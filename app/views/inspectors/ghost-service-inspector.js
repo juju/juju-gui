@@ -76,7 +76,11 @@ YUI.add('ghost-service-inspector', function(Y) {
       // Also see(grep for) the updateGhostName method too.
       var model = this.get('model');
       model.set('displayName', '(' + model.get('packageName') + ')');
-      this.destroy();
+      // The emptySectionA method will destroy this inspector.
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: null }}});
     },
 
     /**

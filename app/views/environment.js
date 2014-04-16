@@ -307,17 +307,6 @@ YUI.add('juju-view-environment', function(Y) {
     },
 
     /**
-      Whenever anything in the topology wants to change the state object
-      this callback is called.
-
-      @method onChangeState
-      @param {Object} e THe change state event object.
-    */
-    onChangeState: function(e) {
-      this.fire('changeState', e.details[0]);
-    },
-
-    /**
       Attaches events after the topology has been created.
 
       @method _attachTopoEvents
@@ -331,8 +320,6 @@ YUI.add('juju-view-environment', function(Y) {
           '*:addRelationEnd', this.expandInspector, this);
       this.topo.on(
           '*:inspectRelation', this.onInspectRelation, this);
-      this.topo.on(
-          '*:changeState', this.onChangeState, this);
     }
   }, {
     ATTRS: {

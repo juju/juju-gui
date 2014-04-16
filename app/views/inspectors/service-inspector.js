@@ -47,7 +47,7 @@ YUI.add('service-inspector', function(Y) {
     },
 
     events: {
-      '.close': {'click': 'destroy'},
+      '.close': {'click': 'onCloseInspector'},
       '.tab': {'click': 'onActivateTab'},
       '.close-slot': {'click': 'hideSlot'},
       '.charm-url': {click: 'onShowCharmDetails'},
@@ -102,6 +102,21 @@ YUI.add('service-inspector', function(Y) {
         this.get('environment').createServiceInspector(this.get('model'));
       });
       this.destroy();
+    },
+
+    /**
+      When the user clicks the x to close the inspector this method is executed.
+
+      @method onCloseInspector
+      @param {Object} e The click event object.
+    */
+    onCloseInspector: function(e) {
+      e.preventDefault();
+      // The emptySectionA method will destroy this inspector.
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: null }}});
     },
 
     /**

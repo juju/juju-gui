@@ -487,7 +487,15 @@ YUI.add('subapp-browser', function(Y) {
       if (this._editorial) { this._editorial.destroy(); }
       if (this._search) { this._search.destroy(); }
       if (this._sidebar.search) { this._sidebar.hideSearch(); }
-      if (this._details) { this._details.destroy(); }
+      if (this._details) {
+        this._details.destroy({ remove: true });
+        var detailsNode = Y.one('.bws-view-data');
+        // XXX window.flags.state the details node is shown by default. When we
+        // switch to the new state object it should be hidden by default in the
+        // template.
+        if (detailsNode) { detailsNode.hide(); }
+      }
+      if (this._activeInspector) {this._activeInspector.destroy(); }
     },
 
     /**

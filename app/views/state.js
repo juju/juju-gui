@@ -208,13 +208,13 @@ YUI.add('juju-app-state', function(Y) {
         id = metadata.id;
         // Compress the id to remove default values.
         if (id) { id = id.replace(/\/?~charmers/, ''); }
+        // If the query params get more complex than just 'search' then
+        // the query parsing should be split out into it's own method.
+        searchQuery = metadata.search;
+        if (searchQuery) { query.text = searchQuery; }
         // All pushes to the urlParts array needs to be in a truthy conditional
         // because no state parameters are required.
         if (component === 'charmbrowser') {
-          // If the query params get more complex than just 'search' then
-          // the query parsing should be split out into it's own method.
-          searchQuery = metadata.search;
-          if (searchQuery) { query.text = searchQuery; }
           hash = metadata.hash || '';
           if (id) { urlParts.push(id); }
         } else {
@@ -343,8 +343,6 @@ YUI.add('juju-app-state', function(Y) {
       // search. When more are added this method is where we can add the
       // additional complexity.
       Y.namespace.call(state, 'sectionA.metadata.search');
-      Y.namespace.call(state, 'sectionA.component');
-      state.sectionA.component = 'charmbrowser';
       state.sectionA.metadata.search = query;
     },
 
