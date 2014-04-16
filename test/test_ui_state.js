@@ -202,7 +202,8 @@ describe('UI State object', function() {
         // Also calls hasChanged() internally but not stubbing to make it a
         // bit of an integration test.
         state.dispatch(newState);
-        assert.equal(emptyStub.callCount(), 1);
+        // It shouldn't empty the section if the component didn't change.
+        assert.equal(emptyStub.callCount(), 0);
         assert.equal(dispatchSectionStub.callCount(), 2);
       });
       it('leaves sections when components don\'t change', function() {

@@ -279,7 +279,7 @@ YUI.add('browser-search-widget', function(Y) {
       this.ac = new Y.AutoComplete({
         inputNode: this.get('boundingBox').one('input[name=bws-search]'),
         minQueryLength: 0,
-        queryDelay: 100,
+        queryDelay: 250,
         resultFormatter: suggestFormatter,
         resultListLocator: 'result',
         // resultTextLocator is quoted to hide it from the yuidoc linter.

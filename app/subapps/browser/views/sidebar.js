@@ -73,6 +73,29 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
+      Shows the sidebar search widget and removes the class on the sidebar
+      container.
+
+      @method showSearch
+    */
+    showSearch: function() {
+      this.search.show();
+      this.get('container').removeClass('no-search');
+    },
+
+    /**
+      Hides the sidebar search widget and adds the class on the sidebar
+      container.
+
+      @method hideSearch
+    */
+    hideSearch: function() {
+      this.search.hide();
+      // addClass() is idempotent.
+      this.get('container').addClass('no-search', true);
+    },
+
+    /**
      * Render out the view to the DOM.
      *
      * @method render
@@ -82,11 +105,15 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl);
 
-      if (!window.flags.il) {
-        // The search widget has no home yet so when the inspector is moved
-        // to the left we will just not render it.
+      if (window.flags && window.flags.state) {
+        // Render then immediately hide the search widget to allow the state
+        // to control the show/hide of the search widget.
+        this._renderSearchWidget(tplNode);
+        this.search.hide();
+      } else {
         this._renderSearchWidget(tplNode);
       }
+
 
       if (typeof container !== 'object') {
         container = this.get('container');

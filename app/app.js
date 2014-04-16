@@ -549,10 +549,8 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
-        if (window.flags.il) {
-          this._renderDeployerBarView();
-        }
         if (window.flags.mv) {
+          this._renderDeployerBarView();
           this._renderEnvironmentHeaderView();
         }
       }, this);
@@ -656,6 +654,10 @@ YUI.add('juju-gui', function(Y) {
       cfg.env = this.env;
       cfg.ecs = this.ecs;
       this.addSubApplications(cfg);
+
+      this.on('*:changeState', function(e) {
+        this.get('subApps').charmbrowser.fire('changeState', e.details[0]);
+      });
 
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
