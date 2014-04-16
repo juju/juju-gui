@@ -260,25 +260,31 @@ Checklist for Making a Stable Release
 
 - Make a new release of the juju-gui charm by doing the following.
 
-  - Get a clean branch of the charm trunk owned by juju-gui:
-    ``bzr branch lp:~juju-gui/charms/precise/juju-gui/trunk/ juju-gui-trunk``.
-  - Get a clean branch of the released branch trunk (from charmers):
-    ``bzr branch lp:charms/juju-gui charmers-trunk``.
-  - Merge possible changes from the charmers' charm to trunk:
-    ``bzr merge -d juju-gui-trunk charmers-trunk``.
-  - If required, commit the changes by running the following from the
-    juju-gui-trunk directory:
-    ``bzr ci -m "Merged changes from the released charm."``
-  - Copy the new release to the releases directory of the charm
-    (i.e. ``juju-gui-trunk/releases``).
+  - Get a clean branch of the development charm trunk owned by juju-gui:
+    ``bzr branch lp:~juju-gui/charms/precise/juju-gui/trunk/ develop-trunk``.
+  - Get a clean branch of the released precise branch trunk:
+    ``bzr branch lp:charms/juju-gui precise-release``.
+  - Get a clean branch of the released trusty branch trunk:
+    ``bzr branch lp:charms/trusty/juju-gui trusty-release``.
+  - Change to the develop-trunk directory: ``cd develop-trunk``.
+  - Merge possible changes from the precise released charms to trunk:
+    ``bzr merge ../precise-release``.
+  - If required, commit the changes by running the following:
+    ``bzr ci -m "Merged changes from the released charm."``.
+  - Merge possible changes from the trusty released charms to trunk:
+    ``bzr merge ../trusty-release``.
+  - If required, commit the changes by running the following:
+    ``bzr ci -m "Merged changes from the released charm."``.
+  - Copy the new GUI release to the releases directory of the charm
+    (i.e. ``develop-trunk/releases``).
   - Remove the old release present in the same directory, and add the new one
     to the repository, e.g.:
     ``bzr rm releases/juju-gui-0.10.1.tgz && bzr add``.
   - Bump the charm revision up.
   - Commit the changes:
     ``bzr ci -m "Updated to the newest juju-gui release."``.
-  - Switch to the charmers' charm directory (charmers-trunk).
-  - Merge the new changes from trunk: ``bzr merge ../juju-gui-trunk/``.
+  - Switch to the precise release charm directory: ``cd ../precise-release``.
+  - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
   - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
   - Commit the changes: ``bzr ci -m "New charm release."``
   - If the merge step above shows more changes than just the new GUI release,
@@ -292,24 +298,29 @@ Checklist for Making a Stable Release
     GUI developers on the Freenode's #juju-gui channel for further explanation
     of the process.
   - Run the charm linter: ``make lint``.
-  - Run the charm unit and functional tests, passing the name of the Juju
-    environment you want to use (this step takes ~1 hour):
-    ``make test JUJU_ENV=ec2``. Note that, since juju-core requires root
-    privileges to bootstrap and destroy an environment when you use the local
-    provider, and since juju-test does not yet support this use case, you have
-    to use another provider type (like AWS in the example above).
-  - juju-test might leave the environment alive at the end of the test run:
-    destroy it with ``juju destroy-environment -e ec2 -y``.
-  - if any error occurs while trying the "upgrade charm" story or in the test
+  - Prepare two ec2 environments, one with ``default-series: precise``, the
+    other with ``default-series: trusty``. Let's call them ``ec2-precise`` and
+    ``ec2-trusty``. These environments will be used to run the charm functional
+    tests, which deploy the precise or trusty charm based on the bootstrap node
+    series. Note that, since functional tests colocate the GUI in the bootstrap
+    node, it is not possible to use local envs to run the test suite.
+  - Run the charm unit and functional tests on precise, passing the name of the
+    Juju environment you want to use (this step takes ~30 minutes):
+    ``make test JUJU_ENV=ec2-precise``.
+  - Run the charm unit and functional tests on trusty, passing the name of the
+    Juju environment you want to use (this step takes ~30 minutes):
+    ``make test JUJU_ENV=ec2-trusty``.
+  - If any error occurs while trying the "upgrade charm" story or in the test
     suite, fix the errors before proceeding. If it ends up not being a trivial
     fix, stop this process and create a critical bug/card.
-  - if everything went well, push the branch directly to the parent:
-    ``bzr push :parent`` should work.
-  - Align the ~juju-gui branch to the ~charmers one:
-    ``cd ../juju-gui-trunk && bzr merge ../charmers-trunk/``.
-  - Commit: bzr ci -m "Merged back the new charm release."
+  - If everything went well, publish the new precise and trusty releases by
+    pushing the branch to the respective locations:
+    ``bzr push lp:charms/juju-gui`` and ``bzr push lp:charms/trusty/juju-gui``.
+  - Align the development branch to the ~charmers ones:
+    ``cd ../develop-trunk && bzr merge ../precise-release/``.
+  - Commit: ``bzr ci -m "Merged back the new charm release."``.
   - Push the branch directly to the parent: ``bzr push :parent`` should work.
-  - In a few minutes, the new charm revision should be available in
+  - In 15-30 minutes, the new charm revision should be available in
     <https://jujucharms.com/search/precise/juju-gui/> and
     <http://manage.jujucharms.com/charms/precise/juju-gui>.
 
