@@ -415,6 +415,10 @@ YUI.add('juju-viewlet-manager', function(Y) {
         var height = winHeight - headerHeight - footerHeight - (
             TB_SPACING * 3);
 
+        if (window.flags.mv) {
+          height -= 50;
+        }
+
         // The viewlet manager has a couple different wrapper elements which
         // impact which components are shown. In this case we are grabbing an
         // internal wrapper to resize without causing the elements to reflow.
