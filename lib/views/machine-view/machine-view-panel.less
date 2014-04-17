@@ -16,10 +16,14 @@
         padding-left: 0;
     }
     .column {
+        .customize-scrollbar;
+        .display-flex;
         .flex(1);
+        .flex-direction(column);
         border-right: 1px solid @machine-view-border-colour;
 
-        .machine-view-panel-header {
+        .head {
+            .flex-basis(auto);
             padding: 20px;
             border-bottom: 1px solid @machine-view-border-colour;
 
@@ -36,16 +40,22 @@
                 height: 20px;
             }
         }
-        .content ul {
-          margin: 0;
-          list-style: none;
-        }
-        .content li {
-          padding: 10px;
-          border-bottom: 1px solid @machine-view-border-colour;
+        .content {
+            .flex(1);
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            ul {
+                margin: 0;
+                list-style: none;
+            }
+            li {
+                padding: 10px;
+                border-bottom: 1px solid @machine-view-border-colour;
+            }
         }
     }
 }
-.flag-state .machine-view-panel {
+.flag-mv .machine-view-panel {
     bottom: @deployer-bar-height;
 }
