@@ -1088,6 +1088,22 @@ describe('Inspector Overview', function() {
     });
   });
 
+  describe('Inspector level actions', function() {
+    it('should fire the changeState event when closed', function() {
+      inspector = setUpInspector(null, true);
+      var fireStub = utils.makeStubMethod(inspector, 'fire');
+      this._cleanups.push(fireStub.reset);
+      inspector.get('container').one('.close').simulate('click');
+      assert.equal(fireStub.calledOnce(), true);
+      var fireArgs = fireStub.lastArguments();
+      assert.equal(fireArgs[0], 'changeState');
+      assert.deepEqual(fireArgs[1], {
+        sectionA: {
+          component: null,
+          metadata: { id: null }}});
+    });
+  });
+
   describe('viewport takeover handling', function() {
 
     it('showUnitDetails fires inspectorTakeoverStarting', function() {
