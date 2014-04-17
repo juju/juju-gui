@@ -35,11 +35,11 @@
 @keyframes pulse-green {.pulse-green-frames-mixin;}
 
 .yui3-juju-inspector {
+    .customize-scrollbar;
     top: 20px;
     right: 70px;
     position: absolute;
 
-    .customize-scrollbar;
 
     .left-breakout {
         .type9;
@@ -1069,7 +1069,7 @@
 .flag-mv .yui3-juju-inspector {
     top: @environment-header-height + 20px;
 }
-.flag-state .yui3-juju-inspector {
+.flag-state #subapp-browser .yui3-juju-inspector {
     .create-border-radius(0);
     top: auto;
     right: auto;
@@ -1078,6 +1078,14 @@
     .juju-inspector {
         position: static;
 
+        ::-webkit-scrollbar-track {
+            background-color: #1c1815;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #505050;
+            border-width: 0 1px;
+            border-color: #1c1815;
+        }
         .viewlet-manager-wrapper {
             .display-flex;
             .flex-direction(column);
