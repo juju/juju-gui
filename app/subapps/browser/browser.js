@@ -228,8 +228,8 @@ YUI.add('subapp-browser', function(Y) {
     _searchChanged: function() {
       if (window.flags && window.flags.state) {
         var state = this.state;
-        if (state.getState('current', 'sectionA', 'search') &&
-            state.hasChanged('sectionA', 'search')) {
+        if (state.getState('current', 'sectionA', 'metadata').search &&
+            state.hasChanged('sectionA', 'metadata')) {
           return true;
         } else {
           return false;
