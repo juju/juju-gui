@@ -1233,6 +1233,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.state.save();
       });
 
+      it('knows when the search cache should be updated (state)', function() {
+        window.flags.state = true;
+        // This flag needs to be set before creating the charmbrowser instance
+        // to get the proper settings in the charmbrowser. This can be removed
+        // once the state flag is removed.
+        var charmbrowser = new ns.Browser();
+        charmbrowser.state.set('current', {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: { search: 'foo' }
+          }, sectionB: {}});
+        assert.equal(charmbrowser._searchChanged(), true);
+        window.flags = {};
+      });
+
       it('re-renders charm details with the sidebar', function() {
         // Set a charm identifier in the view state, and patch the old state
         // so that it is no different than the current one.
