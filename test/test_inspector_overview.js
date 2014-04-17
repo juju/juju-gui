@@ -1099,7 +1099,7 @@ describe('Inspector Overview', function() {
       assert.equal(fireArgs[0], 'changeState');
       assert.deepEqual(fireArgs[1], {
         sectionA: {
-          component: 'charmbrowser',
+          component: null,
           metadata: { id: null }}});
     });
   });

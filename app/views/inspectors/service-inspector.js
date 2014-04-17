@@ -115,7 +115,7 @@ YUI.add('service-inspector', function(Y) {
       // The emptySectionA method will destroy this inspector.
       this.fire('changeState', {
         sectionA: {
-          component: 'charmbrowser',
+          component: null,
           metadata: { id: null }}});
     },
 
