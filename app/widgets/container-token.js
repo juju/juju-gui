@@ -19,34 +19,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
- * Provide the machine token view.
+ * Provide the container token view.
  *
  * @module views
  */
 
-YUI.add('machine-token', function(Y) {
+YUI.add('container-token', function(Y) {
 
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates;
 
   /**
-   * The view associated with the machine token.
+   * The view associated with the container token.
    *
-   * @class MachineToken
+   * @class ContainerToken
    */
-  var MachineToken = Y.Base.create('MachineToken', Y.View,
+  var ContainerToken = Y.Base.create('ContainerToken', Y.View,
       [
         Y.Event.EventTracker
       ], {
-        template: Templates['machine-token'],
+        template: Templates['container-token'],
 
         events: {
           '.delete': {
             click: 'handleDelete'
-          },
-          '.token': {
-            click: 'handleTokenSelect'
           }
         },
 
@@ -62,29 +59,6 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
-         * Fire the click event.
-         *
-         * @method handleToken
-         * @param {Event} ev the click event created.
-         */
-        handleTokenSelect: function(e) {
-          e.preventDefault();
-          this.fire('selectToken');
-        },
-
-        /**
-         * Format the hardware details.
-         *
-         * @method _formatHardware
-         */
-        _formatHardware: function(hardware) {
-          hardware.disk = (hardware.disk / 1024).toFixed(1);
-          hardware.cpuPower = hardware.cpuPower / 100;
-          hardware.mem = (hardware.mem / 1024).toFixed(1);
-          return hardware;
-        },
-
-        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -92,10 +66,9 @@ YUI.add('machine-token', function(Y) {
         render: function() {
           var container = this.get('container'),
               machine = this.get('machine');
-          machine.formattedHardware = this._formatHardware(machine.hardware);
           container.setHTML(this.template(machine));
-          container.addClass('machine-token');
-          container.setAttribute('data-id', machine.id);
+          container.addClass('container-token');
+          this.get('containerParent').append(container);
           return this;
         },
 
@@ -105,11 +78,18 @@ YUI.add('machine-token', function(Y) {
            * @default undefined
            * @type {Object}
           */
-          machine: {}
+          machine: {},
+
+          /**
+           * @attribute containerParent
+           * @default undefined
+           * @type {Object}
+          */
+          containerParent: {}
         }
       });
 
-  views.MachineToken = MachineToken;
+  views.ContainerToken = ContainerToken;
 
 }, '0.1.0', {
   requires: [
@@ -118,7 +98,6 @@ YUI.add('machine-token', function(Y) {
     'event-tracker',
     'node',
     'handlebars',
-    'juju-templates',
-    'machine-token-header'
+    'juju-templates'
   ]
 });

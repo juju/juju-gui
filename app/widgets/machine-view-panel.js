@@ -42,6 +42,9 @@ YUI.add('machine-view-panel', function(Y) {
         template: Templates['machine-view-panel'],
 
         events: {
+          '.machine-token .token': {
+            click: 'handleTokenSelect'
+          }
         },
 
         /**
@@ -54,6 +57,29 @@ YUI.add('machine-view-panel', function(Y) {
           machines.after('*:change', this.render, this);
           machines.after('add', this.render, this);
           machines.after('remove', this.render, this);
+        },
+
+        /**
+         * Display containers for the selected machine.
+         *
+         * @method handleTokenSelect
+         * @param {Event} ev the click event created.
+         */
+        handleTokenSelect: function(e) {
+          var container = this.get('container'),
+              machineTokens = container.all('.machines .content ul .token'),
+              selected = e.currentTarget,
+              id = selected.ancestor().getData('id'),
+              containers = this.get('machines').filterByParent(id),
+              plural = containers.length > 1 ? 's' : '';
+          e.preventDefault();
+          // Select the active token.
+          machineTokens.removeClass('active');
+          selected.addClass('active');
+          // Set the header text.
+          container.one('.containers .head .label').set('text',
+              containers.length + ' machine' + plural + ', xx units');
+          this._renderContainerTokens(containers);
         },
 
         /**
@@ -81,7 +107,7 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _renderHeaders: function(label) {
           var columns = this.get('container').all('.column'),
-              machines = this.get('machines');
+              machines = this.get('machines').filterByParent(null);
 
           columns.each(function(column) {
             var attrs = {container: column.one('.head')};
@@ -93,14 +119,33 @@ YUI.add('machine-view-panel', function(Y) {
               attrs.title = 'Environment';
               attrs.label = 'machine';
               attrs.action = 'New machine';
-              attrs.count = machines.size();
+              attrs.count = machines.length;
             }
             else if (column.hasClass('containers')) {
-              attrs.label = '0 containers, 1 unit';
               attrs.action = 'New container';
             }
             new views.MachineViewPanelHeaderView(attrs).render();
           });
+        },
+
+        /**
+         * Display a list of given containers.
+         *
+         * @method _renderContainerTokens
+         */
+        _renderContainerTokens: function(containers) {
+          var containerParent = this.get('container').one(
+              '.containers .content ul');
+          containerParent.get('childNodes').remove();
+          if (containers.length > 0) {
+            Y.Object.each(containers, function(container) {
+              new views.ContainerToken({
+                containerTemplate: '<li/>',
+                containerParent: containerParent,
+                machine: container
+              }).render();
+            });
+          }
         },
 
         /**
@@ -118,9 +163,7 @@ YUI.add('machine-view-panel', function(Y) {
               var node = Y.Node.create('<li></li>');
               new views.MachineToken({
                 container: node,
-                title: machine.displayName,
-                id: machine.id,
-                hardware: machine.hardware
+                machine: machine
               }).render();
               machineList.append(node);
             });
@@ -181,6 +224,7 @@ YUI.add('machine-view-panel', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
+    'container-token',
     'machine-token',
     'machine-view-panel-header'
   ]
