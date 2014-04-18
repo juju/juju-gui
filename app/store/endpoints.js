@@ -133,7 +133,11 @@ YUI.add('juju-endpoints-controller', function(Y) {
         handleServiceEvent: function(service) {
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
-          if (!service.get('pending')) {
+          var process = true;
+          if (!window.flags.ecs) {
+            process = !service.get('pending');
+          }
+          if (process) {
             var mController = this.get('modelController'),
                 servicePromise = mController.getServiceWithCharm(
                     service.get('id')),

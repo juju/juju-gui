@@ -123,6 +123,9 @@ YUI.add('environment-change-set', function(Y) {
       var args = record.command.args;
       var index = args.length - 1;
       var callback = args[index];
+      if (!Y.Lang.isFunction(callback)) {
+        return;
+      }
       /* jshint -W040 */
       // Possible strict violation.
       var self = this;
@@ -139,6 +142,10 @@ YUI.add('environment-change-set', function(Y) {
           id: record.id,
           record: record
         });
+        // Signal that this record has been completed by decrementing the
+        // count of records to complete and deleting it from the changeset.
+        self.recordCount -= 1;
+        delete self.changeSet[record.id];
         return result;
       }
       args[index] = _callbackWrapper;
@@ -238,6 +245,43 @@ YUI.add('environment-change-set', function(Y) {
       }
     },
 
+    /**
+      Commit the next level of the hierarchy of commits to be made.
+
+      @method _commitNext
+    */
+    _commitNext: function() {
+      var command;
+      this.currentLevel += 1;
+      this.currentCommit[this.currentLevel].forEach(function(record) {
+        command = this.changeSet[record.key];
+        this._execute(command);
+        this.fire('commit', command);
+      }, this);
+      this.levelTimer = Y.later(200, this, this._waitOnLevel, null, true);
+    },
+
+    /**
+      Wait until the entire level of commits has been received by the
+      environment.  This relies on the fact that _execute wraps the callback
+      methods in a wrapper that decrements this.recordCount; once it hits 0,
+      meaning no commits left in that level, it moves on to either finish up or
+      commit the next level.
+
+      @method _waitOnLevel
+    */
+    _waitOnLevel: function() {
+      if (this.recordCount === 0) {
+        this.levelTimer.cancel();
+        if (this.currentLevel < this.currentCommit.length - 1) {
+          // Defer execution to prevent stack overflow.
+          Y.soon(Y.bind(this._commitNext(), this));
+        } else {
+          this.currentLevel = -1;
+          delete this.currentCommit;
+        }
+      }
+    },
 
     /**
       Starts the processing of all of the top level
@@ -246,25 +290,13 @@ YUI.add('environment-change-set', function(Y) {
       @method commit
     */
     commit: function() {
-      // XXX Matthew - This needs to be cloned because _buildHierarchy modifies
-      // the changeset it is given for efficiency.  In the future, however, we
-      // will need this.changeset in its current form, rather than maintaining
-      // the hierarchical form because RPC callbacks should remove commands as
-      // they return.  Clarify this comment at that time. 2014-04-14
-      var changeSet = this.changeSet;
-      var hierarchy = this._buildHierarchy(Y.clone(changeSet));
-      var command;
-
-      hierarchy.forEach(function(level) {
-        level.forEach(function(record) {
-          // XXX Matthew - this fires commands in the right order, but does not
-          // wait until levels have completed before firing.  Card on board.
-          // 2014-04-14
-          command = changeSet[record.key];
-          this._execute(command);
-          this.fire('commit', command);
-        }, this);
-      }, this);
+      // This needs to be cloned because _buildHierarchy modifies the changeset
+      // it is given for efficiency.  However, we will need this.changeset in
+      // its current form, rather than maintaining the hierarchical form
+      // because RPC callbacks remove commands as they return.
+      this.currentCommit = this._buildHierarchy(Y.clone(this.changeSet));
+      this.currentLevel = -1;
+      this._commitNext();
     },
 
     /* End ECS methods */
@@ -283,10 +315,13 @@ YUI.add('environment-change-set', function(Y) {
     _lazyDeploy: function(args) {
       var command = {
         method: 'deploy',
-        args: args
+        args: this._getArgs(args)
       };
+      if (command.args.length !== args.length) {
+        command.options = args[args.length - 1];
+      }
       // The 6th param is the toMachine param of the env deploy call.
-      var toMachine = args[6];
+      var toMachine = command.args[6];
       if (!this.changeSet[parent]) {
         // If the toMachine isn't a record in the changeSet that means it's
         // an existing machine or that the machine does not exist and one
@@ -325,6 +360,37 @@ YUI.add('environment-change-set', function(Y) {
       return this._createNewRecord('setConfig', command, parent);
     },
 
+    /**
+      Creates a new entry in the queue for adding a relation.
+
+      Receives all the parameters it's public method 'addRelation' was called
+      with with the exception of the ECS options oject.
+
+      @method _lazyADdRelation
+      @param {Array} args The arguments to add the relation with.
+    */
+    _lazyAddRelation: function(args) {
+      var serviceA, serviceB;
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.command.method === 'deploy') {
+          if (value.command.options.modelId === args[0][0]) {
+            serviceA = key;
+            args[0][0] = value.command.args[1];
+          }
+          if (value.command.options.modelId === args[1][0]) {
+            serviceB = key;
+            args[1][0] = value.command.args[1];
+          }
+        }
+      });
+      var parent = [serviceA, serviceB];
+      var command = {
+        method: 'add_relation',
+        args: args
+      };
+      return this._createNewRecord('addRelation', command, parent);
+    },
+
     /* End private environment methods. */
 
     /* Public environment methods. */
@@ -346,7 +412,7 @@ YUI.add('environment-change-set', function(Y) {
         // Call the deploy method right away bypassing the queue.
         env.deploy.apply(env, args);
       } else {
-        this._lazyDeploy(args);
+        this._lazyDeploy(arguments);
       }
     },
 
@@ -373,6 +439,25 @@ YUI.add('environment-change-set', function(Y) {
         }
       } else {
         this._lazySetConfig(args);
+      }
+    },
+
+    /**
+      Calls the environment's add_relation method or creates a new add_relation
+      record in the queue.
+
+      The parameters match the parameters for the public env add relation
+      method in go.js.
+
+      @method addRelation
+    */
+    addRelation: function(endpointA, endpointB, callback, options) {
+      var env = this.get('env'),
+          args = this._getArgs(arguments);
+      if (options && options.immediate) {
+        env.add_relation.apply(env, args);
+      } else {
+        this._lazyAddRelation(args);
       }
     }
 

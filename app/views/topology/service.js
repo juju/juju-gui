@@ -550,7 +550,13 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseEnter: function(box, context) {
       var rect = Y.one(this);
       // Do not fire if this service isn't selectable.
-      if (box.pending || !utils.hasSVGClass(rect, 'selectable-service')) {
+      if (!window.flags.ecs) {
+        if (box.pending) {
+          return;
+        }
+      }
+
+      if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
 
@@ -925,8 +931,10 @@ YUI.add('juju-topology-service', function(Y) {
      @param {Object} context The current context.
      */
     serviceAddRelMouseDown: function(box, context) {
-      if (box.pending) {
-        return;
+      if (!window.flags.ecs) {
+        if (box.pending) {
+          return;
+        }
       }
       var evt = d3.event;
       var topo = context.get('component');
@@ -1439,8 +1447,10 @@ YUI.add('juju-topology-service', function(Y) {
       var service = box.model;
       var triangle = serviceMenu.one('.triangle');
 
-      if (service.get('pending')) {
-        return true;
+      if (!window.flags.ecs) {
+        if (service.get('pending')) {
+          return;
+        }
       }
 
       if (box && !serviceMenu.hasClass('active')) {

@@ -741,7 +741,11 @@ YUI.add('juju-topology-relation', function(Y) {
       // created yet.
       topo.fire('show', {
         selection: vis.selectAll('.service')
-          .filter(function(d) { return !d.pending; })
+          .filter(function(d) {
+              if (!window.flags.ecs) {
+                return !d.pending;
+              }
+            })
       });
 
       var db = topo.get('db');
@@ -922,9 +926,16 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.bindAllD3Events();
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
-      env.add_relation(endpoints[0], endpoints[1],
-          Y.bind(this._addRelationCallback, this, module, relation_id)
-      );
+      if (window.flags.ecs) {
+        var ecs = topo.get('ecs');
+        ecs.addRelation(endpoints[0], endpoints[1],
+            Y.bind(this._addRelationCallback, this, module, relation_id)
+        );
+      } else {
+        env.add_relation(endpoints[0], endpoints[1],
+            Y.bind(this._addRelationCallback, this, module, relation_id)
+        );
+      }
       module.set('currentServiceClickAction', 'hideServiceMenu');
     },
 
