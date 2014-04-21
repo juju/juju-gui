@@ -65,4 +65,29 @@ describe('environment header extension', function() {
     view.destroyEnvironmentHeader();
     assert.equal(view.environmentHeader.get('destroyed'), true);
   });
+
+  it('triggers machine view change event', function(done) {
+    view.set('subApps', {
+      charmbrowser: {
+        fire: function(evt, data) {
+          assert.equal(data.sectionB.component, 'machine');
+          done();
+        }
+      }
+    });
+    view.get('container').one('a[data-view=machineView]').simulate('click');
+  });
+
+  it('triggers machine view change event', function(done) {
+    view.set('subApps', {
+      charmbrowser: {
+        fire: function(evt, data) {
+          assert.equal(data.sectionB.component, null);
+          done();
+        }
+      }
+    });
+    view.get('container').one('a[data-view=serviceView]').simulate('click');
+  });
+
 });

@@ -403,6 +403,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               destroy: function() {},
               hideSearch: utils.makeStubFunction() };
             app._details = { destroy: utils.makeStubFunction() };
+            app.machineViewPanel = { destroy: utils.makeStubFunction() };
           }
 
           it('emptySectionA', function() {
@@ -415,6 +416,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(app._sidebar.hideSearch.callCount(), 1);
             assert.equal(app._details.destroy.callCount(), 1);
             assert.equal(bwsdata.getStyle('display'), 'none');
+          });
+
+          it('emptySectionB', function() {
+            stubMethods(app);
+            app.emptySectionB();
+            assert.equal(app.machineViewPanel.destroy.callCount(), 1);
           });
         });
       });
