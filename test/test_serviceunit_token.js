@@ -44,7 +44,6 @@ describe('Service unit token', function() {
   });
 
   afterEach(function() {
-    container.destroy();
     view.destroy();
   });
 

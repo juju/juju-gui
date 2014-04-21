@@ -155,7 +155,8 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _renderMachineTokens: function() {
           var container = this.get('container'),
-              machineList = container.one('.machines .content ul'),
+              listContainer = container.one('.machines .content'),
+              parentNode = Y.Node.create('<ul></ul>'),
               machines = this.get('machines').filterByParent(null);
 
           if (machines.length > 0) {
@@ -165,8 +166,10 @@ YUI.add('machine-view-panel', function(Y) {
                 container: node,
                 machine: machine
               }).render();
-              machineList.append(node);
+              parentNode.append(node);
             });
+            // only append to the DOM once
+            listContainer.append(parentNode);
           }
         },
 
@@ -177,8 +180,10 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _renderServiceUnitTokens: function() {
           var container = this.get('container'),
-              unitList = container.one('.unplaced .content ul'),
+              listContainer = container.one('.unplaced .content'),
+              parentNode = Y.Node.create('<ul></ul>'),
               units = this.get('serviceUnits');
+
           if (units && units.length && units.length > 0) {
             Y.Object.each(units, function(unit) {
               var node = Y.Node.create('<li></li>');
@@ -189,8 +194,10 @@ YUI.add('machine-view-panel', function(Y) {
                 machines: this.get('machines').filterByParent(null),
                 containers: [] // XXX Need to find query for getting containers
               }).render();
-              unitList.append(node);
+              parentNode.append(node);
             });
+            // only append to the DOM once
+            listContainer.append(parentNode);
           }
         },
 

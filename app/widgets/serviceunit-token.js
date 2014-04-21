@@ -134,6 +134,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
        * @attribute container
        * @type {Object}
        */
+      // XXX this should get loaded as required from the db
       containers: []
     }
   });
