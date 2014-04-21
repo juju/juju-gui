@@ -376,6 +376,23 @@ describe('Browser bundle detail view', function() {
     assert.equal(selected.getAttribute('href'), '#services');
   });
 
+  it('sets the proper change request when closed', function(done) {
+    window.flags.il = true;
+    view.set('activeTab', '#services');
+    view._parseData = function() {
+      return new Y.Promise(function(resolve) { resolve(); });
+    };
+    view.set('entity', new models.Bundle(data));
+    view.on('changeState', function(ev) {
+      assert.equal(ev.details[0].sectionA.metadata.id, null,
+                   'The charm id is not set to null.');
+      assert.equal(ev.details[0].sectionA.metadata.hash, null,
+                   'The charm details hash is not set to null.');
+      done();
+    });
+    view.render();
+    view.get('container').one('.bundle .back').simulate('click');
+  });
 
   it('can generate source and revno links from its charm', function() {
     view.set('entity', new models.Bundle(data));
