@@ -237,7 +237,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         this.fire('changeState', {
           sectionA: {
             component: 'charmbrowser',
-            metadata: { id: null }
+            metadata: { id: null, hash: null }
           }});
       } else {
         this.fire('viewNavigate', { change: { charmID: null, hash: null }});

@@ -866,6 +866,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(selected.getAttribute('href'), '#configuration');
     });
 
+    it('sets the proper change request when closed', function(done) {
+      window.flags.il = true;
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+
+      view = new CharmView({
+        activeTab: '#configuration',
+        entity: new models.Charm(data.charm),
+        container: utils.makeContainer(this)
+      });
+
+      view.on('changeState', function(ev) {
+        assert.equal(ev.details[0].sectionA.metadata.id, null,
+                     'The charm id is not set to null.');
+        assert.equal(ev.details[0].sectionA.metadata.hash, null,
+                     'The charm details hash is not set to null.');
+        done();
+      });
+
+      view.render();
+      view.get('container').one('.charm .back').simulate('click');
+    });
+
     it('loads related charms when interface tab selected', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
       testContainer = utils.makeContainer(this);
