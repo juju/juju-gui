@@ -99,7 +99,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
         hash: undefined
       };
 
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         this.fire('changeState', {
           sectionA: {
             component: 'charmbrowser',

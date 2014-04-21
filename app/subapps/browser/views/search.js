@@ -159,7 +159,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
             this._renderSearchResults(cachedResults);
           } else {
             var filters;
-            if (window.flags && window.flags.state) {
+            if (window.flags && window.flags.il) {
               filters = { text: this.get('query')};
             } else {
               filters = this.get('filters');

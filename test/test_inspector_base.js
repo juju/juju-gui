@@ -70,7 +70,7 @@ describe('Inspector Base', function() {
   });
 
   it('can be rendered into the sidebar', function() {
-    window.flags.state = true;
+    window.flags.il = true;
     testUtils.makeContainer(this, 'bws-sidebar');
     Y.one('#bws-sidebar').setHTML('<div class="bws-content"></div>');
     var inspector = new Inspector({

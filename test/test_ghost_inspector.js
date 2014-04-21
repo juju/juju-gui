@@ -298,7 +298,7 @@ describe('Ghost Inspector', function() {
 
   describe('Environment change set interactions', function() {
     it('calls the ecs deploy method', function() {
-      window.flags.ecs = true;
+      window.flags.mv = true;
       inspector = setUpInspector();
       var deployStub = utils.makeStubFunction();
       inspector.set('ecs', { deploy: deployStub });

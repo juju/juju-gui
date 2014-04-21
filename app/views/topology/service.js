@@ -1414,7 +1414,7 @@ YUI.add('juju-topology-service', function(Y) {
     showServiceDetails: function(box, topo) {
       // XXX Jeff March 26 2013 - show_service can be removed once
       // we finish moving the inspector into the browser.
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         topo.fire('changeState', {
           sectionA: {
             component: 'inspector',

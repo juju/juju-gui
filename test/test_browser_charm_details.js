@@ -344,7 +344,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      window.flags.state = true;
+      window.flags.il = true;
       var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.iconpath = function() {
         return 'charm icon url';

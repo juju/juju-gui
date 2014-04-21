@@ -176,7 +176,7 @@ describe('Browser bundle detail view', function() {
 
   it('deploys a bundle when \'add\' and confirmation button is clicked',
       function(done) {
-        window.flags.state = true;
+        window.flags.il = true;
         var changeStateFired = false;
         var handler = view.on('changeState', function(state) {
           changeStateFired = true;

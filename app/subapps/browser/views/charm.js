@@ -110,7 +110,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _addCharmEnvironment: function(ev) {
       ev.halt();
       var charm = this.get('entity');
-      if (!window.flags || !window.flags.state) {
+      if (!window.flags || !window.flags.il) {
         this.fire('viewNavigate', {change: {charmID: null}});
       }
       var ghostAttributes;
@@ -136,7 +136,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         hash: undefined
       };
 
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         this.fire('changeState', {
           sectionA: {
             component: 'charmbrowser',

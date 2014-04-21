@@ -42,7 +42,7 @@ YUI.add('inspector-base', function(Y) {
     */
     _insertContainer: function() {
       var node;
-      if (window.flags.state) {
+      if (window.flags.il) {
         node = Y.one('#bws-sidebar .bws-content');
       } else {
         node = Y.one('#content');

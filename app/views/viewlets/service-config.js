@@ -167,7 +167,7 @@ YUI.add('service-config-view', function(Y) {
 
       if (Y.Object.isEmpty(errors)) {
         var setConfigMethod;
-        if (window.flags.ecs) {
+        if (window.flags.mv) {
           // When this flag is removed and the method is being called
           // directly it doesn't need to be bound.
           var ecs = this.get('ecs');
