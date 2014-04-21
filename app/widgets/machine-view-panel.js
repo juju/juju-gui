@@ -105,7 +105,7 @@ YUI.add('machine-view-panel', function(Y) {
          *
          * @method _renderHeaders
          */
-        _renderHeaders: function(label) {
+        _renderHeaders: function() {
           var columns = this.get('container').all('.column'),
               machines = this.get('machines').filterByParent(null);
 
@@ -153,9 +153,10 @@ YUI.add('machine-view-panel', function(Y) {
          *
          * @method _renderMachineTokens
          */
-        _renderMachineTokens: function(label) {
+        _renderMachineTokens: function() {
           var container = this.get('container'),
-              machineList = container.one('.machines .content ul'),
+              listContainer = container.one('.machines .content'),
+              parentNode = Y.Node.create('<ul></ul>'),
               machines = this.get('machines').filterByParent(null);
 
           if (machines.length > 0) {
@@ -165,8 +166,38 @@ YUI.add('machine-view-panel', function(Y) {
                 container: node,
                 machine: machine
               }).render();
-              machineList.append(node);
+              parentNode.append(node);
             });
+            // only append to the DOM once
+            listContainer.append(parentNode);
+          }
+        },
+
+        /**
+         * Render the undeployed service unit tokens.
+         *
+         * @method _renderServiceUnitTokens
+         */
+        _renderServiceUnitTokens: function() {
+          var container = this.get('container'),
+              listContainer = container.one('.unplaced .content'),
+              parentNode = Y.Node.create('<ul></ul>'),
+              units = this.get('serviceUnits');
+
+          if (units && units.length && units.length > 0) {
+            Y.Object.each(units, function(unit) {
+              var node = Y.Node.create('<li></li>');
+              new views.ServiceUnitToken({
+                container: node,
+                title: unit.displayName,
+                id: unit.id,
+                machines: this.get('machines').filterByParent(null),
+                containers: [] // XXX Need to find query for getting containers
+              }).render();
+              parentNode.append(node);
+            });
+            // only append to the DOM once
+            listContainer.append(parentNode);
           }
         },
 
@@ -181,6 +212,7 @@ YUI.add('machine-view-panel', function(Y) {
           container.addClass('machine-view-panel');
           this._renderHeaders();
           this._renderMachineTokens();
+          this._renderServiceUnitTokens();
           return this;
         },
 
@@ -210,7 +242,15 @@ YUI.add('machine-view-panel', function(Y) {
            * @attribute machines
            * @type {Object}
            */
-          machines: {}
+          machines: {},
+
+          /**
+           * The service units to display in this view.
+           *
+           * @attribute serviceUnits
+           * @type {Object}
+           */
+          serviceUnits: {}
         }
       });
 
@@ -218,14 +258,16 @@ YUI.add('machine-view-panel', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'view',
-    'juju-view-utils',
     'event-tracker',
-    'node',
     'handlebars',
+    'juju-serviceunit-token',
     'juju-templates',
+    'juju-view-utils',
     'container-token',
     'machine-token',
-    'machine-view-panel-header'
+    'juju-serviceunit-token',
+    'machine-view-panel-header',
+    'node',
+    'view'
   ]
 });
