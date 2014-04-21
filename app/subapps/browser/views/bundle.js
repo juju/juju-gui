@@ -87,7 +87,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _deployBundle: function(e) {
       e.halt();
       var bundle = this.get('entity');
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         this.fire('changeState', {
           sectionA: {
             component: 'charmbrowser',

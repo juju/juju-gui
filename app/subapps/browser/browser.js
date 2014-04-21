@@ -226,7 +226,7 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true If search changed.
      */
     _searchChanged: function() {
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         var state = this.state;
         if (state.getState('current', 'sectionA', 'metadata').search &&
             state.hasChanged('sectionA', 'metadata')) {
@@ -357,7 +357,7 @@ YUI.add('subapp-browser', function(Y) {
       };
 
       // XXX this should be moved to the mv flag soon.
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         this.state = new models.UIState({
           dispatchers: {
             sectionA: {
@@ -420,7 +420,7 @@ YUI.add('subapp-browser', function(Y) {
     */
     _charmbrowser: function(metadata) {
       var detailsNode = Y.one('.bws-view-data');
-      // XXX window.flags.state the details node is shown by default. When we
+      // XXX window.flags.il the details node is shown by default. When we
       // switch to the new state object it should be hidden by default in the
       // template.
       if (detailsNode) { detailsNode.hide(); }
@@ -490,7 +490,7 @@ YUI.add('subapp-browser', function(Y) {
       if (this._details) {
         this._details.destroy({ remove: true });
         var detailsNode = Y.one('.bws-view-data');
-        // XXX window.flags.state the details node is shown by default. When we
+        // XXX window.flags.il the details node is shown by default. When we
         // switch to the new state object it should be hidden by default in the
         // template.
         if (detailsNode) { detailsNode.hide(); }
@@ -515,7 +515,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderEntityDetails: function(req, res, next) {
       var entityId, hash;
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         entityId = this.state.getState('current', 'sectionA', 'metadata').id;
         hash = this.state.getState('current', 'sectionA', 'metadata').hash;
       } else {
@@ -579,7 +579,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (!window.flags && !window.flags.state) {
+      if (!window.flags && !window.flags.il) {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
@@ -640,7 +640,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
         var metadata = this.state.getState('current', 'sectionA', 'metadata');
         extraCfg.query = metadata.search;
@@ -702,7 +702,7 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         if (!this._sidebar) {
           this._sidebar = new views.Sidebar(
               this._getViewCfg({
@@ -868,7 +868,7 @@ YUI.add('subapp-browser', function(Y) {
       // topo is passed in to the charmbrowser after
       // the environment view is rendered.
       var topo = this.get('topo');
-      if (!window.flags || !window.flags.state) {
+      if (!window.flags || !window.flags.il) {
         var editorial = this._editorial;
         var search = this._search;
         // Clear out whatever charm list is in the inspector
@@ -929,7 +929,7 @@ YUI.add('subapp-browser', function(Y) {
     routeDefault: function(req, res, next) {
       // The new state object takes the request, parses it and then dispatches
       // so this method only needs these lines once switched over.
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         // We need to render the sidebar view as default. This is the new design
         // in the near future we will likely just render it in the initializer.
         this.sidebar();
@@ -1118,7 +1118,7 @@ YUI.add('subapp-browser', function(Y) {
       @return {undefined} Nothing.
     */
     updateVisible: function() {
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         // This method will be deleted when we switch to the new state class.
         return;
       }

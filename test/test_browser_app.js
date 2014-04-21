@@ -1234,7 +1234,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('knows when the search cache should be updated (state)', function() {
-        window.flags.state = true;
+        window.flags.il = true;
         // This flag needs to be set before creating the charmbrowser instance
         // to get the proper settings in the charmbrowser. This can be removed
         // once the state flag is removed.

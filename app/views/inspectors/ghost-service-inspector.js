@@ -125,7 +125,7 @@ YUI.add('ghost-service-inspector', function(Y) {
           container, '.constraint-field');
 
       var deployMethod;
-      if (window.flags.ecs) {
+      if (window.flags.mv) {
         var ecs = this.get('ecs');
         // When this flag is removed and the method is being called
         // directly it doesn't need to be bound.
@@ -185,7 +185,7 @@ YUI.add('ghost-service-inspector', function(Y) {
 
       var ghostId = ghostService.get('id');
       var inspector;
-      if (!window.flags || !window.flags.state) {
+      if (!window.flags || !window.flags.il) {
         inspector = environmentView.inspector;
         if (inspector) {
           // If there is a ghost inspector currently open for this service, then
@@ -220,7 +220,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       topo.service_boxes[serviceName] = boxModel;
 
       // Set to initial UI state.
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         // In order to display the proper inspector for queued up services
         // Whatever listens for this event will need to check against the
         // currently open inspector.

@@ -60,7 +60,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         }
         ghostService.set('icon', ghostAttributes.icon);
       }
-      if (window.flags.state) {
+      if (window.flags.il) {
         this.get('subApps').charmbrowser.fire('changeState', {
           sectionA: {
             component: 'inspector',

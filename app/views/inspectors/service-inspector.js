@@ -97,7 +97,7 @@ YUI.add('service-inspector', function(Y) {
 
       // Reload the inspector itself.
       this.after('destroy', function() {
-        // window.flags.state
+        // window.flags.il
         // XXX This needs to be re-implemented for the inspector in the browser.
         this.get('environment').createServiceInspector(this.get('model'));
       });

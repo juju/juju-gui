@@ -233,7 +233,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      */
     _handleBack: function(ev) {
       ev.halt();
-      if (window.flags && window.flags.state) {
+      if (window.flags && window.flags.il) {
         this.fire('changeState', {
           sectionA: {
             component: 'charmbrowser',
