@@ -183,6 +183,7 @@ describe('UI State object', function() {
 
   describe('dispatching', function() {
     describe('dispatch', function() {
+
       it('empties sections when components change', function() {
         var newState = {
           sectionA: {
@@ -206,6 +207,7 @@ describe('UI State object', function() {
         assert.equal(emptyStub.callCount(), 0);
         assert.equal(dispatchSectionStub.callCount(), 2);
       });
+
       it('leaves sections when components don\'t change', function() {
         var newState = { sectionA: {}, sectionB: {} };
         // Make sure that the defaults are set properly.
@@ -223,6 +225,7 @@ describe('UI State object', function() {
         assert.equal(dispatchSectionStub.callCount(), 2);
       });
     });
+
     describe('dispatchers', function() {
       var dispatchers;
 
@@ -273,6 +276,7 @@ describe('UI State object', function() {
   });
 
   describe('url part parsing', function() {
+
     describe('_parseInspectorUrl', function() {
       var parts = {
         'inspector': undefined,
@@ -285,6 +289,7 @@ describe('UI State object', function() {
           id: 'service123',
           unit: '13' }
       };
+
       it('can parse the inspector url parts', function() {
         Object.keys(parts).forEach(function(key) {
           assert.deepEqual(
@@ -294,6 +299,7 @@ describe('UI State object', function() {
         });
       });
     });
+
     describe('_parseMachineUrl', function() {
       var parts = {
         'machine': { },
@@ -303,6 +309,7 @@ describe('UI State object', function() {
           id: '3',
           container: 'lxc-0' }
       };
+
       it('can parse the machine url parts', function() {
         Object.keys(parts).forEach(function(key) {
           assert.deepEqual(
@@ -312,6 +319,7 @@ describe('UI State object', function() {
         });
       });
     });
+
     describe('_parseCharmUrl', function() {
       var parts = {
         'precise/mysql-38': {
@@ -319,6 +327,7 @@ describe('UI State object', function() {
         'bundle/~charmers/mediawiki/6/single': {
           id: 'bundle/~charmers/mediawiki/6/single' }
       };
+
       it('can parse the charm url parts', function() {
         Object.keys(parts).forEach(function(key) {
           assert.deepEqual(
@@ -327,6 +336,7 @@ describe('UI State object', function() {
               key + ' did not parse correctly');
         });
       });
+
       it('adds the hash to the state if provided', function() {
         assert.deepEqual(
             state._parseCharmUrl('precise/mysql-38', 'foo'),
@@ -334,6 +344,7 @@ describe('UI State object', function() {
               id: 'precise/mysql-38',
               hash: 'foo' });
       });
+
       it('removes bws_ from the hash from legacy urls', function() {
         assert.deepEqual(
             state._parseCharmUrl('precise/mysql-38', 'bws_foo'),

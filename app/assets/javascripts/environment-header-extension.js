@@ -64,11 +64,25 @@ YUI.add('environment-header-extension', function(Y) {
       @param {Object} e Event object.
     */
     _onChangeEnvironmentView: function(e) {
-      var change = {},
+      var changeState = {},
           environment = e.environment;
-      if (environment === 'serviceView') { change = { topology: true }; }
-      else if (environment === 'machineView') { change = { machine: true }; }
-      this.get('subApps').charmbrowser.fire('viewNavigate', { change: change });
+
+      if (environment === 'serviceView') {
+        changeState = {
+          sectionB: {
+            component: null,
+            metadata: {}
+          }
+        };
+      } else if (environment === 'machineView') {
+        changeState = {
+          sectionB: {
+            component: 'machine',
+            metadata: {}
+          }
+        };
+      }
+      this.get('subApps').charmbrowser.fire('changeState', changeState);
     }
   };
 

@@ -337,7 +337,7 @@ YUI.add('subapp-browser', function(Y) {
         this._onboarding.destroy();
       }
       if (this.machineViewPanel) {
-        this.destroyMachineViewPanel();
+        this.machineViewPanel.destroy();
       }
     },
 
@@ -476,7 +476,10 @@ YUI.add('subapp-browser', function(Y) {
       @param {Object|String} metadata The metadata to pass to the machine
         view.
     */
-    _machine: function(metadata) {},
+    _machine: function(metadata) {
+      this._renderMachineViewPanelView(this.get('db'));
+      this.machineViewPanel.setWidthFull();
+    },
 
     /**
       Empties out the sectionA UI making sure to properly clean up.
@@ -503,7 +506,11 @@ YUI.add('subapp-browser', function(Y) {
 
       @method emptySectionB
     */
-    emptySectionB: function() {},
+    emptySectionB: function() {
+      if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+      }
+    },
 
     /**
        Render the charm details view
