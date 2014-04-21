@@ -1089,10 +1089,15 @@ describe('Inspector Overview', function() {
   });
 
   describe('Inspector level actions', function() {
+    afterEach(function(done) {
+      window.flags = {};
+    });
+
     it('should fire the changeState event when closed', function() {
       inspector = setUpInspector(null, true);
       var fireStub = utils.makeStubMethod(inspector, 'fire');
       this._cleanups.push(fireStub.reset);
+      window.flags.il = true;
       inspector.get('container').one('.close').simulate('click');
       assert.equal(fireStub.calledOnce(), true);
       var fireArgs = fireStub.lastArguments();
