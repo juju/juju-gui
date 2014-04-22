@@ -261,7 +261,7 @@ Checklist for Making a Stable Release
 - Make a new release of the juju-gui charm by doing the following.
 
   - Get a clean branch of the development charm trunk owned by juju-gui:
-    ``bzr branch lp:~juju-gui/charms/precise/juju-gui/trunk/ develop-trunk``.
+    ``bzr branch lp:~juju-gui/charms/trusty/juju-gui/trunk/ develop-trunk``.
   - Get a clean branch of the released precise branch trunk:
     ``bzr branch lp:charms/juju-gui precise-release``.
   - Get a clean branch of the released trusty branch trunk:
@@ -283,7 +283,7 @@ Checklist for Making a Stable Release
   - Bump the charm revision up.
   - Commit the changes:
     ``bzr ci -m "Updated to the newest juju-gui release."``.
-  - Switch to the precise release charm directory: ``cd ../precise-release``.
+  - Switch to the trusty release charm directory: ``cd ../trusty-release``.
   - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
   - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
   - Commit the changes: ``bzr ci -m "New charm release."``
@@ -317,13 +317,16 @@ Checklist for Making a Stable Release
     pushing the branch to the respective locations:
     ``bzr push lp:charms/juju-gui`` and ``bzr push lp:charms/trusty/juju-gui``.
   - Align the development branch to the ~charmers ones:
-    ``cd ../develop-trunk && bzr merge ../precise-release/``.
+    ``cd ../develop-trunk && bzr merge ../trusty-release/``.
   - Commit: ``bzr ci -m "Merged back the new charm release."``.
   - Push the branch directly to the parent: ``bzr push :parent`` should work.
-  - In 15-30 minutes, the new charm revision should be available in
-    <https://jujucharms.com/search/precise/juju-gui/> and
-    <http://manage.jujucharms.com/charms/precise/juju-gui>.
+  - In 15-30 minutes, the new charm revisions should be available at the
+    following locations:
 
+    - trusty: <https://jujucharms.com/search/trusty/juju-gui/> and
+      <http://manage.jujucharms.com/charms/trusty/juju-gui>;
+    - precise: <https://jujucharms.com/search/precise/juju-gui/> and
+      <http://manage.jujucharms.com/charms/precise/juju-gui>.
 
 You are done!
 
