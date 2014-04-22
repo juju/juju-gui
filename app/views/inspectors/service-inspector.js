@@ -112,11 +112,15 @@ YUI.add('service-inspector', function(Y) {
     */
     onCloseInspector: function(e) {
       e.preventDefault();
+      if (!window.flags || !window.flags.il) {
+        this.destroy();
+      } else {
+        this.fire('changeState', {
+          sectionA: {
+            component: null,
+            metadata: { id: null }}});
+      }
       // The emptySectionA method will destroy this inspector.
-      this.fire('changeState', {
-        sectionA: {
-          component: null,
-          metadata: { id: null }}});
     },
 
     /**
