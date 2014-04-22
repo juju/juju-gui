@@ -68,12 +68,6 @@ describe('machine view panel view', function() {
     assert.equal(container.hasClass('machine-view-panel'), true);
   });
 
-  it('can set whether to be full width', function() {
-    assert.equal(container.hasClass('full'), false);
-    view.setWidthFull();
-    assert.equal(container.hasClass('full'), true);
-  });
-
   it('should render the header widgets', function() {
     assert.equal(container.one('.column .head .title').get('text'),
         'Unplaced units');

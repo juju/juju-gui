@@ -1358,25 +1358,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.topo.fire('addRelationStart');
       view.topo.fire('addRelationEnd');
     });
-
-    it('fires an envTakeover event when it gets an inspector version',
-        function(done) {
-          setUpInspector();
-          view.on('envTakeoverStarting', function(ev) {
-            done();
-          });
-          view.inspector.fire('inspectorTakeoverStarting');
-        });
-
-    it('fires an envTakeover stop event when it gets an inspector version',
-        function(done) {
-          setUpInspector();
-          view.on('envTakeoverEnding', function(ev) {
-            done();
-          });
-          view.inspector.fire('inspectorTakeoverEnding');
-        });
-
   });
 
   describe('view model support infrastructure', function() {

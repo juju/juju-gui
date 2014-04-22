@@ -83,24 +83,6 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * Set the panel to be the full width of the screen.
-         *
-         * @method setWidthFull
-         */
-        setWidthFull: function() {
-          this.get('container').addClass('full');
-        },
-
-        /**
-         * Set the panel to leave space for the sidebar.
-         *
-         * @method removeWidthFull
-         */
-        removeWidthFull: function() {
-          this.get('container').removeClass('full');
-        },
-
-        /**
          * Render the header widgets.
          *
          * @method _renderHeaders
