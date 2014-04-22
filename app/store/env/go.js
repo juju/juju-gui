@@ -125,10 +125,10 @@ YUI.add('juju-env-go', function(Y) {
       because we cannot request these constraints from Juju yet.
 
       @property genericConstraints
-      @default ['cpu-power', 'cpu-cores', 'mem', 'arch']
       @type {Array}
     */
-    genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
+    genericConstraints: [
+      'cpu-power', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'],
 
     /**
       A list of the constraints that need to be integers. We require
@@ -136,10 +136,9 @@ YUI.add('juju-env-go', function(Y) {
       Juju.
 
       @property integerConstraints
-      @default ['cpu-power', 'cpu-cores', 'mem']
       @type {Array}
     */
-    integerConstraints: ['cpu-power', 'cpu-cores', 'mem'],
+    integerConstraints: ['cpu-power', 'cpu-cores', 'mem', 'root-disk'],
 
     /**
       A list of valid Ubuntu series.
@@ -299,27 +298,46 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Utility method for filtering the constraint data and removing constraints
-      which do not have valid values.
+      Prepare the service constraints by type converting integer constraints,
+      removing the ones which do not have valid values, and turning tags into
+      an array as expected by the juju-core API backend.
 
-      @method filterConstraints
+      @method prepareConstraints
       @param {Object} constraints key:value pairs.
       @return {Object} an object of valid constraint values.
     */
-    filterConstraints: function(constraints) {
-      // Some of the constraints have to be integers.
-      this.integerConstraints.forEach(function(key) {
-        constraints[key] = parseInt(constraints[key], 10) || undefined;
-      });
-      // Remove all constraint options which don't have values
-      // else the go back end has issues.
+    prepareConstraints: function(constraints) {
+      var result = Object.create(null);
       Object.keys(constraints).forEach(function(key) {
-        if (constraints[key] === undefined ||
-            (constraints[key].trim && constraints[key].trim() === '')) {
-          delete constraints[key];
+        var value;
+        if (this.integerConstraints.indexOf(key) !== -1) {
+          // Some of the constraints have to be integers.
+          value = parseInt(constraints[key], 10);
+        } else if (this.genericConstraints.indexOf(key) !== -1) {
+          // Trim string constraints.
+          value = (constraints[key] || '').trim();
         }
-      });
-      return constraints;
+        if (value || value === 0) {
+          result[key] = value;
+        }
+      }, this);
+      // Turn the tags constraint (a comma separated list of strings) into an
+      // array. If a tag contains spaces, they are turned into a single dash.
+      // This is required so that, when exporting the environment as a deployer
+      // bundle, the tags=... part does not include spaces, which are the
+      // delimiter used by the deployer to separate different constraints,
+      // e.g.: constraints: mem=2000 tags=foo,bar cpu-cores=4.
+      var tags = result.tags;
+      if (tags) {
+        result.tags = tags.split(',').reduce(function(collected, value) {
+          var tag = value.trim().split(/\s+/).join('-');
+          if (tag) {
+            collected.push(tag);
+          }
+          return collected;
+        }, []);
+      }
+      return result;
     },
 
     /**
@@ -805,7 +823,7 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
-        constraints = this.filterConstraints(constraints);
+        constraints = this.prepareConstraints(constraints);
       } else {
         constraints = {};
       }
@@ -940,7 +958,7 @@ YUI.add('juju-env-go', function(Y) {
           ContainerType: param.containerType
         };
         if (param.constraints) {
-          machineParam.Constraints = self.filterConstraints(param.constraints);
+          machineParam.Constraints = self.prepareConstraints(param.constraints);
         }
         return machineParam;
       });
@@ -1593,7 +1611,7 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleSetConstraints, null,
             callback, serviceName);
       }
-      constraints = this.filterConstraints(constraints);
+      constraints = this.prepareConstraints(constraints);
       sendData = {
         Type: 'Client',
         Request: 'SetServiceConstraints',
