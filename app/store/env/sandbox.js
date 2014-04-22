@@ -878,7 +878,16 @@ YUI.add('juju-env-sandbox', function(Y) {
         Exposed: 'exposed',
         CharmURL: 'charm',
         Life: 'life',
-        Constraints: 'constraints',
+        'Constraints': function(attrs) {
+          var constraints = attrs.constraints || {};
+          // Since juju-core sends the tags constraint as a list of strings,
+          // we need to convert the value to an array.
+          var tags = constraints.tags;
+          if (tags) {
+            constraints.tags = tags.split(',');
+          }
+          return constraints;
+        },
         Config: 'config'
       },
       machine: {

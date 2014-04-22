@@ -1595,6 +1595,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         });
       });
+
+      it('converts the tags constraint to a string', function(done) {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
+          fakebackend.setConstraints('wordpress', {'tags': ['tag1', 'tag2']});
+          var service = fakebackend.getService('wordpress').result;
+          assert.strictEqual(service.constraints.tags, 'tag1,tag2');
+          done();
+        });
+      });
+
+      it('lets new constraints override existing ones', function(done) {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
+          fakebackend.setConstraints(
+              'wordpress', {'tags': ['tag1', 'tag2'], mem: 400});
+          var service = fakebackend.getService('wordpress').result;
+          assert.deepEqual(service.constraints, {tags: 'tag1,tag2', mem: 400});
+          done();
+        }, {constraints: {mem: 200, 'cpu-cores': 4}});
+      });
     });
 
     describe('FakeBackend.destroyService', function() {

@@ -208,8 +208,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       before(function() {
         serviceInfo = handlers.serviceInfo;
         constraints = {
-          'arch': '',
-          'cpu-cores': 4};
+          arch: 'amd64',
+          mem: 2000,
+          'cpu-cores': 4
+        };
         config = {cow: 'pie'};
       });
 
@@ -257,24 +259,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual('dying', service.get('life'));
       });
 
-      it('if constraints are not in the change stream they are {}',
-         function() {
-           db.services.add({
-             id: 'wordpress',
-             charm: 'cs:quantal/wordpress-11',
-             exposed: true
-           });
-           var change = {
-             Name: 'wordpress',
-             CharmURL: 'cs:quantal/wordpress-11',
-             Exposed: false
-           };
-           serviceInfo(db, 'change', change);
-           assert.strictEqual(1, db.services.size());
-           // Retrieve the service from the database.
-           var service = db.services.getById('wordpress');
-           assert.deepEqual({}, service.get('constraints'));
-         });
+      it('handles missing constraints', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false
+        };
+        serviceInfo(db, 'change', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('wordpress');
+        assert.deepEqual(service.get('constraints'), {});
+      });
+
+      it('converts the tags constraint into a string', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false,
+          Constraints: {tags: ['tag1', 'tag2', 'tag3']}
+        };
+        serviceInfo(db, 'change', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('wordpress');
+        assert.deepEqual(service.get('constraints'), {tags: 'tag1,tag2,tag3'});
+      });
+
+      it('handle empty tags constraint', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false,
+          Constraints: {tags: []}
+        };
+        serviceInfo(db, 'change', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('wordpress');
+        assert.deepEqual(service.get('constraints'), {});
+      });
 
       it('if configs are not in the change stream they are {}', function() {
         db.services.add({
@@ -910,6 +949,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('returns an empty list if there are no endpoints', function() {
         assert.deepEqual([], createEndpoints([]));
+      });
+
+    });
+
+    describe('Go Juju convertConstraints', function() {
+      var convertConstraints;
+
+      before(function() {
+        convertConstraints = utils.convertConstraints;
+      });
+
+      it('correctly returns the constraints', function() {
+        var constraints = {
+          arch: 'amd64',
+          'cpu-cores': 2,
+          'cpu-power': 800,
+          mem: 2000
+        };
+        assert.deepEqual(convertConstraints(constraints), constraints);
+      });
+
+      it('returns an empty object if no constraints are set', function() {
+        assert.deepEqual(convertConstraints(null), {});
+        assert.deepEqual(convertConstraints({}), {});
+        assert.deepEqual(convertConstraints(undefined), {});
+      });
+
+      it('converts the tags', function() {
+        var constraints = convertConstraints({
+          arch: 'i386',
+          tags: ['tag1', 'tag2', 'tag3']
+        });
+        assert.deepEqual(constraints, {arch: 'i386', tags: 'tag1,tag2,tag3'});
       });
 
     });

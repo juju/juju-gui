@@ -92,6 +92,24 @@ YUI.add('juju-delta-handlers', function(Y) {
             data = {role: relation.Role, name: relation.Name};
         return [endpoint.ServiceName, data];
       });
+    },
+
+    /**
+      Return the constraints converting the tags to a comma separated string.
+
+      @method convertConstraints
+      @param {Object} constraints The constraints included in the mega-watcher
+        for services, or null/undefined if no constraints are set.
+      @return {Object} The converted constraints.
+    */
+    convertConstraints: function(constraints) {
+      var result = constraints || {};
+      var tags = result.tags || [];
+      delete result.tags;
+      if (tags.length) {
+        result.tags = tags.join(',');
+      }
+      return result;
     }
 
   };
@@ -205,8 +223,9 @@ YUI.add('juju-delta-handlers', function(Y) {
         charm: change.CharmURL,
         exposed: change.Exposed,
         life: change.Life,
-        constraints: change.Constraints || {}
+        constraints: utils.convertConstraints(change.Constraints)
       };
+      // Process the stream.
       db.services.process_delta(action, data);
       if (action !== 'remove') {
         var service = db.services.getById(change.Name);

@@ -421,15 +421,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
-        'mem': '512M',
-        'arch': 'i386'
+        mem: '512M',
+        arch: 'i386'
       };
 
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         var service = state.db.services.getById('kumquat');
-        assert.deepEqual(service.get('constraints'), constraints);
+        assert.deepEqual(service.get('constraints'), {
+          'cpu-cores': 1,
+          'cpu-power': 0,
+          mem: 512,
+          arch: 'i386'
+        });
         done();
       };
       env.deploy(

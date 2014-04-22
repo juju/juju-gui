@@ -117,6 +117,78 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     };
 
+    describe('prepareConstraints', function() {
+
+      it('converts integer constraints', function() {
+        var constraints = env.prepareConstraints(
+            {'root-disk': '800', 'cpu-cores': '4', mem: '2000'});
+        assert.deepEqual(
+            constraints, {'root-disk': 800, 'cpu-cores': 4, mem: 2000});
+      });
+
+      it('removes integer constraints with invalid values', function() {
+        var constraints = env.prepareConstraints(
+            {'cpu-power': 'four kquad', 'cpu-cores': 'tons', mem: 2000});
+        assert.deepEqual(constraints, {mem: 2000});
+      });
+
+      it('does not remove zero values', function() {
+        var constraints = env.prepareConstraints({'root-disk': '0', mem: 0});
+        assert.deepEqual(constraints, {'root-disk': 0, mem: 0});
+      });
+
+      it('removes empty/undefined/null values', function() {
+        var constraints = env.prepareConstraints({
+          arch: undefined,
+          tags: '',
+          mem: ' ',
+          'cpu-cores': 4,
+          'cpu-power': null
+        });
+        assert.deepEqual(constraints, {'cpu-cores': 4});
+      });
+
+      it('removes unexpected constraints', function() {
+        var constraints = env.prepareConstraints(
+            {arch: 'i386', invalid: 'not-a-constraint'});
+        assert.deepEqual(constraints, {arch: 'i386'});
+      });
+
+      it('turns tags into an array', function() {
+        var constraints = env.prepareConstraints({tags: 'tag1,tag2,tag3'});
+        assert.deepEqual(constraints, {tags: ['tag1', 'tag2', 'tag3']});
+      });
+
+      it('removes empty tags', function() {
+        var constraints = env.prepareConstraints({tags: 'tag1,,tag3'});
+        assert.deepEqual(constraints, {tags: ['tag1', 'tag3']});
+      });
+
+      it('handles invalid tags', function() {
+        var constraints = env.prepareConstraints({tags: 'tag1,   ,tag2 ,'});
+        assert.deepEqual(constraints, {tags: ['tag1', 'tag2']});
+      });
+
+      it('returns empty tags if no tags are really passed', function() {
+        var constraints = env.prepareConstraints({tags: ' ,    ,   ,,,'});
+        assert.deepEqual(constraints, {tags: []});
+      });
+
+      it('converts tags with spaces', function() {
+        var constraints = env.prepareConstraints(
+            {tags: 'first tag, second   tag'});
+        assert.deepEqual(constraints, {tags: ['first-tag', 'second-tag']});
+      });
+
+      it('does not modify the input constraints in place', function() {
+        var input = {'cpu-power': '800', 'cpu-cores': '4', mem: '2000'};
+        var backup = Y.clone(input);
+        env.prepareConstraints(input);
+        assert.deepEqual(input, backup);
+      });
+
+    });
+
     describe('login', function() {
       it('sends the correct login message', function() {
         noopHandleLogin();
@@ -822,12 +894,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
-        'mem': '512M',
-        'arch': 'i386'
+        mem: '512M',
+        arch: 'i386',
+        'root-disk': '8000',
+        tags: 'tag1,tag2'
       };
       env.deploy('precise/mediawiki', null, null, null, 1, constraints);
       msg = conn.last_message();
-      assert.deepEqual(msg.Params.Constraints, constraints);
+      assert.deepEqual(msg.Params.Constraints, {
+        'cpu-cores': 1,
+        'cpu-power': 0,
+        mem: 512,
+        arch: 'i386',
+        'root-disk': 8000,
+        tags: ['tag1', 'tag2']
+      });
     });
 
     it('successfully deploys a service to a specific machine', function() {

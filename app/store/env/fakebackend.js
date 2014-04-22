@@ -1567,20 +1567,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     setConstraints: function(serviceName, data) {
       var constraints = {};
-
+      // Do not allow calls for unauthenticated users.
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
+      // Retrieve the service.
       var service = this.db.services.getById(serviceName);
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
-
-      var existing = service.get('constraints');
-      if (!existing) {
-        existing = {};
-      }
-
+      // Retrieve the service constraints.
       if (Y.Lang.isArray(data)) {
         Y.Array.each(data, function(i) {
           var kv = i.split('=');
@@ -1589,11 +1585,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
       } else if (data) {
         constraints = data;
       }
-      // Merge new constraints in.
-      existing = Y.mix(existing, constraints, true, undefined, 0, true);
-      // TODO: Validate the constraints.
-      // Reassign the attr.
-      service.set('constraints', existing);
+      // Convert the tags constraints into a comma separated string.
+      var tags = constraints.tags;
+      if (tags) {
+        constraints.tags = tags.join(',');
+      }
+      // For the fakebackend purposes, there is no need to validate the
+      // constraints. Moreover, since we are always setting all the constraints
+      // from the service inspector, merging existing and new constraints is
+      // not necessary.
+      service.set('constraints', constraints);
       this.changes.services[service.get('id')] = [service, true];
       return {result: true};
     },

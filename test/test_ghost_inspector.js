@@ -273,7 +273,7 @@ describe('Ghost Inspector', function() {
     assert.equal(constraintsNode.size(), 1);
 
     var inputNodes = content.all('.service-constraints input');
-    assert.equal(inputNodes.size(), 4);
+    assert.equal(inputNodes.size(), env.genericConstraints.length);
   });
 
   it('does not display constraints for subordinate charms', function() {
@@ -315,8 +315,14 @@ describe('Ghost Inspector', function() {
       assert.deepEqual(deployArgs[2], {});
       assert.isUndefined(deployArgs[3]);
       assert.equal(deployArgs[4], 1);
-      assert.deepEqual(deployArgs[5],
-          { 'cpu-power': '', 'cpu-cores': '', 'mem': '', 'arch': '' });
+      assert.deepEqual(deployArgs[5], {
+        'cpu-power': '',
+        'cpu-cores': '',
+        'mem': '',
+        'arch': '',
+        'root-disk': '',
+        'tags': ''
+      });
       assert.strictEqual(deployArgs[6], null);
       assert.isFunction(deployArgs[7]);
     });

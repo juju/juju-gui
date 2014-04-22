@@ -625,7 +625,9 @@ YUI.add('juju-view-utils', function(Y) {
     'cpu': {title: 'CPU', unit: 'GHz'},
     'cpu-cores': {title: 'CPU cores'},
     'cpu-power': {title: 'CPU power', unit: 'GHz'},
-    'mem': {title: 'Memory', unit: 'MB'}
+    'mem': {title: 'Memory', unit: 'MB'},
+    'root-disk': {title: 'Root Disk Size', unit: 'MB'},
+    'tags': {title: 'Tags'}
   };
 
   /**
