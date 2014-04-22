@@ -959,5 +959,21 @@ describe('UI State object', function() {
           'The object ' + JSON.stringify(changeState) +
               ' did not generate the proper url');
     });
+
+    it('can reset metadata', function() {
+      var defaultState = {
+        sectionA: {
+          metadata: {
+            search: 'apache2' }
+        }, sectionB: {}};
+      var changeState = {
+        sectionA: { metadata: null }
+      };
+      state.set('current', Y.clone(defaultState));
+      assert.equal(
+          state.generateUrl(changeState), '/',
+          'The object ' + JSON.stringify(changeState) +
+              ' did not generate the proper url');
+    });
   });
 });

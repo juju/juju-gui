@@ -147,7 +147,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _goHome: function(ev) {
       if (window.flags && window.flags.il) {
-        this.fire('changeState', { sectionA: {} });
+        this.fire('changeState', {
+          sectionA: {
+            metadata: null,
+            component: null
+          }
+        });
       } else {
         var change = {
           charmID: undefined,
