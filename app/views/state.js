@@ -195,9 +195,12 @@ YUI.add('juju-app-state', function(Y) {
       // Generate the new state temporarily.
       var newState = Y.mix(
           Y.clone(this.get('current')), change, true, null, 0, true);
-      var component, metadata, sectionState, searchQuery, id,
+      var component,
+          metadata,
+          sectionState,
+          id,
+          search = false,
           genUrl = '',
-          query = {},
           hash = '',
           urlParts = [];
       // Loop through each section in the state to generate the urls.
@@ -208,10 +211,16 @@ YUI.add('juju-app-state', function(Y) {
         id = metadata.id;
         // Compress the id to remove default values.
         if (id) { id = id.replace(/\/?~charmers/, ''); }
-        // If the query params get more complex than just 'search' then
-        // the query parsing should be split out into it's own method.
-        searchQuery = metadata.search;
-        if (searchQuery) { query.text = searchQuery; }
+        if (metadata.search && metadata.search.clear) {
+          this.filter.clear();
+        } else if (metadata.search && metadata.search.replace) {
+          search = true;
+          this.filter.clear();
+          this.filter.update(metadata.search);
+        } else if (metadata.search) {
+          search = true;
+          this.filter.update(metadata.search);
+        }
         // All pushes to the urlParts array needs to be in a truthy conditional
         // because no state parameters are required.
         if (component === 'charmbrowser') {
@@ -241,9 +250,9 @@ YUI.add('juju-app-state', function(Y) {
         url = '/' + urlParts.join('/') + '/';
       }
       // Add the query string to the end of the url.
-      if (Y.Object.size(query) > 0) {
+      if (search) {
         url = url.replace(/\/$/, '');
-        url += '?' + Y.QueryString.stringify(query);
+        url += '?' + this.filter.genQueryString();
       }
       // Add the hash to the end of the url.
       if (hash.length > 0) { url += '#' + hash; }
@@ -275,7 +284,7 @@ YUI.add('juju-app-state', function(Y) {
       // Split the url into its sections for the state object.
       var paths = this._splitIntoComponents(url);
       // Organize the paths into their sections.
-      state = this._buildSections(paths, query && query.text, hash);
+      state = this._buildSections(paths, query, hash);
       this.saveState(state);
       return state;
     },
@@ -286,7 +295,7 @@ YUI.add('juju-app-state', function(Y) {
 
       @method _buildSections
       @param {Array} paths The paths of the URL.
-      @param {String} query The text of the search query value.
+      @param {Object} query The search query value.
       @param {string} hash The hash from window.location.hash.
       @return {Object} The section delimited state object.
     */
@@ -321,7 +330,9 @@ YUI.add('juju-app-state', function(Y) {
           });
         }
       }, this);
-      if (query) {
+      // There's always a query component, but we only care if it reflects a
+      // search.
+      if (query && (query.text || query.categories)) {
         // `state` is passed in by reference and modified in place.
         this._addQueryState(state, query);
       }
@@ -339,11 +350,9 @@ YUI.add('juju-app-state', function(Y) {
       @param {String} query The text of the search query value.
     */
     _addQueryState: function(state, query) {
-      // Right now we only support a single query param 'text' and it's for
-      // search. When more are added this method is where we can add the
-      // additional complexity.
       Y.namespace.call(state, 'sectionA.metadata.search');
       state.sectionA.metadata.search = query;
+      this.filter.update(query);
     },
 
     /**

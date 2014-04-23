@@ -220,7 +220,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
         this.fire('changeState', {
           sectionA: {
             component: 'charmbrowser',
-            metadata: { search: ev.newVal }
+            metadata: { search: change.filter }
           }});
       } else {
         this.fire('viewNavigate', {change: change});
