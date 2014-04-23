@@ -40,8 +40,22 @@ YUI.add('charm-details-view', function(Y) {
         viewlet manager.
     */
     render: function(charm, viewletManagerAttrs) {
+      var container;
       var store = viewletManagerAttrs.store;
-      var container = this.get('container');
+      if (window.flags && window.flags.il) {
+        // Target the charm details div for the inspector popout content.
+        container = Y.one('.bws-view-data');
+        container.delegate('click', function(ev) {
+          ev.halt();
+          this.viewletManager.hideSlot(ev);
+          window.location.hash = '';
+          container.hide();
+        }, '.close-slot', this);
+        container.hide();
+      } else {
+        container = this.get('container');
+      }
+
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
           this.charmView = new browserViews.BrowserCharmView({
@@ -64,6 +78,7 @@ YUI.add('charm-details-view', function(Y) {
       }, this, viewletManagerAttrs.db.charms);
 
       container.setHTML(this.templateWrapper({ initial: 'Loading...'}));
+      container.show();
     },
 
     /**
