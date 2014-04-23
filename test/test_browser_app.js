@@ -25,57 +25,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       '<div id="browser-nav">',
       '<div class="sidebar"></div>',
       '</div>',
-      '<div id="subapp-browser-min"></div>',
       '<div id="subapp-browser"></div>',
       '</div>'
     ].join('')).appendTo(container);
   };
-
-  (function() {
-    describe('browser minimized view', function() {
-      var Y, container, utils, view, views, Minimized;
-
-      before(function(done) {
-        Y = YUI(GlobalConfig).use(
-            'juju-browser',
-            'juju-models',
-            'juju-views',
-            'juju-tests-utils',
-            'subapp-browser-minimized',
-            function(Y) {
-              utils = Y.namespace('juju-tests.utils');
-              views = Y.namespace('juju.browser.views');
-              Minimized = views.MinimizedView;
-              done();
-            });
-      });
-
-      beforeEach(function() {
-        container = utils.makeContainer(this, 'container');
-        addBrowserContainer(Y, container);
-        // Mock out a dummy location for the Store used in view instances.
-        window.juju_config = {
-          charmworldURL: 'http://localhost'
-        };
-      });
-
-      afterEach(function() {
-        view.destroy();
-        delete window.juju_config;
-      });
-
-      it('toggles to sidebar', function(done) {
-        var container = Y.one('#subapp-browser');
-        view = new Minimized();
-        view.on('viewNavigate', function(ev) {
-          assert.equal(ev.change.viewmode, 'sidebar');
-          done();
-        });
-        view.render(container);
-        view._toggleMinimized({halt: function() {}});
-      });
-    });
-  })();
 
   (function() {
     describe('browser sidebar view', function() {
@@ -108,17 +61,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       afterEach(function() {
         view.destroy();
         delete window.juju_config;
-      });
-
-      it('reroutes to minimized when toggled', function(done) {
-        var container = Y.one('#subapp-browser');
-        view = new Sidebar();
-        view.on('viewNavigate', function(ev) {
-          assert.equal(ev.change.viewmode, 'minimized');
-          done();
-        });
-        view.render(container);
-        view._showMinimizedView({halt: function() {}});
       });
 
       it('must correctly render the initial browser ui', function(done) {
@@ -499,10 +441,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           destroy: function() {}
         };
         app._sidebar = mockView;
-        app._minimized = mockView;
 
         // Setup some previous state to check for clearing.
-        app.state._setPrevious('viewmode', 'minimized');
         app.state._setCurrent('viewmode', 'sidebar');
 
         // The old initState used to do both state initialization and clearing
@@ -512,7 +452,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         app._clearViews();
 
         assert.equal(app._sidebar, undefined, 'sidebar is removed');
-        assert.equal(app._minimized, undefined, 'minimized is removed');
         assert.equal(app.state.getPrevious('viewmode'), null,
                      'old state is reset');
         assert.equal(app.state.getCurrent('viewmode'), null,
@@ -525,9 +464,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'foo/bar-66',
           'search/foo/bar-66',
           'sidebar/foo/bar-66',
-          'minimized/foo/bar-66',
-          'sidebar/search/foo/bar-66',
-          'minimized/search/foo/bar-66'
+          'sidebar/search/foo/bar-66'
         ];
         paths.map(function(id) {
           assert.equal(
@@ -567,29 +504,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(req.params.id, 'precise/mysql-10');
       });
 
-      it('directCharmId skips routes starting with viewmode', function(done) {
-        app = new browser.Browser({
-          store: new CharmworldAPI({
-            'apiHost': 'http://localhost'
-          })
-        });
-        // Stub out the sidebar so we don't render anything.
-        app.sidebar = function() {};
-        var req = {
-          path: '/minimized/precise/mysql-10/'
-        };
-
-        var testNext = function() {
-          // The request params should not be defined or have a viewmode set
-          // since the callable bailed out and called next() since it's not to
-          // meant to handle this route.
-          assert.equal(req.params, undefined);
-          done();
-        };
-
-        app.routeDirectCharmId(req, null, testNext);
-      });
-
       it('/charm/id handles routes for new charms correctly', function() {
         app = new browser.Browser({
           store: new CharmworldAPI({
@@ -615,7 +529,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Stub out the sidebar so we don't render anything.
         app.sidebar = function() {};
         var req = {
-          path: 'minimized/search'
+          path: 'search'
         };
 
         app.routeDirectCharmId(req, null, next);
@@ -629,34 +543,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         app.routeDirectCharmId(req, null, next);
         // The viewmode should be populated now to the default.
         assert.equal(req.params, undefined);
-      });
-
-      it('minmized updates state and moves to next', function() {
-        app = new browser.Browser({
-          store: new CharmworldAPI({
-            'apiHost': 'http://localhost',
-            'noop': true
-          })
-        });
-
-        // Set _minimized to prevent it from actually rendering the View. We
-        // only care about the state management going no.
-        app._minimized = {
-          set: function() {},
-          destroy: function() {}
-        };
-
-        // And we hard set that the viewmode was in _sidebar.
-        app.state._setCurrent('viewmode', 'sidebar');
-
-        var req = {
-          'viewmode': 'minimized'
-        };
-
-        app.minimized(req, null, next);
-        assert.equal(app.state.getCurrent('viewmode'), 'sidebar');
-        assert.equal(app.state.getCurrent('viewmode'), 'sidebar');
-
       });
     });
 
@@ -676,7 +562,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
               resetHits = function() {
                 hits = {
-                  minimized: false,
                   sidebar: false,
                   renderCharmDetails: false,
                   renderEditorial: false,
@@ -725,19 +610,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.renderSearchResults = function() {
           hits.renderSearchResults = true;
         };
-        browser.minimized = function() {
-          hits.minimized = true;
-        };
         // We can't just replace the sidebar method as it does logic for
         // future routing. We need to hook directly into the Sidebar view's
         // render() method to make sure it's called.
         sidebarRender = Y.juju.browser.views.Sidebar.prototype.render;
         Y.juju.browser.views.Sidebar.prototype.render = function() {
           hits.sidebar = true;
-        };
-        minRender = Y.juju.browser.views.MinimizedView.prototype.render;
-        Y.juju.browser.views.MinimizedView.prototype.render = function() {
-          hits.minimized = true;
         };
         browser.showView = function(view) {
           hits[view] = true;
@@ -749,7 +627,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Replace the render methods for the main views we replaced for
         // testing hits.
         Y.juju.browser.views.Sidebar.prototype.render = sidebarRender;
-        Y.juju.browser.views.MinimizedView.prototype.render = minRender;
       });
 
       it('/ dispatches correctly', function() {
@@ -1163,22 +1040,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.routeView(req, undefined, function() {});
       });
 
-      it('/minimized dispatches correctly', function() {
-        var req = {
-          path: '/minimized',
-          params: {
-            viewmode: 'minimized'
-          }
-        };
-
-        var expected = Y.merge(hits, {
-          minimized: true
-        });
-
-        browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
-      });
-
       it('when hidden the browser avoids routing', function() {
         browser.hidden = true;
         // XXX bug:1217383
@@ -1191,12 +1052,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
         browser._sidebar = mockView;
-        browser._minimized = mockView;
 
         var req = {
-          path: '/minimized',
+          path: '/',
           params: {
-            viewmode: 'minimized'
+            viewmode: 'sidebar'
           }
         };
         var expected = Y.merge(hits);
@@ -1205,18 +1065,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
 
         // And both nodes are hidden.
-        var minNode = Y.one('#subapp-browser-min');
         var browserNode = Y.one('#subapp-browser');
 
-        minNode.getComputedStyle('display').should.eql('none');
         browserNode.getComputedStyle('display').should.eql('none');
 
-        assert.equal(hitCount, 2);
+        assert.equal(hitCount, 1);
 
         // The view state needs to also be sync'd and updated even though
         // we're hidden so that we can detect changes in the app state across
         // requests while hidden.
-        assert.equal(browser.state.getPrevious('viewmode'), 'minimized');
+        assert.equal(browser.state.getPrevious('viewmode'), 'sidebar');
       });
 
       it('knows when the search cache should be updated', function() {

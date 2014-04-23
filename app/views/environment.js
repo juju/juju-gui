@@ -143,22 +143,6 @@ YUI.add('juju-view-environment', function(Y) {
         this.topo.fire('hideServiceMenu');
       }, this);
 
-      // If the inspector (via viewletManager proxy) wants to take over the
-      // screen, trigger the request up the food chain.
-      this.addEvent(
-          inspector.on(
-              'inspectorTakeoverStarting', function(ev) {
-                this.fire('envTakeoverStarting');
-              }, this));
-
-      // If the inspector (via viewletManager proxy) is done taking over the
-      // screen, trigger the request up the food chain.
-      this.addEvent(
-          inspector.on(
-              'inspectorTakeoverEnding', function(ev) {
-                this.fire('envTakeoverEnding');
-              }, this));
-
       if (this.inspector) { this.inspector.destroy(); }
 
       this.inspector = inspector;
