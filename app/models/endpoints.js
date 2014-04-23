@@ -121,7 +121,7 @@ YUI.add('juju-endpoints', function(Y) {
     Y.each(db.services.filter(function(endpoint) {
       // XXX This filter should be removed once the ECS is available by default
       // Makyo 2014-04-21
-      if (!window.flags.ecs) {
+      if (!window.flags.mv) {
         return !endpoint.get('pending');
       }
       return true;

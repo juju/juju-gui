@@ -550,7 +550,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseEnter: function(box, context) {
       var rect = Y.one(this);
       // Do not fire if this service isn't selectable.
-      if (!window.flags.ecs) {
+      if (!window.flags.mv) {
         if (box.pending) {
           return;
         }
@@ -931,10 +931,8 @@ YUI.add('juju-topology-service', function(Y) {
      @param {Object} context The current context.
      */
     serviceAddRelMouseDown: function(box, context) {
-      if (!window.flags.ecs) {
-        if (box.pending) {
-          return;
-        }
+      if (!window.flags.mv && box.pending) {
+        return;
       }
       var evt = d3.event;
       var topo = context.get('component');
@@ -1447,7 +1445,7 @@ YUI.add('juju-topology-service', function(Y) {
       var service = box.model;
       var triangle = serviceMenu.one('.triangle');
 
-      if (!window.flags.ecs) {
+      if (!window.flags.mv) {
         if (service.get('pending')) {
           return;
         }

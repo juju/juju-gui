@@ -742,7 +742,7 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.fire('show', {
         selection: vis.selectAll('.service')
           .filter(function(d) {
-              if (!window.flags.ecs) {
+              if (!window.flags.mv) {
                 return !d.pending;
               }
             })
@@ -926,7 +926,7 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.bindAllD3Events();
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
-      if (window.flags.ecs) {
+      if (window.flags.mv) {
         var ecs = topo.get('ecs');
         ecs.addRelation(endpoints[0], endpoints[1],
             Y.bind(this._addRelationCallback, this, module, relation_id)

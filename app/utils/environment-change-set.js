@@ -144,7 +144,7 @@ YUI.add('environment-change-set', function(Y) {
         });
         // Signal that this record has been completed by decrementing the
         // count of records to complete and deleting it from the changeset.
-        self.recordCount -= 1;
+        self.levelRecordCount -= 1;
         delete self.changeSet[record.id];
         return result;
       }
@@ -173,33 +173,34 @@ YUI.add('environment-change-set', function(Y) {
       @return {Array} An array of arrays of commands to commit, separated by
         level.
     */
-    _buildHierarchy: function(changeSet) {
+    _buildHierarchy: function() {
       var hierarchy = [[]],
           command,
           keyToLevelMap = {},
           currLevel = 1;
+      this.placedCount = 0
 
       // Take care of top-level objects quickly.
-      Object.keys(changeSet).forEach(function(key) {
-        command = changeSet[key];
+      Object.keys(this.changeSet).forEach(Y.bind(function(key) {
+        command = this.changeSet[key];
         command.key = key;
         if (!command.parents || command.parents.length === 0) {
           hierarchy[0].push(Y.clone(command));
           keyToLevelMap[key] = 0;
-          delete changeSet[key];
+          this.placedCount += 1;
         } else {
           // Default everything else to the first level.
           keyToLevelMap[key] = 1;
         }
-      });
+      }, this));
 
       // Now build the other levels of the hierarchy as long as there are still
       // commands in the change set. Functions defined outside of loop for
       // runtime efficiency (jshint W083).
-      while (Object.keys(changeSet).length > 0) {
+      while (this.placedCount < Object.keys(this.changeSet).length) {
         hierarchy.push([]);
         Y.Object.each(keyToLevelMap, Y.bind(this._placeIfNeeded, this,
-            currLevel, keyToLevelMap, changeSet, hierarchy));
+            currLevel, keyToLevelMap, hierarchy));
         currLevel += 1;
       }
       return hierarchy;
@@ -213,35 +214,33 @@ YUI.add('environment-change-set', function(Y) {
       @param {Number} currLevel The current level of the hierarchy.
       @param {Object} keyToLevelMap A mapping of all keys and which levels
         they are in.
-      @param {Object} changeSet The as-yet unplaced commands.
       @param {Array} hierarchy An array of arrays of placed commands.
       @param {Number} value The current level value.
       @param {String} key The current level key.
     */
-    _placeIfNeeded: function(currLevel, keyToLevelMap, changeSet, hierarchy,
-        value, key) {
-      var command = changeSet[key];
+    _placeIfNeeded: function(currLevel, keyToLevelMap, hierarchy, value, key) {
+      var command = this.changeSet[key];
 
-      // Since we are deleting keys from the changeSet as we iterate over
-      // the original list, return if command is undefined.
       if (!command) {
         return;
       }
 
       // Check and see if all of the parents have already been placed.
       var alreadyPlacedParents = true;
-      for (var i = 0; i < command.parents.length; i += 1) {
-        if (keyToLevelMap[command.parents[i]] >= currLevel) {
-          alreadyPlacedParents = false;
+      if (command.parents) {
+        for (var i = 0; i < command.parents.length; i += 1) {
+          if (keyToLevelMap[command.parents[i]] >= currLevel) {
+            alreadyPlacedParents = false;
+          }
         }
       }
 
       // If so, then the command belongs in the current level, so push it
-      // there and delete it from the changeSet.
+      // there and increment the placed count.
       if (alreadyPlacedParents) {
         hierarchy[currLevel].push(Y.clone(command));
         keyToLevelMap[key] = currLevel;
-        delete changeSet[key];
+        this.placedCount += 1;
       }
     },
 
@@ -253,29 +252,32 @@ YUI.add('environment-change-set', function(Y) {
     _commitNext: function() {
       var command;
       this.currentLevel += 1;
+      this.levelRecordCount = this.currentCommit[this.currentLevel].length;
       this.currentCommit[this.currentLevel].forEach(function(record) {
         command = this.changeSet[record.key];
         this._execute(command);
         this.fire('commit', command);
       }, this);
+      // Wait until the entire level has completed (received RPC callbacks from
+      // the state server) before starting the next level.
       this.levelTimer = Y.later(200, this, this._waitOnLevel, null, true);
     },
 
     /**
       Wait until the entire level of commits has been received by the
       environment.  This relies on the fact that _execute wraps the callback
-      methods in a wrapper that decrements this.recordCount; once it hits 0,
-      meaning no commits left in that level, it moves on to either finish up or
-      commit the next level.
+      methods in a wrapper that decrements this.levelRecordCount; once it hits
+      0, meaning no commits left in that level, it moves on to either finish up
+      or commit the next level.
 
       @method _waitOnLevel
     */
     _waitOnLevel: function() {
-      if (this.recordCount === 0) {
+      if (this.levelRecordCount === 0) {
         this.levelTimer.cancel();
         if (this.currentLevel < this.currentCommit.length - 1) {
           // Defer execution to prevent stack overflow.
-          Y.soon(Y.bind(this._commitNext(), this));
+          Y.soon(Y.bind(this._commitNext, this));
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
@@ -290,11 +292,7 @@ YUI.add('environment-change-set', function(Y) {
       @method commit
     */
     commit: function() {
-      // This needs to be cloned because _buildHierarchy modifies the changeset
-      // it is given for efficiency.  However, we will need this.changeset in
-      // its current form, rather than maintaining the hierarchical form
-      // because RPC callbacks remove commands as they return.
-      this.currentCommit = this._buildHierarchy(Y.clone(this.changeSet));
+      this.currentCommit = this._buildHierarchy();
       this.currentLevel = -1;
       this._commitNext();
     },
@@ -366,11 +364,12 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters it's public method 'addRelation' was called
       with with the exception of the ECS options oject.
 
-      @method _lazyADdRelation
+      @method _lazyAddRelation
       @param {Array} args The arguments to add the relation with.
     */
     _lazyAddRelation: function(args) {
-      var serviceA, serviceB;
+      var serviceA;
+      var serviceB;
       Y.Object.each(this.changeSet, function(value, key) {
         if (value.command.method === 'deploy') {
           if (value.command.options.modelId === args[0][0]) {

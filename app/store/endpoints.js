@@ -134,7 +134,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
           var process = true;
-          if (!window.flags.ecs) {
+          if (!window.flags.mv) {
             process = !service.get('pending');
           }
           if (process) {
