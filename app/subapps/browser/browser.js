@@ -419,7 +419,6 @@ YUI.add('subapp-browser', function(Y) {
       if (detailsNode) { detailsNode.hide(); }
       // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
-        this._sidebar.showSearch();
         if (!this._editorial) {
           this.renderEditorial();
         } else if (!metadata || !metadata.id) {
@@ -428,14 +427,12 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
       if (metadata && metadata.search) {
-        this._sidebar.showSearch();
         this.renderSearchResults();
       }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
-        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
     },
@@ -650,17 +647,15 @@ YUI.add('subapp-browser', function(Y) {
       // to render it selected.
       if (window.flags && window.flags.il) {
         extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
-        var metadata = this.state.getState('current', 'sectionA', 'metadata');
-        extraCfg.query = metadata.search;
-        this._sidebar.set('withHome', true);
+        extraCfg.filters = { text: this.state.filter.get('text') };
       } else {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
       }
 
-      this._search = new views.BrowserSearchView(
-          this._getViewCfg(extraCfg));
+      this._search = new views.BrowserSearchView(this._getViewCfg(extraCfg));
+      this._search.set('withHome', true);
 
       // Prepare to handle cache
       this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
@@ -1037,23 +1032,6 @@ YUI.add('subapp-browser', function(Y) {
       if (!req.params) {
         req.params = {};
       }
-
-      // Support redirecting the minimized view.
-      if (req.params.viewmode === 'minimized') {
-        // This setTimeout is required because the double dispatch events
-        // happen in an unpredictable order so we simply let them complete
-        // then navigate away to avoid issues where we are trying to render
-        // while other views are in the middle of being torn down.
-        setTimeout(function() {
-          self.fire('viewNavigate', {
-            change: {
-              viewmode: 'sidebar'
-            }
-          });
-        }, 0);
-        return;
-      }
-
 
       if (!req.params.viewmode) {
         req.params.viewmode = 'sidebar';

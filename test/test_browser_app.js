@@ -32,154 +32,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   };
 
   (function() {
-    describe('browser sidebar view', function() {
-      var Y, container, utils, view, views, Sidebar;
-
-      before(function(done) {
-        Y = YUI(GlobalConfig).use(
-            'juju-browser',
-            'juju-models',
-            'juju-views',
-            'juju-tests-utils',
-            'subapp-browser-sidebar',
-            function(Y) {
-              views = Y.namespace('juju.browser.views');
-              utils = Y.namespace('juju-tests.utils');
-              Sidebar = views.Sidebar;
-              done();
-            });
-      });
-
-      beforeEach(function() {
-        container = utils.makeContainer(this, 'container');
-        addBrowserContainer(Y, container);
-        // Mock out a dummy location for the Store used in view instances.
-        window.juju_config = {
-          charmworldURL: 'http://localhost'
-        };
-      });
-
-      afterEach(function() {
-        view.destroy();
-        delete window.juju_config;
-      });
-
-      it('must correctly render the initial browser ui', function() {
-        var container = Y.one('#subapp-browser');
-        view = new Sidebar({
-          container: container,
-          store: new Y.juju.charmworld.APIv3({
-            apiHost: 'http://localhost'
-          })
-        });
-
-        // mock out the data source on the view so that it won't actually make a
-        // request.
-        var emptyData = {
-          responseText: Y.JSON.stringify({
-            result: {
-              'new': [],
-              slider: []
-            }
-          })
-        };
-
-        // Override the store to not call the dummy localhost address.
-        view.get('store').set(
-            'datasource',
-            new Y.DataSource.Local({source: emptyData}));
-        view.render();
-
-        // And the hide button is rendered to the container node.
-        assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
-        // Also verify that the search widget has rendered into the view code.
-        assert.isTrue(Y.Lang.isObject(container.one('input')));
-
-        // The home buttons are not visible by default.
-        assert.equal(view.get('withHome'), false,
-                     'withHome is true on the view');
-        assert.equal(container.one('#bws-sidebar').hasClass('with-home'),
-                     false, 'with-home class is set');
-
-        // Yet changing the attribute triggers it to go.
-        view.set('withHome', true);
-        assert.equal(view.get('withHome'), true,
-                     'withHome is false on the view');
-        assert.equal(container.one('#bws-sidebar').hasClass('with-home'),
-                     true, 'with-home class is not set');
-      });
-
-      it('shows the home icon when instructed', function() {
-        view = new Sidebar({
-          store: new Y.juju.charmworld.APIv3({
-            apiHost: 'http://localhost'
-          }),
-          withHome: true
-        });
-
-        // mock out the data source on the view so that it won't actually make a
-        // request.
-        var emptyData = {
-          responseText: Y.JSON.stringify({
-            result: {
-              'new': [],
-              slider: []
-            }
-          })
-        };
-
-        // Override the store to not call the dummy localhost address.
-        view.get('store').set(
-            'datasource',
-            new Y.DataSource.Local({source: emptyData}));
-        view.render(container.one('#subapp-browser'));
-
-        // The home buttons are not visible by default.
-        assert.isTrue(view.get('withHome'));
-        assert.isFalse(container.one('#bws-sidebar').hasClass('with-home'));
-
-      });
-
-      it('routes home when it catches a gohome event', function(done) {
-        var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new Sidebar({
-          store: fakeStore
-        });
-        view.on('viewNavigate', function(ev) {
-          assert.equal(ev.change.search, false);
-          assert.equal(ev.change.filter.clear, true);
-          done();
-        });
-
-        view.render(container);
-        view.search._onHome({
-          preventDefault: function() {}
-        });
-      });
-
-      it('picks up the search widget deploy event', function(done) {
-        var container = utils.makeContainer(this, 'subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new Sidebar({
-          charmID: 'precise/jenkins-13',
-          store: fakeStore
-        });
-
-        view._deployEntity = function() {
-          container.remove(true);
-          done();
-        };
-
-        view.render(container);
-        view.search.fire(view.search.EVT_DEPLOY);
-      });
-
-    });
-  })();
-
-
-  (function() {
     describe('browser app', function() {
       var Y, app, browser, CharmworldAPI, container, next, utils;
 
@@ -236,18 +88,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             context._cleanups.push(searchStub.reset);
             entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
             context._cleanups.push(entityStub.reset);
-            showSearchStub = utils.makeStubMethod(app._sidebar, 'showSearch');
-            context._cleanups.push(showSearchStub.reset);
           }
 
           function assertions(
-              editorialCount, searchCount, entityCount, showSearchCount) {
+              editorialCount, searchCount, entityCount) {
             assert.equal(editorialStub.callCount(), editorialCount,
-                'editorialStub');
-            assert.equal(searchStub.callCount(), searchCount, 'searchStub');
-            assert.equal(entityStub.callCount(), entityCount, 'entityStub');
-            assert.equal(showSearchStub.callCount(), showSearchCount,
-                'showSearchStub');
+                         'editorial not rendered');
+            assert.equal(searchStub.callCount(), searchCount,
+                         'search not rendered');
+            assert.equal(entityStub.callCount(), entityCount,
+                         'entity details not rendered');
           }
 
           it('renders the editorial when no metadata is provided', function() {

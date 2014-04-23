@@ -43,8 +43,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       container = utils.makeContainer(this, 'container');
       var testcontent = [
-        '<div id=testcontent><div class="bws-view-data">',
-        '</div><div class="bws-content"></div></div>'
+        '<div id="subapp-browser">',
+        '<div id="testcontent" class="charmbrowser">',
+        '<div class="bws-view-data"></div>',
+        '<div class="bws-header"></div>',
+        '<div class="bws-content"></div>',
+        '</div>',
+        '</div>'
       ].join();
 
       Y.Node.create(testcontent).appendTo(container);

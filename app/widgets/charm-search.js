@@ -645,7 +645,6 @@ YUI.add('browser-search-widget', function(Y) {
     'event-valuechange',
     'juju-browser-models',
     'juju-templates',
-    'juju-views',
     'widget'
   ]
 });

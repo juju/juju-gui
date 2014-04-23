@@ -173,6 +173,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
          */
         render: function(cachedResults) {
           var store = this.get('store');
+
+          var tplNode = Y.one('.charmbrowser');
+          this._renderSearchWidget(tplNode);
+          this._bindSearchWidgetEvents();
           this.showIndicator(this.get('renderTo'));
 
           // By default we grab the editorial content from the api to use for
