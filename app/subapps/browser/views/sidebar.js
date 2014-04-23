@@ -97,7 +97,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 }, '0.1.0', {
   requires: [
     'juju-templates',
-    'subapp-browser-mainview',
     'view'
   ]
 });

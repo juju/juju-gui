@@ -173,7 +173,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
          */
         render: function(cachedResults) {
           var store = this.get('store');
-          var tplNode = Y.one('.charmbrowser');
+
+          var tplNode = Y.one('.charmbrowser .bws-header');
           this._renderSearchWidget(tplNode);
           this._bindSearchWidgetEvents();
           this.showIndicator(this.get('renderTo'));

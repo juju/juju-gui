@@ -149,7 +149,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method render
          */
         render: function(cachedResults) {
-          var tplNode = Y.one('.charmbrowser');
+          var tplNode = Y.one('.charmbrowser .bws-header');
           this._renderSearchWidget(tplNode);
           this._bindSearchWidgetEvents();
 
