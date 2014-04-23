@@ -42,6 +42,9 @@ YUI.add('deployer-bar', function(Y) {
         template: Templates['deployer-bar'],
 
         events: {
+          '.deploy-button': {
+            click: 'deploy'
+          }
         },
 
         /**
@@ -54,6 +57,19 @@ YUI.add('deployer-bar', function(Y) {
           container.setHTML(this.template());
           container.addClass('deployer-bar');
           return this;
+        },
+
+        /**
+          Deploy the current set of environment changes.
+
+          @method deploy
+          @param {Object} evt The event object.
+        */
+        deploy: function(evt) {
+          evt.preventDefault();
+          // XXX The deployer bar will have more integration with the ECS in
+          // the future, so this is just a temporary measure for demos.
+          window.app.ecs.commit();
         }
       });
 
