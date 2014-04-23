@@ -186,6 +186,7 @@ YUI.add('environment-change-set', function(Y) {
         command.key = key;
         if (!command.parents || command.parents.length === 0) {
           hierarchy[0].push(Y.clone(command));
+          command.placed = true;
           keyToLevelMap[key] = 0;
           this.placedCount += 1;
         } else {
@@ -221,7 +222,7 @@ YUI.add('environment-change-set', function(Y) {
     _placeIfNeeded: function(currLevel, keyToLevelMap, hierarchy, value, key) {
       var command = this.changeSet[key];
 
-      if (!command) {
+      if (!command || command.placed) {
         return;
       }
 
@@ -239,6 +240,7 @@ YUI.add('environment-change-set', function(Y) {
       // there and increment the placed count.
       if (alreadyPlacedParents) {
         hierarchy[currLevel].push(Y.clone(command));
+        command.placed = true;
         keyToLevelMap[key] = currLevel;
         this.placedCount += 1;
       }

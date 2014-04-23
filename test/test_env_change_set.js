@@ -188,7 +188,7 @@ describe('Environment Change Set', function() {
 
     describe('_buildHierarchy', function() {
       it('acts sane with "flat" hierarchies', function() {
-        var data = {
+        ecs.changeSet = {
           a: { parents: [] },
           b: { parents: [] },
           c: { parents: [] },
@@ -197,21 +197,21 @@ describe('Environment Change Set', function() {
           f: { } // Can handle missing parents attribute.
         };
 
-        var result = ecs._buildHierarchy(data);
-        assert.deepEqual(result, [
+        var result = ecs._buildHierarchy();
+        assert.deepEqual(JSON.stringify(result), JSON.stringify([
           [
-            { key: 'a', parents: [] },
-            { key: 'b', parents: [] },
-            { key: 'c', parents: [] },
-            { key: 'd', parents: [] },
-            { key: 'e', parents: [] },
+            { parents: [], key: 'a' },
+            { parents: [], key: 'b' },
+            { parents: [], key: 'c' },
+            { parents: [], key: 'd' },
+            { parents: [], key: 'e' },
             { key: 'f' }
           ]
-        ]);
+        ]));
       });
 
       it('splits commands into dependency levels', function() {
-        var data = {
+        ecs.changeSet = {
           a: { parents: [] },
           b: { parents: [] },
           c: { parents: ['a', 'b'] },
@@ -220,24 +220,24 @@ describe('Environment Change Set', function() {
           f: { parents: ['e'] }
         };
 
-        var result = ecs._buildHierarchy(data);
-        assert.deepEqual(result, [
+        var result = ecs._buildHierarchy();
+        assert.equal(JSON.stringify(result), JSON.stringify([
           // Top-level.
           [
-            { key: 'a', parents: [] },
-            { key: 'b', parents: [] }
+            { parents: [], key: 'a' },
+            { parents: [], key: 'b' }
           ],
           [
-            { key: 'c', parents: ['a', 'b'] },
-            { key: 'd', parents: ['a'] }
+            { parents: ['a', 'b'], key: 'c' },
+            { parents: ['a'], key: 'd' }
           ],
           [
-            { key: 'e', parents: ['a', 'c'] }
+            { parents: ['a', 'c'], key: 'e' }
           ],
           [
-            { key: 'f', parents: ['e'] }
+            { parents: ['e'], key: 'f' }
           ]
-        ]);
+        ]));
       });
     });
 
