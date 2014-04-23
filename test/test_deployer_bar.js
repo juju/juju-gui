@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('deployer bar view', function() {
+describe.only('deployer bar view', function() {
   var Y, container, utils, views, view, View;
 
   before(function(done) {
@@ -51,20 +51,17 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('deployer-bar'), true);
   });
 
-  it('should commit ECS changes when deploy is clicked', function(done) {
+  it('should commit ECS changes when deploy is clicked', function() {
     // XXX This is just a temporary measure; the deployer bar will have further
     // integration with the app and ECS.
-    var oldApp = window.app;
-    window.app = {
-      ecs: {
-        commit: function() {
-          window.app = oldApp;
-          done();
-        }
-      }
+    var stubApp = utils.makeStubMethod(window, 'app');
+    stubApp.ecs = {
+      commit: utils.makeStubFunction()
     };
+    this._cleanups.push(stubApp.reset);
 
     container.one('.deploy-button').simulate('click');
+    assert.isTrue(stubApp.ecs.commit.calledOnce());
   });
 
 });

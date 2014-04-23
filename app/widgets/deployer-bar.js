@@ -66,7 +66,7 @@ YUI.add('deployer-bar', function(Y) {
           @param {Object} evt The event object.
         */
         deploy: function(evt) {
-          evt.preventDefault();
+          evt.halt();
           // XXX The deployer bar will have more integration with the ECS in
           // the future, so this is just a temporary measure for demos.
           window.app.ecs.commit();
