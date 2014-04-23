@@ -642,7 +642,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
       });
 
-      it('viewmodes we do not support should render sidebar', function() {
+      it('viewmodes we do not support do not route', function() {
         var req = {
           path: '/ignoreme/',
           params: {
@@ -650,8 +650,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
         var expected = Y.merge(hits);
-        expected.sidebar = true;
-        expected.renderEditorial = true;
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);

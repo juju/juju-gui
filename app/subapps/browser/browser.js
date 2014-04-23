@@ -1023,10 +1023,28 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
+      var self = this;
       // If there is no viewmode, assume it's sidebar.
       if (!req.params) {
         req.params = {};
       }
+
+      // Support redirecting the minimized view.
+      if (req.params.viewmode === 'minimized') {
+        // This setTimeout is required because the double dispatch events
+        // happen in an unpredictable order so we simply let them complete
+        // then navigate away to avoid issues where we are trying to render
+        // while other views are in the middle of being torn down.
+        setTimeout(function() {
+          self.fire('viewNavigate', {
+            change: {
+              viewmode: 'sidebar'
+            }
+          });
+        }, 0);
+        return;
+      }
+
 
       if (!req.params.viewmode) {
         req.params.viewmode = 'sidebar';
@@ -1035,7 +1053,8 @@ YUI.add('subapp-browser', function(Y) {
       // If the viewmode isn't found, it's not one of our urls. Show the
       // sidebar anyway.
       if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
-        req.params.viewmode = 'sidebar';
+        next();
+        return;
       }
 
       // for the route /sidebar it picks up the *id route
@@ -1058,7 +1077,6 @@ YUI.add('subapp-browser', function(Y) {
         // on the current routing code to switch from fullscreen to sidebar
         // to take advantage of its double dispatch mitigation code.
         if (req.params.viewmode === 'fullscreen') {
-          var self = this;
           // This setTimeout is required because the double dispatch events
           // happen in an unpredictable order so we simply let them complete
           // then navigate away to avoid issues where we are trying to render
