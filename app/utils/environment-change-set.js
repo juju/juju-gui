@@ -178,7 +178,7 @@ YUI.add('environment-change-set', function(Y) {
           command,
           keyToLevelMap = {},
           currLevel = 1;
-      this.placedCount = 0
+      this.placedCount = 0;
 
       // Take care of top-level objects quickly.
       Object.keys(this.changeSet).forEach(Y.bind(function(key) {
