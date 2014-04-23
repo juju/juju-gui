@@ -45,7 +45,7 @@ YUI.add('subapp-browser', function(Y) {
     // requests to the sidebar views.
     // XXX Removing 'fullscreen' stops the fullscreen redirects from working.
     // XXX viewmodes need to go away they are only here as a hack for now.
-    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector', 'machine'],
+    viewmodes: ['sidebar', 'fullscreen', 'inspector', 'machine'],
 
     /**
      * Make sure we destroy views no long used.
@@ -81,10 +81,6 @@ YUI.add('subapp-browser', function(Y) {
       if (this._sidebar) {
         this._sidebar.destroy();
         delete this._sidebar;
-      }
-      if (this._minimized) {
-        this._minimized.destroy();
-        delete this._minimized;
       }
       if (this._onboarding) {
         this._onboarding.destroy();
@@ -256,7 +252,7 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^\/?(sidebar|minimized|search|test\/index\.html)\/?(search)?\/?/;
+          /^\/?(sidebar|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
@@ -326,9 +322,6 @@ YUI.add('subapp-browser', function(Y) {
       // If we've got any views hanging around wipe them.
       if (this._sidebar) {
         this._sidebar.destroy();
-      }
-      if (this._minimized) {
-        this._minimized.destroy();
       }
       if (this._details) {
         this._details.destroy();
@@ -478,7 +471,6 @@ YUI.add('subapp-browser', function(Y) {
     */
     _machine: function(metadata) {
       this._renderMachineViewPanelView(this.get('db'));
-      this.machineViewPanel.setWidthFull();
     },
 
     /**
@@ -675,32 +667,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Minimized state shows the button to open back up, but that's it. It's
-       purely a viewmode change and we keep all the old content/state in the
-       old div.
-
-       @method minimized
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-
-     */
-    minimized: function(req, res, next) {
-      // We only need to run the view once.
-      if (!this._minimized) {
-        this._minimized = new views.MinimizedView();
-        this._minimized.render();
-        this._minimized.addTarget(this);
-      }
-
-      var oldViewMode = this.state.getPrevious('viewmode') || 'sidebar';
-      this._minimized.set('oldViewMode', oldViewMode);
-
-      this.state.save();
-      next();
-    },
-
-    /**
        Handle the route for the sidebar view.
 
        @method sidebar
@@ -861,7 +827,6 @@ YUI.add('subapp-browser', function(Y) {
       if (window.flags.mv) {
         this._renderMachineViewPanelView(this.get('db'));
       }
-      this.machineViewPanel.setWidthFull();
     },
 
     /**
@@ -1067,13 +1032,13 @@ YUI.add('subapp-browser', function(Y) {
         req.params.viewmode = 'sidebar';
       }
 
-      // If the viewmode isn't found, it's not one of our urls. Carry on.
+      // If the viewmode isn't found, it's not one of our urls. Show the
+      // sidebar anyway.
       if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
-        next();
-        return;
+        req.params.viewmode = 'sidebar';
       }
 
-      // for the route /sidebar|minimized| it picks up the *id route
+      // for the route /sidebar it picks up the *id route
       // as well. Catch that here and make sure we set that to viewmode and no
       // id in the params.
       var id = this._stripViewMode(req.params.id);
@@ -1129,29 +1094,13 @@ YUI.add('subapp-browser', function(Y) {
         // This method will be deleted when we switch to the new state class.
         return;
       }
-      var minview = this.get('minNode'),
-          browser = this.get('container');
-
-      // In app tests these divs don't exist so ignore them if both aren't
-      // there carry on. The container is created through the subapp, but not
-      // the minview.
-      if (!minview) {
-        console.log('No browser subapp min div available.');
-        return;
-      }
+      var browser = this.get('container');
 
       if (this.hidden) {
         browser.hide();
-        minview.hide();
         this._clearViews();
       } else {
-        if (this.state.getCurrent('viewmode') === 'minimized') {
-          minview.show();
-          browser.hide();
-        } else {
-          minview.hide();
-          browser.show();
-        }
+        browser.show();
       }
     },
 
@@ -1234,26 +1183,7 @@ YUI.add('subapp-browser', function(Y) {
        * @type {Function}
        *
        */
-      deployBundle: {},
-
-      /**
-         @attribute minNode
-         @default Node
-         @type {Node}
-
-       */
-      minNode: {
-        /**
-          Find the minNode and cache it for later use.
-
-          @attribute minNode
-          @readOnly
-        */
-        valueFn: function() {
-          return Y.one('#subapp-browser-min');
-        }
-      }
-
+      deployBundle: {}
     }
   });
 
@@ -1272,7 +1202,6 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmresults',
     'subapp-browser-editorial',
     'subapp-browser-jujucharms',
-    'subapp-browser-minimized',
     'subapp-browser-searchview',
     'subapp-browser-sidebar',
     'machine-view-panel-extension'

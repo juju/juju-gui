@@ -415,7 +415,6 @@ improv is running.  Additionally, these steps may be completed with both
 - Log out and back in.
 - Search for apache.
 - Ensure results look sane.
-- Go between sidebar and minimized views in the charm browser.
 - Visit the internal pages by double clicking a service, ensure
   sanity (this step will go away with future designs).
 

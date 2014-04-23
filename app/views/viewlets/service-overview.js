@@ -911,7 +911,6 @@ YUI.add('inspector-overview-view', function(Y) {
       var service = db.services.getById(unitName.split('/')[0]);
       var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
-      this.viewletManager.fire('inspectorTakeoverStarting');
     },
 
     /**

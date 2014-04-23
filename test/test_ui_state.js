@@ -127,10 +127,8 @@ describe('UI State object', function() {
     var paths = {
       'sidebar': '',
       'fullscreen': '',
-      'minimized': '',
       'fullscreen/precise/mysql-38': 'precise/mysql-38',
-      'sidebar/precise/mysql-38': 'precise/mysql-38',
-      'minimized/precise/mysql-38': 'precise/mysql-38'
+      'sidebar/precise/mysql-38': 'precise/mysql-38'
     };
     it('strips the viewmode from requested urls', function() {
       Object.keys(paths).forEach(function(key) {
@@ -360,7 +358,6 @@ describe('UI State object', function() {
       // Old viewmode urls.
       '/sidebar/': { sectionA: {}, sectionB: {} },
       '/fullscreen/': { sectionA: {}, sectionB: {} },
-      '/minimized/': { sectionA: {}, sectionB: {} },
       // Bundle urls.
       '/bundle/~charmers/mediawiki/6/single/': {
         sectionA: {
@@ -404,12 +401,6 @@ describe('UI State object', function() {
           metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
         }, sectionB: {}
       },
-      '/minimized/bundle/~charmers/mediawiki/6/single/': {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
-        }, sectionB: {}
-      },
       // Charm urls.
       '/precise/mysql-38/': {
         sectionA: {
@@ -435,12 +426,6 @@ describe('UI State object', function() {
           metadata: { id: 'precise/mysql-38' }
         }, sectionB: {}
       },
-      '/minimized/precise/mysql-38/': {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: { id: 'precise/mysql-38' }
-        }, sectionB: {}
-      },
       // Non promoted charm urls.
       '/~prismakov/trusty/cf-dea-1/': {
         sectionA: {
@@ -461,12 +446,6 @@ describe('UI State object', function() {
         }, sectionB: {}
       },
       '/sidebar/~prismakov/trusty/cf-dea-1/': {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        }, sectionB: {}
-      },
-      '/minimized/~prismakov/trusty/cf-dea-1/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
@@ -511,14 +490,6 @@ describe('UI State object', function() {
             search: 'apache' }
         }, sectionB: {}
       },
-      '/minimized/search/precise/apache2-19/?text=apache': {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: {
-            id: 'precise/apache2-19',
-            search: 'apache' }
-        }, sectionB: {}
-      },
       // Bundle search urls.
       '/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
         sectionA: {
@@ -537,14 +508,6 @@ describe('UI State object', function() {
         }, sectionB: {}
       },
       '/sidebar/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: {
-            id: 'bundle/~charmers/mediawiki/6/single',
-            search: 'apache' }
-        }, sectionB: {}
-      },
-      '/minimized/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {

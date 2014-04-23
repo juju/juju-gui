@@ -51,12 +51,6 @@ describe('environment header view', function() {
     assert.equal(container.hasClass('environment-header'), true);
   });
 
-  it('can set whether to be full width', function() {
-    assert.equal(container.hasClass('full'), false);
-    view.setWidthFull();
-    assert.equal(container.hasClass('full'), true);
-  });
-
   it('fires an event on tab change', function(done) {
     view.on('changeEnvironmentView', function(e) {
       assert.equal(e.environment, 'serviceView');

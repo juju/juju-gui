@@ -78,24 +78,6 @@ YUI.add('environment-header', function(Y) {
         },
 
         /**
-         * Set the header to be the full width of the screen.
-         *
-         * @method setWidthFull
-         */
-        setWidthFull: function() {
-          this.get('container').addClass('full');
-        },
-
-        /**
-         * Set the header to leave space for the sidebar.
-         *
-         * @method removeWidthFull
-         */
-        removeWidthFull: function() {
-          this.get('container').removeClass('full');
-        },
-
-        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render

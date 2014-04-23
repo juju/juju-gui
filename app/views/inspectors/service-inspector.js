@@ -79,9 +79,6 @@ YUI.add('service-inspector', function(Y) {
     renderUI: function() {
       this.showViewlet('inspectorHeader');
       this.showViewlet('overview');
-      this.on('viewletSlotClosing', function() {
-        this.fire('inspectorTakeoverEnding');
-      }, this);
     },
 
     /**
@@ -136,7 +133,6 @@ YUI.add('service-inspector', function(Y) {
       var charmId = ev.currentTarget.getData('charmid');
       var charm = db.charms.getById(charmId);
       this.showViewlet('charmDetails', charm);
-      this.fire('inspectorTakeoverStarting');
     },
 
     /**

@@ -1,6 +1,5 @@
 .machine-view-panel {
     .display-flex;
-    .transition(padding-left 0.5s ease-out);
     box-sizing: border-box;
     position: absolute;
     z-index: 600;
@@ -11,10 +10,6 @@
     padding: 10px 0 0 @left-panel-width + 1px;
     background-color: #fff;
 
-    &.full {
-        .transition(padding-left 0s ease-out);
-        padding-left: 0;
-    }
     .column {
         .customize-scrollbar;
         .display-flex;
