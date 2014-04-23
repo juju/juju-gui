@@ -38,7 +38,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    * @extends {juju.browser.views.MainView}
    *
    */
-  ns.Sidebar = Y.Base.create('browser-view-sidebar', ns.MainView, [], {
+  ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
     template: views.Templates.sidebar,
 
     events: {
@@ -73,29 +73,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
-      Shows the sidebar search widget and removes the class on the sidebar
-      container.
-
-      @method showSearch
-    */
-    showSearch: function() {
-      this.search.show();
-      this.get('container').removeClass('no-search');
-    },
-
-    /**
-      Hides the sidebar search widget and adds the class on the sidebar
-      container.
-
-      @method hideSearch
-    */
-    hideSearch: function() {
-      this.search.hide();
-      // addClass() is idempotent.
-      this.get('container').addClass('no-search', true);
-    },
-
-    /**
      * Render out the view to the DOM.
      *
      * @method render
@@ -105,24 +82,12 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl);
 
-      if (window.flags && window.flags.il) {
-        // Render then immediately hide the search widget to allow the state
-        // to control the show/hide of the search widget.
-        this._renderSearchWidget(tplNode);
-        this.search.hide();
-      } else {
-        this._renderSearchWidget(tplNode);
-      }
-
-
       if (typeof container !== 'object') {
         container = this.get('container');
       } else {
         this.set('container', container);
       }
       container.setHTML(tplNode);
-      // Bind our view to the events from the search widget used for controls.
-      this._bindSearchWidgetEvents();
     }
 
   }, {
@@ -131,7 +96,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-search-widget',
     'juju-templates',
     'subapp-browser-mainview',
     'view'

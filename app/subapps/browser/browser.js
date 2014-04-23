@@ -426,18 +426,15 @@ YUI.add('subapp-browser', function(Y) {
       if (detailsNode) { detailsNode.hide(); }
       // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
-        this._sidebar.showSearch();
         this.renderEditorial();
       }
       if (metadata && metadata.search) {
-        this._sidebar.showSearch();
         this.renderSearchResults();
       }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
-        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
     },
@@ -641,7 +638,8 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderSearchResults: function(req, res, next) {
       var container = this.get('container'),
-          extraCfg = {};
+          extraCfg = {},
+          metadata;
 
       extraCfg.renderTo = container.one('.bws-content');
 
@@ -649,17 +647,20 @@ YUI.add('subapp-browser', function(Y) {
       // to render it selected.
       if (window.flags && window.flags.il) {
         extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
-        var metadata = this.state.getState('current', 'sectionA', 'metadata');
-        extraCfg.query = metadata.search;
-        this._sidebar.set('withHome', true);
+        metadata = this.state.getState('current', 'sectionA', 'metadata');
       } else {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
       }
 
-      this._search = new views.BrowserSearchView(
-          this._getViewCfg(extraCfg));
+      var viewCfg = this._getViewCfg(extraCfg);
+      if (window.flags && window.flags.il) {
+        viewCfg.filters.text = metadata.search;
+      }
+
+      this._search = new views.BrowserSearchView(viewCfg);
+      this._search.set('withHome', true);
 
       // Prepare to handle cache
       this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
