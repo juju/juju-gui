@@ -198,6 +198,8 @@ describe('Environment Change Set', function() {
         };
 
         var result = ecs._buildHierarchy();
+        // XXX assert.deepEqual does not seem to play well with arrays
+        // of objects.  Slack card on board - Makyo 2014-04-23
         assert.deepEqual(JSON.stringify(result), JSON.stringify([
           [
             { parents: [], key: 'a' },
@@ -221,6 +223,8 @@ describe('Environment Change Set', function() {
         };
 
         var result = ecs._buildHierarchy();
+        // XXX assert.deepEqual does not seem to play well with arrays
+        // of objects.  Slack card on board - Makyo 2014-04-23
         assert.equal(JSON.stringify(result), JSON.stringify([
           // Top-level.
           [
