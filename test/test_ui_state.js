@@ -443,52 +443,83 @@ describe('UI State object', function() {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        }, sectionB: {}
+        },
+        sectionB: {}
       },
       '/sidebar/~prismakov/trusty/cf-dea-1/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        }, sectionB: {}
+        },
+        sectionB: {}
       },
       // Search urls.
       // search is an old route path so ignore it if there isn't a query param.
       '/search/': { sectionA: {}, sectionB: {} },
       '/search/?text=apache': {
         sectionA: {
-          metadata: { search: 'apache' }
-        }, sectionB: {}
+          metadata: { search: { text: 'apache' }}
+        },
+        sectionB: {}
+      },
+      '/search/?text=apache&categories=app-servers': {
+        sectionA: {
+          metadata: {
+            search: {
+              text: 'apache',
+              categories: 'app-servers'
+            }
+          }
+        },
+        sectionB: {}
       },
       // Charm search urls.
       '/search/precise/cassandra-1/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: 'precise/cassandra-1' }
-        }, sectionB: {}
+        },
+        sectionB: {}
       },
       '/search/precise/apache2-19/?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
-            search: 'apache' }
-        }, sectionB: {}
+            search: { text: 'apache' }}
+        },
+        sectionB: {}
+      },
+      '/search/precise/apache2-19/?text=apache&categories=app-servers': {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {
+            id: 'precise/apache2-19',
+            search: {
+              text: 'apache',
+              categories: 'app-servers'
+            }
+          }
+        },
+        sectionB: {}
       },
       '/fullscreen/search/precise/apache2-19/?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
-            search: 'apache' }
-        }, sectionB: {}
+            search: { text: 'apache' }}
+        },
+        sectionB: {}
       },
       '/sidebar/search/precise/apache2-19/?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
-            search: 'apache' }
-        }, sectionB: {}
+            search: { text: 'apache' }}
+        },
+        sectionB: {}
       },
       // Bundle search urls.
       '/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
@@ -496,15 +527,16 @@ describe('UI State object', function() {
           component: 'charmbrowser',
           metadata: {
             id: 'bundle/~charmers/mediawiki/6/single',
-            search: 'apache' }
-        }, sectionB: {}
+            search: { text: 'apache' }}
+        },
+        sectionB: {}
       },
       '/fullscreen/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'bundle/~charmers/mediawiki/6/single',
-            search: 'apache' }
+            search: { text: 'apache' }}
         }, sectionB: {}
       },
       '/sidebar/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
@@ -512,7 +544,7 @@ describe('UI State object', function() {
           component: 'charmbrowser',
           metadata: {
             id: 'bundle/~charmers/mediawiki/6/single',
-            search: 'apache' }
+            search: { text: 'apache' }}
         }, sectionB: {}
       },
       // New search url syntax.
@@ -521,7 +553,7 @@ describe('UI State object', function() {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-13',
-            search: 'apache'
+            search: { text: 'apache'}
           }
         }, sectionB: {}
       },
@@ -530,7 +562,7 @@ describe('UI State object', function() {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-13',
-            search: 'apache',
+            search: { text: 'apache'},
             hash: 'readme'
           }
         }, sectionB: {}
@@ -539,7 +571,7 @@ describe('UI State object', function() {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
-            search: 'hadoop',
+            search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo'
           }
         }, sectionB: {}
@@ -548,7 +580,7 @@ describe('UI State object', function() {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
-            search: 'hadoop',
+            search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo',
             hash: 'readme'
           }
@@ -610,7 +642,7 @@ describe('UI State object', function() {
       '/machine/3/?text=hadoop': {
         sectionA: {
           metadata: {
-            search: 'hadoop'
+            search: { text: 'hadoop'}
           }
         },
         sectionB: {
@@ -656,9 +688,10 @@ describe('UI State object', function() {
         sectionA: {
           component: 'inspector',
           metadata: {
-            search: 'hadoop'
+            search: { text: 'hadoop'}
           }
-        }, sectionB: {}
+        },
+        sectionB: {}
       }
     };
 
@@ -782,21 +815,21 @@ describe('UI State object', function() {
       { '?text=apache': {
         sectionA: {
           component: 'charmbrowser',
-          metadata: { search: 'apache' }
+          metadata: { search: { text: 'apache' }}
         }, sectionB: {} }},
       { '/precise/apache2-19?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
-            search: 'apache' }
+            search: { text: 'apache' }}
         }, sectionB: {} }},
       { '/precise/apache2-13?text=apache#readme': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-13',
-            search: 'apache',
+            search: { text: 'apache'},
             hash: 'readme'
           }
         }, sectionB: {} }},
@@ -804,7 +837,7 @@ describe('UI State object', function() {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
-            search: 'hadoop',
+            search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo'
           }
         }, sectionB: {} }},
@@ -812,7 +845,7 @@ describe('UI State object', function() {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
-            search: 'hadoop',
+            search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo',
             hash: 'readme'
           }
@@ -866,7 +899,7 @@ describe('UI State object', function() {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
-            search: 'hadoop'
+            search: { text: 'hadoop'}
           }},
         sectionB: {
           component: 'machine',
@@ -909,7 +942,8 @@ describe('UI State object', function() {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2',
-            search: 'apache2' }
+            search: { text: 'apache2'}
+          }
         }, sectionB: {}};
       var changeState = {
         sectionA: {
@@ -927,7 +961,7 @@ describe('UI State object', function() {
       var defaultState = {
         sectionA: {
           metadata: {
-            search: 'apache2' }
+            search: { text: 'apache2' }}
         }, sectionB: {}};
       var changeState = {
         sectionA: { metadata: null }
