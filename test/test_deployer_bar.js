@@ -51,4 +51,17 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('deployer-bar'), true);
   });
 
+  it('should commit ECS changes when deploy is clicked', function() {
+    // XXX This is just a temporary measure; the deployer bar will have further
+    // integration with the app and ECS.
+    var stubApp = utils.makeStubMethod(window, 'app');
+    stubApp.ecs = {
+      commit: utils.makeStubFunction()
+    };
+    this._cleanups.push(stubApp.reset);
+
+    container.one('.deploy-button').simulate('click');
+    assert.isTrue(stubApp.ecs.commit.calledOnce());
+  });
+
 });
