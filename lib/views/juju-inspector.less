@@ -34,11 +34,11 @@
 @-o-keyframes pulse-green {.pulse-green-frames-mixin;}
 @keyframes pulse-green {.pulse-green-frames-mixin;}
 
-.yui3-juju-inspector {
+.yui3-juju-inspector, .bws-view-data {
     .customize-scrollbar;
-    top: 20px;
     right: 70px;
     position: absolute;
+    top: 20px;
 
 
     .left-breakout {
@@ -1069,6 +1069,11 @@
 .flag-mv .yui3-juju-inspector {
     top: @environment-header-height + 20px;
 }
+
+.flag-il .bws-view-data {
+    top: 0;
+}
+
 .flag-il #subapp-browser .yui3-juju-inspector {
     .create-border-radius(0);
     top: auto;

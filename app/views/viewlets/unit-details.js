@@ -171,7 +171,19 @@ YUI.add('unit-details-view', function(Y) {
       var context = this.getContext(db, service, unit);
       var template = Y.Node.create(this.templateWrapper({}));
       template.one('.content').setHTML(this.template(context));
-      this.get('container').setHTML(template);
+      if (window.flags && window.flags.il) {
+        // Target the charm details div for the inspector popout content.
+        var container = Y.one('.bws-view-data');
+        container.setHTML(template);
+        container.show();
+        container.delegate('click', function(ev) {
+          ev.halt();
+          this.viewletManager.hideSlot(ev);
+          container.hide();
+        }, '.close-slot', this);
+      } else {
+        this.get('container').setHTML(template);
+      }
     }
   });
 
