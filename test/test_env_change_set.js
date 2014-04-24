@@ -33,7 +33,8 @@ describe('Environment Change Set', function() {
   beforeEach(function() {
     envObj = {
       deploy: testUtils.makeStubFunction(),
-      set_config: testUtils.makeStubFunction()
+      set_config: testUtils.makeStubFunction(),
+      add_relation: testUtils.makeStubFunction()
     };
     dbObj = {};
     ecs = new ECS({
@@ -187,7 +188,7 @@ describe('Environment Change Set', function() {
 
     describe('_buildHierarchy', function() {
       it('acts sane with "flat" hierarchies', function() {
-        var data = {
+        ecs.changeSet = {
           a: { parents: [] },
           b: { parents: [] },
           c: { parents: [] },
@@ -196,21 +197,23 @@ describe('Environment Change Set', function() {
           f: { } // Can handle missing parents attribute.
         };
 
-        var result = ecs._buildHierarchy(data);
-        assert.deepEqual(result, [
+        var result = ecs._buildHierarchy();
+        // XXX assert.deepEqual does not seem to play well with arrays
+        // of objects.  Slack card on board - Makyo 2014-04-23
+        assert.deepEqual(JSON.stringify(result), JSON.stringify([
           [
-            { key: 'a', parents: [] },
-            { key: 'b', parents: [] },
-            { key: 'c', parents: [] },
-            { key: 'd', parents: [] },
-            { key: 'e', parents: [] },
+            { parents: [], key: 'a' },
+            { parents: [], key: 'b' },
+            { parents: [], key: 'c' },
+            { parents: [], key: 'd' },
+            { parents: [], key: 'e' },
             { key: 'f' }
           ]
-        ]);
+        ]));
       });
 
       it('splits commands into dependency levels', function() {
-        var data = {
+        ecs.changeSet = {
           a: { parents: [] },
           b: { parents: [] },
           c: { parents: ['a', 'b'] },
@@ -219,24 +222,26 @@ describe('Environment Change Set', function() {
           f: { parents: ['e'] }
         };
 
-        var result = ecs._buildHierarchy(data);
-        assert.deepEqual(result, [
+        var result = ecs._buildHierarchy();
+        // XXX assert.deepEqual does not seem to play well with arrays
+        // of objects.  Slack card on board - Makyo 2014-04-23
+        assert.equal(JSON.stringify(result), JSON.stringify([
           // Top-level.
           [
-            { key: 'a', parents: [] },
-            { key: 'b', parents: [] }
+            { parents: [], key: 'a' },
+            { parents: [], key: 'b' }
           ],
           [
-            { key: 'c', parents: ['a', 'b'] },
-            { key: 'd', parents: ['a'] }
+            { parents: ['a', 'b'], key: 'c' },
+            { parents: ['a'], key: 'd' }
           ],
           [
-            { key: 'e', parents: ['a', 'c'] }
+            { parents: ['a', 'c'], key: 'e' }
           ],
           [
-            { key: 'f', parents: ['e'] }
+            { parents: ['e'], key: 'f' }
           ]
-        ]);
+        ]));
       });
     });
 
@@ -268,15 +273,22 @@ describe('Environment Change Set', function() {
 
   describe('private ENV methods', function() {
     describe('_lazyDeploy', function() {
-      it('creates a new `deploy` record', function() {
-        var args = [1, 2, 'foo', 'bar'];
+      it('creates a new `deploy` record', function(done) {
+        var args = [1, 2, 'foo', 'bar', done, {modelId: 'baz'}];
         var key = ecs._lazyDeploy(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
         assert.equal(record.command.method, 'deploy');
+        // Remove the functions, which will not be equal.
+        var cb = record.command.args.pop();
+        args.pop();
+        // Also remove the options object.
+        args.pop();
         assert.deepEqual(record.command.args, args);
+        assert.deepEqual(record.command.options, {modelId: 'baz'});
+        cb(); // Will call done().
       });
     });
 
@@ -314,6 +326,46 @@ describe('Environment Change Set', function() {
         assert.equal(Y.Object.size(ecs.changeSet), 2);
       });
     });
+
+    describe('_lazyAddRelation', function() {
+      it('creates a new `addRelation` record', function() {
+        ecs.changeSet = {
+          'service-1': {
+            command: {
+              args: ['charm', 'mysql'],
+              method: 'deploy',
+              options: { modelId: 'serviceId1$' }
+            }
+          },
+          'service-2': {
+            command: {
+              args: ['charm', 'wordpress'],
+              method: 'deploy',
+              options: { modelId: 'serviceId2$' }
+            }
+          }
+        };
+        var args = [['serviceId1$', ['db', 'client']],
+              ['serviceId2$', ['db', 'server']]];
+        var key = ecs._lazyAddRelation(args);
+        var record = ecs.changeSet[key];
+        assert.deepEqual(record, {
+          command: {
+            args: [
+              ['mysql', ['db', 'client']],
+              ['wordpress', ['db', 'server']]
+            ],
+            method: 'add_relation'
+          },
+          executed: false,
+          id: key,
+          parents: ['service-1', 'service-2']
+        });
+        assert.equal(Y.Object.size(ecs.changeSet), 3);
+        // Perform this last, as it will mutate ecs.changeSet.
+        assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
+      });
+    });
   });
 
   describe('public ENV methods', function() {
@@ -326,8 +378,8 @@ describe('Environment Change Set', function() {
         ecs.deploy.apply(ecs, args);
         assert.equal(envObj.deploy.calledOnce(), true);
         var deployArgs = envObj.deploy.lastArguments();
-        // remove the options param off of the end and compare to that. as it
-        // should be removed before env.deploy is called.
+        // Remove the final options element, which should not be an argument to
+        // env.deploy.
         assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
         // make sure that we don't add it to the changeSet.
         assert.equal(lazyDeploy.callCount(), 0);
@@ -340,9 +392,10 @@ describe('Environment Change Set', function() {
         var args = [1, 2, 3, 4, 5, 6, 7, callback];
         ecs.deploy.apply(ecs, args);
         var lazyDeployArgs = lazyDeploy.lastArguments()[0];
-        // remove the options param off of the end and compare to that. as it
-        // should be removed before env.deploy is called.
-        assert.deepEqual(lazyDeployArgs, args);
+        // Assert within a loop, as Arguments do not deeply equal arrays.
+        args.forEach(function(arg, i) {
+          assert.equal(lazyDeployArgs[i], arg);
+        });
         assert.equal(lazyDeploy.calledOnce(), true);
         // make sure we don't call the env deploy method.
         assert.equal(envObj.deploy.callCount(), 0);
@@ -352,7 +405,7 @@ describe('Environment Change Set', function() {
     describe('setConfig', function() {
       it('can immediately set config to a deployed service', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
-        this._cleanups.push(lazySetConfig);
+        this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, 3, 4, callback, { immediate: true}];
         ecs.setConfig.apply(ecs, args);
@@ -368,7 +421,7 @@ describe('Environment Change Set', function() {
 
       it('throws if immediately setting config to queued service', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
-        this._cleanups.push(lazySetConfig);
+        this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
         ecs.changeSet.foo = {};
         assert.throws(
@@ -384,7 +437,7 @@ describe('Environment Change Set', function() {
 
       it('can add a `set_config` command to the changeSet', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
-        this._cleanups.push(lazySetConfig);
+        this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, 3, 4, callback];
         ecs.setConfig.apply(ecs, args);
@@ -392,6 +445,31 @@ describe('Environment Change Set', function() {
         assert.equal(lazySetConfig.calledOnce(), true);
         // Make sure we don't call the env set_config method
         assert.equal(envObj.set_config.callCount(), 0);
+      });
+    });
+
+    describe('addRelation', function() {
+      it('can immediately call `add_relation`', function() {
+        var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
+        this._cleanups.push(lazyAddRelation.reset);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, callback, {immediate: true}];
+        ecs.addRelation.apply(ecs, args);
+        assert.equal(lazyAddRelation.calledOnce(), false);
+        assert.equal(envObj.add_relation.callCount(), 1);
+        // Get rid of the options, which will not be passed to add_relation.
+        args.pop();
+        assert.deepEqual(envObj.add_relation.lastArguments(), args);
+      });
+      it('can add a `add_relation` command to the changeSet', function() {
+        var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
+        this._cleanups.push(lazyAddRelation.reset);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, callback];
+        ecs.addRelation.apply(ecs, args);
+        assert.deepEqual(lazyAddRelation.lastArguments()[0], args);
+        assert.equal(lazyAddRelation.calledOnce(), true);
+        assert.equal(envObj.add_relation.callCount(), 0);
       });
     });
   });

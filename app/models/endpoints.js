@@ -119,7 +119,12 @@ YUI.add('juju-endpoints', function(Y) {
     // ensuring that we skip pending (ghost) services, which will not have
     // a provides attribute by filtering out services with pending === true.
     Y.each(db.services.filter(function(endpoint) {
-      return !endpoint.get('pending');
+      // XXX This filter should be removed once the ECS is available by default
+      // Makyo 2014-04-21
+      if (!window.flags.mv) {
+        return !endpoint.get('pending');
+      }
+      return true;
     }), function(tgt) {
       var tid = tgt.get('id'),
           tprovides = ep_map[tid].provides.concat();

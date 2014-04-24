@@ -109,8 +109,9 @@ YUI.add('model-controller', function(Y) {
           function(resolve, reject) {
             // `this` points to the serviceList
             var service = db.services.getById(serviceId);
-            // If the service and all data has already been loaded, resolve.
-            if (service && service.get('loaded')) {
+            // If the service and all data has already been loaded, or if the
+            // service is pending, resolve.
+            if (service && (service.get('loaded') || service.get('pending'))) {
               resolve(service);
               return;
             }

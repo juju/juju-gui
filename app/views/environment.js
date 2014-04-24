@@ -193,6 +193,7 @@ YUI.add('juju-view-environment', function(Y) {
         topo = new views.Topology();
         topo.setAttrs({
           size: [640, 480],
+          ecs: this.get('ecs'),
           env: this.get('env'),
           db: this.get('db'),
           store: this.get('store'),

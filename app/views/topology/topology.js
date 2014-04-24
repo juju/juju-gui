@@ -257,6 +257,10 @@ YUI.add('juju-topology', function(Y) {
        */
       db: {},
       /**
+       * @property {utils.EnvironmentChangeSet} ecs
+       */
+      ecs: {},
+      /**
        * @property {store.Environment} env
        */
       env: {},

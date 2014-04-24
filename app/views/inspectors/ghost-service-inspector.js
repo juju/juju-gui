@@ -147,7 +147,9 @@ YUI.add('ghost-service-inspector', function(Y) {
                  this,
                  serviceName,
                  config,
-                 constraints));
+                 constraints),
+          // Options used by ECS, ignored by environment.
+          { modelId: model.get('id') });
     },
 
     /**
