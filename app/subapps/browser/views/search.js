@@ -149,6 +149,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method render
          */
         render: function(cachedResults) {
+          var tplNode = Y.one('.charmbrowser .bws-header');
+          this._renderSearchWidget(tplNode);
+          this._bindSearchWidgetEvents();
+
           this.showIndicator(this.get('renderTo'));
           // This is only rendered once from the subapp and so the filters is
           // the initial set from the application. All subsequent renders go
