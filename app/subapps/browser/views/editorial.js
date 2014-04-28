@@ -145,7 +145,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           // Set the active charm if available.
           var active = this.get('activeID');
           if (active) {
-            this._updateActive(
+            this.updateActive(
                 container.one('.token[data-charmid="' + active + '"]')
             );
           }

@@ -73,7 +73,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
               id = this.get('container').one(
                   '.token[data-charmid="' + id + '"]');
             }
-            this._updateActive(id);
+            this.updateActive(id);
           })
       );
     },
@@ -92,7 +92,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       var charmID = charm.getData('charmid');
 
       // Update the UI for the active one.
-      this._updateActive(ev.currentTarget);
+      this.updateActive(ev.currentTarget);
 
       var change = {
         charmID: charmID,
@@ -113,11 +113,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
     /**
       Update the node in the editorial list marked as 'active'.
 
-      @method _updateActive
+      @method updateActive
       @param {Node} clickTarget the token clicked on to activate.
 
     */
-    _updateActive: function(clickTarget) {
+    updateActive: function(clickTarget) {
       // Remove the active class from any nodes that have it.
       Y.all('.yui3-token.active').removeClass('active');
 
