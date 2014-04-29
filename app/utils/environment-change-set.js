@@ -157,8 +157,7 @@ YUI.add('environment-change-set', function(Y) {
       @method _execute
       @param {Object} record The individual record object from the changeSet.
     */
-    _execute: function(record) {
-      var env = this.get('env');
+    _execute: function(env, record) {
       var command = record.command;
       env[command.method].apply(env, command.args);
     },
@@ -251,18 +250,18 @@ YUI.add('environment-change-set', function(Y) {
 
       @method _commitNext
     */
-    _commitNext: function() {
+    _commitNext: function(env) {
       var command;
       this.currentLevel += 1;
       this.levelRecordCount = this.currentCommit[this.currentLevel].length;
       this.currentCommit[this.currentLevel].forEach(function(record) {
         command = this.changeSet[record.key];
-        this._execute(command);
+        this._execute(env, command);
         this.fire('commit', command);
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.
-      this.levelTimer = Y.later(200, this, this._waitOnLevel, null, true);
+      this.levelTimer = Y.later(200, this, this._waitOnLevel, env, true);
     },
 
     /**
@@ -274,12 +273,12 @@ YUI.add('environment-change-set', function(Y) {
 
       @method _waitOnLevel
     */
-    _waitOnLevel: function() {
+    _waitOnLevel: function(env) {
       if (this.levelRecordCount === 0) {
         this.levelTimer.cancel();
         if (this.currentLevel < this.currentCommit.length - 1) {
           // Defer execution to prevent stack overflow.
-          Y.soon(Y.bind(this._commitNext, this));
+          Y.soon(Y.bind(this._commitNext, this, env));
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
@@ -293,10 +292,10 @@ YUI.add('environment-change-set', function(Y) {
 
       @method commit
     */
-    commit: function() {
+    commit: function(env) {
       this.currentCommit = this._buildHierarchy();
       this.currentLevel = -1;
-      this._commitNext();
+      this._commitNext(env);
     },
 
     /* End ECS methods */
@@ -314,7 +313,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     _lazyDeploy: function(args) {
       var command = {
-        method: 'deploy',
+        method: '_deploy',
         args: this._getArgs(args)
       };
       if (command.args.length !== args.length) {
@@ -350,7 +349,7 @@ YUI.add('environment-change-set', function(Y) {
         parent = [serviceName];
       }
       var command = {
-        method: 'set_config', // This needs to match the method name in env.
+        method: '_set_config', // This needs to match the method name in env.
         args: args
       };
       // XXX Jeff - We may want to flatten this into the deploy service
@@ -373,7 +372,7 @@ YUI.add('environment-change-set', function(Y) {
       var serviceA;
       var serviceB;
       Y.Object.each(this.changeSet, function(value, key) {
-        if (value.command.method === 'deploy') {
+        if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0][0]) {
             serviceA = key;
             args[0][0] = value.command.args[1];
@@ -386,83 +385,13 @@ YUI.add('environment-change-set', function(Y) {
       });
       var parent = [serviceA, serviceB];
       var command = {
-        method: 'add_relation',
+        method: '_add_relation',
         args: args
       };
       return this._createNewRecord('addRelation', command, parent);
-    },
-
-    /* End private environment methods. */
-
-    /* Public environment methods. */
-
-    /**
-      Calls the environments deploy method or creates a new service record
-      in the queue.
-
-      The parameters match the parameters for the public env deploy method in
-      go.js.
-
-      @method deploy
-    */
-    deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
-                     constraints, toMachine, callback, options) {
-      var env = this.get('env'),
-          args = this._getArgs(arguments);
-      if (options && options.immediate) {
-        // Call the deploy method right away bypassing the queue.
-        env.deploy.apply(env, args);
-      } else {
-        this._lazyDeploy(arguments);
-      }
-    },
-
-    /**
-      Calls the environments set_config method or creates a new set_config
-      record in the queue.
-
-      The parameters match the parameters for the public env deploy method in
-      go.js.
-
-      @method setConfig
-    */
-    setConfig: function(serviceName, config, data, serviceConfig, callback,
-                        options) {
-      var env = this.get('env'),
-          args = this._getArgs(arguments);
-      if (options && options.immediate) {
-        // Need to check that the serviceName is a real service name and not
-        // a queued service id before allowing immediate or not.
-        if (this.changeSet[serviceName]) {
-          throw 'You cannot immediately setConfig on a queued service';
-        } else {
-          env.set_config.apply(env, args);
-        }
-      } else {
-        this._lazySetConfig(args);
-      }
-    },
-
-    /**
-      Calls the environment's add_relation method or creates a new add_relation
-      record in the queue.
-
-      The parameters match the parameters for the public env add relation
-      method in go.js.
-
-      @method addRelation
-    */
-    addRelation: function(endpointA, endpointB, callback, options) {
-      var env = this.get('env'),
-          args = this._getArgs(arguments);
-      if (options && options.immediate) {
-        env.add_relation.apply(env, args);
-      } else {
-        this._lazyAddRelation(args);
-      }
     }
 
-    /* End Public environment methods. */
+    /* End private environment methods. */
 
   }, {
     ATTRS: {

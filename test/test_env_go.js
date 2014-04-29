@@ -82,10 +82,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('Go Juju environment', function() {
-    var conn, endpointA, endpointB, env, juju, msg, utils, Y, cleanups;
+    var conn, endpointA, endpointB, ecs, env, juju, msg, utils, Y, cleanups;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils',
+        'environment-change-set'], function(Y) {
         juju = Y.namespace('juju');
         utils = Y.namespace('juju-tests.utils');
         done();
@@ -94,8 +95,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       conn = new utils.SocketStub();
+      ecs = new juju.EnvironmentChangeSet();
       env = juju.newEnvironment({
-        conn: conn, user: 'user', password: 'password'
+        conn: conn, user: 'user', password: 'password', ecs: ecs
       }, 'go');
       env.connect();
       cleanups = [];

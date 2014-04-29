@@ -20,11 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, charmData;
+      inspector, Y, jujuViews, charmData, ecs;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'juju-charm-store', 'juju-charm-models', 'node-event-simulate'];
+      'juju-charm-store', 'juju-charm-models', 'node-event-simulate',
+      'environment-change-set'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
@@ -42,7 +43,8 @@ describe('Inspector Settings', function() {
     container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
-    env = juju.newEnvironment({conn: conn});
+    ecs = new juju.EnvironmentChangeSet();
+    env = juju.newEnvironment({conn: conn, ecs: ecs});
     env.update_annotations = function() {};
   });
 

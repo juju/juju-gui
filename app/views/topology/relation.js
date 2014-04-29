@@ -926,16 +926,9 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.bindAllD3Events();
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
-      if (window.flags.mv) {
-        var ecs = topo.get('ecs');
-        ecs.addRelation(endpoints[0], endpoints[1],
-            Y.bind(this._addRelationCallback, this, module, relation_id)
-        );
-      } else {
-        env.add_relation(endpoints[0], endpoints[1],
-            Y.bind(this._addRelationCallback, this, module, relation_id)
-        );
-      }
+      env.add_relation(endpoints[0], endpoints[1],
+          Y.bind(this._addRelationCallback, this, module, relation_id)
+      );
       module.set('currentServiceClickAction', 'hideServiceMenu');
     },
 
