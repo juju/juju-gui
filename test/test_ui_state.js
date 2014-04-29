@@ -252,6 +252,13 @@ describe('UI State object', function() {
         assert.equal(charmbrowser.lastArguments()[0], newState.metadata);
       });
 
+      it('clears it\'s flash storage after dispatch', function() {
+        var newState = { sectionA: {}, sectionB: {} };
+        state.set('flash', {foo: 'bar'});
+        state.dispatch(newState);
+        assert.deepEqual({}, state.get('flash'));
+      });
+
       it('_dispatchSection: calls registered sectionB dispatcher', function() {
         var newState = {
           component: 'machine',
@@ -971,6 +978,31 @@ describe('UI State object', function() {
           state.generateUrl(changeState), '/',
           'The object ' + JSON.stringify(changeState) +
               ' did not generate the proper url');
+    });
+
+    it('can set flash from metadata', function() {
+      var defaultState = {
+        sectionA: {
+          metadata: {
+            search: {
+              text: 'apache2'
+            }
+          }
+        },
+        sectionB: {}
+      };
+      var changeState = {
+        sectionA: {
+          metadata: {
+            flash: {
+              foo: 'bar'
+            }
+          }
+        }
+      };
+      state.set('current', Y.clone(defaultState));
+      state.generateUrl(changeState);
+      assert.deepEqual({foo: 'bar'}, state.get('flash'));
     });
   });
 });
