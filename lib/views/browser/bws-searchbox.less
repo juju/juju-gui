@@ -118,16 +118,26 @@
   background-color: #eee;
 }
 
-#subapp-browser .browser-nav {
-    padding: 30px 0 10px 0;
+#subapp-browser {
+   .browser-nav {
+        padding: 30px 0 10px 0;
+        display: none;
 
-    a {
-      color: #757575;
-      font-size: 14px;
-      padding-left: 5px;
+        .home {
+            color: #757575;
+            font-size: 14px;
+            cursor: pointer;
 
-      &:hover {
-          text-decoration: underline;
-      }
+            .sprite {
+                padding-right: 2px;
+            }
+            .label:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    .with-home .browser-nav {
+        display: block;
     }
 }
+

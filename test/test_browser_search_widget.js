@@ -63,8 +63,6 @@ describe('browser search widget', function() {
     search = new Search();
     search.render(container);
     assert.isObject(container.one('.bws-searchbox'));
-    // The nav is hidden by default.
-    assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
   });
 
   it('shows the home links when withHome is set', function() {
@@ -77,21 +75,6 @@ describe('browser search widget', function() {
     });
     search.render(container);
     assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
-  });
-
-  it('shows the home on command', function() {
-    search.showHome();
-    assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
-  });
-
-  it('hides the home on command', function() {
-    search.destroy();
-    search = new Search({
-      withHome: true
-    });
-    search.render(container);
-    search.hideHome();
-    assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
   });
 
   it('should support setting search string', function() {
@@ -172,20 +155,12 @@ describe('browser search widget', function() {
     });
   });
 
-  it('supports an onHome event', function(done) {
-    search.on(search.EVT_SEARCH_GOHOME, function() {
-      done();
-    });
-
-    container.one('i.home').simulate('click');
-  });
-
   it('clicking on the home link also works', function(done) {
     search.on(search.EVT_SEARCH_GOHOME, function() {
       done();
     });
 
-    container.one('a.home').simulate('click');
+    container.one('.home').simulate('click');
   });
 
 });

@@ -21,11 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   var addBrowserContainer = function(Y, container) {
     Y.Node.create([
-      '<div id="content">',
-      '<div id="browser-nav">',
-      '<div class="sidebar"></div>',
+      '<div id="navbar">',
+      '<div id="browser-nav"></div>',
       '</div>',
-      '<div id="subapp-browser"></div>',
+      '<div id="content">',
+      '<div id="subapp-browser">',
+      '</div>',
       '</div>'
     ].join('')).appendTo(container);
   };
@@ -63,7 +64,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         delete window.juju_config;
       });
 
-      it('must correctly render the initial browser ui', function(done) {
+      it('must correctly render the initial browser ui', function() {
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
           container: container,
@@ -95,20 +96,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(Y.Lang.isObject(container.one('input')));
 
         // The home buttons are not visible by default.
-        assert.isFalse(view.get('withHome'));
-        assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
+        assert.equal(view.get('withHome'), false,
+                     'withHome is true on the view');
+        assert.equal(container.one('#bws-sidebar').hasClass('with-home'),
+                     false, 'with-home class is set');
 
         // Yet changing the attribute triggers it to go.
-        view.search.showHome = function() {
-          // The only way to exit the test is that we hit this callback bound to
-          // the change event we trigger below.
-          done();
-        };
         view.set('withHome', true);
+        assert.equal(view.get('withHome'), true,
+                     'withHome is false on the view');
+        assert.equal(container.one('#bws-sidebar').hasClass('with-home'),
+                     true, 'with-home class is not set');
       });
 
       it('shows the home icon when instructed', function() {
-        var container = Y.one('#subapp-browser');
         view = new Sidebar({
           store: new Y.juju.charmworld.APIv3({
             apiHost: 'http://localhost'
@@ -131,11 +132,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         view.get('store').set(
             'datasource',
             new Y.DataSource.Local({source: emptyData}));
-        view.render(container);
+        view.render(container.one('#subapp-browser'));
 
         // The home buttons are not visible by default.
         assert.isTrue(view.get('withHome'));
-        assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+        assert.isFalse(container.one('#bws-sidebar').hasClass('with-home'));
 
       });
 
@@ -153,7 +154,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         view.render(container);
         view.search._onHome({
-          halt: function() {}
+          preventDefault: function() {}
         });
       });
 
