@@ -785,9 +785,30 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Deploy a charm.
+      Calls the environments deploy method or creates a new service record
+      in the queue.
+
+      The parameters match the parameters for the public env deploy method in
+      go.js.
 
       @method deploy
+    */
+    deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
+                     constraints, toMachine, callback, options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        // Call the deploy method right away bypassing the queue.
+        this._deploy.apply(this, args);
+      } else {
+        ecs._lazyDeploy(arguments);
+      }
+    },
+
+    /**
+      Deploy a charm.
+
+      @method _deploy
       @param {String} charmUrl The URL of the charm.
       @param {String} serviceName The name of the service to be deployed.
       @param {Object} config The charm configuration options.
@@ -808,8 +829,8 @@ YUI.add('juju-env-go', function(Y) {
         operation is performed.
       @return {undefined} Sends a message to the server only.
     */
-    deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
-                     constraints, toMachine, callback) {
+    _deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
+        constraints, toMachine, callback) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(
@@ -1525,9 +1546,35 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environments set_config method or creates a new set_config
+      record in the queue.
+
+      The parameters match the parameters for the public env deploy method in
+      go.js.
+
+      @method setConfig
+    */
+    set_config: function(serviceName, config, data, serviceConfig, callback,
+        options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        // Need to check that the serviceName is a real service name and not
+        // a queued service id before allowing immediate or not.
+        if (ecs.changeSet[serviceName]) {
+          throw 'You cannot immediately setConfig on a queued service';
+        } else {
+          this._set_config.apply(this, args);
+        }
+      } else {
+        ecs._lazySetConfig(args);
+      }
+    },
+
+    /**
        Change the configuration of the given service.
 
-       @method set_config
+       @method _set_config
        @param {String} serviceName The service name.
        @param {Object} config The charm configuration options.
        @param {String} data The YAML representation of the charm
@@ -1541,7 +1588,7 @@ YUI.add('juju-env-go', function(Y) {
           service_name - the name of the service.
        @return {undefined} Sends a message to the server only.
      */
-    set_config: function(serviceName, config, data, serviceConfig, callback) {
+    _set_config: function(serviceName, config, data, serviceConfig, callback) {
       if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
           (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
         throw 'Exactly one of config and data must be provided';
@@ -1703,9 +1750,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environment's add_relation method or creates a new add_relation
+      record in the queue.
+
+      The parameters match the parameters for the public env add relation
+      method in go.js.
+
+      @method addRelation
+    */
+    add_relation: function(endpointA, endpointB, callback, options) {
+      var ecs = this.get('ecs'),
+          args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        this._add_relation.apply(this, args);
+      } else {
+        ecs._lazyAddRelation(args);
+      }
+    },
+
+    /**
        Add a relation between two services.
 
-       @method add_relation
+       @method _add_relation
        @param {Object} endpointA An array of [service, interface]
          representing one of the endpoints to connect.
        @param {Object} endpointB An array of [service, interface]
@@ -1717,7 +1783,7 @@ YUI.add('juju-env-go', function(Y) {
         containing the names of the endpoints.
        @return {undefined} Nothing.
      */
-    add_relation: function(endpointA, endpointB, callback) {
+    _add_relation: function(endpointA, endpointB, callback) {
       var endpoint_a = endpointToName(endpointA);
       var endpoint_b = endpointToName(endpointB);
       var intermediateCallback;

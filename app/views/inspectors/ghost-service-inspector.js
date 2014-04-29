@@ -124,18 +124,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
 
-      var deployMethod;
-      if (window.flags.mv) {
-        var ecs = this.get('ecs');
-        // When this flag is removed and the method is being called
-        // directly it doesn't need to be bound.
-        deployMethod = ecs.deploy.bind(ecs);
-      } else {
-        var env = this.get('env');
-        deployMethod = env.deploy.bind(env);
-      }
-
-      deployMethod(
+      this.get('env').deploy(
           model.get('charm'),
           serviceName,
           config,

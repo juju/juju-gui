@@ -20,13 +20,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Ghost Inspector', function() {
 
   var charmData, cleanIconHelper, conn, container, content, db, env, inspector,
-      juju, jujuViews, models, service, subordinateCharmData, utils, view, Y;
+      juju, jujuViews, models, service, subordinateCharmData, utils, view, ecs,
+      Y;
 
   before(function(done) {
     var requires = [
       'juju-gui', 'juju-views', 'juju-tests-utils', 'juju-charm-store',
       'juju-charm-models', 'ghost-deployer-extension', 'event-valuechange',
-      'ghost-service-inspector', 'juju-templates', 'node-event-simulate'];
+      'ghost-service-inspector', 'juju-templates', 'node-event-simulate',
+      'environment-change-set'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
@@ -50,7 +52,8 @@ describe('Ghost Inspector', function() {
     Y.one('body').append(content);
     conn = new utils.SocketStub();
     db = new models.Database();
-    env = juju.newEnvironment({conn: conn});
+    ecs = new juju.EnvironmentChangeSet();
+    env = juju.newEnvironment({conn: conn, ecs: ecs});
     env.connect();
   });
 
@@ -282,8 +285,6 @@ describe('Ghost Inspector', function() {
   });
 
   it('deploys with constraints in go env', function() {
-    env.destroy();
-    env = juju.newEnvironment({conn: conn}, 'go');
     inspector = setUpInspector();
     env.connect();
     var vmContainer = inspector.get('container');
@@ -294,38 +295,6 @@ describe('Ghost Inspector', function() {
 
     var message = env.ws.last_message();
     assert.deepEqual(message.Params.Constraints, { 'cpu-power': 2 });
-  });
-
-  describe('Environment change set interactions', function() {
-    it('calls the ecs deploy method', function() {
-      window.flags.mv = true;
-      inspector = setUpInspector();
-      var deployStub = utils.makeStubFunction();
-      inspector.set('ecs', { deploy: deployStub });
-      env.connect();
-      var vmContainer = inspector.get('container');
-      vmContainer.one('.viewlet-manager-footer button.confirm')
-                 .simulate('click');
-      assert.equal(deployStub.calledOnce(), true);
-      var deployArgs = deployStub.lastArguments();
-      // these need to be done individually because mocha doesn't like
-      // deepEquals with undefined values.
-      assert.equal(deployArgs[0], 'cs:precise/mediawiki-8');
-      assert.equal(deployArgs[1], 'mediawiki');
-      assert.deepEqual(deployArgs[2], {});
-      assert.isUndefined(deployArgs[3]);
-      assert.equal(deployArgs[4], 1);
-      assert.deepEqual(deployArgs[5], {
-        'cpu-power': '',
-        'cpu-cores': '',
-        'mem': '',
-        'arch': '',
-        'root-disk': '',
-        'tags': ''
-      });
-      assert.strictEqual(deployArgs[6], null);
-      assert.isFunction(deployArgs[7]);
-    });
   });
 
   it('deploys with zero units if the charm is a subordinate', function() {

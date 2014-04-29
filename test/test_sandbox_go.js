@@ -23,10 +23,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('sandbox.GoJujuAPI', function() {
     var requires = [
       'jsyaml', 'juju-env-sandbox', 'juju-tests-utils',
-      'juju-tests-factory', 'juju-env-go', 'juju-models', 'promise'
+      'environment-change-set', 'juju-tests-factory', 'juju-env-go',
+      'juju-models', 'promise'
     ];
-    var client, env, environmentsModule, factory, juju,
-        sandboxModule, state, utils, Y;
+    var client, env, ecs, environmentsModule, factory, juju,
+        sandboxModule, state, utils, Y, ns;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -34,6 +35,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
         factory = Y.namespace('juju-tests.factory');
+        ns = Y.namespace('juju');
         done();
       });
     });
@@ -42,7 +44,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state = factory.makeFakeBackend();
       juju = new sandboxModule.GoJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
-      env = new environmentsModule.GoEnvironment({conn: client});
+      ecs = new ns.EnvironmentChangeSet();
+      env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
     });
 
     afterEach(function() {

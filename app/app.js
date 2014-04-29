@@ -395,9 +395,14 @@ YUI.add('juju-gui', function(Y) {
           socketUrl += '/ws';
           this.set('socket_url', socketUrl);
         }
+
+        this.ecs = new juju.EnvironmentChangeSet({
+          db: this.db
+        });
         // Instantiate the environment specified in the configuration, choosing
         // between the available implementations, currently Go and Python.
         var envOptions = {
+          ecs: this.ecs,
           socket_url: socketUrl,
           user: this.get('user'),
           password: this.get('password'),
@@ -642,11 +647,6 @@ YUI.add('juju-gui', function(Y) {
       this.db.relations.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
-
-      this.ecs = new juju.EnvironmentChangeSet({
-        env: this.env,
-        db: this.db
-      });
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');

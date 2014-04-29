@@ -22,29 +22,41 @@ describe('Environment Change Set', function() {
   var Y, ECS, ecs, envObj, dbObj, testUtils;
 
   before(function(done) {
-    var modules = ['environment-change-set', 'juju-tests-utils'];
+    var modules = [
+      'environment-change-set',
+      'juju-env',
+      'juju-tests-utils'
+    ];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       testUtils = Y.namespace('juju-tests').utils;
       done();
     });
+    window.flags = { mv: true };
   });
 
   beforeEach(function() {
-    envObj = {
-      deploy: testUtils.makeStubFunction(),
-      set_config: testUtils.makeStubFunction(),
-      add_relation: testUtils.makeStubFunction()
-    };
-    dbObj = {};
     ecs = new ECS({
-      env: envObj,
       db: dbObj
     });
+    envObj = Y.namespace('juju').newEnvironment({
+      connection: new testUtils.SocketStub(),
+      user: 'user',
+      password: 'password',
+      ecs: ecs
+    });
+    testUtils.makeStubMethod(envObj, '_deploy');
+    testUtils.makeStubMethod(envObj, '_set_config');
+    testUtils.makeStubMethod(envObj, '_add_relation');
+    dbObj = {};
   });
 
   afterEach(function() {
     ecs.destroy();
+  });
+
+  after(function() {
+    window.flags = {};
   });
 
   describe('ECS methods', function() {
@@ -177,12 +189,12 @@ describe('Environment Change Set', function() {
           parents: undefined,
           executed: false,
           command: {
-            method: 'deploy',
+            method: '_deploy',
             args: [1, 2, 'foo', callback]
           }
         };
-        ecs._execute(record);
-        assert.equal(envObj.deploy.calledOnce(), true);
+        ecs._execute(envObj, record);
+        assert.equal(envObj._deploy.calledOnce(), true);
       });
     });
 
@@ -255,14 +267,14 @@ describe('Environment Change Set', function() {
           'service-568': {
             executed: false,
             command: {
-              method: 'deploy'
+              method: '_deploy'
             }
           }
         };
         ecs.changeSet = changeSet;
-        ecs.commit();
+        ecs.commit(envObj);
         assert.equal(execute.callCount(), 1);
-        assert.deepEqual(execute.lastArguments()[0], changeSet['service-568']);
+        assert.deepEqual(execute.lastArguments()[1], changeSet['service-568']);
         assert.equal(fire.callCount(), 1);
         var fireArgs = fire.lastArguments();
         assert.equal(fireArgs[0], 'commit');
@@ -280,7 +292,7 @@ describe('Environment Change Set', function() {
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
-        assert.equal(record.command.method, 'deploy');
+        assert.equal(record.command.method, '_deploy');
         // Remove the functions, which will not be equal.
         var cb = record.command.args.pop();
         args.pop();
@@ -302,7 +314,7 @@ describe('Environment Change Set', function() {
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
-        assert.equal(record.command.method, 'set_config');
+        assert.equal(record.command.method, '_set_config');
         assert.deepEqual(record.command.args, args);
         // Make sure we don't also add to a old record
         assert.equal(addToRecord.callCount(), 0);
@@ -320,7 +332,7 @@ describe('Environment Change Set', function() {
         assert.equal(setRecord.executed, false);
         assert.isObject(setRecord.command);
         var command = setRecord.command;
-        assert.equal(command.method, 'set_config');
+        assert.equal(command.method, '_set_config');
         assert.deepEqual(command.args, setArgs);
         // It should have called to create new records
         assert.equal(Y.Object.size(ecs.changeSet), 2);
@@ -333,14 +345,14 @@ describe('Environment Change Set', function() {
           'service-1': {
             command: {
               args: ['charm', 'mysql'],
-              method: 'deploy',
+              method: '_deploy',
               options: { modelId: 'serviceId1$' }
             }
           },
           'service-2': {
             command: {
               args: ['charm', 'wordpress'],
-              method: 'deploy',
+              method: '_deploy',
               options: { modelId: 'serviceId2$' }
             }
           }
@@ -355,7 +367,7 @@ describe('Environment Change Set', function() {
               ['mysql', ['db', 'client']],
               ['wordpress', ['db', 'server']]
             ],
-            method: 'add_relation'
+            method: '_add_relation'
           },
           executed: false,
           id: key,
@@ -375,9 +387,9 @@ describe('Environment Change Set', function() {
         this._cleanups.push(lazyDeploy.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
-        ecs.deploy.apply(ecs, args);
-        assert.equal(envObj.deploy.calledOnce(), true);
-        var deployArgs = envObj.deploy.lastArguments();
+        envObj.deploy.apply(envObj, args);
+        assert.equal(envObj._deploy.calledOnce(), true);
+        var deployArgs = envObj._deploy.lastArguments();
         // Remove the final options element, which should not be an argument to
         // env.deploy.
         assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
@@ -390,7 +402,7 @@ describe('Environment Change Set', function() {
         this._cleanups.push(lazyDeploy.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, 3, 4, 5, 6, 7, callback];
-        ecs.deploy.apply(ecs, args);
+        envObj.deploy.apply(envObj, args);
         var lazyDeployArgs = lazyDeploy.lastArguments()[0];
         // Assert within a loop, as Arguments do not deeply equal arrays.
         args.forEach(function(arg, i) {
@@ -398,7 +410,7 @@ describe('Environment Change Set', function() {
         });
         assert.equal(lazyDeploy.calledOnce(), true);
         // make sure we don't call the env deploy method.
-        assert.equal(envObj.deploy.callCount(), 0);
+        assert.equal(envObj._deploy.callCount(), 0);
       });
     });
 
@@ -408,9 +420,9 @@ describe('Environment Change Set', function() {
         this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, 3, 4, callback, { immediate: true}];
-        ecs.setConfig.apply(ecs, args);
-        assert.equal(envObj.set_config.calledOnce(), true);
-        var setConfigArgs = envObj.set_config.lastArguments();
+        envObj.set_config.apply(envObj, args);
+        assert.equal(envObj._set_config.calledOnce(), true);
+        var setConfigArgs = envObj._set_config.lastArguments();
         // remove the options param off of the end and compare to that. as it
         // should be removed before env.deploy is called.
         assert.deepEqual(
@@ -427,10 +439,10 @@ describe('Environment Change Set', function() {
         assert.throws(
             // this is using bind instead of apply because of how the
             // assert.throws assertion operates.
-            ecs.setConfig.bind(
-                ecs, 'foo', 2, 3, 4, callback, { immediate: true}),
+            envObj.set_config.bind(
+                envObj, 'foo', 2, 3, 4, callback, { immediate: true}),
             'You cannot immediately setConfig on a queued service');
-        assert.equal(envObj.set_config.callCount(), 0);
+        assert.equal(envObj._set_config.callCount(), 0);
         // make sure that we don't add it to the changeSet.
         assert.equal(lazySetConfig.callCount(), 0);
       });
@@ -440,11 +452,11 @@ describe('Environment Change Set', function() {
         this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, 3, 4, callback];
-        ecs.setConfig.apply(ecs, args);
+        envObj.set_config.apply(envObj, args);
         assert.deepEqual(lazySetConfig.lastArguments()[0], args);
         assert.equal(lazySetConfig.calledOnce(), true);
         // Make sure we don't call the env set_config method
-        assert.equal(envObj.set_config.callCount(), 0);
+        assert.equal(envObj._set_config.callCount(), 0);
       });
     });
 
@@ -454,22 +466,22 @@ describe('Environment Change Set', function() {
         this._cleanups.push(lazyAddRelation.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, callback, {immediate: true}];
-        ecs.addRelation.apply(ecs, args);
+        envObj.add_relation.apply(envObj, args);
         assert.equal(lazyAddRelation.calledOnce(), false);
-        assert.equal(envObj.add_relation.callCount(), 1);
+        assert.equal(envObj._add_relation.callCount(), 1);
         // Get rid of the options, which will not be passed to add_relation.
         args.pop();
-        assert.deepEqual(envObj.add_relation.lastArguments(), args);
+        assert.deepEqual(envObj._add_relation.lastArguments(), args);
       });
       it('can add a `add_relation` command to the changeSet', function() {
         var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
         this._cleanups.push(lazyAddRelation.reset);
         var callback = testUtils.makeStubFunction();
         var args = [1, 2, callback];
-        ecs.addRelation.apply(ecs, args);
+        envObj.add_relation.apply(envObj, args);
         assert.deepEqual(lazyAddRelation.lastArguments()[0], args);
         assert.equal(lazyAddRelation.calledOnce(), true);
-        assert.equal(envObj.add_relation.callCount(), 0);
+        assert.equal(envObj._add_relation.callCount(), 0);
       });
     });
   });

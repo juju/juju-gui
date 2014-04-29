@@ -106,6 +106,13 @@ YUI.add('juju-env-base', function(Y) {
     */
     'conn': {},
     /**
+      Environment change set object.
+
+      @attribute ecs
+      @type {object}
+    */
+    'ecs': {},
+    /**
       The username used to connect.
 
       @attribute user

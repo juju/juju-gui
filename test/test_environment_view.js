@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, service, db, conn,
-        juju, charm, env, testUtils, fakeStore, charmConfig;
+        juju, charm, ecs, env, testUtils, fakeStore, charmConfig;
 
     var environment_delta = {
       'result': [
@@ -127,14 +127,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'juju-views', 'juju-tests-utils', 'juju-env',
         'node-event-simulate', 'juju-gui', 'slider',
         'landscape', 'dump', 'juju-view-utils', 'juju-charm-store',
-        'juju-charm-models'
+        'juju-charm-models', 'environment-change-set'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
-        env = juju.newEnvironment({conn: conn});
+        ecs = new juju.EnvironmentChangeSet();
+        env = juju.newEnvironment({conn: conn, ecs: ecs});
         env.connect();
         conn.open();
         fakeStore = new Y.juju.charmworld.APIv3({});
