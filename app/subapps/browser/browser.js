@@ -578,10 +578,11 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (!window.flags && !window.flags.il) {
+      if (!window.flags || !window.flags.il) {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
+      } else {
         this._sidebar.set('withHome', false);
       }
 
