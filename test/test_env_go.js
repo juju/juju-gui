@@ -85,8 +85,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var conn, endpointA, endpointB, ecs, env, juju, msg, utils, Y, cleanups;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils',
-        'environment-change-set'], function(Y) {
+      Y = YUI(GlobalConfig).use([
+        'environment-change-set',
+        'juju-env',
+        'juju-tests-utils'
+      ], function(Y) {
         juju = Y.namespace('juju');
         utils = Y.namespace('juju-tests.utils');
         done();

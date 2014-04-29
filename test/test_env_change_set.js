@@ -22,8 +22,11 @@ describe('Environment Change Set', function() {
   var Y, ECS, ecs, envObj, dbObj, testUtils;
 
   before(function(done) {
-    var modules = ['environment-change-set', 'juju-tests-utils',
-      'juju-env'];
+    var modules = [
+      'environment-change-set',
+      'juju-env',
+      'juju-tests-utils'
+    ];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       testUtils = Y.namespace('juju-tests').utils;
