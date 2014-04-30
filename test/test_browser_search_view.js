@@ -141,7 +141,7 @@ describe('search view', function() {
 
     view.render();
     view.search._onHome({
-      halt: function() {}
+      preventDefault: function() {}
     });
   });
 
