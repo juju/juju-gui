@@ -100,7 +100,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // Set the active charm if available.
           var active = this.get('activeID');
           if (active) {
-            this._updateActive(
+            this.updateActive(
                 this.get('container').one(
                     '.token[data-charmid="' + active + '"]')
             );

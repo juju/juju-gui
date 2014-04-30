@@ -420,7 +420,12 @@ YUI.add('subapp-browser', function(Y) {
       // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
         this._sidebar.showSearch();
-        this.renderEditorial();
+        if (!this._editorial) {
+          this.renderEditorial();
+        } else if (!metadata || !metadata.id) {
+          // Deselect the active charm.
+          this._editorial.updateActive();
+        }
       }
       if (metadata && metadata.search) {
         this._sidebar.showSearch();
@@ -479,7 +484,10 @@ YUI.add('subapp-browser', function(Y) {
       @method emptySectionA
     */
     emptySectionA: function() {
-      if (this._editorial) { this._editorial.destroy(); }
+      if (this._editorial) {
+        this._editorial.destroy();
+        this._editorial = null;
+      }
       if (this._search) { this._search.destroy(); }
       if (this._sidebar.search) { this._sidebar.hideSearch(); }
       if (this._details) {

@@ -242,10 +242,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           function assertions(
               editorialCount, searchCount, entityCount, showSearchCount) {
-            assert.equal(editorialStub.callCount(), editorialCount);
-            assert.equal(searchStub.callCount(), searchCount);
-            assert.equal(entityStub.callCount(), entityCount);
-            assert.equal(showSearchStub.callCount(), showSearchCount);
+            assert.equal(editorialStub.callCount(), editorialCount,
+                'editorialStub');
+            assert.equal(searchStub.callCount(), searchCount, 'searchStub');
+            assert.equal(entityStub.callCount(), entityCount, 'entityStub');
+            assert.equal(showSearchStub.callCount(), showSearchCount,
+                'showSearchStub');
           }
 
           it('renders the editorial when no metadata is provided', function() {
@@ -283,6 +285,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               id: 'foo'
             });
             assertions(0, 1, 1, 2);
+          });
+
+          it('does not rerender the editorial if it exists', function() {
+            stubRenderers(this);
+            // Start with an exisiting editorial so that the test skips
+            // the creation.
+            app._editorial = {};
+            var activeStub = utils.makeStubMethod(app._editorial,
+                'updateActive');
+            this._cleanups.push(activeStub.reset);
+            app._charmbrowser();
+            assertions(0, 0, 0, 1);
+          });
+
+          it('deselects the last active charm', function() {
+            stubRenderers(this);
+            // Start with an exisiting editorial so that the test skips
+            // the creation.
+            app._editorial = {};
+            var activeStub = utils.makeStubMethod(app._editorial,
+                'updateActive');
+            this._cleanups.push(activeStub.reset);
+            app._charmbrowser();
+            assert.equal(activeStub.callCount(), 1);
           });
         });
 
@@ -351,10 +377,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('emptySectionA', function() {
             stubMethods(app);
-            var bwsdata = utils.makeContainer(this);
+            var bwsdata = utils.makeContainer(this),
+                destroyMethod = app._editorial.destroy,
+                destroyCalled = false;
             bwsdata.addClass('bws-view-data');
+            // The original destroy method is set to null after the
+            // destroy is called so we need to stub out the method here
+            // so that we can track the destroy.
+            app._editorial.destroy = function() {
+              destroyCalled = true;
+              app._editorial.destroy = destroyMethod;
+            };
             app.emptySectionA();
-            assert.equal(app._editorial.destroy.callCount(), 1);
+            assert.equal(destroyCalled, true);
             assert.equal(app._search.destroy.callCount(), 1);
             assert.equal(app._sidebar.hideSearch.callCount(), 1);
             assert.equal(app._details.destroy.callCount(), 1);
