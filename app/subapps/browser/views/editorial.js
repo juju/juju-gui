@@ -212,6 +212,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
               container.destroy();
             });
           }
+          if (this.search) {
+            this.search.destroy();
+          }
         }
       }, {
         ATTRS: {}

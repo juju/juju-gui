@@ -140,6 +140,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
               container.destroy();
             });
           }
+          if (this.search) {
+            this.search.destroy();
+          }
         },
 
         /**
