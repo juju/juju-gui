@@ -4,25 +4,33 @@
     .token {
         position: relative;
         display: block;
-        padding: 20px 20px 15px 20px;
+        padding: 15px 20px;
         cursor: pointer;
         color: #dd4814;
 
         &.active {
             background-color: #eee;
+
+            .title {
+                margin-bottom: 10px;
+            }
+            .details,
+            .delete {
+                display: block;
+            }
         }
         span {
             display: block;
         }
-        .title {
-            margin-bottom: 10px;
-        }
         .delete {
             position: absolute;
-            display: block;
             right: 20px;
             bottom: 15px;
             cursor: pointer;
+        }
+        .details,
+        .delete {
+            display: none;
         }
     }
 }

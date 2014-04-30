@@ -84,4 +84,9 @@ describe('machine token view', function() {
     });
     container.one('.token').simulate('click');
   });
+
+  it('does not update the hardware object when formatting', function() {
+    assert.notEqual(view.get('machine').hardware,
+        view.get('machine').formattedHardware);
+  });
 });
