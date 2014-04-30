@@ -93,11 +93,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
           if (ev.newVal) {
             // In the sidebar, the left panel needs the height adjusted to
             // make room for the home links to show up.
-            container.one('#bws-sidebar').addClass('with-home');
+            Y.one('#bws-sidebar').addClass('with-home');
           } else {
             // We need to adjust the height of the sidebar now to close
             // up the space by the home buttons.
-            container.one('#bws-sidebar').removeClass('with-home');
+            Y.one('#bws-sidebar').removeClass('with-home');
           }
         }, this);
       }
@@ -293,7 +293,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       store: {},
 
       withHome: {
-        value: false
+        value: null
       }
     }
   });

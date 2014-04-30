@@ -587,8 +587,6 @@ YUI.add('subapp-browser', function(Y) {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
-      } else {
-        this._sidebar.set('withHome', false);
       }
 
       this._editorial = new views.EditorialView(
@@ -599,6 +597,7 @@ YUI.add('subapp-browser', function(Y) {
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
       this._editorial.render(this._cache.interesting);
+      this._editorial.set('withHome', false);
       this._editorial.addTarget(this);
     },
 
@@ -655,7 +654,6 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       this._search = new views.BrowserSearchView(this._getViewCfg(extraCfg));
-      this._search.set('withHome', true);
 
       // Prepare to handle cache
       this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
@@ -667,6 +665,7 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         this._search.render();
       }
+      this._search.set('withHome', true);
       this._search.addTarget(this);
     },
 
@@ -710,16 +709,6 @@ YUI.add('subapp-browser', function(Y) {
             }));
         this._sidebar.render();
         this._sidebar.addTarget(this);
-      }
-
-      // Even if we've got an existing View, check if Home should be displayed
-      // or not based on the current view state.
-      if (this._sidebar) {
-        if (this.state.getCurrent('search')) {
-          this._sidebar.set('withHome', true);
-        } else {
-          this._sidebar.set('withHome', false);
-        }
       }
 
       if (this.machineViewPanel) {
