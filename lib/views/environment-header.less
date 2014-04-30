@@ -3,7 +3,7 @@
     position: absolute;
     z-index: 600;
     top: @navbar-height;
-    left: 0;
+    left: @bws-sidebar-width;
     right: 0;
     height: @environment-header-height;
     background-color: #eee;
@@ -12,7 +12,7 @@
     ul {
         .display-flex;
         height: @environment-header-height - 1;
-        margin: 0 0 0 @left-panel-width + 1px;
+        margin: 0;
         list-style: none;
 
         li {
