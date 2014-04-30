@@ -69,7 +69,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       describe('state dispatchers', function() {
-        var editorialStub, searchStub, entityStub, showSearchStub;
+        var editorialStub, searchStub, entityStub;
         beforeEach(function() {
           app = new browser.Browser();
           app._sidebar = {
