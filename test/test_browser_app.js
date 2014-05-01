@@ -229,21 +229,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             stubMethods(app);
             var bwsdata = utils.makeContainer(this),
                 destroyMethod = app._editorial.destroy,
-                destroyCalled = false;
+                editorialDestroyCalled = false,
+                searchDestroyCalled = false;
             bwsdata.addClass('bws-view-data');
             // The original destroy method is set to null after the
             // destroy is called so we need to stub out the method here
             // so that we can track the destroy.
             app._editorial.destroy = function() {
-              destroyCalled = true;
+              editorialDestroyCalled = true;
               app._editorial.destroy = destroyMethod;
             };
+            app._search.destroy = function() {
+              searchDestroyCalled = true;
+              app._search.destroy = destroyMethod;
+            };
             app.emptySectionA();
-            assert.equal(destroyCalled, true);
-            assert.equal(app._search.destroy.callCount(), 1);
-            assert.equal(app._sidebar.hideSearch.callCount(), 1);
-            assert.equal(app._details.destroy.callCount(), 1);
-            assert.equal(bwsdata.getStyle('display'), 'none');
+            assert.equal(app._editorial, null, 'editorial is not null');
+            assert.equal(editorialDestroyCalled, true, 'editorial not destroyed');
+            assert.equal(app._search, null, 'search is not null');
+            assert.equal(searchDestroyCalled, true, 'search not destroyed');
+            assert.equal(app._sidebar.hideSearch.callCount(), 1,
+                         'search not hidden in sidebar');
+            assert.equal(app._details.destroy.callCount(), 1,
+                         'details not destroyed');
+            assert.equal(bwsdata.getStyle('display'), 'none',
+                         'search data still displayed');
           });
 
           it('emptySectionB', function() {
