@@ -38,16 +38,95 @@ YUI.add('service-scale-up-view', function(Y) {
 
     template: Templates['service-scale-up-view'],
 
-    initializer: function() {},
+    itemTemplate: Templates['service-scale-up-item'],
+
+    events: {
+      '.action-block button': {
+        click: 'onActionButtonClick'
+      },
+      '.actions button.cancel': {
+        click: 'onCancelButtonClick'
+      }
+    },
+
+    initializer: function() {
+      this._bindModelEvents();
+    },
+
+    _bindModelEvents: function() {
+      this.get('db').services.on(['add', 'remove'], this._updateServiceList);
+    },
+
+    _updateServiceList: function() {
+      var db = this.get('db');
+      var services = [];
+      db.services.each(function(service) {
+        service = service.getAttrs();
+        services.push({
+          id: service.id,
+          name: service.displayName,
+          icon: service.icon
+        });
+        console.log('_', service.displayName);
+      });
+      this._services = services;
+      this._updateUI();
+    },
+
+    _updateUI: function() {
+      var services = this._services;
+      var serviceList = this.get('container').one('.service-list ul');
+      var serviceElements = serviceList.all('li');
+      var exists, newElement;
+
+      services.forEach(function(service) {
+        exists = serviceElements.some(function(element) {
+          if (service.id === element.getData('service')) {
+            element.setData('exists', true);
+            return true;
+          }
+        });
+        if (!exists) {
+          newElement = serviceList.append(this.itemTemplate({
+            id: service.id,
+            name: service.name,
+            icon: service.icon
+          }));
+          console.log('__', service.displayName);
+          newElement.setData('exists', true);
+        }
+      }, this);
+
+      serviceElements.each(function(element) {
+        if (!element.getData('exists')) {
+          element.remove();
+        } else {
+          element.setData('exists', undefined);
+        }
+      });
+    },
+
+    onCancelButtonClick: function(e) {
+      e.preventDefault();
+      this._toggleServiceList(false);
+    },
+
+    onActionButtonClick: function(e) {
+      e.preventDefault();
+      var closed = e.currentTarget.hasClass('closed');
+      this._toggleServiceList(!closed);
+    },
+
+    _toggleServiceList: function(closed) {
+      this.get('container').toggleClass('closed', closed);
+    },
 
     render: function() {
-      var content = this.template({
-        closed: false,
-        services: []
-      });
+      var content = this.template();
       var container = this.get('container');
       container.addClass('service-scale-up-view');
       container.setHTML(content);
+      this._updateServiceList();
       return this;
     },
 
@@ -55,6 +134,10 @@ YUI.add('service-scale-up-view', function(Y) {
       var container = this.get('container');
       container.setHTML('');
       container.removeClass('service-scale-up-view');
+    }
+  }, {
+    ATTRS: {
+      db: {}
     }
   });
 

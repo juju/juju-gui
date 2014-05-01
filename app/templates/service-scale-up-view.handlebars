@@ -1,45 +1,14 @@
 <div class="action-block">
   <span>Choose a service and add units</span>
-  {{#if closed}}
     <button class="closed button inverse orange">
       <i class="sprite scale-up-open"></i>
     </button>
-  {{else}}
     <button class="opened button inverse orange">
       <i class="sprite scale-up-close"></i>
     </button>
-  {{/if}}
 </div>
-<form class="service-list {{#if closed}} closed{{/if}}">
-  <ul>
-    {{#each services}}
-      <li>
-        <img class="icon"/>
-        <span class="service-name"></span>
-        <input type="text" placeholder="units" class="service-units"/>
-      </li>
-    {{/each}}
-      <li>
-        <img class="icon" src="https://manage.jujucharms.com/api/3/charm/precise/mediawiki-10/file/icon.svg"/>
-        <span class="service-name">Mediawiki</span>
-        <input type="text" placeholder="units" class="service-units"/>
-      </li>
-      <li>
-        <img class="icon" src="https://manage.jujucharms.com/api/3/charm/precise/mediawiki-10/file/icon.svg"/>
-        <span class="service-name">Mediawiki</span>
-        <input type="text" placeholder="units" class="service-units"/>
-      </li>
-      <li>
-        <img class="icon" src="https://manage.jujucharms.com/api/3/charm/precise/mediawiki-10/file/icon.svg"/>
-        <span class="service-name">Mediawiki</span>
-        <input type="text" placeholder="units" class="service-units"/>
-      </li>
-      <li>
-        <img class="icon" src="https://manage.jujucharms.com/api/3/charm/precise/mediawiki-10/file/icon.svg"/>
-        <span class="service-name">Mediawiki</span>
-        <input type="text" placeholder="units" class="service-units"/>
-      </li>
-  </ul>
+<form class="service-list">
+  <ul></ul>
   <div class="actions">
     <button class="cancel button inverse">Cancel</button>
     <button class="add-units button inverse orange">Add Units</button>
