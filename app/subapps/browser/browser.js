@@ -419,6 +419,7 @@ YUI.add('subapp-browser', function(Y) {
       // template.
       if (detailsNode) { detailsNode.hide(); }
       if (!metadata || !metadata.search) {
+        this.get('container').removeClass('no-search');
         this._renderView({
           view: 'editorial',
           otherView: 'search',
@@ -427,6 +428,7 @@ YUI.add('subapp-browser', function(Y) {
         });
       }
       if (metadata && metadata.search) {
+        this.get('container').removeClass('no-search');
         this._renderView({
           view: 'search',
           otherView: 'editorial',
@@ -438,6 +440,7 @@ YUI.add('subapp-browser', function(Y) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
+        this.get('container').removeClass('no-search');
         this.renderEntityDetails();
       }
     },
@@ -517,11 +520,11 @@ YUI.add('subapp-browser', function(Y) {
         this._editorial.destroy();
         this._editorial = null;
       }
+      this.get('container').addClass('no-search', true);
       if (this._search) {
         this._search.destroy();
         this._search = null;
       }
-      if (this._sidebar.search) { this._sidebar.hideSearch(); }
       if (this._details) {
         this._details.destroy({ remove: true });
         var detailsNode = Y.one('.bws-view-data');

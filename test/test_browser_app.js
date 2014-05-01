@@ -218,9 +218,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._editorial = { destroy: utils.makeStubFunction() };
             app._search = { destroy: utils.makeStubFunction() };
             app._sidebar = {
-              search: {},
               destroy: function() {},
-              hideSearch: utils.makeStubFunction() };
+            };
             app._details = { destroy: utils.makeStubFunction() };
             app.machineViewPanel = { destroy: utils.makeStubFunction() };
           }
@@ -249,12 +248,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                          'editorial not destroyed');
             assert.equal(app._search, null, 'search is not null');
             assert.equal(searchDestroyCalled, true, 'search not destroyed');
-            assert.equal(app._sidebar.hideSearch.callCount(), 1,
-                         'search not hidden in sidebar');
             assert.equal(app._details.destroy.callCount(), 1,
                          'details not destroyed');
             assert.equal(bwsdata.getStyle('display'), 'none',
                          'search data still displayed');
+            assert.equal(app.get('container').hasClass('no-search'), true,
+                         'container missing no-search class');
           });
 
           it('emptySectionB', function() {
