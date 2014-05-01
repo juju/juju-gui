@@ -139,14 +139,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _goHome: function(ev) {
       if (window.flags && window.flags.il) {
+        // component needs to be 'charmbrowser' in order to trigger
+        // charmbrowser-specific logic in state's generateUrl method
         this.fire('changeState', {
           sectionA: {
-            metadata: {
-              search: {
-                clear: true
-              }
-            },
-            component: null
+            metadata: null,
+            component: 'charmbrowser'
           }
         });
       } else {

@@ -427,12 +427,14 @@ YUI.add('subapp-browser', function(Y) {
         }
         if (this._search) {
           this._search.destroy();
+          this._search = null;
         }
       }
       if (metadata && metadata.search) {
         this.renderSearchResults();
         if (this._editorial) {
           this._editorial.destroy();
+          this._editorial = null;
         }
       }
       if (metadata && metadata.id) {
@@ -491,7 +493,10 @@ YUI.add('subapp-browser', function(Y) {
         this._editorial.destroy();
         this._editorial = null;
       }
-      if (this._search) { this._search.destroy(); }
+      if (this._search) {
+        this._search.destroy();
+        this._search = null;
+      }
       if (this._sidebar.search) { this._sidebar.hideSearch(); }
       if (this._details) {
         this._details.destroy({ remove: true });
@@ -727,6 +732,7 @@ YUI.add('subapp-browser', function(Y) {
         // Showing search implies that other sidebar content is destroyed.
         if (this._editorial) {
           this._editorial.destroy();
+          this._editorial = null;
         }
 
         this.renderSearchResults(req, res, next);
@@ -734,6 +740,7 @@ YUI.add('subapp-browser', function(Y) {
         // Showing editorial implies that other sidebar content is destroyed.
         if (this._search) {
           this._search.destroy();
+          this._search = null;
         }
 
         this.renderEditorial(req, res, next);
