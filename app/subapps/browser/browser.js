@@ -425,9 +425,15 @@ YUI.add('subapp-browser', function(Y) {
           // Deselect the active charm.
           this._editorial.updateActive();
         }
+        if (this._search) {
+          this._search.destroy();
+        }
       }
       if (metadata && metadata.search) {
         this.renderSearchResults();
+        if (this._editorial) {
+          this._editorial.destroy();
+        }
       }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
