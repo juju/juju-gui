@@ -141,7 +141,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (window.flags && window.flags.il) {
         this.fire('changeState', {
           sectionA: {
-            metadata: null,
+            metadata: {
+              search: {
+                clear: true
+              }
+            },
             component: null
           }
         });
