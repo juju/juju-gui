@@ -6,15 +6,15 @@
     <button class="opened">x</button>
   {{/if}}
 </div>
-<form class="service-list">
+<form class="service-list {{#if closed}} closed{{/if}}">
   <ul>
-  {{#each services}}
-    <li>
-      <img class="icon"/>
-      <span class="service-name"></span>
-      <input type="text" placeholder="units" class="service-units"/>
-    </li>
-  {{/each}}
+    {{#each services}}
+      <li>
+        <img class="icon"/>
+        <span class="service-name"></span>
+        <input type="text" placeholder="units" class="service-units"/>
+      </li>
+    {{/each}}
   </ul>
   <button class="cancel">Cancel</button>
   <button class="add-units">Add Units</button>

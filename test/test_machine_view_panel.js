@@ -84,6 +84,12 @@ describe('machine view panel view', function() {
     });
   });
 
+  it('should render the scale up UI', function() {
+    assert.equal(container.one(
+        '.column.unplaced .scale-up .action-block span').get('text'),
+        'Choose a service and add units');
+  });
+
   it('should re-render when machines are added', function() {
     var selector = '.machines .content li',
         list = container.all(selector),

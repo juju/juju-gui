@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe.only('service scale up view', function() {
+describe('service scale up view', function() {
   var Y, container, models, utils, views, view, View;
 
   before(function(done) {
