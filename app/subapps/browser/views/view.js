@@ -70,7 +70,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _bindSearchWidgetEvents: function() {
-      var container = this.get('container');
       if (this.search) {
         this.addEvent(
             this.search.on(
