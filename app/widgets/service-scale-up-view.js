@@ -42,7 +42,7 @@ YUI.add('service-scale-up-view', function(Y) {
 
     render: function() {
       var content = this.template({
-        closed: true,
+        closed: false,
         services: []
       });
       var container = this.get('container');
