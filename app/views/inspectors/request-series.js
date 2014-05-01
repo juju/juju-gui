@@ -42,6 +42,7 @@ YUI.add('request-series-inspector', function(Y) {
         env: this.get('env'),
         db: this.get('db')
       });
+      this.views.requestSeries.addTarget(this);
     }
 
   }, {

@@ -231,8 +231,8 @@ YUI.add('juju-app-state', function(Y) {
         }
 
         // If metadata contains any flash data, store it.
-        if (metadata.flash) {
-          this.set('flash', metadata.flash);
+        if (metadata.file) {
+          this.set('flash', {file: metadata.file});
         }
 
         // All pushes to the urlParts array needs to be in a truthy conditional
@@ -255,6 +255,9 @@ YUI.add('juju-app-state', function(Y) {
             }
             if (metadata.charm) {
               urlParts.push('charm');
+            }
+            if (metadata.localType) {
+              urlParts.push('local/' + metadata.localType);
             }
           }
           if (component === 'machine') {
@@ -408,21 +411,28 @@ YUI.add('juju-app-state', function(Y) {
 
       @method _parseInspectorUrl
       @param {String} url Inspector url to be parsed.
-      @return {Object} State object to be added to the inspector state.
+      @return {Object} Metadata object to be added to the inspector state.
     */
     _parseInspectorUrl: function(url) {
       url = url.replace(/^inspector\/?/, '');
       var parts = url.split('/'),
-          state = {};
-      // If the url is only /inspector/ and that's stripped then just return
-      // because it's an invalid url so it should render the charmstore.
-      if (parts[0] === '') { return; }
-      // The first index is always the service id except for above.
-      state.id = parts[0];
-      if (parts[1]) {
-        state[parts[1]] = parts[2] || true;
+          metadata = {};
+      if (parts[0] === '') {
+        // If the url is only /inspector/ and that's stripped then just return
+        // because it's an invalid url so it should render the charmstore.
+        return;
+      } else if (parts[0] === 'local') {
+        metadata.localType = parts[1];
+        metadata.file = this.get('flash').file;
+      } else {
+        // The first index is the service id except in the above cases.
+        metadata.id = parts[0];
+        if (parts[1]) {
+          metadata[parts[1]] = parts[2] || true;
+        }
       }
-      return state;
+      
+      return metadata;
     },
 
     /**

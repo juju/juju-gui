@@ -700,7 +700,20 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Nothing.
      */
     _deployLocalCharm: function(file, env, db) {
-      localCharmHelpers.deployLocalCharm(file, env, db);
+      if (window.flags.il) {
+        var topo = this.get('component');
+        topo.fire('changeState', {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              localType: 'new',
+              file: file
+            }
+          }
+        });
+      } else {
+        localCharmHelpers.deployLocalCharm(file, env, db);
+      }
     },
 
     /**
