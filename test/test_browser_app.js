@@ -245,7 +245,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
             app.emptySectionA();
             assert.equal(app._editorial, null, 'editorial is not null');
-            assert.equal(editorialDestroyCalled, true, 'editorial not destroyed');
+            assert.equal(editorialDestroyCalled, true,
+                         'editorial not destroyed');
             assert.equal(app._search, null, 'search is not null');
             assert.equal(searchDestroyCalled, true, 'search not destroyed');
             assert.equal(app._sidebar.hideSearch.callCount(), 1,
