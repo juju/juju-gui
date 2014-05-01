@@ -175,6 +175,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var store = this.get('store');
 
           var tplNode = Y.one('.charmbrowser');
+          // Clear any existing filters before rendering search
+          this.set('filters', {});
           this._renderSearchWidget(tplNode);
           this._bindSearchWidgetEvents();
           this.showIndicator(this.get('renderTo'));
