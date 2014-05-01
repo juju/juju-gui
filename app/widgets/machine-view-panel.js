@@ -184,6 +184,16 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Render the scale up UI.
+         *
+         * @method _renderScaleUp
+         */
+        _renderScaleUp: function() {
+          var container = this.get('container').one('.column.unplaced .scale-up');
+          new views.ServiceScaleUpView({container: container}).render();
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -195,6 +205,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._renderHeaders();
           this._renderMachineTokens();
           this._renderServiceUnitTokens();
+          this._renderScaleUp();
           return this;
         },
 
@@ -250,6 +261,7 @@ YUI.add('machine-view-panel', function(Y) {
     'juju-serviceunit-token',
     'machine-view-panel-header',
     'node',
+    'service-scale-up-view',
     'view'
   ]
 });

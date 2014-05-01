@@ -42,14 +42,31 @@ YUI.add('service-scale-up-view', function(Y) {
 
     render: function() {
       var content = this.template({
-        closed: true,
+        closed: false,
         services: []
       });
       var container = this.get('container');
       container.addClass('service-scale-up-view');
       container.setHTML(content);
+      return this;
     },
 
-    destructor: function() {}
+    destructor: function() {
+      var container = this.get('container');
+      container.setHTML('');
+      container.removeClass('service-scale-up-view');
+    }
   });
+
+  views.ServiceScaleUpView = ServiceScaleUpView;
+
+}, '0.1.0', {
+  requires: [
+    'event-tracker',
+    'handlebars',
+    'juju-templates',
+    'juju-view-utils',
+    'node',
+    'view'
+  ]
 });

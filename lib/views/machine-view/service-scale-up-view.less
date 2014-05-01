@@ -1,0 +1,55 @@
+@light-button: #cbcbcb;
+
+.service-scale-up-view {
+    .action-block {
+        .border-box;
+        height: 50px;
+        border-bottom: 1px solid @machine-view-border-colour;
+        padding: 20px;
+        line-height: 10px;
+
+        .button {
+            float: right;
+            height: 30px;
+            width: 30px;
+            margin: -10px 0;
+            padding: 10px;
+
+            &.opened {
+                background-color: @light-button;
+            }
+            .sprite {
+                display: block;
+            }
+        }
+    }
+    .service-list {
+        &.closed {
+            display: none;
+        }
+        li {
+            padding: 10px 20px;
+            border-bottom: 1px solid @machine-view-border-colour;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+            .service-units {
+                float: right;
+                width: 50px;
+            }
+        }
+        .actions {
+            padding: 10px 20px 0 0;
+            text-align: right;
+
+            .button.cancel {
+                margin-right: 7px;
+                background-color: @light-button;
+                color: @text-colour;
+            }
+        }
+    }
+}
