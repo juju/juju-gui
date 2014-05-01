@@ -218,7 +218,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._editorial = { destroy: utils.makeStubFunction() };
             app._search = { destroy: utils.makeStubFunction() };
             app._sidebar = {
-              destroy: function() {},
+              destroy: function() {}
             };
             app._details = { destroy: utils.makeStubFunction() };
             app.machineViewPanel = { destroy: utils.makeStubFunction() };
