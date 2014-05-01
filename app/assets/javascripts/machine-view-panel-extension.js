@@ -50,8 +50,7 @@ YUI.add('machine-view-panel-extension', function(Y) {
       var views = Y.namespace('juju.views');
       this.machineViewPanel = new views.MachineViewPanelView({
         container: Y.one('#machine-view-panel'),
-        machines: db.machines,
-        serviceUnits: db.serviceUnits // XXX locate the service unit collection
+        db: db
       }).render();
     }
   };
