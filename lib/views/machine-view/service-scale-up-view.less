@@ -1,6 +1,15 @@
 @light-button: #cbcbcb;
 
 .service-scale-up-view {
+    &.opened {
+        .action-block .button.closed {
+            display: none;
+        }
+        .action-block .button.opened,
+        .service-list {
+            display: block;
+        }
+    }
     .action-block {
         .border-box;
         height: 50px;
@@ -17,6 +26,7 @@
 
             &.opened {
                 background-color: @light-button;
+                display: none;
             }
             .sprite {
                 display: block;
@@ -24,21 +34,29 @@
         }
     }
     .service-list {
-        &.closed {
-            display: none;
+        display: none;
+
+        ul {
+            margin: 0;
         }
         li {
             padding: 10px 20px;
             border-bottom: 1px solid @machine-view-border-colour;
+            line-height: 28px;
 
             .icon {
+                display: inline-block;
                 width: 20px;
                 height: 20px;
                 margin-right: 10px;
             }
+            .icon,
+            .service-name {
+                vertical-align: middle;
+            }
             .service-units {
                 float: right;
-                width: 50px;
+                width: 30px;
             }
         }
         .actions {

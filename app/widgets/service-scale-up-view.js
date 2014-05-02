@@ -117,15 +117,16 @@ YUI.add('service-scale-up-view', function(Y) {
 
     onActionButtonClick: function(e) {
       e.preventDefault();
-      var closed = e.currentTarget.hasClass('closed');
-      this._toggleServiceList(!closed);
+      var opened = e.currentTarget.hasClass('opened');
+      this._toggleServiceList(!opened);
     },
 
-    _toggleServiceList: function(closed) {
-      this.get('container').toggleClass('closed', closed);
+    _toggleServiceList: function(opened) {
+      this.get('container').toggleClass('opened', opened);
     },
 
     render: function() {
+      console.log('render');
       var content = this.template();
       var container = this.get('container');
       container.addClass('service-scale-up-view');
