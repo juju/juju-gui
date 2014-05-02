@@ -173,6 +173,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
          */
         render: function(cachedResults) {
           var store = this.get('store');
+
+          var tplNode = Y.one('.charmbrowser');
+          this._renderSearchWidget(tplNode);
+          this._bindSearchWidgetEvents();
           this.showIndicator(this.get('renderTo'));
 
           // By default we grab the editorial content from the api to use for
@@ -203,6 +207,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
            @method destructor
          */
         destructor: function() {
+          // XXX Seems to be shared with search.js; may need to be moved into
+          // charmresults.
           if (this.tokenContainers) {
             Y.Array.each(this.tokenContainers, function(container) {
               container.destroy();

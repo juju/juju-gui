@@ -29,7 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('subapp-browser-mainview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       models = Y.namespace('juju.models'),
-      views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
   /**
@@ -71,7 +70,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _bindSearchWidgetEvents: function() {
-      var container = this.get('container');
       if (this.search) {
         this.addEvent(
             this.search.on(
@@ -94,11 +92,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
           if (ev.newVal) {
             // In the sidebar, the left panel needs the height adjusted to
             // make room for the home links to show up.
-            container.one('#bws-sidebar').addClass('with-home');
+            Y.one('#bws-sidebar').addClass('with-home');
           } else {
             // We need to adjust the height of the sidebar now to close
             // up the space by the home buttons.
-            container.one('#bws-sidebar').removeClass('with-home');
+            Y.one('#bws-sidebar').removeClass('with-home');
           }
         }, this);
       }
@@ -141,10 +139,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _goHome: function(ev) {
       if (window.flags && window.flags.il) {
+        // component needs to be 'charmbrowser' in order to trigger
+        // charmbrowser-specific logic in state's generateUrl method
         this.fire('changeState', {
           sectionA: {
             metadata: null,
-            component: null
+            component: 'charmbrowser'
           }
         });
       } else {
@@ -234,6 +234,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (this.details) {
         this.details.destroy(true);
       }
+      // Clean up any search widgets hanging around.
+      if (this.search) {
+        this.search.destroy();
+      }
     }
 
   }, {
@@ -294,7 +298,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       store: {},
 
       withHome: {
-        value: false
+        value: null
       }
     }
   });

@@ -135,6 +135,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method destructor
          */
         destructor: function() {
+          // XXX Seems to be shared with editorial.js; may need to be moved
+          // into charmresults.
           if (this.tokenContainers) {
             Y.Array.each(this.tokenContainers, function(container) {
               container.destroy();
@@ -149,6 +151,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method render
          */
         render: function(cachedResults) {
+          var tplNode = Y.one('.charmbrowser');
+          this._renderSearchWidget(tplNode);
+          this._bindSearchWidgetEvents();
+
           this.showIndicator(this.get('renderTo'));
           // This is only rendered once from the subapp and so the filters is
           // the initial set from the application. All subsequent renders go

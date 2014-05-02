@@ -211,21 +211,23 @@ YUI.add('juju-app-state', function(Y) {
         id = metadata.id;
         // Compress the id to remove default values.
         if (id) { id = id.replace(/\/?~charmers/, ''); }
-        if (metadata.search && metadata.search.clear) {
-          this.filter.clear();
-        } else if (metadata.search && metadata.search.replace) {
-          search = true;
-          this.filter.clear();
-          this.filter.update(metadata.search);
-        } else if (metadata.search) {
-          search = true;
-          this.filter.update(metadata.search);
-        }
         // All pushes to the urlParts array needs to be in a truthy conditional
         // because no state parameters are required.
         if (component === 'charmbrowser') {
           hash = metadata.hash || '';
           if (id) { urlParts.push(id); }
+          // If metadata isn't present, set everything to default
+          if (!sectionState.metadata ||
+              (metadata.search && metadata.search.clear)) {
+            this.filter.clear();
+          } else if (metadata.search && metadata.search.replace) {
+            search = true;
+            this.filter.clear();
+            this.filter.update(metadata.search);
+          } else if (metadata.search) {
+            search = true;
+            this.filter.update(metadata.search);
+          }
         } else {
           if (component) { urlParts.push(component); }
           if (component === 'inspector') {

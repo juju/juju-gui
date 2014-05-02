@@ -522,10 +522,10 @@ YUI.add('browser-search-widget', function(Y) {
     /**
      * Clean up instances of objects we create
      *
-     * @method destroy
+     * @method destructor
      *
      */
-    destroy: function() {
+    destructor: function() {
       if (this.ac) {
         this.ac.destroy();
       }
@@ -645,7 +645,6 @@ YUI.add('browser-search-widget', function(Y) {
     'event-valuechange',
     'juju-browser-models',
     'juju-templates',
-    'juju-views',
     'widget'
   ]
 });

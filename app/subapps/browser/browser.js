@@ -413,29 +413,34 @@ YUI.add('subapp-browser', function(Y) {
     */
     _charmbrowser: function(metadata) {
       var detailsNode = Y.one('.bws-view-data');
+      this.get('container').removeClass('no-search');
       // XXX window.flags.il the details node is shown by default. When we
       // switch to the new state object it should be hidden by default in the
       // template.
       if (detailsNode) { detailsNode.hide(); }
-      // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
-        this._sidebar.showSearch();
         if (!this._editorial) {
           this.renderEditorial();
         } else if (!metadata || !metadata.id) {
           // Deselect the active charm.
           this._editorial.updateActive();
         }
+        if (this._search) {
+          this._search.destroy();
+          this._search = null;
+        }
       }
       if (metadata && metadata.search) {
-        this._sidebar.showSearch();
         this.renderSearchResults();
+        if (this._editorial) {
+          this._editorial.destroy();
+          this._editorial = null;
+        }
       }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
-        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
     },
@@ -484,12 +489,15 @@ YUI.add('subapp-browser', function(Y) {
       @method emptySectionA
     */
     emptySectionA: function() {
+      this.get('container').addClass('no-search', true);
       if (this._editorial) {
         this._editorial.destroy();
         this._editorial = null;
       }
-      if (this._search) { this._search.destroy(); }
-      if (this._sidebar.search) { this._sidebar.hideSearch(); }
+      if (this._search) {
+        this._search.destroy();
+        this._search = null;
+      }
       if (this._details) {
         this._details.destroy({ remove: true });
         var detailsNode = Y.one('.bws-view-data');
@@ -590,8 +598,6 @@ YUI.add('subapp-browser', function(Y) {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
-      } else {
-        this._sidebar.set('withHome', false);
       }
 
       this._editorial = new views.EditorialView(
@@ -602,6 +608,7 @@ YUI.add('subapp-browser', function(Y) {
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
       this._editorial.render(this._cache.interesting);
+      this._editorial.set('withHome', false);
       this._editorial.addTarget(this);
     },
 
@@ -650,17 +657,22 @@ YUI.add('subapp-browser', function(Y) {
       // to render it selected.
       if (window.flags && window.flags.il) {
         extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
-        var metadata = this.state.getState('current', 'sectionA', 'metadata');
-        extraCfg.query = metadata.search;
-        this._sidebar.set('withHome', true);
+        extraCfg.filters = { text: this.state.filter.get('text') };
       } else {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
       }
 
-      this._search = new views.BrowserSearchView(
-          this._getViewCfg(extraCfg));
+      // XXX - Hack to make sure search is fully destroyed before re-rendering
+      // it. The real solution is to move the search widget out of search.js
+      // and editorial.js so that it's managed (rendered/destroyed) separate
+      // from these other views.
+      if (this._search) {
+        this._search.destroy();
+        this._search = null;
+      }
+      this._search = new views.BrowserSearchView(this._getViewCfg(extraCfg));
 
       // Prepare to handle cache
       this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
@@ -672,6 +684,7 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         this._search.render();
       }
+      this._search.set('withHome', true);
       this._search.addTarget(this);
     },
 
@@ -717,16 +730,6 @@ YUI.add('subapp-browser', function(Y) {
         this._sidebar.addTarget(this);
       }
 
-      // Even if we've got an existing View, check if Home should be displayed
-      // or not based on the current view state.
-      if (this._sidebar) {
-        if (this.state.getCurrent('search')) {
-          this._sidebar.set('withHome', true);
-        } else {
-          this._sidebar.set('withHome', false);
-        }
-      }
-
       if (this.machineViewPanel) {
         this.machineViewPanel.destroy();
       }
@@ -737,6 +740,7 @@ YUI.add('subapp-browser', function(Y) {
         // Showing search implies that other sidebar content is destroyed.
         if (this._editorial) {
           this._editorial.destroy();
+          this._editorial = null;
         }
 
         this.renderSearchResults(req, res, next);
@@ -744,6 +748,7 @@ YUI.add('subapp-browser', function(Y) {
         // Showing editorial implies that other sidebar content is destroyed.
         if (this._search) {
           this._search.destroy();
+          this._search = null;
         }
 
         this.renderEditorial(req, res, next);
@@ -1037,23 +1042,6 @@ YUI.add('subapp-browser', function(Y) {
       if (!req.params) {
         req.params = {};
       }
-
-      // Support redirecting the minimized view.
-      if (req.params.viewmode === 'minimized') {
-        // This setTimeout is required because the double dispatch events
-        // happen in an unpredictable order so we simply let them complete
-        // then navigate away to avoid issues where we are trying to render
-        // while other views are in the middle of being torn down.
-        setTimeout(function() {
-          self.fire('viewNavigate', {
-            change: {
-              viewmode: 'sidebar'
-            }
-          });
-        }, 0);
-        return;
-      }
-
 
       if (!req.params.viewmode) {
         req.params.viewmode = 'sidebar';
