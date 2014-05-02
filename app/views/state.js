@@ -431,7 +431,7 @@ YUI.add('juju-app-state', function(Y) {
           metadata[parts[1]] = parts[2] || true;
         }
       }
-      
+
       return metadata;
     },
 
@@ -568,7 +568,7 @@ YUI.add('juju-app-state', function(Y) {
       */
       flash: {
         value: {}
-      },
+      }
     }
   });
 

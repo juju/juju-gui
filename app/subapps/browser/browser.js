@@ -858,10 +858,10 @@ YUI.add('subapp-browser', function(Y) {
       var env = this.get('env');
 
       var inspector = new Y.juju.views.LocalNewUpgradeInspector({
-          services: services,
-          file: file,
-          env: env,
-          db: db
+        services: services,
+        file: file,
+        env: env,
+        db: db
       }).render();
       inspector.recalculateHeight();
       inspector.addTarget(this);
@@ -880,7 +880,7 @@ YUI.add('subapp-browser', function(Y) {
       var inspector = new Y.juju.views.RequestSeriesInspector({
         file: file,
         env: this.get('env'),
-        db: this.get('db'),
+        db: this.get('db')
       }).render();
       inspector.recalculateHeight();
       inspector.addTarget(this);

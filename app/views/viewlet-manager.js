@@ -413,7 +413,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
         if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
-        height = winHeight - headerHeight - footerHeight - ( TB_SPACING * 3);
+        height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
 
         if (window.flags.mv) {
           height -= 50;
