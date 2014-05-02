@@ -459,9 +459,13 @@ YUI.add('subapp-browser', function(Y) {
         }
       });
       if (metadata.localType) {
-        var file = metadata.file;
+        var file = metadata.flash.file;
+        var services = metadata.flash.services;
         if (metadata.localType === 'new') {
           this._activeInspector = this.createRequestSeriesInspector(file);
+        } else if (metadata.localType) {
+          this._activeInspector = this.createUpgradeOrNewInspector(
+              file, services);
         }
       } else if (!model.get('config')) {
         // If there is no config set then it's a ghost service model and not
@@ -841,6 +845,26 @@ YUI.add('subapp-browser', function(Y) {
       if (window.flags.mv) {
         this._renderMachineViewPanelView(this.get('db'));
       }
+    },
+
+    /**
+      Creates the request series inspector for local charms.
+
+      @method createUpgradeOrNewInspector
+      @param {Object} file The ghost service model.
+    */
+    createUpgradeOrNewInspector: function(file, services) {
+      var db = this.get('db');
+      var env = this.get('env');
+
+      var inspector = new Y.juju.views.LocalNewUpgradeInspector({
+          services: services,
+          file: file,
+          env: env,
+          db: db
+      }).render();
+      inspector.addTarget(this);
+      return inspector;
     },
 
     /**

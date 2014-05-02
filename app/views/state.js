@@ -231,8 +231,8 @@ YUI.add('juju-app-state', function(Y) {
         }
 
         // If metadata contains any flash data, store it.
-        if (metadata.file) {
-          this.set('flash', {file: metadata.file});
+        if (metadata.flash) {
+          this.set('flash', metadata.flash);
         }
 
         // All pushes to the urlParts array needs to be in a truthy conditional
@@ -423,7 +423,7 @@ YUI.add('juju-app-state', function(Y) {
         return;
       } else if (parts[0] === 'local') {
         metadata.localType = parts[1];
-        metadata.file = this.get('flash').file;
+        metadata.flash = this.get('flash');
       } else {
         // The first index is the service id except in the above cases.
         metadata.id = parts[0];

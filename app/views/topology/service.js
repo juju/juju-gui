@@ -700,14 +700,16 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Nothing.
      */
     _deployLocalCharm: function(file, env, db) {
-      if (window.flags.il) {
+      if (window.flags && window.flags.il) {
         var topo = this.get('component');
         topo.fire('changeState', {
           sectionA: {
             component: 'inspector',
             metadata: {
               localType: 'new',
-              file: file
+              flash: {
+                file: file
+              }
             }
           }
         });
@@ -842,12 +844,28 @@ YUI.add('juju-topology-service', function(Y) {
         source[index] = service.getAttrs();
       });
 
-      new Y.juju.views.LocalNewUpgradeInspector({
-        services: services,
-        file: file,
-        env: env,
-        db: db
-      }).render();
+      if (window.flags && window.flags.il) {
+        var topo = this.get('component');
+        topo.fire('changeState', {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              localType: 'update',
+              flash: {
+                file: file,
+                services: services
+              }
+            }
+          }
+        });
+      } else {
+        new Y.juju.views.LocalNewUpgradeInspector({
+          services: services,
+          file: file,
+          env: env,
+          db: db
+        }).render();
+      }
     },
 
     /**

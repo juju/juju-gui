@@ -49,6 +49,8 @@ YUI.add('local-new-upgrade-inspector', function(Y) {
         env: this.get('env'),
         db: this.get('db')
       });
+      this.views.requestSeries.addTarget(this);
+      this.views.localNewUpgrade.addTarget(this);
     }
 
   }, {
