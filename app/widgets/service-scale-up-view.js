@@ -60,14 +60,19 @@ YUI.add('service-scale-up-view', function(Y) {
     _updateServiceList: function() {
       var db = this.get('db');
       var services = [];
+      if (!db.services) {
+        return;
+      }
       db.services.each(function(service) {
         service = service.getAttrs();
+        if (service.pending) {
+          return;
+        }
         services.push({
           id: service.id,
           name: service.displayName,
           icon: service.icon
         });
-        console.log('_', service.displayName);
       });
       this._services = services;
       this._updateUI();
@@ -92,7 +97,6 @@ YUI.add('service-scale-up-view', function(Y) {
             name: service.name,
             icon: service.icon
           }));
-          console.log('__', service.displayName);
           newElement.setData('exists', true);
         }
       }, this);
