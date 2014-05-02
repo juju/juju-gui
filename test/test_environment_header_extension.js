@@ -53,6 +53,7 @@ describe('environment header extension', function() {
   beforeEach(function() {
     container = utils.makeContainer(this);
     view = new View({container: container});
+    view._passHeaderToBrowser = function() {};
     view.render();
   });
 

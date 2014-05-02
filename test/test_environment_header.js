@@ -58,4 +58,8 @@ describe('environment header view', function() {
     });
     container.one('.tab a').simulate('click');
   });
+
+  it('should set the active tab on render', function() {
+    assert.equal(container.one('.tab.services').hasClass('active'), true);
+  });
 });

@@ -217,7 +217,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       describe('state dispatchers', function() {
-        var editorialStub, searchStub, entityStub, showSearchStub;
+        var editorialStub, searchStub, entityStub, showSearchStub,
+            renderMachineStub, setSelectedStub;
         beforeEach(function() {
           app = new browser.Browser();
           app._sidebar = {
@@ -360,6 +361,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._inspector({ id: clientId });
             assert.equal(ghostStub.callCount(), 0);
             assert.equal(serviceStub.callCount(), 1);
+          });
+        });
+
+        describe('_machine', function() {
+          function stubRenderers(context) {
+            renderMachineStub = utils.makeStubMethod(app,
+                '_renderMachineViewPanelView');
+            context._cleanups.push(renderMachineStub.reset);
+            app.set('environmentHeader', {});
+            setSelectedStub = utils.makeStubMethod(app.get('environmentHeader'),
+                'setSelectedTab');
+            context._cleanups.push(setSelectedStub.reset);
+          }
+
+          it('Highlights the machine tab', function() {
+            stubRenderers(this);
+            app._machine();
+            assert.equal(setSelectedStub.callCount(), 1);
           });
         });
 
