@@ -389,6 +389,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method recalculateHeight
     */
     recalculateHeight: function() {
+      var height;
       if (!window.flags.il) {
         var container = this.get('container');
         var TB_SPACING = 20;
@@ -412,8 +413,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
         if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
-        var height = winHeight - headerHeight - footerHeight - (
-            TB_SPACING * 3);
+        height = winHeight - headerHeight - footerHeight - ( TB_SPACING * 3);
 
         if (window.flags.mv) {
           height -= 50;
@@ -435,6 +435,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // on another wrapper element, not necessarily the real container.
         this.get('container')
             .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
+      } else {
+        height = Y.one('.bws-content').getStyle('height');
+        this.get('container')
+            .one(this.viewletContainer).setStyle('maxHeight', height);
+        this.get('container')
+            .one(this.viewletContainer).setStyle('height', height);
       }
     },
 
