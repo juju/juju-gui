@@ -65,16 +65,33 @@ YUI.add('environment-header', function(Y) {
          * @param {Node} The corresponding tab anchor.
          */
         switchTab: function(link) {
-          var container = this.get('container'),
-              tabs = container.all('.tab'),
-              environment = link.getData('view');
+          var environment = link.getData('view');
 
-          // Set the active link.
-          tabs.removeClass('active');
-          link.ancestor('li').addClass('active');
+          // Highlight the selected tab
+          if (environment === 'machineView') {
+            this.setSelectedTab('machines');
+          } else {
+            this.setSelectedTab('services');
+          }
 
           // Fire the change event.
           this.fire('changeEnvironmentView', {environment: environment});
+        },
+
+        /**
+         * Highlight the selected tab.
+         *
+         * @method setSelectedTab
+         * @param {Node} The corresponding tab.
+         */
+        setSelectedTab: function(tab) {
+          var container = this.get('container');
+          var tabNode = container.one('.tab.' + tab);
+          var tabs = container.all('.tab');
+
+          // Set the active link.
+          tabs.removeClass('active');
+          tabNode.addClass('active');
         },
 
         /**
@@ -86,6 +103,7 @@ YUI.add('environment-header', function(Y) {
           var container = this.get('container');
           container.setHTML(this.template());
           container.addClass('environment-header');
+          this.setSelectedTab('services');
           return this;
         }
       });
