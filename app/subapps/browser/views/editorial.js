@@ -207,13 +207,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
            @method destructor
          */
         destructor: function() {
+          // XXX Seems to be shared with search.js; may need to be moved into
+          // charmresults.
           if (this.tokenContainers) {
             Y.Array.each(this.tokenContainers, function(container) {
               container.destroy();
             });
-          }
-          if (this.search) {
-            this.search.destroy();
           }
         }
       }, {

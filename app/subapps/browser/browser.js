@@ -412,63 +412,39 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmbrowser: function(metadata) {
-      var detailsNode = Y.one('.bws-view-data'),
-          self = this;
+      var detailsNode = Y.one('.bws-view-d/ata');
+      this.get('container').removeClass('no-search');
       // XXX window.flags.il the details node is shown by default. When we
       // switch to the new state object it should be hidden by default in the
       // template.
       if (detailsNode) { detailsNode.hide(); }
       if (!metadata || !metadata.search) {
-        this.get('container').removeClass('no-search');
-        this._renderView({
-          view: 'editorial',
-          otherView: 'search',
-          metadata: metadata,
-          renderFunction: this.renderEditorial.bind(this)
-        });
+        if (!this._editorial) {
+          this.renderEditorial();
+        } else if (!metadata || !metadata.id) {
+          // Deselect the active charm.
+          this._editorial.updateActive();
+        }
+        if (this._search) {
+          this._search.destroy();
+          this._search = null;
+        }
       }
       if (metadata && metadata.search) {
-        this.get('container').removeClass('no-search');
-        this._renderView({
-          view: 'search',
-          otherView: 'editorial',
-          metadata: metadata,
-          renderFunction: this.renderSearchResults.bind(this)
-        });
+        // Don't re-render if we're just showing details
+        if (!metadata.id) {
+          this.renderSearchResults();
+        }
+        if (this._editorial) {
+          this._editorial.destroy();
+          this._editorial = null;
+        }
       }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
-        this.get('container').removeClass('no-search');
         this.renderEntityDetails();
-      }
-    },
-
-    /**
-      Helper function to handle shared logic for both the editorial and
-      search views.
-
-      @method _renderView
-      @param {Object} o An options object; comprised of the view being
-                        the other view (which needs to be destroyed),
-                        the render function, and the metadata.
-        view.
-    */
-    _renderView: function(o) {
-      var view = '_' + o.view,
-          otherView = '_' + o.otherView;
-      // Only render if the view isn't already present
-      if (!this[view]) {
-        o.renderFunction();
-      } else if (!o.metadata || !o.metadata.id) {
-        // Deselect the active charm
-        this[view].updateActive();
-      }
-      // If the other view is present, destroy it
-      if (this[otherView]) {
-        this[otherView].destroy();
-        this[otherView] = null;
       }
     },
 
@@ -516,11 +492,11 @@ YUI.add('subapp-browser', function(Y) {
       @method emptySectionA
     */
     emptySectionA: function() {
+      this.get('container').addClass('no-search', true);
       if (this._editorial) {
         this._editorial.destroy();
         this._editorial = null;
       }
-      this.get('container').addClass('no-search', true);
       if (this._search) {
         this._search.destroy();
         this._search = null;

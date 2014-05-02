@@ -234,6 +234,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (this.details) {
         this.details.destroy(true);
       }
+      // Clean up any search widgets hanging around.
+      if (this.search) {
+        this.search.destroy();
+      }
     }
 
   }, {
