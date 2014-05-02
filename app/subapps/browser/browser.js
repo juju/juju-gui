@@ -431,10 +431,7 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
       if (metadata && metadata.search) {
-        // Don't re-render if we're just showing details
-        if (!metadata.id) {
-          this.renderSearchResults();
-        }
+        this.renderSearchResults();
         if (this._editorial) {
           this._editorial.destroy();
           this._editorial = null;
@@ -667,6 +664,14 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
+      // XXX - Hack to make sure search is fully destroyed before re-rendering
+      // it. The real solution is to move the search widget out of search.js
+      // and editorial.js so that it's managed (rendered/destroyed) separate
+      // from these other views.
+      if (this._search) {
+        this._search.destroy();
+        this._search = null;
+      }
       this._search = new views.BrowserSearchView(this._getViewCfg(extraCfg));
 
       // Prepare to handle cache
