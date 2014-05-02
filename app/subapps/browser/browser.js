@@ -412,7 +412,7 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmbrowser: function(metadata) {
-      var detailsNode = Y.one('.bws-view-d/ata');
+      var detailsNode = Y.one('.bws-view-data');
       this.get('container').removeClass('no-search');
       // XXX window.flags.il the details node is shown by default. When we
       // switch to the new state object it should be hidden by default in the
