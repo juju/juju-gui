@@ -193,7 +193,8 @@ YUI.add('machine-view-panel', function(Y) {
                               .one('.column.unplaced .scale-up');
           new views.ServiceScaleUpView({
             container: container,
-            db: this.get('db')
+            db: this.get('db'),
+            env: this.get('env')
           }).render();
         },
 

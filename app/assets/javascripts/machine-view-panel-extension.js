@@ -46,11 +46,12 @@ YUI.add('machine-view-panel-extension', function(Y) {
      *
      * @method _renderMachineViewPanelView
      */
-    _renderMachineViewPanelView: function(db) {
+    _renderMachineViewPanelView: function(db, env) {
       var views = Y.namespace('juju.views');
       this.machineViewPanel = new views.MachineViewPanelView({
         container: Y.one('#machine-view-panel'),
-        db: db
+        db: db,
+        env: env
       }).render();
     }
   };
