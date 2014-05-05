@@ -51,7 +51,15 @@ YUI.add('local-new-upgrade-view', function(Y) {
       @method closeInspector
     */
     closeInspector: function() {
-      this.viewletManager.destroy();
+      if (window.flags && window.flags.il) {
+        this.fire('changeState', {
+          sectionA: {
+            component: 'charmbrowser'
+          }
+        });
+      } else {
+        this.viewletManager.destroy();
+      }
     },
 
     /**

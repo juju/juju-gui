@@ -313,13 +313,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
         describe('_inspector', function() {
-          var clientId, ghostStub, serviceStub;
+          var clientId,
+              ghostStub,
+              requestSeriesStub,
+              serviceStub,
+              upgradeOrNewStub;
 
           function stubMethods(context) {
             ghostStub = utils.makeStubMethod(app, 'createGhostInspector');
             context._cleanups.push(ghostStub.reset);
             serviceStub = utils.makeStubMethod(app, 'createServiceInspector');
             context._cleanups.push(serviceStub.reset);
+            requestSeriesStub = utils.makeStubMethod(
+                app, 'createRequestSeriesInspector');
+            context._cleanups.push(requestSeriesStub.reset);
+            upgradeOrNewStub = utils.makeStubMethod(
+                app, 'createUpgradeOrNewInspector');
+            context._cleanups.push(upgradeOrNewStub.reset);
           }
 
           function stubDb(app, ghost) {
@@ -352,6 +362,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._inspector({ id: clientId });
             assert.equal(ghostStub.callCount(), 1);
             assert.equal(serviceStub.callCount(), 0);
+            assert.equal(requestSeriesStub.callCount(), 0);
+            assert.equal(upgradeOrNewStub.callCount(), 0);
           });
 
           it('renders a service inspector', function() {
@@ -360,6 +372,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._inspector({ id: clientId });
             assert.equal(ghostStub.callCount(), 0);
             assert.equal(serviceStub.callCount(), 1);
+            assert.equal(requestSeriesStub.callCount(), 0);
+            assert.equal(upgradeOrNewStub.callCount(), 0);
+          });
+
+          it('renders a request-series local charm inspector', function() {
+            stubMethods(this);
+            stubDb(app, true);
+            app._inspector({
+              localType: 'new',
+              flash: { file: 'foo' }
+            });
+            assert.equal(ghostStub.callCount(), 0);
+            assert.equal(serviceStub.callCount(), 0);
+            assert.equal(requestSeriesStub.callCount(), 1);
+            assert.equal(upgradeOrNewStub.callCount(), 0);
+          });
+
+          it('renders an upgrade-or-new inspector', function() {
+            stubMethods(this);
+            stubDb(app, true);
+            app._inspector({
+              localType: 'upgrade',
+              flash: {
+                file: 'foo',
+                services: ['bar']
+              }
+            });
+            assert.equal(ghostStub.callCount(), 0);
+            assert.equal(serviceStub.callCount(), 0);
+            assert.equal(requestSeriesStub.callCount(), 0);
+            assert.equal(upgradeOrNewStub.callCount(), 1);
           });
         });
 

@@ -458,9 +458,18 @@ YUI.add('subapp-browser', function(Y) {
           return true;
         }
       });
-      // If there is no config set then it's a ghost service model and not
-      // a deployed service yet.
-      if (!model.get('config')) {
+      if (metadata.localType) {
+        var file = metadata.flash.file;
+        var services = metadata.flash.services;
+        if (metadata.localType === 'new') {
+          this._activeInspector = this.createRequestSeriesInspector(file);
+        } else if (metadata.localType) {
+          this._activeInspector = this.createUpgradeOrNewInspector(
+              file, services);
+        }
+      } else if (!model.get('config')) {
+        // If there is no config set then it's a ghost service model and not
+        // a deployed service yet.
         this._activeInspector = this.createGhostInspector(model);
       } else {
         this._activeInspector = this.createServiceInspector(model);
@@ -836,6 +845,42 @@ YUI.add('subapp-browser', function(Y) {
       if (window.flags.mv) {
         this._renderMachineViewPanelView(this.get('db'));
       }
+    },
+
+    /**
+      Creates the request series inspector for local charms.
+
+      @method createUpgradeOrNewInspector
+      @param {Object} file The local charm data file.
+      @param {Array} services The list of existing services that can be updated.
+    */
+    createUpgradeOrNewInspector: function(file, services) {
+      var inspector = new Y.juju.views.LocalNewUpgradeInspector({
+        services: services,
+        file: file,
+        env: this.get('env'),
+        db: this.get('db')
+      }).render();
+      inspector.recalculateHeight();
+      inspector.addTarget(this);
+      return inspector;
+    },
+
+    /**
+      Creates the request series inspector for local charms.
+
+      @method createRequestSeriesInspector
+      @param {Object} file The local charm data file.
+    */
+    createRequestSeriesInspector: function(file) {
+      var inspector = new Y.juju.views.RequestSeriesInspector({
+        file: file,
+        env: this.get('env'),
+        db: this.get('db')
+      }).render();
+      inspector.recalculateHeight();
+      inspector.addTarget(this);
+      return inspector;
     },
 
     /**

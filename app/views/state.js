@@ -121,6 +121,9 @@ YUI.add('juju-app-state', function(Y) {
         }
         this._dispatchSection(section, state[section]);
       }, this);
+      // Reset flash, because we don't want arbitrary potentially large objects
+      // (e.g. files from local charm upload) hanging out.
+      this.set('flash', {});
     },
 
     /**
@@ -196,21 +199,28 @@ YUI.add('juju-app-state', function(Y) {
       var newState = Y.mix(
           Y.clone(this.get('current')), change, true, null, 0, true);
       var component,
+          flash,
+          id,
           metadata,
           sectionState,
-          id,
-          search = false,
           genUrl = '',
           hash = '',
+          search = false,
           urlParts = [];
+
       // Loop through each section in the state to generate the urls.
       Object.keys(newState).forEach(function(section) {
         sectionState = newState[section];
         component = sectionState.component;
         metadata = sectionState.metadata || {};
-        id = metadata.id;
+
         // Compress the id to remove default values.
-        if (id) { id = id.replace(/\/?~charmers/, ''); }
+        id = metadata.id;
+        if (id) {
+          id = id.replace(/\/?~charmers/, '');
+        }
+
+        // Setup the search status and filters based on metadata.search
         if (metadata.search && metadata.search.clear) {
           this.filter.clear();
         } else if (metadata.search && metadata.search.replace) {
@@ -221,22 +231,45 @@ YUI.add('juju-app-state', function(Y) {
           search = true;
           this.filter.update(metadata.search);
         }
+
+        // If metadata contains any flash data, store it.
+        if (metadata.flash) {
+          this.set('flash', metadata.flash);
+        }
+
         // All pushes to the urlParts array needs to be in a truthy conditional
         // because no state parameters are required.
         if (component === 'charmbrowser') {
           hash = metadata.hash || '';
-          if (id) { urlParts.push(id); }
+          if (id) {
+            urlParts.push(id);
+          }
         } else {
-          if (component) { urlParts.push(component); }
+          if (component) {
+            urlParts.push(component);
+          }
           if (component === 'inspector') {
-            if (id) { urlParts.push(id); }
-            if (metadata.unit) { urlParts.push('unit/' + metadata.unit); }
-            if (metadata.charm) { urlParts.push('charm'); }
+            if (id) {
+              urlParts.push(id);
+            }
+            if (metadata.unit) {
+              urlParts.push('unit/' + metadata.unit);
+            }
+            if (metadata.charm) {
+              urlParts.push('charm');
+            }
+            if (metadata.localType) {
+              urlParts.push('local/' + metadata.localType);
+            }
           }
           if (component === 'machine') {
             // With machine view the id is optional.
-            if (id) { urlParts.push(id); }
-            if (metadata.container) { urlParts.push(metadata.container); }
+            if (id) {
+              urlParts.push(id);
+            }
+            if (metadata.container) {
+              urlParts.push(metadata.container);
+            }
           }
         }
       }, this);
@@ -380,21 +413,28 @@ YUI.add('juju-app-state', function(Y) {
 
       @method _parseInspectorUrl
       @param {String} url Inspector url to be parsed.
-      @return {Object} State object to be added to the inspector state.
+      @return {Object} Metadata object to be added to the inspector state.
     */
     _parseInspectorUrl: function(url) {
       url = url.replace(/^inspector\/?/, '');
       var parts = url.split('/'),
-          state = {};
-      // If the url is only /inspector/ and that's stripped then just return
-      // because it's an invalid url so it should render the charmstore.
-      if (parts[0] === '') { return; }
-      // The first index is always the service id except for above.
-      state.id = parts[0];
-      if (parts[1]) {
-        state[parts[1]] = parts[2] || true;
+          metadata = {};
+      if (parts[0] === '') {
+        // If the url is only /inspector/ and that's stripped then just return
+        // because it's an invalid url so it should render the charmstore.
+        return;
+      } else if (parts[0] === 'local') {
+        metadata.localType = parts[1];
+        metadata.flash = this.get('flash');
+      } else {
+        // The first index is the service id except in the above cases.
+        metadata.id = parts[0];
+        if (parts[1]) {
+          metadata[parts[1]] = parts[2] || true;
+        }
       }
-      return state;
+
+      return metadata;
     },
 
     /**
@@ -519,6 +559,16 @@ YUI.add('juju-app-state', function(Y) {
         @default {}
       */
       dispatchers: {
+        value: {}
+      },
+      /**
+        Temporary memory for dispatching some views
+
+        @attribute flash
+        @type {Oobject}
+        @default {}
+      */
+      flash: {
         value: {}
       }
     }

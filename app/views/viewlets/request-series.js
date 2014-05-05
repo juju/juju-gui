@@ -92,7 +92,15 @@ YUI.add('request-series-view', function(Y) {
       @param {Object} viewletManager The viewlet manager instance.
     */
     destroyViewletManager: function(_, viewletManager) {
-      viewletManager.destroy();
+      if (window.flags && window.flags.il) {
+        this.fire('changeState', {
+          sectionA: {
+            component: 'charmbrowser'
+          }
+        });
+      } else {
+        viewletManager.destroy();
+      }
     },
 
     /**

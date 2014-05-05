@@ -38,17 +38,23 @@ YUI.add('local-new-upgrade-inspector', function(Y) {
       @method setupUI
     */
     setupUI: function() {
-      this.views.requestSeries.setAttrs({
+      var requestSeries = this.views.requestSeries;
+      var localNewUpgrade = this.views.localNewUpgrade;
+
+      requestSeries.setAttrs({
         file: this.get('file'),
         env: this.get('env'),
         db: this.get('db')
       });
-      this.views.localNewUpgrade.setAttrs({
+      requestSeries.addTarget(this);
+
+      localNewUpgrade.setAttrs({
         services: this.get('services'),
         file: this.get('file'),
         env: this.get('env'),
         db: this.get('db')
       });
+      localNewUpgrade.addTarget(this);
     }
 
   }, {

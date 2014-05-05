@@ -252,6 +252,13 @@ describe('UI State object', function() {
         assert.equal(charmbrowser.lastArguments()[0], newState.metadata);
       });
 
+      it('clears its flash storage after dispatch', function() {
+        var newState = { sectionA: {}, sectionB: {} };
+        state.set('flash', {foo: 'bar'});
+        state.dispatch(newState);
+        assert.deepEqual({}, state.get('flash'));
+      });
+
       it('_dispatchSection: calls registered sectionB dispatcher', function() {
         var newState = {
           component: 'machine',
@@ -279,16 +286,37 @@ describe('UI State object', function() {
       var parts = {
         'inspector': undefined,
         'inspector/service123': {
-          id: 'service123' },
+          id: 'service123'
+        },
         'inspector/service123/charm': {
           id: 'service123',
-          charm: true },
+          charm: true
+        },
         'inspector/service123/unit/13': {
           id: 'service123',
-          unit: '13' }
+          unit: '13'
+        },
+        'inspector/local/new': {
+          localType: 'new',
+          flash: {
+            file: 'foo',
+            services: ['bar', 'baz']
+          }
+        },
+        'inspector/local/upgrade': {
+          localType: 'upgrade',
+          flash: {
+            file: 'foo',
+            services: ['bar', 'baz']
+          }
+        }
       };
 
       it('can parse the inspector url parts', function() {
+        state.set('flash', {
+          file: 'foo',
+          services: ['bar', 'baz']
+        });
         Object.keys(parts).forEach(function(key) {
           assert.deepEqual(
               state._parseInspectorUrl(key),
@@ -780,51 +808,82 @@ describe('UI State object', function() {
   describe('generateUrl', function() {
     var defaultState = { sectionA: {}, sectionB: {} };
     var stateObj = {};
-    var states = [
-      { '/': { sectionA: {}, sectionB: {} }},
-      { '/bundle/mediawiki/6/single/': {
+    var states = [{
+      '/': {
+        sectionA: {},
+        sectionB: {}
+      }
+    }, {
+      '/bundle/mediawiki/6/single/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
-        }, sectionB: {} }},
-      { '/bundle/mediawiki/6/single/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/bundle/mediawiki/6/single/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/mediawiki/6/single' }
-        }, sectionB: {} }},
-      { '/bundle/~jorge/mediawiki/6/single/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/bundle/~jorge/mediawiki/6/single/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~jorge/mediawiki/6/single' }
-        }, sectionB: {} }},
-      { '/bundle/~jorge/mediawiki/single/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/bundle/~jorge/mediawiki/single/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~jorge/mediawiki/single' }
-        }, sectionB: {} }},
-      { '/precise/mysql-38/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/precise/mysql-38/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql-38' }
-        }, sectionB: {} }},
-      { '/~prismakov/trusty/cf-dea-1/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/~prismakov/trusty/cf-dea-1/': {
         sectionA: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        }, sectionB: {} }},
-      { '?text=apache': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '?text=apache': {
         sectionA: {
           component: 'charmbrowser',
-          metadata: { search: { text: 'apache' }}
-        }, sectionB: {} }},
-      { '/precise/apache2-19?text=apache': {
+          metadata: {
+            search: { text: 'apache' }
+          }
+        },
+        sectionB: {}
+      }
+    }, {
+      '/precise/apache2-19?text=apache': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
-            search: { text: 'apache' }}
-        }, sectionB: {} }},
-      { '/precise/apache2-13?text=apache#readme': {
+            search: { text: 'apache' }
+          }
+        },
+        sectionB: {}
+      }
+    }, {
+      '/precise/apache2-13?text=apache#readme': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
@@ -832,16 +891,22 @@ describe('UI State object', function() {
             search: { text: 'apache'},
             hash: 'readme'
           }
-        }, sectionB: {} }},
-      { '/bundle/hadoop/3/demo?text=hadoop': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/bundle/hadoop/3/demo?text=hadoop': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo'
           }
-        }, sectionB: {} }},
-      { '/bundle/hadoop/3/demo?text=hadoop#readme': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/bundle/hadoop/3/demo?text=hadoop#readme': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
@@ -849,44 +914,85 @@ describe('UI State object', function() {
             id: 'bundle/hadoop/3/demo',
             hash: 'readme'
           }
-        }, sectionB: {} }},
-      {'/inspector/service123/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/inspector/service123/': {
         sectionA: {
           component: 'inspector',
-          metadata: {
-            id: 'service123'
-          }
-        }, sectionB: {} }},
-      {'/inspector/service123/charm/': {
+          metadata: { id: 'service123' }
+        },
+        sectionB: {}
+      }
+    }, {
+      '/inspector/service123/charm/': {
         sectionA: {
           component: 'inspector',
           metadata: {
             id: 'service123',
             charm: true
           }
-        }, sectionB: {} }},
-      { '/inspector/service123/unit/13/': {
+        },
+        sectionB: {}
+      }
+    }, {
+      '/inspector/service123/unit/13/': {
         sectionA: {
           component: 'inspector',
           metadata: {
             id: 'service123',
             unit: '13'
           }
-        }, sectionB: {} }},
-      { '/machine/': {
+        },
+        sectionB: {}
+      }
+    },
+
+    // inspector/local urls get data from the state's flash object, as well as
+    // the url. The flash attr on metadata is from this state flash object.
+    {
+      '/inspector/local/new/': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            localType: 'new',
+            flash: {
+              file: 'foo'
+            }
+          }
+        }
+      }
+    }, {
+      '/inspector/local/upgrade/': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            localType: 'upgrade',
+            flash: {
+              file: 'foo',
+              services: ['bar', 'baz']
+            }
+          }
+        }
+      }
+    }, {
+      '/machine/': {
         sectionA: {},
         sectionB: {
           component: 'machine'
-        }}},
-      { '/machine/3/': {
+        }
+      }
+    }, {
+      '/machine/3/': {
         sectionA: {},
         sectionB: {
           component: 'machine',
-          metadata: {
-            id: '3'
-          }
-        }}},
-      { '/machine/3/lxc-0/': {
+          metadata: { id: '3' }
+        }
+      }
+    }, {
+      '/machine/3/lxc-0/': {
         sectionA: {},
         sectionB: {
           component: 'machine',
@@ -894,33 +1000,38 @@ describe('UI State object', function() {
             id: '3',
             container: 'lxc-0'
           }
-        }}},
-      { '/machine/3?text=hadoop': {
+        }
+      }
+    }, {
+      '/machine/3?text=hadoop': {
         sectionA: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'}
-          }},
+          }
+        },
         sectionB: {
           component: 'machine',
-          metadata: {
-            id: '3'
-          }
-        }}},
-      { '/inspector/apache2/machine/3/lxc-0/': {
+          metadata: { id: '3' }
+        }
+      }
+    }, {
+      '/inspector/apache2/machine/3/lxc-0/': {
         sectionA: {
           component: 'inspector',
           metadata: {
             id: 'apache2'
-          }},
+          }
+        },
         sectionB: {
           component: 'machine',
           metadata: {
             id: '3',
             container: 'lxc-0'
           }
-        }}}
-    ];
+        }
+      }
+    }];
 
     it('can generate proper urls from the state object', function() {
       states.forEach(function(record) {
@@ -971,6 +1082,31 @@ describe('UI State object', function() {
           state.generateUrl(changeState), '/',
           'The object ' + JSON.stringify(changeState) +
               ' did not generate the proper url');
+    });
+
+    it('can set flash from metadata', function() {
+      var defaultState = {
+        sectionA: {
+          metadata: {
+            search: {
+              text: 'apache2'
+            }
+          }
+        },
+        sectionB: {}
+      };
+      var changeState = {
+        sectionA: {
+          metadata: {
+            flash: {
+              foo: 'bar'
+            }
+          }
+        }
+      };
+      state.set('current', Y.clone(defaultState));
+      state.generateUrl(changeState);
+      assert.deepEqual(state.get('flash'), {foo: 'bar'});
     });
   });
 });
