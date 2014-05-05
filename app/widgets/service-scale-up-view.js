@@ -42,22 +42,42 @@ YUI.add('service-scale-up-view', function(Y) {
 
     events: {
       '.action-block button': {
-        click: 'onActionButtonClick'
+        click: '_onActionButtonClick'
       },
       '.actions button.cancel': {
-        click: 'onCancelButtonClick'
+        click: '_onCancelButtonClick'
+      },
+      '.actions button.add-units': {
+        click: '_onAddUnitsButtonClick'
       }
     },
 
+    /**
+      Sets up the view
+
+      @method initializer
+    */
     initializer: function() {
       this._bindModelEvents();
     },
 
+    /**
+      Binds the events to listen for changes on the services db
+
+      @method _bindModelEvents
+    */
     _bindModelEvents: function() {
-      this.get('db').services.on(['*:add', '*:remove', '*:change'], this._updateServiceList, this);
+      this.get('db').services.on(
+          ['*:add', '*:remove', '*:change'], this._updateServiceList, this);
     },
 
-    _updateServiceList: function(e) {
+    /**
+      Parses the service database and generates a service list of the services
+      to display in the service scale up dropdown.
+
+      @method _updateServiceList
+    */
+    _updateServiceList: function() {
       var db = this.get('db');
       var services = [];
       if (!db.services) {
@@ -79,6 +99,11 @@ YUI.add('service-scale-up-view', function(Y) {
       this._updateUI();
     },
 
+    /**
+      Updates the UI to match the currently deployed services.
+
+      @method _updateUI
+    */
     _updateUI: function() {
       var services = this._services;
       var serviceList = this.get('container').one('.service-list ul');
@@ -111,23 +136,68 @@ YUI.add('service-scale-up-view', function(Y) {
       });
     },
 
-    onCancelButtonClick: function(e) {
+    /**
+      Handler for clicking the cancel or X buttons.
+
+      @method onCancelButtonClick
+      @param {Object} e The click event.
+    */
+    _onCancelButtonClick: function(e) {
       e.preventDefault();
       this._toggleServiceList(false);
     },
 
-    onActionButtonClick: function(e) {
+    /**
+      Handler for open/close action button click
+
+      @method onActionButtonClick
+      @param {Object} e The click event.
+    */
+    _onActionButtonClick: function(e) {
       e.preventDefault();
       var opened = e.currentTarget.hasClass('opened');
       this._toggleServiceList(!opened);
     },
 
+    /**
+      Handler for clicking the add units button.
+
+      @method _onAddUnitsButtonClick
+      @param {Object} e The click event.
+    */
+    _onAddUnitsButtonClick: function(e) {
+      e.preventDefault();
+      var services = this.get('container').one('ul').all('li'),
+          env = this.get('env'),
+          serviceName, unitCount;
+      services.each(function(service) {
+        serviceName = service.getData('service');
+        unitCount = parseInt(
+            service.one('input.service-units').get('value'), 10);
+        if (unitCount && unitCount > 0) {
+          env.add_unit(serviceName, unitCount, null, null);
+        }
+      });
+    },
+
+    /**
+      Toggles the opened class on the service list container
+
+      @method _toggleServiceList
+      @param {Bool} opened Whether the opened class should be added.
+    */
     _toggleServiceList: function(opened) {
       this.get('container').toggleClass('opened', opened);
     },
 
+    /**
+      Renders the template content into the container and sets the
+      apropriate classes.
+
+      @method render
+      @return {Object} reference to the view instance.
+    */
     render: function() {
-      console.log('render');
       var content = this.template();
       var container = this.get('container');
       container.addClass('service-scale-up-view');
@@ -136,6 +206,11 @@ YUI.add('service-scale-up-view', function(Y) {
       return this;
     },
 
+    /**
+      Empties out the container and removes the added classes.
+
+      @method destructor
+    */
     destructor: function() {
       var container = this.get('container');
       container.setHTML('');

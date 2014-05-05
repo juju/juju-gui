@@ -91,9 +91,9 @@ YUI.add('machine-token', function(Y) {
          */
         render: function() {
           var container = this.get('container'),
-              machine = this.get('machine');
-          machine.formattedHardware = this._formatHardware(
-              Y.clone(machine.hardware));
+              machine = this.get('machine'),
+              hardware = machine.hardware || {};
+          machine.formattedHardware = this._formatHardware(Y.clone(hardware));
           container.setHTML(this.template(machine));
           container.addClass('machine-token');
           container.setAttribute('data-id', machine.id);
