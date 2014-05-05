@@ -947,7 +947,11 @@ describe('UI State object', function() {
         },
         sectionB: {}
       }
-    }, {
+    },
+
+    // inspector/local urls get data from the state's flash object, as well as
+    // the url. The flash attr on metadata is from this state flash object.
+    {
       '/inspector/local/new/': {
         sectionA: {
           component: 'inspector',
@@ -1102,7 +1106,7 @@ describe('UI State object', function() {
       };
       state.set('current', Y.clone(defaultState));
       state.generateUrl(changeState);
-      assert.deepEqual({foo: 'bar'}, state.get('flash'));
+      assert.deepEqual(state.get('flash'), {foo: 'bar'});
     });
   });
 });

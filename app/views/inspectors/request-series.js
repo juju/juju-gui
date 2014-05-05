@@ -37,12 +37,13 @@ YUI.add('request-series-inspector', function(Y) {
       @method setupUI
     */
     setupUI: function() {
-      this.views.requestSeries.setAttrs({
+      var requestSeries = this.views.requestSeries;
+      requestSeries.setAttrs({
         file: this.get('file'),
         env: this.get('env'),
         db: this.get('db')
       });
-      this.views.requestSeries.addTarget(this);
+      requestSeries.addTarget(this);
     }
 
   }, {

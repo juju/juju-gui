@@ -121,6 +121,8 @@ YUI.add('juju-app-state', function(Y) {
         }
         this._dispatchSection(section, state[section]);
       }, this);
+      // Reset flash, because we don't want arbitrary potentially large objects
+      // (e.g. files from local charm upload) hanging out.
       this.set('flash', {});
     },
 
@@ -215,7 +217,7 @@ YUI.add('juju-app-state', function(Y) {
         // Compress the id to remove default values.
         id = metadata.id;
         if (id) {
-          id = metadata.id.replace(/\/?~charmers/, '');
+          id = id.replace(/\/?~charmers/, '');
         }
 
         // Setup the search status and filters based on metadata.search

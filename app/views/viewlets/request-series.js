@@ -95,8 +95,7 @@ YUI.add('request-series-view', function(Y) {
       if (window.flags && window.flags.il) {
         this.fire('changeState', {
           sectionA: {
-            component: 'charmbrowser',
-            metadata: null
+            component: 'charmbrowser'
           }
         });
       } else {

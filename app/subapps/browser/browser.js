@@ -851,17 +851,15 @@ YUI.add('subapp-browser', function(Y) {
       Creates the request series inspector for local charms.
 
       @method createUpgradeOrNewInspector
-      @param {Object} file The ghost service model.
+      @param {Object} file The local charm data file.
+      @param {Array} services The list of existing services that can be updated.
     */
     createUpgradeOrNewInspector: function(file, services) {
-      var db = this.get('db');
-      var env = this.get('env');
-
       var inspector = new Y.juju.views.LocalNewUpgradeInspector({
         services: services,
         file: file,
-        env: env,
-        db: db
+        env: this.get('env'),
+        db: this.get('db')
       }).render();
       inspector.recalculateHeight();
       inspector.addTarget(this);
@@ -872,11 +870,9 @@ YUI.add('subapp-browser', function(Y) {
       Creates the request series inspector for local charms.
 
       @method createRequestSeriesInspector
-      @param {Object} file The ghost service model.
+      @param {Object} file The local charm data file.
     */
     createRequestSeriesInspector: function(file) {
-      var db = this.get('db');
-      var env = this.get('env');
       var inspector = new Y.juju.views.RequestSeriesInspector({
         file: file,
         env: this.get('env'),

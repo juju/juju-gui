@@ -326,10 +326,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             context._cleanups.push(serviceStub.reset);
             requestSeriesStub = utils.makeStubMethod(
                 app, 'createRequestSeriesInspector');
-            context._cleanups.push(serviceStub.reset);
+            context._cleanups.push(requestSeriesStub.reset);
             upgradeOrNewStub = utils.makeStubMethod(
                 app, 'createUpgradeOrNewInspector');
-            context._cleanups.push(serviceStub.reset);
+            context._cleanups.push(upgradeOrNewStub.reset);
           }
 
           function stubDb(app, ghost) {
@@ -389,7 +389,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(upgradeOrNewStub.callCount(), 0);
           });
 
-          it('renders a service inspector', function() {
+          it('renders an upgrade-or-new inspector', function() {
             stubMethods(this);
             stubDb(app, true);
             app._inspector({
