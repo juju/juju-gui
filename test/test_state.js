@@ -136,7 +136,7 @@ describe('State object', function() {
       // Set the state before changing up.
       state.save();
       state.getUrl({search: false});
-      assert.equal('', state.filter.get('text'));
+      assert.equal(null, state.filter.get('text'));
     });
 
     it('permits a filter clear command', function() {

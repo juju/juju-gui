@@ -56,13 +56,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'node-event-simulate',
           'juju-tests-utils',
-          'subapp-browser-charmresults',
-          'subapp-browser-editorial',
-          'subapp-browser-sidebar',
+          'subapp-browser',
           function(Y) {
             utils = Y.namespace('juju-tests.utils');
             views = Y.namespace('juju.browser.views');
-            EditorialView = views.EditorialView;
+            EditorialView = views.CharmResults;
             sampleData = utils.loadFixture('data/interesting.json');
             cleanIconHelper = utils.stubCharmIconPath();
             done();
@@ -241,45 +239,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
     });
 
-    it('uses passed in cache data if available', function() {
-      fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: sampleData
-              }]
-            }
-          });
-        }
-      });
-      var interesting_called = false,
-          results = {
-            featuredCharms: [],
-            newCharms: [],
-            popularCharms: []
-          };
-
-      fakeStore.interesting = function() {
-        interesting_called = true;
-        return results;
-      };
-      view = new EditorialView({
-        renderTo: Y.one('.bws-content'),
-        store: fakeStore,
-        activeID: 'precise/ceph-7',
-        cachedResults: results
-      });
-      view.render();
-      assert.isFalse(interesting_called);
-
-      view.set('cachedResults', null);
-      view.render();
-      assert.isTrue(interesting_called);
-    });
-
     it('renders bundles and charms', function(done) {
       var sampleData = {
         result: {
@@ -325,7 +284,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         store: fakeStore,
         activeID: 'precise/ceph-7'
       });
-      view._renderInteresting = function(results) {
+      utils.makeStubMethod(view, 'makeStickyHeaders');
+      view._renderInteresting = function(renderTo, results) {
         assert.equal(results.featuredCharms.length, 2,
             'featureCharm length wrong');
         assert.equal(results.newCharms.length, 0,
