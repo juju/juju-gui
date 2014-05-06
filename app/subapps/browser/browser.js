@@ -126,7 +126,7 @@ YUI.add('subapp-browser', function(Y) {
       return Y.merge(cfg, {
         envSeries: this.get('envSeries'),
         db: this.get('db'),
-        filters: this.state.filter.getFilterData(),
+        filter: this.state.filter.getFilterData(),
         store: this.get('store')
       });
     },
@@ -212,32 +212,6 @@ YUI.add('subapp-browser', function(Y) {
         return true;
       } else {
         return false;
-      }
-    },
-
-    /**
-       Determine if search changed, so we know how to handle the cache.
-
-       @method _searchChanged
-       @return {Boolean} true If search changed.
-     */
-    _searchChanged: function() {
-      if (window.flags && window.flags.il) {
-        var state = this.state;
-        if (state.getState('current', 'sectionA', 'metadata').search &&
-            state.hasChanged('sectionA', 'metadata')) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        if (this.state.getCurrent('search') && (
-            this.state.hasChanged('search') ||
-            this.state.hasChanged('querystring'))) {
-          return true;
-        } else {
-          return false;
-        }
       }
     },
 
@@ -421,24 +395,11 @@ YUI.add('subapp-browser', function(Y) {
       // template.
       if (detailsNode) { detailsNode.hide(); }
       // If there is no provided metadata show the defaults.
-      if (!metadata || !metadata.search) {
-        this._sidebar.showSearch();
-        if (!this._editorial) {
-          this.renderEditorial();
-        } else if (!metadata || !metadata.id) {
-          // Deselect the active charm.
-          this._editorial.updateActive();
-        }
-      }
-      if (metadata && metadata.search) {
-        this._sidebar.showSearch();
-        this.renderSearchResults();
-      }
+      this.renderCharmResults();
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
-        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
     },
@@ -497,12 +458,16 @@ YUI.add('subapp-browser', function(Y) {
       @method emptySectionA
     */
     emptySectionA: function() {
-      if (this._editorial) {
-        this._editorial.destroy();
-        this._editorial = null;
+
+      if (this._search) {
+        this._search.destroy();
+        this._search = null;
+        var sidebar = this.get('container').one('#bws-sidebar');
+        if (sidebar) {
+          sidebar.empty();
+        }
       }
-      if (this._search) { this._search.destroy(); }
-      if (this._sidebar.search) { this._sidebar.hideSearch(); }
+
       if (this._details) {
         this._details.destroy({ remove: true });
         var detailsNode = Y.one('.bws-view-data');
@@ -523,6 +488,68 @@ YUI.add('subapp-browser', function(Y) {
       if (this.machineViewPanel) {
         this.machineViewPanel.destroy();
       }
+    },
+
+    /**
+       Handle rendering out the charmbrowser component.
+       - Handles the search widget, search results UI, and the editorial
+         content.
+       - Makes sure the active charm is indicated and clears when closed.
+
+       @method renderCharmResults
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+
+     */
+    renderCharmResults: function(req, res, next) {
+      var container = this.get('container'),
+          extraCfg = {};
+
+      extraCfg.renderTo = container.one('.bws-content');
+
+      // If there's a selected charm we need to pass that info onto the View
+      // to render it selected.
+      if (window.flags && window.flags.il) {
+        var metadata = this.state.getState('current', 'sectionA', 'metadata');
+        if (metadata && metadata.id) {
+          extraCfg.activeID = metadata.id;
+        } else {
+          extraCfg.activeID = null;
+        }
+      } else {
+        if (this.state.getCurrent('charmID')) {
+          extraCfg.activeID = this.state.getCurrent('charmID');
+        }
+      }
+
+      if (!this._search) {
+        this._search = new views.CharmResults(
+            this._getViewCfg(extraCfg));
+        this._search.render();
+        // Prepare to handle cache
+        this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
+          this._cache = Y.merge(this._cache, ev.cache);
+        }, this);
+
+        this._search.set('cachedResults', this._cache.interesting);
+        this._search.addTarget(this);
+
+      } else {
+        // We already have a search UI. Just update the data in it.
+        this._search.set('activeID', extraCfg.activeID);
+        // Update with the latest filter which should cause it to redraw.
+        // Setting the filter to something different forces the results to
+        // auto update. Only do this when the filter has changed though. We
+        // stringify to tell if the filter data is different from existing
+        // data.
+        var existingFilter = Y.JSON.stringify(this._search.get('filter'));
+        var newFilter = Y.JSON.stringify(this.state.filter.getFilterData());
+        if (newFilter !== existingFilter) {
+          this._search.set('filter', this.state.filter.getFilterData());
+        }
+      }
+
     },
 
     /**
@@ -647,49 +674,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Render search results
-
-       @method renderSearchResults
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-     */
-    renderSearchResults: function(req, res, next) {
-      var container = this.get('container'),
-          extraCfg = {};
-
-      extraCfg.renderTo = container.one('.bws-content');
-
-      // If there's a selected charm we need to pass that info onto the View
-      // to render it selected.
-      if (window.flags && window.flags.il) {
-        extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
-        var metadata = this.state.getState('current', 'sectionA', 'metadata');
-        extraCfg.query = metadata.search;
-        this._sidebar.set('withHome', true);
-      } else {
-        if (this.state.getCurrent('charmID')) {
-          extraCfg.activeID = this.state.getCurrent('charmID');
-        }
-      }
-
-      this._search = new views.BrowserSearchView(
-          this._getViewCfg(extraCfg));
-
-      // Prepare to handle cache
-      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
-        this._cache = Y.merge(this._cache, ev.cache);
-      }, this);
-
-      if (!this._searchChanged()) {
-        this._search.render(this._cache.search);
-      } else {
-        this._search.render();
-      }
-      this._search.addTarget(this);
-    },
-
-    /**
        Handle the route for the sidebar view.
 
        @method sidebar
@@ -747,20 +731,9 @@ YUI.add('subapp-browser', function(Y) {
 
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
-      if (this._shouldShowSearch()) {
-        // Showing search implies that other sidebar content is destroyed.
-        if (this._editorial) {
-          this._editorial.destroy();
-        }
-
-        this.renderSearchResults(req, res, next);
-      } else if (this._shouldShowEditorial() || forceSidebar) {
-        // Showing editorial implies that other sidebar content is destroyed.
-        if (this._search) {
-          this._search.destroy();
-        }
-
-        this.renderEditorial(req, res, next);
+      if (this._shouldShowSearch() || this._shouldShowEditorial() ||
+          forceSidebar) {
+        this.renderCharmResults(req, res, next);
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
@@ -900,12 +873,10 @@ YUI.add('subapp-browser', function(Y) {
       // the environment view is rendered.
       var topo = this.get('topo');
       if (!window.flags || !window.flags.il) {
-        var editorial = this._editorial;
         var search = this._search;
         // Clear out whatever charm list is in the inspector
         // XXX This clean up will be handled by the state
         // system once that's implemented.
-        if (editorial) { editorial.destroy(); }
         if (search) { search.destroy(); }
       }
       // Render the ghost inspector
@@ -1275,6 +1246,7 @@ YUI.add('subapp-browser', function(Y) {
 }, '0.1.0', {
   requires: [
     'handlebars',
+    'json-stringify',
     'juju-app-state',
     'juju-browser-models',
     'juju-charm-store',
@@ -1285,9 +1257,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-bundleview',
     'subapp-browser-charmresults',
-    'subapp-browser-editorial',
     'subapp-browser-jujucharms',
-    'subapp-browser-searchview',
     'subapp-browser-sidebar',
     'machine-view-panel-extension'
   ]
