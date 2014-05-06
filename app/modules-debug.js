@@ -549,25 +549,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/jujucharms.js'
         },
 
-        'subapp-browser-mainview': {
-          fullpath: '/juju-ui/subapps/browser/views/view.js'
-        },
-
-        'subapp-browser-searchview': {
-          fullpath: '/juju-ui/subapps/browser/views/search.js'
-        },
-
         'subapp-browser-sidebar': {
           fullpath: '/juju-ui/subapps/browser/views/sidebar.js',
           requires: [
-            'subapp-browser-editorial',
-            'subapp-browser-mainview',
             'subapp-browser-charmview'
           ]
-        },
-
-        'subapp-browser-editorial': {
-          fullpath: '/juju-ui/subapps/browser/views/editorial.js'
         },
 
         //Browser Models

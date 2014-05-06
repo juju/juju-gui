@@ -20,6 +20,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
+  var addBrowserContainer = function(Y, container) {
+    Y.Node.create([
+      '<div id="navbar">',
+      '<div id="browser-nav"></div>',
+      '</div>',
+      '<div id="content">',
+      '<div id="subapp-browser">',
+      '</div>',
+      '</div>'
+    ].join('')).appendTo(container);
+  };
+
+  var addSidebarContainer = function(Y, container) {
+    Y.Node.create([
+      '<div class="charmbrowser">',
+      '<div id="bws-sidebar">',
+      '<div class="bws-header">',
+      '</div>',
+      '<div class="bws-content">',
+      '</div>',
+      '</div>',
+      '<div class="bws-view-data content-panel">',
+      '<div></div>',
+      '</div>',
+      '</div>'
+    ].join('')).appendTo(container);
+  };
+
   describe('browser_editorial', function() {
     var container, cleanIconHelper, EditorialView, fakeStore, models,
         node, sampleData, utils, view, views, Y;
@@ -30,6 +58,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-tests-utils',
           'subapp-browser-charmresults',
           'subapp-browser-editorial',
+          'subapp-browser-sidebar',
           function(Y) {
             utils = Y.namespace('juju-tests.utils');
             views = Y.namespace('juju.browser.views');
@@ -42,18 +71,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer(this, 'container');
-      var testcontent = [
-        '<div id=testcontent><div class="bws-view-data">',
-        '</div><div class="bws-content"></div></div>'
-      ].join();
-
-      Y.Node.create(testcontent).appendTo(container);
+      addBrowserContainer(Y, container);
+      addSidebarContainer(Y, container.one('#subapp-browser'));
 
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
         charmworldURL: 'http://localhost'
       };
-      node = Y.one('#testcontent');
+      node = Y.one('#bws-sidebar');
     });
 
     afterEach(function() {
@@ -201,18 +226,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('tells listeners the cache has updated', function() {
-      view = new EditorialView({
-        renderTo: Y.one('.bws-content')
-      });
       var results = {
         featuredCharms: [],
         newCharms: [],
         popularCharms: []
       };
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        cachedResults: results
+      });
       view.on(view.EV_CACHE_UPDATED, function(ev) {
         assert.isObject(ev.cache);
       });
-      view.render(results);
+      view.render();
     });
 
     it('uses passed in cache data if available', function() {
@@ -243,11 +269,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view = new EditorialView({
         renderTo: Y.one('.bws-content'),
         store: fakeStore,
-        activeID: 'precise/ceph-7'
+        activeID: 'precise/ceph-7',
+        cachedResults: results
       });
-      view.render(results);
+      view.render();
       assert.isFalse(interesting_called);
 
+      view.set('cachedResults', null);
       view.render();
       assert.isTrue(interesting_called);
     });
