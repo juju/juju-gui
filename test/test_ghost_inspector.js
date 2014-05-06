@@ -381,6 +381,44 @@ describe('Ghost Inspector', function() {
     nameInput.set('value', 'foo');
   });
 
+  // XXX j.c.sackett 2014-05-06 This test can be removed when window.flags.il
+  // is removed.
+  it('Resets the canvas when hitting X without flags.il', function(done) {
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) { done(); }
+
+    inspector = setUpInspector();
+    var vmContainer = inspector.get('container');
+    var nameInput = vmContainer.one('input[name=service-name]');
+    var model = inspector.get('model');
+    var serviceIcon = Y.one('tspan.name');
+
+    assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
+    assert.equal(model.get('displayName'), '(mediawiki)', 'model before');
+
+    var fireStub = utils.makeStubMethod(inspector, 'fire');
+    this._cleanups.push(fireStub.reset);
+
+    var handler = vmContainer.delegate('valuechange', function() {
+      assert.equal(model.get('displayName'), '(foo)', 'model callback');
+      view.update(); // Simulating a db.fire('update') call
+      assert.equal(serviceIcon.get('textContent'), '(foo)', 'icon callback');
+      vmContainer.one('.close').simulate('click');
+      assert.equal(model.get('displayName'), '(mediawiki)', 'model after');
+      view.update(); // Simulating a db.fire('update') call
+      assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon after');
+      handler.detach();
+      assert.equal(fireStub.callCount(), 1);
+      var fireArgs = fireStub.lastArguments();
+      assert.equal(fireArgs[0], 'destroy');
+      done();
+    }, 'input[name=service-name]');
+
+    nameInput.simulate('focus');
+    nameInput.set('value', 'foo');
+  });
+
   it('Resets the canvas when hitting X', function(done) {
     // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
     // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
@@ -398,6 +436,7 @@ describe('Ghost Inspector', function() {
     var fireStub = utils.makeStubMethod(inspector, 'fire');
     this._cleanups.push(fireStub.reset);
 
+    window.flags.il = true;
     var handler = vmContainer.delegate('valuechange', function() {
       assert.equal(model.get('displayName'), '(foo)', 'model callback');
       view.update(); // Simulating a db.fire('update') call
