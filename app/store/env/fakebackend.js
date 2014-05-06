@@ -920,6 +920,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {String} serviceName The name of the service to be scaled up.
     @param {Integer} numUnits The number of units to be added, defaulting
       to 1.
+    @param {String} toMachine The machine/container where the unit will be
+      placed, or null/undefined to create a top level machine.
     @return {Object} Returns an object either with an "error" attribute
       containing a string describing the problem, or with a "units"
       attribute containing a list of the added units.

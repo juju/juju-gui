@@ -273,4 +273,65 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
+  describe('createContainer', function() {
+    var requirements = [
+      'juju-fakebackend-simulator', 'juju-tests-factory', 'juju-tests-utils'];
+    var createContainer, fakeBackend, testFactory, testUtils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        createContainer = Y.namespace('juju.environments').createContainer;
+        testFactory = Y.namespace('juju-tests.factory');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Create a fake backend with some machines in it.
+      fakeBackend = testFactory.makeFakeBackend();
+      fakeBackend.db.machines.add([
+        {id: '0'},
+        {id: '1'},
+        {id: '2'},
+        {id: '2/lxc/0'}
+      ]);
+    });
+
+    afterEach(function() {
+      fakeBackend.destroy();
+    });
+
+    // Mock the Math.random function.
+    var mockRandom = function(context, value) {
+      var mockMathRandom = testUtils.makeStubMethod(Math, 'random', value);
+      context._cleanups.push(mockMathRandom.reset);
+    };
+
+    it('creates a new container and returns its name', function() {
+      mockRandom(this, 0.1);
+      var name = createContainer(fakeBackend);
+      assert.deepEqual(name, '0/lxc/0');
+    });
+
+    it('creates a new container in a random top level machine', function() {
+      mockRandom(this, 0.6);
+      var name = createContainer(fakeBackend);
+      assert.deepEqual(name, '1/lxc/0');
+    });
+
+    it('retrieves the name of the next container', function() {
+      mockRandom(this, 0.9);
+      var name = createContainer(fakeBackend);
+      assert.deepEqual(name, '2/lxc/1');
+    });
+
+    it('returns null if no machines are present in the db', function() {
+      fakeBackend.db.reset();
+      var name = createContainer(fakeBackend);
+      assert.isNull(name);
+    });
+
+  });
+
 })();
