@@ -34,11 +34,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-fakebackend-simulator', function(Y) {
 
+  var environmentsModule = Y.namespace('juju.environments');
+
   // How often should we run by default (ms).
   var DEFAULT_INTERVAL = 3000;
   var RAND = function(prob) {
     return Math.random() <= prob;
   };
+
+  /**
+    Create a new container in an existing top level machine.
+    Return the resulting container name.
+    Return null if no top level machines exist in the database.
+
+    @method createContainer
+    @param {Object} state The fake backend instance.
+    @return {String} The name of the new container.
+  */
+  var createContainer = function(state) {
+    // Retrieve all the top level machine names.
+    var machines = state.db.machines.filterByParent(null);
+    if (!machines.length) {
+      return null;
+    }
+    var names = machines.map(function(machine) {
+      return machine.id;
+    });
+    // Select a random machine where to create the new container.
+    var name = names[Math.floor(Math.random() * names.length)];
+    // Add the new container to the database.
+    var result = state.addMachines([{parentId: name, containerType: 'lxc'}]);
+    return result.machines[0].name;
+  };
+  // Add the function above to the environments module for tests.
+  environmentsModule.createContainer = createContainer;
 
   var DEFAULT_AGENTS = {
     landscape: {
@@ -128,11 +157,22 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         list: 'services',
         random: 0.1
       },
+
       run: function(context) {
         context.selection.each(function(service) {
           if (RAND(0.5)) {
-            context.state.addUnit(service.get('id'), 1);
+            // Add a new unit.
+            var toMachine;
+            if (RAND(0.6)) {
+              // Add the unit to a new machine most of the times.
+              toMachine = null;
+            } else {
+              // Add the unit to a container in an existing machine.
+              toMachine = createContainer(context.state);
+            }
+            context.state.addUnit(service.get('id'), 1, toMachine);
           } else {
+            // Remove a unit if it exists.
             var units = service.get('units');
             if (units.length > 1) {
               var unit = units.item(units.length - 1);
@@ -141,6 +181,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           }
         });
       }
+
     },
 
     unitStatus: {
@@ -256,7 +297,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       }
     }
   };
-  Y.namespace('juju.environments').DEFAULT_AGENTS = DEFAULT_AGENTS;
+  environmentsModule.DEFAULT_AGENTS = DEFAULT_AGENTS;
 
   /**
     Agents of backend change. Created automatically,
@@ -377,7 +418,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       }
     }
   });
-  Y.namespace('juju.environments').Agent = Agent;
+  environmentsModule.Agent = Agent;
 
   /**
   Humble make-believe manager.
@@ -557,7 +598,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     }
 
   });
-  Y.namespace('juju.environments').Simulator = Simulator;
+  environmentsModule.Simulator = Simulator;
 
 
 }, '0.1.0', {
