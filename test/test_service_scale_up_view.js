@@ -41,7 +41,6 @@ describe('service scale up view', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'service-scale-up-view');
-    view = new View({container: container}).render();
   });
 
   afterEach(function() {
@@ -49,7 +48,53 @@ describe('service scale up view', function() {
     container.remove(true);
   });
 
+  function generateView(db) {
+    db = db || { services: new models.ServiceList() };
+    view = new View({
+      container: container,
+      db: db
+    });
+    return view;
+  }
+
   it('should apply the wrapping class to the container', function() {
+    generateView().render();
     assert.equal(container.hasClass('service-scale-up-view'), true);
   });
+
+  it('removes the class from the container when destroyed', function() {
+    generateView().render();
+    assert.equal(container.hasClass('service-scale-up-view'), true);
+    view.destroy();
+    assert.equal(container.hasClass('service-scale-up-view'), false);
+  });
+
+  it('binds to the services change events', function() {
+    var db = { services: new models.ServiceList() };
+    var onStub = utils.makeStubMethod(db.services, 'on');
+    generateView(db);
+    this._cleanups.push(onStub.reset);
+    assert.equal(onStub.calledOnce(), true);
+    var args = onStub.lastArguments();
+    assert.deepEqual(args[0], ['*:add', '*:remove', '*:change']);
+  });
+
+  it('updates the serviceList when the service db changes', function(done) {
+    generateView();
+    var updateServiceList = utils.makeStubMethod(view, '_updateServiceList');
+    this._cleanups.push(updateServiceList.reset);
+    var updateUI = utils.makeStubMethod(view, '_updateUI');
+    this._cleanups.push(updateUI.reset);
+    view.render();
+    view.get('db').services.after('*:change', function() {
+      // updateServiceList is stubbed after instantiation so we only see it
+      // being called once.
+      assert.equal(updateServiceList.callCount(), 1, 'updateServiceList');
+      updateServiceList.passThroughToOriginalMethod();
+      assert.equal(updateUI.callCount(), 2);
+      done();
+    });
+    view.get('db').services.fire('foo:change');
+  });
+
 });
