@@ -55,6 +55,16 @@ YUI.add('environment-header-extension', function(Y) {
           header.on(
               'changeEnvironmentView', this._onChangeEnvironmentView, this));
       this.environmentHeader = header;
+      this._passHeaderToBrowser(this.environmentHeader);
+    },
+
+    /**
+     * Pass the header to the Browser view so that it can act upon the header.
+     *
+     * @method _passHeaderToBrowser
+     */
+    _passHeaderToBrowser: function(header) {
+      this.get('subApps').charmbrowser.set('environmentHeader', header);
     },
 
     /**

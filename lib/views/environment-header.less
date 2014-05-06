@@ -6,8 +6,6 @@
     left: @bws-sidebar-width;
     right: 0;
     height: @environment-header-height;
-    background-color: #eee;
-    border-bottom: 1px solid #cdcdcd;
 
     ul {
         .display-flex;
@@ -17,6 +15,7 @@
 
         li {
             .environment-header-li(20px);
+            background-color: #eee;
 
             &.small {
                 .environment-header-li(15px);
@@ -35,16 +34,27 @@
     // by parent classes.
     .flex-basis(auto);
     padding: 0 @spacer;
-    border-right: 1px solid #d9d9d9;
+    border-width: 0 1px 1px 0;
+    border-style: solid;
+    border-right-color: #d9d9d9;
+    border-bottom-color: #cdcdcd;
     line-height: @environment-header-height;
 
     &:last-child {
         border-right: none;
     }
     &.tab {
-        &.active a {
-            height: @environment-header-height;
-            background-color: #fff;
+        &.active {
+            &.services {
+                background-color: transparent;
+                border-bottom: none;
+            }
+            &.machines a {
+                background-color: #fff;
+            }
+            a {
+                height: @environment-header-height;
+            }
         }
     }
     &.search {
