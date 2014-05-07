@@ -53,37 +53,20 @@ YUI.add('service-scale-up-view', function(Y) {
     },
 
     /**
-      Sets up the view
-
-      @method initializer
-    */
-    initializer: function() {
-      this._bindModelEvents();
-    },
-
-    /**
-      Binds the events to listen for changes on the services db
-
-      @method _bindModelEvents
-    */
-    _bindModelEvents: function() {
-      this.get('db').services.on(
-          ['*:add', '*:remove', '*:change'], this._updateServiceList, this);
-    },
-
-    /**
       Parses the service database and generates a service list of the services
       to display in the service scale up dropdown.
 
       @method _updateServiceList
     */
     _updateServiceList: function() {
-      var db = this.get('db');
+      var serviceList = this.get('services');
       var services = [];
-      if (!db.services) {
+      // Sometimes the services modellist isn't yet ready by the time this is
+      // called.
+      if (!serviceList) {
         return;
       }
-      db.services.each(function(service) {
+      serviceList.each(function(service) {
         service = service.getAttrs();
         if (service.pending) {
           return;
@@ -168,16 +151,18 @@ YUI.add('service-scale-up-view', function(Y) {
     _onAddUnitsButtonClick: function(e) {
       e.preventDefault();
       var services = this.get('container').one('ul').all('li'),
-          env = this.get('env'),
           serviceName, unitCount;
       services.each(function(service) {
         serviceName = service.getData('service');
         unitCount = parseInt(
             service.one('input.service-units').get('value'), 10);
         if (unitCount && unitCount > 0) {
-          env.add_unit(serviceName, unitCount, null, null);
+          this.fire('addUnit', {
+            serviceName: serviceName,
+            unitCount: unitCount
+          });
         }
-      });
+      }, this);
     },
 
     /**
@@ -187,6 +172,10 @@ YUI.add('service-scale-up-view', function(Y) {
       @param {Bool} opened Whether the opened class should be added.
     */
     _toggleServiceList: function(opened) {
+      // If we are opening the list then update the service list
+      if (opened) {
+        this._updateServiceList();
+      }
       this.get('container').toggleClass('opened', opened);
     },
 
@@ -202,7 +191,6 @@ YUI.add('service-scale-up-view', function(Y) {
       var container = this.get('container');
       container.addClass('service-scale-up-view');
       container.setHTML(content);
-      this._updateServiceList();
       return this;
     },
 

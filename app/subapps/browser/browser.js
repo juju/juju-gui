@@ -484,7 +484,7 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _machine: function(metadata) {
-      this._renderMachineViewPanelView(this.get('db'));
+      this._renderMachineViewPanelView(this.get('db'), this.get('env'));
       this.get('environmentHeader').setSelectedTab('machines');
     },
 

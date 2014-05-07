@@ -191,11 +191,22 @@ YUI.add('machine-view-panel', function(Y) {
         _renderScaleUp: function() {
           var container = this.get('container')
                               .one('.column.unplaced .scale-up');
-          new views.ServiceScaleUpView({
+          this._scaleUpView = new views.ServiceScaleUpView({
             container: container,
-            db: this.get('db'),
-            env: this.get('env')
+            services: this.get('db').services
           }).render();
+          this.addEvent(
+              this._scaleUpView.on('addUnit', this._scaleUpService, this));
+        },
+
+        /**
+          Handler for addUnit events emitted by the ServiceScaleUpView.
+
+          @method _scaleUpService
+          @param {Object} e The addUnit event facade.
+        */
+        _scaleUpService: function(e) {
+          this.get('env').add_unit(e.serviceName, e.unitCount, null, null);
         },
 
         /**
@@ -223,6 +234,9 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container');
           container.setHTML('');
           container.removeClass('machine-view-panel');
+          if (this._scaleUpView) {
+            this._scaleUpView.destroy();
+          }
         },
 
         ATTRS: {

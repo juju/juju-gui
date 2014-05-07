@@ -45,6 +45,8 @@ YUI.add('machine-view-panel-extension', function(Y) {
      * Sets up the View and renders it to the DOM.
      *
      * @method _renderMachineViewPanelView
+     * @param {Object} db Reference to the application db.
+     * @param {Object} env Reference to the application env (go.js).
      */
     _renderMachineViewPanelView: function(db, env) {
       var views = Y.namespace('juju.views');
