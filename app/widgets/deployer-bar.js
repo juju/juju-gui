@@ -46,6 +46,7 @@ YUI.add('deployer-bar', function(Y) {
             click: 'deploy'
           }
         },
+        descriptionTimer: null,
 
         /**
          * Sets up the DOM nodes and renders them to the DOM.
@@ -53,9 +54,13 @@ YUI.add('deployer-bar', function(Y) {
          * @method render
          */
         render: function() {
-          var container = this.get('container');
-          container.setHTML(this.template());
+          var container = this.get('container'),
+              ecs = this.get('ecs');
+          container.setHTML(this.template({
+            change_count: 0
+          }));
           container.addClass('deployer-bar');
+          Object.observe(ecs.changeSet, Y.bind(this.update,this));
           return this;
         },
 
@@ -67,10 +72,66 @@ YUI.add('deployer-bar', function(Y) {
         */
         deploy: function(evt) {
           evt.halt();
-          // XXX The deployer bar will have more integration with the ECS in
-          // the future, so this is just a temporary measure for demos.
-          window.app.ecs.commit(window.app.env);
+          var container = this.get('container'),
+              ecs = this.get('ecs');
+          //ecs.commit(window.app.env);
+        },
+        /**
+          Update UI with environment changes.
+
+          @method update
+        */
+        update: function() {
+          var container = this.get('container'),
+              ecs = this.get('ecs');
+          var changes = this._getChangeCount(ecs);
+          var latest = this._getChangeDescription(ecs);
+          container.setHTML(this.template({
+            change_count: changes,
+            latest_change_description: latest
+          }));
+          //this.descriptionTimer = window.setTimeout(Y.bind(this._hideChangeDesctiption,this), 2000);
+        },
+        /**
+          return the number of changes in ecs.
+
+          @method getChangeCount
+          @param {Object} ect The environment change set.
+        */
+        _hideChangeDesctiption: function() {
+          var container = this.get('container'),
+              ecs = this.get('ecs');
+          var changes = this._getChangeCount(ecs);
+          container.setHTML(this.template({
+            change_count: changes,
+            latest_change_description: ''
+          }));
+          window.clearTimeout(this.descriptionTimer);
+        },
+        /**
+          return the number of changes in ecs.
+
+          @method getChangeCount
+          @param {Object} ect The environment change set.
+        */
+        _getChangeCount: function(ecs) {
+          return Object.keys(ecs.changeSet).length;
+        },
+        /**
+          return the number of changes in ecs.
+
+          @method getChangeCount
+          @param {Object} ect The environment change set.
+        */
+        _getChangeDescription: function(ecs) {
+          var latest = ecs.changeSet[Object.keys(ecs.changeSet).sort().pop()];
+
+          var icon = '<i class="sprite service-added"></i>';
+          var description = 'Relation added, mysql-wordpress,';
+          var time = '<time>10:50am</time>';
+          return icon + description + time;
         }
+
       });
 
   views.DeployerBarView = DeployerBarView;
@@ -81,6 +142,7 @@ YUI.add('deployer-bar', function(Y) {
     'juju-view-utils',
     'event-tracker',
     'node',
+    'observe',
     'handlebars',
     'juju-templates'
   ]
