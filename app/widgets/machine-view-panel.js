@@ -189,10 +189,10 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderScaleUp
          */
         _renderScaleUp: function() {
-          var container = this.get('container')
+          var scaleUpContainer = this.get('container')
                               .one('.column.unplaced .scale-up');
           this._scaleUpView = new views.ServiceScaleUpView({
-            container: container,
+            container: scaleUpContainer,
             services: this.get('db').services
           }).render();
           this.addEvent(

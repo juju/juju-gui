@@ -206,7 +206,7 @@ YUI.add('service-scale-up-view', function(Y) {
     }
   }, {
     ATTRS: {
-      db: {}
+      services: {}
     }
   });
 
