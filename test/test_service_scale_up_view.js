@@ -49,10 +49,10 @@ describe('service scale up view', function() {
   });
 
   function generateView(db) {
-    db = db || { services: new models.ServiceList() };
+
     view = new View({
       container: container,
-      db: db
+      services: new models.ServiceList()
     });
     return view;
   }
@@ -69,32 +69,60 @@ describe('service scale up view', function() {
     assert.equal(container.hasClass('service-scale-up-view'), false);
   });
 
-  it('binds to the services change events', function() {
-    var db = { services: new models.ServiceList() };
-    var onStub = utils.makeStubMethod(db.services, 'on');
-    generateView(db);
-    this._cleanups.push(onStub.reset);
-    assert.equal(onStub.calledOnce(), true);
-    var args = onStub.lastArguments();
-    assert.deepEqual(args[0], ['*:add', '*:remove', '*:change']);
+  it('it is closed by default', function() {
+    generateView().render();
+    var container = view.get('container');
+    assert.equal(container.hasClass('opened'), false);
   });
 
-  it('updates the serviceList when the service db changes', function(done) {
-    generateView();
-    var updateServiceList = utils.makeStubMethod(view, '_updateServiceList');
-    this._cleanups.push(updateServiceList.reset);
-    var updateUI = utils.makeStubMethod(view, '_updateUI');
-    this._cleanups.push(updateUI.reset);
-    view.render();
-    view.get('db').services.after('*:change', function() {
-      // updateServiceList is stubbed after instantiation so we only see it
-      // being called once.
-      assert.equal(updateServiceList.callCount(), 1, 'updateServiceList');
-      updateServiceList.passThroughToOriginalMethod();
-      assert.equal(updateUI.callCount(), 2);
+  it('shows/hides the service list when clicking the [+]/X/Cancel buttons',
+      function() {
+        generateView().render();
+        var container = view.get('container');
+        assert.equal(container.hasClass('opened'), false);
+        container.one('button.closed').simulate('click');
+        assert.equal(container.hasClass('opened'), true);
+        container.one('button.opened').simulate('click');
+        assert.equal(container.hasClass('opened'), false);
+        container.one('button.closed').simulate('click');
+        assert.equal(container.hasClass('opened'), true);
+        container.one('button.cancel').simulate('click');
+        assert.equal(container.hasClass('opened'), false);
+      });
+
+  it('shows a list of the services in the environment', function() {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    container.one('button.closed').simulate('click');
+    assert.equal(container.all('li').size(), 1);
+  });
+
+  it('closing and opening the view updates the list of services', function() {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    container.one('button.closed').simulate('click');
+    assert.equal(container.all('li').size(), 1);
+    view.get('services').add({ id: 'foobar' });
+    // It should not auto update the list.
+    assert.equal(container.all('li').size(), 1);
+    // close and open the service list.
+    container.one('button.opened').simulate('click');
+    container.one('button.closed').simulate('click');
+    assert.equal(container.all('li').size(), 2);
+  });
+
+  it('fires an addUnit event for scaled up services', function(done) {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    container.one('button.closed').simulate('click');
+    var input = container.one('li input[type=text]');
+    input.set('value', 5);
+    view.on('addUnit', function(e) {
+      assert.equal(e.serviceName, 'foo');
+      assert.equal(e.unitCount, 5);
       done();
     });
-    view.get('db').services.fire('foo:change');
+    container.one('button.add-units').simulate('click');
   });
 
 });
