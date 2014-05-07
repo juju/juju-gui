@@ -118,7 +118,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
      *
      */
     _bindSearchWidgetEvents: function() {
-      var container = this.get('container');
       if (this.search) {
         this.addEvent(
             this.search.on(
@@ -141,11 +140,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
           if (ev.newVal) {
             // In the sidebar, the left panel needs the height adjusted to
             // make room for the home links to show up.
-            container.one('#bws-sidebar').addClass('with-home');
+            Y.one('#bws-sidebar').addClass('with-home');
           } else {
             // We need to adjust the height of the sidebar now to close
             // up the space by the home buttons.
-            container.one('#bws-sidebar').removeClass('with-home');
+            Y.one('#bws-sidebar').removeClass('with-home');
           }
         }, this);
       }
@@ -388,15 +387,16 @@ YUI.add('subapp-browser-charmresults', function(Y) {
      */
     render: function(container) {
       var tpl = this.template(this.getAttrs()),
-          tplNode = Y.Node.create(tpl);
+          tplNode = Y.Node.create(tpl),
+          sidebarNode = Y.one('#bws-sidebar');
 
       if (window.flags && window.flags.il) {
         // Render then immediately hide the search widget to allow the state
         // to control the show/hide of the search widget.
-        this._renderSearchWidget(tplNode);
+        this._renderSearchWidget(sidebarNode);
         this.search.hide();
       } else {
-        this._renderSearchWidget(tplNode);
+        this._renderSearchWidget(sidebarNode);
       }
 
 
@@ -408,6 +408,15 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       container.setHTML(tplNode);
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();
+      this._renderResults();
+    },
+
+    /**
+     * Abstract method to allow subclasses to define their own rendering.
+     *
+     * @method _renderResults
+     */
+    _renderResults: function() {
     },
 
     /**
