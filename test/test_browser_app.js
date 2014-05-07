@@ -57,6 +57,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-models',
             'juju-views',
             'juju-tests-utils',
+            'subapp-browser-editorial',
             'subapp-browser-sidebar',
             function(Y) {
               views = Y.namespace('juju.browser.views');
