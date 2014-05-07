@@ -694,7 +694,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charmworldURL: 'http://localhost'
         };
 
-        browser = new ns.Browser();
+        browser = new ns.Browser({ sandbox: false });
         // Block out each render target so we only track it was hit.
         browser.renderEntityDetails = function() {
           hits.renderCharmDetails = true;
@@ -1201,7 +1201,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // This flag needs to be set before creating the charmbrowser instance
         // to get the proper settings in the charmbrowser. This can be removed
         // once the state flag is removed.
-        var charmbrowser = new ns.Browser();
+        var charmbrowser = new ns.Browser({ sandbox: false });
         charmbrowser.state.set('current', {
           sectionA: {
             component: 'charmbrowser',

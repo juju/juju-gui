@@ -340,10 +340,23 @@ YUI.add('juju-app-state', function(Y) {
         // We check if it's at 0 index in case someone has a service/machine
         // called 'inspector' or 'machine' etc.
         if (part.indexOf('inspector') === 0) {
-          state.sectionA = this._addToSection({
-            component: 'inspector',
-            metadata: this._parseInspectorUrl(part)
-          });
+          // Only add to state if we are allowed to use inspectors.
+          if (this.get('allowInspector')) {
+            state.sectionA = this._addToSection({
+              component: 'inspector',
+              metadata: this._parseInspectorUrl(part)
+            });
+          } else {
+            // XXX Note, in the future, this should redirect to a proper URL.
+            // This will be part of the validation work which is coming up.
+            // Makyo 2014-05-07
+
+            // If we were not allowed to use inspectors, that was only for the
+            // initial state, where the models would not exist.  Now that the
+            // models might exist from working in the sandbox, allow routing
+            // inspectors.
+            this.set('allowInspector', true);
+          }
         } else if (part.indexOf('machine') === 0) {
           state.sectionB = this._addToSection({
             component: 'machine',
@@ -531,6 +544,16 @@ YUI.add('juju-app-state', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+       * Whether or not to allow initial inspector routes.
+       *
+       * @attribute allowInspector
+       * @default true
+       * @type {Boolean}
+       */
+      allowInspector: {
+        value: true
+      },
       /**
         The current state value
 
