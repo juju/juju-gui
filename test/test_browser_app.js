@@ -93,10 +93,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           store: fakeStore,
           renderTo: container.one('.bws-content')
         });
+        window.juju_config = {
+          charmworldURL: 'http://localhost'
+        };
       });
 
       afterEach(function() {
         view.destroy();
+        delete window.juju_config;
       });
 
       after(function() {
