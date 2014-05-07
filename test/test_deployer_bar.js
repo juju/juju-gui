@@ -20,26 +20,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('deployer bar view', function() {
-  var Y, container, utils, views, view, View;
+  var Y, container, ECS, ecs, dbObj, envObj, testUtils, utils, views, view,
+      View;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['deployer-bar',
                                'juju-views',
                                'juju-tests-utils',
+                               'environment-change-set',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
 
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
+      ECS = Y.namespace('juju').EnvironmentChangeSet;
       View = views.DeployerBarView;
       done();
     });
   });
 
   beforeEach(function() {
+    ecs = new ECS({
+      db: dbObj
+    });
     container = utils.makeContainer(this, 'deployer-bar');
-    view = new View({container: container}).render();
+    view = new View({container: container, ecs: ecs}).render();
   });
 
   afterEach(function() {
@@ -47,21 +53,26 @@ describe('deployer bar view', function() {
     view.destroy();
   });
 
+  it('should exist in the views namespace', function() {
+    assert(views.DeployerBarView);
+  });
+
   it('should apply the wrapping class to the container', function() {
     assert.equal(container.hasClass('deployer-bar'), true);
   });
 
-  it('should commit ECS changes when deploy is clicked', function() {
-    // XXX This is just a temporary measure; the deployer bar will have further
-    // integration with the app and ECS.
-    var stubApp = utils.makeStubMethod(window, 'app');
-    stubApp.ecs = {
-      commit: utils.makeStubFunction()
-    };
-    this._cleanups.push(stubApp.reset);
-
-    container.one('.deploy-button').simulate('click');
-    assert.isTrue(stubApp.ecs.commit.calledOnce());
+  it('should increase changes when a service is added', function() {
+    ecs.changeSet.abc123 = { foo: 'foo' };
+    assert.equal(view._getChangeCount(ecs), 1);
   });
 
+  it('should commit ECS changes when deploy is clicked', function(done) {
+    var stubCommit = utils.makeStubMethod(ecs, 'commit');
+
+    view.update = function() {
+      assert.equal(stubCommit.calledOnce(), true);
+      done();
+    };
+    container.one('.deploy-button').simulate('click');
+  });
 });

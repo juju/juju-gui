@@ -303,7 +303,10 @@ function injectData(app, data) {
       container.appendChild(Y.Node.create(
           '<div id="environment-header"></div>'));
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       });
       app.after('ready', function() {
         assert.isObject(app.environmentHeader);

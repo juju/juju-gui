@@ -8,7 +8,7 @@
 <ul>
     <li>
         <a href="" class="link">
-            23 changes
+            {{ change_count }} changes
             <span class="expand">
                 <i class="sprite expand_icon more"></i>
                 <i class="sprite contract_icon less"></i>
@@ -16,8 +16,6 @@
         </a>
     </li>
     <li class="change">
-        <i class="sprite relation-added"></i>
-        Relation added, mysql-wordpress,
-        <time>10:50am</time>
+        {{{ latest_change_description }}}
     </li>
 </ul>
