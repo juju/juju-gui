@@ -347,6 +347,10 @@ YUI.add('juju-app-state', function(Y) {
               metadata: this._parseInspectorUrl(part)
             });
           } else {
+            // XXX Note, in the future, this should redirect to a proper URL.
+            // This will be part of the validation work which is coming up.
+            // Makyo 2014-05-07
+
             // If we were not allowed to use inspectors, that was only for the
             // initial state, where the models would not exist.  Now that the
             // models might exist from working in the sandbox, allow routing
