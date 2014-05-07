@@ -803,6 +803,21 @@ describe('UI State object', function() {
 
       });
     });
+
+    it('ignores inspector URLs if so instructed', function() {
+      var req = buildRequest('/inspector/mysql');
+      var saveStub = testUtils.makeStubMethod(state, 'saveState');
+      this._cleanups.push(saveStub.reset);
+      state.set('allowInspector', false);
+      assert.deepEqual(
+          state.loadRequest(req),
+          { sectionA: {}, sectionB: {} },
+          'inspector was added to state anyway');
+      assert.isTrue(saveStub.calledOnce(),
+          'saveState was still called');
+      assert.isTrue(state.get('allowInspector'),
+          'allowInspector was not reset');
+    });
   });
 
   describe('generateUrl', function() {
