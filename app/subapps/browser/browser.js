@@ -352,6 +352,9 @@ YUI.add('subapp-browser', function(Y) {
       // XXX this should be moved to the mv flag soon.
       if (window.flags && window.flags.il) {
         this.state = new models.UIState({
+          // Disallow routing to inspectors if we are in sandbox mode; the
+          // model to be inspected will not be available.
+          allowInspector: !cfg.sandbox,
           dispatchers: {
             sectionA: {
               charmbrowser: this._charmbrowser.bind(this),
