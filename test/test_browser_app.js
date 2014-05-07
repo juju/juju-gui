@@ -48,8 +48,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   };
 
   (function() {
-    describe.only('browser sidebar view', function() {
-      var Y, cleanIconHelper, container, searchStub, utils, view, views, View;
+    describe('browser sidebar view', function() {
+      var Y, cleanIconHelper, container, sampleData, utils, view, views, View;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -63,6 +63,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               utils = Y.namespace('juju-tests.utils');
               View = views.EditorialView;
               cleanIconHelper = utils.stubCharmIconPath();
+              sampleData = utils.loadFixture('data/interesting.json');
               done();
             });
       });
@@ -73,23 +74,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         addSidebarContainer(Y, container.one('#subapp-browser'));
 
         // Mock up store stuff
-        var sampleData = utils.loadFixture('data/interesting.json');
-        var fakeStore = new Y.juju.charmworld.APIv3({
-          apiHost: 'http://localhost',
-          datasource: {
-            sendRequest: function(params) {
-              // Stubbing the server callback value
-              params.callback.success({
-                response: {
-                  results: [{
-                    responseText: sampleData
-                  }]
-                }
-              });
-            }
+        var fakeStore = new Y.juju.charmworld.APIv3({});
+        fakeStore.set('datasource', {
+          sendRequest: function(params) {
+            // Stubbing the server callback value
+            params.callback.success({
+              response: {
+                results: [{
+                  responseText: sampleData
+                }]
+              }
+            });
           }
         });
-        searchStub = utils.makeStubMethod(fakeStore, 'search');
         window.juju_config = {
           charmworldURL: 'http://localhost'
         };
@@ -103,7 +100,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       afterEach(function() {
         view.destroy();
-        searchStub.reset();
         delete window.juju_config;
       });
 
@@ -622,7 +618,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('browser subapp display tree', function() {
       var Y, browser, container, hits, minRender, ns,
-          resetHits, editorialRender, utils;
+          resetHits, sidebarRender, utils;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -685,10 +681,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           hits.renderSearchResults = true;
         };
         // We can't just replace the sidebar method as it does logic for
-        // future routing. We need to hook directly into the Editorial view's
+        // future routing. We need to hook directly into the Sidebar view's
         // render() method to make sure it's called.
-        editorialRender = Y.juju.browser.views.EditorialView.prototype.render;
-        Y.juju.browser.views.EditorialView.prototype.render = function() {
+        sidebarRender = Y.juju.browser.views.Sidebar.prototype.render;
+        Y.juju.browser.views.Sidebar.prototype.render = function() {
           hits.sidebar = true;
         };
         browser.showView = function(view) {
@@ -700,7 +696,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.destroy();
         // Replace the render methods for the main views we replaced for
         // testing hits.
-        Y.juju.browser.views.EditorialView.prototype.render = editorialRender;
+        Y.juju.browser.views.Sidebar.prototype.render = sidebarRender;
       });
 
       it('/ dispatches correctly', function() {
