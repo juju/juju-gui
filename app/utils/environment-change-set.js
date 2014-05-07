@@ -52,7 +52,9 @@ YUI.add('environment-change-set', function(Y) {
           Y.Lang.isFunction(args[args.length - 2])) {
         cut = -1;
       }
-      return Array.prototype.slice.call(args, 0, cut);
+      // Deep copy the resulting array of arguments, in order to prevent
+      // changeset functions to mutate the given data structures.
+      return Y.clone(Array.prototype.slice.call(args, 0, cut));
     },
 
     /**

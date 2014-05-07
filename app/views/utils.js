@@ -1355,6 +1355,15 @@ YUI.add('juju-view-utils', function(Y) {
   Object.defineProperties(_relationCollection, {
     aggregatedStatus: {
       get: function() {
+        // Return pending if any of the relations are pending.
+        // Note that by "pending" in this context we mean the relation is added
+        // between two ghost/uncommitted services.
+        var pending = Y.Array.some(this.relations, function(relation) {
+          return relation.pending;
+        });
+        if (pending) {
+          return 'pending';
+        }
         // Return unhealthy regardless of subordinate status if any of the
         // relations are in error.
         var unhealthy = Y.Array.some(this.relations, function(relation) {

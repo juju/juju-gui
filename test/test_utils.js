@@ -1182,6 +1182,9 @@ describe('utilities', function() {
       // Any subordinate relations with any errors - error.
       collections[1].relations[0].isSubordinate = true;
       assert.equal(collections[1].aggregatedStatus, 'error');
+      // Any pending relation - pending.
+      collections[1].relations[0].pending = true;
+      assert.equal(collections[1].aggregatedStatus, 'pending');
     });
 
   });
