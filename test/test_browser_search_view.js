@@ -306,7 +306,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
     });
 
-    it('organizes results by a default if there is no envSeries', function(done) {
+    it('organizes by default if there is no envSeries', function(done) {
       assert.isUndefined(view.get('envSeries'));
       view._renderSearchResults = function(results) {
         assert.equal(results.recommended.length, 1);
