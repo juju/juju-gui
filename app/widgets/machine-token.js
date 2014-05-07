@@ -93,6 +93,9 @@ YUI.add('machine-token', function(Y) {
           var container = this.get('container'),
               machine = this.get('machine'),
               hardware = machine.hardware || {};
+          // The clone here is required because we don't want to modify the
+          // original object but we want to pass all of the hardware values into
+          // the formatter.
           machine.formattedHardware = this._formatHardware(Y.clone(hardware));
           container.setHTML(this.template(machine));
           container.addClass('machine-token');
