@@ -54,6 +54,23 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       }
     },
 
+    /**
+     * Render out the view to the DOM.
+     *
+     * @method render
+     *
+     */
+    render: function(container) {
+      var tpl = this.template(this.getAttrs()),
+          tplNode = Y.Node.create(tpl);
+      if (typeof container !== 'object') {
+        container = this.get('container');
+      } else {
+        this.set('container', container);
+      }
+      container.setHTML(tplNode);
+    }
+
   }, {
     ATTRS: {}
   });

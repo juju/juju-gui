@@ -144,11 +144,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
         /**
            Renders the searchview, rendering search results for the view's
-           search text.
+           search text. Implements an abstract method in CharmResults.
 
-           @method render
+           @method _renderResults
          */
-        render: function(cachedResults) {
+        _renderResults: function() {
+          var cachedResults = this.get('cachedResults');
           this.showIndicator(this.get('renderTo'));
           // This is only rendered once from the subapp and so the filters is
           // the initial set from the application. All subsequent renders go
@@ -206,7 +207,16 @@ YUI.add('subapp-browser-searchview', function(Y) {
              @default undefined
              @type {Filter}
            */
-          filters: {}
+          filters: {},
+
+          /**
+           * Cached API results.
+           *
+           * @attribute cachedResults
+           * @default {Object}
+           * @type {Object}
+           */
+          cachedResults: {}
         }
       });
 

@@ -610,7 +610,8 @@ YUI.add('subapp-browser', function(Y) {
         // Add any sidebar charms to the running cache.
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
-      this._editorial.render(this._cache.interesting);
+      this._editorial.set('cachedResults', this._cache.interesting);
+      this._editorial.render();
       this._editorial.addTarget(this);
     },
 
