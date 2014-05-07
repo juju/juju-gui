@@ -79,6 +79,21 @@ describe('Environment Change Set', function() {
         test.apply(null, args);
       });
 
+      it('deep copies the original arguments', function(done) {
+        var args = [{key: 'value'}, [42], function() {}];
+        var backup = Y.clone(args);
+        function test() {
+          var result = ecs._getArgs(arguments);
+          // Mutate the resulting arguments.
+          result[0].key = 'another value';
+          result[1].push(47);
+          // Ensure the original ones have not been changed.
+          assert.deepEqual(args, backup);
+          done();
+        }
+        test.apply(null, args);
+      });
+
       it('strips the ecs options argument off the end', function(done) {
         var stub = testUtils.makeStubFunction();
         var args = [1, 2, 'foo', 'bar', stub, { options: 'foo'}];

@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, utils, views, view, container, topo, db;
+  var Y, utils, views, view, container, topo;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -40,9 +40,6 @@ describe('topology relation module', function() {
   afterEach(function() {
     if (topo) {
       topo.unbind();
-    }
-    if (db) {
-      db.destroy();
     }
   });
 
@@ -200,5 +197,67 @@ describe('topology relation module', function() {
         view.inspectRelationClick.call(container, undefined, view);
         assert.equal(topo.fire.lastArguments()[0], 'inspectRelation');
       });
+
+  describe('_addPendingRelation', function() {
+    var db, endpoints, mockAddRelation1, mockAddRelation2, models;
+
+    before(function() {
+      models = Y.namespace('juju.models');
+    });
+
+    beforeEach(function() {
+      // Create a mock topology object.
+      mockAddRelation1 = utils.makeStubFunction();
+      mockAddRelation2 = utils.makeStubFunction();
+      var service1 = {relations: {add: mockAddRelation1}};
+      var service2 = {relations: {add: mockAddRelation2}};
+      db = new models.Database();
+      var topo = {
+        get: utils.makeStubFunction(db),
+        service_boxes: {service1: service1, service2: service2}
+      };
+      view.set('component', topo);
+      // Create the endpoints.
+      endpoints = [
+        ['service1', {name: 'db', role: 'server'}],
+        ['service2', {name: 'db', role: 'client'}]
+      ];
+    });
+
+    afterEach(function() {
+      db.destroy();
+    });
+
+    // Ensure the given relation includes the expected fields.
+    var assertRelation = function(relation) {
+      assert.strictEqual(
+          relation.get('relation_id'), 'pending-service1service2');
+      assert.strictEqual(relation.get('display_name'), 'pending');
+      assert.deepEqual(relation.get('endpoints'), endpoints);
+      assert.strictEqual(relation.get('pending'), true);
+    };
+
+    it('adds the pending relation to the database', function() {
+      view._addPendingRelation(endpoints);
+      assert.strictEqual(db.relations.size(), 1);
+      assertRelation(db.relations.item(0));
+    });
+
+    it('adds the pending relation to the services', function() {
+      view._addPendingRelation(endpoints);
+      // The relation has been added to the first service.
+      assert.strictEqual(mockAddRelation1.callCount(), 1);
+      assertRelation(mockAddRelation1.lastArguments()[0]);
+      // The relation has been added to the second service.
+      assert.strictEqual(mockAddRelation2.callCount(), 1);
+      assertRelation(mockAddRelation2.lastArguments()[0]);
+    });
+
+    it('returns the newly created relation object', function() {
+      var relation = view._addPendingRelation(endpoints);
+      assertRelation(relation);
+    });
+
+  });
 
 });
