@@ -164,15 +164,17 @@ YUI.add('subapp-browser-editorial', function(Y) {
         },
 
         /**
-         * Load the editorial content into the container specified.
+         * Load the editorial content into the container specified. Implements
+         * an abstract method in CharmResults.
          *
-         * @method render
+         * @method _renderResults
          * @param {Node} container An optional node to override where it's
          * going.
          *
          */
-        render: function(cachedResults) {
-          var store = this.get('store');
+        _renderResults: function() {
+          var store = this.get('store'),
+              cachedResults = this.get('cachedResults');
           this.showIndicator(this.get('renderTo'));
 
           // By default we grab the editorial content from the api to use for
@@ -210,7 +212,16 @@ YUI.add('subapp-browser-editorial', function(Y) {
           }
         }
       }, {
-        ATTRS: {}
+        ATTRS: {
+          /**
+           * Cached API results.
+           *
+           * @attribute cachedResults
+           * @default {Object}
+           * @type {Object}
+           */
+          cachedResults: {}
+        }
       });
 
 }, '0.1.0', {
