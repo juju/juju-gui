@@ -20,7 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine view panel view', function() {
-  var Y, container, machines, machine, models, utils, views, view, View;
+  var Y, container, machines, machine, models, utils, views, view, View,
+      scaleUpView, scaleUpViewRender;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['machine-view-panel',
@@ -56,7 +57,13 @@ describe('machine view panel view', function() {
     // set it on our standalone model.
     var displayName = machines.createDisplayName(machine.get('id'));
     machine.set('displayName', displayName);
-    view = new View({container: container, machines: machines}).render();
+    view = new View({
+      container: container,
+      db: {
+        services: new models.ServiceList(),
+        machines: machines
+      }
+    });
   });
 
   afterEach(function() {
@@ -65,15 +72,18 @@ describe('machine view panel view', function() {
   });
 
   it('should apply the wrapping class to the container', function() {
+    view.render();
     assert.equal(container.hasClass('machine-view-panel'), true);
   });
 
   it('should render the header widgets', function() {
+    view.render();
     assert.equal(container.one('.column .head .title').get('text'),
         'Unplaced units');
   });
 
   it('should render a list of machines', function() {
+    view.render();
     var list = container.all('.machines .content li');
     assert.equal(list.size(), machines.size(),
                  'models are out of sync with displayed list');
@@ -85,6 +95,7 @@ describe('machine view panel view', function() {
   });
 
   it('should re-render when machines are added', function() {
+    view.render();
     var selector = '.machines .content li',
         list = container.all(selector),
         id = 1;
@@ -109,6 +120,7 @@ describe('machine view panel view', function() {
   });
 
   it('should re-render when machines are deleted', function() {
+    view.render();
     var selector = '.machines .content li',
         list = container.all(selector);
     assert.equal(list.size(), machines.size(),
@@ -124,6 +136,7 @@ describe('machine view panel view', function() {
   });
 
   it('should re-render when machines are updated', function() {
+    view.render();
     var id = 999,
         m = machines.revive(0),
         selector = '.machines .content li',
@@ -139,6 +152,7 @@ describe('machine view panel view', function() {
   });
 
   it('should render a list of containers', function(done) {
+    view.render();
     var machineToken = container.one('.machines li .token');
     machines.add([
       new models.Machine({id: '0/lxc/1'}),
@@ -162,5 +176,73 @@ describe('machine view panel view', function() {
       done();
     });
     machineToken.simulate('click');
+  });
+
+  describe('mass scale up UI', function() {
+    it('should render the scale up UI', function() {
+      view.render();
+      assert.equal(container.one(
+          '.column.unplaced .scale-up .action-block span').get('text'),
+          'Choose a service and add units');
+    });
+
+    it('should render the mass scale up UI', function() {
+      var detachStub = utils.makeStubFunction();
+      var onStub = utils.makeStubFunction({ detach: detachStub });
+      var destroyStub = utils.makeStubFunction();
+      scaleUpViewRender = utils.makeStubFunction({
+        on: onStub,
+        destroy: destroyStub
+      });
+      scaleUpView = utils.makeStubMethod(views, 'ServiceScaleUpView', {
+        render: scaleUpViewRender
+      });
+      this._cleanups.push(scaleUpView.reset);
+      view.render();
+      assert.equal(scaleUpView.calledOnce(), true);
+      assert.equal(scaleUpViewRender.calledOnce(), true);
+      assert.equal(onStub.calledOnce(), true);
+      var onArgs = onStub.lastArguments();
+      assert.equal(onArgs[0], 'addUnit');
+      assert.deepEqual(onArgs[1], view._scaleUpService);
+    });
+
+    it('properly destroys the scale up view up on destroy', function() {
+      var detachStub = utils.makeStubFunction();
+      var onStub = utils.makeStubFunction({ detach: detachStub });
+      var destroyStub = utils.makeStubFunction();
+      scaleUpViewRender = utils.makeStubFunction({
+        on: onStub,
+        destroy: destroyStub
+      });
+      scaleUpView = utils.makeStubMethod(views, 'ServiceScaleUpView', {
+        render: scaleUpViewRender
+      });
+      this._cleanups.push(scaleUpView.reset);
+      view.render();
+      view.destroy();
+      assert.equal(detachStub.callCount(), 1);
+      assert.equal(destroyStub.callCount(), 1);
+    });
+
+    it('listens to addUnit event and calls env.add_unit', function(done) {
+      view.render();
+      view.set('env', {
+        add_unit: utils.makeStubFunction()
+      });
+      var addUnitEvent = {
+        serviceName: 'foo',
+        unitCount: '10'
+      };
+      view._scaleUpView.after('addUnit', function() {
+        var addUnit = view.get('env').add_unit;
+        assert.equal(addUnit.callCount(), 1);
+        var addUnitArgs = addUnit.lastArguments();
+        assert.equal(addUnitArgs[0], addUnitEvent.serviceName);
+        assert.equal(addUnitArgs[1], addUnitEvent.unitCount);
+        done();
+      });
+      view._scaleUpView.fire('addUnit', addUnitEvent);
+    });
   });
 });

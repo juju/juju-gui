@@ -299,6 +299,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/onboarding.js'
         },
 
+        'juju-service-scale-up-view': {
+          fullpath: '/juju-ui/widgets/service-scale-up-view.js'
+        },
+
         'juju-templates': {
           fullpath: '/juju-ui/templates.js'
         },
@@ -326,6 +330,7 @@ var GlobalConfig = {
             'juju-machine-view-panel',
             'juju-machine-view-panel-header',
             'juju-view-utils',
+            'juju-service-scale-up-view',
             'juju-topology',
             'juju-view-environment',
             'juju-view-login',
