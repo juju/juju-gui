@@ -53,10 +53,17 @@ YUI.add('machine-view-panel', function(Y) {
          * @method initializer
          */
         initializer: function() {
-          var machines = this.get('db').machines;
-          machines.after('*:change', this.render, this);
-          machines.after('add', this.render, this);
-          machines.after('remove', this.render, this);
+          this._bindModelEvents();
+        },
+
+        /**
+         * Bind the events to the models.
+         *
+         * @method _bindModelEvents
+         */
+        _bindModelEvents: function() {
+          this.get('db').machines.after(['add', 'remove', '*:change'],
+              this._updateMachines, this);
         },
 
         /**
@@ -67,18 +74,15 @@ YUI.add('machine-view-panel', function(Y) {
          */
         handleTokenSelect: function(e) {
           var container = this.get('container'),
-              machineTokens = container.all('.machines .content ul .token'),
+              machineTokens = container.all('.machines .content .items .token'),
               selected = e.currentTarget,
               id = selected.ancestor().getData('id'),
-              containers = this.get('db').machines.filterByParent(id),
-              plural = containers.length > 1 ? 's' : '';
+              containers = this.get('db').machines.filterByParent(id);
           e.preventDefault();
           // Select the active token.
           machineTokens.removeClass('active');
           selected.addClass('active');
           // Set the header text.
-          container.one('.containers .head .label').set('text',
-              containers.length + ' machine' + plural + ', xx units');
           this._renderContainerTokens(containers);
         },
 
@@ -88,8 +92,7 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderHeaders
          */
         _renderHeaders: function() {
-          var columns = this.get('container').all('.column'),
-              machines = this.get('db').machines.filterByParent(null);
+          var columns = this.get('container').all('.column');
 
           columns.each(function(column) {
             var attrs = {container: column.one('.head')};
@@ -99,9 +102,7 @@ YUI.add('machine-view-panel', function(Y) {
             }
             else if (column.hasClass('machines')) {
               attrs.title = 'Environment';
-              attrs.label = 'machine';
               attrs.action = 'New machine';
-              attrs.count = machines.length;
             }
             else if (column.hasClass('containers')) {
               attrs.action = 'New container';
@@ -116,9 +117,14 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderContainerTokens
          */
         _renderContainerTokens: function(containers) {
-          var containerParent = this.get('container').one(
-              '.containers .content ul');
-          containerParent.get('childNodes').remove();
+          var container = this.get('container');
+          var containerParent = container.one('.containers .content .items');
+          var plural = containers.length !== 1 ? 's' : '';
+
+          this._clearContainerColumn();
+          container.one('.containers .head .label').set('text',
+              containers.length + ' container' + plural + ', xx units');
+
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
               new views.ContainerToken({
@@ -131,28 +137,79 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Clear the container column.
+         *
+         * @method _clearContainerColumn
+         */
+        _clearContainerColumn: function(containers) {
+          var container = this.get('container');
+          var containerParent = container.one('.containers .content .items');
+          containerParent.get('childNodes').remove();
+          container.one('.containers .head .label').set('text', '');
+        },
+
+        /**
          * Render the machine token widgets.
          *
-         * @method _renderMachineTokens
+         * @method _updateMachines
          */
-        _renderMachineTokens: function() {
-          var container = this.get('container'),
-              listContainer = container.one('.machines .content'),
-              parentNode = Y.Node.create('<ul></ul>'),
-              machines = this.get('db').machines.filterByParent(null);
-
-          if (machines.length > 0) {
-            Y.Object.each(machines, function(machine) {
-              var node = Y.Node.create('<li></li>');
-              new views.MachineToken({
-                container: node,
-                machine: machine
-              }).render();
-              parentNode.append(node);
-            });
-            // only append to the DOM once
-            listContainer.append(parentNode);
+        _updateMachines: function() {
+          var exists, newElement;
+          var machines = this.get('db').machines.filterByParent(null);
+          var container = this.get('container');
+          var machineList = container.one('.machines .content .items');
+          if (!machines || !machineList) {
+            return;
           }
+          var machineElements = machineList.all('li');
+          var plural = machines.length !== 1 ? 's' : '';
+
+          container.one('.machines .head .label').set('text',
+              machines.length + ' machine' + plural);
+
+          machines.forEach(function(machine) {
+            exists = machineElements.some(function(element) {
+              if (String(machine.id) === element.getData('id')) {
+                element.setData('exists', true);
+                return true;
+              }
+            });
+            if (!exists) {
+              newElement = this._renderMachineToken(machine, machineList);
+              newElement.setData('exists', true);
+            }
+          }, this);
+
+          machineElements.each(function(element) {
+            if (!element.getData('exists')) {
+              if (element.one('.token').hasClass('active')) {
+                this._clearContainerColumn();
+              }
+              element.remove();
+            } else if (machines.length === 0) {
+              element.remove();
+              this._clearContainerColumn();
+            } else {
+              element.setData('exists', undefined);
+            }
+          }, this);
+        },
+
+        /**
+         * Render a machine token.
+         *
+         * @method _renderMachineToken
+         * @param {Object} machine the machine object.
+         * @param {Node} list the list node to append the machine to.
+         */
+        _renderMachineToken: function(machine, list) {
+          var node = Y.Node.create('<li></li>');
+          new views.MachineToken({
+            container: node,
+            machine: machine
+          }).render();
+          list.append(node);
+          return node;
         },
 
         /**
@@ -163,7 +220,7 @@ YUI.add('machine-view-panel', function(Y) {
         _renderServiceUnitTokens: function() {
           var container = this.get('container'),
               listContainer = container.one('.unplaced .content'),
-              parentNode = Y.Node.create('<ul></ul>'),
+              parentNode = listContainer.one('.items'),
               units = this.get('db').serviceUnits;
 
           if (units && units.length && units.length > 0) {
@@ -219,7 +276,7 @@ YUI.add('machine-view-panel', function(Y) {
           container.setHTML(this.template());
           container.addClass('machine-view-panel');
           this._renderHeaders();
-          this._renderMachineTokens();
+          this._updateMachines();
           this._renderServiceUnitTokens();
           this._renderScaleUp();
           return this;
