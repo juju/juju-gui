@@ -715,19 +715,19 @@ YUI.add('subapp-browser-charmresults', function(Y) {
         this._stickyEvent.detach();
       }
 
-      if (filter && (filter === '' || !filter.text)) {
+      if (filter.text === '' || filter.text) {
+        // Search needs to get some data for the template it uses so we just
+        // pass the container for it to render into.
+        this.set('withHome', true);
+        this.renderSearchResults(container);
+
+      } else {
         tpl = this.interestingTemplate(this.getAttrs());
         tplNode = Y.Node.create(tpl);
         container.setHTML(tplNode);
         this.set('withHome', false);
 
         this.renderInterestingResults(tplNode);
-
-      } else {
-        // Search needs to get some data for the template it uses so we just
-        // pass the container for it to render into.
-        this.set('withHome', true);
-        this.renderSearchResults(container);
       }
 
       return container;
@@ -853,7 +853,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
        */
       filter: {
         value: {
-          text: ''
+          text: null
         }
       },
 

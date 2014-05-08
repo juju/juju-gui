@@ -396,10 +396,6 @@ YUI.add('subapp-browser', function(Y) {
       if (detailsNode) { detailsNode.hide(); }
       // If there is no provided metadata show the defaults.
       this.renderCharmResults();
-      if (!metadata || !metadata.id) {
-         // Deselect the active charm.
-         this._search.updateActive();
-      }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.

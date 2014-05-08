@@ -63,8 +63,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-models',
           'node',
           'node-event-simulate',
-          'subapp-browser-searchview',
-          'subapp-browser-sidebar',
+          'subapp-browser',
           function(Y) {
             utils = Y.namespace('juju-tests.utils');
             cleanIconHelper = utils.stubCharmIconPath();
@@ -78,8 +77,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container = utils.makeContainer(this, 'container');
       addBrowserContainer(Y, container);
       addSidebarContainer(Y, container.one('#subapp-browser'));
-      view = new Y.juju.browser.views.BrowserSearchView({
-        filters: {text: 'foo'}
+      view = new Y.juju.browser.views.CharmResults({
+        filter: {text: 'foo'}
       });
       //
       // Create monkeypatched store to verify right method is called.
@@ -109,7 +108,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       view.set('store', fakeStore);
-      view.set('renderTo', container.one('.bws-content'));
     });
 
     afterEach(function() {
@@ -149,7 +147,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles empty text for search', function() {
-      view.set('filters', {text: ''});
+      view.set('filter', {text: ''});
       view.render();
       assert.equal('search?text=', apiURL);
     });
@@ -166,7 +164,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('organizes results by approval status', function(done) {
-      view._renderSearchResults = function(results) {
+      view._renderSearchResults = function(renderTo, results) {
         assert.equal(results.recommended.length, 1);
         assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
         assert.equal(results.more.length, 1);
@@ -209,7 +207,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('organizes results by approval status', function(done) {
-      view._renderSearchResults = function(results) {
+      view._renderSearchResults = function(renderTo, results) {
         assert.equal(results.recommended.length, 2);
         assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
         assert.equal(results.recommended[1].get('id'), '~charmers/bar/2/bar');
@@ -264,7 +262,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('will render both charms and bundles', function(done) {
-      view._renderSearchResults = function(results) {
+      view._renderSearchResults = function(renderTo, results) {
         assert.equal(results.recommended.length, 1);
         assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
         assert.equal(results.more.length, 1);
@@ -308,7 +306,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('organizes by default if there is no envSeries', function(done) {
       assert.isUndefined(view.get('envSeries'));
-      view._renderSearchResults = function(results) {
+      view._renderSearchResults = function(renderTo, results) {
         assert.equal(results.recommended.length, 1);
         assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
         assert.equal(results.more.length, 1);
