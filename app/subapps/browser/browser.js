@@ -512,7 +512,6 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (!this._search) {
-        console.log('new results view');
         this._search = new views.CharmResults(
             this._getViewCfg(extraCfg));
         this._search.render();
@@ -1237,6 +1236,7 @@ YUI.add('subapp-browser', function(Y) {
 }, '0.1.0', {
   requires: [
     'handlebars',
+    'json-stringify',
     'juju-app-state',
     'juju-browser-models',
     'juju-charm-store',
@@ -1247,9 +1247,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-bundleview',
     'subapp-browser-charmresults',
-    'subapp-browser-editorial',
     'subapp-browser-jujucharms',
-    'subapp-browser-searchview',
     'subapp-browser-sidebar',
     'machine-view-panel-extension'
   ]

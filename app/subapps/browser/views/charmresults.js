@@ -321,7 +321,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
         recommendedContainer,
         moreContainer
       ];
-      this.makeStickyHeaders(renderTo);
     },
 
 
@@ -467,8 +466,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       cache.charms.add(popularCharms);
       cache.charms.add(featuredCharms);
       this.fire(this.EV_CACHE_UPDATED, {cache: cache});
-
-      this.makeStickyHeaders(renderTo);
     },
 
     /**
@@ -697,9 +694,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       // Add the container to the sidebar div. Future updates will empty the
       // container and refill it.
       sidebarNode.one('.bws-content').append(charmResultsNode);
+      this.makeStickyHeaders(this.get('container'));
 
       this.after('filterChange', function(ev) {
         this.updateResultsView();
+        this.makeStickyHeaders(this.get('container'));
       }, this);
 
     },
@@ -795,15 +794,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
        * @type {Object}
        */
       cachedResults: {},
-
-      /**
-       * What is the container node we should render our container into?
-       *
-       * @attribute renderTo
-       * @default undefined
-       * @type {Node}
-       */
-      renderTo: {},
 
       /**
        * The Charmworld API store instance for loading content.

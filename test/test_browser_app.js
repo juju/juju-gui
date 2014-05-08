@@ -48,21 +48,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   };
 
   (function() {
-    describe('browser sidebar view', function() {
+    describe.only('browser sidebar view', function() {
       var Y, cleanIconHelper, container, sampleData, utils, view, views, View;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
+            'subapp-browser',
             'juju-browser',
             'juju-models',
             'juju-views',
             'juju-tests-utils',
-            'subapp-browser-editorial',
-            'subapp-browser-sidebar',
             function(Y) {
               views = Y.namespace('juju.browser.views');
               utils = Y.namespace('juju-tests.utils');
-              View = views.EditorialView;
+              View = views.CharmResults;
               cleanIconHelper = utils.stubCharmIconPath();
               sampleData = utils.loadFixture('data/interesting.json');
               done();
@@ -94,8 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Setup the view under test
         view = new View({
-          store: fakeStore,
-          renderTo: container.one('.bws-content')
+          store: fakeStore
         });
       });
 
@@ -132,13 +130,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                      true, 'with-home class is not set');
       });
 
-      it('shows the home icon when instructed', function() {
-        view.set('withHome', true);
+      it('shows the home icon when doing a search', function() {
+        view.set('filter', {text: 'test'});
         view.render();
 
         // The home buttons are not visible by default.
-        assert.isTrue(view.get('withHome'));
-        assert.isFalse(Y.one('#bws-sidebar').hasClass('with-home'));
+        assert.equal(view.get('withHome'), true, 'withHome should be true');
+        assert.equal(
+          Y.one('#bws-sidebar').hasClass('with-home'),
+          true,
+          '#bws-sidebzr does not have css class with-home'
+          );
       });
 
       it('routes home when it catches a gohome event', function(done) {
