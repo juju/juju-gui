@@ -854,7 +854,7 @@ YUI.add('juju-app-state', function(Y) {
         categories: [],
         provider: [],
         series: [],
-        text: '',
+        text: null,
         type: []
       });
     },
@@ -999,7 +999,7 @@ YUI.add('juju-app-state', function(Y) {
        * @type {String}
        */
       text: {
-        value: ''
+        value: null
       },
       /**
        * The type of charms to filter to.

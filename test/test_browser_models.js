@@ -79,7 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       filter.set('provider', ['ec2']);
       filter.clear();
       assert.equal(0, filter.get('provider').length);
-      assert.equal('', filter.get('text'));
+      assert.equal(null, filter.get('text'));
     });
 
     it('constructs a valid query string based on settings.', function() {
