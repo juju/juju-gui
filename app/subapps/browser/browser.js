@@ -387,6 +387,7 @@ YUI.add('subapp-browser', function(Y) {
       });
 
       this.on('*:changeState', function(e) {
+        this.state.set('allowInspector', true);
         var state = e.details[0];
         var url = this.state.generateUrl(state);
         this.navigate(url);

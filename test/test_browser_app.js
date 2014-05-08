@@ -501,6 +501,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('listens to changeState events', function() {
         app = new browser.Browser();
+        app.state.set('allowInspector', false);
         var generateUrlStub = utils.makeStubMethod(
             app.state, 'generateUrl', 'genUrl');
         var navigateStub = utils.makeStubMethod(app, 'navigate');
@@ -509,6 +510,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(generateUrlStub.lastArguments()[0], {foo: 'bar'});
         assert.equal(navigateStub.calledOnce(), true);
         assert.equal(navigateStub.lastArguments()[0], 'genUrl');
+        assert.isTrue(app.state.get('allowInspector'));
       });
 
       it('verify that route callables exist', function() {
