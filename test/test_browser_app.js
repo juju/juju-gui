@@ -418,10 +418,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             context._cleanups.push(setSelectedStub.reset);
           }
 
-          it('Highlights the machine tab', function() {
+          it('highlights the machine tab', function() {
             stubRenderers(this);
             app._machine();
             assert.equal(setSelectedStub.callCount(), 1);
+          });
+
+          it('renders the machine view panel view', function() {
+            stubRenderers(this);
+            app._machine();
+            assert.equal(renderMachineStub.callCount(), 1);
           });
         });
 

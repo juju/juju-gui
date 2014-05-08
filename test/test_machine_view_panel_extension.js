@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine view panel extension', function() {
-  var Y, container, utils, models, view, View;
+  var Y, container, utils, models, view, View, db, env;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['machine-view-panel-extension',
@@ -33,15 +33,18 @@ describe('machine view panel extension', function() {
 
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
+      db = {
+        services: new models.ServiceList(),
+        machines: new models.MachineList()
+      };
+      env = 'environment';
       View = Y.Base.create('machine-view-panel', Y.View, [
         Y.juju.MachineViewPanel
       ], {
         template: '<div id="machine-view-panel"></div>',
         render: function() {
           this.get('container').setHTML(this.template);
-          this._renderMachineViewPanelView({
-            machines: new models.MachineList()
-          });
+          this._renderMachineViewPanelView(db, env);
           return this;
         }
       });
@@ -56,6 +59,13 @@ describe('machine view panel extension', function() {
 
   afterEach(function() {
     view.destroy();
+  });
+
+  it('instantiates the machine view panel with the proper attrs', function() {
+    var attrs = view.machineViewPanel.getAttrs();
+    assert.equal(attrs.container.getAttribute('id'), 'machine-view-panel');
+    assert.deepEqual(attrs.db, db);
+    assert.equal(attrs.env, env);
   });
 
   it('can be destroyed', function() {
