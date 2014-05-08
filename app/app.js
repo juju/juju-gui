@@ -832,7 +832,8 @@ YUI.add('juju-gui', function(Y) {
     _renderDeployerBarView: function() {
       this.deployerBar = new views.DeployerBarView({
         container: Y.one('#deployer-bar'),
-        ecs: this.env.get('ecs')
+        ecs: this.env.get('ecs'),
+        env: this.env
       }).render();
     },
 

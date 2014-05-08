@@ -74,8 +74,7 @@ YUI.add('deployer-bar', function(Y) {
         deploy: function(evt) {
           evt.halt();
           var ecs = this.get('ecs');
-          ecs.commit(window.app.env);
-
+          ecs.commit(this.get('env'));
           this.update();
         },
         /**
@@ -119,7 +118,6 @@ YUI.add('deployer-bar', function(Y) {
           @param {Object} ect The environment change set.
         */
         _getChangeCount: function(ecs) {
-          console.log(ecs.changeSet);
           return Object.keys(ecs.changeSet).length;
         },
         /**
@@ -134,7 +132,7 @@ YUI.add('deployer-bar', function(Y) {
               description,
               time = null;
 
-          if (latest) {
+          if (latest && latest.command) {
             switch (latest.command.method) {
               case '_deploy':
                 icon = '<i class="sprite service-added"></i>';
