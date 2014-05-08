@@ -56,11 +56,12 @@ YUI.add('deployer-bar', function(Y) {
         render: function() {
           var container = this.get('container'),
               ecs = this.get('ecs');
+          var changes = this._getChangeCount(ecs);
           container.setHTML(this.template({
-            change_count: 0
+            change_count: changes
           }));
           container.addClass('deployer-bar');
-          Object.observe(ecs.changeSet, Y.bind(this.update,this));
+          Object.observe(ecs.changeSet, Y.bind(this.update, this));
           return this;
         },
 
@@ -72,9 +73,10 @@ YUI.add('deployer-bar', function(Y) {
         */
         deploy: function(evt) {
           evt.halt();
-          var container = this.get('container'),
-              ecs = this.get('ecs');
-          //ecs.commit(window.app.env);
+          var ecs = this.get('ecs');
+          ecs.commit(window.app.env);
+
+          this.update();
         },
         /**
           Update UI with environment changes.
@@ -90,7 +92,9 @@ YUI.add('deployer-bar', function(Y) {
             change_count: changes,
             latest_change_description: latest
           }));
-          //this.descriptionTimer = window.setTimeout(Y.bind(this._hideChangeDesctiption,this), 2000);
+          this.descriptionTimer = window.setTimeout(
+              Y.bind(this._hideChangeDesctiption, this),
+              2000);
         },
         /**
           return the number of changes in ecs.
@@ -115,6 +119,7 @@ YUI.add('deployer-bar', function(Y) {
           @param {Object} ect The environment change set.
         */
         _getChangeCount: function(ecs) {
+          console.log(ecs.changeSet);
           return Object.keys(ecs.changeSet).length;
         },
         /**
@@ -124,13 +129,61 @@ YUI.add('deployer-bar', function(Y) {
           @param {Object} ect The environment change set.
         */
         _getChangeDescription: function(ecs) {
-          var latest = ecs.changeSet[Object.keys(ecs.changeSet).sort().pop()];
+          var latest = ecs.changeSet[this._getLatestChange()];
+          var icon,
+              description,
+              time = null;
 
-          var icon = '<i class="sprite service-added"></i>';
-          var description = 'Relation added, mysql-wordpress,';
-          var time = '<time>10:50am</time>';
-          return icon + description + time;
+          if (latest) {
+            switch (latest.command.method) {
+              case '_deploy':
+                icon = '<i class="sprite service-added"></i>';
+                description = latest.command.args[1] + ' has been added.';
+                break;
+              case '_add_relation':
+                icon = '<i class="sprite relation-added"></i>';
+                description = latest.command.args[0][1].name +
+                    ' relation added between ' +
+                    latest.command.args[0][0] +
+                    ' and ' +
+                    latest.command.args[1][0];
+                break;
+              default:
+                icon = '<i class="sprite service-exposed"></i>';
+                description = 'An unknown change has been made ' +
+                              'to this enviroment via the CLI.';
+                break;
+            }
+          }
+          if (icon) {
+            time = '<time>' + this._formatAMPM(new Date()) + '</time>';
+            return icon + description + time;
+          }
+        },
+        /**
+          return formatted time for display.
+
+          @method _formatAMPM
+          @param {Date} the current date.
+        */
+        _formatAMPM: function(date) {
+          var hours = date.getHours();
+          var minutes = date.getMinutes();
+          var ampm = hours >= 12 ? 'pm' : 'am';
+          hours = hours % 12;
+          hours = hours ? hours : 12;
+          minutes = minutes < 10 ? '0' + minutes : minutes;
+          var strTime = hours + ':' + minutes + ' ' + ampm;
+          return strTime;
+        },
+
+        _getLatestChange: function() {
+          var ecs = this.get('ecs');
+          var len = Object.keys(ecs.changeSet).length - 1;
+          return Object.keys(ecs.changeSet)[len];
         }
+
+
 
       });
 
