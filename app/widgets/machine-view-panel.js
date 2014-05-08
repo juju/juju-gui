@@ -169,7 +169,7 @@ YUI.add('machine-view-panel', function(Y) {
 
           machines.forEach(function(machine) {
             exists = machineElements.some(function(element) {
-              if (machine.id === element.getData('id')) {
+              if (String(machine.id) === element.getData('id')) {
                 element.setData('exists', true);
                 return true;
               }
@@ -186,6 +186,9 @@ YUI.add('machine-view-panel', function(Y) {
                 this._clearContainerColumn();
               }
               element.remove();
+            } else if (machines.length === 0) {
+              element.remove();
+              this._clearContainerColumn();
             } else {
               element.setData('exists', undefined);
             }

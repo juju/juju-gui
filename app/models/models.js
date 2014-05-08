@@ -951,13 +951,13 @@ YUI.add('juju-models', function(Y) {
       @param {Object|Object[]} models See YUI LazyModelList.
       @return {Object|Object[]} The newly created model instance(s).
     */
-    add: function() {
-      var result = MachineList.superclass.add.apply(this, arguments);
-      if (Y.Lang.isArray(result)) {
-        result.forEach(this._setDefaultsAndCalculatedValues, this);
+    add: function(models, options) {
+      if (Y.Lang.isArray(models)) {
+        models.forEach(this._setDefaultsAndCalculatedValues, this);
       } else {
-        this._setDefaultsAndCalculatedValues(result);
+        this._setDefaultsAndCalculatedValues(models);
       }
+      var result = MachineList.superclass.add.apply(this, arguments);
       return result;
     },
 

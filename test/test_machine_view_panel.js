@@ -42,7 +42,7 @@ describe('machine view panel view', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'machine-view-panel');
-    machine = new models.Machine({
+    machine = {
       id: 0,
       hardware: {
         disk: 1024,
@@ -50,13 +50,13 @@ describe('machine view panel view', function() {
         cpuPower: 1024,
         cpuCores: 1
       }
-    });
+    };
     machines = new models.MachineList();
     machines.add([machine]);
     // displayName is set on the machine object in the list; we also need to
     // set it on our standalone model.
-    var displayName = machines.createDisplayName(machine.get('id'));
-    machine.set('displayName', displayName);
+    var displayName = machines.createDisplayName(machine.id);
+    machine.displayName = displayName;
     view = new View({
       container: container,
       db: {
@@ -68,6 +68,7 @@ describe('machine view panel view', function() {
 
   afterEach(function() {
     view.destroy();
+    machines.destroy();
     container.remove(true);
   });
 
@@ -94,14 +95,14 @@ describe('machine view panel view', function() {
     });
   });
 
-  it('should re-render when machines are added', function() {
+  it('should add new tokens when machines are added', function() {
     view.render();
     var selector = '.machines .content li',
         list = container.all(selector),
         id = 1;
     assert.equal(list.size(), machines.size(),
                  'initial displayed list is out of sync with machines');
-    machines.add([new models.Machine({
+    machines.add([{
       id: id,
       parentId: null,
       hardware: {
@@ -110,7 +111,7 @@ describe('machine view panel view', function() {
         cpuPower: 1024,
         cpuCores: 1
       }
-    })]);
+    }]);
     list = container.all(selector);
     assert.equal(list.size(), machines.size(),
                  'final displayed list is out of sync with machines');
@@ -119,7 +120,7 @@ describe('machine view panel view', function() {
                     'unable to find added machine in the displayed list');
   });
 
-  it('should re-render when machines are deleted', function() {
+  it('should remove tokens when machines are deleted', function() {
     view.render();
     var selector = '.machines .content li',
         list = container.all(selector);
@@ -129,34 +130,37 @@ describe('machine view panel view', function() {
     list = container.all(selector);
     assert.equal(list.size(), machines.size(),
                  'final displayed list is out of sync with machines');
-    var deletedSelector = selector + '[data-id="' + machine.get('id') + '"]';
+    var deletedSelector = selector + '[data-id="' + machine.id + '"]';
     var deletedItem = container.one(deletedSelector);
     assert.equal(deletedItem, null,
                  'found the deleted machine still in the list');
   });
 
-  it('should re-render when machines are updated', function() {
+  it('should re-render token when machine is updated', function() {
     view.render();
     var id = 999,
-        m = machines.revive(0),
+        machineModel = machines.revive(0),
         selector = '.machines .content li',
-        item = container.one(selector + '[data-id="' + m.get('id') + '"]');
+        item = container.one(
+            selector + '[data-id="' + machineModel.get('id') + '"]');
     assert.notEqual(item, null, 'machine was not initially displayed');
-    assert.equal(item.one('.title').get('text'), machine.get('displayName'),
-                 'initial machine names do not match');
-    m.set('id', id);
+    assert.equal(
+        item.one('.title').get('text'), machineModel.get('displayName'),
+        'initial machine names do not match');
+    machineModel.set('id', id);
     item = container.one(selector + '[data-id="' + id + '"]');
     assert.notEqual(item, null, 'machine was not displayed post-update');
-    assert.equal(item.one('.title').get('text'), machine.get('displayName'),
-                 'machine names do not match post-update');
+    assert.equal(
+        item.one('.title').get('text'), machineModel.get('displayName'),
+        'machine names do not match post-update');
   });
 
   it('should render a list of containers', function(done) {
     view.render();
     var machineToken = container.one('.machines li .token');
     machines.add([
-      new models.Machine({id: '0/lxc/1'}),
-      new models.Machine({id: '0/lxc/2'})
+      {id: '0/lxc/1'},
+      {id: '0/lxc/2'}
     ]);
     machineToken.on('click', function(e) {
       // Need to explicitly fire the click handler as we are catching
@@ -169,8 +173,8 @@ describe('machine view panel view', function() {
       assert.equal(list.size(), containers.length,
           'models are out of sync with displayed list');
       list.each(function(item, index) {
-        var m = containers[index];
-        assert.equal(item.one('.title').get('text'), m.displayName,
+        var machines = containers[index];
+        assert.equal(item.one('.title').get('text'), machines.displayName,
             'displayed item does not match model');
       });
       done();
