@@ -111,14 +111,14 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
-      var deploy_services = this._getDeployedServices(ecs);
-      var added_relations = this._getAddRelations(ecs);
+      var deployServices = this._getDeployedServices(ecs);
+      var addedRelations = this._getAddRelations(ecs);
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           change_count: changes,
           latest_change_description: '',
-          deploy_services: deploy_services,
-          added_relations: added_relations
+          deploy_services: deployServices,
+          added_relations: addedRelations
         }));
       }
 
@@ -257,16 +257,14 @@ YUI.add('deployer-bar', function(Y) {
      *
      */
     _getDeployedServices: function(ecs) {
-      var returnSet = [];
+      var returnSet = [],
+        iconUrl = 'https://manage.jujucharms.com/api/3/charm/precise/{name}/file/icon.svg';
       for (var key in ecs.changeSet) {
         if (ecs.changeSet[key]) {
           var obj = ecs.changeSet[key];
           if (obj.command.method === '_deploy') {
-            var single = {icon: 'https://manage.jujucharms.com' +
-                               '/api/3/charm/precise/' +
-                               ecs.changeSet[key].command.args[1] +
-                               '/file/icon.svg',
-                           name: ecs.changeSet[key].command.args[1]};
+            var name = ecs.changeSet[key].command.args[1],
+              single = {icon: Y.Lang.sub(iconUrl, {name: name}), name: name};
             returnSet.push(single);
           }
         }
