@@ -121,5 +121,22 @@ describe('machine token view', function() {
                  'Non-number CPU should be formatted to null');
     assert.equal(hardware.mem, null,
                  'Non-number memory should be formatted to null');
+
+  });
+
+  it('gets one icon for each service deployed on it', function() {
+    // We don't need full serviceunits for the test, just enough to show the
+    // rendering.
+    machine.units = [
+      {icon: 'foo/icon.svg', serviceName: 'mongo'},
+      {icon: 'bar/icon.svg', serviceName: 'wordpress'}
+    ];
+    view = new View({
+      container: container,
+      machine: machine
+    }).render();
+    var service_icons = container.one('.service-icons');
+    assert.isObject(service_icons);
+    assert.equal(2, service_icons.all('img').size());
   });
 });
