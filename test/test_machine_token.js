@@ -89,4 +89,19 @@ describe('machine token view', function() {
     assert.notEqual(view.get('machine').hardware,
         view.get('machine').formattedHardware);
   });
+
+  it('can be marked as uncommitted', function() {
+    view.setUncommitted();
+    assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
+        true);
+  });
+
+  it('can be marked as committed', function() {
+    view.setUncommitted();
+    assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
+        true);
+    view.setCommitted();
+    assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
+        false);
+  });
 });

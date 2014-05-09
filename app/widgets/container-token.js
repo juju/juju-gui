@@ -59,6 +59,24 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+         * Mark the token as uncommitted.
+         *
+         * @method setUncommitted
+         */
+        setUncommitted: function() {
+          this.get('container').one('.token').addClass('uncommitted');
+        },
+
+        /**
+         * Mark the token as committed.
+         *
+         * @method setCommitted
+         */
+        setCommitted: function() {
+          this.get('container').one('.token').removeClass('uncommitted');
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
