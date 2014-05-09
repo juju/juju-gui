@@ -299,10 +299,12 @@ YUI.add('juju-view-environment', function(Y) {
     _attachTopoEvents: function() {
       this.topo.on(
           '*:destroyServiceInspector', this.destroyInspector, this);
-      this.topo.on(
-          '*:addRelationStart', this.shrinkInspector, this);
-      this.topo.on(
-          '*:addRelationEnd', this.expandInspector, this);
+      if (!window.flags.il) {
+        this.topo.on(
+            '*:addRelationStart', this.shrinkInspector, this);
+        this.topo.on(
+            '*:addRelationEnd', this.expandInspector, this);
+      }
       this.topo.on(
           '*:inspectRelation', this.onInspectRelation, this);
     }

@@ -1459,8 +1459,8 @@ YUI.add('juju-topology-service', function(Y) {
           }});
       } else {
         this.show_service(box.model);
-        this.showServiceMenu(box);
       }
+      this.showServiceMenu(box);
     },
 
     /**
