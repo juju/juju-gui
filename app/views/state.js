@@ -288,7 +288,10 @@ YUI.add('juju-app-state', function(Y) {
         url += '?' + this.filter.genQueryString();
       }
       // Add the hash to the end of the url.
-      if (hash.length > 0) { url += '#' + hash; }
+      if (hash.length > 0) {
+        hash = (hash.indexOf('#') === 0) ? hash : '#' + hash;
+        url += hash;
+      }
       return url;
     },
 

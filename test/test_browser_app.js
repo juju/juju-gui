@@ -26,6 +26,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       '</div>',
       '<div id="content">',
       '<div id="subapp-browser">',
+      '<div class="charmbrowser">',
+      '</div>',
       '</div>',
       '</div>'
     ].join('')).appendTo(container);
@@ -273,6 +275,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('renders & editorial charm details with id provided', function() {
             stubRenderers(this);
+            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
+            this._cleanups.push(showStub.reset);
             app._charmbrowser({
               id: 'foo'
             });
@@ -281,6 +285,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('renders search and charm details', function() {
             stubRenderers(this);
+            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
+            this._cleanups.push(showStub.reset);
             app._charmbrowser({
               search: 'foo',
               id: 'foo'
@@ -296,6 +302,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             var activeStub = utils.makeStubMethod(app._editorial,
                 'updateActive');
             this._cleanups.push(activeStub.reset);
+            var cleanupStub = utils.makeStubMethod(app,
+                '_cleanupEntityDetails');
+            this._cleanups.push(cleanupStub.reset);
+
             app._charmbrowser();
             assertions(0, 0, 0, 1);
           });
@@ -308,6 +318,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             var activeStub = utils.makeStubMethod(app._editorial,
                 'updateActive');
             this._cleanups.push(activeStub.reset);
+            var cleanupStub = utils.makeStubMethod(app,
+                '_cleanupEntityDetails');
+            this._cleanups.push(cleanupStub.reset);
             app._charmbrowser();
             assert.equal(activeStub.callCount(), 1);
           });

@@ -101,11 +101,11 @@ YUI.add('subapp-browser', function(Y) {
       if (detailsNode) {
         if (visible) {
           detailsNode.show();
-          container.addClass('content-visible');
+          container.addClass('animate-in');
         }
         else {
           detailsNode.hide();
-          container.removeClass('content-visible');
+          container.removeClass('animate-in');
         }
       }
     },
@@ -155,13 +155,22 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
-      return (
-          this.state.getCurrent('charmID') && (
-              !this._details ||
-              this.state.hasChanged('charmID') ||
-              this.state.hasChanged('viewmode')
-          )
-      );
+      var state = this.state;
+      if (window.flags && window.flags.il) {
+        var current = state.getState('current', 'sectionA', 'metadata'),
+            previous = state.getState('previous', 'sectionA', 'metadata');
+        current = current || {};
+        previous = previous || {};
+        return current.id && (!this._details || current.id !== previous.id);
+      } else {
+        return (
+            state.getCurrent('charmID') && (
+                !this._details ||
+                state.hasChanged('charmID') ||
+                state.hasChanged('viewmode')
+            )
+        );
+      }
     },
 
     /**
@@ -416,11 +425,6 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmbrowser: function(metadata) {
-      var detailsNode = Y.one('.bws-view-data');
-      // XXX window.flags.il the details node is shown by default. When we
-      // switch to the new state object it should be hidden by default in the
-      // template.
-      if (detailsNode) { detailsNode.hide(); }
       // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
         this._sidebar.showSearch();
@@ -435,12 +439,47 @@ YUI.add('subapp-browser', function(Y) {
         this._sidebar.showSearch();
         this.renderSearchResults();
       }
-      if (metadata && metadata.id) {
+      // XXX Won't be needed once window.flags.il becomes the norm. The details
+      // template should be updated to hide by default.
+      if (this._shouldShowCharm()) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
-        if (detailsNode) { detailsNode.show(); }
+        this._detailsVisible(true);
         this._sidebar.showSearch();
         this.renderEntityDetails();
+      }
+      // If there are no details in the route then hide the div for
+      // viewing the charm details.
+      if (!metadata || !metadata.id) {
+        this._cleanupEntityDetails();
+      }
+    },
+
+    /**
+      Ensures we clean up all the various UX bits that need updating when we
+      no longer need to display charm details
+
+      @method _inspector
+      @param {Object|String} metadata The metadata to pass to the inspector
+        view.
+    */
+    _cleanupEntityDetails: function() {
+      this._detailsVisible(false);
+      var detailsNode = Y.one('.bws-view-data');
+      if (detailsNode) {
+        detailsNode.hide();
+      }
+      // Clean up any details we've got.
+      if (this._details) {
+        this._details.destroy({remove: true});
+      }
+
+      // Update the activeID on the editorial/search results.
+      if (this._editorial) {
+        this._editorial.set('activeID', null);
+      }
+      if (this._search) {
+        this._search.set('activeID', null);
       }
     },
 
@@ -510,7 +549,10 @@ YUI.add('subapp-browser', function(Y) {
         // XXX window.flags.il the details node is shown by default. When we
         // switch to the new state object it should be hidden by default in the
         // template.
-        if (detailsNode) { detailsNode.hide(); }
+        if (detailsNode) {
+          this._detailsVisible(false);
+          detailsNode.empty();
+        }
       }
       if (this._activeInspector) {this._activeInspector.destroy(); }
     },
@@ -535,13 +577,15 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     renderEntityDetails: function(req, res, next) {
-      var entityId, hash;
+      var state = this.state,
+          entityId,
+          hash;
       if (window.flags && window.flags.il) {
-        entityId = this.state.getState('current', 'sectionA', 'metadata').id;
-        hash = this.state.getState('current', 'sectionA', 'metadata').hash;
+        entityId = state.getState('current', 'sectionA', 'metadata').id;
+        hash = state.getState('current', 'sectionA', 'metadata').hash;
       } else {
-        entityId = this.state.getCurrent('charmID');
-        hash = this.state.getCurrent('hash');
+        entityId = state.getCurrent('charmID');
+        hash = state.getCurrent('hash');
       }
 
       var extraCfg = {
@@ -554,9 +598,27 @@ YUI.add('subapp-browser', function(Y) {
 
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
-      if (this._details && this.state.hasChanged('hash') &&
-          !(this.state.hasChanged('charmID') ||
-            this.state.hasChanged('viewmode'))) {
+      var hashChanged, charmIDChanged, viewmodeChanged;
+      if (window.flags && window.flags.il) {
+        // XXX until UIState supports dot notation for hasChanged, we'll need
+        // to manually compare metadata attributes
+        var current = state.getState('current', 'sectionA', 'metadata'),
+            previous = state.getState('previous', 'sectionA', 'metadata');
+        current = current || {};
+        previous = previous || {};
+        charmIDChanged = current.id !== previous.id;
+        hashChanged = current.hash !== previous.hash;
+        viewmodeChanged = false; // no longer supported so just hard code
+      } else {
+        charmIDChanged = state.hasChanged('charmID');
+        viewmodeChanged = state.hasChanged('viewmode');
+        hashChanged = state.hasChanged('hash');
+      }
+      // XXX viewmode can be eliminated from this condition once
+      // window.flags.il becomes standard
+      if (this._details &&
+          hashChanged &&
+          !(charmIDChanged || viewmodeChanged)) {
         return;
       }
 
