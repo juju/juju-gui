@@ -89,7 +89,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charm: 'cs:quantal/wordpress-11',
           exposed: true
         });
-        wordpress.get('units').add({
+        db.addUnits({
           id: 'wordpress/1',
           agent_state: 'pending',
           public_address: 'example.com',
@@ -111,8 +111,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         unitInfo = handlers.unitInfo;
       });
 
-      it('creates a unit in the database', function() {
-        var django = db.services.add({id: 'django'});
+      // Ensure the unit has been correctly created in the given model list.
+      var assertCreated = function(list) {
         var change = {
           Name: 'django/1',
           Service: 'django',
@@ -124,8 +124,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
-        // Retrieve the unit from the database.
-        var unit = django.get('units').getById('django/1');
+        // Retrieve the unit from the list.
+        var unit = list.getById('django/1');
         assert.strictEqual('django', unit.service);
         assert.strictEqual('1', unit.machine);
         assert.strictEqual('pending', unit.agent_state);
@@ -133,11 +133,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual('example.com', unit.public_address);
         assert.strictEqual('10.0.0.1', unit.private_address);
         assert.deepEqual(['80/tcp', '42/udp'], unit.open_ports);
+      };
+
+      it('creates a unit in the database (global list)', function() {
+        db.services.add({id: 'django'});
+        assertCreated(db.units);
       });
 
-      it('updates a unit in the database', function() {
+      it('creates a unit in the database (service list)', function() {
         var django = db.services.add({id: 'django'});
-        django.get('units').add({
+        assertCreated(django.get('units'));
+      });
+
+      // Ensure the unit has been correctly updated in the given model list.
+      var assertUpdated = function(list) {
+        db.addUnits({
           id: 'django/2',
           agent_state: 'pending',
           public_address: 'example.com',
@@ -145,16 +155,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         var change = {
           Name: 'django/2',
+          Service: 'django',
           Status: 'started',
           PublicAddress: 'example.com',
           PrivateAddress: '192.168.0.1'
         };
         unitInfo(db, 'change', change);
         // Retrieve the unit from the database.
-        var unit = django.get('units').getById('django/2');
+        var unit = list.getById('django/2');
         assert.strictEqual('started', unit.agent_state);
         assert.strictEqual('example.com', unit.public_address);
         assert.strictEqual('192.168.0.1', unit.private_address);
+      };
+
+      it('updates a unit in the database (global list)', function() {
+        db.services.add({id: 'django'});
+        assertUpdated(db.units);
+      });
+
+      it('updates a unit in the database (service list)', function() {
+        var django = db.services.add({id: 'django'});
+        assertUpdated(django.get('units'));
       });
 
       it('creates or updates the corresponding machine', function() {
@@ -162,6 +183,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         db.services.add({id: 'django'});
         var change = {
           Name: 'django/2',
+          Service: 'django',
           MachineId: '1',
           Status: 'pending',
           PublicAddress: 'example.com'
@@ -182,8 +204,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('removes a unit from the database', function() {
         var django = db.services.add({id: 'django'});
-        var units = django.get('units');
-        units.add({
+        db.addUnits({
           id: 'django/2',
           agent_state: 'pending',
           public_address: 'example.com',
@@ -191,12 +212,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         var change = {
           Name: 'django/2',
+          Service: 'django',
           Status: 'started',
           PublicAddress: 'example.com',
           PrivateAddress: '192.168.0.1'
         };
         unitInfo(db, 'remove', change);
-        assert.strictEqual(0, units.size());
+        // The unit has been removed from both the global list and the service.
+        assert.strictEqual(db.units.size(), 0);
+        assert.strictEqual(django.get('units').size(), 0);
       });
 
     });
@@ -742,8 +766,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('stores annotations on a unit', function() {
         var django = db.services.add({id: 'django'});
-        var units = django.get('units');
-        units.add({id: 'django/2'});
+        var djangoUnits = django.get('units');
+        var unitData = {id: 'django/2', service: 'django'};
+        db.addUnits(unitData);
         var annotations = {'foo': '42', 'bar': '47'};
         var change = {
           Tag: 'unit-django-2',
@@ -751,8 +776,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         annotationInfo(db, 'add', change);
         // Retrieve the annotations from the database.
-        var unit = units.getById('django/2');
-        assert.deepEqual(annotations, unit.annotations);
+        var globalUnit = db.units.getById('django/2');
+        var serviceUnit = djangoUnits.getById('django/2');
+        // Ensure the annotations has been written to both the global and the
+        // service nested unit instance.
+        assert.deepEqual(globalUnit.annotations, annotations);
+        assert.deepEqual(serviceUnit.annotations, annotations);
       });
 
       it('stores annotations on a machine', function() {
@@ -810,18 +839,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('does not override the unit relation_errors attr', function() {
         var django = db.services.add({id: 'django'});
-        var units = django.get('units');
-        var relation_errors = {'cache': ['memcached']},
-            annotations = {'foo': '42', 'bar': '47'};
-        units.add({id: 'django/2', relation_errors: relation_errors});
+        var djangoUnits = django.get('units');
+        var relation_errors = {'cache': ['memcached']};
+        var annotations = {'foo': '42', 'bar': '47'};
+        var unitData = {
+          id: 'django/2',
+          service: 'django',
+          relation_errors: relation_errors
+        };
+        db.addUnits(unitData);
         var change = {
           Tag: 'unit-django-2',
           Annotations: annotations
         };
         annotationInfo(db, 'add', change);
         // Retrieve the annotations from the database.
-        var unit = units.getById('django/2');
-        assert.deepEqual(relation_errors, unit.relation_errors);
+        var globalUnit = db.units.getById('django/2');
+        var serviceUnit = djangoUnits.getById('django/2');
+        // Ensure relation errors are still there.
+        assert.deepEqual(globalUnit.relation_errors, relation_errors);
+        assert.deepEqual(serviceUnit.relation_errors, relation_errors);
       });
 
       it('does not create new model instances', function() {

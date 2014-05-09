@@ -767,7 +767,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     _destroyMachine: function(name, force, machineUnitsMap) {
       var machines = this.db.machines;
-      var services = this.db.services;
       var machine = machines.getById(name);
       // Ensure the machine to be destroyed exists in the database.
       if (!machine) {
@@ -801,8 +800,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
         // Remove all units assigned to this machine.
         units.forEach(function(unit) {
-          var service = services.getById(unit.service);
-          service.get('units').remove(unit);
+          this.db.removeUnits(unit);
           this.changes.units[unit.id] = [unit, false];
         }, this);
       }
@@ -966,13 +964,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // Required machine changes are added by _getUnitMachines.
         machines = this._getUnitMachines(numUnits);
       }
-      var unitList = service.get('units');
       var units = [];
 
       for (var i = 0; i < numUnits; i += 1) {
         var unitId = service.unitSequence;
         machine = machines[i];
-        unit = unitList.add({
+        unit = this.db.addUnits({
           'id': serviceName + '/' + unitId,
           'machine': machine.id,
           // The models use underlines, not hyphens (see
@@ -1062,10 +1059,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
           // For now we also need to clean up the services unit list but the
           // above should go away soon when below becomes the default.
           if (service) {
-            var units = service.get('units');
-            var unit = units.getById(unitName);
+            var unit = this.db.units.getById(unitName);
             if (unit) {
-              units.remove(unit);
+              this.db.removeUnits(unit);
               this.changes.units[unitName] = [unit, false];
               return;
             }
@@ -1451,6 +1447,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       models.setAnnotations(entity, annotations, true);
+      // If this is a unit, also update annotations in the unit instance
+      // included in the service model list.
+      if (entity.name === 'serviceUnit') {
+        var serviceUnits = this.db.services.getById(
+            entity.service).get('units');
+        var nestedEntity = serviceUnits.getById(entityName);
+        models.setAnnotations(nestedEntity, annotations, true);
+      }
       // Arrange delta stream updates.
       var annotationGroup = this._getAnnotationGroup(entity);
       this.annotations[annotationGroup][entityName] = entity;

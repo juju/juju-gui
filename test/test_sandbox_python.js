@@ -1315,8 +1315,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             request_id: 99
           };
           client.onmessage = function(received) {
-            var unit = state.db.services.getById('wordpress')
-                .get('units').getById('wordpress/0');
+            var unit = state.db.units.getById('wordpress/0');
             var annotations = unit.annotations;
             assert.equal(annotations.foo, 'bar');
             // Error should be undefined.
