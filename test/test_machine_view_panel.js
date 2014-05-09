@@ -61,7 +61,8 @@ describe('machine view panel view', function() {
       container: container,
       db: {
         services: new models.ServiceList(),
-        machines: machines
+        machines: machines,
+        units: new models.ServiceUnitList()
       }
     });
   });

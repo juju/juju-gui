@@ -1,5 +1,11 @@
 <div class="token">
   <span class="title">{{ displayName }}</span>
+  <span class="service-icons">
+    {{#units}}
+      <img src="{{icon}}" alt="{{service}}">
+    {{/units}}
+  </span>
+  <span class="clear"></span>
   <span class="details">
     {{#if formattedHardware.cpuCores}}
     {{ formattedHardware.cpuCores }}x{{ formattedHardware.cpuPower }}GHz,
