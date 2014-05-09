@@ -1,35 +1,16 @@
-.machine-view-panel .column .content li.machine-token {
-    padding: 0;
-
+.machine-token {
     .token {
-        position: relative;
-        display: block;
         padding: 15px 20px;
-        cursor: pointer;
-        color: #dd4814;
 
         &.active {
-            background-color: #eee;
-
-            .title {
-                margin-bottom: 10px;
-            }
-            .details,
-            .delete {
+            .details {
                 display: block;
             }
         }
-        span {
-            display: block;
-        }
         .delete {
-            position: absolute;
-            right: 20px;
             bottom: 15px;
-            cursor: pointer;
         }
-        .details,
-        .delete {
+        .details {
             display: none;
         }
     }

@@ -73,6 +73,24 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
+         * Mark the token as uncommitted.
+         *
+         * @method setUncommitted
+         */
+        setUncommitted: function() {
+          this.get('container').one('.token').addClass('uncommitted');
+        },
+
+        /**
+         * Mark the token as committed.
+         *
+         * @method setCommitted
+         */
+        setCommitted: function() {
+          this.get('container').one('.token').removeClass('uncommitted');
+        },
+
+        /**
          * Format the hardware details.
          *
          * @method _formatHardware

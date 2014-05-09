@@ -66,4 +66,19 @@ describe('container token view', function() {
     });
     container.one('.delete').simulate('click');
   });
+
+  it('can be marked as uncommitted', function() {
+    view.setUncommitted();
+    assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
+        true);
+  });
+
+  it('can be marked as committed', function() {
+    view.setUncommitted();
+    assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
+        true);
+    view.setCommitted();
+    assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
+        false);
+  });
 });

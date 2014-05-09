@@ -1,0 +1,33 @@
+.token {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    color: #dd4814;
+
+    &.active {
+        background-color: #eee;
+
+        .title {
+            margin-bottom: 10px;
+        }
+        .delete {
+            display: block;
+        }
+    }
+    // Needs to be after &.active so that when both are applied the active
+    // background is the uncommitted colour.
+    &.uncommitted {
+        background-color: #ddf4fc;
+    }
+    span {
+        display: block;
+    }
+    .delete {
+        position: absolute;
+        right: 20px;
+        cursor: pointer;
+    }
+    .delete {
+        display: none;
+    }
+}
