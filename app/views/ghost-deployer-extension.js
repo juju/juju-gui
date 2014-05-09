@@ -50,16 +50,10 @@ YUI.add('ghost-deployer-extension', function(Y) {
       charm.loaded = true;
       var db = this.db;
       db.charms.add(charm);
-
       var ghostService = db.services.ghostService(charm);
-      if (ghostAttributes !== undefined) {
-        if (ghostAttributes.coordinates !== undefined) {
-          var annotations = ghostService.get('annotations');
-          annotations['gui-x'] = ghostAttributes.coordinates[0];
-          annotations['gui-y'] = ghostAttributes.coordinates[1];
-        }
-        ghostService.set('icon', ghostAttributes.icon);
-      }
+
+      this._setupXYAnnotations(ghostAttributes, ghostService);
+
       if (window.flags && window.flags.il) {
         var serviceName = charm.get('name') + '-' +
                           Math.floor((Math.random() * 1000) + 1);
@@ -85,6 +79,24 @@ YUI.add('ghost-deployer-extension', function(Y) {
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);
+      }
+    },
+
+    /**
+      Sets up the gui-x, gui-y annotations on the passed in ghost service.
+
+      @method _setupXYAnnotations
+      @param {Object} ghostAttributes The attrs to set on the ghost service.
+      @param {Object} ghostService The ghost service model.
+    */
+    _setupXYAnnotations: function(ghostAttributes, ghostService) {
+      if (ghostAttributes !== undefined) {
+        if (ghostAttributes.coordinates !== undefined) {
+          var annotations = ghostService.get('annotations');
+          annotations['gui-x'] = ghostAttributes.coordinates[0];
+          annotations['gui-y'] = ghostAttributes.coordinates[1];
+        }
+        ghostService.set('icon', ghostAttributes.icon);
       }
     },
 
