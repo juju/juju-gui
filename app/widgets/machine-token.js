@@ -97,11 +97,11 @@ YUI.add('machine-token', function(Y) {
          */
         _formatHardware: function(hardware) {
           hardware.disk = isNaN(hardware.disk) ?
-            null : (hardware.disk / 1024).toFixed(1);
+              null : (hardware.disk / 1024).toFixed(1);
           hardware.cpuPower = isNaN(hardware.cpuPower) ?
-            null : hardware.cpuPower / 100;
+              null : hardware.cpuPower / 100;
           hardware.mem = isNaN(hardware.mem) ?
-            null : (hardware.mem / 1024).toFixed(1);
+              null : (hardware.mem / 1024).toFixed(1);
           return hardware;
         },
 
