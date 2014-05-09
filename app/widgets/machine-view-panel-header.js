@@ -70,6 +70,24 @@ YUI.add('machine-view-panel-header', function(Y) {
         },
 
         /**
+         * Change the header to the drop state.
+         *
+         * @method setDroppable
+         */
+        setDroppable: function(label) {
+          this.get('container').addClass('droppable');
+        },
+
+        /**
+         * Change the header back from drop state to the default state.
+         *
+         * @method setNotDroppable
+         */
+        setNotDroppable: function(label) {
+          this.get('container').removeClass('droppable');
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -103,7 +121,14 @@ YUI.add('machine-view-panel-header', function(Y) {
     @default undefined
     @type {String}
     */
-    action: {}
+    action: {},
+
+    /**
+    @attribute dropLabel
+    @default undefined
+    @type {String}
+    */
+    dropLabel: {}
   };
 
   views.MachineViewPanelHeaderView = MachineViewPanelHeaderView;
