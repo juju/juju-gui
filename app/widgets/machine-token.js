@@ -96,9 +96,12 @@ YUI.add('machine-token', function(Y) {
          * @method _formatHardware
          */
         _formatHardware: function(hardware) {
-          hardware.disk = (hardware.disk / 1024).toFixed(1);
-          hardware.cpuPower = hardware.cpuPower / 100;
-          hardware.mem = (hardware.mem / 1024).toFixed(1);
+          hardware.disk = isNaN(hardware.disk) ?
+            null : (hardware.disk / 1024).toFixed(1);
+          hardware.cpuPower = isNaN(hardware.cpuPower) ?
+            null : hardware.cpuPower / 100;
+          hardware.mem = isNaN(hardware.mem) ?
+            null : (hardware.mem / 1024).toFixed(1);
           return hardware;
         },
 
