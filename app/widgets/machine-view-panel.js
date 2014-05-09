@@ -82,7 +82,6 @@ YUI.add('machine-view-panel', function(Y) {
           // Select the active token.
           machineTokens.removeClass('active');
           selected.addClass('active');
-          // Set the header text.
           this._renderContainerTokens(containers);
         },
 
@@ -92,29 +91,39 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderHeaders
          */
         _renderHeaders: function() {
-          var columns = this.get('container').all('.column');
+          this._machinesHeader = this._renderHeader(
+              '.column.machines .head', {
+                title: 'Environment',
+                action: 'New machine'
+              });
+          this._containersHeader = this._renderHeader(
+              '.column.containers .head', {
+                action: 'New container'
+              });
+          this._unplacedHeader = this._renderHeader(
+              '.column.unplaced .head', {
+                title: 'Unplaced units'
+              });
+        },
 
-          columns.each(function(column) {
-            var attrs = {container: column.one('.head')};
-
-            if (column.hasClass('unplaced')) {
-              attrs.title = 'Unplaced units';
-            }
-            else if (column.hasClass('machines')) {
-              attrs.title = 'Environment';
-              attrs.action = 'New machine';
-            }
-            else if (column.hasClass('containers')) {
-              attrs.action = 'New container';
-            }
-            new views.MachineViewPanelHeaderView(attrs).render();
-          });
+        /**
+         * Render a header widget.
+         *
+         * @method _renderHeader
+         * @param {String} container the column class the header will be
+         * rendered to.
+         * @param {Object} attrs the attributes to be passed to the view.
+         */
+        _renderHeader: function(container, attrs) {
+          attrs.container = this.get('container').one(container);
+          return new views.MachineViewPanelHeaderView(attrs).render();
         },
 
         /**
          * Display a list of given containers.
          *
          * @method _renderContainerTokens
+         * @param {Array} containers the list of containers to render.
          */
         _renderContainerTokens: function(containers) {
           var container = this.get('container');
@@ -122,8 +131,8 @@ YUI.add('machine-view-panel', function(Y) {
           var plural = containers.length !== 1 ? 's' : '';
 
           this._clearContainerColumn();
-          container.one('.containers .head .label').set('text',
-              containers.length + ' container' + plural + ', xx units');
+          this._containersHeader.setLabel(
+              containers.length + ' container' + plural + ', 0 units');
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
@@ -141,11 +150,13 @@ YUI.add('machine-view-panel', function(Y) {
          *
          * @method _clearContainerColumn
          */
-        _clearContainerColumn: function(containers) {
+        _clearContainerColumn: function() {
           var container = this.get('container');
           var containerParent = container.one('.containers .content .items');
+          // Remove all the container items.
           containerParent.get('childNodes').remove();
-          container.one('.containers .head .label').set('text', '');
+          // Set the header label text to the default.
+          this._containersHeader.setLabel('0 containers, 0 units');
         },
 
         /**
@@ -164,17 +175,20 @@ YUI.add('machine-view-panel', function(Y) {
           var machineElements = machineList.all('li');
           var plural = machines.length !== 1 ? 's' : '';
 
-          container.one('.machines .head .label').set('text',
+          // Update the header to show the machine count.
+          this._machinesHeader.setLabel(
               machines.length + ' machine' + plural);
 
           machines.forEach(function(machine) {
             exists = machineElements.some(function(element) {
+              // If the machine already exists in the dom, mark it as such.
               if (String(machine.id) === element.getData('id')) {
                 element.setData('exists', true);
                 return true;
               }
             });
             if (!exists) {
+              // If the machine does not exist in the dom, render the token.
               newElement = this._renderMachineToken(machine, machineList);
               newElement.setData('exists', true);
             }
@@ -182,7 +196,12 @@ YUI.add('machine-view-panel', function(Y) {
 
           machineElements.each(function(element) {
             if (!element.getData('exists')) {
+              // If the element exists in the dom, but not in the model
+              // list then it must have been remove, so remove it from
+              // the dom.
               if (element.one('.token').hasClass('active')) {
+                // If the selected machine was removed then stop showing
+                // its containers.
                 this._clearContainerColumn();
               }
               element.remove();
@@ -190,6 +209,8 @@ YUI.add('machine-view-panel', function(Y) {
               element.remove();
               this._clearContainerColumn();
             } else {
+              // Clean up the 'exists' flag for the next loop through
+              // the machine nodes.
               element.setData('exists', undefined);
             }
           }, this);
@@ -279,6 +300,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._updateMachines();
           this._renderServiceUnitTokens();
           this._renderScaleUp();
+          this._clearContainerColumn();
           return this;
         },
 
