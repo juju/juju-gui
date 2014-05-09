@@ -258,13 +258,14 @@ YUI.add('deployer-bar', function(Y) {
      */
     _getDeployedServices: function(ecs) {
       var returnSet = [],
-        iconUrl = 'https://manage.jujucharms.com/api/3/charm/precise/{name}/file/icon.svg';
+          iconUrl = 'https://manage.jujucharms.com/api/3/' +
+          'charm/precise/{name}/file/icon.svg';
       for (var key in ecs.changeSet) {
         if (ecs.changeSet[key]) {
           var obj = ecs.changeSet[key];
           if (obj.command.method === '_deploy') {
             var name = ecs.changeSet[key].command.args[1],
-              single = {icon: Y.Lang.sub(iconUrl, {name: name}), name: name};
+                single = {icon: Y.Lang.sub(iconUrl, {name: name}), name: name};
             returnSet.push(single);
           }
         }
