@@ -37,6 +37,39 @@ YUI.add('environment-change-set', function(Y) {
     /* ECS methods */
 
     /**
+      When a command finishes executing, if that command provides a means of
+      retrieving an ID or IDs from the RPC data, provide that information to
+      any commands down the line that require it within their own contexts.
+      The command's idsFromResults should return an array.
+
+      @method _translateKeysToIds
+      @param {Object} evt The event object, with a record (the current command)
+        and a result (the results of the RPC passed to the wrapped callback).
+    */
+    _translateKeysToIds: function(record, result) {
+      var command = record.command;
+      var key = record.key;
+
+      if (command.idsFromResults) {
+        for (var level = this.currentLevel + 1;
+            level < this.currentCommit.length;
+            level += 1) {
+          /* jshint -W083 */
+          this.currentCommit[level].forEach(function(record) {
+            if (record.command.keyToId) {
+              // XXX Makyo 2014-05-11
+              // This currently only allows a single ID per changeSet entry;
+              // this may be expanded in the future, but current design will
+              // not require more.
+              var id = command.idsFromResults.apply(this, result)[0];
+              this.changeSet[record.key].command.keyToId(key, id);
+            } // if
+          }, this); // foreach
+        } // for
+      } // if
+    },
+
+    /**
       Returns an array of the parameters this method was called with skipping
       the final parameter because it's the public method options.
 
@@ -104,12 +137,16 @@ YUI.add('environment-change-set', function(Y) {
     */
     _createNewRecord: function(type, command, parents) {
       var key = type + '-' + this._generateUniqueKey(type);
+      parents = parents || [];
       this.changeSet[key] = {
         id: key,
-        parents: parents,
+        parents: Y.Array.filter(parents, function(parent) {
+          return !!parent;
+        }),
         executed: false,
         command: command
       };
+      this.fire('changeSetModified');
       this._wrapCallback(this.changeSet[key]);
       return key;
     },
@@ -142,12 +179,15 @@ YUI.add('environment-change-set', function(Y) {
         var result = callback.apply(this, self._getArgs(arguments));
         self.fire('taskComplete', {
           id: record.id,
-          record: record
+          record: record,
+          result: arguments
         });
         // Signal that this record has been completed by decrementing the
         // count of records to complete and deleting it from the changeset.
         self.levelRecordCount -= 1;
         delete self.changeSet[record.id];
+        self._translateKeysToIds(record, arguments);
+        self.fire('changeSetModified');
         return result;
       }
       args[index] = _callbackWrapper;
@@ -229,7 +269,7 @@ YUI.add('environment-change-set', function(Y) {
 
       // Check and see if all of the parents have already been placed.
       var alreadyPlacedParents = true;
-      if (command.parents) {
+      if (command.parents.length > 0) {
         for (var i = 0; i < command.parents.length; i += 1) {
           if (keyToLevelMap[command.parents[i]] >= currLevel) {
             alreadyPlacedParents = false;
@@ -307,8 +347,8 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for creating a new service.
 
-      Receives all the parameters it's public method 'deploy' was called with
-      with the exception of the ECS options oject.
+      Receives all the parameters received by the environment's "deploy"
+      method with the exception of the ECS options object.
 
       @method _lazyDeploy
       @param {Array} args The arguments to deploy the charm with.
@@ -328,7 +368,7 @@ YUI.add('environment-change-set', function(Y) {
         // an existing machine or that the machine does not exist and one
         // will be created to host this unit. This means that this does not
         // need to be queued behind another command.
-        toMachine = null;
+        toMachine = [];
       }
       return this._createNewRecord('service', command, toMachine);
     },
@@ -336,8 +376,8 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for setting a services config.
 
-      Receives all the parameters it's public method 'set_config' was called
-      with with the exception of the ECS options oject.
+      Receives all the parameters received by the environment's "set_config"
+      method with the exception of the ECS options object.
 
       @method _lazySetConfig
       @param {Array} args The arguments to set the config with.
@@ -364,8 +404,8 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new entry in the queue for adding a relation.
 
-      Receives all the parameters it's public method 'addRelation' was called
-      with with the exception of the ECS options oject.
+      Receives all the parameters received by the environment's "add_relation"
+      method with the exception of the ECS options object.
 
       @method _lazyAddRelation
       @param {Array} args The arguments to add the relation with.
@@ -391,6 +431,100 @@ YUI.add('environment-change-set', function(Y) {
         args: args
       };
       return this._createNewRecord('addRelation', command, parent);
+    },
+
+    /**
+      Creates a new entry in the queue for adding machines/containers.
+
+      Receives all the parameters received by the environment's "addMachines"
+      method with the exception of the ECS options object.
+
+      @method lazyAddMachines
+      @param {Array} args The arguments to add the machines with.
+    */
+    lazyAddMachines: function(args) {
+      var parent = [];
+      // Search for and add the service to parent.
+      args[0].forEach(function(param) {
+        if (param.parentId) {
+          Y.Object.each(this.changeSet, function(value, key) {
+            if (value.command.method === '_addMachines') {
+              if (key === param.parentId) {
+                parent.push(key);
+              }
+            }
+          }, this);
+        }
+      }, this);
+      var command = {
+        method: '_addMachines',
+        args: args,
+        /**
+          Given the results of an API call to add machines, extract the IDs as
+          the state server returns them.
+
+          @method idsFromResults
+          @param {object} results The results passed to the RPC callback.
+        */
+        idsFromResults: function(results) {
+          return results.machines.map(function(result) {
+            return result.name;
+          });
+        },
+        /**
+          Replace changeSet keys with real machine IDs returned from
+          idsFromResults.
+
+          Note: this only works with one machine for the moment.
+
+          @method keyToId
+          @param {String} key The changeSet key
+          @param {String} id The machine id.
+        */
+        keyToId: function(key, id) {
+          this.args[0].forEach(function(param) {
+            param.parentId = param.parentId.replace(key, id);
+          });
+        }
+      };
+      return this._createNewRecord('addMachines', command, parent);
+    },
+
+    /**
+      Creates a new entry in the queue for adding service units.
+
+      Receives all the parameters received by the environment's "add_unit"
+      method with the exception of the ECS options object.
+
+      @method lazyAddUnits
+      @param {Array} args The arguments to add the units with.
+    */
+    lazyAddUnits: function(args) {
+      var parent = [];
+      // Search for and add the service to parent.
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.command.method === '_deploy') {
+          if (value.command.options.modelId === args[0]) {
+            parent.push(key);
+            args[0] = value.command.args[1];
+          }
+        }
+      });
+      // If toMachine is specified, search for and add the machine to parent
+      if (args[2]) {
+        Y.Object.each(this.changeSet, function(value, key) {
+          if (value.command.method === '_addMachines') {
+            if (key === args[2]) {
+              parent.push(key);
+            }
+          }
+        }, this);
+      }
+      var command = {
+        method: '_add_unit',
+        args: args
+      };
+      return this._createNewRecord('addUnits', command, parent);
     }
 
     /* End private environment methods. */

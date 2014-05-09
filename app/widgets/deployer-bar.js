@@ -73,7 +73,7 @@ YUI.add('deployer-bar', function(Y) {
         change_count: changes
       }));
       container.addClass('deployer-bar');
-      Object.observe(ecs.changeSet, Y.bind(this.update, this));
+      ecs.on('changeSetModified', Y.bind(this.update, this));
       return this;
     },
 
