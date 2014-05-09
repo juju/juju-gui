@@ -1,11 +1,18 @@
 <div class="right">
-    <span class="import-export">
-        <a href="">Import</a>
-        <a href="">Export</a>
-    </span>
-    <a href="" class="button deploy-button">Deploy</a>
+    <div class="pre-summary">
+        <span class="import-export">
+            <a href="">Import</a>
+            <a href="">Export</a>
+        </span>
+        <a href="" class="button deploy-button">Deploy</a>
+    </div>
+    <div class="post-summary">
+        <p>Confirm will deploy all changes</p>
+        <a href="" class="button cancel-button">Cancel</a>
+        <a href="" class="button confirm-button">Confirm</a>
+    </div>
 </div>
-<ul>
+<ul class="action-list">
     <li>
         <a href="" class="link">
             {{ change_count }} changes
@@ -19,3 +26,46 @@
         {{{ latest_change_description }}}
     </li>
 </ul>
+
+<aside class="summary">
+    <header>
+        <h2 class="title">These change will be deployed to: {{ machine_name }}</h2>
+        <div class="right">
+            <ul class="action-list">
+                <li><a href="" class="min"><i class="sprite DB-expand-01"></i></a></li>
+                <li><a href="" class="mid"><i class="sprite DB-expand-02"></i></a></li>
+                <li><a href="" class="max"><i class="sprite DB-expand-03 active"></i></a></li>
+                <li><a href="" class="close"><i class="sprite DB-close"></i></a></li>
+            </ul>
+        </div>
+    </header>
+    <section>
+        <h2 class="title">Deployment summary</h2>
+        <div class="summary-panel">
+            {{#if change_count}}
+                {{#if deploy_services.length}}
+                    <h3>
+                        {{deploy_services.length}} services added
+                    </h3>
+                    <ul>
+                    {{#each deploy_services}}
+                        <li><img src="{{icon}}" alt="" class="icon" />{{name}} has been added.</li>
+                    {{/each}}
+                    </ul>
+                {{/if}}
+                {{#if added_relations.length}}
+                    <h3>
+                        {{added_relations.length}} relations added
+                    </h3>
+                    <ul>
+                    {{#each added_relations}}
+                        <li>{{type}} relation added between {{from}} and {{to}}</li>
+                    {{/each}}
+                    </ul>
+                {{/if}}
+            {{else}}
+                <p>No uncommited changes</p>
+            {{/if}}
+        </div>
+    </section>
+</aside>

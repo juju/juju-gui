@@ -43,6 +43,15 @@ YUI.add('deployer-bar', function(Y) {
     events: {
       '.deploy-button': {
         click: 'deploy'
+      },
+      '.summary .close': {
+        click: 'summaryClose'
+      },
+      '.cancel-button': {
+        click: 'summaryClose'
+      },
+      '.confirm-button': {
+        click: 'confirm'
       }
     },
 
@@ -76,6 +85,20 @@ YUI.add('deployer-bar', function(Y) {
       Object.observe(ecs.changeSet, Y.bind(this.update, this));
       return this;
     },
+    /**
+      Deploy the current set of environment changes.
+
+      @method deploy
+      @param {Object} evt The event object.
+    */
+    confirm: function(evt) {
+      evt.halt();
+      var container = this.get('container'),
+          ecs = this.get('ecs');
+      container.removeClass('summary-open');
+      ecs.commit(this.get('env'));
+      //this.update();
+    },
 
     /**
       Deploy the current set of environment changes.
@@ -85,9 +108,21 @@ YUI.add('deployer-bar', function(Y) {
     */
     deploy: function(evt) {
       evt.halt();
-      var ecs = this.get('ecs');
-      ecs.commit(this.get('env'));
-      this.update();
+      var container = this.get('container'),
+          ecs = this.get('ecs');
+      var changes = this._getChangeCount(ecs);
+      var deploy_services = this._getDeployedServices(ecs);
+      var added_relations = this._getAddRelations(ecs);
+      if (container && container.get('parentNode')) {
+        container.setHTML(this.template({
+          change_count: changes,
+          latest_change_description: '',
+          deploy_services: deploy_services,
+          added_relations: added_relations
+        }));
+      }
+
+      container.addClass('summary-open');
     },
     /**
       Update UI with environment changes.
@@ -112,6 +147,17 @@ YUI.add('deployer-bar', function(Y) {
             Y.bind(this._hideChangeDesctiption, this),
             2000);
       }
+    },
+    /**
+      Hide the summary panel.
+
+      @method summaryClose
+      @param {Object} evt The event object.
+    */
+    summaryClose: function(evt) {
+      evt.halt();
+      var container = this.get('container');
+      container.removeClass('summary-open');
     },
     /**
       return the number of changes in ecs.
@@ -203,6 +249,50 @@ YUI.add('deployer-bar', function(Y) {
       var ecs = this.get('ecs');
       var len = Object.keys(ecs.changeSet).length - 1;
       return Object.keys(ecs.changeSet)[len];
+    },
+    /**
+     * Pull out all deplayed changes from the changeset to display to the user.
+     *
+     * @method _getDeployedServices
+     *
+     */
+    _getDeployedServices: function(ecs) {
+      var returnSet = [];
+      for (var key in ecs.changeSet) {
+        if (ecs.changeSet[key]) {
+          var obj = ecs.changeSet[key];
+          if (obj.command.method === '_deploy') {
+            var single = {icon: 'https://manage.jujucharms.com' +
+                               '/api/3/charm/precise/' +
+                               ecs.changeSet[key].command.args[1] +
+                               '/file/icon.svg',
+                           name: ecs.changeSet[key].command.args[1]};
+            returnSet.push(single);
+          }
+        }
+      }
+      return returnSet;
+    },
+    /**
+    * Pull out all relation changes from the changeset to display to the user.
+    *
+    * @method _getDeployedServices
+    *
+    */
+    _getAddRelations: function(ecs) {
+      var returnSet = [];
+      for (var key in ecs.changeSet) {
+        if (ecs.changeSet[key]) {
+          var obj = ecs.changeSet[key];
+          if (obj.command.method === '_add_relation') {
+            var single = {type: ecs.changeSet[key].command.args[0][1].name,
+                           from: ecs.changeSet[key].command.args[0][0],
+                           to: ecs.changeSet[key].command.args[1][0]};
+            returnSet.push(single);
+          }
+        }
+      }
+      return returnSet;
     }
 
 
