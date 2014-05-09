@@ -104,4 +104,22 @@ describe('machine token view', function() {
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         false);
   });
+
+  it('handles non-number values for hardware when formatting', function() {
+    var machine = {
+      id: 0,
+      hardware: {}
+    };
+    var view = new View({
+      container: container,
+      machine: machine
+    }).render();
+    var hardware = view.get('machine').formattedHardware;
+    assert.equal(hardware.disk, null,
+                 'Non-number disk should be formatted to null');
+    assert.equal(hardware.cpuPower, null,
+                 'Non-number CPU should be formatted to null');
+    assert.equal(hardware.mem, null,
+                 'Non-number memory should be formatted to null');
+  });
 });

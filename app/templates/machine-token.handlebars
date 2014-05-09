@@ -1,9 +1,15 @@
 <div class="token">
   <span class="title">{{ displayName }}</span>
   <span class="details">
+    {{#if formattedHardware.cpuCores}}
     {{ formattedHardware.cpuCores }}x{{ formattedHardware.cpuPower }}GHz,
+    {{/if}}
+    {{#if formattedHardware.mem}}
     {{ formattedHardware.mem }}GB,
+    {{/if}}
+    {{#if formattedHardware.disk}}
     {{ formattedHardware.disk }}GB
+    {{/if}}
   </span>
   <span class="delete">
     <i class="sprite token-delete"></i>
