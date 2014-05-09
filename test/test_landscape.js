@@ -49,7 +49,7 @@ describe('Landscape integration', function() {
       db.services.add({id: 'mysql',
         annotations: {'landscape-computers': '+service:mysql'}
       });
-      db.services.getById('mysql').get('units').add([{
+      db.addUnits([{
         id: 'mysql/0',
         annotations: {'landscape-computer': '+unit:mysql-0'}
       }, {
@@ -132,7 +132,7 @@ describe('Landscape integration', function() {
     // Add a second service with a unit in a flagged state
     // and make sure the environment reflects this.
     var wordpress = db.services.add({id: 'wordpress'});
-    wordpress.get('units').add({
+    db.addUnits({
       id: 'wordpress/0',
       annotations: {'landscape-security-upgrades': true}
     });

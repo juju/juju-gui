@@ -807,7 +807,7 @@ YUI.add('inspector-overview-view', function(Y) {
             })
         );
       } else {
-        service.get('units').add(
+        db.addUnits(
             Y.Array.map(unit_names, function(unit_id) {
               return {id: unit_id,
                 agent_state: 'pending'};
@@ -853,9 +853,7 @@ YUI.add('inspector-overview-view', function(Y) {
         );
       } else {
         Y.Array.each(unit_names, function(unit_name) {
-          var service = db.services.getById(unit_name.split('/')[0]);
-          var units = service.get('units');
-          units.remove(units.getById(unit_name));
+          db.removeUnits(db.units.getById(unit_name));
         });
         service.set(
             'unit_count', service.get('unit_count') - unit_names.length);

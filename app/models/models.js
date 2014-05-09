@@ -66,7 +66,12 @@ YUI.add('juju-models', function(Y) {
       // are kept and re-used.
       var data = Y.merge(change_base || {}, change_data);
       if (!exists) {
-        instance = list.add(data);
+        if (list.name === 'serviceUnitList') {
+          // Allow direct changes to units when data arrives from the delta.
+          instance = list.add(data, true);
+        } else {
+          instance = list.add(data);
+        }
       } else {
         if (instance instanceof Y.Model) {
           instance.setAttrs(data);
@@ -82,7 +87,12 @@ YUI.add('juju-models', function(Y) {
     }
     else if (action === 'remove') {
       if (exists) {
-        list.remove(instance);
+        if (list.name === 'serviceUnitList') {
+          // Allow direct changes to units when data arrives from the delta.
+          list.remove(instance, true);
+        } else {
+          list.remove(instance);
+        }
         if (list.name === 'serviceList') {
           instance.destroy();
         }
@@ -171,7 +181,7 @@ YUI.add('juju-models', function(Y) {
       // The units model list is also created here to avoid having to check
       // for it's existence in multiple places in the app.
       this.setAttrs({
-        units: new models.ServiceUnitList(),
+        units: new models.ServiceUnitList({preventDirectChanges: true}),
         relations: new models.RelationList()
       });
       this._events = [];
@@ -543,6 +553,29 @@ YUI.add('juju-models', function(Y) {
       });
   models.ServiceUnit = ServiceUnit;
 
+  /**
+    A lazy model list including service units.
+
+    This model list is used in two ways:
+      - as first class object in the db (db.units), in which case the list
+        includes all known units;
+      - as a service model attribute (service.get('units')), in which case
+        the list only includes units belonging to the service.
+    This means each time a unit is added or removed, we usually want to update
+    both the global db.units and the model list in the service.
+
+    The different instances are automatically kept in sync when reacting to
+    changes arriving from the Juju API backend.
+    When adding/removing units from the GUI code, db.addUnits() and
+    db.removeUnits() must be used (rather than units.add/remove):
+    those methods automatically update all the corresponding model lists.
+
+    To enforce the rule above, ServiceUnitList can be instantiated passing
+    {preventDirectChanges: true}. This make units.add/remove raise an error
+    which prevents the list to be directly manipulated.
+
+    @class ServiceUnitList
+  */
   var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
     /**
@@ -564,18 +597,24 @@ YUI.add('juju-models', function(Y) {
       // If a charm_url is included in the data (that is, the Go backend
       // provides it), get the old charm so that we can compare charm URLs
       // in the future.
-      var oldModelCharm;
-      if (action === 'change' && data.charmUrl && db) {
-        var oldModel = db.resolveModelByName(data.id);
-        if (oldModel) {
-          oldModelCharm = oldModel.charmUrl;
+      var existingCharmUrl;
+      if (action === 'change' && data.charmUrl) {
+        var existingUnit = db.units.getById(data.id);
+        if (existingUnit) {
+          existingCharmUrl = existingUnit.charmUrl;
         }
       }
+      // Include the new change in the global units model list.
       var instance = _process_delta(this, action, data, {});
-      if (!db) {
+      // The service should always be included in the delta change.
+      // The getServicesfromDelta helper is used so that we can retrieve the
+      // unit service even when data is just a string (and not an object
+      // including a service field). This happens in pyJuju unit removals.
+      var service = getServicesfromDelta(instance, data, db);
+      if (!service) {
+        console.error('Units added without matching Service');
         return;
       }
-      var service = getServicesfromDelta(instance, data, db);
       // If the charm has changed on this unit in the delta, inform the service
       // of the change (but only if it doesn't already know, so as not to fire
       // a change event).  This is required because the two instances of a)
@@ -583,20 +622,12 @@ YUI.add('juju-models', function(Y) {
       // someone else watching the GUI as a service's charm changes, differ in
       // the amount of information the GUI has originally.  By setting this
       // flag, both cases can react in the same way.
-      if (oldModelCharm &&
-          oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
+      if (existingCharmUrl && existingCharmUrl !== instance.charmUrl &&
+          !service.get('charmChanged')) {
         service.set('charmChanged', true);
       }
-      // Some tests add units without creating a service so we need to check
-      // for a valid service here.
-      if (service) {
-        var units = service.get('units');
-        _process_delta(units, action, data, {});
-        units.fire('deltaChange', { service: service });
-      } else {
-        // fixTests
-        console.error('Units added without matching Service');
-      }
+      // Include the new change in the service own units model list.
+      _process_delta(service.get('units'), action, data, {});
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -608,14 +639,71 @@ YUI.add('juju-models', function(Y) {
       obj.displayName = this.createDisplayName(obj.id);
     },
 
-    add: function() {
-      var result = ServiceUnitList.superclass.add.apply(this, arguments);
-      if (Y.Lang.isArray(result)) {
-        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
-      } else {
-        this._setDefaultsAndCalculatedValues(result);
+    /**
+      Add the specified model or array of models to this list.
+      This is overridden to allow customized attributes to be set up at
+      creation time.
+
+      Note: use db.addUnits to add units to the model list, so that different
+      instances of ServiceUnitList are kept in sync.
+      In case the above is not clear enough: DO NOT USE THIS METHOD directly!
+
+      @method add
+      @param {Object|Object[]} models See YUI LazyModelList.
+      @return {Object|Object[]} The newly created model instance(s).
+    */
+    add: function(models, allowed) {
+      if (!allowed && this.get('preventDirectChanges')) {
+        throw new Error(
+            'direct calls to units.add() are not allowed: ' +
+            'use db.addUnits() instead'
+        );
       }
-      return result;
+      if (Y.Lang.isArray(models)) {
+        models.forEach(this._setDefaultsAndCalculatedValues, this);
+      } else {
+        this._setDefaultsAndCalculatedValues(models);
+      }
+      return ServiceUnitList.superclass.add.call(this, models);
+    },
+
+    /**
+      Remove the specified model or array of models from this list.
+
+      Note: use db.removeUnits to remove units from the model list, so that
+      different instances of ServiceUnitList are kept in sync.
+      In case the above is not clear enough: DO NOT USE THIS METHOD directly!
+
+      @method remove
+      @param {Object|Object[]} models See YUI LazyModelList.
+      @return {Object|Object[]} The removed model instance(s).
+    */
+    remove: function(models, allowed) {
+      if (!allowed && this.get('preventDirectChanges')) {
+        throw new Error(
+            'direct calls to units.remove() are not allowed: ' +
+            'use db.removeUnits() instead'
+        );
+      }
+      return ServiceUnitList.superclass.remove.call(this, models);
+    },
+
+    /**
+      Return a list of all the units placed in the given machine/container.
+
+      This method can also used to return unplaced units:
+        units.filterByMachine(null);
+
+      @method filterByMachine
+      @param {String} parentId The machine/container name.
+      @return {Array} The matching units as a list of objects.
+    */
+    filterByMachine: function(machine) {
+      machine = machine || null;
+      return this.filter(function(unit) {
+        var unitMachine = unit.machine || null;
+        return unitMachine === machine;
+      });
     },
 
     /**
@@ -677,8 +765,18 @@ YUI.add('juju-models', function(Y) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',
           service.get('id'), sum]);
       }
-    },
-    ATTRS: {}
+    }
+
+  }, {
+    ATTRS: {
+      /**
+        Whether to prevent direct use of add/remove methods on this list.
+
+        @attribute preventDirectChanges
+        @type {Boolean}
+      */
+      preventDirectChanges: {value: false, writeOnce: 'initOnly'}
+    }
   });
   models.ServiceUnitList = ServiceUnitList;
 
@@ -1101,7 +1199,6 @@ YUI.add('juju-models', function(Y) {
 
     },
 
-
     /* Return true if a relation exists for the given endpoint.
 
        Optionally the relation must also match include the given
@@ -1307,19 +1404,7 @@ YUI.add('juju-models', function(Y) {
       this.relations = new RelationList();
       this.notifications = new NotificationList();
       this.machines = new MachineList();
-
-      // For model syncing by type. Charms aren't currently sync'd, only
-      // fetched on demand (they're static).
-      this.model_map = {
-        'unit': ServiceUnit,
-        'machine': Machine,
-        'service': Service,
-        'relation': Relation,
-        'charm': models.Charm
-      };
-
-      // Used to assign new relation ids.
-      this._relationCount = 0;
+      this.units = new ServiceUnitList({preventDirectChanges: true});
     },
 
     /**
@@ -1328,12 +1413,12 @@ YUI.add('juju-models', function(Y) {
      * @method destructor
      */
     destructor: function() {
-      [this.services, this.relations,
-        this.machines,
-        this.charms, this.environment,
-        this.notifications].forEach(function(ml) {
-        ml.detachAll();
-        ml.destroy();
+      var modelLists = [
+        this.environment, this.services, this.charms, this.relations,
+        this.notifications, this.machines, this.units];
+      modelLists.forEach(function(modelList) {
+        modelList.detachAll();
+        modelList.destroy();
       });
     },
 
@@ -1353,20 +1438,19 @@ YUI.add('juju-models', function(Y) {
       if (!entityName) {
         return undefined;
       }
+      // Handle the environment entity.
       if (entityName === 'env') {
         return this.environment;
       }
+      // Handle machines.
       if (/^\d+$/.test(entityName)) {
         return this.machines.getById(entityName);
       }
-
+      // Handle units.
       if (/^\S+\/\d+$/.test(entityName)) {
-        var service = this.services.getById(entityName.split('/')[0]);
-        if (service) {
-          return service.get('units').getById(entityName);
-        }
+        return this.units.getById(entityName);
       }
-
+      // Handle services.
       return this.services.getById(entityName);
     },
 
@@ -1378,9 +1462,7 @@ YUI.add('juju-models', function(Y) {
       @return {Object} The model list.
     */
     getModelListByModelName: function(modelName) {
-      if (modelName === 'serviceUnit') {
-        throw new Error('Deprecated usage of global unit list');
-      } else if (modelName === 'annotations' || modelName === 'environment') {
+      if (modelName === 'annotations' || modelName === 'environment') {
         return this.environment;
       }
       return this[modelName + 's'];
@@ -1399,6 +1481,7 @@ YUI.add('juju-models', function(Y) {
       this.charms.reset();
       this.relations.reset();
       this.notifications.reset();
+      this.units.reset();
     },
 
     /**
@@ -1427,11 +1510,11 @@ YUI.add('juju-models', function(Y) {
         handler(self, action, data, kind);
       });
 
-      // Update service unit aggregates.
-      // (This should select only those elements which
-      // had deltas)
+      // Update service unit aggregates
+      // (this should select only those elements which had deltas).
+      var units = this.units;
       this.services.each(function(service) {
-        service.get('units').update_service_unit_aggregates(service);
+        units.update_service_unit_aggregates(service);
       });
       this.fire('update');
     },
@@ -1564,7 +1647,50 @@ YUI.add('juju-models', function(Y) {
       });
 
       return result;
+    },
+
+    /**
+      Adds the specified model or array of models to the units model lists.
+
+      This method updates both the global db.units and the model list included
+      in the corresponding service.
+
+      @method addUnits
+      @param {Object|Object[]|Model|Model[]} models The unit or list of units.
+      @return {Model|Model[]} The newly added model or array of models.
+    */
+    addUnits: function(models) {
+      var unitOrUnits = this.units.add(models, true);
+      var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
+      // Update the units model list included in the corresponding services.
+      units.forEach(function(unit) {
+        var serviceUnits = this.services.getById(unit.service).get('units');
+        serviceUnits.add(unit, true);
+      }, this);
+      return unitOrUnits;
+    },
+
+    /**
+      Remove the specified model or array of models from the units model lists.
+
+      This method updates both the global db.units and the model list included
+      in the corresponding service.
+
+      @method removeUnits
+      @param {Object|Object[]|Model|Model[]} models The unit or list of units.
+      @return {Model|Model[]} The removed model or array of models.
+    */
+    removeUnits: function(models) {
+      var unitOrUnits = this.units.remove(models, true);
+      var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
+      // Update the units model list included in the corresponding services.
+      units.forEach(function(unit) {
+        var serviceUnits = this.services.getById(unit.service).get('units');
+        serviceUnits.remove(unit, true);
+      }, this);
+      return unitOrUnits;
     }
+
   });
   models.Database = Database;
 }, '0.1.0', {

@@ -147,13 +147,12 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     pyDelta: function(db, action, change, kind) {
-      var data, modelList;
-      if (kind === 'unit') {
-        var modelId = change.id || change;
-        var service = db.services.getById(modelId.split('/')[0]);
-        modelList = service.get('units');
-      } else {
-        modelList = db.getModelListByModelName(kind);
+      var data;
+      var modelList = db.getModelListByModelName(kind);
+      // If this is a unit change, then set its service so that both the
+      // global units model lest and the service nested one can be updated.
+      if (kind === 'unit' && typeof change !== 'string') {
+        change.service = change.id.split('/')[0];
       }
       // If kind === 'annotations' then this is an environment
       // annotation, and we don't need to change the values.
@@ -198,11 +197,9 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.MachineId,
         public_address: change.PublicAddress
       };
-      var service = db.services.getById(change.Name.split('/')[0]);
-      if (service) {
-        // The service can be destroyed before the last unit delta comes in.
-        service.get('units').process_delta(action, unitData, db);
-      }
+      // The units model list included in the corresponding service is
+      // automatically kept in sync by db.units.process_delta().
+      db.units.process_delta(action, unitData, db);
       db.machines.process_delta(action, machineData, db);
     },
 
@@ -369,7 +366,18 @@ YUI.add('juju-delta-handlers', function(Y) {
       } else {
         instance = db.resolveModelByName(id);
       }
+      // Do not proceed if the instance is not found.
+      if (!instance) {
+        return;
+      }
       models.setAnnotations(instance, change.Annotations, true);
+      // Keep in sync annotations in units present in the global units model
+      // list and service nested ones.
+      if (instance.name === 'serviceUnit') {
+        var serviceUnits = db.services.getById(instance.service).get('units');
+        var nestedInstance = serviceUnits.getById(id);
+        models.setAnnotations(nestedInstance, change.Annotations, true);
+      }
     }
   };
 

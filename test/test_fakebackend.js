@@ -805,10 +805,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     // Add a unit to the given machine. Return the units model list.
     var addUnit = function(machineName) {
-      var service = fakebackend.db.services.add({id: 'django'});
-      var units = service.get('units');
-      units.add({id: 'django/0', machine: machineName});
-      return units;
+      var db = fakebackend.db;
+      db.services.add({id: 'django'});
+      db.addUnits({id: 'django/0', machine: machineName});
+      return db.units;
     };
 
     it('rejects unauthenticated calls', function() {
@@ -1901,8 +1901,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils;
-    var unitsRemoveData = '',
-        removeCalled = 0;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -1918,92 +1916,86 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       fakebackend.destroy();
-      removeCalled = 0;
-      unitsRemoveData = '';
     });
 
-    function modifyDb(isSubordinate, unitIds) {
-      fakebackend.db.services.getById = function() {
-        return {
-          get: function(type) {
-            if (type === 'is_subordinate') { return isSubordinate; }
-            if (type === 'units') {
-              return {
-                remove: function(removeData) {
-                  unitsRemoveData += removeData;
-                  removeCalled += 1;
-                },
-                getById: function() {
-                  return unitIds;
-                }};
-            }}};
-      };
-    }
-
     it('can remove a single unit', function() {
-      // This assumes that the addUnit tests above pass
+      // This assumes that the addUnit tests above pass.
+      var self = this;
       fakebackend.deploy('cs:precise/wordpress-15', function() {
         var unitId = 'wordpress/0';
-        modifyDb(false, unitId);
+        var mockRemoveUnits = utils.makeStubMethod(
+            fakebackend.db, 'removeUnits');
+        self._cleanups.push(mockRemoveUnits.reset);
         var result = fakebackend.removeUnits(unitId);
         assert.deepEqual(result, {
           error: undefined,
           warning: undefined
         });
-        assert.equal(removeCalled, 1);
-        assert.equal(unitsRemoveData, unitId);
+        // The db.removeUnits method has been called once.
+        assert.strictEqual(mockRemoveUnits.callCount(), 1);
+        // The unit to be removed has been passed.
+        var args = mockRemoveUnits.lastArguments();
+        assert.lengthOf(args, 1);
+        assert.strictEqual(args[0].id, unitId);
       });
     });
 
     it('can remove multiple units', function() {
-      // This assumes that the addUnit tests above pass
+      // This assumes that the addUnit tests above pass.
+      var self = this;
       fakebackend.deploy('cs:precise/wordpress-15', function() {
         var unitIds = ['wordpress/0', 'wordpress/1'];
-        modifyDb(false, unitIds);
-
+        var mockRemoveUnits = utils.makeStubMethod(
+            fakebackend.db, 'removeUnits');
+        self._cleanups.push(mockRemoveUnits.reset);
         var result = fakebackend.removeUnits(unitIds);
         assert.deepEqual(result, {
           error: undefined,
           warning: undefined
         });
-        assert.equal(removeCalled, 2);
-        // This join thing is kind of ugly but it's simply like this so that
-        // we can share the same simple modify method across all tests.
-        assert.equal(unitsRemoveData, unitIds.join(',') + unitIds.join(','));
-      });
+        // The db.removeUnits method has been called twice.
+        assert.strictEqual(mockRemoveUnits.callCount(), 2);
+        // The units to be removed have been passed.
+        var args = mockRemoveUnits.allArguments();
+        assert.strictEqual(args[0][0].id, unitIds[0]);
+        assert.strictEqual(args[1][0].id, unitIds[1]);
+      }, {unitCount: 2});
     });
 
     it('returns an error when removing a subordinate', function() {
-      // This assumes that the addUnit tests above pass
+      // This assumes that the addUnit tests above pass.
+      var self = this;
       fakebackend.deploy('cs:precise/wordpress-15', function() {
+        // Simulate the service is a subordinate.
+        fakebackend.db.services.item(0).set('is_subordinate', true);
         var unitId = 'wordpress/0';
-        modifyDb(true, unitId);
+        var mockRemoveUnits = utils.makeStubMethod(
+            fakebackend.db, 'removeUnits');
+        self._cleanups.push(mockRemoveUnits.reset);
         var result = fakebackend.removeUnits(unitId);
         assert.deepEqual(result, {
-          error: [
-            'wordpress/0 is a subordinate, cannot remove.'
-          ],
+          error: ['wordpress/0 is a subordinate, cannot remove.'],
           warning: undefined
         });
-        assert.equal(removeCalled, 0);
-        assert.equal(unitsRemoveData, '');
+        // No units have been removed.
+        assert.strictEqual(mockRemoveUnits.called(), false);
       });
     });
 
-    it('returns a warning when removing a service which doesn\'t exist',
-        function() {
-          // This assumes that the addUnit tests above pass
-          fakebackend.deploy('cs:precise/wordpress-15', function() {
-            modifyDb(false, null);
-            var result = fakebackend.removeUnits('wordpress/0');
-            assert.deepEqual(result, {
-              error: undefined,
-              warning: [
-                'wordpress/0 does not exist, cannot remove.'
-              ]
-            });
-          });
+    it('returns a warning when removing a non existing unit', function() {
+      // This assumes that the addUnit tests above pass.
+      var self = this;
+      fakebackend.deploy('cs:precise/wordpress-15', function() {
+        var mockRemoveUnits = utils.makeStubMethod(
+            fakebackend.db, 'removeUnits');
+        self._cleanups.push(mockRemoveUnits.reset);
+        var result = fakebackend.removeUnits('wordpress/42');
+        assert.deepEqual(result, {
+          error: undefined,
+          warning: ['wordpress/42 does not exist, cannot remove.']
         });
+      });
+    });
 
   });
 

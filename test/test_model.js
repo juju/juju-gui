@@ -113,22 +113,14 @@ describe('test_model.js', function() {
       var mysql = new models.Service({id: 'mysql'});
       var wordpress = new models.Service({id: 'wordpress'});
       sl.add([mysql, wordpress]);
-      var my0 = new models.ServiceUnit({
-        id: 'mysql/0',
-        agent_state: 'pending'});
-      var my1 = new models.ServiceUnit({
-        id: 'mysql/1',
-        agent_state: 'pending'});
-
-      mysql.get('units').add([my0, my1]);
-
-      var wp0 = new models.ServiceUnit({
-        id: 'wordpress/0',
-        agent_state: 'pending'});
+      var my0 = {id: 'mysql/0', agent_state: 'pending'};
+      var my1 = {id: 'mysql/1', agent_state: 'pending'};
+      mysql.get('units').add([my0, my1], true);
+      var wp0 = {id: 'wordpress/0', agent_state: 'pending'};
       // The order of these errored units is important because there was an old
       // long standing bug where if the first unit was in relation error it
       // would drop the error status silently.
-      var wp1 = new models.ServiceUnit({
+      var wp1 = {
         id: 'wordpress/2',
         agent_state: 'error',
         agent_state_info: 'hook failed: "db-relation-changed"',
@@ -136,12 +128,14 @@ describe('test_model.js', function() {
           hook: 'db-relation-changed',
           'relation-id': 1,
           'remote-unit': 'mysql/0'
-        }});
-      var wp2 = new models.ServiceUnit({
+        }
+      };
+      var wp2 = {
         id: 'wordpress/1',
         agent_state: 'error',
-        agent_state_info: 'hook failed: "install"'});
-      wordpress.get('units').add([wp0, wp1, wp2]);
+        agent_state_info: 'hook failed: "install"'
+      };
+      wordpress.get('units').add([wp0, wp1, wp2], true);
 
       assert.deepEqual(mysql.get('units')
                        .get_informative_states_for_service(mysql),
@@ -156,18 +150,16 @@ describe('test_model.js', function() {
          var sl = new models.ServiceList();
          var mysql = new models.Service({id: 'mysql'});
          sl.add([mysql]);
-         var my0 = new models.ServiceUnit({
-           id: 'mysql/0', agent_state: 'pending'});
-         var my1 = new models.ServiceUnit({
-           id: 'mysql/1', agent_state: 'pending'});
+         var my0 = {id: 'mysql/0', agent_state: 'pending'};
+         var my1 = {id: 'mysql/1', agent_state: 'pending'};
          var sul = mysql.get('units');
 
          window._gaq.should.eql([]);
-         sul.add([my0]);
+         sul.add([my0], true);
          sul.update_service_unit_aggregates(mysql);
          window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
            'mysql', 1]);
-         sul.add([my1]);
+         sul.add([my1], true);
          sul.update_service_unit_aggregates(mysql);
          window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
            'mysql', 2]);
@@ -205,8 +197,8 @@ describe('test_model.js', function() {
        function() {
          var service_unit = {id: 'mysql/0'};
          var db = new models.Database();
-         var service = db.services.add({id: 'mysql'});
-         service.get('units').add(service_unit);
+         db.services.add({id: 'mysql'});
+         db.addUnits(service_unit);
          service_unit.service.should.equal('mysql');
        });
 
@@ -214,31 +206,33 @@ describe('test_model.js', function() {
        function() {
          var service_unit = {id: 'mysql/5'};
          var db = new models.Database();
-         var service = db.services.add({id: 'mysql'});
-         service.get('units').add(service_unit);
+         db.services.add({id: 'mysql'});
+         db.addUnits(service_unit);
          service_unit.number.should.equal(5);
        });
 
     it('must be able to resolve models by their name', function() {
       var db = new models.Database();
-      var results = db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
-      results[0].get('units').add([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
+      // Add some services.
+      db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
+      // A service is properly resolved.
+      var service = db.services.item(0);
+      assert.deepEqual(db.resolveModelByName(service.get('id')), service);
 
-      var model = db.services.item(0);
-      // Single parameter calling
-      db.resolveModelByName(model.get('id'))
-               .get('id').should.equal('wordpress');
-      // Two parameter interface
-      db.resolveModelByName(model.get('id'))
-               .get('id').should.equal('wordpress');
+      // Add some units.
+      db.addUnits([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
+      // A unit is properly resolved.
+      var unit = db.units.item(0);
+      assert.deepEqual(db.resolveModelByName(unit.id), unit);
 
-      var unit = model.get('units').item(0);
-      db.resolveModelByName(unit.id).id.should.equal('wordpress/0');
+      // Add some machines.
+      db.machines.add([{id: '0'}, {id: '42'}]);
+      // A machine is properly resolved.
+      var machine = db.machines.item(0);
+      assert.deepEqual(db.resolveModelByName(machine.id), machine);
 
-      db.resolveModelByName('env').should.equal(db.environment);
-
-      var machine = db.machines.add({machine_id: '0'});
-      db.resolveModelByName('0').should.equal(machine);
+      // The environment is correctly retrieved.
+      assert.equal(db.resolveModelByName('env'), db.environment);
     });
 
     it('should update service units on change', function() {
@@ -261,11 +255,9 @@ describe('test_model.js', function() {
        function() {
          var db = new models.Database();
          var mysql = db.services.add({id: 'mysql'});
-         var my0 = new models.ServiceUnit({id: 'mysql/0',
-           agent_state: 'pending'});
-         var my1 = new models.ServiceUnit({id: 'mysql/1',
-           agent_state: 'pending'});
-         mysql.get('units').add([my0, my1]);
+         var my0 = {id: 'mysql/0', agent_state: 'pending'};
+         var my1 = {id: 'mysql/1', agent_state: 'pending'};
+         db.addUnits([my0, my1]);
          db.onDelta({data: {result: [
            ['unit', 'remove', 'mysql/1']
          ]}});
@@ -290,9 +282,9 @@ describe('test_model.js', function() {
        // Units are special because they use the LazyModelList.
        function() {
          var db = new models.Database();
-         var mysql = db.services.add({id: 'mysql'});
+         db.services.add({id: 'mysql'});
          var my0 = {id: 'mysql/0', agent_state: 'pending'};
-         mysql.get('units').add([my0]);
+         db.addUnits([my0]);
          db.onDelta({data: {result: [
            ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
          ]}});
@@ -305,7 +297,7 @@ describe('test_model.js', function() {
         function() {
           var db = new models.Database();
           var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
-          db.units.add([my0]);
+          db.addUnits([my0]);
           // Note that relation_errors is not set.
           db.onDelta({data: {result: [
             ['unit', 'change', {id: 'mysql/0'}]
@@ -316,10 +308,9 @@ describe('test_model.js', function() {
     it('ServiceUnitList should accept a list of units at instantiation and ' +
        'decorate them', function() {
          var mysql = new models.Service({id: 'mysql'});
-         var objs = [{id: 'mysql/0'},
-           {id: 'mysql/1'}];
+         var objs = [{id: 'mysql/0'}, {id: 'mysql/1'}];
          var sul = mysql.get('units');
-         sul.add(objs);
+         sul.add(objs, true);
          var unit_data = sul.getAttrs(['service', 'number']);
          unit_data.service.should.eql(['mysql', 'mysql']);
          unit_data.number.should.eql([0, 1]);
@@ -432,30 +423,27 @@ describe('test_model.js', function() {
     });
 
     describe('services.filterUnits', function() {
-      var services;
+      var db, services;
 
       beforeEach(function() {
         // Set up services and units used for tests.
-        services = new models.ServiceList();
-        var flask = services.add({id: 'flask'});
-        var rails = services.add({id: 'rails'});
-        var react = services.add({id: 'react'});
-        flask.get('units').add([
+        db = new models.Database();
+        services = db.services;
+        services.add({id: 'flask'});
+        services.add({id: 'rails'});
+        services.add({id: 'react'});
+        db.addUnits([
           {id: 'flask/0', machine: '1', agent_state: 'started'},
-          {id: 'flask/1', machine: '2', agent_state: 'pending'}
-        ]);
-        rails.get('units').add([
+          {id: 'flask/1', machine: '2', agent_state: 'pending'},
           {id: 'rails/0', machine: '1', agent_state: 'pending'},
-          {id: 'rails/1', machine: '2/lxc/0', agent_state: 'error'}
-        ]);
-        react.get('units').add([
+          {id: 'rails/1', machine: '2/lxc/0', agent_state: 'error'},
           {id: 'react/42', machine: '0', agent_state: 'error'},
           {id: 'react/47', machine: '1', agent_state: 'started'}
         ]);
       });
 
       afterEach(function() {
-        services.destroy();
+        db.destroy();
       });
 
       // Ensure the given units have the given expectedNames.
@@ -487,6 +475,103 @@ describe('test_model.js', function() {
           return unit.machine === '1' && unit.agent_state === 'error';
         });
         assert.strictEqual(units.length, 0);
+      });
+
+    });
+
+    describe('serviceUnits.preventDirectChanges', function() {
+
+      it('changes are disallowed when instantiating the db', function() {
+        var db = new models.Database();
+        assert.strictEqual(db.units.get('preventDirectChanges'), true);
+      });
+
+      it('changes are disallowed in the service units', function() {
+        var db = new models.Database();
+        var service = db.services.add({id: 'django'});
+        var units = service.get('units');
+        assert.strictEqual(units.get('preventDirectChanges'), true);
+      });
+
+      it('by default adding units is allowed', function() {
+        var units = new models.ServiceUnitList();
+        // The following does not raise errors.
+        units.add({id: 'django/42'});
+      });
+
+      it('by default removing units is allowed', function() {
+        var units = new models.ServiceUnitList();
+        // The following does not raise errors.
+        units.remove({id: 'django/42'});
+      });
+
+      it('the model list can be configured to deny adding units', function() {
+        var units = new models.ServiceUnitList({preventDirectChanges: true});
+        var func = function() {
+          units.add({id: 'django/42'});
+        };
+        assert.throw(func, 'direct calls to units.add() are not allowed');
+      });
+
+      it('the model list can be configured to deny units removal', function() {
+        var units = new models.ServiceUnitList({preventDirectChanges: true});
+        var func = function() {
+          units.remove({id: 'django/42'});
+        };
+        assert.throw(func, 'direct calls to units.remove() are not allowed');
+      });
+
+    });
+
+
+    describe('serviceUnits.filterByMachine', function() {
+      var units;
+
+      beforeEach(function() {
+        units = new models.ServiceUnitList();
+        units.add([
+          {id: 'django/0', machine: null},
+          {id: 'django/42', machine: '42'},
+          {id: 'haproxy/4', machine: '0/lxc/1'},
+          {id: 'django/47', machine: '47'},
+          {id: 'rails/0', machine: '42'},
+          {id: 'rails/1', machine: '42'},
+          {id: 'postgres/1'},
+          {id: 'rails/2', machine: '0/lxc/1'},
+          {id: 'postgres/2'}
+        ]);
+      });
+
+      afterEach(function() {
+        units.destroy();
+      });
+
+      // Ensure the resulting units match the given identifier.
+      var assertUnits = function(resultingUnits, ids) {
+        var resultingIds = resultingUnits.map(function(unit) {
+          return unit.id;
+        });
+        assert.deepEqual(resultingIds, ids);
+      };
+
+      it('returns all the units hosted by a specific machine', function() {
+        var resultingUnits = units.filterByMachine('42');
+        assertUnits(resultingUnits, ['django/42', 'rails/0', 'rails/1']);
+      });
+
+      it('returns all the units hosted by a specific container', function() {
+        var resultingUnits = units.filterByMachine('0/lxc/1');
+        assertUnits(resultingUnits, ['haproxy/4', 'rails/2']);
+      });
+
+      it('returns all unplaced units', function() {
+        var resultingUnits = units.filterByMachine(null);
+        assertUnits(resultingUnits, ['django/0', 'postgres/1', 'postgres/2']);
+      });
+
+      it('returns an empty list if no machines match', function() {
+        var resultingUnits = units.filterByMachine('no-such');
+        assert.lengthOf(resultingUnits, 0);
       });
 
     });
