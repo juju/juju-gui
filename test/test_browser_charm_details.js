@@ -364,13 +364,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer(this),
         store: fakeStore
       });
+
+      var fireStub = utils.makeStubMethod(view, 'fire');
+      this._cleanups.push(fireStub.reset);
+
       view.set('deployService', function(charm, serviceAttrs) {
         var serviceCharm = view.get('entity');
         assert.deepEqual(charm, serviceCharm);
         assert.equal(charm.get('id'), 'cs:precise/ceph-9');
         assert.equal(serviceAttrs.icon, 'charm icon url');
+        assert.equal(fireStub.calledOnce(), true);
+        var fireArgs = fireStub.lastArguments();
+        assert.equal(fireArgs[0], 'changeState');
+        assert.deepEqual(fireArgs[1], {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: {
+              id: null }}});
         done();
       });
+
       view._addCharmEnvironment({halt: function() {}});
     });
 
