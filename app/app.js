@@ -396,13 +396,13 @@ YUI.add('juju-gui', function(Y) {
           this.set('socket_url', socketUrl);
         }
 
-        this.ecs = new juju.EnvironmentChangeSet({
+        var ecs = new juju.EnvironmentChangeSet({
           db: this.db
         });
         // Instantiate the environment specified in the configuration, choosing
         // between the available implementations, currently Go and Python.
         var envOptions = {
-          ecs: this.ecs,
+          ecs: ecs,
           socket_url: socketUrl,
           user: this.get('user'),
           password: this.get('password'),
@@ -652,7 +652,7 @@ YUI.add('juju-gui', function(Y) {
       cfg.store = this.get('store');
       cfg.envSeries = this.env.get('defaultSeries');
       cfg.env = this.env;
-      cfg.ecs = this.ecs;
+      cfg.ecs = this.env.ecs;
       this.addSubApplications(cfg);
 
       this.on('*:changeState', function(e) {
@@ -831,7 +831,9 @@ YUI.add('juju-gui', function(Y) {
      */
     _renderDeployerBarView: function() {
       this.deployerBar = new views.DeployerBarView({
-        container: Y.one('#deployer-bar')
+        container: Y.one('#deployer-bar'),
+        ecs: this.env.get('ecs'),
+        env: this.env
       }).render();
     },
 
@@ -1330,7 +1332,7 @@ YUI.add('juju-gui', function(Y) {
         useDragDropImport: this.get('sandbox'),
         db: this.db,
         env: this.env,
-        ecs: this.ecs,
+        ecs: this.env.ecs,
         store: this.get('store')};
 
       this.showView('environment', options, {
