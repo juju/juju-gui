@@ -76,13 +76,13 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               machineTokens = container.all('.machines .content .items .token'),
               selected = e.currentTarget,
-              id = selected.ancestor().getData('id'),
-              containers = this.get('db').machines.filterByParent(id);
+              parentId = selected.ancestor().getData('id'),
+              containers = this.get('db').machines.filterByParent(parentId);
           e.preventDefault();
           // Select the active token.
           machineTokens.removeClass('active');
           selected.addClass('active');
-          this._renderContainerTokens(containers);
+          this._renderContainerTokens(containers, parentId);
         },
 
         /**
@@ -127,23 +127,40 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderContainerTokens
          * @param {Array} containers the list of containers to render.
          */
-        _renderContainerTokens: function(containers) {
-          var container = this.get('container');
-          var containerParent = container.one('.containers .content .items');
-          var plural = containers.length !== 1 ? 's' : '';
+        _renderContainerTokens: function(containers, parentId) {
+          var containerParent = this.get('container').one(
+              '.containers .content .items');
+          var allUnits = this._getAllUnits({id: parentId});
+
+          var containersPlural = containers.length !== 1 ? 's' : '';
+          var unitsPlural = allUnits.length !== 1 ? 's' : '';
 
           this._clearContainerColumn();
           this._containersHeader.setLabel(
-              containers.length + ' container' + plural + ', 0 units');
+              containers.length + ' container' + containersPlural + ', ' +
+              allUnits.length + ' unit' + unitsPlural);
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
+              this._updateMachineWithUnitData(container);
               new views.ContainerToken({
                 containerTemplate: '<li/>',
                 containerParent: containerParent,
                 machine: container
               }).render();
-            });
+            }, this);
+          }
+
+          // Create the 'bare metal' container.
+          var units = this.get('db').units.filterByMachine(parentId);
+          if (units.length > 0) {
+            var machine = {displayName: 'Bare metal'};
+            this._updateMachineWithUnitData(machine, units);
+            new views.ContainerToken({
+              containerTemplate: '<li/>',
+              containerParent: containerParent,
+              machine: machine
+            }).render();
           }
         },
 
@@ -226,13 +243,51 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Node} list the list node to append the machine to.
          */
         _renderMachineToken: function(machine, list) {
-          var node = Y.Node.create('<li></li>');
+          var node = Y.Node.create('<li></li>'),
+              units = this._getAllUnits(machine);
+          this._updateMachineWithUnitData(machine, units);
           new views.MachineToken({
             container: node,
             machine: machine
           }).render();
           list.append(node);
           return node;
+        },
+
+        /**
+         * Get all units on the machine, including those on containers in the
+         * machine.
+         *
+         * @method _getAllUnits
+         * @param {Object} machine The machine object.
+         */
+        _getAllUnits: function(machine) {
+          var db = this.get('db'),
+              units = db.units.filterByMachine(machine.id),
+              containers = db.machines.filterByParent(machine.id);
+          Y.Array.each(containers, function(container) {
+            units.push(db.units.filterByMachine(container.id));
+          });
+          return Y.Array.flatten(units);
+        },
+
+        /**
+         * Add units and their icons to the machine.
+         *
+         * @method _getAllUnits
+         * @param {Object} machine The machine object.
+         * @param {Array} units (optional) The units to add to the machine.
+         */
+        _updateMachineWithUnitData: function(machine, units) {
+          var db = this.get('db');
+          if (!units) {
+            units = db.units.filterByMachine(machine.id);
+          }
+          Y.Object.each(units, function(unit) {
+            unit.icon = db.services.getById(unit.service).get('icon');
+          });
+          machine.units = units;
+          return units;
         },
 
         /**
