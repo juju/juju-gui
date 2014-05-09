@@ -19,9 +19,13 @@
 
         .head {
             .flex-basis(auto);
+            position: relative;
             padding: 20px;
             border-bottom: 1px solid @machine-view-border-colour;
 
+            &.droppable .drop {
+                display: block;
+            }
             h3 {
                 .type3;
                 display: block;
@@ -30,9 +34,31 @@
             a {
                 float: right;
             }
-            span {
+            .label {
                 display: block;
                 height: 20px;
+            }
+            .drop {
+                .type4;
+                display: none;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #fff;
+
+                span {
+                    position: absolute;
+                    top: 0;
+                    bottom: 10px;
+                    left: 10px;
+                    right: 10px;
+                    display: block;
+                    border: 2px dashed #d6d3cf;
+                    text-align: center;
+                    line-height: 72px;
+                }
             }
         }
         .content {

@@ -94,11 +94,13 @@ YUI.add('machine-view-panel', function(Y) {
           this._machinesHeader = this._renderHeader(
               '.column.machines .head', {
                 title: 'Environment',
-                action: 'New machine'
+                action: 'New machine',
+                dropLabel: 'Create new machine'
               });
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
-                action: 'New container'
+                action: 'New container',
+                dropLabel: 'Create new container'
               });
           this._unplacedHeader = this._renderHeader(
               '.column.unplaced .head', {

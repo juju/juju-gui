@@ -75,4 +75,16 @@ describe('machine view panel header view', function() {
     });
     container.one('.action').simulate('click');
   });
+
+  it('can be set to the droppable state', function() {
+    view.setDroppable();
+    assert.equal(container.hasClass('droppable'), true);
+  });
+
+  it('can be set from the droppable state back to the default', function() {
+    view.setDroppable();
+    assert.equal(container.hasClass('droppable'), true);
+    view.setNotDroppable();
+    assert.equal(container.hasClass('droppable'), false);
+  });
 });
