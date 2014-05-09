@@ -279,14 +279,25 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Array} units (optional) The units to add to the machine.
          */
         _updateMachineWithUnitData: function(machine, units) {
-          var db = this.get('db');
           if (!units) {
-            units = db.units.filterByMachine(machine.id);
+            units = this.get('db').units.filterByMachine(machine.id);
           }
+          this._addIconsToUnits(units);
+          machine.units = units;
+          return units;
+        },
+
+        /**
+         * Add icon data to units by using the service information.
+         *
+         * @method _addIconsToUnits
+         * @param {Array} units The units to decorate
+         */
+        _addIconsToUnits: function(units) {
+          var db = this.get('db');
           Y.Object.each(units, function(unit) {
             unit.icon = db.services.getById(unit.service).get('icon');
           });
-          machine.units = units;
           return units;
         },
 
@@ -299,8 +310,9 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               listContainer = container.one('.unplaced .content'),
               parentNode = listContainer.one('.items'),
-              units = this.get('db').serviceUnits;
+              units = this.get('db').units.filterByMachine(null);
 
+          this._addIconsToUnits(units);
           if (units && units.length && units.length > 0) {
             Y.Object.each(units, function(unit) {
               var node = Y.Node.create('<li></li>');
@@ -308,11 +320,12 @@ YUI.add('machine-view-panel', function(Y) {
                 container: node,
                 title: unit.displayName,
                 id: unit.id,
+                icon: unit.icon,
                 machines: this.get('db').machines.filterByParent(null),
                 containers: [] // XXX Need to find query for getting containers
               }).render();
               parentNode.append(node);
-            });
+            }, this);
             // only append to the DOM once
             listContainer.append(parentNode);
           }
