@@ -35,7 +35,8 @@ describe('machine view panel extension', function() {
       models = Y.namespace('juju.models');
       db = {
         services: new models.ServiceList(),
-        machines: new models.MachineList()
+        machines: new models.MachineList(),
+        units: new models.ServiceUnitList()
       };
       env = 'environment';
       View = Y.Base.create('machine-view-panel', Y.View, [

@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Service unit token', function() {
+describe.only('Service unit token', function() {
   var container, utils, models, views, view, id, title, Y;
 
   before(function(done) {
@@ -48,7 +48,7 @@ describe('Service unit token', function() {
   });
 
   it('renders to initial, undeployed state', function() {
-    var selector = '.unit[data-id="' + id + '"]';
+    var selector = '.unplaced-unit[data-id="' + id + '"]';
     assert.notEqual(container.one(selector), null,
                     'DOM element not found');
     assert.equal(container.one(selector + ' .title').get('text').trim(),
@@ -58,41 +58,42 @@ describe('Service unit token', function() {
   it('walks through machine and container selections', function() {
     // Make sure initally shows name and move icon
     var name = container.one('.title'),
-        icons = container.one('.icons');
+        icons = container.one('.icons'),
+        machines = container.one('.unplaced-unit .machines'),
+        containers = container.one('unplaced-unit .containers'),
+        actions = container.one('.unplaced-unit .actions'),
+        machinesSelect = container.one('.unplaced-unit .machines select');
+
     assert.notEqual(name.getStyle('display'), 'none',
                     'name was not displayed');
     assert.notEqual(icons.getStyle('display'), 'none',
                     'icons were not displayed');
 
     // test initial move icon click
-    assert.equal(container.one('.unit .machines').getStyle('display'),
-                 'none', 'machine dropdown prematurely displayed');
+    assert.isTrue(machines.hasClass('hidden'),
+        'machine dropdown prematurely displayed');
     icons.one('.token-move').simulate('click');
-    assert.notEqual(container.one('.unit .machines').getStyle('display'),
-                    'none', 'machine dropdown not displayed');
-    assert.equal(icons.getStyle('display'), 'none',
-                 'icons were not hidden');
+    assert.isFalse(machinesSelect.hasClass('hidden'),
+        'machine dropdown not displayed');
+    assert.isTrue(icons.hasClass('hidden'), 'icons were not hidden');
 
     // test selecting a machine in the list
-    var containers = container.one('.unit .containers'),
-        actions = container.one('.unit .actions'),
-        machinesSelect = container.one('.unit .machines select');
-    assert.equal(containers.getStyle('display'), 'none',
-                 'container dropdown prematurely displayed');
-    assert.equal(actions.getStyle('display'), 'none',
-                 'container actions prematurely displayed');
+    assert.isTrue(containers.hasClass('hidden'),
+        'container dropdown prematurely displayed');
+    assert.isTrue(actions.hasClass('hidden'),
+        'container actions prematurely displayed');
     machinesSelect.set('selectedIndex', 1);
     machinesSelect.simulate('change');
-    assert.notEqual(containers.getStyle('display'), 'none',
-                    'container dropdown not displayed');
-    assert.equal(actions.getStyle('display'), 'block',
-                 'container actions not displayed');
+    assert.isFalse(containers.hasClass('hidden'),
+        'container dropdown not displayed');
+    assert.isFalse(actions.hasClass('hidden'),
+        'container actions not displayed');
 
     // test the final click on the move button
     actions.one('.move').simulate('click');
-    assert.notEqual(name.getStyle('display'), 'none',
-                    'name was not displayed in final state');
-    assert.notEqual(icons.getStyle('display'), 'none',
-                    'icons were not displayed in final state');
+    assert.isTrue(name.hasClass('hidden'),
+        'name was not displayed in final state');
+    assert.isTrue(icons.hasClass('hidden'),
+        'icons were not displayed in final state');
   });
 });

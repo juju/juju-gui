@@ -12,27 +12,25 @@
   </div>
   <!-- XXX these HTML selects (machines and containers) will likely need to be
        generated dynamically, rather than show/hidden -->
-  <div class="details">
-    <div class="machines">
-      <select placeholder="Move to&#8230;">
-        <option value="new">New machine</option>
-        {{#each machines}}
-        <option value="{{id}}">{{displayName}}</option>
-        {{/each}}
-      </select>
-    </div>
-    <div class="containers">
-      <select placeholder="Choose location">
-        {{#each containers}}
-        <option value="{{id}}">{{displayName}}</option>
-        {{/each}}
-        <option value="new-lxc">new lxc</option>
-        <option value="new-kvm">new kvm</option>
-      </select>
-    </div>
-    <div class="actions">
-      <span class="cancel secondary-action">Cancel</span>
-      <span class="move primary-action">Move</span>
-    </div>
+  <div class="machines hidden">
+    <select placeholder="Move to&#8230;">
+      <option value="new">New machine</option>
+      {{#each machines}}
+      <option value="{{id}}">{{displayName}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="containers hidden">
+    <select placeholder="Choose location">
+      {{#each containers}}
+      <option value="{{id}}">{{displayName}}</option>
+      {{/each}}
+      <option value="new-lxc">new lxc</option>
+      <option value="new-kvm">new kvm</option>
+    </select>
+  </div>
+  <div class="actions hidden">
+    <span class="cancel secondary-action">Cancel</span>
+    <span class="move primary-action">Move</span>
   </div>
 </div>
