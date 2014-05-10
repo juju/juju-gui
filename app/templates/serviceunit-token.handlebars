@@ -1,21 +1,18 @@
-<div class="unit" data-id="{{ id }}">
-  {{#if container}}
-  <div class="container">
-    {{ container }}
-  </div>
-  {{/if}}
-  <div class="unit-icon">
-    <img src="">
-  </div>
-  <div class="title">
+<div class="unplaced-unit" data-id="{{ id }}">
+  <div class="main">
+  <span class="unit-icon">
+    <img src="{{icon}}" alt="{{displayName}}">
+  </span>
+  <span class="title">
     {{ title }}
-  </div>
-  <div class="icons">
+  </span>
+  <span class="icons">
     <i class="sprite token-move"></i>
+  </span>
   </div>
   <!-- XXX these HTML selects (machines and containers) will likely need to be
        generated dynamically, rather than show/hidden -->
-  <div class="machines" style="display: none;">
+  <div class="machines hidden">
     <select placeholder="Move to&#8230;">
       <option value="new">New machine</option>
       {{#each machines}}
@@ -23,7 +20,7 @@
       {{/each}}
     </select>
   </div>
-  <div class="containers" style="display: none;">
+  <div class="containers hidden">
     <select placeholder="Choose location">
       {{#each containers}}
       <option value="{{id}}">{{displayName}}</option>
@@ -32,7 +29,7 @@
       <option value="new-kvm">new kvm</option>
     </select>
   </div>
-  <div class="actions" style="display: none;">
+  <div class="actions hidden">
     <span class="cancel secondary-action">Cancel</span>
     <span class="move primary-action">Move</span>
   </div>
