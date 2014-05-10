@@ -162,7 +162,7 @@ YUI.add('deployer-bar', function(Y) {
     /**
       return the number of changes in ecs.
 
-      @method getChangeCount
+      @method _hideChangeDescription
       @param {Object} ect The environment change set.
     */
     _hideChangeDesctiption: function() {
@@ -187,7 +187,7 @@ YUI.add('deployer-bar', function(Y) {
     /**
       return the number of changes in ecs.
 
-      @method getChangeCount
+      @method _getChangeDescription
       @param {Object} ect The environment change set.
     */
     _getChangeDescription: function(ecs) {
@@ -258,7 +258,8 @@ YUI.add('deployer-bar', function(Y) {
      */
     _getDeployedServices: function(ecs) {
       var returnSet = [],
-          url = 'https://manage.jujucharms.com/api/3/charm/precise/{name}/file/icon.svg';
+          url = 'https://manage.jujucharms.com' +
+                '/api/3/charm/precise/{name}/file/icon.svg';
       for (var key in ecs.changeSet) {
         if (ecs.changeSet[key]) {
           var command = ecs.changeSet[key].command,
