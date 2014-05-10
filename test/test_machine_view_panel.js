@@ -83,103 +83,118 @@ describe('machine view panel view', function() {
         'Unplaced units');
   });
 
-  it('should render a list of machines', function() {
-    view.render();
-    var list = container.all('.machines .content li');
-    assert.equal(list.size(), machines.size(),
-                 'models are out of sync with displayed list');
-    list.each(function(item, index) {
-      var m = machines.item(index);
-      assert.equal(item.one('.title').get('text'), m.displayName,
-                   'displayed item does not match model');
+  describe('unplaced unit list', function() {
+    it('renders unplaced units on render', function() {
+      var db = view.get('db');
+      db.services.add({id: 'mysql'});
+      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
+      view.render();
+      var tokens = Y.all('.serviceunit-token');
+      assert.equal(tokens.size(), 2);
     });
   });
 
-  it('should add new tokens when machines are added', function() {
-    view.render();
-    var selector = '.machines .content li',
-        list = container.all(selector),
-        id = 1;
-    assert.equal(list.size(), machines.size(),
-                 'initial displayed list is out of sync with machines');
-    machines.add([{
-      id: id,
-      parentId: null,
-      hardware: {
-        disk: 1024,
-        mem: 1024,
-        cpuPower: 1024,
-        cpuCores: 1
-      }
-    }]);
-    list = container.all(selector);
-    assert.equal(list.size(), machines.size(),
-                 'final displayed list is out of sync with machines');
-    var addedItem = container.one(selector + '[data-id="' + id + '"]');
-    assert.notEqual(addedItem, null,
-                    'unable to find added machine in the displayed list');
-  });
-
-  it('should remove tokens when machines are deleted', function() {
-    view.render();
-    var selector = '.machines .content li',
-        list = container.all(selector);
-    assert.equal(list.size(), machines.size(),
-                 'initial displayed list is out of sync with machines');
-    machines.remove(0);
-    list = container.all(selector);
-    assert.equal(list.size(), machines.size(),
-                 'final displayed list is out of sync with machines');
-    var deletedSelector = selector + '[data-id="' + machine.id + '"]';
-    var deletedItem = container.one(deletedSelector);
-    assert.equal(deletedItem, null,
-                 'found the deleted machine still in the list');
-  });
-
-  it('should re-render token when machine is updated', function() {
-    view.render();
-    var id = 999,
-        machineModel = machines.revive(0),
-        selector = '.machines .content li',
-        item = container.one(
-            selector + '[data-id="' + machineModel.get('id') + '"]');
-    assert.notEqual(item, null, 'machine was not initially displayed');
-    assert.equal(
-        item.one('.title').get('text'), machineModel.get('displayName'),
-        'initial machine names do not match');
-    machineModel.set('id', id);
-    item = container.one(selector + '[data-id="' + id + '"]');
-    assert.notEqual(item, null, 'machine was not displayed post-update');
-    assert.equal(
-        item.one('.title').get('text'), machineModel.get('displayName'),
-        'machine names do not match post-update');
-  });
-
-  it('should render a list of containers', function(done) {
-    view.render();
-    var machineToken = container.one('.machines li .token');
-    machines.add([
-      {id: '0/lxc/1'},
-      {id: '0/lxc/2'}
-    ]);
-    machineToken.on('click', function(e) {
-      // Need to explicitly fire the click handler as we are catching
-      // the click event before it can be fired.
-      view.handleTokenSelect(e);
-      var containers = machines.filterByParent('0'),
-          list = container.all('.containers .content li');
-      assert.equal(containers.length > 0, true,
-          'There are no initial containers');
-      assert.equal(list.size(), containers.length,
-          'models are out of sync with displayed list');
+  describe('machine list', function() {
+    it('should render a list of machines', function() {
+      view.render();
+      var list = container.all('.machines .content li');
+      assert.equal(list.size(), machines.size(),
+                   'models are out of sync with displayed list');
       list.each(function(item, index) {
-        var machines = containers[index];
-        assert.equal(item.one('.title').get('text'), machines.displayName,
-            'displayed item does not match model');
+        var m = machines.item(index);
+        assert.equal(item.one('.title').get('text'), m.displayName,
+                     'displayed item does not match model');
       });
-      done();
     });
-    machineToken.simulate('click');
+
+    it('should add new tokens when machines are added', function() {
+      view.render();
+      var selector = '.machines .content li',
+          list = container.all(selector),
+          id = 1;
+      assert.equal(list.size(), machines.size(),
+                   'initial displayed list is out of sync with machines');
+      machines.add([{
+        id: id,
+        parentId: null,
+        hardware: {
+          disk: 1024,
+          mem: 1024,
+          cpuPower: 1024,
+          cpuCores: 1
+        }
+      }]);
+      list = container.all(selector);
+      assert.equal(list.size(), machines.size(),
+                   'final displayed list is out of sync with machines');
+      var addedItem = container.one(selector + '[data-id="' + id + '"]');
+      assert.notEqual(addedItem, null,
+                      'unable to find added machine in the displayed list');
+    });
+
+    it('should remove tokens when machines are deleted', function() {
+      view.render();
+      var selector = '.machines .content li',
+          list = container.all(selector);
+      assert.equal(list.size(), machines.size(),
+                   'initial displayed list is out of sync with machines');
+      machines.remove(0);
+      list = container.all(selector);
+      assert.equal(list.size(), machines.size(),
+                   'final displayed list is out of sync with machines');
+      var deletedSelector = selector + '[data-id="' + machine.id + '"]';
+      var deletedItem = container.one(deletedSelector);
+      assert.equal(deletedItem, null,
+                   'found the deleted machine still in the list');
+    });
+
+    it('should re-render token when machine is updated', function() {
+      view.render();
+      var id = 999,
+          machineModel = machines.revive(0),
+          selector = '.machines .content li',
+          item = container.one(
+              selector + '[data-id="' + machineModel.get('id') + '"]');
+      assert.notEqual(item, null, 'machine was not initially displayed');
+      assert.equal(
+          item.one('.title').get('text'), machineModel.get('displayName'),
+          'initial machine names do not match');
+      machineModel.set('id', id);
+      item = container.one(selector + '[data-id="' + id + '"]');
+      assert.notEqual(item, null, 'machine was not displayed post-update');
+      assert.equal(
+          item.one('.title').get('text'), machineModel.get('displayName'),
+          'machine names do not match post-update');
+    });
+  });
+
+  describe('container list', function() {
+    it('should render a list of containers', function(done) {
+      view.render();
+      var machineToken = container.one('.machines li .token');
+      machines.add([
+        {id: '0/lxc/1'},
+        {id: '0/lxc/2'}
+      ]);
+      machineToken.on('click', function(e) {
+        // Need to explicitly fire the click handler as we are catching
+        // the click event before it can be fired.
+        view.handleTokenSelect(e);
+        var containers = machines.filterByParent('0'),
+            list = container.all('.containers .content li');
+        assert.equal(containers.length > 0, true,
+            'There are no initial containers');
+        assert.equal(list.size(), containers.length,
+            'models are out of sync with displayed list');
+        list.each(function(item, index) {
+          var machines = containers[index];
+          assert.equal(item.one('.title').get('text'), machines.displayName,
+              'displayed item does not match model');
+        });
+        done();
+      });
+      machineToken.simulate('click');
+    });
   });
 
   describe('mass scale up UI', function() {
