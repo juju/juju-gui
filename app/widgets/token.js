@@ -85,7 +85,7 @@ YUI.add('browser-token', function(Y) {
      *
      * @method _makeDragStartHandler
      * @param {String} tokenData The JSON encoded attributes.
-     * @return {undefined} Nothing.
+     * @return {Function} The drag start handler function.
      */
     _makeDragStartHandler: function(tokenData) {
       var container = this.get('boundingBox');
