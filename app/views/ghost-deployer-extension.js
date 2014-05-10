@@ -55,8 +55,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
       if (window.flags && window.flags.il) {
-        var serviceName = charm.get('name') + '-' +
-                          Math.floor((Math.random() * 1000) + 1);
+        var serviceName = charm.get('name') + '-' + charm.get('revision');
         var constraints = { 'arch': '', 'cpu-cores': '', 'cpu-power': '',
           'mem': '', 'root-disk': '', 'tags': '' };
         var config = {};
