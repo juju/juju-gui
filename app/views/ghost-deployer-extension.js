@@ -65,7 +65,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
             serviceName,
             config,
             undefined, // config file content
-            1, // number of units
+            0, // number of units
             constraints,
             null, // toMachine
             Y.bind(this._deployCallbackHandler,
@@ -76,6 +76,22 @@ YUI.add('ghost-deployer-extension', function(Y) {
                    ghostService),
             // Options used by ECS, ignored by environment
             { modelId: ghostService.get('id') });
+
+        // Add an unplaced unit to this service.
+        var ghostUnit = {
+          charmUrl: charm.get('id'),
+          displayName: serviceName + '/99',
+          id: ghostService.get('id') + '/99',
+          machine: null,
+          agent_state: '',
+          agent_state_info: undefined,
+          agent_state_data: {},
+          is_subordinate: charm.get('is_subordinate'),
+          public_address: undefined,
+          private_address: undefined,
+          service: serviceName
+        };
+        db.addUnits(ghostUnit);
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);

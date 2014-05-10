@@ -1664,6 +1664,7 @@ YUI.add('juju-models', function(Y) {
       var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
       // Update the units model list included in the corresponding services.
       units.forEach(function(unit) {
+        debugger;
         var serviceUnits = this.services.getById(unit.service).get('units');
         serviceUnits.add(unit, true);
       }, this);
