@@ -50,8 +50,46 @@ YUI.add('ghost-deployer-extension', function(Y) {
       charm.loaded = true;
       var db = this.db;
       db.charms.add(charm);
-
       var ghostService = db.services.ghostService(charm);
+
+      this._setupXYAnnotations(ghostAttributes, ghostService);
+
+      if (window.flags && window.flags.il) {
+        var serviceName = charm.get('name') + '-' +
+                          Math.floor((Math.random() * 1000) + 1);
+        var constraints = { 'arch': '', 'cpu-cores': '', 'cpu-power': '',
+          'mem': '', 'root-disk': '', 'tags': '' };
+        var config = {};
+        this.env.deploy(
+            charm.get('id'),
+            serviceName,
+            config,
+            undefined, // config file content
+            1, // number of units
+            constraints,
+            null, // toMachine
+            Y.bind(this._deployCallbackHandler,
+                   this,
+                   serviceName,
+                   config,
+                   constraints,
+                   ghostService),
+            // Options used by ECS, ignored by environment
+            { modelId: ghostService.get('id') });
+      } else {
+        var environment = this.views.environment.instance;
+        environment.createServiceInspector(ghostService);
+      }
+    },
+
+    /**
+      Sets up the gui-x, gui-y annotations on the passed in ghost service.
+
+      @method _setupXYAnnotations
+      @param {Object} ghostAttributes The attrs to set on the ghost service.
+      @param {Object} ghostService The ghost service model.
+    */
+    _setupXYAnnotations: function(ghostAttributes, ghostService) {
       if (ghostAttributes !== undefined) {
         if (ghostAttributes.coordinates !== undefined) {
           var annotations = ghostService.get('annotations');
@@ -60,16 +98,64 @@ YUI.add('ghost-deployer-extension', function(Y) {
         }
         ghostService.set('icon', ghostAttributes.icon);
       }
-      if (window.flags.il) {
-        this.get('subApps').charmbrowser.fire('changeState', {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
-              id: ghostService.get('clientId')}}});
-      } else {
-        var environment = this.views.environment.instance;
-        environment.createServiceInspector(ghostService);
+    },
+
+    /**
+      The callback handler from the env.deploy() of the charm.
+
+      @method _deployCallbackHandler
+      @param {String} serviceName The service name.
+      @param {Object} config The configuration object of the service.
+      @param {Object} constraints The constraint settings for the service.
+      @param {Object} ghostService The model of the ghost service.
+      @param {Y.EventFacade} e The event facade from the deploy event.
+    */
+    _deployCallbackHandler: function(serviceName, config, constraints,
+        ghostService, e) {
+
+      var db = this.db,
+          models = Y.juju.models,
+          topo = this.views.environment.instance.topo;
+
+      if (e.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error deploying ' + serviceName,
+              message: 'Could not deploy the requested service. Server ' +
+                  'responded with: ' + e.err,
+              level: 'error'
+            }));
+        return;
       }
+
+      db.notifications.add(
+          new models.Notification({
+            title: 'Deployed ' + serviceName,
+            message: 'Successfully deployed the requested service.',
+            level: 'info'
+          }));
+
+      // Transition the ghost viewModel to the new service. It's alive!
+      var ghostId = ghostService.get('id');
+
+      ghostService.setAttrs({
+        id: serviceName,
+        displayName: undefined,
+        pending: false,
+        loading: false,
+        config: config,
+        constraints: constraints
+      });
+
+      // Without this following code on a real environment the service icons
+      // would disappear and then re-appear when deploying services.
+      var boxModel = topo.service_boxes[ghostId];
+      boxModel.id = serviceName;
+      boxModel.pending = false;
+      delete topo.service_boxes[ghostId];
+      topo.service_boxes[serviceName] = boxModel;
+
+      topo.annotateBoxPosition(boxModel);
     }
   };
 
