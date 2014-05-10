@@ -12,6 +12,7 @@
 
     time {
         color: #bfbab5;
+        margin-left: 7px;
     }
     a.button {
         // Using a variable here because LESS strips commas in mixin args.
@@ -32,7 +33,7 @@
             display: none;
         }
     }
-    ul {
+    ul.action-list {
         margin: 0;
         list-style: none;
 
@@ -81,5 +82,100 @@
                 }
             }
         }
+        .post-summary {
+            display: none;
+
+            p {
+                display: inline;
+            }
+            .cancel-button {
+                background: #D6D6D6;
+                color: #333;
+            }
+            .confirm-button {
+                margin-left: 5px;
+            }
+        }
+        .pre-summary {
+            display: block;
+        }
+    }
+
+
+    .summary {
+        display: none;
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+        height: 450px;
+        transistion: height .3s;
+        width:100%;
+        background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg.jpg) repeat 0 0;
+        border: 1px solid #D9D9D9;
+
+        header {
+            background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
+            padding: 5px 20px;
+            border-bottom: 1px solid #D9D9D9;
+        }
+        section {
+            padding: 5px 0;
+            width: 600px;
+            margin: 0 auto;
+        }
+        .title {
+            display: inline;
+            font-size: 14px;
+        }
+        ul.action-list {
+            li {
+                border: 0;
+                line-height: 30px;
+                height: auto;
+                padding: 0 5px;
+            }
+            li a.close{
+                margin-left: 10px;
+            }
+        }
+        .right {
+            margin-right: 0;
+        }
+        .summary-panel {
+            @box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+            .create-box-shadow(@box-shadow);
+            .create-border-radius(@border-radius);
+            background: #ffffff;
+            padding: 10px;
+            margin-top: 5px;
+            height: 300px;
+            overflow-y: auto;
+
+            li {
+                list-style: none;
+                padding: 10px;
+            }
+
+            h3 {
+                padding: 10px;
+                border-bottom: 1px solid #D9D9D9;
+            }
+            .icon {
+                width: 30px;
+                height: 30px;
+                margin-right: 7px;
+                vertical-align: middle;
+            }
+        }
+    }
+    &.summary-open {
+        .summary,
+        .post-summary {
+            display: block;
+        }
+        .pre-summary {
+            display: none;
+        }
+
     }
 }
