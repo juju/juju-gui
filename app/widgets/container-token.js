@@ -37,7 +37,8 @@ YUI.add('container-token', function(Y) {
    */
   var ContainerToken = Y.Base.create('ContainerToken', Y.View,
       [
-        Y.Event.EventTracker
+        Y.Event.EventTracker,
+        views.DropTargetViewExtension
       ], {
         template: Templates['container-token'],
 
@@ -77,45 +78,6 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
-          Attaches the dragenter, dragover, drop events on the tokens container
-          so that it can have a unit token dropped on it.
-
-          @method _attachDragEvents
-        */
-        _attachDragEvents: function() {
-          var container = this.get('container'),
-              token = '.token';
-          container.delegate('drop', this._unitDropHandler, token, this);
-          container.delegate('dragenter', this._ignore, token, this);
-          container.delegate('dragover', this._ignore, token, this);
-        },
-
-        /**
-          Event handler for the unit dropping on the container token. Fires the
-          unit-token-drop event with the unit id and machine information.
-
-          @method _unitDropHandler
-          @param {Object} e The drop event object.
-        */
-        _unitDropHandler: function(e) {
-          var dragData = JSON.parse(e._event.dataTransfer.getData('Text'));
-          this.fire('unit-token-drop', {
-            unit: dragData.id,
-            machine: this.get('machine')
-          });
-        },
-
-        /**
-          * Ignore a drag event.
-          * @method _ignore
-          */
-        _ignore: function(e) {
-          // This used to be an e.halt() which also stops event propogation but
-          // that prevented listening to any drag events above the canvas.
-          e.preventDefault();
-        },
-
-        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -125,7 +87,7 @@ YUI.add('container-token', function(Y) {
               machine = this.get('machine');
           container.setHTML(this.template(machine));
           container.addClass('container-token');
-          this._attachDragEvents();
+          this._attachDragEvents(); // drop-target-view-extension
           this.get('containerParent').append(container);
           return this;
         },
@@ -156,6 +118,7 @@ YUI.add('container-token', function(Y) {
     'event-tracker',
     'node',
     'handlebars',
-    'juju-templates'
+    'juju-templates',
+    'drop-target-view-extension'
   ]
 });

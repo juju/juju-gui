@@ -500,6 +500,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/utils/environment-change-set.js'
         },
 
+        'drop-target-view-extension': {
+          fullpath: '/juju-ui/utils/drop-target-view-extension.js'
+        },
+
         'juju-controllers': {
           use: [
             'juju-env',
