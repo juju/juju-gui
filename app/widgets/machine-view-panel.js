@@ -76,13 +76,14 @@ YUI.add('machine-view-panel', function(Y) {
           );
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
+          this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
         },
 
         /**
           Converts the machine view into the dragging UI.
 
           @method _showDraggingUI
-          @param {Object} e Custom drag start event handler.
+          @param {Object} e Custom drag start event facade.
         */
         _showDraggingUI: function(e) {},
 
@@ -90,9 +91,18 @@ YUI.add('machine-view-panel', function(Y) {
           Converts the machine view into the normal UI from it's dragging UI.
 
           @method _hideDraggingUI
-          @param {Object} e Custom drag end event handler.
+          @param {Object} e Custom drag end event facade.
         */
         _hideDraggingUI: function(e) {},
+
+        /**
+          Unit token drop handler. Handles the unit beind dropped on anything
+          in the machine view.
+
+          @method _unitTokenDropHandler
+          @param {Object} e The custom drop event facade.
+        */
+        _unitTokenDropHandler: function(e) {},
 
         /**
          * Display containers for the selected machine.
@@ -186,15 +196,20 @@ YUI.add('machine-view-panel', function(Y) {
               containers.length + ' container' + containersPlural + ', ' +
               numUnits + ' unit' + unitsPlural);
 
+          var token;
+
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
               var containerUnits = db.units.filterByMachine(container.id);
               this._updateMachineWithUnitData(container, containerUnits);
-              new views.ContainerToken({
+              token = views.ContainerToken({
+
                 containerTemplate: '<li/>',
                 containerParent: containerParent,
                 machine: container
-              }).render();
+              });
+              token.render();
+              token.addTarget(this);
             }, this);
           }
 
@@ -203,11 +218,13 @@ YUI.add('machine-view-panel', function(Y) {
           if (units.length > 0) {
             var machine = {displayName: 'Bare metal'};
             this._updateMachineWithUnitData(machine, units);
-            new views.ContainerToken({
+            token = new views.ContainerToken({
               containerTemplate: '<li/>',
               containerParent: containerParent,
               machine: machine
-            }).render();
+            });
+            token.render();
+            token.addTarget(this);
           }
         },
 
