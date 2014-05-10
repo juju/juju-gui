@@ -56,15 +56,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @method initializer
          */
         initializer: function() {
-          this._bindModelEvents();
+          this._bindEvents();
         },
 
         /**
          * Bind the events to the models.
          *
-         * @method _bindModelEvents
+         * @method _bindEvents
          */
-        _bindModelEvents: function() {
+        _bindEvents: function() {
           this.addEvent(
               this.get('db').machines.after(['add', 'remove', '*:change'],
                   this._updateMachines, this)
@@ -74,7 +74,25 @@ YUI.add('machine-view-panel', function(Y) {
               this.get('db').units.after(['add', 'remove', '*:change'],
                   this._renderServiceUnitTokens, this)
           );
+          this.on('*:unit-token-drag-start', this._showDraggingUI, this);
+          this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
         },
+
+        /**
+          Converts the machine view into the dragging UI.
+
+          @method _showDraggingUI
+          @param {Object} e Custom drag start event handler.
+        */
+        _showDraggingUI: function(e) {},
+
+        /**
+          Converts the machine view into the normal UI from it's dragging UI.
+
+          @method _hideDraggingUI
+          @param {Object} e Custom drag end event handler.
+        */
+        _hideDraggingUI: function(e) {},
 
         /**
          * Display containers for the selected machine.

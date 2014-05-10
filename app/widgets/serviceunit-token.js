@@ -102,7 +102,17 @@ YUI.add('juju-serviceunit-token', function(Y) {
       var container = this.get('container');
       container.setAttribute('draggable', 'true');
       this.addEvent(container.on('dragstart',
-          this._makeDragStartHandler(this.getAttrs())));
+          this._makeDragStartHandler(this.getAttrs()), this));
+      this.addEvent(container.on('dragend', this._fireDragEndEvent, this));
+    },
+
+    /**
+      Fires the unit-token-drag-end event
+
+      @method _fireDragEndEvent
+    */
+    _fireDragEndEvent: function() {
+      this.fire('unit-token-drag-end');
     },
 
     /**
@@ -125,6 +135,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.
         evt.stopPropagation();
+        this.fire('unit-token-drag-start');
       };
     },
 
