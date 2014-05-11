@@ -100,6 +100,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
           attrs = this.getAttrs();
       container.setHTML(this.template(attrs));
       container.addClass('serviceunit-token');
+      container.setAttribute('data-id', this.get('id'));
       return this;
     },
 

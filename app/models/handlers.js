@@ -374,9 +374,14 @@ YUI.add('juju-delta-handlers', function(Y) {
       // Keep in sync annotations in units present in the global units model
       // list and service nested ones.
       if (instance.name === 'serviceUnit') {
-        var serviceUnits = db.services.getById(instance.service).get('units');
-        var nestedInstance = serviceUnits.getById(id);
-        models.setAnnotations(nestedInstance, change.Annotations, true);
+        var service = db.services.getById(instance.service);
+        if (service) {
+          var serviceUnits = service.get('units');
+          if (serviceUnits) {
+            var nestedInstance = serviceUnits.getById(id);
+            models.setAnnotations(nestedInstance, change.Annotations, true);
+          }
+        }
       }
     }
   };

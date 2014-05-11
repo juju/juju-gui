@@ -19,8 +19,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine view panel view', function() {
-  var Y, container, machines, machine, models, utils, views, view, View,
+  var Y, container, machines, machine, models, utils, units, views, view, View,
       scaleUpView, scaleUpViewRender;
+
+  function createViewNoUnits() {
+    // Create a test-specific view that has no units to start
+    return new View({
+      container: container,
+      db: {
+        services: new models.ServiceList(),
+        machines: machines,
+        units: new models.ServiceUnitList()
+      }
+    });
+  }
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['machine-view-panel',
@@ -41,6 +53,7 @@ describe('machine view panel view', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'machine-view-panel');
+    // setup machines
     machine = {
       id: 0,
       hardware: {
@@ -56,12 +69,16 @@ describe('machine view panel view', function() {
     // set it on our standalone model.
     var displayName = machines.createDisplayName(machine.id);
     machine.displayName = displayName;
+    // setup unplaced service units
+    units = new models.ServiceUnitList();
+    units.add([{id: 'test/1'}]);
+    // add everything to the view
     view = new View({
       container: container,
       db: {
         services: new models.ServiceList(),
         machines: machines,
-        units: new models.ServiceUnitList()
+        units: units
       }
     });
   });
@@ -83,33 +100,7 @@ describe('machine view panel view', function() {
         'Unplaced units');
   });
 
-  describe('unplaced unit list', function() {
-    it('renders unplaced units on render', function() {
-      var db = view.get('db');
-      db.services.add({id: 'mysql'});
-      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
-      view.render();
-      var tokens = Y.all('.serviceunit-token');
-      assert.equal(tokens.size(), 2);
-    });
-
-    it('displays a message when there are no unplaced units', function() {
-      view.render();
-      var message = view.get('container').one('.column.unplaced .all-placed');
-      assert.equal(message.getStyle('display'), 'block');
-    });
-
-    it('doesn\'t show a message when there are no unplaced units', function() {
-      var db = view.get('db');
-      db.services.add({id: 'mysql'});
-      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
-      view.render();
-      var message = view.get('container').one('.column.unplaced .all-placed');
-      assert.equal(message.getStyle('display'), 'none');
-    });
-  });
-
-  describe('machine list', function() {
+  describe('machines column', function() {
     it('should render a list of machines', function() {
       view.render();
       var list = container.all('.machines .content li');
@@ -181,9 +172,7 @@ describe('machine view panel view', function() {
           item.one('.title').get('text'), machineModel.get('displayName'),
           'machine names do not match post-update');
     });
-  });
 
-  describe('container list', function() {
     it('should render a list of containers', function(done) {
       view.render();
       var machineToken = container.one('.machines li .token');
@@ -222,6 +211,78 @@ describe('machine view panel view', function() {
       var containerToken = container.one('.containers li .token');
       containerToken.simulate('click');
       assert.equal(containerToken.hasClass('active'), true);
+    });
+  });
+
+  describe('unplaced units column', function() {
+    it('should render a list of units', function() {
+      view.render();
+      var list = container.all('.unplaced .content li');
+      assert.equal(list.size(), units.size(),
+                   'models are out of sync with displayed list');
+      list.each(function(item, index) {
+        var u = units.item(index),
+            id = item.getAttribute('data-id');
+        assert.equal(id, u.id, 'displayed item does not match model');
+      });
+    });
+
+    it('displays a message when there are no unplaced units', function() {
+      var view = createViewNoUnits();
+      view.render();
+      var message = view.get('container').one('.column.unplaced .all-placed');
+      assert.equal(message.getStyle('display'), 'block');
+    });
+
+    it('doesn\'t show a message when there are no unplaced units', function() {
+      view.render();
+      var message = view.get('container').one('.column.unplaced .all-placed');
+      assert.equal(message.getStyle('display'), 'none');
+    });
+
+    it('should add new tokens when units are added', function() {
+      view.render();
+      var selector = '.unplaced .content li',
+          list = container.all(selector),
+          id = 'test/2';
+      assert.equal(list.size(), units.size(),
+                   'initial displayed list is out of sync with unplaced units');
+      units.add([{ id: id }]);
+      list = container.all(selector);
+      assert.equal(list.size(), units.size(),
+                   'final displayed list is out of sync with unplaced units');
+      var addedItem = container.one(selector + '[data-id="' + id + '"]');
+      assert.notEqual(addedItem, null,
+                      'unable to find added unit in the displayed list');
+    });
+
+    it('should remove tokens when units are deleted', function() {
+      view.render();
+      var selector = '.unplaced .content li',
+          list = container.all(selector);
+      assert.equal(list.size(), units.size(),
+                   'initial displayed list is out of sync with unplaced units');
+      units.remove(0);
+      list = container.all(selector);
+      assert.equal(list.size(), units.size(),
+                   'final displayed list is out of sync with unplaced units');
+      var deletedSelector = selector + '[data-id="test/1"]';
+      var deletedItem = container.one(deletedSelector);
+      assert.equal(deletedItem, null,
+                   'found the deleted unit still in the list');
+    });
+
+    it('should re-render token when a unit is updated', function() {
+      view.render();
+      var id = 'test/3',
+          unitModel = units.revive(0),
+          selector = '.unplaced .content li',
+          item = container.one(
+              selector + '[data-id="' + unitModel.get('id') + '"]');
+      assert.notEqual(item, null, 'unit was not initially displayed');
+      unitModel.set('id', id);
+      item = container.one(selector + '[data-id="' + id + '"]');
+      assert.notEqual(item, null, 'unit was not displayed post-update');
     });
   });
 
@@ -293,6 +354,7 @@ describe('machine view panel view', function() {
 
     it('hides the "all placed" message when the service list is displayed',
         function() {
+          var view = createViewNoUnits();
           view.render();
           // The message should be display initially.
           var message = view.get('container').one(
@@ -307,6 +369,7 @@ describe('machine view panel view', function() {
 
     it('shows the "all placed" message when the service list is closed',
         function() {
+          var view = createViewNoUnits();
           view.render();
           // Click the button to open the panel and the message should
           // be hidden.

@@ -48,7 +48,7 @@ describe('Service unit token', function() {
   });
 
   it('renders to initial, undeployed state', function() {
-    var selector = '.unplaced-unit[data-id="' + id + '"]';
+    var selector = '.unplaced-unit';
     assert.notEqual(container.one(selector), null,
                     'DOM element not found');
     assert.equal(container.one(selector + ' .title').get('text').trim(),

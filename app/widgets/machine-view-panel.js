@@ -65,8 +65,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _bindModelEvents
          */
         _bindModelEvents: function() {
-          this.get('db').machines.after(['add', 'remove', '*:change'],
-              this._updateMachines, this);
+          this.addEvent(
+              this.get('db').machines.after(['add', 'remove', '*:change'],
+                  this._updateMachines, this)
+          );
+
+          this.addEvent(
+              this.get('db').units.after(['add', 'remove', '*:change'],
+                  this._renderServiceUnitTokens, this)
+          );
         },
 
         /**
@@ -206,55 +213,18 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _updateMachines
          */
         _updateMachines: function() {
-          var exists, newElement;
           var machines = this.get('db').machines.filterByParent(null);
           var container = this.get('container');
           var machineList = container.one('.machines .content .items');
-          if (!machines || !machineList) {
-            return;
-          }
-          var machineElements = machineList.all('li');
           var plural = machines.length !== 1 ? 's' : '';
 
           // Update the header to show the machine count.
           this._machinesHeader.setLabel(
               machines.length + ' machine' + plural);
 
-          machines.forEach(function(machine) {
-            exists = machineElements.some(function(element) {
-              // If the machine already exists in the dom, mark it as such.
-              if (String(machine.id) === element.getData('id')) {
-                element.setData('exists', true);
-                return true;
-              }
-            });
-            if (!exists) {
-              // If the machine does not exist in the dom, render the token.
-              newElement = this._renderMachineToken(machine, machineList);
-              newElement.setData('exists', true);
-            }
-          }, this);
-
-          machineElements.each(function(element) {
-            if (!element.getData('exists')) {
-              // If the element exists in the dom, but not in the model
-              // list then it must have been remove, so remove it from
-              // the dom.
-              if (element.one('.token').hasClass('active')) {
-                // If the selected machine was removed then stop showing
-                // its containers.
-                this._clearContainerColumn();
-              }
-              element.remove();
-            } else if (machines.length === 0) {
-              element.remove();
-              this._clearContainerColumn();
-            } else {
-              // Clean up the 'exists' flag for the next loop through
-              // the machine nodes.
-              element.setData('exists', undefined);
-            }
-          }, this);
+          this._smartUpdateList(machines, machineList,
+                                this._renderMachineToken.bind(this),
+                                this._clearContainerColumn.bind(this));
         },
 
         /**
@@ -298,9 +268,77 @@ YUI.add('machine-view-panel', function(Y) {
         _addIconsToUnits: function(units) {
           var db = this.get('db');
           Y.Object.each(units, function(unit) {
-            unit.icon = db.services.getById(unit.service).get('icon');
+            var service = db.services.getById(unit.service);
+            if (service) {
+              unit.icon = service.get('icon');
+            }
+            // XXX What to do if there is no icon?
           });
           return units;
+        },
+
+        /**
+         * A helper function that handles intelligently updating the lists in
+         * the machine view columns. When an update comes in, we don't want to
+         * re-render the entire view, just the items in the list that have
+         * changed. The logic below handles that and uses the render and
+         * cleanup callbacks to allow for column-specific logic.
+         *
+         * @method _smartUpdateList
+         * @param {Array} models The models that are bound to the list
+         * @param {NodeList} list The DOM list
+         * @param {Function} render A callback to handle rendering one item in
+         *                          the list
+         * @param {Function} cleanup Any other changes that need to occur after
+         *                           an update in the list, i.e., clearing the
+         *                           container column
+         */
+        _smartUpdateList: function(models, list, render, cleanup) {
+          var exists, newElement;
+          if (!models || !list) {
+            return;
+          }
+          var elements = list.all('li');
+
+          models.forEach(function(model) {
+            exists = elements.some(function(element) {
+              // If the model already exists in the dom, mark it as such.
+              if (String(model.id) === element.getAttribute('data-id')) {
+                element.setData('exists', true);
+                return true;
+              }
+            });
+            if (!exists) {
+              // If the model does not exist in the dom, render the token.
+              newElement = render(model, list);
+              newElement.setData('exists', true);
+            }
+          }, this);
+
+          elements.each(function(element) {
+            if (!element.getData('exists')) {
+              // If the element exists in the dom, but not in the model
+              // list then it must have been remove, so remove it from
+              // the dom.
+              if (element.one('.token').hasClass('active')) {
+                // If the selected model was removed then stop showing
+                // its containers.
+                if (typeof cleanup === 'function') {
+                  cleanup();
+                }
+              }
+              element.remove();
+            } else if (models.length === 0) {
+              element.remove();
+              if (typeof cleanup === 'function') {
+                cleanup();
+              }
+            } else {
+              // Clean up the 'exists' flag for the next loop through
+              // the nodes.
+              element.setData('exists', undefined);
+            }
+          }, this);
         },
 
         /**
@@ -309,31 +347,31 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderServiceUnitTokens
          */
         _renderServiceUnitTokens: function() {
-          var container = this.get('container'),
-              listContainer = container.one('.unplaced .content'),
-              parentNode = listContainer.one('.items'),
-              units = this.get('db').units.filterByMachine(null);
+          var self = this,
+              container = this.get('container'),
+              units = this.get('db').units.filterByMachine(null),
+              unitList = container.one('.unplaced .content .items');
 
-          this._addIconsToUnits(units);
-          if (units && units.length && units.length > 0) {
-            this._hideAllPlacedMessage();
-            Y.Object.each(units, function(unit) {
-              var node = Y.Node.create('<li></li>');
-              new views.ServiceUnitToken({
-                container: node,
-                title: unit.displayName,
-                id: unit.id,
-                icon: unit.icon,
-                machines: this.get('db').machines.filterByParent(null),
-                containers: [] // XXX Need to find query for getting containers
-              }).render();
-              parentNode.append(node);
-            }, this);
-            // only append to the DOM once
-            listContainer.append(parentNode);
-          } else {
+          if (!units || !units.length) {
             this._showAllPlacedMessage();
+          } else {
+            this._hideAllPlacedMessage();
+            this._addIconsToUnits(units);
           }
+
+          this._smartUpdateList(units, unitList, function(model, list) {
+            var node = Y.Node.create('<li></li>');
+            new views.ServiceUnitToken({
+              container: node,
+              title: model.displayName,
+              id: model.id,
+              icon: model.icon,
+              machines: self.get('db').machines.filterByParent(null),
+              containers: [] // XXX Need to find query for getting containers
+            }).render();
+            list.append(node);
+            return node;
+          });
         },
 
         /**
