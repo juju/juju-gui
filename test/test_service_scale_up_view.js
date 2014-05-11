@@ -125,4 +125,25 @@ describe('service scale up view', function() {
     container.one('button.add-units').simulate('click');
   });
 
+  it('fires an event when the list is opened', function(done) {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    view.on('listOpened', function(e) {
+      assert.isObject(e);
+      done();
+    });
+    container.one('button.closed').simulate('click');
+  });
+
+  it('fires an event when the list is closed', function(done) {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    container.one('button.closed').simulate('click');
+    view.on('listClosed', function(e) {
+      assert.isObject(e);
+      done();
+    });
+    container.one('button.opened').simulate('click');
+  });
+
 });

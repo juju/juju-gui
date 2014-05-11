@@ -39,7 +39,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     template: Templates['serviceunit-token'],
 
     events: {
-      '.unit .icons .token-move': {
+      '.unit .token-move': {
         click: '_handleStartMove'
       },
       '.unit .machines select': {
@@ -59,7 +59,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     _handleStartMove: function(e) {
       e.preventDefault();
       var container = this.get('container');
-      container.all('.icons').hide();
+      container.one('.token-move').hide();
       container.one('.machines').show();
     },
 
@@ -72,7 +72,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     _handleFinishMove: function(e) {
       e.preventDefault();
       var container = this.get('container');
-      container.all('.icons').show();
+      container.one('.token-move').show();
       container.all('.machines, .containers, .actions').hide();
       this.fire('moveToken');
     },
