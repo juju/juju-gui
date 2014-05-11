@@ -636,7 +636,11 @@ YUI.add('juju-models', function(Y) {
       obj.number = parseInt(raw[1], 10);
       obj.urlName = obj.id.replace('/', '-');
       obj.name = 'serviceUnit'; // This lets us more easily mimic models.
-      obj.displayName = this.createDisplayName(obj.id);
+      if (!obj.displayName) {
+        // The display name can be provided by callers, e.g. in the case a
+        // ghost unit is being added to a ghost service.
+        obj.displayName = this.createDisplayName(obj.id);
+      }
     },
 
     /**

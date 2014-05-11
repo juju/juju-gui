@@ -143,9 +143,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           fakebackend.db.charms.getById('cs:precise/wordpress-15'),
           'Fakebackend returned null when a charm was expected.');
       var service = fakebackend.db.services.getById('wordpress');
-      assert.isObject(
-          service,
-          'Null returend when a service was expected.');
+      assert.isObject(service, 'Null returned when a service was expected.');
       assert.strictEqual(service, result.service);
       var attrs = service.getAttrs();
       // clientId varies.
@@ -305,13 +303,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
     });
 
-
     it('deploys multiple units.', function() {
       fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 3});
       var units = result.service.get('units').toArray();
       assert.lengthOf(units, 3);
       assert.lengthOf(result.units, 3);
       assert.deepEqual(units, result.units);
+    });
+
+    it('returns an error when adding multiple units to a machine', function() {
+      fakebackend.deploy(
+          'cs:precise/wordpress-15', callback, {unitCount: 3, toMachine: '2'});
+      assert.strictEqual(
+          result.error,
+          'When deploying to a specific machine, ' +
+          'the number of units requested must be 1.');
+    });
+
+    it('allows deploying a service without units', function() {
+      fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 0});
+      // There is no error.
+      assert.isUndefined(result.error);
+      // No units have been added.
+      assert.strictEqual(result.service.get('units').size(), 0);
     });
 
     it('reports when the API is inaccessible.', function() {
