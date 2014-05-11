@@ -55,7 +55,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
       if (window.flags && window.flags.il) {
-        var serviceName = charm.get('name') + '-' + charm.get('revision');
+        var serviceName = charm.get('name');
         var constraints = { 'arch': '', 'cpu-cores': '', 'cpu-power': '',
           'mem': '', 'root-disk': '', 'tags': '' };
         var config = {};
@@ -77,10 +77,13 @@ YUI.add('ghost-deployer-extension', function(Y) {
             { modelId: ghostService.get('id') });
 
         // Add an unplaced unit to this service.
+        var unitName = serviceName + '-' + charm.get('revision') + '/99',
+            unitID = ghostService.get('id') + '/99';
+
         var ghostUnit = {
           charmUrl: charm.get('id'),
-          displayName: serviceName + '/99',
-          id: ghostService.get('id') + '/99',
+          displayName: unitName,
+          id: unitID,
           machine: null,
           agent_state: '',
           agent_state_info: undefined,
