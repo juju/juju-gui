@@ -48,6 +48,8 @@ describe('Environment Change Set', function() {
     testUtils.makeStubMethod(envObj, '_deploy');
     testUtils.makeStubMethod(envObj, '_set_config');
     testUtils.makeStubMethod(envObj, '_add_relation');
+    testUtils.makeStubMethod(envObj, '_add_units');
+    testUtils.makeStubMethod(envObj, '_addMachines');
     dbObj = {};
   });
 
@@ -64,6 +66,32 @@ describe('Environment Change Set', function() {
       assert.equal(ecs instanceof ECS, true);
       // this object is created on instantiation
       assert.isObject(ecs.changeSet);
+    });
+
+    describe('_translateKeysToIds', function() {
+      it('calls keyToId when available', function() {
+        ecs.currentCommit = [[
+          {
+            key: 'foo-1',
+            command: { keyToId: true }
+          }
+        ]];
+        ecs.currentLevel = -1;
+        ecs.changeSet = {
+          'foo-1': {
+            command: {
+              keyToId: testUtils.makeStubFunction()
+            }
+          }
+        };
+        var idsFromResultsStub = testUtils.makeStubFunction([0]);
+        ecs._translateKeysToIds({
+          command: { idsFromResults: idsFromResultsStub }
+        }, null);
+
+        assert.isTrue(idsFromResultsStub.calledOnce());
+        assert.isTrue(ecs.changeSet['foo-1'].command.keyToId.calledOnce());
+      });
     });
 
     describe('_getArgs', function() {
@@ -132,13 +160,13 @@ describe('Environment Change Set', function() {
         assert.equal(wrapCallback.calledOnce(), true);
         assert.deepEqual(wrapCallback.lastArguments()[0], {
           id: key,
-          parents: undefined,
+          parents: [],
           executed: false,
           command: command
         });
         assert.deepEqual(ecs.changeSet[key], {
           id: key,
-          parents: undefined,
+          parents: [],
           executed: false,
           command: command
         });
@@ -185,13 +213,11 @@ describe('Environment Change Set', function() {
         this._cleanups.push(fire.reset);
         var result = record.command.args[3]();
         assert.equal(result, 'real cb');
-        assert.equal(fire.calledOnce(), true);
-        var fireArgs = fire.lastArguments();
+        assert.equal(fire.callCount(), 2);
+        var fireArgs = fire.allArguments()[0];
         assert.equal(fireArgs[0], 'taskComplete');
-        assert.deepEqual(fireArgs[1], {
-          id: 'service-123',
-          record: record
-        });
+        assert.equal(fireArgs[1].id, 'service-123');
+        assert.equal(fireArgs[1].record, record);
         assert.equal(record.executed, true);
       });
     });
@@ -316,6 +342,83 @@ describe('Environment Change Set', function() {
         assert.deepEqual(record.command.args, args);
         assert.deepEqual(record.command.options, {modelId: 'baz'});
         cb(); // Will call done().
+      });
+    });
+
+    describe('lazyAddMachines', function() {
+      it('creates a new `addMachines` record', function(done) {
+        var translateStub = testUtils.makeStubMethod(ecs,
+            '_translateKeysToIds');
+        this._cleanups.push(translateStub.reset);
+        var args = [[{}], done];
+        var key = ecs.lazyAddMachines(args);
+        var record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_addMachines');
+        var cb = record.command.args.pop();
+        args.pop();
+        assert.deepEqual(record.command.args, args);
+        cb(); // Will call done().
+      });
+
+      it('creates a new `addMachines` record with parentId', function() {
+        ecs.changeSet = {
+          'addMachines-1': {
+            command: { method: '_addMachines' }
+          }
+        };
+        var args = [[{containerType: 'lxc', parentId: 'addMachines-1'}]];
+        var key = ecs.lazyAddMachines(args);
+        var record = ecs.changeSet[key];
+        assert.equal(record.parents[0], 'addMachines-1');
+      });
+    });
+
+    describe('lazyAddUnits', function() {
+      it('creates a new `addUnits` record', function(done) {
+        var args = ['mysql', 1, null, done];
+        var key = ecs.lazyAddUnits(args);
+        var record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_add_unit');
+        var cb = record.command.args.pop();
+        args.pop();
+        assert.deepEqual(record.command.args, args);
+        cb();
+      });
+
+      it('creates a record with a queued service', function() {
+        ecs.changeSet = {
+          'service-1': {
+            command: {
+              method: '_deploy',
+              options: { modelId: 'mysql' },
+              args: ['charmid', 'mysql']
+            }
+          }
+        };
+        var args = ['mysql', 1, null];
+        var key = ecs.lazyAddUnits(args);
+        var record = ecs.changeSet[key];
+        assert.equal(record.parents[0], 'service-1');
+      });
+
+      it('creates a record with a queued machine', function() {
+        ecs.changeSet = {
+          'addMachines-1': {
+            command: {
+              method: '_addMachines'
+            }
+          }
+        };
+        var args = ['mysql', 1, 'addMachines-1'];
+        var key = ecs.lazyAddUnits(args);
+        var record = ecs.changeSet[key];
+        assert.equal(record.parents[0], 'addMachines-1');
       });
     });
 

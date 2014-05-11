@@ -21,12 +21,12 @@ describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container, inspector,
       Y, jujuViews, ENTER, charmConfig, client, backendJuju, state, downgrades,
-      exposeCalled, unexposeCalled;
+      exposeCalled, unexposeCalled, ecs;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
       'event-key', 'juju-charm-store', 'juju-charm-models',
-      'node-event-simulate'];
+      'node-event-simulate', 'environment-change-set'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           utils = Y.namespace('juju-tests.utils');
@@ -46,7 +46,8 @@ describe('Inspector Overview', function() {
     container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
-    env = juju.newEnvironment({conn: conn});
+    ecs = new juju.EnvironmentChangeSet({ db: db });
+    env = juju.newEnvironment({conn: conn, ecs: ecs});
     env.update_annotations = function() {};
     env.expose = function(s) {
       exposeCalled = true;

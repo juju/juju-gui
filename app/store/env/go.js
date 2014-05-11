@@ -785,11 +785,11 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Calls the environments deploy method or creates a new service record
-      in the queue.
+      Calls the environment's _deploy method or creates a new deploy record in
+      the ECS queue.
 
-      The parameters match the parameters for the public env deploy method in
-      go.js.
+      Parameters match the parameters for the _deploy method below.
+      The only new parameter is the last one (ECS options).
 
       @method deploy
     */
@@ -919,9 +919,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Add new machines and/or containers.
+      Calls the environment's _addMachines method or creates a new addMachines
+      record in the ECS queue.
+
+      Parameters match the parameters for the _addMachines method below.
+      The only new parameter is the last one (ECS options).
 
       @method addMachines
+    */
+    addMachines: function(params, callback, options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        this._addMachines.apply(this, args);
+      } else {
+        ecs.lazyAddMachines(args);
+      }
+    },
+
+    /**
+      Add new machines and/or containers.
+
+      @method _addMachines
       @param {Array} params A list of parameters for each machine/container
         to be added. Each item in the list must be an object containing the
         following keys (all optional):
@@ -947,6 +966,9 @@ YUI.add('juju-env-go', function(Y) {
             // Add a new LXC in a new machine.
             {containerType: 'lxc'}
           ];
+        Note: This is not guaranteed to be executed in order or synchronous,
+        so adding containers to machines should wait until after the machines
+        have been created, successfully.
       @param {Function} callback A callable that must be called once the
         operation is performed. The callback is called passing an object like
         the following:
@@ -959,7 +981,7 @@ YUI.add('juju-env-go', function(Y) {
             ]
           }
     */
-    addMachines: function(params, callback) {
+    _addMachines: function(params, callback) {
       var self = this;
       // Avoid calling the server if the API call parameters are not valid.
       if (!params.length) {
@@ -1151,9 +1173,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Add units to the provided service.
+      Calls the environment's _add_unit method or creates a new add_unit record
+      in the ECS queue.
+
+      Parameters match the parameters for the _add_unit method below.
+      The only new parameter is the last one (ECS options).
 
       @method add_unit
+    */
+    add_unit: function(service, numUnits, toMachine, callback, options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        this._add_unit.apply(this, args);
+      } else {
+        ecs.lazyAddUnits(args);
+      }
+    },
+
+    /**
+      Add units to the provided service.
+
+      @method _add_unit
       @param {String} service The service to be scaled up.
       @param {Integer} numUnits The number of units to be added.
       @param {String} toMachine The machine/container name where to deploy the
@@ -1172,7 +1213,7 @@ YUI.add('juju-env-go', function(Y) {
         - result: a list containing the names of the added units.
       @return {undefined} Sends a message to the server only.
     */
-    add_unit: function(service, numUnits, toMachine, callback) {
+    _add_unit: function(service, numUnits, toMachine, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback, service and numUnits.  No context is passed.
@@ -1750,13 +1791,13 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Calls the environment's add_relation method or creates a new add_relation
-      record in the queue.
+      Calls the environment's _add_relation method or creates a new
+      add_relation record in the ECS queue.
 
-      The parameters match the parameters for the public env add relation
-      method in go.js.
+      Parameters match the parameters for the _add_relation method below.
+      The only new parameter is the last one (ECS options).
 
-      @method addRelation
+      @method add_relation
     */
     add_relation: function(endpointA, endpointB, callback, options) {
       var ecs = this.get('ecs'),
