@@ -496,7 +496,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // This is the current behavior in both implementations.
         unitCount = 1;
       }
-      var response = this.addUnit(options.name, unitCount, options.toMachine);
+      var response = {};
+      // Add units if requested.
+      if (unitCount !== 0) {
+        response = this.addUnit(options.name, unitCount, options.toMachine);
+      }
       response.service = service;
       callback(response);
     },

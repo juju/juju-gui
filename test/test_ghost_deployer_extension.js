@@ -49,8 +49,13 @@ describe('Ghost Deployer Extension', function() {
     var getMethod = utils.makeStubFunction();
     ghostDeployer.db = {
       charms: { add: utils.makeStubFunction({ get: getMethod }) },
-      services: { ghostService: utils.makeStubFunction({ get: getMethod }) },
-      notifications: { add: utils.makeStubFunction() }
+      services: {
+        ghostService: utils.makeStubFunction({
+          get: utils.makeStubFunction('ghost-service-id')
+        })
+      },
+      notifications: { add: utils.makeStubFunction() },
+      addUnits: utils.makeStubFunction()
     };
   });
 
@@ -59,11 +64,67 @@ describe('Ghost Deployer Extension', function() {
     window.flags = {};
   });
 
+  // Create and return a charm model instance.
+  var makeCharm = function() {
+    return new Y.Model({
+      id: 'cs:trusty/django-42',
+      name: 'django',
+      is_subordinate: false
+    });
+  };
+
   it('calls the env deploy method with the default charm data', function() {
     window.flags.il = true;
-    var charmGetStub = utils.makeStubFunction();
-    ghostDeployer.deployService({ get: charmGetStub });
-    assert.equal(ghostDeployer.env.deploy.calledOnce(), true);
+    var charm = makeCharm();
+    ghostDeployer.deployService(charm);
+    assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
+    var args = ghostDeployer.env.deploy.lastArguments();
+    assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
+    assert.strictEqual(args[1], 'django'); // Service name.
+    assert.deepEqual(args[2], {}); // Config.
+    assert.strictEqual(args[4], 0); // Number of units.
+    assert.deepEqual(args[5], {}); // Constraints.
+    assert.isNull(args[6]); // Machine placement.
+  });
+
+  it('adds the ECS modelId option when deploying the charm', function() {
+    window.flags.il = true;
+    var charm = makeCharm();
+    ghostDeployer.deployService(charm);
+    assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
+    var args = ghostDeployer.env.deploy.lastArguments();
+    var options = args[args.length - 1];
+    assert.property(options, 'modelId');
+    // The model id is the ghost service identifier.
+    assert.strictEqual(options.modelId, 'ghost-service-id');
+  });
+
+  it('creates a ghost service', function() {
+    window.flags.il = true;
+    var charm = makeCharm();
+    ghostDeployer.deployService(charm);
+    var services = ghostDeployer.db.services;
+    assert.strictEqual(services.ghostService.calledOnce(), true);
+    var args = services.ghostService.lastArguments();
+    assert.lengthOf(args, 1);
+    assert.deepEqual(args[0], charm);
+  });
+
+  it('creates a ghost unit', function() {
+    window.flags.il = true;
+    var charm = makeCharm();
+    ghostDeployer.deployService(charm);
+    var db = ghostDeployer.db;
+    assert.strictEqual(db.addUnits.calledOnce(), true);
+    var args = db.addUnits.lastArguments();
+    assert.lengthOf(args, 1);
+    var expectedUnit = {
+      id: 'ghost-service-id/0',
+      displayName: charm.get('name') + '/0',
+      charmUrl: charm.get('id'),
+      is_subordinate: charm.get('is_subordinate')
+    };
+    assert.deepEqual(args[0], expectedUnit);
   });
 
   it('sets the proper annotations in the deploy handler', function() {

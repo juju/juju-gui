@@ -55,19 +55,21 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
       if (window.flags && window.flags.il) {
-        var serviceName = charm.get('name') + '-' +
-                          Math.floor((Math.random() * 1000) + 1);
-        var constraints = { 'arch': '', 'cpu-cores': '', 'cpu-power': '',
-          'mem': '', 'root-disk': '', 'tags': '' };
+        var ghostServiceId = ghostService.get('id');
+        // XXX frankban 2014-05-11:
+        // after the ODS demo, find a smarter way to set a unique service name.
+        var serviceName = charm.get('name');
+        var charmId = charm.get('id');
         var config = {};
+        var constraints = {};
         this.env.deploy(
-            charm.get('id'),
+            charmId,
             serviceName,
             config,
-            undefined, // config file content
-            1, // number of units
+            undefined, // Config file content.
+            0, // Number of units.
             constraints,
-            null, // toMachine
+            null, // toMachine.
             Y.bind(this._deployCallbackHandler,
                    this,
                    serviceName,
@@ -75,7 +77,25 @@ YUI.add('ghost-deployer-extension', function(Y) {
                    constraints,
                    ghostService),
             // Options used by ECS, ignored by environment
-            { modelId: ghostService.get('id') });
+            {modelId: ghostServiceId});
+
+        // Add an unplaced unit to this service.
+        // The service is not yet deployed (we just added it to ECS), so we can
+        // safely assume the first unit to be unit 0. Each subsequent unit
+        // added to the ghost service would have number
+        // `ghostService.get('units').size()`.
+        db.addUnits({
+          id: ghostServiceId + '/0',
+          displayName: serviceName + '/0',
+          charmUrl: charmId,
+          is_subordinate: charm.get('is_subordinate')
+        });
+        // XXX frankban 2014-05-11:
+        // Add an ECS add_unit record by calling this.env.add_unit.
+        // The call is not yet implemented.
+        // When adding the call, attach a callback that, when called, removes
+        // all the ghost units for this service. Real units should be then
+        // created reacting to the mega-watcher changes.
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);
