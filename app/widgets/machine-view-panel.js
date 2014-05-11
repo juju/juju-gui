@@ -202,8 +202,7 @@ YUI.add('machine-view-panel', function(Y) {
             Y.Object.each(containers, function(container) {
               var containerUnits = db.units.filterByMachine(container.id);
               this._updateMachineWithUnitData(container, containerUnits);
-              token = views.ContainerToken({
-
+              token = new views.ContainerToken({
                 containerTemplate: '<li/>',
                 containerParent: containerParent,
                 machine: container

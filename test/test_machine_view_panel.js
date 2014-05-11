@@ -17,7 +17,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-
 describe('machine view panel view', function() {
   var Y, container, machines, machine, models, utils, units, views, view, View,
       scaleUpView, scaleUpViewRender;
@@ -41,6 +40,7 @@ describe('machine view panel view', function() {
                                'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
+                               'drop-target-view-extension',
                                'node'], function(Y) {
 
       models = Y.namespace('juju.models');
@@ -100,7 +100,44 @@ describe('machine view panel view', function() {
         'Unplaced units');
   });
 
-  describe('machines column', function() {
+  describe('unplaced unit list', function() {
+    it('renders unplaced units on render', function() {
+      var db = view.get('db');
+      db.services.add({id: 'mysql'});
+      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
+      view.render();
+      var tokens = Y.all('.serviceunit-token');
+      assert.equal(tokens.size(), 2);
+    });
+
+    it('displays a message when there are no unplaced units', function() {
+      view.render();
+      var message = view.get('container').one('.column.unplaced .all-placed');
+      assert.equal(message.getStyle('display'), 'block');
+    });
+
+    it('doesn\'t show a message when there are no unplaced units', function() {
+      var db = view.get('db');
+      db.services.add({id: 'mysql'});
+      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
+      view.render();
+      var message = view.get('container').one('.column.unplaced .all-placed');
+      assert.equal(message.getStyle('display'), 'none');
+    });
+
+    it('listens for the drag start, end, drop events', function() {
+      var onStub = utils.makeStubMethod(view, 'on');
+      this._cleanups.push(onStub.reset);
+      view._bindEvents();
+      assert.equal(onStub.callCount(), 3);
+      var onStubArgs = onStub.allArguments();
+      assert.equal(onStubArgs[0][0], '*:unit-token-drag-start');
+      assert.equal(onStubArgs[1][0], '*:unit-token-drag-end');
+      assert.equal(onStubArgs[2][0], '*:unit-token-drop');
+    });
+  });
+
+  describe('machine list', function() {
     it('should render a list of machines', function() {
       view.render();
       var list = container.all('.machines .content li');

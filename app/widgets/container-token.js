@@ -37,7 +37,6 @@ YUI.add('container-token', function(Y) {
    */
   var ContainerToken = Y.Base.create('ContainerToken', Y.View,
       [
-        Y.Event.EventTracker,
         views.DropTargetViewExtension
       ], {
         template: Templates['container-token'],
@@ -90,8 +89,8 @@ YUI.add('container-token', function(Y) {
           this._attachDragEvents(); // drop-target-view-extension
           this.get('containerParent').append(container);
           return this;
-        },
-
+        }
+      }, {
         ATTRS: {
           /**
            * @attribute machine
