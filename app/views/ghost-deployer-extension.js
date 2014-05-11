@@ -55,8 +55,8 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
       if (window.flags && window.flags.il) {
-        var serviceName = charm.get('name') + '-' +
-                          Math.floor((Math.random() * 1000) + 1);
+        var serviceName = charm.get('name');
+        debugger;
         var constraints = { 'arch': '', 'cpu-cores': '', 'cpu-power': '',
           'mem': '', 'root-disk': '', 'tags': '' };
         var config = {};
@@ -65,7 +65,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
             serviceName,
             config,
             undefined, // config file content
-            1, // number of units
+            0, // number of units
             constraints,
             null, // toMachine
             Y.bind(this._deployCallbackHandler,
@@ -76,6 +76,26 @@ YUI.add('ghost-deployer-extension', function(Y) {
                    ghostService),
             // Options used by ECS, ignored by environment
             { modelId: ghostService.get('id') });
+
+        // Add an unplaced unit to this service.
+        var unitName = serviceName,
+            unitID = ghostService.get('id') + '/99';
+
+        debugger;
+        var ghostUnit = {
+          charmUrl: charm.get('id'),
+          displayName: unitName,
+          id: unitID,
+          machine: null,
+          agent_state: '',
+          agent_state_info: undefined,
+          agent_state_data: {},
+          is_subordinate: charm.get('is_subordinate'),
+          public_address: undefined,
+          private_address: undefined,
+          service: serviceName
+        };
+        db.addUnits(ghostUnit);
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);
