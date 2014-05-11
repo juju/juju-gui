@@ -536,9 +536,13 @@ describe('test_model.js', function() {
           {id: 'django/47', machine: '47'},
           {id: 'rails/0', machine: '42'},
           {id: 'rails/1', machine: '42'},
+          {id: 'mysql/42', machine: '0/kvm/0/lxc/0'},
+          {id: 'rails/42', machine: '0'},
           {id: 'postgres/1'},
+          {id: 'django/2', machine: '0/lxc/2'},
           {id: 'rails/2', machine: '0/lxc/1'},
-          {id: 'postgres/2'}
+          {id: 'postgres/2'},
+          {id: 'mysql/47', machine: '0/kvm/0/lxc/1'}
         ]);
       });
 
@@ -564,13 +568,42 @@ describe('test_model.js', function() {
         assertUnits(resultingUnits, ['haproxy/4', 'rails/2']);
       });
 
+      it('returns the machine hosted units including children', function() {
+        var resultingUnits = units.filterByMachine('0', true);
+        var expectedUnits = [
+          'haproxy/4', 'mysql/42', 'rails/42', 'django/2', 'rails/2',
+          'mysql/47'
+        ];
+        assertUnits(resultingUnits, expectedUnits);
+      });
+
+      it('returns the container hosted units including children', function() {
+        var resultingUnits = units.filterByMachine('0/kvm/0', true);
+        assertUnits(resultingUnits, ['mysql/42', 'mysql/47']);
+      });
+
+      it('returns the machine units with non-existing children', function() {
+        var resultingUnits = units.filterByMachine('47', true);
+        assertUnits(resultingUnits, ['django/47']);
+      });
+
       it('returns all unplaced units', function() {
         var resultingUnits = units.filterByMachine(null);
         assertUnits(resultingUnits, ['django/0', 'postgres/1', 'postgres/2']);
       });
 
+      it('ignores includeChildren if machine is null', function() {
+        var resultingUnits = units.filterByMachine(null, true);
+        assertUnits(resultingUnits, ['django/0', 'postgres/1', 'postgres/2']);
+      });
+
       it('returns an empty list if no machines match', function() {
         var resultingUnits = units.filterByMachine('no-such');
+        assert.lengthOf(resultingUnits, 0);
+      });
+
+      it('returns an empty list even when children are included', function() {
+        var resultingUnits = units.filterByMachine('no-such', true);
         assert.lengthOf(resultingUnits, 0);
       });
 
