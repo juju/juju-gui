@@ -690,20 +690,41 @@ YUI.add('juju-models', function(Y) {
 
     /**
       Return a list of all the units placed in the given machine/container.
+      If includeChildren is set to true, also return the units hosted in the
+      sub-containers of the given machine.
 
       This method can also used to return unplaced units:
         units.filterByMachine(null);
+      In this case the includeChildren argument is ignored.
 
       @method filterByMachine
-      @param {String} parentId The machine/container name.
+      @param {String} machine The machine/container name.
+      @param {Boolean} includeChildren Whether to include units hosted in
+        sub-containers.
       @return {Array} The matching units as a list of objects.
     */
-    filterByMachine: function(machine) {
+    filterByMachine: function(machine, includeChildren) {
+      var predicate;
+      if (machine) {
+        if (includeChildren) {
+          // Filter by machine and the containers hosted by the machine.
+          predicate = function(unit) {
+            return unit.machine && unit.machine.indexOf(machine) === 0;
+          };
+        } else {
+          // Filter by exact machine.
+          predicate = function(unit) {
+            return unit.machine === machine;
+          };
+        }
+      } else {
+        // Return the unplaced units.
+        predicate = function(unit) {
+          return !unit.machine;
+        };
+      }
       machine = machine || null;
-      return this.filter(function(unit) {
-        var unitMachine = unit.machine || null;
-        return unitMachine === machine;
-      });
+      return this.filter(predicate);
     },
 
     /**

@@ -126,23 +126,26 @@ YUI.add('machine-view-panel', function(Y) {
          *
          * @method _renderContainerTokens
          * @param {Array} containers the list of containers to render.
+         * @param {String} parentId the ancestor machine name.
          */
         _renderContainerTokens: function(containers, parentId) {
+          var db = this.get('db');
           var containerParent = this.get('container').one(
               '.containers .content .items');
-          var allUnits = this._getAllUnits({id: parentId});
+          var numUnits = db.units.filterByMachine(parentId, true).length;
 
           var containersPlural = containers.length !== 1 ? 's' : '';
-          var unitsPlural = allUnits.length !== 1 ? 's' : '';
+          var unitsPlural = numUnits !== 1 ? 's' : '';
 
           this._clearContainerColumn();
           this._containersHeader.setLabel(
               containers.length + ' container' + containersPlural + ', ' +
-              allUnits.length + ' unit' + unitsPlural);
+              numUnits + ' unit' + unitsPlural);
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
-              this._updateMachineWithUnitData(container);
+              var containerUnits = db.units.filterByMachine(container.id);
+              this._updateMachineWithUnitData(container, containerUnits);
               new views.ContainerToken({
                 containerTemplate: '<li/>',
                 containerParent: containerParent,
@@ -152,7 +155,7 @@ YUI.add('machine-view-panel', function(Y) {
           }
 
           // Create the 'bare metal' container.
-          var units = this.get('db').units.filterByMachine(parentId);
+          var units = db.units.filterByMachine(parentId);
           if (units.length > 0) {
             var machine = {displayName: 'Bare metal'};
             this._updateMachineWithUnitData(machine, units);
@@ -243,8 +246,8 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Node} list the list node to append the machine to.
          */
         _renderMachineToken: function(machine, list) {
-          var node = Y.Node.create('<li></li>'),
-              units = this._getAllUnits(machine);
+          var node = Y.Node.create('<li></li>');
+          var units = this.get('db').units.filterByMachine(machine.id, true);
           this._updateMachineWithUnitData(machine, units);
           new views.MachineToken({
             container: node,
@@ -255,33 +258,13 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * Get all units on the machine, including those on containers in the
-         * machine.
-         *
-         * @method _getAllUnits
-         * @param {Object} machine The machine object.
-         */
-        _getAllUnits: function(machine) {
-          var db = this.get('db'),
-              units = db.units.filterByMachine(machine.id),
-              containers = db.machines.filterByParent(machine.id);
-          Y.Array.each(containers, function(container) {
-            units.push(db.units.filterByMachine(container.id));
-          });
-          return Y.Array.flatten(units);
-        },
-
-        /**
          * Add units and their icons to the machine.
          *
-         * @method _getAllUnits
+         * @method _updateMachineWithUnitData
          * @param {Object} machine The machine object.
-         * @param {Array} units (optional) The units to add to the machine.
+         * @param {Array} units The units to add to the machine.
          */
         _updateMachineWithUnitData: function(machine, units) {
-          if (!units) {
-            units = this.get('db').units.filterByMachine(machine.id);
-          }
           this._addIconsToUnits(units);
           machine.units = units;
           return units;
