@@ -62,7 +62,7 @@ describe('Service unit token', function() {
   it.skip('walks through machine and container selections', function() {
     // Make sure initally shows name and move icon
     var name = container.one('.title'),
-        icons = container.one('.icons'),
+        tokenMove = container.one('.token-move'),
         machines = container.one('.unplaced-unit .machines'),
         containers = container.one('unplaced-unit .containers'),
         actions = container.one('.unplaced-unit .actions'),
@@ -70,16 +70,16 @@ describe('Service unit token', function() {
 
     assert.notEqual(name.getStyle('display'), 'none',
                     'name was not displayed');
-    assert.notEqual(icons.getStyle('display'), 'none',
-                    'icons were not displayed');
+    assert.notEqual(tokenMove.getStyle('display'), 'none',
+                    'icon was not displayed');
 
     // test initial move icon click
     assert.isTrue(machines.hasClass('hidden'),
         'machine dropdown prematurely displayed');
-    icons.one('.token-move').simulate('click');
+    tokenMove.simulate('click');
     assert.isFalse(machinesSelect.hasClass('hidden'),
         'machine dropdown not displayed');
-    assert.isTrue(icons.hasClass('hidden'), 'icons were not hidden');
+    assert.isTrue(tokenMove.hasClass('hidden'), 'icon was not hidden');
 
     // test selecting a machine in the list
     assert.isTrue(containers.hasClass('hidden'),
@@ -97,7 +97,7 @@ describe('Service unit token', function() {
     actions.one('.move').simulate('click');
     assert.isTrue(name.hasClass('hidden'),
         'name was not displayed in final state');
-    assert.isTrue(icons.hasClass('hidden'),
-        'icons were not displayed in final state');
+    assert.isTrue(tokenMove.hasClass('hidden'),
+        'icon was not displayed in final state');
   });
 });

@@ -175,6 +175,9 @@ YUI.add('service-scale-up-view', function(Y) {
       // If we are opening the list then update the service list
       if (opened) {
         this._updateServiceList();
+        this.fire('listOpened');
+      } else {
+        this.fire('listClosed');
       }
       this.get('container').toggleClass('opened', opened);
     },

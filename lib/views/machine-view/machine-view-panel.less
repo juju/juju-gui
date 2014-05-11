@@ -17,6 +17,17 @@
         .flex-direction(column);
         border-right: 1px solid @machine-view-border-colour;
 
+        &.unplaced {
+            .all-placed {
+                padding: 20px;
+                border-bottom: 1px solid @machine-view-border-colour;
+                line-height: 40px;
+
+                .sprite {
+                    margin-right: 7px;
+                }
+            }
+        }
         .head {
             .flex-basis(auto);
             position: relative;

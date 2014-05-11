@@ -92,6 +92,21 @@ describe('machine view panel view', function() {
       var tokens = Y.all('.serviceunit-token');
       assert.equal(tokens.size(), 2);
     });
+
+    it('displays a message when there are no unplaced units', function() {
+      view.render();
+      var message = view.get('container').one('.column.unplaced .all-placed');
+      assert.equal(message.getStyle('display'), 'block');
+    });
+
+    it('doesn\'t show a message when there are no unplaced units', function() {
+      var db = view.get('db');
+      db.services.add({id: 'mysql'});
+      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
+      view.render();
+      var message = view.get('container').one('.column.unplaced .all-placed');
+      assert.equal(message.getStyle('display'), 'none');
+    });
   });
 
   describe('machine list', function() {
@@ -220,10 +235,9 @@ describe('machine view panel view', function() {
       view.render();
       assert.equal(scaleUpView.calledOnce(), true);
       assert.equal(scaleUpViewRender.calledOnce(), true);
-      assert.equal(onStub.calledOnce(), true);
+      assert.equal(onStub.callCount(), 3);
       var onArgs = onStub.lastArguments();
-      assert.equal(onArgs[0], 'addUnit');
-      assert.deepEqual(onArgs[1], view._scaleUpService);
+      assert.equal(onArgs[0], 'listClosed');
     });
 
     it('properly destroys the scale up view up on destroy', function() {
@@ -240,7 +254,7 @@ describe('machine view panel view', function() {
       this._cleanups.push(scaleUpView.reset);
       view.render();
       view.destroy();
-      assert.equal(detachStub.callCount(), 1);
+      assert.equal(detachStub.callCount(), 3);
       assert.equal(destroyStub.callCount(), 1);
     });
 
@@ -263,5 +277,34 @@ describe('machine view panel view', function() {
       });
       view._scaleUpView.fire('addUnit', addUnitEvent);
     });
+
+    it('hides the "all placed" message when the service list is displayed',
+        function() {
+          view.render();
+          // The message should be display initially.
+          var message = view.get('container').one(
+              '.column.unplaced .all-placed');
+          assert.equal(message.getStyle('display'), 'block');
+          // Click the button to open the panel and the message should
+          // be hidden.
+          container.one('.scale-up button.closed').simulate('click');
+          message = view.get('container').one('.column.unplaced .all-placed');
+          assert.equal(message.getStyle('display'), 'none');
+        });
+
+    it('shows the "all placed" message when the service list is closed',
+        function() {
+          view.render();
+          // Click the button to open the panel and the message should
+          // be hidden.
+          container.one('.scale-up button.closed').simulate('click');
+          var message = view.get('container').one(
+              '.column.unplaced .all-placed');
+          assert.equal(message.getStyle('display'), 'none');
+          // Close the panel and the message should displayed again.
+          container.one('.scale-up button.opened').simulate('click');
+          message = view.get('container').one('.column.unplaced .all-placed');
+          assert.equal(message.getStyle('display'), 'block');
+        });
   });
 });

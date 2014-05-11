@@ -314,6 +314,7 @@ YUI.add('machine-view-panel', function(Y) {
 
           this._addIconsToUnits(units);
           if (units && units.length && units.length > 0) {
+            this._hideAllPlacedMessage();
             Y.Object.each(units, function(unit) {
               var node = Y.Node.create('<li></li>');
               new views.ServiceUnitToken({
@@ -328,6 +329,39 @@ YUI.add('machine-view-panel', function(Y) {
             }, this);
             // only append to the DOM once
             listContainer.append(parentNode);
+          } else {
+            this._showAllPlacedMessage();
+          }
+        },
+
+        /**
+          Show the message for when all units are placed.
+
+          @method _showAllPlacedMessage
+        */
+        _showAllPlacedMessage: function() {
+          this.get('container').one('.column.unplaced .all-placed').show();
+        },
+
+        /**
+          Hide the message for when all units are placed.
+
+          @method _hideAllPlacedMessage
+        */
+        _hideAllPlacedMessage: function() {
+          this.get('container').one('.column.unplaced .all-placed').hide();
+        },
+
+        /**
+          Toggle the message for when all units are placed.
+
+          @method _toggleAllPlacedMessage
+        */
+        _toggleAllPlacedMessage: function() {
+          if (this.get('db').units.filterByMachine(null).length > 0) {
+            this._hideAllPlacedMessage();
+          } else {
+            this._showAllPlacedMessage();
           }
         },
 
@@ -345,6 +379,10 @@ YUI.add('machine-view-panel', function(Y) {
           }).render();
           this.addEvent(
               this._scaleUpView.on('addUnit', this._scaleUpService, this));
+          this.addEvent(this._scaleUpView.on('listOpened',
+              this._hideAllPlacedMessage, this));
+          this.addEvent(this._scaleUpView.on('listClosed',
+              this._toggleAllPlacedMessage, this));
         },
 
         /**

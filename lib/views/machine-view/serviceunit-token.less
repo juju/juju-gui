@@ -1,12 +1,31 @@
-.unplaced-unit {
-    .details {
-        display: none;
-    }
-    .unit-icon {
+.serviceunit-token {
+    height: 38px;
+    margin: 10px 10px 0 10px;
+    padding: 0 10px;
+    border: 1px solid @machine-view-border-colour;
+    line-height: 38px;
+    cursor: move;
 
-        img {
-            width: 20px;
-            height: 20px;
+    &:last-child {
+        margin-bottom: 10px;
+    }
+    .unplaced-unit {
+        .details {
+            display: none;
+        }
+        .unit-icon {
+            margin-right: 7px;
+
+            img {
+                width: 20px;
+                height: 20px;
+                vertical-align: -5px;
+            }
+        }
+        .token-move {
+            float: right;
+            margin-top: -1px;
+            cursor: pointer;
         }
     }
 }
