@@ -16,13 +16,6 @@
         li {
             .environment-header-li(20px);
             background-color: #eee;
-
-            &.small {
-                .environment-header-li(15px);
-            }
-            &.tiny {
-                .environment-header-li(10px);
-            }
         }
     }
 }
@@ -57,30 +50,8 @@
             }
         }
     }
-    &.search {
+    &.spacer {
       .flex(1);
-      position: relative;
-      padding: 0;
-
-      input[type=search] {
-          box-sizing: border-box;
-          width: 100%;
-          height: @environment-header-height - 1;
-          padding-left: 40px;
-          background-color: transparent;
-          border: none;
-      }
-      input[type=submit] {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: @environment-header-height;
-          height: @environment-header-height - 1;
-          background: transparent
-              url(/juju-ui/assets/images/non-sprites/environment_search.png)
-              no-repeat center center;
-          border: none;
-      }
     }
     a {
         display: block;
