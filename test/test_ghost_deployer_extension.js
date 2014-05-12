@@ -39,11 +39,15 @@ describe('Ghost Deployer Extension', function() {
           views: {
             environment: {
               instance: {
-                topo: {
-                  service_boxes: {}},
-                createServiceInspector: utils.makeStubFunction() }}},
+                topo: {service_boxes: {}},
+                createServiceInspector: utils.makeStubFunction()
+              }
+            }
+          },
           env: {
-            deploy: utils.makeStubFunction() }
+            deploy: utils.makeStubFunction(),
+            add_unit: utils.makeStubFunction()
+          }
         });
     ghostDeployer = new GhostDeployer();
     var getMethod = utils.makeStubFunction();
@@ -55,7 +59,8 @@ describe('Ghost Deployer Extension', function() {
         })
       },
       notifications: { add: utils.makeStubFunction() },
-      addUnits: utils.makeStubFunction()
+      addUnits: utils.makeStubFunction(),
+      removeUnits: utils.makeStubFunction()
     };
   });
 
@@ -127,6 +132,19 @@ describe('Ghost Deployer Extension', function() {
     assert.deepEqual(args[0], expectedUnit);
   });
 
+  it('deploys the ghost unit using the ECS', function() {
+    window.flags.il = true;
+    var charm = makeCharm();
+    ghostDeployer.deployService(charm);
+    var env = ghostDeployer.env;
+    // Ensure env.add_unit has been called with the expected arguments.
+    assert.strictEqual(env.add_unit.calledOnce(), true);
+    var args = env.add_unit.lastArguments();
+    assert.strictEqual(args[0], 'ghost-service-id'); // The service name.
+    assert.strictEqual(args[1], 1); // The number of units.
+    assert.isNull(args[2]); // The unit is not yet placed.
+  });
+
   it('sets the proper annotations in the deploy handler', function() {
     var ghostService = new Y.Model({
       id: 'ghostid'
@@ -147,6 +165,50 @@ describe('Ghost Deployer Extension', function() {
       pending: false
     });
     assert.equal(topo.annotateBoxPosition.calledOnce(), true);
+  });
+
+  it('notifies add_unit success', function() {
+    var ghostUnit = {displayName: 'django/42'};
+    var evt = {err: 'bad wolf'};
+    ghostDeployer._addUnitCallback(ghostUnit, evt);
+    var notifications = ghostDeployer.db.notifications;
+    assert.strictEqual(notifications.add.calledOnce(), true);
+    var notification = notifications.add.lastArguments()[0];
+    assert.strictEqual(
+        notification.get('title'), 'Error adding unit django/42');
+    assert.strictEqual(
+        notification.get('message'),
+        'Could not add the requested unit. Server responded with: bad wolf');
+    assert.strictEqual(notification.get('level'), 'error');
+  });
+
+  it('notifies add_unit failures', function() {
+    var ghostUnit = {displayName: 'django/42'};
+    var evt = {service_name: 'django'};
+    ghostDeployer._addUnitCallback(ghostUnit, evt);
+    var notifications = ghostDeployer.db.notifications;
+    assert.strictEqual(notifications.add.calledOnce(), true);
+    var notification = notifications.add.lastArguments()[0];
+    assert.strictEqual(notification.get('title'), 'Added unit django/42');
+    assert.strictEqual(
+        notification.get('message'),
+        'Successfully created the requested unit.');
+    assert.strictEqual(notification.get('level'), 'info');
+  });
+
+  it('removes the ghost unit on add_unit success', function() {
+    var ghostUnit = {displayName: 'django/42'};
+    var evt = {service_name: 'django'};
+    ghostDeployer._addUnitCallback(ghostUnit, evt);
+    var db = ghostDeployer.db;
+    assert.strictEqual(db.removeUnits.calledOnce(), true);
+    var args = db.removeUnits.lastArguments();
+    assert.lengthOf(args, 1);
+    var expectedUnit = {
+      displayName: 'django/42',
+      service: 'django'
+    };
+    assert.deepEqual(args[0], expectedUnit);
   });
 
 });

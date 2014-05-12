@@ -84,18 +84,21 @@ YUI.add('ghost-deployer-extension', function(Y) {
         // safely assume the first unit to be unit 0. Each subsequent unit
         // added to the ghost service would have number
         // `ghostService.get('units').size()`.
-        db.addUnits({
+        var ghostUnit = db.addUnits({
           id: ghostServiceId + '/0',
           displayName: serviceName + '/0',
           charmUrl: charmId,
           is_subordinate: charm.get('is_subordinate')
         });
-        // XXX frankban 2014-05-11:
-        // Add an ECS add_unit record by calling this.env.add_unit.
-        // The call is not yet implemented.
-        // When adding the call, attach a callback that, when called, removes
-        // all the ghost units for this service. Real units should be then
-        // created reacting to the mega-watcher changes.
+        // Add an ECS add_unit record. Attach a callback that, when called,
+        // removes the ghost unit from the database. The real unit should then
+        // be created reacting to the mega-watcher changes.
+        this.env.add_unit(
+            ghostServiceId, // The service to which the unit is added.
+            1, // Add a single unit.
+            null, // For now the unit is unplaced.
+            Y.bind(this._addUnitCallback, this, ghostUnit) // The callback.
+        );
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);
@@ -176,6 +179,41 @@ YUI.add('ghost-deployer-extension', function(Y) {
       topo.service_boxes[serviceName] = boxModel;
 
       topo.annotateBoxPosition(boxModel);
+    },
+
+    /**
+      The callback handler from the env.add_unit() call.
+
+      @method _addUnitCallback
+      @param {Object} ghostUnit The ghost unit model instance.
+      @param {Y.EventFacade} evt The event facade from the add_unit call.
+    */
+    _addUnitCallback: function(ghostUnit, evt) {
+      var db = this.db;
+      var models = Y.juju.models;
+      if (evt.err) {
+        // Add a notification and exit if the API call failed.
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error adding unit ' + ghostUnit.displayName,
+              message: 'Could not add the requested unit. Server ' +
+                  'responded with: ' + evt.err,
+              level: 'error'
+            }));
+        return;
+      }
+      // Notify the unit has been successfully created.
+      db.notifications.add(
+          new models.Notification({
+            title: 'Added unit ' + ghostUnit.displayName,
+            message: 'Successfully created the requested unit.',
+            level: 'info'
+          })
+      );
+      // Remove the ghost unit: the real unit will be re-added by the
+      // mega-watcher handlers.
+      ghostUnit.service = evt.service_name;
+      db.removeUnits(ghostUnit);
     }
   };
 

@@ -532,11 +532,6 @@ YUI.add('environment-change-set', function(Y) {
   }, {
     ATTRS: {
       /**
-        Reference to the environment
-        @attribute env
-      */
-      env: {},
-      /**
         Reference to the db
         @attribute db
       */

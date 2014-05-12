@@ -30,7 +30,7 @@
 </div>
 <aside class="summary">
     <header>
-        <h2 class="title">These changes will be deployed to: {{ machineName }}</h2>
+        <h2 class="title">The following changes will be deployed</h2>
         <div class="right">
             <ul class="action-list">
                 <li><a href="" class="min"><i class="sprite DB-expand-01"></i></a></li>
@@ -46,7 +46,8 @@
             {{#if changeCount}}
                 {{#if deployServices.length}}
                     <h3>
-                        {{deployServices.length}} services added
+                        {{deployServices.length}}
+                        {{pluralize 'service' deployServices.length}} added
                     </h3>
                     <ul>
                     {{#each deployServices}}
@@ -56,7 +57,8 @@
                 {{/if}}
                 {{#if addedRelations.length}}
                     <h3>
-                        {{addedRelations.length}} relations added
+                        {{addedRelations.length}}
+                        {{pluralize 'relation' addedRelations.length}} added
                     </h3>
                     <ul>
                     {{#each addedRelations}}
@@ -64,8 +66,23 @@
                     {{/each}}
                     </ul>
                 {{/if}}
+                {{#if addedUnits.length}}
+                    <h3>
+                        {{addedUnits.length}}
+                        {{pluralize 'unit' addedUnits.length}} added
+                    </h3>
+                    <ul>
+                        {{#each addedUnits}}
+                            <li>
+                                <img src="{{icon}}" alt="" class="icon" />
+                                {{numUnits}} {{serviceName}}
+                                {{pluralize 'unit' numUnits}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
             {{else}}
-                <p>No uncommited changes</p>
+                <p>No uncommitted changes</p>
             {{/if}}
         </div>
     </section>
