@@ -99,7 +99,26 @@
                                     root-level machine
                                 {{/if}}
                                 {{#if constraints}}
-                                    with constraints
+                                    with constraints ({{#constraints}}
+                                        {{#if mem}}
+                                            mem={{mem}}MB
+                                        {{/if}}
+                                        {{#if cpu-power}}
+                                            cpu-power={{cpu-power}}GHz
+                                        {{/if}}
+                                        {{#if cpu-cores}}
+                                            cpu-cores={{cores}}
+                                        {{/if}}
+                                        {{#if arch}}
+                                            arch={{arch}}
+                                        {{/if}}
+                                        {{#if tags}}
+                                            tags={{tags}}
+                                        {{/if}}
+                                        {{#if root-disk}}
+                                            root-disk={{root-disk}}MB
+                                        {{/if}}
+                                    {{/constraints}})
                                     {{#if jobs}}
                                         and
                                     {{/if}}

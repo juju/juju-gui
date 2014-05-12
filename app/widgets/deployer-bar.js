@@ -227,12 +227,12 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_addMachines':
             var machineType = latest.command.args[0][0].parentId ?
-              'container' : 'machine';
+                'container' : 'machine';
             icon = '<i class="sprite ' + machineType + '-created01"></i>';
             description = latest.command.args[0].length +
-              ' ' + machineType +
-              (latest.command.args[0].length !== 1 ? 's have' : ' has') +
-              ' been added.';
+                ' ' + machineType +
+                (latest.command.args[0].length !== 1 ? 's have' : ' has') +
+                ' been added.';
             break;
           default:
             icon = '<i class="sprite service-exposed"></i>';
@@ -369,6 +369,7 @@ YUI.add('deployer-bar', function(Y) {
         if (ecs.changeSet[key]) {
           var command = ecs.changeSet[key].command;
           if (command.method === '_addMachines') {
+            /* jshint -W083 */
             command.args[0].forEach(function(machine) {
               returnSet.push(machine);
             });
