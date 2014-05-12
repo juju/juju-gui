@@ -591,7 +591,10 @@ YUI.add('environment-change-set', function(Y) {
         }
       }, this);
       // Place the unit in the db.
-      unit.machine = machineId;
+      var unitsDb = this.get('db').units;
+      var unitModel = unitsDb.revive(unit);
+      unitModel.set('machine', machineId);
+      unitsDb.free(unitModel);
     }
 
     /* End private environment methods. */
