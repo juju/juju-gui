@@ -194,7 +194,7 @@ describe('machine view panel view', function() {
       machineToken.on('click', function(e) {
         // Need to explicitly fire the click handler as we are catching
         // the click event before it can be fired.
-        view.handleTokenSelect(e);
+        view.handleMachineTokenSelect(e);
         var containers = machines.filterByParent('0'),
             list = container.all('.containers .content li');
         assert.equal(containers.length > 0, true,
@@ -209,6 +209,19 @@ describe('machine view panel view', function() {
         done();
       });
       machineToken.simulate('click');
+    });
+
+    it('should select a token when clicked', function() {
+      view.render();
+      machines.add([
+        {id: '0/lxc/1'}
+      ]);
+      // Click on a machine so that we have a list of containers.
+      container.one('.machines li .token').simulate('click');
+      // Now select a container.
+      var containerToken = container.one('.containers li .token');
+      containerToken.simulate('click');
+      assert.equal(containerToken.hasClass('active'), true);
     });
   });
 

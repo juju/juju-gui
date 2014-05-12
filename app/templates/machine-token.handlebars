@@ -1,23 +1,28 @@
 <div class="token">
-  <span class="title">{{ displayName }}</span>
-  <span class="service-icons">
-    {{#units}}
-      <img src="{{icon}}" alt="{{service}}">
-    {{/units}}
-  </span>
-  <span class="clear"></span>
+  <div class="top">
+    <span class="title">{{ displayName }}</span>
+    <span class="service-icons">
+      {{#units}}
+        <img src="{{icon}}" alt="{{service}}" class="unit">
+      {{/units}}
+    </span>
+  </div>
   <span class="details">
-    {{#if formattedHardware.cpuCores}}
-    {{ formattedHardware.cpuCores }}x{{ formattedHardware.cpuPower }}GHz,
-    {{/if}}
-    {{#if formattedHardware.mem}}
-    {{ formattedHardware.mem }}GB,
-    {{/if}}
-    {{#if formattedHardware.disk}}
-    {{ formattedHardware.disk }}GB
+    {{#if noHardware}}
+      Hardware details not available
+    {{else}}
+      {{#if formattedHardware.cpuCores}}
+        {{ formattedHardware.cpuCores }}x{{ formattedHardware.cpuPower }}GHz,
+      {{/if}}
+      {{#if formattedHardware.mem}}
+        {{ formattedHardware.mem }}GB,
+      {{/if}}
+      {{#if formattedHardware.disk}}
+        {{ formattedHardware.disk }}GB
+      {{/if}}
     {{/if}}
   </span>
   <span class="delete">
-    <i class="sprite token-delete"></i>
+    <i class="sprite mv-token-destroy"></i>
   </span>
 </div>

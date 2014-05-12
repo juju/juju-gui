@@ -118,6 +118,12 @@ YUI.add('machine-token', function(Y) {
           // original object but we want to pass all of the hardware values into
           // the formatter.
           machine.formattedHardware = this._formatHardware(Y.clone(hardware));
+          if (!machine.formattedHardware.disk &&
+              !machine.formattedHardware.cpuPower &&
+              !machine.formattedHardware.mem &&
+              !machine.formattedHardware.cpuCores) {
+            machine.noHardware = true;
+          }
           container.setHTML(this.template(machine));
           container.addClass('machine-token');
           container.setAttribute('data-id', machine.id);

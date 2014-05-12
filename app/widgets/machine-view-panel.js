@@ -43,7 +43,10 @@ YUI.add('machine-view-panel', function(Y) {
 
         events: {
           '.machine-token .token': {
-            click: 'handleTokenSelect'
+            click: 'handleMachineTokenSelect'
+          },
+          '.container-token .token': {
+            click: 'handleContainerTokenSelect'
           }
         },
 
@@ -69,10 +72,10 @@ YUI.add('machine-view-panel', function(Y) {
         /**
          * Display containers for the selected machine.
          *
-         * @method handleTokenSelect
+         * @method handleMachineTokenSelect
          * @param {Event} ev the click event created.
          */
-        handleTokenSelect: function(e) {
+        handleMachineTokenSelect: function(e) {
           var container = this.get('container'),
               machineTokens = container.all('.machines .content .items .token'),
               selected = e.currentTarget,
@@ -83,6 +86,22 @@ YUI.add('machine-view-panel', function(Y) {
           machineTokens.removeClass('active');
           selected.addClass('active');
           this._renderContainerTokens(containers, parentId);
+        },
+
+        /**
+         * Set the active container.
+         *
+         * @method handleContainerTokenSelect
+         * @param {Event} ev the click event created.
+         */
+        handleContainerTokenSelect: function(e) {
+          var container = this.get('container');
+          var machineTokens = container.all(
+              '.containers .content .items .token');
+          var selected = e.currentTarget;
+          // Select the active token.
+          machineTokens.removeClass('active');
+          selected.addClass('active');
         },
 
         /**

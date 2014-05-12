@@ -1,16 +1,38 @@
 .container-token {
     .token {
-        padding: 20px 15px;
+        &.active {
+            .top {
+                display: block;
+            }
+            .service-icons {
+                float: none;
+                padding-top: 15px;
 
+                .unit {
+                    float: none;
+                    margin: 0 0 10px 0;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                    img {
+                        vertical-align: middle;
+                        margin: 0 7px 0 0;
+                    }
+                    .name {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
         .delete {
-            top: 15px;
+            top: 10px;
         }
         .service-icons {
-            padding-top: 10px;
+            list-style: none;
 
-            img {
-                width: 20px;
-                height: 20px;
+            .name {
+                display: none;
             }
         }
     }
