@@ -592,6 +592,9 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       // Place the unit in the db.
       var unitsDb = this.get('db').units;
+      // Because each 'model' in a lazy model list is actually just an object
+      // it doesn't fire change events. We need to revive it to a real object,
+      // make the change then the change events will fire.
       var unitModel = unitsDb.revive(unit);
       unitModel.set('machine', machineId);
       unitsDb.free(unitModel);

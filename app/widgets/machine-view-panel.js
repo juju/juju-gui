@@ -125,7 +125,11 @@ YUI.add('machine-view-panel', function(Y) {
           env.addMachines([{
             containerType: 'lxc',
             parentId: parentId
-          }], null, { modelId: container });
+            // XXX A callback param MUST be provided even if it's just an empty
+            // function, the ECS relies on wrapping this function so if it's
+            // null it'll just stop executing. This should probably be handled
+            // properly on the ECS side. Jeff May 12 2014
+          }], function() {}, { modelId: container });
           // Place the unplaced unit on the machine
           var unit = db.units.getById(e.unit);
           env.placeUnit(unit, container.id);
