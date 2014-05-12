@@ -110,20 +110,19 @@ YUI.add('deployer-bar', function(Y) {
       evt.halt();
       var container = this.get('container'),
           ecs = this.get('ecs');
-      var changes = this._getChangeCount(ecs);
-      var deployServices = this._getDeployedServices(ecs);
-      var addedRelations = this._getAddRelations(ecs);
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
-          changeCount: changes,
+          changeCount: this._getChangeCount(ecs),
           latestChangeDescription: '',
-          deployServices: deployServices,
-          addedRelations: addedRelations
+          deployServices: this._getDeployedServices(ecs),
+          addedRelations: this._getAddRelations(ecs),
+          addedUnits: this._getAddUnits(ecs)
         }));
       }
 
       container.addClass('summary-open');
     },
+
     /**
       Update UI with environment changes.
 
@@ -143,11 +142,16 @@ YUI.add('deployer-bar', function(Y) {
           change_count: changes,
           latest_change_description: latest
         }));
+        // XXX frankban 2014-05-12: the code below makes the changeset
+        // description disappear the first time the panel is visited. Why
+        // do we want this? This breaks the user experience, and after removing
+        // the line below everything seems to work just fine.
         this.descriptionTimer = window.setTimeout(
-            Y.bind(this._hideChangeDesctiption, this),
+            Y.bind(this._hideChangeDescription, this),
             2000);
       }
     },
+
     /**
       Hide the summary panel.
 
@@ -159,13 +163,13 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container');
       container.removeClass('summary-open');
     },
+
     /**
-      return the number of changes in ecs.
+      Hide the changeset description.
 
       @method _hideChangeDescription
-      @param {Object} ect The environment change set.
     */
-    _hideChangeDesctiption: function() {
+    _hideChangeDescription: function() {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
@@ -175,20 +179,22 @@ YUI.add('deployer-bar', function(Y) {
       }));
       window.clearTimeout(this.descriptionTimer);
     },
+
     /**
-      return the number of changes in ecs.
+      Return the number of changes in ecs.
 
       @method getChangeCount
-      @param {Object} ect The environment change set.
+      @param {Object} ecs The environment change set.
     */
     _getChangeCount: function(ecs) {
       return Object.keys(ecs.changeSet).length;
     },
+
     /**
-      return the number of changes in ecs.
+      Return the latest change description.
 
       @method _getChangeDescription
-      @param {Object} ect The environment change set.
+      @param {Object} ecs The environment change set.
     */
     _getChangeDescription: function(ecs) {
       var latest = ecs.changeSet[this._getLatestChange()];
@@ -222,11 +228,12 @@ YUI.add('deployer-bar', function(Y) {
         return icon + description + time;
       }
     },
+
     /**
-      return formatted time for display.
+      Return formatted time for display.
 
       @method _formatAMPM
-      @param {Date} the current date.
+      @param {Date} date The current date.
     */
     _formatAMPM: function(date) {
       var hours = date.getHours();
@@ -250,33 +257,46 @@ YUI.add('deployer-bar', function(Y) {
       var len = Object.keys(ecs.changeSet).length - 1;
       return Object.keys(ecs.changeSet)[len];
     },
+
     /**
-     * Pull out all deplayed changes from the changeset to display to the user.
+      Return the URL to the service icon.
+      XXX frankban 2014-05-12: use the view helper for icon locating.
+
+      @method _getServiceIconUrl
+      @param {String} serviceName The service name.
+    */
+    _getServiceIconUrl: function(serviceName) {
+      var url = 'https://manage.jujucharms.com' +
+                '/api/3/charm/precise/{name}/file/icon.svg';
+      return Y.Lang.sub(url, {name: serviceName});
+    },
+
+    /**
+     * Pull out all deployed changes from the changeset to display to the user.
      *
      * @method _getDeployedServices
-     *
+     * @param {Object} ecs The environment change set.
      */
     _getDeployedServices: function(ecs) {
-      var returnSet = [],
-          url = 'https://manage.jujucharms.com' +
-                '/api/3/charm/precise/{name}/file/icon.svg';
+      var returnSet = [];
       for (var key in ecs.changeSet) {
         if (ecs.changeSet[key]) {
           var command = ecs.changeSet[key].command,
               name = command.args[1];
           if (command.method === '_deploy') {
-            var icon = Y.Lang.sub(url, {name: name});
+            var icon = this._getServiceIconUrl(name);
             returnSet.push({icon: icon, name: name});
           }
         }
       }
       return returnSet;
     },
+
     /**
     * Pull out all relation changes from the changeset to display to the user.
     *
-    * @method _getDeployedServices
-    *
+    * @method _getAddRelations
+    * @param {Object} ecs The environment change set.
     */
     _getAddRelations: function(ecs) {
       var returnSet = [];
@@ -292,9 +312,31 @@ YUI.add('deployer-bar', function(Y) {
         }
       }
       return returnSet;
+    },
+
+    /**
+    * Pull out all addUnits changes from the changeset to display to the user.
+    *
+    * @method _getAddUnits
+    * @param {Object} ecs The environment change set.
+    */
+    _getAddUnits: function(ecs) {
+      var returnSet = [];
+      for (var key in ecs.changeSet) {
+        if (ecs.changeSet[key]) {
+          var command = ecs.changeSet[key].command;
+          if (command.method === '_add_unit') {
+            var serviceName = command.args[0];
+            returnSet.push({
+              icon: this._getServiceIconUrl(serviceName),
+              serviceName: serviceName,
+              numUnits: command.args[1]
+            });
+          }
+        }
+      }
+      return returnSet;
     }
-
-
 
   });
 

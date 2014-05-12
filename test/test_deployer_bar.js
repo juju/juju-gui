@@ -50,6 +50,7 @@ describe('deployer bar view', function() {
   });
 
   afterEach(function() {
+    ecs.destroy();
     container.remove(true);
     view.destroy();
   });
@@ -96,4 +97,35 @@ describe('deployer bar view', function() {
     view.summaryClose(mockEvent);
     assert.equal(container.hasClass('summary-open'), false);
   });
+
+  it('provides a way to retrieve the service icon', function() {
+    var url = view._getServiceIconUrl('django');
+    assert.strictEqual(
+        url,
+        'https://manage.jujucharms.com' +
+        '/api/3/charm/precise/django/file/icon.svg'
+    );
+  });
+
+  // XXX frankban 2014-05-12: it seems all this suite is not well isolated,
+  // or the view does not clean up correctly.
+  it.skip('retrieves all the unit changes', function() {
+    ecs.lazyAddUnits(['django', 1]);
+    ecs.lazyAddUnits(['rails', 2]);
+    var results = view._getAddUnits(ecs);
+    assert.lengthOf(results, 2);
+    assert.deepEqual(results[0], {
+      icon: 'https://manage.jujucharms.com' +
+          '/api/3/charm/precise/django/file/icon.svg',
+      numUnits: 1,
+      serviceName: 'django'
+    });
+    assert.deepEqual(results[1], {
+      icon: 'https://manage.jujucharms.com' +
+          '/api/3/charm/precise/rails/file/icon.svg',
+      numUnits: 2,
+      serviceName: 'rails'
+    });
+  });
+
 });
