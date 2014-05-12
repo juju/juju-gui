@@ -79,7 +79,7 @@ YUI.add('deployer-bar', function(Y) {
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
       container.setHTML(this.template({
-        change_count: changes
+        changeCount: changes
       }));
       container.addClass('deployer-bar');
       ecs.on('changeSetModified', Y.bind(this.update, this));
@@ -140,11 +140,11 @@ YUI.add('deployer-bar', function(Y) {
       // wanted.
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
-          change_count: changes,
-          latest_change_description: latest
+          changeCount: changes,
+          latestChangeDescription: latest
         }));
         this.descriptionTimer = window.setTimeout(
-            Y.bind(this._hideChangeDesctiption, this),
+            Y.bind(this._hideChangeDescription, this),
             2000);
       }
     },
@@ -165,14 +165,8 @@ YUI.add('deployer-bar', function(Y) {
       @method _hideChangeDescription
       @param {Object} ect The environment change set.
     */
-    _hideChangeDesctiption: function() {
-      var container = this.get('container'),
-          ecs = this.get('ecs');
-      var changes = this._getChangeCount(ecs);
-      container.setHTML(this.template({
-        change_count: changes,
-        latest_change_description: ''
-      }));
+    _hideChangeDescription: function() {
+      this.get('container').one('.action-list .change').set('text', '');
       window.clearTimeout(this.descriptionTimer);
     },
     /**
