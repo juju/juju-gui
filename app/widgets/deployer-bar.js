@@ -170,13 +170,6 @@ YUI.add('deployer-bar', function(Y) {
       @method _hideChangeDescription
     */
     _hideChangeDescription: function() {
-      var container = this.get('container'),
-          ecs = this.get('ecs');
-      var changes = this._getChangeCount(ecs);
-      container.setHTML(this.template({
-        change_count: changes,
-        latest_change_description: ''
-      }));
       this.get('container').one('.action-list .change').set('text', '');
       window.clearTimeout(this.descriptionTimer);
     },
