@@ -73,24 +73,22 @@ describe('Environment Change Set', function() {
         ecs.currentCommit = [[
           {
             key: 'foo-1',
-            command: { keyToId: true }
+            command: { onParentResults: true },
+            parents: ['bar-1']
           }
         ]];
         ecs.currentLevel = -1;
         ecs.changeSet = {
           'foo-1': {
             command: {
-              keyToId: testUtils.makeStubFunction()
+              onParentResults: testUtils.makeStubFunction()
             }
           }
         };
-        var idsFromResultsStub = testUtils.makeStubFunction([0]);
-        ecs._translateKeysToIds({
-          command: { idsFromResults: idsFromResultsStub }
-        }, null);
+        ecs._updateChangesetFromResults({key: 'bar-1'}, null);
 
-        assert.isTrue(idsFromResultsStub.calledOnce());
-        assert.isTrue(ecs.changeSet['foo-1'].command.keyToId.calledOnce());
+        assert.isTrue(
+            ecs.changeSet['foo-1'].command.onParentResults.calledOnce());
       });
     });
 
@@ -366,10 +364,13 @@ describe('Environment Change Set', function() {
       it('creates a new `addMachines` record with parentId', function() {
         ecs.changeSet = {
           'addMachines-1': {
-            command: { method: '_addMachines' }
+            command: {
+              method: '_addMachines',
+              options: {modelId: 'new1'}
+            }
           }
         };
-        var args = [[{containerType: 'lxc', parentId: 'addMachines-1'}]];
+        var args = [[{containerType: 'lxc', parentId: 'new1'}]];
         var key = ecs.lazyAddMachines(args);
         var record = ecs.changeSet[key];
         assert.equal(record.parents[0], 'addMachines-1');
@@ -411,11 +412,12 @@ describe('Environment Change Set', function() {
         ecs.changeSet = {
           'addMachines-1': {
             command: {
-              method: '_addMachines'
+              method: '_addMachines',
+              options: {modelId: 'new1'}
             }
           }
         };
-        var args = ['mysql', 1, 'addMachines-1'];
+        var args = ['mysql', 1, 'new1'];
         var key = ecs.lazyAddUnits(args);
         var record = ecs.changeSet[key];
         assert.equal(record.parents[0], 'addMachines-1');

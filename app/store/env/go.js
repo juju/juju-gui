@@ -933,7 +933,7 @@ YUI.add('juju-env-go', function(Y) {
       if (!window.flags.mv || options && options.immediate) {
         this._addMachines.apply(this, args);
       } else {
-        ecs.lazyAddMachines(args);
+        ecs.lazyAddMachines(args, options);
       }
     },
 
@@ -1187,7 +1187,7 @@ YUI.add('juju-env-go', function(Y) {
       if (!window.flags.mv || options && options.immediate) {
         this._add_unit.apply(this, args);
       } else {
-        ecs.lazyAddUnits(args);
+        ecs.lazyAddUnits(args, options);
       }
     },
 
@@ -1258,6 +1258,21 @@ YUI.add('juju-env-go', function(Y) {
       }
       // Call the original user callback.
       userCallback(transformedData);
+    },
+
+    /**
+      Place the given ghost unit to the given machine or container.
+
+      This is just a wrapper around the ECS placeUnit method.
+
+      @method placeUnit
+      @static
+      @param {Object} unit The ghost unit model instance.
+      @param {String} machineId The name of the machine/container where the
+        unit must be placed. This can be either a ghost machine or a real one.
+    */
+    placeUnit: function(unit, machineId) {
+      this.get('ecs').placeUnit(unit, machineId);
     },
 
     /**
