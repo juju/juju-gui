@@ -148,7 +148,7 @@ YUI.add('deployer-bar', function(Y) {
         // the line below everything seems to work just fine.
         this.descriptionTimer = window.setTimeout(
             Y.bind(this._hideChangeDescription, this),
-            2000);
+            4000);
       }
     },
 
