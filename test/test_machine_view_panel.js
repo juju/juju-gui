@@ -201,6 +201,25 @@ describe('machine view panel view', function() {
     });
   });
 
+  describe('_addIconsToUnits', function() {
+    it('should annotate units with icons for its tokens', function() {
+      var db = view.get('db'),
+          unit = {id: 'foo/0', service: 'foo' };
+      db.services.add({ id: 'foo', icon: 'http://example.com/foo.png' });
+      unit = view._addIconsToUnits([unit])[0];
+      assert.equal(unit.icon, 'http://example.com/foo.png');
+    });
+
+    it('should log an error when it cannot find the service', function() {
+      var unit = {id: 'foo/0', service: 'foo' },
+          errorStub = utils.makeStubMethod(console, 'error');
+      this._cleanups.push(errorStub.reset);
+      unit = view._addIconsToUnits([unit])[0];
+      assert.equal(errorStub.calledOnce(), true);
+      assert.equal(errorStub.lastArguments(), 'Unit foo/0 has no service.');
+    });
+  });
+
   describe('machine list', function() {
     it('should render a list of machines', function() {
       view.render();

@@ -322,13 +322,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Array} units The units to decorate
          */
         _addIconsToUnits: function(units) {
-          var db = this.get('db');
+          var db = this.get('db'),
+              service;
           Y.Object.each(units, function(unit) {
-            var service = db.services.getById(unit.service);
+            service = db.services.getById(unit.service);
             if (service) {
               unit.icon = service.get('icon');
+            } else {
+              console.error('Unit ' + unit.id + ' has no service.');
             }
-            // XXX What to do if there is no icon?
           });
           return units;
         },
