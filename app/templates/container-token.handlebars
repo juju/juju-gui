@@ -1,11 +1,16 @@
 <div class="token">
-  <span class="title">{{ displayName }}</span>
+  <div class="top">
+    <span class="title">{{ displayName }}</span>
+    <ul class="service-icons">
+      {{#units}}
+        <li class="unit">
+          <img src="{{icon}}" alt="{{service}}"/>
+          <span class="name">{{displayName}}</span>
+        </li>
+      {{/units}}
+    </ul>
+  </div>
   <span class="delete">
-    <i class="sprite token-delete"></i>
-  </span>
-  <span class="service-icons">
-    {{#units}}
-    <img src="{{icon}}" alt="{{service}}"/> {{displayName}}
-    {{/units}}
+    <i class="sprite mv-token-destroy"></i>
   </span>
 </div>

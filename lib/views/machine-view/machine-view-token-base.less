@@ -1,14 +1,22 @@
 .token {
+    .border-box;
     position: relative;
     display: block;
+    min-height: 40px;
+    padding: 10px 20px;
+    border-bottom: 1px solid @machine-view-border-colour;
     cursor: pointer;
-    color: #dd4814;
 
     &.active {
         background-color: #eee;
 
-        .title {
-            margin-bottom: 10px;
+        .top {
+            overflow: visible;
+
+            .title,
+            .service-icons {
+                height: auto;
+            }
         }
         .delete {
             display: block;
@@ -22,12 +30,37 @@
     span {
         display: block;
     }
+    .top {
+        .display-flex;
+        overflow: hidden;
+
+        .title {
+            .flex-basis(auto);
+            margin-right: 10px;
+        }
+        .title,
+        .service-icons {
+            height: 20px;
+        }
+    }
     .delete {
+        display: none;
         position: absolute;
         right: 20px;
         cursor: pointer;
     }
-    .delete {
-        display: none;
+    .service-icons {
+        .flex(1);
+        margin-top: -5px;
+
+        .unit {
+            display: block;
+            float: right;
+            margin: 5px 0 0 5px;
+        }
+        img {
+            width: 20px;
+            height: 20px;
+        }
     }
 }

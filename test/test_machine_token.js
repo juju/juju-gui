@@ -124,6 +124,19 @@ describe('machine token view', function() {
 
   });
 
+  it('display a message when no hardware is available', function() {
+    var machine = {
+      id: 0,
+      hardware: {}
+    };
+    var view = new View({
+      container: container,
+      machine: machine
+    }).render();
+    assert.equal(view.get('container').one('.details').get('text').trim(),
+                 'Hardware details not available');
+  });
+
   it('gets one icon for each service deployed on it', function() {
     // We don't need full serviceunits for the test, just enough to show the
     // rendering.
