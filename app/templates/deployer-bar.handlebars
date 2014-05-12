@@ -1,35 +1,36 @@
-<div class="right">
-    <div class="pre-summary">
-        <span class="import-export">
-            <a href="">Import</a>
-            <a href="">Export</a>
-        </span>
-        <a href="" class="button deploy-button">Deploy</a>
-    </div>
-    <div class="post-summary">
-        <p>Confirm will deploy all changes</p>
-        <a href="" class="button cancel-button">Cancel</a>
-        <a href="" class="button confirm-button">Confirm</a>
-    </div>
-</div>
-<ul class="action-list">
-    <li>
-        <a href="" class="link">
-            {{ changeCount }} changes
-            <span class="expand">
-                <i class="sprite expand_icon more"></i>
-                <i class="sprite contract_icon less"></i>
+<div class="bar">
+    <div class="right">
+        <div class="pre-summary">
+            <span class="import-export">
+                <a href="">Import</a>
+                <a href="">Export</a>
             </span>
-        </a>
-    </li>
-    <li class="change">
-        {{ latestChangeDescription }}
-    </li>
-</ul>
-
+            <a href="" class="button deploy-button">Deploy</a>
+        </div>
+        <div class="post-summary">
+            <p>Confirm will deploy all changes</p>
+            <a href="" class="button cancel-button">Cancel</a>
+            <a href="" class="button confirm-button">Confirm</a>
+        </div>
+    </div>
+    <ul class="action-list">
+        <li>
+            <a href="" class="link">
+                {{ changeCount }} changes
+                <span class="expand">
+                    <i class="sprite expand_icon more"></i>
+                    <i class="sprite contract_icon less"></i>
+                </span>
+            </a>
+        </li>
+        <li class="change">
+            {{ latestChangeDescription }}
+        </li>
+    </ul>
+</div>
 <aside class="summary">
     <header>
-        <h2 class="title">These change will be deployed to: {{ machineName }}</h2>
+        <h2 class="title">These changes will be deployed to: {{ machineName }}</h2>
         <div class="right">
             <ul class="action-list">
                 <li><a href="" class="min"><i class="sprite DB-expand-01"></i></a></li>
@@ -69,3 +70,4 @@
         </div>
     </section>
 </aside>
+<div class="cover"></div>

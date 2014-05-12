@@ -1,37 +1,79 @@
 .deployer-bar {
+    .bar {
+        box-sizing: border-box;
+        position: absolute;
+        z-index: 652;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: @deployer-bar-height;
+        background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
 
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 650;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: @deployer-bar-height;
-    background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
-
-    time {
-        color: #bfbab5;
-        margin-left: 7px;
-    }
-    a.button {
-        // Using a variable here because LESS strips commas in mixin args.
-        @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
-        .create-box-shadow(@box-shadow);
-        .create-border-radius(@border-radius);
-        display: inline-block;
-        height: 30px;
-        padding: 0 20px;
-        background-color: @charm-panel-orange;
-        color: #fff;
-        line-height: 30px;
-    }
-    .expand {
-        margin-left: 10px;
-
-        .less {
-            display: none;
+        time {
+            color: #bfbab5;
+            margin-left: 7px;
         }
+        a.button {
+            // Using a variable here because LESS strips commas in mixin args.
+            @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
+            .create-box-shadow(@box-shadow);
+            .create-border-radius(@border-radius);
+            display: inline-block;
+            height: 30px;
+            padding: 0 20px;
+            background-color: @charm-panel-orange;
+            color: #fff;
+            line-height: 30px;
+        }
+        .expand {
+            margin-left: 10px;
+
+            .less {
+                display: none;
+            }
+        }
+        .right {
+            margin-right: 20px;
+
+            a.button {
+                margin-left: 20px;
+            }
+            .import-export {
+                a {
+                    &:first-child:after {
+                        content: '';
+                        display: inline-block;
+                        height: 16px;
+                        margin: 0 5px 0 8px;
+                        border-right: 1px solid #bfbab5;
+                        vertical-align: middle;
+                    }
+                }
+            }
+            .post-summary {
+                display: none;
+
+                p {
+                    display: inline;
+                }
+                .cancel-button {
+                    background: #D6D6D6;
+                    color: #333;
+                }
+                .confirm-button {
+                    margin-left: 5px;
+                }
+            }
+            .pre-summary {
+                display: block;
+            }
+        }
+    }
+    .right {
+            float: right;
+            height: 50px;
+            line-height: 50px;
     }
     ul.action-list {
         margin: 0;
@@ -61,50 +103,10 @@
             }
         }
     }
-    .right {
-        float: right;
-        height: 50px;
-        margin-right: 20px;
-        line-height: 50px;
-
-        a.button {
-            margin-left: 20px;
-        }
-        .import-export {
-            a {
-                &:first-child:after {
-                    content: '';
-                    display: inline-block;
-                    height: 16px;
-                    margin: 0 5px 0 8px;
-                    border-right: 1px solid #bfbab5;
-                    vertical-align: middle;
-                }
-            }
-        }
-        .post-summary {
-            display: none;
-
-            p {
-                display: inline;
-            }
-            .cancel-button {
-                background: #D6D6D6;
-                color: #333;
-            }
-            .confirm-button {
-                margin-left: 5px;
-            }
-        }
-        .pre-summary {
-            display: block;
-        }
-    }
-
-
     .summary {
         display: none;
         position: absolute;
+        z-index: 651;
         bottom: 50px;
         left: 0;
         height: 450px;
@@ -168,14 +170,26 @@
             }
         }
     }
+    .cover {
+        display: none;
+        position: absolute;
+        z-index: 650;
+        top: @navbar-height;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
     &.summary-open {
         .summary,
-        .post-summary {
+        .bar .post-summary {
             display: block;
         }
-        .pre-summary {
+        .bar .pre-summary {
             display: none;
         }
-
+        .cover {
+            display: block;
+        }
     }
 }
