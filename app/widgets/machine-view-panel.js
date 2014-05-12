@@ -318,8 +318,8 @@ YUI.add('machine-view-panel', function(Y) {
           elements.each(function(element) {
             if (!element.getData('exists')) {
               // If the element exists in the dom, but not in the model
-              // list then it must have been remove, so remove it from
-              // the dom.
+              // list then it must have been removed from the DB, so remove it
+              // from the dom.
               if (element.one('.token').hasClass('active')) {
                 // If the selected model was removed then stop showing
                 // its containers.
