@@ -18,13 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Drop target view extension', function() {
+describe('MV drop target view extension', function() {
 
   var Y, juju, utils, view, View;
 
   before(function(done) {
-    var requires = ['base', 'base-build', 'event', 'drop-target-view-extension',
-      'juju-tests-utils'];
+    var requires = ['base', 'base-build', 'event', 'juju-tests-utils',
+      'mv-drop-target-view-extension'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           juju = Y.namespace('juju');
           utils = Y.namespace('juju-tests.utils');
@@ -34,7 +34,7 @@ describe('Drop target view extension', function() {
 
   beforeEach(function() {
     View = Y.Base.create(
-        'deployer', Y.Base, [juju.views.DropTargetViewExtension], {});
+        'deployer', Y.Base, [juju.views.MVDropTargetViewExtension], {});
     view = new View();
   });
 

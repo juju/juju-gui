@@ -85,7 +85,14 @@ YUI.add('machine-view-panel', function(Y) {
           @method _showDraggingUI
           @param {Object} e Custom drag start event facade.
         */
-        _showDraggingUI: function(e) {},
+        _showDraggingUI: function(e) {
+          this._machinesHeader.setDroppable();
+          // We only show that the container header is droppable if the user
+          // has selected a machine as a parent already.
+          if (this.get('selectedMachine')) {
+            this._containersHeader.setDroppable();
+          }
+        },
 
         /**
           Converts the machine view into the normal UI from it's dragging UI.
@@ -93,7 +100,10 @@ YUI.add('machine-view-panel', function(Y) {
           @method _hideDraggingUI
           @param {Object} e Custom drag end event facade.
         */
-        _hideDraggingUI: function(e) {},
+        _hideDraggingUI: function(e) {
+          this._machinesHeader.setNotDroppable();
+          this._containersHeader.setNotDroppable();
+        },
 
         /**
           Unit token drop handler. Handles the unit beind dropped on anything
@@ -102,7 +112,13 @@ YUI.add('machine-view-panel', function(Y) {
           @method _unitTokenDropHandler
           @param {Object} e The custom drop event facade.
         */
-        _unitTokenDropHandler: function(e) {},
+        _unitTokenDropHandler: function(e) {
+          var parentId = this.get('selectedMachine');
+          this.get('env').addMachines([{
+            containerType: 'lxc',
+            parentId: parentId
+          }]);
+        },
 
         /**
          * Display containers for the selected machine.
@@ -117,6 +133,9 @@ YUI.add('machine-view-panel', function(Y) {
               parentId = selected.ancestor().getData('id'),
               containers = this.get('db').machines.filterByParent(parentId);
           e.preventDefault();
+          // A lot of things in the machine view rely on knowing when the user
+          // selects a machine.
+          this.set('selectedMachine', parentId);
           // Select the active token.
           machineTokens.removeClass('active');
           selected.addClass('active');
@@ -151,15 +170,18 @@ YUI.add('machine-view-panel', function(Y) {
                 action: 'New machine',
                 dropLabel: 'Create new machine'
               });
+          this._machinesHeader.addTarget(this);
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'New container',
                 dropLabel: 'Create new container'
               });
+          this._containersHeader.addTarget(this);
           this._unplacedHeader = this._renderHeader(
               '.column.unplaced .head', {
                 title: 'Unplaced units'
               });
+          this._unplacedHeader.addTarget(this);
         },
 
         /**
@@ -515,7 +537,23 @@ YUI.add('machine-view-panel', function(Y) {
             @attribute db
             @type {Object}
           */
-          db: {}
+          db: {},
+
+          /**
+            Reference to the application env
+
+            @attribute env
+            @type {Object}
+          */
+          env: {},
+
+          /**
+            The currently selected machine id.
+
+            @attribute selectedMachine
+            @type {String}
+          */
+          selectedMachine: {}
         }
       });
 

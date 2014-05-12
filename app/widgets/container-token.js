@@ -37,7 +37,7 @@ YUI.add('container-token', function(Y) {
    */
   var ContainerToken = Y.Base.create('ContainerToken', Y.View,
       [
-        views.DropTargetViewExtension
+        views.MVDropTargetViewExtension
       ], {
         template: Templates['container-token'],
 
@@ -118,6 +118,6 @@ YUI.add('container-token', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
-    'drop-target-view-extension'
+    'mv-drop-target-view-extension'
   ]
 });
