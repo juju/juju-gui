@@ -116,7 +116,8 @@ YUI.add('deployer-bar', function(Y) {
           latestChangeDescription: '',
           deployServices: this._getDeployedServices(ecs),
           addedRelations: this._getAddRelations(ecs),
-          addedUnits: this._getAddUnits(ecs)
+          addedUnits: this._getAddUnits(ecs),
+          addedMachines: this._getAddMachines(ecs)
         }));
       }
 
@@ -223,6 +224,15 @@ YUI.add('deployer-bar', function(Y) {
                 latest.command.args[0][0] +
                 ' and ' +
                 latest.command.args[1][0];
+            break;
+          case '_addMachines':
+            var machineType = latest.command.args[0][0].parentId ?
+                'container' : 'machine';
+            icon = '<i class="sprite ' + machineType + '-created01"></i>';
+            description = latest.command.args[0].length +
+                ' ' + machineType +
+                (latest.command.args[0].length !== 1 ? 's have' : ' has') +
+                ' been added.';
             break;
           default:
             icon = '<i class="sprite service-exposed"></i>';
@@ -339,6 +349,29 @@ YUI.add('deployer-bar', function(Y) {
               icon: this._getServiceIconUrl(serviceName),
               serviceName: serviceName,
               numUnits: command.args[1]
+            });
+          }
+        }
+      }
+      return returnSet;
+    },
+
+    /**
+    * Pull out all addMachines changes from the changeset to display to the
+    * user.
+    *
+    * @method _getAddMachines
+    * @param {Object} ecs The environment change set.
+    */
+    _getAddMachines: function(ecs) {
+      var returnSet = [];
+      for (var key in ecs.changeSet) {
+        if (ecs.changeSet[key]) {
+          var command = ecs.changeSet[key].command;
+          if (command.method === '_addMachines') {
+            /* jshint -W083 */
+            command.args[0].forEach(function(machine) {
+              returnSet.push(machine);
             });
           }
         }

@@ -128,4 +128,19 @@ describe('deployer bar view', function() {
     });
   });
 
+  // XXX see above
+  it.skip('retrieves all the machine changes', function() {
+    var machine = {};
+    var container = {
+      parentId: ecs.lazyAddMachines([[machine]]), containerType: 'lxc'
+    };
+    // Add a second machine and a container on the first.
+    ecs.lazyAddMachines([[machine, container]]);
+    var results = view._getAddMachines(ecs);
+    assert.lengthOf(results, 3);
+    assert.deepEqual(results[0], machine);
+    assert.deepEqual(results[1], machine);
+    assert.deepEqual(results[2], container);
+  });
+
 });
