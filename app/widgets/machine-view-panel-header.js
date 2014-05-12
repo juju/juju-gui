@@ -39,7 +39,8 @@ YUI.add('machine-view-panel-header', function(Y) {
       'MachineViewPanelHeaderView',
       Y.View,
       [
-        Y.Event.EventTracker
+        Y.Event.EventTracker,
+        views.MVDropTargetViewExtension
       ], {
         template: Templates['machine-view-panel-header'],
 
@@ -97,6 +98,7 @@ YUI.add('machine-view-panel-header', function(Y) {
               attrs = this.getAttrs();
           container.setHTML(this.template(attrs));
           container.addClass('machine-view-panel-header');
+          this._attachDragEvents('.drop');
           return this;
         }
       });
@@ -140,6 +142,7 @@ YUI.add('machine-view-panel-header', function(Y) {
     'event-tracker',
     'node',
     'handlebars',
-    'juju-templates'
+    'juju-templates',
+    'mv-drop-target-view-extension'
   ]
 });

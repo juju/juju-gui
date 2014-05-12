@@ -81,4 +81,15 @@ describe('container token view', function() {
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         false);
   });
+
+  it('mixes in the DropTargetViewExtension', function() {
+    assert.equal(typeof view._attachDragEvents, 'function');
+  });
+
+  it('attaches the drag events on render', function() {
+    var attachDragStub = utils.makeStubMethod(view, '_attachDragEvents');
+    this._cleanups.push(attachDragStub.reset);
+    view.render();
+    assert.equal(attachDragStub.calledOnce(), true);
+  });
 });

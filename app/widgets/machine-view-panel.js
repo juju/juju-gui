@@ -56,15 +56,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @method initializer
          */
         initializer: function() {
-          this._bindModelEvents();
+          this._bindEvents();
         },
 
         /**
          * Bind the events to the models.
          *
-         * @method _bindModelEvents
+         * @method _bindEvents
          */
-        _bindModelEvents: function() {
+        _bindEvents: function() {
           this.addEvent(
               this.get('db').machines.after(['add', 'remove', '*:change'],
                   this._updateMachines, this)
@@ -74,6 +74,50 @@ YUI.add('machine-view-panel', function(Y) {
               this.get('db').units.after(['add', 'remove', '*:change'],
                   this._renderServiceUnitTokens, this)
           );
+          this.on('*:unit-token-drag-start', this._showDraggingUI, this);
+          this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
+          this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
+        },
+
+        /**
+          Converts the machine view into the dragging UI.
+
+          @method _showDraggingUI
+          @param {Object} e Custom drag start event facade.
+        */
+        _showDraggingUI: function(e) {
+          this._machinesHeader.setDroppable();
+          // We only show that the container header is droppable if the user
+          // has selected a machine as a parent already.
+          if (this.get('selectedMachine')) {
+            this._containersHeader.setDroppable();
+          }
+        },
+
+        /**
+          Converts the machine view into the normal UI from it's dragging UI.
+
+          @method _hideDraggingUI
+          @param {Object} e Custom drag end event facade.
+        */
+        _hideDraggingUI: function(e) {
+          this._machinesHeader.setNotDroppable();
+          this._containersHeader.setNotDroppable();
+        },
+
+        /**
+          Unit token drop handler. Handles the unit beind dropped on anything
+          in the machine view.
+
+          @method _unitTokenDropHandler
+          @param {Object} e The custom drop event facade.
+        */
+        _unitTokenDropHandler: function(e) {
+          var parentId = this.get('selectedMachine');
+          this.get('env').addMachines([{
+            containerType: 'lxc',
+            parentId: parentId
+          }]);
         },
 
         /**
@@ -89,6 +133,9 @@ YUI.add('machine-view-panel', function(Y) {
               parentId = selected.ancestor().getData('id'),
               containers = this.get('db').machines.filterByParent(parentId);
           e.preventDefault();
+          // A lot of things in the machine view rely on knowing when the user
+          // selects a machine.
+          this.set('selectedMachine', parentId);
           // Select the active token.
           machineTokens.removeClass('active');
           selected.addClass('active');
@@ -123,15 +170,18 @@ YUI.add('machine-view-panel', function(Y) {
                 action: 'New machine',
                 dropLabel: 'Create new machine'
               });
+          this._machinesHeader.addTarget(this);
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'New container',
                 dropLabel: 'Create new container'
               });
+          this._containersHeader.addTarget(this);
           this._unplacedHeader = this._renderHeader(
               '.column.unplaced .head', {
                 title: 'Unplaced units'
               });
+          this._unplacedHeader.addTarget(this);
         },
 
         /**
@@ -168,15 +218,19 @@ YUI.add('machine-view-panel', function(Y) {
               containers.length + ' container' + containersPlural + ', ' +
               numUnits + ' unit' + unitsPlural);
 
+          var token;
+
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
               var containerUnits = db.units.filterByMachine(container.id);
               this._updateMachineWithUnitData(container, containerUnits);
-              new views.ContainerToken({
+              token = new views.ContainerToken({
                 containerTemplate: '<li/>',
                 containerParent: containerParent,
                 machine: container
-              }).render();
+              });
+              token.render();
+              token.addTarget(this);
             }, this);
           }
 
@@ -185,11 +239,13 @@ YUI.add('machine-view-panel', function(Y) {
           if (units.length > 0) {
             var machine = {displayName: 'Bare metal'};
             this._updateMachineWithUnitData(machine, units);
-            new views.ContainerToken({
+            token = new views.ContainerToken({
               containerTemplate: '<li/>',
               containerParent: containerParent,
               machine: machine
-            }).render();
+            });
+            token.render();
+            token.addTarget(this);
           }
         },
 
@@ -361,14 +417,16 @@ YUI.add('machine-view-panel', function(Y) {
 
           this._smartUpdateList(units, unitList, function(model, list) {
             var node = Y.Node.create('<li></li>');
-            new views.ServiceUnitToken({
+            var token = new views.ServiceUnitToken({
               container: node,
               title: model.displayName,
               id: model.id,
               icon: model.icon,
               machines: self.get('db').machines.filterByParent(null),
               containers: [] // XXX Need to find query for getting containers
-            }).render();
+            });
+            token.render();
+            token.addTarget(self);
             list.append(node);
             return node;
           });
@@ -481,7 +539,23 @@ YUI.add('machine-view-panel', function(Y) {
             @attribute db
             @type {Object}
           */
-          db: {}
+          db: {},
+
+          /**
+            Reference to the application env
+
+            @attribute env
+            @type {Object}
+          */
+          env: {},
+
+          /**
+            The currently selected machine id.
+
+            @attribute selectedMachine
+            @type {String}
+          */
+          selectedMachine: {}
         }
       });
 

@@ -37,7 +37,7 @@ YUI.add('container-token', function(Y) {
    */
   var ContainerToken = Y.Base.create('ContainerToken', Y.View,
       [
-        Y.Event.EventTracker
+        views.MVDropTargetViewExtension
       ], {
         template: Templates['container-token'],
 
@@ -86,10 +86,11 @@ YUI.add('container-token', function(Y) {
               machine = this.get('machine');
           container.setHTML(this.template(machine));
           container.addClass('container-token');
+          this._attachDragEvents(); // drop-target-view-extension
           this.get('containerParent').append(container);
           return this;
-        },
-
+        }
+      }, {
         ATTRS: {
           /**
            * @attribute machine
@@ -116,6 +117,7 @@ YUI.add('container-token', function(Y) {
     'event-tracker',
     'node',
     'handlebars',
-    'juju-templates'
+    'juju-templates',
+    'mv-drop-target-view-extension'
   ]
 });

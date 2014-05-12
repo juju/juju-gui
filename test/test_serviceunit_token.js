@@ -55,6 +55,27 @@ describe('Service unit token', function() {
                  title, 'display names do not match');
   });
 
+  it('makes itself draggable on render', function() {
+    assert.equal(view.get('container').getAttribute('draggable'), 'true');
+  });
+
+  it('adds the unit id to the drag data', function() {
+    var handler = view._makeDragStartHandler({ id: 'foo' });
+    var dragData = {
+      _event: {
+        dataTransfer: {
+          setData: utils.makeStubFunction()
+        },
+        stopPropagation: utils.makeStubFunction() }};
+    handler.call(view, dragData);
+    var dragEvent = dragData._event;
+    assert.equal(dragEvent.stopPropagation.calledOnce(), true);
+    assert.equal(dragEvent.dataTransfer.setData.calledOnce(), true);
+    var setArgs = dragEvent.dataTransfer.setData.lastArguments();
+    assert.equal(setArgs[0], 'Text');
+    assert.equal(setArgs[1], '{"id":"foo"}');
+  });
+
   // XXX May 10 2014 The UI is very broken so this cannot be properly tested now
   // so it's being skipped until the token UI is fixed up.
   // This test should also not use isTrue/isFalse etc as it doesn't give trace

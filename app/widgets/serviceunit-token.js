@@ -35,7 +35,9 @@ YUI.add('juju-serviceunit-token', function(Y) {
    *
    * @class ServiceUnitToken
    */
-  var ServiceUnitToken = Y.Base.create('ServiceUnitToken', Y.View, [], {
+  var ServiceUnitToken = Y.Base.create('ServiceUnitToken', Y.View, [
+    Y.Event.EventTracker
+  ], {
     template: Templates['serviceunit-token'],
 
     events: {
@@ -91,6 +93,53 @@ YUI.add('juju-serviceunit-token', function(Y) {
     },
 
     /**
+      Makes the token draggable so it can be dropped on a machine, container,
+      or column header.
+
+      @method _makeDraggable
+    */
+    _makeDraggable: function() {
+      var container = this.get('container');
+      container.setAttribute('draggable', 'true');
+      this.addEvent(container.on('dragstart',
+          this._makeDragStartHandler(this.getAttrs()), this));
+      this.addEvent(container.on('dragend', this._fireDragEndEvent, this));
+    },
+
+    /**
+      Fires the unit-token-drag-end event
+
+      @method _fireDragEndEvent
+    */
+    _fireDragEndEvent: function() {
+      this.fire('unit-token-drag-end');
+    },
+
+    /**
+      Generate a function that generates the drag start handler data when
+      the drag starts.
+
+      @method _makeDragStartHandler
+      @param {Object} attrs The tokens attributes.
+      @return {Function} The drag start handler function.
+    */
+    _makeDragStartHandler: function(attrs) {
+      return function(e) {
+        var evt = e._event; // We need the real event not the YUI wrapped one.
+        var dataTransfer = evt.dataTransfer;
+        dataTransfer.effectAllowed = 'move';
+        var dragData = {
+          id: attrs.id
+        };
+        dataTransfer.setData('Text', JSON.stringify(dragData));
+        // This event is registered on many nested elements, but we only have
+        // to handle the drag start once, so stop now.
+        evt.stopPropagation();
+        this.fire('unit-token-drag-start');
+      };
+    },
+
+    /**
      * Sets up the DOM nodes and renders them to the DOM.
      *
      * @method render
@@ -101,6 +150,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
       container.setHTML(this.template(attrs));
       container.addClass('serviceunit-token');
       container.setAttribute('data-id', this.get('id'));
+      this._makeDraggable();
       return this;
     },
 
