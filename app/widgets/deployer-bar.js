@@ -149,7 +149,7 @@ YUI.add('deployer-bar', function(Y) {
         // the line below everything seems to work just fine.
         this.descriptionTimer = window.setTimeout(
             Y.bind(this._hideChangeDescription, this),
-            2000);
+            4000);
       }
     },
 
@@ -171,13 +171,6 @@ YUI.add('deployer-bar', function(Y) {
       @method _hideChangeDescription
     */
     _hideChangeDescription: function() {
-      var container = this.get('container'),
-          ecs = this.get('ecs');
-      var changes = this._getChangeCount(ecs);
-      container.setHTML(this.template({
-        change_count: changes,
-        latest_change_description: ''
-      }));
       this.get('container').one('.action-list .change').set('text', '');
       window.clearTimeout(this.descriptionTimer);
     },
