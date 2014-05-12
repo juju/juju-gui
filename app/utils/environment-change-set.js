@@ -32,6 +32,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     initializer: function() {
       this.changeSet = {};
+      this.currentCommit = [];
     },
 
     /* ECS methods */
@@ -542,6 +543,13 @@ YUI.add('environment-change-set', function(Y) {
       return this._createNewRecord('addUnits', command, parent);
     },
 
+    /**
+      Given a Unit ID, retrieve the changeSet record for that unit.
+
+      @method _retrieveUnitRecord
+      @param {String} unitId The ID of the unit to retrieve.
+      @return {Object} the unit
+    */
     _retrieveUnitRecord: function(unitId) {
       var record;
       Y.Object.some(this.changeSet, function(value, key) {
@@ -555,6 +563,13 @@ YUI.add('environment-change-set', function(Y) {
       return record;
     },
 
+    /**
+      Place a unit on a machine or container.
+
+      @method placeUnit
+      @param {Object} unit The unit to place.
+      @param {String} machineId The id of the destination machine.
+    */
     placeUnit: function(unit, machineId) {
       var record = this._retrieveUnitRecord(unit.id);
       if (!record) {
