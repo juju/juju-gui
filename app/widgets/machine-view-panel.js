@@ -417,14 +417,16 @@ YUI.add('machine-view-panel', function(Y) {
 
           this._smartUpdateList(units, unitList, function(model, list) {
             var node = Y.Node.create('<li></li>');
-            new views.ServiceUnitToken({
+            var token = new views.ServiceUnitToken({
               container: node,
               title: model.displayName,
               id: model.id,
               icon: model.icon,
               machines: self.get('db').machines.filterByParent(null),
               containers: [] // XXX Need to find query for getting containers
-            }).render();
+            });
+            token.render();
+            token.addTarget(self);
             list.append(node);
             return node;
           });

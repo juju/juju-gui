@@ -102,25 +102,26 @@ describe('machine view panel view', function() {
 
   describe('unplaced unit list', function() {
     it('renders unplaced units on render', function() {
+      view.render();
       var db = view.get('db');
       db.services.add({id: 'mysql'});
       db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
-      view.render();
       var tokens = Y.all('.serviceunit-token');
-      assert.equal(tokens.size(), 2);
+      assert.equal(tokens.size(), 3);
     });
 
     it('displays a message when there are no unplaced units', function() {
       view.render();
+      view.get('db').units.remove(0);
       var message = view.get('container').one('.column.unplaced .all-placed');
       assert.equal(message.getStyle('display'), 'block');
     });
 
     it('doesn\'t show a message when there are no unplaced units', function() {
+      view.render();
       var db = view.get('db');
       db.services.add({id: 'mysql'});
       db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
-      view.render();
       var message = view.get('container').one('.column.unplaced .all-placed');
       assert.equal(message.getStyle('display'), 'none');
     });
