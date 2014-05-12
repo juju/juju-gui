@@ -28,21 +28,6 @@
         </li>
     </ul>
 </div>
-<ul class="action-list">
-    <li>
-        <a href="" class="link">
-            {{ changeCount }} changes
-            <span class="expand">
-                <i class="sprite expand_icon more"></i>
-                <i class="sprite contract_icon less"></i>
-            </span>
-        </a>
-    </li>
-    <li class="change">
-        {{{ latestChangeDescription }}}
-    </li>
-</ul>
-
 <aside class="summary">
     <header>
         <h2 class="title">The following changes will be deployed</h2>
@@ -92,6 +77,36 @@
                                 <img src="{{icon}}" alt="" class="icon" />
                                 {{numUnits}} {{serviceName}}
                                 {{pluralize 'unit' numUnits}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
+                {{#if addedMachines.length}}
+                    <h3>
+                        {{addedMachines.length}}
+                        {{pluralize 'machine' addedMachines.length}} added
+                    </h3>
+                    <ul>
+                        {{#each addedMachines}}
+                            <li>
+                                <i class="sprite {{#if parentId}}container{{else}}machine{{/if}}-created02"></i>
+                                {{#if series}}
+                                    {{series}}
+                                {{/if}}
+                                {{#if parentId}}
+                                    {{containerType}} container on {{parentId}}
+                                {{else}}
+                                    root-level machine
+                                {{/if}}
+                                {{#if constraints}}
+                                    with constraints
+                                    {{#if jobs}}
+                                        and
+                                    {{/if}}
+                                {{/if}}
+                                {{#if jobs}}
+                                    with jobs: {{jobs}}
+                                {{/if}}
                             </li>
                         {{/each}}
                     </ul>
