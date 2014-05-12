@@ -79,7 +79,7 @@ YUI.add('deployer-bar', function(Y) {
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
       container.setHTML(this.template({
-        change_count: changes
+        changeCount: changes
       }));
       container.addClass('deployer-bar');
       ecs.on('changeSetModified', Y.bind(this.update, this));
@@ -139,8 +139,8 @@ YUI.add('deployer-bar', function(Y) {
       // wanted.
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
-          change_count: changes,
-          latest_change_description: latest
+          changeCount: changes,
+          latestChangeDescription: latest
         }));
         // XXX frankban 2014-05-12: the code below makes the changeset
         // description disappear the first time the panel is visited. Why
@@ -177,6 +177,7 @@ YUI.add('deployer-bar', function(Y) {
         change_count: changes,
         latest_change_description: ''
       }));
+      this.get('container').one('.action-list .change').set('text', '');
       window.clearTimeout(this.descriptionTimer);
     },
 
@@ -203,10 +204,17 @@ YUI.add('deployer-bar', function(Y) {
           time = null;
 
       if (latest && latest.command) {
+        // XXX: The add_unit is just the same as the service because adding
+        // the service also adds the unit. We need to look at the UX for
+        // units as follow up.
         switch (latest.command.method) {
           case '_deploy':
             icon = '<i class="sprite service-added"></i>';
             description = latest.command.args[1] + ' has been added.';
+            break;
+          case '_add_unit':
+            icon = '<i class="sprite service-added"></i>';
+            description = latest.command.args[0] + ' has been added.';
             break;
           case '_add_relation':
             icon = '<i class="sprite relation-added"></i>';
