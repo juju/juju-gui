@@ -42,31 +42,25 @@ YUI.add('environment-change-set', function(Y) {
       any commands down the line that require it within their own contexts.
       The command's idsFromResults should return an array.
 
-      @method _translateKeysToIds
-      @param {Object} evt The event object, with a record (the current command)
-        and a result (the results of the RPC passed to the wrapped callback).
+      @method _updateChangesetFromResults
+      @param {Object} record The current command.
+      @param {Object} results The data returned by calling the command.
     */
-    _translateKeysToIds: function(record, result) {
-      var command = record.command;
-      var key = record.key;
-
-      if (command.idsFromResults) {
-        for (var level = this.currentLevel + 1;
-            level < this.currentCommit.length;
-            level += 1) {
-          /* jshint -W083 */
-          this.currentCommit[level].forEach(function(record) {
-            if (record.command.keyToId) {
-              // XXX Makyo 2014-05-11
-              // This currently only allows a single ID per changeSet entry;
-              // this may be expanded in the future, but current design will
-              // not require more.
-              var id = command.idsFromResults.apply(this, result)[0];
-              this.changeSet[record.key].command.keyToId(key, id);
-            } // if
-          }, this); // foreach
-        } // for
-      } // if
+    _updateChangesetFromResults: function(record, results) {
+      for (var level = this.currentLevel + 1;
+          level < this.currentCommit.length;
+          level += 1) {
+        /* jshint -W083 */
+        this.currentCommit[level].forEach(function(subrecord) {
+          if (subrecord.command.onParentResults &&
+              subrecord.parents &&
+              subrecord.parents.indexOf(record.key) !== -1) {
+            // Possibly mutate the original record on the changeset.
+            this.changeSet[subrecord.key].command.onParentResults(
+                record, results);
+          } // if
+        }, this); // foreach
+      } // for
     },
 
     /**
@@ -186,7 +180,7 @@ YUI.add('environment-change-set', function(Y) {
         // count of records to complete and deleting it from the changeset.
         self.levelRecordCount -= 1;
         delete self.changeSet[record.id];
-        self._translateKeysToIds(record, arguments);
+        self._updateChangesetFromResults(record, arguments);
         self.fire('changeSetModified');
         return result;
       }
@@ -441,17 +435,19 @@ YUI.add('environment-change-set', function(Y) {
 
       @method lazyAddMachines
       @param {Array} args The arguments to add the machines with.
+      @param {Object} options The ECS options including a modelId field
+        representing the ghost machine model instance identifier.
     */
-    lazyAddMachines: function(args) {
+    lazyAddMachines: function(args, options) {
       var parent = [];
-      // Search for and add the service to parent.
+      // Search for and add the container to its parent machine.
       args[0].forEach(function(param) {
         if (param.parentId) {
           Y.Object.each(this.changeSet, function(value, key) {
-            if (value.command.method === '_addMachines') {
-              if (key === param.parentId) {
-                parent.push(key);
-              }
+            var command = value.command;
+            if (command.method === '_addMachines' &&
+                command.options.modelId === param.parentId) {
+              parent.push(key);
             }
           }, this);
         }
@@ -459,32 +455,28 @@ YUI.add('environment-change-set', function(Y) {
       var command = {
         method: '_addMachines',
         args: args,
+        options: options,
         /**
-          Given the results of an API call to add machines, extract the IDs as
-          the state server returns them.
-
-          @method idsFromResults
-          @param {object} results The results passed to the RPC callback.
-        */
-        idsFromResults: function(results) {
-          return results.machines.map(function(result) {
-            return result.name;
-          });
-        },
-        /**
-          Replace changeSet keys with real machine IDs returned from
-          idsFromResults.
+          Replace changeSet keys with real machine IDs returned from the call.
 
           Note: this only works with one machine for the moment.
 
-          @method keyToId
-          @param {String} key The changeSet key
-          @param {String} id The machine id.
+          @method onParentResults
+          @param {String} record The changeSet record which generated the
+            results.
+          @param {String} results The data returned by the API call.
         */
-        keyToId: function(key, id) {
-          this.args[0].forEach(function(param) {
-            param.parentId = param.parentId.replace(key, id);
-          });
+        onParentResults: function(record, results) {
+          // Assume the machine we are interested in is the first one.
+          if (record.command.method === '_addMachines') {
+            // We are only interested in machine parent results.
+            var currentParentId = record.command.options.modelId;
+            var newParentId = results[0].machines[0].name;
+            this.args[0].forEach(function(param) {
+              param.parentId = param.parentId.replace(
+                  currentParentId, newParentId);
+            });
+          }
         }
       };
       return this._createNewRecord('addMachines', command, parent);
@@ -498,8 +490,10 @@ YUI.add('environment-change-set', function(Y) {
 
       @method lazyAddUnits
       @param {Array} args The arguments to add the units with.
+      @param {Object} options The ECS options including a modelId field
+        representing the ghost unit model instance identifier.
     */
-    lazyAddUnits: function(args) {
+    lazyAddUnits: function(args, options) {
       var parent = [];
       // Search for and add the service to parent.
       Y.Object.each(this.changeSet, function(value, key) {
@@ -510,21 +504,79 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       });
-      // If toMachine is specified, search for and add the machine to parent
-      if (args[2]) {
+      // If toMachine is specified, search for and add the machine to parent.
+      var toMachine = args[2];
+      if (toMachine) {
         Y.Object.each(this.changeSet, function(value, key) {
-          if (value.command.method === '_addMachines') {
-            if (key === args[2]) {
-              parent.push(key);
-            }
+          var command = value.command;
+          if (command.method === '_addMachines' &&
+              command.options.modelId === toMachine) {
+            parent.push(key);
           }
         }, this);
       }
       var command = {
         method: '_add_unit',
-        args: args
+        args: args,
+        options: options,
+        /**
+          Replace the toMachine argument with the real one in results, returned
+          by the addMachines API call.
+
+          Note: this only works with one machine for the moment.
+
+          @method onParentResults
+          @param {String} record The changeSet record which generated the
+            results.
+          @param {String} results The data returned by the API call.
+        */
+        onParentResults: function(record, results) {
+          // Assume the machine we are interested in is the first one.
+          if (record.command.method === '_addMachines') {
+            // We are only interested in machine parent results.
+            var newMachineId = results[0].machines[0].name;
+            this.args[2] = newMachineId;
+          }
+        }
       };
       return this._createNewRecord('addUnits', command, parent);
+    },
+
+    _retrieveUnitRecord: function(unitId) {
+      var record;
+      Y.Object.some(this.changeSet, function(value, key) {
+        var command = value.command;
+        if (command.method === '_add_unit' &&
+            command.options.modelId === unitId) {
+          record = value;
+          return true;
+        }
+      });
+      return record;
+    },
+
+    placeUnit: function(unit, machineId) {
+      var record = this._retrieveUnitRecord(unit.id);
+      if (!record) {
+        throw new Error(
+            'attempted to place a unit which has not been added: ' + unit.id
+        );
+      }
+      // Remove all the current addMachines parents
+      // (they can be there if the unit was already placed).
+      record.parents = record.parents.filter(function(parent) {
+        return parent.indexOf('addMachines') !== 0;
+      });
+      // Add the new addMachines parent.
+      Y.Object.each(this.changeSet, function(value, key) {
+        var command = value.command;
+        if (command.method === '_addMachines' &&
+            command.options.modelId === machineId) {
+          record.parents.push(key);
+        }
+      }, this);
+      // Place the unit in the db.
+      unit.machine = machineId;
     }
 
     /* End private environment methods. */
