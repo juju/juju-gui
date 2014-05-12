@@ -24,10 +24,25 @@
             </a>
         </li>
         <li class="change">
-            {{ latestChangeDescription }}
+          {{{ latestChangeDescription }}}
         </li>
     </ul>
 </div>
+<ul class="action-list">
+    <li>
+        <a href="" class="link">
+            {{ changeCount }} changes
+            <span class="expand">
+                <i class="sprite expand_icon more"></i>
+                <i class="sprite contract_icon less"></i>
+            </span>
+        </a>
+    </li>
+    <li class="change">
+        {{{ latestChangeDescription }}}
+    </li>
+</ul>
+
 <aside class="summary">
     <header>
         <h2 class="title">The following changes will be deployed</h2>
