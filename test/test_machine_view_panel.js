@@ -194,19 +194,13 @@ describe('machine view panel view', function() {
       view._bindEvents();
       view.set('selectedMachine', 1);
       view.set('env', {
-        addMachines: utils.makeStubFunction(),
         placeUnit: utils.makeStubFunction()
       });
       view.set('db', {
-        machines: { add: utils.makeStubFunction({}) },
         units: { getById: utils.makeStubFunction() }
       });
       onStub.lastArguments()[1].call(view, {});
       var viewEnv = view.get('env');
-      assert.deepEqual(viewEnv.addMachines.lastArguments()[0], [{
-        containerType: 'lxc',
-        parentId: 1
-      }]);
       assert.equal(viewEnv.placeUnit.calledOnce(), true);
       assert.equal(renderContainerToken.calledOnce(), true);
     });

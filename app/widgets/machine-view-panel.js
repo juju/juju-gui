@@ -118,24 +118,11 @@ YUI.add('machine-view-panel', function(Y) {
           var parentId = this.get('selectedMachine'),
               env = this.get('env'),
               db = this.get('db');
-          // XXX This is a temporary hack for the demo to create a ghost
-          // container.
-          var container = db.machines.add({id: parentId + '/lxc/0'});
-          // Create a new container on the selected machine
-          env.addMachines([{
-            containerType: 'lxc',
-            parentId: parentId
-            // XXX A callback param MUST be provided even if it's just an empty
-            // function, the ECS relies on wrapping this function so if it's
-            // null it'll just stop executing. This should probably be handled
-            // properly on the ECS side. Jeff May 12 2014
-          }], function() {}, { modelId: container });
-          // Place the unplaced unit on the machine
           var unit = db.units.getById(e.unit);
-          env.placeUnit(unit, container.id);
+          env.placeUnit(unit, parentId);
           // XXX manually rerender the container column to show newly created
           // containers DEMO HACK.
-          this._renderContainerTokens([container], this.get('selectedMachine'));
+          this._renderContainerTokens([], this.get('selectedMachine'));
         },
 
         /**
@@ -192,7 +179,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'New container',
-                dropLabel: 'Create new container'
+                dropLabel: 'Co-locate to machine'
               });
           this._containersHeader.addTarget(this);
           this._unplacedHeader = this._renderHeader(
