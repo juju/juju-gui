@@ -114,15 +114,28 @@ YUI.add('machine-view-panel', function(Y) {
         */
         _unitTokenDropHandler: function(e) {
           // XXX Jeff May 12 2014 - This handler only supports dropping on the
-          // container columns header.
-          var parentId = this.get('selectedMachine'),
-              env = this.get('env'),
+          // machine column header.
+          var env = this.get('env'),
               db = this.get('db');
+          // XXX This is a temporary hack for the demo to create a ghost
+          // container.
+          var machineSize = String(db.machines.size());
+          var container = db.machines.add({id: machineSize});
+          // Create a new container on the selected machine
+          env.addMachines([{
+            // XXX A callback param MUST be provided even if it's just an empty
+            // function, the ECS relies on wrapping this function so if it's
+            // null it'll just stop executing. This should probably be handled
+            // properly on the ECS side. Jeff May 12 2014
+          }], function() {}, { modelId: container.id });
+          // // Place the unplaced unit on the machine
           var unit = db.units.getById(e.unit);
-          env.placeUnit(unit, parentId);
+          env.placeUnit(unit, container.id);
           // XXX manually rerender the container column to show newly created
           // containers DEMO HACK.
-          this._renderContainerTokens([], this.get('selectedMachine'));
+          Y.one('li.machine-token[data-id=' + machineSize + ']').remove();
+          this._updateMachines();
+          this._renderContainerTokens([container], this.get('selectedMachine'));
         },
 
         /**
@@ -179,7 +192,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'New container',
-                dropLabel: 'Co-locate to machine'
+                dropLabel: 'Create new container'
               });
           this._containersHeader.addTarget(this);
           this._unplacedHeader = this._renderHeader(
