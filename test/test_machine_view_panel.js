@@ -233,6 +233,20 @@ describe('machine view panel view', function() {
       });
     });
 
+    it('updates and re-renders a specific machine', function() {
+      view.render();
+      var node = container.one('.machines .content li');
+      assert.equal(node.all('.service-icons .unit').size(),
+                   machine.units.length, 'not all units have icons');
+      machine.units = [
+        {service: 'test1', icon: 'test1.svg'},
+        {service: 'test2', icon: 'test2.svg'}
+      ];
+      view._updateMachine(machine);
+      assert.equal(node.all('.service-icons .unit').size(),
+                   machine.units.length, 'icons not updated along with units');
+    });
+
     it('should add new tokens when machines are added', function() {
       view.render();
       var selector = '.machines .content li',
@@ -403,6 +417,18 @@ describe('machine view panel view', function() {
       unitModel.set('id', id);
       item = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(item, null, 'unit was not displayed post-update');
+    });
+
+    it('update a machine when a new unit is assigned to it', function() {
+      view.render();
+      var updateStub = utils.makeStubMethod(view, '_updateMachine'),
+          unitModel = units.revive(0),
+          machineId = '0';
+      this._cleanups.push(updateStub.reset);
+      unitModel.set('machine', machineId);
+      assert.equal(updateStub.calledOnce(), true);
+      var updateArgs = updateStub.lastArguments();
+      assert.equal(updateArgs[0], machineId);
     });
   });
 
