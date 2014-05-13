@@ -532,17 +532,18 @@ describe('test_model.js', function() {
         units.add([
           {id: 'django/0', machine: null},
           {id: 'django/42', machine: '42'},
-          {id: 'haproxy/4', machine: '0/lxc/1'},
+          {id: 'haproxy/4', machine: '1/lxc/1'},
           {id: 'django/47', machine: '47'},
           {id: 'rails/0', machine: '42'},
           {id: 'rails/1', machine: '42'},
-          {id: 'mysql/42', machine: '0/kvm/0/lxc/0'},
-          {id: 'rails/42', machine: '0'},
+          {id: 'mysql/42', machine: '1/kvm/0/lxc/0'},
+          {id: 'rails/42', machine: '1'},
           {id: 'postgres/1'},
-          {id: 'django/2', machine: '0/lxc/2'},
-          {id: 'rails/2', machine: '0/lxc/1'},
+          {id: 'django/2', machine: '1/lxc/2'},
+          {id: 'rails/2', machine: '1/lxc/1'},
           {id: 'postgres/2'},
-          {id: 'mysql/47', machine: '0/kvm/0/lxc/1'}
+          {id: 'mysql/47', machine: '1/kvm/0/lxc/1'},
+          {id: 'mysql/12', machine: '15/lxc/6'}
         ]);
       });
 
@@ -550,11 +551,16 @@ describe('test_model.js', function() {
         units.destroy();
       });
 
-      // Ensure the resulting units match the given identifier.
-      var assertUnits = function(resultingUnits, ids) {
-        var resultingIds = resultingUnits.map(function(unit) {
+      // Map a list of units to their ids.
+      var mapUnitIds = function(units) {
+        return units.map(function(unit) {
           return unit.id;
         });
+      };
+
+      // Ensure the resulting units match the given identifier.
+      var assertUnits = function(resultingUnits, ids) {
+        var resultingIds = mapUnitIds(resultingUnits);
         assert.deepEqual(resultingIds, ids);
       };
 
@@ -564,12 +570,12 @@ describe('test_model.js', function() {
       });
 
       it('returns all the units hosted by a specific container', function() {
-        var resultingUnits = units.filterByMachine('0/lxc/1');
+        var resultingUnits = units.filterByMachine('1/lxc/1');
         assertUnits(resultingUnits, ['haproxy/4', 'rails/2']);
       });
 
       it('returns the machine hosted units including children', function() {
-        var resultingUnits = units.filterByMachine('0', true);
+        var resultingUnits = units.filterByMachine('1', true);
         var expectedUnits = [
           'haproxy/4', 'mysql/42', 'rails/42', 'django/2', 'rails/2',
           'mysql/47'
@@ -577,8 +583,14 @@ describe('test_model.js', function() {
         assertUnits(resultingUnits, expectedUnits);
       });
 
+      it('should not return units with partially matching ids', function() {
+        var resultingUnits = mapUnitIds(units.filterByMachine('1', true));
+        assert.equal(resultingUnits.indexOf('mysql/12'), -1,
+            'This item should not be returned');
+      });
+
       it('returns the container hosted units including children', function() {
-        var resultingUnits = units.filterByMachine('0/kvm/0', true);
+        var resultingUnits = units.filterByMachine('1/kvm/0', true);
         assertUnits(resultingUnits, ['mysql/42', 'mysql/47']);
       });
 

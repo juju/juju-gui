@@ -713,7 +713,15 @@ YUI.add('juju-models', function(Y) {
         if (includeChildren) {
           // Filter by machine and the containers hosted by the machine.
           predicate = function(unit) {
-            return unit.machine && unit.machine.indexOf(machine) === 0;
+            if (machine && machine.toString().indexOf('/') >= 0) {
+              // If this is a container then match the entire string.
+              return unit.machine && unit.machine.indexOf(machine) === 0;
+            }
+            else {
+              // If this is a machine then match against the first token
+              // in the id. This prevents against '1' matching '15/lxc/5'.
+              return unit.machine && unit.machine.split('/')[0] === machine;
+            }
           };
         } else {
           // Filter by exact machine.
