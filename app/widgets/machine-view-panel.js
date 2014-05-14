@@ -67,16 +67,44 @@ YUI.add('machine-view-panel', function(Y) {
         _bindEvents: function() {
           this.addEvent(
               this.get('db').machines.after(['add', 'remove', '*:change'],
-                  this._updateMachines, this)
+                  this._onMachinesChange, this)
           );
 
           this.addEvent(
               this.get('db').units.after(['add', 'remove', '*:change'],
-                  this._renderServiceUnitTokens, this)
+                  this._onUnitsChange, this)
           );
+
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
           this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
+        },
+
+        /**
+          Handle changes to the units in the db unit model list.
+
+         @method _onUnitsChange
+         @param {Object} e Custom model change event facade.
+        */
+        _onUnitsChange: function(e) {
+          if (e.changed) {
+            // Need to update any machines that now have new units
+            var machineChanged = e.changed.machine;
+            if (machineChanged) {
+              this._updateMachine(machineChanged.newVal);
+            }
+          }
+          this._renderUnits();
+        },
+
+        /**
+          Handles changes to the machines in the db model list.
+
+         @method _onMachinesChange
+         @param {Object} e Custom model change event facade.
+        */
+        _onMachinesChange: function(e) {
+          this._renderMachines();
         },
 
         /**
@@ -266,9 +294,9 @@ YUI.add('machine-view-panel', function(Y) {
         /**
          * Render the machine token widgets.
          *
-         * @method _updateMachines
+         * @method _renderMachines
          */
-        _updateMachines: function() {
+        _renderMachines: function() {
           var machines = this.get('db').machines.filterByParent(null);
           var container = this.get('container');
           var machineList = container.one('.machines .content .items');
@@ -284,21 +312,49 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Find and re-render a specific machine token.
+         *
+         * @method _updateMachine
+         * @param {Integer} id the ID of the machine to update
+         */
+        // XXX: replace this with direct access to the upcoming _machineTokens
+        // list
+        _updateMachine: function(machineOrId) {
+          var id;
+          if (typeof machineOrId === 'string') {
+            id = machineOrId;
+          } else {
+            id = machineOrId.id;
+          }
+          var container = this.get('container'),
+              selector = '.machines .content .machine-token[data-id="{id}"]',
+              machineNode = container.one(Y.Lang.sub(selector, {id: id}));
+          if (machineNode) {
+            machineNode.replace(this._renderMachineToken(machineOrId));
+          }
+        },
+
+        /**
          * Render a machine token.
          *
          * @method _renderMachineToken
          * @param {Object} machine the machine object.
          * @param {Node} list the list node to append the machine to.
          */
-        _renderMachineToken: function(machine, list) {
-          var node = Y.Node.create('<li></li>');
-          var units = this.get('db').units.filterByMachine(machine.id, true);
+        _renderMachineToken: function(machineOrId) {
+          var machine;
+          if (typeof machineOrId === 'string') {
+            machine = this.get('db').machines.getById(machineOrId);
+          } else {
+            machine = machineOrId;
+          }
+          var node = Y.Node.create('<li></li>'),
+              units = this.get('db').units.filterByMachine(machine.id, true);
           this._updateMachineWithUnitData(machine, units);
           new views.MachineToken({
             container: node,
             machine: machine
           }).render();
-          list.append(node);
           return node;
         },
 
@@ -368,7 +424,8 @@ YUI.add('machine-view-panel', function(Y) {
             });
             if (!exists) {
               // If the model does not exist in the dom, render the token.
-              newElement = render(model, list);
+              newElement = render(model);
+              list.append(newElement);
               newElement.setData('exists', true);
             }
           }, this);
@@ -378,7 +435,8 @@ YUI.add('machine-view-panel', function(Y) {
               // If the element exists in the dom, but not in the model
               // list then it must have been removed from the DB, so remove it
               // from the dom.
-              if (element.one('.token').hasClass('active')) {
+              var token = element.one('.token');
+              if (token && token.hasClass('active')) {
                 // If the selected model was removed then stop showing
                 // its containers.
                 if (typeof cleanup === 'function') {
@@ -402,9 +460,9 @@ YUI.add('machine-view-panel', function(Y) {
         /**
          * Render the undeployed service unit tokens.
          *
-         * @method _renderServiceUnitTokens
+         * @method _renderUnits
          */
-        _renderServiceUnitTokens: function() {
+        _renderUnits: function() {
           var self = this,
               container = this.get('container'),
               units = this.get('db').units.filterByMachine(null),
@@ -429,7 +487,6 @@ YUI.add('machine-view-panel', function(Y) {
             });
             token.render();
             token.addTarget(self);
-            list.append(node);
             return node;
           });
         },
@@ -505,8 +562,8 @@ YUI.add('machine-view-panel', function(Y) {
           container.setHTML(this.template());
           container.addClass('machine-view-panel');
           this._renderHeaders();
-          this._updateMachines();
-          this._renderServiceUnitTokens();
+          this._renderMachines();
+          this._renderUnits();
           this._renderScaleUp();
           this._clearContainerColumn();
           return this;
