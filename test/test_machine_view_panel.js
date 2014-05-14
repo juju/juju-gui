@@ -100,30 +100,87 @@ describe('machine view panel view', function() {
         'Unplaced units');
   });
 
-  describe('unplaced unit list', function() {
-    it('renders unplaced units on render', function() {
+  describe('unplaced units column', function() {
+    it('should render a list of units', function() {
       view.render();
-      var db = view.get('db');
-      db.services.add({id: 'mysql'});
-      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
-      var tokens = Y.all('.serviceunit-token');
-      assert.equal(tokens.size(), 3);
+      var list = container.all('.unplaced .content li');
+      assert.equal(list.size(), units.size(),
+                   'models are out of sync with displayed list');
+      list.each(function(item, index) {
+        var u = units.item(index),
+            id = item.getAttribute('data-id');
+        assert.equal(id, u.id, 'displayed item does not match model');
+      });
     });
 
     it('displays a message when there are no unplaced units', function() {
+      var view = createViewNoUnits();
       view.render();
-      view.get('db').units.remove(0);
       var message = view.get('container').one('.column.unplaced .all-placed');
       assert.equal(message.getStyle('display'), 'block');
     });
 
     it('doesn\'t show a message when there are no unplaced units', function() {
       view.render();
-      var db = view.get('db');
-      db.services.add({id: 'mysql'});
-      db.units.add([{id: 'mysql/10'}, {id: 'mysql/11'}]);
       var message = view.get('container').one('.column.unplaced .all-placed');
       assert.equal(message.getStyle('display'), 'none');
+    });
+
+    it('should add new tokens when units are added', function() {
+      view.render();
+      var selector = '.unplaced .content li',
+          list = container.all(selector),
+          id = 'test/2';
+      assert.equal(list.size(), units.size(),
+                   'initial displayed list is out of sync with unplaced units');
+      units.add([{ id: id }]);
+      list = container.all(selector);
+      assert.equal(list.size(), units.size(),
+                   'final displayed list is out of sync with unplaced units');
+      var addedItem = container.one(selector + '[data-id="' + id + '"]');
+      assert.notEqual(addedItem, null,
+                      'unable to find added unit in the displayed list');
+    });
+
+    it('should remove tokens when units are deleted', function() {
+      view.render();
+      var selector = '.unplaced .content li',
+          list = container.all(selector);
+      assert.equal(list.size(), units.size(),
+                   'initial displayed list is out of sync with unplaced units');
+      units.remove(0);
+      list = container.all(selector);
+      assert.equal(list.size(), units.size(),
+                   'final displayed list is out of sync with unplaced units');
+      var deletedSelector = selector + '[data-id="test/1"]';
+      var deletedItem = container.one(deletedSelector);
+      assert.equal(deletedItem, null,
+                   'found the deleted unit still in the list');
+    });
+
+    it('should re-render token when a unit is updated', function() {
+      view.render();
+      var id = 'test/3',
+          unitModel = units.revive(0),
+          selector = '.unplaced .content li',
+          item = container.one(
+              selector + '[data-id="' + unitModel.get('id') + '"]');
+      assert.notEqual(item, null, 'unit was not initially displayed');
+      unitModel.set('id', id);
+      item = container.one(selector + '[data-id="' + id + '"]');
+      assert.notEqual(item, null, 'unit was not displayed post-update');
+    });
+
+    it('update a machine when a new unit is assigned to it', function() {
+      view.render();
+      var updateStub = utils.makeStubMethod(view, '_updateMachine'),
+          unitModel = units.revive(0),
+          machineId = '0';
+      this._cleanups.push(updateStub.reset);
+      unitModel.set('machine', machineId);
+      assert.equal(updateStub.calledOnce(), true);
+      var updateArgs = updateStub.lastArguments();
+      assert.equal(updateArgs[0], machineId);
     });
 
     it('listens for the drag start, end, drop events', function() {
@@ -220,7 +277,7 @@ describe('machine view panel view', function() {
     });
   });
 
-  describe('machine list', function() {
+  describe('machine column', function() {
     it('should render a list of machines', function() {
       view.render();
       var list = container.all('.machines .content li');
@@ -345,90 +402,6 @@ describe('machine view panel view', function() {
       var containerToken = container.one('.containers li .token');
       containerToken.simulate('click');
       assert.equal(containerToken.hasClass('active'), true);
-    });
-  });
-
-  describe('unplaced units column', function() {
-    it('should render a list of units', function() {
-      view.render();
-      var list = container.all('.unplaced .content li');
-      assert.equal(list.size(), units.size(),
-                   'models are out of sync with displayed list');
-      list.each(function(item, index) {
-        var u = units.item(index),
-            id = item.getAttribute('data-id');
-        assert.equal(id, u.id, 'displayed item does not match model');
-      });
-    });
-
-    it('displays a message when there are no unplaced units', function() {
-      var view = createViewNoUnits();
-      view.render();
-      var message = view.get('container').one('.column.unplaced .all-placed');
-      assert.equal(message.getStyle('display'), 'block');
-    });
-
-    it('doesn\'t show a message when there are no unplaced units', function() {
-      view.render();
-      var message = view.get('container').one('.column.unplaced .all-placed');
-      assert.equal(message.getStyle('display'), 'none');
-    });
-
-    it('should add new tokens when units are added', function() {
-      view.render();
-      var selector = '.unplaced .content li',
-          list = container.all(selector),
-          id = 'test/2';
-      assert.equal(list.size(), units.size(),
-                   'initial displayed list is out of sync with unplaced units');
-      units.add([{ id: id }]);
-      list = container.all(selector);
-      assert.equal(list.size(), units.size(),
-                   'final displayed list is out of sync with unplaced units');
-      var addedItem = container.one(selector + '[data-id="' + id + '"]');
-      assert.notEqual(addedItem, null,
-                      'unable to find added unit in the displayed list');
-    });
-
-    it('should remove tokens when units are deleted', function() {
-      view.render();
-      var selector = '.unplaced .content li',
-          list = container.all(selector);
-      assert.equal(list.size(), units.size(),
-                   'initial displayed list is out of sync with unplaced units');
-      units.remove(0);
-      list = container.all(selector);
-      assert.equal(list.size(), units.size(),
-                   'final displayed list is out of sync with unplaced units');
-      var deletedSelector = selector + '[data-id="test/1"]';
-      var deletedItem = container.one(deletedSelector);
-      assert.equal(deletedItem, null,
-                   'found the deleted unit still in the list');
-    });
-
-    it('should re-render token when a unit is updated', function() {
-      view.render();
-      var id = 'test/3',
-          unitModel = units.revive(0),
-          selector = '.unplaced .content li',
-          item = container.one(
-              selector + '[data-id="' + unitModel.get('id') + '"]');
-      assert.notEqual(item, null, 'unit was not initially displayed');
-      unitModel.set('id', id);
-      item = container.one(selector + '[data-id="' + id + '"]');
-      assert.notEqual(item, null, 'unit was not displayed post-update');
-    });
-
-    it('update a machine when a new unit is assigned to it', function() {
-      view.render();
-      var updateStub = utils.makeStubMethod(view, '_updateMachine'),
-          unitModel = units.revive(0),
-          machineId = '0';
-      this._cleanups.push(updateStub.reset);
-      unitModel.set('machine', machineId);
-      assert.equal(updateStub.calledOnce(), true);
-      var updateArgs = updateStub.lastArguments();
-      assert.equal(updateArgs[0], machineId);
     });
   });
 
