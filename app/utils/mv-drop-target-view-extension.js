@@ -44,6 +44,7 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
     */
     _attachDragEvents: function(spec) {
       var container = this.get('container');
+      // .token is the container of the machine/container token
       spec = spec || '.token';
       container.delegate('drop', this._unitDropHandler, spec, this);
       container.delegate('dragenter', this._ignore, spec, this);
@@ -58,8 +59,11 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
       @param {Object} e The drop event object.
     */
     _unitDropHandler: function(e) {
-      var dragData = JSON.parse(e._event.dataTransfer.getData('Text'));
+      var dragData = JSON.parse(e._event.dataTransfer.getData('Text')),
+          currentTarget = e.currentTarget;
       this.fire('unit-token-drop', {
+        targetId: currentTarget.getData('id'),
+        dropAction: currentTarget.getData('drop-action'),
         unit: dragData.id,
         machine: this.get('machine')
       });

@@ -86,6 +86,11 @@ YUI.add('container-token', function(Y) {
               machine = this.get('machine');
           container.setHTML(this.template(machine));
           container.addClass('container-token');
+          // Tells the machine view panel drop handler where the unplaced unit
+          // token was dropped.
+          var token = container.one('.token');
+          token.setData('drop-action', 'container');
+          token.setData('id', machine.id);
           this._attachDragEvents(); // drop-target-view-extension
           this.get('containerParent').append(container);
           return this;
