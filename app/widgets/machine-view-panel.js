@@ -141,11 +141,29 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The custom drop event facade.
         */
         _unitTokenDropHandler: function(e) {
-          var parentId = this.get('selectedMachine');
-          this.get('env').addMachines([{
-            containerType: 'lxc',
-            parentId: parentId
-          }]);
+          // XXX Jeff May 12 2014 - This handler only supports dropping on the
+          // machine column header.
+          var env = this.get('env'),
+              db = this.get('db');
+          // XXX This is a temporary hack for the demo to create a ghost
+          // container.
+          var machineSize = String(db.machines.size());
+          var container = db.machines.add({id: machineSize});
+          // Create a new container on the selected machine
+          env.addMachines([{
+            // XXX A callback param MUST be provided even if it's just an empty
+            // function, the ECS relies on wrapping this function so if it's
+            // null it'll just stop executing. This should probably be handled
+            // properly on the ECS side. Jeff May 12 2014
+          }], function() {}, { modelId: container.id });
+          // // Place the unplaced unit on the machine
+          var unit = db.units.getById(e.unit);
+          env.placeUnit(unit, container.id);
+          // XXX manually rerender the container column to show newly created
+          // containers DEMO HACK.
+          Y.one('li.machine-token[data-id=' + machineSize + ']').remove();
+          this._updateMachines();
+          this._renderContainerTokens([container], this.get('selectedMachine'));
         },
 
         /**

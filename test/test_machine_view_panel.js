@@ -245,16 +245,21 @@ describe('machine view panel view', function() {
       // 'listens for the drag start, end, drop events'
       var onStub = utils.makeStubMethod(view, 'on');
       this._cleanups.push(onStub.reset);
+      var renderContainerToken = utils.makeStubMethod(
+          view, '_renderContainerTokens');
+      this._cleanups.push(renderContainerToken.reset);
       view._bindEvents();
       view.set('selectedMachine', 1);
       view.set('env', {
-        addMachines: utils.makeStubFunction()
+        placeUnit: utils.makeStubFunction()
       });
-      onStub.lastArguments()[1].call(view);
-      assert.deepEqual(view.get('env').addMachines.lastArguments()[0], [{
-        containerType: 'lxc',
-        parentId: 1
-      }]);
+      view.set('db', {
+        units: { getById: utils.makeStubFunction() }
+      });
+      onStub.lastArguments()[1].call(view, {});
+      var viewEnv = view.get('env');
+      assert.equal(viewEnv.placeUnit.calledOnce(), true);
+      assert.equal(renderContainerToken.calledOnce(), true);
     });
   });
 
