@@ -141,11 +141,16 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The custom drop event facade.
         */
         _unitTokenDropHandler: function(e) {
-          var parentId = this.get('selectedMachine');
-          this.get('env').addMachines([{
-            containerType: 'lxc',
-            parentId: parentId
-          }]);
+          // XXX Jeff May 12 2014 - This handler only supports dropping on the
+          // container columns header.
+          var parentId = this.get('selectedMachine'),
+              env = this.get('env'),
+              db = this.get('db');
+          var unit = db.units.getById(e.unit);
+          env.placeUnit(unit, parentId);
+          // XXX manually rerender the container column to show newly created
+          // containers DEMO HACK.
+          this._renderContainerTokens([], this.get('selectedMachine'));
         },
 
         /**
@@ -202,7 +207,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'New container',
-                dropLabel: 'Create new container'
+                dropLabel: 'Co-locate to machine'
               });
           this._containersHeader.addTarget(this);
           this._unplacedHeader = this._renderHeader(
