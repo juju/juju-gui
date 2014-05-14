@@ -35,23 +35,21 @@ YUI.add('deployer-bar', function(Y) {
    *
    * @class DeployerBarView
    */
-  var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [
-    Y.Event.EventTracker
-  ], {
+  var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [], {
     template: Templates['deployer-bar'],
 
     events: {
       '.deploy-button': {
-        click: 'deploy'
+        click: 'showSummary'
       },
       '.summary .close': {
-        click: 'summaryClose'
+        click: 'hideSummary'
       },
       '.cancel-button': {
-        click: 'summaryClose'
+        click: 'hideSummary'
       },
       '.confirm-button': {
-        click: 'confirm'
+        click: 'deploy'
       }
     },
 
@@ -85,13 +83,14 @@ YUI.add('deployer-bar', function(Y) {
       ecs.on('changeSetModified', Y.bind(this.update, this));
       return this;
     },
+
     /**
       Deploy the current set of environment changes.
 
       @method deploy
       @param {Object} evt The event object.
     */
-    confirm: function(evt) {
+    deploy: function(evt) {
       evt.halt();
       var container = this.get('container'),
           ecs = this.get('ecs');
@@ -101,12 +100,12 @@ YUI.add('deployer-bar', function(Y) {
     },
 
     /**
-      Deploy the current set of environment changes.
+      Display a summary of the changeset
 
-      @method deploy
+      @method showSummary
       @param {Object} evt The event object.
     */
-    deploy: function(evt) {
+    showSummary: function(evt) {
       evt.halt();
       var container = this.get('container'),
           ecs = this.get('ecs');
@@ -133,7 +132,7 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
-      var latest = this._getChangeDescription(ecs);
+      var latest = this._getLatestChangeDescription(ecs);
       // XXX  Tests start to fail on this update without the parent of the
       // container to address. This should be setup in the factory for env
       // and app to be better mocked out to not pick up changes when not
@@ -156,10 +155,10 @@ YUI.add('deployer-bar', function(Y) {
     /**
       Hide the summary panel.
 
-      @method summaryClose
+      @method hideSummary
       @param {Object} evt The event object.
     */
-    summaryClose: function(evt) {
+    hideSummary: function(evt) {
       evt.halt();
       var container = this.get('container');
       container.removeClass('summary-open');
@@ -191,40 +190,44 @@ YUI.add('deployer-bar', function(Y) {
       @method _getChangeDescription
       @param {Object} ecs The environment change set.
     */
-    _getChangeDescription: function(ecs) {
+    _getLatestChangeDescription: function(ecs) {
       var latest = ecs.changeSet[this._getLatestChange()];
+      return this._getChangeDescription(latest, false);
+    },
+
+    _getChangeDescription: function(change, forChangeList) {
       var icon,
           description,
           time = null;
 
-      if (latest && latest.command) {
+      if (change && change.command) {
         // XXX: The add_unit is just the same as the service because adding
         // the service also adds the unit. We need to look at the UX for
         // units as follow up.
-        switch (latest.command.method) {
+        switch (change.command.method) {
           case '_deploy':
             icon = '<i class="sprite service-added"></i>';
-            description = latest.command.args[1] + ' has been added.';
+            description = change.command.args[1] + ' has been added.';
             break;
           case '_add_unit':
             icon = '<i class="sprite service-added"></i>';
-            description = latest.command.args[0] + ' has been added.';
+            description = change.command.args[0] + ' has been added.';
             break;
           case '_add_relation':
             icon = '<i class="sprite relation-added"></i>';
-            description = latest.command.args[0][1].name +
+            description = change.command.args[0][1].name +
                 ' relation added between ' +
-                latest.command.args[0][0] +
+                change.command.args[0][0] +
                 ' and ' +
-                latest.command.args[1][0];
+                change.command.args[1][0];
             break;
           case '_addMachines':
-            var machineType = latest.command.args[0][0].parentId ?
+            var machineType = change.command.args[0][0].parentId ?
                 'container' : 'machine';
             icon = '<i class="sprite ' + machineType + '-created01"></i>';
-            description = latest.command.args[0].length +
+            description = change.command.args[0].length +
                 ' ' + machineType +
-                (latest.command.args[0].length !== 1 ? 's have' : ' has') +
+                (change.command.args[0].length !== 1 ? 's have' : ' has') +
                 ' been added.';
             break;
           default:

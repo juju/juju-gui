@@ -69,14 +69,14 @@ describe('deployer bar view', function() {
     assert.equal(view._getChangeCount(ecs), 1);
   });
 
-  it('should confirm ECS changes when deploy is clicked', function() {
+  it('show a summary of uncommitted changes', function() {
     var changesStub = utils.makeStubMethod(view, '_getChangeCount', 0),
         deployStub = utils.makeStubMethod(view, '_getDeployedServices', []),
         relationsStub = utils.makeStubMethod(view, '_getAddRelations', []);
     this._cleanups.push(changesStub.reset);
     this._cleanups.push(deployStub.reset);
     this._cleanups.push(relationsStub.reset);
-    view.deploy(mockEvent);
+    view.showSummary(mockEvent);
     assert.equal(container.hasClass('summary-open'), true,
                  'summary is not open');
     assert.notEqual(container.one('.summary-panel'), null,
@@ -86,15 +86,15 @@ describe('deployer bar view', function() {
   it('should commit on confirmation', function() {
     var stubCommit = utils.makeStubMethod(ecs, 'commit');
     this._cleanups.push(stubCommit.reset);
-    view.confirm(mockEvent);
+    view.deploy(mockEvent);
     assert.equal(stubCommit.calledOnce(), true,
                  'ECS commit not called');
     assert.equal(container.hasClass('summary-open'), false,
                  'summary-open class still present');
   });
 
-  it('should close', function() {
-    view.summaryClose(mockEvent);
+  it('closes the summary', function() {
+    view.hideSummary(mockEvent);
     assert.equal(container.hasClass('summary-open'), false);
   });
 
