@@ -35,23 +35,27 @@ YUI.add('deployer-bar', function(Y) {
    *
    * @class DeployerBarView
    */
-  var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [
-    Y.Event.EventTracker
-  ], {
+  var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [], {
     template: Templates['deployer-bar'],
 
     events: {
       '.deploy-button': {
-        click: 'deploy'
+        click: 'showDeployConfirmation'
       },
       '.summary .close': {
-        click: 'summaryClose'
+        click: 'hideSummary'
       },
       '.cancel-button': {
-        click: 'summaryClose'
+        click: 'hideSummary'
       },
       '.confirm-button': {
-        click: 'confirm'
+        click: 'deploy'
+      },
+      '.action-list .show': {
+        click: 'showRecentChanges'
+      },
+      '.action-list .hide': {
+        click: 'hideSummary'
       }
     },
 
@@ -85,20 +89,6 @@ YUI.add('deployer-bar', function(Y) {
       ecs.on('changeSetModified', Y.bind(this.update, this));
       return this;
     },
-    /**
-      Deploy the current set of environment changes.
-
-      @method deploy
-      @param {Object} evt The event object.
-    */
-    confirm: function(evt) {
-      evt.halt();
-      var container = this.get('container'),
-          ecs = this.get('ecs');
-      container.removeClass('summary-open');
-      ecs.commit(this.get('env'));
-      //this.update();
-    },
 
     /**
       Deploy the current set of environment changes.
@@ -110,6 +100,43 @@ YUI.add('deployer-bar', function(Y) {
       evt.halt();
       var container = this.get('container'),
           ecs = this.get('ecs');
+      container.removeClass('summary-open');
+      ecs.commit(this.get('env'));
+      //this.update();
+    },
+
+    /**
+      Display the recent changes in the summary panel.
+
+      @method showRecentChanges
+      @param {Object} evt The event object.
+    */
+    showRecentChanges: function(evt) {
+      evt.halt();
+      this._showSummary(false);
+    },
+
+    /**
+      Display a summary of the recent changes to confirm deployment
+
+      @method showDeployConfirmation
+      @param {Object} evt The event object.
+    */
+    showDeployConfirmation: function(evt) {
+      evt.halt();
+      this._showSummary(true);
+    },
+
+    /**
+      Display summary information about the current changes.
+
+      @method _showSummary
+      @param {Bool} confirmDeploy A toggle indicating if this is for
+          confirmation of deployment, or just viewing the current changes.
+    */
+    _showSummary: function(confirmDeploy) {
+      var container = this.get('container'),
+          ecs = this.get('ecs');
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: this._getChangeCount(ecs),
@@ -117,10 +144,11 @@ YUI.add('deployer-bar', function(Y) {
           deployServices: this._getDeployedServices(ecs),
           addedRelations: this._getAddRelations(ecs),
           addedUnits: this._getAddUnits(ecs),
-          addedMachines: this._getAddMachines(ecs)
+          addedMachines: this._getAddMachines(ecs),
+          changeList: this._generateAllChangeDescriptions(ecs),
+          confirmDeploy: confirmDeploy
         }));
       }
-
       container.addClass('summary-open');
     },
 
@@ -133,7 +161,7 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
-      var latest = this._getChangeDescription(ecs);
+      var latest = this._getLatestChangeDescription(ecs);
       // XXX  Tests start to fail on this update without the parent of the
       // container to address. This should be setup in the factory for env
       // and app to be better mocked out to not pick up changes when not
@@ -156,10 +184,10 @@ YUI.add('deployer-bar', function(Y) {
     /**
       Hide the summary panel.
 
-      @method summaryClose
+      @method hideSummary
       @param {Object} evt The event object.
     */
-    summaryClose: function(evt) {
+    hideSummary: function(evt) {
       evt.halt();
       var container = this.get('container');
       container.removeClass('summary-open');
@@ -188,43 +216,80 @@ YUI.add('deployer-bar', function(Y) {
     /**
       Return the latest change description.
 
-      @method _getChangeDescription
+      @method _getLatestChangeDescription
       @param {Object} ecs The environment change set.
     */
-    _getChangeDescription: function(ecs) {
+    _getLatestChangeDescription: function(ecs) {
       var latest = ecs.changeSet[this._getLatestChange()];
+      return this._generateChangeDescription(latest);
+    },
+
+    /**
+      Return a list of all change descriptions.
+
+      @method _generateAllChangeDescriptions
+      @param {Object} ecs The environment change set.
+    */
+    _generateAllChangeDescriptions: function(ecs) {
+      var changes = [],
+          change;
+      Object.keys(ecs.changeSet).forEach(function(key) {
+        change = this._generateChangeDescription(ecs.changeSet[key]);
+        if (change) {
+          changes.push(change);
+        }
+      }, this);
+      return changes;
+    },
+
+    /**
+      Return a description of an ecs change for the summary.
+
+      @method _generateChangeDescription
+      @param {Object} change The environment change.
+      @param {Bool} skipTime optional, used for testing, don't generate time.
+    */
+    _generateChangeDescription: function(change, skipTime) {
       var icon,
           description,
           time = null;
 
-      if (latest && latest.command) {
+      if (change && change.command) {
         // XXX: The add_unit is just the same as the service because adding
         // the service also adds the unit. We need to look at the UX for
         // units as follow up.
-        switch (latest.command.method) {
+        switch (change.command.method) {
           case '_deploy':
             icon = '<i class="sprite service-added"></i>';
-            description = latest.command.args[1] + ' has been added.';
+            description = ' ' + change.command.args[1] + ' has been added.';
             break;
           case '_add_unit':
             icon = '<i class="sprite service-added"></i>';
-            description = latest.command.args[0] + ' has been added.';
+            var units = change.command.args[1],
+                msg;
+            if (units !== 1) {
+              msg = 'units have been added.';
+            } else {
+              msg = 'unit has been added.';
+            }
+            description = ' ' + units + ' ' + change.command.args[0] + ' ' +
+                msg;
             break;
           case '_add_relation':
             icon = '<i class="sprite relation-added"></i>';
-            description = latest.command.args[0][1].name +
+            description = change.command.args[0][1].name +
                 ' relation added between ' +
-                latest.command.args[0][0] +
+                change.command.args[0][0] +
                 ' and ' +
-                latest.command.args[1][0];
+                change.command.args[1][0] + '.';
             break;
           case '_addMachines':
-            var machineType = latest.command.args[0][0].parentId ?
+            var machineType = change.command.args[0][0].parentId ?
                 'container' : 'machine';
             icon = '<i class="sprite ' + machineType + '-created01"></i>';
-            description = latest.command.args[0].length +
+            description = change.command.args[0].length +
                 ' ' + machineType +
-                (latest.command.args[0].length !== 1 ? 's have' : ' has') +
+                (change.command.args[0].length !== 1 ? 's have' : ' has') +
                 ' been added.';
             break;
           default:
@@ -235,7 +300,11 @@ YUI.add('deployer-bar', function(Y) {
         }
       }
       if (icon) {
-        time = '<time>' + this._formatAMPM(new Date()) + '</time>';
+        if (skipTime) {
+          time = '<time>00:00</time>';
+        } else {
+          time = '<time>' + this._formatAMPM(new Date()) + '</time>';
+        }
         return icon + description + time;
       }
     },
