@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('deployer bar view', function() {
-  var Y, container, ECS, ecs, mockEvent, testUtils, utils, views,
+  var Y, container, dbObj, ECS, ecs, mockEvent, testUtils, utils, views,
       view, View;
 
   before(function(done) {
@@ -42,7 +42,9 @@ describe('deployer bar view', function() {
   });
 
   beforeEach(function() {
-    ecs = new ECS({});
+    ecs = new ECS({
+      db: dbObj
+    });
     container = utils.makeContainer(this, 'deployer-bar');
     view = new View({container: container, ecs: ecs}).render();
   });
