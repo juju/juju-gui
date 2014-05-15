@@ -149,7 +149,8 @@ YUI.add('machine-view-panel', function(Y) {
           var db = this.get('db');
           var unit;
 
-          if (dropAction === 'container' && parentId !== undefined) {
+          if (dropAction === 'container' &&
+              (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
             unit = db.units.getById(e.unit);
@@ -380,7 +381,6 @@ YUI.add('machine-view-panel', function(Y) {
           });
           token.render();
           token.addTarget(this);
-          list.append(node);
           return node;
         },
 

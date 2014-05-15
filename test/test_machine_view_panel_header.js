@@ -43,7 +43,9 @@ describe('machine view panel header view', function() {
       container: container,
       title: 'test title',
       label: 'test label',
-      action: 'test action'
+      dropLabel: 'test drop label',
+      action: 'test action',
+      actionLabel: 'test action label'
     }).render();
   });
 
@@ -59,7 +61,8 @@ describe('machine view panel header view', function() {
   it('should have the correct attributes set', function() {
     assert.equal(container.one('.title').get('text'), 'test title');
     assert.equal(container.one('.label').get('text').trim(), 'test label');
-    assert.equal(container.one('.action').get('text'), 'test action');
+    assert.equal(container.one('.action').get('text'), 'test action label');
+    assert.equal(container.one('.drop span').get('text'), 'test drop label');
   });
 
   it('can set the label', function() {
