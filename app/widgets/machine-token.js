@@ -37,7 +37,8 @@ YUI.add('machine-token', function(Y) {
    */
   var MachineToken = Y.Base.create('MachineToken', Y.View,
       [
-        Y.Event.EventTracker
+        Y.Event.EventTracker,
+        views.MVDropTargetViewExtension
       ], {
         template: Templates['machine-token'],
 
@@ -126,7 +127,14 @@ YUI.add('machine-token', function(Y) {
           }
           container.setHTML(this.template(machine));
           container.addClass('machine-token');
-          container.setAttribute('data-id', machine.id);
+          // Tells the machine view panel drop handler where the unplaced unit
+          // token was dropped.
+          var token = container.one('.token');
+          // Even though this is a machine we want it to create a container
+          // when something is dropped on it.
+          token.setData('drop-action', 'container');
+          token.setData('id', machine.id);
+          this._attachDragEvents(); // drop-target-view-extension
           return this;
         },
 
@@ -150,6 +158,7 @@ YUI.add('machine-token', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
-    'machine-token-header'
+    'machine-token-header',
+    'mv-drop-target-view-extension'
   ]
 });

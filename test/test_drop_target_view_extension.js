@@ -63,6 +63,9 @@ describe('MV drop target view extension', function() {
 
   it('fires unit-token-drop in its drop handler', function() {
     var eventData = {
+      currentTarget: {
+        getData: utils.makeStubFunction('targetid', 'dropaction')
+      },
       _event: {
         dataTransfer: {
           getData: utils.makeStubFunction('{"id":"foo"}')
@@ -74,6 +77,8 @@ describe('MV drop target view extension', function() {
     assert.equal(fireStub.calledOnce(), true);
     assert.equal(fireStub.lastArguments()[0], 'unit-token-drop');
     assert.deepEqual(fireStub.lastArguments()[1], {
+      targetId: 'targetid',
+      dropAction: 'dropaction',
       unit: 'foo',
       machine: 'machineObj'
     });

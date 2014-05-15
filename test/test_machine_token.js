@@ -66,7 +66,7 @@ describe('machine token view', function() {
   });
 
   it('should set the id on the container', function() {
-    assert.equal(container.getData('id'), '0');
+    assert.equal(container.one('.token').getData('id'), '0');
   });
 
   it('fires the delete event', function(done) {

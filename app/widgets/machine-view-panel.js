@@ -141,11 +141,33 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The custom drop event facade.
         */
         _unitTokenDropHandler: function(e) {
-          var parentId = this.get('selectedMachine');
-          this.get('env').addMachines([{
-            containerType: 'lxc',
-            parentId: parentId
-          }]);
+          var selected = this.get('selectedMachine');
+          var dropAction = e.dropAction;
+          var parentId = e.targetId;
+          var containerType = (dropAction === 'container') ? 'lxc' : undefined;
+          var env = this.get('env');
+          var db = this.get('db');
+          var unit;
+
+          if (dropAction === 'container' &&
+              (parentId && parentId.indexOf('/') !== -1)) {
+            // If the user drops a unit on an already created container then
+            // place the unit.
+            unit = db.units.getById(e.unit);
+            env.placeUnit(unit, parentId);
+          } else {
+            var machine = env.addMachines([{
+              containerType: containerType,
+              parentId: parentId || selected
+              // XXX A callback param MUST be provided even if it's just an
+              // empty function, the ECS relies on wrapping this function so if
+              // it's null it'll just stop executing. This should probably be
+              // handled properly on the ECS side. Jeff May 12 2014
+            }], function() {}, { modelId: null });
+
+            unit = db.units.getById(e.unit);
+            env.placeUnit(unit, machine.id);
+          }
         },
 
         /**
@@ -158,7 +180,7 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               machineTokens = container.all('.machines .content .items .token'),
               selected = e.currentTarget,
-              parentId = selected.ancestor().getData('id'),
+              parentId = selected.getData('id'),
               containers = this.get('db').machines.filterByParent(parentId);
           e.preventDefault();
           // A lot of things in the machine view rely on knowing when the user
@@ -195,13 +217,15 @@ YUI.add('machine-view-panel', function(Y) {
           this._machinesHeader = this._renderHeader(
               '.column.machines .head', {
                 title: 'Environment',
-                action: 'New machine',
+                action: 'machine',
+                actionLabel: 'Add machine',
                 dropLabel: 'Create new machine'
               });
           this._machinesHeader.addTarget(this);
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
-                action: 'New container',
+                action: 'container',
+                actionLabel: 'Add container',
                 dropLabel: 'Create new container'
               });
           this._containersHeader.addTarget(this);
@@ -351,10 +375,12 @@ YUI.add('machine-view-panel', function(Y) {
           var node = Y.Node.create('<li></li>'),
               units = this.get('db').units.filterByMachine(machine.id, true);
           this._updateMachineWithUnitData(machine, units);
-          new views.MachineToken({
+          var token = new views.MachineToken({
             container: node,
             machine: machine
-          }).render();
+          });
+          token.render();
+          token.addTarget(this);
           return node;
         },
 

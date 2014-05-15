@@ -931,9 +931,9 @@ YUI.add('juju-env-go', function(Y) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (!window.flags.mv || options && options.immediate) {
-        this._addMachines.apply(this, args);
+        return this._addMachines.apply(this, args);
       } else {
-        ecs.lazyAddMachines(args, options);
+        return ecs.lazyAddMachines(args, options);
       }
     },
 

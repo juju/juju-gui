@@ -97,6 +97,7 @@ YUI.add('machine-view-panel-header', function(Y) {
           var container = this.get('container'),
               attrs = this.getAttrs();
           container.setHTML(this.template(attrs));
+          container.one('.drop').setData('drop-action', this.get('action'));
           container.addClass('machine-view-panel-header');
           this._attachDragEvents('.drop');
           return this;
@@ -124,6 +125,13 @@ YUI.add('machine-view-panel-header', function(Y) {
     @type {String}
     */
     action: {},
+
+    /**
+    @attribute actionLabel
+    @default undefined
+    @type {String}
+    */
+    actionLabel: {},
 
     /**
     @attribute dropLabel
