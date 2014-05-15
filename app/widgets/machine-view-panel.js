@@ -495,9 +495,9 @@ YUI.add('machine-view-panel', function(Y) {
               unitList = container.one('.unplaced .content .items');
 
           if (!units || !units.length) {
-            this._showAllPlacedMessage();
+            this._toggleAllPlacedMessage(true);
           } else {
-            this._hideAllPlacedMessage();
+            this._toggleAllPlacedMessage(false);
             this._addIconsToUnits(units);
           }
 
@@ -518,34 +518,19 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Show the message for when all units are placed.
-
-          @method _showAllPlacedMessage
-        */
-        _showAllPlacedMessage: function() {
-          this.get('container').one('.column.unplaced .all-placed').show();
-        },
-
-        /**
-          Hide the message for when all units are placed.
-
-          @method _hideAllPlacedMessage
-        */
-        _hideAllPlacedMessage: function() {
-          this.get('container').one('.column.unplaced .all-placed').hide();
-        },
-
-        /**
           Toggle the message for when all units are placed.
 
           @method _toggleAllPlacedMessage
+          @param {Boolean} show Boolean value weather to force the placed
+            message to be visible or not (optional).
         */
-        _toggleAllPlacedMessage: function() {
-          if (this.get('db').units.filterByMachine(null).length > 0) {
-            this._hideAllPlacedMessage();
-          } else {
-            this._showAllPlacedMessage();
+        _toggleAllPlacedMessage: function(show) {
+          if (show !== true && show !== false) {
+            show = !this.get('db').units.filterByMachine(null).length;
           }
+          this.get('container')
+              .one('.column.unplaced .all-placed')
+              .toggleView(show);
         },
 
         /**
@@ -563,9 +548,9 @@ YUI.add('machine-view-panel', function(Y) {
           this.addEvent(
               this._scaleUpView.on('addUnit', this._scaleUpService, this));
           this.addEvent(this._scaleUpView.on('listOpened',
-              this._hideAllPlacedMessage, this));
+              this._toggleAllPlacedMessage.bind(this, false)));
           this.addEvent(this._scaleUpView.on('listClosed',
-              this._toggleAllPlacedMessage, this));
+              this._toggleAllPlacedMessage.bind(this, undefined)));
         },
 
         /**
