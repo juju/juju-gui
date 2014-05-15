@@ -35,7 +35,9 @@ YUI.add('deployer-bar', function(Y) {
    *
    * @class DeployerBarView
    */
-  var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [], {
+  var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [
+    Y.Event.EventTracker
+  ], {
     template: Templates['deployer-bar'],
 
     events: {
@@ -67,7 +69,9 @@ YUI.add('deployer-bar', function(Y) {
       @method initializer
     */
     initializer: function() {
-      this.on('hideChangeDescription', this._hideChangeDescription);
+      this.addEvent(
+          this.on('hideChangeDescription', this._hideChangeDescription)
+      );
     },
 
     /**
