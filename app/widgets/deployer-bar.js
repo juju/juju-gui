@@ -40,7 +40,7 @@ YUI.add('deployer-bar', function(Y) {
 
     events: {
       '.deploy-button': {
-        click: 'showSummary'
+        click: 'showDeployConfirmation'
       },
       '.summary .close': {
         click: 'hideSummary'
@@ -50,6 +50,12 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.confirm-button': {
         click: 'deploy'
+      },
+      '.action-list .show': {
+        click: 'showRecentChanges'
+      },
+      '.action-list .hide': {
+        click: 'hideSummary'
       }
     },
 
@@ -100,13 +106,35 @@ YUI.add('deployer-bar', function(Y) {
     },
 
     /**
-      Display a summary of the changeset
+      Display the recent changes in the summary panel.
 
-      @method showSummary
+      @method showRecentChanges
       @param {Object} evt The event object.
     */
-    showSummary: function(evt) {
+    showRecentChanges: function(evt) {
       evt.halt();
+      this._showSummary(false);
+    },
+
+    /**
+      Display a summary of the recent changes to confirm deployment
+
+      @method showDeployConfirmation
+      @param {Object} evt The event object.
+    */
+    showDeployConfirmation: function(evt) {
+      evt.halt();
+      this._showSummary(true);
+    },
+
+    /**
+      Display summary information about the current changes.
+
+      @method _showSummary
+      @param {Bool} confirmDeploy A toggle indicating if this is for
+          confirmation of deployment, or just viewing the current changes.
+    */
+    _showSummary: function(confirmDeploy) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       if (container && container.get('parentNode')) {
@@ -116,10 +144,11 @@ YUI.add('deployer-bar', function(Y) {
           deployServices: this._getDeployedServices(ecs),
           addedRelations: this._getAddRelations(ecs),
           addedUnits: this._getAddUnits(ecs),
-          addedMachines: this._getAddMachines(ecs)
+          addedMachines: this._getAddMachines(ecs),
+          changeList: this._generateAllChangeDescriptions(ecs),
+          confirmDeploy: confirmDeploy
         }));
       }
-
       container.addClass('summary-open');
     },
 
@@ -187,15 +216,40 @@ YUI.add('deployer-bar', function(Y) {
     /**
       Return the latest change description.
 
-      @method _getChangeDescription
+      @method _getLatestChangeDescription
       @param {Object} ecs The environment change set.
     */
     _getLatestChangeDescription: function(ecs) {
       var latest = ecs.changeSet[this._getLatestChange()];
-      return this._getChangeDescription(latest, false);
+      return this._generateChangeDescription(latest);
     },
 
-    _getChangeDescription: function(change, forChangeList) {
+    /**
+      Return a list of all change descriptions.
+
+      @method _generateAllChangeDescriptions
+      @param {Object} ecs The environment change set.
+    */
+    _generateAllChangeDescriptions: function(ecs) {
+      var changes = [],
+          change;
+      Object.keys(ecs.changeSet).forEach(function(key) {
+        change = this._generateChangeDescription(ecs.changeSet[key]);
+        if (change) {
+          changes.push(change);
+        }
+      }, this);
+      return changes;
+    },
+
+    /**
+      Return a description of an ecs change for the summary.
+
+      @method _generateChangeDescription
+      @param {Object} change The environment change.
+      @param {Bool} skipTime optional, used for testing, don't generate time.
+    */
+    _generateChangeDescription: function(change, skipTime) {
       var icon,
           description,
           time = null;
@@ -207,11 +261,19 @@ YUI.add('deployer-bar', function(Y) {
         switch (change.command.method) {
           case '_deploy':
             icon = '<i class="sprite service-added"></i>';
-            description = change.command.args[1] + ' has been added.';
+            description = ' ' + change.command.args[1] + ' has been added.';
             break;
           case '_add_unit':
             icon = '<i class="sprite service-added"></i>';
-            description = change.command.args[0] + ' has been added.';
+            var units = change.command.args[1],
+                msg;
+            if (units !== 1) {
+              msg = 'units have been added.';
+            } else {
+              msg = 'unit has been added.';
+            }
+            description = ' ' + units + ' ' + change.command.args[0] + ' ' +
+                msg;
             break;
           case '_add_relation':
             icon = '<i class="sprite relation-added"></i>';
@@ -219,7 +281,7 @@ YUI.add('deployer-bar', function(Y) {
                 ' relation added between ' +
                 change.command.args[0][0] +
                 ' and ' +
-                change.command.args[1][0];
+                change.command.args[1][0] + '.';
             break;
           case '_addMachines':
             var machineType = change.command.args[0][0].parentId ?
@@ -238,7 +300,11 @@ YUI.add('deployer-bar', function(Y) {
         }
       }
       if (icon) {
-        time = '<time>' + this._formatAMPM(new Date()) + '</time>';
+        if (skipTime) {
+          time = '<time>00:00</time>';
+        } else {
+          time = '<time>' + this._formatAMPM(new Date()) + '</time>';
+        }
         return icon + description + time;
       }
     },

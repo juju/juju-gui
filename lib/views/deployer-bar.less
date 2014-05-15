@@ -78,6 +78,12 @@
     ul.action-list {
         margin: 0;
         list-style: none;
+        .hide {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
 
         li {
             float: left;
@@ -190,6 +196,14 @@
         }
         .cover {
             display: block;
+        }
+        .action-list {
+            .hide {
+                display: block;
+            }
+            .show {
+                display: none
+            }
         }
     }
 }
