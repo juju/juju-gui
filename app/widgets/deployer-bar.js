@@ -62,7 +62,16 @@ YUI.add('deployer-bar', function(Y) {
     descriptionTimer: null,
 
     /**
-     * Destroy any time left around.
+      Initialize events.
+
+      @method initializer
+    */
+    initializer: function() {
+      this.on('hideChangeDescription', this._hideChangeDescription);
+    },
+
+    /**
+     * Destroy any timer left around.
      *
      * @method destructor
      *
@@ -176,7 +185,7 @@ YUI.add('deployer-bar', function(Y) {
         // do we want this? This breaks the user experience, and after removing
         // the line below everything seems to work just fine.
         this.descriptionTimer = window.setTimeout(
-            Y.bind(this._hideChangeDescription, this),
+            Y.bind(function() { this.fire('hideChangeDescription'); }, this),
             4000);
       }
     },
