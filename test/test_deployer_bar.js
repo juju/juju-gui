@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('deployer bar view', function() {
-  var Y, container, ECS, ecs, mockEvent, testUtils, utils, views,
+  var Y, container, dbObj, ECS, ecs, mockEvent, testUtils, utils, views,
       view, View;
 
   before(function(done) {
@@ -42,12 +42,15 @@ describe('deployer bar view', function() {
   });
 
   beforeEach(function() {
-    ecs = new ECS({});
+    ecs = new ECS({
+      db: dbObj
+    });
     container = utils.makeContainer(this, 'deployer-bar');
     view = new View({container: container, ecs: ecs}).render();
   });
 
   afterEach(function() {
+    window.clearTimeout(ecs.descriptionTimer);
     ecs.destroy();
     container.remove(true);
     view.destroy();
@@ -61,8 +64,7 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('deployer-bar'), true);
   });
 
-  // Test currently has cleanup issues
-  it.skip('should increase changes when a service is added', function() {
+  it('should increase changes when a service is added', function() {
     ecs.changeSet.abc123 = { foo: 'foo' };
     assert.equal(view._getChangeCount(ecs), 1);
   });
@@ -264,9 +266,7 @@ describe('deployer bar view', function() {
     );
   });
 
-  // XXX frankban 2014-05-12: it seems all this suite is not well isolated,
-  // or the view does not clean up correctly.
-  it.skip('retrieves all the unit changes', function() {
+  it('retrieves all the unit changes', function() {
     ecs.lazyAddUnits(['django', 1]);
     ecs.lazyAddUnits(['rails', 2]);
     var results = view._getAddUnits(ecs);
@@ -285,14 +285,15 @@ describe('deployer bar view', function() {
     });
   });
 
-  // XXX see above
-  it.skip('retrieves all the machine changes', function() {
+  it('retrieves all the machine changes', function() {
     var machine = {};
+    ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
     var container = {
-      parentId: ecs.lazyAddMachines([[machine]]), containerType: 'lxc'
+      parentId: 'new-0', containerType: 'lxc'
     };
     // Add a second machine and a container on the first.
-    ecs.lazyAddMachines([[machine, container]]);
+    ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
+    ecs.lazyAddMachines([[container]], { modelId: 'new-2' });
     var results = view._getAddMachines(ecs);
     assert.lengthOf(results, 3);
     assert.deepEqual(results[0], machine);
