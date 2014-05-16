@@ -611,6 +611,7 @@ YUI.add('juju-charm-store', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'array-extras',
     'datasource-io',
     'json-parse',
     'juju-charm-models',

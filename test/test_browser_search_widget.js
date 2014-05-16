@@ -259,12 +259,12 @@ describe('search widget autocomplete', function() {
     // input should turn it back on for responding to results.
     search.get('boundingBox').one('form').simulate('submit');
     assert.equal(search.ignoreInFlight, true);
-    search.get('boundingBox').one('input').simulate('focus');
+    // search.get('boundingBox').one('input').simulate('focus');
     // IE does not trigger a focus event through simulate so we call the
     // function directly.
-    if (Y.UA.ie) {
+    // if (Y.UA.ie) {
       search._handleInputFocus();
-    }
+    // }
     assert.equal(search.ignoreInFlight, false);
   });
 

@@ -436,7 +436,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         this.get('container')
             .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
       } else {
-        height = Y.one('.bws-content').getStyle('height');
+        height = Y.one('#bws-sidebar').getStyle('height');
         this.get('container')
             .one(this.viewletContainer).setStyle('maxHeight', height);
         this.get('container')
