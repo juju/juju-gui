@@ -100,6 +100,132 @@ describe('machine view panel view', function() {
         'Unplaced units');
   });
 
+  describe('token drag and drop', function() {
+    beforeEach(function() {
+      view.set('env', {
+        addMachines: utils.makeStubFunction({ id: 'foo' }),
+        placeUnit: utils.makeStubFunction()
+      });
+    });
+
+    it('listens for the drag start, end, drop events', function() {
+      var onStub = utils.makeStubMethod(view, 'on');
+      this._cleanups.push(onStub.reset);
+      view._bindEvents();
+      assert.equal(onStub.callCount(), 3);
+      var onStubArgs = onStub.allArguments();
+      assert.equal(onStubArgs[0][0], '*:unit-token-drag-start');
+      assert.deepEqual(onStubArgs[0][1], view._showDraggingUI);
+      assert.equal(onStubArgs[1][0], '*:unit-token-drag-end');
+      assert.deepEqual(onStubArgs[1][1], view._hideDraggingUI);
+      assert.equal(onStubArgs[2][0], '*:unit-token-drop');
+      assert.deepEqual(onStubArgs[2][1], view._unitTokenDropHandler);
+    });
+
+    it('converts the headers to drop targets when dragging', function() {
+      // This tests assumes the previous test passed.
+      // 'listens for the drag start, end, drop events'
+      var onStub = utils.makeStubMethod(view, 'on');
+      this._cleanups.push(onStub.reset);
+      view._bindEvents();
+      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
+      view._containersHeader = { setDroppable: utils.makeStubFunction() };
+      // unit-drag start handler _showDraggingUI
+      onStub.allArguments()[0][1].call(view);
+      assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
+      // The user hasn't selected a machine so this header should not be
+      // a drop target.
+      assert.equal(view._containersHeader.setDroppable.calledOnce(), false);
+    });
+
+    it('converts headers to drop targets when machine selected', function() {
+      // This tests assumes the previous test passed.
+      // 'listens for the drag start, end, drop events'
+      var onStub = utils.makeStubMethod(view, 'on');
+      this._cleanups.push(onStub.reset);
+      view._bindEvents();
+      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
+      view._containersHeader = { setDroppable: utils.makeStubFunction() };
+      view.set('selectedMachine', 1);
+      // unit-drag start handler _showDraggingUI
+      onStub.allArguments()[0][1].call(view);
+      assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
+      // The user selected a machine so this header should be a drop target.
+      assert.equal(view._containersHeader.setDroppable.calledOnce(), true);
+    });
+
+    it('converts headers to non-drop targets when drag stopped', function() {
+      // This tests assumes the previous test passed.
+      // 'listens for the drag start, end, drop events'
+      var onStub = utils.makeStubMethod(view, 'on');
+      this._cleanups.push(onStub.reset);
+      view._bindEvents();
+      view._machinesHeader = { setNotDroppable: utils.makeStubFunction() };
+      view._containersHeader = { setNotDroppable: utils.makeStubFunction() };
+      // unit-drag end handler _hideDraggingUI
+      onStub.allArguments()[1][1].call(view);
+      assert.equal(view._machinesHeader.setNotDroppable.calledOnce(), true);
+      assert.equal(view._containersHeader.setNotDroppable.calledOnce(), true);
+    });
+
+    it('creates a new machine when dropped on machine header', function() {
+      view._unitTokenDropHandler({
+        dropAction: 'machine'
+      });
+      var env = view.get('env');
+      assert.deepEqual(env.addMachines.lastArguments()[0], [{
+        containerType: undefined,
+        parentId: undefined
+      }]);
+      var placeArgs = env.placeUnit.lastArguments();
+      assert.strictEqual(placeArgs[0], null);
+      assert.equal(placeArgs[1], 'foo');
+    });
+
+    it('creates new container when dropped on container header', function() {
+      view.set('selectedMachine', '5');
+      view._unitTokenDropHandler({
+        dropAction: 'container'
+      });
+      var env = view.get('env');
+      assert.deepEqual(env.addMachines.lastArguments()[0], [{
+        containerType: 'lxc',
+        parentId: '5'
+      }]);
+      var placeArgs = env.placeUnit.lastArguments();
+      assert.strictEqual(placeArgs[0], null);
+      assert.equal(placeArgs[1], 'foo');
+    });
+
+    it('creates a new container when dropped on a machine', function() {
+      view._unitTokenDropHandler({
+        dropAction: 'container',
+        targetId: '0'
+      });
+      var env = view.get('env');
+      assert.deepEqual(env.addMachines.lastArguments()[0], [{
+        containerType: 'lxc',
+        parentId: '0'
+      }]);
+      var placeArgs = env.placeUnit.lastArguments();
+      assert.strictEqual(placeArgs[0], null);
+      assert.equal(placeArgs[1], 'foo');
+    });
+
+    it('places the unit on an already existing container', function() {
+      view._unitTokenDropHandler({
+        dropAction: 'container',
+        targetId: '0/lxc/1'
+      });
+      var env = view.get('env');
+      // The machine is already created so we don't need to create a new one.
+      assert.equal(env.addMachines.callCount(), 0);
+      var placeArgs = env.placeUnit.lastArguments();
+      assert.strictEqual(placeArgs[0], null);
+      assert.equal(placeArgs[1], '0/lxc/1');
+    });
+  });
+
   describe('unplaced units column', function() {
     it('should render a list of units', function() {
       view.render();
@@ -183,151 +309,8 @@ describe('machine view panel view', function() {
       assert.equal(updateArgs[0], machineId);
     });
 
-    it('listens for the drag start, end, drop events', function() {
-      var onStub = utils.makeStubMethod(view, 'on');
-      this._cleanups.push(onStub.reset);
-      view._bindEvents();
-      assert.equal(onStub.callCount(), 3);
-      var onStubArgs = onStub.allArguments();
-      assert.equal(onStubArgs[0][0], '*:unit-token-drag-start');
-      assert.deepEqual(onStubArgs[0][1], view._showDraggingUI);
-      assert.equal(onStubArgs[1][0], '*:unit-token-drag-end');
-      assert.deepEqual(onStubArgs[1][1], view._hideDraggingUI);
-      assert.equal(onStubArgs[2][0], '*:unit-token-drop');
-      assert.deepEqual(onStubArgs[2][1], view._unitTokenDropHandler);
-    });
-
-    it('converts the headers to drop targets when dragging', function() {
-      // This tests assumes the previous test passed.
-      // 'listens for the drag start, end, drop events'
-      var onStub = utils.makeStubMethod(view, 'on');
-      this._cleanups.push(onStub.reset);
-      view._bindEvents();
-      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
-      view._containersHeader = { setDroppable: utils.makeStubFunction() };
-      // unit-drag start handler _showDraggingUI
-      onStub.allArguments()[0][1].call(view);
-      assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
-      // The user hasn't selected a machine so this header should not be
-      // a drop target.
-      assert.equal(view._containersHeader.setDroppable.calledOnce(), false);
-    });
-
-    it('converts headers to drop targets when machine selected', function() {
-      // This tests assumes the previous test passed.
-      // 'listens for the drag start, end, drop events'
-      var onStub = utils.makeStubMethod(view, 'on');
-      this._cleanups.push(onStub.reset);
-      view._bindEvents();
-      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
-      view._containersHeader = { setDroppable: utils.makeStubFunction() };
-      view.set('selectedMachine', 1);
-      // unit-drag start handler _showDraggingUI
-      onStub.allArguments()[0][1].call(view);
-      assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
-      // The user selected a machine so this header should be a drop target.
-      assert.equal(view._containersHeader.setDroppable.calledOnce(), true);
-    });
-
-    it('converts headers to non-drop targets when drag stopped', function() {
-      // This tests assumes the previous test passed.
-      // 'listens for the drag start, end, drop events'
-      var onStub = utils.makeStubMethod(view, 'on');
-      this._cleanups.push(onStub.reset);
-      view._bindEvents();
-      view._machinesHeader = { setNotDroppable: utils.makeStubFunction() };
-      view._containersHeader = { setNotDroppable: utils.makeStubFunction() };
-      // unit-drag end handler _hideDraggingUI
-      onStub.allArguments()[1][1].call(view);
-      assert.equal(view._machinesHeader.setNotDroppable.calledOnce(), true);
-      assert.equal(view._containersHeader.setNotDroppable.calledOnce(), true);
-    });
-
-    describe('_unitTokenDropHandler', function() {
-      beforeEach(function() {
-        view.set('env', {
-          addMachines: utils.makeStubFunction({ id: 'foo' }),
-          placeUnit: utils.makeStubFunction()
-        });
-      });
-
-      it('creates a new machine when dropped on machine header', function() {
-        view._unitTokenDropHandler({
-          dropAction: 'machine'
-        });
-        var env = view.get('env');
-        assert.deepEqual(env.addMachines.lastArguments()[0], [{
-          containerType: undefined,
-          parentId: undefined
-        }]);
-        var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0], null);
-        assert.equal(placeArgs[1], 'foo');
-      });
-
-      it('creates new container when dropped on container header', function() {
-        view.set('selectedMachine', '5');
-        view._unitTokenDropHandler({
-          dropAction: 'container'
-        });
-        var env = view.get('env');
-        assert.deepEqual(env.addMachines.lastArguments()[0], [{
-          containerType: 'lxc',
-          parentId: '5'
-        }]);
-        var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0], null);
-        assert.equal(placeArgs[1], 'foo');
-      });
-
-      it('creates a new container when dropped on a machine', function() {
-        view._unitTokenDropHandler({
-          dropAction: 'container',
-          targetId: '0'
-        });
-        var env = view.get('env');
-        assert.deepEqual(env.addMachines.lastArguments()[0], [{
-          containerType: 'lxc',
-          parentId: '0'
-        }]);
-        var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0], null);
-        assert.equal(placeArgs[1], 'foo');
-      });
-
-      it('places the unit on an already existing container', function() {
-        view._unitTokenDropHandler({
-          dropAction: 'container',
-          targetId: '0/lxc/1'
-        });
-        var env = view.get('env');
-        // The machine is already created so we don't need to create a new one.
-        assert.equal(env.addMachines.callCount(), 0);
-        var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0], null);
-        assert.equal(placeArgs[1], '0/lxc/1');
-      });
-    });
   });
 
-  describe('_addIconsToUnits', function() {
-    it('should annotate units with icons for its tokens', function() {
-      var db = view.get('db'),
-          unit = {id: 'foo/0', service: 'foo' };
-      db.services.add({ id: 'foo', icon: 'http://example.com/foo.png' });
-      unit = view._addIconsToUnits([unit])[0];
-      assert.equal(unit.icon, 'http://example.com/foo.png');
-    });
-
-    it('should log an error when it cannot find the service', function() {
-      var unit = {id: 'foo/0', service: 'foo' },
-          errorStub = utils.makeStubMethod(console, 'error');
-      this._cleanups.push(errorStub.reset);
-      unit = view._addIconsToUnits([unit])[0];
-      assert.equal(errorStub.calledOnce(), true);
-      assert.equal(errorStub.lastArguments(), 'Unit foo/0 has no service.');
-    });
-  });
 
   describe('machine column', function() {
     it('should render a list of machines', function() {
@@ -418,34 +401,6 @@ describe('machine view panel view', function() {
           item.one('.title').get('text'), machineModel.get('displayName'),
           'machine names do not match post-update');
     });
-    /// XXX Jeff May 15 2014 - drop handlers no longer update UI. Fix once
-    // handlers update the UI.
-    it.skip('should render a list of containers', function(done) {
-      view.render();
-      var machineToken = container.one('.machines li .token');
-      machines.add([
-        {id: '0/lxc/1'},
-        {id: '0/lxc/2'}
-      ]);
-      machineToken.on('click', function(e) {
-        // Need to explicitly fire the click handler as we are catching
-        // the click event before it can be fired.
-        view.handleMachineTokenSelect(e);
-        var containers = machines.filterByParent('0'),
-            list = container.all('.containers .content li');
-        assert.equal(containers.length > 0, true,
-            'There are no initial containers');
-        assert.equal(list.size(), containers.length,
-            'models are out of sync with displayed list');
-        list.each(function(item, index) {
-          var machines = containers[index];
-          assert.equal(item.one('.title').get('text'), machines.displayName,
-              'displayed item does not match model');
-        });
-        done();
-      });
-      machineToken.simulate('click');
-    });
 
     it('should select a token when clicked', function() {
       view.render();
@@ -458,6 +413,117 @@ describe('machine view panel view', function() {
       var containerToken = container.one('.containers li .token');
       containerToken.simulate('click');
       assert.equal(containerToken.hasClass('active'), true);
+    });
+
+    it('should annotate units with icons for its tokens', function() {
+      var db = view.get('db'),
+          unit = {id: 'foo/0', service: 'foo' };
+      db.services.add({ id: 'foo', icon: 'http://example.com/foo.png' });
+      unit = view._addIconsToUnits([unit])[0];
+      assert.equal(unit.icon, 'http://example.com/foo.png');
+    });
+
+    it('should log an error when it cannot find the service', function() {
+      var unit = {id: 'foo/0', service: 'foo' },
+          errorStub = utils.makeStubMethod(console, 'error');
+      this._cleanups.push(errorStub.reset);
+      unit = view._addIconsToUnits([unit])[0];
+      assert.equal(errorStub.calledOnce(), true);
+      assert.equal(errorStub.lastArguments(), 'Unit foo/0 has no service.');
+    });
+  });
+
+  describe('container column', function() {
+    it('creates container tokens without units', function() {
+      var updateStub = utils.makeStubMethod(
+          view, '_updateMachineWithUnitData');
+      this._cleanups.push(updateStub.reset);
+      var db = view.get('db'),
+          filterStub = utils.makeStubMethod(db.units, 'filterByMachine');
+      this._cleanups.push(filterStub.reset);
+      var rendered = false,
+          target;
+      var viewStub = utils.makeStubMethod(views, 'ContainerToken', {
+        render: function() { rendered = true; },
+        addTarget: function(t) { target = t; }
+      });
+      var containerParent = utils.makeContainer(this, 'machine-view-panel'),
+          container = {};
+      view._createContainerToken(containerParent, container);
+      // Verify that units for the container were looked up since they weren't
+      // provided
+      assert.equal(filterStub.calledOnce(), true);
+      assert.equal(updateStub.calledOnce(), true);
+      assert.equal(viewStub.calledOnce(), true);
+      // Verify token is rendered and has the view added as a target.
+      assert.equal(rendered, true);
+      assert.equal(target, view);
+    });
+
+    it('creates container tokens with units', function() {
+      var updateStub = utils.makeStubMethod(view, '_updateMachineWithUnitData');
+      this._cleanups.push(updateStub.reset);
+      var db = view.get('db'),
+          filterStub = utils.makeStubMethod(db.units, 'filterByMachine');
+      this._cleanups.push(filterStub.reset);
+      var rendered = false,
+          target;
+      var viewStub = utils.makeStubMethod(views, 'ContainerToken', {
+        render: function() { rendered = true; },
+        addTarget: function(t) { target = t; }
+      });
+      var containerParent = utils.makeContainer(this, 'machine-view-panel'),
+          units = [{}],
+          container = {};
+      view._createContainerToken(containerParent, container, units);
+      // Verify that units for the container were provided, and not looked up.
+      assert.equal(filterStub.calledOnce(), false);
+      assert.equal(updateStub.calledOnce(), true);
+      assert.equal(viewStub.calledOnce(), true);
+      // Verify token is rendered and has the view added as a target.
+      assert.equal(rendered, true);
+      assert.equal(target, view);
+    });
+
+    it('creates container tokens when a machine is selected', function() {
+      view.render();
+      var target = container.one('.machines li .token');
+      target.setData('id', '0');
+      var mockEvent = {
+        currentTarget: target,
+        preventDefault: function() {}
+      };
+      machines.add([{ id: '0/lxc/0' }]);
+      var renderStub = utils.makeStubMethod(view, '_renderContainerTokens');
+      this._cleanups.push(renderStub.reset);
+      view.handleMachineTokenSelect(mockEvent);
+      assert.equal(renderStub.calledOnce(), true);
+      var lastArgs = renderStub.lastArguments();
+      assert.equal(lastArgs[0][0].displayName, '0/lxc/0');
+      assert.equal(lastArgs[1], '0');
+    });
+
+    it('creates tokens for containers and "bare metal"', function() {
+      view.render();
+      machines.add([{ id: '0/lxc/0' }]);
+      var containers = machines.filterByParent('0');
+      var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
+      this._cleanups.push(tokenStub.reset);
+      view._renderContainerTokens(containers, 0);
+      assert.equal(tokenStub.callCount(), 2);
+      var tokenArguments = tokenStub.allArguments();
+      assert.equal(tokenArguments[0][1].displayName, '0/lxc/0');
+      assert.equal(tokenArguments[1][1].displayName, 'Bare metal');
+    });
+
+    it('always creates a "bare metal" token', function() {
+      view.render();
+      var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
+      this._cleanups.push(tokenStub.reset);
+      view._renderContainerTokens([], 0);
+      assert.equal(tokenStub.callCount(), 1);
+      var tokenArguments = tokenStub.allArguments();
+      assert.equal(tokenArguments[0][1].displayName, 'Bare metal');
     });
   });
 
