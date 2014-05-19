@@ -69,24 +69,6 @@ describe('deployer bar view', function() {
     assert.equal(view._getChangeCount(ecs), 1);
   });
 
-
-  it('can be told to show deploy confirmation or recent changes', function() {
-    var summaryStub = utils.makeStubMethod(view, '_showSummary');
-    this._cleanups.push(summaryStub.reset);
-
-    view.showDeployConfirmation(mockEvent);
-    assert.equal(
-        summaryStub.lastArguments()[0], true,
-        '_showSummary did not receive true from showDeployConfirmation.'
-    );
-
-    view.showRecentChanges(mockEvent);
-    assert.equal(
-        summaryStub.lastArguments()[0], false,
-        '_showSummary did not receive false from showRecentChanges.'
-    );
-  });
-
   it('can show a summary of uncommitted changes for deployment', function() {
     var changesStub = utils.makeStubMethod(view, '_getChangeCount', 0),
         deployStub = utils.makeStubMethod(view, '_getDeployedServices', []),
@@ -94,7 +76,7 @@ describe('deployer bar view', function() {
     this._cleanups.push(changesStub.reset);
     this._cleanups.push(deployStub.reset);
     this._cleanups.push(relationsStub.reset);
-    view._showSummary(true);
+    view._showSummary();
     assert.equal(
         container.hasClass('summary-open'), true,
         'Summary is not open.'
@@ -114,29 +96,14 @@ describe('deployer bar view', function() {
   });
 
   it('can show a list of recent changes', function() {
-    var changesStub = utils.makeStubMethod(view, '_getChangeCount', 0),
-        deployStub = utils.makeStubMethod(view, '_getDeployedServices', []),
-        relationsStub = utils.makeStubMethod(view, '_getAddRelations', []);
+    var changesStub = utils.makeStubMethod(view,
+        '_generateAllChangeDescriptions', []);
     this._cleanups.push(changesStub.reset);
-    this._cleanups.push(deployStub.reset);
-    this._cleanups.push(relationsStub.reset);
-    view._showSummary(false);
-    assert.equal(
-        container.hasClass('summary-open'), true,
-        'Summary is not open.'
-    );
-    assert.notEqual(
-        container.one('.summary-panel'), null,
-        'Summary panel HTML is not present.'
-    );
-    assert.equal(
-        container.one('.post-summary'), null,
-        'Deployment confirmation present when it should not be.'
-    );
-    assert.notEqual(
-        container.one('.change-list'), null,
-        'Recent changes not present.'
-    );
+    view._showChanges();
+    assert.equal(container.hasClass('changes-open'), true,
+        'Changes should be open.');
+    assert.notEqual(container.one('.panel.changes'), null,
+        'Summary panel HTML should be present.');
   });
 
   it('should commit on confirmation', function() {
@@ -156,7 +123,7 @@ describe('deployer bar view', function() {
 
   it('can generate descriptions for any change type', function() {
     var tests = [{
-      icon: '<i class="sprite service-added"></i>',
+      icon: 'service-added',
       msg: ' bar has been added.',
       change: {
         command: {
@@ -165,7 +132,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite service-added"></i>',
+      icon: 'service-added',
       msg: ' 1 foo unit has been added.',
       change: {
         command: {
@@ -174,7 +141,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite service-added"></i>',
+      icon: 'service-added',
       msg: ' 2 foo units have been added.',
       change: {
         command: {
@@ -183,7 +150,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite relation-added"></i>',
+      icon: 'relation-added',
       msg: 'bar relation added between foo and baz.',
       change: {
         command: {
@@ -195,7 +162,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite container-created01"></i>',
+      icon: 'container-created01',
       msg: '1 container has been added.',
       change: {
         command: {
@@ -204,7 +171,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite container-created01"></i>',
+      icon: 'container-created01',
       msg: '2 containers have been added.',
       change: {
         command: {
@@ -213,7 +180,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite machine-created01"></i>',
+      icon: 'machine-created01',
       msg: '1 machine has been added.',
       change: {
         command: {
@@ -222,7 +189,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite machine-created01"></i>',
+      icon: 'machine-created01',
       msg: '2 machines have been added.',
       change: {
         command: {
@@ -231,7 +198,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: '<i class="sprite service-exposed"></i>',
+      icon: 'service-exposed',
       msg: 'An unknown change has been made to this enviroment via the CLI.',
       change: {
         command: {
@@ -240,10 +207,11 @@ describe('deployer bar view', function() {
       }
     }];
 
-    var msg;
     tests.forEach(function(test) {
-      msg = test.icon + test.msg + '<time>00:00</time>';
-      assert.equal(view._generateChangeDescription(test.change, true), msg);
+      var change = view._generateChangeDescription(test.change, true);
+      assert.equal(change.icon, test.icon);
+      assert.equal(change.description, test.msg);
+      assert.equal(change.time, '00:00');
     });
   });
 

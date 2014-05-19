@@ -7,39 +7,45 @@
             </span>
             <a href="" class="button deploy-button">Deploy</a>
         </div>
-        {{#if confirmDeploy}}
         <div class="post-summary">
             <p>Confirm will deploy all changes</p>
             <a href="" class="button cancel-button">Cancel</a>
             <a href="" class="button confirm-button">Confirm</a>
         </div>
-        {{/if}}
     </div>
     <ul class="action-list">
         <li class="show">
             <a href="" class="link">
                 {{ changeCount }} changes
                 <span class="expand">
-                    <i class="sprite expand_icon more"></i>
-                </span>
-            </a>
-        </li>
-        <li class="hide">
-            <a href="" class="link">
-                {{ changeCount }} changes
-                <span class="contract">
-                    <i class="sprite contract_icon less"></i>
+                    <i class="sprite contract_icon more"></i>
                 </span>
             </a>
         </li>
         <li class="change">
-          {{{ latestChangeDescription }}}
+          <i class="sprite {{ latestChangeDescription.icon }}"></i>
+          {{ latestChangeDescription.description }}
+          <time>{{ latestChangeDescription.time }}</time>
         </li>
     </ul>
 </div>
-<aside class="summary">
+<aside class="panel changes">
+  <header>
+    <ul class="action-list">
+        <li class="hide">
+            <a href="" class="link">
+                {{ changeCount }} changes
+                <span class="contract">
+                    <i class="sprite expand_icon less"></i>
+                </span>
+            </a>
+        </li>
+    </ul>
+  </header>
+  <section></section>
+</aside>
+<aside class="panel summary">
     <header>
-        {{#if confirmDeploy}}
         <h2 class="title">The following changes will be deployed</h2>
         <div class="right">
             <ul class="action-list">
@@ -49,9 +55,7 @@
                 <li><a href="" class="close"><i class="sprite DB-close"></i></a></li>
             </ul>
         </div>
-        {{/if}}
     </header>
-    {{#if confirmDeploy}}
     <section>
         <h2 class="title">Deployment summary</h2>
         <div class="summary-panel">
@@ -147,23 +151,5 @@
             {{/if}}
         </div>
     </section>
-    {{else}}
-    <section>
-        <h2 class="title">Recent changes</h2>
-        <div class="summary-panel">
-          <div class="change-list">
-          {{#if changeList}}
-            <ul>
-            {{#each changeList}}
-            <li>{{{.}}}</li>
-            {{/each}}
-            </ul>
-          {{else}}
-            <p>No recent changes</p>
-          {{/if}}
-          </div>
-        </div>
-    </section>
-    {{/if}}
 </aside>
 <div class="cover"></div>

@@ -1,4 +1,9 @@
 .deployer-bar {
+    @paper-dark: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
+
+    time {
+        color: #bfbab5;
+    }
     .bar {
         box-sizing: border-box;
         position: absolute;
@@ -7,11 +12,10 @@
         left: 0;
         right: 0;
         height: @deployer-bar-height;
-        background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
+        background: @paper-dark;
         box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
 
         time {
-            color: #bfbab5;
             margin-left: 7px;
         }
         a.button {
@@ -78,13 +82,13 @@
     ul.action-list {
         margin: 0;
         list-style: none;
+
         .hide {
             display: none;
         }
         .show {
             display: block;
         }
-
         li {
             float: left;
             height: 50px;
@@ -109,22 +113,79 @@
             }
         }
     }
-    .summary {
+    .panel {
         display: none;
         position: absolute;
-        z-index: 651;
-        bottom: 50px;
+        // Needs to be above .bar so that the shadow does not appear
+        // above the panel.
+        z-index: 652;
+        bottom: @deployer-bar-height;
         left: 0;
-        height: 450px;
-        transistion: height .3s;
-        width:100%;
+        width: 100%;
         background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg.jpg) repeat 0 0;
         border: 1px solid #D9D9D9;
+        transistion: height .3s;
 
         header {
-            background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
-            padding: 5px 20px;
+            background: @paper-dark;
             border-bottom: 1px solid #D9D9D9;
+        }
+    }
+    .panel.changes {
+        .customize-scrollbar;
+
+        header {
+            .action-list .hide {
+                float: none;
+                padding-left: none;
+
+                .less {
+                    margin-left: 10px;
+                }
+            }
+        }
+        .change-list {
+            overflow: auto;
+            max-height: 400px;
+            margin: 0;
+            list-style: none;
+
+            li {
+                border-bottom: 1px solid #D9D9D9;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+                &,
+                span {
+                    height: 40px;
+                }
+                span {
+                    display: block;
+                    float: left;
+                    padding: 0 20px;
+                    line-height: 40px;
+                }
+                .icon {
+                    padding: 0 15px;
+                    border-right: 1px solid #D9D9D9;
+                }
+                .time {
+                    padding: 0 40px;
+                    float: right;
+                    border-left: 1px solid #D9D9D9;
+                }
+            }
+        }
+        p.none {
+            margin: 20px;
+        }
+    }
+    .panel.summary {
+        height: 450px;
+
+        header {
+            padding: 5px 20px;
         }
         section {
             padding: 5px 0;
@@ -141,9 +202,10 @@
                 line-height: 30px;
                 height: auto;
                 padding: 0 5px;
-            }
-            li a.close{
-                margin-left: 10px;
+
+                a.close {
+                    margin-left: 10px;
+                }
             }
         }
         .right {
@@ -186,24 +248,36 @@
         right: 0;
         background-color: rgba(0, 0, 0, 0.7);
     }
+    &.changes-open,
     &.summary-open {
-        .summary,
+        .cover {
+            display: block;
+        }
+        .action-list {
+            .show {
+                display: none;
+            }
+        }
+    }
+    &.changes-open {
+        .panel.changes {
+            display: block;
+
+            .action-list {
+                .hide {
+                    display: block;
+                }
+            }
+        }
+    }
+    &.summary-open {
+        .cover,
+        .panel.summary,
         .bar .post-summary {
             display: block;
         }
         .bar .pre-summary {
             display: none;
-        }
-        .cover {
-            display: block;
-        }
-        .action-list {
-            .hide {
-                display: block;
-            }
-            .show {
-                display: none
-            }
         }
     }
 }
