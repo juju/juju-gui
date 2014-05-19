@@ -180,8 +180,8 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               machineTokens = container.all('.machines .content .items .token'),
               selected = e.currentTarget,
-              parentId = selected.getData('id'),
-              containers = this.get('db').machines.filterByParent(parentId);
+              parentId = selected.getData('id');
+          var containers = this.get('db').machines.filterByParent(parentId);
           e.preventDefault();
           // A lot of things in the machine view rely on knowing when the user
           // selects a machine.
@@ -270,19 +270,9 @@ YUI.add('machine-view-panel', function(Y) {
               containers.length + ' container' + containersPlural + ', ' +
               numUnits + ' unit' + unitsPlural);
 
-          var token;
-
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
-              var containerUnits = db.units.filterByMachine(container.id);
-              this._updateMachineWithUnitData(container, containerUnits);
-              token = new views.ContainerToken({
-                containerTemplate: '<li/>',
-                containerParent: containerParent,
-                machine: container
-              });
-              token.render();
-              token.addTarget(this);
+              this._createContainerToken(containerParent, container);
             }, this);
           }
 
@@ -290,15 +280,31 @@ YUI.add('machine-view-panel', function(Y) {
           var units = db.units.filterByMachine(parentId);
           if (units.length > 0) {
             var machine = {displayName: 'Bare metal'};
-            this._updateMachineWithUnitData(machine, units);
-            token = new views.ContainerToken({
-              containerTemplate: '<li/>',
-              containerParent: containerParent,
-              machine: machine
-            });
-            token.render();
-            token.addTarget(this);
+            this._createContainerToken(containerParent, machine, units);
           }
+        },
+
+        /**
+           Create a container token
+           @param {Y.Node} containerParent The parent node for the token's
+             container
+           @param {Object} container The lxc or kvm container object
+           @param {Array} units Optional list of units on the container.
+             If not provided, the container's units will be looked up.
+           @method _createContainerToken
+         */
+        _createContainerToken: function(containerParent, container, units) {
+          if (!units) {
+            units = this.get('db').units.filterByMachine(container.id);
+          }
+          this._updateMachineWithUnitData(container, units);
+          var token = new views.ContainerToken({
+            containerTemplate: '<li/>',
+            containerParent: containerParent,
+            machine: container
+          });
+          token.render();
+          token.addTarget(this);
         },
 
         /**
