@@ -7,6 +7,9 @@
 README
 ======
 
+.. image:: https://saucelabs.com/buildstatus/juju-gui
+   :alt: SauceLabs Status
+
 Welcome. Juju-GUI is a web-based GUI for `Juju <https://juju.ubuntu.com/>`_.
 Juju lets you deploy connected services to the cloud in a convenient,
 vendor-neutral, and powerful way. The GUI lets you visualize and manage
