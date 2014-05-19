@@ -67,6 +67,7 @@ YUI.add('machine-view-panel-header', function(Y) {
          * @method setLabel
          */
         setLabel: function(label) {
+          this.set('label', label);
           this.get('container').one('.label').set('text', label);
         },
 

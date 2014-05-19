@@ -100,6 +100,14 @@ describe('machine view panel view', function() {
         'Unplaced units');
   });
 
+  it('should set the initial container header label', function() {
+    var label = '0 containers, 0 units';
+    view.render();
+    assert.equal(view._containersHeader.get('label'), label);
+    assert.equal(view._containersHeader.get(
+        'container').one('.label').get('text'), label);
+  });
+
   describe('token drag and drop', function() {
     beforeEach(function() {
       view.set('env', {
@@ -324,6 +332,14 @@ describe('machine view panel view', function() {
                      'displayed item does not match model');
       });
     });
+
+    it('should set the correct machine count in the header', function() {
+      var label = '1 machine';
+      view.render();
+      assert.equal(view._machinesHeader.get('label'), label);
+      assert.equal(view._machinesHeader.get(
+          'container').one('.label').get('text'), label);
+    });
     /// XXX Jeff May 15 2014 - drop handlers no longer update UI. Fix once
     // handlers update the UI.
     it.skip('updates and re-renders a specific machine', function() {
@@ -400,6 +416,28 @@ describe('machine view panel view', function() {
       assert.equal(
           item.one('.title').get('text'), machineModel.get('displayName'),
           'machine names do not match post-update');
+    });
+
+    it('should set the correct counts in the container header', function(done) {
+      var label = '2 containers, 1 unit';
+      view.render();
+      var machineToken = container.one('.machines li .token');
+      machines.add([
+        {id: '0/lxc/1'},
+        {id: '0/lxc/2'}
+      ]);
+      // Add a unit to the machine.
+      view.get('db').units.add([{id: 'test/2', machine: '0'}]);
+      machineToken.on('click', function(e) {
+        // Need to explicitly fire the click handler as we are catching
+        // the click event before it can be fired.
+        view.handleMachineTokenSelect(e);
+        assert.equal(view._containersHeader.get('label'), label);
+        assert.equal(view._containersHeader.get(
+            'container').one('.label').get('text'), label);
+        done();
+      });
+      machineToken.simulate('click');
     });
 
     it('should select a token when clicked', function() {
