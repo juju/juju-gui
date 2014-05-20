@@ -67,11 +67,11 @@ YUI.add('machine-view-panel', function(Y) {
         _bindEvents: function() {
           var db = this.get('db');
           this.addEvent(db.machines.after(
-            ['add', 'remove', '*:change'], this._onMachinesChange, this)
+              ['add', 'remove', '*:change'], this._onMachinesChange, this)
           );
 
           this.addEvent(db.units.after(
-            ['add', 'remove', '*:change'], this._onUnitsChange, this));
+              ['add', 'remove', '*:change'], this._onUnitsChange, this));
 
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
@@ -370,14 +370,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Node} list the list node to append the machine to.
          */
         _renderMachineToken: function(machineOrId) {
-          var machine;
+          var db = this.get('db'),
+              machine;
           if (typeof machineOrId === 'string') {
-            machine = this.get('db').machines.getById(machineOrId);
+            machine = db.machines.getById(machineOrId);
           } else {
             machine = machineOrId;
           }
           var node = Y.Node.create('<li></li>'),
-              units = this.get('db').units.filterByMachine(machine.id, true);
+              units = db.units.filterByMachine(machine.id, true);
           this._updateMachineWithUnitData(machine, units);
           var token = new views.MachineToken({
             container: node,
