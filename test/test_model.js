@@ -1455,6 +1455,15 @@ describe('test_model.js', function() {
       assert.equal(services.length, 1);
       assert.deepEqual(services, [rails]);
     });
+
+    it('can properly parse the charm url for the package name', function() {
+      assert.equal(rails.get('packageName'), 'rails');
+      var jujuGui = new models.Service({
+        id: 'juju-gui',
+        charm: 'cs:/trusty/juju-gui-90'
+      });
+      assert.equal(jujuGui.get('packageName'), 'juju-gui');
+    });
   });
 
   describe('db.charms.addFromCharmData', function() {
