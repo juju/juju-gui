@@ -729,6 +729,44 @@ describe('machine view panel view', function() {
       var tokenArguments = tokenStub.allArguments();
       assert.equal(tokenArguments[0][1].displayName, 'Bare metal');
     });
+
+    describe('functional tests', function() {
+      it('can render containers on click of machine token', function() {
+        view.render();
+        machines.add([{ id: '0/lxc/0' }]);
+        view.get('db').units.add([{id: 'test/2', machine: '0'}]);
+        var token = container.one('.machine-token .token');
+        assert.equal(
+            token.hasClass('active'), false,
+            'Machine token already selected.');
+        token.simulate('click');
+        assert.equal(
+            token.hasClass('active'), true,
+            'Machine token not marked as selected.');
+        var containers = container.all('.container-token .token'),
+            hardware = token.one('.details').get('text').replace(/\s+/g, '');
+        // We should have one token for the new container and one for the
+        // "bare metal".
+        assert.equal(containers.size(), 2, 'Containers did not render.');
+        assert.equal(hardware, '1x10.24GHz,1.0GB,1.0GB');
+      });
+
+      it('can select container tokens', function() {
+        view.render();
+        machines.add([{ id: '0/lxc/0' }]);
+        view.get('db').units.add([{id: 'test/2', machine: '0'}]);
+        var machineToken = container.one('.machine-token .token');
+        machineToken.simulate('click');
+        var containerToken = container.one('.container-token .token');
+        assert.equal(
+            containerToken.hasClass('active'), false,
+            'Container token already selected.');
+        containerToken.simulate('click');
+        assert.equal(
+            containerToken.hasClass('active'), true,
+            'Container token not marked as selected.');
+      });
+    });
   });
 
   describe('mass scale up UI', function() {
