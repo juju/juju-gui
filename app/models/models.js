@@ -409,15 +409,25 @@ YUI.add('juju-models', function(Y) {
           } else {
             // Because the packageName is not set if the
             // model was created from the core delta.
-            var charm = this.get('charm');
+            var charmUrl = this.get('charm'),
+                charmName;
             // If there is no charm as well, well you have bigger problems :)
             // but this helps so that we don't need to provide charm data
             // for every test suite.
-            if (charm) {
-              charm = charm.split('/');
-              charm = charm[charm.length - 1].split('-')[0];
+            if (charmUrl) {
+              var urlParts = charmUrl.split('/');
+              var nameParts = urlParts[urlParts.length - 1].split('-');
+              var possibleVersion = nameParts[nameParts.length - 1];
+              // Expected === and instead saw ==
+              /* jshint -W116 */
+              if (possibleVersion == parseInt(possibleVersion, 10)) {
+                // The charmUrl contains the version so we can drop that and
+                // reconstruct the name.
+                nameParts.pop();
+              }
+              charmName = nameParts.join('-');
             }
-            return charm || undefined;
+            return charmName;
           }
         }
       }
