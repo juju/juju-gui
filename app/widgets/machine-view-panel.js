@@ -92,7 +92,7 @@ YUI.add('machine-view-panel', function(Y) {
               this._updateMachine(machineChanged.newVal);
             }
           }
-          this._renderUnits();
+          this._renderUnplacedUnits();
         },
 
         /**
@@ -518,13 +518,12 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * Render the undeployed service unit tokens.
-         *
-         * @method _renderUnits
+           Render the undeployed service unit tokens.
+
+           @method _renderUnplacedUnits
          */
-        _renderUnits: function() {
-          var self = this,
-              container = this.get('container'),
+        _renderUnplacedUnits: function() {
+          var container = this.get('container'),
               units = this.get('db').units.filterByMachine(null),
               unitList = container.one('.unplaced .content .items');
 
@@ -535,20 +534,29 @@ YUI.add('machine-view-panel', function(Y) {
             this._addIconsToUnits(units);
           }
 
-          this._smartUpdateList(units, unitList, function(model, list) {
-            var node = Y.Node.create('<li></li>');
-            var token = new views.ServiceUnitToken({
-              container: node,
-              title: model.displayName,
-              id: model.id,
-              icon: model.icon,
-              machines: self.get('db').machines.filterByParent(null),
-              containers: [] // XXX Need to find query for getting containers
-            });
-            token.render();
-            token.addTarget(self);
-            return node;
+          this._smartUpdateList(
+              units, unitList,
+              this._renderUnplacedUnitToken.bind(this)
+          );
+        },
+
+        /**
+           Render a serviceunit token.
+
+           @method _renderUnplacedUnitToken
+           @param {Object} model The model data for the unplaced unit
+         */
+        _renderUnplacedUnitToken: function(model) {
+          var node = Y.Node.create('<li></li>');
+          var token = new views.ServiceUnitToken({
+            container: node,
+            title: model.displayName,
+            id: model.id,
+            icon: model.icon
           });
+          token.render();
+          token.addTarget(this);
+          return node;
         },
 
         /**
@@ -608,7 +616,7 @@ YUI.add('machine-view-panel', function(Y) {
           container.addClass('machine-view-panel');
           this._renderHeaders();
           this._renderMachines();
-          this._renderUnits();
+          this._renderUnplacedUnits();
           this._renderScaleUp();
           this._clearContainerColumn();
           return this;
