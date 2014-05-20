@@ -573,9 +573,7 @@ YUI.add('environment-change-set', function(Y) {
     placeUnit: function(unit, machineId) {
       var record = this._retrieveUnitRecord(unit.id);
       if (!record) {
-        throw new Error(
-            'attempted to place a unit which has not been added: ' + unit.id
-        );
+        throw 'attempted to place a unit which has not been added: ' + unit.id;
       }
       // When placeUnit is called the unit could have been already placed on a
       // ghost machine. In that case the corresponding addMachines parent has
