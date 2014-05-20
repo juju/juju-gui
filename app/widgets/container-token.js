@@ -90,7 +90,10 @@ YUI.add('container-token', function(Y) {
           // token was dropped.
           var token = container.one('.token');
           token.setData('drop-action', 'container');
-          token.setData('id', machine.id);
+          // This must be setAttribute, not setData, as setData does not
+          // munipulate the dom, which we need for our namespaced code
+          // to read.
+          token.setAttribute('data-id', machine.id);
           this._attachDragEvents(); // drop-target-view-extension
           this.get('containerParent').append(container);
           return this;
