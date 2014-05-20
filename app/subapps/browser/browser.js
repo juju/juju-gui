@@ -650,34 +650,25 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     renderEditorial: function(req, res, next) {
-      // If loading the interesting content then it's not a search going on.
-      var container = this.get('container'),
-          extraCfg = {};
-
-      // The editorial content goes into a
-      // different div since we can view both editorial content and
-      // view-data (such as a charm details) side by side.
-      extraCfg.renderTo = container.one('.bws-content');
-
-
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
+      var activeID;
       if (!window.flags || !window.flags.il) {
-        if (this.state.getCurrent('charmID')) {
-          extraCfg.activeID = this.state.getCurrent('charmID');
-        }
+        activeID = this.state.getCurrent('charmID');
       } else {
+        activeID = this.state.getState('current', 'sectionA', 'metadata').id;
         this._sidebar.set('withHome', false);
       }
 
-      this._editorial = new views.EditorialView(
-          this._getViewCfg(extraCfg));
-
-      this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
-        // Add any sidebar charms to the running cache.
-        this._cache = Y.merge(this._cache, ev.cache);
-      }, this);
-      this._editorial.render(this._cache.interesting);
+      // XXX As a stop gap this is being called _editorial. It's no longer only
+      // the editorial, it will also include the search results so this will
+      // need to be renamed as more functionality is moved over.
+      this._editorial = new views.CharmBrowser(
+          Y.mix(this._getViewCfg(), {
+            activeID: activeID
+          }));
+      var container = this._sidebar.get('container').one('.bws-content');
+      this._editorial.render(container, 'curated');
       this._editorial.addTarget(this);
     },
 
@@ -1351,6 +1342,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-jujucharms',
     'subapp-browser-searchview',
     'subapp-browser-sidebar',
-    'machine-view-panel-extension'
+    'machine-view-panel-extension',
+    'juju-charmbrowser'
   ]
 });
