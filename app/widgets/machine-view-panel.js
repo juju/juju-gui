@@ -56,6 +56,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @method initializer
          */
         initializer: function() {
+          var machines = this.get('db').machines.filterByParent(null),
+              machineTokens = {};
+          machines.forEach(function(machine) {
+            var token = new views.MachineToken({
+              machine: machine
+            });
+            machineTokens[machine.id] = token;
+          });
+          this.set('machineTokens', machineTokens);
           this._bindEvents();
         },
 
@@ -67,8 +76,11 @@ YUI.add('machine-view-panel', function(Y) {
         _bindEvents: function() {
           var db = this.get('db');
           this.addEvent(db.machines.after(
-              ['add', 'remove', '*:change'], this._onMachinesChange, this)
-          );
+              'add', this._onMachineAdd, this));
+          this.addEvent(db.machines.after(
+              'remove', this._onMachineRemove, this));
+          this.addEvent(db.machines.after(
+              '*:change', this._onMachineChange, this));
 
           this.addEvent(db.units.after(
               ['add', 'remove', '*:change'], this._onUnitsChange, this));
@@ -89,7 +101,13 @@ YUI.add('machine-view-panel', function(Y) {
             // Need to update any machines that now have new units
             var machineChanged = e.changed.machine;
             if (machineChanged) {
-              this._updateMachine(machineChanged.newVal);
+              var machineTokens = this.get('machineTokens'),
+                  id = machineChanged.newVal,
+                  token = machineTokens[id];
+              if (token) {
+                this._updateMachineWithUnitData(token.get('machine'));
+                token.render();
+              }
             }
           }
           this._renderUnplacedUnits();
@@ -98,11 +116,72 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Handles changes to the machines in the db model list.
 
-         @method _onMachinesChange
+         @method _onMachineChange
          @param {Object} e Custom model change event facade.
         */
-        _onMachinesChange: function(e) {
-          this._renderMachines();
+        _onMachineChange: function(e) {
+          var token,
+              machineTokens = this.get('machineTokens');
+          // Don't do anything with containers
+          if (e.target.get('parentId')) {
+            return;
+          }
+          if (e.changed) {
+            if (e.changed.id) {
+              var prevId = e.changed.id.prevVal,
+                  newId = e.changed.id.newVal;
+              token = machineTokens[prevId];
+              machineTokens[newId] = token;
+              delete machineTokens[prevId];
+            } else {
+              token = machineTokens[e.target.id];
+            }
+            this._updateMachineWithUnitData(token.get('machine'));
+            token.render();
+          }
+        },
+
+        /**
+          Handles machines added to the db model list.
+
+         @method _onMachineAdd
+         @param {Object} e Custom model change event facade.
+        */
+        _onMachineAdd: function(e) {
+          var token,
+              machineTokens = this.get('machineTokens'),
+              machine = e.model,
+              node = Y.Node.create('<li></li>');
+          // Don't do anything with containers
+          if (machine.parentId) {
+            return;
+          }
+          token = new views.MachineToken({
+            container: node,
+            machine: machine
+          });
+          machineTokens[machine.id] = token;
+          this._updateMachineWithUnitData(machine);
+          token.render();
+          token.addTarget(this);
+          this.get('container').one('.machines .items').append(node);
+        },
+
+        /**
+          Handles machines removed from the db model list.
+
+         @method _onMachineRemove
+         @param {Object} e Custom model change event facade.
+        */
+        _onMachineRemove: function(e) {
+          var machineTokens = this.get('machineTokens'),
+              machine = e.model;
+          // Don't do anything with containers
+          if (machine.parentId) {
+            return;
+          }
+          machineTokens[machine.id].destroy({remove: true});
+          delete machineTokens[machine.id];
         },
 
         /**
@@ -325,68 +404,25 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderMachines
          */
         _renderMachines: function() {
-          var machines = this.get('db').machines.filterByParent(null);
-          var container = this.get('container');
-          var machineList = container.one('.machines .content .items');
-          var plural = machines.length !== 1 ? 's' : '';
+          var machineTokens = this.get('machineTokens'),
+              machineIds = Object.keys(machineTokens),
+              nodeContainer = this.get('container').one('.machines .items'),
+              plural = machineIds.length !== 1 ? 's' : '';
 
           // Update the header to show the machine count.
           this._machinesHeader.setLabel(
-              machines.length + ' machine' + plural);
+              machineIds.length + ' machine' + plural);
 
-          this._smartUpdateList(machines, machineList,
-                                this._renderMachineToken.bind(this),
-                                this._clearContainerColumn.bind(this));
-        },
-
-        /**
-         * Find and re-render a specific machine token.
-         *
-         * @method _updateMachine
-         * @param {Integer} id the ID of the machine to update
-         */
-        // XXX: replace this with direct access to the upcoming _machineTokens
-        // list
-        _updateMachine: function(machineOrId) {
-          var id;
-          if (typeof machineOrId === 'string') {
-            id = machineOrId;
-          } else {
-            id = machineOrId.id;
-          }
-          var container = this.get('container'),
-              selector = '.machines .content .machine-token[data-id="{id}"]',
-              machineNode = container.one(Y.Lang.sub(selector, {id: id}));
-          if (machineNode) {
-            machineNode.replace(this._renderMachineToken(machineOrId));
-          }
-        },
-
-        /**
-         * Render a machine token.
-         *
-         * @method _renderMachineToken
-         * @param {Object} machine the machine object.
-         * @param {Node} list the list node to append the machine to.
-         */
-        _renderMachineToken: function(machineOrId) {
-          var db = this.get('db'),
-              machine;
-          if (typeof machineOrId === 'string') {
-            machine = db.machines.getById(machineOrId);
-          } else {
-            machine = machineOrId;
-          }
-          var node = Y.Node.create('<li></li>'),
-              units = db.units.filterByMachine(machine.id, true);
-          this._updateMachineWithUnitData(machine, units);
-          var token = new views.MachineToken({
-            container: node,
-            machine: machine
-          });
-          token.render();
-          token.addTarget(this);
-          return node;
+          // Render each of the machine tokens out to a list
+          machineIds.forEach(function(id) {
+            var token = machineTokens[id],
+                node = Y.Node.create('<li></li>');
+            token.set('container', node);
+            this._updateMachineWithUnitData(token.get('machine'));
+            token.render();
+            token.addTarget(this);
+            nodeContainer.append(node);
+          }, this);
         },
 
         /**
@@ -394,9 +430,12 @@ YUI.add('machine-view-panel', function(Y) {
          *
          * @method _updateMachineWithUnitData
          * @param {Object} machine The machine object.
-         * @param {Array} units The units to add to the machine.
+         * @param {Array} units The units associated with the machine.
          */
         _updateMachineWithUnitData: function(machine, units) {
+          if (!units) {
+            units = this.get('db').units.filterByMachine(machine.id);
+          }
           this._addIconsToUnits(units);
           machine.units = units;
           return units;
@@ -628,20 +667,29 @@ YUI.add('machine-view-panel', function(Y) {
           @method destructor
         */
         destructor: function() {
-          var container = this.get('container');
+          var container = this.get('container'),
+              machineTokens = this.get('machineTokens'),
+              machineIds = Object.keys(machineTokens);
+
           container.setHTML('');
           container.removeClass('machine-view-panel');
+
           if (this._scaleUpView) {
             this._scaleUpView.destroy();
           }
+
+          machineIds.forEach(function(id) {
+            machineTokens[id].destroy();
+            delete machineTokens[id];
+          });
         },
 
         ATTRS: {
           /**
-           * The container element for the view.
-           *
-           * @attribute container
-           * @type {Object}
+            The container element for the view.
+
+            @attribute container
+            @type {Object}
            */
           container: {},
 
@@ -650,7 +698,7 @@ YUI.add('machine-view-panel', function(Y) {
 
             @attribute db
             @type {Object}
-          */
+           */
           db: {},
 
           /**
@@ -658,7 +706,7 @@ YUI.add('machine-view-panel', function(Y) {
 
             @attribute env
             @type {Object}
-          */
+           */
           env: {},
 
           /**
@@ -666,8 +714,18 @@ YUI.add('machine-view-panel', function(Y) {
 
             @attribute selectedMachine
             @type {String}
-          */
-          selectedMachine: {}
+           */
+          selectedMachine: {},
+
+          /**
+            The key/value store of machine tokens currently displayed in the
+            machine column. Allows for fast, efficient updates because we can
+            only re-render the information that's changed.
+
+            @attribute machineTokens
+            @type {Object}
+           */
+          machineTokens: {}
         }
       });
 
