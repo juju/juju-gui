@@ -65,15 +65,13 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _bindEvents
          */
         _bindEvents: function() {
-          this.addEvent(
-              this.get('db').machines.after(['add', 'remove', '*:change'],
-                  this._onMachinesChange, this)
+          var db = this.get('db');
+          this.addEvent(db.machines.after(
+              ['add', 'remove', '*:change'], this._onMachinesChange, this)
           );
 
-          this.addEvent(
-              this.get('db').units.after(['add', 'remove', '*:change'],
-                  this._onUnitsChange, this)
-          );
+          this.addEvent(db.units.after(
+              ['add', 'remove', '*:change'], this._onUnitsChange, this));
 
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
@@ -372,14 +370,15 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Node} list the list node to append the machine to.
          */
         _renderMachineToken: function(machineOrId) {
-          var machine;
+          var db = this.get('db'),
+              machine;
           if (typeof machineOrId === 'string') {
-            machine = this.get('db').machines.getById(machineOrId);
+            machine = db.machines.getById(machineOrId);
           } else {
             machine = machineOrId;
           }
           var node = Y.Node.create('<li></li>'),
-              units = this.get('db').units.filterByMachine(machine.id, true);
+              units = db.units.filterByMachine(machine.id, true);
           this._updateMachineWithUnitData(machine, units);
           var token = new views.MachineToken({
             container: node,
@@ -424,28 +423,45 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * A helper function that handles intelligently updating the lists in
-         * the machine view columns. When an update comes in, we don't want to
-         * re-render the entire view, just the items in the list that have
-         * changed. The logic below handles that and uses the render and
-         * cleanup callbacks to allow for column-specific logic.
-         *
-         * @method _smartUpdateList
-         * @param {Array} models The models that are bound to the list
-         * @param {NodeList} list The DOM list
-         * @param {Function} render A callback to handle rendering one item in
-         *                          the list
-         * @param {Function} cleanup Any other changes that need to occur after
-         *                           an update in the list, i.e., clearing the
-         *                           container column
+           A helper function that handles intelligently updating the lists in
+           the machine view columns. When an update comes in, we don't want to
+           re-render the entire view, just the items in the list that have
+           changed. The logic below handles that and uses the render and
+           cleanup callbacks to allow for column-specific logic.
+
+           @method _smartUpdateList
+           @param {Array} models The models that are bound to the list
+           @param {NodeList} list The DOM list
+           @param {Function} renderFn A callback to handle rendering one item
+             in the list
+           @param {Function} cleanupFn Any other changes that need to occur
+             after an update in the list, i.e., clearing the
+                                     container column
          */
         _smartUpdateList: function(models, list, render, cleanup) {
-          var exists, newElement;
           if (!models || !list) {
             return;
           }
           var elements = list.all('li');
+          var newElements = this._addNewTokens(models, elements, render);
+          newElements.forEach(function(newToken) {
+            list.append(newToken);
+          });
+          this._removeOldTokens(models, elements, cleanup);
+        },
 
+        /**
+           Creates new tokens for any models not yet found in the DOM.
+
+           @method _addNewTokens
+           @param {Array} models The list of machine models
+           @param {Y.NodeList} elements The list of tokens in the DOM
+           @param {function} renderFn The function to create the rendered token.
+         */
+        _addNewTokens: function(models, elements, renderFn) {
+          var list = [],
+              exists,
+              newElement;
           models.forEach(function(model) {
             exists = elements.some(function(element) {
               // If the model already exists in the dom, mark it as such.
@@ -454,33 +470,45 @@ YUI.add('machine-view-panel', function(Y) {
                 return true;
               }
             });
+
             if (!exists) {
               // If the model does not exist in the dom, render the token.
-              newElement = render(model);
-              list.append(newElement);
+              newElement = renderFn(model);
+              list.push(newElement);
               newElement.setData('exists', true);
             }
           }, this);
+          return list;
+        },
 
+        /**
+           Removes tokens for items that no longer have a corresponding model.
+
+           @method _removeOldTokens
+           @param {Array} models The list of machine models
+           @param {Y.NodeList} elements The list of tokens in the DOM
+           @param {function} cleanupFn Option cleanup function
+         */
+        _removeOldTokens: function(models, elements, cleanupFn) {
           elements.each(function(element) {
             if (!element.getData('exists')) {
               // If the element exists in the dom, but not in the model
               // list then it must have been removed from the DB, so remove it
               // from the dom.
               var token = element.one('.token');
-              if (token && token.hasClass('active')) {
+              if (token && token.hasClass('active') && cleanupFn) {
                 // If the selected model was removed then stop showing
                 // its containers.
-                if (typeof cleanup === 'function') {
-                  cleanup();
+                if (cleanupFn) {
+                  cleanupFn();
                 }
               }
               element.remove();
             } else if (models.length === 0) {
-              element.remove();
-              if (typeof cleanup === 'function') {
-                cleanup();
+              if (cleanupFn) {
+                cleanupFn();
               }
+              element.remove();
             } else {
               // Clean up the 'exists' flag for the next loop through
               // the nodes.
