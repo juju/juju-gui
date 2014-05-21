@@ -1,0 +1,13 @@
+{{#if changeList}}
+  <ul class="change-list">
+    {{#each changeList}}
+      <li>
+        <span class="icon"><i class="sprite {{ icon }}"></i></span>
+        <span>{{ description }}</span>
+        <span class="time"><time>{{ time }}</time></span>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p class="none">No recent changes</p>
+{{/if}}

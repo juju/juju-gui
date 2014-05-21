@@ -39,6 +39,7 @@ YUI.add('deployer-bar', function(Y) {
     Y.Event.EventTracker
   ], {
     template: Templates['deployer-bar'],
+    changesTemplate: Templates['deployer-bar-changes'],
 
     events: {
       '.deploy-button': {
@@ -56,8 +57,8 @@ YUI.add('deployer-bar', function(Y) {
       '.action-list .show': {
         click: 'showRecentChanges'
       },
-      '.action-list .hide': {
-        click: 'hideSummary'
+      '.panel.changes .action-list .hide': {
+        click: 'clickHideChanges'
       }
     },
 
@@ -126,7 +127,22 @@ YUI.add('deployer-bar', function(Y) {
     */
     showRecentChanges: function(evt) {
       evt.halt();
-      this._showSummary(false);
+      this._showChanges();
+    },
+
+    /**
+      Display a list of the recent changes.
+
+      @method _showChanges
+    */
+    _showChanges: function(confirmDeploy) {
+      var container = this.get('container');
+      var changesPanel = container.one('.panel.changes section');
+      var ecs = this.get('ecs');
+      changesPanel.setHTML(this.changesTemplate({
+        changeList: this._generateAllChangeDescriptions(ecs)
+      }));
+      container.addClass('changes-open');
     },
 
     /**
@@ -137,17 +153,17 @@ YUI.add('deployer-bar', function(Y) {
     */
     showDeployConfirmation: function(evt) {
       evt.halt();
-      this._showSummary(true);
+      this._showSummary();
     },
 
     /**
       Display summary information about the current changes.
 
       @method _showSummary
-      @param {Bool} confirmDeploy A toggle indicating if this is for
-          confirmation of deployment, or just viewing the current changes.
     */
-    _showSummary: function(confirmDeploy) {
+    _showSummary: function() {
+      // Hide the changes panel if it is visible.
+      this.hideChanges();
       var container = this.get('container'),
           ecs = this.get('ecs');
       if (container && container.get('parentNode')) {
@@ -157,9 +173,7 @@ YUI.add('deployer-bar', function(Y) {
           deployServices: this._getDeployedServices(ecs),
           addedRelations: this._getAddRelations(ecs),
           addedUnits: this._getAddUnits(ecs),
-          addedMachines: this._getAddMachines(ecs),
-          changeList: this._generateAllChangeDescriptions(ecs),
-          confirmDeploy: confirmDeploy
+          addedMachines: this._getAddMachines(ecs)
         }));
       }
       container.addClass('summary-open');
@@ -204,6 +218,26 @@ YUI.add('deployer-bar', function(Y) {
       evt.halt();
       var container = this.get('container');
       container.removeClass('summary-open');
+    },
+
+    /**
+      Click handler for hiding the changes panel.
+
+      @method clickHideChanges
+      @param {Object} e The event object.
+    */
+    clickHideChanges: function(e) {
+      e.halt();
+      this.hideChanges();
+    },
+
+    /**
+      Hide the changes panel.
+
+      @method hideChanges
+    */
+    hideChanges: function() {
+      this.get('container').removeClass('changes-open');
     },
 
     /**
@@ -263,9 +297,7 @@ YUI.add('deployer-bar', function(Y) {
       @param {Bool} skipTime optional, used for testing, don't generate time.
     */
     _generateChangeDescription: function(change, skipTime) {
-      var icon,
-          description,
-          time = null;
+      var changeItem = {};
 
       if (change && change.command) {
         // XXX: The add_unit is just the same as the service because adding
@@ -273,11 +305,12 @@ YUI.add('deployer-bar', function(Y) {
         // units as follow up.
         switch (change.command.method) {
           case '_deploy':
-            icon = '<i class="sprite service-added"></i>';
-            description = ' ' + change.command.args[1] + ' has been added.';
+            changeItem.icon = 'service-added';
+            changeItem.description = ' ' + change.command.args[1] +
+                ' has been added.';
             break;
           case '_add_unit':
-            icon = '<i class="sprite service-added"></i>';
+            changeItem.icon = 'service-added';
             var units = change.command.args[1],
                 msg;
             if (units !== 1) {
@@ -285,12 +318,12 @@ YUI.add('deployer-bar', function(Y) {
             } else {
               msg = 'unit has been added.';
             }
-            description = ' ' + units + ' ' + change.command.args[0] + ' ' +
-                msg;
+            changeItem.description = ' ' + units + ' ' +
+                change.command.args[0] + ' ' + msg;
             break;
           case '_add_relation':
-            icon = '<i class="sprite relation-added"></i>';
-            description = change.command.args[0][1].name +
+            changeItem.icon = 'relation-added';
+            changeItem.description = change.command.args[0][1].name +
                 ' relation added between ' +
                 change.command.args[0][0] +
                 ' and ' +
@@ -299,27 +332,25 @@ YUI.add('deployer-bar', function(Y) {
           case '_addMachines':
             var machineType = change.command.args[0][0].parentId ?
                 'container' : 'machine';
-            icon = '<i class="sprite ' + machineType + '-created01"></i>';
-            description = change.command.args[0].length +
+            changeItem.icon = '' + machineType + '-created01';
+            changeItem.description = change.command.args[0].length +
                 ' ' + machineType +
                 (change.command.args[0].length !== 1 ? 's have' : ' has') +
                 ' been added.';
             break;
           default:
-            icon = '<i class="sprite service-exposed"></i>';
-            description = 'An unknown change has been made ' +
-                          'to this enviroment via the CLI.';
+            changeItem.icon = 'service-exposed';
+            changeItem.description = 'An unknown change has been made ' +
+                'to this enviroment via the CLI.';
             break;
         }
       }
-      if (icon) {
-        if (skipTime) {
-          time = '<time>00:00</time>';
-        } else {
-          time = '<time>' + this._formatAMPM(new Date()) + '</time>';
-        }
-        return icon + description + time;
+      if (skipTime) {
+        changeItem.time = '00:00';
+      } else {
+        changeItem.time = this._formatAMPM(new Date());
       }
+      return changeItem;
     },
 
     /**
