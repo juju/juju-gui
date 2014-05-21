@@ -147,6 +147,12 @@ YUI.add('juju-topology-relation', function(Y) {
         */
         servicesRendered: 'updateLinks',
         /**
+          Update data when a service box type has changed.
+
+          @event serviceTypeChanged
+        */
+        serviceTypeChanged: 'update',
+        /**
           Ensure the dragline follows the cursor outside of services.
 
           @event snapOutOfService

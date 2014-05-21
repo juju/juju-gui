@@ -185,6 +185,14 @@ describe('service module events', function() {
        assert.isFalse(menu.hasClass('active'));
      });
 
+  it('should notify modules when service type is changed', function(done) {
+    topo.on('serviceTypeChanged', function() {
+      done();
+    });
+    topo.service_boxes.haproxy.model.set('subordinate', true);
+    serviceModule.update();
+  });
+
   // Click the provided service so that the service menu is shown.
   // Return the service menu.
   var clickService = function(service) {
