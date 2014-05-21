@@ -95,6 +95,10 @@ YUI.add('ghost-service-inspector', function(Y) {
       @method handleDeploy
     */
     deployCharm: function() {
+      // This functionality is not required with the deployer bar.
+      if (window.flags && window.flags.mv) {
+        return;
+      }
       var container = this.get('container'),
           model = this.get('model'),
           db = this.get('db'),

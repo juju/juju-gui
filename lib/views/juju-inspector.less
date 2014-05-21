@@ -488,28 +488,6 @@
                 border-top: 1px solid @inspector-divider-top;
             }
         }
-        /* Resetting panel styles. Can be removed after old inspector styles are
-           removed. (ServiceInspector) */
-        .charm-panel-configure {
-            background: transparent;
-            float: none;
-            border: 0;
-            height: auto;
-            width: auto;
-            padding: 0 20px;
-
-            .title {
-                font-size: 20px;
-                font-weight: 300;
-                line-height: 1.2;
-                margin: 0;
-            }
-            .name {
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 1.5;
-            }
-        }
 
         .control-description,
         .control-label {
@@ -1068,6 +1046,10 @@
 }
 .flag-mv .yui3-juju-inspector {
     top: @environment-header-height + 20px;
+
+    .ghost .viewlet-manager-footer .controls {
+        display: none;
+    }
 }
 
 .bws-view-data {
