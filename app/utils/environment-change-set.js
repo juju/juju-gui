@@ -573,23 +573,33 @@ YUI.add('environment-change-set', function(Y) {
     placeUnit: function(unit, machineId) {
       var record = this._retrieveUnitRecord(unit.id);
       if (!record) {
-        throw new Error(
-            'attempted to place a unit which has not been added: ' + unit.id
-        );
+        throw 'attempted to place a unit which has not been added: ' + unit.id;
       }
-      // Remove all the current addMachines parents
-      // (they can be there if the unit was already placed).
+      // When placeUnit is called the unit could have been already placed on a
+      // ghost machine. In that case the corresponding addMachines parent has
+      // been set to the addUnit record. When we place the unit again, that
+      // parent is no longer relevant and must be removed. At this point either
+      // the unit is re-placed to a ghost, in which case a new parent is added,
+      // or an existing machine will host the unit, in which case we don't need
+      // a parent at all.
       record.parents = record.parents.filter(function(parent) {
         return parent.indexOf('addMachines') !== 0;
       });
       // Add the new addMachines parent.
+      var containerExists = true;
       Y.Object.each(this.changeSet, function(value, key) {
         var command = value.command;
         if (command.method === '_addMachines' &&
             command.options.modelId === machineId) {
           record.parents.push(key);
+          containerExists = false;
         }
       }, this);
+      // Update the command in the changeset to place the unit on an already
+      // existing machine.
+      if (containerExists && machineId) {
+        record.command.args[2] = machineId;
+      }
       // Place the unit in the db.
       var unitsDb = this.get('db').units;
       // Because each 'model' in a lazy model list is actually just an object

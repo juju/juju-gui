@@ -604,6 +604,130 @@ describe('Environment Change Set', function() {
         assert.equal(envObj._add_relation.callCount(), 0);
       });
     });
+
+    describe('placeUnit', function() {
+      it('throws if it can\'t find the unit being placed', function() {
+        var unit = { id: 'foo' };
+        assert.throws(
+            ecs.placeUnit.bind(ecs, unit),
+            'attempted to place a unit which has not been added: ' + unit.id);
+      });
+
+      it('places on a same ghost if it was already was placed', function() {
+        var unit = { id: '1234' };
+        var machineId = '0';
+        ecs.changeSet = {
+          a: {
+            command: {
+              method: '_add_unit',
+              options: {
+                modelId: unit.id }},
+            parents: ['addMachines_123'] },
+          addMachines_123: {
+            command: {
+              method: '_addMachines',
+              options: {
+                modelId: machineId }},
+            parents: [] }
+        };
+        ecs.set('db', {
+          units: {
+            revive: testUtils.makeStubFunction({
+              set: testUtils.makeStubFunction() }),
+            free: testUtils.makeStubFunction() }
+        });
+        assert.equal(ecs.changeSet.a.parents.length, 1);
+        ecs.placeUnit(unit, machineId);
+        assert.equal(ecs.changeSet.a.parents.length, 1);
+        assert.equal(ecs.changeSet.a.parents[0], 'addMachines_123');
+      });
+
+      it('adds addMachine parent for the unit on new machines', function() {
+        var unit = { id: '1234' };
+        var machineId = '0';
+        ecs.changeSet = {
+          a: {
+            command: {
+              method: '_add_unit',
+              options: {
+                modelId: unit.id }},
+            parents: [] },
+          b: {
+            command: {
+              method: '_addMachines',
+              options: {
+                modelId: machineId }},
+            parents: [] }
+        };
+        ecs.set('db', {
+          units: {
+            revive: testUtils.makeStubFunction({
+              set: testUtils.makeStubFunction() }),
+            free: testUtils.makeStubFunction() }
+        });
+        assert.equal(ecs.changeSet.a.parents.length, 0);
+        ecs.placeUnit(unit, machineId);
+        assert.equal(ecs.changeSet.a.parents.length, 1);
+        assert.equal(ecs.changeSet.a.parents[0], 'b');
+      });
+
+      it('updates add_unit record when container exists', function() {
+        var unit = { id: '1234' };
+        var machineId = '0';
+        var cmdArgs = ['serviceid', 1, null];
+        ecs.changeSet = {
+          a: {
+            command: {
+              args: cmdArgs,
+              method: '_add_unit',
+              options: {
+                modelId: unit.id }},
+            parents: [] }
+        };
+        ecs.set('db', {
+          units: {
+            revive: testUtils.makeStubFunction({
+              set: testUtils.makeStubFunction() }),
+            free: testUtils.makeStubFunction() }
+        });
+        assert.deepEqual(ecs.changeSet.a.command.args, cmdArgs);
+        ecs.placeUnit(unit, machineId);
+        cmdArgs[2] = machineId;
+        assert.deepEqual(ecs.changeSet.a.command.args, cmdArgs);
+      });
+
+      it('sets the machineId in the unit model', function() {
+        var unit = { id: '1234' };
+        var machineId = '0';
+        ecs.changeSet = {
+          a: {
+            command: {
+              method: '_add_unit',
+              options: {
+                modelId: unit.id }},
+            parents: [] },
+          b: {
+            command: {
+              method: '_addMachines',
+              options: {
+                modelId: machineId }},
+            parents: [] }
+        };
+        var set = testUtils.makeStubFunction();
+        ecs.set('db', {
+          units: {
+            revive: testUtils.makeStubFunction({ set: set }),
+            free: testUtils.makeStubFunction() }
+        });
+        ecs.placeUnit(unit, machineId);
+        var db = ecs.get('db');
+        assert.equal(db.units.revive.calledOnce(), true);
+        var setArgs = set.lastArguments();
+        assert.equal(set.calledOnce(), true);
+        assert.deepEqual(setArgs, ['machine', machineId]);
+        assert.equal(db.units.free.calledOnce(), true);
+      });
+    });
   });
 
 });
