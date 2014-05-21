@@ -38,8 +38,10 @@ describe('Service unit token', function() {
     title = 'test';
     view = new views.ServiceUnitToken({
       container: container,
-      id: 'test/0',
-      title: 'test'
+      unit: {
+        id: 'test/0',
+        displayName: 'test'
+      }
     }).render();
   });
 
