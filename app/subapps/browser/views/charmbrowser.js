@@ -49,6 +49,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       'new': 2
     },
 
+    // XXX This template will be moved to an external file soon.
     template: '<div class="search-widget"></div><div class="charm-list"></div>',
     curatedTemplate: templates.editorial,
     searchResultTemplate: templates.search,
@@ -319,6 +320,7 @@ YUI.add('juju-charmbrowser', function(Y) {
 }, '', {
   requires: [
     'browser-token-container',
+    'browser-overlay-indicator',
     'event-tracker',
     'juju-view-utils',
     'view',

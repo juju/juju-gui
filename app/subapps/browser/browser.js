@@ -656,7 +656,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!window.flags || !window.flags.il) {
         activeID = this.state.getCurrent('charmID');
       } else {
-        activeID = this.state.getState('current', 'sectionA', 'metadata').id;
+        var meta = this.state.getState('current', 'sectionA', 'metadata');
+        if (meta) { activeID = meta.id; }
         this._sidebar.set('withHome', false);
       }
 
