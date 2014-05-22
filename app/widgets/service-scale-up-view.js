@@ -32,7 +32,7 @@ YUI.add('service-scale-up-view', function(Y) {
   /**
    * The view associated with the machine token.
    *
-   * @class ServiceUnitToken
+   * @class ServicesScaleUpView
    */
   var ServiceScaleUpView = Y.Base.create('service-scale-up-view', Y.View, [], {
 

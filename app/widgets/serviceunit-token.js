@@ -146,30 +146,35 @@ YUI.add('juju-serviceunit-token', function(Y) {
      */
     render: function() {
       var container = this.get('container'),
-          attrs = this.getAttrs();
-      container.setHTML(this.template(attrs));
+          unit = this.get('unit'),
+          token;
+      container.setHTML(this.template(unit));
       container.addClass('serviceunit-token');
-      container.setAttribute('data-id', this.get('id'));
+      token = container.one('.unplaced-unit');
+      // This must be setAttribute, not setData, as setData does not
+      // manipulate the dom, which we need for our namespaced code
+      // to read.
+      token.setAttribute('data-id', unit.id);
       this._makeDraggable();
       return this;
     },
 
     ATTRS: {
       /**
-       * The displayed name for the unit.
-       *
-       * @attribute container
-       * @type {Object}
+        The Node instance that contains this token.
+
+        @attribute container
+        @type {Object}
        */
-      title: '',
+      container: {},
 
       /**
-       * The unit's ID.
-       *
-       * @attribute container
-       * @type {Object}
+        The model wrapped by this token.
+
+        @attribute unit
+        @type {Object}
        */
-      id: ''
+      unit: {}
     }
   });
 

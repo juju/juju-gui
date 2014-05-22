@@ -56,8 +56,12 @@ YUI.add('machine-view-panel', function(Y) {
          * @method initializer
          */
         initializer: function() {
-          var machines = this.get('db').machines.filterByParent(null),
-              machineTokens = {};
+          var db = this.get('db'),
+              machines = db.machines.filterByParent(null),
+              machineTokens = {},
+              units = db.units.filterByMachine(null),
+              unitTokens = {};
+          // Turn machine models into tokens and store internally.
           machines.forEach(function(machine) {
             var token = new views.MachineToken({
               machine: machine
@@ -65,6 +69,15 @@ YUI.add('machine-view-panel', function(Y) {
             machineTokens[machine.id] = token;
           });
           this.set('machineTokens', machineTokens);
+          // Turn unit models into tokens and store internally.
+          this._addIconsToUnits(units);
+          units.forEach(function(unit) {
+            var token = new views.ServiceUnitToken({
+              unit: unit
+            });
+            unitTokens[unit.id] = token;
+          });
+          this.set('unitTokens', unitTokens);
           this._bindEvents();
         },
 
@@ -75,6 +88,7 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _bindEvents: function() {
           var db = this.get('db');
+
           this.addEvent(db.machines.after(
               'add', this._onMachineAdd, this));
           this.addEvent(db.machines.after(
@@ -83,7 +97,11 @@ YUI.add('machine-view-panel', function(Y) {
               '*:change', this._onMachineChange, this));
 
           this.addEvent(db.units.after(
-              ['add', 'remove', '*:change'], this._onUnitsChange, this));
+              'add', this._onUnitAdd, this));
+          this.addEvent(db.units.after(
+              'remove', this._onUnitRemove, this));
+          this.addEvent(db.units.after(
+              '*:change', this._onUnitChange, this));
 
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
@@ -93,24 +111,91 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Handle changes to the units in the db unit model list.
 
-         @method _onUnitsChange
+         @method _onUnitChange
          @param {Object} e Custom model change event facade.
         */
-        _onUnitsChange: function(e) {
-          if (e.changed) {
+        _onUnitChange: function(e) {
+          var unitTokens = this.get('unitTokens'),
+              changed = e.changed,
+              target = e.target;
+          if (changed) {
             // Need to update any machines that now have new units
-            var machineChanged = e.changed.machine;
-            if (machineChanged) {
+            if (changed.machine) {
               var machineTokens = this.get('machineTokens'),
-                  id = machineChanged.newVal,
-                  token = machineTokens[id];
-              if (token) {
-                this._updateMachineWithUnitData(token.get('machine'));
-                token.render();
+                  id = changed.machine.newVal,
+                  machineToken = machineTokens[id],
+                  machine = machineToken.get('machine');
+              if (machineToken) {
+                this._updateMachineWithUnitData(machine);
+                machineToken.render();
               }
             }
+            if (target.get('machine')) {
+              // It's a placed unit; make sure it gets removed from our
+              // internal list.
+              this._removeUnit(target.get('id'));
+            } else {
+              unitTokens[target.get('id')].render();
+            }
           }
-          this._renderUnplacedUnits();
+        },
+
+        /**
+          Handle units added to the db unit model list.
+
+         @method _onUnitAdd
+         @param {Object} e Custom model change event facade.
+        */
+        _onUnitAdd: function(e) {
+          var token,
+              unitTokens = this.get('unitTokens'),
+              unit = e.model,
+              node = Y.Node.create('<li></li>');
+          // Ignore placed units
+          if (unit.machine) {
+            return;
+          }
+          this._addIconToUnit(unit);
+          token = new views.ServiceUnitToken({
+            container: node,
+            unit: unit
+          });
+          unitTokens[unit.id] = token;
+          token.render();
+          token.addTarget(this);
+          this.get('container').one('.unplaced .items').append(node);
+          this._renderAllPlacedMessage(Object.keys(unitTokens));
+        },
+
+        /**
+          Handle units removed from the db unit model list.
+
+         @method _onUnitRemove
+         @param {Object} e Custom model change event facade.
+        */
+        _onUnitRemove: function(e) {
+          var unit = e.model;
+          // Ignore placed units
+          if (unit.machine) {
+            return;
+          }
+          this._removeUnit(unit.id);
+        },
+
+        /**
+          Helper method that removes/cleans up a single unit token.
+
+         @method _removeUnit
+         @param {Integer} id the ID of the unit token to remove
+        */
+        _removeUnit: function(id) {
+          var unitTokens = this.get('unitTokens'),
+              token = unitTokens[id];
+          if (token) {
+            token.destroy({remove: true});
+            delete unitTokens[id];
+            this._renderAllPlacedMessage(Object.keys(unitTokens));
+          }
         },
 
         /**
@@ -121,15 +206,16 @@ YUI.add('machine-view-panel', function(Y) {
         */
         _onMachineChange: function(e) {
           var token,
-              machineTokens = this.get('machineTokens');
+              machineTokens = this.get('machineTokens'),
+              changed = e.changed;
           // Don't do anything with containers
           if (e.target.get('parentId')) {
             return;
           }
-          if (e.changed) {
-            if (e.changed.id) {
-              var prevId = e.changed.id.prevVal,
-                  newId = e.changed.id.newVal;
+          if (changed) {
+            if (changed.id) {
+              var prevId = changed.id.prevVal,
+                  newId = changed.id.newVal;
               token = machineTokens[prevId];
               machineTokens[newId] = token;
               delete machineTokens[prevId];
@@ -448,112 +534,24 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Array} units The units to decorate
          */
         _addIconsToUnits: function(units) {
-          var db = this.get('db'),
-              service;
-          Y.Object.each(units, function(unit) {
-            service = db.services.getById(unit.service);
-            if (service) {
-              unit.icon = service.get('icon');
-            } else {
-              console.error('Unit ' + unit.id + ' has no service.');
-            }
-          });
+          Y.Object.each(units, this._addIconToUnit.bind(this));
           return units;
         },
 
         /**
-           A helper function that handles intelligently updating the lists in
-           the machine view columns. When an update comes in, we don't want to
-           re-render the entire view, just the items in the list that have
-           changed. The logic below handles that and uses the render and
-           cleanup callbacks to allow for column-specific logic.
-
-           @method _smartUpdateList
-           @param {Array} models The models that are bound to the list
-           @param {NodeList} list The DOM list
-           @param {Function} renderFn A callback to handle rendering one item
-             in the list
-           @param {Function} cleanupFn Any other changes that need to occur
-             after an update in the list, i.e., clearing the
-                                     container column
+         * Add icon data to a single unit by using the service information.
+         *
+         * @method _addIconToUnit
+         * @param {Array} unit The unit to decorate
          */
-        _smartUpdateList: function(models, list, render, cleanup) {
-          if (!models || !list) {
-            return;
+        _addIconToUnit: function(unit) {
+          var service = this.get('db').services.getById(unit.service);
+          if (service) {
+            unit.icon = service.get('icon');
+          } else {
+            console.error('Unit ' + unit.id + ' has no service.');
           }
-          var elements = list.all('li');
-          var newElements = this._addNewTokens(models, elements, render);
-          newElements.forEach(function(newToken) {
-            list.append(newToken);
-          });
-          this._removeOldTokens(models, elements, cleanup);
-        },
-
-        /**
-           Creates new tokens for any models not yet found in the DOM.
-
-           @method _addNewTokens
-           @param {Array} models The list of machine models
-           @param {Y.NodeList} elements The list of tokens in the DOM
-           @param {function} renderFn The function to create the rendered token.
-         */
-        _addNewTokens: function(models, elements, renderFn) {
-          var list = [],
-              exists,
-              newElement;
-          models.forEach(function(model) {
-            exists = elements.some(function(element) {
-              // If the model already exists in the dom, mark it as such.
-              if (String(model.id) === element.getAttribute('data-id')) {
-                element.setData('exists', true);
-                return true;
-              }
-            });
-
-            if (!exists) {
-              // If the model does not exist in the dom, render the token.
-              newElement = renderFn(model);
-              list.push(newElement);
-              newElement.setData('exists', true);
-            }
-          }, this);
-          return list;
-        },
-
-        /**
-           Removes tokens for items that no longer have a corresponding model.
-
-           @method _removeOldTokens
-           @param {Array} models The list of machine models
-           @param {Y.NodeList} elements The list of tokens in the DOM
-           @param {function} cleanupFn Option cleanup function
-         */
-        _removeOldTokens: function(models, elements, cleanupFn) {
-          elements.each(function(element) {
-            if (!element.getData('exists')) {
-              // If the element exists in the dom, but not in the model
-              // list then it must have been removed from the DB, so remove it
-              // from the dom.
-              var token = element.one('.token');
-              if (token && token.hasClass('active') && cleanupFn) {
-                // If the selected model was removed then stop showing
-                // its containers.
-                if (cleanupFn) {
-                  cleanupFn();
-                }
-              }
-              element.remove();
-            } else if (models.length === 0) {
-              if (cleanupFn) {
-                cleanupFn();
-              }
-              element.remove();
-            } else {
-              // Clean up the 'exists' flag for the next loop through
-              // the nodes.
-              element.setData('exists', undefined);
-            }
-          }, this);
+          return unit;
         },
 
         /**
@@ -562,40 +560,37 @@ YUI.add('machine-view-panel', function(Y) {
            @method _renderUnplacedUnits
          */
         _renderUnplacedUnits: function() {
-          var container = this.get('container'),
-              units = this.get('db').units.filterByMachine(null),
-              unitList = container.one('.unplaced .content .items');
+          var unitTokens = this.get('unitTokens'),
+              unitIds = Object.keys(unitTokens),
+              nodeContainer = this.get('container').one('.unplaced .items'),
+              plural = unitIds.length !== 1 ? 's' : '';
 
+          this._renderAllPlacedMessage(unitIds);
+
+          // Render each of the unit tokens out to a list
+          unitIds.forEach(function(id) {
+            var token = unitTokens[id],
+                node = Y.Node.create('<li></li>');
+            token.set('container', node);
+            token.render();
+            token.addTarget(this);
+            nodeContainer.append(node);
+          }, this);
+        },
+
+        /**
+          Conditionally renders the "All placed" message.
+
+          @method _renderAllPlacedMessage
+          @param {Array} units A list of the units (or unit IDs) to determine
+            if everything's been placed or not.
+        */
+        _renderAllPlacedMessage: function(units) {
           if (!units || !units.length) {
             this._toggleAllPlacedMessage(true);
           } else {
             this._toggleAllPlacedMessage(false);
-            this._addIconsToUnits(units);
           }
-
-          this._smartUpdateList(
-              units, unitList,
-              this._renderUnplacedUnitToken.bind(this)
-          );
-        },
-
-        /**
-           Render a serviceunit token.
-
-           @method _renderUnplacedUnitToken
-           @param {Object} model The model data for the unplaced unit
-         */
-        _renderUnplacedUnitToken: function(model) {
-          var node = Y.Node.create('<li></li>');
-          var token = new views.ServiceUnitToken({
-            container: node,
-            title: model.displayName,
-            id: model.id,
-            icon: model.icon
-          });
-          token.render();
-          token.addTarget(this);
-          return node;
         },
 
         /**
@@ -669,7 +664,9 @@ YUI.add('machine-view-panel', function(Y) {
         destructor: function() {
           var container = this.get('container'),
               machineTokens = this.get('machineTokens'),
-              machineIds = Object.keys(machineTokens);
+              machineIds = Object.keys(machineTokens),
+              unitTokens = this.get('unitTokens'),
+              unitIds = Object.keys(unitTokens);
 
           container.setHTML('');
           container.removeClass('machine-view-panel');
@@ -681,6 +678,11 @@ YUI.add('machine-view-panel', function(Y) {
           machineIds.forEach(function(id) {
             machineTokens[id].destroy();
             delete machineTokens[id];
+          });
+
+          unitIds.forEach(function(id) {
+            unitTokens[id].destroy();
+            delete unitTokens[id];
           });
         },
 
@@ -725,7 +727,17 @@ YUI.add('machine-view-panel', function(Y) {
             @attribute machineTokens
             @type {Object}
            */
-          machineTokens: {}
+          machineTokens: {},
+
+          /**
+            The key/value store of unit tokens currently displayed in the
+            unplaced units column. Allows for fast, efficient updates because we
+            can only re-render the information that's changed.
+
+            @attribute unitTokens
+            @type {Object}
+           */
+          unitTokens: {}
         }
       });
 

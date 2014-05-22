@@ -134,7 +134,7 @@ YUI.add('machine-token', function(Y) {
           // when something is dropped on it.
           token.setData('drop-action', 'container');
           // This must be setAttribute, not setData, as setData does not
-          // munipulate the dom, which we need for our namespaced code
+          // manipulate the dom, which we need for our namespaced code
           // to read.
           token.setAttribute('data-id', machine.id);
           this._attachDragEvents(); // drop-target-view-extension

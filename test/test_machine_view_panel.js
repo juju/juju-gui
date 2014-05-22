@@ -118,88 +118,6 @@ describe('machine view panel view', function() {
         'container').one('.label').get('text'), label);
   });
 
-  describe('_smartUpdateList', function() {
-    // _smartUpdateList use two private methods, _addNewTokens and
-    // _removeOldTokens that do all the work--we can just test those.
-    it('can determine if a model is new and needs token', function() {
-      var models = [{id: 1}];
-      var newTokens = view._addNewTokens(models, [], function(model) {
-        return Y.Node.create('<li/>');
-      });
-      assert.equal(
-          newTokens.length, 1,
-          'Did not received expected number of tokens');
-      assert.equal(
-          newTokens[0].getData('exists'), true,
-          'New element not marked with "exists"');
-    });
-
-    it('can determine if a model already has a token', function() {
-      var models = [{id: 1}],
-          element = Y.Node.create('<li data-id="1"></li>');
-      var newTokens = view._addNewTokens(models, [element], function(model) {
-        return Y.Node.create('<li/>');
-      });
-      assert.equal(
-          newTokens.length, 0,
-          'Received tokens when no new tokens should have been created');
-      assert.equal(
-          element.getData('exists'), true,
-          'Element not marked with "exists"');
-    });
-
-    it('can determine if a token has no model and remove it', function() {
-      container.append(Y.Node.create('<li data-id="2"></li>'));
-      var models = [{id: 1}],
-          elements = container.all('li');
-      assert.equal(elements.size(), 1);
-      view._removeOldTokens(models, elements);
-      assert.equal(container.all('li').size(), 0, 'Element not removed.');
-    });
-
-    it('can determine if there are no models and clear nodes', function() {
-      container.append(Y.Node.create('<li></li>'));
-      var models = [],
-          elements = container.all('li');
-      // Make sure the element has "exists" so we test the models condition.
-      elements.each(function(element) {
-        element.setData('exists', true);
-      });
-      assert.equal(elements.size(), 1);
-      view._removeOldTokens(models, elements);
-      assert.equal(container.all('li').size(), 0, 'Element not removed.');
-    });
-
-    it('calls a cleanup function if an "active" token is removed', function() {
-      container.append(Y.Node.create('<li><span class="token active"/></li>'));
-      var models = [{id: 1}],
-          elements = container.all('li'),
-          cleanup = false;
-      assert.equal(elements.size(), 1);
-      var cleanupFn = function() {
-        cleanup = true;
-      };
-      view._removeOldTokens(models, elements, cleanupFn);
-      assert.equal(cleanup, true, 'Cleanup function not called.');
-    });
-
-    it('calls a cleanup function if there are no models', function() {
-      container.append(Y.Node.create('<li></li>'));
-      var models = [],
-          elements = container.all('li'),
-          cleanup = false;
-      // Make sure the element has "exists" so we test the models condition.
-      elements.each(function(element) {
-        element.setData('exists', true);
-      });
-      var cleanupFn = function() {
-        cleanup = true;
-      };
-      view._removeOldTokens(models, elements, cleanupFn);
-      assert.equal(cleanup, true, 'Cleanup function not called.');
-    });
-  });
-
   describe('token drag and drop', function() {
     beforeEach(function() {
       view.set('env', {
@@ -329,7 +247,7 @@ describe('machine view panel view', function() {
   describe('unplaced units column', function() {
     it('should render a list of units', function() {
       view.render();
-      var list = container.all('.unplaced .content li');
+      var list = container.all('.unplaced .unplaced-unit');
       assert.equal(list.size(), units.size(),
                    'models are out of sync with displayed list');
       list.each(function(item, index) {
@@ -354,7 +272,7 @@ describe('machine view panel view', function() {
 
     it('should add new tokens when units are added', function() {
       view.render();
-      var selector = '.unplaced .content li',
+      var selector = '.unplaced .unplaced-unit',
           list = container.all(selector),
           id = 'test/2';
       assert.equal(list.size(), units.size(),
@@ -370,7 +288,7 @@ describe('machine view panel view', function() {
 
     it('should remove tokens when units are deleted', function() {
       view.render();
-      var selector = '.unplaced .content li',
+      var selector = '.unplaced .unplaced-unit',
           list = container.all(selector);
       assert.equal(list.size(), units.size(),
                    'initial displayed list is out of sync with unplaced units');
@@ -386,29 +304,20 @@ describe('machine view panel view', function() {
 
     it('should re-render token when a unit is updated', function() {
       view.render();
-      var id = 'test/3',
+      var name = 'scooby',
           unitModel = units.revive(0),
-          selector = '.unplaced .content li',
-          item = container.one(
-              selector + '[data-id="' + unitModel.get('id') + '"]');
+          id = unitModel.get('id'),
+          selector = '.unplaced .unplaced-unit[data-id="{id}"]',
+          item;
+      selector = Y.Lang.sub(selector, {id: id});
+      item = container.one(selector);
       assert.notEqual(item, null, 'unit was not initially displayed');
-      unitModel.set('id', id);
-      item = container.one(selector + '[data-id="' + id + '"]');
+      unitModel.set('displayName', name);
+      item = container.one(selector);
       assert.notEqual(item, null, 'unit was not displayed post-update');
+      assert.equal(name, item.one('.title').get('text').trim(),
+                   'unit did not have the updated name');
     });
-
-    it('update a machine when a new unit is assigned to it', function() {
-      view.render();
-      var unitModel = units.revive(0),
-          machineId = '0',
-          token = view.get('machineTokens')[machineId],
-          renderStub = utils.makeStubMethod(token, 'render');
-      this._cleanups.push(renderStub.reset);
-      unitModel.set('machine', machineId);
-      assert.equal(renderStub.calledOnce(), true,
-                   'updated machine not rendered');
-    });
-
   });
 
 
@@ -626,9 +535,13 @@ describe('machine view panel view', function() {
       view.render();
       view.destroy();
       assert.equal(Object.keys(view.get('machineTokens')).length, 0,
-                   'No tokens should exist');
+                   'No machine tokens should exist');
       assert.equal(Y.all('.machines .token').size(), 0,
-                   'No DOM elements should exist');
+                   'No machine DOM elements should exist');
+      assert.equal(Object.keys(view.get('unitTokens')).length, 0,
+                   'No service unit tokens should exist');
+      assert.equal(Y.all('.unplaced .unplaced-unit').size(), 0,
+                   'No service unit DOM elements should exist');
     });
   });
 
