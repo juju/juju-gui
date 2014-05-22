@@ -154,6 +154,23 @@ describe('topology relation module', function() {
     assert.equal(view.render(), view);
   });
 
+  it('can rerender', function() {
+    var stubRemove = utils.makeStubFunction();
+    var topo = {
+      vis: {
+        selectAll: function() {
+          return { remove: stubRemove };
+        }
+      }
+    };
+    view.set('component', topo);
+    var stubUpdate = utils.makeStubMethod(view, 'update');
+    this._cleanups.push(stubUpdate.reset);
+    view.rerender();
+    assert.isTrue(stubRemove.calledOnce());
+    assert.isTrue(stubUpdate.calledOnce());
+  });
+
   it('retrieves the current relation DOM element when removing', function() {
     var requestedSelector;
     var container = {
