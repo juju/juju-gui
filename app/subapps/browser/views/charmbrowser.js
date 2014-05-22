@@ -137,7 +137,8 @@ YUI.add('juju-charmbrowser', function(Y) {
             popular: transform(result.popular),
             'new': transform(result['new'])
           };
-          this._renderCurated(results);
+          this._renderCharmTokens(
+              results, ['featured', 'popular', 'new'], 'curatedTemplate');
         },
         failure: this.apiFailure.bind(this, 'curated')
       }, this);
@@ -146,16 +147,16 @@ YUI.add('juju-charmbrowser', function(Y) {
     /**
       Renders the curated charm list into the container.
 
-      @method _renderCurated
+      @method _renderCharmTokens
       @param {Object} results The curated charm list.
+      @param {Array} tokenTypes A list of token types
     */
-    _renderCurated: function(results) {
-      var content = Y.Node.create(this.curatedTemplate()),
+    _renderCharmTokens: function(results, tokenTypes, template) {
+      var content = Y.Node.create(this[template]()),
           TokenContainer = widgets.browser.TokenContainer,
           tokenContainers = [],
           tokenContainer = {};
 
-      var tokenTypes = ['featured', 'popular', 'new'];
       tokenTypes.forEach(function(tokenType) {
         tokenContainer = new TokenContainer({
           name: tokenType,
@@ -271,39 +272,51 @@ YUI.add('juju-charmbrowser', function(Y) {
         'success': function(data) {
           var results = store.transformResults(data.result);
           var recommended = [],
-              more = [];
+              other = [];
           var series = this.get('envSeries') || 'precise';
           results.map(function(entity) {
             // If this is a charm, make sure it's approved and is of the
             // correct series to be recommended.
             var approved = entity.get('is_approved');
             if (entity.entityType === 'bundle') {
-              (approved) ? recommended.push(entity) : more.push(entity);
+              /* jshint -W030 */
+              /* Expected an assignment or function call */
+              (approved) ? recommended.push(entity) : other.push(entity);
             } else {
-              if (approved) && entity.get('series') === series) {
+              if (approved && (entity.get('series') === series)) {
                 recommended.push(entity);
               } else {
-                more.push(entity);
+                other.push(entity);
               }
             }
           }, this);
-          this._renderSearchResults({
+          this._renderCharmTokens({
             recommended: recommended,
-            more: more
-          });
+            // The token type is called 'other' instead of 'new' because 'new'
+            // clashes with class names of other elements.
+            other: other
+          }, ['recommended', 'other'], 'searchResultTemplate');
         },
         'failure': this.apiFailure
       }, this);
     },
 
     /**
-      Renders the search results into the container.
+      Removes the token and detaches DOM bound events. This allows the render
+      method to be immutable. Also called by the destructor.
 
-      @method _renderSearchResults
-      @param {Object} results The results of the search.
+      @method _cleanUp
     */
-    _renderSearchResults: function(results) {
-
+    _cleanUp: function() {
+      var tokenContainers = this.tokenContainers;
+      if (tokenContainers.length > 0) {
+        tokenContainers.forEach(function(container) {
+          container.destroy();
+        });
+      }
+      if (this._stickyEvent) {
+        this._stickyEvent.detach();
+      }
     },
 
     /**
@@ -312,10 +325,12 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method render
       @param {String} type The type of list to render
     */
-    render: function(parentContainer, type) {
+    render: function(type) {
+      this.set('type', type);
       var container = this.get('container');
+      this._cleanUp(); // Clear out any existing tokens.
       container.setHTML(this.template); // XXX
-      container.appendTo(parentContainer);
+      container.appendTo(this.get('parentContainer'));
       this._renderSearch();
 
       this.showIndicator(container.get('parentElement'));
@@ -348,12 +363,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method destructor
     */
     destructor: function() {
-      var tokenContainers = this.tokenContainers;
-      if (tokenContainers.length > 0) {
-        tokenContainers.forEach(function(container) {
-          container.destroy();
-        });
-      }
+      this._cleanUp();
     }
 
   });

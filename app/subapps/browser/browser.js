@@ -233,8 +233,15 @@ YUI.add('subapp-browser', function(Y) {
     _searchChanged: function() {
       if (window.flags && window.flags.il) {
         var state = this.state;
-        if (state.getState('current', 'sectionA', 'metadata').search &&
-            state.hasChanged('sectionA', 'metadata')) {
+        var sectionA = 'sectionA',
+            metadata = 'metadata',
+            current = state.getState('current', sectionA, metadata),
+            previous = state.getState('previous', sectionA, metadata),
+            newSearch = current && current.search,
+            oldSearch = previous && previous.search;
+
+        if (newSearch &&
+            (JSON.stringify(newSearch) !== JSON.stringify(oldSearch))) {
           return true;
         } else {
           return false;
@@ -425,19 +432,32 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmBrowserDispatcher: function(metadata) {
-      // If there is no provided metadata show the defaults.
-      if (!metadata || !metadata.search) {
-        this._sidebar.showSearch();
-        if (!this._charmbrowser) {
-          this.renderCharmBrowser();
-        } else if (!metadata || !metadata.id) {
-          // Deselect the active charm.
-          this._charmbrowser.updateActive();
-        }
-      }
+      var charmBrowserType = 'curated',
+          cbType;
+      // XXX This will be removed once the search widget rendering gets
+      // moved into the consolidated charmbrowser view.
+      this._sidebar.showSearch();
+      // If there is search data then show the search results.
       if (metadata && metadata.search) {
-        this._sidebar.showSearch();
-        this.renderSearchResults();
+        charmBrowserType = 'search';
+        // XXX Home button rendering will be moved into the charmbrowser view.
+        this._sidebar.set('withHome', true);
+      } else {
+        this._sidebar.set('withHome', false);
+      }
+      if (this._charmbrowser) {
+        cbType = this._charmbrowser.get('type');
+      }
+      // If there isn't a charmbrowser rendered or if the rendered type doesn't
+      // match then re-/render or there is new data to send to the charmbrowser.
+      if (!this._charmbrowser ||
+          this._searchChanged() ||
+          (cbType !== charmBrowserType)) {
+        this.renderCharmBrowser(charmBrowserType);
+      }
+      // If there is no id data then deselect any potentially active tokens.
+      if (!metadata || !metadata.id) {
+        this._charmbrowser.updateActive();
       }
       // XXX Won't be needed once window.flags.il becomes the norm. The details
       // template should be updated to hide by default.
@@ -445,7 +465,6 @@ YUI.add('subapp-browser', function(Y) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         this._detailsVisible(true);
-        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
       // If there are no details in the route then hide the div for
@@ -541,7 +560,6 @@ YUI.add('subapp-browser', function(Y) {
         this._charmbrowser.destroy();
         this._charmbrowser = null;
       }
-      if (this._search) { this._search.destroy(); }
       if (this._sidebar.search) { this._sidebar.hideSearch(); }
       if (this._details) {
         this._details.destroy({ remove: true });
@@ -645,28 +663,29 @@ YUI.add('subapp-browser', function(Y) {
        Render charmbrowser view content into the parent view when required.
 
        @method renderCharmBrowser
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
+       @param {String} type The type of charmbrowser to show.
      */
-    renderCharmBrowser: function(req, res, next) {
+    renderCharmBrowser: function(type, data) {
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
+      type = type || 'curated';
       var activeID;
       if (!window.flags || !window.flags.il) {
         activeID = this.state.getCurrent('charmID');
       } else {
         var meta = this.state.getState('current', 'sectionA', 'metadata');
         if (meta) { activeID = meta.id; }
-        this._sidebar.set('withHome', false);
       }
-      this._charmbrowser = new views.CharmBrowser(
-          Y.mix(this._getViewCfg(), {
-            activeID: activeID
-          }));
-      var container = this._sidebar.get('container').one('.bws-content');
-      this._charmbrowser.render(container, 'curated');
-      this._charmbrowser.addTarget(this);
+      if (!this._charmbrowser) {
+        this._charmbrowser = new views.CharmBrowser();
+        this._charmbrowser.addTarget(this);
+      }
+      this._charmbrowser.setAttrs(this._getViewCfg({
+        parentContainer: this._sidebar.get('container').one('.bws-content'),
+        activeID: activeID
+      }));
+      // Render is idempotent
+      this._charmbrowser.render(type, data);
     },
 
     /**
@@ -694,49 +713,6 @@ YUI.add('subapp-browser', function(Y) {
       if (!this._onboarding.get('seen')) {
         this._onboarding.render();
       }
-    },
-
-    /**
-       Render search results
-
-       @method renderSearchResults
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-     */
-    renderSearchResults: function(req, res, next) {
-      var container = this.get('container'),
-          extraCfg = {};
-
-      extraCfg.renderTo = container.one('.bws-content');
-
-      // If there's a selected charm we need to pass that info onto the View
-      // to render it selected.
-      if (window.flags && window.flags.il) {
-        extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
-        var metadata = this.state.getState('current', 'sectionA', 'metadata');
-        extraCfg.query = metadata.search;
-        this._sidebar.set('withHome', true);
-      } else {
-        if (this.state.getCurrent('charmID')) {
-          extraCfg.activeID = this.state.getCurrent('charmID');
-        }
-      }
-
-      this._search = new views.BrowserSearchView(
-          this._getViewCfg(extraCfg));
-
-      // Prepare to handle cache
-      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
-        this._cache = Y.merge(this._cache, ev.cache);
-      }, this);
-
-      if (!this._searchChanged()) {
-        this._search.render(this._cache.search);
-      } else {
-        this._search.render();
-      }
-      this._search.addTarget(this);
     },
 
     /**
@@ -1332,9 +1308,7 @@ YUI.add('subapp-browser', function(Y) {
     'sub-app',
     'subapp-browser-charmview',
     'subapp-browser-bundleview',
-    'subapp-browser-charmresults',
     'subapp-browser-jujucharms',
-    'subapp-browser-searchview',
     'subapp-browser-sidebar',
     'machine-view-panel-extension',
     'juju-charmbrowser'
