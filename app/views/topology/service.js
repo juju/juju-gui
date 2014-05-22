@@ -132,6 +132,7 @@ YUI.add('juju-topology-service', function(Y) {
       'height': function(box) { box.h = 190; return box.h;}
     });
 
+    var serviceTypeChanged = false;
     node.select('.service-block-image').each(function(d) {
       var curr_node = d3.select(this);
       var curr_href = curr_node.attr('xlink:href');
@@ -143,12 +144,28 @@ YUI.add('juju-topology-service', function(Y) {
       // thus avoiding redundant requests to the server. #1182135
       if (curr_href !== new_href) {
         curr_node.attr({'xlink:href': new_href});
+        // Also update relations, as the shape of the service block is now
+        // different.
+        serviceTypeChanged = true;
       }
       curr_node.attr({
         'width': d.w,
         'height': d.h
       });
     });
+
+    // In instances such as deploying a bundle through the deployer, whether or
+    // not a service is a subordinate does not come in until after the service
+    // has been processed by core and associated with a charm.  In that case,
+    // notify the topology and all of its modules that the type of one or more
+    // services has changed and the canvas or data should be updated
+    // accordingly.
+    if (serviceTypeChanged) {
+      // Rebuild the relation component's internal representation of relations.
+      topo.fire('serviceTypeChanged');
+      // Rerender the relations on the canvas.
+      topo.fire('rendered');
+    }
 
     // Draw a subordinate relation indicator.
     var subRelationIndicator = node.filter(function(d) {
