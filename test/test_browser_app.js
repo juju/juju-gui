@@ -231,7 +231,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           if (app) { app.destroy(); }
         });
 
-        describe('_charmbrowser', function() {
+        describe('_charmBrowserDispatcher', function() {
           function stubRenderers(context) {
             editorialStub = utils.makeStubMethod(app, 'renderEditorial');
             context._cleanups.push(editorialStub.reset);
@@ -255,19 +255,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('renders the editorial when no metadata is provided', function() {
             stubRenderers(this);
-            app._charmbrowser(undefined);
+            app._charmBrowserDispatcher(undefined);
             assertions(1, 0, 0, 1);
           });
 
           it('renders the editorial when no search is provided', function() {
             stubRenderers(this);
-            app._charmbrowser({});
+            app._charmBrowserDispatcher({});
             assertions(1, 0, 0, 1);
           });
 
           it('renders search results when search is provided', function() {
             stubRenderers(this);
-            app._charmbrowser({
+            app._charmBrowserDispatcher({
               search: 'foo'
             });
             assertions(0, 1, 0, 1);
@@ -277,7 +277,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             stubRenderers(this);
             var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
             this._cleanups.push(showStub.reset);
-            app._charmbrowser({
+            app._charmBrowserDispatcher({
               id: 'foo'
             });
             assertions(1, 0, 1, 2);
@@ -287,7 +287,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             stubRenderers(this);
             var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
             this._cleanups.push(showStub.reset);
-            app._charmbrowser({
+            app._charmBrowserDispatcher({
               search: 'foo',
               id: 'foo'
             });
@@ -306,7 +306,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 '_cleanupEntityDetails');
             this._cleanups.push(cleanupStub.reset);
 
-            app._charmbrowser();
+            app._charmBrowserDispatcher();
             assertions(0, 0, 0, 1);
           });
 
@@ -321,7 +321,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             var cleanupStub = utils.makeStubMethod(app,
                 '_cleanupEntityDetails');
             this._cleanups.push(cleanupStub.reset);
-            app._charmbrowser();
+            app._charmBrowserDispatcher();
             assert.equal(activeStub.callCount(), 1);
           });
         });
