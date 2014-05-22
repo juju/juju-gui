@@ -260,11 +260,51 @@ YUI.add('juju-charmbrowser', function(Y) {
     _renderSearch: function() {},
 
     /**
+      Requests the search results from the charm store.
+
+      @method _loadSearchResults
+    */
+    _loadSearchResults: function() {
+      var filters = this.get('filters'),
+          store = this.get('store');
+      store.search(filters, {
+        'success': function(data) {
+          var results = store.transformResults(data.result);
+          var recommended = [],
+              more = [];
+          var series = this.get('envSeries') || 'precise';
+          results.map(function(entity) {
+            // If this is a charm, make sure it's approved and is of the
+            // correct series to be recommended.
+            var approved = entity.get('is_approved');
+            if (entity.entityType === 'bundle') {
+              (approved) ? recommended.push(entity) : more.push(entity);
+            } else {
+              if (approved) && entity.get('series') === series) {
+                recommended.push(entity);
+              } else {
+                more.push(entity);
+              }
+            }
+          }, this);
+          this._renderSearchResults({
+            recommended: recommended,
+            more: more
+          });
+        },
+        'failure': this.apiFailure
+      }, this);
+    },
+
+    /**
       Renders the search results into the container.
 
       @method _renderSearchResults
+      @param {Object} results The results of the search.
     */
-    _renderSearchResults: function() {},
+    _renderSearchResults: function(results) {
+
+    },
 
     /**
       Renders either the curated charm list or the search results list.
@@ -284,7 +324,8 @@ YUI.add('juju-charmbrowser', function(Y) {
         // XXX When caching is implemented it will likely go here.
         this._loadCurated();
       } else if (type === 'search') {
-        this._renderSearchResults();
+        // XXX When caching is implemented it will likely go here.
+        this._loadSearchResults();
       }
     },
 
