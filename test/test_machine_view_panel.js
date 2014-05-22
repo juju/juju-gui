@@ -131,7 +131,6 @@ describe('machine view panel view', function() {
       var onStub = utils.makeStubMethod(view, 'on');
       this._cleanups.push(onStub.reset);
       view._bindEvents();
-      assert.equal(onStub.callCount(), 3);
       var onStubArgs = onStub.allArguments();
       assert.equal(onStubArgs[0][0], '*:unit-token-drag-start');
       assert.deepEqual(onStubArgs[0][1], view._showDraggingUI);
@@ -194,7 +193,8 @@ describe('machine view panel view', function() {
       var env = view.get('env');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
         containerType: undefined,
-        parentId: undefined
+        parentId: undefined,
+        constraints: {}
       }]);
       var placeArgs = env.placeUnit.lastArguments();
       assert.strictEqual(placeArgs[0], null);
@@ -209,7 +209,8 @@ describe('machine view panel view', function() {
       var env = view.get('env');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
         containerType: 'lxc',
-        parentId: '5'
+        parentId: '5',
+        constraints: {}
       }]);
       var placeArgs = env.placeUnit.lastArguments();
       assert.strictEqual(placeArgs[0], null);
@@ -224,7 +225,8 @@ describe('machine view panel view', function() {
       var env = view.get('env');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
         containerType: 'lxc',
-        parentId: '0'
+        parentId: '0',
+        constraints: {}
       }]);
       var placeArgs = env.placeUnit.lastArguments();
       assert.strictEqual(placeArgs[0], null);
@@ -246,6 +248,13 @@ describe('machine view panel view', function() {
   });
 
   describe('unplaced units column', function() {
+    beforeEach(function() {
+      view.set('env', {
+        addMachines: utils.makeStubFunction({id: '7'}),
+        placeUnit: utils.makeStubFunction()
+      });
+    });
+
     it('should render a list of units', function() {
       view.render();
       var list = container.all('.unplaced .unplaced-unit');
@@ -318,6 +327,187 @@ describe('machine view panel view', function() {
       assert.notEqual(item, null, 'unit was not displayed post-update');
       assert.equal(name, item.one('.title').get('text').trim(),
                    'unit did not have the updated name');
+    });
+
+    it('can move the unit to a new machine', function(done) {
+      view.render();
+      var env = view.get('env');
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      var constraints = {
+        'cpu-power': '',
+        mem: '',
+        'root-disk': ''
+      };
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.deepEqual(env.addMachines.lastArguments()[0], [{
+          containerType: undefined,
+          parentId: null,
+          constraints: constraints
+        }], 'A new machine should have been created');
+        var placeArgs = env.placeUnit.lastArguments();
+        assert.strictEqual(placeArgs[0].id, 'test/0',
+            'The correct unit should be placed');
+        assert.equal(placeArgs[1], '7',
+            'The unit should be placed on the new machine');
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/0'},
+        machine: 'new',
+        container: undefined,
+        constraints: constraints
+      });
+    });
+
+    it('can move the unit to a new machine with constraints', function(done) {
+      view.render();
+      var env = view.get('env');
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      var constraints = {
+        'cpu-power': '2',
+        mem: '4',
+        'root-disk': '6'
+      };
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.deepEqual(env.addMachines.lastArguments()[0], [{
+          containerType: undefined,
+          parentId: null,
+          constraints: constraints
+        }], 'A new machine should have been created');
+        var placeArgs = env.placeUnit.lastArguments();
+        assert.strictEqual(placeArgs[0].id, 'test/0',
+            'The correct unit should be placed');
+        assert.equal(placeArgs[1], '7',
+            'The unit should be placed on the new machine');
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/0'},
+        machine: 'new',
+        container: undefined,
+        constraints: constraints
+      });
+    });
+
+    it('can move the unit to a new kvm container', function(done) {
+      view.render();
+      var env = view.get('env');
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      var constraints = {
+        'cpu-power': '4',
+        mem: '5',
+        'root-disk': '6'
+      };
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.deepEqual(env.addMachines.lastArguments()[0], [{
+          containerType: 'kvm',
+          parentId: '4',
+          constraints: constraints
+        }], 'A new container should have been created');
+        var placeArgs = env.placeUnit.lastArguments();
+        assert.strictEqual(placeArgs[0].id, 'test/0',
+            'The correct unit should be placed');
+        assert.equal(placeArgs[1], '7',
+            'The unit should be placed on the new container');
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/0'},
+        machine: '4',
+        container: 'new-kvm',
+        constraints: constraints
+      });
+    });
+
+    it('can move the unit to a new lxc container', function(done) {
+      view.render();
+      var env = view.get('env');
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.deepEqual(env.addMachines.lastArguments()[0], [{
+          containerType: 'lxc',
+          parentId: '4',
+          constraints: {}
+        }], 'A new container should have been created');
+        var placeArgs = env.placeUnit.lastArguments();
+        assert.strictEqual(placeArgs[0].id, 'test/0',
+            'The correct unit should be placed');
+        assert.equal(placeArgs[1], '7',
+            'The unit should be placed on the new container');
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/0'},
+        machine: '4',
+        container: 'new-lxc',
+        constraints: {}
+      });
+    });
+
+    it('can move the unit to bare metal', function(done) {
+      view.render();
+      var env = view.get('env');
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      var constraints = {
+        'cpu-power': '',
+        mem: '',
+        'root-disk': ''
+      };
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.equal(env.addMachines.lastArguments(), undefined,
+            'No machines or containers should have been created');
+        var placeArgs = env.placeUnit.lastArguments();
+        assert.strictEqual(placeArgs[0].id, 'test/0',
+            'The correct unit should be placed');
+        assert.equal(placeArgs[1], '4',
+            'The unit should be placed on the bare metal of the machine');
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/0'},
+        machine: '4',
+        container: 'bare-metal',
+        constraints: constraints
+      });
+    });
+
+    it('can move the unit to a container', function(done) {
+      view.render();
+      var env = view.get('env');
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      var constraints = {
+        'cpu-power': '',
+        mem: '',
+        'root-disk': ''
+      };
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.equal(env.addMachines.lastArguments(), undefined,
+            'No machines or containers should have been created');
+        var placeArgs = env.placeUnit.lastArguments();
+        assert.strictEqual(placeArgs[0].id, 'test/0',
+            'The correct unit should be placed');
+        assert.equal(placeArgs[1], '4/lxc/2',
+            'The unit should be placed on the container');
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/0'},
+        machine: '4',
+        container: '4/lxc/2',
+        constraints: constraints
+      });
     });
   });
 

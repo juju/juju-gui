@@ -57,6 +57,7 @@ YUI.add('machine-view-panel', function(Y) {
          */
         initializer: function() {
           var db = this.get('db'),
+              env = this.get('env'),
               machines = db.machines.filterByParent(null),
               machineTokens = {},
               units = db.units.filterByMachine(null),
@@ -73,10 +74,12 @@ YUI.add('machine-view-panel', function(Y) {
           this._addIconsToUnits(units);
           units.forEach(function(unit) {
             var token = new views.ServiceUnitToken({
-              unit: unit
+              unit: unit,
+              db: db,
+              env: env
             });
             unitTokens[unit.id] = token;
-          });
+          }, this);
           this.set('unitTokens', unitTokens);
           this._bindEvents();
         },
@@ -106,6 +109,8 @@ YUI.add('machine-view-panel', function(Y) {
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
           this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
+
+          this.on('*:moveToken', this._placeServiceUnit, this);
         },
 
         /**
@@ -123,10 +128,9 @@ YUI.add('machine-view-panel', function(Y) {
             if (changed.machine) {
               var machineTokens = this.get('machineTokens'),
                   id = changed.machine.newVal,
-                  machineToken = machineTokens[id],
-                  machine = machineToken.get('machine');
+                  machineToken = machineTokens[id];
               if (machineToken) {
-                this._updateMachineWithUnitData(machine);
+                this._updateMachineWithUnitData(machineToken.get('machine'));
                 machineToken.render();
               }
             }
@@ -158,7 +162,9 @@ YUI.add('machine-view-panel', function(Y) {
           this._addIconToUnit(unit);
           token = new views.ServiceUnitToken({
             container: node,
-            unit: unit
+            unit: unit,
+            db: this.get('db'),
+            env: this.get('env')
           });
           unitTokens[unit.id] = token;
           token.render();
@@ -312,27 +318,71 @@ YUI.add('machine-view-panel', function(Y) {
           var containerType = (dropAction === 'container') ? 'lxc' : undefined;
           var env = this.get('env');
           var db = this.get('db');
-          var unit;
+          var unit = db.units.getById(e.unit);
 
           if (dropAction === 'container' &&
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
-            unit = db.units.getById(e.unit);
             env.placeUnit(unit, parentId);
           } else {
-            var machine = env.addMachines([{
-              containerType: containerType,
-              parentId: parentId || selected
-              // XXX A callback param MUST be provided even if it's just an
-              // empty function, the ECS relies on wrapping this function so if
-              // it's null it'll just stop executing. This should probably be
-              // handled properly on the ECS side. Jeff May 12 2014
-            }], function() {}, { modelId: null });
-
-            unit = db.units.getById(e.unit);
+            var machine = this._createMachine(containerType,
+                parentId || selected, {});
             env.placeUnit(unit, machine.id);
           }
+        },
+
+        /**
+         * Handles placing an unplaced unit
+         *
+         * @method _placeServiceUnit
+         * @param {Y.Event} e EventFacade object.
+         */
+        _placeServiceUnit: function(e) {
+          var placeId;
+          var machine;
+
+          if (e.machine === 'new') {
+            machine = this._createMachine(undefined, null, e.constraints);
+            placeId = machine.id;
+          } else if (e.container === 'new-kvm' || e.container === 'new-lxc') {
+            var constraints = {};
+            if (e.container === 'new-kvm') {
+              constraints = e.constraints;
+            }
+            machine = this._createMachine(e.container.split('-')[1],
+                e.machine, constraints);
+            placeId = machine.id;
+          } else if (e.container === 'bare-metal') {
+            placeId = e.machine;
+          } else {
+            // Add the unit to the container.
+            placeId = e.container;
+          }
+          // Place the unit onto the existing or newly created
+          // machine/container.
+          this.get('env').placeUnit(e.unit, placeId);
+        },
+
+        /**
+         * Create a new machine/container.
+         *
+         * @method _createMachine
+         * @param {String} containerType The container type to create.
+         * @param {String} parentId The parent for the container.
+         * @param {Object} constraints The machine/container constraints.
+         */
+        _createMachine: function(containerType, parentId, constraints) {
+          var machine = this.get('env').addMachines([{
+            containerType: containerType,
+            parentId: parentId,
+            constraints: constraints || {}
+            // XXX A callback param MUST be provided even if it's just an
+            // empty function, the ECS relies on wrapping this function so if
+            // it's null it'll just stop executing. This should probably be
+            // handled properly on the ECS side. Jeff May 12 2014
+          }], function() {}, { modelId: null });
+          return machine;
         },
 
         /**
@@ -755,7 +805,6 @@ YUI.add('machine-view-panel', function(Y) {
     'juju-view-utils',
     'container-token',
     'machine-token',
-    'juju-serviceunit-token',
     'machine-view-panel-header',
     'node',
     'service-scale-up-view',

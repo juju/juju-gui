@@ -1,13 +1,76 @@
-.serviceunit-token {
-    height: 38px;
+.machine-view-panel .serviceunit-token {
+    position: relative;
+    min-height: 38px;
     margin: 10px 10px 0 10px;
     padding: 0 10px;
+    background-color: #eee;
     border: 1px solid @machine-view-border-colour;
     line-height: 38px;
-    cursor: move;
 
+    // States
+    &.state-initial {
+        background-color: transparent;
+        cursor: move;
+
+        .token-move {
+            display: block;
+        }
+        .title {
+            display: inline;
+        }
+    }
+    &.state-select-machine {
+        .machines {
+            display: block;
+        }
+    }
+    &.state-new-machine {
+        .machines,
+        .actions,
+        .constraints,
+        .new-machines {
+            display: block;
+        }
+    }
+    &.state-new-kvm,
+    &.state-select-container {
+        .machines,
+        .actions,
+        .containers {
+            display: block;
+        }
+    }
+    &.state-new-kvm {
+        .constraints {
+            display: block;
+        }
+    }
     &:last-child {
         margin-bottom: 10px;
+    }
+    input[type="text"],
+    select {
+        width: 100%;
+    }
+    input[type="text"] {
+        .border-box;
+        margin-bottom: 6px;
+        background-color: #fff;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+    }
+    form label {
+        position: relative;
+        float: right;
+        margin: -37px 10px 0 0;
+        color: #c6c1bb;
+        line-height: 30px;
+
+        &:last-of-type {
+            margin-top: -34px;
+        }
     }
     .unplaced-unit {
         .details {
@@ -27,5 +90,30 @@
             margin-top: -1px;
             cursor: pointer;
         }
+    }
+    .machines {
+        position: absolute;
+        top: 0;
+        left: 38px;
+        right: 10px;
+    }
+    .actions {
+        text-align: right;
+
+        span {
+            cursor: pointer;
+        }
+        .primary-action {
+            color: @charm-panel-orange;
+        }
+    }
+    .token-move,
+    .title,
+    .new-machine,
+    .containers,
+    .constraints,
+    .actions,
+    .machines {
+        display: none;
     }
 }
