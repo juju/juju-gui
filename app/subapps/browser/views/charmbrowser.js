@@ -297,7 +297,7 @@ YUI.add('juju-charmbrowser', function(Y) {
             other: other
           }, ['recommended', 'other'], 'searchResultTemplate');
         },
-        'failure': this.apiFailure
+        'failure': this.apiFailure.bind(this, 'search')
       }, this);
     },
 
@@ -321,6 +321,8 @@ YUI.add('juju-charmbrowser', function(Y) {
 
     /**
       Renders either the curated charm list or the search results list.
+
+      This method should always be idempotent.
 
       @method render
       @param {String} type The type of list to render

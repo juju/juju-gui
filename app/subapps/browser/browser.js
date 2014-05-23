@@ -716,6 +716,52 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Render search results
+
+      XXX This is only used for the old sidebar rendering code and will be
+      removed with window.flags.il
+
+      @method renderSearchResults
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+    */
+    renderSearchResults: function(req, res, next) {
+      var container = this.get('container'),
+          extraCfg = {};
+
+      extraCfg.renderTo = container.one('.bws-content');
+
+      // If there's a selected charm we need to pass that info onto the View
+      // to render it selected.
+      if (window.flags && window.flags.il) {
+        extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
+        var metadata = this.state.getState('current', 'sectionA', 'metadata');
+        extraCfg.query = metadata.search;
+        this._sidebar.set('withHome', true);
+      } else {
+        if (this.state.getCurrent('charmID')) {
+          extraCfg.activeID = this.state.getCurrent('charmID');
+        }
+      }
+
+      this._search = new views.BrowserSearchView(
+          this._getViewCfg(extraCfg));
+
+      // Prepare to handle cache
+      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
+        this._cache = Y.merge(this._cache, ev.cache);
+      }, this);
+
+      if (!this._searchChanged()) {
+        this._search.render(this._cache.search);
+      } else {
+        this._search.render();
+      }
+      this._search.addTarget(this);
+    },
+
+    /**
        Handle the route for the sidebar view.
 
        @method sidebar
@@ -1307,6 +1353,8 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
+    'subapp-browser-searchview',
+    'subapp-browser-charmresults',
     'subapp-browser-bundleview',
     'subapp-browser-jujucharms',
     'subapp-browser-sidebar',

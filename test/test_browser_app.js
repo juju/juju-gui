@@ -219,12 +219,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       describe('state dispatchers', function() {
-        var editorialStub, searchStub, entityStub, showSearchStub,
-            renderMachineStub, setSelectedStub;
+        var showSearchStub, setHome, searchChanged, renderCharmBrowser,
+            updateActive, entityStub, cleanupEntity;
+
         beforeEach(function() {
           app = new browser.Browser();
           app._sidebar = {
             destroy: utils.makeStubFunction()
+          };
+          app._charmbrowser = {
+            get: utils.makeStubFunction()
           };
         });
         afterEach(function() {
@@ -233,36 +237,58 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         describe('_charmBrowserDispatcher', function() {
           function stubRenderers(context) {
-            editorialStub = utils.makeStubMethod(app, 'renderEditorial');
-            context._cleanups.push(editorialStub.reset);
-            searchStub = utils.makeStubMethod(app, 'renderSearchResults');
-            context._cleanups.push(searchStub.reset);
-            entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
-            context._cleanups.push(entityStub.reset);
             showSearchStub = utils.makeStubMethod(app._sidebar, 'showSearch');
             context._cleanups.push(showSearchStub.reset);
+            setHome = utils.makeStubMethod(app._sidebar, 'set');
+            context._cleanups.push(setHome.reset);
+            searchChanged = utils.makeStubMethod(app, '_searchChanged');
+            context._cleanups.push(searchChanged.reset);
+            renderCharmBrowser = utils.makeStubMethod(
+                app, 'renderCharmBrowser');
+            context._cleanups.push(renderCharmBrowser.reset);
+            updateActive = utils.makeStubMethod(
+                app._charmbrowser, 'updateActive');
+            context._cleanups.push(updateActive.reset);
+            entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
+            context._cleanups.push(entityStub.reset);
+            cleanupEntity = utils.makeStubMethod(app, '_cleanupEntityDetails');
+            context._cleanups.push(cleanupEntity.reset);
           }
 
-          function assertions(
-              editorialCount, searchCount, entityCount, showSearchCount) {
-            assert.equal(editorialStub.callCount(), editorialCount,
-                'editorialStub');
-            assert.equal(searchStub.callCount(), searchCount, 'searchStub');
+          function assertions(showSearchCount, setHomeVal,
+              renderCharmBrowserCount, charmBrowserType, updateActiveCount,
+              entityCount, cleanupEntityCount) {
+
+            assert.equal(
+                showSearchStub.callCount(), showSearchCount, 'showSearchStub');
+            assert.strictEqual(
+                setHome.lastArguments()[1], setHomeVal, 'setHome');
+            assert.equal(
+                renderCharmBrowser.callCount(), renderCharmBrowserCount, 'cb');
+            // If it's never called we dont' need to check it's args.
+            if (renderCharmBrowserCount > 0) {
+              assert.equal(
+                  renderCharmBrowser.lastArguments()[0],
+                  charmBrowserType,
+                  'charmtype');
+            }
+            assert.equal(
+                updateActive.callCount(), updateActiveCount, 'update');
             assert.equal(entityStub.callCount(), entityCount, 'entityStub');
-            assert.equal(showSearchStub.callCount(), showSearchCount,
-                'showSearchStub');
+            assert.equal(
+                cleanupEntity.callCount(), cleanupEntityCount, 'cleanup');
           }
 
-          it('renders the editorial when no metadata is provided', function() {
+          it('renders the curated when no metadata is provided', function() {
             stubRenderers(this);
             app._charmBrowserDispatcher(undefined);
-            assertions(1, 0, 0, 1);
+            assertions(1, false, 1, 'curated', 1, 0, 1);
           });
 
-          it('renders the editorial when no search is provided', function() {
+          it('renders the curated when no search is provided', function() {
             stubRenderers(this);
             app._charmBrowserDispatcher({});
-            assertions(1, 0, 0, 1);
+            assertions(1, false, 1, 'curated', 1, 0, 1);
           });
 
           it('renders search results when search is provided', function() {
@@ -270,17 +296,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._charmBrowserDispatcher({
               search: 'foo'
             });
-            assertions(0, 1, 0, 1);
+            assertions(1, true, 1, 'search', 1, 0, 1);
           });
 
-          it('renders & editorial charm details with id provided', function() {
+          it('renders curated charm details with id provided', function() {
             stubRenderers(this);
             var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
             this._cleanups.push(showStub.reset);
             app._charmBrowserDispatcher({
               id: 'foo'
             });
-            assertions(1, 0, 1, 2);
+            assertions(1, false, 1, 'curated', 0, 1, 0);
           });
 
           it('renders search and charm details', function() {
@@ -291,38 +317,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               search: 'foo',
               id: 'foo'
             });
-            assertions(0, 1, 1, 2);
+            assertions(1, true, 1, 'search', 0, 1, 0);
           });
 
-          it('does not rerender the editorial if it exists', function() {
+          it('does not rerender the list when charm is selected', function() {
             stubRenderers(this);
-            // Start with an exisiting editorial so that the test skips
-            // the creation.
-            app._editorial = {};
-            var activeStub = utils.makeStubMethod(app._editorial,
-                'updateActive');
-            this._cleanups.push(activeStub.reset);
-            var cleanupStub = utils.makeStubMethod(app,
-                '_cleanupEntityDetails');
-            this._cleanups.push(cleanupStub.reset);
-
-            app._charmBrowserDispatcher();
-            assertions(0, 0, 0, 1);
+            app._charmbrowser.get = function() { return 'curated'; };
+            searchChanged.reset();
+            searchChanged = utils.makeStubMethod(app, '_searchChanged', false);
+            this._cleanups.push(searchChanged.reset);
+            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
+            this._cleanups.push(showStub.reset);
+            app._charmBrowserDispatcher({
+              id: 'foo'
+            });
+            assertions(1, false, 0, undefined, 0, 1, 0);
           });
 
-          it('deselects the last active charm', function() {
+          it('does not rerender the search when charm is selected', function() {
             stubRenderers(this);
-            // Start with an exisiting editorial so that the test skips
-            // the creation.
-            app._editorial = {};
-            var activeStub = utils.makeStubMethod(app._editorial,
-                'updateActive');
-            this._cleanups.push(activeStub.reset);
-            var cleanupStub = utils.makeStubMethod(app,
-                '_cleanupEntityDetails');
-            this._cleanups.push(cleanupStub.reset);
-            app._charmBrowserDispatcher();
-            assert.equal(activeStub.callCount(), 1);
+            app._charmbrowser.get = function() { return 'search'; };
+            searchChanged.reset();
+            searchChanged = utils.makeStubMethod(app, '_searchChanged', false);
+            this._cleanups.push(searchChanged.reset);
+            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
+            this._cleanups.push(showStub.reset);
+            app._charmBrowserDispatcher({
+              search: 'foo',
+              id: 'foo'
+            });
+            assertions(1, true, 0, undefined, 0, 1, 0);
           });
         });
 
@@ -421,6 +445,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
         describe('_machine', function() {
+          var renderMachineStub, setSelectedStub;
           function stubRenderers(context) {
             renderMachineStub = utils.makeStubMethod(app,
                 '_renderMachineViewPanelView');
@@ -446,8 +471,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         describe('emptySections', function() {
           function stubMethods(app) {
-            app._editorial = { destroy: utils.makeStubFunction() };
-            app._search = { destroy: utils.makeStubFunction() };
+            app._charmbrowser = { destroy: utils.makeStubFunction() };
             app._sidebar = {
               search: {},
               destroy: function() {},
@@ -459,19 +483,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           it('emptySectionA', function() {
             stubMethods(app);
             var bwsdata = utils.makeContainer(this),
-                destroyMethod = app._editorial.destroy,
+                destroyMethod = app._charmbrowser.destroy,
                 destroyCalled = false;
             bwsdata.addClass('bws-view-data');
             // The original destroy method is set to null after the
             // destroy is called so we need to stub out the method here
             // so that we can track the destroy.
-            app._editorial.destroy = function() {
+            app._charmbrowser.destroy = function() {
               destroyCalled = true;
-              app._editorial.destroy = destroyMethod;
+              app._charmbrowser.destroy = destroyMethod;
             };
             app.emptySectionA();
             assert.equal(destroyCalled, true);
-            assert.equal(app._search.destroy.callCount(), 1);
             assert.equal(app._sidebar.hideSearch.callCount(), 1);
             assert.equal(app._details.destroy.callCount(), 1);
             assert.equal(bwsdata.getStyle('display'), 'none');
@@ -683,9 +706,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 hits = {
                   sidebar: false,
                   renderCharmDetails: false,
-                  renderEditorial: false,
-                  renderOnboarding: true,
-                  renderSearchResults: false
+                  charmbrowser: false,
+                  renderOnboarding: true
                 };
               };
               done();
@@ -720,14 +742,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.renderEntityDetails = function() {
           hits.renderCharmDetails = true;
         };
-        browser.renderEditorial = function() {
-          hits.renderEditorial = true;
+        browser.renderCharmBrowser = function() {
+          hits.charmbrowser = true;
         };
+        // remove me (renderSearchResults) window.flags.il
+        browser.renderSearchResults = function() {};
         browser.renderOnboarding = function() {
           hits.renderOnboarding = true;
-        };
-        browser.renderSearchResults = function() {
-          hits.renderSearchResults = true;
         };
         // We can't just replace the sidebar method as it does logic for
         // future routing. We need to hook directly into the Sidebar view's
@@ -754,7 +775,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true
+          charmbrowser: true
         });
 
         browser.routeView(req, undefined, function() {});
@@ -784,7 +805,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true
+          charmbrowser: true
         });
 
         browser.routeView(req, undefined, function() {});
@@ -801,7 +822,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderSearchResults: true
+          // XXX window.flags.il this should be true but the old
+          // viewmode/sidebar code requires it to be false.
+          charmbrowser: false
         });
 
         browser.routeView(req, undefined, function() {});
@@ -818,7 +841,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderSearchResults: true,
+          // XXX window.flags.il this should be true but the old
+          // viewmode/sidebar code requires it to be false.
+          charmbrowser: false,
           renderCharmDetails: true
         });
 
@@ -835,7 +860,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true
+          charmbrowser: true
         });
 
         browser.routeView(req, undefined, function() {});
@@ -851,7 +876,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true,
+          charmbrowser: true,
           renderCharmDetails: true
         });
 
@@ -869,7 +894,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true,
+          charmbrowser: true,
           renderCharmDetails: true
         });
 
@@ -887,7 +912,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderSearchResults: true,
+          // XXX window.flags.il this should be true but the old
+          // viewmode/sidebar code requires it to be false.
+          charmbrowser: false,
           renderCharmDetails: true
         });
 
@@ -958,7 +985,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.routeView(req, undefined, function() {});
 
         // Now route through to the charmid from here and we should not hit the
-        // editorial content again.
+        // curated content again.
         resetHits();
         req = {
           path: '/sidebar/precise/apache2-2',
@@ -1017,7 +1044,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         req.query.text = 'test2';
 
         var expected = Y.merge(hits, {
-          renderSearchResults: true
+          // XXX window.flags.il this should be true but the old
+          // viewmode/sidebar code requires it to be false.
+          charmbrowser: false
         });
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
@@ -1053,14 +1082,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderSearchResults: true
+          // XXX window.flags.il this should be true but the old
+          // viewmode/sidebar code requires it to be false.
+          charmbrowser: false
         });
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
       });
 
-      it('back from searching dispatches editorial', function() {
+      it('back from searching dispatches curated', function() {
         var req = {
           path: '/sidebar/search/',
           params: {
@@ -1083,8 +1114,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The viewmode did not change so we don't hit sidebar again.
         var expected = Y.merge(hits, {
           sidebar: false,
-          renderSearchResults: false,
-          renderEditorial: true
+          charmbrowser: true
         });
         assert.deepEqual(hits, expected);
       });
@@ -1098,7 +1128,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true,
+          charmbrowser: true,
           renderOnboarding: true
         });
         browser.routeView(req, undefined, function() {});
@@ -1115,7 +1145,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderEditorial: true,
+          charmbrowser: true,
           renderCharmDetails: true,
           renderOnboarding: true
         });
@@ -1134,7 +1164,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         var expected = Y.merge(hits, {
           sidebar: true,
-          renderSearchResults: true,
+          // XXX window.flags.il this should be true but the old
+          // viewmode/sidebar code requires it to be false.
+          charmbrowser: false,
           renderOnboarding: true
         });
 
