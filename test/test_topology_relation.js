@@ -154,7 +154,7 @@ describe('topology relation module', function() {
     assert.equal(view.render(), view);
   });
 
-  it('can rerender', function() {
+  it('has a rerender method which removes and updates relations', function() {
     var stubRemove = utils.makeStubFunction();
     var topo = {
       vis: {
