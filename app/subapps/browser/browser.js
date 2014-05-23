@@ -832,7 +832,7 @@ YUI.add('subapp-browser', function(Y) {
           this._search.destroy();
         }
 
-        this.renderCharmBrowser(req, res, next);
+        this.renderCharmBrowser();
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
