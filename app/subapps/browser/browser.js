@@ -432,33 +432,19 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmBrowserDispatcher: function(metadata) {
-      var charmBrowserType = 'curated',
-          cbType;
       // XXX This will be removed once the search widget rendering gets
       // moved into the consolidated charmbrowser view.
       this._sidebar.showSearch();
       // If there is search data then show the search results.
       if (metadata && metadata.search) {
-        charmBrowserType = 'search';
         // XXX Home button rendering will be moved into the charmbrowser view.
         this._sidebar.set('withHome', true);
       } else {
         this._sidebar.set('withHome', false);
       }
-      if (this._charmbrowser) {
-        cbType = this._charmbrowser.get('type');
-      }
-      // If there isn't a charmbrowser rendered or if the rendered type doesn't
-      // match then re-/render or there is new data to send to the charmbrowser.
-      if (!this._charmbrowser ||
-          this._searchChanged() ||
-          (cbType !== charmBrowserType)) {
-        this.renderCharmBrowser(charmBrowserType);
-      }
-      // If there is no id data then deselect any potentially active tokens.
-      if (!metadata || !metadata.id) {
-        this._charmbrowser.updateActive();
-      }
+
+      this.renderCharmBrowser(metadata);
+
       // XXX Won't be needed once window.flags.il becomes the norm. The details
       // template should be updated to hide by default.
       if (this._shouldShowCharm()) {
@@ -663,13 +649,12 @@ YUI.add('subapp-browser', function(Y) {
        Render charmbrowser view content into the parent view when required.
 
        @method renderCharmBrowser
-       @param {String} type The type of charmbrowser to show.
+       @param {Object} metadata The state metadata for the charmbrowser.
      */
-    renderCharmBrowser: function(type, data) {
+    renderCharmBrowser: function(metadata) {
+      var activeID;
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      type = type || 'curated';
-      var activeID;
       if (!window.flags || !window.flags.il) {
         activeID = this.state.getCurrent('charmID');
       } else {
@@ -685,7 +670,7 @@ YUI.add('subapp-browser', function(Y) {
         activeID: activeID
       }));
       // Render is idempotent
-      this._charmbrowser.render(type);
+      this._charmbrowser.render(metadata, this._searchChanged());
     },
 
     /**

@@ -331,11 +331,17 @@ YUI.add('juju-charmbrowser', function(Y) {
       This method should always be idempotent.
 
       @method render
-      @param {String} type The type of list to render
+      @param {Object} metadata The charmbrowser state metadata.
+      @param {Boolean} searchChanged Whether or not the search value changed.
     */
-    render: function(type) {
-      this.set('type', type);
-      var container = this.get('container');
+    render: function(metadata, searchChanged) {
+      // To keep render idempotent we check to see if any changes have been
+      // made since the last time it's been rendered.
+      if (!this._shouldRender(metadata, searchChanged)) {
+        return;
+      }
+      var container = this.get('container'),
+          renderType = this.get('renderType');
       this._cleanUp(); // Clear out any existing tokens.
       container.setHTML(this.template); // XXX
       container.appendTo(this.get('parentContainer'));
@@ -343,13 +349,46 @@ YUI.add('juju-charmbrowser', function(Y) {
 
       this.showIndicator(container.get('parentElement'));
 
-      if (type === 'curated') {
+      if (renderType === 'curated') {
         // XXX When caching is implemented it will likely go here.
         this._loadCurated();
-      } else if (type === 'search') {
+      } else if (renderType === 'search') {
         // XXX When caching is implemented it will likely go here.
         this._loadSearchResults();
       }
+      // If there is no id data then deselect any potentially active tokens.
+      if (!metadata || !metadata.id) {
+        this.updateActive();
+      }
+    },
+
+    /**
+      Every time the charmbrowser state changes its render method is called.
+      This determines whether it should actually render or not
+
+      @method _shouldRender
+      @param {Object} metadata The charmbrowser state metadata.
+      @param {Boolean} searchChanged Whether or not the search value changed.
+      @return {Boolean} Whether the charmbrowser view should render or not.
+    */
+    _shouldRender: function(metadata, searchChanged) {
+      var renderType = this.get('renderType'),
+          shouldRender = false,
+          requestedType = 'curated';
+
+      if (metadata && metadata.search) {
+        requestedType = 'search';
+        if (searchChanged) {
+          shouldRender = true;
+        }
+      }
+
+      if (renderType !== requestedType) {
+        this.set('renderType', requestedType);
+        shouldRender = true;
+      }
+
+      return shouldRender;
     },
 
     /**
@@ -373,7 +412,17 @@ YUI.add('juju-charmbrowser', function(Y) {
     destructor: function() {
       this._cleanUp();
     }
+  },
+  {
+    ATTRS: {
+      /**
+        The type of view to render
 
+        @attribute renderType
+        @type {String}
+      */
+      renderType: {}
+    }
   });
 
 }, '', {
