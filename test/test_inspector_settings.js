@@ -270,8 +270,10 @@ describe('Inspector Settings', function() {
       notifications: {
         add: function(attrs) {
           // The notification has the required attributes.
-          assert.isTrue(attrs.hasOwnProperty('title'));
-          assert.isTrue(attrs.hasOwnProperty('message'));
+          assert.equal(attrs.hasOwnProperty('title'), true,
+              'Does not have a title');
+          assert.equal(attrs.hasOwnProperty('message'), true,
+              'Does not have a message');
           // The service name is mentioned in the error message.
           assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
           assert.equal(attrs.level, 'important');
