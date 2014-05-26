@@ -132,6 +132,7 @@ YUI.add('juju-topology-service', function(Y) {
       'height': function(box) { box.h = 190; return box.h;}
     });
 
+    var rerenderRelations = false;
     node.select('.service-block-image').each(function(d) {
       var curr_node = d3.select(this);
       var curr_href = curr_node.attr('xlink:href');
@@ -143,12 +144,16 @@ YUI.add('juju-topology-service', function(Y) {
       // thus avoiding redundant requests to the server. #1182135
       if (curr_href !== new_href) {
         curr_node.attr({'xlink:href': new_href});
+        rerenderRelations = true;
       }
       curr_node.attr({
         'width': d.w,
         'height': d.h
       });
     });
+    if (rerenderRelations) {
+      topo.fire('rerenderRelations');
+    }
 
     // Draw a subordinate relation indicator.
     var subRelationIndicator = node.filter(function(d) {

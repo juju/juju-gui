@@ -132,6 +132,12 @@ YUI.add('juju-topology-relation', function(Y) {
         */
         rendered: 'renderedHandler',
         /**
+          Re-render relations on visualization update.
+
+          @event rerenderRelations
+        */
+        rerenderRelations: 'rerender',
+        /**
           Update the endpoints for relations when services are moved.
 
           @event updateLinkEndpoints
@@ -184,6 +190,20 @@ YUI.add('juju-topology-relation', function(Y) {
       this.updateSubordinateRelationsCount();
 
       return this;
+    },
+
+    /**
+      Re-render the relations in the environment view. In the case of a bundle
+      deployment, information such as subordinate status is not included until
+      the state server knows about the service itself; once that arrives and
+      the service blocks are updated, re-render the relations.
+
+      @method rerender
+    */
+    rerender: function() {
+      var topo = this.get('component');
+      topo.vis.selectAll('.rel-group').remove();
+      this.update();
     },
 
     renderedHandler: function() {
