@@ -250,6 +250,43 @@ describe('Inspector Settings', function() {
     assert.isTrue(notificationAdded);
   });
 
+  it('removes the inspector when service is destroyed', function() {
+    window.flags.il = true;
+    var container = utils.makeContainer(this, 'bws-sidebar');
+    container.append('<div class="bws-content"></div>');
+    inspector = setUpInspector();
+
+    var stubFire = utils.makeStubMethod(inspector, 'fire');
+    this._cleanups.push(stubFire.reset);
+
+    var notificationAdded = false;
+    var SERVICE_NAME = 'the name of the service being removed';
+    var evt = {
+      err: false,
+      service_name: SERVICE_NAME
+    };
+
+    var db = {
+      notifications: {
+        add: function(attrs) {
+          // The notification has the required attributes.
+          assert.isTrue(attrs.hasOwnProperty('title'));
+          assert.isTrue(attrs.hasOwnProperty('message'));
+          // The service name is mentioned in the error message.
+          assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
+          assert.equal(attrs.level, 'important');
+          notificationAdded = true;
+        }
+      }
+    };
+
+    inspector._destroyServiceCallback(service, db, evt);
+    assert.isTrue(notificationAdded);
+    // Check that changeState was fired.
+    assert.equal(stubFire.calledOnce(), true, 'Fire not called');
+    window.flags = {};
+  });
+
   /**** End service destroy UI tests. ****/
 
   describe('config file upload', function() {
