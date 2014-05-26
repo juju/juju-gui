@@ -685,7 +685,7 @@ YUI.add('subapp-browser', function(Y) {
         activeID: activeID
       }));
       // Render is idempotent
-      this._charmbrowser.render(type, data);
+      this._charmbrowser.render(type);
     },
 
     /**

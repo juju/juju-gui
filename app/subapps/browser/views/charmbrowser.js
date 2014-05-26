@@ -266,39 +266,45 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method _loadSearchResults
     */
     _loadSearchResults: function() {
-      var filters = this.get('filters'),
-          store = this.get('store');
-      store.search(filters, {
-        'success': function(data) {
-          var results = store.transformResults(data.result);
-          var recommended = [],
-              other = [];
-          var series = this.get('envSeries') || 'precise';
-          results.map(function(entity) {
-            // If this is a charm, make sure it's approved and is of the
-            // correct series to be recommended.
-            var approved = entity.get('is_approved');
-            if (entity.entityType === 'bundle') {
-              /* jshint -W030 */
-              /* Expected an assignment or function call */
-              (approved) ? recommended.push(entity) : other.push(entity);
-            } else {
-              if (approved && (entity.get('series') === series)) {
-                recommended.push(entity);
-              } else {
-                other.push(entity);
-              }
-            }
-          }, this);
-          this._renderCharmTokens({
-            recommended: recommended,
-            // The token type is called 'other' instead of 'new' because 'new'
-            // clashes with class names of other elements.
-            other: other
-          }, ['recommended', 'other'], 'searchResultTemplate');
-        },
+      this.get('store').search(this.get('filters'), {
+        'success': this._loadSearchSuccessHandler,
         'failure': this.apiFailure.bind(this, 'search')
       }, this);
+    },
+
+    /**
+      The success handler for the store's search call from _loadSearchResults.
+
+      @method _loadSearchSuccessHandler
+      @param {Object} data The data from the store search results call.
+    */
+    _loadSearchSuccessHandler: function(data) {
+      var results = this.get('store').transformResults(data.result);
+      var recommended = [],
+          other = [];
+      var series = this.get('envSeries') || 'precise';
+      results.map(function(entity) {
+        // If this is a charm, make sure it's approved and is of the
+        // correct series to be recommended.
+        var approved = entity.get('is_approved');
+        if (entity.entityType === 'bundle') {
+          /* jshint -W030 */
+          /* Expected an assignment or function call */
+          (approved) ? recommended.push(entity) : other.push(entity);
+        } else {
+          if (approved && (entity.get('series') === series)) {
+            recommended.push(entity);
+          } else {
+            other.push(entity);
+          }
+        }
+      }, this);
+      this._renderCharmTokens({
+        recommended: recommended,
+        // The token type is called 'other' instead of 'new' because 'new'
+        // clashes with class names of other elements.
+        other: other
+      }, ['recommended', 'other'], 'searchResultTemplate');
     },
 
     /**

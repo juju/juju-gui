@@ -265,7 +265,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 setHome.lastArguments()[1], setHomeVal, 'setHome');
             assert.equal(
                 renderCharmBrowser.callCount(), renderCharmBrowserCount, 'cb');
-            // If it's never called we dont' need to check it's args.
+            // If it's never called we don't need to check it's args.
             if (renderCharmBrowserCount > 0) {
               assert.equal(
                   renderCharmBrowser.lastArguments()[0],
