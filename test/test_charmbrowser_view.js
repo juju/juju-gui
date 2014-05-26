@@ -49,14 +49,31 @@ describe('charmbrowser view', function() {
   });
 
   describe('render', function() {
-    it('appends the template to the container', function() {
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
-      var cleanup = utils.makeStubMethod(charmBrowser, '_cleanUp');
-      this._cleanups.push(cleanup.reset);
+    var shouldRender, renderSearch, indicator, cleanup;
 
+    beforeEach(function() {
+      shouldRender = utils.makeStubMethod(charmBrowser, '_shouldRender', true);
+      this._cleanups.push(shouldRender.reset);
+      renderSearch = utils.makeStubMethod(charmBrowser, '_renderSearch');
+      this._cleanups.push(renderSearch.reset);
+      indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
+      this._cleanups.push(indicator.reset);
+      cleanup = utils.makeStubMethod(charmBrowser, '_cleanUp');
+      this._cleanups.push(cleanup.reset);
+    });
+
+    it('checks that it should render before rendering', function() {
+      shouldRender.reset();
+      shouldRender = utils.makeStubMethod(charmBrowser, '_shouldRender', false);
+      this._cleanups.push(shouldRender.reset);
+      charmBrowser.render('foo', 'bar');
+      assert.equal(shouldRender.calledOnce(), true);
+      var shouldArgs = shouldRender.lastArguments();
+      assert.equal(shouldArgs[0], 'foo');
+      assert.equal(shouldArgs[1], 'bar');
+    });
+
+    it('appends the template to the container', function() {
       charmBrowser.render();
       var cbContainer = charmBrowser.get('container');
       assert.equal(cleanup.calledOnce(), true);
@@ -65,23 +82,11 @@ describe('charmbrowser view', function() {
     });
 
     it('calls to clean up any old content', function() {
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
-      var cleanup = utils.makeStubMethod(charmBrowser, '_cleanUp');
-      this._cleanups.push(cleanup.reset);
-
       charmBrowser.render();
       assert.equal(cleanup.calledOnce(), true);
     });
 
     it('appends itself to the provided parent container', function() {
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
-
       charmBrowser.render();
       var container = charmBrowser.get('container');
       assert.notEqual(container.one('.search-widget'), null);
@@ -91,57 +96,74 @@ describe('charmbrowser view', function() {
     it('calls to render the search widget on render', function() {
       // XXX This doesn't really test anything yet because the search widget
       // rendering code isn't completed.
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
-
       charmBrowser.render();
-      assert.equal(search.calledOnce(), true);
+      assert.equal(renderSearch.calledOnce(), true);
     });
 
     it('shows the loading indicator on render', function() {
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
-
       charmBrowser.render();
       assert.equal(indicator.calledOnce(), true);
     });
 
     it('calls to render the search results when requested', function() {
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
       var searchResults = utils.makeStubMethod(
           charmBrowser, '_loadSearchResults');
       this._cleanups.push(searchResults.reset);
       var curated = utils.makeStubMethod(charmBrowser, '_loadCurated');
       this._cleanups.push(curated.reset);
-
-      charmBrowser.render('search');
+      charmBrowser.set('renderType', 'search');
+      charmBrowser.render();
       // Make sure we don't also render the curated list.
       assert.equal(curated.callCount(), 0);
       assert.equal(searchResults.calledOnce(), true);
     });
 
     it('calls to render the curated list on render when requested', function() {
-      var search = utils.makeStubMethod(charmBrowser, '_renderSearch');
-      this._cleanups.push(search.reset);
-      var indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
-      this._cleanups.push(indicator.reset);
       var searchResults = utils.makeStubMethod(
-          charmBrowser, '_renderSearchResults');
+          charmBrowser, '_loadSearchResults');
       this._cleanups.push(searchResults.reset);
       var curated = utils.makeStubMethod(charmBrowser, '_loadCurated');
       this._cleanups.push(curated.reset);
-
+      charmBrowser.set('renderType', 'curated');
       charmBrowser.render('curated');
       assert.equal(curated.calledOnce(), true);
       // Make sure we don't also render the search result list.
       assert.equal(searchResults.callCount(), 0);
+    });
+
+    it('unsets any potentially active tokens', function() {
+      var updateActive = utils.makeStubMethod(charmBrowser, 'updateActive');
+      charmBrowser.render();
+      assert.equal(updateActive.calledOnce(), true);
+    });
+  });
+
+  describe('_shouldRender', function() {
+    it('should render with a new search value', function() {
+      assert.equal(charmBrowser._shouldRender({}, true), true);
+    });
+
+    it('sets the renderType to the default', function() {
+      charmBrowser._shouldRender();
+      assert.equal(charmBrowser.get('renderType'), 'curated');
+    });
+
+    it('sets the renderType to search', function() {
+      charmBrowser._shouldRender({
+        search: 'foo'
+      });
+      assert.equal(charmBrowser.get('renderType'), 'search');
+    });
+
+    it('should render with a new view type', function() {
+      assert.equal(charmBrowser.get('renderType'), undefined);
+      assert.equal(charmBrowser._shouldRender({}, false), true);
+    });
+
+    it('should skip rendering if there are no changes', function() {
+      charmBrowser.set('renderType', 'curated');
+      assert.equal(charmBrowser._shouldRender({}, false), false);
+      assert.equal(charmBrowser.get('renderType'), 'curated');
     });
   });
 
@@ -238,10 +260,12 @@ describe('charmbrowser view', function() {
   });
 
   describe('_renderCharmTokens', function() {
-    var hideIndicator, updateActive, sticky;
+    var hideIndicator, updateActive, sticky, shouldRender;
 
     beforeEach(function() {
       charmBrowser.set('activeID', '12');
+      shouldRender = utils.makeStubMethod(charmBrowser, '_shouldRender', true);
+      this._cleanups.push(shouldRender.reset);
       hideIndicator = utils.makeStubMethod(charmBrowser, 'hideIndicator');
       this._cleanups.push(hideIndicator.reset);
       updateActive = utils.makeStubMethod(charmBrowser, 'updateActive');
@@ -345,7 +369,8 @@ describe('charmbrowser view', function() {
           results,
           ['featured', 'popular', 'new'],
           'curatedTemplate');
-      assert.equal(updateActive.callCount(), 1);
+      // It's called once in the initial render call.
+      assert.equal(updateActive.callCount(), 2);
       assert.equal(updateActive.lastArguments()[0], null);
     });
 
@@ -366,6 +391,9 @@ describe('charmbrowser view', function() {
 
   describe('_makeStickyHeaders', function() {
     it('makes the charm list section headers sticky', function() {
+      var shouldRender = utils.makeStubMethod(
+          charmBrowser, '_shouldRender', true);
+      this._cleanups.push(shouldRender.reset);
       var hideIndicator = utils.makeStubMethod(charmBrowser, 'hideIndicator');
       this._cleanups.push(hideIndicator.reset);
       charmBrowser.render();

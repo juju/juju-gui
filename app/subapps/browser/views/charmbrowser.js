@@ -349,16 +349,17 @@ YUI.add('juju-charmbrowser', function(Y) {
 
       this.showIndicator(container.get('parentElement'));
 
+      // If there is no id data then deselect any potentially active tokens.
+      if (!metadata || !metadata.id) {
+        this.updateActive();
+      }
+
       if (renderType === 'curated') {
         // XXX When caching is implemented it will likely go here.
         this._loadCurated();
       } else if (renderType === 'search') {
         // XXX When caching is implemented it will likely go here.
         this._loadSearchResults();
-      }
-      // If there is no id data then deselect any potentially active tokens.
-      if (!metadata || !metadata.id) {
-        this.updateActive();
       }
     },
 

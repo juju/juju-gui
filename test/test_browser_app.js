@@ -219,8 +219,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       describe('state dispatchers', function() {
-        var showSearchStub, setHome, searchChanged, renderCharmBrowser,
-            updateActive, entityStub, cleanupEntity;
+        var showSearchStub, setHome, renderCharmBrowser, entityStub,
+            cleanupEntity, metadata;
 
         beforeEach(function() {
           app = new browser.Browser();
@@ -241,112 +241,104 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             context._cleanups.push(showSearchStub.reset);
             setHome = utils.makeStubMethod(app._sidebar, 'set');
             context._cleanups.push(setHome.reset);
-            searchChanged = utils.makeStubMethod(app, '_searchChanged');
-            context._cleanups.push(searchChanged.reset);
             renderCharmBrowser = utils.makeStubMethod(
                 app, 'renderCharmBrowser');
             context._cleanups.push(renderCharmBrowser.reset);
-            updateActive = utils.makeStubMethod(
-                app._charmbrowser, 'updateActive');
-            context._cleanups.push(updateActive.reset);
             entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
             context._cleanups.push(entityStub.reset);
             cleanupEntity = utils.makeStubMethod(app, '_cleanupEntityDetails');
             context._cleanups.push(cleanupEntity.reset);
           }
 
-          function assertions(showSearchCount, setHomeVal,
-              renderCharmBrowserCount, charmBrowserType, updateActiveCount,
-              entityCount, cleanupEntityCount) {
-
+          function assertions(data) {
             assert.equal(
-                showSearchStub.callCount(), showSearchCount, 'showSearchStub');
+                showSearchStub.callCount(),
+                data.showSearchCount,
+                'showSearchStub');
             assert.strictEqual(
-                setHome.lastArguments()[1], setHomeVal, 'setHome');
+                setHome.lastArguments()[1], data.setHomeVal, 'setHome');
             assert.equal(
-                renderCharmBrowser.callCount(), renderCharmBrowserCount, 'cb');
-            // If it's never called we don't need to check it's args.
-            if (renderCharmBrowserCount > 0) {
-              assert.equal(
-                  renderCharmBrowser.lastArguments()[0],
-                  charmBrowserType,
-                  'charmtype');
-            }
+                renderCharmBrowser.callCount(),
+                data.renderCharmBrowserCount,
+                'renderCharmBrowser');
+            assert.deepEqual(
+                renderCharmBrowser.lastArguments()[0],
+                data.renderCharmBrowserData,
+                'renderCharmBrowserData');
             assert.equal(
-                updateActive.callCount(), updateActiveCount, 'update');
-            assert.equal(entityStub.callCount(), entityCount, 'entityStub');
+                entityStub.callCount(),
+                data.renderEntityCount,
+                'entityStub');
             assert.equal(
-                cleanupEntity.callCount(), cleanupEntityCount, 'cleanup');
+                cleanupEntity.callCount(),
+                data.cleanupEntityCount,
+                'cleanupEntity');
           }
 
-          it('renders the curated when no metadata is provided', function() {
+          it('sets home button visible with search metadata', function() {
             stubRenderers(this);
-            app._charmBrowserDispatcher(undefined);
-            assertions(1, false, 1, 'curated', 1, 0, 1);
-          });
-
-          it('renders the curated when no search is provided', function() {
-            stubRenderers(this);
-            app._charmBrowserDispatcher({});
-            assertions(1, false, 1, 'curated', 1, 0, 1);
-          });
-
-          it('renders search results when search is provided', function() {
-            stubRenderers(this);
-            app._charmBrowserDispatcher({
+            metadata = {
               search: 'foo'
+            };
+            // Cloning the object passed in so we can see if it's modified.
+            app._charmBrowserDispatcher(Y.clone(metadata));
+            assertions({
+              showSearchCount: 1,
+              setHomeVal: true,
+              renderCharmBrowserCount: 1,
+              renderCharmBrowserData: metadata,
+              renderEntityCount: 0,
+              cleanupEntityCount: 1
             });
-            assertions(1, true, 1, 'search', 1, 0, 1);
           });
 
-          it('renders curated charm details with id provided', function() {
+          it('sets the home button hidden with no search metadata', function() {
             stubRenderers(this);
-            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
-            this._cleanups.push(showStub.reset);
-            app._charmBrowserDispatcher({
-              id: 'foo'
+            metadata = {};
+            // Cloning the object passed in so we can see if it's modified.
+            app._charmBrowserDispatcher(Y.clone(metadata));
+            assertions({
+              showSearchCount: 1,
+              setHomeVal: false,
+              renderCharmBrowserCount: 1,
+              renderCharmBrowserData: metadata,
+              renderEntityCount: 0,
+              cleanupEntityCount: 1
             });
-            assertions(1, false, 1, 'curated', 0, 1, 0);
           });
 
-          it('renders search and charm details', function() {
+          it('calls to reneder the charmbrowser with the metadata', function() {
             stubRenderers(this);
-            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
-            this._cleanups.push(showStub.reset);
-            app._charmBrowserDispatcher({
-              search: 'foo',
-              id: 'foo'
+            metadata = {};
+            // Cloning the object passed in so we can see if it's modified.
+            app._charmBrowserDispatcher(Y.clone(metadata));
+            assertions({
+              showSearchCount: 1,
+              setHomeVal: false,
+              renderCharmBrowserCount: 1,
+              renderCharmBrowserData: metadata,
+              renderEntityCount: 0,
+              cleanupEntityCount: 1
             });
-            assertions(1, true, 1, 'search', 0, 1, 0);
           });
 
-          it('does not rerender the list when charm is selected', function() {
+          it('shows the selected charm details', function() {
             stubRenderers(this);
-            app._charmbrowser.get = function() { return 'curated'; };
-            searchChanged.reset();
-            searchChanged = utils.makeStubMethod(app, '_searchChanged', false);
-            this._cleanups.push(searchChanged.reset);
+            metadata = {
+              id: 'foo'
+            };
             var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
             this._cleanups.push(showStub.reset);
-            app._charmBrowserDispatcher({
-              id: 'foo'
+            // Cloning the object passed in so we can see if it's modified.
+            app._charmBrowserDispatcher(Y.clone(metadata));
+            assertions({
+              showSearchCount: 1,
+              setHomeVal: false,
+              renderCharmBrowserCount: 1,
+              renderCharmBrowserData: metadata,
+              renderEntityCount: 1,
+              cleanupEntityCount: 0
             });
-            assertions(1, false, 0, undefined, 0, 1, 0);
-          });
-
-          it('does not rerender the search when charm is selected', function() {
-            stubRenderers(this);
-            app._charmbrowser.get = function() { return 'search'; };
-            searchChanged.reset();
-            searchChanged = utils.makeStubMethod(app, '_searchChanged', false);
-            this._cleanups.push(searchChanged.reset);
-            var showStub = utils.makeStubMethod(app, '_shouldShowCharm', true);
-            this._cleanups.push(showStub.reset);
-            app._charmBrowserDispatcher({
-              search: 'foo',
-              id: 'foo'
-            });
-            assertions(1, true, 0, undefined, 0, 1, 0);
           });
         });
 

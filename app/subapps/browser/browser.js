@@ -665,6 +665,8 @@ YUI.add('subapp-browser', function(Y) {
         this._charmbrowser = new views.CharmBrowser();
         this._charmbrowser.addTarget(this);
       }
+      // See the _getViewCfg method for the extra objects which are passed in
+      // every time the charmbrowser is rendered.
       this._charmbrowser.setAttrs(this._getViewCfg({
         parentContainer: this._sidebar.get('container').one('.bws-content'),
         activeID: activeID
