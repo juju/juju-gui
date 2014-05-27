@@ -54,7 +54,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
 
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
-      if (window.flags && window.flags.il) {
+      if (window.flags && window.flags.mv) {
         var ghostServiceId = ghostService.get('id');
         // XXX frankban 2014-05-11:
         // after the ODS demo, find a smarter way to set a unique service name.
@@ -102,6 +102,12 @@ YUI.add('ghost-deployer-extension', function(Y) {
             // Options used by ECS, ignored by environment.
             {modelId: unitId}
         );
+      } else if (window.flags && window.flags.il) {
+        this.get('subApps').charmbrowser.fire('changeState', {
+          sectionA: {
+            component: 'inspector',
+            metadata: { id: ghostService.get('id') }
+          }});
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);
