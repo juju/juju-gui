@@ -182,6 +182,10 @@ YUI.add('ghost-deployer-extension', function(Y) {
       // Without this following code on a real environment the service icons
       // would disappear and then re-appear when deploying services.
       var boxModel = topo.service_boxes[ghostId];
+      this.get('subApps').charmbrowser.fire('serviceDeployed', {
+        clientId: boxModel.clientId,
+        serviceName: serviceName
+      });
       boxModel.id = serviceName;
       boxModel.pending = false;
       delete topo.service_boxes[ghostId];
