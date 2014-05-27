@@ -61,15 +61,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
       api.set('datasource', new Y.DataSource.Local({source: data}));
 
-      api.interesting({
+      var requestId = api.interesting({
         success: function(data) {
           data.summary.should.equal('wowza');
-          done();
+          setTimeout(function() {
+            assert.equal(requestId, 0);
+            done();
+          }, 0);
         },
         failure: function(data, request) {
         }
       }, this);
-
     });
 
     it('handles searching correctly', function(done) {
@@ -83,18 +85,42 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       datasource.sendRequest = function(params) {
         url = params.request;
         datasource.realSendRequest(params);
+        // sendRequest would return a transaction id that we need to check for.
+        return 0;
       };
 
       api.set('datasource', datasource);
-      api.search({text: 'foo'}, {
+      var requestId = api.search({text: 'foo'}, {
         success: function(data) {
           assert.equal('search?text=foo', url);
           assert.equal('foo', data.name);
-          done();
+          setTimeout(function() {
+            assert.equal(requestId, 0);
+            done();
+          }, 0);
         },
         failure: function(data, request) {
         }
       }, this);
+      api.destroy();
+    });
+
+    it('provides an in flight request abort method', function() {
+      var transaction = {
+        abort: utils.makeStubFunction()
+      };
+      var datasource = new Y.DataSource.IO({
+        source: '/',
+        io: utils.makeStubFunction(transaction)
+      });
+      var cb = function() {};
+      api.set('datasource', datasource);
+      var requestId = api.interesting({ success: cb, failure: cb });
+      assert.equal(typeof requestId, 'number');
+      assert.deepEqual(Y.DataSource.Local.transactions[requestId], transaction);
+      api.cancelInFlightRequest(requestId);
+      assert.equal(transaction.abort.calledOnce(), true);
+      datasource.destroy();
       api.destroy();
     });
 
