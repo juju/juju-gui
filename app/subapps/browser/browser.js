@@ -818,7 +818,12 @@ YUI.add('subapp-browser', function(Y) {
         if (this._search) {
           this._search.destroy();
         }
-
+        // Because this uses the new charmbrowser code for the curated list but
+        // not the search we need to trick it into thinking it's changing its
+        // mode and should re-render.
+        if (this._charmbrowser) {
+          this._charmbrowser.set('renderType', undefined);
+        }
         this.renderCharmBrowser();
       }
 
