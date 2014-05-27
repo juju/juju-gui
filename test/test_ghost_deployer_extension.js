@@ -62,6 +62,9 @@ describe('Ghost Deployer Extension', function() {
       addUnits: utils.makeStubFunction(),
       removeUnits: utils.makeStubFunction()
     };
+    ghostDeployer.set('subApps', {
+      charmbrowser: {
+        fire: utils.makeStubFunction() }});
   });
 
   afterEach(function() {
@@ -78,8 +81,8 @@ describe('Ghost Deployer Extension', function() {
     });
   };
 
-  it('calls the env deploy method with the default charm data', function() {
-    window.flags.il = true;
+  it('calls the env deploy method with default charm data', function() {
+    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
@@ -93,7 +96,7 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {
-    window.flags.il = true;
+    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
@@ -113,10 +116,18 @@ describe('Ghost Deployer Extension', function() {
     var args = services.ghostService.lastArguments();
     assert.lengthOf(args, 1);
     assert.deepEqual(args[0], charm);
+    var fire = ghostDeployer.get('subApps').charmbrowser.fire;
+    assert.equal(fire.calledOnce(), true);
+    var fireArgs = fire.lastArguments();
+    assert.equal(fireArgs[0], 'changeState');
+    assert.deepEqual(fireArgs[1], {
+      sectionA: {
+        component: 'inspector',
+        metadata: { id: 'ghost-service-id' }}});
   });
 
   it('creates a ghost unit', function() {
-    window.flags.il = true;
+    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     var db = ghostDeployer.db;
@@ -133,7 +144,7 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('deploys the ghost unit using the ECS', function() {
-    window.flags.il = true;
+    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     var env = ghostDeployer.env;
