@@ -52,6 +52,11 @@ YUI.add('machine-view-panel-header', function(Y) {
           }
         },
 
+        /**
+         * Handle initial view setup.
+         *
+         * @method initializer
+         */
         initializer: function() {
           this.addEvent(this.after(
               'labelsChange', this._afterLabelsChange, this));
@@ -80,13 +85,21 @@ YUI.add('machine-view-panel-header', function(Y) {
         },
 
         /**
-         * Set the header label.
+         * Update a particular label's count.
          *
-         * @method setLabel
+         * @method _updateLabelCount
+         * @param {String} label the label to update
+         * @param {Integer} delta the amount to change the label count
          */
-        setLabel: function(label) {
-          this.set('label', label);
-          this.get('container').one('.label').set('text', label);
+        updateLabelCount: function(label, delta) {
+          var container = this.get('container'),
+              pluralize = Y.Handlebars.helpers.pluralize,
+              node = container.one('.label[data-label="' + label + '"]'),
+              oldVal = parseInt(node.getData('count'), 10),
+              newVal = oldVal + delta,
+              text = newVal + ' ' + pluralize(label, newVal);
+          node.setAttribute('data-count', newVal);
+          node.set('text', text);
         },
 
         /**

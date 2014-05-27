@@ -42,7 +42,6 @@ describe('machine view panel header view', function() {
     view = new View({
       container: container,
       title: 'test title',
-      label: 'test label',
       dropLabel: 'test drop label',
       action: 'test action',
       actionLabel: 'test action label'
@@ -60,15 +59,33 @@ describe('machine view panel header view', function() {
 
   it('should have the correct attributes set', function() {
     assert.equal(container.one('.title').get('text'), 'test title');
-    assert.equal(container.one('.label').get('text').trim(), 'test label');
     assert.equal(container.one('.action').get('text'), 'test action label');
     assert.equal(container.one('.drop span').get('text'), 'test drop label');
   });
 
   it('can set the label', function() {
-    assert.equal(container.one('.label').get('text').trim(), 'test label');
-    view.setLabel('new label');
-    assert.equal(container.one('.label').get('text').trim(), 'new label');
+    view.set('labels', [{label: 'label', count: 0}]);
+    assert.equal(container.one('.label').get('text').trim(), '0 labels');
+    view.set('labels', [{label: 'label', count: 1}]);
+    assert.equal(container.one('.label').get('text').trim(), '1 label');
+  });
+
+  it('can increment a label', function() {
+    view.set('labels', [{label: 'test', count: 0}]);
+    assert.equal(container.one('.label').get('text').trim(), '0 tests');
+    view.updateLabelCount('test', 1);
+    assert.equal(container.one('.label').get('text').trim(), '1 test');
+    view.updateLabelCount('test', 1);
+    assert.equal(container.one('.label').get('text').trim(), '2 tests');
+  });
+
+  it('can decrement a label', function() {
+    view.set('labels', [{label: 'test', count: 2}]);
+    assert.equal(container.one('.label').get('text').trim(), '2 tests');
+    view.updateLabelCount('test', -1);
+    assert.equal(container.one('.label').get('text').trim(), '1 test');
+    view.updateLabelCount('test', -1);
+    assert.equal(container.one('.label').get('text').trim(), '0 tests');
   });
 
   it('fires an event on tab change', function(done) {

@@ -251,6 +251,7 @@ YUI.add('machine-view-panel', function(Y) {
           token.render();
           token.addTarget(this);
           this.get('container').one('.machines .items').append(node);
+          this._machinesHeader.updateLabelCount('machine', 1);
         },
 
         /**
@@ -268,6 +269,7 @@ YUI.add('machine-view-panel', function(Y) {
           }
           machineTokens[machine.id].destroy({remove: true});
           delete machineTokens[machine.id];
+          this._machinesHeader.updateLabelCount('machine', -1);
         },
 
         /**
