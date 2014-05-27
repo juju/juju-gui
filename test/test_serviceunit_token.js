@@ -62,7 +62,7 @@ describe('Service unit token', function() {
   });
 
   it('adds the unit id to the drag data', function() {
-    var handler = view._makeDragStartHandler({ id: 'foo' });
+    var handler = view._makeDragStartHandler({unit: { id: 'foo' }});
     var dragData = {
       _event: {
         dataTransfer: {
