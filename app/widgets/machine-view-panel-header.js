@@ -44,10 +44,28 @@ YUI.add('machine-view-panel-header', function(Y) {
       ], {
         template: Templates['machine-view-panel-header'],
 
+        labelTemplate: Templates['machine-view-panel-header-label'],
+
         events: {
           'a': {
             click: 'clickAction'
           }
+        },
+
+        initializer: function() {
+          this.addEvent(this.after(
+              'labelsChange', this._afterLabelsChange, this));
+        },
+
+        /**
+         * Handle label change events
+         *
+         * @method _afterLabelsChange
+         * @param {Event} e the custom event created.
+         */
+        _afterLabelsChange: function(e) {
+          var html = this.labelTemplate({labels: this.get('labels')});
+          this.get('container').one('.labels').setHTML(html);
         },
 
         /**
