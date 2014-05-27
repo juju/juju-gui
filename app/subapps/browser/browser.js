@@ -411,7 +411,8 @@ YUI.add('subapp-browser', function(Y) {
 
       this.on('*:serviceDeployed', function(e) {
         if (this._activeInspector) {
-          var activeClientId = this._activeInspector.get('model').get('clientId');
+          var activeClientId = this._activeInspector.get('model')
+            .get('clientId');
           // Because multiple services can be deployed at once we only want to
           // switch to a deployed inspector if there is currently one open.
           // And we only want to switch to that specific inspector.
