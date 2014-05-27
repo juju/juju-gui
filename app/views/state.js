@@ -207,7 +207,9 @@ YUI.add('juju-app-state', function(Y) {
           hash = '',
           search = false,
           urlParts = [];
-
+      // Clear the filter, if there is a valid search value, it will be
+      // re-populated in the state loops.
+      this.filter.clear();
       // Loop through each section in the state to generate the urls.
       Object.keys(newState).forEach(function(section) {
         sectionState = newState[section];
@@ -219,15 +221,8 @@ YUI.add('juju-app-state', function(Y) {
         if (id) {
           id = id.replace(/\/?~charmers/, '');
         }
-
         // Setup the search status and filters based on metadata.search
-        if (metadata.search && metadata.search.clear) {
-          this.filter.clear();
-        } else if (metadata.search && metadata.search.replace) {
-          search = true;
-          this.filter.clear();
-          this.filter.update(metadata.search);
-        } else if (metadata.search) {
+        if (Y.Lang.isValue(metadata.search)) {
           search = true;
           this.filter.update(metadata.search);
         }

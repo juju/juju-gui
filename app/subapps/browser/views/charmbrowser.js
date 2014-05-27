@@ -137,7 +137,8 @@ YUI.add('juju-charmbrowser', function(Y) {
             popular: transform(result.popular),
             'new': transform(result['new'])
           };
-          this._renderCurated(results);
+          this._renderCharmTokens(
+              results, ['featured', 'popular', 'new'], 'curatedTemplate');
         },
         failure: this.apiFailure.bind(this, 'curated')
       }, this);
@@ -146,16 +147,16 @@ YUI.add('juju-charmbrowser', function(Y) {
     /**
       Renders the curated charm list into the container.
 
-      @method _renderCurated
+      @method _renderCharmTokens
       @param {Object} results The curated charm list.
+      @param {Array} tokenTypes A list of token types
     */
-    _renderCurated: function(results) {
-      var content = Y.Node.create(this.curatedTemplate()),
+    _renderCharmTokens: function(results, tokenTypes, template) {
+      var content = Y.Node.create(this[template]()),
           TokenContainer = widgets.browser.TokenContainer,
           tokenContainers = [],
           tokenContainer = {};
 
-      var tokenTypes = ['featured', 'popular', 'new'];
       tokenTypes.forEach(function(tokenType) {
         tokenContainer = new TokenContainer({
           name: tokenType,
@@ -260,32 +261,135 @@ YUI.add('juju-charmbrowser', function(Y) {
     _renderSearch: function() {},
 
     /**
-      Renders the search results into the container.
+      Requests the search results from the charm store.
 
-      @method _renderSearchResults
+      @method _loadSearchResults
     */
-    _renderSearchResults: function() {},
+    _loadSearchResults: function() {
+      this.get('store').search(this.get('filters'), {
+        'success': this._loadSearchSuccessHandler,
+        'failure': this.apiFailure.bind(this, 'search')
+      }, this);
+    },
+
+    /**
+      The success handler for the store's search call from _loadSearchResults.
+
+      @method _loadSearchSuccessHandler
+      @param {Object} data The data from the store search results call.
+    */
+    _loadSearchSuccessHandler: function(data) {
+      var results = this.get('store').transformResults(data.result);
+      var recommended = [],
+          other = [];
+      var series = this.get('envSeries') || 'precise';
+      results.map(function(entity) {
+        // If this is a charm, make sure it's approved and is of the
+        // correct series to be recommended.
+        var approved = entity.get('is_approved');
+        if (entity.entityType === 'bundle') {
+          /* jshint -W030 */
+          /* Expected an assignment or function call */
+          (approved) ? recommended.push(entity) : other.push(entity);
+        } else {
+          if (approved && (entity.get('series') === series)) {
+            recommended.push(entity);
+          } else {
+            other.push(entity);
+          }
+        }
+      }, this);
+      this._renderCharmTokens({
+        recommended: recommended,
+        // The token type is called 'other' instead of 'new' because 'new'
+        // clashes with class names of other elements.
+        other: other
+      }, ['recommended', 'other'], 'searchResultTemplate');
+    },
+
+    /**
+      Removes the token and detaches DOM bound events. This allows the render
+      method to be immutable. Also called by the destructor.
+
+      @method _cleanUp
+    */
+    _cleanUp: function() {
+      var tokenContainers = this.tokenContainers;
+      if (tokenContainers.length > 0) {
+        tokenContainers.forEach(function(container) {
+          container.destroy();
+        });
+      }
+      if (this._stickyEvent) {
+        this._stickyEvent.detach();
+      }
+    },
 
     /**
       Renders either the curated charm list or the search results list.
 
+      This method should always be idempotent.
+
       @method render
-      @param {String} type The type of list to render
+      @param {Object} metadata The charmbrowser state metadata.
+      @param {Boolean} searchChanged Whether or not the search value changed.
     */
-    render: function(parentContainer, type) {
-      var container = this.get('container');
+    render: function(metadata, searchChanged) {
+      // To keep render idempotent we check to see if any changes have been
+      // made since the last time it's been rendered.
+      if (!this._shouldRender(metadata, searchChanged)) {
+        return;
+      }
+      var container = this.get('container'),
+          renderType = this.get('renderType');
+      this._cleanUp(); // Clear out any existing tokens.
       container.setHTML(this.template); // XXX
-      container.appendTo(parentContainer);
+      container.appendTo(this.get('parentContainer'));
       this._renderSearch();
 
       this.showIndicator(container.get('parentElement'));
 
-      if (type === 'curated') {
+      // If there is no id data then deselect any potentially active tokens.
+      if (!metadata || !metadata.id) {
+        this.updateActive();
+      }
+
+      if (renderType === 'curated') {
         // XXX When caching is implemented it will likely go here.
         this._loadCurated();
-      } else if (type === 'search') {
-        this._renderSearchResults();
+      } else if (renderType === 'search') {
+        // XXX When caching is implemented it will likely go here.
+        this._loadSearchResults();
       }
+    },
+
+    /**
+      Every time the charmbrowser state changes its render method is called.
+      This determines whether it should actually render or not
+
+      @method _shouldRender
+      @param {Object} metadata The charmbrowser state metadata.
+      @param {Boolean} searchChanged Whether or not the search value changed.
+      @return {Boolean} Whether the charmbrowser view should render or not.
+    */
+    _shouldRender: function(metadata, searchChanged) {
+      var renderType = this.get('renderType'),
+          shouldRender = false,
+          requestedType = 'curated';
+
+      if (metadata && metadata.search) {
+        requestedType = 'search';
+        if (searchChanged) {
+          shouldRender = true;
+        }
+      }
+
+      if (renderType !== requestedType) {
+        this.set('renderType', requestedType);
+        shouldRender = true;
+      }
+
+      return shouldRender;
     },
 
     /**
@@ -307,14 +411,19 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method destructor
     */
     destructor: function() {
-      var tokenContainers = this.tokenContainers;
-      if (tokenContainers.length > 0) {
-        tokenContainers.forEach(function(container) {
-          container.destroy();
-        });
-      }
+      this._cleanUp();
     }
+  },
+  {
+    ATTRS: {
+      /**
+        The type of view to render
 
+        @attribute renderType
+        @type {String}
+      */
+      renderType: {}
+    }
   });
 
 }, '', {

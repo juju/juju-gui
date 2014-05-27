@@ -412,8 +412,7 @@ YUI.add('browser-search-widget', function(Y) {
           charmID: null,
           search: true,
           filter: {
-            categories: [category[1]],
-            replace: true
+            categories: [category[1]]
           }
         };
 
@@ -428,8 +427,7 @@ YUI.add('browser-search-widget', function(Y) {
           charmID: id,
           filter: {
             categories: [],
-            text: newVal,
-            replace: true
+            text: newVal
           }
         };
       }

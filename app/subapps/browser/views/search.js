@@ -55,8 +55,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
               tpl = this.template({
                 count: results.recommended.length + results.more.length
               }),
-              tplNode = Y.Node.create(tpl),
-              results_container = tplNode.one('.search-results');
+              tplNode = Y.Node.create(tpl);
 
           var recommendedContainer = new widgets.browser.TokenContainer(
               Y.merge({
@@ -84,10 +83,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 }
               }));
 
-          var recommend_node = results_container.one('.recommended'),
-              more_node = results_container.one('.more');
+          var recommend_node = tplNode.one('.recommended'),
+              other_node = tplNode.one('.other');
           recommendedContainer.render(recommend_node);
-          moreContainer.render(more_node);
+          moreContainer.render(other_node);
           this.get('container').setHTML(tplNode);
           target.setHTML(this.get('container'));
           // XXX: We shouldn't have to do this; calling .empty before rending

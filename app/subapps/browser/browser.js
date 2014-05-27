@@ -174,13 +174,13 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Determine if we should render the editorial content based on the current
+       Determine if we should render the curated content based on the current
        state.
 
-       @method _shouldShowEditorial
+       @method _shouldShowCurated
        @return {Boolean} true if should show.
      */
-    _shouldShowEditorial: function() {
+    _shouldShowCurated: function() {
       var should = false;
       // If the viewmode has changed, and seach is not enabled then yes
       if (!this.state.getCurrent('search') &&
@@ -233,8 +233,15 @@ YUI.add('subapp-browser', function(Y) {
     _searchChanged: function() {
       if (window.flags && window.flags.il) {
         var state = this.state;
-        if (state.getState('current', 'sectionA', 'metadata').search &&
-            state.hasChanged('sectionA', 'metadata')) {
+        var sectionA = 'sectionA',
+            metadata = 'metadata',
+            current = state.getState('current', sectionA, metadata),
+            previous = state.getState('previous', sectionA, metadata),
+            newSearch = current && current.search,
+            oldSearch = previous && previous.search;
+
+        if (newSearch &&
+            (JSON.stringify(newSearch) !== JSON.stringify(oldSearch))) {
           return true;
         } else {
           return false;
@@ -366,7 +373,7 @@ YUI.add('subapp-browser', function(Y) {
           allowInspector: !cfg.sandbox,
           dispatchers: {
             sectionA: {
-              charmbrowser: this._charmbrowser.bind(this),
+              charmbrowser: this._charmBrowserDispatcher.bind(this),
               inspector: this._inspector.bind(this),
               empty: this.emptySectionA.bind(this)
             },
@@ -420,32 +427,30 @@ YUI.add('subapp-browser', function(Y) {
     /**
       Handles rendering and/or updating the charmbrowser UI component.
 
-      @method _charmbrowser
+      @method _charmBrowserDispatcher
       @param {Object|String} metadata The metadata to pass to the charmbrowser
         view.
     */
-    _charmbrowser: function(metadata) {
-      // If there is no provided metadata show the defaults.
-      if (!metadata || !metadata.search) {
-        this._sidebar.showSearch();
-        if (!this._editorial) {
-          this.renderEditorial();
-        } else if (!metadata || !metadata.id) {
-          // Deselect the active charm.
-          this._editorial.updateActive();
-        }
-      }
+    _charmBrowserDispatcher: function(metadata) {
+      // XXX This will be removed once the search widget rendering gets
+      // moved into the consolidated charmbrowser view.
+      this._sidebar.showSearch();
+      // If there is search data then show the search results.
       if (metadata && metadata.search) {
-        this._sidebar.showSearch();
-        this.renderSearchResults();
+        // XXX Home button rendering will be moved into the charmbrowser view.
+        this._sidebar.set('withHome', true);
+      } else {
+        this._sidebar.set('withHome', false);
       }
+
+      this.renderCharmBrowser(metadata);
+
       // XXX Won't be needed once window.flags.il becomes the norm. The details
       // template should be updated to hide by default.
       if (this._shouldShowCharm()) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         this._detailsVisible(true);
-        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
       // If there are no details in the route then hide the div for
@@ -474,9 +479,9 @@ YUI.add('subapp-browser', function(Y) {
         this._details.destroy({remove: true});
       }
 
-      // Update the activeID on the editorial/search results.
-      if (this._editorial) {
-        this._editorial.set('activeID', null);
+      // Update the activeID on the charmbrowser view.
+      if (this._charmbrowser) {
+        this._charmbrowser.set('activeID', null);
       }
       if (this._search) {
         this._search.set('activeID', null);
@@ -537,11 +542,10 @@ YUI.add('subapp-browser', function(Y) {
       @method emptySectionA
     */
     emptySectionA: function() {
-      if (this._editorial) {
-        this._editorial.destroy();
-        this._editorial = null;
+      if (this._charmbrowser) {
+        this._charmbrowser.destroy();
+        this._charmbrowser = null;
       }
-      if (this._search) { this._search.destroy(); }
       if (this._sidebar.search) { this._sidebar.hideSearch(); }
       if (this._details) {
         this._details.destroy({ remove: true });
@@ -642,35 +646,33 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Render editorial content into the parent view when required.
+       Render charmbrowser view content into the parent view when required.
 
-       @method renderEditorial
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
+       @method renderCharmBrowser
+       @param {Object} metadata The state metadata for the charmbrowser.
      */
-    renderEditorial: function(req, res, next) {
+    renderCharmBrowser: function(metadata) {
+      var activeID;
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      var activeID;
       if (!window.flags || !window.flags.il) {
         activeID = this.state.getCurrent('charmID');
       } else {
         var meta = this.state.getState('current', 'sectionA', 'metadata');
         if (meta) { activeID = meta.id; }
-        this._sidebar.set('withHome', false);
       }
-
-      // XXX As a stop gap this is being called _editorial. It's no longer only
-      // the editorial, it will also include the search results so this will
-      // need to be renamed as more functionality is moved over.
-      this._editorial = new views.CharmBrowser(
-          Y.mix(this._getViewCfg(), {
-            activeID: activeID
-          }));
-      var container = this._sidebar.get('container').one('.bws-content');
-      this._editorial.render(container, 'curated');
-      this._editorial.addTarget(this);
+      if (!this._charmbrowser) {
+        this._charmbrowser = new views.CharmBrowser();
+        this._charmbrowser.addTarget(this);
+      }
+      // See the _getViewCfg method for the extra objects which are passed in
+      // every time the charmbrowser is rendered.
+      this._charmbrowser.setAttrs(this._getViewCfg({
+        parentContainer: this._sidebar.get('container').one('.bws-content'),
+        activeID: activeID
+      }));
+      // Render is idempotent
+      this._charmbrowser.render(metadata, this._searchChanged());
     },
 
     /**
@@ -701,13 +703,16 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Render search results
+      Render search results
 
-       @method renderSearchResults
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-     */
+      XXX This is only used for the old sidebar rendering code and will be
+      removed with window.flags.il
+
+      @method renderSearchResults
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+    */
     renderSearchResults: function(req, res, next) {
       var container = this.get('container'),
           extraCfg = {};
@@ -803,18 +808,23 @@ YUI.add('subapp-browser', function(Y) {
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
         // Showing search implies that other sidebar content is destroyed.
-        if (this._editorial) {
-          this._editorial.destroy();
+        if (this._charmbrowser) {
+          this._charmbrowser.destroy();
         }
 
         this.renderSearchResults(req, res, next);
-      } else if (this._shouldShowEditorial() || forceSidebar) {
+      } else if (this._shouldShowCurated() || forceSidebar) {
         // Showing editorial implies that other sidebar content is destroyed.
         if (this._search) {
           this._search.destroy();
         }
-
-        this.renderEditorial(req, res, next);
+        // Because this uses the new charmbrowser code for the curated list but
+        // not the search we need to trick it into thinking it's changing its
+        // mode and should re-render.
+        if (this._charmbrowser) {
+          this._charmbrowser.set('renderType', undefined);
+        }
+        this.renderCharmBrowser();
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
@@ -837,9 +847,9 @@ YUI.add('subapp-browser', function(Y) {
           this._details.destroy({remove: true});
         }
 
-        // Update the activeID on the editorial/search results.
-        if (this._editorial) {
-          this._editorial.set('activeID', null);
+        // Update the activeID on the charmbrowser view.
+        if (this._charmbrowser) {
+          this._charmbrowser.set('activeID', null);
         }
         if (this._search) {
           this._search.set('activeID', null);
@@ -954,13 +964,11 @@ YUI.add('subapp-browser', function(Y) {
       // the environment view is rendered.
       var topo = this.get('topo');
       if (!window.flags || !window.flags.il) {
-        var editorial = this._editorial;
-        var search = this._search;
+        var charmbrowser = this._charmbrowser;
         // Clear out whatever charm list is in the inspector
         // XXX This clean up will be handled by the state
         // system once that's implemented.
-        if (editorial) { editorial.destroy(); }
-        if (search) { search.destroy(); }
+        if (charmbrowser) { charmbrowser.destroy(); }
       }
       // Render the ghost inspector
       var inspector = new Y.juju.views.GhostServiceInspector({
@@ -1337,11 +1345,10 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
-    'subapp-browser-bundleview',
-    'subapp-browser-charmresults',
-    'subapp-browser-editorial',
-    'subapp-browser-jujucharms',
     'subapp-browser-searchview',
+    'subapp-browser-charmresults',
+    'subapp-browser-bundleview',
+    'subapp-browser-jujucharms',
     'subapp-browser-sidebar',
     'machine-view-panel-extension',
     'juju-charmbrowser'
