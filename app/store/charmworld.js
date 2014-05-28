@@ -59,7 +59,7 @@ YUI.add('juju-charm-store', function(Y) {
         apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
       }
 
-      this.sendRequest({
+      return this.sendRequest({
         request: apiEndpoint,
         callback: {
           'success': function(io_request) {
@@ -142,7 +142,7 @@ YUI.add('juju-charm-store', function(Y) {
         return;
       }
       // Delegate the request making to the helper object.
-      this.apiHelper.makeRequest(apiEndpoint, callbacks, args);
+      return this.apiHelper.makeRequest(apiEndpoint, callbacks, args);
     },
 
     /**
@@ -344,7 +344,7 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
-      this._makeRequest(endpoint, callbacks, filters);
+      return this._makeRequest(endpoint, callbacks, filters);
     },
 
     /**
@@ -531,7 +531,21 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      this._makeRequest('search/interesting', callbacks);
+      return this._makeRequest('search/interesting', callbacks);
+    },
+
+    /**
+      Cancels the inflight datasource io request which is associated with the
+      passed in request id.
+
+      @method cancelInFlightRequest
+      @param {Integer} requestId The requestId to cancel.
+    */
+    cancelInFlightRequest: function(requestId) {
+      var transaction = Y.DataSource.Local.transactions[requestId];
+      if (transaction) {
+        transaction.abort();
+      }
     },
 
     /**

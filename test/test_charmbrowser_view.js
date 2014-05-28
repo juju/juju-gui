@@ -37,7 +37,10 @@ describe('charmbrowser view', function() {
 
   beforeEach(function() {
     charmBrowser = new CharmBrowser({
-      parentContainer: utils.makeContainer(this)
+      parentContainer: utils.makeContainer(this),
+      store: {
+        cancelInFlightRequest: utils.makeStubFunction()
+      }
     });
   });
 
@@ -180,7 +183,8 @@ describe('charmbrowser view', function() {
       this._cleanups.push(render.reset);
       charmBrowser.set('store', {
         search: utils.makeStubFunction(),
-        transformResults: utils.makeStubFunction([])
+        transformResults: utils.makeStubFunction([]),
+        cancelInFlightRequest: utils.makeStubFunction()
       });
       charmBrowser.set('filters', 'filterObj');
       charmBrowser._loadSearchResults();
@@ -224,7 +228,8 @@ describe('charmbrowser view', function() {
       this._cleanups.push(render.reset);
       charmBrowser.set('store', {
         interesting: utils.makeStubFunction(),
-        transformResults: utils.makeStubFunction({})
+        transformResults: utils.makeStubFunction({}),
+        cancelInFlightRequest: utils.makeStubFunction()
       });
       charmBrowser._loadCurated();
       interesting = charmBrowser.get('store').interesting;
@@ -465,6 +470,14 @@ describe('charmbrowser view', function() {
       this._cleanups.push(cleanup.reset);
       charmBrowser.destroy();
       assert.equal(cleanup.calledOnce(), true);
+    });
+
+    it('calls to abort any in flight store requests', function() {
+      charmBrowser.activeRequestId = 42;
+      charmBrowser.destroy();
+      var cancel = charmBrowser.get('store').cancelInFlightRequest;
+      assert.equal(cancel.calledOnce(), true);
+      assert.equal(cancel.lastArguments()[0], charmBrowser.activeRequestId);
     });
   });
 

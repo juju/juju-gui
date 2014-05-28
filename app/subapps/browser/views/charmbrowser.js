@@ -61,6 +61,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     */
     initializer: function() {
       this.tokenContainers = [];
+      this.activeRequestId = null;
       this._bindEvents();
     },
 
@@ -128,7 +129,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     */
     _loadCurated: function() {
       var store = this.get('store');
-      store.interesting({
+      this.activeRequestId = store.interesting({
         'success': function(data) {
           var result = data.result,
               transform = store.transformResults;
@@ -266,7 +267,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method _loadSearchResults
     */
     _loadSearchResults: function() {
-      this.get('store').search(this.get('filters'), {
+      this.activeRequestId = this.get('store').search(this.get('filters'), {
         'success': this._loadSearchSuccessHandler,
         'failure': this.apiFailure.bind(this, 'search')
       }, this);
@@ -412,6 +413,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     */
     destructor: function() {
       this._cleanUp();
+      this.get('store').cancelInFlightRequest(this.activeRequestId);
     }
   },
   {
