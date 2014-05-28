@@ -435,14 +435,6 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmBrowserDispatcher: function(metadata) {
-      // If there is search data then show the search results.
-      if (metadata && metadata.search) {
-        // XXX Home button rendering will be moved into the charmbrowser view.
-        this._sidebar.set('withHome', true);
-      } else {
-        this._sidebar.set('withHome', false);
-      }
-
       this.renderCharmBrowser(metadata);
 
       // XXX Won't be needed once window.flags.il becomes the norm. The details

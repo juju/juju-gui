@@ -55,29 +55,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
-      Shows the sidebar search widget and removes the class on the sidebar
-      container.
-
-      @method showSearch
-    */
-    showSearch: function() {
-      this.search.show();
-      this.get('container').removeClass('no-search');
-    },
-
-    /**
-      Hides the sidebar search widget and adds the class on the sidebar
-      container.
-
-      @method hideSearch
-    */
-    hideSearch: function() {
-      this.search.hide();
-      // addClass() is idempotent.
-      this.get('container').addClass('no-search', true);
-    },
-
-    /**
      * Render out the view to the DOM.
      *
      * @method render
@@ -93,8 +70,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         this.set('container', container);
       }
       container.setHTML(tplNode);
-      // Bind our view to the events from the search widget used for controls.
-      this._bindSearchWidgetEvents();
     }
 
   }, {

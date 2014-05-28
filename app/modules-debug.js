@@ -504,6 +504,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/utils/mv-drop-target-view-extension.js'
         },
 
+        'search-widget-mgmt-extension': {
+          fullpath: '/juju-ui/utils/search-widget-mgmt-extension.js'
+        },
+
         'juju-controllers': {
           use: [
             'juju-env',

@@ -34,7 +34,8 @@ YUI.add('juju-charmbrowser', function(Y) {
   ns.CharmBrowser = Y.Base.create('charmbrowser', Y.View, [
     views.utils.apiFailingView,
     Y.Event.EventTracker,
-    widgets.browser.IndicatorManager
+    widgets.browser.IndicatorManager,
+    views.SearchWidgetMgmtExtension
   ], {
 
     events: {
@@ -62,6 +63,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     initializer: function() {
       this.tokenContainers = [];
       this.activeRequestId = null;
+      this.searchWidget = null;
       this._bindEvents();
     },
 
@@ -255,28 +257,6 @@ YUI.add('juju-charmbrowser', function(Y) {
     },
 
     /**
-      Renders the search widget into the container.
-
-      @method _renderSearchWidget
-    */
-    _renderSearchWidget: function() {
-      // It only makes sense to render search if we have a store to use to
-      // search against.
-      var store = this.get('store');
-      if (store) {
-        this.search = new widgets.browser.Search({
-          autocompleteSource: Y.bind(
-              store.autocomplete,
-              store ),
-          autocompleteDataFormatter: store.transformResults,
-          categoryIconGenerator: Y.bind(store.buildCategoryIconPath, store),
-          filters: this.get('filters')
-        });
-        this.search.render(this.get('container').one('.search-widget'));
-      }
-    },
-
-    /**
       Requests the search results from the charm store.
 
       @method _loadSearchResults
@@ -365,6 +345,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       this._cleanUp(); // Clear out any existing tokens.
       container.setHTML(this.template); // XXX
       container.appendTo(this.get('parentContainer'));
+      // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();
 
       this.showIndicator(container.one('.charm-list'));
@@ -376,9 +357,11 @@ YUI.add('juju-charmbrowser', function(Y) {
 
       if (renderType === 'curated') {
         // XXX When caching is implemented it will likely go here.
+        this.set('withHome', false);
         this._loadCurated();
       } else if (renderType === 'search') {
         // XXX When caching is implemented it will likely go here.
+        this.set('withHome', true);
         this._loadSearchResults();
       }
     },
@@ -443,7 +426,14 @@ YUI.add('juju-charmbrowser', function(Y) {
         @attribute renderType
         @type {String}
       */
-      renderType: {}
+      renderType: {},
+      /**
+        Whether we should show the 'Home' button with the search widget or not.
+
+        @attribute withHome
+        @type {Boolean}
+      */
+      withHome: {}
     }
   });
 
@@ -451,6 +441,7 @@ YUI.add('juju-charmbrowser', function(Y) {
   requires: [
     'browser-token-container',
     'browser-overlay-indicator',
+    'search-widget-mgmt-extension',
     'event-tracker',
     'juju-view-utils',
     'view',
