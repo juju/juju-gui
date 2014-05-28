@@ -175,7 +175,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       this.tokenContainers = tokenContainers;
       var container = this.get('container'),
           charmList = container.one('.charm-list');
-      this.hideIndicator(container.get('parentElement'));
+      this.hideIndicator(charmList);
       charmList.append(content);
       // Set the active charm if available.
       var active = this.get('activeID');
@@ -339,6 +339,10 @@ YUI.add('juju-charmbrowser', function(Y) {
       if (this._stickyEvent) {
         this._stickyEvent.detach();
       }
+      var charmList = this.get('container').one('.charm-list');
+      if (charmList) {
+        this.hideIndicator(charmList);
+      }
     },
 
     /**
@@ -363,7 +367,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       container.appendTo(this.get('parentContainer'));
       this._renderSearchWidget();
 
-      this.showIndicator(container.get('parentElement'));
+      this.showIndicator(container.one('.charm-list'));
 
       // If there is no id data then deselect any potentially active tokens.
       if (!metadata || !metadata.id) {
