@@ -178,6 +178,24 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(topo.annotateBoxPosition.calledOnce(), true);
   });
 
+  it('fires serviceDeployed in the deploy handler', function() {
+    var ghostService = new Y.Model({
+      id: 'ghostid'
+    });
+    var topo = ghostDeployer.views.environment.instance.topo;
+    topo.annotateBoxPosition = utils.makeStubFunction();
+    topo.service_boxes.ghostid = {clientId: 'ghostid'};
+    var stubFire = ghostDeployer.get('subApps').charmbrowser.fire;
+    ghostDeployer._deployCallbackHandler('ghostid', {}, {}, ghostService, {});
+    assert.deepEqual(stubFire.lastArguments(), [
+      'serviceDeployed',
+      {
+        clientId: 'ghostid',
+        serviceName: 'ghostid'
+      }
+    ], 'Event not fired.');
+  });
+
   it('notifies add_unit success', function() {
     var ghostUnit = {displayName: 'django/42'};
     var evt = {err: 'bad wolf'};
