@@ -434,6 +434,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(requestSeriesStub.callCount(), 0);
             assert.equal(upgradeOrNewStub.callCount(), 1);
           });
+
+          it('removes existing inspectors', function(done) {
+            stubMethods(this);
+            stubDb(app, false);
+            app._inspector({ id: clientId });
+            app._activeInspector = {
+              destroy: function() {
+                // If the inspector is not destroyed, the test will time out.
+                done();
+              }
+            };
+            app._inspector({ id: clientId });
+          });
         });
 
         describe('_machine', function() {

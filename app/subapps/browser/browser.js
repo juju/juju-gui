@@ -509,6 +509,10 @@ YUI.add('subapp-browser', function(Y) {
           return true;
         }
       });
+      // In the instance of updating, destroy the existing inspector.
+      if (this._activeInspector) {
+        this._activeInspector.destroy();
+      }
       if (metadata.localType) {
         var file = metadata.flash.file;
         var services = metadata.flash.services;
@@ -549,7 +553,9 @@ YUI.add('subapp-browser', function(Y) {
         this._charmbrowser.destroy();
         this._charmbrowser = null;
       }
-      if (this._sidebar.search) { this._sidebar.hideSearch(); }
+      if (this._sidebar.search) {
+        this._sidebar.hideSearch();
+      }
       if (this._details) {
         this._details.destroy({ remove: true });
         var detailsNode = Y.one('.bws-view-data');
@@ -561,7 +567,9 @@ YUI.add('subapp-browser', function(Y) {
           detailsNode.empty();
         }
       }
-      if (this._activeInspector) {this._activeInspector.destroy(); }
+      if (this._activeInspector) {
+        this._activeInspector.destroy();
+      }
     },
 
     /**
