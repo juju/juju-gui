@@ -45,9 +45,15 @@
             a {
                 float: right;
             }
-            .label {
+            .labels {
                 display: block;
                 height: 20px;
+            }
+            .label:after {
+                content: ', ';
+            }
+            .label:last-child:after {
+                content: '';
             }
             .drop {
                 .type4;

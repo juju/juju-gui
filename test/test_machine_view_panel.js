@@ -111,11 +111,12 @@ describe('machine view panel view', function() {
   });
 
   it('should set the initial container header label', function() {
-    var label = '0 containers, 0 units';
+    var labels = ['0 containers', '0 units'];
     view.render();
-    assert.equal(view._containersHeader.get('label'), label);
-    assert.equal(view._containersHeader.get(
-        'container').one('.label').get('text'), label);
+    labels.forEach(function(l, index) {
+      assert.equal(view._containersHeader.get(
+          'container').all('.label').item(index).get('text'), l);
+    });
   });
 
   describe('token drag and drop', function() {
@@ -337,7 +338,6 @@ describe('machine view panel view', function() {
     it('should set the correct machine count in the header', function() {
       var label = '1 machine';
       view.render();
-      assert.equal(view._machinesHeader.get('label'), label);
       assert.equal(view._machinesHeader.get(
           'container').one('.label').get('text'), label);
     });
@@ -403,7 +403,7 @@ describe('machine view panel view', function() {
     });
 
     it('should set the correct counts in the container header', function(done) {
-      var label = '2 containers, 1 unit';
+      var labels = ['2 containers', '1 unit'];
       view.render();
       var machineToken = container.one('.machines li .token');
       machines.add([
@@ -416,9 +416,10 @@ describe('machine view panel view', function() {
         // Need to explicitly fire the click handler as we are catching
         // the click event before it can be fired.
         view.handleMachineTokenSelect(e);
-        assert.equal(view._containersHeader.get('label'), label);
-        assert.equal(view._containersHeader.get(
-            'container').one('.label').get('text'), label);
+        labels.forEach(function(l, index) {
+          assert.equal(view._containersHeader.get(
+              'container').all('.label').item(index).get('text'), l);
+        });
         done();
       });
       machineToken.simulate('click');

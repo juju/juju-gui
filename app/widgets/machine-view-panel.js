@@ -251,6 +251,7 @@ YUI.add('machine-view-panel', function(Y) {
           token.render();
           token.addTarget(this);
           this.get('container').one('.machines .items').append(node);
+          this._machinesHeader.updateLabelCount('machine', 1);
         },
 
         /**
@@ -268,6 +269,7 @@ YUI.add('machine-view-panel', function(Y) {
           }
           machineTokens[machine.id].destroy({remove: true});
           delete machineTokens[machine.id];
+          this._machinesHeader.updateLabelCount('machine', -1);
         },
 
         /**
@@ -425,13 +427,11 @@ YUI.add('machine-view-panel', function(Y) {
               '.containers .content .items');
           var numUnits = db.units.filterByMachine(parentId, true).length;
 
-          var containersPlural = containers.length !== 1 ? 's' : '';
-          var unitsPlural = numUnits !== 1 ? 's' : '';
-
           this._clearContainerColumn();
-          this._containersHeader.setLabel(
-              containers.length + ' container' + containersPlural + ', ' +
-              numUnits + ' unit' + unitsPlural);
+          this._containersHeader.set('labels', [
+            {label: 'container', count: containers.length},
+            {label: 'unit', count: numUnits}
+          ]);
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
@@ -481,7 +481,10 @@ YUI.add('machine-view-panel', function(Y) {
           // Remove all the container items.
           containerParent.get('childNodes').remove();
           // Set the header label text to the default.
-          this._containersHeader.setLabel('0 containers, 0 units');
+          this._containersHeader.set('labels', [
+            {label: 'container', count: 0},
+            {label: 'unit', count: 0}
+          ]);
         },
 
         /**
@@ -492,12 +495,12 @@ YUI.add('machine-view-panel', function(Y) {
         _renderMachines: function() {
           var machineTokens = this.get('machineTokens'),
               machineIds = Object.keys(machineTokens),
-              nodeContainer = this.get('container').one('.machines .items'),
-              plural = machineIds.length !== 1 ? 's' : '';
+              nodeContainer = this.get('container').one('.machines .items');
 
           // Update the header to show the machine count.
-          this._machinesHeader.setLabel(
-              machineIds.length + ' machine' + plural);
+          this._machinesHeader.set('labels', [
+            {label: 'machine', count: machineIds.length}
+          ]);
 
           // Render each of the machine tokens out to a list
           machineIds.forEach(function(id) {
