@@ -323,6 +323,10 @@ YUI.add('juju-charmbrowser', function(Y) {
       if (charmList) {
         this.hideIndicator(charmList);
       }
+
+      if (this.searchWidget) {
+        this.searchWidget.destroy();
+      }
     },
 
     /**

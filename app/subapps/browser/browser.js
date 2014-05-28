@@ -662,7 +662,10 @@ YUI.add('subapp-browser', function(Y) {
         if (meta) { activeID = meta.id; }
       }
       if (!this._charmbrowser) {
-        this._charmbrowser = new views.CharmBrowser();
+        this._charmbrowser = new views.CharmBrowser({
+          deployService: this.get('deployService'),
+          deployBundle: this.get('deployBundle')
+        });
         this._charmbrowser.addTarget(this);
       }
       // See the _getViewCfg method for the extra objects which are passed in
@@ -761,9 +764,7 @@ YUI.add('subapp-browser', function(Y) {
         if (!this._sidebar) {
           this._sidebar = new views.Sidebar(
               this._getViewCfg({
-                container: this.get('container'),
-                deployService: this.get('deployService'),
-                deployBundle: this.get('deployBundle')
+                container: this.get('container')
               }));
           this._sidebar.render();
           this._sidebar.addTarget(this);
