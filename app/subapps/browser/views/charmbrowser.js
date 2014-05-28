@@ -192,7 +192,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method makeStickyHeaders
     */
     _makeStickyHeaders: function() {
-      var charmContainer = this.get('container').get('parentElement');
+      var charmContainer = this.get('container').one('.charm-list');
       var headings = charmContainer.all('.section-title');
       var headingHeight = 53; // The height of the heading block in pixels
 
@@ -257,9 +257,24 @@ YUI.add('juju-charmbrowser', function(Y) {
     /**
       Renders the search widget into the container.
 
-      @method _renderSearch
+      @method _renderSearchWidget
     */
-    _renderSearch: function() {},
+    _renderSearchWidget: function() {
+      // It only makes sense to render search if we have a store to use to
+      // search against.
+      var store = this.get('store');
+      if (store) {
+        this.search = new widgets.browser.Search({
+          autocompleteSource: Y.bind(
+              store.autocomplete,
+              store ),
+          autocompleteDataFormatter: store.transformResults,
+          categoryIconGenerator: Y.bind(store.buildCategoryIconPath, store),
+          filters: this.get('filters')
+        });
+        this.search.render(this.get('container').one('.search-widget'));
+      }
+    },
 
     /**
       Requests the search results from the charm store.
@@ -346,7 +361,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       this._cleanUp(); // Clear out any existing tokens.
       container.setHTML(this.template); // XXX
       container.appendTo(this.get('parentContainer'));
-      this._renderSearch();
+      this._renderSearchWidget();
 
       this.showIndicator(container.get('parentElement'));
 

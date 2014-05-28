@@ -435,9 +435,6 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmBrowserDispatcher: function(metadata) {
-      // XXX This will be removed once the search widget rendering gets
-      // moved into the consolidated charmbrowser view.
-      this._sidebar.showSearch();
       // If there is search data then show the search results.
       if (metadata && metadata.search) {
         // XXX Home button rendering will be moved into the charmbrowser view.
