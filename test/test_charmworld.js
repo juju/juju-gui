@@ -105,6 +105,48 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       api.destroy();
     });
 
+    it('caches data loaded from charmworld', function(done) {
+      var data = [];
+      var stubSendRequest;
+      var self = this;
+
+      data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
+      api.set('datasource', new Y.DataSource.Local({source: data}));
+
+      api.interesting({
+        success: function(data) {
+          stubSendRequest = utils.makeStubMethod(api.apiHelper,
+              'sendRequest');
+          this._cleanups.push(stubSendRequest.reset);
+          setTimeout(function() {
+            assert.deepEqual(api.apiHelper.get('cachedResults'), {
+              'search/interesting': { summary: 'wowza' }
+            });
+            requestAgain.call(this);
+          }, 0);
+        },
+        failure: function(data, request) {
+        }
+      }, this);
+
+      function requestAgain() {
+        api.interesting({
+          success: function(data) {
+            setTimeout(function() {
+              assert.deepEqual(api.apiHelper.get('cachedResults'), {
+                'search/interesting': { summary: 'wowza' }
+              });
+              // Cached results were returned without a request being made.
+              assert.equal(stubSendRequest.callCount(), 0);
+              done();
+            }, 0);
+          },
+          failure: function(data, request) {
+          }
+        }, self);
+      }
+    });
+
     it('provides an in flight request abort method', function() {
       var transaction = {
         abort: utils.makeStubFunction()
