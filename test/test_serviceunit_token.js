@@ -23,6 +23,7 @@ describe('Service unit token', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-serviceunit-token',
+                               'juju-models',
                                'juju-tests-utils',
                                'node-event-simulate'], function(Y) {
       models = Y.namespace('juju.models');
@@ -34,15 +35,27 @@ describe('Service unit token', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'container');
+    var unit = {
+      id: 'test/0',
+      displayName: 'test'
+    };
+    var units = new models.ServiceUnitList();
+    units.add([unit]);
     id = 'test/0';
     title = 'test';
     view = new views.ServiceUnitToken({
       container: container,
-      unit: {
-        id: 'test/0',
-        displayName: 'test'
+      unit: unit,
+      db: {
+        machines: new models.MachineList(),
+        units: units
+      },
+      env: {
+        addMachines: utils.makeStubFunction({id: '7'}),
+        placeUnit: utils.makeStubFunction()
       }
     }).render();
+    view.get('db').machines.add([{id: '0'}, {id: '0/lxc/12'}]);
   });
 
   afterEach(function() {
@@ -55,6 +68,7 @@ describe('Service unit token', function() {
                     'DOM element not found');
     assert.equal(container.one(selector + ' .title').get('text').trim(),
                  title, 'display names do not match');
+    assert.equal(container.hasClass('state-initial'), true);
   });
 
   it('makes itself draggable on render', function() {
@@ -78,49 +92,212 @@ describe('Service unit token', function() {
     assert.equal(setArgs[1], '{"id":"foo"}');
   });
 
-  // XXX May 10 2014 The UI is very broken so this cannot be properly tested now
-  // so it's being skipped until the token UI is fixed up.
-  // This test should also not use isTrue/isFalse etc as it doesn't give trace
-  // backs.
-  it.skip('walks through machine and container selections', function() {
-    // Make sure initally shows name and move icon
-    var name = container.one('.title'),
-        tokenMove = container.one('.token-move'),
-        machines = container.one('.unplaced-unit .machines'),
-        containers = container.one('unplaced-unit .containers'),
-        actions = container.one('.unplaced-unit .actions'),
-        machinesSelect = container.one('.unplaced-unit .machines select');
+  it('can show the machine selection', function() {
+    // Show the machine selection.
+    container.one('.token-move').simulate('click');
+    assert.equal(container.hasClass('state-select-machine'), true);
+  });
 
-    assert.notEqual(name.getStyle('display'), 'none',
-                    'name was not displayed');
-    assert.notEqual(tokenMove.getStyle('display'), 'none',
-                    'icon was not displayed');
+  it('can populate the machines selection', function() {
+    var machinesSelect = container.one('.machines select');
+    assert.equal(machinesSelect.all('option').size(), 2,
+        'The defaults should exist');
+    // Show the machine selection.
+    container.one('.token-move').simulate('click');
+    var machineOptions = machinesSelect.all('option');
+    assert.equal(machineOptions.size(), 3);
+    assert.equal(machineOptions.item(2).get('value'), '0');
+  });
 
-    // test initial move icon click
-    assert.isTrue(machines.hasClass('hidden'),
-        'machine dropdown prematurely displayed');
-    tokenMove.simulate('click');
-    assert.isFalse(machinesSelect.hasClass('hidden'),
-        'machine dropdown not displayed');
-    assert.isTrue(tokenMove.hasClass('hidden'), 'icon was not hidden');
+  it('orders the machines list correctly', function() {
+    view.get('db').machines.add([{id: '2'}, {id: '1'}]);
+    // Show the machine selection.
+    container.one('.token-move').simulate('click');
+    var machineOptions = container.one('.machines select').all('option');
+    assert.equal(machineOptions.item(2).get('value'), '0');
+    assert.equal(machineOptions.item(3).get('value'), '1');
+    assert.equal(machineOptions.item(4).get('value'), '2');
+  });
 
-    // test selecting a machine in the list
-    assert.isTrue(containers.hasClass('hidden'),
-        'container dropdown prematurely displayed');
-    assert.isTrue(actions.hasClass('hidden'),
-        'container actions prematurely displayed');
+  it('can show the new machine form', function() {
+    var machinesSelect = container.one('.machines select');
+    // Select the 'New machine' option.
     machinesSelect.set('selectedIndex', 1);
     machinesSelect.simulate('change');
-    assert.isFalse(containers.hasClass('hidden'),
-        'container dropdown not displayed');
-    assert.isFalse(actions.hasClass('hidden'),
-        'container actions not displayed');
+    assert.equal(container.hasClass('state-new-machine'), true);
+  });
 
-    // test the final click on the move button
-    actions.one('.move').simulate('click');
-    assert.isTrue(name.hasClass('hidden'),
-        'name was not displayed in final state');
-    assert.isTrue(tokenMove.hasClass('hidden'),
-        'icon was not displayed in final state');
+  it('can show the container selection', function() {
+    // Select a machine option.
+    container.one('.machines select').simulate('change');
+    assert.equal(container.hasClass('state-select-container'), true);
+  });
+
+  it('can populate the containers selection', function() {
+    var containersSelect = container.one('.containers select');
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    assert.equal(containersSelect.all('option').size(), 3,
+        'The defaults should exist');
+    // Select a machine option.
+    container.one('.machines select').simulate('change');
+    var containerOptions = containersSelect.all('option');
+    assert.equal(containerOptions.size(), 5);
+    assert.equal(containerOptions.item(2).get('value'), '0/lxc/12');
+    // Check the "Choose location" item is still at the top of the list.
+    assert.equal(containerOptions.item(0).get('text').trim(),
+        'Choose location');
+    // Check the bare metal option is the second item.
+    assert.equal(containerOptions.item(1).get('value'), 'bare-metal');
+    assert.equal(containerOptions.item(1).get('text'), '0/bare metal');
+  });
+
+  it('orders the containers list correctly', function() {
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    view.get('db').machines.add([
+      {id: '0/lxc/1'},
+      {id: '0/lxc/3'}
+    ]);
+    // Select a machine option.
+    container.one('.machines select').simulate('change');
+    var containerOptions = container.one('.containers select').all('option');
+    assert.equal(containerOptions.item(2).get('value'), '0/lxc/1');
+    assert.equal(containerOptions.item(3).get('value'), '0/lxc/3');
+    assert.equal(containerOptions.item(4).get('value'), '0/lxc/12');
+  });
+
+  it('shows the constraints for a new kvm container', function() {
+    var containersSelect = container.one('.containers select');
+    // Select the kvm option.
+    containersSelect.set('selectedIndex', 2);
+    containersSelect.simulate('change');
+    assert.equal(container.hasClass('state-new-kvm'), true);
+  });
+
+  it('does not show the constraints for non kvm containers', function() {
+    var containersSelect = container.one('.containers select');
+    // Select a non kvm option.
+    containersSelect.set('selectedIndex', 1);
+    containersSelect.simulate('change');
+    assert.equal(container.hasClass('state-select-container'), true);
+  });
+
+  it('resets the token on cancel', function() {
+    var machinesSelect = container.one('.machines select');
+    // Show the machine selection.
+    container.one('.token-move').simulate('click');
+    // Select the 'New machine' option.
+    machinesSelect.set('selectedIndex', 1);
+    machinesSelect.simulate('change');
+    // Cancel the move.
+    container.one('.actions .cancel').simulate('click');
+    assert.equal(container.hasClass('state-initial'), true);
+  });
+
+  it('fires an event when the unit should be moved', function(done) {
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    var selectedContainerStub = utils.makeStubMethod(view,
+        '_getSelectedContainer', '0/lxc/12');
+    this._cleanups.push(selectedContainerStub.reset);
+    view.on('moveToken', function(e) {
+      assert.equal(e.unit, view.get('unit'));
+      assert.equal(e.machine, '0');
+      assert.equal(e.container, '0/lxc/12');
+      assert.deepEqual(e.constraints, {});
+      done();
+    });
+    // Move the unit.
+    container.one('.actions .move').simulate('click');
+  });
+
+  it('does not fire an event when a container is not selected', function() {
+    var moveFired = false;
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    var selectedContainerStub = utils.makeStubMethod(view,
+        '_getSelectedContainer', '');
+    this._cleanups.push(selectedContainerStub.reset);
+    view.on('moveToken', function(e) {
+      moveFired = true;
+    });
+    // Move the unit.
+    container.one('.actions .move').simulate('click');
+    assert.equal(moveFired, false);
+  });
+
+  it('can create a machine with constraints', function(done) {
+    var constraints = {
+      'cpu-power': '2',
+      mem: '4',
+      'root-disk': '7'
+    };
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', 'new');
+    this._cleanups.push(selectedMachineStub.reset);
+    var selectedContainerStub = utils.makeStubMethod(view,
+        '_getSelectedContainer', '');
+    this._cleanups.push(selectedContainerStub.reset);
+    var constraintsStub = utils.makeStubMethod(view,
+        '_getConstraints', constraints);
+    this._cleanups.push(constraintsStub.reset);
+    view.on('moveToken', function(e) {
+      assert.equal(e.unit, view.get('unit'));
+      assert.equal(e.machine, 'new');
+      assert.equal(e.container, '');
+      assert.deepEqual(e.constraints, constraints);
+      done();
+    });
+    // Move the unit.
+    container.one('.actions .move').simulate('click');
+  });
+
+  it('can create a kvm container with constraints', function(done) {
+    var constraints = {
+      'cpu-power': '2',
+      mem: '4',
+      'root-disk': '7'
+    };
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    var selectedContainerStub = utils.makeStubMethod(view,
+        '_getSelectedContainer', 'new-kvm');
+    this._cleanups.push(selectedContainerStub.reset);
+    var constraintsStub = utils.makeStubMethod(view,
+        '_getConstraints', constraints);
+    this._cleanups.push(constraintsStub.reset);
+    view.on('moveToken', function(e) {
+      assert.equal(e.unit, view.get('unit'));
+      assert.equal(e.machine, '0');
+      assert.equal(e.container, 'new-kvm');
+      assert.deepEqual(e.constraints, constraints);
+      done();
+    });
+    // Move the unit.
+    container.one('.actions .move').simulate('click');
+  });
+
+  it('does not pass constraints to new lxc containers', function(done) {
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    var selectedContainerStub = utils.makeStubMethod(view,
+        '_getSelectedContainer', 'new-lxc');
+    this._cleanups.push(selectedContainerStub.reset);
+    view.on('moveToken', function(e) {
+      assert.equal(e.unit, view.get('unit'));
+      assert.equal(e.machine, '0');
+      assert.equal(e.container, 'new-lxc');
+      assert.deepEqual(e.constraints, {});
+      done();
+    });
+    // Move the unit.
+    container.one('.actions .move').simulate('click');
   });
 });
