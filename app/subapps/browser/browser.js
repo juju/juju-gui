@@ -581,6 +581,7 @@ YUI.add('subapp-browser', function(Y) {
     emptySectionB: function() {
       if (this.machineViewPanel) {
         this.machineViewPanel.destroy();
+        this.machineViewPanel = null;
       }
     },
 
