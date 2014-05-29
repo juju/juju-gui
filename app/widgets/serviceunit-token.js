@@ -129,7 +129,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
         var dataTransfer = evt.dataTransfer;
         dataTransfer.effectAllowed = 'move';
         var dragData = {
-          id: attrs.id
+          id: attrs.unit.id
         };
         dataTransfer.setData('Text', JSON.stringify(dragData));
         // This event is registered on many nested elements, but we only have
