@@ -38,11 +38,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    * @extends {juju.browser.views.MainView}
    *
    */
-  ns.Sidebar = Y.Base.create('browser-view-sidebar', ns.MainView, [], {
+  ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
     template: views.Templates.sidebar,
-
-    events: {
-    },
 
     /**
      * Remove the HTML contents for the sidebar.
@@ -71,9 +68,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       }
       container.setHTML(tplNode);
     }
-
-  }, {
-    ATTRS: {}
   });
 
 }, '0.1.0', {

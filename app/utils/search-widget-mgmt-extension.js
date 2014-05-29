@@ -44,8 +44,7 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
       @method _renderSearchWidget
     */
     _renderSearchWidget: function() {
-      // It only makes sense to render search if we have a store to use to
-      // search against.
+      // Only render search if we have a store.
       var store = this.get('store');
       if (store) {
         this.searchWidget = new widgets.browser.Search({
@@ -185,4 +184,8 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
 
   views.SearchWidgetMgmtExtension = SearchWidgetMgmtExtension;
 
+}, '', {
+  requires: [
+    'browser-search-widget'
+  ]
 });
