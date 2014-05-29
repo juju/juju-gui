@@ -509,10 +509,7 @@ YUI.add('subapp-browser', function(Y) {
           return true;
         }
       });
-      // In the instance of updating, destroy the existing inspector.
-      if (this._activeInspector) {
-        this._activeInspector.destroy();
-      }
+      var previousInspector = this._activeInspector;
       if (metadata.localType) {
         var file = metadata.flash.file;
         var services = metadata.flash.services;
@@ -528,6 +525,10 @@ YUI.add('subapp-browser', function(Y) {
         this._activeInspector = this.createGhostInspector(model);
       } else {
         this._activeInspector = this.createServiceInspector(model);
+      }
+      // In the instance of updating, destroy the existing inspector.
+      if (previousInspector) {
+        previousInspector.destroy();
       }
     },
 
