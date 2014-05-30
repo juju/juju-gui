@@ -1298,7 +1298,6 @@ YUI.add('juju-gui', function(Y) {
           charmbrowser.hidden = false;
           this.renderEnvironment = true;
         }
-        charmbrowser.updateVisible();
       }
       next();
     },

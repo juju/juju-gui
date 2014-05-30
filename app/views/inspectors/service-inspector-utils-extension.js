@@ -142,14 +142,10 @@ YUI.add('service-inspector-utils-extension', function(Y) {
           message: 'Service: ' + evt.service_name + ' is being destroyed.',
           level: 'important'
         });
-        if (!window.flags || !window.flags.il) {
-          this.destroy();
-        } else {
-          this.fire('changeState', {
-            sectionA: {
-              component: null,
-              metadata: { id: null }}});
-        }
+        this.fire('changeState', {
+          sectionA: {
+            component: null,
+            metadata: { id: null }}});
         // The emptySectionA method will destroy this inspector.
       }
     }

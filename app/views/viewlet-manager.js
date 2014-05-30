@@ -135,10 +135,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
         this.viewletContainer = options.viewletContainer; }
 
       this.templateConfig = options.templateConfig || {};
-
       // {String}: {View}
       this.views = this._generateViews(options.views || this.views);
-
 
       this.events = options.events;
       // Map from logical slot name to the CSS selector within ViewletManager's
@@ -147,9 +145,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       // Internal mapping from slot name to viewlet rendered into slot.
       this._slots = {};
       this._events = [];
-
-      this._setupEvents();
-
       // Pass in databinding: true in the config parameters
       // to enable databinding.
       if (options.enableDatabinding) {
@@ -233,7 +228,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       this._render();
       this.renderUI();
       this._insertContainer();
-      this.recalculateHeight();
       return this;
     },
 
@@ -314,7 +308,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
         });
       }
       view.show();
-      this.recalculateHeight();
     },
 
     /**
@@ -383,62 +376,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
     },
 
     /**
-      Recalculates and sets the height of the viewlet-manager when
-      the browser is resized or by being called directly.
-
-      @method recalculateHeight
-    */
-    recalculateHeight: function() {
-      var height;
-      if (!window.flags.il) {
-        var container = this.get('container');
-        var TB_SPACING = 20;
-        var winHeight = container.get('winHeight'),
-            header = Y.one('.navbar'),
-            footer = Y.one('.bottom-navbar'),
-            // Depending on the render cycle these may or may not be in the DOM
-            // which is why we pull their heights separately
-            vcHeader = container.one('.header-slot'),
-            vcNavigation = container.one('.viewlet-manager-navigation'),
-            vcFooter = container.one('.viewlet-manager-footer'),
-            headerHeight = 0,
-            footerHeight = 0,
-            vcHeaderHeight = 0,
-            vcNavHeight = 0,
-            vcFooterHeight = 0;
-
-        if (header) { headerHeight = header.get('clientHeight'); }
-        if (footer) { footerHeight = footer.get('clientHeight'); }
-        if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
-        if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
-        if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
-
-        height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
-
-        if (window.flags.mv) {
-          height -= 50;
-        }
-
-        // The viewlet manager has a couple different wrapper elements which
-        // impact which components are shown. In this case we are grabbing an
-        // internal wrapper to resize without causing the elements to reflow.
-        var wrapper = container.one('.viewlet-manager-wrapper:not(.ghost)');
-        if (wrapper) {
-          wrapper.setStyle('maxHeight', height + 'px');
-        }
-
-        // subtract the height of the header and footer of the viewlet manager.
-        height = height - vcHeaderHeight - vcFooterHeight - (TB_SPACING * 3);
-
-        // This needs to pull from the 'real' container not what was passed in.
-        // This is because this method can be called to recalculate the height
-        // on another wrapper element, not necessarily the real container.
-        this.get('container')
-            .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
-      }
-    },
-
-    /**
       Generates a new instance of all of the views passed into the viewlet
       manager.
 
@@ -466,17 +403,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       }, this);
 
       return initializedViews;
-    },
-
-    /**
-      Attaches events which cannot be attached using the container event object
-
-      @method _setupEvents
-      @private
-    */
-    _setupEvents: function() {
-      this._events.push(
-          Y.one('window').after('resize', this.recalculateHeight, this));
     },
 
     /**

@@ -96,21 +96,11 @@ YUI.add('juju-charmbrowser', function(Y) {
 
       // Update the UI for the active one.
       this.updateActive(ev.currentTarget);
-
-      if (window.flags && window.flags.il) {
-        this.fire('changeState', {
-          sectionA: {
-            component: 'charmbrowser',
-            metadata: { id: charmID }
-          }});
-      } else {
-        this.fire('viewNavigate', {
-          change: {
-            charmID: charmID,
-            hash: undefined
-          }
-        });
-      }
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: charmID }
+        }});
     },
 
     /**
@@ -417,9 +407,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     */
     destructor: function() {
       this._cleanUp();
-      if (window.flags && window.flags.il) {
-        this.get('container').remove(true);
-      }
+      this.get('container').remove(true);
       this.get('store').cancelInFlightRequest(this.activeRequestId);
     }
   },

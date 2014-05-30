@@ -691,22 +691,16 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Nothing.
      */
     _deployLocalCharm: function(file, env, db) {
-      if (window.flags && window.flags.il) {
-        var topo = this.get('component');
-        topo.fire('changeState', {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
-              localType: 'new',
-              flash: {
-                file: file
-              }
-            }
-          }
-        });
-      } else {
-        localCharmHelpers.deployLocalCharm(file, env, db);
-      }
+      var topo = this.get('component');
+      topo.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            localType: 'new',
+            flash: {
+              file: file
+            }}}
+      });
     },
 
     /**
@@ -835,28 +829,17 @@ YUI.add('juju-topology-service', function(Y) {
         source[index] = service.getAttrs();
       });
 
-      if (window.flags && window.flags.il) {
-        var topo = this.get('component');
-        topo.fire('changeState', {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
-              localType: 'update',
-              flash: {
-                file: file,
-                services: services
-              }
-            }
-          }
-        });
-      } else {
-        new Y.juju.views.LocalNewUpgradeInspector({
-          services: services,
-          file: file,
-          env: env,
-          db: db
-        }).render();
-      }
+      var topo = this.get('component');
+      topo.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            localType: 'update',
+            flash: {
+              file: file,
+              services: services
+            }}}
+      });
     },
 
     /**
@@ -1440,17 +1423,11 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} topo The reference to the topology object.
     */
     showServiceDetails: function(box, topo) {
-      // XXX Jeff March 26 2013 - show_service can be removed once
-      // we finish moving the inspector into the browser.
-      if (window.flags && window.flags.il) {
-        topo.fire('changeState', {
-          sectionA: {
-            component: 'inspector',
-            metadata: { id: box.id }
-          }});
-      } else {
-        this.show_service(box.model);
-      }
+      topo.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: { id: box.id }
+        }});
       this.showServiceMenu(box);
     },
 

@@ -110,15 +110,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _addCharmEnvironment: function(ev) {
       ev.halt();
       var charm = this.get('entity');
-      if (window.flags && window.flags.il) {
-        this.fire('changeState', {
-          sectionA: {
-            component: 'charmbrowser',
-            metadata: {
-              id: null }}});
-      } else {
-        this.fire('viewNavigate', {change: {charmID: null}});
-      }
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {
+            id: null }}});
       var ghostAttributes;
       ghostAttributes = {
         icon: this.get('store').iconpath(charm.get('storeId'))
@@ -141,17 +137,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
         charmID: charmID,
         hash: undefined
       };
-
-      if (window.flags && window.flags.il) {
-        this.fire('changeState', {
-          sectionA: {
-            component: 'charmbrowser',
-            metadata: { id: charmID }
-          }});
-      } else {
-        this.fire('viewNavigate', {change: change});
-      }
-
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: charmID }
+        }});
     },
 
     /**

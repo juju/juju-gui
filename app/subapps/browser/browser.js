@@ -155,22 +155,12 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
-      var state = this.state;
-      if (window.flags && window.flags.il) {
-        var current = state.getState('current', 'sectionA', 'metadata'),
-            previous = state.getState('previous', 'sectionA', 'metadata');
-        current = current || {};
-        previous = previous || {};
-        return current.id && (!this._details || current.id !== previous.id);
-      } else {
-        return (
-            state.getCurrent('charmID') && (
-                !this._details ||
-                state.hasChanged('charmID') ||
-                state.hasChanged('viewmode')
-            )
-        );
-      }
+      var state = this.state,
+          current = state.getState('current', 'sectionA', 'metadata'),
+          previous = state.getState('previous', 'sectionA', 'metadata');
+      current = current || {};
+      previous = previous || {};
+      return current.id && (!this._details || current.id !== previous.id);
     },
 
     /**
@@ -231,29 +221,18 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true If search changed.
      */
     _searchChanged: function() {
-      if (window.flags && window.flags.il) {
-        var state = this.state;
-        var sectionA = 'sectionA',
-            metadata = 'metadata',
-            current = state.getState('current', sectionA, metadata),
-            previous = state.getState('previous', sectionA, metadata),
-            newSearch = current && current.search,
-            oldSearch = previous && previous.search;
-
-        if (newSearch &&
-            (JSON.stringify(newSearch) !== JSON.stringify(oldSearch))) {
-          return true;
-        } else {
-          return false;
-        }
+      var state = this.state,
+          sectionA = 'sectionA',
+          metadata = 'metadata',
+          current = state.getState('current', sectionA, metadata),
+          previous = state.getState('previous', sectionA, metadata),
+          newSearch = current && current.search,
+          oldSearch = previous && previous.search;
+      if (newSearch &&
+          (JSON.stringify(newSearch) !== JSON.stringify(oldSearch))) {
+        return true;
       } else {
-        if (this.state.getCurrent('search') && (
-            this.state.hasChanged('search') ||
-            this.state.hasChanged('querystring'))) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       }
     },
 
@@ -365,34 +344,31 @@ YUI.add('subapp-browser', function(Y) {
         interesting: null
       };
 
-      // XXX this should be moved to the mv flag soon.
-      if (window.flags && window.flags.il) {
-        this.state = new models.UIState({
-          // Disallow routing to inspectors if we are in sandbox mode; the
-          // model to be inspected will not be available.
-          allowInspector: !cfg.sandbox,
-          dispatchers: {
-            sectionA: {
-              charmbrowser: this._charmBrowserDispatcher.bind(this),
-              inspector: this._inspector.bind(this),
-              empty: this.emptySectionA.bind(this)
-            },
-            sectionB: {
-              machine: this._machine.bind(this),
-              empty: this.emptySectionB.bind(this)
-            }
+      this.state = new models.UIState({
+        // Disallow routing to inspectors if we are in sandbox mode; the
+        // model to be inspected will not be available.
+        allowInspector: !cfg.sandbox,
+        dispatchers: {
+          sectionA: {
+            charmbrowser: this._charmBrowserDispatcher.bind(this),
+            inspector: this._inspector.bind(this),
+            empty: this.emptySectionA.bind(this)
+          },
+          sectionB: {
+            machine: this._machine.bind(this),
+            empty: this.emptySectionB.bind(this)
           }
-        });
-      } else {
-        this.state = new models.State();
-      }
+        }
+      });
 
       this._clearViews();
 
       this._registerSubappHelpers();
 
       // Listen for navigate events from any views we're rendering.
+      // window.flags.il
       this.on('*:viewNavigate', function(ev) {
+        debugger;
         var url;
         if (ev.url) {
           url = ev.url;
@@ -400,14 +376,14 @@ YUI.add('subapp-browser', function(Y) {
           url = this.state.getUrl(ev.change);
         }
         this.navigate(url);
-      });
+      }, this);
 
       this.on('*:changeState', function(e) {
         this.state.set('allowInspector', true);
         var state = e.details[0];
         var url = this.state.generateUrl(state);
         this.navigate(url);
-      });
+      }, this);
 
       this.on('*:serviceDeployed', function(e) {
         if (this._activeInspector) {
@@ -474,9 +450,6 @@ YUI.add('subapp-browser', function(Y) {
       // Update the activeID on the charmbrowser view.
       if (this._charmbrowser) {
         this._charmbrowser.set('activeID', null);
-      }
-      if (this._search) {
-        this._search.set('activeID', null);
       }
     },
 
@@ -586,13 +559,9 @@ YUI.add('subapp-browser', function(Y) {
       var state = this.state,
           entityId,
           hash;
-      if (window.flags && window.flags.il) {
-        entityId = state.getState('current', 'sectionA', 'metadata').id;
-        hash = state.getState('current', 'sectionA', 'metadata').hash;
-      } else {
-        entityId = state.getCurrent('charmID');
-        hash = state.getCurrent('hash');
-      }
+
+      entityId = state.getState('current', 'sectionA', 'metadata').id;
+      hash = state.getState('current', 'sectionA', 'metadata').hash;
 
       var extraCfg = {
         activeTab: hash,
@@ -605,21 +574,16 @@ YUI.add('subapp-browser', function(Y) {
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
       var hashChanged, charmIDChanged, viewmodeChanged;
-      if (window.flags && window.flags.il) {
-        // XXX until UIState supports dot notation for hasChanged, we'll need
-        // to manually compare metadata attributes
-        var current = state.getState('current', 'sectionA', 'metadata'),
-            previous = state.getState('previous', 'sectionA', 'metadata');
-        current = current || {};
-        previous = previous || {};
-        charmIDChanged = current.id !== previous.id;
-        hashChanged = current.hash !== previous.hash;
-        viewmodeChanged = false; // no longer supported so just hard code
-      } else {
-        charmIDChanged = state.hasChanged('charmID');
-        viewmodeChanged = state.hasChanged('viewmode');
-        hashChanged = state.hasChanged('hash');
-      }
+      // XXX until UIState supports dot notation for hasChanged, we'll need
+      // to manually compare metadata attributes
+      var current = state.getState('current', 'sectionA', 'metadata'),
+          previous = state.getState('previous', 'sectionA', 'metadata');
+      current = current || {};
+      previous = previous || {};
+      charmIDChanged = current.id !== previous.id;
+      hashChanged = current.hash !== previous.hash;
+      viewmodeChanged = false; // no longer supported so just hard code
+
       // XXX viewmode can be eliminated from this condition once
       // window.flags.il becomes standard
       if (this._details &&
@@ -657,12 +621,9 @@ YUI.add('subapp-browser', function(Y) {
       var activeID;
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (!window.flags || !window.flags.il) {
-        activeID = this.state.getCurrent('charmID');
-      } else {
-        var meta = this.state.getState('current', 'sectionA', 'metadata');
-        if (meta) { activeID = meta.id; }
-      }
+      var meta = this.state.getState('current', 'sectionA', 'metadata');
+      if (meta) { activeID = meta.id; }
+
       if (!this._charmbrowser) {
         this._charmbrowser = new views.CharmBrowser({
           deployService: this.get('deployService'),
@@ -708,176 +669,18 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Render search results
-
-      XXX This is only used for the old sidebar rendering code and will be
-      removed with window.flags.il
-
-      @method renderSearchResults
-      @param {Request} req current request object.
-      @param {Response} res current response object.
-      @param {function} next callable for the next route in the chain.
-    */
-    renderSearchResults: function(req, res, next) {
-      var container = this.get('container'),
-          extraCfg = {};
-
-      extraCfg.renderTo = container.one('.bws-content');
-
-      // If there's a selected charm we need to pass that info onto the View
-      // to render it selected.
-      if (window.flags && window.flags.il) {
-        extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
-        var metadata = this.state.getState('current', 'sectionA', 'metadata');
-        extraCfg.query = metadata.search;
-        this._sidebar.set('withHome', true);
-      } else {
-        if (this.state.getCurrent('charmID')) {
-          extraCfg.activeID = this.state.getCurrent('charmID');
-        }
-      }
-
-      this._search = new views.BrowserSearchView(
-          this._getViewCfg(extraCfg));
-
-      // Prepare to handle cache
-      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
-        this._cache = Y.merge(this._cache, ev.cache);
-      }, this);
-
-      if (!this._searchChanged()) {
-        this._search.render(this._cache.search);
-      } else {
-        this._search.render();
-      }
-      this._search.addTarget(this);
-    },
-
-    /**
        Handle the route for the sidebar view.
 
        @method sidebar
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
      */
-    sidebar: function(req, res, next) {
-      if (window.flags && window.flags.il) {
-        if (!this._sidebar) {
-          this._sidebar = new views.Sidebar(
-              this._getViewCfg({
-                container: this.get('container')
-              }));
-          this._sidebar.render();
-          this._sidebar.addTarget(this);
-        }
-        // We don't continue or next() because we only need the sidebar view
-        // rendered here the rest is done in the state dispatcher.
-        return;
-      }
-      // If we've gone from no _sidebar to having one, then force editorial to
-      // render.
-      var forceSidebar = false;
+    sidebar: function() {
       if (!this._sidebar) {
-        forceSidebar = true;
-      }
-      // If we've switched to viewmode sidebar, we need to render it.
-      if (this.state.hasChanged('viewmode') || forceSidebar) {
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
-              container: this.get('container'),
-              deployService: this.get('deployService'),
-              deployBundle: this.get('deployBundle')
+              container: this.get('container')
             }));
         this._sidebar.render();
         this._sidebar.addTarget(this);
-      }
-
-      // Even if we've got an existing View, check if Home should be displayed
-      // or not based on the current view state.
-      if (this._sidebar) {
-        if (this.state.getCurrent('search')) {
-          this._sidebar.set('withHome', true);
-        } else {
-          this._sidebar.set('withHome', false);
-        }
-      }
-
-      if (this.machineViewPanel) {
-        this.machineViewPanel.destroy();
-      }
-
-      // Render search results if search is in the url and the viewmode or the
-      // search has been changed in the state.
-      if (this._shouldShowSearch()) {
-        // Showing search implies that other sidebar content is destroyed.
-        if (this._charmbrowser) {
-          this._charmbrowser.destroy();
-        }
-
-        this.renderSearchResults(req, res, next);
-      } else if (this._shouldShowCurated() || forceSidebar) {
-        // Showing editorial implies that other sidebar content is destroyed.
-        if (this._search) {
-          this._search.destroy();
-        }
-        // Because this uses the new charmbrowser code for the curated list but
-        // not the search we need to trick it into thinking it's changing its
-        // mode and should re-render.
-        if (this._charmbrowser) {
-          this._charmbrowser.set('renderType', undefined);
-        }
-        this.renderCharmBrowser();
-      }
-
-      // If we've changed the charmID or the viewmode has changed and we have
-      // a charmID, render charmDetails.
-      if (this._shouldShowCharm()) {
-        this._detailsVisible(true);
-        this.renderEntityDetails(req, res, next);
-      }
-
-      // If there are no details in the route then hide the div for
-      // viewing the charm details.
-      if (!this.state.getCurrent('charmID')) {
-        this._detailsVisible(false);
-        var detailsNode = Y.one('.bws-view-data');
-        if (detailsNode) {
-          detailsNode.hide();
-        }
-        // Clean up any details we've got.
-        if (this._details) {
-          this._details.destroy({remove: true});
-        }
-
-        // Update the activeID on the charmbrowser view.
-        if (this._charmbrowser) {
-          this._charmbrowser.set('activeID', null);
-        }
-        if (this._search) {
-          this._search.set('activeID', null);
-        }
-      }
-
-      // Only show the onboarding messaging if we're hitting the sidebar view
-      // without any extra url bits to the user. It's meant for a fresh user
-      // to see, not someone doing what they know they want to do.
-      var force = localStorage.getItem('force-onboarding');
-      // Reset force-onboarding so that the next request to /sidebar acts normal
-      localStorage.setItem('force-onboarding', '');
-
-      if (!this._onboarding || force) {
-        if (!this.state.getCurrent('search') &&
-            !this.state.getCurrent('charmID')) {
-          this.renderOnboarding(force);
-        }
-      }
-
-      // Sync that the state has changed.
-      this.state.save();
-      // This can be called as a route callback or as a utility method.
-      if (typeof next === 'function') {
-        next();
       }
     },
 
@@ -966,13 +769,6 @@ YUI.add('subapp-browser', function(Y) {
       // topo is passed in to the charmbrowser after
       // the environment view is rendered.
       var topo = this.get('topo');
-      if (!window.flags || !window.flags.il) {
-        var charmbrowser = this._charmbrowser;
-        // Clear out whatever charm list is in the inspector
-        // XXX This clean up will be handled by the state
-        // system once that's implemented.
-        if (charmbrowser) { charmbrowser.destroy(); }
-      }
       // Render the ghost inspector
       var inspector = new Y.juju.views.GhostServiceInspector({
         db: db,
@@ -1025,47 +821,11 @@ YUI.add('subapp-browser', function(Y) {
     routeDefault: function(req, res, next) {
       // The new state object takes the request, parses it and then dispatches
       // so this method only needs these lines once switched over.
-      if (window.flags && window.flags.il) {
-        // We need to render the sidebar view as default. This is the new design
-        // in the near future we will likely just render it in the initializer.
-        this.sidebar();
-        this.state.loadRequest(req);
-        return;
-      }
-      // Check if there's any path. If there is, someone else will handle
-      // routing it. Just carry on.
-      var viewmode = 'sidebar';
-      if (req.path.replace(/\//, '') !== '') {
-        next();
-        return;
-      }
-
-      // For the * request there will be no req.params. Update it forcing
-      // the default viewmode.
-      req.params = {
-        viewmode: viewmode
-      };
-
-      // Update the state for the rest of things to figure out what to do.
+      // We need to render the sidebar view as default. This is the new design
+      // in the near future we will likely just render it in the initializer.
+      this.sidebar();
       this.state.loadRequest(req);
-      this._cleanOldViews(req.params.viewmode);
-
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
-
-      // Don't bother routing if we're hidden.
-      if (!this.hidden) {
-        if (this.get('isJujucharms')) {
-          this.jujucharms(req, res, next);
-        } else {
-          this[viewmode](req, res, next);
-        }
-      } else {
-        // Update the app state even though we're not showing anything.
-        this.state.save();
-        // Let the next route go on.
-        next();
-      }
+      return;
     },
 
     /**
@@ -1126,13 +886,9 @@ YUI.add('subapp-browser', function(Y) {
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         this[viewmode](req, res, next);
-        // Once the state is updated determine visibility of our Nodes.
-        this.updateVisible();
       } else {
         // Update the app state even though we're not showing anything.
         this.state.save();
-        // Once the state is updated determine visibility of our Nodes.
-        this.updateVisible();
         // Let the next route go on.
         next();
       }
@@ -1190,10 +946,6 @@ YUI.add('subapp-browser', function(Y) {
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
       this._cleanOldViews(req.params.viewmode);
-
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
-
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         // This redirects any requests coming in to fullscreen to their
@@ -1221,28 +973,6 @@ YUI.add('subapp-browser', function(Y) {
         this.state.save();
         // Let the next route go on.
         next();
-      }
-    },
-
-    /**
-      Based on the viewmode and the hidden check what divs we should be
-      showing or hiding.
-
-      @method updateVisible
-      @return {undefined} Nothing.
-    */
-    updateVisible: function() {
-      if (window.flags && window.flags.il) {
-        // This method will be deleted when we switch to the new state class.
-        return;
-      }
-      var browser = this.get('container');
-
-      if (this.hidden) {
-        browser.hide();
-        this._clearViews();
-      } else {
-        browser.show();
       }
     },
 

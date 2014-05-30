@@ -255,28 +255,6 @@ YUI.add('juju-view-environment', function(Y) {
     },
 
     /**
-      Shrinks any open inspectors
-
-      @method shrinkInspector
-    */
-    shrinkInspector: function() {
-      this.inspector.get('container')
-          .one('.viewlet-manager-wrapper')
-          .setStyle('max-height', '100px');
-    },
-
-    /**
-      Expands any open inspectors
-
-      @method expandInspector
-    */
-    expandInspector: function() {
-      if (this.inspector) {
-        this.inspector.recalculateHeight();
-      }
-    },
-
-    /**
       Provide a way to create and render an inspector for one of the
       endpoints in a particular relation.
 
@@ -299,12 +277,6 @@ YUI.add('juju-view-environment', function(Y) {
     _attachTopoEvents: function() {
       this.topo.on(
           '*:destroyServiceInspector', this.destroyInspector, this);
-      if (!window.flags.il) {
-        this.topo.on(
-            '*:addRelationStart', this.shrinkInspector, this);
-        this.topo.on(
-            '*:addRelationEnd', this.expandInspector, this);
-      }
       this.topo.on(
           '*:inspectRelation', this.onInspectRelation, this);
     }
