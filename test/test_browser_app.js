@@ -33,153 +33,129 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     ].join('')).appendTo(container);
   };
 
-  (function() {
-    describe('browser sidebar view', function() {
-      var Y, container, utils, view, views, Sidebar;
+  describe('browser', function() {
+    var Y, container, utils, views;
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'juju-browser',
+          'subapp-browser',
+          'juju-models',
+          'juju-views',
+          'juju-tests-utils',
+          'subapp-browser-sidebar',
+          function(Y) {
+            views = Y.namespace('juju.browser.views');
+            utils = Y.namespace('juju-tests.utils');
+            done();
+          });
+    });
 
-      before(function(done) {
-        Y = YUI(GlobalConfig).use(
-            'juju-browser',
-            'juju-models',
-            'juju-views',
-            'juju-tests-utils',
-            'subapp-browser-sidebar',
-            function(Y) {
-              views = Y.namespace('juju.browser.views');
-              utils = Y.namespace('juju-tests.utils');
-              Sidebar = views.Sidebar;
-              done();
-            });
-      });
-
-      beforeEach(function() {
-        container = utils.makeContainer(this, 'container');
-        addBrowserContainer(Y, container);
-        // Mock out a dummy location for the Store used in view instances.
-        window.juju_config = {
-          charmworldURL: 'http://localhost'
-        };
-      });
+    describe('sidebar view', function() {
+      var view;
 
       afterEach(function() {
         view.destroy();
-        delete window.juju_config;
       });
 
-      it('must correctly render the initial browser ui', function() {
-        var container = Y.one('#subapp-browser');
-        view = new Sidebar({
-          container: container,
-          store: new Y.juju.charmworld.APIv3({
-            apiHost: 'http://localhost'
-          })
-        });
-
-        // mock out the data source on the view so that it won't actually make a
-        // request.
-        var emptyData = {
-          responseText: Y.JSON.stringify({
-            result: {
-              'new': [],
-              slider: []
-            }
-          })
-        };
-
-        // Override the store to not call the dummy localhost address.
-        view.get('store').set(
-            'datasource',
-            new Y.DataSource.Local({source: emptyData}));
+      it('renders the sidebar ui', function() {
+        view = new views.Sidebar();
         view.render();
 
-        // And the hide button is rendered to the container node.
-        assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
-        // Also verify that the search widget has rendered into the view code.
-        assert.isTrue(Y.Lang.isObject(container.one('input')));
-
-        // The home buttons are not visible by default.
-        assert.equal(view.get('withHome'), false,
-                     'withHome is true on the view');
-        assert.equal(container.one('#bws-sidebar').hasClass('with-home'),
-                     false, 'with-home class is set');
-
-        // Yet changing the attribute triggers it to go.
-        view.set('withHome', true);
-        assert.equal(view.get('withHome'), true,
-                     'withHome is false on the view');
-        assert.equal(container.one('#bws-sidebar').hasClass('with-home'),
-                     true, 'with-home class is not set');
+        // Make sure the template is rendered into the container
+        assert.notEqual(view.get('container').one('.charmbrowser'), null);
       });
-
-      it('shows the home icon when instructed', function() {
-        view = new Sidebar({
-          store: new Y.juju.charmworld.APIv3({
-            apiHost: 'http://localhost'
-          }),
-          withHome: true
-        });
-
-        // mock out the data source on the view so that it won't actually make a
-        // request.
-        var emptyData = {
-          responseText: Y.JSON.stringify({
-            result: {
-              'new': [],
-              slider: []
-            }
-          })
-        };
-
-        // Override the store to not call the dummy localhost address.
-        view.get('store').set(
-            'datasource',
-            new Y.DataSource.Local({source: emptyData}));
-        view.render(container.one('#subapp-browser'));
-
-        // The home buttons are not visible by default.
-        assert.isTrue(view.get('withHome'));
-        assert.isFalse(container.one('#bws-sidebar').hasClass('with-home'));
-
-      });
-
-      it('routes home when it catches a gohome event', function(done) {
-        var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new Sidebar({
-          store: fakeStore
-        });
-        view.on('viewNavigate', function(ev) {
-          assert.equal(ev.change.search, false);
-          assert.equal(ev.change.filter.clear, true);
-          done();
-        });
-
-        view.render(container);
-        view.search._onHome({
-          preventDefault: function() {}
-        });
-      });
-
-      it('picks up the search widget deploy event', function(done) {
-        var container = utils.makeContainer(this, 'subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new Sidebar({
-          charmID: 'precise/jenkins-13',
-          store: fakeStore
-        });
-
-        view._deployEntity = function() {
-          container.remove(true);
-          done();
-        };
-
-        view.render(container);
-        view.search.fire(view.search.EVT_DEPLOY);
-      });
-
     });
-  })();
 
+    describe('renderCharmBrowser', function() {
+      var app, render;
+
+      beforeEach(function() {
+        // XXX window.flags.il
+        window.flags = { il: true };
+        app = new Y.juju.subapps.Browser({});
+        app._sidebar = {
+          get: function() {
+            return {
+              one: function() {}
+            };
+          },
+          destroy: function() {}
+        };
+        render = utils.makeStubMethod(views.CharmBrowser.prototype, 'render');
+        this._cleanups.push(render.reset);
+      });
+
+      afterEach(function() {
+        app.destroy();
+        window.flags = {};
+      });
+
+      it('creates a new instance', function() {
+        assert.strictEqual(app._charmbrowser, undefined);
+        app.renderCharmBrowser();
+        assert.equal(app._charmbrowser instanceof views.CharmBrowser, true);
+      });
+
+      it('passes in the deploy methods on instantiation', function() {
+        var deployService = 'deployServiceFn';
+        var deployBundle = 'deployBundleFn';
+        app.set('deployService', deployService);
+        app.set('deployBundle', deployBundle);
+        app.renderCharmBrowser();
+        assert.equal(app._charmbrowser.get('deployService'), deployService);
+        assert.equal(app._charmbrowser.get('deployBundle'), deployBundle);
+      });
+
+      it('adds the browser as a bubble target', function(done) {
+        app.on('*:fooo', function() {
+          // If this is never called then this test will fail.
+          done();
+        });
+        app.renderCharmBrowser();
+        app._charmbrowser.fire('fooo');
+      });
+
+      it('skips creating a new instance if one exists', function() {
+        app.renderCharmBrowser();
+        // Setting a nonsense attribute on the charmbrowser instance. If this
+        // attribute is no longer there after rendering again, it created a
+        // new instance when it shouldn't have.
+        app._charmbrowser.set('flag', true);
+        app.renderCharmBrowser();
+        assert.equal(app._charmbrowser.get('flag'), true);
+      });
+
+      it('sets attributes every time it is called', function() {
+        app.renderCharmBrowser.call(app);
+        assert.equal(app._charmbrowser.get('activeID'), undefined);
+        var getState = utils.makeStubMethod(app.state, 'getState', {id: 'foo'});
+        this._cleanups.push(getState.reset);
+        app.renderCharmBrowser.call(app);
+        assert.equal(app._charmbrowser.get('activeID'), 'foo');
+      });
+
+      it('passes the metadata through to the render call', function() {
+        var metadata = { foo: 'bar' };
+        app.renderCharmBrowser(metadata);
+        assert.deepEqual(render.lastArguments()[0], metadata);
+      });
+
+      it('calls _searchChanged and passes to render method', function() {
+        var search = utils.makeStubMethod(app, '_searchChanged', true);
+        this._cleanups.push(search.reset);
+        app.renderCharmBrowser();
+        assert.equal(render.lastArguments()[1], true);
+      });
+
+      it('renders on every call', function() {
+        assert.equal(render.callCount(), 0);
+        app.renderCharmBrowser();
+        assert.equal(render.callCount(), 1);
+        app.renderCharmBrowser();
+        assert.equal(render.callCount(), 2);
+      });
+    });
+  });
 
   (function() {
     describe('browser app', function() {
@@ -252,12 +228,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           function assertions(data) {
             assert.equal(
-                showSearchStub.callCount(),
-                data.showSearchCount,
-                'showSearchStub');
-            assert.strictEqual(
-                setHome.lastArguments()[1], data.setHomeVal, 'setHome');
-            assert.equal(
                 renderCharmBrowser.callCount(),
                 data.renderCharmBrowserCount,
                 'renderCharmBrowser');
@@ -275,46 +245,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 'cleanupEntity');
           }
 
-          it('sets home button visible with search metadata', function() {
-            stubRenderers(this);
-            metadata = {
-              search: 'foo'
-            };
-            // Cloning the object passed in so we can see if it's modified.
-            app._charmBrowserDispatcher(Y.clone(metadata));
-            assertions({
-              showSearchCount: 1,
-              setHomeVal: true,
-              renderCharmBrowserCount: 1,
-              renderCharmBrowserData: metadata,
-              renderEntityCount: 0,
-              cleanupEntityCount: 1
-            });
-          });
-
-          it('sets the home button hidden with no search metadata', function() {
-            stubRenderers(this);
-            metadata = {};
-            // Cloning the object passed in so we can see if it's modified.
-            app._charmBrowserDispatcher(Y.clone(metadata));
-            assertions({
-              showSearchCount: 1,
-              setHomeVal: false,
-              renderCharmBrowserCount: 1,
-              renderCharmBrowserData: metadata,
-              renderEntityCount: 0,
-              cleanupEntityCount: 1
-            });
-          });
-
           it('calls to reneder the charmbrowser with the metadata', function() {
             stubRenderers(this);
             metadata = {};
             // Cloning the object passed in so we can see if it's modified.
             app._charmBrowserDispatcher(Y.clone(metadata));
             assertions({
-              showSearchCount: 1,
-              setHomeVal: false,
               renderCharmBrowserCount: 1,
               renderCharmBrowserData: metadata,
               renderEntityCount: 0,
@@ -332,8 +268,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             // Cloning the object passed in so we can see if it's modified.
             app._charmBrowserDispatcher(Y.clone(metadata));
             assertions({
-              showSearchCount: 1,
-              setHomeVal: false,
               renderCharmBrowserCount: 1,
               renderCharmBrowserData: metadata,
               renderEntityCount: 1,

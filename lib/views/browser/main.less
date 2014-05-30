@@ -42,29 +42,16 @@
   .token {
     color: @text-colour;
   }
-  .bws-header {
-      padding: 20px;
-      border-bottom: 1px solid #b7b7b9;
-  }
-  #bws-sidebar .bws-content,
+
   #bws-sidebar {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-  }
-  #bws-sidebar {
-    z-index: 600;
-    background: @bws-background;
-  }
-  #bws-sidebar .bws-content {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  #bws-sidebar {
     z-index: 601;
     right: auto;
+    background: @bws-background;
     width: @bws-sidebar-width;
     border-right: 1px solid #a5a5a5;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
@@ -72,12 +59,8 @@
     .bws-searchbox {
         width: 100%;
     }
-    &.with-home .bws-content {
-        top: 145px;
-    }
     .bws-content {
-      top: 81px;
-      border-top: 8px solid #d7d7d7;
+      overflow-x: hidden;
 
       .section-title {
         .border-box;
@@ -121,6 +104,23 @@
             background-color: #eee;
         }
       }
+      .search-widget {
+        padding: 20px 30px;
+        position: absolute;
+        border-bottom: 1px solid #b7b7b9;
+      }
+      .with-home .charm-list {
+        top: 145px;
+      }
+      .charm-list {
+        overflow-y: auto;
+        border-top: 8px solid #d7d7d7;
+        position: absolute;
+        top: 81px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
     }
   }
   .bws-view-data {
@@ -133,10 +133,6 @@
 }
 
 #subapp-browser.no-search {
-  .bws-header {
-    padding: 0;
-    border-bottom: none;
-  }
   #bws-sidebar {
     .bws-content {
       top: 0;

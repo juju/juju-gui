@@ -435,12 +435,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // on another wrapper element, not necessarily the real container.
         this.get('container')
             .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
-      } else {
-        height = Y.one('.bws-content').getStyle('height');
-        this.get('container')
-            .one(this.viewletContainer).setStyle('maxHeight', height);
-        this.get('container')
-            .one(this.viewletContainer).setStyle('height', height);
       }
     },
 

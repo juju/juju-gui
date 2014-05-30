@@ -34,7 +34,8 @@ YUI.add('juju-charmbrowser', function(Y) {
   ns.CharmBrowser = Y.Base.create('charmbrowser', Y.View, [
     views.utils.apiFailingView,
     Y.Event.EventTracker,
-    widgets.browser.IndicatorManager
+    widgets.browser.IndicatorManager,
+    views.SearchWidgetMgmtExtension
   ], {
 
     events: {
@@ -62,6 +63,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     initializer: function() {
       this.tokenContainers = [];
       this.activeRequestId = null;
+      this.searchWidget = null;
       this._bindEvents();
     },
 
@@ -175,7 +177,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       this.tokenContainers = tokenContainers;
       var container = this.get('container'),
           charmList = container.one('.charm-list');
-      this.hideIndicator(container.get('parentElement'));
+      this.hideIndicator(charmList);
       charmList.append(content);
       // Set the active charm if available.
       var active = this.get('activeID');
@@ -192,7 +194,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method makeStickyHeaders
     */
     _makeStickyHeaders: function() {
-      var charmContainer = this.get('container').get('parentElement');
+      var charmContainer = this.get('container').one('.charm-list');
       var headings = charmContainer.all('.section-title');
       var headingHeight = 53; // The height of the heading block in pixels
 
@@ -253,13 +255,6 @@ YUI.add('juju-charmbrowser', function(Y) {
         });
       });
     },
-
-    /**
-      Renders the search widget into the container.
-
-      @method _renderSearch
-    */
-    _renderSearch: function() {},
 
     /**
       Requests the search results from the charm store.
@@ -324,6 +319,14 @@ YUI.add('juju-charmbrowser', function(Y) {
       if (this._stickyEvent) {
         this._stickyEvent.detach();
       }
+      var charmList = this.get('container').one('.charm-list');
+      if (charmList) {
+        this.hideIndicator(charmList);
+      }
+
+      if (this.searchWidget) {
+        this.searchWidget.destroy();
+      }
     },
 
     /**
@@ -346,9 +349,10 @@ YUI.add('juju-charmbrowser', function(Y) {
       this._cleanUp(); // Clear out any existing tokens.
       container.setHTML(this.template); // XXX
       container.appendTo(this.get('parentContainer'));
-      this._renderSearch();
+      // Provided by 'search-widget-mgmt-extension'.
+      this._renderSearchWidget();
 
-      this.showIndicator(container.get('parentElement'));
+      this.showIndicator(container.one('.charm-list'));
 
       // If there is no id data then deselect any potentially active tokens.
       if (!metadata || !metadata.id) {
@@ -357,9 +361,11 @@ YUI.add('juju-charmbrowser', function(Y) {
 
       if (renderType === 'curated') {
         // XXX When caching is implemented it will likely go here.
+        this.set('withHome', false);
         this._loadCurated();
       } else if (renderType === 'search') {
         // XXX When caching is implemented it will likely go here.
+        this.set('withHome', true);
         this._loadSearchResults();
       }
     },
@@ -427,7 +433,14 @@ YUI.add('juju-charmbrowser', function(Y) {
         @attribute renderType
         @type {String}
       */
-      renderType: {}
+      renderType: {},
+      /**
+        Whether we should show the 'Home' button with the search widget or not.
+
+        @attribute withHome
+        @type {Boolean}
+      */
+      withHome: {}
     }
   });
 
@@ -435,6 +448,7 @@ YUI.add('juju-charmbrowser', function(Y) {
   requires: [
     'browser-token-container',
     'browser-overlay-indicator',
+    'search-widget-mgmt-extension',
     'event-tracker',
     'juju-view-utils',
     'view',

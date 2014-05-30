@@ -435,17 +435,6 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmBrowserDispatcher: function(metadata) {
-      // XXX This will be removed once the search widget rendering gets
-      // moved into the consolidated charmbrowser view.
-      this._sidebar.showSearch();
-      // If there is search data then show the search results.
-      if (metadata && metadata.search) {
-        // XXX Home button rendering will be moved into the charmbrowser view.
-        this._sidebar.set('withHome', true);
-      } else {
-        this._sidebar.set('withHome', false);
-      }
-
       this.renderCharmBrowser(metadata);
 
       // XXX Won't be needed once window.flags.il becomes the norm. The details
@@ -675,7 +664,10 @@ YUI.add('subapp-browser', function(Y) {
         if (meta) { activeID = meta.id; }
       }
       if (!this._charmbrowser) {
-        this._charmbrowser = new views.CharmBrowser();
+        this._charmbrowser = new views.CharmBrowser({
+          deployService: this.get('deployService'),
+          deployBundle: this.get('deployBundle')
+        });
         this._charmbrowser.addTarget(this);
       }
       // See the _getViewCfg method for the extra objects which are passed in
@@ -774,9 +766,7 @@ YUI.add('subapp-browser', function(Y) {
         if (!this._sidebar) {
           this._sidebar = new views.Sidebar(
               this._getViewCfg({
-                container: this.get('container'),
-                deployService: this.get('deployService'),
-                deployBundle: this.get('deployBundle')
+                container: this.get('container')
               }));
           this._sidebar.render();
           this._sidebar.addTarget(this);

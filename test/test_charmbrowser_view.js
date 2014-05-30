@@ -24,8 +24,14 @@ describe('charmbrowser view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
+        'browser-search-widget',
+        'array-extras', // Why this is necessary?? Nobody knows!
+        'base', // Why this is necessary?? Nobody knows!
+        'view', // Why this is necessary?? Nobody knows!
+        'browser-tabview', // Why this is necessary?? Nobody knows!
         'juju-tests-utils',
         'juju-charmbrowser',
+        'event-tracker',
         function(Y) {
           utils = Y.namespace('juju-tests.utils');
           views = Y.namespace('juju.browser.views');
@@ -57,7 +63,7 @@ describe('charmbrowser view', function() {
     beforeEach(function() {
       shouldRender = utils.makeStubMethod(charmBrowser, '_shouldRender', true);
       this._cleanups.push(shouldRender.reset);
-      renderSearch = utils.makeStubMethod(charmBrowser, '_renderSearch');
+      renderSearch = utils.makeStubMethod(charmBrowser, '_renderSearchWidget');
       this._cleanups.push(renderSearch.reset);
       indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
       this._cleanups.push(indicator.reset);
@@ -97,8 +103,6 @@ describe('charmbrowser view', function() {
     });
 
     it('calls to render the search widget on render', function() {
-      // XXX This doesn't really test anything yet because the search widget
-      // rendering code isn't completed.
       charmBrowser.render();
       assert.equal(renderSearch.calledOnce(), true);
     });
@@ -106,6 +110,7 @@ describe('charmbrowser view', function() {
     it('shows the loading indicator on render', function() {
       charmBrowser.render();
       assert.equal(indicator.calledOnce(), true);
+      assert.notEqual(indicator.lastArguments()[0], null);
     });
 
     it('calls to render the search results when requested', function() {
@@ -115,10 +120,12 @@ describe('charmbrowser view', function() {
       var curated = utils.makeStubMethod(charmBrowser, '_loadCurated');
       this._cleanups.push(curated.reset);
       charmBrowser.set('renderType', 'search');
+      assert.equal(charmBrowser.get('withHome'), undefined);
       charmBrowser.render();
       // Make sure we don't also render the curated list.
       assert.equal(curated.callCount(), 0);
       assert.equal(searchResults.calledOnce(), true);
+      assert.equal(charmBrowser.get('withHome'), true);
     });
 
     it('calls to render the curated list on render when requested', function() {
@@ -128,10 +135,12 @@ describe('charmbrowser view', function() {
       var curated = utils.makeStubMethod(charmBrowser, '_loadCurated');
       this._cleanups.push(curated.reset);
       charmBrowser.set('renderType', 'curated');
+      assert.equal(charmBrowser.get('withHome'), undefined);
       charmBrowser.render('curated');
       assert.equal(curated.calledOnce(), true);
       // Make sure we don't also render the search result list.
       assert.equal(searchResults.callCount(), 0);
+      assert.equal(charmBrowser.get('withHome'), false);
     });
 
     it('unsets any potentially active tokens', function() {
@@ -170,8 +179,141 @@ describe('charmbrowser view', function() {
     });
   });
 
-  describe.skip('_renderSearch', function() {
-    it('renders the search widget on render');
+  describe('search-widget-mgmt-extension', function() {
+    beforeEach(function() {
+      charmBrowser.set('store', {
+        cancelInFlightRequest: utils.makeStubFunction(),
+        autocomplete: utils.makeStubFunction(),
+        transformResults: utils.makeStubFunction(),
+        buildCategoryIconPath: utils.makeStubFunction(),
+        iconpath: utils.makeStubFunction()
+      });
+      charmBrowser.set('filters', { text: 'apache' });
+      charmBrowser.get('container')
+                  .append('<div class="search-widget"></div>');
+    });
+
+    describe('_renderSearchWidget', function() {
+      var searchEvents;
+      beforeEach(function() {
+        searchEvents = utils.makeStubMethod(
+            charmBrowser, '_bindSearchWidgetEvents');
+        this._cleanups.push(searchEvents.reset);
+      });
+
+      it('instantiates the search widget properly', function() {
+        charmBrowser._renderSearchWidget();
+        var search = charmBrowser.searchWidget,
+            store = charmBrowser.get('store');
+        search.get('autocompleteSource')();
+        assert.equal(store.autocomplete.calledOnce(), true);
+        search.get('autocompleteDataFormatter')();
+        assert.equal(store.transformResults.calledOnce(), true);
+        search.get('categoryIconGenerator')();
+        assert.equal(store.buildCategoryIconPath.calledOnce(), true);
+        assert.deepEqual(search.get('filters'), charmBrowser.get('filters'));
+      });
+
+      it('renders the search widget', function() {
+        charmBrowser._renderSearchWidget();
+        assert.notEqual(
+            charmBrowser.get('container').one('.browser-nav'), null);
+      });
+
+      it('calls to bind the search widget events', function() {
+        charmBrowser._renderSearchWidget();
+        assert.equal(searchEvents.calledOnce(), true);
+      });
+    });
+
+    describe('_bindSearchWidgetEvents', function() {
+      // window.flags.il
+      beforeEach(function() {
+        window.flags = { il: true };
+      });
+
+      afterEach(function() {
+        window.flags = {};
+      });
+
+      it('fires a changeState event when going home', function(done) {
+        assert.equal(charmBrowser.get('withHome'), undefined);
+        charmBrowser._renderSearchWidget();
+        charmBrowser.on('changeState', function(e) {
+          assert.deepEqual(e.details[0], {
+            sectionA: {
+              metadata: null,
+              component: null
+            }
+          });
+          assert.equal(charmBrowser.get('withHome'), false);
+          done();
+        });
+        var searchWidget = charmBrowser.searchWidget;
+        searchWidget.fire(searchWidget.EVT_SEARCH_GOHOME);
+      });
+
+      it('fires a changeState event when the search changes', function(done) {
+        var change = {
+          filter: 'foo',
+          charmID: 'bar'
+        };
+        charmBrowser._renderSearchWidget();
+        charmBrowser.on('changeState', function(e) {
+          assert.deepEqual(e.details[0], {
+            sectionA: {
+              component: 'charmbrowser',
+              metadata: {
+                search: change.filter,
+                id: change.charmID
+              }}});
+          done();
+        });
+        var searchWidget = charmBrowser.searchWidget;
+        searchWidget.fire(searchWidget.EVT_SEARCH_CHANGED, {
+          change: change
+        });
+      });
+
+      it('calls to deploy charm when the deploy button is clicked', function() {
+        var deploy = utils.makeStubMethod(charmBrowser, '_deployEntity');
+        this._cleanups.push(deploy.reset);
+        charmBrowser._renderSearchWidget();
+        var searchWidget = charmBrowser.searchWidget;
+        searchWidget.fire(searchWidget.EVT_DEPLOY);
+        assert.equal(deploy.calledOnce(), true);
+      });
+    });
+
+    describe('_deployEntity', function() {
+      beforeEach(function() {
+        charmBrowser.setAttrs({
+          deployBundle: utils.makeStubFunction(),
+          deployService: utils.makeStubFunction()
+        });
+      });
+
+      it('calls to deploy a bundle', function() {
+        var data = {
+          entityType: 'bundle',
+          data: { foo: 'bar' },
+          id: 'bundle-123' };
+        charmBrowser._deployEntity(Y.clone(data));
+        assert.equal(charmBrowser.get('deployBundle').calledOnce(), true);
+        assert.equal(charmBrowser.get('deployService').callCount(), false);
+      });
+
+      it('calls to deploy a charm', function() {
+        var data = {
+          entityType: 'charm',
+          data: { id: 'cs:precise/mysql-44' },
+          id: 'cs:precise/mysql-44' };
+        charmBrowser._deployEntity(Y.clone(data));
+        assert.equal(charmBrowser.get('deployBundle').calledOnce(), false);
+        assert.equal(charmBrowser.get('deployService').callCount(), true);
+        assert.equal(charmBrowser.get('store').iconpath.calledOnce(), true);
+      });
+    });
   });
 
   describe('_loadSearchResults', function() {
@@ -457,10 +599,25 @@ describe('charmbrowser view', function() {
       charmBrowser._cleanUp();
       assert.equal(charmBrowser.tokenContainers[0].destroy.calledOnce(), true);
     });
+
     it('detaches the sticky header event', function() {
       charmBrowser._stickyEvent = { detach: utils.makeStubFunction() };
       charmBrowser._cleanUp();
       assert.equal(charmBrowser._stickyEvent.detach.calledOnce(), true);
+    });
+
+    it('calls to hide the indicator', function() {
+      charmBrowser.get('container').append('<div class="charm-list"></div>');
+      var hide = utils.makeStubMethod(charmBrowser, 'hideIndicator');
+      this._cleanups.push(hide.reset);
+      charmBrowser._cleanUp();
+      assert.equal(hide.calledOnce(), true);
+    });
+
+    it('calls to destroy the search widget', function() {
+      charmBrowser.searchWidget = { destroy: utils.makeStubFunction() };
+      charmBrowser._cleanUp();
+      assert.equal(charmBrowser.searchWidget.destroy.calledOnce(), true);
     });
   });
 
