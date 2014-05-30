@@ -54,44 +54,6 @@
       }
     }
 
-    /* Override styles for the autocomplete results */
-    .yui3-aclist-item {
-
-        .yui3-token {
-            border-bottom: 1px solid #efefef;
-            margin-left: 5px;
-            margin-right: 5px;
-
-            .token.tiny.category {
-                .icon,
-                .icon img {
-                    width: 27px;
-                    height: 27px;
-                }
-
-                .title {
-                  .type13;
-                }
-            }
-
-            .token.tiny {
-                padding: 8px 0;
-
-                .title {
-                    .type15;
-                    margin-top: 2px;
-                }
-
-                .icon,
-                .icon img {
-                    width: 32px;
-                    height: 32px;
-                }
-
-            }
-        }
-    }
-
     /* Make sure we don't draw a border on the last one in the list */
     .yui3-aclist-list .yui3-aclist-item:last-child .yui3-token {
         border-bottom: 0;
@@ -139,5 +101,46 @@
     .with-home .browser-nav {
         display: block;
     }
+
+    /* Override styles for the autocomplete results */
+    #bws-sidebar .yui3-aclist-item {
+
+        .yui3-token {
+            border-bottom: 1px solid #efefef;
+            border-top: none;
+            width: auto;
+            margin-left: 5px;
+            margin-right: 5px;
+
+            .token.tiny.category {
+                .icon,
+                .icon img {
+                    width: 27px;
+                    height: 27px;
+                }
+
+                .title {
+                  .type13;
+                }
+            }
+
+            .token.tiny {
+                padding: 8px 0;
+
+                .title {
+                    .type15;
+                    margin-top: 2px;
+                }
+
+                .icon,
+                .icon img {
+                    width: 32px;
+                    height: 32px;
+                }
+
+            }
+        }
+    }
+
 }
 
