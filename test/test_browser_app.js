@@ -507,8 +507,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('emptySectionB', function() {
             stubMethods(app);
+            var destroyMethod = app.machineViewPanel.destroy,
+                destroyCalled = false;
+            // The original destroy method is set to null after the
+            // destroy is called so we need to stub out the method here
+            // so that we can track the destroy.
+            app.machineViewPanel.destroy = function() {
+              destroyCalled = true;
+              app.machineViewPanel.destroy = destroyMethod;
+            };
             app.emptySectionB();
-            assert.equal(app.machineViewPanel.destroy.callCount(), 1);
+            assert.equal(destroyCalled, true);
+            assert.equal(app.machineViewPanel, null);
           });
         });
       });

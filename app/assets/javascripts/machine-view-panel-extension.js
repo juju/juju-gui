@@ -49,12 +49,14 @@ YUI.add('machine-view-panel-extension', function(Y) {
      * @param {Object} env Reference to the application env (go.js).
      */
     _renderMachineViewPanelView: function(db, env) {
-      var views = Y.namespace('juju.views');
-      this.machineViewPanel = new views.MachineViewPanelView({
-        container: Y.one('#machine-view-panel'),
-        db: db,
-        env: env
-      }).render();
+      if (!this.machineViewPanel) {
+        var views = Y.namespace('juju.views');
+        this.machineViewPanel = new views.MachineViewPanelView({
+          container: Y.one('#machine-view-panel'),
+          db: db,
+          env: env
+        }).render();
+      }
     }
   };
 
