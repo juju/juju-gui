@@ -465,11 +465,31 @@ describe('charmbrowser view', function() {
   });
 
   describe('destroy', function() {
-    it('calls the cleanup method', function() {
-      var cleanup = utils.makeStubMethod(charmBrowser, '_cleanUp');
+    var shouldRender, renderSearch, indicator, cleanup;
+
+    beforeEach(function() {
+      shouldRender = utils.makeStubMethod(charmBrowser, '_shouldRender', true);
+      this._cleanups.push(shouldRender.reset);
+      renderSearch = utils.makeStubMethod(charmBrowser, '_renderSearch');
+      this._cleanups.push(renderSearch.reset);
+      indicator = utils.makeStubMethod(charmBrowser, 'showIndicator');
+      this._cleanups.push(indicator.reset);
+      cleanup = utils.makeStubMethod(charmBrowser, '_cleanUp');
       this._cleanups.push(cleanup.reset);
+    });
+
+    it('calls the cleanup method', function() {
       charmBrowser.destroy();
       assert.equal(cleanup.calledOnce(), true);
+    });
+
+    it('removes the container from the DOM', function() {
+      window.flags = {};
+      window.flags.il = true;
+      charmBrowser.render();
+      charmBrowser.destroy();
+      assert.equal(charmBrowser.get('container').getDOMNode(), null);
+      window.flags = null;
     });
 
     it('calls to abort any in flight store requests', function() {
