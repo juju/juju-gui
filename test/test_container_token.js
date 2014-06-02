@@ -71,15 +71,18 @@ describe('container token view', function() {
     view.setUncommitted();
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         true);
+    assert.equal(view.get('committed'), false);
   });
 
   it('can be marked as committed', function() {
     view.setUncommitted();
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         true);
+    assert.equal(view.get('committed'), false);
     view.setCommitted();
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         false);
+    assert.equal(view.get('committed'), true);
   });
 
   it('mixes in the DropTargetViewExtension', function() {

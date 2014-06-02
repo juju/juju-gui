@@ -65,7 +65,8 @@ YUI.add('machine-view-panel', function(Y) {
           // Turn machine models into tokens and store internally.
           machines.forEach(function(machine) {
             var token = new views.MachineToken({
-              machine: machine
+              machine: machine,
+              committed: true
             });
             machineTokens[machine.id] = token;
           });
@@ -250,7 +251,8 @@ YUI.add('machine-view-panel', function(Y) {
           }
           token = new views.MachineToken({
             container: node,
-            machine: machine
+            machine: machine,
+            committed: true
           });
           machineTokens[machine.id] = token;
           this._updateMachineWithUnitData(machine);
@@ -476,6 +478,7 @@ YUI.add('machine-view-panel', function(Y) {
           var containerParent = this.get('container').one(
               '.containers .content .items');
           var numUnits = db.units.filterByMachine(parentId, true).length;
+          var committed = true;
 
           this._clearContainerColumn();
           this._containersHeader.set('labels', [
@@ -485,7 +488,7 @@ YUI.add('machine-view-panel', function(Y) {
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
-              this._createContainerToken(containerParent, container);
+              this._createContainerToken(containerParent, container, committed);
             }, this);
           }
 
@@ -493,7 +496,8 @@ YUI.add('machine-view-panel', function(Y) {
           var units = db.units.filterByMachine(parentId);
           if (units.length > 0) {
             var machine = {displayName: 'Bare metal'};
-            this._createContainerToken(containerParent, machine, units);
+            this._createContainerToken(containerParent, machine,
+                committed, units);
           }
         },
 
@@ -502,11 +506,13 @@ YUI.add('machine-view-panel', function(Y) {
            @param {Y.Node} containerParent The parent node for the token's
              container
            @param {Object} container The lxc or kvm container object
+           @param {Bool} committed The committed state.
            @param {Array} units Optional list of units on the container.
              If not provided, the container's units will be looked up.
            @method _createContainerToken
          */
-        _createContainerToken: function(containerParent, container, units) {
+        _createContainerToken: function(containerParent, container,
+            committed, units) {
           if (!units) {
             units = this.get('db').units.filterByMachine(container.id);
           }
@@ -514,7 +520,8 @@ YUI.add('machine-view-panel', function(Y) {
           var token = new views.ContainerToken({
             containerTemplate: '<li/>',
             containerParent: containerParent,
-            machine: container
+            machine: container,
+            committed: committed
           });
           token.render();
           token.addTarget(this);

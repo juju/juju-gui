@@ -64,6 +64,7 @@ YUI.add('container-token', function(Y) {
          * @method setUncommitted
          */
         setUncommitted: function() {
+          this.set('committed', false);
           this.get('container').one('.token').addClass('uncommitted');
         },
 
@@ -73,6 +74,7 @@ YUI.add('container-token', function(Y) {
          * @method setCommitted
          */
         setCommitted: function() {
+          this.set('committed', true);
           this.get('container').one('.token').removeClass('uncommitted');
         },
 
@@ -86,6 +88,8 @@ YUI.add('container-token', function(Y) {
               machine = this.get('machine');
           container.setHTML(this.template(machine));
           container.addClass('container-token');
+          container.one('.token').addClass(
+              this.get('committed') ? 'committed' : 'uncommitted');
           // Tells the machine view panel drop handler where the unplaced unit
           // token was dropped.
           var token = container.one('.token');
@@ -112,7 +116,16 @@ YUI.add('container-token', function(Y) {
            * @default undefined
            * @type {Object}
           */
-          containerParent: {}
+          containerParent: {},
+
+          /**
+           * @attribute committed
+           * @default true
+           * @type {Bool}
+          */
+          committed: {
+            value: true
+          }
         }
       });
 
