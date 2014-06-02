@@ -951,7 +951,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.showServiceDetails(service);
+         sm.showServiceDetails(service, { fire: function() {} });
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
          add_rel.simulate('click');
@@ -1126,7 +1126,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env: env,
         store: fakeStore
       }).render();
-
+      // This stops the simulate() call later on from causing a 'script error'
+      container.append(
+          '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       // Single relation.
       var relation = container.one(
           '#' + views.utils.generateSafeDOMId('relation-0000000001',
@@ -1341,23 +1343,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var endpointsController = view.topo.get('endpointsController');
       assert.equal('hidy ho', endpointsController);
       view.destroy();
-    });
-
-    it('resizes the inspector when creating a relation', function(done) {
-      var shrinkInspectorCalled = 0,
-          expandInspectorCalled = 0;
-      view.shrinkInspector = function() { shrinkInspectorCalled = 1; };
-      view.expandInspector = function() { expandInspectorCalled = 1; };
-
-      view.createTopology();
-
-      view.topo.after('addRelationEnd', function() {
-        assert.equal(shrinkInspectorCalled, 1);
-        assert.equal(expandInspectorCalled, 1);
-        done();
-      });
-      view.topo.fire('addRelationStart');
-      view.topo.fire('addRelationEnd');
     });
   });
 

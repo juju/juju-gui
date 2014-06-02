@@ -38,6 +38,8 @@ describe('local-new-upgrade-inspector', function() {
   // which add the _cleanups property do not fire.
   beforeEach(function() {
     container = testUtils.makeContainer(this, 'content');
+    container.append(
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
     lnui = new views.LocalNewUpgradeInspector({
       services: services,
       file: fileObj,

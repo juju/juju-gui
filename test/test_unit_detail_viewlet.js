@@ -156,7 +156,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(node.one('a').get('text'), '42/tcp');
     });
 
-    it('instantiates correctly when bound', function() {
+    it.skip('instantiates correctly when bound', function() {
       db.environment.set('annotations', {
         'landscape-url': 'http://landscape.example.com',
         'landscape-computers': '/computers/criteria/environment:test'

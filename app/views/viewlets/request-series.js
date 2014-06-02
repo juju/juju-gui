@@ -88,10 +88,8 @@ YUI.add('request-series-view', function(Y) {
       Calls the destroy method on the viewlet manager.
 
       @method destroyViewletManager
-      @param {Object} _ The button click event.
-      @param {Object} viewletManager The viewlet manager instance.
     */
-    destroyViewletManager: function(_, viewletManager) {
+    destroyViewletManager: function() {
       this.fire('changeState', {
         sectionA: {
           component: 'charmbrowser'

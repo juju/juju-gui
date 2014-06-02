@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Conflict UX', function() {
 
   var Y, juju, views, templates, utils, container, models;
-  var conn, env, view, service, charmData, db, inspector;
+  var conn, env, view, service, charmData, db, inspector, sidebar;
   var modifyAndWaitHandler;
 
   before(function(done) {
@@ -31,6 +31,7 @@ describe('Inspector Conflict UX', function() {
                     'juju-gui',
                     'juju-views',
                     'node-event-simulate',
+                    'subapp-browser-sidebar',
                     'juju-charm-store',
                     'juju-charm-models',
                     'base',
@@ -60,6 +61,7 @@ describe('Inspector Conflict UX', function() {
   afterEach(function(done) {
     delete view.inspector;
     view.destroy();
+    sidebar.destroy();
     env.after('destroy', function() { done(); });
     env.destroy();
   });
@@ -92,7 +94,8 @@ describe('Inspector Conflict UX', function() {
     });
     view.render();
     Y.Node.create(['<div id="content">'].join('')).appendTo(container);
-
+    sidebar = new Y.juju.browser.views.Sidebar({ container: container });
+    sidebar.render();
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   }
 

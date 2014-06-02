@@ -32,9 +32,7 @@ describe('Inspector Base', function() {
     });
   });
 
-  afterEach(function() {
-    window.flags = {};
-  });
+  afterEach(function() {});
 
   it('can be instantiated', function() {
     var inspector = new Inspector({
@@ -59,18 +57,7 @@ describe('Inspector Base', function() {
     assert.equal(typeof newInspector.get('container'), 'object');
   });
 
-  it('can be rendered', function() {
-    testUtils.makeContainer(this, 'content');
-    var inspector = new Inspector({
-      views: { testView: fakeView }
-    });
-    inspector.render();
-    // If this element is not in the page then it will be null.
-    assert.isObject(inspector.get('container').one('.viewlet-container'));
-  });
-
   it('can be rendered into the sidebar', function() {
-    window.flags.il = true;
     testUtils.makeContainer(this, 'bws-sidebar');
     Y.one('#bws-sidebar').setHTML('<div class="bws-content"></div>');
     var inspector = new Inspector({

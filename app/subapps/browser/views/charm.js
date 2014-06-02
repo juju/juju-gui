@@ -133,10 +133,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.halt();
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
-      var change = {
-        charmID: charmID,
-        hash: undefined
-      };
       this.fire('changeState', {
         sectionA: {
           component: 'charmbrowser',

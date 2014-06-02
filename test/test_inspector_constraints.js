@@ -100,6 +100,8 @@ describe('Inspector Constraints', function() {
       store: fakeStore
     });
     view.render();
+    container.append(
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
     inspector = makeInspector(view, service);
     done();
   });

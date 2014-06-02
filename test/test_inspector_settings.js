@@ -107,6 +107,8 @@ describe('Inspector Settings', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
+    container.append(
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 

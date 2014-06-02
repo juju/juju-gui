@@ -368,7 +368,6 @@ YUI.add('subapp-browser', function(Y) {
       // Listen for navigate events from any views we're rendering.
       // window.flags.il
       this.on('*:viewNavigate', function(ev) {
-        debugger;
         var url;
         if (ev.url) {
           url = ev.url;

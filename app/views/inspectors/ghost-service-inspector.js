@@ -159,8 +159,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       var db = this.get('db'),
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
-          topo = this.get('topo'),
-          createServiceInspector = false;
+          topo = this.get('topo');
 
       if (e.err) {
         db.notifications.add(
@@ -181,7 +180,6 @@ YUI.add('ghost-service-inspector', function(Y) {
           }));
 
       var ghostId = ghostService.get('id');
-      var inspector;
 
       ghostService.setAttrs({
         id: serviceName,
@@ -209,6 +207,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       // In order to display the proper inspector for queued up services
       // Whatever listens for this event will need to check against the
       // currently open inspector.
+
       this.fire('serviceDeployed', {
         serviceName: serviceName,
         clientId: ghostService.get('clientId')
