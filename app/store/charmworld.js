@@ -62,6 +62,8 @@ YUI.add('juju-charm-store', function(Y) {
       var cachedResults = this.get('cachedResults')[apiEndpoint];
       if (cachedResults) {
         callbacks.success(cachedResults);
+        // If we do not return from here, we will wind up making another
+        // request below.
         return;
       }
 
