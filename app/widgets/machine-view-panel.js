@@ -316,24 +316,25 @@ YUI.add('machine-view-panel', function(Y) {
           var dropAction = e.dropAction;
           var parentId = e.targetId;
           var containerType = (dropAction === 'container') ? 'lxc' : undefined;
-          var env = this.get('env');
           var db = this.get('db');
           var unit = db.units.getById(e.unit);
+          var placeId;
 
           if (dropAction === 'container' &&
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
-            env.placeUnit(unit, parentId);
+            placeId = parentId;
           } else {
             var machine = this._createMachine(containerType,
                 parentId || selected, {});
-            env.placeUnit(unit, machine.id);
+            placeId = machine.id;
           }
+          this._placeUnit(unit, placeId);
         },
 
         /**
-         * Handles placing an unplaced unit
+         * Handles placing an unplaced unit.
          *
          * @method _placeServiceUnit
          * @param {Y.Event} e EventFacade object.
@@ -361,7 +362,19 @@ YUI.add('machine-view-panel', function(Y) {
           }
           // Place the unit onto the existing or newly created
           // machine/container.
-          this.get('env').placeUnit(e.unit, placeId);
+          this._placeUnit(e.unit, placeId);
+        },
+
+        /**
+         * Handles placing unit and updating the UI.
+         *
+         * @method _placeUnit
+         * @param {Object} unit The unit to be placed.
+         * @param {String} parentId The machine/container id to place on.
+         */
+        _placeUnit: function(unit, parentId) {
+          this.get('env').placeUnit(unit, parentId);
+          this._removeUnit(unit.id);
         },
 
         /**

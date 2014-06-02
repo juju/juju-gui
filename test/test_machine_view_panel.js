@@ -187,8 +187,11 @@ describe('machine view panel view', function() {
     });
 
     it('creates a new machine when dropped on machine header', function() {
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      this._cleanups.push(toggleStub.reset);
       view._unitTokenDropHandler({
-        dropAction: 'machine'
+        dropAction: 'machine',
+        unit: 'test/1'
       });
       var env = view.get('env');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
@@ -197,14 +200,17 @@ describe('machine view panel view', function() {
         constraints: {}
       }]);
       var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0], null);
+      assert.strictEqual(placeArgs[0].id, 'test/1');
       assert.equal(placeArgs[1], 'foo');
     });
 
     it('creates new container when dropped on container header', function() {
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      this._cleanups.push(toggleStub.reset);
       view.set('selectedMachine', '5');
       view._unitTokenDropHandler({
-        dropAction: 'container'
+        dropAction: 'container',
+        unit: 'test/1'
       });
       var env = view.get('env');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
@@ -213,14 +219,17 @@ describe('machine view panel view', function() {
         constraints: {}
       }]);
       var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0], null);
+      assert.strictEqual(placeArgs[0].id, 'test/1');
       assert.equal(placeArgs[1], 'foo');
     });
 
     it('creates a new container when dropped on a machine', function() {
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      this._cleanups.push(toggleStub.reset);
       view._unitTokenDropHandler({
         dropAction: 'container',
-        targetId: '0'
+        targetId: '0',
+        unit: 'test/1'
       });
       var env = view.get('env');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
@@ -229,20 +238,23 @@ describe('machine view panel view', function() {
         constraints: {}
       }]);
       var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0], null);
+      assert.strictEqual(placeArgs[0].id, 'test/1');
       assert.equal(placeArgs[1], 'foo');
     });
 
     it('places the unit on an already existing container', function() {
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      this._cleanups.push(toggleStub.reset);
       view._unitTokenDropHandler({
         dropAction: 'container',
-        targetId: '0/lxc/1'
+        targetId: '0/lxc/1',
+        unit: 'test/1'
       });
       var env = view.get('env');
       // The machine is already created so we don't need to create a new one.
       assert.equal(env.addMachines.callCount(), 0);
       var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0], null);
+      assert.strictEqual(placeArgs[0].id, 'test/1');
       assert.equal(placeArgs[1], '0/lxc/1');
     });
   });
@@ -346,7 +358,7 @@ describe('machine view panel view', function() {
           constraints: constraints
         }], 'A new machine should have been created');
         var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0].id, 'test/0',
+        assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '7',
             'The unit should be placed on the new machine');
@@ -354,7 +366,7 @@ describe('machine view panel view', function() {
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
-        unit: {id: 'test/0'},
+        unit: {id: 'test/1'},
         machine: 'new',
         container: undefined,
         constraints: constraints
@@ -378,7 +390,7 @@ describe('machine view panel view', function() {
           constraints: constraints
         }], 'A new machine should have been created');
         var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0].id, 'test/0',
+        assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '7',
             'The unit should be placed on the new machine');
@@ -386,7 +398,7 @@ describe('machine view panel view', function() {
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
-        unit: {id: 'test/0'},
+        unit: {id: 'test/1'},
         machine: 'new',
         container: undefined,
         constraints: constraints
@@ -410,7 +422,7 @@ describe('machine view panel view', function() {
           constraints: constraints
         }], 'A new container should have been created');
         var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0].id, 'test/0',
+        assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '7',
             'The unit should be placed on the new container');
@@ -418,7 +430,7 @@ describe('machine view panel view', function() {
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
-        unit: {id: 'test/0'},
+        unit: {id: 'test/1'},
         machine: '4',
         container: 'new-kvm',
         constraints: constraints
@@ -437,7 +449,7 @@ describe('machine view panel view', function() {
           constraints: {}
         }], 'A new container should have been created');
         var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0].id, 'test/0',
+        assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '7',
             'The unit should be placed on the new container');
@@ -445,7 +457,7 @@ describe('machine view panel view', function() {
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
-        unit: {id: 'test/0'},
+        unit: {id: 'test/1'},
         machine: '4',
         container: 'new-lxc',
         constraints: {}
@@ -466,7 +478,7 @@ describe('machine view panel view', function() {
         assert.equal(env.addMachines.lastArguments(), undefined,
             'No machines or containers should have been created');
         var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0].id, 'test/0',
+        assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '4',
             'The unit should be placed on the bare metal of the machine');
@@ -474,7 +486,7 @@ describe('machine view panel view', function() {
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
-        unit: {id: 'test/0'},
+        unit: {id: 'test/1'},
         machine: '4',
         container: 'bare-metal',
         constraints: constraints
@@ -495,7 +507,7 @@ describe('machine view panel view', function() {
         assert.equal(env.addMachines.lastArguments(), undefined,
             'No machines or containers should have been created');
         var placeArgs = env.placeUnit.lastArguments();
-        assert.strictEqual(placeArgs[0].id, 'test/0',
+        assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '4/lxc/2',
             'The unit should be placed on the container');
@@ -503,10 +515,30 @@ describe('machine view panel view', function() {
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
-        unit: {id: 'test/0'},
+        unit: {id: 'test/1'},
         machine: '4',
         container: '4/lxc/2',
         constraints: constraints
+      });
+    });
+
+    it('removes the unit token when it has been placed', function(done) {
+      view.render();
+      var unplacedUnit = container.one('.unplaced .unplaced-unit');
+      var unitTokens = view.get('unitTokens');
+      assert.equal(Object.keys(unitTokens).length, 1);
+      unplacedUnit.on('moveToken', function(e) {
+        view._placeServiceUnit(e);
+        assert.equal(Object.keys(unitTokens).length, 0);
+        assert.equal(container.one('.unplaced .unplaced-unit'), null);
+        done();
+      });
+      // Move the unit.
+      unplacedUnit.fire('moveToken', {
+        unit: {id: 'test/1'},
+        machine: 'new',
+        container: undefined,
+        constraints: {}
       });
     });
   });
