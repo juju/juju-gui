@@ -113,6 +113,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
       api.set('datasource', new Y.DataSource.Local({source: data}));
 
+      // Make a first call to interesting, which should request the data
+      // from the data source.
       api.interesting({
         success: function(data) {
           stubSendRequest = utils.makeStubMethod(api.apiHelper,
@@ -129,6 +131,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       }, this);
 
+      // Ensure that the sendRequest method is not called a second time.
+      // Additionally, make sure that we still receive the same data from
+      // the cache.
       function requestAgain() {
         api.interesting({
           success: function(data) {

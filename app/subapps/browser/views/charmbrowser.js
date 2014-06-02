@@ -360,11 +360,9 @@ YUI.add('juju-charmbrowser', function(Y) {
       }
 
       if (renderType === 'curated') {
-        // XXX When caching is implemented it will likely go here.
         this.set('withHome', false);
         this._loadCurated();
       } else if (renderType === 'search') {
-        // XXX When caching is implemented it will likely go here.
         this.set('withHome', true);
         this._loadSearchResults();
       }
