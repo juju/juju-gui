@@ -824,7 +824,7 @@ YUI.add('subapp-browser', function(Y) {
       // in the near future we will likely just render it in the initializer.
       this.sidebar();
       this.state.loadRequest(req);
-      return;
+      next();
     },
 
     /**
@@ -1020,12 +1020,14 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           // Show the sidebar on all places if its not manually shut off
-          { path: '*', callbacks: 'routeDefault'},
-          { path: '/*id/', callbacks: 'routeDirectCharmId'},
-          { path: '/:viewmode/', callbacks: 'routeView' },
-          { path: '/:viewmode/search/', callbacks: 'routeView' },
-          { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
-          { path: '/:viewmode/*id/', callbacks: 'routeView' }
+          { path: '*', callbacks: 'routeDefault'}
+          // XXX window.flags.il
+          // Leaving these here so they can easily be found for the cleanup.
+          // { path: '/*id/', callbacks: 'routeDirectCharmId'},
+          // { path: '/:viewmode/', callbacks: 'routeView' },
+          // { path: '/:viewmode/search/', callbacks: 'routeView' },
+          // { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
+          // { path: '/:viewmode/*id/', callbacks: 'routeView' }
         ]
       },
 
