@@ -301,7 +301,6 @@ YUI.add('juju-topology-service', function(Y) {
       scene: {
         '.service': {
           click: 'serviceClick',
-          dblclick: 'serviceDblClick',
           mouseenter: 'serviceMouseEnter',
           mouseleave: 'serviceMouseLeave',
           mousemove: 'serviceMouseMove'
@@ -537,19 +536,6 @@ YUI.add('juju-topology-service', function(Y) {
       // with the service, the SVG node, and the view
       // as arguments.
       self[curr_click_action](box, topo);
-    },
-
-    serviceDblClick: function(box, self) {
-      if (box.pending) {
-        return;
-      }
-      // Just show the service on double-click.
-      var service = box.model;
-      // The browser sends a click event right before the dblclick one, and
-      // it opens the service menu: close it before moving to the service
-      // details.
-      self.hideServiceMenu();
-      self.show_service(service);
     },
 
     serviceMouseEnter: function(box, context) {

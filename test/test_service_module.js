@@ -205,17 +205,6 @@ describe('service module events', function() {
     return viewContainer.one('#service-menu');
   };
 
-  it('should not show the service menu after the service is double-clicked',
-     function() {
-       var service = viewContainer.one('.service');
-       var menu = clickService(service);
-
-       // Ideally the browser would not send the click event right away...
-       assert(menu.hasClass('active'));
-       service.simulate('dblclick');
-       assert.isFalse(menu.hasClass('active'));
-     });
-
   it('should handle touch/click events properly', function() {
     var service = viewContainer.one('.service');
     var menu = viewContainer.one('#service-menu');
