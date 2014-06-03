@@ -77,16 +77,12 @@ YUI.add('ghost-service-inspector', function(Y) {
       var model = this.get('model');
       model.set('displayName', '(' + model.get('packageName') + ')');
       // The emptySectionA method will destroy this inspector.
-      if (window.flags && window.flags.il) {
-        this.fire('changeState', {
-          sectionA: {
-            component: 'charmbrowser',
-            metadata: { id: null }
-          }
-        });
-      } else {
-        this.destroy();
-      }
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: null }
+        }
+      });
     },
 
     /**
@@ -163,8 +159,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       var db = this.get('db'),
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
-          topo = this.get('topo'),
-          createServiceInspector = false;
+          topo = this.get('topo');
 
       if (e.err) {
         db.notifications.add(
@@ -185,18 +180,7 @@ YUI.add('ghost-service-inspector', function(Y) {
           }));
 
       var ghostId = ghostService.get('id');
-      var inspector;
-      if (!window.flags || !window.flags.il) {
-        inspector = environmentView.inspector;
-        if (inspector) {
-          // If there is a ghost inspector currently open for this service, then
-          // we know we need to create a service inspector for it.  However,
-          // since the user may have closed/destroyed the original one, we need
-          // to check based on the ID of the model involved, rather than simple
-          // equality.
-          createServiceInspector = inspector.get('model').get('id') === ghostId;
-        }
-      }
+
       ghostService.setAttrs({
         id: serviceName,
         displayName: undefined,
@@ -219,26 +203,16 @@ YUI.add('ghost-service-inspector', function(Y) {
       boxModel.pending = false;
       delete topo.service_boxes[ghostId];
       topo.service_boxes[serviceName] = boxModel;
-
       // Set to initial UI state.
-      if (window.flags && window.flags.il) {
-        // In order to display the proper inspector for queued up services
-        // Whatever listens for this event will need to check against the
-        // currently open inspector.
-        this.fire('serviceDeployed', {
-          serviceName: serviceName,
-          clientId: ghostService.get('clientId')
-        });
-      } else {
-        if (createServiceInspector) {
-          // Clean up any existing instances of the inspector so that
-          // databinding won't encounter race conditions.
-          if (inspector) {
-            inspector.destroy();
-          }
-          environmentView.createServiceInspector(ghostService);
-        }
-      }
+      // In order to display the proper inspector for queued up services
+      // Whatever listens for this event will need to check against the
+      // currently open inspector.
+
+      this.fire('serviceDeployed', {
+        serviceName: serviceName,
+        clientId: ghostService.get('clientId')
+      });
+
       topo.showMenu(serviceName);
       topo.annotateBoxPosition(boxModel);
     }

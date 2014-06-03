@@ -43,6 +43,11 @@ describe('Inspector Charm', function() {
     });
   });
 
+  beforeEach(function() {
+    var container = utils.makeContainer(this);
+    container.addClass('bws-view-data');
+  });
+
   afterEach(function(done) {
     if (fakeStore) {
       fakeStore.destroy();

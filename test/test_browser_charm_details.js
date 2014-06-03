@@ -344,7 +344,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      window.flags.il = true;
       var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.iconpath = function() {
         return 'charm icon url';
@@ -880,7 +879,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets the proper change request when closed', function(done) {
-      window.flags.il = true;
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];

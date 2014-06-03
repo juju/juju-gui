@@ -107,6 +107,8 @@ describe('Inspector Settings', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
+    container.append(
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
@@ -251,7 +253,6 @@ describe('Inspector Settings', function() {
   });
 
   it('removes the inspector when service is destroyed', function() {
-    window.flags.il = true;
     var container = utils.makeContainer(this, 'bws-sidebar');
     container.append('<div class="bws-content"></div>');
     inspector = setUpInspector();

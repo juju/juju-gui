@@ -176,7 +176,6 @@ describe('Browser bundle detail view', function() {
 
   it('deploys a bundle when \'add\' and confirmation button is clicked',
       function(done) {
-        window.flags.il = true;
         var changeStateFired = false;
         var handler = view.on('changeState', function(state) {
           changeStateFired = true;
@@ -377,7 +376,6 @@ describe('Browser bundle detail view', function() {
   });
 
   it('sets the proper change request when closed', function(done) {
-    window.flags.il = true;
     view.set('activeTab', '#services');
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });

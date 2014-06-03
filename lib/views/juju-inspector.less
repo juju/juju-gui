@@ -88,7 +88,7 @@
     }
     .juju-inspector {
         .create-border-radius(@border-radius);
-        position: relative;
+        position: static;
         z-index: 501;
         width: @inspector-width;
         min-height: 100px;
@@ -590,6 +590,24 @@
         .viewlet-manager-wrapper {
             overflow-y: hidden;
             .transition(max-height 1s);
+            .display-flex;
+            .flex-direction(column);
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: @inspector-background-color;
+
+            .header-slot,
+            .viewlet-manager-navigation,
+            .viewlet-manager-footer {
+                .flex-basis(auto);
+            }
+            .viewlet-container {
+                .flex(1);
+                max-height: none;
+            }
         }
 
         .viewlet-manager-navigation {
@@ -658,7 +676,7 @@
         }
         .settings-constraints,
         .settings-config {
-            margin-bottom: @inspector-controls-height;
+            margin-bottom: 0;
         }
         .view-container {
             overflow-x: hidden;
@@ -1056,46 +1074,9 @@
     top: 0;
 }
 
-.flag-il #subapp-browser .yui3-juju-inspector {
+#subapp-browser .yui3-juju-inspector {
     .create-border-radius(0);
     top: auto;
     right: auto;
     position: static;
-
-    .juju-inspector {
-        position: static;
-
-        ::-webkit-scrollbar-track {
-            background-color: #1c1815;
-        }
-        ::-webkit-scrollbar-thumb {
-            background-color: #505050;
-            border-width: 0 1px;
-            border-color: #1c1815;
-        }
-        .viewlet-manager-wrapper {
-            .display-flex;
-            .flex-direction(column);
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: @inspector-background-color;
-
-            .header-slot,
-            .viewlet-manager-navigation,
-            .viewlet-manager-footer {
-                .flex-basis(auto);
-            }
-            .viewlet-container {
-                .flex(1);
-                max-height: none;
-            }
-        }
-        .settings-constraints,
-        settings-config {
-            margin-bottom: 0;
-        }
-    }
 }

@@ -662,19 +662,25 @@ describe('service module events', function() {
     var envObj = { env: 'env' };
     var services = [{ getAttrs: function() {} }];
 
-    var renderStub = utils.makeStubFunction();
-    var InspectorStub = utils.makeStubMethod(
-        Y.juju.views, 'LocalNewUpgradeInspector', { render: renderStub });
-    this._cleanups.push(InspectorStub.reset);
-    serviceModule._showUpgradeOrNewInspector(services, fileObj, envObj, dbObj);
-    assert.deepEqual(InspectorStub.lastArguments()[0], {
-      services: services,
-      file: fileObj,
-      env: envObj,
-      db: dbObj
+    serviceModule.set('component', {
+      fire: utils.makeStubFunction()
     });
-    assert.equal(InspectorStub.calledOnce(), true);
-    assert.equal(renderStub.calledOnce(), true);
+
+    var fireStub = serviceModule.get('component').fire;
+
+    serviceModule._showUpgradeOrNewInspector(services, fileObj, envObj, dbObj);
+    assert.equal(fireStub.callCount(), 1);
+    assert.equal(fireStub.lastArguments()[0], 'changeState');
+    assert.deepEqual(fireStub.lastArguments()[1], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          localType: 'update',
+          flash: {
+            file: fileObj,
+            services: services
+          }}}
+    });
   });
 });
 

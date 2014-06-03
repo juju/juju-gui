@@ -413,6 +413,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           setCharm: setCharmStub
         };
         fileObj = { name: 'foo', size: '100' };
+        var container = testUtils.makeContainer(this);
+        container.append(
+            '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       });
 
       it('deployLocalCharm: can be stopped when asking for series', function() {

@@ -113,18 +113,14 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
       if (e.change) {
         change = Y.merge(change, e.change);
       }
-      if (window.flags && window.flags.il) {
-        this.fire('changeState', {
-          sectionA: {
-            component: 'charmbrowser',
-            metadata: {
-              search: change.filter,
-              id: change.charmID
-            }
-          }});
-      } else {
-        this.fire('viewNavigate', {change: change});
-      }
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {
+            search: change.filter,
+            id: change.charmID
+          }
+        }});
     },
 
     /**
@@ -133,25 +129,13 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
       @method _goHome
     */
     _goHome: function() {
-      if (window.flags && window.flags.il) {
-        this.set('withHome', false);
-        this.fire('changeState', {
-          sectionA: {
-            metadata: null,
-            component: null
-          }
-        });
-      } else {
-        var change = {
-          charmID: undefined,
-          hash: undefined,
-          search: false,
-          filter: {
-            clear: true
-          }
-        };
-        this.fire('viewNavigate', {change: change});
-      }
+      this.set('withHome', false);
+      this.fire('changeState', {
+        sectionA: {
+          metadata: null,
+          component: null
+        }
+      });
     },
 
     /**

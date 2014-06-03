@@ -42,10 +42,11 @@ YUI.add('inspector-base', function(Y) {
     */
     _insertContainer: function() {
       var node;
-      if (window.flags.il) {
-        node = Y.one('#bws-sidebar .bws-content');
-      } else {
-        node = Y.one('#content');
+      node = Y.one('#bws-sidebar .bws-content');
+      if (!node) {
+        // mocha + chai + simulate captures any errors thrown here making them
+        // impossible to debug, this will help any future us find it.
+        console.error('Inspector container is not yet rendered');
       }
       this.get('container').appendTo(node);
     }

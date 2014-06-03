@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    var services, filestub, envstub, dbstub, vmstub;
+    var services, filestub, envstub, dbstub;
 
     beforeEach(function() {
       services = [{ getAttrs: function() {} }];
@@ -46,15 +46,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       };
       dbstub = { db: 'db' };
-      vmstub = { destroy: testUtils.makeStubFunction() };
       view = new juju.viewlets.LocalNewUpgradeView({
         services: services,
         file: filestub,
         env: envstub,
         db: dbstub
       });
-      // added by the viewletManager
-      view.viewletManager = vmstub;
     });
 
     afterEach(function(done) {
@@ -99,9 +96,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var selectedServices = testUtils.makeStubMethod(
           view, '_getSelectedServices', services);
       this._cleanups.push(selectedServices.reset);
+      var fireStub = testUtils.makeStubMethod(view, 'fire');
+      this._cleanups.push(fireStub.reset);
       view._upgradeSelectedServices();
-      assert.equal(helperUpgrade.calledOnce(), true);
-      assert.equal(vmstub.destroy.calledOnce(), true);
+      assert.equal(helperUpgrade.calledOnce(), true, 'helperUpgrade');
+      assert.equal(fireStub.calledOnce(), true);
+      assert.equal(fireStub.lastArguments()[0], 'changeState');
+      assert.deepEqual(fireStub.lastArguments()[1], {
+        sectionA: {
+          component: 'charmbrowser'
+        }
+      });
     });
 
     it('returns service objects for checked services', function() {

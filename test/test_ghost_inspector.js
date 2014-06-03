@@ -92,11 +92,9 @@ describe('Ghost Inspector', function() {
     });
 
     view.render();
-    //Y.Node.create('<div id="content">').appendTo(container);
 
-    // interval: 0 must be set to test sync data updates else there will be
-    // an aprox 150ms delay
-    //return view.createServiceInspector(service, {databinding: {interval: 0}});
+    container.append(
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
 
     inspector = new Y.juju.views.GhostServiceInspector({
       db: db,
@@ -204,8 +202,7 @@ describe('Ghost Inspector', function() {
 
   it('displays the charms icon when rendered', function() {
     inspector = setUpInspector();
-    var icon = content.one('.icon img');
-
+    var icon = container.one('.icon img');
     // The icon url is from the fakestore we manually defined.
     assert.equal(icon.getAttribute('src'), '/icon/cs:precise/mediawiki-8');
   });
@@ -236,25 +233,29 @@ describe('Ghost Inspector', function() {
     // Create a second inspector.  Our stub beneath should only be called once,
     // and only on the above insepctor.
     setUpInspector(subordinateCharmData);
-    var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
-    this._cleanups.push(stubCreate.reset);
+    var fireStub = utils.makeStubMethod(inspector, 'fire');
+    this._cleanups.push(fireStub.reset);
     inspector.get('environment').inspector = inspector;
     inspector._deployCallbackHandler('mediawiki', {}, {}, {});
-    assert.isTrue(stubCreate.calledOnce());
+    // The event fire is called twice but the 'serviceDeployed' call is the
+    // canary.
+    assert.equal(fireStub.callCount(), 2);
+    assert.equal(fireStub.allArguments()[1][0], 'serviceDeployed');
   });
 
   it('destroys existing ghost inspector on deploy', function() {
     inspector = setUpInspector();
     var secondInspector = setUpInspector();
-    var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
-    this._cleanups.push(stubCreate.reset);
+    var fireStub = utils.makeStubMethod(inspector, 'fire');
+    this._cleanups.push(fireStub.reset);
     var secondDestroy = utils.makeStubMethod(secondInspector, 'destroy');
     this._cleanups.push(secondDestroy.reset);
     secondInspector.get('environment').inspector = secondInspector;
     inspector.set('environment', secondInspector.get('environment'));
     inspector._deployCallbackHandler('mediawiki', {}, {}, {});
     // Assert that the service inspector is only created once.
-    assert.isTrue(stubCreate.calledOnce(), 'Create called once.');
+    assert.equal(fireStub.callCount(), 1);
+    assert.equal(fireStub.lastArguments()[0], 'serviceDeployed');
     // Despite the callback being called from the first inspector, the second
     // inspector is destroyed as well.
     assert.isTrue(secondDestroy.called(), '2nd destroy called');
@@ -272,10 +273,10 @@ describe('Ghost Inspector', function() {
     env.destroy();
     env = juju.newEnvironment({conn: conn}, 'go');
     inspector = setUpInspector();
-    var constraintsNode = content.all('.service-constraints');
+    var constraintsNode = container.all('.service-constraints');
     assert.equal(constraintsNode.size(), 1);
 
-    var inputNodes = content.all('.service-constraints input');
+    var inputNodes = container.all('.service-constraints input');
     assert.equal(inputNodes.size(), env.genericConstraints.length);
   });
 
@@ -381,44 +382,6 @@ describe('Ghost Inspector', function() {
     nameInput.set('value', 'foo');
   });
 
-  // XXX j.c.sackett 2014-05-06 This test can be removed when window.flags.il
-  // is removed.
-  it('Resets the canvas when hitting X without flags.il', function(done) {
-    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
-    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
-    if (Y.UA.ie === 10) { done(); }
-
-    inspector = setUpInspector();
-    var vmContainer = inspector.get('container');
-    var nameInput = vmContainer.one('input[name=service-name]');
-    var model = inspector.get('model');
-    var serviceIcon = Y.one('tspan.name');
-
-    assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
-    assert.equal(model.get('displayName'), '(mediawiki)', 'model before');
-
-    var fireStub = utils.makeStubMethod(inspector, 'fire');
-    this._cleanups.push(fireStub.reset);
-
-    var handler = vmContainer.delegate('valuechange', function() {
-      assert.equal(model.get('displayName'), '(foo)', 'model callback');
-      view.update(); // Simulating a db.fire('update') call
-      assert.equal(serviceIcon.get('textContent'), '(foo)', 'icon callback');
-      vmContainer.one('.close').simulate('click');
-      assert.equal(model.get('displayName'), '(mediawiki)', 'model after');
-      view.update(); // Simulating a db.fire('update') call
-      assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon after');
-      handler.detach();
-      assert.equal(fireStub.callCount(), 1);
-      var fireArgs = fireStub.lastArguments();
-      assert.equal(fireArgs[0], 'destroy');
-      done();
-    }, 'input[name=service-name]');
-
-    nameInput.simulate('focus');
-    nameInput.set('value', 'foo');
-  });
-
   it('Resets the canvas when hitting X', function(done) {
     // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
     // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
@@ -436,7 +399,6 @@ describe('Ghost Inspector', function() {
     var fireStub = utils.makeStubMethod(inspector, 'fire');
     this._cleanups.push(fireStub.reset);
 
-    window.flags.il = true;
     var handler = vmContainer.delegate('valuechange', function() {
       assert.equal(model.get('displayName'), '(foo)', 'model callback');
       view.update(); // Simulating a db.fire('update') call
@@ -462,7 +424,7 @@ describe('Ghost Inspector', function() {
 
   it('renders into the dom when instantiated', function() {
     inspector = setUpInspector();
-    assert.isObject(content.one('.view-content'));
+    assert.isObject(container.one('.view-content'));
     container = inspector.get('container');
     // Basic sanity checks of the rendering.
     // The debug checkbox must start out disabled.

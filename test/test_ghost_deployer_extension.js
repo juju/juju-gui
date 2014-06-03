@@ -108,7 +108,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('creates a ghost service', function() {
-    window.flags.il = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     var services = ghostDeployer.db.services;

@@ -37,6 +37,8 @@ describe('request-series-inspector', function() {
   // which add the _cleanups property do not fire.
   beforeEach(function() {
     container = testUtils.makeContainer(this, 'content');
+    container.append(
+        '<div id="bws-sidebar"><div class="bws-content"></div></div>');
     rsi = new views.RequestSeriesInspector({
       file: fileObj,
       env: envObj,

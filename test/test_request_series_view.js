@@ -109,8 +109,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('destroyViewletManager: destroys the viewlet manager', function() {
-      view.destroyViewletManager(null, vmstub);
-      assert.equal(vmstub.destroy.calledOnce(), true);
+      var fireStub = testUtils.makeStubMethod(view, 'fire');
+      this._cleanups.push(fireStub.reset);
+      view.destroyViewletManager(null);
+      assert.equal(fireStub.calledOnce(), true);
+      assert.equal(fireStub.lastArguments()[0], 'changeState');
+      assert.deepEqual(fireStub.lastArguments()[1], {
+        sectionA: {
+          component: 'charmbrowser'
+        }
+      });
     });
 
     it('_uploadLocalCharm: calls uploadLocalCharm', function() {
