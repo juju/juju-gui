@@ -227,14 +227,8 @@ describe('charmbrowser view', function() {
     });
 
     describe('_bindSearchWidgetEvents', function() {
-      // window.flags.il
-      beforeEach(function() {
-        window.flags = { il: true };
-      });
-
-      afterEach(function() {
-        window.flags = {};
-      });
+      beforeEach(function() {});
+      afterEach(function() {});
 
       it('fires a changeState event when going home', function(done) {
         assert.equal(charmBrowser.get('withHome'), undefined);
@@ -641,8 +635,6 @@ describe('charmbrowser view', function() {
     });
 
     it('removes the container from the DOM', function() {
-      window.flags = {};
-      window.flags.il = true;
       charmBrowser.render();
       charmBrowser.destroy();
       assert.equal(charmBrowser.get('container').getDOMNode(), null);

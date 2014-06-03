@@ -399,7 +399,6 @@ describe('Ghost Inspector', function() {
     var fireStub = utils.makeStubMethod(inspector, 'fire');
     this._cleanups.push(fireStub.reset);
 
-    window.flags.il = true;
     var handler = vmContainer.delegate('valuechange', function() {
       assert.equal(model.get('displayName'), '(foo)', 'model callback');
       view.update(); // Simulating a db.fire('update') call

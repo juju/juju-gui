@@ -253,7 +253,6 @@ describe('Inspector Settings', function() {
   });
 
   it('removes the inspector when service is destroyed', function() {
-    window.flags.il = true;
     var container = utils.makeContainer(this, 'bws-sidebar');
     container.append('<div class="bws-content"></div>');
     inspector = setUpInspector();

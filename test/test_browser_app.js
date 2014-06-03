@@ -70,8 +70,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var app, render;
 
       beforeEach(function() {
-        // XXX window.flags.il
-        window.flags = { il: true };
         app = new Y.juju.subapps.Browser({});
         app._sidebar = {
           get: function() {

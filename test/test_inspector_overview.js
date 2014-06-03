@@ -1100,7 +1100,6 @@ describe('Inspector Overview', function() {
       inspector = setUpInspector(null, true);
       var fireStub = utils.makeStubMethod(inspector, 'fire');
       this._cleanups.push(fireStub.reset);
-      window.flags.il = true;
       inspector.get('container').one('.close').simulate('click');
       assert.equal(fireStub.calledOnce(), true);
       var fireArgs = fireStub.lastArguments();
