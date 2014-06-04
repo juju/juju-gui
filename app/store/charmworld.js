@@ -62,7 +62,8 @@ YUI.add('juju-charm-store', function(Y) {
       // XXX the following is commented out due to an issue with the UI thread
       // locking up when rendering the charm token widgets; the cache makes
       // this very evident. Uncomment when a path forward is found for the
-      // widget rendering - Makyo 2014-06-04
+      // widget rendering. Note that this also involves a skipped test in 
+      // test/test_charmworld.js - Makyo 2014-06-04
       /*
       var cachedResults = this.get('cachedResults')[apiEndpoint];
       if (cachedResults) {
