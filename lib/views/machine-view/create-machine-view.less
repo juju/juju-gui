@@ -1,0 +1,44 @@
+.machine-view-panel .create-machine-view {
+    margin: 10px;
+    padding: 0 10px;
+    background-color: #eee;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: @machine-view-border-colour;
+    line-height: 38px;
+
+    input[type="text"],
+    select {
+        width: 100%;
+    }
+    input[type="text"] {
+        .border-box;
+        margin-bottom: 6px;
+        background-color: #fff;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+    }
+    form label {
+        position: relative;
+        float: right;
+        margin: -36px 10px 0 0;
+        color: #c6c1bb;
+        line-height: 30px;
+
+        &:last-of-type {
+            margin-top: -33px;
+        }
+    }
+    .actions {
+        text-align: right;
+
+        span {
+            cursor: pointer;
+        }
+        .primary-action {
+            color: @charm-panel-orange;
+        }
+    }
+}
