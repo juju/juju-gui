@@ -237,8 +237,8 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Handles machines added to the db model list.
 
-         @method _onMachineAdd
-         @param {Object} e Custom model change event facade.
+          @method _onMachineAdd
+          @param {Object} e Custom model change event facade.
         */
         _onMachineAdd: function(e) {
           var token,
@@ -265,8 +265,8 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Handles machines removed from the db model list.
 
-         @method _onMachineRemove
-         @param {Object} e Custom model change event facade.
+          @method _onMachineRemove
+          @param {Object} e Custom model change event facade.
         */
         _onMachineRemove: function(e) {
           var machineTokens = this.get('machineTokens'),
@@ -307,19 +307,19 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Unit token drop handler. Handles the unit beind dropped on anything
+          Unit token drop handler. Handles the unit being dropped on anything
           in the machine view.
 
           @method _unitTokenDropHandler
-          @param {Object} e The custom drop event facade.
+          @param {Object} evt The custom drop event facade.
         */
-        _unitTokenDropHandler: function(e) {
+        _unitTokenDropHandler: function(evt) {
           var selected = this.get('selectedMachine');
-          var dropAction = e.dropAction;
-          var parentId = e.targetId;
+          var dropAction = evt.dropAction;
+          var parentId = evt.targetId;
           var containerType = (dropAction === 'container') ? 'lxc' : undefined;
           var db = this.get('db');
-          var unit = db.units.getById(e.unit);
+          var unit = db.units.getById(evt.unit);
           var placeId;
 
           if (dropAction === 'container' &&
@@ -380,24 +380,70 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * Create a new machine/container.
-         *
-         * @method _createMachine
-         * @param {String} containerType The container type to create.
-         * @param {String} parentId The parent for the container.
-         * @param {Object} constraints The machine/container constraints.
-         */
+          Create a new machine/container.
+
+          @method _createMachine
+          @param {String} containerType The container type to create.
+          @param {String} parentId The parent for the container.
+          @param {Object} constraints The machine/container constraints.
+          @return {Object} The newly created ghost machine model instance.
+        */
         _createMachine: function(containerType, parentId, constraints) {
-          var machine = this.get('env').addMachines([{
+          var db = this.get('db');
+          var machine = db.machines.addGhost(parentId, containerType);
+          // XXX A callback param MUST be provided even if it's just an
+          // empty function, the ECS relies on wrapping this function so if
+          // it's null it'll just stop executing. This should probably be
+          // handled properly on the ECS side. Jeff May 12 2014
+          var callback = Y.bind(this._onMachineCreated, this, machine);
+          this.get('env').addMachines([{
             containerType: containerType,
             parentId: parentId,
             constraints: constraints || {}
-            // XXX A callback param MUST be provided even if it's just an
-            // empty function, the ECS relies on wrapping this function so if
-            // it's null it'll just stop executing. This should probably be
-            // handled properly on the ECS side. Jeff May 12 2014
-          }], function() {}, { modelId: null });
+          }], callback, {modelId: machine.id});
           return machine;
+        },
+
+        /**
+          Callback called when a new machine is created.
+
+          @method _onMachineCreated
+          @param {Object} machine The corresponding ghost machine.
+          @param {Object} response The juju-core response. The response is an
+            object like the following:
+            {
+              err: 'only defined if a global error occurred'
+              machines: [
+                {name: '1', err: 'a machine error occurred'},
+              ]
+            }
+        */
+        _onMachineCreated: function(machine, response) {
+          var db = this.get('db');
+          var errorTitle;
+          var errorMessage;
+          // Ensure the addMachines call executed successfully.
+          if (response.err) {
+            errorTitle = 'Error creating the new machine';
+            errorMessage = response.err;
+          } else {
+            var machineResponse = response.machines[0];
+            if (machineResponse.err) {
+              errorTitle = 'Error creating machine ' + machineResponse.name;
+              errorMessage = machineResponse.err;
+            }
+          }
+          // Add an error notification if adding a machine failed.
+          if (errorTitle) {
+            db.notifications.add({
+              title: errorTitle,
+              message: 'Could not add the requested machine. Server ' +
+                  'responded with: ' + errorMessage,
+              level: 'error'
+            });
+          }
+          // In both success and failure cases, destroy the ghost machine.
+          db.machines.remove(machine);
         },
 
         /**
