@@ -753,7 +753,7 @@ describe('machine view panel view', function() {
       this._cleanups.push(viewStub.reset);
       var containerParent = utils.makeContainer(this, 'machine-view-panel'),
           container = {};
-      view._createContainerToken(containerParent, container);
+      view._createContainerToken(containerParent, container, true);
       // Verify that units for the container were looked up since they weren't
       // provided
       assert.equal(filterStub.calledOnce(), true);
@@ -780,7 +780,7 @@ describe('machine view panel view', function() {
       var containerParent = utils.makeContainer(this, 'machine-view-panel'),
           units = [{}],
           container = {};
-      view._createContainerToken(containerParent, container, units);
+      view._createContainerToken(containerParent, container, true, units);
       // Verify that units for the container were provided, and not looked up.
       assert.equal(filterStub.calledOnce(), false);
       assert.equal(updateStub.calledOnce(), true);
