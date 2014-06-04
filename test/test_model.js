@@ -94,12 +94,12 @@ describe('test_model.js', function() {
   });
 
   describe('juju models', function() {
-    var models, yui;
+    var models, Y;
+    var requirements = ['juju-models', 'juju-charm-models'];
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
-        yui = Y;
         done();
       });
     });
@@ -185,7 +185,7 @@ describe('test_model.js', function() {
                 // This means that it will update the aggregate
                 // relations for databinding
                 handler.detach();
-                var isObject = yui.Lang.isObject;
+                var isObject = Y.Lang.isObject;
                 assert.equal(
                     isObject(service.get('relationChangeTrigger')), true);
                 done();
@@ -523,7 +523,6 @@ describe('test_model.js', function() {
 
     });
 
-
     describe('serviceUnits.filterByMachine', function() {
       var units;
 
@@ -689,6 +688,66 @@ describe('test_model.js', function() {
           var machine = machines.add({id: id});
           assert.deepEqual(machine.id, id);
         });
+      });
+
+      describe('addGhost', function() {
+
+        afterEach(function() {
+          machines.reset();
+        });
+
+        it('defines a ghost counter', function() {
+          assert.strictEqual(machines._ghostCounter, 0);
+        });
+
+        it('creates a top level ghost machine', function() {
+          machines.addGhost();
+          assert.strictEqual(machines.size(), 1);
+          var machine = machines.item(0);
+          assert.strictEqual(machine.id, 'new0');
+        });
+
+        it('creates a ghost container', function() {
+          machines.addGhost('0', 'lxc');
+          assert.strictEqual(machines.size(), 1);
+          var machine = machines.item(0);
+          assert.strictEqual(machine.id, '0/lxc/new0');
+        });
+
+        it('creates a ghost machine with initial attrs', function() {
+          machines.addGhost(null, null, {series: 'trusty'});
+          assert.strictEqual(machines.size(), 1);
+          var machine = machines.item(0);
+          assert.strictEqual(machine.series, 'trusty');
+        });
+
+        it('does not mutate the initial attrs', function() {
+          var attrs = {series: 'trusty'};
+          var original = Y.clone(attrs);
+          machines.addGhost(null, null, attrs);
+          assert.deepEqual(attrs, original);
+        });
+
+        it('raises an error if the container type is not passed', function() {
+          var func = function() {machines.addGhost('0');};
+          var expectedError = 'parent id specified without a container type';
+          assert.throws(func, expectedError);
+        });
+
+        it('returns the newly created ghost machine', function() {
+          var machine = machines.addGhost();
+          assert.deepEqual(machine, machines.item(0));
+        });
+
+        it('increases the ghost counter', function() {
+          var machine0 = machines.addGhost();
+          var machine1 = machines.addGhost('42', 'kvm');
+          var machine2 = machines.addGhost();
+          assert.strictEqual(machine0.id, 'new0');
+          assert.strictEqual(machine1.id, '42/kvm/new1');
+          assert.strictEqual(machine2.id, 'new2');
+        });
+
       });
 
       describe('containerization', function() {

@@ -18,8 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('machine view panel view', function() {
-  var Y, container, machines, machine, models, scaleUpView, scaleUpViewRender,
-      services, utils, units, views, view, View;
+  var Y, container, machines, machine, models, notifications, scaleUpView,
+      scaleUpViewRender, services, utils, units, views, view, View;
 
   function createViewNoUnits() {
     // Create a test-specific view that has no units to start
@@ -80,12 +80,15 @@ describe('machine view panel view', function() {
       {id: 'test', icon: 'test.svg'},
       {id: 'baz', icon: 'baz.svg'}
     ]);
+    // Set up test notifications.
+    notifications = new models.NotificationList();
     // add everything to the view
     view = new View({
       container: container,
       db: {
-        services: services,
         machines: machines,
+        notifications: notifications,
+        services: services,
         units: units
       }
     });
@@ -94,8 +97,9 @@ describe('machine view panel view', function() {
   afterEach(function() {
     view.destroy();
     machines.destroy();
-    units.destroy();
+    notifications.destroy();
     services.destroy();
+    units.destroy();
     container.remove(true);
   });
 
@@ -119,10 +123,64 @@ describe('machine view panel view', function() {
     });
   });
 
+  describe('_onMachineCreated', function() {
+
+    beforeEach(function() {
+      machines.reset();
+      view.render();
+    });
+
+    it('adds a notification if a global error occurred', function() {
+      var machine = machines.addGhost();
+      view._onMachineCreated(machine, {err: 'bad wolf'});
+      assert.strictEqual(notifications.size(), 1);
+      var notification = notifications.item(0);
+      assert.strictEqual(
+          notification.get('title'), 'Error creating the new machine');
+      assert.strictEqual(
+          notification.get('message'),
+          'Could not add the requested machine. ' +
+          'Server responded with: bad wolf');
+      assert.strictEqual(notification.get('level'), 'error');
+    });
+
+    it('adds a notification if a machine error occurred', function() {
+      var machine = machines.addGhost();
+      var response = {machines: [{name: '42', err: 'exterminate'}]};
+      view._onMachineCreated(machine, response);
+      assert.strictEqual(notifications.size(), 1);
+      var notification = notifications.item(0);
+      assert.strictEqual(
+          notification.get('title'), 'Error creating machine 42');
+      assert.strictEqual(
+          notification.get('message'),
+          'Could not add the requested machine. ' +
+          'Server responded with: exterminate');
+      assert.strictEqual(notification.get('level'), 'error');
+    });
+
+    it('removes the ghost machine', function() {
+      var machine = machines.addGhost();
+      assert.strictEqual(machines.size(), 1);
+      var response = {machines: [{name: '42'}]};
+      view._onMachineCreated(machine, response);
+      assert.strictEqual(machines.size(), 0);
+    });
+
+    it('removes the ghost machine even when an error occurs', function() {
+      var machine = machines.addGhost();
+      assert.strictEqual(machines.size(), 1);
+      var response = {err: 'bad wolf'};
+      view._onMachineCreated(machine, response);
+      assert.strictEqual(machines.size(), 0);
+    });
+
+  });
+
   describe('token drag and drop', function() {
     beforeEach(function() {
       view.set('env', {
-        addMachines: utils.makeStubFunction({ id: 'foo' }),
+        addMachines: utils.makeStubFunction('add-machine-record-key'),
         placeUnit: utils.makeStubFunction()
       });
     });
@@ -189,6 +247,7 @@ describe('machine view panel view', function() {
     it('creates a new machine when dropped on machine header', function() {
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
       this._cleanups.push(toggleStub.reset);
+      view.render();
       view._unitTokenDropHandler({
         dropAction: 'machine',
         unit: 'test/1'
@@ -199,9 +258,11 @@ describe('machine view panel view', function() {
         parentId: undefined,
         constraints: {}
       }]);
+      // A new ghost machine has been added to the database.
+      assert.isNotNull(machines.getById('new0'));
       var placeArgs = env.placeUnit.lastArguments();
       assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], 'foo');
+      assert.equal(placeArgs[1], 'new0');
     });
 
     it('creates new container when dropped on container header', function() {
@@ -218,9 +279,11 @@ describe('machine view panel view', function() {
         parentId: '5',
         constraints: {}
       }]);
+      // A new ghost machine has been added to the database.
+      assert.isNotNull(machines.getById('5/lxc/new0'));
       var placeArgs = env.placeUnit.lastArguments();
       assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], 'foo');
+      assert.equal(placeArgs[1], '5/lxc/new0');
     });
 
     it('creates a new container when dropped on a machine', function() {
@@ -237,9 +300,11 @@ describe('machine view panel view', function() {
         parentId: '0',
         constraints: {}
       }]);
+      // A new ghost machine has been added to the database.
+      assert.isNotNull(machines.getById('0/lxc/new0'));
       var placeArgs = env.placeUnit.lastArguments();
       assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], 'foo');
+      assert.equal(placeArgs[1], '0/lxc/new0');
     });
 
     it('places the unit on an already existing container', function() {
@@ -262,7 +327,7 @@ describe('machine view panel view', function() {
   describe('unplaced units column', function() {
     beforeEach(function() {
       view.set('env', {
-        addMachines: utils.makeStubFunction({id: '7'}),
+        addMachines: utils.makeStubFunction('add-machines-record-key'),
         placeUnit: utils.makeStubFunction()
       });
     });
@@ -360,7 +425,7 @@ describe('machine view panel view', function() {
         var placeArgs = env.placeUnit.lastArguments();
         assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
-        assert.equal(placeArgs[1], '7',
+        assert.equal(placeArgs[1], 'new0',
             'The unit should be placed on the new machine');
         done();
       });
@@ -392,7 +457,7 @@ describe('machine view panel view', function() {
         var placeArgs = env.placeUnit.lastArguments();
         assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
-        assert.equal(placeArgs[1], '7',
+        assert.equal(placeArgs[1], 'new0',
             'The unit should be placed on the new machine');
         done();
       });
@@ -424,7 +489,7 @@ describe('machine view panel view', function() {
         var placeArgs = env.placeUnit.lastArguments();
         assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
-        assert.equal(placeArgs[1], '7',
+        assert.equal(placeArgs[1], '4/kvm/new0',
             'The unit should be placed on the new container');
         done();
       });
@@ -445,20 +510,20 @@ describe('machine view panel view', function() {
         view._placeServiceUnit(e);
         assert.deepEqual(env.addMachines.lastArguments()[0], [{
           containerType: 'lxc',
-          parentId: '4',
+          parentId: '42',
           constraints: {}
         }], 'A new container should have been created');
         var placeArgs = env.placeUnit.lastArguments();
         assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
-        assert.equal(placeArgs[1], '7',
+        assert.equal(placeArgs[1], '42/lxc/new0',
             'The unit should be placed on the new container');
         done();
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
         unit: {id: 'test/1'},
-        machine: '4',
+        machine: '42',
         container: 'new-lxc',
         constraints: {}
       });

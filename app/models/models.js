@@ -991,6 +991,8 @@ YUI.add('juju-models', function(Y) {
 
   var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine,
+    _ghostCounter: 0,
+
     /**
      * Create a display name that can be used in the views as an entity label
      * agnostic from juju type.
@@ -1100,6 +1102,33 @@ YUI.add('juju-models', function(Y) {
       }
       var result = MachineList.superclass.add.apply(this, arguments);
       return result;
+    },
+
+    /**
+      Adds a ghost machine to this list.
+
+      @method addGhost
+      @param {String} parentId When adding a new container, this parameter can
+        be used to place it into a specific machine, in which case the
+        containerType must also be specified.
+      @param {String} containerType The container type of the new machine
+        (e.g. "lxc").
+      @param {Object} attrs The initial machine attributes.
+      @return {Object} The newly created model instance.
+    */
+    addGhost: function(parentId, containerType, attrs) {
+      var obj = attrs ? Y.clone(attrs) : Object.create(null);
+      // Define the fully qualified ghost machine identifier.
+      obj.id = 'new' + this._ghostCounter;
+      this._ghostCounter += 1;
+      if (parentId) {
+        if (!containerType) {
+          throw new Error('parent id specified without a container type');
+        }
+        obj.id = parentId + '/' + containerType + '/' + obj.id;
+      }
+      // Add the new machine to the database.
+      return this.add(obj);
     },
 
     /**
