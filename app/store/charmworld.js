@@ -59,24 +59,15 @@ YUI.add('juju-charm-store', function(Y) {
         apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
       }
 
-      var cachedResults = this.get('cachedResults')[apiEndpoint];
-      if (cachedResults) {
-        callbacks.success(cachedResults);
-        // If we do not return from here, we will wind up making another
-        // request below.
-        return;
-      }
-
       return this.sendRequest({
         request: apiEndpoint,
         callback: {
-          'success': Y.bind(function(io_request) {
+          'success': function(io_request) {
             var res = Y.JSON.parse(
                 io_request.response.results[0].responseText
                 );
-            this.get('cachedResults')[io_request.request] = res;
             callbacks.success(res);
-          }, this),
+          },
 
           'failure': function(io_request) {
             var respText = io_request.response.results[0].responseText,
@@ -123,16 +114,6 @@ YUI.add('juju-charm-store', function(Y) {
 
   }, {
     ATTRS: {
-      /**
-       * Cached results from non-charm requests.
-       *
-       * @attribute cachedResults
-       * @default empty
-       * @type {Object}
-       */
-      cachedResults: {
-        value: {}
-      }
     }
   });
 
