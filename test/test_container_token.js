@@ -46,6 +46,7 @@ describe('container token view', function() {
     };
     view = new View({
       containerParent: container,
+      container: utils.makeContainer(this, 'container'),
       machine: machine
     }).render();
   });
@@ -56,7 +57,7 @@ describe('container token view', function() {
   });
 
   it('should apply the wrapping class to the container', function() {
-    assert.equal(container.one('> div').hasClass('container-token'), true);
+    assert.equal(view.get('container').hasClass('container-token'), true);
   });
 
   it('fires the delete event', function(done) {
@@ -89,10 +90,23 @@ describe('container token view', function() {
     assert.equal(typeof view._attachDragEvents, 'function');
   });
 
-  it('attaches the drag events on render', function() {
+  it('attaches the drag events on init', function() {
     var attachDragStub = utils.makeStubMethod(view, '_attachDragEvents');
     this._cleanups.push(attachDragStub.reset);
-    view.render();
+    view.init();
     assert.equal(attachDragStub.calledOnce(), true);
+  });
+
+  it('can be set to the droppable state', function() {
+    view.setDroppable();
+    assert.equal(view.get('container').hasClass('droppable'), true);
+  });
+
+  it('can be set from the droppable state back to the default', function() {
+    var viewContainer = view.get('container');
+    view.setDroppable();
+    assert.equal(viewContainer.hasClass('droppable'), true);
+    view.setNotDroppable();
+    assert.equal(viewContainer.hasClass('droppable'), false);
   });
 });
