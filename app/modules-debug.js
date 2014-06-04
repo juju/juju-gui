@@ -263,6 +263,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/container-token.js'
         },
 
+        'juju-create-machine-view': {
+          fullpath: '/juju-ui/widgets/create-machine-view.js'
+        },
+
         'juju-deployer-bar': {
           fullpath: '/juju-ui/widgets/deployer-bar.js'
         },
@@ -323,6 +327,7 @@ var GlobalConfig = {
             'juju-templates',
             'juju-notifications',
             'juju-help-dropdown',
+            'juju-create-machine-view',
             'juju-deployer-bar',
             'juju-environment-header',
             'juju-machine-token',
