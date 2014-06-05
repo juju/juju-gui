@@ -320,8 +320,8 @@ describe('Viewlet Manager', function() {
     viewletManager.get = function() {
       return { one: stubCOne };
     };
-    viewletManager._getSlot(slots['left-hand-panel']);
-    viewletManager._getSlot(slots.other);
+    viewletManager._getSlotContainer(slots['left-hand-panel']);
+    viewletManager._getSlotContainer(slots.other);
     assert.equal(stubYOne.calledOnce(), true);
     assert.equal(stubCOne.calledOnce(), true);
     viewletManager.get = oldGet;

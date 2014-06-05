@@ -167,11 +167,11 @@ YUI.add('juju-viewlet-manager', function(Y) {
     /**
       Return the node for the given slot
 
-      @method _getSlot
+      @method _getSlotContainer
       @param {Object} slot the slot to retrieve
       @return {Y.Node} the node
     */
-    _getSlot: function(slot) {
+    _getSlotContainer: function(slot) {
       if (slot.scope === 'container') {
         return this.get('container').one(slot.selector);
       } else {
@@ -307,7 +307,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // Makes sure the view is visible
         view.show();
         // Makes sure the slot the view is to be rendered into is visible.
-        this._getSlot(this.slots[view.slot]).show();
+        this._getSlotContainer(this.slots[view.slot]).show();
       } else {
         Y.Object.each(this.views, function(viewToCheck, name) {
           if (!options || (options && options.visible !== true)) {
@@ -352,7 +352,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       }
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
-        target = this._getSlot(this.slots[slot]);
+        target = this._getSlotContainer(this.slots[slot]);
         view.render(model, this.getAttrs());
         target.setHTML(view.get('container'));
         this._slots[slot] = view;
@@ -377,7 +377,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         existing.remove();
         // Destroy the view rendered into the slot.
         existing.destroy();
-        this._getSlot(this.slots[existing.slot]).hide();
+        this._getSlotContainer(this.slots[existing.slot]).hide();
         /**
           Fired when the viewlet slot is closing.  May be used by other
           components in order to expand/contract in reaction to the viewlet
