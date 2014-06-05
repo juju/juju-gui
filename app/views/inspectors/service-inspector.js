@@ -32,8 +32,14 @@ YUI.add('service-inspector', function(Y) {
     template: Y.juju.views.Templates['service-config-wrapper'],
 
     slots: {
-      'header': '.header-slot',
-      'left-hand-panel': '.left-breakout'
+      'header': {
+        selector: '.header-slot',
+        scope: 'container'
+      },
+      'left-hand-panel': {
+        selector: '.bws-view-data',
+        scope: 'global'
+      }
     },
 
     views: {

@@ -44,7 +44,7 @@ YUI.add('charm-details-view', function(Y) {
           store = viewletManagerAttrs.store,
           panel = Y.one('.charmbrowser');
       // Target the charm details div for the inspector popout content.
-      container = Y.one('.bws-view-data');
+      container = this.get('container');
       container.delegate('click', function(ev) {
         ev.halt();
         this.viewletManager.hideSlot(ev);
@@ -90,7 +90,7 @@ YUI.add('charm-details-view', function(Y) {
       @method destructor
     */
     destructor: function() {
-      var breakout = Y.one('.left-breakout');
+      var breakout = this.get('container').one('.left-breakout');
       // Tests don't have this element.
       if (breakout) { breakout.removeClass('with-charm'); }
       // If the view is never rendered then charmView will not exist.

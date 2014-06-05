@@ -32,7 +32,10 @@ YUI.add('ghost-service-inspector', function(Y) {
     template: Y.juju.views.Templates['ghost-config-wrapper'],
 
     slots: {
-      'header': '.header-slot'
+      'header': {
+        selector: '.header-slot',
+        scope: 'container'
+      }
     },
 
     views: {
