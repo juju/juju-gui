@@ -1085,6 +1085,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-jujucharms',
     'subapp-browser-sidebar',
     'machine-view-panel-extension',
-    'juju-charmbrowser'
+    'juju-charmbrowser',
+    'generic-cache'
   ]
 });
