@@ -177,6 +177,38 @@ describe('machine view panel view', function() {
 
   });
 
+  describe('create machine view', function() {
+    beforeEach(function() {
+      view.set('env', {
+        addMachines: utils.makeStubFunction('add-machine-record-key'),
+        placeUnit: utils.makeStubFunction()
+      });
+    });
+
+    it('displays when the machine header action is clicked', function() {
+      view.render();
+      var createMachine = container.one('.create-machine');
+      container.one('.machines .head .action').simulate('click');
+      assert.equal(createMachine.hasClass('create-machine-view'), true);
+      assert.equal(createMachine.getHTML() === '', false);
+    });
+
+    it('creates an unplaced unit when cancelled with a unit', function() {
+      var unitTokens = view.get('unitTokens');
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      this._cleanups.push(toggleStub.reset);
+      view.render();
+      view._unitTokenDropHandler({
+        dropAction: 'machine',
+        unit: 'test/1'
+      });
+      assert.equal(Object.keys(unitTokens).length, 0);
+      // Confirm the machine creation.
+      container.one('.create-machine-view .cancel').simulate('click');
+      assert.equal(Object.keys(unitTokens).length, 1);
+    });
+  });
+
   describe('token drag and drop', function() {
     beforeEach(function() {
       view.set('env', {
@@ -253,10 +285,20 @@ describe('machine view panel view', function() {
         unit: 'test/1'
       });
       var env = view.get('env');
+      // The create machine options should be visible.
+      var createMachine = container.one('.create-machine');
+      assert.equal(createMachine.hasClass('create-machine-view'), true);
+      assert.equal(createMachine.getHTML() === '', false);
+      // Confirm the machine creation.
+      container.one('.create-machine-view .create').simulate('click');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
         containerType: undefined,
-        parentId: undefined,
-        constraints: {}
+        parentId: null,
+        constraints: {
+          'cpu-power': '',
+          mem: '',
+          'root-disk': ''
+        }
       }]);
       // A new ghost machine has been added to the database.
       assert.isNotNull(machines.getById('new0'));

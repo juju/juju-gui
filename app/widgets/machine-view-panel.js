@@ -115,6 +115,16 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+          Handle the action in the machines header being fired.
+
+         @method _handleMachinesHeaderAction
+         @param {Y.Event} e EventFacade object.
+        */
+        _handleMachinesHeaderAction: function(e) {
+          this._displayCreateMachine();
+        },
+
+        /**
           Handle changes to the units in the db unit model list.
 
          @method _onUnitChange
@@ -152,14 +162,22 @@ YUI.add('machine-view-panel', function(Y) {
          @param {Object} e Custom model change event facade.
         */
         _onUnitAdd: function(e) {
+          var unit = e.model;
+          if (!unit.machine) {
+            this._createServiceUnitToken(unit);
+          }
+        },
+
+        /**
+          Handle creating and rendering the token for the unit.
+
+         @method _createServiceUnitToken
+         @param {Object} unit The unit to create the token for.
+        */
+        _createServiceUnitToken: function(unit) {
           var token,
               unitTokens = this.get('unitTokens'),
-              unit = e.model,
               node = Y.Node.create('<li></li>');
-          // Ignore placed units
-          if (unit.machine) {
-            return;
-          }
           this._addIconToUnit(unit);
           token = new views.ServiceUnitToken({
             container: node,
@@ -320,19 +338,64 @@ YUI.add('machine-view-panel', function(Y) {
           var containerType = (dropAction === 'container') ? 'lxc' : undefined;
           var db = this.get('db');
           var unit = db.units.getById(evt.unit);
-          var placeId;
 
           if (dropAction === 'container' &&
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
-            placeId = parentId;
-          } else {
+            this._placeUnit(unit, parentId);
+          } else if (dropAction === 'container') {
             var machine = this._createMachine(containerType,
                 parentId || selected, {});
-            placeId = machine.id;
+            this._placeUnit(unit, machine.id);
+          } else {
+            this._displayCreateMachine(unit);
           }
-          this._placeUnit(unit, placeId);
+        },
+
+        /**
+          Show the widget to create a machine with constraints.
+
+          @method _displayCreateMachine
+          @param {Object} unit The unit to place on the machine.
+        */
+        _displayCreateMachine: function(unit) {
+          var createMachine = new views.CreateMachineView({
+            container: this.get('container').one('.create-machine'),
+            unit: unit
+          }).render();
+          if (unit) {
+            this._removeUnit(unit.id);
+          }
+          this.addEvent(createMachine.on(
+              'createMachine', this._handleCreateMachine, this));
+          this.addEvent(createMachine.on(
+              'cancelCreateMachine', this._handleCancelCreateMachine, this));
+        },
+
+        /**
+          Handle creating a machine from a createMachine event.
+
+          @method _handleCreateMachine
+          @param {Object} unit The event.
+        */
+        _handleCreateMachine: function(e) {
+          var machine = this._createMachine(undefined, null, e.constraints);
+          if (e.unit) {
+            this.get('env').placeUnit(e.unit, machine.id);
+          }
+        },
+
+        /**
+          Handle cancelling creating a machine.
+
+          @method _handleCancelCreateMachine
+          @param {Object} unit The event.
+        */
+        _handleCancelCreateMachine: function(e) {
+          if (e.unit) {
+            this._createServiceUnitToken(e.unit);
+          }
         },
 
         /**
@@ -498,6 +561,8 @@ YUI.add('machine-view-panel', function(Y) {
                 dropLabel: 'Create new machine'
               });
           this._machinesHeader.addTarget(this);
+          this.addEvent(this._machinesHeader.on(
+              'actionFired', this._handleMachinesHeaderAction, this));
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'container',
@@ -870,6 +935,7 @@ YUI.add('machine-view-panel', function(Y) {
     'juju-templates',
     'juju-view-utils',
     'container-token',
+    'create-machine-view',
     'machine-token',
     'machine-view-panel-header',
     'node',

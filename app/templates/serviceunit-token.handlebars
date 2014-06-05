@@ -28,14 +28,7 @@
       <option value="new-kvm" class="default">new kvm</option>
     </select>
   </div>
-  <form class="constraints">
-    <input type="text" name="cpu">
-    <label>CPU (GHz)</label>
-    <input type="text" name="ram">
-    <label>RAM (GB)</label>
-    <input type="text" name="disk">
-    <label>Disk (TB)</label>
-  </form>
+  {{>constraints-form}}
   <div class="actions">
     <span class="cancel secondary-action">Cancel</span> |
     <span class="move primary-action">Move</span>

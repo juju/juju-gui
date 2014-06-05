@@ -3,10 +3,18 @@
     position: relative;
     display: block;
     min-height: 40px;
+    // This is so the top border wraps over the header border if there
+    // is nothing about the first token.
+    margin-top: -1px;
     padding: 10px 20px;
-    border-bottom: 1px solid @machine-view-border-colour;
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-color: @machine-view-border-colour;
     cursor: pointer;
 
+    &:last-child {
+        border-bottom-width: 1px;
+    }
     &.active {
         background-color: #eee;
 
