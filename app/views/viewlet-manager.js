@@ -165,6 +165,21 @@ YUI.add('juju-viewlet-manager', function(Y) {
     },
 
     /**
+      Return the node for the given slot
+
+      @method _getSlotContainer
+      @param {Object} slot the slot to retrieve
+      @return {Y.Node} the node
+    */
+    _getSlotContainer: function(slot) {
+      if (slot.scope === 'container') {
+        return this.get('container').one(slot.selector);
+      } else {
+        return Y.one(slot.selector);
+      }
+    },
+
+    /**
       Renders the views into the viewlet manager. Views with a logical
       slot name defined are not rendered by default and require that showViewlet
       be called for them to render. Slots are typically filled through event
@@ -272,7 +287,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
         of the viewlets.
     */
     showViewlet: function(viewName, model, options) {
-      var container = this.get('container');
       // This method can be called directly but it is also an event handler
       // for clicking on the viewlet manager tab handles.
       if (typeof viewName !== 'string') {
@@ -293,7 +307,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // Makes sure the view is visible
         view.show();
         // Makes sure the slot the view is to be rendered into is visible.
-        container.one(this.slots[view.slot]).show();
+        this._getSlotContainer(this.slots[view.slot]).show();
       } else {
         Y.Object.each(this.views, function(viewToCheck, name) {
           if (!options || (options && options.visible !== true)) {
@@ -338,7 +352,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       }
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
-        target = this.get('container').one(this.slots[slot]);
+        target = this._getSlotContainer(this.slots[slot]);
         view.render(model, this.getAttrs());
         target.setHTML(view.get('container'));
         this._slots[slot] = view;
@@ -363,7 +377,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         existing.remove();
         // Destroy the view rendered into the slot.
         existing.destroy();
-        this.get('container').one(this.slots[existing.slot]).hide();
+        this._getSlotContainer(this.slots[existing.slot]).hide();
         /**
           Fired when the viewlet slot is closing.  May be used by other
           components in order to expand/contract in reaction to the viewlet

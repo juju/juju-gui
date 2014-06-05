@@ -24,6 +24,14 @@ describe('Viewlet Manager', function() {
   var fakeController = function() {};
   fakeController.prototype.bind = function() { /* noop */};
 
+  function generateTestView() {
+    var TestView = Y.Base.create(
+        'testView', Y.View, [Y.juju.viewlets.ViewletBaseView], {
+          template: Y.Handlebars.compile('<div class="viewie"></div>')
+        });
+    return TestView;
+  }
+
   var generateViewletManager = function(
       context, options, managerOptions, merge) {
     merge = merge || false;
@@ -193,7 +201,10 @@ describe('Viewlet Manager', function() {
     generateViewletManager(this);
     //Define a slot mapping on the container for 'left'
     viewletManager.slots = {
-      'left': '.left-breakout'
+      'left': {
+        selector: '.left-breakout',
+        scope: 'global'
+      }
     };
     // And unitDetailsStub will use that slot.
     viewletManager.views.unitDetailsStub.slot = 'left';
@@ -211,7 +222,10 @@ describe('Viewlet Manager', function() {
        generateViewletManager(this);
        //Define a slot mapping on the container for 'left'
        viewletManager.slots = {
-         left: '.left-breakout'
+         left: {
+           selector: '.left-breakout',
+           scope: 'global'
+         }
        };
        // And unitDetailsStub will use that slot.
        viewletManager.views.unitDetailsStub.slot = 'left';
@@ -254,7 +268,10 @@ describe('Viewlet Manager', function() {
     generateViewletManager(this);
     //Define a slot mapping on the container for 'left'
     viewletManager.slots = {
-      'left-hand-panel': '.left-breakout'
+      'left-hand-panel': {
+        selector: '.left-breakout',
+        scope: 'global'
+      }
     };
     // And unitDetailsStub will use that slot.
     viewletManager.views.unitDetailsStub.slot = 'left-hand-panel';
@@ -277,6 +294,39 @@ describe('Viewlet Manager', function() {
         'none');
   });
 
+  it('can get a slot from a container or globally', function() {
+    generateViewletManager(this);
+    var slots = {
+      'left-hand-panel': {
+        selector: '.left-breakout',
+        scope: 'global'
+      },
+      other: {
+        selector: '.other',
+        scope: 'container'
+      }
+    };
+    viewletManager.slots = slots;
+    viewletManager.views.other = generateTestView();
+    viewletManager.views.other.slot = 'other';
+    viewletManager.views.unitDetailsStub.slot = 'left-hand-panel';
+    viewletManager.render();
+    var stubYOne = utils.makeStubMethod(Y, 'one');
+    this._cleanups.push(stubYOne.reset);
+    // Since the mock occurs in an object /returned/ from get, store this get
+    // for later and manually reset at the end of the test.
+    var stubCOne = utils.makeStubFunction();
+    var oldGet = viewletManager.get;
+    viewletManager.get = function() {
+      return { one: stubCOne };
+    };
+    viewletManager._getSlotContainer(slots['left-hand-panel']);
+    viewletManager._getSlotContainer(slots.other);
+    assert.equal(stubYOne.calledOnce(), true);
+    assert.equal(stubCOne.calledOnce(), true);
+    viewletManager.get = oldGet;
+  });
+
   it('switches to the specified tab', function() {
     generateViewletManager(this);
     var requestedTab = 'overview',
@@ -292,14 +342,6 @@ describe('Viewlet Manager', function() {
   });
 
   describe('View Support', function() {
-    function generateTestView() {
-      var TestView = Y.Base.create(
-          'testView', Y.View, [Y.juju.viewlets.ViewletBaseView], {
-            template: Y.Handlebars.compile('<div class="viewie"></div>')
-          });
-      return TestView;
-    }
-
     it('accepts new Y.View instances', function() {
       var TestView = generateTestView();
       generateViewletManager(this, null, {

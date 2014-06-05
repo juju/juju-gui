@@ -172,7 +172,7 @@ YUI.add('unit-details-view', function(Y) {
       var template = Y.Node.create(this.templateWrapper({}));
       template.one('.content').setHTML(this.template(context));
       // Target the charm details div for the inspector popout content.
-      var container = Y.one('.bws-view-data');
+      var container = this.get('container');
       container.setHTML(template);
       container.show();
       container.delegate('click', function(ev) {
