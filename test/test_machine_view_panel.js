@@ -177,6 +177,35 @@ describe('machine view panel view', function() {
 
   });
 
+  describe('_onMachineRemove', function() {
+
+    it('clears the container column when the active machine is removed',
+        function() {
+          var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
+          this._cleanups.push(clearStub.reset);
+          view._machinesHeader = {};
+          var labelStub = utils.makeStubMethod(view._machinesHeader,
+              'updateLabelCount');
+          this._cleanups.push(labelStub.reset);
+          view.set('selectedMachine', '0');
+          machines.remove(machines.getById('0'));
+          assert.equal(clearStub.calledOnce(), true);
+        });
+
+    it('does not clear the container column if the machine is not active',
+        function() {
+          var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
+          this._cleanups.push(clearStub.reset);
+          view._machinesHeader = {};
+          var labelStub = utils.makeStubMethod(view._machinesHeader,
+              'updateLabelCount');
+          this._cleanups.push(labelStub.reset);
+          view.set('selectedMachine', '9');
+          machines.remove(machines.getById('0'));
+          assert.equal(clearStub.calledOnce(), false);
+        });
+  });
+
   describe('token drag and drop', function() {
     beforeEach(function() {
       view.set('env', {
@@ -266,6 +295,7 @@ describe('machine view panel view', function() {
     });
 
     it('creates new container when dropped on container header', function() {
+      view.render();
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
       this._cleanups.push(toggleStub.reset);
       view.set('selectedMachine', '5');
@@ -287,6 +317,7 @@ describe('machine view panel view', function() {
     });
 
     it('creates a new container when dropped on a machine', function() {
+      view.render();
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
       this._cleanups.push(toggleStub.reset);
       view._unitTokenDropHandler({
@@ -760,63 +791,67 @@ describe('machine view panel view', function() {
                    'machine should display icons post-update');
     });
 
-    it('should ignore added containers', function() {
+    it('should add tokens when containers are added', function() {
       view.render();
-      var selector = '.machines .token',
+      var selector = '.containers .token',
           list = container.all(selector),
           id = '2/foo/999',
           initialSize = list.size();
-      assert.equal(initialSize, machines.size(),
-                   'initial displayed list is out of sync with machines');
+      assert.equal(initialSize, 0,
+                   'check the initial size');
       machines.add([
         { id: id }
       ]);
       list = container.all(selector);
-      assert.equal(list.size(), initialSize,
-                   'list should not have changed in size');
-      var addedItem = container.one(selector + '[data-id="' + id + '"]');
-      assert.equal(addedItem, null, 'found container in displayed list');
+      assert.equal(list.size(), 1, 'list should have updated');
+      assert.equal(container.one(selector).getData('id'), '2/foo/999',
+          'the container should be in the displayed list');
     });
 
-    it('should ignore removed containers', function() {
+    it('should remove tokens when containers are removed', function() {
       var id = '2/foo/999';
-      machines.add([{ id: id }]);
       view.render();
-      var selector = '.machines .token',
+      machines.add([{ id: id }]);
+      var selector = '.containers .token',
           list = container.all(selector),
           initialSize = list.size(),
           m = machines.getById(id);
-      assert.equal(initialSize, machines.size() - 1,
-                   'initial displayed list is out of sync with machines');
+      assert.equal(initialSize, 1,
+                   'check the initial size');
       machines.remove(m);
       list = container.all(selector);
-      assert.equal(list.size(), initialSize,
-                   'list should not have changed in size');
+      assert.equal(list.size(), 0,
+                   'list should have changed in size');
       var deletedSelector = selector + '[data-id="' + id + '"]';
       var deletedItem = container.one(deletedSelector);
       assert.equal(deletedItem, null,
                    'found the deleted container in the list');
     });
 
-    it('should ignore changed containers', function() {
+    it('should update tokens when containers are changed', function() {
       var id = '2/foo/999';
-      machines.add([{ id: id }]);
       view.render();
-      var selector = '.machines .token',
+      machines.add([{ id: id }]);
+      var selector = '.containers .token',
           list = container.all(selector),
           initialSize = list.size(),
           m = machines.getById(id);
-      assert.equal(initialSize, machines.size() - 1,
-                   'initial displayed list is out of sync with machines');
+      var oldItem = container.one(selector + '[data-id="' + id + '"]');
+      assert.equal(initialSize, 1,
+                   'check the initial size');
       m = machines.revive(m);
-      m.set('hardware', {disk: 2048});
+      assert.equal(oldItem === null, false, 'the item should exist');
+      m.set('id', '2/foo/1000');
       list = container.all(selector);
-      assert.equal(list.size(), initialSize,
+      assert.equal(list.size(), 1,
                    'list should not have changed in size');
-      var changedSelector = selector + '[data-id="' + id + '"]';
+      oldItem = container.one(selector + '[data-id="' + id + '"]');
+      assert.equal(oldItem, null,
+          'the old item should no longer exist');
+      var changedSelector = selector + '[data-id="2/foo/1000"]';
       var changedItem = container.one(changedSelector);
-      assert.equal(changedItem, null,
-                   'found the changed container still in the list');
+      assert.equal(changedItem === null, false,
+                   'the new item should be in the list');
     });
 
     it('should remove all tokens on destroy', function() {
@@ -826,6 +861,10 @@ describe('machine view panel view', function() {
                    'No machine tokens should exist');
       assert.equal(Y.all('.machines .token').size(), 0,
                    'No machine DOM elements should exist');
+      assert.equal(Object.keys(view.get('containerTokens')).length, 0,
+                   'No container tokens should exist');
+      assert.equal(Y.all('.countainers .token').size(), 0,
+                   'No container DOM elements should exist');
       assert.equal(Object.keys(view.get('unitTokens')).length, 0,
                    'No service unit tokens should exist');
       assert.equal(Y.all('.unplaced .unplaced-unit').size(), 0,
@@ -845,11 +884,12 @@ describe('machine view panel view', function() {
           target;
       var viewStub = utils.makeStubMethod(views, 'ContainerToken', {
         render: function() { rendered = true; },
-        addTarget: function(t) { target = t; }
+        addTarget: function(t) { target = t; },
+        destroy: function() {}
       });
       this._cleanups.push(viewStub.reset);
       var containerParent = utils.makeContainer(this, 'machine-view-panel'),
-          container = {};
+          container = {id: '10/lxc/5'};
       view._createContainerToken(containerParent, container, true);
       // Verify that units for the container were looked up since they weren't
       // provided
@@ -871,12 +911,13 @@ describe('machine view panel view', function() {
           target;
       var viewStub = utils.makeStubMethod(views, 'ContainerToken', {
         render: function() { rendered = true; },
-        addTarget: function(t) { target = t; }
+        addTarget: function(t) { target = t; },
+        destroy: function() {}
       });
       this._cleanups.push(viewStub.reset);
       var containerParent = utils.makeContainer(this, 'machine-view-panel'),
           units = [{}],
-          container = {};
+          container = {id: '10/lxc/5'};
       view._createContainerToken(containerParent, container, true, units);
       // Verify that units for the container were provided, and not looked up.
       assert.equal(filterStub.calledOnce(), false);
@@ -911,18 +952,18 @@ describe('machine view panel view', function() {
       var containers = machines.filterByParent('0');
       var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
       this._cleanups.push(tokenStub.reset);
-      view._renderContainerTokens(containers, 0);
+      view._renderContainerTokens(containers, '0');
       assert.equal(tokenStub.callCount(), 2);
       var tokenArguments = tokenStub.allArguments();
-      assert.equal(tokenArguments[0][1].displayName, '0/lxc/0');
-      assert.equal(tokenArguments[1][1].displayName, 'Bare metal');
+      assert.equal(tokenArguments[0][1].displayName, 'Bare metal');
+      assert.equal(tokenArguments[1][1].displayName, '0/lxc/0');
     });
 
     it('always creates a "bare metal" token', function() {
       view.render();
       var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
       this._cleanups.push(tokenStub.reset);
-      view._renderContainerTokens([], 0);
+      view._renderContainerTokens([], '0');
       assert.equal(tokenStub.callCount(), 1);
       var tokenArguments = tokenStub.allArguments();
       assert.equal(tokenArguments[0][1].displayName, 'Bare metal');
