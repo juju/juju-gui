@@ -261,10 +261,19 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method _loadSearchResults
     */
     _loadSearchResults: function() {
-      this.activeRequestId = this.get('store').search(this.get('filters'), {
-        'success': this._loadSearchSuccessHandler,
-        'failure': this.apiFailure.bind(this, 'search')
-      }, this);
+      var filters = this.get('filters'),
+          cacheKey = Y.QueryString.stringify(filters),
+          searchCache = this.get('cache').get(cacheKey);
+      if (searchCache) {
+        this._renderCharmTokens(
+            // If you change these change them in _loadSearchSuccessHandler too.
+            searchCache, ['recommended', 'other'], 'searchResultTemplate');
+      } else {
+        this.activeRequestId = this.get('store').search(filters, {
+          'success': this._loadSearchSuccessHandler,
+          'failure': this.apiFailure.bind(this, 'search')
+        }, this);
+      }
     },
 
     /**
@@ -294,12 +303,18 @@ YUI.add('juju-charmbrowser', function(Y) {
           }
         }
       }, this);
-      this._renderCharmTokens({
+      var cache = this.get('cache');
+      var charmData = {
         recommended: recommended,
         // The token type is called 'other' instead of 'new' because 'new'
         // clashes with class names of other elements.
         other: other
-      }, ['recommended', 'other'], 'searchResultTemplate');
+      };
+      cache.set(Y.QueryString.stringify(this.get('filters')), charmData);
+      cache.updateCharmList(charmData);
+      this._renderCharmTokens(
+          // If you change these change them in _loadSearchResults too.
+          charmData, ['recommended', 'other'], 'searchResultTemplate');
     },
 
     /**
