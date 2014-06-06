@@ -558,7 +558,6 @@ YUI.add('subapp-browser', function(Y) {
         deployBundle: this.get('deployBundle'),
         deployService: this.get('deployService')
       };
-
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
       var hashChanged, charmIDChanged, viewmodeChanged;
@@ -571,7 +570,6 @@ YUI.add('subapp-browser', function(Y) {
       charmIDChanged = current.id !== previous.id;
       hashChanged = current.hash !== previous.hash;
       viewmodeChanged = false; // no longer supported so just hard code
-
       // XXX viewmode can be eliminated from this condition once
       // window.flags.il becomes standard
       if (this._details &&
@@ -579,21 +577,18 @@ YUI.add('subapp-browser', function(Y) {
           !(charmIDChanged || viewmodeChanged)) {
         return;
       }
-
-      // Gotten from the sidebar creating the cache.
-      var model = this._cache.getCharm(entityId);
-
-      if (model) {
-        extraCfg.charm = model;
-      }
-
-      var EntityView;
+      var EntityView, prefix = '';
       if (entityId.indexOf('bundle') !== -1) {
         EntityView = views.BrowserBundleView;
       } else {
         EntityView = views.BrowserCharmView;
+        prefix = 'cs:';
       }
-
+      // Gotten from the charmbrowser creating the cache.
+      var model = this._cache.getEntity(prefix + entityId);
+      if (model) {
+        extraCfg.entity = model;
+      }
       this._details = new EntityView(this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);

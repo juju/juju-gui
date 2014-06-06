@@ -32,7 +32,7 @@ YUI.add('browser-cache', function(Y) {
   */
   function BrowserCache() {
     this._storage = {};
-    this._storage._charms = new Y.juju.models.CharmList();
+    this._storage._entities = new Y.ModelList();
   }
 
   BrowserCache.prototype = {
@@ -63,24 +63,24 @@ YUI.add('browser-cache', function(Y) {
     /**
       Updates the internal charm model cache.
 
-      @method updateCharmList
-      @param {Object} charmList Either a single charm model or an object of
-        models from the charmstore transformed results.
+      @method updateEntityList
+      @param {Object} entityList Either a single charm/bundle model or an object
+        of models from the charmstore transformed results.
     */
-    updateCharmList: function(charmList) {
+    updateEntityList: function(entityList) {
       // Check to see if this is a single charm model or not
-      if (charmList instanceof Y.Model) {
-        this._storage._charms.add(charmList);
+      if (entityList instanceof Y.Model) {
+        this._storage._entities.add(entityList);
       } else {
-        Object.keys(charmList).forEach(function(key) {
-          var charms = charmList[key];
+        Object.keys(entityList).forEach(function(key) {
+          var entities = entityList[key];
           // The charmworld transform method can return a single charm model
           // or an array of them.
-          if (!Y.Lang.isArray(charms)) {
-            charms = [charms];
+          if (!Y.Lang.isArray(entities)) {
+            entities = [entities];
           }
-          charms.forEach(function(charm) {
-            this._storage._charms.add(charm);
+          entities.forEach(function(charm) {
+            this._storage._entities.add(charm);
           }, this);
         }, this);
       }
@@ -89,12 +89,25 @@ YUI.add('browser-cache', function(Y) {
     /**
       Fetches the charm from the charm cache if it exists.
 
-      @method getCharm
-      @param {String} charmId The charm id to fetch from the cache.
+      @method getEntity
+      @param {String} entityId The charm or bundle id to fetch from the cache.
       @return {CharmModel | null} The charm model or null if it doesn't exist.
     */
-    getCharm: function(charmId) {
-      return this._storage._charms.getById(charmId);
+    getEntity: function(entityId) {
+      var bundleIndex = entityId.indexOf('bundle');
+      if (bundleIndex !== -1) {
+        entityId = entityId.substring(bundleIndex + 7);
+        entityId = 'bundle:' + entityId;
+        var bundle;
+        this._storage._entities.some(function(entity) {
+          if (entity.get('bundleURL') === entityId) {
+            bundle = entity;
+          }
+        });
+        return bundle;
+      } else {
+        return this._storage._entities.getById(entityId);
+      }
     }
 
   };
@@ -102,6 +115,6 @@ YUI.add('browser-cache', function(Y) {
   Y.namespace('juju').BrowserCache = BrowserCache;
 }, '', {
   requires: [
-    'juju-charm-models'
+    'model-list'
   ]
 });

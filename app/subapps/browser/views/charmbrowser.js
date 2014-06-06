@@ -138,7 +138,7 @@ YUI.add('juju-charmbrowser', function(Y) {
               'new': transform(result['new'])
             };
             cache.set('curated', results);
-            cache.updateCharmList(results);
+            cache.updateEntityList(results);
             this._renderCharmTokens(results, tokenHeaders, templateName);
           },
           failure: this.apiFailure.bind(this, 'curated')
@@ -304,17 +304,17 @@ YUI.add('juju-charmbrowser', function(Y) {
         }
       }, this);
       var cache = this.get('cache');
-      var charmData = {
+      var entityData = {
         recommended: recommended,
         // The token type is called 'other' instead of 'new' because 'new'
         // clashes with class names of other elements.
         other: other
       };
-      cache.set(Y.QueryString.stringify(this.get('filters')), charmData);
-      cache.updateCharmList(charmData);
+      cache.set(Y.QueryString.stringify(this.get('filters')), entityData);
+      cache.updateEntityList(entityData);
       this._renderCharmTokens(
           // If you change these change them in _loadSearchResults too.
-          charmData, ['recommended', 'other'], 'searchResultTemplate');
+          entityData, ['recommended', 'other'], 'searchResultTemplate');
     },
 
     /**
