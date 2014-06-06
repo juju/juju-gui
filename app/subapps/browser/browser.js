@@ -304,7 +304,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     destructor: function() {
       if (this._cache) {
-        this._cache.destroy();
+        this._cache.empty();
       }
       this.state.destroy();
       // If we've got any views hanging around wipe them.

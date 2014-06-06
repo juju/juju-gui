@@ -31,11 +31,19 @@ YUI.add('browser-cache', function(Y) {
     @method BrowserCache
   */
   function BrowserCache() {
-    this._storage = {};
-    this._storage._entities = new Y.ModelList();
+    this.init();
   }
 
   BrowserCache.prototype = {
+    /**
+      Sets up the cache.
+
+      @method init
+    */
+    init: function() {
+      this._storage = {};
+      this._storage._entities = new Y.ModelList();
+    },
 
     /**
       Fetch the data associated with a key from the storage cache.
@@ -108,8 +116,44 @@ YUI.add('browser-cache', function(Y) {
       } else {
         return this._storage._entities.getById(entityId);
       }
-    }
+    },
 
+    /**
+      Empty the cache. This is a nuclear option, there's no going back.
+
+      @method empty
+    */
+    empty: function() {
+      var storage = this._storage;
+      storage._entities.destroy();
+      this._destroyModels(storage);
+      this._storage = null;
+      // Set the cache back to a functional state
+      this.init();
+    },
+
+    /**
+      Recursive function to loop through the cache and destroy any existing
+      models.
+
+      @method _destroyModels
+      @param {Object} storage A storage object. Starts with the parent cache
+        object.
+    */
+    _destroyModels: function(storage) {
+      Object.keys(storage).forEach(function(key) {
+        var model = storage[key];
+        if ((!model instanceof Y.Model) && (typeof model === 'object')) {
+          this._destroyModels(model);
+        } else {
+          // In case items which are not models are stored in here and do not
+          // have a destroy method.
+          if (model.destroy) {
+            model.destroy();
+          }
+        }
+      }, this);
+    }
   };
 
   Y.namespace('juju').BrowserCache = BrowserCache;
