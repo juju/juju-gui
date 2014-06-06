@@ -32,6 +32,7 @@ YUI.add('browser-cache', function(Y) {
   */
   function BrowserCache() {
     this._storage = {};
+    this._storage._charms = new Y.juju.models.CharmList();
   }
 
   BrowserCache.prototype = {
@@ -57,10 +58,50 @@ YUI.add('browser-cache', function(Y) {
     set: function(key, data) {
       this._storage[key] = Y.clone(data);
       return this._storage[key];
+    },
+
+    /**
+      Updates the internal charm model cache.
+
+      @method updateCharmList
+      @param {Object} charmList Either a single charm model or an object of
+        models from the charmstore transformed results.
+    */
+    updateCharmList: function(charmList) {
+      // Check to see if this is a single charm model or not
+      if (charmList instanceof Y.Model) {
+        this._storage._charms.add(charmList);
+      } else {
+        Object.keys(charmList).forEach(function(key) {
+          var charms = charmList[key];
+          // The charmworld transform method can return a single charm model
+          // or an array of them.
+          if (!Y.Lang.isArray(charms)) {
+            charms = [charms];
+          }
+          charms.forEach(function(charm) {
+            this._storage._charms.add(charm);
+          }, this);
+        }, this);
+      }
+    },
+
+    /**
+      Fetches the charm from the charm cache if it exists.
+
+      @method getCharm
+      @param {String} charmId The charm id to fetch from the cache.
+      @return {CharmModel | null} The charm model or null if it doesn't exist.
+    */
+    getCharm: function(charmId) {
+      return this._storage._charms.getById(charmId);
     }
 
   };
 
   Y.namespace('juju').BrowserCache = BrowserCache;
-
+}, '', {
+  requires: [
+    'juju-charm-models'
+  ]
 });

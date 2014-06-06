@@ -303,17 +303,10 @@ YUI.add('subapp-browser', function(Y) {
        @method destructor
      */
     destructor: function() {
-      this._cache.charms.destroy();
-      if (this._cache.search) {
-        this._cache.search.destroy();
-      }
-      if (this._cache.interesting) {
-        this._cache.interesting.newCharms.destroy();
-        this._cache.interesting.popularCharms.destroy();
-        this._cache.interesting.featuredCharms.destroy();
+      if (this._cache) {
+        this._cache.destroy();
       }
       this.state.destroy();
-
       // If we've got any views hanging around wipe them.
       if (this._sidebar) {
         this._sidebar.destroy();
@@ -338,11 +331,7 @@ YUI.add('subapp-browser', function(Y) {
     initializer: function(cfg) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
-      this._cache = {
-        charms: new models.CharmList(),
-        search: null,
-        interesting: null
-      };
+      this._cache = new Y.juju.BrowserCache();
 
       this.state = new models.UIState({
         // Disallow routing to inspectors if we are in sandbox mode; the
@@ -592,7 +581,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cache.charms.getById(entityId);
+      var model = this._cache.getCharm(entityId);
 
       if (model) {
         extraCfg.charm = model;
@@ -626,7 +615,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!this._charmbrowser) {
         this._charmbrowser = new views.CharmBrowser({
           deployService: this.get('deployService'),
-          deployBundle: this.get('deployBundle')
+          deployBundle: this.get('deployBundle'),
+          cache: this._cache
         });
         this._charmbrowser.addTarget(this);
       }
@@ -1070,6 +1060,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-cache',
     'handlebars',
     'juju-app-state',
     'juju-browser-models',

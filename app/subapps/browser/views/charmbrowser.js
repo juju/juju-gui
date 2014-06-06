@@ -120,21 +120,30 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method _loadCurated
     */
     _loadCurated: function() {
-      var store = this.get('store');
-      this.activeRequestId = store.interesting({
-        'success': function(data) {
-          var result = data.result,
-              transform = store.transformResults;
-          var results = {
-            featured: transform(result.featured),
-            popular: transform(result.popular),
-            'new': transform(result['new'])
-          };
-          this._renderCharmTokens(
-              results, ['featured', 'popular', 'new'], 'curatedTemplate');
-        },
-        failure: this.apiFailure.bind(this, 'curated')
-      }, this);
+      var cache = this.get('cache'),
+          curated = cache.get('curated'),
+          tokenHeaders = ['featured', 'popular', 'new'],
+          templateName = 'curatedTemplate';
+      if (curated) {
+        this._renderCharmTokens(curated, tokenHeaders, templateName);
+      } else {
+        var store = this.get('store');
+        this.activeRequestId = store.interesting({
+          'success': function(data) {
+            var result = data.result,
+                transform = store.transformResults;
+            var results = {
+              featured: transform(result.featured),
+              popular: transform(result.popular),
+              'new': transform(result['new'])
+            };
+            cache.set('curated', results);
+            cache.updateCharmList(results);
+            this._renderCharmTokens(results, tokenHeaders, templateName);
+          },
+          failure: this.apiFailure.bind(this, 'curated')
+        }, this);
+      }
     },
 
     /**
