@@ -496,6 +496,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/websocket-logging.js'
         },
 
+        'browser-cache': {
+          fullpath: '/juju-ui/utils/cache.js'
+        },
+
         'environment-change-set': {
           fullpath: '/juju-ui/utils/environment-change-set.js'
         },
