@@ -461,6 +461,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         this._cleanups.push(generateStub.reset);
         var navigateStub = utils.makeStubMethod(app, 'navigate');
         this._cleanups.push(navigateStub.reset);
+        var emptyStub = utils.makeStubMethod(app, 'emptySectionA');
+        this._cleanups.push(emptyStub.reset);
         app._activeInspector = {
           get: function() {
             return {
@@ -488,8 +490,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var generateUrlStub = utils.makeStubMethod(
             app.state, 'generateUrl', 'genUrl');
         var navigateStub = utils.makeStubMethod(app, 'navigate');
+        var emptyStub = utils.makeStubMethod(
+            app, 'emptySectionA');
         app.fire('changeState', {foo: 'bar'});
         assert.equal(generateUrlStub.calledOnce(), true);
+        assert.equal(emptyStub.calledOnce(), true, 'Section A not emptied');
         assert.deepEqual(generateUrlStub.lastArguments()[0], {foo: 'bar'});
         assert.equal(navigateStub.calledOnce(), true);
         assert.equal(navigateStub.lastArguments()[0], 'genUrl');

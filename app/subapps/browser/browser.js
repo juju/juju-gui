@@ -381,6 +381,8 @@ YUI.add('subapp-browser', function(Y) {
         this.state.set('allowInspector', true);
         var state = e.details[0];
         var url = this.state.generateUrl(state);
+        // Make sure that any inspectors or charm listings are cleaned up.
+        this.emptySectionA();
         this.navigate(url);
       }, this);
 
