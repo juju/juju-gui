@@ -148,7 +148,10 @@ YUI.add('juju-charmbrowser', function(Y) {
       var content = Y.Node.create(this[template]()),
           TokenContainer = widgets.browser.TokenContainer,
           tokenContainers = [],
-          tokenContainer = {};
+          tokenContainer = {},
+          container = this.get('container'),
+          charmList = container.one('.charm-list');
+      charmList.append(content);
 
       tokenTypes.forEach(function(tokenType) {
         tokenContainer = new TokenContainer({
@@ -160,15 +163,12 @@ YUI.add('juju-charmbrowser', function(Y) {
           side: 'small',
           isDraggable: true
         });
-        tokenContainer.render(content.one('.' + tokenType));
+        tokenContainer.render(charmList.one('.' + tokenType));
         tokenContainers.push(tokenContainer);
       }, this);
 
       this.tokenContainers = tokenContainers;
-      var container = this.get('container'),
-          charmList = container.one('.charm-list');
       this.hideIndicator(charmList);
-      charmList.append(content);
       // Set the active charm if available.
       var active = this.get('activeID');
       if (active) {
