@@ -577,15 +577,14 @@ YUI.add('subapp-browser', function(Y) {
           !(charmIDChanged || viewmodeChanged)) {
         return;
       }
-      var EntityView, prefix = '';
+      var EntityView;
       if (entityId.indexOf('bundle') !== -1) {
         EntityView = views.BrowserBundleView;
       } else {
         EntityView = views.BrowserCharmView;
-        prefix = 'cs:';
       }
       // Gotten from the charmbrowser creating the cache.
-      var model = this._cache.getEntity(prefix + entityId);
+      var model = this._cache.getEntity(entityId);
       if (model) {
         extraCfg.entity = model;
       }

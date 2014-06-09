@@ -122,7 +122,31 @@ YUI.add('juju-bundle-models', function(Y) {
     */
     entityType: 'bundle',
     ATTRS: {
-      id: {},
+      id: {
+        'setter': function(id) {
+          var charmersIndex = id.indexOf('~charmers');
+          var stateId = '';
+          if (charmersIndex !== -1) {
+            // Remove the ~charmers/ from the url
+            stateId = id.substring(charmersIndex + 10);
+          } else {
+            stateId = id;
+          }
+          stateId = 'bundle/' + stateId;
+          this.set('stateId', stateId);
+          // We want to set this attribute to it's actual ID;
+          return id;
+        }
+      },
+      /**
+        This id is set from the setter of the real id. It is supposed to match
+        the id which is passed in from the state object.
+
+        @attribute stateId
+        @type {String}
+        @default undefined
+      */
+      stateId: {},
       name: {},
       description: {},
       /**

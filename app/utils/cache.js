@@ -103,18 +103,16 @@ YUI.add('browser-cache', function(Y) {
     */
     getEntity: function(entityId) {
       var bundleIndex = entityId.indexOf('bundle');
+      var bundle;
       if (bundleIndex !== -1) {
-        entityId = entityId.substring(bundleIndex + 7);
-        entityId = 'bundle:' + entityId;
-        var bundle;
         this._storage._entities.some(function(entity) {
-          if (entity.get('bundleURL') === entityId) {
+          if (entity.get('stateId') === entityId) {
             bundle = entity;
           }
         });
         return bundle;
       } else {
-        return this._storage._entities.getById(entityId);
+        return this._storage._entities.getById('cs:' + entityId);
       }
     },
 
