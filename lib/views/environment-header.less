@@ -14,78 +14,43 @@
         list-style: none;
 
         li {
-            .environment-header-li(20px);
+            @spacer: 20px;
+
+            .flex-basis(auto);
+            padding: 0 @spacer;
             background-color: #eee;
+            border-width: 0 1px 1px 0;
+            border-style: solid;
+            border-right-color: #d9d9d9;
+            border-bottom-color: #cdcdcd;
+            line-height: @environment-header-height;
 
-            &.small {
-                .environment-header-li(15px);
+            &:last-child {
+                border-right: none;
             }
-            &.tiny {
-                .environment-header-li(10px);
+            &.tab {
+                &.active {
+                    &.services {
+                        background-color: transparent;
+                        border-bottom: none;
+                    }
+                    &.machines a {
+                        background-color: #fff;
+                    }
+                    a {
+                        height: @environment-header-height;
+                    }
+                }
             }
-        }
-    }
-}
-
-/* Mixins */
-
-.environment-header-li(@spacer) {
-    // The following styles are in a mixin so the styles can be munipulated
-    // by parent classes.
-    .flex-basis(auto);
-    padding: 0 @spacer;
-    border-width: 0 1px 1px 0;
-    border-style: solid;
-    border-right-color: #d9d9d9;
-    border-bottom-color: #cdcdcd;
-    line-height: @environment-header-height;
-
-    &:last-child {
-        border-right: none;
-    }
-    &.tab {
-        &.active {
-            &.services {
-                background-color: transparent;
-                border-bottom: none;
-            }
-            &.machines a {
-                background-color: #fff;
+            &.spacer {
+                .flex(1);
             }
             a {
-                height: @environment-header-height;
+                display: block;
+                margin: 0 (-@spacer);
+                padding: 0 @spacer;
+                color: @text-colour;
             }
         }
-    }
-    &.search {
-      .flex(1);
-      position: relative;
-      padding: 0;
-
-      input[type=search] {
-          box-sizing: border-box;
-          width: 100%;
-          height: @environment-header-height - 1;
-          padding-left: 40px;
-          background-color: transparent;
-          border: none;
-      }
-      input[type=submit] {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: @environment-header-height;
-          height: @environment-header-height - 1;
-          background: transparent
-              url(/juju-ui/assets/images/non-sprites/environment_search.png)
-              no-repeat center center;
-          border: none;
-      }
-    }
-    a {
-        display: block;
-        margin: 0 (-@spacer);
-        padding: 0 @spacer;
-        color: @text-colour;
     }
 }
