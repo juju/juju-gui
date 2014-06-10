@@ -120,21 +120,30 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method _loadCurated
     */
     _loadCurated: function() {
-      var store = this.get('store');
-      this.activeRequestId = store.interesting({
-        'success': function(data) {
-          var result = data.result,
-              transform = store.transformResults;
-          var results = {
-            featured: transform(result.featured),
-            popular: transform(result.popular),
-            'new': transform(result['new'])
-          };
-          this._renderCharmTokens(
-              results, ['featured', 'popular', 'new'], 'curatedTemplate');
-        },
-        failure: this.apiFailure.bind(this, 'curated')
-      }, this);
+      var cache = this.get('cache'),
+          curated = cache.get('curated'),
+          tokenHeaders = ['featured', 'popular', 'new'],
+          templateName = 'curatedTemplate';
+      if (curated) {
+        this._renderCharmTokens(curated, tokenHeaders, templateName);
+      } else {
+        var store = this.get('store');
+        this.activeRequestId = store.interesting({
+          'success': function(data) {
+            var result = data.result,
+                transform = store.transformResults;
+            var results = {
+              featured: transform(result.featured),
+              popular: transform(result.popular),
+              'new': transform(result['new'])
+            };
+            cache.set('curated', results);
+            cache.updateEntityList(results);
+            this._renderCharmTokens(results, tokenHeaders, templateName);
+          },
+          failure: this.apiFailure.bind(this, 'curated')
+        }, this);
+      }
     },
 
     /**
@@ -252,10 +261,19 @@ YUI.add('juju-charmbrowser', function(Y) {
       @method _loadSearchResults
     */
     _loadSearchResults: function() {
-      this.activeRequestId = this.get('store').search(this.get('filters'), {
-        'success': this._loadSearchSuccessHandler,
-        'failure': this.apiFailure.bind(this, 'search')
-      }, this);
+      var filters = this.get('filters'),
+          cacheKey = Y.QueryString.stringify(filters),
+          searchCache = this.get('cache').get(cacheKey);
+      if (searchCache) {
+        this._renderCharmTokens(
+            // If you change these change them in _loadSearchSuccessHandler too.
+            searchCache, ['recommended', 'other'], 'searchResultTemplate');
+      } else {
+        this.activeRequestId = this.get('store').search(filters, {
+          'success': this._loadSearchSuccessHandler,
+          'failure': this.apiFailure.bind(this, 'search')
+        }, this);
+      }
     },
 
     /**
@@ -285,12 +303,18 @@ YUI.add('juju-charmbrowser', function(Y) {
           }
         }
       }, this);
-      this._renderCharmTokens({
+      var cache = this.get('cache');
+      var entityData = {
         recommended: recommended,
         // The token type is called 'other' instead of 'new' because 'new'
         // clashes with class names of other elements.
         other: other
-      }, ['recommended', 'other'], 'searchResultTemplate');
+      };
+      cache.set(Y.QueryString.stringify(this.get('filters')), entityData);
+      cache.updateEntityList(entityData);
+      this._renderCharmTokens(
+          // If you change these change them in _loadSearchResults too.
+          entityData, ['recommended', 'other'], 'searchResultTemplate');
     },
 
     /**
@@ -438,6 +462,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     'event-tracker',
     'juju-view-utils',
     'view',
-    'juju-models'
+    'juju-models',
+    'querystring'
   ]
 });

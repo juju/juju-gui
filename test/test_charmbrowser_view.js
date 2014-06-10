@@ -312,44 +312,86 @@ describe('charmbrowser view', function() {
 
   describe('_loadSearchResults', function() {
     var failure, render, search, searchArgs, transform;
-    beforeEach(function() {
+
+    function makeStubs(context) {
       failure = utils.makeStubMethod(charmBrowser, 'apiFailure');
-      this._cleanups.push(failure.reset);
+      context._cleanups.push(failure.reset);
       render = utils.makeStubMethod(charmBrowser, '_renderCharmTokens');
-      this._cleanups.push(render.reset);
+      context._cleanups.push(render.reset);
       charmBrowser.set('store', {
         search: utils.makeStubFunction(),
         transformResults: utils.makeStubFunction([]),
         cancelInFlightRequest: utils.makeStubFunction()
       });
-      charmBrowser.set('filters', 'filterObj');
+      charmBrowser.set('filters', { text: 'apache' });
+      charmBrowser.set('cache', {
+        get: utils.makeStubFunction(),
+        set: utils.makeStubFunction(),
+        updateEntityList: utils.makeStubFunction()
+      });
+    }
+
+    function callLoadSearchResults(context) {
+      makeStubs(context);
       charmBrowser._loadSearchResults();
       search = charmBrowser.get('store').search;
       transform = charmBrowser.get('store').transformResults;
       searchArgs = search.lastArguments();
-    });
+    }
+
+    beforeEach(function() {});
+    afterEach(function() {});
 
     it('requests the store for curated results', function() {
-      assert.equal(searchArgs[0], 'filterObj');
+      callLoadSearchResults(this);
+      assert.deepEqual(searchArgs[0], { text: 'apache' });
       assert.deepEqual(Object.keys(searchArgs[1]), ['success', 'failure']);
       assert.deepEqual(searchArgs[2], charmBrowser);
     });
 
     it('passes the api failure call off properly', function() {
+      callLoadSearchResults(this);
       searchArgs[1].failure();
       assert.equal(failure.calledOnce(), true);
       assert.equal(failure.lastArguments()[0], 'search');
     });
 
     it('calls to render the search results', function() {
+      callLoadSearchResults(this);
       var data = {
         recommended: [],
         other: [] };
       searchArgs[1].success.call(charmBrowser, data);
       assert.equal(transform.callCount(), 1);
+      // Make sure it updates the cache with the search results.
+      var cache = charmBrowser.get('cache');
+      assert.equal(cache.set.calledOnce(), true, 'set not called');
+      var cacheArgs = cache.set.lastArguments();
+      assert.equal(cacheArgs[0], 'text=apache');
+      assert.deepEqual(cacheArgs[1], {
+        recommended: [],
+        other: [] });
+      assert.equal(cache.updateEntityList.calledOnce(), true,
+          'updateEntityList not called');
+      // Make sure it calls to render the results.
       assert.equal(render.calledOnce(), true);
       var renderArgs = render.lastArguments();
       assert.deepEqual(renderArgs[0], data);
+      assert.deepEqual(renderArgs[1], ['recommended', 'other']);
+      assert.equal(renderArgs[2], 'searchResultTemplate');
+    });
+
+    it('calls to render search results when cached results exist', function() {
+      makeStubs(this);
+      var searchCache = { foo: 'bar' };
+      charmBrowser.set('cache', {
+        get: utils.makeStubFunction(searchCache)
+      });
+      charmBrowser._loadSearchResults();
+      // Make sure it calls to render the results.
+      assert.equal(render.calledOnce(), true, 'render not called');
+      var renderArgs = render.lastArguments();
+      assert.deepEqual(renderArgs[0], searchCache);
       assert.deepEqual(renderArgs[1], ['recommended', 'other']);
       assert.equal(renderArgs[2], 'searchResultTemplate');
     });
@@ -357,34 +399,50 @@ describe('charmbrowser view', function() {
 
   describe('_loadCurated', function() {
     var interesting, intArgs, failure, render, transform;
-    beforeEach(function() {
+
+    function makeStubs(context) {
       failure = utils.makeStubMethod(charmBrowser, 'apiFailure');
-      this._cleanups.push(failure.reset);
+      context._cleanups.push(failure.reset);
       render = utils.makeStubMethod(charmBrowser, '_renderCharmTokens');
-      this._cleanups.push(render.reset);
+      context._cleanups.push(render.reset);
       charmBrowser.set('store', {
         interesting: utils.makeStubFunction(),
         transformResults: utils.makeStubFunction({}),
         cancelInFlightRequest: utils.makeStubFunction()
       });
+      charmBrowser.set('cache', {
+        get: utils.makeStubFunction(),
+        set: utils.makeStubFunction(),
+        updateEntityList: utils.makeStubFunction()
+      });
+    }
+
+    function callLoadCurated(context) {
+      makeStubs(context);
       charmBrowser._loadCurated();
       interesting = charmBrowser.get('store').interesting;
       transform = charmBrowser.get('store').transformResults;
       intArgs = interesting.lastArguments();
-    });
+    }
+
+    beforeEach(function() {});
+    afterEach(function() {});
 
     it('requests the store for curated results', function() {
+      callLoadCurated(this);
       assert.deepEqual(Object.keys(intArgs[0]), ['success', 'failure']);
       assert.deepEqual(intArgs[1], charmBrowser);
     });
 
     it('passes the api failure call off properly', function() {
+      callLoadCurated(this);
       intArgs[0].failure();
       assert.equal(failure.calledOnce(), true);
       assert.equal(failure.lastArguments()[0], 'curated');
     });
 
     it('calls to render the results', function() {
+      callLoadCurated(this);
       var data = {
         result: {
           featured: {},
@@ -392,9 +450,33 @@ describe('charmbrowser view', function() {
           'new': {} }};
       intArgs[0].success.call(charmBrowser, data);
       assert.equal(transform.callCount(), 3);
+      // Make sure it updates the cache for any curated data.
+      var cache = charmBrowser.get('cache');
+      assert.equal(cache.set.calledOnce(), true);
+      var cacheArgs = cache.set.lastArguments();
+      assert.equal(cacheArgs[0], 'curated');
+      assert.deepEqual(cacheArgs[1], data.result);
+      assert.equal(cache.updateEntityList.calledOnce(), true);
+      assert.deepEqual(cache.updateEntityList.lastArguments()[0], data.result);
+      // Make sure it calls to render
       assert.equal(render.calledOnce(), true);
       var renderArgs = render.lastArguments();
       assert.deepEqual(renderArgs[0], data.result);
+      assert.deepEqual(renderArgs[1], ['featured', 'popular', 'new']);
+      assert.equal(renderArgs[2], 'curatedTemplate');
+    });
+
+    it('calls to render cached results if they exist', function() {
+      makeStubs(this);
+      var cached = { foo: 'bar' };
+      charmBrowser.get('cache').get = utils.makeStubFunction(cached),
+      /* jshint -W030 */
+      // Linter doesn't like this call for some reason.
+      charmBrowser._loadCurated();
+      // Make sure it calls to render
+      assert.equal(render.calledOnce(), true);
+      var renderArgs = render.lastArguments();
+      assert.deepEqual(renderArgs[0], cached);
       assert.deepEqual(renderArgs[1], ['featured', 'popular', 'new']);
       assert.equal(renderArgs[2], 'curatedTemplate');
     });

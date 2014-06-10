@@ -252,4 +252,19 @@ describe('The bundle model', function() {
     assert.deepEqual(['Jorge O. Castro', 'n/a'], parts);
   });
 
+  // These two tests around the stateId use two different methods for setting
+  // the id because of a bug in YUI https://github.com/yui/yui3/issues/1859
+  // See the initializer in the Bundle model for more information.
+  it('creates a stateId when the id attribute is set (charmers)', function() {
+    instance = new models.Bundle();
+    instance.set('id', '~charmers/wiki/5/wiki');
+    assert.equal(instance.get('stateId'), 'bundle/wiki/5/wiki');
+  });
+
+  it('creates a stateId when the id attribute is set', function() {
+    instance = new models.Bundle(data);
+    assert.equal(instance.get('stateId'), 'bundle/~benji/wiki/5/wiki');
+  });
+  // See comment above regarding these two tests
+
 });

@@ -31,10 +31,19 @@ YUI.add('browser-cache', function(Y) {
     @method BrowserCache
   */
   function BrowserCache() {
-    this._storage = {};
+    this.init();
   }
 
   BrowserCache.prototype = {
+    /**
+      Sets up the cache.
+
+      @method init
+    */
+    init: function() {
+      this._storage = {};
+      this._storage._entities = new Y.ModelList();
+    },
 
     /**
       Fetch the data associated with a key from the storage cache.
@@ -57,10 +66,99 @@ YUI.add('browser-cache', function(Y) {
     set: function(key, data) {
       this._storage[key] = Y.clone(data);
       return this._storage[key];
-    }
+    },
 
+    /**
+      Updates the internal charm model cache.
+
+      @method updateEntityList
+      @param {Object} entityList Either a single charm/bundle model or an object
+        of models from the charmstore transformed results.
+    */
+    updateEntityList: function(entityList) {
+      // Check to see if this is a single charm model or not
+      if (entityList instanceof Y.Model) {
+        this._storage._entities.add(entityList);
+      } else {
+        Object.keys(entityList).forEach(function(key) {
+          var entities = entityList[key];
+          // The charmworld transform method can return a single charm model
+          // or an array of them.
+          if (!Y.Lang.isArray(entities)) {
+            entities = [entities];
+          }
+          entities.forEach(function(charm) {
+            this._storage._entities.add(charm);
+          }, this);
+        }, this);
+      }
+    },
+
+    /**
+      Fetches the charm from the charm cache if it exists.
+
+      @method getEntity
+      @param {String} entityId The charm or bundle id to fetch from the cache.
+      @return {CharmModel | null} The charm model or null if it doesn't exist.
+    */
+    getEntity: function(entityId) {
+      var bundleIndex = entityId.indexOf('bundle');
+      var bundle;
+      if (bundleIndex !== -1) {
+        this._storage._entities.some(function(entity) {
+          if (entity.get('stateId') === entityId) {
+            bundle = entity;
+          }
+        });
+        return bundle;
+      } else {
+        return this._storage._entities.getById('cs:' + entityId);
+      }
+    },
+
+    /**
+      Empty the cache. This is a nuclear option, there's no going back.
+
+      @method empty
+    */
+    empty: function() {
+      var storage = this._storage;
+      storage._entities.destroy();
+      this._destroyModels(storage);
+      this._storage = null;
+      // Set the cache back to a functional state
+      this.init();
+    },
+
+    /**
+      Recursive function to loop through the cache and destroy any existing
+      models.
+
+      @method _destroyModels
+      @param {Object} storage A storage object. Starts with the parent cache
+        object.
+    */
+    _destroyModels: function(storage) {
+      Object.keys(storage).forEach(function(key) {
+        var model = storage[key];
+        if (!(model instanceof Y.Model || model instanceof Y.ModelList) &&
+            (typeof model === 'object')) {
+          this._destroyModels(model);
+        } else {
+          // In case items which are not models are stored in here and do not
+          // have a destroy method.
+          if (model.destroy) {
+            model.destroy();
+          }
+        }
+      }, this);
+    }
   };
 
   Y.namespace('juju').BrowserCache = BrowserCache;
-
+}, '', {
+  requires: [
+    'model',
+    'model-list'
+  ]
 });
