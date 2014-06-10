@@ -273,6 +273,25 @@ describe('machine view panel view', function() {
       assert.equal(view._containersHeader.setNotDroppable.calledOnce(), true);
     });
 
+    it('converts headers to non-drop targets when dropped on a header',
+        function() {
+          view.render();
+          view._machinesHeader = {
+            setNotDroppable: utils.makeStubFunction(),
+            updateLabelCount: utils.makeStubFunction()
+          };
+          view._containersHeader = {
+            setNotDroppable: utils.makeStubFunction()
+          };
+          view._unitTokenDropHandler({
+            dropAction: 'machine',
+            unit: 'test/1'
+          });
+          assert.equal(view._machinesHeader.setNotDroppable.calledOnce(), true);
+          assert.equal(view._containersHeader.setNotDroppable.calledOnce(),
+              true);
+        });
+
     it('creates a new machine when dropped on machine header', function() {
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
       this._cleanups.push(toggleStub.reset);
@@ -341,6 +360,13 @@ describe('machine view panel view', function() {
     it('places the unit on an already existing container', function() {
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
       this._cleanups.push(toggleStub.reset);
+      view._machinesHeader = {
+        setNotDroppable: utils.makeStubFunction(),
+        updateLabelCount: utils.makeStubFunction()
+      };
+      view._containersHeader = {
+        setNotDroppable: utils.makeStubFunction()
+      };
       view._unitTokenDropHandler({
         dropAction: 'container',
         targetId: '0/lxc/1',

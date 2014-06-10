@@ -328,6 +328,7 @@ YUI.add('machine-view-panel', function(Y) {
           var unit = db.units.getById(evt.unit);
           var placeId;
 
+          this._hideDraggingUI();
           if (dropAction === 'container' &&
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
