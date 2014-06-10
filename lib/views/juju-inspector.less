@@ -487,6 +487,10 @@
                 padding-top: 20px;
                 border-top: 1px solid @inspector-divider-top;
             }
+            .header-slot header .service-charm .charm-url {
+                cursor: auto;
+                text-decoration: none;
+            }
         }
 
         .control-description,
@@ -537,12 +541,13 @@
                     .icon,
                     .icon img {
                         /* Required for sizing images in IE10 */
-                        width: 30px;
-                        height: 30px;
+                        width: 50px;
+                        height: 50px;
 
                     }
                     .details-wrapper {
                         width: 180px;
+                        margin-top: 3px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
@@ -555,7 +560,7 @@
                         }
                         input.service-name {
                             display: block;
-                            width: 170px;
+                            width: 160px;
                             margin-bottom: 5px;
                         }
                     }
@@ -565,7 +570,9 @@
                     }
                     .close {
                         display: block;
-                        float: right;
+                        position: absolute;
+                        top: 20px;
+                        right: 20px;
                         cursor: pointer;
 
                         .sprite {

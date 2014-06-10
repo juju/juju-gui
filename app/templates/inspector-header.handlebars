@@ -11,10 +11,8 @@
         <div data-bind="displayName" class="service-name">{{displayName}}</div>
       {{/if}}
       <div {{#unless ghost}}data-bind="charm"{{/unless}}
-           data-charmid="{{charmUrl}}">{{charmUrl}}</div>
-      {{#unless pending}}
-        <div class="charm-url" data-charmid="{{charmUrl}}">Charm details</div>
-      {{/unless}}
+           data-charmid="{{charmUrl}}"
+           class="charm-url">{{charmUrl}}</div>
     </div>
     <div class="close">
         <i class="sprite inspector-close"></i>
