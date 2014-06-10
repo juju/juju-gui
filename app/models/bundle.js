@@ -59,6 +59,14 @@ YUI.add('juju-bundle-models', function(Y) {
 
       this.loaded = false;
       this.on('load', function() { this.loaded = true; });
+      // Because of a bug in Y.Attribute https://github.com/yui/yui3/issues/1859
+      // Attribute setters are not called when values are passed in in the
+      // constructors. This checks if a value is being passed in via the
+      // constructor and calls the setter manually.
+      var id = cfg && cfg.id;
+      if (id) {
+        this.idSetter(id);
+      }
     },
 
     /**
@@ -109,6 +117,31 @@ YUI.add('juju-bundle-models', function(Y) {
         }, this);
       }
       return commits;
+    },
+
+    /**
+      Called when the id value is set. It parses the id and sets the `stateId`
+      value to match what the value will be for the id's passed in from the
+      state metadata.
+
+      @method idSetter
+      @param {String} id The bundles id
+      @return {String} The id that was passed in.
+    */
+    idSetter: function(id) {
+      if (id === undefined) { return id; }
+      var charmersIndex = id.indexOf('~charmers');
+      var stateId = '';
+      if (charmersIndex !== -1) {
+        // Remove the ~charmers/ from the url
+        stateId = id.substring(charmersIndex + 10);
+      } else {
+        stateId = id;
+      }
+      stateId = 'bundle/' + stateId;
+      this.set('stateId', stateId);
+      // We want to set this attribute to it's actual ID;
+      return id;
     }
   }, {
     /**
@@ -124,18 +157,8 @@ YUI.add('juju-bundle-models', function(Y) {
     ATTRS: {
       id: {
         'setter': function(id) {
-          var charmersIndex = id.indexOf('~charmers');
-          var stateId = '';
-          if (charmersIndex !== -1) {
-            // Remove the ~charmers/ from the url
-            stateId = id.substring(charmersIndex + 10);
-          } else {
-            stateId = id;
-          }
-          stateId = 'bundle/' + stateId;
-          this.set('stateId', stateId);
-          // We want to set this attribute to it's actual ID;
-          return id;
+          // This is called like this because of a bug in YUI see initializer.
+          this.idSetter(id);
         }
       },
       /**

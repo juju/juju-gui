@@ -141,7 +141,8 @@ YUI.add('browser-cache', function(Y) {
     _destroyModels: function(storage) {
       Object.keys(storage).forEach(function(key) {
         var model = storage[key];
-        if ((!model instanceof Y.Model) && (typeof model === 'object')) {
+        if (!(model instanceof Y.Model || model instanceof Y.ModelList) &&
+            (typeof model === 'object')) {
           this._destroyModels(model);
         } else {
           // In case items which are not models are stored in here and do not
@@ -157,6 +158,7 @@ YUI.add('browser-cache', function(Y) {
   Y.namespace('juju').BrowserCache = BrowserCache;
 }, '', {
   requires: [
+    'model',
     'model-list'
   ]
 });

@@ -462,6 +462,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     'event-tracker',
     'juju-view-utils',
     'view',
-    'juju-models'
+    'juju-models',
+    'querystring'
   ]
 });
