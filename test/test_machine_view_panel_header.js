@@ -88,8 +88,8 @@ describe('machine view panel header view', function() {
     assert.equal(container.one('.label').get('text').trim(), '0 tests');
   });
 
-  it('fires an event on tab change', function(done) {
-    view.on('actionFired', function(e) {
+  it('fires an event on clicking on the action', function(done) {
+    view.on('createMachine', function(e) {
       assert.isObject(e);
       done();
     });

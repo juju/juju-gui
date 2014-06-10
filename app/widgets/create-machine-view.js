@@ -112,7 +112,7 @@ YUI.add('create-machine-view', function(Y) {
         */
         destructor: function() {
           var container = this.get('container');
-          container.setHTML('');
+          container.empty();
           container.removeClass('create-machine-view');
         },
 

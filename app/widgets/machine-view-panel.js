@@ -94,6 +94,7 @@ YUI.add('machine-view-panel', function(Y) {
         _bindEvents: function() {
           var db = this.get('db');
 
+          // Machine change handlers
           this.addEvent(db.machines.after(
               'add', this._onMachineAdd, this));
           this.addEvent(db.machines.after(
@@ -101,6 +102,7 @@ YUI.add('machine-view-panel', function(Y) {
           this.addEvent(db.machines.after(
               '*:change', this._onMachineChange, this));
 
+          // Unit change handlers
           this.addEvent(db.units.after(
               'add', this._onUnitAdd, this));
           this.addEvent(db.units.after(
@@ -108,21 +110,12 @@ YUI.add('machine-view-panel', function(Y) {
           this.addEvent(db.units.after(
               '*:change', this._onUnitChange, this));
 
+          // Drag-n-drop handlers
           this.on('*:unit-token-drag-start', this._showDraggingUI, this);
           this.on('*:unit-token-drag-end', this._hideDraggingUI, this);
           this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
 
           this.on('*:moveToken', this._placeServiceUnit, this);
-        },
-
-        /**
-          Handle the action in the machines header being fired.
-
-         @method _handleMachinesHeaderAction
-         @param {Y.Event} e EventFacade object.
-        */
-        _handleMachinesHeaderAction: function(e) {
-          this._displayCreateMachine();
         },
 
         /**
@@ -367,6 +360,9 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} unit The unit to place on the machine.
         */
         _displayCreateMachine: function(unit) {
+          if (unit._event) {
+            unit = null;
+          }
           var createMachine = new views.CreateMachineView({
             container: this.get('container').one('.create-machine'),
             unit: unit
@@ -374,10 +370,18 @@ YUI.add('machine-view-panel', function(Y) {
           if (unit) {
             this._removeUnit(unit.id);
           }
-          this.addEvent(createMachine.on(
-              'createMachine', this._handleCreateMachine, this));
-          this.addEvent(createMachine.on(
-              'cancelCreateMachine', this._handleCancelCreateMachine, this));
+          var createHandler, cancelHandler, handler;
+          createHandler = createMachine.on('createMachine',
+                                           this._handleCreateMachine,
+                                           this);
+          cancelHandler = createMachine.on('cancelCreateMachine',
+                                           this._handleCancelCreateMachine,
+                                           this);
+          handler = createMachine.after('destroy', function() {
+            createHandler.detach();
+            cancelHandler.detach();
+            handler.detach();
+          });
         },
 
         /**
@@ -568,8 +572,6 @@ YUI.add('machine-view-panel', function(Y) {
                 dropLabel: 'Create new machine'
               });
           this._machinesHeader.addTarget(this);
-          this.addEvent(this._machinesHeader.on(
-              'actionFired', this._handleMachinesHeaderAction, this));
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'container',
@@ -582,6 +584,8 @@ YUI.add('machine-view-panel', function(Y) {
                 title: 'Unplaced units'
               });
           this._unplacedHeader.addTarget(this);
+          this.addEvent(this.on(
+              '*:createMachine', this._displayCreateMachine, this));
         },
 
         /**
