@@ -719,7 +719,6 @@ YUI.add('subapp-browser', function(Y) {
         env: this.get('env'),
         db: this.get('db')
       }).render();
-      inspector.recalculateHeight();
       inspector.addTarget(this);
       return inspector;
     },
@@ -736,7 +735,6 @@ YUI.add('subapp-browser', function(Y) {
         env: this.get('env'),
         db: this.get('db')
       }).render();
-      inspector.recalculateHeight();
       inspector.addTarget(this);
       return inspector;
     },
