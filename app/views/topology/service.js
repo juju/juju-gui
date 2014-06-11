@@ -696,6 +696,7 @@ YUI.add('juju-topology-service', function(Y) {
         sectionA: {
           component: 'inspector',
           metadata: {
+            id: null,
             localType: 'new',
             flash: {
               file: file
@@ -834,6 +835,7 @@ YUI.add('juju-topology-service', function(Y) {
         sectionA: {
           component: 'inspector',
           metadata: {
+            id: null,
             localType: 'update',
             flash: {
               file: file,

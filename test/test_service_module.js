@@ -675,10 +675,37 @@ describe('service module events', function() {
       sectionA: {
         component: 'inspector',
         metadata: {
+          id: null,
           localType: 'update',
           flash: {
             file: fileObj,
             services: services
+          }}}
+    });
+  });
+
+  it('_deployLocalCharm: calls to show the inspector', function() {
+    var dbObj = { db: 'db' };
+    var fileObj = { name: 'foo' };
+    var envObj = { env: 'env' };
+
+    serviceModule.set('component', {
+      fire: utils.makeStubFunction()
+    });
+
+    var fireStub = serviceModule.get('component').fire;
+
+    serviceModule._deployLocalCharm(fileObj, envObj, dbObj);
+    assert.equal(fireStub.callCount(), 1);
+    assert.equal(fireStub.lastArguments()[0], 'changeState');
+    assert.deepEqual(fireStub.lastArguments()[1], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: null,
+          localType: 'new',
+          flash: {
+            file: fileObj
           }}}
     });
   });
