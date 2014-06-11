@@ -81,7 +81,7 @@ YUI.add('machine-view-panel-header', function(Y) {
          */
         clickAction: function(e) {
           e.preventDefault();
-          this.fire('actionFired');
+          this.fire('createMachine');
         },
 
         /**
