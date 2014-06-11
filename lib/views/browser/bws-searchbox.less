@@ -1,87 +1,118 @@
-.yui3-search-widget-hidden {
-  display: none;
-}
+#subapp-browser #bws-sidebar {
+    .yui3-search-widget-hidden {
+        display: none;
+    }
+    .bws-searchbox {
+        width: 250px;
+        position: relative;
 
-.bws-searchbox {
-    width: 250px;
-    position: relative;
-
-    form {
-        margin: 0;
-
-        .search {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        input {
-            .border-box;
-            height: 40px;
-            width: 100%;
+        form {
             margin: 0;
-            padding: 0 40px 0 10px;
+
+            .search {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            input {
+                .border-box;
+                height: 40px;
+                width: 100%;
+                margin: 0;
+                padding: 0 40px 0 10px;
+                background-color: #fff;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+                border: 1px solid @bws-border;
+                outline: none;
+                border-radius: @border-radius;
+                font-size: 16px;
+                color: #bbb;
+            }
+            &.active input {
+                border-color: @charm-panel-orange;
+                color: @text-colour;
+            }
+        }
+        .yui3-aclist {
+            // Need the list to appear above the sticky headings in the charm list.
+            // Needs to be on top of the overlay indicator while the sidebar
+            // content is loading (its zindex is 999)
+            z-index: 1000;
+            width: 100%;
             background-color: #fff;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-            border: 1px solid @bws-border;
-            outline: none;
-            border-radius: @border-radius;
-            font-size: 16px;
-            color: #bbb;
+
+            .yui3-aclist-content {
+                border: 1px solid #bbb;
+                box-shadow: 1px 1px 1px #DFDFDF;
+
+                .yui3-aclist-item {
+                    padding-top: 0;
+                    padding-bottom: 0;
+
+                    // Make sure we don't draw a border on the last one in the list.
+                    &:last-child .yui3-token {
+                        border-bottom: 0;
+                    }
+                    &:hover {
+                        background-color: #eee;
+                    }
+                    .yui3-token {
+                        width: auto;
+                        margin-left: 5px;
+                        margin-right: 5px;
+                        border-top: none;
+                        border-bottom: 1px solid #efefef;
+
+                        // The last category we find needs a special border to
+                        // break it from the charms that are suggested.
+                        &.last-category {
+                            border-bottom: 1px solid #999;
+                            // Back out the aclist-item margin so our line goes
+                            // across the container.
+                            margin-left: -5px;
+                            margin-right: -5px;
+
+                            // And put the margin back on the child container so
+                            // the icons and such line back up.
+                            .token {
+                                margin-left: 10px;
+                                margin-right: 10px;
+                            }
+                        }
+                        .title {
+                            max-width: 135px;
+                        }
+                        .token.tiny.category {
+                            .icon,
+                            .icon img {
+                                width: 27px;
+                                height: 27px;
+                            }
+                            .title {
+                                .type13;
+                            }
+                        }
+
+                        .token.tiny {
+                            padding: 8px 0;
+
+                            .title {
+                                .type15;
+                                margin-top: 2px;
+                            }
+                            .icon,
+                            .icon img {
+                                width: 32px;
+                                height: 32px;
+                            }
+
+                        }
+                    }
+                }
+            }
         }
-        &.active input {
-            border-color: @charm-panel-orange;
-            color: @text-colour;
-        }
     }
-
-    .yui3-aclist {
-      // Need the list to appear above the sticky headings in the charm list.
-      // Needs to be on top of the overlay indicator while the sidebar
-      // content is loading (it's zindex is 999)
-      z-index: 1000;
-      width: 100%;
-      background-color: #fff;
-
-      .yui3-aclist-content {
-        border: 1px solid #bbb;
-        box-shadow: 1px 1px 1px #DFDFDF;
-      }
-
-      .yui3-token {
-          .title {
-              max-width: 135px;
-          }
-      }
-    }
-
-    /* Make sure we don't draw a border on the last one in the list */
-    .yui3-aclist-list .yui3-aclist-item:last-child .yui3-token {
-        border-bottom: 0;
-    }
-
-    /* The last category we find needs a special border to break it from the
-     * charms that are suggested */
-    .yui3-aclist-list .yui3-aclist-item .yui3-token.last-category {
-        border-bottom: 1px solid #999;
-        /* Back out the aclist-item margin so our line goes across the container */
-        margin-left: -5px;
-        margin-right: -5px;
-
-        /* And put the margin back on the child container so the icons and such
-         * line back up */
-        .token {
-          margin-left: 10px;
-          margin-right: 10px;
-        }
-    }
-}
-
-.yui3-aclist-item-hover {
-  background-color: #eee;
-}
-
-#subapp-browser {
-   .browser-nav {
+    .browser-nav {
         padding: 30px 0 10px 0;
         display: none;
 
@@ -101,46 +132,4 @@
     .with-home .browser-nav {
         display: block;
     }
-
-    /* Override styles for the autocomplete results */
-    #bws-sidebar .yui3-aclist-item {
-
-        .yui3-token {
-            border-bottom: 1px solid #efefef;
-            border-top: none;
-            width: auto;
-            margin-left: 5px;
-            margin-right: 5px;
-
-            .token.tiny.category {
-                .icon,
-                .icon img {
-                    width: 27px;
-                    height: 27px;
-                }
-
-                .title {
-                  .type13;
-                }
-            }
-
-            .token.tiny {
-                padding: 8px 0;
-
-                .title {
-                    .type15;
-                    margin-top: 2px;
-                }
-
-                .icon,
-                .icon img {
-                    width: 32px;
-                    height: 32px;
-                }
-
-            }
-        }
-    }
-
 }
-
