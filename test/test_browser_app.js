@@ -194,7 +194,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       describe('state dispatchers', function() {
         var showSearchStub, setHome, renderCharmBrowser, entityStub,
-            cleanupEntity, metadata;
+            cleanupEntity, metadata, onboarding;
 
         beforeEach(function() {
           app = new browser.Browser({});
@@ -222,6 +222,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             context._cleanups.push(entityStub.reset);
             cleanupEntity = utils.makeStubMethod(app, '_cleanupEntityDetails');
             context._cleanups.push(cleanupEntity.reset);
+            onboarding = utils.makeStubMethod(app, 'renderOnboarding');
+            context._cleanups.push(onboarding.reset);
           }
 
           function assertions(data) {
@@ -241,9 +243,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 cleanupEntity.callCount(),
                 data.cleanupEntityCount,
                 'cleanupEntity');
+            assert.equal(
+                onboarding.callCount(),
+                data.renderOnboardingCount,
+                'renderOnboardingCount');
           }
 
-          it('calls to reneder the charmbrowser with the metadata', function() {
+          it('calls to render the charmbrowser with the metadata', function() {
             stubRenderers(this);
             metadata = {};
             // Cloning the object passed in so we can see if it's modified.
@@ -252,7 +258,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               renderCharmBrowserCount: 1,
               renderCharmBrowserData: metadata,
               renderEntityCount: 0,
-              cleanupEntityCount: 1
+              cleanupEntityCount: 1,
+              renderOnboardingCount: 1
             });
           });
 
@@ -269,7 +276,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               renderCharmBrowserCount: 1,
               renderCharmBrowserData: metadata,
               renderEntityCount: 1,
-              cleanupEntityCount: 0
+              cleanupEntityCount: 0,
+              renderOnboardingCount: 0
             });
           });
         });

@@ -59,10 +59,10 @@ YUI.add('help-dropdown', function(Y) {
           ev.halt();
           // Added by the view-dropdown-extension.js
           this.__close(); // Closes itself
-          // Because we need the app to be in sidebar mode when
+          // Because we need the app to be in the root mode when
           // the user views the onboarding we navigate to it.
           localStorage.setItem('force-onboarding', true);
-          this.fire('navigate', { url: '/sidebar' });
+          this.fire('navigate', { url: '/' });
         },
 
         /**

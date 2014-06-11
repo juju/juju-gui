@@ -400,7 +400,6 @@ YUI.add('subapp-browser', function(Y) {
     */
     _charmBrowserDispatcher: function(metadata) {
       this.renderCharmBrowser(metadata);
-
       // XXX Won't be needed once window.flags.il becomes the norm. The details
       // template should be updated to hide by default.
       if (this._shouldShowCharm()) {
@@ -413,6 +412,7 @@ YUI.add('subapp-browser', function(Y) {
       // viewing the charm details.
       if (!metadata || !metadata.id) {
         this._cleanupEntityDetails();
+        this.renderOnboarding();
       }
     },
 
@@ -632,20 +632,20 @@ YUI.add('subapp-browser', function(Y) {
       browser is showing charm details or search results.
 
       @method renderOnboarding
-      @param {Boolean} force Whether it should force render the onboarding.
     */
-    renderOnboarding: function(force) {
+    renderOnboarding: function() {
       // The sidebar method which calls this method checks to make sure that
       // onboarding doesn't exist prior to calling this method due to the
       // double dispatch bug.
-      this._onboarding = new Y.juju.views.OnboardingView({
-        'container': '#onboarding'
-      });
-
-      if (force) {
+      if (!this._onboarding) {
+        this._onboarding = new Y.juju.views.OnboardingView({
+          'container': '#onboarding'
+        });
+      }
+      if (localStorage.getItem('force-onboarding')) {
+        localStorage.setItem('force-onboarding', '');
         this._onboarding.reset();
       }
-
       if (!this._onboarding.get('seen')) {
         this._onboarding.render();
       }
