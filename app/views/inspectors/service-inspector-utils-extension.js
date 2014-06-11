@@ -42,6 +42,10 @@ YUI.add('service-inspector-utils-extension', function(Y) {
       this.initiateServiceDestroy();
       this._onCancelDestroy(evt);
       this.get('topo').fire('clearState');
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: { id: null }}});
     },
 
     /**
