@@ -579,6 +579,8 @@ describe('Ghost Inspector', function() {
         function(done) {
           inspector = setUpInspector();
           container = inspector.get('container');
+          var fire = utils.makeStubMethod(inspector, 'fire');
+          this._cleanups.push(inspector.reset);
           var promptBox = container.one('.destroy-service-prompt');
           // First we have to open the prompt.
           container.one('.destroy-service-trigger span').simulate('click');
@@ -589,6 +591,14 @@ describe('Ghost Inspector', function() {
             done();
           };
           container.one('.initiate-destroy').simulate('click');
+          // Check to make sure that it fires the event to reset the sidebar
+          assert.equal(fire.calledOnce(), true);
+          var fireArgs = fire.lastArguments();
+          assert.equal(fireArgs[0], 'changeState');
+          assert.deepEqual(fireArgs[1], {
+            sectionA: {
+              component: null,
+              metadata: { id: null }}});
         });
 
     it('wires up UI elements to handlers for destroy service', function() {
