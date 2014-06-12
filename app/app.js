@@ -879,7 +879,7 @@ YUI.add('juju-gui', function(Y) {
       // to be text/plain instead of it's actual type of application/yaml.
       var exportBlob = new Blob([exportData],
           {type: 'text/plain;charset=utf-8'});
-      saveAs(exportBlob, 'export.yaml');
+      saveAs(exportBlob, 'bundles.yaml');
     },
 
     /**
