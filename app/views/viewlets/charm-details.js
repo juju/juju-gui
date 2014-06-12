@@ -45,15 +45,8 @@ YUI.add('charm-details-view', function(Y) {
           panel = Y.one('.charmbrowser');
       // Target the charm details div for the inspector popout content.
       container = this.get('container');
-      container.delegate('click', function(ev) {
-        ev.halt();
-        this.viewletManager.hideSlot(ev);
-        window.location.hash = '';
-        panel.removeClass('animate-in');
-        container.hide();
-        this.destroy({remove: true});
-        container.empty();
-      }, '.close-slot', this);
+
+      container.delegate('click', this.close, '.close-slot', this);
       panel.removeClass('animate-in');
       container.hide();
 
@@ -83,6 +76,22 @@ YUI.add('charm-details-view', function(Y) {
       container.show();
     },
 
+    /**
+       Handles animation and url cleanup and destroys the view on close.
+
+       @method close
+       @param {Event} ev The event.
+     */
+    close: function(ev) {
+      ev.halt();
+      var panel = Y.one('.charmbrowser'),
+          container = this.get('container');
+      panel.removeClass('animate-in');
+      window.location.hash = '';
+      this.viewletManager.hideSlot(ev);
+      container.empty();
+      this.destroy();
+    },
     /**
       Removes the class from the left breakout panel saying there is a charm.
       Destroys the charmView tabview instance.
