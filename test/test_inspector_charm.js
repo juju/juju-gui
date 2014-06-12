@@ -150,4 +150,65 @@ describe('Inspector Charm', function() {
     view.container = testContainer;
     view.render(fakeCharm, viewletAttrs);
   });
+
+  it('closes itself safely', function() {
+    var data = utils.loadFixture('data/browsercharm.json', false);
+    testContainer = utils.makeContainer(this);
+    testContainer.setHTML([
+      '<div class="charmbrowser">',
+      '<div class="left-breakout">',
+      '</div>',
+      '</div>'
+    ].join(''));
+
+    fakeStore = new Y.juju.charmworld.APIv3({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: data
+            }]
+          }
+        });
+      }
+    });
+
+    var viewletAttrs = {
+      db: new Y.juju.models.Database(),
+      store: fakeStore
+    };
+
+    var tabviewRender = utils.makeStubFunction();
+    var browserCharmView = utils.makeStubMethod(
+        views, 'BrowserCharmView', {
+          render: tabviewRender,
+          destroy: function() {}
+        });
+    this._cleanups.push(browserCharmView.reset);
+
+    var hideSlot = utils.makeStubFunction();
+    var fakeManager = {'hideSlot': hideSlot};
+
+    var fakeEvent = {
+      halt: function() {},
+      currentTarget: {
+        getData: function() { return 'left-hand-panel'; }
+      }
+    };
+
+    view = new viewlets.charmDetails();
+    view.container = testContainer;
+    view.viewletManager = fakeManager;
+
+    view.render(fakeCharm, viewletAttrs);
+    view.close(fakeEvent);
+
+    assert.equal(hideSlot.calledOnce(), true);
+    assert.equal(Y.one('.charmbrowser').hasClass('animate-in'), false);
+    assert.equal(view.get('container').getHTML(), '');
+
+  });
 });
+
