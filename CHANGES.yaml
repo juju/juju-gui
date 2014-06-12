@@ -20,7 +20,28 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.1.0:
+    - >
+      The inspector's default rendering position is now in the left hand column
+      to give you more room to view and work with your environment.
+    - >
+      A new uni-directional data flow state system was implemented which has
+      dramatically simplified the data flow and execution of the GUI codebase.
+    - >
+      The various inspectors have had their rendering cycles refactored to
+      simplify their execution.
+    - Charm searching has been improved in the charm browser.
+    - >
+      Under the "mv" flag work continues on the machine view and a new deployer
+      bar has been created which allows you to queue up changes to your
+      environment and then commit those changes all at once.
+    - (FIX) Disable potential iframing to avoid any possible click jacking.
+    - (FIX) Environment export file name now defaults to "bundles.yaml".
+    - (FIX) Relation icons getting reloaded on every delta.
+    - (FIX) Service names with dashes get trimmed on closing the inspector.
+    - (FIX) Subordinate relationship lines show green until moved.
+    - Removed "il" flag support as it's now the default.
+    - Currently available flags: mv
 - 1.0.2:
     - >
       Safari is now a first class browser. You can use it without any notice
