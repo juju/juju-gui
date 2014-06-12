@@ -108,6 +108,24 @@
             border-width: 0 1px;
             border-color: #1c1815;
         }
+        // XXX: Fix for local charm inspectors, can be removed when the
+        // new designs are implemented. huwshimi, 12 June 2014.
+        & > .viewlet-container {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: @inspector-background-color;
+
+            .local-new-upgrade {
+                border-top: 1px solid rgba(0, 0, 0, 0.3);
+
+                h2 {
+                    border-top: 1px solid rgba(255, 255, 255, 0.05);
+                }
+            }
+        }
         form {
             margin: 0;
         }
