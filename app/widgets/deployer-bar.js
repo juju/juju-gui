@@ -100,6 +100,7 @@ YUI.add('deployer-bar', function(Y) {
         changeCount: changes
       }));
       container.addClass('deployer-bar');
+      this._toggleDeployButtonStatus(changes > 0);
       ecs.on('changeSetModified', Y.bind(this.update, this));
       return this;
     },
@@ -153,7 +154,9 @@ YUI.add('deployer-bar', function(Y) {
     */
     showDeployConfirmation: function(evt) {
       evt.halt();
-      this._showSummary();
+      if (this._getChangeCount(this.get('ecs')) > 0) {
+        this._showSummary();
+      }
     },
 
     /**
@@ -198,6 +201,7 @@ YUI.add('deployer-bar', function(Y) {
           changeCount: changes,
           latestChangeDescription: latest
         }));
+        this._toggleDeployButtonStatus(changes > 0);
         // XXX frankban 2014-05-12: the code below makes the changeset
         // description disappear the first time the panel is visited. Why
         // do we want this? This breaks the user experience, and after removing
@@ -218,6 +222,8 @@ YUI.add('deployer-bar', function(Y) {
       evt.halt();
       var container = this.get('container');
       container.removeClass('summary-open');
+
+      this._toggleDeployButtonStatus(this._getChangeCount(this.get('ecs')) > 0);
     },
 
     /**
@@ -258,6 +264,19 @@ YUI.add('deployer-bar', function(Y) {
     */
     _getChangeCount: function(ecs) {
       return Object.keys(ecs.changeSet).length;
+    },
+
+    /**
+      Toggle the status of the deploy button.
+
+      @method _toggleDeployButtonStatus
+    */
+    _toggleDeployButtonStatus: function(enabled) {
+      if (enabled) {
+        this.get('container').one('.deploy-button').removeClass('disabled');
+      } else {
+        this.get('container').one('.deploy-button').addClass('disabled');
+      }
     },
 
     /**

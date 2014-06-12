@@ -69,6 +69,26 @@ describe('deployer bar view', function() {
     assert.equal(view._getChangeCount(ecs), 1);
   });
 
+  it('should disabled the deploy button if there are no changes', function() {
+    assert.equal(container.one('.deploy-button').hasClass('disabled'), true);
+  });
+
+  it('should enable the deploy button if there are changes', function() {
+    ecs.lazyAddUnits(['django', 1]);
+    assert.equal(container.one('.deploy-button').hasClass('disabled'), false);
+  });
+
+  it('should not show the summary panel when there are no changes', function() {
+    container.one('.deploy-button').simulate('click');
+    assert.equal(container.hasClass('summary-open'), false);
+  });
+
+  it('should show the summary panel when there are changes', function() {
+    ecs.lazyAddUnits(['django', 1]);
+    container.one('.deploy-button').simulate('click');
+    assert.equal(container.hasClass('summary-open'), true);
+  });
+
   it('can show a summary of uncommitted changes for deployment', function() {
     var changesStub = utils.makeStubMethod(view, '_getChangeCount', 0),
         deployStub = utils.makeStubMethod(view, '_getDeployedServices', []),
