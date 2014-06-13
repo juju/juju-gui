@@ -115,6 +115,29 @@ describe('deployer bar view', function() {
     );
   });
 
+  it('can open the recent changes in the summary panel', function() {
+    var changesNode = container.one('.panel.summary .changes');
+    var toggleNode = changesNode.one('.toggle');
+    container.one('.deploy-button').simulate('click');
+    assert.equal(changesNode.hasClass('open'), false,
+        'The changes should initially be closed');
+    toggleNode.simulate('click');
+    assert.equal(changesNode.hasClass('open'), true,
+        'The changes node should have had the open class added');
+  });
+
+  it('can hide the recent changes in the summary panel', function() {
+    var changesNode = container.one('.panel.summary .changes');
+    var toggleNode = changesNode.one('.toggle');
+    container.one('.deploy-button').simulate('click');
+    toggleNode.simulate('click');
+    assert.equal(changesNode.hasClass('open'), true,
+        'The changes should set to open');
+    toggleNode.simulate('click');
+    assert.equal(changesNode.hasClass('open'), false,
+        'The changes node should have had the open class removed');
+  });
+
   it('can show a list of recent changes', function() {
     var changesStub = utils.makeStubMethod(view,
         '_generateAllChangeDescriptions', []);
