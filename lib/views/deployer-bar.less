@@ -149,39 +149,6 @@
                 }
             }
         }
-        .change-list {
-            overflow: auto;
-            max-height: 400px;
-            margin: 0;
-            list-style: none;
-
-            li {
-                border-bottom: 1px solid #D9D9D9;
-
-                &:last-child {
-                    border-bottom: none;
-                }
-                &,
-                span {
-                    height: 40px;
-                }
-                span {
-                    display: block;
-                    float: left;
-                    padding: 0 20px;
-                    line-height: 40px;
-                }
-                .icon {
-                    padding: 0 15px;
-                    border-right: 1px solid #D9D9D9;
-                }
-                .time {
-                    padding: 0 40px;
-                    float: right;
-                    border-left: 1px solid #D9D9D9;
-                }
-            }
-        }
         p.none {
             margin: 20px;
         }
@@ -190,12 +157,20 @@
         height: 450px;
 
         header {
-            padding: 5px 20px;
+            .border-box;
+            height: 50px;
+            padding: 0 20px;
+            line-height: 50px;
         }
         section {
-            padding: 5px 0;
-            width: 600px;
-            margin: 0 auto;
+            height: 400px;
+            overflow-y: auto;
+
+            .content {
+                padding: 5px 0 20px 0;
+                width: 600px;
+                margin: 0 auto;
+            }
         }
         .title {
             display: inline;
@@ -204,16 +179,18 @@
         ul.action-list {
             li {
                 border: 0;
-                line-height: 30px;
+                line-height: 50px;
                 height: auto;
                 padding: 0 5px;
 
                 a.close {
+                    display: block;
                     margin-left: 10px;
                 }
             }
         }
         .right {
+            height: auto;
             margin-right: 0;
         }
         .summary-panel {
@@ -223,8 +200,6 @@
             background: #ffffff;
             padding: 10px;
             margin-top: 5px;
-            height: 300px;
-            overflow-y: auto;
 
             li {
                 list-style: none;
@@ -240,6 +215,44 @@
                 height: 30px;
                 margin-right: 7px;
                 vertical-align: middle;
+            }
+        }
+        .changes {
+            margin-top: 20px;
+            background: @paper-dark;
+            border-width: 1px 0;
+            border-style: solid;
+            border-color: #D9D9D9;
+
+            &.open {
+                .toggle {
+                    .expand {
+                        display: none;
+                    }
+                    .contract {
+                        display: inline;
+                    }
+                }
+                .list {
+                    display: block;
+                }
+            }
+            .toggle {
+                padding: 0 20px;
+                line-height: 50px;
+                cursor: pointer;
+
+                .expand,
+                .contract {
+                    margin-left: 6px;
+                }
+                .contract {
+                    display: none;
+                }
+            }
+            .list {
+                display: none;
+                border-top: 1px solid #D9D9D9;
             }
         }
     }
@@ -283,6 +296,40 @@
         }
         .bar .pre-summary {
             display: none;
+        }
+    }
+
+    .change-list {
+        overflow: auto;
+        max-height: 400px;
+        margin: 0;
+        list-style: none;
+
+        li {
+            border-bottom: 1px solid #D9D9D9;
+
+            &:last-child {
+                border-bottom: none;
+            }
+            &,
+            span {
+                height: 40px;
+            }
+            span {
+                display: block;
+                float: left;
+                padding: 0 20px;
+                line-height: 40px;
+            }
+            .icon {
+                padding: 0 15px;
+                border-right: 1px solid #D9D9D9;
+            }
+            .time {
+                padding: 0 40px;
+                float: right;
+                border-left: 1px solid #D9D9D9;
+            }
         }
     }
 }

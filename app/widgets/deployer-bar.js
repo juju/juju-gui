@@ -59,6 +59,9 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.panel.changes .action-list .hide': {
         click: 'clickHideChanges'
+      },
+      '.panel.summary .changes .toggle': {
+        click: '_toggleSummaryChanges'
       }
     },
 
@@ -136,7 +139,7 @@ YUI.add('deployer-bar', function(Y) {
 
       @method _showChanges
     */
-    _showChanges: function(confirmDeploy) {
+    _showChanges: function() {
       var container = this.get('container');
       var changesPanel = container.one('.panel.changes section');
       var ecs = this.get('ecs');
@@ -180,6 +183,20 @@ YUI.add('deployer-bar', function(Y) {
         }));
       }
       container.addClass('summary-open');
+      container.one('.panel.summary .changes .list').setHTML(
+          this.changesTemplate({
+            changeList: this._generateAllChangeDescriptions(ecs)
+          }));
+    },
+
+    /**
+      Toggle the visibility of the list of changes on the summary panel.
+
+      @method _toggleSummaryChanges
+      @param {Object} e The event object.
+    */
+    _toggleSummaryChanges: function(e) {
+      this.get('container').one('.panel.summary .changes').toggleClass('open');
     },
 
     /**
