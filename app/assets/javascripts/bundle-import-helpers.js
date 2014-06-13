@@ -201,6 +201,23 @@ YUI.add('bundle-import-helpers', function(Y) {
     },
 
     /**
+    Export the YAML for the environment.
+
+    @method exportYAML
+    @param {Database} db The app Database with access to the
+      NotificationList.
+    */
+    exportYAML: function(db) {
+      var result = db.exportDeployer();
+      var exportData = jsyaml.dump(result);
+      // In order to support Safari 7 the type of this blob needs
+      // to be text/plain instead of it's actual type of application/yaml.
+      var exportBlob = new Blob([exportData],
+          {type: 'text/plain;charset=utf-8'});
+      saveAs(exportBlob, 'bundles.yaml');
+    },
+
+    /**
       Notify a deployment change.
       Add a record to the notifications database.
 

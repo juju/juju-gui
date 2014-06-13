@@ -81,6 +81,7 @@ body {
     // This won't start working until Firefox 25
     -moz-osx-font-smoothing: grayscale;
 }
+.link,
 a,
 a:hover {
     cursor: pointer;
@@ -244,6 +245,7 @@ th {
                     margin-right: 6px;
                 }
             }
+            // Can be removed when flags.mv is removed.
             &.import-export {
                 padding: 17px 0 0 0;
 
@@ -910,6 +912,12 @@ g.unit {
     }
     #loading-spinner {
         height: 100px;
+    }
+}
+
+body.flag-mv {
+    #browser-nav .import-export {
+        display: none;
     }
 }
 

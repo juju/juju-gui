@@ -21,12 +21,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('deployer bar view', function() {
   var Y, container, dbObj, ECS, ecs, mockEvent, testUtils, utils, views,
-      view, View;
+      view, View, bundleHelpers;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['deployer-bar',
                                'juju-views',
                                'juju-tests-utils',
+                               'bundle-import-helpers',
                                'environment-change-set',
                                'event-simulate',
                                'node-event-simulate',
@@ -36,6 +37,7 @@ describe('deployer bar view', function() {
       views = Y.namespace('juju.views');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       View = views.DeployerBarView;
+      bundleHelpers = Y.namespace('juju.BundleHelpers');
       mockEvent = { halt: function() {} };
       done();
     });
@@ -310,5 +312,33 @@ describe('deployer bar view', function() {
     assert.deepEqual(results[0], machine);
     assert.deepEqual(results[1], machine);
     assert.deepEqual(results[2], container);
+  });
+
+  it('can export the environment', function() {
+    var exportStub = utils.makeStubMethod(bundleHelpers, 'exportYAML');
+    this._cleanups.push(exportStub.reset);
+    container.one('.export').simulate('click');
+    assert.equal(exportStub.calledOnce(), true,
+        'exportYAML should have been called');
+  });
+
+  it('can open the import file dialogue', function() {
+    // The file input is hidden and the dialogue is opened by a
+    // javascript click event. Stubbing out the click so we can test
+    // that it is called.
+    var clickStub = utils.makeStubMethod(container.one(
+        '.import-file').getDOMNode(), 'click');
+    this._cleanups.push(clickStub.reset);
+    container.one('.import').simulate('click');
+    assert.equal(clickStub.calledOnce(), true,
+        'the file input should have been clicked');
+  });
+
+  it('can import a bundle file', function() {
+    var importStub = utils.makeStubMethod(bundleHelpers, 'deployBundleFiles');
+    this._cleanups.push(importStub.reset);
+    container.one('.import-file').simulate('change');
+    assert.equal(importStub.calledOnce(), true,
+        'deployBundleFiles should have been called');
   });
 });
