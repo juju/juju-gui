@@ -562,10 +562,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/charmresults.js'
         },
 
-        'subapp-browser-jujucharms': {
-          fullpath: '/juju-ui/subapps/browser/views/jujucharms.js'
-        },
-
         'subapp-browser-searchview': {
           fullpath: '/juju-ui/subapps/browser/views/search.js'
         },

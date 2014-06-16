@@ -94,20 +94,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       // Update the UI for the active one.
       this.updateActive(ev.currentTarget);
 
-      var change = {
-        charmID: charmID,
-        hash: undefined
-      };
-
-      if (window.flags && window.flags.il) {
-        this.fire('changeState', {
-          sectionA: {
-            component: 'charmbrowser',
-            metadata: { id: charmID }
-          }});
-      } else {
-        this.fire('viewNavigate', {change: change});
-      }
+      this.fire('changeState', {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: charmID }
+        }});
     },
 
     /**
