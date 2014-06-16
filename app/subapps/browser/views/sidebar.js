@@ -35,7 +35,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    * Sidebar master view for the gui browser.
    *
    * @class Sidebar
-   * @extends {juju.browser.views.MainView}
    *
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
@@ -74,7 +73,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
   requires: [
     'browser-search-widget',
     'juju-templates',
-    'subapp-browser-mainview',
     'view'
   ]
 });
