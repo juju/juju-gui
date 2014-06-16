@@ -341,12 +341,12 @@ YUI.add('deployer-bar', function(Y) {
         // units as follow up.
         switch (change.command.method) {
           case '_deploy':
-            changeItem.icon = 'service-added';
+            changeItem.icon = 'changes-service-added';
             changeItem.description = ' ' + change.command.args[1] +
                 ' has been added.';
             break;
           case '_add_unit':
-            changeItem.icon = 'service-added';
+            changeItem.icon = 'changes-service-added';
             var units = change.command.args[1],
                 msg;
             if (units !== 1) {
@@ -358,7 +358,7 @@ YUI.add('deployer-bar', function(Y) {
                 change.command.args[0] + ' ' + msg;
             break;
           case '_add_relation':
-            changeItem.icon = 'relation-added';
+            changeItem.icon = 'changes-relation-added';
             changeItem.description = change.command.args[0][1].name +
                 ' relation added between ' +
                 change.command.args[0][0] +
@@ -368,14 +368,14 @@ YUI.add('deployer-bar', function(Y) {
           case '_addMachines':
             var machineType = change.command.args[0][0].parentId ?
                 'container' : 'machine';
-            changeItem.icon = '' + machineType + '-created01';
+            changeItem.icon = 'changes-' + machineType + '-created';
             changeItem.description = change.command.args[0].length +
                 ' ' + machineType +
                 (change.command.args[0].length !== 1 ? 's have' : ' has') +
                 ' been added.';
             break;
           default:
-            changeItem.icon = 'service-exposed';
+            changeItem.icon = 'changes-service-exposed';
             changeItem.description = 'An unknown change has been made ' +
                 'to this enviroment via the CLI.';
             break;

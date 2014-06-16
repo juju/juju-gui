@@ -166,7 +166,7 @@ describe('deployer bar view', function() {
 
   it('can generate descriptions for any change type', function() {
     var tests = [{
-      icon: 'service-added',
+      icon: 'changes-service-added',
       msg: ' bar has been added.',
       change: {
         command: {
@@ -175,7 +175,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'service-added',
+      icon: 'changes-service-added',
       msg: ' 1 foo unit has been added.',
       change: {
         command: {
@@ -184,7 +184,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'service-added',
+      icon: 'changes-service-added',
       msg: ' 2 foo units have been added.',
       change: {
         command: {
@@ -193,7 +193,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'relation-added',
+      icon: 'changes-relation-added',
       msg: 'bar relation added between foo and baz.',
       change: {
         command: {
@@ -205,7 +205,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'container-created01',
+      icon: 'changes-container-created',
       msg: '1 container has been added.',
       change: {
         command: {
@@ -214,7 +214,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'container-created01',
+      icon: 'changes-container-created',
       msg: '2 containers have been added.',
       change: {
         command: {
@@ -223,7 +223,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'machine-created01',
+      icon: 'changes-machine-created',
       msg: '1 machine has been added.',
       change: {
         command: {
@@ -232,7 +232,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'machine-created01',
+      icon: 'changes-machine-created',
       msg: '2 machines have been added.',
       change: {
         command: {
@@ -241,7 +241,7 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'service-exposed',
+      icon: 'changes-service-exposed',
       msg: 'An unknown change has been made to this enviroment via the CLI.',
       change: {
         command: {
