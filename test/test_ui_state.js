@@ -62,7 +62,7 @@ describe('UI State object', function() {
     });
 
     beforeEach(function() {
-      state = new ns.State();
+      state = new ns.UIState();
     });
 
     afterEach(function(done) {
@@ -70,56 +70,38 @@ describe('UI State object', function() {
       state.destroy();
     });
 
-    it('resets filters when navigating away from search', function() {
-      state._setCurrent('search', true);
-      state.filter.set('text', 'foo');
-      // Set the state before changing up.
-      state.save();
-      state.getUrl({search: false});
-      assert.equal('', state.filter.get('text'));
+    it('clears the filter when generating new urls', function() {
+      state.filter.setAttrs({
+        categories: 'cat',
+        provider: 'prov',
+        series: 'ser',
+        text: 'tex',
+        type: 'typ'
+      });
+      var change = {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {}}};
+      state.generateUrl(change);
+      assert.deepEqual(state.filter.get('categories'), []);
+      assert.deepEqual(state.filter.get('provider'), []);
+      assert.deepEqual(state.filter.get('series'), []);
+      assert.deepEqual(state.filter.get('text'), '');
+      assert.deepEqual(state.filter.get('type'), []);
     });
 
-    it('permits a filter clear command', function() {
-      var url = state.getUrl({
-        'search': true,
-        'filter': {
-          text: 'apache'
-        }
-      });
-
-      // We have a good valid search.
-      assert.equal(url, '/search?text=apache');
-
-      // Now let's clear it and make sure it's emptied.
-      url = state.getUrl({
-        'filter': {
-          clear: true
-        }
-      });
-      assert.equal(url, '/search');
-    });
-
-    it('permits a filter replace command', function() {
-      var url = state.getUrl({
-        'search': true,
-        'filter': {
-          text: 'apache',
-          categories: ['app-servers']
-        }
-      });
-      // We have a good valid search.
-      assert.equal(
-          url,
-          '/search?categories=app-servers&text=apache');
-
-      // Now let's update it and force all the rest to go away.
-      url = state.getUrl({
-        'filter': {
-          replace: true,
-          text: 'mysql'
-        }
-      });
-      assert.equal(url, '/search?text=mysql');
+    it('updates the filter when a search param is provided', function() {
+      var change = {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {
+            search: {
+              text: 'apache'
+            }
+          }}};
+      assert.equal(state.filter.get('text'), '');
+      state.generateUrl(change);
+      assert.equal(state.filter.get('text'), 'apache');
     });
   });
 

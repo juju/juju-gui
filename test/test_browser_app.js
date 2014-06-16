@@ -510,22 +510,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isTrue(typeof app[route.callback] === 'function');
         });
       });
-
-      it('correctly strips viewmode from the charmID', function() {
-        app = new browser.Browser({});
-        var paths = [
-          'foo/bar-66',
-          'search/foo/bar-66',
-          'sidebar/foo/bar-66',
-          'sidebar/search/foo/bar-66'
-        ];
-        paths.map(function(id) {
-          assert.equal(
-              'foo/bar-66', app._stripViewMode(id),
-              id + ' was not stripped correctly.'
-          );
-        });
-      });
     });
 
     describe('browser subapp display tree', function() {

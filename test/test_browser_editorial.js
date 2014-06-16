@@ -123,35 +123,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
     });
 
-    it('clicking a charm navigates for sidebar', function(done) {
-      fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: sampleData
-              }]
-            }
-          });
-        }
-      });
-      view = new EditorialView({
-        renderTo: Y.one('.bws-content'),
-        store: fakeStore
-      });
-      view.render();
-
-      view.on('viewNavigate', function(ev) {
-        ev.halt();
-        ev.change.charmID.should.eql('precise/ceph-9');
-        done();
-      });
-
-      node.one('.token').simulate('click');
-    });
-
     it('setting the activeID marks the div active', function() {
       fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
