@@ -195,7 +195,7 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          this.exportYAML();
+          importHelpers.exportYAML(this.db);
         },
         help: 'Export the environment'
       },
@@ -583,33 +583,35 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      var exportNode = Y.one('#export-trigger');
-      // Tests won't have this node.
-      if (exportNode) {
-        exportNode.on('click', function(e) {
-          e.halt();
-          this.exportYAML();
-        }, this);
-      }
+      if (!window.flags.mv) {
+        var exportNode = Y.one('#export-trigger');
+        // Tests won't have this node.
+        if (exportNode) {
+          exportNode.on('click', function(e) {
+            e.halt();
+            importHelpers.exportYAML(this.db);
+          }, this);
+        }
 
-      var importNode = Y.one('#import-trigger');
-      var importFileInput = Y.one('.import-export input[type=file]');
+        var importNode = Y.one('#import-trigger');
+        var importFileInput = Y.one('.import-export input[type=file]');
 
-      // Tests won't have this node.
-      if (importNode && importFileInput) {
-        importNode.on('click', function(e) {
-          e.halt();
-          e.currentTarget.siblings('input[type=file]')
-                                  .item(0).getDOMNode().click();
-        });
+        // Tests won't have this node.
+        if (importNode && importFileInput) {
+          importNode.on('click', function(e) {
+            e.halt();
+            e.currentTarget.siblings('input[type=file]')
+            .item(0).getDOMNode().click();
+          });
 
-        importFileInput.on('change', function(e) {
-          importHelpers.deployBundleFiles(
-              e.currentTarget.get('files')._nodes,
-              this.env,
-              this.db
-          );
-        }, this);
+          importFileInput.on('change', function(e) {
+            importHelpers.deployBundleFiles(
+                e.currentTarget.get('files')._nodes,
+                this.env,
+                this.db
+            );
+          }, this);
+        }
       }
 
       // Attach SubApplications. The subapps should share the same db.
@@ -833,7 +835,8 @@ YUI.add('juju-gui', function(Y) {
       this.deployerBar = new views.DeployerBarView({
         container: Y.one('#deployer-bar'),
         ecs: this.env.get('ecs'),
-        env: this.env
+        env: this.env,
+        db: this.db
       }).render();
     },
 
@@ -865,21 +868,6 @@ YUI.add('juju-gui', function(Y) {
         });
         this.zoomMessageDisplayed = true;
       }
-    },
-
-    /**
-    Export the YAML for this environment.
-
-    @method exportYAML
-    */
-    exportYAML: function() {
-      var result = this.db.exportDeployer();
-      var exportData = jsyaml.dump(result);
-      // In order to support Safari 7 the type of this blob needs
-      // to be text/plain instead of it's actual type of application/yaml.
-      var exportBlob = new Blob([exportData],
-          {type: 'text/plain;charset=utf-8'});
-      saveAs(exportBlob, 'bundles.yaml');
     },
 
     /**

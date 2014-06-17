@@ -28,7 +28,8 @@ YUI.add('deployer-bar', function(Y) {
 
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      Templates = views.Templates;
+      Templates = views.Templates,
+      bundleHelpers = Y.namespace('juju.BundleHelpers');
 
   /**
    * The view associated with the deployer bar.
@@ -62,6 +63,15 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.panel.summary .changes .toggle': {
         click: '_toggleSummaryChanges'
+      },
+      '.export': {
+        click: '_exportFile'
+      },
+      '.import': {
+        click: '_importFile'
+      },
+      '.import-file': {
+        change: '_deployFile'
       }
     },
 
@@ -519,6 +529,40 @@ YUI.add('deployer-bar', function(Y) {
         }
       }
       return returnSet;
+    },
+
+    /**
+      Export the YAML for this environment.
+
+      @method _exportFile
+      @param {Object} e The event object.
+    */
+    _exportFile: function(e) {
+      bundleHelpers.exportYAML(this.get('db'));
+    },
+
+    /**
+      Import a bundle file.
+
+      @method _importFile
+      @param {Object} e The event object.
+    */
+    _importFile: function(e) {
+      this.get('container').one('.import-file').getDOMNode().click();
+    },
+
+    /**
+      Deploy a bundle file.
+
+      @method _deployFile
+      @param {Object} e The event object.
+    */
+    _deployFile: function(e) {
+      bundleHelpers.deployBundleFiles(
+          e.currentTarget.get('files')._nodes,
+          this.get('env'),
+          this.get('db')
+      );
     }
 
   });
@@ -529,6 +573,7 @@ YUI.add('deployer-bar', function(Y) {
   requires: [
     'view',
     'juju-view-utils',
+    'bundle-import-helpers',
     'event-tracker',
     'node',
     'observe',
