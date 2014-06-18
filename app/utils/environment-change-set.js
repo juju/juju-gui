@@ -399,7 +399,9 @@ YUI.add('environment-change-set', function(Y) {
       // up to date.
       service._dirtyFields = service._dirtyFields
                                     .concat(Object.keys(changedFields));
-      service.setAttrs(changedFields);
+      service.setAttrs(
+          config,
+          Y.mix(service.get('config'), changedFields, true, null, null, true));
       // XXX Jeff - We may want to flatten this into the deploy service
       // command on 'commit' if there is a queued service for this command.
       // We will want to flatten multiple setConfig calls to the same service
