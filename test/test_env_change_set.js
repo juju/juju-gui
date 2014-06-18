@@ -36,6 +36,7 @@ describe('Environment Change Set', function() {
   });
 
   beforeEach(function() {
+    dbObj = {};
     ecs = new ECS({
       db: dbObj
     });
@@ -50,7 +51,6 @@ describe('Environment Change Set', function() {
     testUtils.makeStubMethod(envObj, '_add_relation');
     testUtils.makeStubMethod(envObj, '_add_units');
     testUtils.makeStubMethod(envObj, '_addMachines');
-    dbObj = {};
   });
 
   afterEach(function() {
@@ -425,10 +425,22 @@ describe('Environment Change Set', function() {
     });
 
     describe('_lazySetConfig', function() {
+      var service;
+
+      beforeEach(function() {
+        service = {
+          _dirtyFields: [],
+          setAttrs: testUtils.makeStubFunction()
+        };
+        ecs.get('db').services = {
+          getById: testUtils.makeStubFunction(service)
+        };
+      });
+
       it('creates a new `setConfig` record for a deployed service', function() {
         var addToRecord = testUtils.makeStubMethod(ecs, '_addToRecord');
         this._cleanups.push(addToRecord.reset);
-        var args = [1, 2, 'foo', 'bar'];
+        var args = [1, {}, 'foo', {}];
         var key = ecs._lazySetConfig(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
@@ -441,12 +453,12 @@ describe('Environment Change Set', function() {
       });
 
       it('creates a new `setConfig` record for a queued service', function() {
-        var args = [1, 2, 'foo', 'bar'];
+        var args = [1, {}, 'foo', {}];
         // This assumes that the _lazyDeploy tests complete successfully.
         var key = ecs._lazyDeploy(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
-        var setArgs = [key, 1, 2, 3];
+        var setArgs = [key, {}, 2, {}];
         var setKey = ecs._lazySetConfig(setArgs);
         var setRecord = ecs.changeSet[setKey];
         assert.equal(setRecord.executed, false);
@@ -456,6 +468,21 @@ describe('Environment Change Set', function() {
         assert.deepEqual(command.args, setArgs);
         // It should have called to create new records
         assert.equal(Y.Object.size(ecs.changeSet), 2);
+      });
+
+      it('concats changed fields to the service modesl', function() {
+        service._dirtyFields.push('bax');
+        var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz' }];
+        ecs._lazySetConfig(args);
+        assert.equal(service._dirtyFields.length, 2);
+        assert.deepEqual(service._dirtyFields, ['bax', 'foo']);
+      });
+
+      it('sets the changed values to the service model', function() {
+        var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz' }];
+        ecs._lazySetConfig(args);
+        assert.equal(service.setAttrs.calledOnce(), true);
+        assert.deepEqual(service.setAttrs.lastArguments()[0], { foo: 'bar' });
       });
     });
 

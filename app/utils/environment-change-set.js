@@ -19,7 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('environment-change-set', function(Y) {
-  var ns = Y.namespace('juju');
+  var ns = Y.namespace('juju'),
+      utils = Y.namespace('juju.views.utils');
 
   var name = 'environment-change-set';
 
@@ -389,6 +390,16 @@ YUI.add('environment-change-set', function(Y) {
         method: '_set_config', // This needs to match the method name in env.
         args: args
       };
+
+      var config = args[1],
+          serviceConfig = args[3];
+      var service = this.get('db').services.getById(args[0]);
+      var changedFields = utils.getChangedConfigOptions(config, serviceConfig);
+      // Set the values in the service model and keep the dirty fields array
+      // up to date.
+      service._dirtyFields = service._dirtyFields
+                                    .concat(Object.keys(changedFields));
+      service.setAttrs(changedFields);
       // XXX Jeff - We may want to flatten this into the deploy service
       // command on 'commit' if there is a queued service for this command.
       // We will want to flatten multiple setConfig calls to the same service
@@ -625,6 +636,7 @@ YUI.add('environment-change-set', function(Y) {
 }, '', {
   requires: [
     'base',
-    'base-build'
+    'base-build',
+    'juju-view-utils'
   ]
 });

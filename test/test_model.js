@@ -168,6 +168,12 @@ describe('test_model.js', function() {
          window._gaq.should.eql([]);
        });
 
+    it('services are instantiated with _dirtyFields property', function() {
+      var service = new models.Service();
+      assert.equal(Y.Lang.isArray(service._dirtyFields), true);
+      assert.equal(service._dirtyFields.length, 0);
+    });
+
     it('services have unit and relation modellists', function() {
       var service = new models.Service();
       assert.equal(service.get('units') instanceof
