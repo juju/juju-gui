@@ -143,14 +143,18 @@ describe('Service unit token', function() {
     // Select a machine option.
     container.one('.machines select').simulate('change');
     var containerOptions = containersSelect.all('option');
-    assert.equal(containerOptions.size(), 5);
-    assert.equal(containerOptions.item(2).get('value'), '0/lxc/12');
+    assert.equal(containerOptions.size(), 5,
+                 'unexpected number of containers present');
+    assert.equal(containerOptions.item(2).get('value'), '0/lxc/12',
+                 'unexpected container value in list');
     // Check the "Choose location" item is still at the top of the list.
     assert.equal(containerOptions.item(0).get('text').trim(),
-        'Choose location');
+        'Choose location', 'default container text incorrect');
     // Check the bare metal option is the second item.
-    assert.equal(containerOptions.item(1).get('value'), 'bare-metal');
-    assert.equal(containerOptions.item(1).get('text'), '0/bare metal');
+    assert.equal(containerOptions.item(1).get('value'), 'bare-metal',
+                 'bare metal value is not the second option');
+    assert.equal(containerOptions.item(1).get('text'), '0/bare metal',
+                 'bare metal text is not the second option');
   });
 
   it('orders the containers list correctly', function() {
@@ -174,7 +178,7 @@ describe('Service unit token', function() {
     // Select the kvm option.
     containersSelect.set('selectedIndex', 2);
     containersSelect.simulate('change');
-    assert.equal(container.hasClass('state-new-kvm'), true);
+    assert.equal(container.hasClass('state-kvm'), true);
   });
 
   it('does not show the constraints for non kvm containers', function() {
@@ -267,7 +271,7 @@ describe('Service unit token', function() {
         '_getSelectedMachine', '0');
     this._cleanups.push(selectedMachineStub.reset);
     var selectedContainerStub = utils.makeStubMethod(view,
-        '_getSelectedContainer', 'new-kvm');
+        '_getSelectedContainer', 'kvm');
     this._cleanups.push(selectedContainerStub.reset);
     var constraintsStub = utils.makeStubMethod(view,
         '_getConstraints', constraints);
@@ -275,7 +279,7 @@ describe('Service unit token', function() {
     view.on('moveToken', function(e) {
       assert.equal(e.unit, view.get('unit'));
       assert.equal(e.machine, '0');
-      assert.equal(e.container, 'new-kvm');
+      assert.equal(e.container, 'kvm');
       assert.deepEqual(e.constraints, constraints);
       done();
     });
@@ -288,12 +292,12 @@ describe('Service unit token', function() {
         '_getSelectedMachine', '0');
     this._cleanups.push(selectedMachineStub.reset);
     var selectedContainerStub = utils.makeStubMethod(view,
-        '_getSelectedContainer', 'new-lxc');
+        '_getSelectedContainer', 'lxc');
     this._cleanups.push(selectedContainerStub.reset);
     view.on('moveToken', function(e) {
       assert.equal(e.unit, view.get('unit'));
       assert.equal(e.machine, '0');
-      assert.equal(e.container, 'new-lxc');
+      assert.equal(e.container, 'lxc');
       assert.deepEqual(e.constraints, {});
       done();
     });

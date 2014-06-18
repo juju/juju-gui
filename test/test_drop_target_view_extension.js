@@ -69,8 +69,9 @@ describe('MV drop target view extension', function() {
     var eventData = {
       currentTarget: {
         ancestor: utils.makeStubFunction({
-          getData: utils.makeStubFunction('targetid', 'dropaction')
-        })
+          getData: utils.makeStubFunction('targetid')
+        }),
+        getData: utils.makeStubFunction('dropaction')
       },
       _event: {
         dataTransfer: {

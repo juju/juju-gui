@@ -357,7 +357,12 @@ YUI.add('machine-view-panel', function(Y) {
           var selected = this.get('selectedMachine');
           var dropAction = evt.dropAction;
           var parentId = evt.targetId;
-          var containerType = (dropAction === 'container') ? 'lxc' : undefined;
+          // When an unplaced unit is dropped on the container header drop
+          // target, we need to pull the parentId from the currently selected
+          // machine.
+          if (dropAction === 'container' && !parentId) {
+            parentId = selected;
+          }
           var db = this.get('db');
           var unit = db.units.getById(evt.unit);
 
@@ -367,12 +372,8 @@ YUI.add('machine-view-panel', function(Y) {
             // If the user drops a unit on an already created container then
             // place the unit.
             this._placeUnit(unit, parentId);
-          } else if (dropAction === 'container') {
-            var machine = this._createMachine(containerType,
-                parentId || selected, {});
-            this._placeUnit(unit, machine.id);
           } else {
-            this._displayCreateMachine(unit);
+            this._displayCreateMachine(unit, dropAction, parentId);
           }
         },
 
@@ -380,14 +381,24 @@ YUI.add('machine-view-panel', function(Y) {
           Show the widget to create a machine with constraints.
 
           @method _displayCreateMachine
-          @param {Object} unit The unit to place on the machine.
+          @param {Object} unit either the unit or a custom event
         */
-        _displayCreateMachine: function(unit) {
+        _displayCreateMachine: function(unit, action, parentId) {
+          var container = this.get('container'),
+              createContainer;
           if (unit._event) {
-            unit = null;
+            action = action || unit.action;
+            unit = undefined;
+          }
+          if (action === 'container') {
+            parentId = parentId || this.get('selectedMachine');
+            createContainer = container.one('.create-container');
+          } else {
+            createContainer = container.one('.create-machine');
           }
           var createMachine = new views.CreateMachineView({
-            container: this.get('container').one('.create-machine'),
+            container: createContainer,
+            parentId: parentId,
             unit: unit
           }).render();
           if (unit) {
@@ -414,7 +425,8 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} unit The event.
         */
         _handleCreateMachine: function(e) {
-          var machine = this._createMachine(undefined, null, e.constraints);
+          var machine = this._createMachine(e.containerType, e.parentId,
+                                            e.constraints);
           if (e.unit) {
             this.get('env').placeUnit(e.unit, machine.id);
           }
@@ -439,25 +451,26 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Y.Event} e EventFacade object.
          */
         _placeServiceUnit: function(e) {
-          var placeId;
-          var machine;
+          var machineInput = e.machine,
+              containerInput = e.container,
+              placeId, machine;
 
-          if (e.machine === 'new') {
+          if (machineInput === 'new') {
             machine = this._createMachine(undefined, null, e.constraints);
             placeId = machine.id;
-          } else if (e.container === 'new-kvm' || e.container === 'new-lxc') {
+          } else if (containerInput === 'kvm' || containerInput === 'lxc') {
             var constraints = {};
-            if (e.container === 'new-kvm') {
+            if (containerInput === 'kvm') {
               constraints = e.constraints;
             }
-            machine = this._createMachine(e.container.split('-')[1],
-                e.machine, constraints);
+            machine = this._createMachine(containerInput, machineInput,
+                                          constraints);
             placeId = machine.id;
-          } else if (e.container === 'bare-metal') {
-            placeId = e.machine;
+          } else if (containerInput === 'bare-metal') {
+            placeId = machineInput;
           } else {
             // Add the unit to the container.
-            placeId = e.container;
+            placeId = containerInput;
           }
           // Place the unit onto the existing or newly created
           // machine/container.

@@ -82,7 +82,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
       var containerValue = this._getSelectedContainer();
       var constraints = {};
 
-      if (machineValue === 'new' || containerValue === 'new-kvm') {
+      if (machineValue === 'new' || containerValue === 'kvm') {
         constraints = this._getConstraints();
       } else if (!containerValue) {
         // Do nothing, the user has not yet selected a container.
@@ -139,6 +139,10 @@ YUI.add('juju-serviceunit-token', function(Y) {
       } else {
         this._populateContainers(machineValue);
         this._setStateClass('select-container');
+        // XXX kadams54 20/06/2014 This is a kludge - other places that use the
+        // container type form don't have the state class. Need to either
+        // settle on one approach or the other.
+        this.get('container').one('.containers').removeClass('hidden');
       }
     },
 
@@ -152,7 +156,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
       e.preventDefault();
       var containerValue = this._getSelectedContainer();
 
-      if (containerValue === 'new-kvm') {
+      if (containerValue === 'kvm') {
         this._setStateClass(containerValue);
       } else {
         this._setStateClass('select-container');

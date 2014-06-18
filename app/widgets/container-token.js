@@ -120,7 +120,7 @@ YUI.add('container-token', function(Y) {
           // Tells the machine view panel drop handler where the unplaced unit
           // token was dropped.
           var token = container.one('.token');
-          token.setData('drop-action', 'container');
+          token.one('.drop').setData('drop-action', 'container');
           // This must be setAttribute, not setData, as setData does not
           // munipulate the dom, which we need for our namespaced code
           // to read.

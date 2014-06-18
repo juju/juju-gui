@@ -74,14 +74,15 @@ YUI.add('machine-view-panel-header', function(Y) {
         },
 
         /**
-         * Fire the action event.
+         * Fire the action event; the action attached to the event will either
+         * be 'machine' (create machine), or 'container (create container).
          *
          * @method clickAction
          * @param {Event} ev the click event created.
          */
         clickAction: function(e) {
-          e.preventDefault();
-          this.fire('createMachine');
+          e.halt();
+          this.fire('createMachine', {action: this.get('action')});
         },
 
         /**

@@ -60,9 +60,11 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
     */
     _unitDropHandler: function(e) {
       var dragData = JSON.parse(e._event.dataTransfer.getData('Text')),
-          target = e.currentTarget.ancestor();
+          target = e.currentTarget,
+          token = target.ancestor('.token'),
+          targetId = token ? token.getData('id') : null;
       this.fire('unit-token-drop', {
-        targetId: target.getData('id'),
+        targetId: targetId,
         dropAction: target.getData('drop-action'),
         unit: dragData.id,
         machine: this.get('machine')
