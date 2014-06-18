@@ -148,6 +148,20 @@
                             {{/each}}
                         </ul>
                     {{/if}}
+                    {{#if configsChanged.length}}
+                        <h3>
+                            {{configsChanged.length}}
+                            {{pluralize 'configuration' configsChanged.length}} changed
+                        </h3>
+                        <ul>
+                            {{#each configsChanged}}
+                                <li>
+                                    <img src="{{icon}}" alt="" class="icon" />
+                                    {{numUnits}} {{serviceName}}
+                                </li>
+                            {{/each}}
+                        </ul>
+                    {{/if}}
                 {{else}}
                     <p>No uncommitted changes</p>
                 {{/if}}

@@ -189,7 +189,8 @@ YUI.add('deployer-bar', function(Y) {
           deployServices: this._getDeployedServices(ecs),
           addedRelations: this._getAddRelations(ecs),
           addedUnits: this._getAddUnits(ecs),
-          addedMachines: this._getAddMachines(ecs)
+          addedMachines: this._getAddMachines(ecs),
+          configsChanged: this._getConfigsChanged(ecs)
         }));
       }
       container.addClass('summary-open');
@@ -534,6 +535,30 @@ YUI.add('deployer-bar', function(Y) {
         }
       }
       return returnSet;
+    },
+
+    /**
+      Fetches the set_config changes from the ecs changeset to display to the
+      user.
+
+      @method _getConfigsChanged
+      @param {Object} ecs The environment change set.
+      @return {Array} A collection of config changes.
+    */
+    _getConfigsChanged: function(ecs) {
+      var configSet = [],
+          command, serviceName;
+      Object.keys(ecs.changeSet).forEach(function(key) {
+        command = ecs.changeSet[key].command;
+        if (command.method === '_set_config') {
+          serviceName = command.args[0];
+          configSet.push({
+            icon: this._getServiceIconUrl(serviceName),
+            serviceName: serviceName
+          });
+        }
+      }, this);
+      return configSet;
     },
 
     /**
