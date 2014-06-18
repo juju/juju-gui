@@ -185,6 +185,15 @@ YUI.add('juju-models', function(Y) {
         relations: new models.RelationList()
       });
       this._events = [];
+      /**
+        Stores the fields changed by the ECS system. It is set and cleared by
+        the environment-change-set.
+
+        @property _dirtyFields
+        @type {Array}
+        @default []
+      */
+      this._dirtyFields = [];
       this._bindAttributes();
     },
 
