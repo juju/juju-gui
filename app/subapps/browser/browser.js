@@ -193,6 +193,16 @@ YUI.add('subapp-browser', function(Y) {
       this._registerSubappHelpers();
 
       this.on('*:changeState', function(e) {
+        // Cancel the inspectorRetryTimer, if there is one.
+        // The user may be navigating away from the inspector, but first
+        // triggered the inspector's retry mechanism. This makes sure the timer
+        // won't suddenly have the inspector show up after the user navigates
+        // away.
+        var timer = this.get('inspectorRetryTimer');
+        if (timer) {
+          timer.cancel();
+          this.set('inspectorRetries', 0);
+        }
         this.state.set('allowInspector', true);
         var state = e.details[0];
         var url = this.state.generateUrl(state);
@@ -246,9 +256,7 @@ YUI.add('subapp-browser', function(Y) {
       Ensures we clean up all the various UX bits that need updating when we
       no longer need to display charm details
 
-      @method _inspector
-      @param {Object|String} metadata The metadata to pass to the inspector
-        view.
+      @method _cleanupEntityDetails
     */
     _cleanupEntityDetails: function() {
       this._detailsVisible(false);
@@ -268,15 +276,14 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Handles rendering and/or updating the inspector UI component.
+       Gets the model from the services db, if it exists.
 
-      @method _inspector
-      @param {Object|String} metadata The metadata to pass to the inspector
-        view.
-    */
-    _inspector: function(metadata) {
-      var clientId = metadata.id,
-          model;
+       @method _findModelInServices
+       @param {String} clientID The model id we're looking for.
+       @return {Object} model The found model.
+     */
+    _findModelInServices: function(clientId) {
+      var model;
       this.get('db').services.some(function(service) {
         if ((service.get('clientId') === clientId) ||
             // In this case clientId is actually the real service id.
@@ -285,7 +292,55 @@ YUI.add('subapp-browser', function(Y) {
           return true;
         }
       });
+      return model;
+    },
+
+    /**
+       Retries the inspector.
+
+       The inspector must have a means of retrying dispatch because it is
+       dispatched to before services have necessarily loaded.
+
+       @method _retryInspector
+       @param {Object|String} metadata The metadata to pass to the inspector
+         view.
+     */
+    _retryInspector: function(metadata) {
+      var retries = this.get('inspectorRetries');
+      if (retries < this.get('inspectorRetryLimit')) {
+        retries = retries + 1;
+        this.set(
+            'inspectorRetryTimer', Y.later(100, this, '_inspector', metadata));
+      } else {
+        retries = 0;
+        this.fire('changeState', {
+          sectionA: {
+            component: null,
+            metadata: { id: null }
+          }
+        });
+        this.get('db').notifications.add({
+          title: 'Could not load service inspector.',
+          message: 'There is no deployed service named ' + metadata.id + '.',
+          level: 'error'
+        });
+      }
+      this.set('inspectorRetries', retries);
+    },
+
+    /**
+      Handles rendering and/or updating the inspector UI component.
+
+      @method _inspector
+      @param {Object|String} metadata The metadata to pass to the inspector
+        view.
+    */
+    _inspector: function(metadata) {
+      var clientId = metadata.id;
+      var model = this._findModelInServices(clientId);
+
       var previousInspector = this._activeInspector;
+
       if (metadata.localType) {
         var file = metadata.flash.file;
         var services = metadata.flash.services;
@@ -295,6 +350,8 @@ YUI.add('subapp-browser', function(Y) {
           this._activeInspector = this.createUpgradeOrNewInspector(
               file, services);
         }
+      } else if (!model) {
+        this._retryInspector(metadata);
       } else if (!model.get('config')) {
         // If there is no config set then it's a ghost service model and not
         // a deployed service yet.
@@ -302,6 +359,7 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         this._activeInspector = this.createServiceInspector(model);
       }
+
       // In the instance of updating, destroy the existing inspector.
       if (previousInspector) {
         previousInspector.destroy();
@@ -711,7 +769,40 @@ YUI.add('subapp-browser', function(Y) {
        * @type {Object}
        *
        */
-      environmentHeader: {}
+      environmentHeader: {},
+
+      /**
+         A timer for retrying dispatch.
+
+         @attribute inspectorRetryTimer
+         @default undefined
+         @type {Object}
+       */
+      inspectorRetryTimer: {},
+
+      /**
+         The number of current retries in dispatch.
+
+         @attribute inspectorRetries
+         @default 0
+         @type {Int}
+       */
+      inspectorRetries: {
+        value: 0
+      },
+
+      /**
+         The number of retries in dispatch to allow. 5 100ms is more than is
+         likely needed, but gives us a buffer and the error is usually resolved
+         after one retry.
+
+         @attribute inspectorRetryLimit
+         @default 5
+         @type {Int}
+       */
+      inspectorRetryLimit: {
+        value: 5
+      }
     }
   });
 
