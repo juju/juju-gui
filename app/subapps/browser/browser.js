@@ -194,9 +194,14 @@ YUI.add('subapp-browser', function(Y) {
 
       this.on('*:changeState', function(e) {
         // Cancel the inspectorRetryTimer, if there is one.
+        // The user may be navigating away from the inspector, but first
+        // triggered the inspector's retry mechanism. This makes sure the timer
+        // won't suddenly have the inspector show up after the user navigates
+        // away.
         var timer = this.get('inspectorRetryTimer');
         if (timer) {
           timer.cancel();
+          this.set('inspectorRetries', 0);
         }
         this.state.set('allowInspector', true);
         var state = e.details[0];
@@ -274,7 +279,8 @@ YUI.add('subapp-browser', function(Y) {
        Gets the model from the services db, if it exists.
 
        @method _findModelInServices
-       @param {String} clientID the model id we're looking for.
+       @param {String} clientID The model id we're looking for.
+       @return {Object} model The found model.
      */
     _findModelInServices: function(clientId) {
       var model;
@@ -313,11 +319,11 @@ YUI.add('subapp-browser', function(Y) {
             metadata: { id: null }
           }
         });
-        this.get('db').notifications.add(new models.Notification({
+        this.get('db').notifications.add({
           title: 'Could not load service inspector.',
           message: 'There is no deployed service named ' + metadata.id + '.',
           level: 'error'
-        }));
+        });
       }
       this.set('inspectorRetries', retries);
     },
@@ -330,8 +336,8 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _inspector: function(metadata) {
-      var clientId = metadata.id,
-          model = this._findModelInServices(clientId);
+      var clientId = metadata.id;
+      var model = this._findModelInServices(clientId);
 
       var previousInspector = this._activeInspector;
 
@@ -768,7 +774,7 @@ YUI.add('subapp-browser', function(Y) {
       /**
          A timer for retrying dispatch.
 
-         @attribute dispatchTimer
+         @attribute inspectorRetryTimer
          @default undefined
          @type {Object}
        */
@@ -777,7 +783,7 @@ YUI.add('subapp-browser', function(Y) {
       /**
          The number of current retries in dispatch.
 
-         @attribute dispatchRetries
+         @attribute inspectorRetries
          @default 0
          @type {Int}
        */
@@ -786,9 +792,11 @@ YUI.add('subapp-browser', function(Y) {
       },
 
       /**
-         The number of retries in dispatch to allow.
+         The number of retries in dispatch to allow. 5 100ms is more than is
+         likely needed, but gives us a buffer and the error is usually resolved
+         after one retry.
 
-         @attribute retryLimit
+         @attribute inspectorRetryLimit
          @default 5
          @type {Int}
        */
@@ -800,7 +808,6 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-overlay-indicator',
     'browser-cache',
     'handlebars',
     'juju-app-state',

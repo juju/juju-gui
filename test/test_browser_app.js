@@ -302,9 +302,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             context._cleanups.push(upgradeOrNewStub.reset);
           }
 
-          function stubDb(app, ghost) {
+          function stubDb(app, ghost, notes) {
             clientId = 'foo';
             var db = {
+              notifications: {
+                add: function(note) {
+                  if (notes) {
+                    notes.push(note);
+                  }
+                }
+              },
               services: {
                 some: function(callback) {
                   callback({
@@ -386,6 +393,74 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               }
             };
             app._inspector({ id: clientId });
+          });
+
+          it('can retry the inspector', function() {
+            stubMethods(this);
+            stubDb(app, false);
+            var fakeTimer = {time: 'foo'},
+                metadata = { id: clientId },
+                laterStub = utils.makeStubMethod(Y, 'later', fakeTimer);
+            this._cleanups.push(laterStub.reset);
+            assert.equal(app.get('inspectorRetries'), 0);
+            app._retryInspector(metadata);
+            var lastArguments = laterStub.lastArguments();
+            assert.equal(laterStub.calledOnce(), true);
+            assert.equal(lastArguments[0], 100);
+            assert.equal(lastArguments[1], app);
+            assert.equal(lastArguments[2], '_inspector');
+            assert.equal(lastArguments[3], metadata);
+            assert.equal(app.get('inspectorRetries'), 1);
+            assert.equal(app.get('inspectorRetryTimer'), fakeTimer);
+          });
+
+          it('retries if it cannot find model data', function() {
+            stubMethods(this);
+            var findStub = utils.makeStubMethod(
+                app, '_findModelInServices', false);
+            this._cleanups.push(findStub);
+            var retryStub = utils.makeStubMethod(app, '_retryInspector');
+            this._cleanups.push(retryStub.reset);
+
+            var metadata = {id: clientId};
+            app._inspector(metadata);
+            assert.equal(retryStub.calledOnce(), true);
+            assert.equal(retryStub.lastArguments()[0], metadata);
+          });
+
+          it('stops retrying after a cutoff', function() {
+            var notes = [];
+            stubMethods(this);
+            stubDb(app, false, notes);
+            var laterStub = utils.makeStubMethod(Y, 'later'),
+                fireStub = utils.makeStubMethod(app, 'fire');
+            this._cleanups.push(laterStub.reset);
+            this._cleanups.push(fireStub.reset);
+
+            app.set('inspectorRetries', 1);
+            app.set('inspectorRetryLimit', 1);
+            app._retryInspector({id: clientId});
+
+            assert.equal(laterStub.calledOnce(), false);
+            assert.equal(fireStub.calledOnce(), true);
+            assert.equal(fireStub.lastArguments()[0], 'changeState');
+            var note = notes[0];
+            assert.equal(note.title, 'Could not load service inspector.');
+            assert.equal(
+                note.message,
+                'There is no deployed service named ' + clientId + '.');
+            assert.equal(note.level, 'error');
+          });
+
+          it('cancels the retry timer when dispatching', function() {
+            stubMethods(this);
+            stubDb(app, false);
+            var fakeTimer = {},
+                timerStub = utils.makeStubMethod(fakeTimer, 'cancel');
+            app.set('inspectorRetryTimer', fakeTimer);
+            app.fire('changeState');
+            assert.equal(timerStub.calledOnce(), true);
+            assert.equal(app.get('inspectorRetries'), 0);
           });
         });
 
