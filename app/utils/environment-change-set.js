@@ -442,6 +442,42 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Creates a new entry in the queue for removing a relation.
+
+      Receives all the parameters received by the environment's
+      "remove_relation" method with the exception of the ECS options object.
+
+      @method _lazyRemoveRelation
+      @param {Array} args The arguments to remove the relation with.
+    */
+    _lazyRemoveRelation: function(args) {
+      // If an existing ecs record for this relation exists, remove it from the
+      // queue.
+      var changeSet = this.changeSet,
+          argsEndpoints = [args[0], args[1]],
+          command;
+      var relations = this.get('db').relations;
+      Object.keys(changeSet).forEach(function(key) {
+        command = changeSet[key].command;
+        if (command.method === '_add_relation') {
+          // If there is a matching ecs relation then remove it from the queue.
+          if (relations.compareRelationEndpoints(
+                                        [command.args[0], command.args[1]],
+                                        argsEndpoints)) {
+            delete this.changeSet[key];
+          }
+        }
+      }, this);
+
+      // XXX Add changeset to remove the relation from the env XXX
+
+      // Remove the relation from the relations db. Even the ghost relations
+      // are stored in the db.
+      var relation = relations.getRelationFromEndpoints(argsEndpoints);
+      relations.remove(relation);
+    },
+
+    /**
       Creates a new entry in the queue for adding machines/containers.
 
       Receives all the parameters received by the environment's "addMachines"

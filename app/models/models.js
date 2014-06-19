@@ -1280,6 +1280,62 @@ YUI.add('juju-models', function(Y) {
 
     },
 
+    /**
+      Returns the relation which matches the provided endpoints.
+
+      @method getRelationFromEndpoints.
+      @param {Array} endpoints A 2 record array of endpoint objects.
+      @return {Object} The relation model associated with the endpoints or
+        undefined.
+    */
+    getRelationFromEndpoints: function(endpoints) {
+      var relationModel, matching;
+      this.some(function(relation) {
+        matching = this.compareRelationEndpoints(
+                               relation.get('endpoints'), endpoints);
+        if (matching) {
+          relationModel = relation;
+          return true;
+        }
+      }, this);
+      return relationModel;
+    },
+
+    /**
+      Compares two relation endpoint objects to see if they are the same.
+
+      @method compareRelationEndpoints
+      @param {Array} endpointSetA A set of endpoint objects.
+      @param {Array} endpointSetB A set of endpoint objects.
+      @return {Boolean} If the endpoint sets match.
+    */
+    compareRelationEndpoints: function(endpointSetA, endpointSetB) {
+      return endpointSetA.some(function(endpointA) {
+        return endpointSetB.some(function(endpointB) {
+          return this._compareEndpoints(endpointA, endpointB);
+        }, this);
+      }, this);
+    },
+
+    /**
+      Recursive function to compare two endpoints forwards and backwards.
+
+      @method _compareEndpoints
+      @param {Object} endpointA An endpoint object.
+      @param {Object} endpointB An endpoint object.
+      @param {Boolean} done Pass true if it's done comparing and can return.
+      @return {Boolean} If the endpoints match.
+    */
+    _compareEndpoints: function(endpointA, endpointB, done) {
+      if (endpointA[0] === endpointB[0] &&
+          endpointA[1].name === endpointB[1].name) {
+        return true;
+      } else if (!done) {
+        return this._compareEndpoints(endpointB, endpointA, true);
+      }
+      return false;
+    },
+
     /* Return true if a relation exists for the given endpoint.
 
        Optionally the relation must also match include the given

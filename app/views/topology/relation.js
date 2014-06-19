@@ -677,7 +677,10 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       view.get('rmrelation_dialog').hide();
       view.get('rmrelation_dialog').destroy();
-      confirmButton.set('disabled', false);
+      if (!window.flags && !window.flags.mv) {
+        // There is no remove relation dialogue when running with the ecs.
+        confirmButton.set('disabled', false);
+      }
       topo.fire('clearState');
     },
 
@@ -1122,7 +1125,12 @@ YUI.add('juju-topology-relation', function(Y) {
         topo.fire('clearState');
         self.showSubRelDialog();
       } else {
-        self.removeRelationConfirm(relation.relations[0], self);
+        if (!window.flags || !window.flags.mv) {
+          self.removeRelationConfirm(relation.relations[0], self);
+        } else {
+          self.removeRelation(relation.relations[0], self);
+          topo.fire('clearState');
+        }
       }
     },
 
