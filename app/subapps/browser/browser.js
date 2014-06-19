@@ -193,6 +193,11 @@ YUI.add('subapp-browser', function(Y) {
       this._registerSubappHelpers();
 
       this.on('*:changeState', function(e) {
+        // Cancel the inspectorRetryTimer, if there is one.
+        var timer = this.get('inspectorRetryTimer');
+        if (timer) {
+          timer.cancel();
+        }
         this.state.set('allowInspector', true);
         var state = e.details[0];
         var url = this.state.generateUrl(state);
@@ -767,7 +772,7 @@ YUI.add('subapp-browser', function(Y) {
          @default undefined
          @type {Object}
        */
-      dispatchTimer: {},
+      inspectorRetryTimer: {},
 
       /**
          The number of current retries in dispatch.
@@ -776,7 +781,7 @@ YUI.add('subapp-browser', function(Y) {
          @default 0
          @type {Int}
        */
-      dispatchRetries: {
+      inspectorRetries: {
         value: 0
       },
 
@@ -787,7 +792,7 @@ YUI.add('subapp-browser', function(Y) {
          @default 5
          @type {Int}
        */
-      retryLimit: {
+      inspectorRetryLimit: {
         value: 5
       }
     }
