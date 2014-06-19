@@ -243,6 +243,15 @@ describe('deployer bar view', function() {
         }
       }
     }, {
+      icon: 'changes-config-changed',
+      msg: 'Configuration values changed for foo.',
+      change: {
+        command: {
+          method: '_set_config',
+          args: ['foo']
+        }
+      }
+    }, {
       icon: 'changes-service-exposed',
       msg: 'An unknown change has been made to this enviroment via the CLI.',
       change: {

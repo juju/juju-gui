@@ -153,11 +153,11 @@ YUI.add('service-config-view', function(Y) {
           charm = db.charms.getById(charmUrl),
           schema = charm.get('options'),
           container = this.get('container'),
-          button = container.one('button.confirm'),
           errors = {},
           config;
 
-      button.set('disabled', 'disabled');
+      container.one('.controls').addClass('closed');
+
       if (inspector.configFileContent) {
         config = null;
       } else {
@@ -211,7 +211,10 @@ YUI.add('service-config-view', function(Y) {
               level: 'error'
             })
         );
-      } else {
+        this.onRemoveFile();
+      } else if (!this.get('destroyed')) {
+        // If the inspector has been destroyed then we don't need to make these
+        // changes as the destructor should have cleaned it up.
         this._highlightSaved(container);
         var service = this.viewletManager.get('model');
         // Mix the current config (stored in the db) with the modified options.
@@ -219,9 +222,8 @@ YUI.add('service-config-view', function(Y) {
         service.set('config', config);
         var bindingEngine = this.viewletManager.bindingEngine;
         bindingEngine.resetDOMToModel('config');
+        this.onRemoveFile();
       }
-      this.onRemoveFile();
-      container.one('.controls .confirm').removeAttribute('disabled');
     },
 
     /**
