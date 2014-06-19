@@ -49,7 +49,8 @@ YUI.add('service-inspector', function(Y) {
       constraints: viewlets.Constraints,
       unitDetails: viewlets.UnitDetails,
       inspectorHeader: viewlets.InspectorHeader,
-      relations: viewlets.Relations
+      relations: viewlets.Relations,
+      changeVersion: viewlets.ChangeVersion
     },
 
     events: {
@@ -63,7 +64,8 @@ YUI.add('service-inspector', function(Y) {
       // ServiceInspectorUtilsExtension
       '.initiate-destroy': {click: '_onInitiateDestroy'},
       '.cancel-destroy': {click: '_onCancelDestroy'},
-      '.destroy-service-trigger span': {click: '_onDestroyClick'}
+      '.destroy-service-trigger span': {click: '_onDestroyClick'},
+      '.change-version-trigger span': {click: '_onChangeVersionClick'}
     },
 
     /**
@@ -268,6 +270,7 @@ YUI.add('service-inspector', function(Y) {
     'service-constraints-view',
     'unit-details-view',
     'inspector-header-view',
-    'service-relations-view'
+    'service-relations-view',
+    'change-version-view'
   ]
 });

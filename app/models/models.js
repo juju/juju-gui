@@ -398,6 +398,17 @@ YUI.add('juju-models', function(Y) {
       },
 
       /**
+        Whether or not the upgrade availablility has been loaded.
+
+        @attribute upgrade_loaded
+        @type {boolean}
+        @default false
+      */
+      upgrade_loaded: {
+        value: false
+      },
+
+      /**
         The latest charm URL that the service can be upgraded to.
 
         @attribute upgrade_to

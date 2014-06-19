@@ -413,6 +413,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/unit-details.js'
         },
 
+        'change-version-view': {
+          fullpath: '/juju-ui/views/viewlets/change-version.js'
+        },
+
         // Viewlet view extensions
 
         'conflict-view-extension': {

@@ -143,29 +143,14 @@ YUI.add('model-controller', function(Y) {
       @param {String} serviceId The service id to populate.
     */
     getServiceWithCharm: function(serviceId) {
-      var db = this.get('db'),
-          env = this.get('env'),
-          store = this.get('store'),
-          mController = this;
+      var mController = this;
 
       return this._getPromise(
           serviceId, this._serviceCharmPromises,
           function(resolve, reject) {
             mController.getService(serviceId).then(function(service) {
               mController.getCharm(service.get('charm')).then(function(charm) {
-                // Check if a newer charm is available for this service so that
-                // we can offer it as an upgrade.
-                if (charm.get('scheme') === 'cs') {
-                  store.promiseUpgradeAvailability(charm, db.charms)
-                    .then(function(latestId) {
-                        service.set('upgrade_available', !!latestId);
-                        service.set('upgrade_to',
-                            charm.get('scheme') + ':' + latestId);
-                        resolve({service: service, charm: charm});
-                      }, reject);
-                } else {
-                  resolve({service: service, charm: charm});
-                }
+                resolve({service: service, charm: charm});
               }, reject);
             }, reject);
           });
