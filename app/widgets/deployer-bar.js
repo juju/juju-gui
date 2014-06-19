@@ -386,7 +386,7 @@ YUI.add('deployer-bar', function(Y) {
                 ' been added.';
             break;
           case '_set_config':
-            changeItem.icon = 'changes-service-exposed';
+            changeItem.icon = 'changes-config-changed';
             changeItem.description = 'Configuration values changed for ' +
                 change.command.args[0] + '.';
             break;

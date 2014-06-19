@@ -375,6 +375,23 @@ describe('Inspector Settings', function() {
     assert.isTrue(input.hasClass('change-saved'));
   });
 
+  it('does not modify the inspector if it is destroyed after save', function() {
+    inspector = setUpInspector();
+    env.connect();
+    var vmContainer = inspector.get('container'),
+        input = vmContainer.one('textarea[name=admins]'),
+        button = vmContainer.one('.configuration-buttons .confirm');
+    input.set('value', 'foo');
+    // Force the databinding to notice the change in-line.
+    inspector.bindingEngine._nodeChanged(input, inspector.views.config);
+    inspector.set('destroyed', true);
+    var reset = utils.makeStubMethod(
+        inspector.bindingEngine, 'resetDOMToModel');
+    this._cleanups.push(reset.reset);
+    button.simulate('click');
+    assert.equal(reset.callCount(), 0);
+  });
+
   it('can cancel changes', function() {
     // Set up.
     inspector = setUpInspector();
