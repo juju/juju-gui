@@ -1,4 +1,5 @@
 .deployer-bar {
+    @panel-header: 50px;
     @paper-dark: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
 
     time {
@@ -135,6 +136,8 @@
         transistion: height .3s;
 
         header {
+            .border-box;
+            height: @panel-header;
             background: @paper-dark;
             border-bottom: 1px solid #D9D9D9;
         }
@@ -157,16 +160,18 @@
         }
     }
     .panel.summary {
-        height: 450px;
+        top: @navbar-height + @environment-header-height + 10px;
 
         header {
-            .border-box;
-            height: 50px;
             padding: 0 20px;
             line-height: 50px;
         }
         section {
-            height: 400px;
+            position: absolute;
+            top: @panel-header;
+            bottom: 0;
+            left: 0;
+            right: 0;
             overflow-y: auto;
 
             .content {
