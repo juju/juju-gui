@@ -2,6 +2,7 @@
   "compile": false,
   "noIDs": false,
   "noOverqualifying": false,
+  "noUniversalSelectors": false,
   "strictPropertyOrder": false,
   "zeroUnits": false
 }

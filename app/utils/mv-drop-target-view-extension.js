@@ -42,12 +42,12 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
 
       @method _attachDragEvents
     */
-    _attachDragEvents: function(spec) {
+    _attachDragEvents: function() {
       var container = this.get('container');
-      // .token is the container of the machine/container token
-      spec = spec || '.token';
+      var spec = '.drop';
       container.delegate('drop', this._unitDropHandler, spec, this);
-      container.delegate('dragenter', this._ignore, spec, this);
+      container.delegate('dragenter', this._startHover, spec, this);
+      container.delegate('dragleave', this._stopHover, spec, this);
       container.delegate('dragover', this._ignore, spec, this);
     },
 
@@ -60,13 +60,40 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
     */
     _unitDropHandler: function(e) {
       var dragData = JSON.parse(e._event.dataTransfer.getData('Text')),
-          currentTarget = e.currentTarget;
+          target = e.currentTarget.ancestor();
       this.fire('unit-token-drop', {
-        targetId: currentTarget.getData('id'),
-        dropAction: currentTarget.getData('drop-action'),
+        targetId: target.getData('id'),
+        dropAction: target.getData('drop-action'),
         unit: dragData.id,
         machine: this.get('machine')
       });
+      // Remove the hover state from the target.
+      this._stopHover(e);
+    },
+
+    /**
+      Handle a token dragged over a drop target.
+
+      @method _startHover
+      @param {Object} e The drop event object.
+    */
+    _startHover: function(e) {
+      // To allow a drop, we have to prevent the default handling by
+      // cancelling the dragenter event. See:
+      // https://developer.mozilla.org/en-US/docs/DragDrop
+      // /Drag_Operations#droptargets
+      this._ignore(e);
+      this.get('container').addClass('drop-hover');
+    },
+
+    /**
+      Handle a token stopping hovering a drop target.
+
+      @method _stopHover
+      @param {Object} e The drop event object.
+    */
+    _stopHover: function(e) {
+      this.get('container').removeClass('drop-hover');
     },
 
     /**

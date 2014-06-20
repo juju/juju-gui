@@ -65,6 +65,7 @@ YUI.add('machine-view-panel', function(Y) {
           // Turn machine models into tokens and store internally.
           machines.forEach(function(machine) {
             var token = new views.MachineToken({
+              containerTemplate: '<li/>',
               machine: machine,
               committed: machine.id.indexOf('new') !== 0
             });
@@ -304,12 +305,23 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e Custom drag start event facade.
         */
         _showDraggingUI: function(e) {
+          var machineTokens = this.get('machineTokens');
+          var containerTokens = this.get('containerTokens');
           this._machinesHeader.setDroppable();
           // We only show that the container header is droppable if the user
           // has selected a machine as a parent already.
           if (this.get('selectedMachine')) {
             this._containersHeader.setDroppable();
           }
+          // Show the drop states for all visible machines and containers.
+          Object.keys(machineTokens).forEach(function(id) {
+            var token = machineTokens[id];
+            token.setDroppable();
+          }, this);
+          Object.keys(containerTokens).forEach(function(id) {
+            var token = containerTokens[id];
+            token.setDroppable();
+          }, this);
         },
 
         /**
@@ -319,8 +331,19 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e Custom drag end event facade.
         */
         _hideDraggingUI: function(e) {
+          var machineTokens = this.get('machineTokens');
+          var containerTokens = this.get('containerTokens');
           this._machinesHeader.setNotDroppable();
           this._containersHeader.setNotDroppable();
+          // Hide the drop states for all visible machines and containers.
+          Object.keys(machineTokens).forEach(function(id) {
+            var token = machineTokens[id];
+            token.setNotDroppable();
+          }, this);
+          Object.keys(containerTokens).forEach(function(id) {
+            var token = containerTokens[id];
+            token.setNotDroppable();
+          }, this);
         },
 
         /**
@@ -706,13 +729,11 @@ YUI.add('machine-view-panel', function(Y) {
 
           // Render each of the machine tokens out to a list
           machineIds.forEach(function(id) {
-            var token = machineTokens[id],
-                node = Y.Node.create('<li></li>');
-            token.set('container', node);
+            var token = machineTokens[id];
             this._updateMachineWithUnitData(token.get('machine'));
             token.render();
             token.addTarget(this);
-            nodeContainer.append(node);
+            nodeContainer.append(token.get('container'));
           }, this);
         },
 
@@ -726,9 +747,8 @@ YUI.add('machine-view-panel', function(Y) {
         _createMachineToken: function(machine, committed) {
           var token;
           var machineTokens = this.get('machineTokens');
-          var node = Y.Node.create('<li></li>');
           token = new views.MachineToken({
-            container: node,
+            containerTemplate: '<li/>',
             machine: machine,
             committed: committed
           });
@@ -736,7 +756,8 @@ YUI.add('machine-view-panel', function(Y) {
           this._updateMachineWithUnitData(machine);
           token.render();
           token.addTarget(this);
-          this.get('container').one('.machines .items').append(node);
+          this.get('container').one('.machines .items').append(
+              token.get('container'));
         },
 
         /**

@@ -155,4 +155,16 @@ describe('machine token view', function() {
     assert.isObject(service_icons);
     assert.equal(2, service_icons.all('img').size());
   });
+
+  it('can be set to the droppable state', function() {
+    view.setDroppable();
+    assert.equal(container.hasClass('droppable'), true);
+  });
+
+  it('can be set from the droppable state back to the default', function() {
+    view.setDroppable();
+    assert.equal(container.hasClass('droppable'), true);
+    view.setNotDroppable();
+    assert.equal(container.hasClass('droppable'), false);
+  });
 });

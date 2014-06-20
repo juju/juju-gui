@@ -259,55 +259,84 @@ describe('machine view panel view', function() {
       assert.deepEqual(onStubArgs[2][1], view._unitTokenDropHandler);
     });
 
-    it('converts the headers to drop targets when dragging', function() {
-      // This tests assumes the previous test passed.
-      // 'listens for the drag start, end, drop events'
-      var onStub = utils.makeStubMethod(view, 'on');
-      this._cleanups.push(onStub.reset);
-      view._bindEvents();
-      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
-      view._containersHeader = { setDroppable: utils.makeStubFunction() };
-      // unit-drag start handler _showDraggingUI
-      onStub.allArguments()[0][1].call(view);
-      assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
-      // The user hasn't selected a machine so this header should not be
-      // a drop target.
-      assert.equal(view._containersHeader.setDroppable.calledOnce(), false);
-    });
+    it('converts the headers and tokens to drop targets when dragging',
+        function() {
+          // This tests assumes the previous test passed.
+          // 'listens for the drag start, end, drop events'
+          var onStub = utils.makeStubMethod(view, 'on');
+          this._cleanups.push(onStub.reset);
+          var machineToken = view.get('machineTokens')['0'];
+          view._bindEvents();
+          view._machinesHeader = { setDroppable: utils.makeStubFunction() };
+          view._containersHeader = { setDroppable: utils.makeStubFunction() };
+          machineToken.setDroppable = utils.makeStubFunction();
+          // unit-drag start handler _showDraggingUI
+          onStub.allArguments()[0][1].call(view);
+          assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
+          assert.equal(machineToken.setDroppable.calledOnce(), true);
+          // The user hasn't selected a machine so this header should not be
+          // a drop target.
+          assert.equal(view._containersHeader.setDroppable.calledOnce(), false);
+        });
 
-    it('converts headers to drop targets when machine selected', function() {
-      // This tests assumes the previous test passed.
-      // 'listens for the drag start, end, drop events'
-      var onStub = utils.makeStubMethod(view, 'on');
-      this._cleanups.push(onStub.reset);
-      view._bindEvents();
-      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
-      view._containersHeader = { setDroppable: utils.makeStubFunction() };
-      view.set('selectedMachine', 1);
-      // unit-drag start handler _showDraggingUI
-      onStub.allArguments()[0][1].call(view);
-      assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
-      // The user selected a machine so this header should be a drop target.
-      assert.equal(view._containersHeader.setDroppable.calledOnce(), true);
-    });
+    it('converts headers and tokens to drop targets when machine selected',
+        function() {
+          // This tests assumes the previous test passed.
+          // 'listens for the drag start, end, drop events'
+          var onStub = utils.makeStubMethod(view, 'on');
+          this._cleanups.push(onStub.reset);
+          container.append(Y.Node.create('<div class="containers">' +
+              '<div class="content"><div class="items"></div></div></div>'));
+          // Add a container.
+          machines.add([{id: '0/lxc/3'}]);
+          var machineToken = view.get('machineTokens')['0'];
+          var containerToken = view.get('containerTokens')['0/lxc/3'];
+          view._bindEvents();
+          view._machinesHeader = { setDroppable: utils.makeStubFunction() };
+          view._containersHeader = { setDroppable: utils.makeStubFunction() };
+          machineToken.setDroppable = utils.makeStubFunction();
+          containerToken.setDroppable = utils.makeStubFunction();
+          view.set('selectedMachine', 1);
+          // unit-drag start handler _showDraggingUI
+          onStub.allArguments()[0][1].call(view);
+          assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
+          assert.equal(machineToken.setDroppable.calledOnce(), true);
+          // The user selected a machine so this header should be a drop target.
+          assert.equal(view._containersHeader.setDroppable.calledOnce(), true);
+          assert.equal(containerToken.setDroppable.calledOnce(), true);
+        });
 
     it('converts headers to non-drop targets when drag stopped', function() {
       // This tests assumes the previous test passed.
       // 'listens for the drag start, end, drop events'
       var onStub = utils.makeStubMethod(view, 'on');
       this._cleanups.push(onStub.reset);
+      container.append(Y.Node.create('<div class="containers">' +
+          '<div class="content"><div class="items"></div></div></div>'));
+      machines.add([{id: '0/lxc/3'}]);
+      var machineToken = view.get('machineTokens')['0'];
+      var containerToken = view.get('containerTokens')['0/lxc/3'];
       view._bindEvents();
       view._machinesHeader = { setNotDroppable: utils.makeStubFunction() };
       view._containersHeader = { setNotDroppable: utils.makeStubFunction() };
+      machineToken.setNotDroppable = utils.makeStubFunction();
+      containerToken.setNotDroppable = utils.makeStubFunction();
       // unit-drag end handler _hideDraggingUI
       onStub.allArguments()[1][1].call(view);
       assert.equal(view._machinesHeader.setNotDroppable.calledOnce(), true);
       assert.equal(view._containersHeader.setNotDroppable.calledOnce(), true);
+      assert.equal(machineToken.setNotDroppable.calledOnce(), true);
+      assert.equal(containerToken.setNotDroppable.calledOnce(), true);
     });
 
     it('converts headers to non-drop targets when dropped on a header',
         function() {
           view.render();
+          machines.add([{id: '0/lxc/3'}]);
+          var machineToken = view.get('machineTokens')['0'];
+          var containerToken = view.get('containerTokens')['0/lxc/3'];
+          machineToken.setNotDroppable = utils.makeStubFunction();
+          containerToken.setNotDroppable = utils.makeStubFunction();
           view._machinesHeader = {
             setNotDroppable: utils.makeStubFunction(),
             updateLabelCount: utils.makeStubFunction()
@@ -322,6 +351,8 @@ describe('machine view panel view', function() {
           assert.equal(view._machinesHeader.setNotDroppable.calledOnce(), true);
           assert.equal(view._containersHeader.setNotDroppable.calledOnce(),
               true);
+          assert.equal(machineToken.setNotDroppable.calledOnce(), true);
+          assert.equal(containerToken.setNotDroppable.calledOnce(), true);
         });
 
     it('creates a new machine when dropped on machine header', function() {

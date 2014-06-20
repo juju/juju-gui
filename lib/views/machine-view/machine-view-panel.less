@@ -7,7 +7,7 @@
     bottom: 0;
     left: @bws-sidebar-width;
     right: 0;
-    padding: 10px 0 0 0;
+    padding: 0;
     background-color: #fff;
 
     input[type="text"] {
@@ -39,15 +39,29 @@
                 }
             }
         }
+        &.machines {
+            .content {
+                // Allow the token borders to overlap the column borders
+                // that would otherwise be hidden by overflow: hidden.
+                margin-left: -1px;
+                margin-right: -1px;
+                padding-left: 1px;
+                padding-right: 1px;
+            }
+        }
+        &.containers {
+            .content {
+                // Allow the token borders to overlap the column borders
+                // that would otherwise be hidden by overflow: hidden.
+                margin-left: -1px;
+                padding-left: 1px;
+            }
+        }
         .head {
             .flex-basis(auto);
             position: relative;
             padding: 20px;
-            border-bottom: 1px solid @machine-view-border-colour;
 
-            &.droppable .drop {
-                display: block;
-            }
             h3 {
                 .type3;
                 display: block;
@@ -68,24 +82,9 @@
             }
             .drop {
                 .type4;
-                display: none;
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: #fff;
 
                 span {
-                    position: absolute;
-                    top: 0;
-                    bottom: 10px;
-                    left: 10px;
-                    right: 10px;
-                    display: block;
-                    border: 2px dashed #d6d3cf;
-                    text-align: center;
-                    line-height: 72px;
+                    margin-top: -13px;
                 }
             }
         }
@@ -93,11 +92,46 @@
             .flex(1);
             overflow-x: hidden;
             overflow-y: auto;
+            border-top: 1px solid @machine-view-border-colour;
 
             ul.items {
                 margin: 0;
                 list-style: none;
             }
+        }
+    }
+    .droppable {
+        &.drop-hover .drop {
+            background-color: #eee;
+        }
+        .drop {
+            display: block;
+
+            * {
+                // Set the children to not fire pointer events, specifically to
+                // not fire the enter events otherwise the parent will fire an
+                // exit event and the highlight will be removed.
+                pointer-events: none;
+            }
+        }
+    }
+    .drop {
+        display: none;
+        position: absolute;
+        top: -1px;
+        bottom: -1px;
+        left: -1px;
+        right: -1px;
+        background-color: #fff;
+        border: 1px dashed #d9d9d9;
+        text-align: center;
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            margin-top: -13px;
         }
     }
 }

@@ -48,6 +48,15 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+          Initialize events.
+
+          @method initializer
+        */
+        initializer: function() {
+          this._attachDragEvents(); // drop-target-view-extension
+        },
+
+        /**
          * Fire the delete event.
          *
          * @method handleDelete
@@ -79,6 +88,24 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+         * Change the token to the drop state.
+         *
+         * @method setDroppable
+         */
+        setDroppable: function() {
+          this.get('container').addClass('droppable');
+        },
+
+        /**
+         * Change the token back from drop state to the default state.
+         *
+         * @method setNotDroppable
+         */
+        setNotDroppable: function() {
+          this.get('container').removeClass('droppable');
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -98,7 +125,6 @@ YUI.add('container-token', function(Y) {
           // munipulate the dom, which we need for our namespaced code
           // to read.
           token.setAttribute('data-id', machine.id);
-          this._attachDragEvents(); // drop-target-view-extension
           this.get('containerParent').append(container);
           return this;
         }

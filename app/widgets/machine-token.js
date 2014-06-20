@@ -52,6 +52,15 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
+          Initialize events.
+
+          @method initializer
+        */
+        initializer: function() {
+          this._attachDragEvents(); // drop-target-view-extension
+        },
+
+        /**
          * Fire the delete event.
          *
          * @method handleDelete
@@ -91,6 +100,24 @@ YUI.add('machine-token', function(Y) {
         setCommitted: function() {
           this.set('committed', true);
           this.get('container').one('.token').removeClass('uncommitted');
+        },
+
+        /**
+         * Change the token to the drop state.
+         *
+         * @method setDroppable
+         */
+        setDroppable: function() {
+          this.get('container').addClass('droppable');
+        },
+
+        /**
+         * Change the token back from drop state to the default state.
+         *
+         * @method setNotDroppable
+         */
+        setNotDroppable: function() {
+          this.get('container').removeClass('droppable');
         },
 
         /**
@@ -141,7 +168,6 @@ YUI.add('machine-token', function(Y) {
           // manipulate the dom, which we need for our namespaced code
           // to read.
           token.setAttribute('data-id', machine.id);
-          this._attachDragEvents(); // drop-target-view-extension
           return this;
         },
 

@@ -24,7 +24,7 @@ describe('MV drop target view extension', function() {
 
   before(function(done) {
     var requires = ['base', 'base-build', 'event', 'juju-tests-utils',
-      'mv-drop-target-view-extension'];
+      'node-event-simulate', 'mv-drop-target-view-extension'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           juju = Y.namespace('juju');
           utils = Y.namespace('juju-tests.utils');
@@ -48,23 +48,29 @@ describe('MV drop target view extension', function() {
     });
     view._attachDragEvents();
     var delegate = view.get('container').delegate;
-    assert.equal(delegate.callCount(), 3);
+    assert.equal(delegate.callCount(), 4);
     var delArgs = delegate.allArguments();
     assert.equal(delArgs[0][0], 'drop');
     assert.deepEqual(delArgs[0][1], view._unitDropHandler);
-    assert.equal(delArgs[0][2], '.token');
+    assert.equal(delArgs[0][2], '.drop');
     assert.equal(delArgs[1][0], 'dragenter');
-    assert.deepEqual(delArgs[1][1], view._ignore);
-    assert.equal(delArgs[1][2], '.token');
-    assert.equal(delArgs[2][0], 'dragover');
-    assert.deepEqual(delArgs[2][1], view._ignore);
-    assert.equal(delArgs[2][2], '.token');
+    assert.deepEqual(delArgs[1][1], view._startHover);
+    assert.equal(delArgs[1][2], '.drop');
+    assert.equal(delArgs[2][0], 'dragleave');
+    assert.deepEqual(delArgs[2][1], view._stopHover);
+    assert.equal(delArgs[2][2], '.drop');
+    assert.equal(delArgs[3][0], 'dragover');
+    assert.deepEqual(delArgs[3][1], view._ignore);
+    assert.equal(delArgs[3][2], '.drop');
   });
 
   it('fires unit-token-drop in its drop handler', function() {
+    var container = utils.makeContainer(this, 'machine-view-panel');
     var eventData = {
       currentTarget: {
-        getData: utils.makeStubFunction('targetid', 'dropaction')
+        ancestor: utils.makeStubFunction({
+          getData: utils.makeStubFunction('targetid', 'dropaction')
+        })
       },
       _event: {
         dataTransfer: {
@@ -72,6 +78,7 @@ describe('MV drop target view extension', function() {
         }}};
     var fireStub = utils.makeStubMethod(view, 'fire');
     this._cleanups.push(fireStub.reset);
+    view.set('container', container);
     view.set('machine', 'machineObj');
     view._unitDropHandler(eventData);
     assert.equal(fireStub.calledOnce(), true);
@@ -82,6 +89,32 @@ describe('MV drop target view extension', function() {
       unit: 'foo',
       machine: 'machineObj'
     });
+    assert.equal(container.hasClass('drop-hover'), false,
+        'the container should have had the hover state removed');
   });
+
+  it('sets the hover class when dragging over a drop target', function() {
+    var container = utils.makeContainer(this, 'machine-view-panel');
+    view.set('container', container);
+    assert.equal(container.hasClass('drop-hover'), false);
+    view._startHover({
+      currentTarget: container,
+      preventDefault: utils.makeStubFunction()
+    });
+    assert.equal(container.hasClass('drop-hover'), true);
+  });
+
+  it('removes the hover class when it stops dragging over a drop target',
+      function() {
+        var container = utils.makeContainer(this, 'machine-view-panel');
+        view.set('container', container);
+        view._startHover({
+          currentTarget: container,
+          preventDefault: utils.makeStubFunction()
+        });
+        assert.equal(container.hasClass('drop-hover'), true);
+        view._stopHover({currentTarget: container});
+        assert.equal(container.hasClass('drop-hover'), false);
+      });
 
 });

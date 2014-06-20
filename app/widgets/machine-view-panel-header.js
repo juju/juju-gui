@@ -107,7 +107,7 @@ YUI.add('machine-view-panel-header', function(Y) {
          *
          * @method setDroppable
          */
-        setDroppable: function(label) {
+        setDroppable: function() {
           this.get('container').addClass('droppable');
         },
 
@@ -116,7 +116,7 @@ YUI.add('machine-view-panel-header', function(Y) {
          *
          * @method setNotDroppable
          */
-        setNotDroppable: function(label) {
+        setNotDroppable: function() {
           this.get('container').removeClass('droppable');
         },
 
@@ -131,7 +131,7 @@ YUI.add('machine-view-panel-header', function(Y) {
           container.setHTML(this.template(attrs));
           container.one('.drop').setData('drop-action', this.get('action'));
           container.addClass('machine-view-panel-header');
-          this._attachDragEvents('.drop');
+          this._attachDragEvents();
           return this;
         }
       });
