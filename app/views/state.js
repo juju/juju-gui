@@ -479,6 +479,10 @@ YUI.add('juju-app-state', function(Y) {
     */
     _parseCharmUrl: function(url, hash) {
       var state = {};
+      // We don't want to parse the login/logout urls as charms.
+      if (url === 'login' || url === 'logout') {
+        return state;
+      }
       if (url) { state.id = url; }
       if (hash) {
         // There are legacy hashes which have a 'bws_' prefix. This strips the

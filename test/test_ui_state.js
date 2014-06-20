@@ -360,6 +360,15 @@ describe('UI State object', function() {
               id: 'precise/mysql-38',
               hash: 'foo' });
       });
+
+      it('does not parse "login" or "logout" as charms', function() {
+        var result;
+        result = state._parseCharmUrl('login');
+        assert.deepEqual(result, {});
+
+        result = state._parseCharmUrl('logout');
+        assert.deepEqual(result, {});
+      });
     });
   });
 
