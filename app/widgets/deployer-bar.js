@@ -182,15 +182,16 @@ YUI.add('deployer-bar', function(Y) {
       this.hideChanges();
       var container = this.get('container'),
           ecs = this.get('ecs');
+      var changes = this._getChanges(ecs);
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: this._getChangeCount(ecs),
           latestChangeDescription: '',
-          deployServices: this._getDeployedServices(ecs),
-          addedRelations: this._getAddRelations(ecs),
-          addedUnits: this._getAddUnits(ecs),
-          addedMachines: this._getAddMachines(ecs),
-          configsChanged: this._getConfigsChanged(ecs)
+          deployServices: changes.deployedServices,
+          addedRelations: changes.addRelations,
+          addedUnits: changes.addUnits,
+          addedMachines: changes.addMachines,
+          configsChanged: changes.setConfigs
         }));
       }
       container.addClass('summary-open');
@@ -448,117 +449,60 @@ YUI.add('deployer-bar', function(Y) {
     },
 
     /**
-     * Pull out all deployed changes from the changeset to display to the user.
+     * Fetch and format the changeSet command records for the deployment
+     * summary.
      *
-     * @method _getDeployedServices
+     * @method _getChanges
      * @param {Object} ecs The environment change set.
      */
-    _getDeployedServices: function(ecs) {
-      var returnSet = [];
-      for (var key in ecs.changeSet) {
-        if (ecs.changeSet[key]) {
-          var command = ecs.changeSet[key].command,
-              name = command.args[1];
-          if (command.method === '_deploy') {
+    _getChanges: function(ecs) {
+      var changes = {
+        deployedServices: [],
+        addRelations: [],
+        addUnits: [],
+        addMachines: [],
+        setConfigs: []
+      };
+      Object.keys(ecs.changeSet).forEach(function(key) {
+        var command = ecs.changeSet[key].command;
+        var name;
+        switch (command.method) {
+          case '_deploy':
+            name = command.args[1];
             var icon = this._getServiceIconUrl(name);
-            returnSet.push({icon: icon, name: name});
-          }
-        }
-      }
-      return returnSet;
-    },
-
-    /**
-    * Pull out all relation changes from the changeset to display to the user.
-    *
-    * @method _getAddRelations
-    * @param {Object} ecs The environment change set.
-    */
-    _getAddRelations: function(ecs) {
-      var returnSet = [];
-      for (var key in ecs.changeSet) {
-        if (ecs.changeSet[key]) {
-          var obj = ecs.changeSet[key];
-          if (obj.command.method === '_add_relation') {
-            var single = {type: ecs.changeSet[key].command.args[0][1].name,
-                           from: ecs.changeSet[key].command.args[0][0],
-                           to: ecs.changeSet[key].command.args[1][0]};
-            returnSet.push(single);
-          }
-        }
-      }
-      return returnSet;
-    },
-
-    /**
-    * Pull out all addUnits changes from the changeset to display to the user.
-    *
-    * @method _getAddUnits
-    * @param {Object} ecs The environment change set.
-    */
-    _getAddUnits: function(ecs) {
-      var returnSet = [];
-      for (var key in ecs.changeSet) {
-        if (ecs.changeSet[key]) {
-          var command = ecs.changeSet[key].command;
-          if (command.method === '_add_unit') {
-            var serviceName = command.args[0];
-            returnSet.push({
-              icon: this._getServiceIconUrl(serviceName),
-              serviceName: serviceName,
+            changes.deployedServices.push({icon: icon, name: name});
+            break;
+          case '_add_relation':
+            changes.addRelations.push({
+              type: command.args[0][1].name,
+              from: command.args[0][0],
+              to: command.args[1][0]
+            });
+            break;
+          case '_add_unit':
+            name = command.args[0];
+            changes.addUnits.push({
+              icon: this._getServiceIconUrl(name),
+              serviceName: name,
               numUnits: command.args[1]
             });
-          }
-        }
-      }
-      return returnSet;
-    },
-
-    /**
-    * Pull out all addMachines changes from the changeset to display to the
-    * user.
-    *
-    * @method _getAddMachines
-    * @param {Object} ecs The environment change set.
-    */
-    _getAddMachines: function(ecs) {
-      var returnSet = [];
-      for (var key in ecs.changeSet) {
-        if (ecs.changeSet[key]) {
-          var command = ecs.changeSet[key].command;
-          if (command.method === '_addMachines') {
+            break;
+          case '_addMachines':
             /* jshint -W083 */
             command.args[0].forEach(function(machine) {
-              returnSet.push(machine);
+              changes.addMachines.push(machine);
             });
-          }
-        }
-      }
-      return returnSet;
-    },
-
-    /**
-      Fetches the set_config changes from the ecs changeset to display to the
-      user.
-
-      @method _getConfigsChanged
-      @param {Object} ecs The environment change set.
-      @return {Array} A collection of config changes.
-    */
-    _getConfigsChanged: function(ecs) {
-      var configSet = [],
-          command, serviceName;
-      Object.keys(ecs.changeSet).forEach(function(key) {
-        command = ecs.changeSet[key].command;
-        if (command.method === '_set_config') {
-          serviceName = command.args[0];
-          configSet.push({
-            icon: this._getServiceIconUrl(serviceName),
-            serviceName: serviceName
-          });
+            break;
+          case '_set_config':
+            name = command.args[0];
+            changes.setConfigs.push({
+              icon: this._getServiceIconUrl(name),
+              serviceName: name
+            });
+            break;
         }
       }, this);
-      return configSet;
+      return changes;
     },
 
     /**
