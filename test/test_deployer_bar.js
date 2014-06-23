@@ -291,7 +291,7 @@ describe('deployer bar view', function() {
   it('retrieves all the unit changes', function() {
     ecs.lazyAddUnits(['django', 1]);
     ecs.lazyAddUnits(['rails', 2]);
-    var results = view._getAddUnits(ecs);
+    var results = view._getChanges(ecs).addUnits;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], {
       icon: 'https://manage.jujucharms.com' +
@@ -316,7 +316,7 @@ describe('deployer bar view', function() {
     // Add a second machine and a container on the first.
     ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
     ecs.lazyAddMachines([[container]], { modelId: 'new-2' });
-    var results = view._getAddMachines(ecs);
+    var results = view._getChanges(ecs).addMachines;
     assert.lengthOf(results, 3);
     assert.deepEqual(results[0], machine);
     assert.deepEqual(results[1], machine);
