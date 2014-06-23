@@ -148,6 +148,17 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Removes an existing record from the changeSet
+
+      @method _removeExistingRecord
+      @param {String} id The id of the record to remove.
+    */
+    _removeExistingRecord: function(id) {
+      delete this.changeSet[id];
+      this.fire('changeSetModified');
+    },
+
+    /**
       Wraps the last function parameter so that we can be notified when it's
       called.
 
@@ -466,7 +477,7 @@ YUI.add('environment-change-set', function(Y) {
                                         [command.args[0], command.args[1]],
                                         argsEndpoints)) {
             ghosted = true;
-            delete this.changeSet[key];
+            this._removeExistingRecord(key);
             // Remove the relation from the relations db. Even the ghost
             // relations are stored in the db.
             relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
