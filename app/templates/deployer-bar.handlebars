@@ -32,7 +32,29 @@
 </div>
 <aside class="panel changes">
   <header>
-    <ul class="action-list">
+    <ul class="action-list right">
+        <li>
+            <span class="link change-mode min" data-mode="min">
+                <i class="sprite DB-expand-01"></i>
+            </span>
+        </li>
+        <li>
+            <span class="link change-mode mid" data-mode="mid">
+                <i class="sprite DB-expand-02"></i>
+            </span>
+        </li>
+        <li>
+            <span class="link change-mode max" data-mode="max">
+                <i class="sprite DB-expand-03"></i>
+            </span>
+        </li>
+        <li>
+            <span class="link close">
+                <i class="sprite DB-close"></i>
+            </span>
+        </li>
+    </ul>
+    <ul class="action-list left">
         <li class="hide">
             <a href="" class="link">
                 {{ changeCount }} changes
@@ -47,15 +69,29 @@
 </aside>
 <aside class="panel summary">
     <header>
-        <h2 class="title">The following changes will be deployed</h2>
-        <div class="right">
-            <ul class="action-list">
-                <li><a href="" class="min"><i class="sprite DB-expand-01"></i></a></li>
-                <li><a href="" class="mid"><i class="sprite DB-expand-02"></i></a></li>
-                <li><a href="" class="max"><i class="sprite DB-expand-03 active"></i></a></li>
-                <li><a href="" class="close"><i class="sprite DB-close"></i></a></li>
-            </ul>
-        </div>
+        The following changes will be deployed
+        <ul class="action-list right">
+            <li>
+                <span class="link change-mode min" data-mode="min">
+                    <i class="sprite DB-expand-01"></i>
+                </span>
+            </li>
+            <li>
+                <span class="link change-mode mid" data-mode="mid">
+                    <i class="sprite DB-expand-02"></i>
+                </span>
+            </li>
+            <li>
+                <span class="link change-mode max" data-mode="max">
+                    <i class="sprite DB-expand-03"></i>
+                </span>
+            </li>
+            <li>
+                <span class="link close">
+                    <i class="sprite DB-close"></i>
+                </span>
+            </li>
+        </ul>
     </header>
     <section>
         <div class="content">
