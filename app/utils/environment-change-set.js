@@ -455,7 +455,8 @@ YUI.add('environment-change-set', function(Y) {
       // queue.
       var changeSet = this.changeSet,
           argsEndpoints = [args[0], args[1]],
-          command;
+          ghosted = false,
+          command, record;
       var relations = this.get('db').relations;
       Object.keys(changeSet).forEach(function(key) {
         command = changeSet[key].command;
@@ -464,17 +465,24 @@ YUI.add('environment-change-set', function(Y) {
           if (relations.compareRelationEndpoints(
                                         [command.args[0], command.args[1]],
                                         argsEndpoints)) {
+            ghosted = true;
             delete this.changeSet[key];
+            // Remove the relation from the relations db. Even the ghost
+            // relations are stored in the db.
+            relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
           }
         }
       }, this);
-
-      // XXX Add changeset to remove the relation from the env XXX
-
-      // Remove the relation from the relations db. Even the ghost relations
-      // are stored in the db.
-      var relation = relations.getRelationFromEndpoints(argsEndpoints);
-      relations.remove(relation);
+      // If the relation wasn't found in the ecs then it's a real relation.
+      if (!ghosted) {
+        record = this._createNewRecord('removeRelation', {
+          method: '_remove_relation',
+          args: args
+        });
+        // XXX We will probably want to mark that the relation line is pending
+        // to be destroyed. Awaiting feedback from design. 06-23-2014 Jeff
+      }
+      return record;
     },
 
     /**

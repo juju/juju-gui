@@ -675,9 +675,9 @@ YUI.add('juju-topology-relation', function(Y) {
         // Redraw the graph and reattach events.
         topo.update();
       }
-      view.get('rmrelation_dialog').hide();
-      view.get('rmrelation_dialog').destroy();
-      if (!window.flags && !window.flags.mv) {
+      if (!window.flags || !window.flags.mv) {
+        view.get('rmrelation_dialog').hide();
+        view.get('rmrelation_dialog').destroy();
         // There is no remove relation dialogue when running with the ecs.
         confirmButton.set('disabled', false);
       }
