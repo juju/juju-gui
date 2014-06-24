@@ -402,6 +402,79 @@ describe('test_model.js', function() {
          .should.eql(['relation-2', 'relation-3', 'relation-4']);
        });
 
+    it('getRelationFromEndpoints returns relation using endpoints', function() {
+      var relations = new models.RelationList();
+      var relation = new models.Relation({
+        endpoints: [
+          ['wordpress', {
+            name: 'db',
+            role: 'server'
+          }],
+          ['mysql', {
+            name: 'db',
+            role: 'client'
+          }]
+        ]});
+      var endpoints = [
+        ['wordpress', {
+          name: 'db',
+          role: 'server'
+        }],
+        ['mysql', {
+          name: 'db',
+          role: 'client'
+        }]
+      ];
+      relations.add(relation);
+      assert.deepEqual(relations.getRelationFromEndpoints(endpoints), relation);
+    });
+
+    it('compareRelationEndpoints can compare two endpoint sets', function() {
+      var relations = new models.RelationList();
+      var endpointSetA = [
+        ['wordpress', {
+          name: 'db',
+          role: 'server'
+        }],
+        ['mysql', {
+          name: 'db',
+          role: 'client'
+        }]
+      ];
+      var endpointSetB = [
+        ['wordpress', {
+          name: 'db',
+          role: 'server'
+        }],
+        ['mysql', {
+          name: 'db',
+          role: 'client'
+        }]
+      ];
+
+      assert.equal(
+          relations.compareRelationEndpoints(
+              [endpointSetA[0], endpointSetA[1]],
+              [endpointSetB[0], endpointSetB[1]]),
+          true, 'compare set 1 failed');
+      assert.equal(
+          relations.compareRelationEndpoints(
+              [endpointSetA[1], endpointSetA[0]],
+              [endpointSetB[0], endpointSetB[1]]),
+          true, 'compare set 2 failed');
+      assert.equal(
+          relations.compareRelationEndpoints(
+              [endpointSetA[0], endpointSetA[1]],
+              [endpointSetB[1], endpointSetB[0]]),
+          true, 'compare set 3 failed');
+      assert.equal(
+          relations.compareRelationEndpoints(
+              [endpointSetA[0], endpointSetA[0]],
+              [endpointSetB[1], endpointSetB[1]]),
+          false, 'compare set 4 failed');
+    });
+
+
     it('must be able to reference the Environment model', function() {
       var db = new models.Database();
       var env = db.environment;

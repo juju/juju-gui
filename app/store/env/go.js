@@ -1894,6 +1894,25 @@ YUI.add('juju-env-go', function(Y) {
         result: result
       });
     },
+    /**
+      Calls the environment's _remove_relation method or removes a
+      remove_relation record in the ECS queue.
+
+      Parameters match the parameters for the _remove_relation method below.
+      The only new parameter is the last one (ECS options).
+
+      @method remove_relation
+    */
+    remove_relation: function(endpointA, endpointB, callback, options) {
+      var ecs = this.get('ecs'),
+          args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        this._remove_relation.apply(this, args);
+      } else {
+        ecs._lazyRemoveRelation(args);
+      }
+    },
+
 
     /**
      * Remove the relationship between two services.
@@ -1908,9 +1927,9 @@ YUI.add('juju-env-go', function(Y) {
      *  occurred), and with a "endpoint_a" and "endpoint_b" attributes
      *  containing the names of the endpoints.
      * @return {undefined} Nothing.
-     * @method remove_relation
+     * @method _remove_relation
      */
-    remove_relation: function(endpointA, endpointB, callback) {
+    _remove_relation: function(endpointA, endpointB, callback) {
       var endpoint_a = endpointToName(endpointA);
       var endpoint_b = endpointToName(endpointB);
       var intermediateCallback;

@@ -148,6 +148,19 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Removes an existing record from the changeSet
+
+      @method _removeExistingRecord
+      @param {String} id The id of the record to remove.
+    */
+    _removeExistingRecord: function(id) {
+      delete this.changeSet[id];
+      // We need to fire this event so other items in the application know this
+      // list has changed.
+      this.fire('changeSetModified');
+    },
+
+    /**
       Wraps the last function parameter so that we can be notified when it's
       called.
 
@@ -439,6 +452,50 @@ YUI.add('environment-change-set', function(Y) {
         args: args
       };
       return this._createNewRecord('addRelation', command, parent);
+    },
+
+    /**
+      Creates a new entry in the queue for removing a relation.
+
+      Receives all the parameters received by the environment's
+      "remove_relation" method with the exception of the ECS options object.
+
+      @method _lazyRemoveRelation
+      @param {Array} args The arguments to remove the relation with.
+    */
+    _lazyRemoveRelation: function(args) {
+      // If an existing ecs record for this relation exists, remove it from the
+      // queue.
+      var changeSet = this.changeSet,
+          argsEndpoints = [args[0], args[1]],
+          ghosted = false,
+          command, record;
+      var relations = this.get('db').relations;
+      Object.keys(changeSet).forEach(function(key) {
+        command = changeSet[key].command;
+        if (command.method === '_add_relation') {
+          // If there is a matching ecs relation then remove it from the queue.
+          if (relations.compareRelationEndpoints(
+                                        [command.args[0], command.args[1]],
+                                        argsEndpoints)) {
+            ghosted = true;
+            this._removeExistingRecord(key);
+            // Remove the relation from the relations db. Even the ghost
+            // relations are stored in the db.
+            relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
+          }
+        }
+      }, this);
+      // If the relation wasn't found in the ecs then it's a real relation.
+      if (!ghosted) {
+        record = this._createNewRecord('removeRelation', {
+          method: '_remove_relation',
+          args: args
+        });
+        // XXX We will probably want to mark that the relation line is pending
+        // to be destroyed. Awaiting feedback from design. 06-23-2014 Jeff
+      }
+      return record;
     },
 
     /**

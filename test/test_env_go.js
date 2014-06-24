@@ -1683,6 +1683,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, last_message);
     });
 
+    it('calls the ecs remove relation', function() {
+      window.flags = { mv: true };
+      var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveRelation');
+      this._cleanups.push(lazy.reset);
+      env.remove_relation([], [], function() {});
+      assert.equal(lazy.calledOnce(), true);
+      window.flags = {};
+    });
+
     it('successfully removes a relation', function() {
       var endpoint_a, endpoint_b;
       endpointA = ['mysql', {name: 'database'}];

@@ -214,6 +214,7 @@ YUI.add('deployer-bar', function(Y) {
           latestChangeDescription: '',
           deployServices: changes.deployedServices,
           addedRelations: changes.addRelations,
+          removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
           addedMachines: changes.addMachines,
           configsChanged: changes.setConfigs
@@ -402,6 +403,14 @@ YUI.add('deployer-bar', function(Y) {
                 ' and ' +
                 change.command.args[1][0] + '.';
             break;
+          case '_remove_relation':
+            changeItem.icon = 'changes-relation-removed';
+            changeItem.description = change.command.args[0][1].name +
+                ' relation removed between ' +
+                change.command.args[0][0] +
+                ' and ' +
+                change.command.args[1][0] + '.';
+            break;
           case '_addMachines':
             var machineType = change.command.args[0][0].parentId ?
                 'container' : 'machine';
@@ -484,42 +493,51 @@ YUI.add('deployer-bar', function(Y) {
       var changes = {
         deployedServices: [],
         addRelations: [],
+        removeRelations: [],
         addUnits: [],
         addMachines: [],
         setConfigs: []
       };
       Object.keys(ecs.changeSet).forEach(function(key) {
-        var command = ecs.changeSet[key].command;
-        var name;
+        var command = ecs.changeSet[key].command,
+            args = command.args,
+            name;
         switch (command.method) {
           case '_deploy':
-            name = command.args[1];
+            name = args[1];
             var icon = this._getServiceIconUrl(name);
             changes.deployedServices.push({icon: icon, name: name});
             break;
           case '_add_relation':
             changes.addRelations.push({
-              type: command.args[0][1].name,
-              from: command.args[0][0],
-              to: command.args[1][0]
+              type: args[0][1].name,
+              from: args[0][0],
+              to: args[1][0]
+            });
+            break;
+          case '_remove_relation':
+            changes.removeRelations.push({
+              type: args[0][1].name,
+              from: args[0][0],
+              to: args[1][0]
             });
             break;
           case '_add_unit':
-            name = command.args[0];
+            name = args[0];
             changes.addUnits.push({
               icon: this._getServiceIconUrl(name),
               serviceName: name,
-              numUnits: command.args[1]
+              numUnits: args[1]
             });
             break;
           case '_addMachines':
             /* jshint -W083 */
-            command.args[0].forEach(function(machine) {
+            args[0].forEach(function(machine) {
               changes.addMachines.push(machine);
             });
             break;
           case '_set_config':
-            name = command.args[0];
+            name = args[0];
             changes.setConfigs.push({
               icon: this._getServiceIconUrl(name),
               serviceName: name

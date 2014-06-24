@@ -120,6 +120,17 @@
                         {{/each}}
                         </ul>
                     {{/if}}
+                    {{#if removedRelations.length}}
+                        <h3>
+                            {{removedRelations.length}}
+                            {{pluralize 'relation' removedRelations.length}} removed
+                        </h3>
+                        <ul>
+                        {{#each removedRelations}}
+                            <li>{{type}} relation removed between {{from}} and {{to}}</li>
+                        {{/each}}
+                        </ul>
+                    {{/if}}
                     {{#if addedUnits.length}}
                         <h3>
                             {{addedUnits.length}}
