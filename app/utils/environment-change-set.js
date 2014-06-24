@@ -155,6 +155,8 @@ YUI.add('environment-change-set', function(Y) {
     */
     _removeExistingRecord: function(id) {
       delete this.changeSet[id];
+      // We need to fire this event so other items in the application know this
+      // list has changed.
       this.fire('changeSetModified');
     },
 

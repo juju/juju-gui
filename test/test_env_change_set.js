@@ -193,6 +193,22 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('_removeExistingRecord', function() {
+      it('deletes the requested record from the changeSet', function() {
+        ecs.changeSet.abc123 = 'foo';
+        ecs._removeExistingRecord('abc123');
+        assert.strictEqual(ecs.changeSet.abc123, undefined);
+      });
+
+      it('fires a changeSetModified event', function() {
+        var fire = testUtils.makeStubMethod(ecs, 'fire');
+        ecs.changeSet.abc123 = 'foo';
+        ecs._removeExistingRecord('abc123');
+        assert.equal(fire.calledOnce(), true);
+        assert.equal(fire.lastArguments()[0], 'changeSetModified');
+      });
+    });
+
     describe('_wrapCallback', function() {
       it('wraps the callback provided in the record object', function() {
         var callback = testUtils.makeStubFunction('real cb');
@@ -527,6 +543,46 @@ describe('Environment Change Set', function() {
         assert.equal(Y.Object.size(ecs.changeSet), 3);
         // Perform this last, as it will mutate ecs.changeSet.
         assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
+      });
+    });
+
+    describe('_lazyRemoveRelation', function() {
+      it('can remove a ghost relation from the changeset', function() {
+        ecs.get('db').relations = {
+          compareRelationEndpoints: testUtils.makeStubFunction(true),
+          getRelationFromEndpoints: testUtils.makeStubFunction(),
+          remove: testUtils.makeStubFunction()
+        };
+        ecs.changeSet['addRelation-982'] = {
+          command: {
+            args: ['arg1', 'arg2'],
+            method: '_add_relation' }};
+        var record = ecs._lazyRemoveRelation(['args1', 'args2']);
+        var compare = ecs.get('db').relations.compareRelationEndpoints;
+        var remove = ecs.get('db').relations.remove;
+        var getRelation = ecs.get('db').relations.getRelationFromEndpoints;
+        var compareArgs = compare.lastArguments();
+        assert.equal(compare.calledOnce(), true);
+        assert.deepEqual(compareArgs[0], ['arg1', 'arg2']);
+        assert.deepEqual(compareArgs[1], ['args1', 'args2']);
+        assert.strictEqual(record, undefined);
+        assert.strictEqual(ecs.changeSet['addRelation-982'], undefined);
+        assert.deepEqual(getRelation.lastArguments()[0], ['args1', 'args2']);
+        assert.equal(remove.calledOnce(), true);
+      });
+
+      it('can add a remove relation record into the changeset', function() {
+        var record = ecs._lazyRemoveRelation(['args1', 'args2']);
+        assert.equal(record.split('-')[0], 'removeRelation');
+        assert.deepEqual(ecs.changeSet[record], {
+          command: {
+            args: ['args1', 'args2'],
+            method: '_remove_relation'
+          },
+          executed: false,
+          id: record,
+          parents: []
+        });
       });
     });
   });

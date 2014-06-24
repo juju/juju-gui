@@ -402,6 +402,33 @@ describe('test_model.js', function() {
          .should.eql(['relation-2', 'relation-3', 'relation-4']);
        });
 
+    it('getRelationFromEndpoints returns relation using endpoints', function() {
+      var relations = new models.RelationList();
+      var relation = new models.Relation({
+        endpoints: [
+          ['wordpress', {
+            name: 'db',
+            role: 'server'
+          }],
+          ['mysql', {
+            name: 'db',
+            role: 'client'
+          }]
+        ]});
+      var endpoints = [
+        ['wordpress', {
+          name: 'db',
+          role: 'server'
+        }],
+        ['mysql', {
+          name: 'db',
+          role: 'client'
+        }]
+      ];
+      relations.add(relation);
+      assert.deepEqual(relations.getRelationFromEndpoints(endpoints), relation);
+    });
+
     it('compareRelationEndpoints can compare two endpoint sets', function() {
       var relations = new models.RelationList();
       var endpointSetA = [
