@@ -350,4 +350,22 @@ describe('deployer bar view', function() {
     assert.equal(importStub.calledOnce(), true,
         'deployBundleFiles should have been called');
   });
+
+  it('can set the height mode to small', function() {
+    assert.equal(container.hasClass('mode-min'), false);
+    container.one('.action-list .min').simulate('click');
+    assert.equal(container.hasClass('mode-min'), true);
+  });
+
+  it('can set the height mode to medium', function() {
+    assert.equal(container.hasClass('mode-mid'), false);
+    container.one('.action-list .mid').simulate('click');
+    assert.equal(container.hasClass('mode-mid'), true);
+  });
+
+  it('can set the height mode to large', function() {
+    assert.equal(container.hasClass('mode-max'), false);
+    container.one('.action-list .max').simulate('click');
+    assert.equal(container.hasClass('mode-max'), true);
+  });
 });

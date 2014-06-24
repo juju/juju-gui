@@ -49,6 +49,9 @@ YUI.add('deployer-bar', function(Y) {
       '.summary .close': {
         click: 'hideSummary'
       },
+      '.changes .close': {
+        click: 'clickHideChanges'
+      },
       '.cancel-button': {
         click: 'hideSummary'
       },
@@ -72,6 +75,9 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.import-file': {
         change: '_deployFile'
+      },
+      '.action-list .change-mode': {
+        click: '_setMode'
       }
     },
 
@@ -142,6 +148,25 @@ YUI.add('deployer-bar', function(Y) {
     showRecentChanges: function(evt) {
       evt.halt();
       this._showChanges();
+    },
+
+    /**
+      Set the display mode.
+
+      @method _setMode
+      @param {Object} e The event object.
+    */
+    _setMode: function(e) {
+      var container = this.get('container');
+      var existing = container.get('className').split(' ');
+      var mode = e.currentTarget.getData('mode');
+      // Remove old mode classes.
+      existing.forEach(function(className) {
+        if (className.indexOf('mode-') === 0) {
+          container.removeClass(className);
+        }
+      });
+      container.addClass('mode-' + mode);
     },
 
     /**
