@@ -6,12 +6,18 @@
                 <span class="export link">Export</span>
                 <input type="file" class="import-file" />
             </span>
-            <a href="" class="button deploy-button">Deploy</a>
+            <span class="button deploy-button">
+                {{#if deployed}}
+                    Commit
+                {{else}}
+                    Deploy
+                {{/if}}
+            </span>
         </div>
         <div class="post-summary">
             <p>Confirm will deploy all changes</p>
-            <a href="" class="button cancel-button">Cancel</a>
-            <a href="" class="button confirm-button">Confirm</a>
+            <span class="button cancel-button">Cancel</span>
+            <span class="button confirm-button">Confirm</span>
         </div>
     </div>
     <ul class="action-list">
