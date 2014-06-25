@@ -47,6 +47,9 @@ YUI.add('create-machine-view', function(Y) {
           },
           '.create': {
             click: '_handleCreate'
+          },
+          '.containers select': {
+            change: '_handleContainerTypeChange'
           }
         },
 
@@ -74,9 +77,32 @@ YUI.add('create-machine-view', function(Y) {
           e.preventDefault();
           this.fire('createMachine', {
             unit: this.get('unit'),
+            containerType: this.get('containerType'),
+            parentId: this.get('parentId'),
             constraints: this._getConstraints()
           });
           this.destroy();
+        },
+
+        /**
+          Handle display/hiding constraints depending
+          on containerType
+
+          @method _handleContainerTypeChange
+          @param {Event} ev the click event created.
+        */
+        _handleContainerTypeChange: function(e) {
+          e.preventDefault();
+          var constraints = this.get('container').one('.constraints'),
+              select = e.currentTarget,
+              selectedIndex = select.get('selectedIndex'),
+              newVal = select.get('options').item(selectedIndex).get('value');
+          this.set('containerType', newVal);
+          if (newVal === 'kvm') {
+            constraints.removeClass('hidden');
+          } else {
+            constraints.addClass('hidden');
+          }
         },
 
         /**
@@ -102,6 +128,12 @@ YUI.add('create-machine-view', function(Y) {
           var container = this.get('container');
           container.setHTML(this.template());
           container.addClass('create-machine-view');
+          // If this is a container (i.e., has a parent machine), show the
+          // container type select and hide the constraints.
+          if (this.get('parentId')) {
+            container.one('.containers').removeClass('hidden');
+            container.one('.constraints').addClass('hidden');
+          }
           return this;
         },
 
@@ -122,7 +154,21 @@ YUI.add('create-machine-view', function(Y) {
             @default undefined
             @type {Object}
           */
-          unit: {}
+          unit: {},
+
+          /**
+            @attribute parentId
+            @default undefined
+            @type {String}
+          */
+          parentId: {},
+
+          /**
+            @attribute containerType
+            @default undefined
+            @type {String}
+          */
+          containerType: {}
         }
       });
 

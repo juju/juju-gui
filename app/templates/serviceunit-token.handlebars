@@ -19,15 +19,7 @@
   <div class="new-machine">
     Define constraints
   </div>
-  <div class="containers">
-    <select>
-      <option value="" selected disabled class="hidden default">
-        Choose location
-      </option>
-      <option value="new-lxc" class="default">new lxc</option>
-      <option value="new-kvm" class="default">new kvm</option>
-    </select>
-  </div>
+  {{>container-type-form}}
   {{>constraints-form}}
   <div class="actions">
     <span class="cancel secondary-action">Cancel</span> |

@@ -87,7 +87,9 @@ YUI.add('charm-details-view', function(Y) {
       var panel = Y.one('.charmbrowser'),
           container = this.get('container');
       panel.removeClass('animate-in');
-      window.location.hash = '';
+      if (window.location.hash) {
+        window.location.hash = '';
+      }
       this.viewletManager.hideSlot(ev);
       container.empty();
       this.destroy();

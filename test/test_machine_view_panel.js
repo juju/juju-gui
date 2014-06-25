@@ -218,8 +218,25 @@ describe('machine view panel view', function() {
       view.render();
       var createMachine = container.one('.create-machine');
       container.one('.machines .head .action').simulate('click');
-      assert.equal(createMachine.hasClass('create-machine-view'), true);
-      assert.equal(createMachine.getHTML() === '', false);
+      assert.equal(createMachine.hasClass('create-machine-view'), true,
+                   'expected class is not present');
+      assert.equal(createMachine.getHTML() === '', false,
+                   'HTML is not present');
+      assert.equal(createMachine.one('.containers').hasClass('hidden'), true,
+                   'container types are visible');
+    });
+
+    it('displays when the container header action is clicked', function() {
+      view.render();
+      view.set('selectedMachine', '0');
+      var createContainer = container.one('.create-container');
+      container.one('.containers .head .action').simulate('click');
+      assert.equal(createContainer.hasClass('create-machine-view'), true,
+                   'expected class is not present');
+      assert.equal(createContainer.getHTML() === '', false,
+                   'HTML is not present');
+      assert.equal(createContainer.one('.containers').hasClass('hidden'), false,
+                   'container types are hidden');
     });
 
     it('creates an unplaced unit when cancelled with a unit', function() {
@@ -372,7 +389,7 @@ describe('machine view panel view', function() {
       container.one('.create-machine-view .create').simulate('click');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
         containerType: undefined,
-        parentId: null,
+        parentId: undefined,
         constraints: {
           'cpu-power': '',
           mem: '',
@@ -396,19 +413,43 @@ describe('machine view panel view', function() {
         unit: 'test/1'
       });
       var env = view.get('env');
+      // The create container options should be visible
+      var createView = container.one('.create-machine-view');
+      assert.equal(createView.hasClass('create-machine-view'), true,
+                   'expected class is not present');
+      assert.equal(createView.getHTML() === '', false,
+                   'HTML is not present');
+      // Make sure the correct container type is selected
+      var select = createView.one('select');
+      select.all('option').each(function(option, index) {
+        var value = option.get('value');
+        if (value === 'lxc') {
+          select.getDOMNode().selectedIndex = index;
+        }
+      });
+      // Confirm the container creation
+      createView.one('select').simulate('change');
+      createView.one('.create').simulate('click');
       assert.deepEqual(env.addMachines.lastArguments()[0], [{
         containerType: 'lxc',
         parentId: '5',
-        constraints: {}
-      }]);
+        constraints: {
+          'cpu-power': '',
+          mem: '',
+          'root-disk': ''
+        }
+      }], 'Args passed to addMachines are incorrect');
       // A new ghost machine has been added to the database.
-      assert.isNotNull(machines.getById('5/lxc/new0'));
+      assert.notEqual(machines.getById('5/lxc/new0'), null,
+                      'new container is not in the database');
       var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], '5/lxc/new0');
+      assert.strictEqual(placeArgs[0].id, 'test/1',
+                         'the unit ID passed to placeUnit is incorrect');
+      assert.equal(placeArgs[1], '5/lxc/new0',
+                   'the container ID passed to placeUnit is incorrect');
     });
 
-    it('creates a new container when dropped on a machine', function() {
+    it('displays new container form when dropped on a machine', function() {
       view.render();
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
       this._cleanups.push(toggleStub.reset);
@@ -417,17 +458,12 @@ describe('machine view panel view', function() {
         targetId: '0',
         unit: 'test/1'
       });
-      var env = view.get('env');
-      assert.deepEqual(env.addMachines.lastArguments()[0], [{
-        containerType: 'lxc',
-        parentId: '0',
-        constraints: {}
-      }]);
-      // A new ghost machine has been added to the database.
-      assert.isNotNull(machines.getById('0/lxc/new0'));
-      var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], '0/lxc/new0');
+      // The create container options should be visible
+      var createView = container.one('.create-machine-view');
+      assert.equal(createView.hasClass('create-machine-view'), true,
+                   'expected class is not present');
+      assert.equal(createView.getHTML() === '', false,
+                   'HTML is not present');
     });
 
     it('places the unit on an already existing container', function() {
@@ -627,7 +663,7 @@ describe('machine view panel view', function() {
       unplacedUnit.fire('moveToken', {
         unit: {id: 'test/1'},
         machine: '4',
-        container: 'new-kvm',
+        container: 'kvm',
         constraints: constraints
       });
     });
@@ -654,7 +690,7 @@ describe('machine view panel view', function() {
       unplacedUnit.fire('moveToken', {
         unit: {id: 'test/1'},
         machine: '42',
-        container: 'new-lxc',
+        container: 'lxc',
         constraints: {}
       });
     });

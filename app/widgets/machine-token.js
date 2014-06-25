@@ -163,7 +163,7 @@ YUI.add('machine-token', function(Y) {
           var token = container.one('.token');
           // Even though this is a machine we want it to create a container
           // when something is dropped on it.
-          token.setData('drop-action', 'container');
+          token.one('.drop').setData('drop-action', 'container');
           // This must be setAttribute, not setData, as setData does not
           // manipulate the dom, which we need for our namespaced code
           // to read.
