@@ -178,6 +178,13 @@ YUI.add('juju-gui', function(Y) {
         help: 'Center the Environment overview',
         label: 'Shift + 0'
       },
+      'C-A-h': {
+        callback: function(e) {
+          this._toggleSidebar();
+        },
+        help: 'Show or hide the sidebar',
+        label: 'Control + Alt + h'
+      },
       'esc': {
         fire: 'clearState',
         callback: function() {
@@ -214,8 +221,6 @@ YUI.add('juju-gui', function(Y) {
         help: 'Save the websocket log to a file',
         label: 'Control + Shift + s'
       }
-
-
     },
 
     /**
@@ -846,6 +851,15 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         db: this.db
       }).render();
+    },
+
+    /**
+     * Toggle the visibility of the sidebar.
+     *
+     * @method _toggleSidebar
+     */
+    _toggleSidebar: function() {
+      Y.one('body').toggleClass('state-sidebar-hidden');
     },
 
     /**

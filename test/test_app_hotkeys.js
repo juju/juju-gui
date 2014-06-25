@@ -71,7 +71,7 @@ describe('application hotkeys', function() {
         found = false;
     bindings.each(function(node) {
       var text = node.getDOMNode().textContent;
-      if (text === 'S-?') {
+      if (text === 'Shift + ?') {
         found = true;
       }
     });
@@ -108,5 +108,15 @@ describe('application hotkeys', function() {
     });
   });
 
+  it('should listen for ctrl+alt+h events', function() {
+    var body = Y.one('body');
+    assert.equal(body.hasClass('state-sidebar-hidden'), false);
+    windowNode.simulate('keydown', {
+      keyCode: 104, // "h" key.
+      ctrlKey: true,
+      altKey: true
+    });
+    assert.equal(body.hasClass('state-sidebar-hidden'), true);
+  });
 });
 
