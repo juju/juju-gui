@@ -368,4 +368,19 @@ describe('deployer bar view', function() {
     container.one('.action-list .max').simulate('click');
     assert.equal(container.hasClass('mode-max'), true);
   });
+
+  it('changes the deploy label after the first deploy', function() {
+    var deployButton = container.one('.deploy-button');
+    assert.equal(deployButton.get('text').trim(), 'Deploy');
+    view.deploy({halt: utils.makeStubFunction()});
+    assert.equal(deployButton.get('text').trim(), 'Commit');
+  });
+
+  it('shows the commit label after deploy and re-render', function() {
+    var deployButton = container.one('.deploy-button');
+    view.deploy({halt: utils.makeStubFunction()});
+    assert.equal(deployButton.get('text').trim(), 'Commit');
+    view.render();
+    assert.equal(deployButton.get('text').trim(), 'Commit');
+  });
 });

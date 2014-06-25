@@ -92,6 +92,7 @@ YUI.add('deployer-bar', function(Y) {
       this.addEvent(
           this.on('hideChangeDescription', this._hideChangeDescription)
       );
+      this._deployed = false;
     },
 
     /**
@@ -116,7 +117,8 @@ YUI.add('deployer-bar', function(Y) {
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
       container.setHTML(this.template({
-        changeCount: changes
+        changeCount: changes,
+        deployed: this._deployed
       }));
       container.addClass('deployer-bar');
       this._toggleDeployButtonStatus(changes > 0);
@@ -137,6 +139,19 @@ YUI.add('deployer-bar', function(Y) {
       container.removeClass('summary-open');
       ecs.commit(this.get('env'));
       //this.update();
+      if (this._deployed === false) {
+        this._setDeployed();
+      }
+    },
+
+    /**
+      Set the button state to deployed.
+
+      @method _setDeployed
+    */
+    _setDeployed: function() {
+      this._deployed = true;
+      this.get('container').one('.deploy-button').set('text', 'Commit');
     },
 
     /**
@@ -217,7 +232,8 @@ YUI.add('deployer-bar', function(Y) {
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
           addedMachines: changes.addMachines,
-          configsChanged: changes.setConfigs
+          configsChanged: changes.setConfigs,
+          deployed: this._deployed
         }));
       }
       container.addClass('summary-open');
@@ -254,7 +270,8 @@ YUI.add('deployer-bar', function(Y) {
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: changes,
-          latestChangeDescription: latest
+          latestChangeDescription: latest,
+          deployed: this._deployed
         }));
         this._toggleDeployButtonStatus(changes > 0);
         // XXX frankban 2014-05-12: the code below makes the changeset
