@@ -129,7 +129,6 @@
     animation: sidebar-details-slide-in 0.5s;
   }
 }
-
 #subapp-browser.no-search {
   #bws-sidebar {
     .bws-content {
@@ -142,7 +141,9 @@
     }
   }
 }
-
+body.state-sidebar-hidden #subapp-browser {
+    display: none;
+}
 .flag-mv #subapp-browser {
   .bws-view-data {
       top: @environment-header-height - 1px;

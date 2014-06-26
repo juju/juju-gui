@@ -124,7 +124,8 @@ YUI.add('juju-gui', function(Y) {
       'A-s': {
         target: '#charm-search-field',
         focus: true,
-        help: 'Select the charm Search'
+        help: 'Select the charm Search',
+        label: 'Alt + s'
       },
       '/': {
         target: '#charm-search-field',
@@ -153,26 +154,36 @@ YUI.add('juju-gui', function(Y) {
           }
         },
         help: 'Display this help',
-        label: 'S-?'
+        label: 'Shift + ?'
       },
       'A-e': {
         callback: function(evt) {
           this.fire('navigateTo', { url: '/:gui:/' });
         },
-        help: 'Navigate to the Environment overview.'
+        help: 'Navigate to the Environment overview.',
+        label: 'Alt + e'
       },
       'S-+': {
         fire: 'zoom_in',
-        help: 'Zoom In'
+        help: 'Zoom In',
+        label: 'Shift + "+"'
       },
       'S--': {
         fire: 'zoom_out',
-        help: 'Zoom Out'
+        help: 'Zoom Out',
+        label: 'Shift + -'
       },
       'S-0': {
         fire: 'panToCenter',
         help: 'Center the Environment overview',
-        label: 'S-)'
+        label: 'Shift + 0'
+      },
+      'C-A-h': {
+        callback: function(e) {
+          this._toggleSidebar();
+        },
+        help: 'Show or hide the sidebar',
+        label: 'Control + Alt + h'
       },
       'esc': {
         fire: 'clearState',
@@ -180,7 +191,8 @@ YUI.add('juju-gui', function(Y) {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
         },
-        help: 'Cancel current action'
+        help: 'Cancel current action',
+        label: 'Esc'
       },
 
       'C-s': {
@@ -190,24 +202,25 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           this._simulator.toggle();
         },
-        help: 'Toggle the simulator'
+        help: 'Toggle the simulator',
+        label: 'Control + s'
       },
 
       'S-d': {
         callback: function(evt) {
           importHelpers.exportYAML(this.db);
         },
-        help: 'Export the environment'
+        help: 'Export the environment',
+        label: 'Shift + d'
       },
 
       'C-S-d': {
         callback: function(evt) {
           Y.fire('saveWebsocketLog');
         },
-        help: 'Save the websocket log to a file'
+        help: 'Save the websocket log to a file',
+        label: 'Control + Shift + s'
       }
-
-
     },
 
     /**
@@ -838,6 +851,15 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         db: this.db
       }).render();
+    },
+
+    /**
+     * Toggle the visibility of the sidebar.
+     *
+     * @method _toggleSidebar
+     */
+    _toggleSidebar: function() {
+      Y.one('body').toggleClass('state-sidebar-hidden');
     },
 
     /**
