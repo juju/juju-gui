@@ -448,6 +448,14 @@ YUI.add('environment-change-set', function(Y) {
       var command = {
         method: '_add_relation',
         args: args,
+        /**
+          Replace changeSet keys with real service names returned from the call.
+
+          @method onParentResults
+          @param {String} record The changeSet record which generated the
+            results.
+          @param {String} results The data returned by the API call.
+        */
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
             this.args.forEach(function(arg, index) {
