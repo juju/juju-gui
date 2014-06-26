@@ -106,6 +106,7 @@ YUI.add('change-version-view', function(Y) {
           level: 'error'
         }));
         console.warn('Environment does not support setCharm.');
+        return;
       }
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
