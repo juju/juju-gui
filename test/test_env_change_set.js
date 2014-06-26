@@ -528,18 +528,15 @@ describe('Environment Change Set', function() {
               ['serviceId2$', ['db', 'server']]];
         var key = ecs._lazyAddRelation(args);
         var record = ecs.changeSet[key];
-        assert.deepEqual(record, {
-          command: {
-            args: [
-              ['mysql', ['db', 'client']],
-              ['wordpress', ['db', 'server']]
-            ],
-            method: '_add_relation'
-          },
-          executed: false,
-          id: key,
-          parents: ['service-1', 'service-2']
-        });
+        assert.equal(record.command.method, '_add_relation');
+        assert.deepEqual(record.command.args, [
+          ['serviceId1$', ['db', 'client']],
+          ['serviceId2$', ['db', 'server']]
+        ]);
+        assert.equal(typeof record.command.onParentResults, 'function');
+        assert.equal(record.executed, false);
+        assert.equal(record.id, key);
+        assert.deepEqual(record.parents, ['service-1', 'service-2']);
         assert.equal(Y.Object.size(ecs.changeSet), 3);
         // Perform this last, as it will mutate ecs.changeSet.
         assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
