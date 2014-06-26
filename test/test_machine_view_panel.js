@@ -772,6 +772,21 @@ describe('machine view panel view', function() {
         constraints: {}
       });
     });
+
+    it('does not show more than one placement form at once', function() {
+      view.render();
+      units.add([{id: 'test/5'}]);
+      var firstToken = container.all('.serviceunit-token').item(0);
+      var secondToken = container.all('.serviceunit-token').item(1);
+      firstToken.one('.token-move').simulate('click');
+      assert.equal(firstToken.hasClass('state-select-machine'), true);
+      assert.equal(secondToken.hasClass('state-select-machine'), false);
+      // Clicking on a different token should make the second token
+      // active, and reset the first token.
+      secondToken.one('.token-move').simulate('click');
+      assert.equal(firstToken.hasClass('state-select-machine'), false);
+      assert.equal(secondToken.hasClass('state-select-machine'), true);
+    });
   });
 
 

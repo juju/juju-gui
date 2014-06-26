@@ -118,10 +118,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
      */
     _handleCancelClick: function(e) {
       e.preventDefault();
-      var container = this.get('container');
-      // In lieu of resetting every element, just re-render the HTML.
-      container.setHTML(this.template(this.get('unit')));
-      this._setStateClass('initial');
+      this.reset();
     },
 
     /**
@@ -308,22 +305,39 @@ YUI.add('juju-serviceunit-token', function(Y) {
     },
 
     /**
+      Reset the token to the initial state.
+
+      @method reset
+    */
+    reset: function() {
+      // In lieu of resetting every element, just re-render the HTML.
+      this._renderTemplate();
+    },
+
+    /**
+      Render the template and set the appropriate classes.
+
+      @method _renderTemplate
+    */
+    _renderTemplate: function() {
+      var container = this.get('container');
+      var unit = this.get('unit');
+      container.setHTML(this.template(unit));
+      // This must be setAttribute, not setData, as setData does not
+      // manipulate the dom, which we need for our namespaced code
+      // to read.
+      container.one('.unplaced-unit').setAttribute('data-id', unit.id);
+      this._setStateClass('initial');
+    },
+
+    /**
      * Sets up the DOM nodes and renders them to the DOM.
      *
      * @method render
      */
     render: function() {
-      var container = this.get('container'),
-          unit = this.get('unit'),
-          token;
-      container.setHTML(this.template(unit));
-      container.addClass('serviceunit-token');
-      this._setStateClass('initial');
-      token = container.one('.unplaced-unit');
-      // This must be setAttribute, not setData, as setData does not
-      // manipulate the dom, which we need for our namespaced code
-      // to read.
-      token.setAttribute('data-id', unit.id);
+      this.get('container').addClass('serviceunit-token');
+      this._renderTemplate();
       this._makeDraggable();
       return this;
     },

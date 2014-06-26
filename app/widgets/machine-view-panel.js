@@ -47,6 +47,9 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.container-token .token': {
             click: 'handleContainerTokenSelect'
+          },
+          '.unplaced-unit .token-move': {
+            click: '_cancelUnitPlacement'
           }
         },
 
@@ -117,6 +120,24 @@ YUI.add('machine-view-panel', function(Y) {
           this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
 
           this.on('*:moveToken', this._placeServiceUnit, this);
+        },
+
+        /**
+          Cancel placing units as only one unit should display the
+          placement form at a time.
+
+         @method _cancelUnitPlacement
+         @param {Object} e Custom model change event facade.
+        */
+        _cancelUnitPlacement: function(e) {
+          var unitTokens = this.get('unitTokens');
+          var clickedId = e.currentTarget.ancestor(
+              '.unplaced-unit').getData('id');
+          Object.keys(unitTokens).forEach(function(id) {
+            if (id.toString() !== clickedId) {
+              unitTokens[id].reset();
+            }
+          });
         },
 
         /**
