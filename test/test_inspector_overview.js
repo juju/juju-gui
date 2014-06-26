@@ -368,197 +368,6 @@ describe('Inspector Overview', function() {
         categoryType: 'landscape', units: [
           { unit: e, category: 'landscape-needs-reboot',
             categoryType: 'landscape'}
-        ]},
-      { type: 'service', category: 'upgrade-service',
-        categoryType: 'upgrade-service',
-        upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
-        downgrades: downgrades
-      }
-    ];
-    assert.deepEqual(overview.updateStatusList(units), expected);
-  });
-
-  it('can generate service update statuses (update)', function() {
-    var inspector = setUpInspector(),
-        overview = inspector.views.overview;
-
-    var units = new Y.LazyModelList();
-
-    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
-        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
-        e = units.add({
-          id: 'mysql/4',
-          agent_state: 'started',
-          annotations: {
-            'landscape-needs-reboot': 'foo'
-          }
-        }),
-        a = units.add({
-          id: 'mysql/0',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        }),
-        b = units.add({
-          id: 'mysql/1',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        });
-
-    // This order is important.
-    var expected = [
-      { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [
-          {
-            unit: a,
-            category: 'hook failed: "install"',
-            categoryType: 'error'
-          }, {
-            unit: b,
-            category: 'hook failed: "install"',
-            categoryType: 'error'
-          }
-        ] },
-      { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
-      { type: 'unit', category: 'running', categoryType: 'running',
-        units: [
-          { unit: d, category: 'running', categoryType: 'running' },
-          { unit: e, category: 'running', categoryType: 'running' }
-        ] },
-      { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [
-          { unit: e, category: 'landscape-needs-reboot',
-            categoryType: 'landscape'}
-        ]},
-      { type: 'service', category: 'upgrade-service',
-        categoryType: 'upgrade-service',
-        upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
-        downgrades: downgrades
-      }
-    ];
-    assert.deepEqual(overview.updateStatusList(units), expected);
-  });
-
-  it('can generate service update statuses (no update)', function() {
-    var inspector = setUpInspector(),
-        overview = inspector.views.overview;
-
-    // Clear the service upgrade information.
-    service.set('upgrade_available', false);
-    service.set('upgrade_to', undefined);
-
-    var units = new Y.LazyModelList();
-
-    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
-        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
-        e = units.add({
-          id: 'mysql/4',
-          agent_state: 'started',
-          annotations: {
-            'landscape-needs-reboot': 'foo'
-          }
-        }),
-        a = units.add({
-          id: 'mysql/0',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        }),
-        b = units.add({
-          id: 'mysql/1',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        });
-
-    // This order is important.
-    var expected = [
-      { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [
-          {
-            unit: a,
-            category: 'hook failed: "install"',
-            categoryType: 'error'
-          }, {
-            unit: b,
-            category: 'hook failed: "install"',
-            categoryType: 'error'
-          }
-        ] },
-      { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
-      { type: 'unit', category: 'running', categoryType: 'running',
-        units: [
-          { unit: d, category: 'running', categoryType: 'running' },
-          { unit: e, category: 'running', categoryType: 'running' }
-        ] },
-      { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [
-          { unit: e, category: 'landscape-needs-reboot',
-            categoryType: 'landscape'}
-        ]},
-      { type: 'service', category: 'upgrade-service',
-        categoryType: 'upgrade-service',
-        upgradeAvailable: false, upgradeTo: undefined, downgrades: downgrades
-      }
-    ];
-    assert.deepEqual(overview.updateStatusList(units), expected);
-  });
-
-  it('can generate service update statuses (no downgrades)', function() {
-    var inspector = setUpInspector(),
-        overview = inspector.views.overview;
-
-    // Clear the service upgrade information.
-    service.set('charm', 'cs:precise/mysql-1');
-    service.set('upgrade_available', false);
-    service.set('upgrade_to', undefined);
-
-    var units = new Y.LazyModelList();
-
-    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
-        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
-        e = units.add({
-          id: 'mysql/4',
-          agent_state: 'started',
-          annotations: {
-            'landscape-needs-reboot': 'foo'
-          }
-        }),
-        a = units.add({
-          id: 'mysql/0',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        }),
-        b = units.add({
-          id: 'mysql/1',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        });
-
-    // This order is important.
-    var expected = [
-      { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [
-          {
-            unit: a,
-            category: 'hook failed: "install"',
-            categoryType: 'error'
-          }, {
-            unit: b,
-            category: 'hook failed: "install"',
-            categoryType: 'error'
-          }
-        ] },
-      { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
-      { type: 'unit', category: 'running', categoryType: 'running',
-        units: [
-          { unit: d, category: 'running', categoryType: 'running' },
-          { unit: e, category: 'running', categoryType: 'running' }
-        ] },
-      { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [
-          { unit: e, category: 'landscape-needs-reboot',
-            categoryType: 'landscape'}
         ]}
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
@@ -602,30 +411,6 @@ describe('Inspector Overview', function() {
         category: 'landscape-security-upgrades',
         categoryType: 'landscape',
         units: []
-      },
-      'A new upgrade is available': {
-        type: 'service',
-        category: 'upgrade-service',
-        categoryType: 'upgrade-service',
-        upgradeAvailable: true,
-        upgradeTo: 'cs:precise/mediawiki-5',
-        downgrades: [
-          'precise/mediawiki-3',
-          'precise/mediawiki-2',
-          'precise/mediawiki-1'
-        ]
-      },
-      'Upgrade service': {
-        type: 'service',
-        category: 'upgrade-service',
-        categoryType: 'upgrade-service',
-        upgradeAvailable: false,
-        upgradeTo: undefined,
-        downgrades: [
-          'precise/mediawiki-3',
-          'precise/mediawiki-2',
-          'precise/mediawiki-1'
-        ]
       }
     };
 
@@ -666,7 +451,7 @@ describe('Inspector Overview', function() {
     var SUH = '.status-unit-header',
         SUC = '.status-unit-content';
 
-    assert.equal(unitListWrappers.size(), 4);
+    assert.equal(unitListWrappers.size(), 3);
     var wrapper1 = unitListWrappers.item(0);
     assert.equal(wrapper1.one(SUH).hasClass('error'), true);
     assert.equal(wrapper1.one(SUH).hasClass('closed-unit-list'), true);
@@ -708,7 +493,7 @@ describe('Inspector Overview', function() {
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
 
-    assert.equal(unitListWrappers.size(), 3);
+    assert.equal(unitListWrappers.size(), 2);
 
     wrapper2 = unitListWrappers.item(0);
     assert.equal(wrapper2.one(SUH).hasClass('pending'), true);
@@ -741,7 +526,7 @@ describe('Inspector Overview', function() {
 
     var unitListWrappers = newContainer.all('.unit-list-wrapper');
 
-    assert.equal(unitListWrappers.size(), 2);
+    assert.equal(unitListWrappers.size(), 1);
 
     units.item(0).annotations = {'landscape-needs-reboot': true};
     var envAnno = {};
@@ -761,7 +546,7 @@ describe('Inspector Overview', function() {
         newContainer, statuses, db.environment);
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
-    assert.equal(unitListWrappers.size(), 3);
+    assert.equal(unitListWrappers.size(), 2);
 
     assert.equal(
         unitListWrappers.item(1).one('a.landscape').get('href'),
@@ -785,7 +570,7 @@ describe('Inspector Overview', function() {
 
     var unitListWrappers = newContainer.all('.unit-list-wrapper');
 
-    assert.equal(unitListWrappers.size(), 2);
+    assert.equal(unitListWrappers.size(), 1);
 
     units.item(0).annotations = {'landscape-security-upgrades': true};
     var envAnno = {};
@@ -805,138 +590,12 @@ describe('Inspector Overview', function() {
         newContainer, statuses, db.environment);
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
-    assert.equal(unitListWrappers.size(), 3);
+    assert.equal(unitListWrappers.size(), 2);
 
     assert.equal(
         unitListWrappers.item(1).one('a.landscape').get('href'),
         'http://landscape.example.com/computers/criteria/' +
         'environment:test+service:mediawiki/');
-  });
-
-  it('generates the service list data bound elements', function() {
-    var inspector = setUpInspector(),
-        overview = inspector.views.overview,
-        newContainer = utils.makeContainer(this);
-
-    var units = new Y.LazyModelList();
-
-    units.add({ id: 'mysql/0', agent_state: 'error',
-      agent_state_info: 'hook failed: "install"' });
-    units.add({ id: 'mysql/1', agent_state: 'error',
-      agent_state_info: 'hook failed: "install"' });
-    units.add({ id: 'mysql/2', agent_state: 'pending' });
-    units.add({ id: 'mysql/3', agent_state: 'started' });
-
-    var statuses = overview.updateStatusList(units);
-
-    overview.generateAndBindStatusHeaders(
-        newContainer, statuses, db.environment);
-
-    var unitListWrappers = newContainer.all('.unit-list-wrapper');
-    var SUH = '.status-unit-header',
-        SUC = '.status-unit-content';
-
-    assert.equal(unitListWrappers.size(), 4);
-    var serviceWrapper = unitListWrappers.item(3);
-    assert.equal(serviceWrapper.one(SUH).hasClass('upgrade-service'), true);
-    assert.equal(serviceWrapper.one(SUH).hasClass('closed-unit-list'), true);
-    assert.equal(serviceWrapper.one(SUC).hasClass('close-unit'), true);
-    assert.equal(serviceWrapper.one('.category-label').getHTML(),
-        'A new upgrade is available');
-    assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
-    assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 1);
-    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 13);
-
-    service.set('upgrade_available', false);
-    service.set('upgrade_to', undefined);
-
-    statuses = overview.updateStatusList(units);
-
-    // Re-create the container; d3 is smart enough to keep the existing
-    // ordering of the wrappers in this test.
-    newContainer.remove(true);
-    newContainer = utils.makeContainer(this);
-
-    overview.generateAndBindStatusHeaders(
-        newContainer, statuses, db.environment);
-
-    unitListWrappers = newContainer.all('.unit-list-wrapper');
-
-    assert.equal(unitListWrappers.size(), 4);
-
-    serviceWrapper = unitListWrappers.item(3);
-    assert.equal(serviceWrapper.one(SUH).hasClass('upgrade-service'), true);
-    assert.equal(serviceWrapper.one(SUH).hasClass('closed-unit-list'), true);
-    assert.equal(serviceWrapper.one(SUC).hasClass('close-unit'), true);
-    assert.equal(serviceWrapper.one('.category-label').getHTML(),
-        'Upgrade service');
-    assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
-    assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 5);
-    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 8);
-
-    // Check to make sure that the links to view the charm details in the
-    // upgrade section are full links instead of relative ones to allow
-    // the YUI Pjax module to properly parse them in IE10
-    serviceWrapper.one(SUC).all('.top-upgrade').each(function(node) {
-      // Selects the first anchor tag which is the 'view charm details' link
-      assert.isTrue(Y.PjaxBase.prototype._isLinkSameOrigin(node.one('a')));
-    });
-
-    serviceWrapper.one(SUC).all('.other-charm').each(function(node) {
-      // Selects the first anchor tag which is the 'view charm details' link
-      assert.isTrue(Y.PjaxBase.prototype._isLinkSameOrigin(node.one('a')));
-    });
-
-    newContainer.remove(true);
-  });
-
-  it('attempts to upgrade on click', function(done) {
-    var inspector = setUpInspector(),
-        overview = inspector.views.overview,
-        newContainer = inspector.get('container');
-
-    // Ensure that get_charm is called to get the new charm.
-    env.setCharm = function(serviceName, upgradeTo, force, callback) {
-      callback({});
-    };
-    env.get_charm = function(upgradeTo, callback) {
-      assert.equal(upgradeTo, newContainer.one('.upgrade-link')
-        .getData('upgradeto'));
-      done();
-    };
-
-    var statuses = overview.updateStatusList(service.get('units'));
-
-    overview.generateAndBindStatusHeaders(
-        newContainer, statuses, db.environment);
-
-    newContainer.one('.upgrade-link').simulate('click');
-  });
-
-  it('reflects that a service was upgraded', function(done) {
-    var inspector = setUpInspector();
-    var newContainer = inspector.views.inspectorHeader
-      .get('container');
-    var unitId = 'mediawiki/1';
-
-    var service = db.services.getById('mediawiki');
-    assert.isFalse(service.get('charmChanged'));
-    assert.isTrue(
-        newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
-
-    db.onDelta({data: {result: [
-      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-15'}]
-    ]}});
-
-    assert.isTrue(service.get('charmChanged'));
-    assert.isFalse(
-        newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
-    inspector.get('environment')
-      .createServiceInspector = function(model, attrs) {
-          assert.isFalse(model.get('charmChanged'));
-          done();
-        };
-    newContainer.one('.rerender-config').simulate('click');
   });
 
   it('reflects that a service is dying', function() {

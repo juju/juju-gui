@@ -29,8 +29,6 @@ YUI.add('inspector-overview-view', function(Y) {
   var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
   var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
-  var SHOWCOUNT = 5;
-
   var unitListNameMap = {
     'error': function(status) {
       return status.category;
@@ -58,14 +56,7 @@ YUI.add('inspector-overview-view', function(Y) {
   */
   function categoryName(status) {
     var nameMap = {
-      'unit': unitListNameMap,
-      'service': {
-        'upgrade-service': function(status) {
-          return status.upgradeAvailable ?
-              'A new upgrade is available' :
-              'Upgrade service';
-        }
-      }
+      'unit': unitListNameMap
     };
 
     var name = nameMap[status.type][status.categoryType];
@@ -131,7 +122,7 @@ YUI.add('inspector-overview-view', function(Y) {
       });
     });
 
-    return sortStatuses(addCharmUpgrade(statuses, this.model));
+    return sortStatuses(statuses, this.model);
   }
 
   /**
@@ -146,8 +137,7 @@ YUI.add('inspector-overview-view', function(Y) {
       'error': 1,
       'pending': 2,
       'running': 3,
-      'landscape': 4,
-      'upgrade-service': 5
+      'landscape': 4
     };
 
     var sortedStatus = statuses.sort(function(a, b) {
@@ -160,64 +150,6 @@ YUI.add('inspector-overview-view', function(Y) {
     });
 
     return sortedStatus;
-  }
-
-
-  /**
-    If the charm has available upgrades it adds the upgrade details to the
-    statuses list to be displayed in the unit list in the inspector.
-
-    XXX (Jeff): This is done on every update call, we can probably cache this
-    result for performance later.
-
-    @method addCharmUpgrade
-    @param {Array} statuses An array of statuses from `updateStatusList`.
-    @param {Object} service A reference to the service model.
-    @return {Array} An array of statuses containing the charm upgrade list
-      if applicable.
-  */
-  function addCharmUpgrade(statuses, service) {
-    var upgradeServiceStatus = {
-      type: 'service',
-      category: 'upgrade-service',
-      categoryType: 'upgrade-service',
-      upgradeAvailable: service.get('upgrade_available'),
-      upgradeTo: service.get('upgrade_to'),
-      downgrades: []
-    };
-    // Retrieve the charm ID (minus the schema).
-    var charm = service.get('charm');
-    // Find the latest version number - if we have an upgrade, it will be
-    // that charm's version; otherwise it will be the current charm's
-    // version.
-    var currVersion = parseInt(charm.split('-').pop(), 10),
-        maxVersion = upgradeServiceStatus.upgradeAvailable ?
-            parseInt(upgradeServiceStatus.upgradeTo.split('-').pop(), 10) :
-            currVersion;
-    // Remove the version number from the charm so that we can build a
-    // list of downgrades.
-    charm = charm.replace(/-\d+$/, '');
-    // Build a list of available downgrades
-    if (maxVersion > 1) {
-      // Disable -- operator warning so that we can loop.
-      /* jshint -W016 */
-      for (var version = maxVersion - 1; version > 0; version--) {
-        if (version === currVersion) {
-          continue;
-        }
-        upgradeServiceStatus.downgrades.push(charm + '-' + version);
-      }
-    }
-    // If we have an upgrade for this service, then it needs to appear under
-    // the pending units (at index 1, so insert at index 2); otherwise, it
-    // should just be pushed onto the end of the list of statuses.
-    if (upgradeServiceStatus.upgradeAvailable) {
-      statuses.splice(2, 0, upgradeServiceStatus);
-    } else if (upgradeServiceStatus.downgrades.length > 0) {
-      statuses.push(upgradeServiceStatus);
-    }
-
-    return statuses;
   }
 
   /**
@@ -247,99 +179,6 @@ YUI.add('inspector-overview-view', function(Y) {
       });
     });
     return showingButtons;
-  }
-
-  /**
-    Generates the list of upgrades/downgrades available for this service.
-
-    @method generateD3UpgradeCharmList
-    @param {Object} serviceStatusContentForm the D3 selection for the upgrades
-      list.
-  */
-  function generateD3UpgradeCharmList(serviceStatusContentForm) {
-    /*
-      The _isLinkSameOrigin method in YUI's pjax.base class does not
-      properly account for IE10's issues when parsing protocol and
-      host from anchor tags unless the tags contain the full protocol
-      and host for relative hrefs.
-    */
-    var wl = window.location;
-    var locationPrefix = wl.protocol + '//' + wl.host;
-
-    var serviceUpgradeLi = serviceStatusContentForm
-    .filter(function(d) {
-          return d.category === 'upgrade-service';
-        })
-    .selectAll('li.top-upgrade')
-    .data(function(d) {
-          if (d.upgradeAvailable) {
-            return [d.upgradeTo];
-          } else {
-            return d.downgrades.slice(0, SHOWCOUNT);
-          }
-        })
-    .enter()
-    .append('li')
-    .classed('top-upgrade', true);
-
-    serviceUpgradeLi.append('a')
-      .attr('href', function(d) {
-          return locationPrefix + '/' + d.replace(/^cs:/, '');
-        })
-      .text(function(d) { return d; });
-
-    serviceUpgradeLi.append('a')
-      .classed('upgrade-link right-link', true)
-      .attr('data-upgradeto', function(d) { return d; })
-      .text('Upgrade');
-
-    serviceStatusContentForm
-      .filter(function(d) {
-          return d.category === 'upgrade-service' && (d.upgradeAvailable ||
-              d.downgrades.length - SHOWCOUNT > 0);
-        })
-      .append('li')
-      .append('a')
-      .classed('right-link', true)
-      .text(function(d) {
-          return (d.downgrades.length - (d.upgradeAvailable ? 0 : SHOWCOUNT)) +
-              ' hidden upgrades';
-        })
-      .on('click', function(d) {
-          // Toggle the 'hidden' class.
-          serviceStatusContentForm.select('.other-charms')
-          .classed('hidden', function() {
-                return !d3.select(this).classed('hidden');
-              });
-        });
-
-    var serviceUpgradeOtherCharms = serviceStatusContentForm
-      .filter(function(d) {
-          return d.category === 'upgrade-service';
-        })
-      .append('div')
-      .classed('other-charms', true)
-      .classed('hidden', true)
-      .selectAll('.other-charm')
-      .data(function(d) {
-          return d.downgrades.slice(d.upgradeAvailable ? 0 : SHOWCOUNT);
-        })
-      .enter()
-      .append('li')
-      .classed('other-charm', true);
-
-    serviceUpgradeOtherCharms
-      .append('a')
-      .attr('href', function(d) {
-          return locationPrefix + '/' + d.replace(/^cs:/, '');
-        })
-      .text(function(d) { return d; });
-
-    serviceUpgradeOtherCharms
-      .append('a')
-      .classed('upgrade-link right-link', true)
-      .attr('data-upgradeto', function(d) { return d; })
-      .text('Upgrade');
   }
 
   /**
@@ -374,18 +213,6 @@ YUI.add('inspector-overview-view', function(Y) {
           return 'status-unit-header ' +
               'closed-unit-list ' + d.categoryType;
         });
-
-    var serviceStatusContentForm = categoryStatusWrapper
-    .filter(function(d) { return d.type === 'service'; })
-    .append('div')
-    .attr('class', function(d) {
-          return 'status-unit-content ' +
-              'close-unit ' + d.categoryType;
-        });
-
-    // The Upgrade Charm list needs to be generated separately from
-    // the typical unit list data in the current UX.
-    generateD3UpgradeCharmList(serviceStatusContentForm);
 
     var unitStatusContentForm = categoryStatusWrapper
     .filter(function(d) { return d.type === 'unit'; })
@@ -519,13 +346,6 @@ YUI.add('inspector-overview-view', function(Y) {
           var numItems = 0;
           if (d.type === 'unit') {
             numItems = d.units.length + 1;
-          } else {
-            if (d.category === 'upgrade-service') {
-              // If there is an upgrade available, make room for that, plus the
-              // link to show hidden upgrades; otherwise, just return the number
-              // of downgrades.
-              numItems = d.downgrades.length + (d.upgradeAvailable ? 2 : 0);
-            }
           }
           return ((self._itemHeight * numItems) + buttonHeight) + 'px';
         });
@@ -553,8 +373,7 @@ YUI.add('inspector-overview-view', function(Y) {
       '.status-unit-header': {click: 'toggleUnitHeader'},
       '.toggle-select-all': {click: 'toggleSelectAllUnits'},
       'a[data-unit]': { click: 'showUnitDetails'},
-      'button.unit-action-button': { click: '_unitActionButtonClick'},
-      '.upgrade-link': { click: 'upgradeService' }
+      'button.unit-action-button': { click: '_unitActionButtonClick'}
     },
     bindings: {
       aggregated_status: {
@@ -998,78 +817,11 @@ YUI.add('inspector-overview-view', function(Y) {
       }
     },
 
-    /**
-      Upgrades a service to the one specified in the event target's upgradeto
-      data attribute.
-
-      @method upgradeService
-      @param {Y.EventFacade} ev Click event object.
-    */
-    upgradeService: function(ev) {
-      ev.halt();
-      var viewletManager = this.viewletManager,
-          db = viewletManager.get('db'),
-          env = viewletManager.get('env'),
-          store = viewletManager.get('store'),
-          service = this.model,
-          upgradeTo = ev.currentTarget.getData('upgradeto');
-      if (!upgradeTo) {
-        return;
-      }
-      if (!env.setCharm) {
-        db.notifications.add(new db.models.Notification({
-          title: 'Environment does not support setCharm',
-          message: 'Your juju environment does not support setCharm/' +
-              'upgrade-charm through the API; please try from the ' +
-              'command line.',
-          level: 'error'
-        }));
-        console.warn('Environment does not support setCharm.');
-      }
-      env.setCharm(service.get('id'), upgradeTo, false, function(result) {
-        if (result.err) {
-          db.notifications.create({
-            title: 'Error setting charm.',
-            message: result.err,
-            level: 'error'
-          });
-          return;
-        }
-        env.get_charm(upgradeTo, function(data) {
-          if (data.err) {
-            db.notifications.create({
-              title: 'Error retrieving charm.',
-              message: data.err,
-              level: 'error'
-            });
-          }
-          // Set the charm on the service.
-          service.set('charm', upgradeTo);
-          store.promiseUpgradeAvailability(data.result, db.charms).then(
-              function(latestId) {
-                // Redraw(?) the inspector.
-                service.set('upgrade_available', !!latestId);
-                service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
-              },
-              function(error) {
-                db.notifications.create({
-                  title: 'Error retrieving charm.',
-                  message: error,
-                  level: 'error'
-                });
-              });
-        });
-      });
-    },
-
-
-
     // These methods are exposed here to allow us access for testing.
     categoryName: categoryName,
     generateAndBindStatusHeaders: generateAndBindStatusHeaders,
     generateActionButtonList: generateActionButtonList,
     updateStatusList: updateStatusList,
-    addCharmUpgrade: addCharmUpgrade,
     sortStatuses: sortStatuses
   });
 
