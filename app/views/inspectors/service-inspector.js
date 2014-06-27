@@ -96,17 +96,22 @@ YUI.add('service-inspector', function(Y) {
       @method reloadInspector
     */
     reloadInspector: function() {
+      var model = this.get('model');
       // Ensure that any flags which would lead to a reload notification are
       // unset.
-      this.get('model').set('charmChanged', false);
+      model.set('charmChanged', false);
 
       // Reload the inspector itself.
       this.after('destroy', function() {
-        // window.flags.il
-        // XXX This needs to be re-implemented for the inspector in the browser.
-        this.get('environment').createServiceInspector(this.get('model'));
+        this.fire('changeState', {
+          sectionA: {
+            component: 'inspector',
+            metadata: { id: model.get('id') }}});
       });
-      this.destroy();
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: { id: null }}});
     },
 
     /**

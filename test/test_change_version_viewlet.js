@@ -147,7 +147,7 @@ describe('Change version viewlet', function() {
     container.one('.upgrade-link').simulate('click');
   });
 
-  it('reflects that a service was upgraded', function(done) {
+  it('reflects that a service was upgraded', function() {
     var unitId = 'mediawiki/1';
 
     assert.equal(service.get('charmChanged'), false);
@@ -161,11 +161,13 @@ describe('Change version viewlet', function() {
     assert.equal(service.get('charmChanged'), true);
     assert.equal(
         container.one('[data-bind=charmChanged]').hasClass('hidden'), false);
-    inspector.get('environment')
-      .createServiceInspector = function(model, attrs) {
-          assert.equal(model.get('charmChanged'), false);
-          done();
-        };
+    var eventFired = utils.makeStubFunction();
+    inspector.on('changeState', eventFired);
     container.one('.rerender-config').simulate('click');
+    assert.equal(eventFired.called(), true);
+    // Ensure that the state was changed as a result.
+    assert.deepEqual(eventFired.allArguments()[0][0].sectionA, {
+      component: null,
+      metadata: { id: null }});
   });
 });
