@@ -156,17 +156,21 @@ describe('Environment Change Set', function() {
         this._cleanups.push(wrapCallback.reset);
         var key = ecs._createNewRecord('service', command);
         assert.equal(wrapCallback.calledOnce(), true);
+        // Note that we cannot guarantee the duration of the tests, so we
+        // need to assert against the record's timestamp below.
         assert.deepEqual(wrapCallback.lastArguments()[0], {
           id: key,
           parents: [],
           executed: false,
-          command: command
+          command: command,
+          timestamp: ecs.changeSet[key].timestamp
         });
         assert.deepEqual(ecs.changeSet[key], {
           id: key,
           parents: [],
           executed: false,
-          command: command
+          command: command,
+          timestamp: ecs.changeSet[key].timestamp
         });
       });
 
@@ -178,17 +182,21 @@ describe('Environment Change Set', function() {
         var parent = ['service-123'];
         var key = ecs._createNewRecord('service', command, parent);
         assert.equal(wrapCallback.calledOnce(), true);
+        // Note that we cannot guarantee the duration of the tests, so we
+        // need to assert against the record's timestamp below.
         assert.deepEqual(wrapCallback.lastArguments()[0], {
           id: key,
           parents: parent,
           executed: false,
-          command: command
+          command: command,
+          timestamp: ecs.changeSet[key].timestamp
         });
         assert.deepEqual(ecs.changeSet[key], {
           id: key,
           parents: parent,
           executed: false,
-          command: command
+          command: command,
+          timestamp: ecs.changeSet[key].timestamp
         });
       });
     });
@@ -571,6 +579,8 @@ describe('Environment Change Set', function() {
       it('can add a remove relation record into the changeset', function() {
         var record = ecs._lazyRemoveRelation(['args1', 'args2']);
         assert.equal(record.split('-')[0], 'removeRelation');
+        // Note that we cannot guarantee the duration of the tests, so we
+        // need to assert against the record's timestamp below.
         assert.deepEqual(ecs.changeSet[record], {
           command: {
             args: ['args1', 'args2'],
@@ -578,7 +588,8 @@ describe('Environment Change Set', function() {
           },
           executed: false,
           id: record,
-          parents: []
+          parents: [],
+          timestamp: ecs.changeSet[record].timestamp
         });
       });
     });

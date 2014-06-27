@@ -452,7 +452,7 @@ YUI.add('deployer-bar', function(Y) {
       if (skipTime) {
         changeItem.time = '00:00';
       } else {
-        changeItem.time = this._formatAMPM(new Date());
+        changeItem.time = this._formatAMPM(new Date(change.timestamp));
       }
       return changeItem;
     },
