@@ -57,7 +57,7 @@ YUI.add('bundle-import-helpers', function(Y) {
           notifications.add({
             title: 'Bundle deployment requested',
             message: 'Bundle deployment request successful. The full ' +
-                'deployment can take some time to complete',
+                'deployment can take some time to complete.',
             level: 'important'
           });
 
@@ -70,6 +70,13 @@ YUI.add('bundle-import-helpers', function(Y) {
           name: null,
           id: bundleId
         };
+
+        notifications.add({
+          title: 'Bundle deployment requested',
+          message: 'Waiting for bundle deployment request confirmation.',
+          level: 'important'
+        });
+
         env.deployerImport(
             bundle,
             bundleData,
