@@ -199,7 +199,8 @@ describe('deployer bar view', function() {
           method: '_deploy',
           args: ['foo', 'bar']
         }
-      }
+      },
+      time: '12:34 PM'
     }, {
       icon: 'changes-service-added',
       msg: ' 1 foo unit has been added.',
@@ -292,7 +293,11 @@ describe('deployer bar view', function() {
       var change = view._generateChangeDescription(test.change, true);
       assert.equal(change.icon, test.icon);
       assert.equal(change.description, test.msg);
-      assert.equal(change.time, '00:00');
+      if (test.timestamp) {
+        assert.equal(change.time, test.time);
+      } else {
+        assert.equal(change.time, '00:00');
+      }
     });
   });
 

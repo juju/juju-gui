@@ -140,7 +140,8 @@ YUI.add('environment-change-set', function(Y) {
           return !!parent;
         }),
         executed: false,
-        command: command
+        command: command,
+        timestamp: Date.now()
       };
       this.fire('changeSetModified');
       this._wrapCallback(this.changeSet[key]);
