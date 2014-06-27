@@ -438,18 +438,34 @@ YUI.add('environment-change-set', function(Y) {
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0][0]) {
             serviceA = key;
-            args[0][0] = value.command.args[1];
           }
           if (value.command.options.modelId === args[1][0]) {
             serviceB = key;
-            args[1][0] = value.command.args[1];
           }
         }
       });
       var parent = [serviceA, serviceB];
       var command = {
         method: '_add_relation',
-        args: args
+        args: args,
+        /**
+          Replace changeSet keys with real service names returned from the call.
+
+          @method onParentResults
+          @param {String} record The changeSet record which generated the
+            results.
+          @param {String} results The data returned by the API call.
+        */
+        onParentResults: function(record, results) {
+          if (record.command.method === '_deploy') {
+            this.args.forEach(function(arg, index) {
+              if (Y.Lang.isArray(arg) &&
+                  record.command.options.modelId === arg[0]) {
+                this.args[index][0] = results[0].service_name;
+              }
+            }, this);
+          }
+        }
       };
       return this._createNewRecord('addRelation', command, parent);
     },

@@ -413,12 +413,12 @@ YUI.add('deployer-bar', function(Y) {
                 change.command.args[0] + ' ' + msg;
             break;
           case '_add_relation':
+            var services = this._getRealRelationEndpointNames(
+                change.command.args);
             changeItem.icon = 'changes-relation-added';
             changeItem.description = change.command.args[0][1].name +
                 ' relation added between ' +
-                change.command.args[0][0] +
-                ' and ' +
-                change.command.args[1][0] + '.';
+                services[0] + ' and ' + services[1] + '.';
             break;
           case '_remove_relation':
             changeItem.icon = 'changes-relation-removed';
@@ -455,6 +455,29 @@ YUI.add('deployer-bar', function(Y) {
         changeItem.time = this._formatAMPM(new Date());
       }
       return changeItem;
+    },
+
+    /**
+      Loops through the services in the db to find ones which have id's which
+      match the temporary id's assigned to the add realation call.
+
+      @method _getRealRelationEndpointNames
+      @param {Array} args The arguments array from the ecs add relations call.
+      @return {Array} An array of the service names involved in the relation.
+    */
+    _getRealRelationEndpointNames: function(args) {
+      var services = [],
+          serviceId;
+      this.get('db').services.each(function(service) {
+        serviceId = service.get('id');
+        args.forEach(function(arg) {
+          if (serviceId === arg[0]) {
+            services.push(
+                service.get('displayName').replace(/^\(|\)$/g, ''));
+          }
+        });
+      });
+      return services;
     },
 
     /**
@@ -526,10 +549,11 @@ YUI.add('deployer-bar', function(Y) {
             changes.deployedServices.push({icon: icon, name: name});
             break;
           case '_add_relation':
+            var services = this._getRealRelationEndpointNames(args);
             changes.addRelations.push({
               type: args[0][1].name,
-              from: args[0][0],
-              to: args[1][0]
+              from: services[0],
+              to: services[0]
             });
             break;
           case '_remove_relation':

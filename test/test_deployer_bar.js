@@ -166,6 +166,30 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('summary-open'), false);
   });
 
+  it('can convert relation endpoints to their real names', function() {
+    var args = [
+      ['wordpress', {
+        name: 'db',
+        role: 'server'
+      }],
+      ['84882221$', {
+        name: 'db',
+        role: 'client'
+      }],
+      function() {}
+    ];
+    view.set('db', {
+      services: new Y.ModelList()
+    });
+    view.get('db').services.add([
+      { id: 'foobar' },
+      { id: '84882221$', displayName: '(mysql)' },
+      { id: 'wordpress', displayName: 'wordpress' }
+    ]);
+    var services = view._getRealRelationEndpointNames(args);
+    assert.deepEqual(services, ['mysql', 'wordpress']);
+  });
+
   it('can generate descriptions for any change type', function() {
     var tests = [{
       icon: 'changes-service-added',
@@ -260,7 +284,10 @@ describe('deployer bar view', function() {
         }
       }
     }];
-
+    // This method needs to be stubbed out for the add relation path.
+    var endpointNames = utils.makeStubMethod(
+        view, '_getRealRelationEndpointNames', ['foo', 'baz']);
+    this._cleanups.push(endpointNames.reset);
     tests.forEach(function(test) {
       var change = view._generateChangeDescription(test.change, true);
       assert.equal(change.icon, test.icon);
