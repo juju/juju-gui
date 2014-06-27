@@ -73,7 +73,7 @@ YUI.add('bundle-import-helpers', function(Y) {
 
         notifications.add({
           title: 'Bundle deployment requested',
-          message: 'Waiting for bundle deployment request conformation.',
+          message: 'Waiting for bundle deployment request confirmation.',
           level: 'important'
         });
 

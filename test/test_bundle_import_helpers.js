@@ -21,13 +21,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('bundle-import-helpers', function() {
-    var db, env, ns, Y;
+    var db, env, ns, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('bundle-import-helpers', function(Y) {
-        ns = Y.namespace('juju');
-        done();
-      });
+      Y = YUI(GlobalConfig).use('bundle-import-helpers', 'juju-tests-utils',
+          function(Y) {
+            ns = Y.namespace('juju');
+            utils = Y.namespace('juju-tests').utils;
+            done();
+          });
     });
 
     beforeEach(function() {
@@ -58,21 +60,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ns.BundleHelpers.deployBundle('test bundle', undefined, env, db);
     });
 
-    it('errors when the bundle import fails from the env', function(done) {
-      db.notifications.add = function(info) {
-        assert.equal(info.level, 'error');
-        assert.notEqual(info.title.indexOf('deployment failed'), -1);
-        done();
-      };
-
+    it('errors when the bundle import fails from the env', function() {
+      var add = utils.makeStubMethod(db.notifications, 'add');
+      this._cleanups.push(add.reset);
       env.deployerImport = function(bundle, bundleData, callback) {
         callback({
           err: 'Abort abort!'
         });
       };
-
       // Start the process by deploying the bundle.
       ns.BundleHelpers.deployBundle('test bundle', '~jorge/wiki/wiki', env, db);
+      var addArgs = add.allArguments();
+      assert.deepEqual(addArgs[0][0], {
+        level: 'important',
+        message: 'Waiting for bundle deployment request confirmation.',
+        title: 'Bundle deployment requested'
+      });
+      assert.deepEqual(addArgs[1][0], {
+        level: 'error',
+        message: 'Unable to deploy the bundle. The server returned the ' +
+            'following error: Abort abort!',
+        title: 'Bundle deployment failed'
+      });
     });
 
     it('provides deployBundle helper for working through env', function(done) {
@@ -192,7 +201,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ns.BundleHelpers._watchDeploymentUpdates(watchId, env, db);
     });
 
-    it('the stack of deploy to watch integrate', function(done) {
+    it('the stack of deploy to watch integrate', function() {
       // By stubbing only the env calls to behave properly, we should be able to
       // verify that the bundle-import-helpers stack up and call in proper
       // succession to get a deployment id, then a watcher id, then the watch
@@ -206,13 +215,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           DeploymentId: 10
         });
       };
-
       env.deployerWatch = function(deploymentId, callback) {
         callback({
           WatchId: 1
         });
       };
-
       var updated = false;
       env.deployerNext = function(watchId, callback) {
         if (!updated) {
@@ -232,31 +239,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         }
       };
-
-      // We'll be called several times.
-      // 1. Deployment Requested.
-      // 2. Watching will pass without a notification.
-      // 3. The status will be started.
-      // 4. The status will be completed.
-      var called = 0;
-      db.notifications.add = function(info) {
-        switch (called) {
-          case 0:
-            assert.include(info.title, 'requested');
-            break;
-          case 1:
-            assert.include(info.message, 'in progress');
-            break;
-          case 2:
-            assert.include(info.message, 'completed');
-            done();
-            break;
-        }
-        called = called + 1;
-      };
-
+      var add = utils.makeStubMethod(db.notifications, 'add');
+      this._cleanups.push(add.reset);
       // Start the process by deploying the bundle.
       ns.BundleHelpers.deployBundle('test bundle', undefined, env, db);
+      assert.equal(add.callCount(), 4);
+      var addArgs = add.allArguments();
+      assert.deepEqual(addArgs[0][0], {
+        level: 'important',
+        message: 'Waiting for bundle deployment request confirmation.',
+        title: 'Bundle deployment requested'
+      });
+      assert.deepEqual(addArgs[1][0], {
+        level: 'important',
+        message: 'Bundle deployment request successful. The full deployment ' +
+            'can take some time to complete.',
+        title: 'Bundle deployment requested'
+      });
+      assert.deepEqual(addArgs[2][0], {
+        level: 'important',
+        message: 'The deployment is currently in progress',
+        title: 'Updated status for deployment id: 42'
+      });
+      assert.deepEqual(addArgs[3][0], {
+        level: 'important',
+        message: 'The deployment has been successfully completed',
+        title: 'Updated status for deployment id: 42'
+      });
     });
 
   });
