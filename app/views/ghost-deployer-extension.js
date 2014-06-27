@@ -102,13 +102,12 @@ YUI.add('ghost-deployer-extension', function(Y) {
             // Options used by ECS, ignored by environment.
             {modelId: unitId}
         );
-      } else {
-        this.get('subApps').charmbrowser.fire('changeState', {
-          sectionA: {
-            component: 'inspector',
-            metadata: { id: ghostService.get('id') }
-          }});
       }
+      this.get('subApps').charmbrowser.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: { id: ghostService.get('id') }
+        }});
     },
 
     /**
