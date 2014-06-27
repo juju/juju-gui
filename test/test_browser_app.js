@@ -545,10 +545,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var navigateStub = utils.makeStubMethod(app, 'navigate');
         this._cleanups.push(navigateStub.reset);
         app._activeInspector = {
-          get: function() {
-            return {
-              get: function() {
-                return 'foo'; }};
+          get: function(key) {
+            if (key === 'destroyed') { return false; }
+            if (key === 'model') {
+              return { get: function() { return 'foo'; } };
+            }
           }};
         app.on('changeState', function(e) {
           e.halt(); // stop any futher propogation of this event.
@@ -558,6 +559,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               metadata: {
                 id: 'bar' }}});
           done();
+        });
+        app.fire('serviceDeployed', {
+          clientId: 'foo',
+          serviceName: 'bar'
+        });
+      });
+
+      it('don\'t render a destroyed inspector on serviceDeployed', function() {
+        app = new browser.Browser({});
+        var generateStub = utils.makeStubMethod(app.state, 'generateUrl');
+        this._cleanups.push(generateStub.reset);
+        var navigateStub = utils.makeStubMethod(app, 'navigate');
+        this._cleanups.push(navigateStub.reset);
+        app._activeInspector = {
+          get: function() { return true; }
+        };
+        app.on('changeState', function(e) {
+          e.halt(); // stop any futher propogation of this event.
+          // We don't need to wait on this, if the event is fired later this
+          // test will still fail out of band.
+          assert.fail(
+              'changeState should not be fired with a destroyed inspector');
         });
         app.fire('serviceDeployed', {
           clientId: 'foo',
