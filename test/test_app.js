@@ -110,7 +110,7 @@ function injectData(app, data) {
             env: juju.newEnvironment({ conn: new utils.SocketStub() })
           });
           assert.equal(app.env.get('user'), undefined);
-          assert.equal(app.env.get('password'), undefined);
+          assert.notEqual(app.env.get('password'), undefined);
         });
 
     it('should report backend misconfiguration', function() {
