@@ -593,6 +593,40 @@ describe('Environment Change Set', function() {
         });
       });
     });
+
+    describe('_lazyRemoveUnit', function() {
+      it('can remove a ghost unit from the changeset', function() {
+        ecs.get('db').units = {
+          remove: testUtils.makeStubFunction()
+        };
+        ecs.changeSet['addUnit-982'] = {
+          command: {
+            args: ['arg1'],
+            method: '_add_units' }};
+        var record = ecs._lazyRemoveUnit(['arg1']);
+        var remove = ecs.get('db').units.remove;
+        assert.strictEqual(record, undefined);
+        assert.strictEqual(ecs.changeSet['addUnit-982'], undefined);
+        assert.equal(remove.calledOnce(), true);
+      });
+
+      it('can add a remove unit record into the changeset', function() {
+        var record = ecs._lazyRemoveUnit(['args1', 'args2']);
+        assert.equal(record.split('-')[0], 'removeUnit');
+        // Note that we cannot guarantee the duration of the tests, so we
+        // need to assert against the record's timestamp below.
+        assert.deepEqual(ecs.changeSet[record], {
+          command: {
+            args: ['args1', 'args2'],
+            method: '_remove_units'
+          },
+          executed: false,
+          id: record,
+          parents: [],
+          timestamp: ecs.changeSet[record].timestamp
+        });
+      });
+    });
   });
 
   describe('public ENV methods', function() {

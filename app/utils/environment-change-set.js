@@ -516,6 +516,45 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Creates a new entry in the queue for removing a unit.
+
+      Receives all the parameters received by the environment's
+      "_remove_unit" method with the exception of the ECS options object.
+
+      @method _lazyRemoveUnit
+      @param {Array} args The arguments to remove the relation with.
+    */
+    _lazyRemoveUnit: function(args) {
+      // If an existing ecs record for this unit exists, remove it from the
+      // queue.
+      var changeSet = this.changeSet,
+          ghosted = false,
+          service = args[0],
+          units = this.get('db').units,
+          command, record;
+      Object.keys(changeSet).forEach(function(key) {
+        command = changeSet[key].command;
+        if (command.method === '_add_units') {
+          // If there is a matching ecs unit then remove it from the queue.
+          if (command.args[0] === service) {
+            ghosted = true;
+            this._removeExistingRecord(key);
+            // Remove the unit from the units DB. Even the ghost units are
+            // stored in the DB.
+            units.remove({service: service});
+          }
+        }
+      }, this);
+      // If the unit wasn't found in the ecs then it's a real unit.
+      if (!ghosted) {
+        record = this._createNewRecord('removeUnit', {
+          method: '_remove_units',
+          args: args
+        });
+      }
+      return record;
+    },
+    /**
       Creates a new entry in the queue for adding machines/containers.
 
       Receives all the parameters received by the environment's "addMachines"

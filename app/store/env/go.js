@@ -1276,15 +1276,34 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environment's _remove_units method or removes an
+      add_unit record in the ECS queue.
+
+      Parameters match the parameters for the _remove_units method below.
+      The only new parameter is the last one (ECS options).
+
+      @method remove_units
+    */
+    remove_units: function(unit_names, callback, options) {
+      var ecs = this.get('ecs'),
+          args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        this._remove_units.apply(this, args);
+      } else {
+        ecs._lazyRemoveUnit(args);
+      }
+    },
+
+    /**
      * Remove units from a service.
      *
-     * @method remove_units
+     * @method _remove_units
      * @param {Array} unit_names The units to be removed.
      * @param {Function} callback A callable that must be called once the
      *   operation is performed. Normalized data, including the unit_names
      *   is passed to the callback.
      */
-    remove_units: function(unit_names, callback) {
+    _remove_units: function(unit_names, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and unit_names.  No context is passed.
@@ -1894,6 +1913,7 @@ YUI.add('juju-env-go', function(Y) {
         result: result
       });
     },
+
     /**
       Calls the environment's _remove_relation method or removes a
       remove_relation record in the ECS queue.
@@ -1912,7 +1932,6 @@ YUI.add('juju-env-go', function(Y) {
         ecs._lazyRemoveRelation(args);
       }
     },
-
 
     /**
      * Remove the relationship between two services.
