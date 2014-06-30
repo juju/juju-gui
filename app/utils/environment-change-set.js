@@ -383,11 +383,24 @@ YUI.add('environment-change-set', function(Y) {
       return this._createNewRecord('service', command, toMachine);
     },
 
+    /**
+      Creates a new entry in the queue for destroying a service; or, if the
+      service is in the queue already, removes it.
+
+      Receives all parameters received by the environment's 'destroy_service'
+      method with the exception of the ECS options object.
+
+      @method _lazyDestroyService
+      @param {Array} args The arguments used for destroying.
+    */
     _lazyDestroyService: function(args) {
       var command = {
         method: '_destroyService',
         args: this._getArgs(args)
       };
+      if (command.args.length !== args.length) {
+        command.options = args[args.length - 1];
+      }
       var existingService;
       // Check if the service is pending in the change set.
       Object.keys(this.changeSet).forEach(function(key) {
@@ -404,6 +417,13 @@ YUI.add('environment-change-set', function(Y) {
       }
     },
 
+    /**
+      In the event that a service in the change set needs to be destroyed,
+      remove it and all of the entries of which it is a parent.
+
+      @method _destroyQueuedService
+      @param {String} service The key of the service to be destroyed.
+    */
     _destroyQueuedService: function(service) {
       // Search for everything that has that service as a parent and remove it.
       Object.keys(this.changeSet).forEach(function(key) {

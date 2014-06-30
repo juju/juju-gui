@@ -143,7 +143,8 @@ YUI.add('service-inspector-utils-extension', function(Y) {
     initiateServiceDestroy: function() {
       var model = this.get('model');
       var db = this.get('db');
-      if (model.name === 'service' && (!model.get('pending') || window.flags.mv)) {
+      if (model.name === 'service' &&
+          (!model.get('pending') || window.flags.mv)) {
         var env = this.get('env');
         env.destroy_service(model.get('id'),
             Y.bind(this._destroyServiceCallback, this, model, db),

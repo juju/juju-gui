@@ -1672,6 +1672,15 @@ YUI.add('juju-env-go', function(Y) {
       this._send_rpc(request, intermediateCallback);
     },
 
+    /**
+      Calls the environments destroyService method or creates a new
+      destroyService record in the queue.
+
+      The parameters match the parameters for the public env destroy_service
+      method in go.js.
+
+      @method destroy_service
+    */
     destroy_service: function(service, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);

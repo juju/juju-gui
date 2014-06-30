@@ -556,9 +556,10 @@ YUI.add('deployer-bar', function(Y) {
             changes.deployedServices.push({icon: icon, name: name});
             break;
           case '_destroyService':
-            name = args[0];
-            var icon = this._getServiceIconUrl(name);
-            changes.destroyedServices.push({icon: icon, name: name});
+            changes.destroyedServices.push({
+              icon: this._getServiceIconUrl(args[0]),
+              name: args[0]
+            });
             break;
           case '_add_relation':
             var services = this._getRealRelationEndpointNames(args);
