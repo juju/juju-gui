@@ -1,7 +1,6 @@
-<div class="overview-footer-item">
-  <div class="change-version-trigger">
-    <span>
-      <i class="sprite inspector-charm-upgrade"></i>
-      Change version
-    </span>
+<div class="change-version-trigger">
+  <span>
+    <i class="sprite inspector-charm-upgrade"></i>
+    Change version
+  </span>
 </div>
