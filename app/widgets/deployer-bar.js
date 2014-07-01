@@ -228,6 +228,7 @@ YUI.add('deployer-bar', function(Y) {
           changeCount: this._getChangeCount(ecs),
           latestChangeDescription: '',
           deployServices: changes.deployedServices,
+          destroyedServices: changes.destroyedServices,
           addedRelations: changes.addRelations,
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
@@ -400,6 +401,11 @@ YUI.add('deployer-bar', function(Y) {
             changeItem.description = ' ' + change.command.args[1] +
                 ' has been added.';
             break;
+          case '_destroyService':
+            changeItem.icon = 'changes-service-destroyed';
+            changeItem.description = ' ' + change.command.args[0] +
+                ' has been destroyed.';
+            break;
           case '_add_unit':
             changeItem.icon = 'changes-service-added';
             var units = change.command.args[1],
@@ -449,7 +455,7 @@ YUI.add('deployer-bar', function(Y) {
             break;
         }
       }
-      if (skipTime) {
+      if (skipTime || !change) {
         changeItem.time = '00:00';
       } else {
         changeItem.time = this._formatAMPM(new Date(change.timestamp));
@@ -532,6 +538,7 @@ YUI.add('deployer-bar', function(Y) {
     _getChanges: function(ecs) {
       var changes = {
         deployedServices: [],
+        destroyedServices: [],
         addRelations: [],
         removeRelations: [],
         addUnits: [],
@@ -547,6 +554,12 @@ YUI.add('deployer-bar', function(Y) {
             name = args[1];
             var icon = this._getServiceIconUrl(name);
             changes.deployedServices.push({icon: icon, name: name});
+            break;
+          case '_destroyService':
+            changes.destroyedServices.push({
+              icon: this._getServiceIconUrl(args[0]),
+              name: args[0]
+            });
             break;
           case '_add_relation':
             var services = this._getRealRelationEndpointNames(args);

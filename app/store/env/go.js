@@ -1692,9 +1692,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environments destroyService method or creates a new
+      destroyService record in the queue.
+
+      The parameters match the parameters for the public env destroy_service
+      method in go.js.
+
+      @method destroy_service
+    */
+    destroy_service: function(service, callback, options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        this._destroyService.apply(this, args);
+      } else {
+        ecs._lazyDestroyService(args);
+      }
+    },
+
+    /**
        Destroy the given service.
 
-       @method destroy_service
+       @method _destroyService
        @param {String} serviceName The service name.
        @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object containing:
@@ -1702,7 +1721,7 @@ YUI.add('juju-env-go', function(Y) {
           service_name - the name of the service.
        @return {undefined} Sends a message to the server only.
      */
-    destroy_service: function(service, callback) {
+    _destroyService: function(service, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and service.  No context is passed.
