@@ -193,12 +193,6 @@ YUI.add('ghost-service-inspector', function(Y) {
         constraints: constraints
       });
 
-      // Now that we are using the same model for the ghost and service views
-      // we need to close the inspector to deactivate the databinding before
-      // setting else we end up with a race condition on nodes which no longer
-      // exist.
-      this.destroy();
-
       // Transition the ghost viewModel to the new
       // service. It's alive!
       var boxModel = topo.service_boxes[ghostId];

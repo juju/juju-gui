@@ -239,26 +239,8 @@ describe('Ghost Inspector', function() {
     inspector._deployCallbackHandler('mediawiki', {}, {}, {});
     // The event fire is called twice but the 'serviceDeployed' call is the
     // canary.
-    assert.equal(fireStub.callCount(), 2);
-    assert.equal(fireStub.allArguments()[1][0], 'serviceDeployed');
-  });
-
-  it('destroys existing ghost inspector on deploy', function() {
-    inspector = setUpInspector();
-    var secondInspector = setUpInspector();
-    var fireStub = utils.makeStubMethod(inspector, 'fire');
-    this._cleanups.push(fireStub.reset);
-    var secondDestroy = utils.makeStubMethod(secondInspector, 'destroy');
-    this._cleanups.push(secondDestroy.reset);
-    secondInspector.get('environment').inspector = secondInspector;
-    inspector.set('environment', secondInspector.get('environment'));
-    inspector._deployCallbackHandler('mediawiki', {}, {}, {});
-    // Assert that the service inspector is only created once.
     assert.equal(fireStub.callCount(), 1);
-    assert.equal(fireStub.lastArguments()[0], 'serviceDeployed');
-    // Despite the callback being called from the first inspector, the second
-    // inspector is destroyed as well.
-    assert.isTrue(secondDestroy.called(), '2nd destroy called');
+    assert.equal(fireStub.allArguments()[0][0], 'serviceDeployed');
   });
 
   it('does not display unit count for subordinate charms', function() {
