@@ -1728,6 +1728,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(err, 'service "yoursql" not found');
     });
 
+    it('calls the ecs remove unit', function() {
+      window.flags = {};
+      window.flags.mv = true;
+      var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveUnit');
+      this._cleanups.push(lazy.reset);
+      env.remove_units([], function() {});
+      assert.equal(lazy.calledOnce(), true);
+      window.flags = {};
+    });
+
     it('sends the correct CharmInfo message', function() {
       env.get_charm('cs:precise/wordpress-10');
       var last_message = conn.last_message();
