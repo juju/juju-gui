@@ -533,32 +533,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Renders the inspector into the sidebar container.
-      Route callback.
-
-      @method inspector
-    */
-    inspector: function(req, res, next) {
-      // We need the sidebar rendered so that we can show the inspector in it.
-      this.sidebar(req, null, function() {});
-      var clientId = req.params.id,
-          model;
-      this.get('db').services.some(function(service) {
-        if (service.get('clientId') === clientId) {
-          model = service;
-          return true;
-        }
-      });
-      // If there is no config set then it's a ghost service model and not
-      // a deployed service yet.
-      if (!model.get('config')) {
-        this.createGhostInspector(model);
-      } else {
-        this.createServiceInspector(model);
-      }
-    },
-
-    /**
       Renders the machine view over the canvas.
       Route callback.
 
