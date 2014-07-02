@@ -87,6 +87,17 @@ YUI.add('service-inspector', function(Y) {
     renderUI: function() {
       this.showViewlet('inspectorHeader');
       this.showViewlet('overview');
+      if (this.get('showCharm')) {
+        var charmId = this.get('model').get('charm');
+        var charm = this.get('db').charms.getById(charmId);
+        this.showViewlet('charmDetails', charm);
+      } else {
+        var existing = this.slots['left-hand-panel'];
+        var container = this._getSlotContainer(existing);
+        if (container) {
+          container.hide();
+        }
+      }
     },
 
     /**
@@ -126,7 +137,7 @@ YUI.add('service-inspector', function(Y) {
       this.fire('changeState', {
         sectionA: {
           component: null,
-          metadata: { id: null }}});
+          metadata: { id: null, charm: false }}});
     },
 
     /**
@@ -138,10 +149,13 @@ YUI.add('service-inspector', function(Y) {
      */
     onShowCharmDetails: function(ev) {
       ev.halt();
-      var db = this.get('db');
-      var charmId = ev.currentTarget.getData('charmid');
-      var charm = db.charms.getById(charmId);
-      this.showViewlet('charmDetails', charm);
+      this.fire('changeState', {
+        sectionA: {
+          metadata: {
+            charm: true,
+          }
+        }
+      });
     },
 
     /**
@@ -259,6 +273,19 @@ YUI.add('service-inspector', function(Y) {
       } else {
         service.set('exposed', true);
         db.fire('update');
+      }
+    }
+  }, {
+    ATTRS: {
+      /**
+         Whether or not to show the service's charm information.
+
+         @attribute showCharm
+         @default false
+         @type booleans
+       */
+      showCharm: {
+        value: false
       }
     }
   });

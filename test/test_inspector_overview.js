@@ -778,7 +778,7 @@ describe('Inspector Overview', function() {
       assert.deepEqual(fireArgs[1], {
         sectionA: {
           component: null,
-          metadata: { id: null }}});
+          metadata: { id: null, charm: false }}});
     });
   });
 });

@@ -358,7 +358,8 @@ YUI.add('subapp-browser', function(Y) {
         // a deployed service yet.
         this._activeInspector = this.createGhostInspector(model);
       } else {
-        this._activeInspector = this.createServiceInspector(model);
+        var showCharm = metadata.charm || false;
+        this._activeInspector = this.createServiceInspector(model, showCharm);
       }
 
       // In the instance of updating, destroy the existing inspector.
@@ -651,9 +652,11 @@ YUI.add('subapp-browser', function(Y) {
       @method createServiceInspector
       @param {String} model The service model.
     */
-    createServiceInspector: function(model) {
+    createServiceInspector: function(model, showCharm) {
       var db = this.get('db'),
           topo = this.get('topo');
+
+      showCharm = showCharm || false;
 
       var inspector = new Y.juju.views.ServiceInspector({
         db: db,
@@ -662,7 +665,8 @@ YUI.add('subapp-browser', function(Y) {
         ecs: this.get('ecs'),
         enableDatabinding: true,
         topo: topo,
-        store: topo.get('store')
+        store: topo.get('store'),
+        showCharm: showCharm
       }).render();
 
       inspector.addTarget(this);
