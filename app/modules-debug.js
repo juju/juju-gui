@@ -417,6 +417,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/change-version.js'
         },
 
+        'scale-up-view': {
+          fullpath: '/juju-ui/views/viewlets/scale-up.js'
+        },
+
         // Viewlet view extensions
 
         'conflict-view-extension': {
