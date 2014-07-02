@@ -384,6 +384,63 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Creates a new entry in the queue for destroying a service; or, if the
+      service is in the queue already, removes it.
+
+      Receives all parameters received by the environment's 'destroy_service'
+      method with the exception of the ECS options object.
+
+      @method _lazyDestroyService
+      @param {Array} args The arguments used for destroying.
+    */
+    _lazyDestroyService: function(args) {
+      var command = {
+        method: '_destroyService',
+        args: this._getArgs(args)
+      };
+      if (command.args.length !== args.length) {
+        command.options = args[args.length - 1];
+      }
+      var existingService;
+      // Check if the service is pending in the change set.
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].command.method === '_deploy') {
+          if (this.changeSet[key].command.options.modelId === args[0]) {
+            existingService = key;
+          }
+        }
+      }.bind(this));
+      if (existingService) {
+        this._destroyQueuedService(existingService);
+      } else {
+        return this._createNewRecord('destroyService', command, []);
+      }
+    },
+
+    /**
+      In the event that a service in the change set needs to be destroyed,
+      remove it and all of the entries of which it is a parent.
+
+      @method _destroyQueuedService
+      @param {String} service The key of the service to be destroyed.
+    */
+    _destroyQueuedService: function(service) {
+      // Search for everything that has that service as a parent and remove it.
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].parents.indexOf(service) !== -1) {
+          this._removeExistingRecord(key);
+        }
+      }.bind(this));
+      // Remove the service itself.
+      var db = this.get('db');
+      var modelId = this.changeSet[service].command.options.modelId;
+      var model = db.services.getById(modelId);
+      db.services.remove(model);
+      model.destroy();
+      this._removeExistingRecord(service);
+    },
+
+    /**
       Creates a new entry in the queue for setting a services config.
 
       Receives all the parameters received by the environment's "set_config"
