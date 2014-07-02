@@ -422,10 +422,10 @@ YUI.add('inspector-overview-view', function(Y) {
     render: function(attributes) {
       var container = this.get('container');
       if (window.flags && window.flags.mv) {
-        this._instantiateScaleUp(attributes);
+        this._instantiateScaleUp();
         container.append(this.scaleUp.render());
       }
-      this.get('container').append(this.template(attributes.model.getAttrs()));
+      container.append(this.template(attributes.model.getAttrs()));
     },
 
     /**

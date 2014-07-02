@@ -35,14 +35,16 @@ YUI.add('scale-up-view', function(Y) {
       @return {Object} The views container.
     */
     render: function() {
-      this.get('container').append(this.template());
-      return this.get('container');
+      var container = this.get('container');
+      container.append(this.template());
+      return container;
     }
   });
 
 }, '0.0.1', {
   requires: [
     'node',
+    'juju-templates',
     'viewlet-view-base'
   ]
 });
