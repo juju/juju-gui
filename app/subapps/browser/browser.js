@@ -180,7 +180,7 @@ YUI.add('subapp-browser', function(Y) {
         dispatchers: {
           sectionA: {
             charmbrowser: this._charmBrowserDispatcher.bind(this),
-            inspector: this._inspector.bind(this),
+            inspector: this._inspectorDispatcher.bind(this),
             empty: this.emptySectionA.bind(this)
           },
           sectionB: {
@@ -210,7 +210,7 @@ YUI.add('subapp-browser', function(Y) {
       }, this);
 
       this.on('*:serviceDeployed', function(e) {
-        var activeInspector = this._activeInspector;
+        var activeInspector = this._inspector;
         if (activeInspector && !activeInspector.get('destroyed')) {
           var activeClientId = activeInspector.get('model')
             .get('clientId');
@@ -306,12 +306,13 @@ YUI.add('subapp-browser', function(Y) {
        @param {Object|String} metadata The metadata to pass to the inspector
          view.
      */
-    _retryInspector: function(metadata) {
+    _retryRenderServiceInspector: function(metadata) {
       var retries = this.get('inspectorRetries');
       if (retries < this.get('inspectorRetryLimit')) {
         retries = retries + 1;
         this.set(
-            'inspectorRetryTimer', Y.later(100, this, '_inspector', metadata));
+            'inspectorRetryTimer',
+            Y.later(100, this, '_inspectorDispatcher', metadata));
       } else {
         retries = 0;
         this.fire('changeState', {
@@ -332,39 +333,21 @@ YUI.add('subapp-browser', function(Y) {
     /**
       Handles rendering and/or updating the inspector UI component.
 
-      @method _inspector
+      @method _inspectorDispatcher
       @param {Object|String} metadata The metadata to pass to the inspector
         view.
     */
-    _inspector: function(metadata) {
-      var clientId = metadata.id;
-      var model = this._findModelInServices(clientId);
-
-      var previousInspector = this._activeInspector;
+    _inspectorDispatcher: function(metadata) {
+      var inspectors;
 
       if (metadata.localType) {
-        var file = metadata.flash.file;
-        var services = metadata.flash.services;
-        if (metadata.localType === 'new') {
-          this._activeInspector = this.createRequestSeriesInspector(file);
-        } else if (metadata.localType) {
-          this._activeInspector = this.createUpgradeOrNewInspector(
-              file, services);
-        }
-      } else if (!model) {
-        this._retryInspector(metadata);
-      } else if (!model.get('config')) {
-        // If there is no config set then it's a ghost service model and not
-        // a deployed service yet.
-        this._activeInspector = this.createGhostInspector(model);
+        inspectors = this.renderLocalInspector(metadata);
       } else {
-        var showCharm = metadata.charm || false;
-        this._activeInspector = this.createServiceInspector(model, showCharm);
+        inspectors = this.renderServiceInspector(metadata);
       }
-
-      // In the instance of updating, destroy the existing inspector.
-      if (previousInspector) {
-        previousInspector.destroy();
+      this._inspector = inspectors.active;
+      if (inspectors.previous) {
+        inspectors.previous.destroy();
       }
     },
 
@@ -404,8 +387,9 @@ YUI.add('subapp-browser', function(Y) {
           detailsNode.empty();
         }
       }
-      if (this._activeInspector) {
-        this._activeInspector.destroy();
+      if (this._inspector) {
+        this._inspector.destroy();
+        this._inspector = null;
       }
     },
 
@@ -587,90 +571,100 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Creates the request series inspector for local charms.
+       Renders a local charm deployment inspector
 
-      @method createUpgradeOrNewInspector
-      @param {Object} file The local charm data file.
-      @param {Array} services The list of existing services that can be updated.
-    */
-    createUpgradeOrNewInspector: function(file, services) {
-      var inspector = new Y.juju.views.LocalNewUpgradeInspector({
-        services: services,
+       @method renderLocalInspector
+       @param {Object|String} metadata The metadata to pass to the inspector
+       @return {Object} An object with the previous and active inspector.
+     */
+    renderLocalInspector: function(metadata) {
+      var file = metadata.flash.file,
+          services = metadata.flash.services,
+          previousInspector = this._inspector,
+          activeInspector;
+      var cfg = {
         file: file,
         env: this.get('env'),
         db: this.get('db')
-      }).render();
-      inspector.addTarget(this);
-      return inspector;
+      };
+      if (metadata.localType === 'new') {
+        activeInspector = new Y.juju.views.RequestSeriesInspector(cfg);
+      } else {
+        cfg.services = services;
+        activeInspector = new Y.juju.views.LocalNewUpgradeInspector(cfg);
+      }
+      activeInspector.render();
+      activeInspector.addTarget(this);
+      return {
+        active: activeInspector,
+        previous: previousInspector
+      };
     },
 
     /**
-      Creates the request series inspector for local charms.
+       Renders the service or ghost service inspector, handling updates to the
+       existing service inspector if necessary.
 
-      @method createRequestSeriesInspector
-      @param {Object} file The local charm data file.
-    */
-    createRequestSeriesInspector: function(file) {
-      var inspector = new Y.juju.views.RequestSeriesInspector({
-        file: file,
-        env: this.get('env'),
-        db: this.get('db')
-      }).render();
-      inspector.addTarget(this);
-      return inspector;
-    },
+       @method renderServiceInspector
+       @param {Object} metadata The dispatched view metadata.
+       @return {Object} An object with the previous and active inspector.
+     */
+    renderServiceInspector: function(metadata) {
+      var clientId = metadata.id,
+          model = this._findModelInServices(clientId),
+          previousInspector,
+          activeInspector;
 
-    /**
-      Creates the ghost inspector.
-
-      @method createGhostInspector
-      @param {Object} model The ghost service model.
-    */
-    createGhostInspector: function(model) {
-      var db = this.get('db');
-      // topo is passed in to the charmbrowser after
-      // the environment view is rendered.
-      var topo = this.get('topo');
-      // Render the ghost inspector
-      var inspector = new Y.juju.views.GhostServiceInspector({
-        db: db,
-        model: model,
-        env: this.get('env'),
-        ecs: this.get('ecs'),
-        charmModel: db.charms.getById(model.get('charm')),
-        topo: topo,
-        store: topo.get('store')
-      }).render();
-
-      inspector.addTarget(this);
-      return inspector;
-    },
-
-    /**
-      Creates a service inspector.
-
-      @method createServiceInspector
-      @param {String} model The service model.
-    */
-    createServiceInspector: function(model, showCharm) {
       var db = this.get('db'),
           topo = this.get('topo');
 
-      showCharm = showCharm || false;
-
-      var inspector = new Y.juju.views.ServiceInspector({
+      var cfg = {
         db: db,
         model: model,
         env: this.get('env'),
         ecs: this.get('ecs'),
-        enableDatabinding: true,
         topo: topo,
-        store: topo.get('store'),
-        showCharm: showCharm
-      }).render();
+        store: topo.get('store')
+      };
 
-      inspector.addTarget(this);
-      return inspector;
+      if (model) {
+        if (model.get('config')) {
+          // This is a service inspector.
+          cfg.showCharm = metadata.charm || false;
+          cfg.enableDatabinding = true;
+
+          if (!this._inspector ||
+              this._inspector.name !== 'service-inspector' ||
+              (this._inspector.get('model').get('id') !==
+                  model.get('id'))) {
+            // This is a new service.
+            previousInspector = this._inspector;
+            activeInspector = new Y.juju.views.ServiceInspector(cfg);
+            activeInspector.render();
+            activeInspector.addTarget(this);
+          } else {
+            // This is a dispatch for the existing inspector
+            activeInspector = this._inspector;
+            activeInspector.setAttrs(cfg);
+            activeInspector.renderUI();
+          }
+
+        } else {
+          // This is a ghost service inspector.
+          previousInspector = this._inspector;
+          cfg.charmModel = db.charms.getById(model.get('charm'));
+          activeInspector = new Y.juju.views.GhostServiceInspector(cfg);
+          activeInspector.render();
+          activeInspector.addTarget(this);
+        }
+      } else {
+        // If we found no model, begin the retry loop.
+        this._retryRenderServiceInspector(metadata);
+      }
+      return {
+        previous: previousInspector,
+        active: activeInspector
+      };
     },
 
     /**

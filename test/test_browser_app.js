@@ -282,7 +282,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         });
 
-        describe('_inspector', function() {
+        describe('_inspectorDispatcher', function() {
           var clientId,
               ghostStub,
               requestSeriesStub,
@@ -290,21 +290,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               upgradeOrNewStub;
 
           function stubMethods(context) {
-            ghostStub = utils.makeStubMethod(app, 'createGhostInspector');
+            ghostStub = utils.makeStubMethod(Y.juju.views,
+                'GhostServiceInspector',
+                {render: function() {}, addTarget: function() {} });
             context._cleanups.push(ghostStub.reset);
-            serviceStub = utils.makeStubMethod(app, 'createServiceInspector');
+            serviceStub = utils.makeStubMethod(Y.juju.views,
+                'ServiceInspector',
+                {render: function() {}, addTarget: function() {} });
             context._cleanups.push(serviceStub.reset);
-            requestSeriesStub = utils.makeStubMethod(
-                app, 'createRequestSeriesInspector');
+            requestSeriesStub = utils.makeStubMethod(Y.juju.views,
+                'RequestSeriesInspector',
+                {render: function() {}, addTarget: function() {} });
             context._cleanups.push(requestSeriesStub.reset);
             upgradeOrNewStub = utils.makeStubMethod(
-                app, 'createUpgradeOrNewInspector');
+                Y.juju.views, 'LocalNewUpgradeInspector',
+                {render: function() {}, addTarget: function() {} });
             context._cleanups.push(upgradeOrNewStub.reset);
           }
 
-          function stubDb(app, ghost, notes) {
+          function stubApp(app, ghost, notes) {
             clientId = 'foo';
             var db = {
+              charms: { getById: function() {} },
               notifications: {
                 add: function(note) {
                   if (notes) {
@@ -331,12 +338,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               }
             };
             app.set('db', db);
+            app.set('env', {});
+            app.set('topo', { get: function() {} });
           }
 
           it('renders a ghost inspector', function() {
             stubMethods(this);
-            stubDb(app, true);
-            app._inspector({ id: clientId });
+            stubApp(app, true);
+            app._inspectorDispatcher({ id: clientId });
             assert.equal(ghostStub.callCount(), 1);
             assert.equal(serviceStub.callCount(), 0);
             assert.equal(requestSeriesStub.callCount(), 0);
@@ -345,18 +354,45 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('renders a service inspector', function() {
             stubMethods(this);
-            stubDb(app, false);
-            app._inspector({ id: clientId });
+            stubApp(app, false);
+            app._inspectorDispatcher({ id: clientId });
             assert.equal(ghostStub.callCount(), 0);
             assert.equal(serviceStub.callCount(), 1);
             assert.equal(requestSeriesStub.callCount(), 0);
             assert.equal(upgradeOrNewStub.callCount(), 0);
           });
 
+          it('updates a service inspector when showing details', function() {
+            stubMethods(this);
+            stubApp(app, false);
+            var charmId = 'foo',
+                called = false;
+            app._inspectorDispatcher({ id: clientId });
+            app._inspector = {
+              name: 'service-inspector',
+              destroy: function() {},
+              get: function(arg) {
+                if (arg === 'activeUnit') {
+                  return;
+                }
+                return { get: function() { return charmId; }};
+              },
+              setAttrs: function() {},
+              renderUI: function() { called = true; }
+            };
+            app._inspectorDispatcher({ id: clientId }, charmId);
+            assert.equal(serviceStub.callCount(), 1);
+            assert.equal(ghostStub.callCount(), 0);
+            assert.equal(requestSeriesStub.callCount(), 0);
+            assert.equal(upgradeOrNewStub.callCount(), 0);
+            assert.equal(called, true);
+          });
+
           it('renders a request-series local charm inspector', function() {
             stubMethods(this);
-            stubDb(app, true);
-            app._inspector({
+            stubApp(app, true);
+            app.set('env', {});
+            app._inspectorDispatcher({
               localType: 'new',
               flash: { file: 'foo' }
             });
@@ -368,8 +404,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('renders an upgrade-or-new inspector', function() {
             stubMethods(this);
-            stubDb(app, true);
-            app._inspector({
+            stubApp(app, true);
+            app.set('env', {});
+            app._inspectorDispatcher({
               localType: 'upgrade',
               flash: {
                 file: 'foo',
@@ -384,46 +421,51 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('removes existing inspectors', function(done) {
             stubMethods(this);
-            stubDb(app, false);
-            app._inspector({ id: clientId });
-            app._activeInspector = {
+            stubApp(app, false);
+            app._inspectorDispatcher({ id: clientId });
+            app._inspector = {
               destroy: function() {
                 // If the inspector is not destroyed, the test will time out.
                 done();
+              },
+              get: function() {
+                return { get: function() {} };
               }
             };
-            app._inspector({ id: clientId });
+            app._inspectorDispatcher({ id: clientId });
           });
 
           it('can retry the inspector', function() {
             stubMethods(this);
-            stubDb(app, false);
+            stubApp(app, false);
             var fakeTimer = {time: 'foo'},
                 metadata = { id: clientId },
                 laterStub = utils.makeStubMethod(Y, 'later', fakeTimer);
             this._cleanups.push(laterStub.reset);
             assert.equal(app.get('inspectorRetries'), 0);
-            app._retryInspector(metadata);
+            app._retryRenderServiceInspector(metadata);
             var lastArguments = laterStub.lastArguments();
             assert.equal(laterStub.calledOnce(), true);
             assert.equal(lastArguments[0], 100);
             assert.equal(lastArguments[1], app);
-            assert.equal(lastArguments[2], '_inspector');
+            assert.equal(lastArguments[2], '_inspectorDispatcher');
             assert.equal(lastArguments[3], metadata);
             assert.equal(app.get('inspectorRetries'), 1);
             assert.equal(app.get('inspectorRetryTimer'), fakeTimer);
           });
 
           it('retries if it cannot find model data', function() {
+            stubApp(app, false);
             stubMethods(this);
             var findStub = utils.makeStubMethod(
                 app, '_findModelInServices', false);
             this._cleanups.push(findStub);
-            var retryStub = utils.makeStubMethod(app, '_retryInspector');
+            var retryStub = utils.makeStubMethod(
+                app, '_retryRenderServiceInspector');
             this._cleanups.push(retryStub.reset);
 
             var metadata = {id: clientId};
-            app._inspector(metadata);
+            app._inspectorDispatcher(metadata);
             assert.equal(retryStub.calledOnce(), true);
             assert.equal(retryStub.lastArguments()[0], metadata);
           });
@@ -431,7 +473,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           it('stops retrying after a cutoff', function() {
             var notes = [];
             stubMethods(this);
-            stubDb(app, false, notes);
+            stubApp(app, false, notes);
             var laterStub = utils.makeStubMethod(Y, 'later'),
                 fireStub = utils.makeStubMethod(app, 'fire');
             this._cleanups.push(laterStub.reset);
@@ -439,7 +481,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             app.set('inspectorRetries', 1);
             app.set('inspectorRetryLimit', 1);
-            app._retryInspector({id: clientId});
+            app._retryRenderServiceInspector({id: clientId});
 
             assert.equal(laterStub.calledOnce(), false);
             assert.equal(fireStub.calledOnce(), true);
@@ -454,7 +496,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('cancels the retry timer when dispatching', function() {
             stubMethods(this);
-            stubDb(app, false);
+            stubApp(app, false);
             var fakeTimer = {},
                 timerStub = utils.makeStubMethod(fakeTimer, 'cancel');
             app.set('inspectorRetryTimer', fakeTimer);
@@ -544,7 +586,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         this._cleanups.push(generateStub.reset);
         var navigateStub = utils.makeStubMethod(app, 'navigate');
         this._cleanups.push(navigateStub.reset);
-        app._activeInspector = {
+        app._inspector = {
           get: function(key) {
             if (key === 'destroyed') { return false; }
             if (key === 'model') {
@@ -572,7 +614,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         this._cleanups.push(generateStub.reset);
         var navigateStub = utils.makeStubMethod(app, 'navigate');
         this._cleanups.push(navigateStub.reset);
-        app._activeInspector = {
+        app._inspector = {
           get: function() { return true; }
         };
         app.on('changeState', function(e) {

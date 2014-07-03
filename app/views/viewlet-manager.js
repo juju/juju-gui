@@ -371,14 +371,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
     */
     hideSlot: function(e) {
       e.halt();
-      var existing = this._slots[e.currentTarget.getData('slot')],
-          change;
+      var existing = this._slots[e.currentTarget.getData('slot')];
       if (existing) {
-        if (existing.name === 'charm-details') {
-          change = { sectionA: { metadata: { charm: false }}};
-        } else if (existing.name === 'unit-details') {
-          change = { sectionA: { metadata: { unit: null }}};
-        }
+        // unbind the databinding
         existing.remove();
         // Destroy the view rendered into the slot.
         existing.destroy();
@@ -391,10 +386,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
           @event endpointMapAdded
         */
         this.fire('viewletSlotClosing');
-        if (change) {
-          this.fire('changeState', change);
-        }
-
       }
     },
 
@@ -418,6 +409,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         if (singleView instanceof Y.View === false) {
           /* jshint -W055 */
           singleView = new singleView();
+          singleView.addTarget(this);
         }
 
         singleView.viewletManager = this;
