@@ -1,1 +1,58 @@
-<div class="view-container"></div>
+<div class="view-container scale-up-view state-default">
+  <div class="add-units">
+    <div class="add button inverse orange">
+      <i class="sprite scale-up-open"></i>
+    </div>
+    <i class="sprite inspector-units units-icon"></i>
+    xx units
+  </div>
+  <div class="placement">
+    <form>
+      <span class="units-number-wrap">
+        <input class="units-number" type="text" name="units-number" />
+      </span>
+      <span class="text-in-input">Units</span>
+      <div class="cancel button inverse">
+        <i class="sprite close-inspector-click"></i>
+      </div>
+      <label for="unit-per-machine">
+        <input type="radio" name="placement" checked="checked"
+               id="unit-per-machine" />
+        1 unit per machine
+      </label>
+      <label for="manually-place">
+        <input type="radio" name="placement" id="manually-place" />
+        Manually place
+      </label>
+    </form>
+  </div>
+  <div class="constraints">
+    Scale up with these constraints?
+    Default CPU, default Mem, default Arch.
+    <span class="edit link">Edit</span>
+  </div>
+  <div class="edit-constraints">
+    <form>
+      <ul>
+        <li>
+          <label for="constraints-cpu">CPU power</label>
+          <input type="text" name="cpu" id="constraints-cpu" />
+          <span class="text-in-input">GHz</span>
+        </li>
+        <li>
+          <label for="constraints-mem">Memory</label>
+          <input type="text" name="mem" id="constraints-mem" />
+          <span class="text-in-input">GB</span>
+        </li>
+        <li>
+          <label for="constraints-arch">Architecture</label>
+          <input type="text" name="arch" id="constraints-arch" />
+        </li>
+      </ul>
+    </form>
+  </div>
+  <div class="inspector-buttons">
+    <button class="cancel">Cancel</button>
+    <button class="confirm">Confirm</button>
+  </div>
+</div>
