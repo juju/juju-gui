@@ -845,16 +845,24 @@
         }
         .destroy-service-trigger,
         .change-version-trigger {
+            display: inline-block;
+
             span {
                 cursor: pointer;
 
                 .sprite {
-                    vertical-align: -10%;
-                    margin-right: 7px;
+                    margin-right: 5px;
                 }
             }
         }
-
+        .destroy-service-trigger {
+            .sprite {
+                    vertical-align: -10%;
+            }
+        }
+        .change-version-trigger {
+            float: right
+        }
         .destroy-service-prompt {
             overflow: hidden;
             max-height: 200px;
@@ -921,74 +929,27 @@
                 padding-bottom: 5px;
             }
         }
-
+        .unit-list,
         .overview-unit-list {
             margin: 0;
 
+            .status-unit-header {
+                padding-left: 40px;
+                cursor: pointer;
+            }
             .action-button-wrapper {
                 text-align: center;
                 padding: 20px 0;
             }
-
-            .status-unit-header {
-                padding: 15px 15px 15px 40px;
-                font-size: 14px;
-                cursor: pointer;
-                border-bottom: 1px solid @inspector-divider-bottom;
-                border-top: 1px solid @inspector-divider-top;
-                background-position: 20px center;
-                background-repeat: no-repeat;
-                display: -ms-flexbox;
-                -ms-flex-align: baseline;
-                display: flex;
-                align-content: stretch;
-                align-items: baseline;
-
-                span {
-                    margin-right: 5px;
-                }
-
-                ul {
-                    background: #fff;
-                }
-
-                .category-label {
-                    text-overflow: ellipsis;
-                    white-space: normal;
-                    overflow: hidden;
-                    -webkit-user-select: none;
-                    -moz-user-select: none;
-                    -ms-user-select: none;
-                    user-select: none;
-                }
-
-                .chevron {
-                    display: inline-block;
-                    /* The above rule is required because IE10 does not support
-                    the flexbox rules that we need. It has no effect in the
-                    other supported browsers. */
-                    width: 10px;
-                    height: 5px; // magic number warning see below.
-                    /* For whatever reason this combination of flexbox and inline-block
-                    Does not allow padding-bottom to work in IE10, changing the height
-                    of the element puts the chevron in the appropriate place in all browsers */
-                    margin-left: 5px;
-                    background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
-                }
-            }
-
             .closed-unit-list .category-label {
                 white-space: nowrap;
             }
-
             .closed-unit-list .chevron {
                 background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
             }
-
             .status-unit-header {
                 background-position: 15px 19px;
             }
-
             .status-unit-header.error {
                 background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
             }
@@ -1004,7 +965,6 @@
             .status-unit-header.landscape {
                 background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
             }
-
             .status-unit-content.running ul li {
                 background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
             }
@@ -1019,52 +979,103 @@
                 background: url("/juju-ui/assets/images/inspector-charm-landscape.png") no-repeat scroll 35px center;
             }
         }
+        .unit-list-header,
+        .status-unit-header {
+            padding: 15px;
+            font-size: 14px;
+            border-bottom: 1px solid @inspector-divider-bottom;
+            border-top: 1px solid @inspector-divider-top;
+            background-position: 20px center;
+            background-repeat: no-repeat;
+            display: -ms-flexbox;
+            -ms-flex-align: baseline;
+            display: flex;
+            align-content: stretch;
+            align-items: baseline;
 
-        .overview-unit-list,
-        .relation-wrapper {
-            .unit-action-button {
-                width: 70px;
-                margin: 0 3px 0;
-                background: #CBCBCB;
+            span {
+                margin-right: 5px;
             }
-            .status-unit-content {
-                .transition(.25s, max-height .3s);
+
+            ul {
+                background: #fff;
+            }
+
+            .category-label {
+                text-overflow: ellipsis;
+                white-space: normal;
                 overflow: hidden;
-                background: @charm-panel-background-color;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
 
-                &.close-unit {
-                    max-height: 0px !important;
+            .chevron {
+                display: inline-block;
+                /* The above rule is required because IE10 does not support
+                the flexbox rules that we need. It has no effect in the
+                other supported browsers. */
+                width: 10px;
+                height: 5px; // magic number warning see below.
+                /* For whatever reason this combination of flexbox and inline-block
+                Does not allow padding-bottom to work in IE10, changing the height
+                of the element puts the chevron in the appropriate place in all browsers */
+                margin-left: 5px;
+                background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
+            }
+        }
+        .unit-list-header {
+            position: relative;
+
+            .close {
+                position: absolute;
+                right: 20px;
+            }
+        }
+        .unit-action-button {
+            width: 70px;
+            margin: 0 3px 0;
+            background: #CBCBCB;
+        }
+        .unit-list,
+        .status-unit-content {
+            .transition(.25s, max-height .3s);
+            overflow: hidden;
+            background: @charm-panel-background-color;
+
+            &.close-unit {
+                max-height: 0px !important;
+            }
+
+            a {
+                color: @text-colour;
+                text-decoration: underline;
+            }
+
+            a.landscape {
+                font-size: 12px;
+            }
+
+            ul {
+                margin-left: 0;
+                border-bottom: 1px solid #BEBEBE;
+            }
+
+            li {
+                list-style-type: none;
+                padding: 7px 10px 7px 10px;
+                border-top: 1px solid @inspector-status-border-color;
+                clear: both;
+
+                .right-link {
+                    float: right;
+                    color: @confirm-button-color;
                 }
+            }
 
-                a {
-                    color: @text-colour;
-                    text-decoration: underline;
-                }
-
-                a.landscape {
-                    font-size: 12px;
-                }
-
-                ul {
-                    margin-left: 0;
-                    border-bottom: 1px solid #BEBEBE;
-                }
-
-                li {
-                    list-style-type: none;
-                    padding: 7px 10px 7px 10px;
-                    border-top: 1px solid @inspector-status-border-color;
-                    clear: both;
-
-                    .right-link {
-                        float: right;
-                        color: @confirm-button-color;
-                    }
-                }
-
-                input[type="checkbox"] {
-                    margin-right: 30px;
-                }
+            input[type="checkbox"] {
+                margin-right: 30px;
             }
         }
         .relation-wrapper {
