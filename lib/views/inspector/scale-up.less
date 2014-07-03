@@ -1,0 +1,102 @@
+.yui3-juju-inspector .juju-inspector .view-container.scale-up-view {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: @inspector-dark;
+    border-top: 1px solid @inspector-divider-top;
+    border-bottom: 1px solid @inspector-divider-bottom;
+
+    &.state-default {
+        .add-units {
+            display: block;
+        }
+    }
+    &.state-per-machine {
+        .placement,
+        .constraints,
+        .inspector-buttons {
+            display: block;
+        }
+    }
+    &.state-constraints {
+        .placement,
+        .edit-constraints,
+        .inspector-buttons {
+            display: block;
+        }
+    }
+    &.state-manual {
+        .placement,
+        .inspector-buttons {
+            display: block;
+        }
+    }
+    .add-units,
+    .placement,
+    .constraints,
+    .edit-constraints,
+    .inspector-buttons {
+        display: none;
+    }
+    .button {
+        height: 30px;
+        padding: 0 10px;
+        line-height: 30px;
+
+        &.inverse {
+            background-color: #181614;
+        }
+    }
+    .add-units {
+        line-height: 30px;
+
+        .units-icon {
+            margin-right: 8px;
+        }
+        .button {
+            float: right;
+        }
+    }
+    .placement {
+        position: relative;
+
+        .units-number-wrap {
+            display: block;
+            padding-right: 40px;
+
+            .units-number {
+            }
+        }
+        .text-in-input {
+            margin-right: 50px;
+            margin-bottom: 10px;
+        }
+        .cancel {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        form {
+            input[type=radio] {
+                margin-right: 5px;
+            }
+        }
+    }
+    .constraints {
+        .link {
+            color: #fff;
+            text-decoration: underline;
+        }
+    }
+    .edit-constraints {
+        label {
+            line-height: 30px;
+        }
+    }
+    .inspector-buttons {
+        padding-top: 20px;
+
+        button {
+            margin: 0;
+        }
+    }
+}
