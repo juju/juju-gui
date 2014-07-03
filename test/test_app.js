@@ -788,7 +788,9 @@ describe('File drag over notification system', function() {
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('creates a notification if logged in with a token', function(done) {
+    // XXX This test causes intermittent cascading failures when run in CI.
+    // When the notification system gets refactored this test can be un-skipped.
+    it.skip('creates a notification if logged in with a token', function(done) {
       // We need to change the prototype before we instantiate.
       // See the "this.reset()" call in the callback below that cleans up.
       var stub = utils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
