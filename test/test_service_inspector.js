@@ -22,10 +22,11 @@ describe('Service Inspector', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'juju-views',
+      'environment-change-set',
       'juju-tests-utils',
-      'service-inspector',
-      'environment-change-set'
+      'juju-views',
+      'node-event-simulate',
+      'service-inspector'
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -105,5 +106,29 @@ describe('Service Inspector', function() {
     inspector.render();
     inspector.render();
     assert.equal(stubShow.callCount(), 2);
+  });
+
+  it('can render unit details', function() {
+    var inspector = setUpInspector();
+    var stubShow = utils.makeStubMethod(inspector, 'showViewlet');
+    inspector.render();
+    assert.equal(stubShow.lastArguments()[0], 'overview');
+    inspector.set('activeUnit', 0);
+    inspector.render();
+    assert.equal(stubShow.lastArguments()[0], 'unitDetails');
+  });
+
+  it('fires the changeState event when the charm uri is clicked', function() {
+    var inspector = setUpInspector();
+    inspector.render();
+    var fireStub = utils.makeStubMethod(inspector, 'fire');
+    this._cleanups.push(fireStub.reset);
+    inspector.get('container').one('.charm-url').simulate('click');
+    assert.equal(fireStub.calledOnce(), true);
+    var fireArgs = fireStub.lastArguments();
+    assert.equal(fireArgs[0], 'changeState');
+    assert.deepEqual(
+        fireArgs[1],
+        { sectionA: { metadata: { unit: null, charm: true }}});
   });
 });

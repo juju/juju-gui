@@ -177,6 +177,7 @@ YUI.add('unit-details-view', function(Y) {
       container.show();
       container.delegate('click', function(ev) {
         ev.halt();
+        this.fire('changeState', { sectionA: { metadata: { unit: null }}});
         this.viewletManager.hideSlot(ev);
         container.hide();
       }, '.close-slot', this);
