@@ -168,6 +168,18 @@ describe('Inspector Overview', function() {
     assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-14');
   });
 
+  it('renders the scale up view', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    var ScaleUp = Y.juju.viewlets.ScaleUp;
+    var render = utils.makeStubMethod(ScaleUp.prototype, 'render');
+    this._cleanups.push(render.reset);
+    inspector = setUpInspector();
+    assert.equal(inspector.views.overview.scaleUp instanceof ScaleUp, true);
+    assert.equal(render.calledOnce(), true, 'render not called once');
+    window.flags = {};
+  });
+
   it('should start with the proper number of units shown in the text field',
      function() {
        inspector = setUpInspector();

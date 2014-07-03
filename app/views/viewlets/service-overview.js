@@ -420,7 +420,23 @@ YUI.add('inspector-overview-view', function(Y) {
       @param {Object} attributes the viewlet manager attributes.
     */
     render: function(attributes) {
-      this.get('container').append(this.template(attributes.model.getAttrs()));
+      var container = this.get('container');
+      if (window.flags && window.flags.mv) {
+        this._instantiateScaleUp();
+        container.append(this.scaleUp.render());
+      }
+      container.append(this.template(attributes.model.getAttrs()));
+    },
+
+    /**
+      Instantiates the scale up view.
+
+      @method _instantiateScaleUp
+    */
+    _instantiateScaleUp: function() {
+      if (!this.scaleUp) {
+        this.scaleUp = new ns.ScaleUp();
+      }
     },
 
     /**
@@ -817,6 +833,17 @@ YUI.add('inspector-overview-view', function(Y) {
       }
     },
 
+    /**
+      Clean up anything not attached to the view instance destroy cycle.
+
+      @method destructor
+    */
+    destructor: function() {
+      if (this.scaleUp) {
+        this.scaleUp.destroy();
+      }
+    },
+
     // These methods are exposed here to allow us access for testing.
     categoryName: categoryName,
     generateAndBindStatusHeaders: generateAndBindStatusHeaders,
@@ -832,6 +859,7 @@ YUI.add('inspector-overview-view', function(Y) {
     'd3-statusbar',
     'juju-charm-models',
     'viewlet-view-base',
+    'scale-up-view',
     'juju-view'
   ]
 });
