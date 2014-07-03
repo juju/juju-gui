@@ -276,6 +276,22 @@ describe('service module events', function() {
     assert.equal(topo.vis.selectAll('.service.pending')[0].length, 1);
   });
 
+  it('should display an indicator for pending services', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    db.services.add([
+      {id: 'apache2', pending: true}
+    ]);
+    serviceModule.update();
+    assert.equal(topo.service_boxes.apache2.pending, true);
+    assert.isFalse(topo.service_boxes.haproxy.pending);
+    // Assert that there are two services on the canvas, but only one has
+    // the pending indicator.
+    assert.equal(topo.vis.selectAll('.service')[0].length, 2);
+    assert.equal(topo.vis.selectAll('.pending-indicator')[0].length, 1);
+    window.flags = {};
+  });
+
   it('should deploy a service on charm token drop events', function(done) {
     var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
