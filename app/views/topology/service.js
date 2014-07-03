@@ -134,11 +134,16 @@ YUI.add('juju-topology-service', function(Y) {
 
     var rerenderRelations = false;
     node.select('.service-block-image').each(function(d) {
-      var curr_node = d3.select(this);
-      var curr_href = curr_node.attr('xlink:href');
-      var new_href = d.subordinate ?
-          '/juju-ui/assets/svgs/sub_module.svg' :
-          '/juju-ui/assets/svgs/service_module.svg';
+      var curr_node = d3.select(this),
+          curr_href = curr_node.attr('xlink:href'),
+          new_href = '/juju-ui/assets/svgs/';
+      if (d.subordinate) {
+        new_href += 'sub_module.svg';
+      } else if (d.pending && window.flags.mv) {
+        new_href += 'service_module_pending.svg';
+      } else {
+        new_href += 'service_module.svg';
+      }
 
       // Only set 'xlink:href' if not already set to the new value,
       // thus avoiding redundant requests to the server. #1182135
@@ -254,6 +259,40 @@ YUI.add('juju-topology-service', function(Y) {
           !d3.select(this)
                       .select('.exposed-indicator').empty();
     }).select('.exposed-indicator').remove();
+
+    // Show whether or not the service is pending using an indicator.
+    var pending = node.filter(function(d) {
+      return d.pending && window.flags.mv;
+    });
+    pending.each(function(d) {
+      var pending = Y.one(this).one('.pending-indicator');
+      if (!pending) {
+        pending = d3.select(this)
+                    .append('image')
+                    .attr({
+                      'class': 'pending-indicator',
+                      'xlink:href': '/juju-ui/assets/svgs/pending.svg',
+                      'width': 16,
+                      'height': 16
+                    })
+                    .append('title')
+                    .text(function(d) {
+                      return d.pending ? 'Pending' : '';
+                    });
+      }
+      pending = d3.select(this)
+                  .select('.pending-indicator')
+                  .attr({
+                    'x': 18,
+                    'y': 18
+                  });
+    });
+
+    // Remove pending indicator from nodes that are no longer pending.
+    node.filter(function(d) {
+      return !d.pending &&
+          !d3.select(this).select('.pending-indicator').empty();
+    }).select('.pending-indicator').remove();
 
     // Adds the relative health in the form of a percentage bar.
     node.each(function(d) {
