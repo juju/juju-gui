@@ -5,6 +5,10 @@
     border-top: 1px solid @inspector-divider-top;
     border-bottom: 1px solid @inspector-divider-bottom;
 
+    /*
+        If you modify these state classes you will also need to modify the
+        classes set in scale-up.js
+    */
     &.state-default {
         .add-units {
             display: block;
@@ -13,6 +17,7 @@
     &.state-per-machine {
         .placement,
         .constraints,
+        .constraints-defaults,
         .inspector-buttons {
             display: block;
         }
@@ -33,6 +38,7 @@
     .add-units,
     .placement,
     .constraints,
+    .constraints-defaults,
     .edit-constraints,
     .inspector-buttons {
         display: none;
