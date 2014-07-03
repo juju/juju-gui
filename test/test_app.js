@@ -731,11 +731,9 @@ describe('File drag over notification system', function() {
       // The difference between this test and the following one is that this
       // tests the path where there is no hash in the url.
       var stubit = utils.makeStubMethod;
-      var oldPopRedirectMethod = Y.juju.App.prototype.popLoginRedirectPath;
-      Y.juju.App.prototype.popLoginRedirectPath = function() {
-        Y.juju.App.prototype.popLoginRedirectPath = oldPopRedirectMethod;
-        return '/foo/bar';
-      };
+      var popup = utils.makeStubMethod(
+          Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
+      this._cleanups.push(popup.reset);
       var app = makeApp(true);
       stubit(app, 'hideMask');
       stubit(app, 'navigate');
@@ -759,11 +757,9 @@ describe('File drag over notification system', function() {
       // then manually dispatching it forces the application to render the
       // proper view.
       var stubit = utils.makeStubMethod;
-      var oldPopRedirectMethod = Y.juju.App.prototype.popLoginRedirectPath;
-      Y.juju.App.prototype.popLoginRedirectPath = function() {
-        Y.juju.App.prototype.popLoginRedirectPath = oldPopRedirectMethod;
-        return '/foo/bar#baz';
-      };
+      var popup = utils.makeStubMethod(
+          Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar#baz');
+      this._cleanups.push(popup.reset);
       var app = makeApp(true);
       stubit(app, 'hideMask');
       stubit(app, 'navigate');
