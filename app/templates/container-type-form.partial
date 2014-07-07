@@ -1,4 +1,4 @@
-<div class="containers hidden">
+<div class="containers">
   <select>
     <option value="" selected disabled class="default">Choose location</option>
     <option value="lxc" class="default">New LXC</option>

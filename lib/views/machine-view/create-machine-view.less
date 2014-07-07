@@ -7,6 +7,26 @@
     border-color: @machine-view-border-colour;
     line-height: 38px;
 
+    &.state-containers {
+        .containers {
+            display: block;
+        }
+    }
+    &.state-constraints {
+        .constraints {
+            display: block;
+        }
+    }
+    &.state-container-constraints {
+        .containers,
+        .constraints {
+            display: block;
+        }
+    }
+    .constraints,
+    .containers {
+        display: none;
+    }
     input[type="text"],
     select {
         width: 100%;

@@ -306,6 +306,24 @@ YUI.add('juju-view-utils', function(Y) {
   };
   utils.removeSVGClass = removeSVGClass;
 
+  /**
+    Set a state class on a node.
+
+    @method setStateClass
+    @param {String} newState the new state to set.
+  */
+  var setStateClass = function(node, newState) {
+    var existing = node.get('className').split(' ');
+    // Remove old state classes.
+    existing.forEach(function(className) {
+      if (className.indexOf('state-') === 0) {
+        node.removeClass(className);
+      }
+    });
+    node.addClass('state-' + newState);
+  };
+  utils.setStateClass = setStateClass;
+
   var consoleManager = function() {
     var noop = function() {};
     var winConsole = window.console,

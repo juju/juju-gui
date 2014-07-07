@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-serviceunit-token', function(Y) {
 
   var views = Y.namespace('juju.views'),
+      utils = views.utils,
       Templates = views.Templates;
 
   /**
@@ -67,7 +68,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     _handleMoveIconClick: function(e) {
       e.preventDefault();
       this._populateMachines();
-      this._setStateClass('select-machine');
+      utils.setStateClass(this.get('container'), 'select-machine');
     },
 
     /**
@@ -132,14 +133,10 @@ YUI.add('juju-serviceunit-token', function(Y) {
       var machineValue = this._getSelectedMachine();
 
       if (machineValue === 'new') {
-        this._setStateClass('new-machine');
+        utils.setStateClass(this.get('container'), 'new-machine');
       } else {
         this._populateContainers(machineValue);
-        this._setStateClass('select-container');
-        // XXX kadams54 20/06/2014 This is a kludge - other places that use the
-        // container type form don't have the state class. Need to either
-        // settle on one approach or the other.
-        this.get('container').one('.containers').removeClass('hidden');
+        utils.setStateClass(this.get('container'), 'select-container');
       }
     },
 
@@ -154,9 +151,9 @@ YUI.add('juju-serviceunit-token', function(Y) {
       var containerValue = this._getSelectedContainer();
 
       if (containerValue === 'kvm') {
-        this._setStateClass(containerValue);
+        utils.setStateClass(this.get('container'), containerValue);
       } else {
-        this._setStateClass('select-container');
+        utils.setStateClass(this.get('container'), 'select-container');
       }
     },
 
@@ -287,24 +284,6 @@ YUI.add('juju-serviceunit-token', function(Y) {
     },
 
     /**
-      Set the state classes on the widget.
-
-      @method _setStateClass
-      @param {String} newState the new state.
-    */
-    _setStateClass: function(newState) {
-      var container = this.get('container');
-      var existing = container.get('className').split(' ');
-      // Remove old state classes.
-      existing.forEach(function(className) {
-        if (className.indexOf('state-') === 0) {
-          container.removeClass(className);
-        }
-      });
-      container.addClass('state-' + newState);
-    },
-
-    /**
       Reset the token to the initial state.
 
       @method reset
@@ -327,7 +306,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
       // manipulate the dom, which we need for our namespaced code
       // to read.
       container.one('.unplaced-unit').setAttribute('data-id', unit.id);
-      this._setStateClass('initial');
+      utils.setStateClass(container, 'initial');
     },
 
     /**
@@ -394,6 +373,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     'event-tracker',
     'node',
     'juju-templates',
+    'juju-view-utils',
     'handlebars'
   ]
 });
