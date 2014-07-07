@@ -222,8 +222,8 @@ describe('machine view panel view', function() {
                    'expected class is not present');
       assert.equal(createMachine.getHTML() === '', false,
                    'HTML is not present');
-      assert.equal(createMachine.one('.containers').hasClass('hidden'), true,
-                   'container types are visible');
+      assert.equal(createMachine.hasClass('state-constraints'), true,
+                   'the constraints should be visible');
     });
 
     it('displays when the container header action is clicked', function() {
@@ -235,8 +235,8 @@ describe('machine view panel view', function() {
                    'expected class is not present');
       assert.equal(createContainer.getHTML() === '', false,
                    'HTML is not present');
-      assert.equal(createContainer.one('.containers').hasClass('hidden'), false,
-                   'container types are hidden');
+      assert.equal(createContainer.hasClass('state-containers'), true,
+                   'the container types should be visible');
     });
 
     it('creates an unplaced unit when cancelled with a unit', function() {

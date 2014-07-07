@@ -28,6 +28,7 @@ YUI.add('create-machine-view', function(Y) {
 
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
+      utils = views.utils,
       Templates = views.Templates;
 
   /**
@@ -93,15 +94,15 @@ YUI.add('create-machine-view', function(Y) {
         */
         _handleContainerTypeChange: function(e) {
           e.preventDefault();
-          var constraints = this.get('container').one('.constraints'),
-              select = e.currentTarget,
+          var container = this.get('container');
+          var select = e.currentTarget,
               selectedIndex = select.get('selectedIndex'),
               newVal = select.get('options').item(selectedIndex).get('value');
           this.set('containerType', newVal);
           if (newVal === 'kvm') {
-            constraints.removeClass('hidden');
+            utils.setStateClass(container, 'container-constraints');
           } else {
-            constraints.addClass('hidden');
+            utils.setStateClass(container, 'containers');
           }
         },
 
@@ -131,8 +132,9 @@ YUI.add('create-machine-view', function(Y) {
           // If this is a container (i.e., has a parent machine), show the
           // container type select and hide the constraints.
           if (this.get('parentId')) {
-            container.one('.containers').removeClass('hidden');
-            container.one('.constraints').addClass('hidden');
+            utils.setStateClass(container, 'containers');
+          } else {
+            utils.setStateClass(container, 'constraints');
           }
           return this;
         },
