@@ -810,6 +810,13 @@ describe('machine view panel view', function() {
           'container').one('.label').get('text'), label);
     });
 
+    it('should select the first machine by default', function() {
+      view.render();
+      assert.equal(container.one(
+          '.machines .content li:first-child .token').hasClass('active'),
+          true, 'the first machine token should be selected');
+    });
+
     it('should add new tokens when machines are added', function() {
       view.render();
       var selector = '.machines .token',
@@ -947,14 +954,14 @@ describe('machine view panel view', function() {
           list = container.all(selector),
           id = '2/foo/999',
           initialSize = list.size();
-      assert.equal(initialSize, 0,
+      assert.equal(initialSize, 1,
                    'check the initial size');
       machines.add([
         { id: id }
       ]);
       list = container.all(selector);
-      assert.equal(list.size(), 1, 'list should have updated');
-      assert.equal(container.one(selector).getData('id'), '2/foo/999',
+      assert.equal(list.size(), 2, 'list should have updated');
+      assert.equal(container.all(selector).item(1).getData('id'), '2/foo/999',
           'the container should be in the displayed list');
     });
 
@@ -966,11 +973,11 @@ describe('machine view panel view', function() {
           list = container.all(selector),
           initialSize = list.size(),
           m = machines.getById(id);
-      assert.equal(initialSize, 1,
+      assert.equal(initialSize, 2,
                    'check the initial size');
       machines.remove(m);
       list = container.all(selector);
-      assert.equal(list.size(), 0,
+      assert.equal(list.size(), 1,
                    'list should have changed in size');
       var deletedSelector = selector + '[data-id="' + id + '"]';
       var deletedItem = container.one(deletedSelector);
@@ -987,13 +994,13 @@ describe('machine view panel view', function() {
           initialSize = list.size(),
           m = machines.getById(id);
       var oldItem = container.one(selector + '[data-id="' + id + '"]');
-      assert.equal(initialSize, 1,
+      assert.equal(initialSize, 2,
                    'check the initial size');
       m = machines.revive(m);
       assert.equal(oldItem === null, false, 'the item should exist');
       m.set('id', '2/foo/1000');
       list = container.all(selector);
-      assert.equal(list.size(), 1,
+      assert.equal(list.size(), 2,
                    'list should not have changed in size');
       oldItem = container.one(selector + '[data-id="' + id + '"]');
       assert.equal(oldItem, null,
@@ -1122,9 +1129,9 @@ describe('machine view panel view', function() {
     describe('functional tests', function() {
       it('can render containers on click of machine token', function() {
         view.render();
-        machines.add([{ id: '0/lxc/0' }]);
+        machines.add([{id: '5'}, {id: '5/lxc/0'}]);
         view.get('db').units.add([{id: 'test/2', machine: '0'}]);
-        var token = container.one('.machine-token .token');
+        var token = container.one('.machine-token:last-child .token');
         assert.equal(
             token.hasClass('active'), false,
             'Machine token already selected.');
@@ -1137,7 +1144,7 @@ describe('machine view panel view', function() {
         // We should have one token for the new container and one for the
         // "bare metal".
         assert.equal(containers.size(), 2, 'Containers did not render.');
-        assert.equal(hardware, '1x10.24GHz,1.0GB,1.0GB');
+        assert.equal(hardware, 'Hardwaredetailsnotavailable');
       });
 
       it('can select container tokens', function() {
@@ -1146,7 +1153,8 @@ describe('machine view panel view', function() {
         view.get('db').units.add([{id: 'test/2', machine: '0'}]);
         var machineToken = container.one('.machine-token .token');
         machineToken.simulate('click');
-        var containerToken = container.one('.container-token .token');
+        var containerToken = container.one(
+            '.container-token:last-child .token');
         assert.equal(
             containerToken.hasClass('active'), false,
             'Container token already selected.');
@@ -1154,6 +1162,17 @@ describe('machine view panel view', function() {
         assert.equal(
             containerToken.hasClass('active'), true,
             'Container token not marked as selected.');
+      });
+
+      it('should select the bare metal container by default', function() {
+        view.render();
+        machines.add([{ id: '0/lxc/0' }]);
+        view.get('db').units.add([{id: 'test/2', machine: '0'}]);
+        var machineToken = container.one('.machine-token .token');
+        machineToken.simulate('click');
+        assert.equal(container.one(
+            '.containers .content li:first-child .token').hasClass('active'),
+            true, 'the bare metal token should be selected');
       });
     });
   });

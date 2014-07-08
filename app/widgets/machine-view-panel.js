@@ -578,18 +578,27 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * Display containers for the selected machine.
+         * Handle the click event to show containers for the selected machine.
          *
          * @method handleMachineTokenSelect
          * @param {Event} ev the click event created.
          */
         handleMachineTokenSelect: function(e) {
+          e.preventDefault();
+          this._selectMachineToken(e.currentTarget);
+        },
+
+        /**
+         * Display containers for the selected machine.
+         *
+         * @method _selectMachineToken
+         * @param {Object} selected the node for the token that was selected.
+         */
+        _selectMachineToken: function(selected) {
           var container = this.get('container'),
               machineTokens = container.all('.machines .content .items .token'),
-              selected = e.currentTarget,
               parentId = selected.getData('id');
           var containers = this.get('db').machines.filterByParent(parentId);
-          e.preventDefault();
           // A lot of things in the machine view rely on knowing when the user
           // selects a machine.
           this.set('selectedMachine', parentId);
@@ -597,21 +606,32 @@ YUI.add('machine-view-panel', function(Y) {
           machineTokens.removeClass('active');
           selected.addClass('active');
           this._renderContainerTokens(containers, parentId);
+          this._selectBareMetalContainer(parentId);
         },
 
         /**
-         * Set the active container.
+         * Handle the click event to show the active container.
          *
          * @method handleContainerTokenSelect
          * @param {Event} ev the click event created.
          */
         handleContainerTokenSelect: function(e) {
+          e.preventDefault();
+          this._selectContainerToken(e.currentTarget);
+        },
+
+        /**
+         * Set the active container.
+         *
+         * @method _selectContainerToken
+         * @param {Object} selected the node for the token that was selected.
+         */
+        _selectContainerToken: function(selected) {
           var container = this.get('container');
-          var machineTokens = container.all(
+          var containerTokens = container.all(
               '.containers .content .items .token');
-          var selected = e.currentTarget;
           // Select the active token.
-          machineTokens.removeClass('active');
+          containerTokens.removeClass('active');
           selected.addClass('active');
         },
 
@@ -923,6 +943,34 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+          Select the first machine.
+
+          @method _selectFirstMachine
+        */
+        _selectFirstMachine: function() {
+          // Get the first token in the dom. The dom order is the one we
+          // care about.
+          var machineNode = this.get('container').one(
+              '.column.machines .items li .token');
+          if (machineNode) {
+            this._selectMachineToken(machineNode);
+          }
+        },
+
+        /**
+          Select the bare metal container.
+
+          @method _selectBareMetalContainer
+          @param {String} machineId The id of the selected machine.
+        */
+        _selectBareMetalContainer: function(machineId) {
+          var bareMetalId = machineId + '/bare-metal';
+          var containerTokens = this.get('containerTokens');
+          this._selectContainerToken(containerTokens[bareMetalId].get(
+              'container').one('.token'));
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -936,6 +984,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._renderUnplacedUnits();
           this._renderScaleUp();
           this._clearContainerColumn();
+          this._selectFirstMachine();
           return this;
         },
 
