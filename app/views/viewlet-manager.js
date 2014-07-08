@@ -409,6 +409,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         if (singleView instanceof Y.View === false) {
           /* jshint -W055 */
           singleView = new singleView();
+          singleView.addTarget(this);
         }
 
         singleView.viewletManager = this;
