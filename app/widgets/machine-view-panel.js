@@ -151,14 +151,21 @@ YUI.add('machine-view-panel', function(Y) {
               changed = e.changed,
               target = e.target;
           if (changed) {
-            // Need to update any machines that now have new units
+            // Need to update any machines and containers that now have
+            // new units.
             if (changed.machine) {
               var machineTokens = this.get('machineTokens'),
+                  containerTokens = this.get('containerTokens'),
                   id = changed.machine.newVal,
-                  machineToken = machineTokens[id];
+                  machineToken = machineTokens[id],
+                  containerToken = containerTokens[id];
               if (machineToken) {
                 this._updateMachineWithUnitData(machineToken.get('machine'));
                 machineToken.render();
+              }
+              if (containerToken) {
+                this._updateMachineWithUnitData(containerToken.get('machine'));
+                containerToken.renderUnits();
               }
             }
             if (target.get('machine')) {
