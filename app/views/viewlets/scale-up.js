@@ -31,6 +31,7 @@ YUI.add('scale-up-view', function(Y) {
       '.add.button': { click: '_showScaleUp' },
       '.placement .cancel.button': { click: '_hideScaleUp' },
       'input[name="placement"]': { change: '_toggleConstraints' },
+      'form': { submit: '_preventFormSubmit' },
       '.edit.link': { click: '_toggleEditConstraints' },
       '.inspector-buttons .cancel': { click: '_hideScaleUp' },
       '.inspector-buttons .confirm': { click: '_submitScaleUp' }
@@ -46,6 +47,17 @@ YUI.add('scale-up-view', function(Y) {
       var container = this.get('container');
       container.append(this.template());
       return container;
+    },
+
+    /**
+      This prevents the placement forms from submitting without the user
+      clicking the Confirm button manually.
+
+      @method _preventFormSubmit
+      @param {Object} e Submit event facade.
+    */
+    _preventFormSubmit: function(e) {
+      e.preventDefault();
     },
 
     /**
@@ -121,6 +133,22 @@ YUI.add('scale-up-view', function(Y) {
     */
     _submitScaleUp: function(e) {
       e.preventDefault();
+      var container = this.get('container');
+      var env = this.get('env');
+      var type = container.one('input[name="placement"]:checked').get('id');
+      var numUnits = container.one('input[name="units-number"]').get('value');
+      if (type === 'manually-place') {
+        env.add_unit(
+            this.get('serviceId'), numUnits);
+      } else {
+
+      }
+    }
+
+  }, {
+    ATTRS: {
+      serviceId: {},
+      env: {}
     }
   });
 
