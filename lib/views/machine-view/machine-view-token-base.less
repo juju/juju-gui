@@ -12,6 +12,9 @@
     border-color: @machine-view-border-colour;
     cursor: pointer;
 
+    &:hover {
+        background-color: #f6f6f6;
+    }
     &:last-child {
         border-bottom-width: 1px;
     }
@@ -30,10 +33,13 @@
             display: block;
         }
     }
-    // Needs to be after &.active so that when both are applied the active
-    // background is the uncommitted colour.
     &.uncommitted {
         background-color: #ddf4fc;
+
+        &:hover,
+        &.active {
+            background-color: #c5edfb;
+        }
     }
     span {
         display: block;
