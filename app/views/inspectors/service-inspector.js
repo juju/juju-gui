@@ -85,15 +85,24 @@ YUI.add('service-inspector', function(Y) {
       @method renderUI
     */
     renderUI: function() {
+      var activeUnit = this.get('activeUnit'),
+          db = this.get('db'),
+          model = this.get('model');
       if (!this.get('rendered')) {
         this.showViewlet('inspectorHeader');
         this.showViewlet('overview');
         this.set('rendered', true);
       }
       if (this.get('showCharm')) {
-        var charmId = this.get('model').get('charm');
-        var charm = this.get('db').charms.getById(charmId);
+        var charmId = model.get('charm');
+        var charm = db.charms.getById(charmId);
         this.showViewlet('charmDetails', charm);
+      } else if (activeUnit >= 0) {
+        var serviceName = model.get('id');
+        var unitName = serviceName + '/' + activeUnit;
+        var service = db.services.getById(serviceName);
+        var unit = service.get('units').getById(unitName);
+        this.showViewlet('unitDetails', unit);
       } else {
         // XXX j.c.sackett July 8th 2014: This is a temporary handling until
         // we have better slot destruction behavior in the viewlet manager.
@@ -142,7 +151,7 @@ YUI.add('service-inspector', function(Y) {
       this.fire('changeState', {
         sectionA: {
           component: null,
-          metadata: { id: null, charm: false }}});
+          metadata: { id: null }}});
     },
 
     /**
@@ -157,7 +166,8 @@ YUI.add('service-inspector', function(Y) {
       this.fire('changeState', {
         sectionA: {
           metadata: {
-            charm: true
+            charm: true,
+            unit: null
           }
         }
       });
@@ -292,6 +302,15 @@ YUI.add('service-inspector', function(Y) {
       showCharm: {
         value: false
       },
+
+      /**
+         The unit being displayed
+
+         @attribute activeUnit
+         @default undefined
+         @type {Number}
+       */
+      activeUnit: {},
 
       /**
          Logs whether the inspector has already been rendered

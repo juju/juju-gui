@@ -606,6 +606,7 @@ YUI.add('subapp-browser', function(Y) {
           // This is a service inspector.
           cfg.showCharm = metadata.charm || false;
           cfg.enableDatabinding = true;
+          cfg.activeUnit = metadata.unit;
 
           if (!this._inspector ||
               this._inspector.name !== 'service-inspector' ||
