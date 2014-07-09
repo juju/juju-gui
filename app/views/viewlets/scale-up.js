@@ -22,11 +22,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('scale-up-view', function(Y) {
 
   var ns = Y.namespace('juju.viewlets'),
+      utils = Y.namespace('juju.views.utils'),
       templates = Y.namespace('juju.views').Templates;
 
   ns.ScaleUp = Y.Base.create(name, Y.View, [], {
     template: templates['scale-up'],
-    events: {},
+    events: {
+      '.add.button': { click: '_showScaleUp' },
+      '.placement .cancel.button': { click: '_hideScaleUp' },
+      'input[name="placement"]': { change: '_toggleConstraints' },
+      '.edit.link': { click: '_toggleEditConstraints' },
+      '.inspector-buttons .cancel': { click: '_hideScaleUp' },
+      '.inspector-buttons .confirm': { click: '_submitScaleUp' }
+    },
 
     /**
       Renders the views template into the container
@@ -38,12 +46,88 @@ YUI.add('scale-up-view', function(Y) {
       var container = this.get('container');
       container.append(this.template());
       return container;
+    },
+
+    /**
+      Updates the state class on the viewlet templates container. See
+      scale-up.less for available classes.
+
+      @method updateStateClass
+      @param {object} className The class name to set on the container via the
+        utils setStateClass method.
+    */
+    updateStateClass: function(className) {
+      utils.setStateClass(
+          this.get('container').one('.view-container'),
+          className);
+    },
+
+    /**
+      Calls to set the class on the container to show the scale-up UI.
+
+      @method _showScaleUp
+      @param {Object} e The click event facade.
+    */
+    _showScaleUp: function(e) {
+      e.preventDefault();
+      this.updateStateClass('per-machine');
+    },
+
+    /**
+      Calls to set the class on the container to hide the scale-up UI.
+
+      @method _hideScaleUp
+      @param {Object} e The click event facade.
+    */
+    _hideScaleUp: function(e) {
+      e.preventDefault();
+      this.updateStateClass('default');
+    },
+
+    /**
+      Calls to set the class on the container to show the constraints
+      information based on which radio button is selected in the UI.
+
+      @method _toggleConstraints
+      @param {Object} e The click event facade.
+    */
+    _toggleConstraints: function(e) {
+      var state;
+      if (e.currentTarget.get('id') === 'manually-place') {
+        state = 'manual';
+      } else {
+        state = 'per-machine';
+      }
+      this.updateStateClass(state);
+    },
+
+    /**
+      Calls to set the class on the container to show the edit-constraints
+      inputs.
+
+      @method _toggleEditConstraints
+      @param {Object} e The click event facade.
+    */
+    _toggleEditConstraints: function(e) {
+      e.preventDefault();
+      this.updateStateClass('constraints');
+    },
+
+    /**
+      handles submitting the new scale up information to Juju.
+
+      @method _submitScaleUp
+      @param {Object} e The click event facade.
+    */
+    _submitScaleUp: function(e) {
+      e.preventDefault();
     }
   });
 
 }, '0.0.1', {
   requires: [
     'node',
+    'juju-view-utils',
     'juju-templates',
     'viewlet-view-base'
   ]
