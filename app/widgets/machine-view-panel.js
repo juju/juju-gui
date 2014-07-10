@@ -943,12 +943,19 @@ YUI.add('machine-view-panel', function(Y) {
               serviceName = e.serviceName,
               service = db.services.getById(serviceName),
               existingUnitCount = service.get('units').size(),
-              unitName, ghostUnit;
+              displayName, ghostUnit, unitId, unitIdCount;
+          if (serviceName.indexOf('$') > 0) {
+            displayName = service.get('displayName')
+                                 .replace(/^\(/, '').replace(/\)$/, '');
+          } else {
+            displayName = serviceName;
+          }
           for(var i = 0; i < e.unitCount; i += 1) {
-            unitName = serviceName + '/' + (existingUnitCount + i);
+            unitIdCount = existingUnitCount + i;
+            unitId = serviceName + '/' + unitIdCount;
             ghostUnit = db.addUnits({
-              id: unitName,
-              displayName: unitName,
+              id: unitId,
+              displayName: displayName + '/' + unitIdCount,
               charmUrl: service.get('charm'),
               is_subordinate: service.get('id_subordinate')
             });
@@ -957,7 +964,7 @@ YUI.add('machine-view-panel', function(Y) {
               1,
               null,
               Y.bind(this._addUnitCallback, this, ghostUnit),
-              {modelId: unitName});
+              {modelId: unitId});
           }
         },
 
