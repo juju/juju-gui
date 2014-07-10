@@ -323,7 +323,7 @@ YUI.add('subapp-browser', function(Y) {
         });
         this.get('db').notifications.add({
           title: 'Could not load service inspector.',
-          message: 'There is no deployed service named ' + metadata.id + '.',
+          message: 'The service named ' + metadata.id + 'has not yet loaded.',
           level: 'error'
         });
       }

@@ -80,11 +80,11 @@ YUI.add('service-config-view', function(Y) {
         }
       }
     },
+
     /**
       View standard render call.
 
       @method render
-      @param {Service} service the model of the service in the inspector.
       @param {Object} viewContainerAttrs an object of helper data from the
         viewlet manager.
     */
@@ -93,24 +93,42 @@ YUI.add('service-config-view', function(Y) {
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
-      var templatedSettings = utils.extractServiceSettings(
-          charm.get('options'), service.get('config'));
-
-      var container = this.get('container');
-
-      container.setHTML(
-          this.template({
-            service: service,
-            settings: templatedSettings,
-            exposed: service.get('exposed')}));
-      container.all('textarea.config-field').plug(
-          plugins.ResizingTextarea, {
-            max_height: 200,
-            min_height: 18,
-            single_line: 18
+      if (!charm) {
+        // XXX j.c.sackett Jul 10 2014: With dispatched urls in persistent
+        // environements, data may not be loaded at the time we try to load the
+        // inspectors. While we have a strategy to deal with this at the base
+        // level, for now we'll just bail. See bug 1340417.
+        this.fire('changeState', {
+          sectionA: {
+            component: null,
+            metadata: { id: null }
           }
-      );
-      this.attachExpandingTextarea();
+        });
+        db.notifications.add({
+          title: 'Could not load charm details.',
+          message: 'The charm ' + service.get('charm') + ' has not yet loaded.',
+          level: 'error'
+        });
+      } else {
+        var templatedSettings = utils.extractServiceSettings(
+            charm.get('options'), service.get('config'));
+
+        var container = this.get('container');
+
+        container.setHTML(
+            this.template({
+              service: service,
+              settings: templatedSettings,
+              exposed: service.get('exposed')}));
+        container.all('textarea.config-field').plug(
+            plugins.ResizingTextarea, {
+              max_height: 200,
+              min_height: 18,
+              single_line: 18
+            }
+        );
+        this.attachExpandingTextarea();
+      }
     },
     /**
       Ensures that all resizing textareas are attached.
