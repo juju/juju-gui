@@ -939,7 +939,54 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The addUnit event facade.
         */
         _scaleUpService: function(e) {
-          this.get('env').add_unit(e.serviceName, e.unitCount, null, null);
+          var db = this.get('db'),
+              serviceName = e.serviceName,
+              service = db.services.getById(serviceName),
+              existingUnitCount = service.get('units').size(),
+              unitName, ghostUnit;
+          for(var i = 0; i < e.unitCount; i += 1) {
+            unitName = serviceName + '/' + (existingUnitCount + i);
+            ghostUnit = db.addUnits({
+              id: unitName,
+              displayName: unitName,
+              charmUrl: service.get('charm'),
+              is_subordinate: service.get('id_subordinate')
+            });
+            this.get('env').add_unit(
+              serviceName,
+              1,
+              null,
+              Y.bind(this._addUnitCallback, this, ghostUnit),
+              {modelId: unitName});
+          }
+        },
+
+        _addUnitCallback: function(ghostUnit, e) {
+          var db = this.get('db');
+          var models = Y.juju.models;
+          if (e.err) {
+            // Add a notification and exit if the API call failed.
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error adding unit ' + ghostUnit.displayName,
+                  message: 'Could not add the requested unit. Server ' +
+                      'responded with: ' + e.err,
+                  level: 'error'
+                }));
+            return;
+          }
+          // Notify the unit has been successfully created.
+          db.notifications.add(
+              new models.Notification({
+                title: 'Added unit ' + ghostUnit.displayName,
+                message: 'Successfully created the requested unit.',
+                level: 'info'
+              })
+          );
+          // Remove the ghost unit: the real unit will be re-added by the
+          // mega-watcher handlers.
+          ghostUnit.service = e.service_name;
+          db.removeUnits(ghostUnit);
         },
 
         /**
