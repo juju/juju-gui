@@ -1,8 +1,11 @@
 <form class="constraints">
-  <input type="text" name="cpu">
-  <label>CPU (GHz)</label>
-  <input type="text" name="ram">
-  <label>RAM (MB)</label>
-  <input type="text" name="disk">
-  <label>Disk (MB)</label>
+  <fieldset>
+    <legend>Define constraints</legend>
+    <input type="text" name="cpu">
+    <label>CPU (GHz)</label>
+    <input type="text" name="ram">
+    <label>RAM (MB)</label>
+    <input type="text" name="disk">
+    <label>Disk (MB)</label>
+  </fieldset>
 </form>
