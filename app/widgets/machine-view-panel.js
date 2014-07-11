@@ -950,24 +950,31 @@ YUI.add('machine-view-panel', function(Y) {
           } else {
             displayName = serviceName;
           }
-          for(var i = 0; i < e.unitCount; i += 1) {
+          for (var i = 0; i < e.unitCount; i += 1) {
             unitIdCount = existingUnitCount + i;
             unitId = serviceName + '/' + unitIdCount;
             ghostUnit = db.addUnits({
               id: unitId,
               displayName: displayName + '/' + unitIdCount,
               charmUrl: service.get('charm'),
-              is_subordinate: service.get('id_subordinate')
+              is_subordinate: service.get('is_subordinate')
             });
             this.get('env').add_unit(
-              serviceName,
-              1,
-              null,
-              Y.bind(this._addUnitCallback, this, ghostUnit),
-              {modelId: unitId});
+                serviceName,
+                1,
+                null,
+                Y.bind(this._addUnitCallback, this, ghostUnit),
+                {modelId: unitId});
           }
         },
 
+        /**
+          Handles showing the successful unit notifications
+
+          @method _addUnitCallback
+          @param {Object} ghostUnit the unit which was created in the db.
+          @param {Object} The event facade.
+        */
         _addUnitCallback: function(ghostUnit, e) {
           var db = this.get('db');
           var models = Y.juju.models;
