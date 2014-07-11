@@ -95,6 +95,7 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
       @param {Object} e The drop event object.
     */
     _stopHover: function(e) {
+      this._ignore(e);
       this.get('container').removeClass('drop-hover');
     },
 
