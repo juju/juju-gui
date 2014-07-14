@@ -150,11 +150,11 @@ describe('Service unit token', function() {
     // Check the "Choose location" item is still at the top of the list.
     assert.equal(containerOptions.item(0).get('text').trim(),
         'Choose location', 'default container text incorrect');
-    // Check the bare metal option is the second item.
-    assert.equal(containerOptions.item(1).get('value'), 'bare-metal',
-                 'bare metal value is not the second option');
-    assert.equal(containerOptions.item(1).get('text'), '0/bare metal',
-                 'bare metal text is not the second option');
+    // Check the root container option is the second item.
+    assert.equal(containerOptions.item(1).get('value'), 'root-container',
+                 'root container value is not the second option');
+    assert.equal(containerOptions.item(1).get('text'), '0/root container',
+                 'root container text is not the second option');
   });
 
   it('orders the containers list correctly', function() {
