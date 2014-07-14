@@ -2027,6 +2027,48 @@ YUI.add('juju-view-utils', function(Y) {
     return charmIcons;
   };
 
+  /**
+    Given the db, env, service, and unit count, add these units to the db
+    and to the environment such that the unit tokens can be displayed and that
+    the ECS will clean them up on deploy.
+
+    @method addGhostAndEcsUnits
+  */
+  utils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
+    var serviceName = service.get('id'),
+        existingUnitCount = service.get('units').size(),
+        displayName, ghostUnit, unitId, unitIdCount;
+
+    if (serviceName.indexOf('$') > 0) {
+      displayName = service.get('displayName')
+                           .replace(/^\(/, '').replace(/\)$/, '');
+    } else {
+      displayName = serviceName;
+    }
+    for (var i = 0; i < unitCount; i += 1) {
+      unitIdCount = existingUnitCount + i;
+      unitId = serviceName + '/' + unitIdCount;
+      ghostUnit = db.addUnits({
+        id: unitId,
+        displayName: displayName + '/' + unitIdCount,
+        charmUrl: service.get('charm'),
+        is_subordinate: service.get('is_subordinate')
+      });
+      env.add_unit(
+          serviceName,
+          1,
+          null,
+          function(e) {
+            // Remove the ghost unit: the real unit will be re-added by the
+            // mega-watcher handlers.
+            ghostUnit.service = e.service_name;
+            db.removeUnits(ghostUnit);
+            callback(e, db, ghostUnit);
+          },
+          {modelId: unitId});
+    }
+  };
+
 
 }, '0.1.0', {
   requires: [
