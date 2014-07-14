@@ -389,16 +389,29 @@ describe('Environment Change Set', function() {
       it('destroys create records for undeployed services', function() {
         var stubRemove = testUtils.makeStubFunction();
         var stubDestroy = testUtils.makeStubFunction();
-        ecs.get('db').services = {
+        var db = ecs.get('db');
+        var fakeUnits = new Y.LazyModelList();
+        fakeUnits.add({});
+        db.services = {
           remove: stubRemove,
           getById: function() {
-            return { destroy: stubDestroy };
+            return {
+              destroy: stubDestroy,
+              get: function(key) {
+                if (key === 'units') { return fakeUnits; }
+              }
+            };
           }
         };
+        var stubRemoveUnits = testUtils.makeStubMethod(db, 'removeUnits');
+        this._cleanups.push(stubRemoveUnits.reset);
+
         ecs._lazyDeploy([1, 2, 'foo', 'bar', function() {}, {modelId: 'baz'}]);
         ecs._lazyDestroyService(['baz']);
         assert.equal(stubRemove.calledOnce(), true, 'remove not called');
         assert.equal(stubDestroy.calledOnce(), true, 'destroy not called');
+        assert.equal(
+            stubRemoveUnits.calledOnce(), true, 'remove units not called');
         assert.deepEqual(ecs.changeSet, {});
       });
     });
