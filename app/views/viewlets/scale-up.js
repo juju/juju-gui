@@ -133,13 +133,18 @@ YUI.add('scale-up-view', function(Y) {
     */
     _submitScaleUp: function(e) {
       e.preventDefault();
-      var container = this.get('container');
-      var env = this.get('env');
+      var container = this.get('container'),
+          env = this.get('env'),
+          db = this.get('db');
       var type = container.one('input[name="placement"]:checked').get('id');
       var numUnits = container.one('input[name="units-number"]').get('value');
+
       if (type === 'manually-place') {
-        env.add_unit(
-            this.get('serviceId'), numUnits);
+        utils.addGhostAndEcsUnits(
+          db,
+          env,
+          db.services.getById(this.get('serviceId')),
+          numUnits);
       } else {
 
       }
@@ -148,6 +153,7 @@ YUI.add('scale-up-view', function(Y) {
   }, {
     ATTRS: {
       serviceId: {},
+      db: {},
       env: {}
     }
   });

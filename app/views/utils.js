@@ -2063,7 +2063,9 @@ YUI.add('juju-view-utils', function(Y) {
             // mega-watcher handlers.
             ghostUnit.service = e.service_name;
             db.removeUnits(ghostUnit);
-            callback(e, db, ghostUnit);
+            if (typeof callback === 'function') {
+              callback(e, db, ghostUnit);
+            }
           },
           {modelId: unitId});
     }

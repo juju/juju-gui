@@ -437,6 +437,7 @@ YUI.add('inspector-overview-view', function(Y) {
       if (!this.scaleUp) {
         this.scaleUp = new ns.ScaleUp({
           env: this.options.env,
+          db: this.options.db,
           serviceId: this.viewletManager.get('model').get('id')
         });
       }
