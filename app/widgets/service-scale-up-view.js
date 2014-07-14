@@ -68,12 +68,9 @@ YUI.add('service-scale-up-view', function(Y) {
       }
       serviceList.each(function(service) {
         service = service.getAttrs();
-        if (service.pending) {
-          return;
-        }
         services.push({
           id: service.id,
-          name: service.displayName,
+          name: service.displayName.replace(/^\(/, '').replace(/\)$/, ''),
           icon: service.icon
         });
       });

@@ -739,11 +739,15 @@ YUI.add('inspector-overview-view', function(Y) {
      */
     showUnitDetails: function(ev) {
       ev.halt();
-      var db = this.viewletManager.get('db');
       var unitName = ev.currentTarget.getData('unit');
-      var service = db.services.getById(unitName.split('/')[0]);
-      var unit = service.get('units').getById(unitName);
-      this.viewletManager.showViewlet('unitDetails', unit);
+      this.fire('changeState', {
+        sectionA: {
+          metadata: {
+            unit: parseInt(unitName.split('/')[1], 10),
+            charm: false
+          }
+        }
+      });
     },
 
     /**

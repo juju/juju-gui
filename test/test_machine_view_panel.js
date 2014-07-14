@@ -695,7 +695,7 @@ describe('machine view panel view', function() {
       });
     });
 
-    it('can move the unit to bare metal', function(done) {
+    it('can move the unit to the root container', function(done) {
       view.render();
       var env = view.get('env');
       var unplacedUnit = container.one('.unplaced .unplaced-unit');
@@ -712,14 +712,14 @@ describe('machine view panel view', function() {
         assert.strictEqual(placeArgs[0].id, 'test/1',
             'The correct unit should be placed');
         assert.equal(placeArgs[1], '4',
-            'The unit should be placed on the bare metal of the machine');
+            'The unit should be placed on the root container');
         done();
       });
       // Move the unit.
       unplacedUnit.fire('moveToken', {
         unit: {id: 'test/1'},
         machine: '4',
-        container: 'bare-metal',
+        container: 'root-container',
         constraints: constraints
       });
     });
@@ -1103,7 +1103,7 @@ describe('machine view panel view', function() {
       assert.equal(lastArgs[1], '0');
     });
 
-    it('creates tokens for containers and "bare metal"', function() {
+    it('creates tokens for containers including the root', function() {
       view.render();
       machines.add([{ id: '0/lxc/0' }]);
       var containers = machines.filterByParent('0');
@@ -1112,18 +1112,18 @@ describe('machine view panel view', function() {
       view._renderContainerTokens(containers, '0');
       assert.equal(tokenStub.callCount(), 2);
       var tokenArguments = tokenStub.allArguments();
-      assert.equal(tokenArguments[0][1].displayName, 'Bare metal');
+      assert.equal(tokenArguments[0][1].displayName, 'Root container');
       assert.equal(tokenArguments[1][1].displayName, '0/lxc/0');
     });
 
-    it('always creates a "bare metal" token', function() {
+    it('always creates a root container token', function() {
       view.render();
       var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
       this._cleanups.push(tokenStub.reset);
       view._renderContainerTokens([], '0');
       assert.equal(tokenStub.callCount(), 1);
       var tokenArguments = tokenStub.allArguments();
-      assert.equal(tokenArguments[0][1].displayName, 'Bare metal');
+      assert.equal(tokenArguments[0][1].displayName, 'Root container');
     });
 
     describe('functional tests', function() {
@@ -1142,7 +1142,7 @@ describe('machine view panel view', function() {
         var containers = container.all('.container-token .token'),
             hardware = token.one('.details').get('text').replace(/\s+/g, '');
         // We should have one token for the new container and one for the
-        // "bare metal".
+        // root container.
         assert.equal(containers.size(), 2, 'Containers did not render.');
         assert.equal(hardware, 'Hardwaredetailsnotavailable');
       });
@@ -1164,7 +1164,7 @@ describe('machine view panel view', function() {
             'Container token not marked as selected.');
       });
 
-      it('should select the bare metal container by default', function() {
+      it('should select the root container by default', function() {
         view.render();
         machines.add([{ id: '0/lxc/0' }]);
         view.get('db').units.add([{id: 'test/2', machine: '0'}]);
@@ -1172,7 +1172,7 @@ describe('machine view panel view', function() {
         machineToken.simulate('click');
         assert.equal(container.one(
             '.containers .content li:first-child .token').hasClass('active'),
-            true, 'the bare metal token should be selected');
+            true, 'the root container token should be selected');
       });
     });
   });
@@ -1223,24 +1223,85 @@ describe('machine view panel view', function() {
       assert.equal(destroyStub.callCount(), 1);
     });
 
-    it('listens to addUnit event and calls env.add_unit', function(done) {
+    it('calls _scaleUpService on addUnit', function() {
+      var scale = utils.makeStubMethod(view, '_scaleUpService');
+      this._cleanups.push(scale.reset);
       view.render();
+      view._scaleUpView.fire('addUnit');
+      assert.equal(scale.calledOnce(), true);
+    });
+
+    function testScaleUpService(addUnitEvent) {
       view.set('env', {
         add_unit: utils.makeStubFunction()
       });
+      view.set('db', {
+        services: {
+          getById: utils.makeStubFunction({
+            get: function(key) {
+              var returnVal;
+              switch (key) {
+                case 'units':
+                  returnVal = { size: function() { return 1; } };
+                  break;
+                case 'displayName':
+                  returnVal = addUnitEvent.serviceName;
+                  break;
+                case 'charm':
+                  returnVal = 'Im a charm url';
+                  break;
+                case 'is_subordinate':
+                  returnVal = false;
+                  break;
+              }
+              return returnVal;
+            }
+          })},
+        addUnits: utils.makeStubFunction()
+      });
+
+      view._scaleUpService(addUnitEvent);
+      var addUnit = view.get('env').add_unit;
+      var dbAddUnits = view.get('db').addUnits;
+      assert.equal(addUnit.callCount(), 2, 'incorrect number of units added');
+      assert.equal(
+          dbAddUnits.callCount(), 2, 'incorrect number of units added to db');
+      var dbAddUnitsArgs = dbAddUnits.allArguments();
+      assert.deepEqual(dbAddUnitsArgs[0][0], {
+        id: addUnitEvent.serviceName + '/1',
+        displayName: addUnitEvent.serviceName + '/1',
+        charmUrl: 'Im a charm url',
+        is_subordinate: false
+      });
+      assert.deepEqual(dbAddUnitsArgs[1][0], {
+        id: addUnitEvent.serviceName + '/2',
+        displayName: addUnitEvent.serviceName + '/2',
+        charmUrl: 'Im a charm url',
+        is_subordinate: false
+      });
+      var addUnitArgs = addUnit.allArguments();
+      assert.equal(addUnitArgs[0][0], addUnitEvent.serviceName);
+      assert.equal(addUnitArgs[0][1], 1);
+      assert.equal(addUnitArgs[1][0], addUnitEvent.serviceName);
+      assert.equal(addUnitArgs[1][1], 1);
+    }
+
+    it('creates units in the db and calls add_unit', function() {
       var addUnitEvent = {
         serviceName: 'foo',
-        unitCount: '10'
+        unitCount: '2'
       };
-      view._scaleUpView.after('addUnit', function() {
-        var addUnit = view.get('env').add_unit;
-        assert.equal(addUnit.callCount(), 1);
-        var addUnitArgs = addUnit.lastArguments();
-        assert.equal(addUnitArgs[0], addUnitEvent.serviceName);
-        assert.equal(addUnitArgs[1], addUnitEvent.unitCount);
-        done();
-      });
-      view._scaleUpView.fire('addUnit', addUnitEvent);
+
+      testScaleUpService(addUnitEvent);
+    });
+
+    it('creates units in the db and calls add_unit for ghosts', function() {
+      var addUnitEvent = {
+        serviceName: 'foo$',
+        unitCount: '2'
+      };
+
+      testScaleUpService(addUnitEvent);
     });
 
     it('hides the "all placed" message when the service list is displayed',

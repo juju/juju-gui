@@ -90,6 +90,7 @@ YUI.add('charm-details-view', function(Y) {
       if (window.location.hash) {
         window.location.hash = '';
       }
+      this.fire('changeState', { sectionA: { metadata: { charm: false }}});
       this.viewletManager.hideSlot(ev);
       container.empty();
       this.destroy();

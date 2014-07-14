@@ -85,8 +85,33 @@ YUI.add('service-inspector', function(Y) {
       @method renderUI
     */
     renderUI: function() {
-      this.showViewlet('inspectorHeader');
-      this.showViewlet('overview');
+      var activeUnit = this.get('activeUnit'),
+          db = this.get('db'),
+          model = this.get('model');
+      if (!this.get('rendered')) {
+        this.showViewlet('inspectorHeader');
+        this.showViewlet('overview');
+        this.set('rendered', true);
+      }
+      if (this.get('showCharm')) {
+        var charmId = model.get('charm');
+        var charm = db.charms.getById(charmId);
+        this.showViewlet('charmDetails', charm);
+      } else if (activeUnit >= 0) {
+        var serviceName = model.get('id');
+        var unitName = serviceName + '/' + activeUnit;
+        var service = db.services.getById(serviceName);
+        var unit = service.get('units').getById(unitName);
+        this.showViewlet('unitDetails', unit);
+      } else {
+        // XXX j.c.sackett July 8th 2014: This is a temporary handling until
+        // we have better slot destruction behavior in the viewlet manager.
+        var existing = this.slots['left-hand-panel'];
+        var container = this._getSlotContainer(existing);
+        if (container) {
+          container.hide();
+        }
+      }
     },
 
     /**
@@ -138,10 +163,14 @@ YUI.add('service-inspector', function(Y) {
      */
     onShowCharmDetails: function(ev) {
       ev.halt();
-      var db = this.get('db');
-      var charmId = ev.currentTarget.getData('charmid');
-      var charm = db.charms.getById(charmId);
-      this.showViewlet('charmDetails', charm);
+      this.fire('changeState', {
+        sectionA: {
+          metadata: {
+            charm: true,
+            unit: null
+          }
+        }
+      });
     },
 
     /**
@@ -260,6 +289,40 @@ YUI.add('service-inspector', function(Y) {
         service.set('exposed', true);
         db.fire('update');
       }
+    }
+  }, {
+    ATTRS: {
+      /**
+         Whether or not to show the service's charm information.
+
+         @attribute showCharm
+         @default false
+         @type {Boolean}
+       */
+      showCharm: {
+        value: false
+      },
+
+      /**
+         The unit being displayed
+
+         @attribute activeUnit
+         @default undefined
+         @type {Number}
+       */
+      activeUnit: {},
+
+      /**
+         Logs whether the inspector has already been rendered
+
+         @attribute rendered
+         @default false
+         @type {Boolean}
+       */
+      rendered: {
+        value: false
+      }
+
     }
   });
 

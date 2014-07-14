@@ -157,14 +157,21 @@ YUI.add('machine-view-panel', function(Y) {
               changed = e.changed,
               target = e.target;
           if (changed) {
-            // Need to update any machines that now have new units
+            // Need to update any machines and containers that now have
+            // new units.
             if (changed.machine) {
               var machineTokens = this.get('machineTokens'),
+                  containerTokens = this.get('containerTokens'),
                   id = changed.machine.newVal,
-                  machineToken = machineTokens[id];
+                  machineToken = machineTokens[id],
+                  containerToken = containerTokens[id];
               if (machineToken) {
                 this._updateMachineWithUnitData(machineToken.get('machine'));
                 machineToken.render();
+              }
+              if (containerToken) {
+                this._updateMachineWithUnitData(containerToken.get('machine'));
+                containerToken.renderUnits();
               }
             }
             if (target.get('machine')) {
@@ -493,7 +500,7 @@ YUI.add('machine-view-panel', function(Y) {
             machine = this._createMachine(containerInput, machineInput,
                                           constraints);
             placeId = machine.id;
-          } else if (containerInput === 'bare-metal') {
+          } else if (containerInput === 'root-container') {
             placeId = machineInput;
           } else {
             // Add the unit to the container.
@@ -612,7 +619,7 @@ YUI.add('machine-view-panel', function(Y) {
           machineTokens.removeClass('active');
           selected.addClass('active');
           this._renderContainerTokens(containers, parentId);
-          this._selectBareMetalContainer(parentId);
+          this._selectRootContainer(parentId);
         },
 
         /**
@@ -718,12 +725,12 @@ YUI.add('machine-view-panel', function(Y) {
             {label: 'unit', count: numUnits}
           ]);
 
-          // Create the 'bare metal' container. Should be above other
+          // Create the root container. Should be above other
           // containers.
           var units = db.units.filterByMachine(parentId);
           var machine = {
-            displayName: 'Bare metal',
-            id: parentId + '/bare-metal'
+            displayName: 'Root container',
+            id: parentId + '/root-container'
           };
           this._createContainerToken(containerParent, machine,
               committed, units);
@@ -959,7 +966,68 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The addUnit event facade.
         */
         _scaleUpService: function(e) {
-          this.get('env').add_unit(e.serviceName, e.unitCount, null, null);
+          var db = this.get('db'),
+              serviceName = e.serviceName,
+              service = db.services.getById(serviceName),
+              existingUnitCount = service.get('units').size(),
+              displayName, ghostUnit, unitId, unitIdCount;
+          if (serviceName.indexOf('$') > 0) {
+            displayName = service.get('displayName')
+                                 .replace(/^\(/, '').replace(/\)$/, '');
+          } else {
+            displayName = serviceName;
+          }
+          for (var i = 0; i < e.unitCount; i += 1) {
+            unitIdCount = existingUnitCount + i;
+            unitId = serviceName + '/' + unitIdCount;
+            ghostUnit = db.addUnits({
+              id: unitId,
+              displayName: displayName + '/' + unitIdCount,
+              charmUrl: service.get('charm'),
+              is_subordinate: service.get('is_subordinate')
+            });
+            this.get('env').add_unit(
+                serviceName,
+                1,
+                null,
+                Y.bind(this._addUnitCallback, this, ghostUnit),
+                {modelId: unitId});
+          }
+        },
+
+        /**
+          Handles showing the successful unit notifications
+
+          @method _addUnitCallback
+          @param {Object} ghostUnit the unit which was created in the db.
+          @param {Object} The event facade.
+        */
+        _addUnitCallback: function(ghostUnit, e) {
+          var db = this.get('db');
+          var models = Y.juju.models;
+          if (e.err) {
+            // Add a notification and exit if the API call failed.
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error adding unit ' + ghostUnit.displayName,
+                  message: 'Could not add the requested unit. Server ' +
+                      'responded with: ' + e.err,
+                  level: 'error'
+                }));
+            return;
+          }
+          // Notify the unit has been successfully created.
+          db.notifications.add(
+              new models.Notification({
+                title: 'Added unit ' + ghostUnit.displayName,
+                message: 'Successfully created the requested unit.',
+                level: 'info'
+              })
+          );
+          // Remove the ghost unit: the real unit will be re-added by the
+          // mega-watcher handlers.
+          ghostUnit.service = e.service_name;
+          db.removeUnits(ghostUnit);
         },
 
         /**
@@ -978,15 +1046,15 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Select the bare metal container.
+          Select the root container.
 
-          @method _selectBareMetalContainer
+          @method _selectRootContainer
           @param {String} machineId The id of the selected machine.
         */
-        _selectBareMetalContainer: function(machineId) {
-          var bareMetalId = machineId + '/bare-metal';
+        _selectRootContainer: function(machineId) {
+          var rootContainerId = machineId + '/root-container';
           var containerTokens = this.get('containerTokens');
-          this._selectContainerToken(containerTokens[bareMetalId].get(
+          this._selectContainerToken(containerTokens[rootContainerId].get(
               'container').one('.token'));
         },
 

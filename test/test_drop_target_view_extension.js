@@ -67,6 +67,7 @@ describe('MV drop target view extension', function() {
   it('fires unit-token-drop in its drop handler', function() {
     var container = utils.makeContainer(this, 'machine-view-panel');
     var eventData = {
+      preventDefault: utils.makeStubFunction(),
       currentTarget: {
         ancestor: utils.makeStubFunction({
           getData: utils.makeStubFunction('targetid')
@@ -114,8 +115,26 @@ describe('MV drop target view extension', function() {
           preventDefault: utils.makeStubFunction()
         });
         assert.equal(container.hasClass('drop-hover'), true);
-        view._stopHover({currentTarget: container});
+        view._stopHover({
+          preventDefault: utils.makeStubFunction(),
+          currentTarget: container
+        });
         assert.equal(container.hasClass('drop-hover'), false);
       });
 
+  it('properly ignores the event for drag and drop', function() {
+    var container = utils.makeContainer(this, 'machine-view-panel');
+    var ignoreStub = utils.makeStubMethod(view, '_ignore');
+    var fakeEvent = {};
+
+    view.set('container', container);
+
+    view._startHover(fakeEvent);
+    assert.equal(ignoreStub.callCount(), 1);
+    assert.equal(ignoreStub.lastArguments()[0], fakeEvent);
+
+    view._stopHover(fakeEvent);
+    assert.deepEqual(ignoreStub.callCount(), 2);
+    assert.deepEqual(ignoreStub.lastArguments()[0], fakeEvent);
+  });
 });

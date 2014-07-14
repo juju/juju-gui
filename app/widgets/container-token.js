@@ -40,6 +40,7 @@ YUI.add('container-token', function(Y) {
         views.MVDropTargetViewExtension
       ], {
         template: Templates['container-token'],
+        unitsTemplate: Templates['container-token-units'],
 
         events: {
           '.delete': {
@@ -106,6 +107,16 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+         * Render the units.
+         *
+         * @method renderTemplate
+         */
+        renderUnits: function() {
+          this.get('container').one('.service-icons').setHTML(
+              this.unitsTemplate(this.get('machine')));
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -114,6 +125,7 @@ YUI.add('container-token', function(Y) {
           var container = this.get('container'),
               machine = this.get('machine');
           container.setHTML(this.template(machine));
+          this.renderUnits();
           container.addClass('container-token');
           container.one('.token').addClass(
               this.get('committed') ? 'committed' : 'uncommitted');

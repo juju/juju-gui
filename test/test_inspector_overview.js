@@ -767,6 +767,18 @@ describe('Inspector Overview', function() {
       window.flags = {};
     });
 
+    it('fires changeState event to open unit details', function() {
+      inspector = setUpInspector(null);
+      var fireStub = utils.makeStubMethod(inspector.views.overview, 'fire');
+      inspector.get('container').one('a[data-unit]').simulate('click');
+      assert.equal(fireStub.calledOnce(), true);
+      var fireArgs = fireStub.lastArguments();
+      assert.equal(fireArgs[0], 'changeState');
+      assert.deepEqual(fireArgs[1], {
+        sectionA: {
+          metadata: { unit: 0, charm: false }}});
+    });
+
     it('should fire the changeState event when closed', function() {
       inspector = setUpInspector(null, true);
       var fireStub = utils.makeStubMethod(inspector, 'fire');
