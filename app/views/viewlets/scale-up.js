@@ -92,7 +92,9 @@ YUI.add('scale-up-view', function(Y) {
       @param {Object} e The click event facade.
     */
     _hideScaleUp: function(e) {
-      e.preventDefault();
+      if (e && e.preventDefault) {
+        e.preventDefault();
+      }
       this.updateStateClass('default');
     },
 
@@ -136,17 +138,54 @@ YUI.add('scale-up-view', function(Y) {
       var container = this.get('container'),
           env = this.get('env'),
           db = this.get('db');
+      var service = db.services.getById(this.get('serviceId'));
       var type = container.one('input[name="placement"]:checked').get('id');
       var numUnits = container.one('input[name="units-number"]').get('value');
 
       if (type === 'manually-place') {
-        utils.addGhostAndEcsUnits(
-          db,
-          env,
-          db.services.getById(this.get('serviceId')),
-          numUnits);
+        utils.addGhostAndEcsUnits(db, env, service, numUnits);
+        this.fire('changeState', {
+          sectionB: {
+            component: 'machine'
+          }
+        });
       } else {
+        this._createMachinesPlaceUnits(numUnits, service);
+      }
+      this._hideScaleUp();
+    },
 
+    /**
+      Handles creating machines based on the users specified constraints,
+      creating units for the supplied service and placing those units on
+      the newly created machines.
+
+      @method _createMachinesPlaceUnits
+      @param {String} numUnits The number of units input from the user.
+      @param {Object} service The service model to add units to.
+    */
+    _createMachinesPlaceUnits: function(numUnits, service) {
+      var container = this.get('container'),
+          env = this.get('env'),
+          db = this.get('db');
+      var constraints = {
+        'cpu-power': container.one('input[name="cpu"]').get('value'),
+        mem: container.one('input[name="mem"]').get('value'),
+        arch: container.one('input[name="arch"]').get('value')
+      };
+      var machine;
+      // "Don't make functions in a loop"
+      // jshint -W083
+      for (var i = 0; i < parseInt(numUnits, 10); i += 1) {
+        machine = db.machines.addGhost();
+        env.addMachines([{
+          constraints: constraints
+        }], function(machine) {
+          db.machines.remove(machine);
+        }.bind(this, machine), { modelId: machine.id});
+        env.placeUnit(
+            utils.addGhostAndEcsUnits(db, env, service, 1)[0],
+            machine.id);
       }
     }
 

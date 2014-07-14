@@ -2033,10 +2033,17 @@ YUI.add('juju-view-utils', function(Y) {
     the ECS will clean them up on deploy.
 
     @method addGhostAndEcsUnits
+    @param {Object} db Reference to the app db.
+    @param {Object} env Reference to the app env.
+    @param {Object} service Reference to the service model to add units to.
+    @param {Integer} unitCount the unit count from the form input.
+    @param {Function} callback optional The callback to call after the units
+      have been added to the env.
   */
   utils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
     var serviceName = service.get('id'),
         existingUnitCount = service.get('units').size(),
+        units = [],
         displayName, ghostUnit, unitId, unitIdCount;
 
     if (serviceName.indexOf('$') > 0) {
@@ -2058,6 +2065,8 @@ YUI.add('juju-view-utils', function(Y) {
           serviceName,
           1,
           null,
+          // "Don't make functions in a loop"
+          // jshint -W083
           function(e) {
             // Remove the ghost unit: the real unit will be re-added by the
             // mega-watcher handlers.
@@ -2068,7 +2077,9 @@ YUI.add('juju-view-utils', function(Y) {
             }
           },
           {modelId: unitId});
+      units.push(ghostUnit);
     }
+    return units;
   };
 
 

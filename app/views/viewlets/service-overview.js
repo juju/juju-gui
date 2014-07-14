@@ -440,6 +440,12 @@ YUI.add('inspector-overview-view', function(Y) {
           db: this.options.db,
           serviceId: this.viewletManager.get('model').get('id')
         });
+        // XXX July 14 2014 Jeff - There is an issue where the changeState
+        // events don't bubble like they should to get around this we need to
+        // manually re-fire the event with the changeState details.
+        this.scaleUp.on('changeState', function(e) {
+          this.fire('changeState', e.details[0]);
+        }, this);
       }
     },
 

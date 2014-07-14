@@ -949,11 +949,11 @@ YUI.add('machine-view-panel', function(Y) {
         _scaleUpService: function(e) {
           var db = this.get('db');
           utils.addGhostAndEcsUnits(
-            db,
-            this.get('env'),
-            db.services.getById(e.serviceName),
-            e.unitCount,
-            this._addUnitCallback);
+              db,
+              this.get('env'),
+              db.services.getById(e.serviceName),
+              e.unitCount,
+              this._addUnitCallback);
         },
 
         /**
@@ -961,12 +961,11 @@ YUI.add('machine-view-panel', function(Y) {
 
           @method _addUnitCallback
           @param {Object} e The event facade.
-          @Param {Object} db Reference to the db.
+          @param {Object} db Reference to the db.
           @param {Object} ghostUnit The unit which was created in the db.
 
         */
         _addUnitCallback: function(e, db, ghostUnit) {
-          var models = Y.juju.models;
           if (e.err) {
             // Add a notification and exit if the API call failed.
             db.notifications.add({
