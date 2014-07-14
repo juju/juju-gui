@@ -48,6 +48,12 @@ YUI.add('machine-view-panel', function(Y) {
           '.container-token .token': {
             click: 'handleContainerTokenSelect'
           },
+          '.machine-token .delete': {
+            click: 'deleteMachine'
+          },
+          '.container-token .delete': {
+            click: 'deleteMachine'
+          },
           '.unplaced-unit .token-move': {
             click: '_cancelUnitPlacement'
           }
@@ -633,6 +639,20 @@ YUI.add('machine-view-panel', function(Y) {
           // Select the active token.
           containerTokens.removeClass('active');
           selected.addClass('active');
+        },
+
+        deleteMachine: function(e) {
+          e.preventDefault();
+          var machineName = e.currentTarget.ancestor().one('.title').getHTML();
+          this.get('env').destroyMachines([machineName], false, function(data) {
+            if (data.err) {
+              this.get('db').notifications.add({
+                title: 'Error destroying machine or container',
+                message: data.err,
+                level: 'error'
+              });
+            };
+          }.bind(this), {modelId: machineName});
         },
 
         /**

@@ -440,6 +440,51 @@ YUI.add('environment-change-set', function(Y) {
       this._removeExistingRecord(service);
     },
 
+    _lazyDestroyMachines: function(args) {
+      var command = {
+        method: '_destroyMachines',
+        args: this._getArgs(args)
+      };
+      if (command.args.length !== args.length) {
+        command.options = args[args.length - 1];
+      }
+      // Search for already queued machines.
+      var existingMachine;
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].command.method === '_addMachines') {
+          if (this.changeSet[key].command.options.modelId === args[0][0]) {
+            existingMachine = key;
+          }
+        }
+      }.bind(this));
+      if (existingMachine) {
+        this._destroyQueuedMachine(existingMachine);
+      } else {
+        return this._createNewRecord('destroyMachines', command, []);
+      }
+    },
+
+    /**
+      In the event that a machine in the change set needs to be destroyed,
+      remove it and all of the entries of which it is a parent.
+
+      @method _destroyQueuedMachine
+      @param {String} machine The key of the machine to be destroyed.
+    */
+    _destroyQueuedMachine: function(machine) {
+      // Search for everything that has that machine as a parent and remove it.
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].parents.indexOf(machine) !== -1) {
+          this._removeExistingRecord(key);
+        }
+      }.bind(this));
+      // Remove the machine itself.
+      var db = this.get('db');
+      var modelId = this.changeSet[machine].command.options.modelId;
+      db.machines.remove(db.machines.getById(modelId));
+      this._removeExistingRecord(machine);
+    },
+
     /**
       Creates a new entry in the queue for setting a services config.
 

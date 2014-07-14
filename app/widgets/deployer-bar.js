@@ -233,6 +233,7 @@ YUI.add('deployer-bar', function(Y) {
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
           addedMachines: changes.addMachines,
+          destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
           deployed: this._deployed
         }));
@@ -443,6 +444,15 @@ YUI.add('deployer-bar', function(Y) {
                 (change.command.args[0].length !== 1 ? 's have' : ' has') +
                 ' been added.';
             break;
+          case '_destroyMachines':
+            var machineType = change.command.args[0][0].indexOf('/') != -1 ?
+              'container' : 'machine';
+            changeItem.icon = 'changes-' + machineType + '-destroyed';
+            changeItem.description = change.command.args[0].length +
+                ' ' + machineType +
+                (change.command.args[0].length !== 1 ? 's have' : ' has') +
+                ' been destroyed.';
+            break;
           case '_set_config':
             changeItem.icon = 'changes-config-changed';
             changeItem.description = 'Configuration values changed for ' +
@@ -543,6 +553,7 @@ YUI.add('deployer-bar', function(Y) {
         removeRelations: [],
         addUnits: [],
         addMachines: [],
+        destroyMachines: [],
         setConfigs: []
       };
       Object.keys(ecs.changeSet).forEach(function(key) {
@@ -588,6 +599,14 @@ YUI.add('deployer-bar', function(Y) {
             /* jshint -W083 */
             args[0].forEach(function(machine) {
               changes.addMachines.push(machine);
+            });
+            break;
+          case '_destroyMachines':
+            args[0].forEach(function(machine) {
+              changes.destroyMachines.push({
+                name: machine,
+                type: machine.indexOf('/') != -1 ? 'container' : 'machine'
+              });
             });
             break;
           case '_set_config':

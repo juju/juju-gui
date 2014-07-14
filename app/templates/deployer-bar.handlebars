@@ -212,6 +212,19 @@
                             {{/each}}
                         </ul>
                     {{/if}}
+                    {{#if destroyedMachines.length}}
+                        <h3>
+                            {{destroyedMachines.length}}
+                            {{pluralize 'machine' destroyedMachines.length}} destroyed
+                        </h3>
+                        <ul>
+                            {{#each destroyedMachines}}
+                                <li>
+                                    <i class="sprite changes-{{ type }}-destroyed"></i> {{ name }}
+                                </li>
+                            {{/each}}
+                        </ul>
+                    {{/if}}
                     {{#if configsChanged.length}}
                         <h3>
                             {{configsChanged.length}}
