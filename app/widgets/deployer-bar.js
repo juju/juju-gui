@@ -587,6 +587,14 @@ YUI.add('deployer-bar', function(Y) {
           case '_addMachines':
             /* jshint -W083 */
             args[0].forEach(function(machine) {
+              var constraints = machine.constraints;
+              if (constraints) {
+                if (constraints.mem || constraints['cpu-power'] ||
+                    constraints['cpu-cores'] || constraints.arch ||
+                    constraints.tags || constraints['root-disk']) {
+                  machine.someConstraints = true;
+                }
+              }
               changes.addMachines.push(machine);
             });
             break;
