@@ -494,7 +494,7 @@ YUI.add('machine-view-panel', function(Y) {
             machine = this._createMachine(containerInput, machineInput,
                                           constraints);
             placeId = machine.id;
-          } else if (containerInput === 'bare-metal') {
+          } else if (containerInput === 'root-container') {
             placeId = machineInput;
           } else {
             // Add the unit to the container.
@@ -613,7 +613,7 @@ YUI.add('machine-view-panel', function(Y) {
           machineTokens.removeClass('active');
           selected.addClass('active');
           this._renderContainerTokens(containers, parentId);
-          this._selectBareMetalContainer(parentId);
+          this._selectRootContainer(parentId);
         },
 
         /**
@@ -705,12 +705,12 @@ YUI.add('machine-view-panel', function(Y) {
             {label: 'unit', count: numUnits}
           ]);
 
-          // Create the 'bare metal' container. Should be above other
+          // Create the root container. Should be above other
           // containers.
           var units = db.units.filterByMachine(parentId);
           var machine = {
-            displayName: 'Bare metal',
-            id: parentId + '/bare-metal'
+            displayName: 'Root container',
+            id: parentId + '/root-container'
           };
           this._createContainerToken(containerParent, machine,
               committed, units);
@@ -1026,15 +1026,15 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Select the bare metal container.
+          Select the root container.
 
-          @method _selectBareMetalContainer
+          @method _selectRootContainer
           @param {String} machineId The id of the selected machine.
         */
-        _selectBareMetalContainer: function(machineId) {
-          var bareMetalId = machineId + '/bare-metal';
+        _selectRootContainer: function(machineId) {
+          var rootContainerId = machineId + '/root-container';
           var containerTokens = this.get('containerTokens');
-          this._selectContainerToken(containerTokens[bareMetalId].get(
+          this._selectContainerToken(containerTokens[rootContainerId].get(
               'container').one('.token'));
         },
 

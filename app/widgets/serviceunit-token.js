@@ -215,9 +215,9 @@ YUI.add('juju-serviceunit-token', function(Y) {
         // when the items are prepended, no appended.
         return obj1.id.split('/')[2] - obj2.id.split('/')[2];
       });
-      // Add the bare metal container to the top of the list.
+      // Add the root container to the top of the list.
       newContainers += this._createMachineOption(
-          {displayName: parentId + '/bare metal', id: 'bare-metal'});
+          {displayName: parentId + '/root container', id: 'root-container'});
       // Add all the containers to the select.
       containers.forEach(function(container) {
         newContainers += this._createMachineOption(container);
