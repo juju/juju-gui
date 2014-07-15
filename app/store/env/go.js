@@ -1057,9 +1057,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Remove machines and/or containers.
+      Calls the environment's _destroyMachines method or creates a new
+      destroyMachines record in the ECS queue.
+
+      Parameters match the parameters for the _destroyMachines method below.
+      The only new parameter is the last one (ECS options).
 
       @method destroyMachines
+    */
+    destroyMachines: function(params, callback, options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (!window.flags.mv || options && options.immediate) {
+        return this._destroyMachines.apply(this, args);
+      } else {
+        return ecs._lazyDestroyMachines(args, options);
+      }
+    },
+
+    /**
+      Remove machines and/or containers.
+
+      @method _destroyMachines
       @param {Array} names The names of the machines/containers to be removed.
         Each name is a string: machine names are numbers, e.g. "1" or "42";
         containers have the [machine name]/[container type]/[container number]
@@ -1075,7 +1094,7 @@ YUI.add('juju-env-go', function(Y) {
                       // call (propagated to provide some context).
           }
     */
-    destroyMachines: function(names, force, callback) {
+    _destroyMachines: function(names, force, callback) {
       // Avoid calling the server if the API call parameters are not valid.
       if (!names.length) {
         console.log('destroyMachines called without machines to remove');

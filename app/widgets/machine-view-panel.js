@@ -48,6 +48,12 @@ YUI.add('machine-view-panel', function(Y) {
           '.container-token .token': {
             click: 'handleContainerTokenSelect'
           },
+          '.machine-token .delete': {
+            click: 'deleteMachine'
+          },
+          '.container-token .delete': {
+            click: 'deleteMachine'
+          },
           '.unplaced-unit .token-move': {
             click: '_cancelUnitPlacement'
           }
@@ -643,6 +649,26 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Queue up deleting the machine from the environment.
+         *
+         * @method deleteMachine
+         * @param {Object} e The event
+         */
+        deleteMachine: function(e) {
+          e.preventDefault();
+          var machineName = e.currentTarget.ancestor().one('.title').getHTML();
+          this.get('env').destroyMachines([machineName], false, function(data) {
+            if (data.err) {
+              this.get('db').notifications.add({
+                title: 'Error destroying machine or container',
+                message: data.err,
+                level: 'error'
+              });
+            }
+          }.bind(this), {modelId: machineName});
+        },
+
+        /**
          * Render the header widgets.
          *
          * @method _renderHeaders
@@ -709,6 +735,7 @@ YUI.add('machine-view-panel', function(Y) {
           // containers.
           var units = db.units.filterByMachine(parentId);
           var machine = {
+            displayDelete: false,
             displayName: 'Root container',
             id: parentId + '/root-container'
           };
@@ -717,6 +744,7 @@ YUI.add('machine-view-panel', function(Y) {
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
+              container.displayDelete = true;
               this._createContainerToken(containerParent, container, committed);
             }, this);
           }

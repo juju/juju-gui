@@ -416,6 +416,37 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('_lazyDestroyMachines', function() {
+      it('creates a new destroy record', function(done) {
+        var args = [['0/lxc/0'], false, done, {}];
+        var key = ecs._lazyDestroyMachines(args);
+        var record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_destroyMachines');
+        // Remove the functions, which will not be equal.
+        var cb = record.command.args.pop();
+        args.pop();
+        // Also remove the options object.
+        args.pop();
+        assert.deepEqual(record.command.args, args);
+        cb(); // Will call done().
+      });
+
+      it('destroys create records for undeployed services', function() {
+        var stubRemove = testUtils.makeStubFunction();
+        ecs.get('db').machines = {
+          getById: function() {},
+          remove: stubRemove
+        };
+        ecs.lazyAddMachines([[{}], function() {}], {modelId: 'baz'});
+        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        assert.equal(stubRemove.calledOnce(), true, 'remove not called');
+        assert.deepEqual(ecs.changeSet, {});
+      });
+    });
+
     describe('lazyAddMachines', function() {
       it('creates a new `addMachines` record', function(done) {
         var translateStub = testUtils.makeStubMethod(ecs,

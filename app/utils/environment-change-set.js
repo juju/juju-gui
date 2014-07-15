@@ -409,7 +409,7 @@ YUI.add('environment-change-set', function(Y) {
             existingService = key;
           }
         }
-      }.bind(this));
+      }, this);
       if (existingService) {
         this._destroyQueuedService(existingService);
       } else {
@@ -430,7 +430,7 @@ YUI.add('environment-change-set', function(Y) {
         if (this.changeSet[key].parents.indexOf(service) !== -1) {
           this._removeExistingRecord(key);
         }
-      }.bind(this));
+      }, this);
       // Remove the service itself.
       var db = this.get('db');
       var modelId = this.changeSet[service].command.options.modelId;
@@ -443,6 +443,61 @@ YUI.add('environment-change-set', function(Y) {
       db.services.remove(model);
       model.destroy();
       this._removeExistingRecord(service);
+    },
+
+    /**
+      Creates a new entry in the queue for destroying a machine; or, if the
+      machine is in the queue already, removes it.
+
+      Receives all parameters received by the environment's 'destroyMachines'
+      method with the exception of the ECS options object.
+
+      @method _lazyDestroyMachine
+      @param {Array} args The arguments used for destroying.
+    */
+    _lazyDestroyMachines: function(args) {
+      var command = {
+        method: '_destroyMachines',
+        args: this._getArgs(args)
+      };
+      if (command.args.length !== args.length) {
+        command.options = args[args.length - 1];
+      }
+      // Search for already queued machines.
+      var existingMachine;
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].command.method === '_addMachines') {
+          if (this.changeSet[key].command.options.modelId === args[0][0]) {
+            existingMachine = key;
+          }
+        }
+      }, this);
+      if (existingMachine) {
+        this._destroyQueuedMachine(existingMachine);
+      } else {
+        return this._createNewRecord('destroyMachines', command, []);
+      }
+    },
+
+    /**
+      In the event that a machine in the change set needs to be destroyed,
+      remove it and all of the entries of which it is a parent.
+
+      @method _destroyQueuedMachine
+      @param {String} machine The key of the machine to be destroyed.
+    */
+    _destroyQueuedMachine: function(machine) {
+      // Search for everything that has that machine as a parent and remove it.
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].parents.indexOf(machine) !== -1) {
+          this._removeExistingRecord(key);
+        }
+      }, this);
+      // Remove the machine itself.
+      var db = this.get('db');
+      var modelId = this.changeSet[machine].command.options.modelId;
+      db.machines.remove(db.machines.getById(modelId));
+      this._removeExistingRecord(machine);
     },
 
     /**

@@ -3,9 +3,11 @@
     <span class="title">{{ displayName }}</span>
     <ul class="service-icons"></ul>
   </div>
-  <span class="delete">
-    <i class="sprite mv-token-destroy"></i>
-  </span>
+  {{#if displayDelete}}
+    <span class="delete">
+      <i class="sprite mv-token-destroy"></i>
+    </span>
+  {{/if}}
   <div class="drop">
     <span>Add to container {{ displayName }}</span>
   </div>
