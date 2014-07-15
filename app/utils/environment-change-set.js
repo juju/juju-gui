@@ -409,7 +409,7 @@ YUI.add('environment-change-set', function(Y) {
             existingService = key;
           }
         }
-      }.bind(this));
+      }, this);
       if (existingService) {
         this._destroyQueuedService(existingService);
       } else {
@@ -430,7 +430,7 @@ YUI.add('environment-change-set', function(Y) {
         if (this.changeSet[key].parents.indexOf(service) !== -1) {
           this._removeExistingRecord(key);
         }
-      }.bind(this));
+      }, this);
       // Remove the service itself.
       var db = this.get('db');
       var modelId = this.changeSet[service].command.options.modelId;
@@ -466,7 +466,7 @@ YUI.add('environment-change-set', function(Y) {
             existingMachine = key;
           }
         }
-      }.bind(this));
+      }, this);
       if (existingMachine) {
         this._destroyQueuedMachine(existingMachine);
       } else {
@@ -487,7 +487,7 @@ YUI.add('environment-change-set', function(Y) {
         if (this.changeSet[key].parents.indexOf(machine) !== -1) {
           this._removeExistingRecord(key);
         }
-      }.bind(this));
+      }, this);
       // Remove the machine itself.
       var db = this.get('db');
       var modelId = this.changeSet[machine].command.options.modelId;
