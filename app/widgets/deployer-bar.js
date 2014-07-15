@@ -235,7 +235,8 @@ YUI.add('deployer-bar', function(Y) {
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
-          deployed: this._deployed
+          deployed: this._deployed,
+          noChange: this._noMajorChanges(changes)
         }));
       }
       container.addClass('summary-open');
@@ -243,6 +244,23 @@ YUI.add('deployer-bar', function(Y) {
           this.changesTemplate({
             changeList: this._generateAllChangeDescriptions(ecs)
           }));
+    },
+
+
+    /**
+       Determines if there are no major changes in the change set.
+
+       @method _noMajorChanges
+       @param {Object} changes The change set for the summary.
+     */
+    _noMajorChanges: function(changes) {
+      var noChange = true;
+      Object.keys(changes).forEach(function(change) {
+        if (changes[change].length !== 0) {
+          noChange = false;
+        }
+      });
+      return noChange;
     },
 
     /**
@@ -599,15 +617,17 @@ YUI.add('deployer-bar', function(Y) {
           case '_addMachines':
             /* jshint -W083 */
             args[0].forEach(function(machine) {
-              var constraints = machine.constraints;
-              if (constraints) {
-                if (constraints.mem || constraints['cpu-power'] ||
-                    constraints['cpu-cores'] || constraints.arch ||
-                    constraints.tags || constraints['root-disk']) {
-                  machine.someConstraints = true;
+              if (!machine.parentId) {
+                var constraints = machine.constraints;
+                if (constraints) {
+                  if (constraints.mem || constraints['cpu-power'] ||
+                      constraints['cpu-cores'] || constraints.arch ||
+                      constraints.tags || constraints['root-disk']) {
+                    machine.someConstraints = true;
+                  }
                 }
+                changes.addMachines.push(machine);
               }
-              changes.addMachines.push(machine);
             });
             break;
           case '_destroyMachines':

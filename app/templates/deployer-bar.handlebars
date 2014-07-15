@@ -102,6 +102,7 @@
     <section>
         <div class="content">
             <h2 class="title">Deployment summary</h2>
+            {{#unless noChange}}
             <div class="summary-panel">
                 {{#if changeCount}}
                     {{#if deployServices.length}}
@@ -244,7 +245,12 @@
                     <p>No uncommitted changes</p>
                 {{/if}}
             </div>
-            <div class="changes">
+            {{/unless}}
+            {{#if noChange}}
+              <div class="changes open">
+            {{else}}
+              <div class="changes">
+            {{/if}}
                 <div class="toggle">
                     View the complete change log
                     <span class="expand">
