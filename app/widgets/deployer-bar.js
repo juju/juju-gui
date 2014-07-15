@@ -445,8 +445,9 @@ YUI.add('deployer-bar', function(Y) {
                 ' been added.';
             break;
           case '_destroyMachines':
-            var machineType = change.command.args[0][0].indexOf('/') != -1 ?
-              'container' : 'machine';
+            /*jshint -W004*/
+            var machineType = change.command.args[0][0].indexOf('/') !== -1 ?
+                'container' : 'machine';
             changeItem.icon = 'changes-' + machineType + '-destroyed';
             changeItem.description = change.command.args[0].length +
                 ' ' + machineType +
@@ -605,7 +606,7 @@ YUI.add('deployer-bar', function(Y) {
             args[0].forEach(function(machine) {
               changes.destroyMachines.push({
                 name: machine,
-                type: machine.indexOf('/') != -1 ? 'container' : 'machine'
+                type: machine.indexOf('/') !== -1 ? 'container' : 'machine'
               });
             });
             break;

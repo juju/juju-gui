@@ -1057,7 +1057,7 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Calls the environment's _destroyMachines method or creates a new 
+      Calls the environment's _destroyMachines method or creates a new
       destroyMachines record in the ECS queue.
 
       Parameters match the parameters for the _destroyMachines method below.

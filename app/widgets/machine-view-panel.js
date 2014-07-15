@@ -648,6 +648,12 @@ YUI.add('machine-view-panel', function(Y) {
           selected.addClass('active');
         },
 
+        /**
+         * Queue up deleting the machine from the environment.
+         *
+         * @method deleteMachine
+         * @param {Object} e The event
+         */
         deleteMachine: function(e) {
           e.preventDefault();
           var machineName = e.currentTarget.ancestor().one('.title').getHTML();
@@ -658,7 +664,7 @@ YUI.add('machine-view-panel', function(Y) {
                 message: data.err,
                 level: 'error'
               });
-            };
+            }
           }.bind(this), {modelId: machineName});
         },
 
@@ -729,6 +735,7 @@ YUI.add('machine-view-panel', function(Y) {
           // containers.
           var units = db.units.filterByMachine(parentId);
           var machine = {
+            displayDelete: false,
             displayName: 'Root container',
             id: parentId + '/root-container'
           };
@@ -737,6 +744,7 @@ YUI.add('machine-view-panel', function(Y) {
 
           if (containers.length > 0) {
             Y.Object.each(containers, function(container) {
+              container.displayDelete = true;
               this._createContainerToken(containerParent, container, committed);
             }, this);
           }

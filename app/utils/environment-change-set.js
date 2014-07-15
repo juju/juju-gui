@@ -440,6 +440,16 @@ YUI.add('environment-change-set', function(Y) {
       this._removeExistingRecord(service);
     },
 
+    /**
+      Creates a new entry in the queue for destroying a machine; or, if the
+      machine is in the queue already, removes it.
+
+      Receives all parameters received by the environment's 'destroyMachines'
+      method with the exception of the ECS options object.
+
+      @method _lazyDestroyMachine
+      @param {Array} args The arguments used for destroying.
+    */
     _lazyDestroyMachines: function(args) {
       var command = {
         method: '_destroyMachines',
