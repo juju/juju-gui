@@ -2067,7 +2067,7 @@ YUI.add('juju-view-utils', function(Y) {
           null,
           // "Don't make functions in a loop"
           // jshint -W083
-          function(e) {
+          function(ghostUnit, e) {
             // Remove the ghost unit: the real unit will be re-added by the
             // mega-watcher handlers.
             ghostUnit.service = e.service_name;
@@ -2075,7 +2075,7 @@ YUI.add('juju-view-utils', function(Y) {
             if (typeof callback === 'function') {
               callback(e, db, ghostUnit);
             }
-          },
+          }.bind(null, ghostUnit),
           {modelId: unitId});
       units.push(ghostUnit);
     }
