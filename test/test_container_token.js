@@ -42,6 +42,7 @@ describe('container token view', function() {
   beforeEach(function() {
     container = utils.makeContainer(this, 'container-token');
     machine = {
+      displayDelete: true,
       title: 'test title'
     };
     view = new View({
@@ -58,6 +59,17 @@ describe('container token view', function() {
 
   it('should apply the wrapping class to the container', function() {
     assert.equal(view.get('container').hasClass('container-token'), true);
+  });
+
+  it('does not have a delete button if it is not supposed to', function() {
+    container = utils.makeContainer(this, 'container-token');
+    machine.displayDelete = false;
+    view = new View({
+      containerParent: container,
+      container: utils.makeContainer(this, 'container'),
+      machine: machine
+    }).render();
+    assert.equal(container.one('.delete'), null);
   });
 
   it('fires the delete event', function(done) {
