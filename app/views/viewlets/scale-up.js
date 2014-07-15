@@ -139,7 +139,15 @@ YUI.add('scale-up-view', function(Y) {
           env = this.get('env'),
           db = this.get('db');
       var service = db.services.getById(this.get('serviceId'));
-      var type = container.one('input[name="placement"]:checked').get('id');
+      var type;
+      // This loop is required because the psudo selector :checked does not work
+      // in phantomjs.
+      container.all('input[name="placement"]').some(function(radio) {
+        if (radio.get('checked')) {
+          type = radio.get('id');
+          return true;
+        }
+      });
       var numUnits = container.one('input[name="units-number"]').get('value');
 
       if (type === 'manually-place') {

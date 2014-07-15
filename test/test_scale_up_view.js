@@ -20,14 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('scale-up view', function() {
 
-  var container, utils, view, View, Y;
+  var container, jujuUtils, utils, view, View, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'scale-up-view',
         'juju-tests-utils',
+        'juju-view-utils',
         'node-event-simulate',
         function() {
+          jujuUtils = Y.namespace('juju.views.utils');
           utils = Y.namespace('juju-tests').utils;
           View = Y.namespace('juju.viewlets').ScaleUp;
           done();
@@ -56,8 +58,7 @@ describe('scale-up view', function() {
     context._cleanups.push(stub.reset);
     instantiateView().render();
     var button = container.one(options.buttonSelector);
-    // Open the scale-up view.
-    button.simulate('click');
+    button.simulate(options.eventType || 'click');
     assert.equal(stub.calledOnce(), true, options.stubMethod + ' not called');
   }
 
@@ -129,6 +130,14 @@ describe('scale-up view', function() {
     }, this);
   });
 
+  it('prevents form submissions without clicking the button', function() {
+    testEventBinding({
+      stubMethod: '_preventFormSubmit',
+      buttonSelector: 'form',
+      eventType: 'submit'
+    }, this);
+  });
+
   it('_showScaleUp calls to set the proper state class', function() {
     testSetStateClass({
       method: '_showScaleUp',
@@ -172,5 +181,64 @@ describe('scale-up view', function() {
       },
       className: 'per-machine'
     }, this);
+  });
+
+  describe('_submitScaleUp', function() {
+    var addGhost, create, eventObj, hide;
+    beforeEach(function() {
+      instantiateView().render();
+      view.setAttrs({
+        env: { env: 'obj' },
+        db: {
+          services: {
+            getById: function() { return 'fooService'; }
+          }
+        }
+      });
+      eventObj = { preventDefault: utils.makeStubFunction() };
+      create = utils.makeStubMethod(view, '_createMachinesPlaceUnits');
+      this._cleanups.push(create.reset);
+      hide = utils.makeStubMethod(view, '_hideScaleUp');
+      this._cleanups.push(hide.reset);
+      addGhost = utils.makeStubMethod(jujuUtils, 'addGhostAndEcsUnits');
+      this._cleanups.push(addGhost.reset);
+      view.get('container').one('input[name="units-number"]').set('value', 2);
+    });
+
+    it('supports manually placing units on scale-up submit', function() {
+      // When submitting scale-up requests and requesting manually place it
+      // should call to create the machines, units, place the units, and then
+      // switch to the machine view to allow the user to place the units.
+      var fire = utils.makeStubMethod(view, 'fire');
+      this._cleanups.push(fire.reset);
+      // This is required because simulating a click on radio buttons doesn't
+      // seem to work properly in phantomjs.
+      var container = view.get('container');
+      container.all('input[name="placement"]').removeAttribute('checked');
+      container.one('input#manually-place').setAttribute('checked', true);
+      view._submitScaleUp(eventObj);
+      assert.equal(eventObj.preventDefault.calledOnce(), true);
+      assert.equal(addGhost.calledOnce(), true);
+      assert.deepEqual(addGhost.lastArguments(), [
+        view.get('db'), view.get('env'), 'fooService', '2']);
+      assert.equal(fire.calledOnce(), true);
+      assert.deepEqual(fire.lastArguments(), [
+        'changeState', { sectionB: { component: 'machine' } }]);
+      assert.equal(create.callCount(), 0);
+      assert.equal(hide.calledOnce(), true);
+    });
+
+    it('supports auto placing units on new machines on submit', function() {
+      // It should create machines based on the supplied constraints and
+      // automatically place new units on those machines.
+      view._submitScaleUp(eventObj);
+      assert.equal(eventObj.preventDefault.calledOnce(), true);
+      assert.equal(addGhost.callCount(), 0);
+      assert.equal(create.calledOnce(), true);
+      var createArgs = create.lastArguments();
+      assert.equal(createArgs[0], 2);
+      assert.equal(createArgs[1], 'fooService');
+      assert.equal(hide.calledOnce(), true);
+    });
   });
 });

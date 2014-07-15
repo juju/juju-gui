@@ -188,6 +188,18 @@ describe('Inspector Overview', function() {
     window.flags = {};
   });
 
+  it('catches scaleUp cangeState and re-fires', function(done) {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector();
+    inspector.on('*:changeState', function(e) {
+      assert.equal(e.details[0], 'foo');
+      done();
+    });
+    inspector.views.overview.scaleUp.fire('changeState', 'foo');
+    window.flags = {};
+  });
+
   it('should start with the proper number of units shown in the text field',
      function() {
        inspector = setUpInspector();
