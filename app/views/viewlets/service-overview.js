@@ -412,9 +412,10 @@ YUI.add('inspector-overview-view', function(Y) {
       @param {Object} attributes the viewlet manager attributes.
     */
     render: function(attributes) {
-      var container = this.get('container');
-      container.append(this.template(attributes.model.getAttrs()));
-      if (window.flags && window.flags.mv) {
+      var container = this.get('container'),
+          model = attributes.model;
+      container.append(this.template(model.getAttrs()));
+      if (window.flags && window.flags.mv && !model.get('subordinate')) {
         this._instantiateScaleUp();
         container.one('.scale-up-container').append(this.scaleUp.render());
       }

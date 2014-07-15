@@ -140,16 +140,6 @@ describe('Inspector Overview', function() {
     return inspector;
   };
 
-  // Simulate the click to scale up/down the service units.
-  // The value argument is the number of units to set.
-  // Return the units control node.
-  var scaleUnits = function(value) {
-    var control = container.one('.num-units-control');
-    control.set('value', value);
-    control.simulate('keydown', {keyCode: ENTER});
-    return control;
-  };
-
   it('is created with the proper template context', function() {
     inspector = setUpInspector();
     assert.deepEqual(inspector.templateConfig, {});
@@ -202,7 +192,7 @@ describe('Inspector Overview', function() {
 
   it('does not display the unit scaling widgets if subordinate', function() {
     inspector = setUpInspector({subordinate: true});
-    assert.strictEqual(container.all('.unit-scaling').size(), 0);
+    assert.strictEqual(container.all('.scale-up-view').size(), 0);
   });
 
   it('does not display the constraints widgets if subordinate', function() {
