@@ -301,6 +301,32 @@ describe('deployer bar view', function() {
     });
   });
 
+  it('can display the constraints', function() {
+    ecs.lazyAddMachines([[{
+      modelId: 'new0',
+      constraints: {
+        mem: 1024
+      }
+    }]], { modelId: 'new-0' });
+    view._showSummary();
+    assert.equal(container.one('.summary-panel li').get(
+        'text').replace(/\s+/g, ' ').trim(),
+        'root-level machine created with constraints ( mem=1024GB )');
+  });
+
+  it('displays correctly with null constraints', function() {
+    ecs.lazyAddMachines([[{
+      modelId: 'new0',
+      constraints: {
+        mem: null
+      }
+    }]], { modelId: 'new-0' });
+    view._showSummary();
+    assert.equal(container.one('.summary-panel li').get(
+        'text').replace(/\s+/g, ' ').trim(),
+        'root-level machine created');
+  });
+
   it('can generate descriptions for all the changes in the ecs', function() {
     var stubDescription = utils.makeStubMethod(
         view,

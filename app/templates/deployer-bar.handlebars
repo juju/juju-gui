@@ -180,10 +180,11 @@
                                     {{else}}
                                         root-level machine
                                     {{/if}}
-                                    {{#if constraints}}
+                                    created
+                                    {{#if someConstraints}}
                                         with constraints ({{#constraints}}
                                             {{#if mem}}
-                                                mem={{mem}}MB
+                                                mem={{mem}}GB
                                             {{/if}}
                                             {{#if cpu-power}}
                                                 cpu-power={{cpu-power}}GHz
@@ -198,7 +199,7 @@
                                                 tags={{tags}}
                                             {{/if}}
                                             {{#if root-disk}}
-                                                root-disk={{root-disk}}MB
+                                                root-disk={{root-disk}}TB
                                             {{/if}}
                                         {{/constraints}})
                                         {{#if jobs}}
