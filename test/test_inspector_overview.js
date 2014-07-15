@@ -180,6 +180,14 @@ describe('Inspector Overview', function() {
     window.flags = {};
   });
 
+  it('binds the scale up unit count', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector();
+    assert.equal(container.one('.unit-count').get('text'), db.units.size());
+    window.flags = {};
+  });
+
   it('should start with the proper number of units shown in the text field',
      function() {
        inspector = setUpInspector();
