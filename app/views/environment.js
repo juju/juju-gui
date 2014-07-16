@@ -255,21 +255,6 @@ YUI.add('juju-view-environment', function(Y) {
     },
 
     /**
-      Provide a way to create and render an inspector for one of the
-      endpoints in a particular relation.
-
-      @method onInspectRelation
-      @param {Y.EventTarget} ev click event handler
-      @param {String} serviceId the ID of the service being inspected
-    */
-    onInspectRelation: function(ev, serviceId) {
-      var db = this.topo.get('db');
-      var service = db.services.getById(serviceId);
-      var inspector = this.createServiceInspector(service);
-      inspector.switchTab('relations');
-    },
-
-    /**
       Attaches events after the topology has been created.
 
       @method _attachTopoEvents
@@ -277,8 +262,6 @@ YUI.add('juju-view-environment', function(Y) {
     _attachTopoEvents: function() {
       this.topo.on(
           '*:destroyServiceInspector', this.destroyInspector, this);
-      this.topo.on(
-          '*:inspectRelation', this.onInspectRelation, this);
     }
   }, {
     ATTRS: {

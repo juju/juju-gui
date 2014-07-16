@@ -1145,7 +1145,14 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = self.get('component');
       var endpoint = Y.one(this).get('text');
       var serviceId = endpoint.split(':')[0].trim();
-      topo.fire('inspectRelation', serviceId);
+      topo.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: serviceId
+          }
+        }
+      });
     }
 
   }, {
