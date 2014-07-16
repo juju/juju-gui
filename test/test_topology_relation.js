@@ -205,14 +205,19 @@ describe('topology relation module', function() {
         requestedSelector, '#' + views.utils.generateSafeDOMId(relationId));
   });
 
-  it('fires "inspectRelation" topo event for clicking a relation endpoint',
+  it('fires "changeState" topo event for clicking a relation endpoint',
       function() {
         var topo = {
           fire: utils.makeStubFunction()
         };
         view.set('component', topo);
         view.inspectRelationClick.call(container, undefined, view);
-        assert.equal(topo.fire.lastArguments()[0], 'inspectRelation');
+        assert.equal(topo.fire.lastArguments()[0], 'changeState');
+        assert.deepEqual(topo.fire.lastArguments()[1], {
+          sectionA: {
+            component: 'inspector',
+            metadata: { id: container.get('text').split(':')[0].trim() }
+          }});
       });
 
   describe('_addPendingRelation', function() {

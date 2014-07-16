@@ -1118,7 +1118,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ]);
     });
 
-    it('allows clicking on a relation to inspect it', function() {
+    it('allows clicking on a relation to inspect it', function(done) {
       db.onDelta({data: additionalRelations});
       view = new views.environment({
         container: container,
@@ -1146,18 +1146,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var endpoints = menu.all('.inspect-relation'),
           endpoint = endpoints.item(0),
           endpointName = endpoint.get('text').split(':')[0].trim();
-      endpoint.simulate('click');
 
-      // The inspector should be displayed for the service
-      // clicked on
-      var inspector = Y.one('.juju-inspector'),
-          serviceName = inspector.one('.service-name').get('text'),
-          activePane = inspector.one('.tab.active').getData('viewlet');
-      assert.equal(endpointName, serviceName,
-                   'Name in inspector does not match the clicked endpoint');
-      // The active pane should be relations
-      assert.equal('relations', activePane,
-                   'The relations pane is not active');
+      view.topo.after('changeState', function(e) {
+        assert.deepEqual(e.details[0], {
+          sectionA: {
+            component: 'inspector',
+            metadata: { id: endpointName }
+          }});
+        done();
+      });
+
+      endpoint.simulate('click');
     });
 
     it('allows deletion of relations within collections', function() {
