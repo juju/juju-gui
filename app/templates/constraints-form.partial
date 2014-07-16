@@ -2,7 +2,7 @@
   <input type="text" name="cpu">
   <label>CPU (GHz)</label>
   <input type="text" name="ram">
-  <label>RAM (GB)</label>
+  <label>RAM (MB)</label>
   <input type="text" name="disk">
-  <label>Disk (TB)</label>
+  <label>Disk (MB)</label>
 </form>
