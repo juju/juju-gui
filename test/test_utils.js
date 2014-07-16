@@ -1701,6 +1701,22 @@ describe('utilities', function() {
       testScaleUp('myGhostService$');
     });
 
+    it('properly removes the ghost units on env add_unit callback', function() {
+      var ghostUnit = { ghostUnit: 'I am' };
+      var db = {
+        removeUnits: testUtils.makeStubFunction()
+      };
+      var callback = testUtils.makeStubFunction();
+      var e = {
+        service_name: 'serviceName'
+      };
+      utils.removeGhostAddUnitCallback(ghostUnit, db, callback, e);
+      assert.equal(db.removeUnits.calledOnce(), true);
+      assert.equal(db.removeUnits.lastArguments()[0].service, 'serviceName');
+      assert.equal(callback.calledOnce(), true);
+      assert.deepEqual(callback.lastArguments(), [e, db, ghostUnit]);
+    });
+
   });
 
 })();

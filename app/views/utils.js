@@ -2045,7 +2045,9 @@ YUI.add('juju-view-utils', function(Y) {
         existingUnitCount = service.get('units').size(),
         units = [],
         displayName, ghostUnit, unitId, unitIdCount;
-
+    // Service names have a $ in them when they are uncommitted. Uncomitted
+    // service's display names are also wrapped in parens to display on the
+    // canvas.
     if (serviceName.indexOf('$') > 0) {
       displayName = service.get('displayName')
                            .replace(/^\(/, '').replace(/\)$/, '');
@@ -2065,22 +2067,34 @@ YUI.add('juju-view-utils', function(Y) {
           serviceName,
           1,
           null,
-          // "Don't make functions in a loop"
-          // jshint -W083
-          function(ghostUnit, e) {
-            // Remove the ghost unit: the real unit will be re-added by the
-            // mega-watcher handlers.
-            ghostUnit.service = e.service_name;
-            db.removeUnits(ghostUnit);
-            if (typeof callback === 'function') {
-              callback(e, db, ghostUnit);
-            }
-          }.bind(null, ghostUnit),
+          removeGhostAddUnitCallback.bind(null, ghostUnit, db, callback),
           {modelId: unitId});
       units.push(ghostUnit);
     }
     return units;
   };
+
+  /**
+    Callback for the env add_unit call from tne addGhostAndEcsUnit method.
+
+    @method removeGhostAndUnitCallback
+    @param {Object} ghostUnit the ghost unit created in the db which this fn
+      needs to remove.
+    @param {Object} db Reference to the app db instance.
+    @param {Function} callback The user supplied callback for the env add_unit
+      call.
+    @param {Object} e env add_unit event facade.
+  */
+  function removeGhostAddUnitCallback(ghostUnit, db, callback, e) {
+    // Remove the ghost unit: the real unit will be re-added by the
+    // mega-watcher handlers.
+    ghostUnit.service = e.service_name;
+    db.removeUnits(ghostUnit);
+    if (typeof callback === 'function') {
+      callback(e, db, ghostUnit);
+    }
+  }
+  utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
 
 
 }, '0.1.0', {

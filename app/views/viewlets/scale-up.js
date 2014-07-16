@@ -137,9 +137,9 @@ YUI.add('scale-up-view', function(Y) {
       e.preventDefault();
       var container = this.get('container'),
           env = this.get('env'),
-          db = this.get('db');
+          db = this.get('db'),
+          type;
       var service = db.services.getById(this.get('serviceId'));
-      var type;
       // This loop is required because the psudo selector :checked does not work
       // in phantomjs.
       container.all('input[name="placement"]').some(function(radio) {
@@ -175,13 +175,13 @@ YUI.add('scale-up-view', function(Y) {
     _createMachinesPlaceUnits: function(numUnits, service) {
       var container = this.get('container'),
           env = this.get('env'),
-          db = this.get('db');
+          db = this.get('db'),
+          machine;
       var constraints = {
         'cpu-power': container.one('input[name="cpu"]').get('value'),
         mem: container.one('input[name="mem"]').get('value'),
         arch: container.one('input[name="arch"]').get('value')
       };
-      var machine;
       // "Don't make functions in a loop"
       // jshint -W083
       for (var i = 0; i < parseInt(numUnits, 10); i += 1) {
