@@ -2027,6 +2027,75 @@ YUI.add('juju-view-utils', function(Y) {
     return charmIcons;
   };
 
+  /**
+    Given the db, env, service, and unit count, add these units to the db
+    and to the environment such that the unit tokens can be displayed and that
+    the ECS will clean them up on deploy.
+
+    @method addGhostAndEcsUnits
+    @param {Object} db Reference to the app db.
+    @param {Object} env Reference to the app env.
+    @param {Object} service Reference to the service model to add units to.
+    @param {Integer} unitCount the unit count from the form input.
+    @param {Function} callback optional The callback to call after the units
+      have been added to the env.
+  */
+  utils.addGhostAndEcsUnits = function(db, env, service, unitCount, callback) {
+    var serviceName = service.get('id'),
+        existingUnitCount = service.get('units').size(),
+        units = [],
+        displayName, ghostUnit, unitId, unitIdCount;
+    // Service names have a $ in them when they are uncommitted. Uncomitted
+    // service's display names are also wrapped in parens to display on the
+    // canvas.
+    if (serviceName.indexOf('$') > 0) {
+      displayName = service.get('displayName')
+                           .replace(/^\(/, '').replace(/\)$/, '');
+    } else {
+      displayName = serviceName;
+    }
+    for (var i = 0; i < unitCount; i += 1) {
+      unitIdCount = existingUnitCount + i;
+      unitId = serviceName + '/' + unitIdCount;
+      ghostUnit = db.addUnits({
+        id: unitId,
+        displayName: displayName + '/' + unitIdCount,
+        charmUrl: service.get('charm'),
+        is_subordinate: service.get('is_subordinate')
+      });
+      env.add_unit(
+          serviceName,
+          1,
+          null,
+          removeGhostAddUnitCallback.bind(null, ghostUnit, db, callback),
+          {modelId: unitId});
+      units.push(ghostUnit);
+    }
+    return units;
+  };
+
+  /**
+    Callback for the env add_unit call from tne addGhostAndEcsUnit method.
+
+    @method removeGhostAndUnitCallback
+    @param {Object} ghostUnit the ghost unit created in the db which this fn
+      needs to remove.
+    @param {Object} db Reference to the app db instance.
+    @param {Function} callback The user supplied callback for the env add_unit
+      call.
+    @param {Object} e env add_unit event facade.
+  */
+  function removeGhostAddUnitCallback(ghostUnit, db, callback, e) {
+    // Remove the ghost unit: the real unit will be re-added by the
+    // mega-watcher handlers.
+    ghostUnit.service = e.service_name;
+    db.removeUnits(ghostUnit);
+    if (typeof callback === 'function') {
+      callback(e, db, ghostUnit);
+    }
+  }
+  utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
+
 
 }, '0.1.0', {
   requires: [

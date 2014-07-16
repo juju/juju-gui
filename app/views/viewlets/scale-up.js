@@ -31,6 +31,7 @@ YUI.add('scale-up-view', function(Y) {
       '.add.button': { click: '_showScaleUp' },
       '.placement .cancel.button': { click: '_hideScaleUp' },
       'input[name="placement"]': { change: '_toggleConstraints' },
+      'form': { submit: '_preventFormSubmit' },
       '.edit.link': { click: '_toggleEditConstraints' },
       '.inspector-buttons .cancel': { click: '_hideScaleUp' },
       '.inspector-buttons .confirm': { click: '_submitScaleUp' }
@@ -46,6 +47,17 @@ YUI.add('scale-up-view', function(Y) {
       var container = this.get('container');
       container.append(this.template());
       return container;
+    },
+
+    /**
+      This prevents the placement forms from submitting without the user
+      clicking the Confirm button manually.
+
+      @method _preventFormSubmit
+      @param {Object} e Submit event facade.
+    */
+    _preventFormSubmit: function(e) {
+      e.preventDefault();
     },
 
     /**
@@ -80,7 +92,9 @@ YUI.add('scale-up-view', function(Y) {
       @param {Object} e The click event facade.
     */
     _hideScaleUp: function(e) {
-      e.preventDefault();
+      if (e && e.preventDefault) {
+        e.preventDefault();
+      }
       this.updateStateClass('default');
     },
 
@@ -121,6 +135,73 @@ YUI.add('scale-up-view', function(Y) {
     */
     _submitScaleUp: function(e) {
       e.preventDefault();
+      var container = this.get('container'),
+          env = this.get('env'),
+          db = this.get('db'),
+          type;
+      var service = db.services.getById(this.get('serviceId'));
+      // This loop is required because the psudo selector :checked does not work
+      // in phantomjs.
+      container.all('input[name="placement"]').some(function(radio) {
+        if (radio.get('checked')) {
+          type = radio.get('id');
+          return true;
+        }
+      });
+      var numUnits = container.one('input[name="units-number"]').get('value');
+
+      if (type === 'manually-place') {
+        utils.addGhostAndEcsUnits(db, env, service, numUnits);
+        this.fire('changeState', {
+          sectionB: {
+            component: 'machine'
+          }
+        });
+      } else {
+        this._createMachinesPlaceUnits(numUnits, service);
+      }
+      this._hideScaleUp();
+    },
+
+    /**
+      Handles creating machines based on the users specified constraints,
+      creating units for the supplied service and placing those units on
+      the newly created machines.
+
+      @method _createMachinesPlaceUnits
+      @param {String} numUnits The number of units input from the user.
+      @param {Object} service The service model to add units to.
+    */
+    _createMachinesPlaceUnits: function(numUnits, service) {
+      var container = this.get('container'),
+          env = this.get('env'),
+          db = this.get('db'),
+          machine;
+      var constraints = {
+        'cpu-power': container.one('input[name="cpu"]').get('value'),
+        mem: container.one('input[name="mem"]').get('value'),
+        arch: container.one('input[name="arch"]').get('value')
+      };
+      // "Don't make functions in a loop"
+      // jshint -W083
+      for (var i = 0; i < parseInt(numUnits, 10); i += 1) {
+        machine = db.machines.addGhost();
+        env.addMachines([{
+          constraints: constraints
+        }], function(machine) {
+          db.machines.remove(machine);
+        }.bind(this, machine), { modelId: machine.id});
+        env.placeUnit(
+            utils.addGhostAndEcsUnits(db, env, service, 1)[0],
+            machine.id);
+      }
+    }
+
+  }, {
+    ATTRS: {
+      serviceId: {},
+      db: {},
+      env: {}
     }
   });
 

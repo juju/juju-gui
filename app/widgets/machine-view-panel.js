@@ -28,6 +28,7 @@ YUI.add('machine-view-panel', function(Y) {
 
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
+      utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
 
   /**
@@ -974,68 +975,41 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The addUnit event facade.
         */
         _scaleUpService: function(e) {
-          var db = this.get('db'),
-              serviceName = e.serviceName,
-              service = db.services.getById(serviceName),
-              existingUnitCount = service.get('units').size(),
-              displayName, ghostUnit, unitId, unitIdCount;
-          if (serviceName.indexOf('$') > 0) {
-            displayName = service.get('displayName')
-                                 .replace(/^\(/, '').replace(/\)$/, '');
-          } else {
-            displayName = serviceName;
-          }
-          for (var i = 0; i < e.unitCount; i += 1) {
-            unitIdCount = existingUnitCount + i;
-            unitId = serviceName + '/' + unitIdCount;
-            ghostUnit = db.addUnits({
-              id: unitId,
-              displayName: displayName + '/' + unitIdCount,
-              charmUrl: service.get('charm'),
-              is_subordinate: service.get('is_subordinate')
-            });
-            this.get('env').add_unit(
-                serviceName,
-                1,
-                null,
-                Y.bind(this._addUnitCallback, this, ghostUnit),
-                {modelId: unitId});
-          }
+          var db = this.get('db');
+          utils.addGhostAndEcsUnits(
+              db,
+              this.get('env'),
+              db.services.getById(e.serviceName),
+              e.unitCount,
+              this._addUnitCallback);
         },
 
         /**
           Handles showing the successful unit notifications
 
           @method _addUnitCallback
-          @param {Object} ghostUnit the unit which was created in the db.
-          @param {Object} The event facade.
+          @param {Object} e The event facade.
+          @param {Object} db Reference to the db.
+          @param {Object} ghostUnit The unit which was created in the db.
+
         */
-        _addUnitCallback: function(ghostUnit, e) {
-          var db = this.get('db');
-          var models = Y.juju.models;
+        _addUnitCallback: function(e, db, ghostUnit) {
           if (e.err) {
             // Add a notification and exit if the API call failed.
-            db.notifications.add(
-                new models.Notification({
-                  title: 'Error adding unit ' + ghostUnit.displayName,
-                  message: 'Could not add the requested unit. Server ' +
-                      'responded with: ' + e.err,
-                  level: 'error'
-                }));
+            db.notifications.add({
+              title: 'Error adding unit ' + ghostUnit.displayName,
+              message: 'Could not add the requested unit. Server ' +
+                  'responded with: ' + e.err,
+              level: 'error'
+            });
             return;
           }
           // Notify the unit has been successfully created.
-          db.notifications.add(
-              new models.Notification({
-                title: 'Added unit ' + ghostUnit.displayName,
-                message: 'Successfully created the requested unit.',
-                level: 'info'
-              })
-          );
-          // Remove the ghost unit: the real unit will be re-added by the
-          // mega-watcher handlers.
-          ghostUnit.service = e.service_name;
-          db.removeUnits(ghostUnit);
+          db.notifications.add({
+            title: 'Added unit ' + ghostUnit.displayName,
+            message: 'Successfully created the requested unit.',
+            level: 'info'
+          });
         },
 
         /**

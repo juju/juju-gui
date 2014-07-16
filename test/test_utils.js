@@ -1605,9 +1605,117 @@ describe('utilities', function() {
       // reset it back to normal
       utils.checkForExistingService = old;
     });
+  });
 
+  describe('addGhostAndEcsUnits', function() {
+    var utils, testUtils;
 
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
 
+    function testScaleUp(serviceName) {
+      var service = {
+        get: function(key) {
+          var returnVal;
+          switch (key) {
+            case 'id':
+              returnVal = serviceName;
+              break;
+            case 'units':
+              returnVal = { size: function() { return 2; } };
+              break;
+            case 'displayName':
+              if (serviceName.indexOf('$') > 0) {
+                returnVal = '(' + serviceName + ')';
+              } else {
+                returnVal = serviceName;
+              }
+              break;
+            case 'charm':
+              returnVal = 'I am a charm url';
+              break;
+            case 'is_subordinate':
+              returnVal = false;
+              break;
+          }
+          return returnVal;
+        }
+      };
+      var db = {
+        addUnits: testUtils.makeStubFunction(),
+        removeUnits: testUtils.makeStubFunction()
+      };
+      var env = {
+        add_unit: testUtils.makeStubFunction()
+      };
+      var unitCount = 2;
+      var callback = testUtils.makeStubFunction();
+
+      var units = utils.addGhostAndEcsUnits(
+          db, env, service, unitCount, callback);
+      // Test the db.addUnits call.
+      assert.equal(db.addUnits.callCount(), 2);
+      var addUnitsArgs = db.addUnits.allArguments();
+      assert.deepEqual(addUnitsArgs[0][0], {
+        id: serviceName + '/' + 2,
+        displayName: serviceName + '/' + 2,
+        charmUrl: 'I am a charm url',
+        is_subordinate: false
+      });
+      assert.deepEqual(addUnitsArgs[1][0], {
+        id: serviceName + '/' + 3,
+        displayName: serviceName + '/' + 3,
+        charmUrl: 'I am a charm url',
+        is_subordinate: false
+      });
+      // Test the env.add_unit call.
+      assert.equal(env.add_unit.callCount(), 2);
+      var add_unit_args = env.add_unit.allArguments();
+      assert.equal(add_unit_args[0][0], serviceName);
+      assert.equal(add_unit_args[0][1], 1);
+      assert.strictEqual(add_unit_args[0][2], null);
+      assert.equal(typeof add_unit_args[0][3], 'function');
+      assert.deepEqual(add_unit_args[0][4], {
+        modelId: serviceName + '/' + 2
+      });
+      assert.equal(add_unit_args[1][0], serviceName);
+      assert.equal(add_unit_args[1][1], 1);
+      assert.strictEqual(add_unit_args[1][2], null);
+      assert.equal(typeof add_unit_args[1][3], 'function');
+      assert.deepEqual(add_unit_args[1][4], {
+        modelId: serviceName + '/' + 3
+      });
+      assert.equal(units.length, 2);
+    }
+
+    it('creates machines, units, and places units', function() {
+      testScaleUp('myService');
+    });
+
+    it('creates machines, units, and places units for ghosts', function() {
+      testScaleUp('myGhostService$');
+    });
+
+    it('properly removes the ghost units on env add_unit callback', function() {
+      var ghostUnit = { ghostUnit: 'I am' };
+      var db = {
+        removeUnits: testUtils.makeStubFunction()
+      };
+      var callback = testUtils.makeStubFunction();
+      var e = {
+        service_name: 'serviceName'
+      };
+      utils.removeGhostAddUnitCallback(ghostUnit, db, callback, e);
+      assert.equal(db.removeUnits.calledOnce(), true);
+      assert.equal(db.removeUnits.lastArguments()[0].service, 'serviceName');
+      assert.equal(callback.calledOnce(), true);
+      assert.deepEqual(callback.lastArguments(), [e, db, ghostUnit]);
+    });
 
   });
 

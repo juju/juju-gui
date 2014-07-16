@@ -1231,77 +1231,31 @@ describe('machine view panel view', function() {
       assert.equal(scale.calledOnce(), true);
     });
 
-    function testScaleUpService(addUnitEvent) {
-      view.set('env', {
-        add_unit: utils.makeStubFunction()
-      });
-      view.set('db', {
+    it('calls addGhostAndEcsUnits on scale-up', function() {
+      var addGhost = utils.makeStubMethod(
+          Y.juju.views.utils, 'addGhostAndEcsUnits');
+      this._cleanups.push(addGhost);
+
+      var db = {
         services: {
-          getById: utils.makeStubFunction({
-            get: function(key) {
-              var returnVal;
-              switch (key) {
-                case 'units':
-                  returnVal = { size: function() { return 1; } };
-                  break;
-                case 'displayName':
-                  returnVal = addUnitEvent.serviceName;
-                  break;
-                case 'charm':
-                  returnVal = 'Im a charm url';
-                  break;
-                case 'is_subordinate':
-                  returnVal = false;
-                  break;
-              }
-              return returnVal;
-            }
-          })},
-        addUnits: utils.makeStubFunction()
-      });
+          getById: utils.makeStubFunction('serviceName') }};
+      var env = { foo: 'bar' };
 
-      view._scaleUpService(addUnitEvent);
-      var addUnit = view.get('env').add_unit;
-      var dbAddUnits = view.get('db').addUnits;
-      assert.equal(addUnit.callCount(), 2, 'incorrect number of units added');
-      assert.equal(
-          dbAddUnits.callCount(), 2, 'incorrect number of units added to db');
-      var dbAddUnitsArgs = dbAddUnits.allArguments();
-      assert.deepEqual(dbAddUnitsArgs[0][0], {
-        id: addUnitEvent.serviceName + '/1',
-        displayName: addUnitEvent.serviceName + '/1',
-        charmUrl: 'Im a charm url',
-        is_subordinate: false
-      });
-      assert.deepEqual(dbAddUnitsArgs[1][0], {
-        id: addUnitEvent.serviceName + '/2',
-        displayName: addUnitEvent.serviceName + '/2',
-        charmUrl: 'Im a charm url',
-        is_subordinate: false
-      });
-      var addUnitArgs = addUnit.allArguments();
-      assert.equal(addUnitArgs[0][0], addUnitEvent.serviceName);
-      assert.equal(addUnitArgs[0][1], 1);
-      assert.equal(addUnitArgs[1][0], addUnitEvent.serviceName);
-      assert.equal(addUnitArgs[1][1], 1);
-    }
+      view.set('db', db);
+      view.set('env', env);
 
-    it('creates units in the db and calls add_unit', function() {
-      var addUnitEvent = {
+      view._scaleUpService({
         serviceName: 'foo',
-        unitCount: '2'
-      };
+        unitCount: 7
+      });
 
-      testScaleUpService(addUnitEvent);
-    });
-
-    it('creates units in the db and calls add_unit for ghosts', function() {
-      var addUnitEvent = {
-        serviceName: 'foo$',
-        unitCount: '2'
-      };
-
-      testScaleUpService(addUnitEvent);
+      assert.equal(addGhost.calledOnce(), true);
+      var addArgs = addGhost.lastArguments();
+      assert.deepEqual(addArgs[0], db);
+      assert.deepEqual(addArgs[1], env);
+      assert.equal(addArgs[2], 'serviceName');
+      assert.equal(addArgs[3], 7);
+      assert.equal(typeof addArgs[4], 'function');
     });
 
     it('hides the "all placed" message when the service list is displayed',
