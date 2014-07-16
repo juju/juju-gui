@@ -102,7 +102,7 @@
     <section>
         <div class="content">
             <h2 class="title">Deployment summary</h2>
-            {{#unless noChange}}
+            {{#if majorChange}}
             <div class="summary-panel">
                 {{#if changeCount}}
                     {{#if deployServices.length}}
@@ -245,22 +245,20 @@
                     <p>No uncommitted changes</p>
                 {{/if}}
             </div>
-            {{/unless}}
-            {{#if noChange}}
-              <div class="changes open">
+            <div class="changes">
             {{else}}
-              <div class="changes">
+            <div class="changes open">
             {{/if}}
-                <div class="toggle">
-                    View the complete change log
-                    <span class="expand">
-                        <i class="sprite expand_icon"></i>
-                    </span>
-                    <span class="contract">
-                        <i class="sprite contract_icon"></i>
-                    </span>
-                </div>
-                <div class="list"></div>
+              <div class="toggle">
+                  View the complete change log
+                  <span class="expand">
+                      <i class="sprite expand_icon"></i>
+                  </span>
+                  <span class="contract">
+                      <i class="sprite contract_icon"></i>
+                  </span>
+              </div>
+              <div class="list"></div>
             </div>
         </div>
     </section>

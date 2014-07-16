@@ -236,7 +236,7 @@ YUI.add('deployer-bar', function(Y) {
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
           deployed: this._deployed,
-          noChange: this._noMajorChanges(changes)
+          majorChange: this._hasMajorChanges(changes)
         }));
       }
       container.addClass('summary-open');
@@ -248,19 +248,19 @@ YUI.add('deployer-bar', function(Y) {
 
 
     /**
-       Determines if there are no major changes in the change set.
+       Determines if there are "major" changes in the change set.
 
-       @method _noMajorChanges
+       @method _hasMajorChanges
        @param {Object} changes The change set for the summary.
      */
-    _noMajorChanges: function(changes) {
-      var noChange = true;
+    _hasMajorChanges: function(changes) {
+      var hasChange = false;
       Object.keys(changes).forEach(function(change) {
         if (changes[change].length !== 0) {
-          noChange = false;
+          hasChange = true;
         }
       });
-      return noChange;
+      return hasChange;
     },
 
     /**
