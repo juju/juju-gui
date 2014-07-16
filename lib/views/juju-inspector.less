@@ -1095,12 +1095,20 @@
         }
     }
 }
+/* window.flags.mv */
 .flag-mv .yui3-juju-inspector {
     top: @environment-header-height + 20px;
 
     .ghost .viewlet-manager-footer .controls {
         display: none;
     }
+
+    .units-input,
+    .unit-scaling .current-unit-num,
+    .unit-constraints-confirm {
+        display: none;
+    }
+
 }
 
 .bws-view-data {
