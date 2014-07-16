@@ -311,7 +311,7 @@ describe('deployer bar view', function() {
     view._showSummary();
     assert.equal(container.one('.summary-panel li').get(
         'text').replace(/\s+/g, ' ').trim(),
-        'root-level machine created with constraints ( mem=1024MB )');
+        'new-0 created with constraints ( mem=1024MB )');
   });
 
   it('displays correctly with null constraints', function() {
@@ -324,7 +324,7 @@ describe('deployer bar view', function() {
     view._showSummary();
     assert.equal(container.one('.summary-panel li').get(
         'text').replace(/\s+/g, ' ').trim(),
-        'root-level machine created');
+        'new-0 created');
   });
 
   it('can generate descriptions for all the changes in the ecs', function() {
