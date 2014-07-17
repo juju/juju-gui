@@ -626,6 +626,7 @@ YUI.add('deployer-bar', function(Y) {
                     machine.someConstraints = true;
                   }
                 }
+                machine.name = command.options.modelId;
                 changes.addMachines.push(machine);
               }
             });
