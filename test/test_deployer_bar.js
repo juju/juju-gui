@@ -91,7 +91,11 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('summary-open'), true);
   });
 
-  it('can show a summary of uncommitted changes for deployment', function() {
+  it('shows a summary of major uncommitted changes for deployment', function() {
+    // We must add at least one major change
+    var machine = {};
+    ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
+
     var changesStub = utils.makeStubMethod(view, '_getChangeCount', 0),
         deployStub = utils.makeStubMethod(view, '_getDeployedServices', []),
         relationsStub = utils.makeStubMethod(view, '_getAddRelations', []);
@@ -111,30 +115,50 @@ describe('deployer bar view', function() {
         container.one('.post-summary'), null,
         'Deployment confirmation not present.'
     );
+  });
+
+  it('shows only the changelog if there are no major changes', function() {
+    // We must add at least one chan
+    var containerMachine = {
+      parentId: 'new-0', containerType: 'lxc'
+    };
+    ecs.lazyAddMachines([[containerMachine]], { modelId: 'new-1' });
+    var changesStub = utils.makeStubMethod(view, '_getChangeCount', 0),
+        deployStub = utils.makeStubMethod(view, '_getDeployedServices', []),
+        relationsStub = utils.makeStubMethod(view, '_getAddRelations', []);
+    this._cleanups.push(changesStub.reset);
+    this._cleanups.push(deployStub.reset);
+    this._cleanups.push(relationsStub.reset);
+    view._showSummary();
     assert.equal(
-        container.one('.change-list'), null,
-        'Recent changes present when they should not be.'
+        container.hasClass('summary-open'), true,
+        'Summary is not open.'
+    );
+    assert.equal(
+        container.one('.summary-panel'), null,
+        'Summary panel HTML exists when it should not.'
+    );
+    assert.notEqual(
+        container.one('.post-summary'), null,
+        'Deployment confirmation not present.'
+    );
+    assert.equal(
+        container.one('.panel.summary .changes').hasClass('open'), true,
+        'Changelog not open when it should be.'
     );
   });
 
-  it('can open the recent changes in the summary panel', function() {
+  it('can toggle the recent changes in the summary panel', function() {
+    var majorChangeStub = utils.makeStubMethod(view, '_hasMajorChanges', true);
+    this._cleanups.push(majorChangeStub);
+    view._showSummary();
     var changesNode = container.one('.panel.summary .changes');
     var toggleNode = changesNode.one('.toggle');
-    container.one('.deploy-button').simulate('click');
     assert.equal(changesNode.hasClass('open'), false,
         'The changes should initially be closed');
     toggleNode.simulate('click');
     assert.equal(changesNode.hasClass('open'), true,
         'The changes node should have had the open class added');
-  });
-
-  it('can hide the recent changes in the summary panel', function() {
-    var changesNode = container.one('.panel.summary .changes');
-    var toggleNode = changesNode.one('.toggle');
-    container.one('.deploy-button').simulate('click');
-    toggleNode.simulate('click');
-    assert.equal(changesNode.hasClass('open'), true,
-        'The changes should set to open');
     toggleNode.simulate('click');
     assert.equal(changesNode.hasClass('open'), false,
         'The changes node should have had the open class removed');
@@ -368,17 +392,23 @@ describe('deployer bar view', function() {
   it('retrieves all the machine changes', function() {
     var machine = {};
     ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
+    ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
+    var results = view._getChanges(ecs).addMachines;
+    assert.lengthOf(results, 2);
+    assert.deepEqual(results[0], machine);
+    assert.deepEqual(results[1], machine);
+  });
+
+  it('ignores container changes in the summary', function() {
+    var machine = {};
+    ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
     var container = {
       parentId: 'new-0', containerType: 'lxc'
     };
-    // Add a second machine and a container on the first.
-    ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
-    ecs.lazyAddMachines([[container]], { modelId: 'new-2' });
+    ecs.lazyAddMachines([[container]], { modelId: 'new-1' });
     var results = view._getChanges(ecs).addMachines;
-    assert.lengthOf(results, 3);
+    assert.lengthOf(results, 1);
     assert.deepEqual(results[0], machine);
-    assert.deepEqual(results[1], machine);
-    assert.deepEqual(results[2], container);
   });
 
   it('can export the environment', function() {
