@@ -2125,6 +2125,25 @@ YUI.add('juju-view-utils', function(Y) {
   }
   utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
 
+  /**
+    Returns the real service name for the provided service ghost id.
+
+    @method getServiceNameFromGhostId
+    @param {String} id The ghost service id.
+    @param {Object} db Reference to the app db.
+    @return {String} The service name.
+  */
+  utils.getServiceNameFromGhostId = function(id, db) {
+    var serviceName;
+    db.services.some(function(service) {
+      if (service.get('id') === id) {
+        serviceName = service.get('displayName').replace(/^\(/, '').replace(/\)$/, '');
+        return true;
+      }
+    });
+    return serviceName;
+  };
+
 
 }, '0.1.0', {
   requires: [
