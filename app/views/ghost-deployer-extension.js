@@ -79,29 +79,32 @@ YUI.add('ghost-deployer-extension', function(Y) {
             // Options used by ECS, ignored by environment.
             {modelId: ghostServiceId});
 
-        // Add an unplaced unit to this service.
-        // The service is not yet deployed (we just added it to ECS), so we can
-        // safely assume the first unit to be unit 0. Each subsequent unit
-        // added to the ghost service would have number
-        // `ghostService.get('units').size()`.
-        var unitId = ghostServiceId + '/0';
-        var ghostUnit = db.addUnits({
-          id: unitId,
-          displayName: serviceName + '/0',
-          charmUrl: charmId,
-          is_subordinate: charm.get('is_subordinate')
-        });
-        // Add an ECS add_unit record. Attach a callback that, when called,
-        // removes the ghost unit from the database. The real unit should then
-        // be created reacting to the mega-watcher changes.
-        this.env.add_unit(
-            ghostServiceId, // The service to which the unit is added.
-            1, // Add a single unit.
-            null, // For now the unit is unplaced.
-            Y.bind(this._addUnitCallback, this, ghostUnit), // The callback.
-            // Options used by ECS, ignored by environment.
-            {modelId: unitId}
-        );
+        // Add an unplaced unit to this service if it is not a subordinate
+        // (subordinate units reside alongside non-subordinate units).
+        if (!charm.get('is_subordinate')) {
+          // The service is not yet deployed (we just added it to ECS), so we
+          // can safely assume the first unit to be unit 0. Each subsequent
+          // unit added to the ghost service would have number
+          // `ghostService.get('units').size()`.
+          var unitId = ghostServiceId + '/0';
+          var ghostUnit = db.addUnits({
+            id: unitId,
+            displayName: serviceName + '/0',
+            charmUrl: charmId,
+            is_subordinate: charm.get('is_subordinate')
+          });
+          // Add an ECS add_unit record. Attach a callback that, when called,
+          // removes the ghost unit from the database. The real unit should then
+          // be created reacting to the mega-watcher changes.
+          this.env.add_unit(
+              ghostServiceId, // The service to which the unit is added.
+              1, // Add a single unit.
+              null, // For now the unit is unplaced.
+              Y.bind(this._addUnitCallback, this, ghostUnit), // The callback.
+              // Options used by ECS, ignored by environment.
+              {modelId: unitId}
+          );
+        }
       }
       this.get('subApps').charmbrowser.fire('changeState', {
         sectionA: {

@@ -434,11 +434,12 @@ YUI.add('inspector-overview-view', function(Y) {
       @method _instantiateScaleUp
     */
     _instantiateScaleUp: function() {
-      if (!this.scaleUp) {
+      var model = this.viewletManager.get('model');
+      if (!this.scaleUp && !model.get('is_subordinate')) {
         this.scaleUp = new ns.ScaleUp({
           env: this.options.env,
           db: this.options.db,
-          serviceId: this.viewletManager.get('model').get('id')
+          serviceId: model.get('id')
         });
         // XXX July 14 2014 Jeff - There is an issue where the changeState
         // events don't bubble like they should to get around this we need to

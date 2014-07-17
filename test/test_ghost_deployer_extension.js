@@ -125,7 +125,7 @@ describe('Ghost Deployer Extension', function() {
         metadata: { id: 'ghost-service-id' }}});
   });
 
-  it('creates a ghost unit', function() {
+  it('can create a ghost unit', function() {
     window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
@@ -140,6 +140,15 @@ describe('Ghost Deployer Extension', function() {
       is_subordinate: charm.get('is_subordinate')
     };
     assert.deepEqual(args[0], expectedUnit);
+  });
+
+  it('does not create a ghost unit for subordinates', function() {
+    window.flags.mv = true;
+    var charm = makeCharm();
+    charm.set('is_subordinate', true);
+    ghostDeployer.deployService(charm);
+    var db = ghostDeployer.db;
+    assert.strictEqual(db.addUnits.callCount(), 0);
   });
 
   it('deploys the ghost unit using the ECS', function() {
