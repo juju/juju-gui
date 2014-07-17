@@ -16,9 +16,15 @@ PPA.
 
 ::
 
+  # For precise:
+  sudo apt-get install python-software-properties
+  # For saucy and later:
+  sudo apt-get install software-properties-common
+  # Then
+  sudo add-apt-repository ppa:juju/stable
   sudo add-apt-repository ppa:juju/pkgs
   sudo apt-get update
-  sudo apt-get install juju
+  sudo apt-get install juju-core
 
 
 Now it is time to actually get the GUI itself set up.  Juju GUI uses
@@ -32,8 +38,17 @@ Closure linter tools locally, and g++ for contextify::
   sudo add-apt-repository ppa:gophers/go
   sudo apt-get update
   sudo apt-get install nodejs imagemagick python-sphinx python-yaml \
-    python-tz python-virtualenv python-shelltoolbox python-selenium \
-    python-tornado python-gflags g++ xvfb
+    python-tz python-virtualenv python-shelltoolbox \
+    python-tornado python-gflags g++ xvfb git build-essential
+
+For precise, selenium has to be installed from pip::
+
+  sudo pip install selenium
+
+For saucy and later::
+
+  sudo apt-get install python-selenium
+  
 
 See :ref:`Browser Testing <browser-testing>` if you are curious about the
 reason for ``python-shelltoolbox`` and ``python-selenium``.
