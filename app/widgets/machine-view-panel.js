@@ -411,6 +411,8 @@ YUI.add('machine-view-panel', function(Y) {
             // If the user drops a unit on an already created container then
             // place the unit.
             this._placeUnit(unit, parentId);
+            var token = this._findMachineOrContainerToken(parentId, true);
+            this._selectContainerToken(token);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);
           }
@@ -464,10 +466,18 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} unit The event.
         */
         _handleCreateMachine: function(e) {
-          var machine = this._createMachine(e.containerType, e.parentId,
-                                            e.constraints);
+          var machine = this._createMachine(
+              e.containerType, e.parentId, e.constraints);
           if (e.unit) {
             this.get('env').placeUnit(e.unit, machine.id);
+          }
+          var token;
+          if (machine.id.indexOf('/') !== -1) {
+            token = this._findMachineOrContainerToken(machine.id, true);
+            this._selectContainerToken(token);
+          } else {
+            token = this._findMachineOrContainerToken(machine.id, false);
+            this._selectMachineToken(token);
           }
         },
 
@@ -502,8 +512,8 @@ YUI.add('machine-view-panel', function(Y) {
             if (containerInput === 'kvm') {
               constraints = e.constraints;
             }
-            machine = this._createMachine(containerInput, machineInput,
-                                          constraints);
+            machine = this._createMachine(
+                containerInput, machineInput, constraints);
             placeId = machine.id;
           } else if (containerInput === 'root-container') {
             placeId = machineInput;
@@ -868,6 +878,26 @@ YUI.add('machine-view-panel', function(Y) {
           this._addIconsToUnits(units);
           machine.units = units;
           return units;
+        },
+
+        /**
+           Given a machine name, find the associated token.
+
+           @method _findMachineOrContainerToken
+           @param {String} name The machine name.
+           @param {bool} isContainer If the machine is a container.
+           @return {Object} The DOM node of the machine token.
+         */
+        _findMachineOrContainerToken: function(name, isContainer) {
+          var token;
+          if (isContainer) {
+            token = this.get('containerTokens')[name];
+          } else {
+            token = this.get('machineTokens')[name];
+          }
+          if (token) {
+            return token.get('container').one('.token');
+          }
         },
 
         /**

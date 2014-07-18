@@ -108,6 +108,12 @@ describe('machine view panel view', function() {
     assert.equal(container.hasClass('machine-view-panel'), true);
   });
 
+  it('can find machine tokens', function() {
+    view.render();
+    var token = view._findMachineOrContainerToken('0', false);
+    assert.equal(token.getAttribute('data-id'), '0');
+  });
+
   it('should render the header widgets', function() {
     view.render();
     assert.equal(container.one('.column .head .title').get('text'),
@@ -372,82 +378,97 @@ describe('machine view panel view', function() {
           assert.equal(containerToken.setNotDroppable.calledOnce(), true);
         });
 
-    it('creates a new machine when dropped on machine header', function() {
-      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
-      this._cleanups.push(toggleStub.reset);
-      view.render();
-      view._unitTokenDropHandler({
-        dropAction: 'machine',
-        unit: 'test/1'
-      });
-      var env = view.get('env');
-      // The create machine options should be visible.
-      var createMachine = container.one('.create-machine');
-      assert.equal(createMachine.hasClass('create-machine-view'), true);
-      assert.equal(createMachine.getHTML() === '', false);
-      // Confirm the machine creation.
-      container.one('.create-machine-view .create').simulate('click');
-      assert.deepEqual(env.addMachines.lastArguments()[0], [{
-        containerType: undefined,
-        parentId: undefined,
-        constraints: {
-          'cpu-power': '',
-          mem: '',
-          'root-disk': ''
-        }
-      }]);
-      // A new ghost machine has been added to the database.
-      assert.isNotNull(machines.getById('new0'));
-      var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], 'new0');
-    });
+    it('creates and selects a new machine when dropped on machine header',
+        function() {
+          var toggleStub = utils.makeStubMethod(
+              view, '_toggleAllPlacedMessage');
+          this._cleanups.push(toggleStub.reset);
+          var selectStub = utils.makeStubMethod(view, '_selectMachineToken');
+          this._cleanups.push(selectStub.reset);
+          view.render();
+          view._unitTokenDropHandler({
+            dropAction: 'machine',
+            unit: 'test/1'
+          });
+          var env = view.get('env');
+          // The create machine options should be visible.
+          var createMachine = container.one('.create-machine');
+          assert.equal(createMachine.hasClass('create-machine-view'), true);
+          assert.equal(createMachine.getHTML() === '', false);
+          // Confirm the machine creation.
+          container.one('.create-machine-view .create').simulate('click');
+          assert.deepEqual(env.addMachines.lastArguments()[0], [{
+            containerType: undefined,
+            parentId: undefined,
+            constraints: {
+              'cpu-power': '',
+              mem: '',
+              'root-disk': ''
+            }
+          }]);
+          // A new ghost machine has been added to the database.
+          assert.isNotNull(machines.getById('new0'));
+          var placeArgs = env.placeUnit.lastArguments();
+          assert.strictEqual(placeArgs[0].id, 'test/1');
+          assert.equal(placeArgs[1], 'new0');
 
-    it('creates new container when dropped on container header', function() {
-      view.render();
-      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
-      this._cleanups.push(toggleStub.reset);
-      view.set('selectedMachine', '5');
-      view._unitTokenDropHandler({
-        dropAction: 'container',
-        unit: 'test/1'
-      });
-      var env = view.get('env');
-      // The create container options should be visible
-      var createView = container.one('.create-machine-view');
-      assert.equal(createView.hasClass('create-machine-view'), true,
-                   'expected class is not present');
-      assert.equal(createView.getHTML() === '', false,
-                   'HTML is not present');
-      // Make sure the correct container type is selected
-      var select = createView.one('select');
-      select.all('option').each(function(option, index) {
-        var value = option.get('value');
-        if (value === 'lxc') {
-          select.getDOMNode().selectedIndex = index;
+          // Call count will be 2--once for the create, and once when
+          // selectFirstMachine is called on render.
+          assert.equal(selectStub.callCount(), 2);
         }
-      });
-      // Confirm the container creation
-      createView.one('select').simulate('change');
-      createView.one('.create').simulate('click');
-      assert.deepEqual(env.addMachines.lastArguments()[0], [{
-        containerType: 'lxc',
-        parentId: '5',
-        constraints: {
-          'cpu-power': '',
-          mem: '',
-          'root-disk': ''
+    );
+
+    it('creates and selects a new container when dropped on container header',
+        function() {
+          view.render();
+          var toggleStub = utils.makeStubMethod(
+              view, '_toggleAllPlacedMessage');
+          this._cleanups.push(toggleStub.reset);
+          var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
+          this._cleanups.push(selectStub.reset);
+          view.set('selectedMachine', '5');
+          view._unitTokenDropHandler({
+            dropAction: 'container',
+            unit: 'test/1'
+          });
+          var env = view.get('env');
+          // The create container options should be visible
+          var createView = container.one('.create-machine-view');
+          assert.equal(createView.hasClass('create-machine-view'), true,
+                       'expected class is not present');
+          assert.equal(createView.getHTML() === '', false,
+                       'HTML is not present');
+          // Make sure the correct container type is selected
+          var select = createView.one('select');
+          select.all('option').each(function(option, index) {
+            var value = option.get('value');
+            if (value === 'lxc') {
+              select.getDOMNode().selectedIndex = index;
+            }
+          });
+          // Confirm the container creation
+          createView.one('select').simulate('change');
+          createView.one('.create').simulate('click');
+          assert.deepEqual(env.addMachines.lastArguments()[0], [{
+            containerType: 'lxc',
+            parentId: '5',
+            constraints: {
+              'cpu-power': '',
+              mem: '',
+              'root-disk': ''
+            }
+          }], 'Args passed to addMachines are incorrect');
+          // A new ghost machine has been added to the database.
+          assert.notEqual(machines.getById('5/lxc/new0'), null,
+                          'new container is not in the database');
+          var placeArgs = env.placeUnit.lastArguments();
+          assert.strictEqual(placeArgs[0].id, 'test/1',
+                             'the unit ID passed to placeUnit is incorrect');
+          assert.equal(placeArgs[1], '5/lxc/new0',
+                       'the container ID passed to placeUnit is incorrect');
+          assert.equal(selectStub.callCount(), 1);
         }
-      }], 'Args passed to addMachines are incorrect');
-      // A new ghost machine has been added to the database.
-      assert.notEqual(machines.getById('5/lxc/new0'), null,
-                      'new container is not in the database');
-      var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0].id, 'test/1',
-                         'the unit ID passed to placeUnit is incorrect');
-      assert.equal(placeArgs[1], '5/lxc/new0',
-                   'the container ID passed to placeUnit is incorrect');
-    });
+    );
 
     it('displays new container form when dropped on a machine', function() {
       view.render();
@@ -466,28 +487,34 @@ describe('machine view panel view', function() {
                    'HTML is not present');
     });
 
-    it('places the unit on an already existing container', function() {
-      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
-      this._cleanups.push(toggleStub.reset);
-      view._machinesHeader = {
-        setNotDroppable: utils.makeStubFunction(),
-        updateLabelCount: utils.makeStubFunction()
-      };
-      view._containersHeader = {
-        setNotDroppable: utils.makeStubFunction()
-      };
-      view._unitTokenDropHandler({
-        dropAction: 'container',
-        targetId: '0/lxc/1',
-        unit: 'test/1'
-      });
-      var env = view.get('env');
-      // The machine is already created so we don't need to create a new one.
-      assert.equal(env.addMachines.callCount(), 0);
-      var placeArgs = env.placeUnit.lastArguments();
-      assert.strictEqual(placeArgs[0].id, 'test/1');
-      assert.equal(placeArgs[1], '0/lxc/1');
-    });
+    it('places the unit on and selects an already existing container',
+        function() {
+          var toggleStub = utils.makeStubMethod(
+              view, '_toggleAllPlacedMessage');
+          this._cleanups.push(toggleStub.reset);
+          var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
+          this._cleanups.push(selectStub.reset);
+          view._machinesHeader = {
+            setNotDroppable: utils.makeStubFunction(),
+            updateLabelCount: utils.makeStubFunction()
+          };
+          view._containersHeader = {
+            setNotDroppable: utils.makeStubFunction()
+          };
+          view._unitTokenDropHandler({
+            dropAction: 'container',
+            targetId: '0/lxc/1',
+            unit: 'test/1'
+          });
+          var env = view.get('env');
+          // The machine is already created so we don't create a new one.
+          assert.equal(env.addMachines.callCount(), 0);
+          var placeArgs = env.placeUnit.lastArguments();
+          assert.strictEqual(placeArgs[0].id, 'test/1');
+          assert.equal(placeArgs[1], '0/lxc/1');
+          assert.equal(selectStub.callCount(), 1);
+        }
+    );
   });
 
   describe('unplaced units column', function() {
