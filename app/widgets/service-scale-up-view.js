@@ -180,6 +180,26 @@ YUI.add('service-scale-up-view', function(Y) {
     },
 
     /**
+      Make the UI visible.
+
+      @method render
+      @return {Object} reference to the view instance.
+    */
+    showScaleUp: function() {
+      this.get('container').removeClass('hidden');
+    },
+
+    /**
+      Hide the UI
+
+      @method render
+      @return {Object} reference to the view instance.
+    */
+    hideScaleUp: function() {
+      this.get('container').addClass('hidden');
+    },
+
+    /**
       Renders the template content into the container and sets the
       apropriate classes.
 

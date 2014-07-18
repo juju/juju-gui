@@ -105,6 +105,10 @@ YUI.add('machine-view-panel', function(Y) {
         _bindEvents: function() {
           var db = this.get('db');
 
+          // Service change handlers
+          this.addEvent(db.services.after(
+              ['add', 'remove'], this._toggleScaleUp, this));
+
           // Machine change handlers
           this.addEvent(db.machines.after(
               'add', this._onMachineAdd, this));
@@ -960,12 +964,31 @@ YUI.add('machine-view-panel', function(Y) {
             container: scaleUpContainer,
             services: this.get('db').services
           }).render();
+          this._toggleScaleUp();
           this.addEvent(
               this._scaleUpView.on('addUnit', this._scaleUpService, this));
           this.addEvent(this._scaleUpView.on('listOpened',
               this._toggleAllPlacedMessage.bind(this, false)));
           this.addEvent(this._scaleUpView.on('listClosed',
               this._toggleAllPlacedMessage.bind(this, undefined)));
+        },
+
+        /**
+          Hide or show the scale up UI depending on whether there are
+          any services.
+
+          @method _toggleScaleUp
+        */
+        _toggleScaleUp: function() {
+          var scaleUpView = this._scaleUpView;
+          if (scaleUpView) {
+            if (this.get('db').services.size() === 0) {
+              scaleUpView.hideScaleUp();
+            }
+            else {
+              scaleUpView.showScaleUp();
+            }
+          }
         },
 
         /**
