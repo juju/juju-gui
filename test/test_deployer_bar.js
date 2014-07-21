@@ -226,7 +226,7 @@ describe('deployer bar view', function() {
       },
       time: '12:34 PM'
     }, {
-      icon: 'changes-service-added',
+      icon: 'changes-units-added',
       msg: ' 1 foo unit has been added.',
       change: {
         command: {
@@ -235,7 +235,16 @@ describe('deployer bar view', function() {
         }
       }
     }, {
-      icon: 'changes-service-added',
+      icon: 'changes-units-removed',
+      msg: '1 unit has been removed from foo',
+      change: {
+        command: {
+          method: '_remove_units',
+          args: [['foo/0']]
+        }
+      }
+    }, {
+      icon: 'changes-units-added',
       msg: ' 2 foo units have been added.',
       change: {
         command: {
