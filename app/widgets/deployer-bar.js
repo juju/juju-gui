@@ -232,6 +232,7 @@ YUI.add('deployer-bar', function(Y) {
           addedRelations: changes.addRelations,
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
+          removedUnits: changes.removeUnits,
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
@@ -426,7 +427,7 @@ YUI.add('deployer-bar', function(Y) {
                 ' has been destroyed.';
             break;
           case '_add_unit':
-            changeItem.icon = 'changes-service-added';
+            changeItem.icon = 'changes-units-added';
             var units = change.command.args[1],
                 msg;
             if (units !== 1) {
@@ -436,6 +437,14 @@ YUI.add('deployer-bar', function(Y) {
             }
             changeItem.description = ' ' + units + ' ' +
                 change.command.args[0] + ' ' + msg;
+            break;
+          case '_remove_units':
+            changeItem.icon = 'changes-units-removed';
+            /*jslint -W004*/
+            var units = change.command.args[0];
+            changeItem.description = units.length + ' unit' +
+                (units.length === 1 ? ' has' : 's have') +
+                ' been removed from ' + units[0].split('/')[0];
             break;
           case '_add_relation':
             var services = this._getRealRelationEndpointNames(
@@ -571,6 +580,7 @@ YUI.add('deployer-bar', function(Y) {
         addRelations: [],
         removeRelations: [],
         addUnits: [],
+        removeUnits: [],
         addMachines: [],
         destroyMachines: [],
         setConfigs: []
@@ -612,6 +622,14 @@ YUI.add('deployer-bar', function(Y) {
               icon: this._getServiceIconUrl(name),
               serviceName: name,
               numUnits: args[1]
+            });
+            break;
+          case '_remove_units':
+            name = args[0][0].split('/')[0];
+            changes.removeUnits.push({
+              icon: this._getServiceIconUrl(name),
+              numUnits: args[0].length,
+              serviceName: name
             });
             break;
           case '_addMachines':
