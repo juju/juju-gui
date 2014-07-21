@@ -33,16 +33,18 @@
             display: block;
         }
     }
-    &.uncommitted {
-        background-color: #ddf4fc;
-
-        &:hover,
-        &.active {
-            background-color: #c5edfb;
-        }
+    &.uncommitted .token-uncommitted {
+        display: inline-block;
     }
     span {
         display: block;
+    }
+    .unit-uncommitted,
+    .token-uncommitted {
+        .uncommitted-circle;
+    }
+    .token-uncommitted {
+        display: none;
     }
     .top {
         .display-flex;
