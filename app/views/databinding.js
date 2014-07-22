@@ -350,17 +350,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
       defaultBinding.get = function(model) {
-        if (model.get) {
-          // YUI mode.
-          return model.get(this.name);
-        } else {
-          // POJO mode!
-          var result = model;
-          this.name.split('.').forEach(function(name) {
-            result = result && result[name];
-          });
-          return result;
-        }
+        return model.get(this.name);
       };
       var binding = Y.mix(defaultBinding, config);
       // Explicitly allow additional binding information to
@@ -484,18 +474,8 @@ YUI.add('juju-databinding', function(Y) {
       }
 
       var modelEventHandles = this.resetModelChangeEvents(model);
-      if (checkClassImplements(viewletModel, 'model')) {
-        modelEventHandles.push(
-            model.on('change', this._modelChangeHandler, this));
-      } else {
-        // Pojo support
-        // This typically depends on an Object.observe polyfill being
-        // in place (which it is). As browsers natively support this
-        // we can one day drop the polyfill.
-        var callback = Y.bind(this._modelChangeHandler, this);
-        Object.observe(model, callback);
-        modelEventHandles.push({model: model, callback: callback});
-      }
+      modelEventHandles.push(
+          model.on('change', this._modelChangeHandler, this));
 
       // Bind and listen for model changes.
       var viewletContainer = viewlet.container || viewlet.get('container');
@@ -515,7 +495,6 @@ YUI.add('juju-databinding', function(Y) {
           viewlet._eventHandles.push(
               node.on('valueChange', this._nodeChangeHandler, this, viewlet));
         }
-
       }, this);
 
       this._setupWildcarding(viewlet);
@@ -628,8 +607,6 @@ YUI.add('juju-databinding', function(Y) {
         handles.forEach(function(handle) {
           if (handle.detach) {
             handle.detach();
-          } else {
-            Object.unobserve(handle.model, handle.callback);
           }
         });
         handles.splice(0, handles.length);
@@ -655,7 +632,6 @@ YUI.add('juju-databinding', function(Y) {
       var modelEventHandles = this._models[mID] || [];
 
       modelEventHandles.forEach(function(handle) {
-
         if (handle.model) {
           // We don't just need to detach the events we also need to remove them
           // from the bindings list entirely. This loops through each property
@@ -675,11 +651,8 @@ YUI.add('juju-databinding', function(Y) {
             }, this);
           }, this);
         }
-
         if (handle.detach) {
           handle.detach();
-        } else {
-          Object.unobserve(handle.model, handle.callback);
         }
       }, this);
       // Empty the list
@@ -847,13 +820,7 @@ YUI.add('juju-databinding', function(Y) {
       // If this is an initialization then we want to force all
       // changes not just the unapplied changes.
       if (!initialize) {
-        if (Y.Lang.isArray(evt)) {
-          // Object.observe updates
-          keys = evt.map(function(update) { return update.name; });
-        } else {
-          keys = evt && Y.Object.keys(evt.changed);
-        }
-
+        keys = evt && Y.Object.keys(evt.changed);
         // Mix any unapplied changes into the key set
         // updating this list. We then use that combined
         // list to generate the binding set.
@@ -1098,7 +1065,6 @@ YUI.add('juju-databinding', function(Y) {
   requires: ['juju-view-utils',
              'juju-models',
              'yui-later',
-             'observe',
              'node',
              'event-valuechange']
 });

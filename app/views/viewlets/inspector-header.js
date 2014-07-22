@@ -65,32 +65,32 @@ YUI.add('inspector-header-view', function(Y) {
       Renders the view into it's container.
 
       @method render
-      @param {Object} charm the charm model to display the details of.
-      @param {Object} viewletManagerAttrs the attributes passed to the
+      @param {Object} model The charm model to display the details of.
+      @param {Object} viewletManagerAttrs The attributes passed to the
         viewlet manager.
     */
     render: function(model, viewContainerAttrs) {
-      var pojoModel = model.getAttrs();
-      pojoModel.charmUrl = pojoModel.charm;
+      var model = model.getAttrs();
+      model.charmUrl = model.charm;
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.
-      pojoModel.icon = utils.getCharmIconUrl(
-          pojoModel.charmUrl, viewContainerAttrs.store,
+      model.icon = utils.getCharmIconUrl(
+          model.charmUrl, viewContainerAttrs.store,
           viewContainerAttrs.env);
-      if (pojoModel.pending) {
+      if (model.pending) {
         // Check if there is already a service using the default name to
         // trigger the name ux.
         // This regex simply removes the outer parentheses from the
         // displayName that is set in the ghost-inspector.js updateGhostName
         // method.  If the regex doesn't match, blow up.  It should match.
-        var name = pojoModel.displayName.match(/^\(([^)]*)\)$/)[1];
+        var name = model.displayName.match(/^\(([^)]*)\)$/)[1];
         if (utils.checkForExistingService(name, viewContainerAttrs.db)) {
-          pojoModel.invalidName = 'invalid';
+          model.invalidName = 'invalid';
         } else {
-          pojoModel.invalidName = 'valid';
+          model.invalidName = 'valid';
         }
       }
-      this.get('container').setHTML(this.template(pojoModel));
+      this.get('container').setHTML(this.template(model));
     },
 
     /**
