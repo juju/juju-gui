@@ -101,8 +101,10 @@ YUI.add('service-inspector', function(Y) {
         var serviceName = model.get('id');
         var unitName = serviceName + '/' + activeUnit;
         var service = db.services.getById(serviceName);
-        var unit = service.get('units').getById(unitName);
+        var unitsModel = service.get('units');
+        var unit = unitsModel.revive(unitsModel.getById(unitName));
         this.showViewlet('unitDetails', unit);
+        unitsModel.free(unit);
       } else {
         // XXX j.c.sackett July 8th 2014: This is a temporary handling until
         // we have better slot destruction behavior in the viewlet manager.

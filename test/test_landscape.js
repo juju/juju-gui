@@ -80,9 +80,8 @@ describe('Landscape integration', function() {
     url = landscape.getLandscapeURL(db.services.getById('mysql'));
     url.should.equal(
         'http://landscape.example.com/computers/criteria/environment:test+service:mysql/');
-
-    url = landscape.getLandscapeURL(db.services.getById('mysql')
-                                    .get('units').item(0));
+    var units = db.services.getById('mysql').get('units');
+    url = landscape.getLandscapeURL(units.revive(units.item(0)));
     url.should.equal(
         'http://landscape.example.com/computers/criteria/environment:test+unit:mysql-0/');
   });
