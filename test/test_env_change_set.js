@@ -788,11 +788,11 @@ describe('Environment Change Set', function() {
         // Make sure we don't call the env set_config method
         assert.equal(envObj._set_config.callCount(), 0);
       });
-        
-      it.only('handles heirarchical changes on queued services', function() {
+
+      it('handles heirarchical changes on queued services', function() {
         var db = ecs.get('db');
         db.services = new Y.juju.models.ServiceList();
-        db.services.ghostService({ get: function() {} });
+        db.services.add({ id: 'serviceId1$' });
         ecs.changeSet = {
           'service-1': {
             command: {
@@ -803,14 +803,14 @@ describe('Environment Change Set', function() {
           }
         };
         var callback = testUtils.makeStubFunction();
-        var args = ['service-1', {}, {}, {}, callback];
+        var args = ['serviceId1$', {}, {}, {}, callback];
         var key = ecs._lazySetConfig(args);
         var record = ecs.changeSet[key];
         assert.equal(typeof record.command.onParentResults, 'function');
         assert.equal(record.executed, false);
         assert.equal(record.id, key);
-        assert.deepEqual(record.parents, ['service-1', 'service-2']);
-        assert.equal(Y.Object.size(ecs.changeSet), 3);
+        assert.deepEqual(record.parents, ['service-1']);
+        assert.equal(Y.Object.size(ecs.changeSet), 2);
         // Perform this last, as it will mutate ecs.changeSet.
         assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
       });
