@@ -55,7 +55,8 @@ describe('Ghost Deployer Extension', function() {
       charms: { add: utils.makeStubFunction({ get: getMethod }) },
       services: {
         ghostService: utils.makeStubFunction({
-          get: utils.makeStubFunction('ghost-service-id')
+          get: utils.makeStubFunction('ghost-service-id'),
+          set: utils.makeStubFunction()
         })
       },
       notifications: { add: utils.makeStubFunction() },
@@ -80,6 +81,16 @@ describe('Ghost Deployer Extension', function() {
       is_subordinate: false
     });
   };
+
+  it('sets the ghost service config to its defaults', function() {
+    window.flags.mv = true;
+    var charm = makeCharm();
+    charm.set('options', { foo: { default: 'bar' }});
+    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.deployService(charm);
+    var service = ghostDeployer.db.services.item(0);
+    assert.deepEqual(service.get('config'), {foo: 'bar'});
+  });
 
   it('calls the env deploy method with default charm data', function() {
     window.flags.mv = true;
