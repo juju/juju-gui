@@ -602,7 +602,7 @@ YUI.add('subapp-browser', function(Y) {
       };
 
       if (model) {
-        if (model.get('config')) {
+        if ((window.flags && window.flags.mv) || model.get('config')) {
           // This is a service inspector.
           cfg.showCharm = metadata.charm || false;
           cfg.enableDatabinding = true;
@@ -623,9 +623,7 @@ YUI.add('subapp-browser', function(Y) {
             activeInspector.setAttrs(cfg);
             activeInspector.renderUI();
           }
-
         } else {
-          // This is a ghost service inspector.
           previousInspector = this._inspector;
           cfg.charmModel = db.charms.getById(model.get('charm'));
           activeInspector = new Y.juju.views.GhostServiceInspector(cfg);

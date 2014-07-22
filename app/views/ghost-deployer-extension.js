@@ -55,12 +55,16 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this._setupXYAnnotations(ghostAttributes, ghostService);
 
       if (window.flags && window.flags.mv) {
+        var config = {};
         var ghostServiceId = ghostService.get('id');
+        Y.Object.each(charm.get('options'), function(v, k) {
+          config[k] = v['default'];
+        });
+        ghostService.set('config', config);
         // XXX frankban 2014-05-11:
         // after the ODS demo, find a smarter way to set a unique service name.
         var serviceName = charm.get('name');
         var charmId = charm.get('id');
-        var config = {};
         var constraints = {};
         this.env.deploy(
             charmId,

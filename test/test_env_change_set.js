@@ -25,6 +25,7 @@ describe('Environment Change Set', function() {
     var modules = [
       'environment-change-set',
       'juju-env',
+      'juju-models',
       'juju-tests-utils'
     ];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
@@ -560,7 +561,7 @@ describe('Environment Change Set', function() {
       });
 
       it('creates a new `setConfig` record for a queued service', function() {
-        var args = [1, {}, 'foo', {}];
+        var args = [1, 2, 'foo', 'bar', function() {}, {modelId: 'baz'}];
         // This assumes that the _lazyDeploy tests complete successfully.
         var key = ecs._lazyDeploy(args);
         var record = ecs.changeSet[key];
@@ -786,6 +787,32 @@ describe('Environment Change Set', function() {
         assert.equal(lazySetConfig.calledOnce(), true);
         // Make sure we don't call the env set_config method
         assert.equal(envObj._set_config.callCount(), 0);
+      });
+
+      it('handles heirarchical changes on queued services', function() {
+        var db = ecs.get('db');
+        db.services = new Y.juju.models.ServiceList();
+        db.services.add({ id: 'serviceId1$' });
+        ecs.changeSet = {
+          'service-1': {
+            command: {
+              args: ['charm', 'mysql'],
+              method: '_deploy',
+              options: { modelId: 'serviceId1$' }
+            }
+          }
+        };
+        var callback = testUtils.makeStubFunction();
+        var args = ['serviceId1$', {}, {}, {}, callback];
+        var key = ecs._lazySetConfig(args);
+        var record = ecs.changeSet[key];
+        assert.equal(typeof record.command.onParentResults, 'function');
+        assert.equal(record.executed, false);
+        assert.equal(record.id, key);
+        assert.deepEqual(record.parents, ['service-1']);
+        assert.equal(Y.Object.size(ecs.changeSet), 2);
+        // Perform this last, as it will mutate ecs.changeSet.
+        assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
       });
     });
 

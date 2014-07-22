@@ -510,21 +510,44 @@ YUI.add('environment-change-set', function(Y) {
       @param {Array} args The arguments to set the config with.
     */
     _lazySetConfig: function(args) {
-      var serviceName = args[0];
-      var parent;
-      if (this.changeSet[serviceName]) {
-        // If it's a queued service then we need to add this command as a
-        // reference to the deploy service command.
-        parent = [serviceName];
-      }
+      var ghostServiceName = args[0],
+          parent = [];
+      // Search for and add the service to parent.
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.command.method === '_deploy') {
+          if (value.command.options.modelId === args[0]) {
+            parent.push(key);
+            args[0] = value.command.args[1];
+          }
+        }
+      });
+
       var command = {
         method: '_set_config', // This needs to match the method name in env.
-        args: args
+        args: args,
+        /**
+          Replace changeSet keys with real service names returned from the call.
+
+          @method onParentResults
+          @param {String} record The changeSet record which generated the
+            results.
+          @param {String} results The data returned by the API call.
+        */
+        onParentResults: function(record, results) {
+          if (record.command.method === '_deploy') {
+            this.args.forEach(function(arg, index) {
+              if (Y.Lang.isArray(arg) &&
+                  record.command.options.modelId === arg[0]) {
+                this.args[index][0] = results[0].service_name;
+              }
+            }, this);
+          }
+        }
       };
 
       var config = args[1],
           serviceConfig = args[3];
-      var service = this.get('db').services.getById(args[0]);
+      var service = this.get('db').services.getById(ghostServiceName);
       var changedFields = utils.getChangedConfigOptions(config, serviceConfig);
       // Set the values in the service model and keep the dirty fields array
       // up to date.
