@@ -128,13 +128,13 @@ YUI.add('unit-details-view', function(Y) {
       private_address: {
         depends: ['open_ports'],
         'update': function(node, value) {
-          updateAddress(node, value, this.viewlet.model.open_ports);
+          updateAddress(node, value, this.viewlet.model.get('open_ports'));
         }
       },
       public_address: {
         depends: ['open_ports'],
         'update': function(node, value) {
-          updateAddress(node, value, this.viewlet.model.open_ports);
+          updateAddress(node, value, this.viewlet.model.get('open_ports'));
         }
       }
     },
@@ -167,7 +167,7 @@ YUI.add('unit-details-view', function(Y) {
     */
     render: function(unit, viewletManagerAttrs) {
       var db = viewletManagerAttrs.db;
-      var service = db.services.getById(unit.service);
+      var service = db.services.getById(unit.get('service'));
       var context = this.getContext(db, service, unit);
       var template = Y.Node.create(this.templateWrapper({}));
       template.one('.content').setHTML(this.template(context));

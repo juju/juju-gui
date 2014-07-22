@@ -1562,9 +1562,10 @@ YUI.add('juju-view-utils', function(Y) {
         }
         url += utils.ensureTrailingSlash(annotation);
       } else if (serviceOrUnit.name === 'serviceUnit') {
+        var serviceUnitAnnotation = serviceOrUnit.get('annotations');
         annotation = (
-            serviceOrUnit.annotations &&
-            serviceOrUnit.annotations['landscape-computer']
+            serviceUnitAnnotation &&
+            serviceUnitAnnotation['landscape-computer']
             );
         if (!annotation) {
           console.warn('Unit missing the landscape-computer annotation!');

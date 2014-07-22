@@ -178,7 +178,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         scope: 'container'
       };
       manager.render();
-      manager.showViewlet('unitDetails', unit);
+      manager.showViewlet('unitDetails', db.units.revive(unit));
       var node = manager.views.unitDetails.get('container');
       assert.strictEqual(
           node.one('[data-bind="displayName"]').get('text'), 'haproxy/42');

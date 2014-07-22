@@ -413,61 +413,6 @@ describe('data binding library', function() {
           assert.equal(result.length, 1);
         });
       });
-
-      it('should be able to observe pojos', function(done) {
-        var pojo = {id: 'a', name: 'test'};
-        container = utils.makeContainer(this);
-        container.append('<div data-bind="name"></div>');
-        var called = false;
-
-        engine = new BindingEngine({interval: 0});
-        engine.bind(pojo, {
-          get: function(m) { return m[this.name];},
-          name: 'testViewlet',
-          container: container,
-          changedValues: {},
-          _eventHandles: [],
-          bindings: {
-            name: {
-              update: function(node, value) {
-                node.setHTML(value);
-                called = true;
-              }
-            }
-          }
-        });
-
-        called = false;
-        // Should trigger binding update
-        pojo.name = 'rising';
-        setTimeout(function() {
-          // The polyfll impl of Object.observe needs this,
-          // the browser impl shouldn't.
-          assert.equal(called, true);
-          done();
-        }, 125);
-      });
-
-      it('unbind method unbinds models and pojos (unit test)', function() {
-        container = utils.makeContainer(this);
-        engine = new BindingEngine({interval: 0});
-        var model = {id: 'test', name: 'this'};
-        viewlet = {
-          container: container,
-          changedValues: {},
-          _eventHandles: []
-        };
-        engine.bind(model, viewlet);
-        // Gently poke at the internals
-        // to see that we've unbound
-        var notifier = Object.getNotifier(model);
-        var listeners = notifier.listeners();
-        assert.equal(listeners.length, 1);
-
-        engine.unbind();
-        listeners = notifier.listeners();
-        assert.equal(listeners.length, 0);
-      });
     });
 
     describe('field types', function() {

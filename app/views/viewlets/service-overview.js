@@ -741,7 +741,7 @@ YUI.add('inspector-overview-view', function(Y) {
     /**
       Show a unit within the left-hand panel.
       Note that, due to the revived model below, this model can potentially
-      be out of date, as the POJO from the LazyModelList is the one kept up
+      be out of date, as the the LazyModelList is the one kept up
       to date.  This is just a first-pass and will be changed later.
 
       @method showUnitDetails

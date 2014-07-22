@@ -714,7 +714,6 @@ YUI.add('deployer-bar', function(Y) {
     'bundle-import-helpers',
     'event-tracker',
     'node',
-    'observe',
     'handlebars',
     'juju-templates'
   ]

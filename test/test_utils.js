@@ -1419,10 +1419,11 @@ describe('utilities', function() {
           id: 'django',
           annotations: {'landscape-computers': '+service:django'}
         });
-        unit = db.addUnits({
+        var unitObj = db.addUnits({
           id: 'django/42',
           annotations: {'landscape-computer': '+unit:django-42'}
         });
+        unit = db.units.revive(unitObj);
         done();
       });
     });
