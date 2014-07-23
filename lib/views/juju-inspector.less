@@ -37,7 +37,6 @@
     position: absolute;
     top: 20px;
 
-
     .left-breakout {
         .type9;
         z-index: 500;
@@ -605,6 +604,10 @@
                 border-top: 1px solid @inspector-divider-top;
                 color: @text-colour;
                 padding-left: @inspector-main-padding;
+                span[dismiss] {
+                    text-decoration: underline;
+                    cursor: pointer;
+                }
             }
         }
 
@@ -1094,6 +1097,8 @@
             }
         }
     }
+
+
 }
 /* window.flags.mv */
 .flag-mv .yui3-juju-inspector {
@@ -1109,6 +1114,13 @@
         display: none;
     }
 
+    .view-container .view-content.unit-scaling {
+        padding: 0;
+    }
+
+    .viewlet-manager-navigation .hide-on-mv {
+        display: none;
+    }
 }
 
 .bws-view-data {
