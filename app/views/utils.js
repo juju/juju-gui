@@ -1473,6 +1473,10 @@ YUI.add('juju-view-utils', function(Y) {
   utils.simplifyState = function(unit, life) {
     var state = unit.agent_state,
         inError = (/-?error$/).test(state);
+    if (unit.id !== unit.displayName) {
+      // If the ID and the displayName are different, it's an uncommitted unit.
+      return 'uncommitted';
+    }
     if (life === 'dying' && !inError) {
       return 'dying';
     } else {
@@ -1516,6 +1520,7 @@ YUI.add('juju-view-utils', function(Y) {
     if ((/fail|error/).test(category)) { return 'error'; }
     if ((/landscape/).test(category)) { return 'landscape'; }
     if (category === 'running') { return 'running'; }
+    if (category === 'uncommitted') { return 'uncommitted'; }
     return 'pending';
   };
 
@@ -1562,7 +1567,12 @@ YUI.add('juju-view-utils', function(Y) {
         }
         url += utils.ensureTrailingSlash(annotation);
       } else if (serviceOrUnit.name === 'serviceUnit') {
-        var serviceUnitAnnotation = serviceOrUnit.get('annotations');
+        var serviceUnitAnnotation;
+        if (serviceOrUnit.get) {
+          serviceUnitAnnotation = serviceOrUnit.get('annotations');
+        } else {
+          serviceUnitAnnotation = serviceOrUnit.annotations;
+        }
         annotation = (
             serviceUnitAnnotation &&
             serviceUnitAnnotation['landscape-computer']

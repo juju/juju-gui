@@ -92,6 +92,8 @@ YUI.add('service-inspector', function(Y) {
         this.showViewlet('inspectorHeader');
         this.showViewlet('overview');
         this.set('rendered', true);
+      } else {
+        this.views.overview.render();
       }
       if (this.get('showCharm')) {
         var charmId = model.get('charm');

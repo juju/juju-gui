@@ -36,6 +36,7 @@ YUI.add('inspector-overview-view', function(Y) {
     'pending': function(status) {
       return status.category + ' units';
     },
+    uncommitted: 'uncommitted units',
     running: 'running units',
     'landscape': function(status) {
       var nameMap = {
@@ -134,6 +135,7 @@ YUI.add('inspector-overview-view', function(Y) {
   */
   function sortStatuses(statuses) {
     var indexMap = {
+      'uncommitted': 0,
       'error': 1,
       'pending': 2,
       'running': 3,
@@ -166,6 +168,7 @@ YUI.add('inspector-overview-view', function(Y) {
         // the list in the unit tests
         buttons = {
           error: ['resolve', 'retry', 'remove'],
+          uncommitted: [],
           pending: ['remove'],
           running: ['remove'],
           landscape: ['landscape']
@@ -420,12 +423,18 @@ YUI.add('inspector-overview-view', function(Y) {
       @param {Object} attributes the viewlet manager attributes.
     */
     render: function(attributes) {
-      var container = this.get('container');
+      var container = this.get('container'),
+          rendered = this.get('rendered');
       if (window.flags && window.flags.mv) {
         this._instantiateScaleUp();
-        container.append(this.scaleUp.render());
+        if (!rendered) {
+          container.append(this.scaleUp.render());
+        }
       }
-      container.append(this.template(attributes.model.getAttrs()));
+      if (!rendered) {
+        this.set('rendered', true);
+        container.append(this.template(attributes.model.getAttrs()));
+      }
     },
 
     /**
@@ -434,12 +443,13 @@ YUI.add('inspector-overview-view', function(Y) {
       @method _instantiateScaleUp
     */
     _instantiateScaleUp: function() {
-      var model = this.viewletManager.get('model');
+      var model = this.viewletManager.get('model'),
+          serviceId = model.get('id');
       if (!this.scaleUp && !model.get('is_subordinate')) {
         this.scaleUp = new ns.ScaleUp({
           env: this.options.env,
           db: this.options.db,
-          serviceId: model.get('id')
+          serviceId: serviceId
         });
         // XXX July 14 2014 Jeff - There is an issue where the changeState
         // events don't bubble like they should to get around this we need to
@@ -447,6 +457,10 @@ YUI.add('inspector-overview-view', function(Y) {
         this.scaleUp.on('changeState', function(e) {
           this.fire('changeState', e.details[0]);
         }, this);
+      } else {
+        this.scaleUp.setAttrs({
+          serviceId: serviceId
+        });
       }
     },
 
@@ -865,6 +879,19 @@ YUI.add('inspector-overview-view', function(Y) {
     generateActionButtonList: generateActionButtonList,
     updateStatusList: updateStatusList,
     sortStatuses: sortStatuses
+  }, {
+    ATTRS: {
+      /**
+        Flag to indicate if the render method had been called
+
+        @attribute rendered
+        @type {Boolean}
+        @default false
+      */
+      rendered: {
+        value: false
+      }
+    }
   });
 
 }, '0.0.1', {
