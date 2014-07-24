@@ -551,8 +551,10 @@ YUI.add('environment-change-set', function(Y) {
       var changedFields = utils.getChangedConfigOptions(config, serviceConfig);
       // Set the values in the service model and keep the dirty fields array
       // up to date.
-      service._dirtyFields = service._dirtyFields
-                                    .concat(Object.keys(changedFields));
+      var DIRTYFIELDS = '_dirtyFields';
+      var dirtyFields = service.get(DIRTYFIELDS);
+      dirtyFields = dirtyFields.concat(Object.keys(changedFields));
+      service.set(DIRTYFIELDS, dirtyFields);
       service.setAttrs(
           config,
           Y.mix(service.get('config'), changedFields, true, null, null, true));

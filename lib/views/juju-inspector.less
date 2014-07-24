@@ -724,6 +724,12 @@
                 }
             }
             .settings-wrapper {
+                label.uncommitted::after {
+                    .uncommitted-circle;
+                    content: "\00B0";
+                    margin-left: 4px;
+                    line-height: 4px;
+                }
                 span.resolver .conflicted-env {
                   display: inline-block;
                   min-width: 25px;
