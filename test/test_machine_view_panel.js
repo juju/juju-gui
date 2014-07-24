@@ -798,8 +798,8 @@ describe('machine view panel view', function() {
                    'models are out of sync with displayed list');
       list.each(function(item, index) {
         var m = machines.item(index);
-        assert.equal(item.one('.title').get('text'), m.displayName,
-                     'displayed item does not match model');
+        assert.equal(item.one('.title').get('text').replace(/\s+/g, ' ').trim(),
+            m.displayName + ' °', 'displayed item does not match model');
       });
     });
 
@@ -867,13 +867,15 @@ describe('machine view panel view', function() {
               selector + '[data-id="' + machineModel.get('id') + '"]');
       assert.notEqual(item, null, 'machine was not initially displayed');
       assert.equal(
-          item.one('.title').get('text'), machineModel.get('displayName'),
+          item.one('.title').get('text').replace(/\s+/g, ' ').trim(),
+          machineModel.get('displayName') + ' °',
           'initial machine names do not match');
       machineModel.set('id', id);
       item = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(item, null, 'machine was not displayed post-update');
       assert.equal(
-          item.one('.title').get('text'), machineModel.get('displayName'),
+          item.one('.title').get('text').replace(/\s+/g, ' ').trim(),
+          machineModel.get('displayName') + ' °',
           'machine names do not match post-update');
     });
 

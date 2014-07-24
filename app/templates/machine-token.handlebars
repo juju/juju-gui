@@ -1,6 +1,9 @@
 <div class="token">
   <div class="top">
-    <span class="title">{{ displayName }}</span>
+    <span class="title">
+      {{ displayName }}
+      <span class="token-uncommitted">&deg;</span>
+    </span>
     <span class="service-icons">
       {{#units}}
         <img src="{{icon}}" alt="{{service}}" class="unit">
