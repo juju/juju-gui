@@ -52,13 +52,16 @@ describe('Service Inspector', function() {
     env.destroy();
   });
 
-  var setUpInspector = function(data) {
-    if (!data) { data = charmData; }
-    var charm = new models.Charm(data.charm);
+  var setUpInspector = function(service) {
+    var charm = new models.Charm(charmData.charm);
     db.charms.add(charm);
 
-    // Create a ghost service with the fake charm.
-    service = db.services.ghostService(charm);
+    if (!service) {
+      service = db.services.add({
+        id: charm.get('package_name'),
+        charm: charm.get('id')
+      });
+    }
 
     var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function(id) {
@@ -100,12 +103,27 @@ describe('Service Inspector', function() {
     assert.equal(stubShow.lastArguments()[0], 'charmDetails');
   });
 
-  it('only renders the overview on the first call to render', function() {
+  it('handles re-rendering the overview', function() {
     var inspector = setUpInspector();
     var stubShow = utils.makeStubMethod(inspector, 'showViewlet');
-    inspector.render();
-    inspector.render();
+    this._cleanups.push(stubShow.reset);
+    var stubOverviewRender = utils.makeStubMethod(
+        inspector.views.overview, 'render');
+    this._cleanups.push(stubOverviewRender.reset);
+    var stubHeaderRender = utils.makeStubMethod(
+        inspector.views.inspectorHeader, 'render');
+    this._cleanups.push(stubHeaderRender.reset);
+
+    inspector.renderUI();
+    // Two calls two showViewlet, one for inspectorHeader, one for overview.
     assert.equal(stubShow.callCount(), 2);
+    assert.equal(stubOverviewRender.callCount(), 0);
+    assert.equal(stubHeaderRender.callCount(), 0);
+
+    inspector.renderUI();
+    assert.equal(stubShow.callCount(), 2);
+    assert.equal(stubOverviewRender.callCount(), 1);
+    assert.equal(stubHeaderRender.callCount(), 1);
   });
 
   it('can render unit details', function() {
@@ -130,5 +148,19 @@ describe('Service Inspector', function() {
     assert.deepEqual(
         fireArgs[1],
         { sectionA: { metadata: { unit: null, charm: true }}});
+  });
+
+  it('can dismiss notifications', function() {
+    // Create a ghost service with a fake charm.
+    var charm = new models.Charm(charmData.charm);
+    db.charms.add(charm);
+    service = db.services.ghostService(charm);
+    var stubDismiss = utils.makeStubMethod(
+        Y.juju.viewlets.InspectorHeader.prototype, '_dismissMessage');
+    this._cleanups.push(stubDismiss.reset);
+    var inspector = setUpInspector(service);
+    inspector.render();
+    inspector.get('container').one('span[dismiss]').simulate('click');
+    assert.equal(stubDismiss.callCount(), 1);
   });
 });

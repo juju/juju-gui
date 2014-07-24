@@ -37,7 +37,6 @@
     position: absolute;
     top: 20px;
 
-
     .left-breakout {
         .type9;
         z-index: 500;
@@ -605,6 +604,10 @@
                 border-top: 1px solid @inspector-divider-top;
                 color: @text-colour;
                 padding-left: @inspector-main-padding;
+                span[dismiss] {
+                    text-decoration: underline;
+                    cursor: pointer;
+                }
             }
         }
 
@@ -971,11 +974,17 @@
             .status-unit-header.landscape {
                 background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
             }
-            .status-unit-content.running ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
+            .status-unit-header.uncommitted {
+                background-image: url("/juju-ui/assets/images/inspector-unit-uncommitted.png");
+            }
+            .status-unit-content.uncommitted ul li {
+                background: url("/juju-ui/assets/images/inspector-unit-uncommitted.png") no-repeat scroll 35px center;
             }
             .status-unit-content.pending ul li {
                 background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
+            }
+            .status-unit-content.running ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
             }
             .status-unit-content.error ul li {
                 background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
@@ -1100,6 +1109,8 @@
             }
         }
     }
+
+
 }
 /* window.flags.mv */
 .flag-mv .yui3-juju-inspector {
@@ -1115,6 +1126,13 @@
         display: none;
     }
 
+    .view-container .view-content.unit-scaling {
+        padding: 0;
+    }
+
+    .viewlet-manager-navigation .hide-on-mv {
+        display: none;
+    }
 }
 
 .bws-view-data {

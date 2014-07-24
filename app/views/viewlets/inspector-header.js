@@ -31,7 +31,8 @@ YUI.add('inspector-header-view', function(Y) {
     slot: 'header',
     template: templates['inspector-header'],
     events: {
-      'input[name=service-name]': { valuechange: 'updateGhostName' }
+      'input[name=service-name]': { valuechange: 'updateGhostName' },
+      'span[dismiss]': { click: '_dismissMessage' }
     },
     bindings: {
       charmChanged: {
@@ -90,7 +91,11 @@ YUI.add('inspector-header-view', function(Y) {
           pojoModel.invalidName = 'valid';
         }
       }
-      this.get('container').setHTML(this.template(pojoModel));
+      var container = this.get('container');
+      container.setHTML(this.template(pojoModel));
+      if (window.flags && window.flags.mv && pojoModel.pending) {
+        container.one('.ghost-message').removeClass('hidden');
+      }
     },
 
     /**
@@ -129,6 +134,17 @@ YUI.add('inspector-header-view', function(Y) {
         input.removeClass('valid');
         input.addClass('invalid'); // add x
       }
+    },
+
+    /**
+      Hides the ghost-message element
+
+      @method _dismissMessage
+      @param {Object} e The click event facade.
+    */
+    _dismissMessage: function(e) {
+      e.preventDefault();
+      e.currentTarget.get('parentElement').addClass('hidden');
     }
   });
 
