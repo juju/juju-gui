@@ -31,7 +31,8 @@ YUI.add('service-config-view', function(Y) {
   var extensions = [
     ns.ViewletBaseView,
     ns.ConflictViewExtension,
-    ns.ConfigFileViewExtension
+    ns.ConfigFileViewExtension,
+    Y.Event.EventTracker
   ];
 
   ns.Config = Y.Base.create(name, Y.View, extensions, {
@@ -111,7 +112,42 @@ YUI.add('service-config-view', function(Y) {
           }
       );
       this.attachExpandingTextarea();
+      this._attachEvents(service);
+      this._highlightUncommitted(service.get('_dirtyFields'));
     },
+
+    /**
+      Attaches the events this view needs to operate.
+
+      @method _attachEvents
+      @param {Object} service The service model instance.
+    */
+    _attachEvents: function(service) {
+      this.addEvent(
+          service.on('*:_dirtyFieldsChange', this._highlightUncommitted, this));
+    },
+
+    /**
+      Adds the proper classes to the uncommitted inputs to show the uncommitted
+      status.
+
+      @method _highlightUncommitted
+      @param {Object | Array} e This is either the set attribute event from the
+        ecs setting the _dirtyFields array with new data or the _dirtyFields
+        attribute directly.
+    */
+    _highlightUncommitted: function(e) {
+      var container = this.get('container'),
+          dirtyFields = e.newVal || e;
+      container.all('label.uncommitted').removeClass('uncommitted');
+      dirtyFields.forEach(function(configKey) {
+        container.one('[data-bind=config.' + configKey + ']')
+                 .ancestor('.settings-wrapper')
+                 .one('label')
+                 .addClass('uncommitted');
+      });
+    },
+
     /**
       Ensures that all resizing textareas are attached.
 
@@ -202,6 +238,7 @@ YUI.add('service-config-view', function(Y) {
     _setConfigCallback: function(container, evt) {
       // If the user has conflicted fields and still chooses to
       // save, then we will be overwriting the values in Juju.
+      var model = this.model;
       if (evt.err) {
         var db = this.viewletManager.get('db');
         db.notifications.add(
@@ -212,7 +249,21 @@ YUI.add('service-config-view', function(Y) {
             })
         );
         this.onRemoveFile();
-      } else if (!this.get('destroyed')) {
+      } else {
+        // Clear out the dirty fields that were committed in this call.
+        var dirtyFields = model.get('_dirtyFields'),
+            newValues;
+        dirtyFields = dirtyFields.filter(function(dirtyKey) {
+          newValues = Object.keys(evt.newValues);
+          return !newValues.some(function(newValKey) {
+            if (newValKey === dirtyKey) { return true; }
+          });
+        });
+        this._highlightUncommitted(dirtyFields);
+        model.set('_dirtyFields', dirtyFields);
+      }
+
+      if (!this.get('destroyed')) {
         // If the inspector has been destroyed then we don't need to make these
         // changes as the destructor should have cleaned it up.
         this._highlightSaved(container);
@@ -255,6 +306,7 @@ YUI.add('service-config-view', function(Y) {
 }, '0.0.1', {
   requires: [
     'event-simulate',
+    'event-tracker',
     'juju-charm-models',
     'viewlet-base-view',
     'conflict-view-extension',

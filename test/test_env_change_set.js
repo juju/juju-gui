@@ -536,9 +536,16 @@ describe('Environment Change Set', function() {
         service = {
           _dirtyFields: [],
           setAttrs: testUtils.makeStubFunction(),
-          get: testUtils.makeStubFunction({
-            foo: 'baz'
-          })
+          get: function(key) {
+            if (key === '_dirtyFields') {
+              return service._dirtyFields;
+            } else {
+              return { foo: 'bar' };
+            }
+          },
+          set: function(key, value) {
+            service[key] = value;
+          }
         };
         ecs.get('db').services = {
           getById: testUtils.makeStubFunction(service)
@@ -579,11 +586,14 @@ describe('Environment Change Set', function() {
       });
 
       it('concats changed fields to the service modesl', function() {
-        service._dirtyFields.push('bax');
+        var dirtyFields = service.get('_dirtyFields');
+        dirtyFields.push('bax');
+        service.set('_dirtyFields', dirtyFields);
         var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz' }];
         ecs._lazySetConfig(args);
-        assert.equal(service._dirtyFields.length, 2);
-        assert.deepEqual(service._dirtyFields, ['bax', 'foo']);
+        dirtyFields = service.get('_dirtyFields');
+        assert.equal(dirtyFields.length, 2);
+        assert.deepEqual(dirtyFields, ['bax', 'foo']);
       });
 
       it('sets the changed values to the service model', function() {

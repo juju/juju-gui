@@ -170,8 +170,9 @@ describe('test_model.js', function() {
 
     it('services are instantiated with _dirtyFields property', function() {
       var service = new models.Service();
-      assert.equal(Y.Lang.isArray(service._dirtyFields), true);
-      assert.equal(service._dirtyFields.length, 0);
+      var dirtyFields = service.get('_dirtyFields');
+      assert.equal(Y.Lang.isArray(dirtyFields), true);
+      assert.equal(dirtyFields.length, 0);
     });
 
     it('services have unit and relation modellists', function() {
