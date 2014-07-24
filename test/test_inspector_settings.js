@@ -139,6 +139,17 @@ describe('Inspector Settings', function() {
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
   });
 
+  it('attaches the dirtyFieldsChange event', function() {
+    var highlight = utils.makeStubMethod(
+        Y.juju.viewlets.Config.prototype, '_highlightUncommitted');
+    this._cleanups.push(highlight.reset);
+    inspector = setUpInspector();
+    service.fire('_dirtyFieldsChange');
+    // It is called twice, once in the render method and once when the
+    // _dirtyFieldsChange event is fired from the service model.
+    assert.equal(highlight.callCount(), 2);
+  });
+
   it('properly renders charm options with booleans', function() {
     inspector = setUpInspector();
     // Verify the viewlet rendered, previously it would raise.
@@ -477,6 +488,15 @@ describe('Inspector Settings', function() {
         parentNode.all('[name=admins].conflict').size(),
         0,
         'found the conflict node');
+  });
+
+  it('adds the uncommitted class to uncommitted config fields', function() {
+    inspector = setUpInspector();
+    assert.equal(inspector.get('container').all('label.uncommitted').size(), 0);
+    service.fire('_dirtyFieldsChange', {
+      newVal: ['admins']
+    });
+    assert.equal(inspector.get('container').all('label.uncommitted').size(), 1);
   });
 
 });

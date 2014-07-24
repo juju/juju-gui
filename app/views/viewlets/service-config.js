@@ -306,6 +306,7 @@ YUI.add('service-config-view', function(Y) {
 }, '0.0.1', {
   requires: [
     'event-simulate',
+    'event-tracker',
     'juju-charm-models',
     'viewlet-base-view',
     'conflict-view-extension',
