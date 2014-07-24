@@ -93,7 +93,7 @@ YUI.add('inspector-header-view', function(Y) {
       }
       var container = this.get('container');
       container.setHTML(this.template(pojoModel));
-      if (window.flags && window.flags.mv) {
+      if (window.flags && window.flags.mv && pojoModel.pending) {
         container.one('.ghost-message').removeClass('hidden');
       }
     },

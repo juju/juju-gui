@@ -355,39 +355,48 @@ describe('Inspector Overview', function() {
 
     var units = new Y.LazyModelList();
 
-    var c = units.add({
-          id: 'mysql/2',
-          displayName: 'mysql/2',
-          agent_state: 'pending'
-        }),
-        d = units.add({
-          id: 'mysql/3',
-          displayName: 'mysql/3',
-          agent_state: 'started'
-        }),
-        e = units.add({
-          id: 'mysql/4',
-          displayName: 'mysql/4',
-          agent_state: 'started',
-          annotations: {
-            'landscape-needs-reboot': 'foo'
-          }
-        }),
-        a = units.add({
-          id: 'mysql/0',
-          displayName: 'mysql/0',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        }),
-        b = units.add({
-          id: 'mysql/1',
-          displayName: 'mysql/1',
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
-        });
-
+    var a, b, c, d, e, f;
+    c = units.add({
+      id: 'mysql/2',
+      displayName: 'mysql/2',
+      agent_state: 'pending'
+    });
+    d = units.add({
+      id: 'mysql/3',
+      displayName: 'mysql/3',
+      agent_state: 'started'
+    });
+    e = units.add({
+      id: 'mysql/4',
+      displayName: 'mysql/4',
+      agent_state: 'started',
+      annotations: {
+        'landscape-needs-reboot': 'foo'
+      }
+    });
+    a = units.add({
+      id: 'mysql/0',
+      displayName: 'mysql/0',
+      agent_state: 'error',
+      agent_state_info: 'hook failed: "install"'
+    });
+    b = units.add({
+      id: 'mysql/1',
+      displayName: 'mysql/1',
+      agent_state: 'error',
+      agent_state_info: 'hook failed: "install"'
+    });
+    f = units.add({
+      id: '$foobar/5',
+      displayName: 'mysql/5'
+    });
     // This order is important.
+    // Addiitonally, do not change the way this object is laid out or formatted,
+    // the test fails for unknown reasons if you do.
     var expected = [
+      { type: 'unit', category: 'uncommitted', categoryType: 'uncommitted',
+        units: [
+          { unit: f, category: 'uncommitted', categoryType: 'uncommitted' }] },
       { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
         units: [
           {
@@ -494,7 +503,10 @@ describe('Inspector Overview', function() {
       displayName: 'mysql/3',
       agent_state: 'started'
     });
-
+    units.add({
+      id: '$foobar/4',
+      displayName: 'mysql/4'
+    });
     var statuses = overview.updateStatusList(units);
 
     overview.generateAndBindStatusHeaders(
@@ -504,32 +516,42 @@ describe('Inspector Overview', function() {
     var SUH = '.status-unit-header',
         SUC = '.status-unit-content';
 
-    assert.equal(unitListWrappers.size(), 3);
-    var wrapper1 = unitListWrappers.item(0);
-    assert.equal(wrapper1.one(SUH).hasClass('error'), true);
-    assert.equal(wrapper1.one(SUH).hasClass('closed-unit-list'), true);
-    assert.equal(wrapper1.one(SUC).hasClass('close-unit'), true);
-    assert.equal(wrapper1.one('.unit-qty').getHTML(), 2);
+    assert.equal(unitListWrappers.size(), 4);
+
+    var uncommittedWrapper = unitListWrappers.item(0);
+    assert.equal(uncommittedWrapper.one(SUH).hasClass('uncommitted'), true);
     assert.equal(
-        wrapper1.one('.category-label').getHTML(),
+        uncommittedWrapper.one(SUH).hasClass('closed-unit-list'), true);
+    assert.equal(uncommittedWrapper.one(SUC).hasClass('close-unit'), true);
+    assert.equal(uncommittedWrapper.one('.unit-qty').getHTML(), 1);
+
+    var errorWrapper = unitListWrappers.item(1);
+    assert.equal(errorWrapper.one(SUH).hasClass('error'), true);
+    assert.equal(errorWrapper.one(SUH).hasClass('closed-unit-list'), true);
+    assert.equal(errorWrapper.one(SUC).hasClass('close-unit'), true);
+    assert.equal(errorWrapper.one('.unit-qty').getHTML(), 2);
+    assert.equal(
+        errorWrapper.one('.category-label').getHTML(),
         'hook failed: "install"');
-    assert.notEqual(wrapper1.one(SUC).getStyle('maxHeight'), undefined);
+    assert.notEqual(errorWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
-    var wrapper2 = unitListWrappers.item(1);
-    assert.equal(wrapper2.one(SUH).hasClass('pending'), true);
-    assert.equal(wrapper2.one(SUH).hasClass('closed-unit-list'), true);
-    assert.equal(wrapper2.one(SUC).hasClass('close-unit'), true);
-    assert.equal(wrapper2.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
-    assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
+    var pendingWrapper = unitListWrappers.item(2);
+    assert.equal(pendingWrapper.one(SUH).hasClass('pending'), true);
+    assert.equal(pendingWrapper.one(SUH).hasClass('closed-unit-list'), true);
+    assert.equal(pendingWrapper.one(SUC).hasClass('close-unit'), true);
+    assert.equal(pendingWrapper.one('.unit-qty').getHTML(), 1);
+    assert.equal(
+        pendingWrapper.one('.category-label').getHTML(), 'pending units');
+    assert.notEqual(pendingWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
-    var wrapper3 = unitListWrappers.item(2);
-    assert.equal(wrapper3.one(SUH).hasClass('running'), true);
-    assert.equal(wrapper3.one(SUH).hasClass('closed-unit-list'), true);
-    assert.equal(wrapper3.one(SUC).hasClass('close-unit'), true);
-    assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
-    assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
+    var runningWrapper = unitListWrappers.item(3);
+    assert.equal(runningWrapper.one(SUH).hasClass('running'), true);
+    assert.equal(runningWrapper.one(SUH).hasClass('closed-unit-list'), true);
+    assert.equal(runningWrapper.one(SUC).hasClass('close-unit'), true);
+    assert.equal(runningWrapper.one('.unit-qty').getHTML(), 1);
+    assert.equal(
+        runningWrapper.one('.category-label').getHTML(), 'running units');
+    assert.notEqual(runningWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
     units = new Y.LazyModelList();
 
@@ -573,17 +595,19 @@ describe('Inspector Overview', function() {
 
     assert.equal(unitListWrappers.size(), 2);
 
-    wrapper2 = unitListWrappers.item(0);
-    assert.equal(wrapper2.one(SUH).hasClass('pending'), true);
-    assert.equal(wrapper2.one('.unit-qty').getHTML(), 5);
-    assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
-    assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
+    pendingWrapper = unitListWrappers.item(0);
+    assert.equal(pendingWrapper.one(SUH).hasClass('pending'), true);
+    assert.equal(pendingWrapper.one('.unit-qty').getHTML(), 5);
+    assert.equal(
+        pendingWrapper.one('.category-label').getHTML(), 'pending units');
+    assert.notEqual(pendingWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
-    wrapper3 = unitListWrappers.item(1);
-    assert.equal(wrapper3.one(SUH).hasClass('running'), true);
-    assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
-    assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
+    runningWrapper = unitListWrappers.item(1);
+    assert.equal(runningWrapper.one(SUH).hasClass('running'), true);
+    assert.equal(runningWrapper.one('.unit-qty').getHTML(), 1);
+    assert.equal(
+        runningWrapper.one('.category-label').getHTML(), 'running units');
+    assert.notEqual(runningWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
     newContainer.remove(true);
   });
