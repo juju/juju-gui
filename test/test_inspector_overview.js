@@ -355,10 +355,19 @@ describe('Inspector Overview', function() {
 
     var units = new Y.LazyModelList();
 
-    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
-        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
+    var c = units.add({
+          id: 'mysql/2',
+          displayName: 'mysql/2',
+          agent_state: 'pending'
+        }),
+        d = units.add({
+          id: 'mysql/3',
+          displayName: 'mysql/3',
+          agent_state: 'started'
+        }),
         e = units.add({
           id: 'mysql/4',
+          displayName: 'mysql/4',
           agent_state: 'started',
           annotations: {
             'landscape-needs-reboot': 'foo'
@@ -366,11 +375,13 @@ describe('Inspector Overview', function() {
         }),
         a = units.add({
           id: 'mysql/0',
+          displayName: 'mysql/0',
           agent_state: 'error',
           agent_state_info: 'hook failed: "install"'
         }),
         b = units.add({
           id: 'mysql/1',
+          displayName: 'mysql/1',
           agent_state: 'error',
           agent_state_info: 'hook failed: "install"'
         });
@@ -463,16 +474,26 @@ describe('Inspector Overview', function() {
 
     units.add({
       id: 'mysql/0',
+      displayName: 'mysql/0',
       agent_state: 'error',
       agent_state_info: 'hook failed: "install"'
     });
     units.add({
       id: 'mysql/1',
+      displayName: 'mysql/1',
       agent_state: 'error',
       agent_state_info: 'hook failed: "install"'
     });
-    units.add({ id: 'mysql/2', agent_state: 'pending' });
-    units.add({ id: 'mysql/3', agent_state: 'started' });
+    units.add({
+      id: 'mysql/2',
+      displayName: 'mysql/2',
+      agent_state: 'pending'
+    });
+    units.add({
+      id: 'mysql/3',
+      displayName: 'mysql/3',
+      agent_state: 'started'
+    });
 
     var statuses = overview.updateStatusList(units);
 
@@ -489,7 +510,8 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper1.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(wrapper1.one(SUC).hasClass('close-unit'), true);
     assert.equal(wrapper1.one('.unit-qty').getHTML(), 2);
-    assert.equal(wrapper1.one('.category-label').getHTML(),
+    assert.equal(
+        wrapper1.one('.category-label').getHTML(),
         'hook failed: "install"');
     assert.notEqual(wrapper1.one(SUC).getStyle('maxHeight'), undefined);
 
@@ -511,12 +533,36 @@ describe('Inspector Overview', function() {
 
     units = new Y.LazyModelList();
 
-    units.add({ id: 'mysql/0', agent_state: 'started' });
-    units.add({ id: 'mysql/1', agent_state: 'pending' });
-    units.add({ id: 'mysql/2', agent_state: 'pending' });
-    units.add({ id: 'mysql/3', agent_state: 'pending' });
-    units.add({ id: 'mysql/4', agent_state: 'pending' });
-    units.add({ id: 'mysql/5', agent_state: 'pending' });
+    units.add({
+      id: 'mysql/0',
+      displayName: 'mysql/0',
+      agent_state: 'started'
+    });
+    units.add({
+      id: 'mysql/1',
+      displayName: 'mysql/1',
+      agent_state: 'pending'
+    });
+    units.add({
+      id: 'mysql/2',
+      displayName: 'mysql/2',
+      agent_state: 'pending'
+    });
+    units.add({
+      id: 'mysql/3',
+      displayName: 'mysql/3',
+      agent_state: 'pending'
+    });
+    units.add({
+      id: 'mysql/4',
+      displayName: 'mysql/4',
+      agent_state: 'pending'
+    });
+    units.add({
+      id: 'mysql/5',
+      displayName: 'mysql/5',
+      agent_state: 'pending'
+    });
 
     statuses = overview.updateStatusList(units);
 
