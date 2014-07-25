@@ -101,7 +101,7 @@ describe('service scale up view', function() {
         assert.equal(container.hasClass('opened'), false);
         container.one('button.closed').simulate('click');
         assert.equal(container.hasClass('opened'), true);
-        container.one('button.cancel').simulate('click');
+        container.one('.button.cancel').simulate('click');
         assert.equal(container.hasClass('opened'), false);
       });
 
@@ -138,6 +138,27 @@ describe('service scale up view', function() {
       done();
     });
     container.one('button.add-units').simulate('click');
+  });
+
+  it('closes` when units are added', function() {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    container.one('button.closed').simulate('click');
+    container.one('li input[type=text]').set('value', 5);
+    assert.equal(container.hasClass('opened'), true);
+    container.one('button.add-units').simulate('click');
+    assert.equal(container.hasClass('opened'), false);
+  });
+
+  it('clears the inputs when units are added', function() {
+    generateView().render();
+    view.get('services').add({ id: 'foo' });
+    container.one('button.closed').simulate('click');
+    var input = container.one('li input[type=text]');
+    input.set('value', 5);
+    assert.equal(input.get('value'), 5);
+    container.one('button.add-units').simulate('click');
+    assert.equal(input.get('value'), 0);
   });
 
   it('fires an event when the list is opened', function(done) {
