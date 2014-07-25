@@ -1193,7 +1193,8 @@ describe('machine view panel view', function() {
       var destroyStub = utils.makeStubFunction();
       scaleUpViewRender = utils.makeStubFunction({
         on: onStub,
-        destroy: destroyStub
+        destroy: destroyStub,
+        showScaleUp: utils.makeStubFunction()
       });
       scaleUpView = utils.makeStubMethod(views, 'ServiceScaleUpView', {
         render: scaleUpViewRender
@@ -1213,7 +1214,8 @@ describe('machine view panel view', function() {
       var destroyStub = utils.makeStubFunction();
       scaleUpViewRender = utils.makeStubFunction({
         on: onStub,
-        destroy: destroyStub
+        destroy: destroyStub,
+        showScaleUp: utils.makeStubFunction()
       });
       scaleUpView = utils.makeStubMethod(views, 'ServiceScaleUpView', {
         render: scaleUpViewRender
@@ -1223,6 +1225,59 @@ describe('machine view panel view', function() {
       view.destroy();
       assert.equal(detachStub.callCount(), 3);
       assert.equal(destroyStub.callCount(), 1);
+    });
+
+    it('is hidden when there are no services', function() {
+      var db = view.get('db');
+      // Clear all the services from the list.
+      db.services.reset();
+      assert.equal(db.services.size(), 0,
+          'There need to be 0 services for this test');
+      view.render();
+      assert.equal(view.get('container').one(
+          '.service-scale-up-view').hasClass('hidden'), true);
+    });
+
+    it('is visible when there are services', function() {
+      var db = view.get('db');
+      assert.equal(db.services.size() > 0, true,
+          'There need to be some services for this test');
+      view.render();
+      assert.equal(view.get('container').one(
+          '.service-scale-up-view').hasClass('hidden'), false);
+    });
+
+    it('shows when a service is added', function() {
+      var db = view.get('db');
+      // Clear all the services from the list.
+      db.services.reset();
+      assert.equal(db.services.size(), 0,
+          'There initially need to be 0 services for this test');
+      view.render();
+      var scaleUpNode = view.get('container').one(
+          '.service-scale-up-view');
+      assert.equal(scaleUpNode.hasClass('hidden'), true);
+      services.add([{id: 'test'}]);
+      assert.equal(view.get('container').one(
+          '.service-scale-up-view').hasClass('hidden'), false);
+    });
+
+    it('hides when all services are removed', function() {
+      var db = view.get('db');
+      // Clear and add once service for later removal.
+      db.services.reset();
+      services.add([{id: 'test'}]);
+      assert.equal(db.services.size() > 0, true,
+          'There initially need to be some services for this test');
+      view.render();
+      var scaleUpNode = view.get('container').one(
+          '.service-scale-up-view');
+      assert.equal(scaleUpNode.hasClass('hidden'), false);
+      db.services.remove(0);
+      assert.equal(db.services.size(), 0,
+          'There now should be 0 services');
+      assert.equal(view.get('container').one(
+          '.service-scale-up-view').hasClass('hidden'), true);
     });
 
     it('calls _scaleUpService on addUnit', function() {

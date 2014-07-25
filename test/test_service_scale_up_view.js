@@ -69,6 +69,21 @@ describe('service scale up view', function() {
     assert.equal(container.hasClass('service-scale-up-view'), false);
   });
 
+  it('can be hidden', function() {
+    generateView().render();
+    assert.equal(container.hasClass('hidden'), false);
+    view.hideScaleUp();
+    assert.equal(container.hasClass('hidden'), true);
+  });
+
+  it('can be made visible', function() {
+    generateView().render();
+    view.hideScaleUp();
+    assert.equal(container.hasClass('hidden'), true);
+    view.showScaleUp();
+    assert.equal(container.hasClass('hidden'), false);
+  });
+
   it('it is closed by default', function() {
     generateView().render();
     var container = view.get('container');
