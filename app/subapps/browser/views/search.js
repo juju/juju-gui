@@ -164,7 +164,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
                     data.result);
                 var recommended = [],
                     more = [];
-                var series = this.get('envSeries');
+                var series = this.get('envSeries')();
                 if (!series) {
                   series = DEFAULT_SEARCH_SERIES;
                 }

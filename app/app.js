@@ -665,7 +665,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');
-      cfg.envSeries = this.env.get('defaultSeries');
+      cfg.envSeries = this.getEnvDefaultSeries.bind(this);
       cfg.env = this.env;
       cfg.ecs = this.env.ecs;
       this.addSubApplications(cfg);
@@ -689,6 +689,16 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+    },
+
+    /**
+      Returns the current defaultSeries value from the environment.
+
+      @method getEnvDefaultSeries
+      @return {String} The default series.
+    */
+    getEnvDefaultSeries: function() {
+      return this.env.get('defaultSeries');
     },
 
     /**

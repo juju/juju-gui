@@ -85,7 +85,6 @@ YUI.add('browser-search-widget', function(Y) {
                 if (self.ignoreInFlight) {
                   return;
                 }
-
                 var catData = this._suggestCategoryOptions(query);
                 if (catData) {
                   data.result = catData.concat(data.result);
@@ -115,7 +114,7 @@ YUI.add('browser-search-widget', function(Y) {
       var recommended = [],
           other = [],
           charm;
-      var series = this.get('envSeries') || 'precise';
+      var series = this.get('envSeries')() || 'precise';
       result.forEach(function(record) {
         charm = record.charm;
         if (charm.is_approved && charm.distro_series === series) {
@@ -651,7 +650,17 @@ YUI.add('browser-search-widget', function(Y) {
         value: {
           text: ''
         }
-      }
+      },
+
+      /**
+         A callable passsed in from the top level application which fetches the
+         default env series.
+
+         @attribute envSeries
+         @default undefined
+         @type {Function}
+       */
+      envSeries: {}
     }
   });
 
