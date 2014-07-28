@@ -53,7 +53,8 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
               store),
           autocompleteDataFormatter: store.transformResults,
           categoryIconGenerator: Y.bind(store.buildCategoryIconPath, store),
-          filters: this.get('filters')
+          filters: this.get('filters'),
+          envSeries: this.get('envSeries')
         });
         this.searchWidget.render(this.get('container').one('.search-widget'));
         this._bindSearchWidgetEvents();

@@ -90,6 +90,7 @@ YUI.add('browser-search-widget', function(Y) {
                 if (catData) {
                   data.result = catData.concat(data.result);
                 }
+                data.result = this._sortResultSet(data.result);
                 callback(data);
               },
               'failure': function() {
@@ -100,6 +101,30 @@ YUI.add('browser-search-widget', function(Y) {
             this
         );
       }
+    },
+
+    /**
+      Sorts the result data set from the autocomplete results putting the charms
+      with the correct series and recommended status on top.
+
+      @method _sortResultSet
+      @param {Array} result The data result set from the autocomplete data call.
+      @return {Array} the sorted result set.
+    */
+    _sortResultSet: function(result) {
+      var recommended = [],
+          other = [],
+          charm;
+      var series = this.get('envSeries') || 'precise';
+      result.forEach(function(record) {
+        charm = record.charm;
+        if (charm.is_approved && charm.distro_series === series) {
+          recommended.push(record);
+        } else {
+          other.push(record);
+        }
+      });
+      return recommended.concat(other);
     },
 
     /**
