@@ -329,6 +329,7 @@ describe('charmbrowser view', function() {
         set: utils.makeStubFunction(),
         updateEntityList: utils.makeStubFunction()
       });
+      charmBrowser.set('envSeries', utils.makeStubFunction());
     }
 
     function callLoadSearchResults(context) {

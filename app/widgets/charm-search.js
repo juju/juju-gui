@@ -86,10 +86,9 @@ YUI.add('browser-search-widget', function(Y) {
                   return;
                 }
                 var catData = this._suggestCategoryOptions(query);
-                if (catData) {
-                  data.result = catData.concat(data.result);
-                }
                 data.result = this._sortResultSet(data.result);
+                // The categories need to be listed first.
+                data.result = catData.concat(data.result);
                 callback(data);
               },
               'failure': function() {
