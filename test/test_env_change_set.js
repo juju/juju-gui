@@ -895,13 +895,6 @@ describe('Environment Change Set', function() {
     describe('placeUnit', function() {
       var machineId, mockSet, mockValidateUnitPlacement, unit;
 
-      it('throws if it can\'t find the unit being placed', function() {
-        var unit = { id: 'foo' };
-        assert.throws(
-            ecs.placeUnit.bind(ecs, unit),
-            'attempted to place a unit which has not been added: ' + unit.id);
-      });
-
       beforeEach(function() {
         machineId = '0';
         // Set up a mock db object.
@@ -999,7 +992,8 @@ describe('Environment Change Set', function() {
       });
 
       it('validates unit placement', function() {
-        ecs.placeUnit(unit, machineId);
+        var err = ecs.placeUnit(unit, machineId);
+        assert.isNull(err);
         assert.strictEqual(mockValidateUnitPlacement.calledOnce(), true);
         var args = mockValidateUnitPlacement.lastArguments();
         assert.deepEqual(args, [unit, {id: machineId}]);
@@ -1009,9 +1003,8 @@ describe('Environment Change Set', function() {
         mockValidateUnitPlacement = testUtils.makeStubMethod(
             ecs, 'validateUnitPlacement', 'bad wolf');
         this._cleanups.push(mockValidateUnitPlacement.reset);
-        assert.throw(
-            function() {ecs.placeUnit(unit, machineId);},
-            'bad wolf');
+        var err = ecs.placeUnit(unit, machineId);
+        assert.strictEqual(err, 'bad wolf');
         // No parents have been added to the changeset record.
         assert.strictEqual(ecs.changeSet.a.parents.length, 0);
         // The machine id has not been set on the unit.
@@ -1020,8 +1013,9 @@ describe('Environment Change Set', function() {
 
       it('raises an error if the unit was not added', function() {
         ecs.changeSet = {};
-        assert.throw(
-            function() {ecs.placeUnit(unit, machineId);},
+        var err = ecs.placeUnit(unit, machineId);
+        assert.strictEqual(
+            err,
             'attempted to place a unit which has not been added: django/42');
       });
 

@@ -311,8 +311,8 @@ YUI.add('environment-change-set', function(Y) {
       var record;
       this.currentLevel += 1;
       this.levelRecordCount = this.currentCommit[this.currentLevel].length;
-      this.currentCommit[this.currentLevel].forEach(function(record) {
-        record = this.changeSet[record.key];
+      this.currentCommit[this.currentLevel].forEach(function(changeSetRecord) {
+        record = this.changeSet[changeSetRecord.key];
         this._execute(env, record);
         this.fire('commit', record);
       }, this);
@@ -860,23 +860,22 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Place a unit on a machine or container.
 
-      Raise an error if the unit is not present in the changeset or if its
-      placement is not valid.
-
       @method placeUnit
       @param {Object} unit The unit to place.
       @param {String} machineId The id of the destination machine.
+      @return {String} An error if the unit is not present in the changeset or
+        if its placement is not valid. Null if the placement succeeds.
     */
     placeUnit: function(unit, machineId) {
       var record = this._retrieveUnitRecord(unit.id);
       if (!record) {
-        throw 'attempted to place a unit which has not been added: ' + unit.id;
+        return 'attempted to place a unit which has not been added: ' + unit.id;
       }
       var db = this.get('db');
       var error = this.validateUnitPlacement(
           unit, db.machines.getById(machineId));
       if (error) {
-        throw error;
+        return error;
       }
       // When placeUnit is called the unit could have been already placed on a
       // ghost machine. In that case the corresponding addMachines parent has
@@ -912,6 +911,7 @@ YUI.add('environment-change-set', function(Y) {
       var unitModel = unitsDb.revive(unit);
       unitModel.set('machine', machineId);
       unitsDb.free(unitModel);
+      return null;
     },
 
     /* End private environment methods. */

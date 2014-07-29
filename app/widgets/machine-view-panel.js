@@ -532,9 +532,8 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _placeUnit: function(unit, parentId) {
           var env = this.get('env');
-          try {
-            env.placeUnit(unit, parentId);
-          } catch (err) {
+          var err = env.placeUnit(unit, parentId);
+          if (err) {
             this.get('db').notifications.add({
               title: 'Unable to place the unit on the specified location',
               message: err,
