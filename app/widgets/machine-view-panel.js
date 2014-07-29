@@ -31,6 +31,8 @@ YUI.add('machine-view-panel', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
 
+  var ROOT_CONTAINER_PLACEHOLDER = 'root-container';
+
   /**
    * The view associated with the machine view panel.
    *
@@ -410,6 +412,11 @@ YUI.add('machine-view-panel', function(Y) {
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
+            // Before proceeding, rename the machine in the case the top level
+            // container has been selected.
+            if (parentId === selected + '/' + ROOT_CONTAINER_PLACEHOLDER) {
+              parentId = selected;
+            }
             this._placeUnit(unit, parentId);
             var token = this._findMachineOrContainerToken(parentId, true);
             this._selectContainerToken(token);
@@ -515,7 +522,7 @@ YUI.add('machine-view-panel', function(Y) {
             machine = this._createMachine(
                 containerInput, machineInput, constraints);
             placeId = machine.id;
-          } else if (containerInput === 'root-container') {
+          } else if (containerInput === ROOT_CONTAINER_PLACEHOLDER) {
             placeId = machineInput;
           } else {
             // Add the unit to the container.
@@ -534,7 +541,16 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {String} parentId The machine/container id to place on.
          */
         _placeUnit: function(unit, parentId) {
-          this.get('env').placeUnit(unit, parentId);
+          var env = this.get('env');
+          var err = env.placeUnit(unit, parentId);
+          if (err) {
+            this.get('db').notifications.add({
+              title: 'Unable to place the unit on the specified location',
+              message: err,
+              level: 'error'
+            });
+            return;
+          }
           this._removeUnit(unit.id);
         },
 
@@ -752,7 +768,7 @@ YUI.add('machine-view-panel', function(Y) {
           var machine = {
             displayDelete: false,
             displayName: 'Root container',
-            id: parentId + '/root-container'
+            id: parentId + '/' + ROOT_CONTAINER_PLACEHOLDER
           };
           this._createContainerToken(containerParent, machine,
               committed, units);
@@ -1087,7 +1103,7 @@ YUI.add('machine-view-panel', function(Y) {
           @param {String} machineId The id of the selected machine.
         */
         _selectRootContainer: function(machineId) {
-          var rootContainerId = machineId + '/root-container';
+          var rootContainerId = machineId + '/' + ROOT_CONTAINER_PLACEHOLDER;
           var containerTokens = this.get('containerTokens');
           this._selectContainerToken(containerTokens[rootContainerId].get(
               'container').one('.token'));

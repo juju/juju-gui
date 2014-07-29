@@ -259,6 +259,29 @@ describe('Environment Change Set', function() {
         };
         ecs._execute(envObj, record);
         assert.equal(envObj._deploy.calledOnce(), true);
+        var args = envObj._deploy.lastArguments();
+        assert.deepEqual(args, record.command.args);
+      });
+
+      it('executes the command prepare callable if defined', function() {
+        var db = {'mock': 'db'};
+        ecs.set('db', db);
+        var prepare = testUtils.makeStubFunction();
+        var record = {
+          id: 'service-123',
+          parents: undefined,
+          executed: false,
+          command: {
+            method: '_deploy',
+            args: [1, 2, 'foo', testUtils.makeStubFunction()],
+            prepare: prepare
+          }
+        };
+        ecs._execute(envObj, record);
+        assert.strictEqual(prepare.calledOnce(), true);
+        // The database object is passed to the prepare callable.
+        var args = prepare.lastArguments();
+        assert.deepEqual(args, [db]);
       });
     });
 
@@ -479,6 +502,24 @@ describe('Environment Change Set', function() {
         var key = ecs.lazyAddMachines(args);
         var record = ecs.changeSet[key];
         assert.equal(record.parents[0], 'addMachines-1');
+      });
+
+      it('includes the series in the command on preparation', function() {
+        var args = [[{}]];
+        var options = {modelId: 'new1'};
+        var key = ecs.lazyAddMachines(args, options);
+        var command = ecs.changeSet[key].command;
+        // Assign a unit to the machine.
+        var units = new Y.juju.models.ServiceUnitList();
+        units.add({
+          id: 'django/1',
+          machine: 'new1',
+          charmUrl: 'cs:utopic/django-42'
+        });
+        // Execute the command preparation.
+        command.prepare({units: units});
+        // The series is now set for the new machine call.
+        assert.strictEqual(command.args[0][0].series, 'utopic');
       });
     });
 
@@ -852,16 +893,50 @@ describe('Environment Change Set', function() {
     });
 
     describe('placeUnit', function() {
-      it('throws if it can\'t find the unit being placed', function() {
-        var unit = { id: 'foo' };
-        assert.throws(
-            ecs.placeUnit.bind(ecs, unit),
-            'attempted to place a unit which has not been added: ' + unit.id);
+      var machineId, mockSet, mockValidateUnitPlacement, unit;
+
+      beforeEach(function() {
+        machineId = '0';
+        // Set up a mock db object.
+        mockSet = testUtils.makeStubFunction();
+        ecs.set('db', {
+          units: {
+            free: testUtils.makeStubFunction(),
+            revive: testUtils.makeStubFunction({set: mockSet})
+          },
+          machines: {
+            getById: testUtils.makeStubFunction({
+              id: machineId
+            })
+          }
+        });
+        // Set up a mock unit.
+        unit = {id: 'django/42'};
+        // Mock the validateUnitPlacement function: without errors the function
+        // returns null (third argument of makeStubMethod).
+        mockValidateUnitPlacement = testUtils.makeStubMethod(
+            ecs, 'validateUnitPlacement', null);
+        this._cleanups.push(mockValidateUnitPlacement.reset);
+        // Set up a base changeset: tests can override this value if required.
+        ecs.changeSet = {
+          a: {
+            command: {
+              method: '_add_unit',
+              options: {modelId: unit.id}
+            },
+            parents: []
+          },
+          b: {
+            command: {
+              method: '_addMachines',
+              options: {modelId: machineId}
+            },
+            parents: []
+          }
+        };
       });
 
       it('places on a same ghost if it was already was placed', function() {
-        var unit = { id: '1234' };
-        var machineId = '0';
         ecs.changeSet = {
           a: {
             command: {
@@ -876,12 +951,6 @@ describe('Environment Change Set', function() {
                 modelId: machineId }},
             parents: [] }
         };
-        ecs.set('db', {
-          units: {
-            revive: testUtils.makeStubFunction({
-              set: testUtils.makeStubFunction() }),
-            free: testUtils.makeStubFunction() }
-        });
         assert.equal(ecs.changeSet.a.parents.length, 1);
         ecs.placeUnit(unit, machineId);
         assert.equal(ecs.changeSet.a.parents.length, 1);
@@ -889,28 +958,6 @@ describe('Environment Change Set', function() {
       });
 
       it('adds addMachine parent for the unit on new machines', function() {
-        var unit = { id: '1234' };
-        var machineId = '0';
-        ecs.changeSet = {
-          a: {
-            command: {
-              method: '_add_unit',
-              options: {
-                modelId: unit.id }},
-            parents: [] },
-          b: {
-            command: {
-              method: '_addMachines',
-              options: {
-                modelId: machineId }},
-            parents: [] }
-        };
-        ecs.set('db', {
-          units: {
-            revive: testUtils.makeStubFunction({
-              set: testUtils.makeStubFunction() }),
-            free: testUtils.makeStubFunction() }
-        });
         assert.equal(ecs.changeSet.a.parents.length, 0);
         ecs.placeUnit(unit, machineId);
         assert.equal(ecs.changeSet.a.parents.length, 1);
@@ -918,8 +965,6 @@ describe('Environment Change Set', function() {
       });
 
       it('updates add_unit record when container exists', function() {
-        var unit = { id: '1234' };
-        var machineId = '0';
         var cmdArgs = ['serviceid', 1, null];
         ecs.changeSet = {
           a: {
@@ -930,12 +975,6 @@ describe('Environment Change Set', function() {
                 modelId: unit.id }},
             parents: [] }
         };
-        ecs.set('db', {
-          units: {
-            revive: testUtils.makeStubFunction({
-              set: testUtils.makeStubFunction() }),
-            free: testUtils.makeStubFunction() }
-        });
         assert.deepEqual(ecs.changeSet.a.command.args, cmdArgs);
         ecs.placeUnit(unit, machineId);
         cmdArgs[2] = machineId;
@@ -943,37 +982,98 @@ describe('Environment Change Set', function() {
       });
 
       it('sets the machineId in the unit model', function() {
-        var unit = { id: '1234' };
-        var machineId = '0';
-        ecs.changeSet = {
-          a: {
-            command: {
-              method: '_add_unit',
-              options: {
-                modelId: unit.id }},
-            parents: [] },
-          b: {
-            command: {
-              method: '_addMachines',
-              options: {
-                modelId: machineId }},
-            parents: [] }
-        };
-        var set = testUtils.makeStubFunction();
-        ecs.set('db', {
-          units: {
-            revive: testUtils.makeStubFunction({ set: set }),
-            free: testUtils.makeStubFunction() }
-        });
         ecs.placeUnit(unit, machineId);
         var db = ecs.get('db');
         assert.equal(db.units.revive.calledOnce(), true);
-        var setArgs = set.lastArguments();
-        assert.equal(set.calledOnce(), true);
+        assert.equal(mockSet.calledOnce(), true);
+        var setArgs = mockSet.lastArguments();
         assert.deepEqual(setArgs, ['machine', machineId]);
         assert.equal(db.units.free.calledOnce(), true);
       });
+
+      it('validates unit placement', function() {
+        var err = ecs.placeUnit(unit, machineId);
+        assert.isNull(err);
+        assert.strictEqual(mockValidateUnitPlacement.calledOnce(), true);
+        var args = mockValidateUnitPlacement.lastArguments();
+        assert.deepEqual(args, [unit, {id: machineId}]);
+      });
+
+      it('does not apply changes if unit placement is not valid', function() {
+        mockValidateUnitPlacement = testUtils.makeStubMethod(
+            ecs, 'validateUnitPlacement', 'bad wolf');
+        this._cleanups.push(mockValidateUnitPlacement.reset);
+        var err = ecs.placeUnit(unit, machineId);
+        assert.strictEqual(err, 'bad wolf');
+        // No parents have been added to the changeset record.
+        assert.strictEqual(ecs.changeSet.a.parents.length, 0);
+        // The machine id has not been set on the unit.
+        assert.strictEqual(mockSet.called(), false);
+      });
+
+      it('raises an error if the unit was not added', function() {
+        ecs.changeSet = {};
+        var err = ecs.placeUnit(unit, machineId);
+        assert.strictEqual(
+            err,
+            'attempted to place a unit which has not been added: django/42');
+      });
+
     });
+
+  });
+
+  describe('validateUnitPlacement', function() {
+    var unit, units;
+
+    beforeEach(function() {
+      // Set up a unit used for tests and the ecs database.
+      unit = {charmUrl: 'cs:utopic/django-42'};
+      units = new Y.juju.models.ServiceUnitList();
+      ecs.set('db', {units: units});
+    });
+
+    afterEach(function() {
+      units.destroy();
+    });
+
+    it('passes the validation on an existing machine', function() {
+      var machine = {id: '0', series: 'utopic'};
+      var err = ecs.validateUnitPlacement(unit, machine);
+      assert.isNull(err);
+    });
+
+    it('passes the validation on a ghost machine', function() {
+      units.add({
+        id: 'wordpress/1',
+        charmUrl: 'cs:utopic/wordpress-0',
+        machine: '0'
+      });
+      var machine = {id: '0'};
+      var err = ecs.validateUnitPlacement(unit, machine);
+      assert.isNull(err);
+    });
+
+    it('checks the series of an existing machine', function() {
+      var machine = {id: '0', series: 'trusty'};
+      var err = ecs.validateUnitPlacement(unit, machine);
+      assert.strictEqual(
+          err, 'unable to place a utopic unit on the trusty machine 0');
+    });
+
+    it('checks the series of a ghost machine', function() {
+      units.add({
+        id: 'wordpress/1',
+        charmUrl: 'cs:trusty/wordpress-0',
+        machine: '0'
+      });
+      var machine = {id: '0'};
+      var err = ecs.validateUnitPlacement(unit, machine);
+      assert.strictEqual(
+          err,
+          'machine 0 already includes units with a different series: trusty');
+    });
+
   });
 
 });

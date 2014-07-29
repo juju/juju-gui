@@ -211,6 +211,11 @@ YUI.add('environment-change-set', function(Y) {
     */
     _execute: function(env, record) {
       var command = record.command;
+      // Commands may define a prepare method to be called before the actual
+      // external command execution.
+      if (command.prepare) {
+        command.prepare(this.get('db'));
+      }
       env[command.method].apply(env, command.args);
     },
 
@@ -303,13 +308,13 @@ YUI.add('environment-change-set', function(Y) {
       @method _commitNext
     */
     _commitNext: function(env) {
-      var command;
+      var record;
       this.currentLevel += 1;
       this.levelRecordCount = this.currentCommit[this.currentLevel].length;
-      this.currentCommit[this.currentLevel].forEach(function(record) {
-        command = this.changeSet[record.key];
-        this._execute(env, command);
-        this.fire('commit', command);
+      this.currentCommit[this.currentLevel].forEach(function(changeSetRecord) {
+        record = this.changeSet[changeSetRecord.key];
+        this._execute(env, record);
+        this.fire('commit', record);
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.
@@ -726,6 +731,27 @@ YUI.add('environment-change-set', function(Y) {
         args: args,
         options: options,
         /**
+          Make the machine series match the series of the units it will host
+          (if any).
+
+          If a command defines a prepare function, the function is called
+          passing a db instance right before the actual command execution.
+
+          @method prepare
+          @param {Object} db The database instance.
+        */
+        prepare: function(db) {
+          var units = db.units.filterByMachine(this.options.modelId);
+          if (!units.length) {
+            return;
+          }
+          // Assume all the units in this machine have the same series.
+          // This is safe since this kind of validation is done during
+          // units' placement.
+          var url = units[0].charmUrl;
+          this.args[0][0].series = utils.getSeries(url);
+        },
+        /**
           Replace changeSet keys with real machine IDs returned from the call.
 
           Note: this only works with one machine for the moment.
@@ -837,11 +863,19 @@ YUI.add('environment-change-set', function(Y) {
       @method placeUnit
       @param {Object} unit The unit to place.
       @param {String} machineId The id of the destination machine.
+      @return {String} An error if the unit is not present in the changeset or
+        if its placement is not valid. Null if the placement succeeds.
     */
     placeUnit: function(unit, machineId) {
       var record = this._retrieveUnitRecord(unit.id);
       if (!record) {
-        throw 'attempted to place a unit which has not been added: ' + unit.id;
+        return 'attempted to place a unit which has not been added: ' + unit.id;
+      }
+      var db = this.get('db');
+      var error = this.validateUnitPlacement(
+          unit, db.machines.getById(machineId));
+      if (error) {
+        return error;
       }
       // When placeUnit is called the unit could have been already placed on a
       // ghost machine. In that case the corresponding addMachines parent has
@@ -862,6 +896,7 @@ YUI.add('environment-change-set', function(Y) {
           record.parents.push(key);
           containerExists = false;
         }
+
       }, this);
       // Update the command in the changeset to place the unit on an already
       // existing machine.
@@ -869,16 +904,51 @@ YUI.add('environment-change-set', function(Y) {
         record.command.args[2] = machineId;
       }
       // Place the unit in the db.
-      var unitsDb = this.get('db').units;
+      var unitsDb = db.units;
       // Because each 'model' in a lazy model list is actually just an object
       // it doesn't fire change events. We need to revive it to a real object,
       // make the change then the change events will fire.
       var unitModel = unitsDb.revive(unit);
       unitModel.set('machine', machineId);
       unitsDb.free(unitModel);
-    }
+      return null;
+    },
 
     /* End private environment methods. */
+
+    /**
+      Validate the unit's placement on a machine.
+
+      @method placeUnit
+      @param {Object} unit The unit to place.
+      @param {Object} machine The machine where to place the unit.
+      @return {String} A validation error or null if no errors occurred.
+    */
+    validateUnitPlacement: function(unit, machine) {
+      var unitSeries = utils.getSeries(unit.charmUrl);
+      if (machine.series) {
+        // This is a real provisioned machine. Ensure its series matches the
+        // unit series.
+        if (machine.series !== unitSeries) {
+          return 'unable to place a ' + unitSeries + ' unit on the ' +
+              machine.series + ' machine ' + machine.id;
+        }
+        return null;
+      }
+      // This is a ghost machine. If units are already assigned to this
+      // machine, ensure they all share the same series.
+      var error = null;
+      var db = this.get('db');
+      db.units.filterByMachine(machine.id).some(function(existingUnit) {
+        var existingUnitSeries = utils.getSeries(existingUnit.charmUrl);
+        if (existingUnitSeries !== unitSeries) {
+          error = 'machine ' + machine.id + ' already includes units with a ' +
+              'different series: ' + existingUnitSeries;
+          return true;
+        }
+      });
+      return error;
+    }
 
   }, {
     ATTRS: {

@@ -983,8 +983,35 @@ describe('utilities', function() {
 })();
 
 (function() {
-  describe('utils.isGuiCharmUrl', function() {
 
+  describe('utils.getSeries', function() {
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('returns the series of a charmstore charm', function() {
+      var series = utils.getSeries('cs:precise/rails-47');
+      assert.strictEqual(series, 'precise');
+    });
+
+    it('returns the series of a local charm with no revision', function() {
+      var series = utils.getSeries('local:trusty/django');
+      assert.strictEqual(series, 'trusty');
+    });
+
+    it('returns the series of a user charm', function() {
+      var series = utils.getSeries('cs:~who/utopic/wordpress-42');
+      assert.strictEqual(series, 'utopic');
+    });
+
+  });
+
+  describe('utils.isGuiCharmUrl', function() {
     var utils, Y;
 
     before(function(done) {
@@ -1015,6 +1042,7 @@ describe('utilities', function() {
     });
 
   });
+
 })();
 
 

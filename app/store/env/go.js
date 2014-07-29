@@ -1289,9 +1289,11 @@ YUI.add('juju-env-go', function(Y) {
       @param {Object} unit The ghost unit model instance.
       @param {String} machineId The name of the machine/container where the
         unit must be placed. This can be either a ghost machine or a real one.
+      @return {String} An error if the unit is not present in the changeset or
+        if its placement is not valid. Null if the placement succeeds.
     */
     placeUnit: function(unit, machineId) {
-      this.get('ecs').placeUnit(unit, machineId);
+      return this.get('ecs').placeUnit(unit, machineId);
     },
 
     /**
