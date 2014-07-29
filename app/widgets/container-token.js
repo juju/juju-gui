@@ -109,7 +109,7 @@ YUI.add('container-token', function(Y) {
         /**
          * Render the units.
          *
-         * @method renderTemplate
+         * @method renderUnits
          */
         renderUnits: function() {
           this.get('container').one('.service-icons').setHTML(

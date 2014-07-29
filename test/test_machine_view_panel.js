@@ -977,6 +977,26 @@ describe('machine view panel view', function() {
                    'machine should display icons post-update');
     });
 
+    it('should update machine when a unit is added to a container', function() {
+      view.render();
+      var machineModel = machines.revive(0),
+          unitModel = units.revive(0),
+          id = machineModel.get('id'),
+          containerId = id + '/lxc/3',
+          selector = Y.Lang.sub('.machines .token[data-id="{id}"]', {id: id}),
+          item = container.one(selector);
+      machines.add([{id: containerId}]);
+      assert.notEqual(item, null, 'machine was not initially displayed');
+      assert.equal(item.one('img.unit'), null,
+                   'machine should not have any unit icons initially');
+      unitModel.set('machine', containerId);
+      item = container.one(selector);
+      assert.notEqual(item, null, 'machine was not displayed post-update');
+      var icon = item.one('img.unit');
+      assert.equal(icon.getAttribute('src'), 'test.svg',
+                   'machine should display icons post-update');
+    });
+
     it('should add tokens when containers are added', function() {
       view.render();
       var selector = '.containers .token',
