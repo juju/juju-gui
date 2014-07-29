@@ -603,7 +603,8 @@
                 border-bottom: 1px solid @inspector-divider-bottom;
                 border-top: 1px solid @inspector-divider-top;
                 color: @text-colour;
-                padding-left: @inspector-main-padding;
+                padding: 16px @inspector-main-padding;
+
                 span[dismiss] {
                     text-decoration: underline;
                     cursor: pointer;
@@ -705,7 +706,6 @@
         .view-container {
             overflow-x: hidden;
             overflow-y: auto;
-            margin-top: -1px;
 
             .line-too-long {
                 text-overflow: ellipsis;
@@ -1119,17 +1119,9 @@
     .ghost .viewlet-manager-footer .controls {
         display: none;
     }
-
-    .units-input,
-    .unit-scaling .current-unit-num,
-    .unit-constraints-confirm {
+    .unit-scaling {
         display: none;
     }
-
-    .view-container .view-content.unit-scaling {
-        padding: 0;
-    }
-
     .viewlet-manager-navigation .hide-on-mv {
         display: none;
     }
