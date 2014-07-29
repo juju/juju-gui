@@ -44,7 +44,7 @@ YUI.add('service-scale-up-view', function(Y) {
       '.action-block button': {
         click: '_onActionButtonClick'
       },
-      '.actions button.cancel': {
+      '.actions .button.cancel': {
         click: '_onCancelButtonClick'
       },
       '.actions button.add-units': {
@@ -135,7 +135,7 @@ YUI.add('service-scale-up-view', function(Y) {
     */
     _onActionButtonClick: function(e) {
       e.preventDefault();
-      var opened = e.currentTarget.hasClass('opened');
+      var opened = this.get('container').hasClass('opened');
       this._toggleServiceList(!opened);
     },
 
@@ -148,18 +148,21 @@ YUI.add('service-scale-up-view', function(Y) {
     _onAddUnitsButtonClick: function(e) {
       e.preventDefault();
       var services = this.get('container').one('ul').all('li'),
-          serviceName, unitCount;
+          serviceName, unitCount, serviceInput;
       services.each(function(service) {
         serviceName = service.getData('service');
+        serviceInput = service.one('input.service-units');
         unitCount = parseInt(
-            service.one('input.service-units').get('value'), 10);
+            serviceInput.get('value'), 10);
         if (unitCount && unitCount > 0) {
           this.fire('addUnit', {
             serviceName: serviceName,
             unitCount: unitCount
           });
         }
+        serviceInput.set('value', '');
       }, this);
+      this._toggleServiceList(false);
     },
 
     /**
