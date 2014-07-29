@@ -699,7 +699,7 @@ YUI.add('machine-view-panel', function(Y) {
          */
         deleteMachine: function(e) {
           e.preventDefault();
-          var machineName = e.currentTarget.ancestor().one('.title').getHTML();
+          var machineName = e.currentTarget.ancestor('.token').getData('id');
           this.get('env').destroyMachines([machineName], false, function(data) {
             if (data.err) {
               this.get('db').notifications.add({
