@@ -1619,6 +1619,24 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Return the series of the given charm URL.
+
+    @method getSeries
+    @param {String} url A fully qualified charm URL, like
+      "cs:trusty/django-42" or "cs:~frankban/utopic/juju-gui-0"
+    @return {String} The charm series.
+  */
+  utils.getSeries = function(url) {
+    var path = url.split(':')[1];
+    var parts = path.split('/');
+    if (path.indexOf('~') === 0) {
+      // The URL includes the user.
+      return parts[1];
+    }
+    return parts[0];
+  };
+
+  /**
    * Determine if a service is the Juju GUI by inspecting the charm URL.
    *
    * @method isGuiCharmUrl
