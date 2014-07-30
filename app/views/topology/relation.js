@@ -959,15 +959,20 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = this.get('component');
       var db = topo.get('db');
       // Set up the relation data.
-      var relation_id = 'pending-' + endpoints[0][0] + endpoints[1][0];
-      var relationData = {
-        relation_id: relation_id,
-        display_name: 'pending',
-        endpoints: endpoints,
-        pending: true
-      };
+      var endpoint1 = endpoints[0][0],
+          endpoint2 = endpoints[1][0];
+      var relation_id = 'pending-' + endpoint1 + endpoint2;
+      var endpointData = utils.parseEndpointStrings(db, [endpoint1, endpoint2]);
+      var match = utils.findEndpointMatch(endpointData);
       // Add the relation to the database.
-      var relation = db.relations.add(relationData);
+      var relation = db.relations.add({
+        relation_id: relation_id,
+        'interface': match['interface'],
+        endpoints: endpoints,
+        pending: true,
+        scope: match.scope || 'global',
+        display_name: 'pending'
+      });
       // Also add the relation to the relations model lists included in the two
       // services. This way the relation line follows the service blocks when
       // they are moved.

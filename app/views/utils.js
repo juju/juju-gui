@@ -705,6 +705,116 @@ YUI.add('juju-view-utils', function(Y) {
         });
   };
 
+  /**
+    Takes two string endpoints and splits it into usable parts.
+
+    @method parseEndpointStrings
+    @param {Database} db to resolve charms/services on.
+    @param {Array} endpoints an array of endpoint strings
+      to split in the format wordpress:db.
+    @return {Object} An Array of parsed endpoints, each containing name, type
+    and the related charm. Name is the user defined service name and type is
+    the charms authors name for the relation type.
+   */
+  utils.parseEndpointStrings = function(db, endpoints) {
+    return Y.Array.map(endpoints, function(endpoint) {
+      var epData = endpoint.split(':');
+      var result = {};
+      if (epData.length > 1) {
+        result.name = epData[0];
+        result.type = epData[1];
+      } else {
+        result.name = epData[0];
+      }
+      result.service = db.services.getById(result.name);
+      if (result.service) {
+        result.charm = db.charms.getById(
+            result.service.get('charm'));
+        if (!result.charm) {
+          console.warn('Failed to load charm',
+                       result.charm, db.charms.size(), db.charms.get('id'));
+        }
+      } else {
+        console.warn('failed to resolve service', result.name);
+      }
+      return result;
+    }, this);
+  };
+
+  /**
+    Loops through the charm endpoint data to determine whether we have a
+    relationship match. The result is either an object with an error
+    attribute, or an object giving the interface, scope, providing endpoint,
+    and requiring endpoint.
+
+    @method findEndpointMatch
+    @param {Array} endpoints Pair of two endpoint data objects.  Each
+    endpoint data object has name, charm, service, and scope.
+    @return {Object} A hash with the keys 'interface', 'scope', 'provides',
+    and 'requires'.
+   */
+  utils.findEndpointMatch = function(endpoints) {
+    var matches = [], result;
+    Y.each([0, 1], function(providedIndex) {
+      // Identify the candidates.
+      var providingEndpoint = endpoints[providedIndex];
+      // The merges here result in a shallow copy.
+      var provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
+          requiringEndpoint = endpoints[!providedIndex + 0],
+          requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
+      if (!provides['juju-info']) {
+        provides['juju-info'] = {'interface': 'juju-info',
+                                  scope: 'container'};
+      }
+      // Restrict candidate types as tightly as possible.
+      var candidateProvideTypes, candidateRequireTypes;
+      if (providingEndpoint.type) {
+        candidateProvideTypes = [providingEndpoint.type];
+      } else {
+        candidateProvideTypes = Y.Object.keys(provides);
+      }
+      if (requiringEndpoint.type) {
+        candidateRequireTypes = [requiringEndpoint.type];
+      } else {
+        candidateRequireTypes = Y.Object.keys(requires);
+      }
+      // Find matches for candidates and evaluate them.
+      Y.each(candidateProvideTypes, function(provideType) {
+        Y.each(candidateRequireTypes, function(requireType) {
+          var provideMatch = provides[provideType],
+              requireMatch = requires[requireType];
+          if (provideMatch &&
+              requireMatch &&
+              provideMatch['interface'] === requireMatch['interface']) {
+            matches.push({
+              'interface': provideMatch['interface'],
+              scope: provideMatch.scope || requireMatch.scope,
+              provides: providingEndpoint,
+              requires: requiringEndpoint,
+              provideType: provideType,
+              requireType: requireType
+            });
+          }
+        });
+      });
+    });
+    if (matches.length === 0) {
+      console.log(endpoints);
+      result = {error: 'Specified relation is unavailable.'};
+    } else if (matches.length > 1) {
+      console.log(endpoints);
+      result = {error: 'Ambiguous relationship is not allowed.'};
+    } else {
+      result = matches[0];
+      // Specify the type for implicit relations.
+      result.provides = Y.merge(result.provides);
+      result.requires = Y.merge(result.requires);
+      result.provides.type = result.provideType;
+      result.requires.type = result.requireType;
+    }
+    return result;
+  };
+
   /*
    * Given a CSS selector, gather up form values and return in a mapping
    * (object).
@@ -2137,7 +2247,9 @@ YUI.add('juju-view-utils', function(Y) {
     var serviceName;
     db.services.some(function(service) {
       if (service.get('id') === id) {
-        serviceName = service.get('displayName').replace(/^\(/, '').replace(/\)$/, '');
+        serviceName = service.get('displayName')
+                             .replace(/^\(/, '')
+                             .replace(/\)$/, '');
         return true;
       }
     });
