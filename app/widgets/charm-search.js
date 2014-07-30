@@ -116,7 +116,9 @@ YUI.add('browser-search-widget', function(Y) {
       var series = this.get('envSeries')() || 'precise';
       result.forEach(function(record) {
         charm = record.charm;
-        if (charm.is_approved && charm.distro_series === series) {
+        // The result set can also contain bundles, bundles are not series
+        // specific.
+        if (charm && charm.is_approved && charm.distro_series === series) {
           recommended.push(record);
         } else {
           other.push(record);
