@@ -19,15 +19,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, utils, views, view, container, topo;
+  var Y, utils, views, view, container, topo, models;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['juju-tests-utils', 'juju-topology', 'node',
-          'node-event-simulate', 'juju-view-utils'],
+          'node-event-simulate', 'juju-view-utils', 'juju-models'],
         function(Y) {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
+          models = Y.namespace('juju.models');
           done();
         });
   });
@@ -234,6 +235,40 @@ describe('topology relation module', function() {
       var service1 = {relations: {add: mockAddRelation1}};
       var service2 = {relations: {add: mockAddRelation2}};
       db = new models.Database();
+      db.services.add({
+        id: 'service1',
+        charm: 'cs:precise/wordpress-0'
+      });
+      db.services.add({
+        id: 'service2',
+        charm: 'cs:precise/mysql-0'
+      });
+      db.charms.add({
+        id: 'cs:precise/wordpress-0',
+        provides: {
+          website: {
+            interface: 'http' }
+        },
+        requires: {
+          cache: {
+            interface: 'memcache' },
+          db: {
+            interface: 'mysql' },
+          nfs: {
+            interface: 'mount' }
+        }
+      });
+      db.charms.add({
+        id: 'cs:precise/mysql-0',
+        requires: {
+          ceph: {
+            interface: 'ceph-client' }
+        },
+        provides: {
+          db: {
+            interface: 'mysql' }
+        }
+      });
       var topo = {
         get: utils.makeStubFunction(db),
         service_boxes: {service1: service1, service2: service2}
@@ -241,8 +276,8 @@ describe('topology relation module', function() {
       view.set('component', topo);
       // Create the endpoints.
       endpoints = [
-        ['service1', {name: 'db', role: 'server'}],
-        ['service2', {name: 'db', role: 'client'}]
+        ['service1', { name: 'db', role: 'server' }],
+        ['service2', { name: 'db', role: 'client' }]
       ];
     });
 
