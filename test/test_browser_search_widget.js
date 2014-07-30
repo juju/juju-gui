@@ -218,7 +218,8 @@ describe('search widget autocomplete', function() {
       autocompleteDataFormatter: fakeStore.transformResults,
       categoryIconGenerator:
           Y.bind(fakeStore.buildCategoryIconPath, fakeStore),
-      filters: {}
+      filters: {},
+      envSeries: function() {}
     });
     search.render(container);
     search.ac.queryDelay = 0;
@@ -282,6 +283,12 @@ describe('search widget autocomplete', function() {
       // of the list of completion options.
       assert.equal(ev.results[0].text, 'App Servers');
       assert.equal(ev.results[1].text, 'Applications');
+      // charms should be sorted by the users default series in their env.
+      // For these tests the default series is set to precise so they should
+      // come first.
+      assert.equal(ev.results[2].raw.charm.distro_series, 'precise');
+      assert.equal(ev.results[3].raw.charm.distro_series, 'precise');
+      assert.equal(ev.results[20].raw.charm.distro_series, 'oneiric');
       done();
     });
 

@@ -292,7 +292,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       var results = this.get('store').transformResults(data.result);
       var recommended = [],
           other = [];
-      var series = this.get('envSeries') || 'precise';
+      var series = this.get('envSeries')() || 'precise';
       results.map(function(entity) {
         // If this is a charm, make sure it's approved and is of the
         // correct series to be recommended.

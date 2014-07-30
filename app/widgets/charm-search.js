@@ -85,11 +85,10 @@ YUI.add('browser-search-widget', function(Y) {
                 if (self.ignoreInFlight) {
                   return;
                 }
-
                 var catData = this._suggestCategoryOptions(query);
-                if (catData) {
-                  data.result = catData.concat(data.result);
-                }
+                data.result = this._sortResultSet(data.result);
+                // The categories need to be listed first.
+                data.result = catData.concat(data.result);
                 callback(data);
               },
               'failure': function() {
@@ -100,6 +99,32 @@ YUI.add('browser-search-widget', function(Y) {
             this
         );
       }
+    },
+
+    /**
+      Sorts the result data set from the autocomplete results putting the charms
+      with the correct series and recommended status on top.
+
+      @method _sortResultSet
+      @param {Array} result The data result set from the autocomplete data call.
+      @return {Array} the sorted result set.
+    */
+    _sortResultSet: function(result) {
+      var recommended = [],
+          other = [],
+          charm;
+      var series = this.get('envSeries')() || 'precise';
+      result.forEach(function(record) {
+        charm = record.charm;
+        // The result set can also contain bundles, bundles are not series
+        // specific.
+        if (charm && charm.is_approved && charm.distro_series === series) {
+          recommended.push(record);
+        } else {
+          other.push(record);
+        }
+      });
+      return recommended.concat(other);
     },
 
     /**
@@ -626,7 +651,17 @@ YUI.add('browser-search-widget', function(Y) {
         value: {
           text: ''
         }
-      }
+      },
+
+      /**
+         A callable passsed in from the top level application which fetches the
+         default env series.
+
+         @attribute envSeries
+         @default undefined
+         @type {Function}
+       */
+      envSeries: {}
     }
   });
 

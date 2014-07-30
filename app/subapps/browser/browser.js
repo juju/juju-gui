@@ -682,11 +682,12 @@ YUI.add('subapp-browser', function(Y) {
       },
 
       /**
-         The series in the environment, e.g. 'precise'
+         A callable passsed in from the top level application which fetches the
+         default env series.
 
          @attribute envSeries
          @default undefined
-         @type {String}
+         @type {Function}
        */
       envSeries: {},
 
