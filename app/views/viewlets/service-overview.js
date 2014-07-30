@@ -768,7 +768,9 @@ YUI.add('inspector-overview-view', function(Y) {
       this.fire('changeState', {
         sectionA: {
           metadata: {
-            unit: parseInt(unitName.split('/')[1], 10),
+            // The state machinery requires unit numbers to be passed as
+            // strings.
+            unit: unitName.split('/')[1],
             charm: false
           }
         }
