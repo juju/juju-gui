@@ -866,7 +866,12 @@ describe('Inspector Overview', function() {
       assert.equal(fireArgs[0], 'changeState');
       assert.deepEqual(fireArgs[1], {
         sectionA: {
-          metadata: { unit: 0, charm: false }}});
+          metadata: {
+            unit: '0',
+            charm: false
+          }
+        }
+      });
     });
 
     it('should fire the changeState event when closed', function() {
