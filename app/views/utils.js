@@ -2055,6 +2055,23 @@ YUI.add('juju-view-utils', function(Y) {
     }
   });
 
+  Y.Handlebars.registerHelper('getRealServiceName', function(id, relation) {
+    var endpoint;
+    if (id === relation.sourceId) {
+      endpoint = relation.source;
+    } else if (id === relation.targetId) {
+      endpoint = relation.target;
+    } else {
+      // If it doesn't match any of the above it's a real relation id and we can
+      // return that without modifying it.
+      return id;
+    }
+    var type = id.split(':')[1];
+    return endpoint.displayName
+                   .replace(/^\(/, '')
+                   .replace(/\)$/, '') + ':' + type;
+  });
+
   /*
    * Dev tool: dump to debugger in template.
    * Allows you to inspect a variable by passing it to

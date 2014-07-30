@@ -1148,7 +1148,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     inspectRelationClick: function(_, self) {
       var topo = self.get('component');
-      var endpoint = Y.one(this).get('text');
+      var endpoint = Y.one(this).getAttribute('data-endpoint');
       var serviceId = endpoint.split(':')[0].trim();
       topo.fire('changeState', {
         sectionA: {
