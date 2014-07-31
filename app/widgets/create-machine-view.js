@@ -76,10 +76,17 @@ YUI.add('create-machine-view', function(Y) {
         */
         _handleCreate: function(e) {
           e.preventDefault();
+          var parentId = this.get('parentId');
+          var containerType = this.get('containerType');
+          // Do nothing if we're trying to create a container and the
+          // container type has not been selected.
+          if (parentId && !containerType) {
+            return;
+          }
           this.fire('createMachine', {
             unit: this.get('unit'),
-            containerType: this.get('containerType'),
-            parentId: this.get('parentId'),
+            containerType: containerType,
+            parentId: parentId,
             constraints: this._getConstraints()
           });
           this.destroy();
