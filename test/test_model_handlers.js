@@ -202,8 +202,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual('example.com/foo', machine.public_address);
       });
 
-      it.only('skips machine create when a service is unassociated', function() {
-        var machine;
+      it.only('skips machine create if a service is unassociated', function() {
         db.services.add({id: 'django'});
         var change = {
           Name: 'django/2',
