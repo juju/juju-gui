@@ -59,6 +59,9 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.unplaced-unit .token-move': {
             click: '_cancelUnitPlacement'
+          },
+          '.machines .onboarding .add-machine': {
+            click: '_displayCreateMachine'
           }
         },
 
@@ -316,6 +319,7 @@ YUI.add('machine-view-panel', function(Y) {
             this._createMachineToken(machine, committed);
             this._machinesHeader.updateLabelCount('machine', 1);
           }
+          this._hideOnboarding();
         },
 
         /**
@@ -342,6 +346,7 @@ YUI.add('machine-view-panel', function(Y) {
           if (!machine.parentId) {
             this._machinesHeader.updateLabelCount('machine', -1);
           }
+          this._showOnboarding();
         },
 
         /**
@@ -469,6 +474,7 @@ YUI.add('machine-view-panel', function(Y) {
             cancelHandler.detach();
             handler.detach();
           });
+          this._hideOnboarding();
         },
 
         /**
@@ -503,6 +509,7 @@ YUI.add('machine-view-panel', function(Y) {
           if (e.unit) {
             this._createServiceUnitToken(e.unit);
           }
+          this._showOnboarding();
         },
 
         /**
@@ -745,6 +752,27 @@ YUI.add('machine-view-panel', function(Y) {
         _renderHeader: function(container, attrs) {
           attrs.container = this.get('container').one(container);
           return new views.MachineViewPanelHeaderView(attrs).render();
+        },
+
+        /**
+          Show the onboarding message.
+
+          @method _showOnboarding
+        */
+        _showOnboarding: function() {
+          if (this.get('db').machines.size() === 0) {
+            this.get('container').one('.machines .onboarding').removeClass(
+                'hidden');
+          }
+        },
+
+        /**
+          Hide the onboarding message.
+
+          @method _hideOnboarding
+        */
+        _hideOnboarding: function() {
+          this.get('container').one('.machines .onboarding').addClass('hidden');
         },
 
         /**
@@ -1129,6 +1157,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._renderScaleUp();
           this._clearContainerColumn();
           this._selectFirstMachine();
+          this._showOnboarding();
           return this;
         },
 
