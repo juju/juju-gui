@@ -737,6 +737,24 @@ describe('Inspector Overview', function() {
     assert.equal(handle instanceof Y.Node, false);
   });
 
+  it.only('does not display the expose option', function() {
+    // Somehow set the inspector up in the pending/ghost state
+    inspector = setUpInspector({pending: true});
+    assert.equal(inspector.get('container').one('.expose').hasClass('hidden'),
+        true);
+  });
+
+  it('displays the expose option once deployed', function() {
+    // Somehow set the inspector up in the pending/ghost state
+    inspector = setUpInspector({pending: true});
+    var expose = inspector.get('container').one('.expose');
+    assert.equal(expose.hasClass('hidden'), true);
+    // Now "deploy" the service
+    inspector.get('model').set('pending', false);
+    inspector.render();
+    assert.equal(expose.hasClass('hidden'), false);
+  });
+
   describe('Unit action buttons', function() {
     it('sends the resolve cmd to the env for the selected units', function() {
       inspector = setUpInspector(null, true);

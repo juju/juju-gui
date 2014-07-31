@@ -434,6 +434,8 @@ YUI.add('inspector-overview-view', function(Y) {
       if (!rendered) {
         this.set('rendered', true);
         container.append(this.template(attributes.model.getAttrs()));
+      } else if (!this.viewletManager.get('model').get('pending')) {
+        container.one('.expose').removeClass('hidden');
       }
     },
 

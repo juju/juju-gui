@@ -16,5 +16,19 @@
     <ul class="overview-unit-list" data-bind="units">
     </ul>
   {{/unless}}
-  {{>service-expose}}
+  <div class="overview-footer-item expose {{#if pending}}hidden{{/if}}">
+    <div class="toggle single-line">
+      <label for="expose-toggle">Expose this service?</label>
+      <div class="toggle-switch" data-bind="exposed">
+          <input type="checkbox"
+                 name="expose-toggle"
+                 class="expose-toggle hidden"
+                 data-skipconflictux=true
+                 id="expose-toggle">
+          <label for="expose-toggle" class="light">
+            <div class="handle"></div>
+          </label>
+      </div>
+    </div>
+  </div>
 </div>
