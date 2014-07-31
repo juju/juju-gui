@@ -189,6 +189,8 @@ describe('machine view panel view', function() {
         function() {
           var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
           this._cleanups.push(clearStub.reset);
+          var showOnboaringStub = utils.makeStubMethod(view, '_showOnboarding');
+          this._cleanups.push(showOnboaringStub.reset);
           view._machinesHeader = {};
           var labelStub = utils.makeStubMethod(view._machinesHeader,
               'updateLabelCount');
@@ -202,6 +204,8 @@ describe('machine view panel view', function() {
         function() {
           var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
           this._cleanups.push(clearStub.reset);
+          var showOnboaringStub = utils.makeStubMethod(view, '_showOnboarding');
+          this._cleanups.push(showOnboaringStub.reset);
           view._machinesHeader = {};
           var labelStub = utils.makeStubMethod(view._machinesHeader,
               'updateLabelCount');
@@ -308,6 +312,8 @@ describe('machine view panel view', function() {
           // 'listens for the drag start, end, drop events'
           var onStub = utils.makeStubMethod(view, 'on');
           this._cleanups.push(onStub.reset);
+          var hideOnboaringStub = utils.makeStubMethod(view, '_hideOnboarding');
+          this._cleanups.push(hideOnboaringStub.reset);
           container.append(Y.Node.create('<div class="containers">' +
               '<div class="content"><div class="items"></div></div></div>'));
           // Add a container.
@@ -334,6 +340,8 @@ describe('machine view panel view', function() {
       // 'listens for the drag start, end, drop events'
       var onStub = utils.makeStubMethod(view, 'on');
       this._cleanups.push(onStub.reset);
+      var hideOnboaringStub = utils.makeStubMethod(view, '_hideOnboarding');
+      this._cleanups.push(hideOnboaringStub.reset);
       container.append(Y.Node.create('<div class="containers">' +
           '<div class="content"><div class="items"></div></div></div>'));
       machines.add([{id: '0/lxc/3'}]);
@@ -820,7 +828,7 @@ describe('machine view panel view', function() {
   describe('machine column', function() {
     it('should render a list of machines', function() {
       view.render();
-      var list = container.all('.machines .content li');
+      var list = container.all('.machines .content .items li');
       assert.equal(list.size(), machines.size(),
                    'models are out of sync with displayed list');
       list.each(function(item, index) {
@@ -1372,5 +1380,71 @@ describe('machine view panel view', function() {
           message = view.get('container').one('.column.unplaced .all-placed');
           assert.equal(message.getStyle('display'), 'block');
         });
+  });
+
+  describe('onboarding', function() {
+    it('should display on MV render if there are no machines', function() {
+      var machines = view.get('db').machines;
+      machines.reset();
+      assert.equal(machines.size(), 0);
+      view.render();
+      assert.equal(container.one('.machines .onboarding').hasClass('hidden'),
+          false);
+    });
+
+    it('should not display on MV render if there are machines', function() {
+      assert.equal(view.get('db').machines.size() > 0, true);
+      view.render();
+      assert.equal(container.one('.machines .onboarding').hasClass('hidden'),
+          true);
+    });
+
+    it('should hide when "create machine" is opened', function() {
+      var machines = view.get('db').machines;
+      machines.reset();
+      assert.equal(machines.size(), 0);
+      view.render();
+      var container = view.get('container');
+      var onboarding = container.one('.machines .onboarding');
+      assert.equal(onboarding.hasClass('hidden'), false);
+      container.one('.machine-view-panel-header .action').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), true);
+    });
+
+    it('should show when "create machine" is cancelled', function() {
+      var machines = view.get('db').machines;
+      machines.reset();
+      assert.equal(machines.size(), 0);
+      view.render();
+      var container = view.get('container');
+      var onboarding = container.one('.machines .onboarding');
+      container.one('.machine-view-panel-header .action').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), true);
+      container.one('.create-machine .cancel').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), false);
+    });
+
+    it('should show when all machines are removed', function() {
+      var machines = view.get('db').machines;
+      assert.equal(machines.size(), 1);
+      view.render();
+      var onboarding = view.get('container').one('.machines .onboarding');
+      assert.equal(onboarding.hasClass('hidden'), true);
+      machines.remove(0);
+      assert.equal(machines.size(), 0);
+      assert.equal(onboarding.hasClass('hidden'), false);
+    });
+
+    it('should hide when a machine is added', function() {
+      var machines = view.get('db').machines;
+      machines.reset();
+      assert.equal(machines.size(), 0);
+      view.render();
+      var onboarding = view.get('container').one('.machines .onboarding');
+      assert.equal(onboarding.hasClass('hidden'), false);
+      machines.add([{id: '0'}]);
+      assert.equal(machines.size(), 1);
+      assert.equal(onboarding.hasClass('hidden'), true);
+    });
   });
 });

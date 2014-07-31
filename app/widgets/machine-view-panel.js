@@ -755,9 +755,9 @@ YUI.add('machine-view-panel', function(Y) {
           @method _showOnboarding
         */
         _showOnboarding: function() {
-          if (!Object.keys(this.get('machineTokens')).length > 0) {
-              this.get('container').one('.machines .onboarding').removeClass(
-                  'hidden');
+          if (this.get('db').machines.size() === 0) {
+            this.get('container').one('.machines .onboarding').removeClass(
+                'hidden');
           }
         },
 
