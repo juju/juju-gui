@@ -172,14 +172,19 @@ YUI.add('machine-view-panel', function(Y) {
                   id = changed.machine.newVal,
                   machineToken = machineTokens[id],
                   containerToken = containerTokens[id];
-              if (machineToken) {
-                this._updateMachineWithUnitData(machineToken.get('machine'));
-                machineToken.render();
-              }
               if (containerToken) {
-                this._updateMachineWithUnitData(containerToken.get('machine'));
+                var container = containerToken.get('machine');
+                this._updateMachineWithUnitData(container);
                 containerToken.renderUnits();
+                // Get the parent machine token to update as well.
+                machineToken = machineTokens[container.parentId];
               }
+              // Update the machine/parent token. This is always updated
+              // as the unit is either added to the root container or a
+              // child container. Either way we need to display the unit
+              // on the parent.
+              this._updateMachineWithUnitData(machineToken.get('machine'));
+              machineToken.renderUnits();
             }
             if (target.get('machine')) {
               // It's a placed unit; make sure it gets removed from our
@@ -889,7 +894,7 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _updateMachineWithUnitData: function(machine, units) {
           if (!units) {
-            units = this.get('db').units.filterByMachine(machine.id);
+            units = this.get('db').units.filterByMachine(machine.id, true);
           }
           this._addIconsToUnits(units);
           machine.units = units;

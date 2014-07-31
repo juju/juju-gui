@@ -41,6 +41,7 @@ YUI.add('machine-token', function(Y) {
         views.MVDropTargetViewExtension
       ], {
         template: Templates['machine-token'],
+        unitsTemplate: Templates['machine-token-units'],
 
         events: {
           '.delete': {
@@ -136,6 +137,16 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
+          Render the units.
+
+          @method renderUnits
+        */
+        renderUnits: function() {
+          this.get('container').one('.service-icons').setHTML(
+              this.unitsTemplate(this.get('machine')));
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -155,6 +166,7 @@ YUI.add('machine-token', function(Y) {
             machine.noHardware = true;
           }
           container.setHTML(this.template(machine));
+          this.renderUnits();
           container.addClass('machine-token');
           container.one('.token').addClass(
               this.get('committed') ? 'committed' : 'uncommitted');
