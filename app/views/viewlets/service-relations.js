@@ -85,8 +85,9 @@ YUI.add('service-relations-view', function(Y) {
     @method _generateAndBindRelationsList
     @param {Y.Node} node The databound node to render the relations info into.
     @param {Array} relations The list of relations to display.
+    @param {Object} db Reference to the app db.
   */
-  function _generateAndBindRelationsList(node, relations) {
+  function _generateAndBindRelationsList(node, relations, db) {
     // New relation enter
     var relationWrappers = d3.select(node.getDOMNode())
     .selectAll('.relation-wrapper')
@@ -105,13 +106,21 @@ YUI.add('service-relations-view', function(Y) {
           return 'relation-label ' + status;
         })
     .append('h3')
-    .text(function(d) {
+    .text(function(db, d) {
+          // This method is bound to null to get access to the app db so it does
+          // not have access to the text node supplied from d3.
+          var serviceName;
           if (d.far) {
-            return d.far.service;
+            serviceName = d.far.service;
           } else { // It's a peer relation
-            return d.near.service;
+            serviceName = d.near.service;
           }
-        });
+          // Ghost service names have a $ in them.
+          if (serviceName.indexOf('$') > 0) {
+            serviceName = utils.getServiceNameFromGhostId(serviceName, db);
+          }
+          return serviceName;
+        }.bind(null, db));
 
     // Relation info
     relationWrapper.append('h4')
@@ -189,7 +198,7 @@ YUI.add('service-relations-view', function(Y) {
 
           if (relations.length > 0) {
             node.empty(); // Remove the no-relations messages
-            _generateAndBindRelationsList(node, relations);
+            _generateAndBindRelationsList(node, relations, db);
           } else {
             node.setHTML(
                 '<div class="view-content">This service has no relations.' +

@@ -914,36 +914,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation'),
              after_evt;
-
          var service = d3.select(serviceNode.getDOMNode()).datum();
+         var endpoints = {},
+             serviceName = serviceNode.one('.name')
+                                      .getDOMNode()
+                                      .firstChild
+                                      .nodeValue,
+             nextServiceName = serviceNode.next().one('.name')
+                                                 .getDOMNode()
+                                                 .firstChild
+                                                 .nodeValue;
+         endpoints[nextServiceName] = [
+           [{
+              service: serviceName,
+              name: 'relName',
+              type: 'relType'
+            }, {
+              service: nextServiceName,
+              name: 'relName',
+              type: 'relType'
+            }]];
          // Add a mock charm for the service.
-         var charm = {id: service.charm,
-           loaded: false};
+         var charm = { id: service.charm, loaded: false };
+         var charm2 = { id: 'cs:precise/mediawiki-3', loaded: false };
          db.charms.add(charm);
+         db.charms.add(charm2);
          charm = db.charms.getById(service.charm);
          charm.loaded = true;
          // Mock endpoints
          var existing = models.getEndpoints;
          models.getEndpoints = function() {
-           var endpoints = {},
-               serviceName = serviceNode.one('.name')
-                 .getDOMNode().firstChild.nodeValue,
-               nextServiceName = serviceNode.next().one('.name')
-                 .getDOMNode().firstChild.nodeValue;
-           endpoints[nextServiceName] = [
-             [
-              {
-                service: serviceName,
-                name: 'relName',
-                type: 'relType'
-              },
-              {
-                service: nextServiceName,
-                name: 'relName',
-                type: 'relType'
-              }
-             ]
-           ];
            return endpoints;
          };
 

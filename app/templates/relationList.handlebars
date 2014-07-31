@@ -3,8 +3,8 @@
     <ul>
         {{#each relations}}
         <li class="relation-container {{#if hasRelationError}}error{{else}}running{{/if}}" data-relationid="{{id}}">
-        <span class="inspect-relation endpoint{{#if sourceHasError}} error{{/if}}">{{sourceId}}</span> -
-        <span class="inspect-relation endpoint{{#if targetHasError}} error{{/if}}">{{targetId}}</span>
+        <span data-endpoint="{{sourceId}}" class="inspect-relation endpoint{{#if sourceHasError}} error{{/if}}">{{getRealServiceName sourceId .}}</span> -
+        <span data-endpoint="{{targetId}}" class="inspect-relation endpoint{{#if targetHasError}} error{{/if}}">{{getRealServiceName targetId .}}</span>
         <i class="relation-remove trash-icon"></i>
         </li>
         {{/each}}
