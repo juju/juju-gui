@@ -1583,8 +1583,8 @@ YUI.add('juju-view-utils', function(Y) {
   utils.simplifyState = function(unit, life) {
     var state = unit.agent_state,
         inError = (/-?error$/).test(state);
-    if (unit.id !== unit.displayName) {
-      // If the ID and the displayName are different, it's an uncommitted unit.
+    if (!state) {
+      //Uncommitted units don't have state.
       return 'uncommitted';
     }
     if (life === 'dying' && !inError) {

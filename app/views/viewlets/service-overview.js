@@ -381,6 +381,10 @@ YUI.add('inspector-overview-view', function(Y) {
     bindings: {
       aggregated_status: {
         'update': function(node, value) {
+          if (value && value.uncommitted) {
+            // We don't want to update the status bar with uncommitted units.
+            delete value.uncommitted;
+          }
           var bar = this._statusbar;
           if (!bar) {
             bar = this._statusbar = new views.StatusBar({
