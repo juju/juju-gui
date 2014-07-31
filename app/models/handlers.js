@@ -200,7 +200,12 @@ YUI.add('juju-delta-handlers', function(Y) {
       // The units model list included in the corresponding service is
       // automatically kept in sync by db.units.process_delta().
       db.units.process_delta(action, unitData, db);
-      db.machines.process_delta(action, machineData, db);
+      // It's valid for a service/unit to not have a machine; for example, when
+      // a deploy fails due to an error. In that case the unit is unplaced and
+      // we don't need to process machine info.
+      if (machineData.id) {
+        db.machines.process_delta(action, machineData, db);
+      }
     },
 
     /**
