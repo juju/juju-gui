@@ -93,7 +93,7 @@ describe('Inspector Overview', function() {
       exposed: false,
       upgrade_available: true,
       upgrade_to: 'cs:precise/mediawiki-15'
-    }, serviceAttrs, true);
+    }, serviceAttrs, true, null, 0, true);
     service = new models.Service(serviceAttrs);
     downgrades = (function() {
       var versions = [];
@@ -737,22 +737,25 @@ describe('Inspector Overview', function() {
     assert.equal(handle instanceof Y.Node, false);
   });
 
-  it.only('does not display the expose option', function() {
-    // Somehow set the inspector up in the pending/ghost state
-    inspector = setUpInspector({pending: true});
+  it('does not display the expose option', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector({pending: true, displayName: '(wordpress)'});
     assert.equal(inspector.get('container').one('.expose').hasClass('hidden'),
         true);
+    window.flags = {};
   });
 
   it('displays the expose option once deployed', function() {
-    // Somehow set the inspector up in the pending/ghost state
-    inspector = setUpInspector({pending: true});
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector({pending: true, displayName: '(wordpress)'});
     var expose = inspector.get('container').one('.expose');
     assert.equal(expose.hasClass('hidden'), true);
-    // Now "deploy" the service
     inspector.get('model').set('pending', false);
     inspector.render();
     assert.equal(expose.hasClass('hidden'), false);
+    window.flags = {};
   });
 
   describe('Unit action buttons', function() {

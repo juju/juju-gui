@@ -94,7 +94,7 @@ YUI.add('juju-view-environment', function(Y) {
       // This method is called with a charm or service. If it's called with a
       // charm then it needs to show the ghost inspector instead of the service
       // inspector.
-      if (model.get('pending')) {
+      if (model.get('pending') && (window.flags && !window.flags.mv)) {
         model.set('packageName', charm.get('package_name'));
         // XXX In order to support the events below we need to use the same
         // object structure. Once the Service inspector is converted to

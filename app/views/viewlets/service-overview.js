@@ -435,6 +435,8 @@ YUI.add('inspector-overview-view', function(Y) {
         this.set('rendered', true);
         container.append(this.template(attributes.model.getAttrs()));
       } else if (!this.viewletManager.get('model').get('pending')) {
+        // If the inspector is open when the service is deployed we need
+        // to update the inspector.
         container.one('.expose').removeClass('hidden');
       }
     },
