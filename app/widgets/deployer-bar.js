@@ -578,19 +578,6 @@ YUI.add('deployer-bar', function(Y) {
     },
 
     /**
-      Return the URL to the service icon.
-      XXX frankban 2014-05-12: use the view helper for icon locating.
-
-      @method _getServiceIconUrl
-      @param {String} serviceName The service name.
-    */
-    _getServiceIconUrl: function(serviceName) {
-      var url = 'https://manage.jujucharms.com' +
-                '/api/3/charm/precise/{name}/file/icon.svg';
-      return Y.Lang.sub(url, {name: serviceName});
-    },
-
-    /**
      * Fetch and format the changeSet command records for the deployment
      * summary.
      *
@@ -613,19 +600,20 @@ YUI.add('deployer-bar', function(Y) {
       Object.keys(ecs.changeSet).forEach(function(key) {
         var command = ecs.changeSet[key].command,
             args = command.args,
-            name;
+            name, service;
         switch (command.method) {
           case '_deploy':
-            var ghostService = db.services.getById(command.options.modelId);
+            service = db.services.getById(command.options.modelId);
             changes.deployedServices.push({
-              icon: this._getServiceIconUrl(ghostService.get('packageName')),
-              name: ghostService.get('name')
+              icon: service.get('icon'),
+              name: service.get('name')
             });
             break;
           case '_destroyService':
+            service = db.services.getById(args[0]);
             changes.destroyedServices.push({
-              icon: this._getServiceIconUrl(args[0]),
-              name: args[0]
+              icon: service.get('icon'),
+              name: service.get('name')
             });
             break;
           case '_add_relation':
@@ -645,17 +633,18 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_add_unit':
             // This can be either a ghost or a real deployed service.
-            var service = this._getServiceByUnitId(command.options.modelId);
+            service = this._getServiceByUnitId(command.options.modelId);
             changes.addUnits.push({
-              icon: this._getServiceIconUrl(service.get('packageName')),
+              icon: service.get('icon'),
               serviceName: service.get('name'),
               numUnits: args[1]
             });
             break;
           case '_remove_units':
             name = args[0][0].split('/')[0];
+            service = db.services.getById(name);
             changes.removeUnits.push({
-              icon: this._getServiceIconUrl(name),
+              icon: service.get('icon'),
               numUnits: args[0].length,
               serviceName: name
             });
@@ -687,8 +676,9 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_set_config':
             name = args[0];
+            service = db.services.getById(name);
             changes.setConfigs.push({
-              icon: this._getServiceIconUrl(name),
+              icon: service.get('icon'),
               serviceName: name
             });
             break;

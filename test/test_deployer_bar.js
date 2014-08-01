@@ -403,19 +403,11 @@ describe('deployer bar view', function() {
     assert.equal(stubDescription.callCount(), 2);
   });
 
-  it('provides a way to retrieve the service icon', function() {
-    var url = view._getServiceIconUrl('django');
-    assert.strictEqual(
-        url,
-        'https://manage.jujucharms.com' +
-        '/api/3/charm/precise/django/file/icon.svg'
-    );
-  });
-
   it('retrieves all the unit changes', function() {
     db.services.add([
       {id: 'ghost-django', name: 'django', charm: 'cs:trusty/django-1'},
-      {id: 'rails', charm: 'cs:utopic/rails-42'}
+      {id: 'rails', charm: 'cs:utopic/rails-42',
+        icon: 'http://example.com/foo'}
     ]);
     db.addUnits([
       {id: 'ghost-django/0'},
@@ -426,15 +418,13 @@ describe('deployer bar view', function() {
     var results = view._getChanges(ecs).addUnits;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], {
-      icon: 'https://manage.jujucharms.com' +
-          '/api/3/charm/precise/django/file/icon.svg',
       numUnits: 1,
+      icon: undefined,
       serviceName: 'django'
     });
     assert.deepEqual(results[1], {
-      icon: 'https://manage.jujucharms.com' +
-          '/api/3/charm/precise/rails/file/icon.svg',
       numUnits: 1,
+      icon: 'http://example.com/foo',
       serviceName: 'rails'
     });
   });
