@@ -20,19 +20,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('deployer bar view', function() {
-  var Y, container, dbObj, ECS, ecs, mockEvent, testUtils, utils, views,
-      view, View, bundleHelpers;
+  var bundleHelpers, container, db, ECS, ecs, mockEvent, models, testUtils,
+      utils, view, View, views, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['deployer-bar',
-                               'juju-views',
-                               'juju-tests-utils',
-                               'bundle-import-helpers',
-                               'environment-change-set',
-                               'event-simulate',
-                               'node-event-simulate',
-                               'node'], function(Y) {
-
+    var requirements = [
+      'bundle-import-helpers',
+      'deployer-bar',
+      'environment-change-set',
+      'event-simulate',
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views',
+      'node',
+      'node-event-simulate'
+    ];
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
@@ -44,11 +48,10 @@ describe('deployer bar view', function() {
   });
 
   beforeEach(function() {
-    ecs = new ECS({
-      db: dbObj
-    });
+    db = new models.Database();
+    ecs = new ECS({db: db});
     container = utils.makeContainer(this, 'deployer-bar');
-    view = new View({container: container, ecs: ecs}).render();
+    view = new View({container: container, db: db, ecs: ecs}).render();
   });
 
   afterEach(function() {
@@ -56,6 +59,28 @@ describe('deployer bar view', function() {
     ecs.destroy();
     container.remove(true);
     view.destroy();
+  });
+
+  // Add a service and a unit to the given database.
+  var addEntities = function(db) {
+    db.services.add({id: 'django', charm: 'cs:trusty/django-1'});
+    db.addUnits({id: 'django/0'});
+  };
+
+  describe('_getServiceByUnitId', function() {
+
+    it('returns the service', function() {
+      addEntities(db);
+      var service = view._getServiceByUnitId('django/0');
+      assert.strictEqual(service.get('id'), 'django');
+    });
+
+    it('raises an error if the service is not found', function() {
+      assert.throw(function() {
+        view._getServiceByUnitId('no-such/42');
+      }, 'unit no-such/42 not found');
+    });
+
   });
 
   it('should exist in the views namespace', function() {
@@ -76,7 +101,8 @@ describe('deployer bar view', function() {
   });
 
   it('should enable the deploy button if there are changes', function() {
-    ecs.lazyAddUnits(['django', 1]);
+    addEntities(db);
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
     assert.equal(container.one('.deploy-button').hasClass('disabled'), false);
   });
 
@@ -86,7 +112,8 @@ describe('deployer bar view', function() {
   });
 
   it('should show the summary panel when there are changes', function() {
-    ecs.lazyAddUnits(['django', 1]);
+    addEntities(db);
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
     container.one('.deploy-button').simulate('click');
     assert.equal(container.hasClass('summary-open'), true);
   });
@@ -215,23 +242,26 @@ describe('deployer bar view', function() {
   });
 
   it('can generate descriptions for any change type', function() {
+    addEntities(db);
     var tests = [{
       icon: 'changes-service-added',
-      msg: ' bar has been added.',
+      msg: ' django has been added.',
       change: {
         command: {
           method: '_deploy',
-          args: ['foo', 'bar']
+          args: ['cs:trusty/django-1', 'django'],
+          options: {modelId: 'django'}
         }
       },
       time: '12:34 PM'
     }, {
       icon: 'changes-units-added',
-      msg: ' 1 foo unit has been added.',
+      msg: ' 1 django unit has been added.',
       change: {
         command: {
           method: '_add_unit',
-          args: ['foo', 1]
+          args: ['django', 1],
+          options: {modelId: 'django/0'}
         }
       }
     }, {
@@ -244,12 +274,15 @@ describe('deployer bar view', function() {
         }
       }
     }, {
+      // Note that this case is never used in production code.
+      // We always add a single unit to a service.
       icon: 'changes-units-added',
-      msg: ' 2 foo units have been added.',
+      msg: ' 2 django units have been added.',
       change: {
         command: {
           method: '_add_unit',
-          args: ['foo', 2]
+          args: ['django', 2],
+          options: {modelId: 'django/0'}
         }
       }
     }, {
@@ -380,8 +413,16 @@ describe('deployer bar view', function() {
   });
 
   it('retrieves all the unit changes', function() {
-    ecs.lazyAddUnits(['django', 1]);
-    ecs.lazyAddUnits(['rails', 2]);
+    db.services.add([
+      {id: 'ghost-django', name: 'django', charm: 'cs:trusty/django-1'},
+      {id: 'rails', charm: 'cs:utopic/rails-42'}
+    ]);
+    db.addUnits([
+      {id: 'ghost-django/0'},
+      {id: 'rails/1'}
+    ]);
+    ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django/0'});
+    ecs.lazyAddUnits(['rails', 1], {modelId: 'rails/1'});
     var results = view._getChanges(ecs).addUnits;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], {
@@ -393,7 +434,7 @@ describe('deployer bar view', function() {
     assert.deepEqual(results[1], {
       icon: 'https://manage.jujucharms.com' +
           '/api/3/charm/precise/rails/file/icon.svg',
-      numUnits: 2,
+      numUnits: 1,
       serviceName: 'rails'
     });
   });

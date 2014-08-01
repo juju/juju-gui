@@ -74,12 +74,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
             0, // Number of units.
             constraints,
             null, // toMachine.
-            Y.bind(this._deployCallbackHandler,
-                   this,
-                   serviceName,
-                   config,
-                   constraints,
-                   ghostService),
+            Y.bind(this._deployCallbackHandler, this, ghostService),
             // Options used by ECS, ignored by environment.
             {modelId: ghostServiceId});
 
@@ -139,25 +134,20 @@ YUI.add('ghost-deployer-extension', function(Y) {
       The callback handler from the env.deploy() of the charm.
 
       @method _deployCallbackHandler
-      @param {String} serviceName The service name.
-      @param {Object} config The configuration object of the service.
-      @param {Object} constraints The constraint settings for the service.
       @param {Object} ghostService The model of the ghost service.
-      @param {Y.EventFacade} e The event facade from the deploy event.
+      @param {Y.EventFacade} evt The event facade from the deploy event.
     */
-    _deployCallbackHandler: function(serviceName, config, constraints,
-        ghostService, e) {
+    _deployCallbackHandler: function(ghostService, evt) {
+      var db = this.db;
+      var models = Y.juju.models;
+      var serviceName = ghostService.get('name');
 
-      var db = this.db,
-          models = Y.juju.models,
-          topo = this.views.environment.instance.topo;
-
-      if (e.err) {
+      if (evt.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error deploying ' + serviceName,
               message: 'Could not deploy the requested service. Server ' +
-                  'responded with: ' + e.err,
+                  'responded with: ' + evt.err,
               level: 'error'
             }));
         return;
@@ -178,10 +168,11 @@ YUI.add('ghost-deployer-extension', function(Y) {
         displayName: undefined,
         pending: false,
         loading: false,
-        config: config,
-        constraints: constraints
+        config: ghostService.get('config'),
+        constraints: {}
       });
 
+      var topo = this.views.environment.instance.topo;
       // Without this following code on a real environment the service icons
       // would disappear and then re-appear when deploying services.
       var boxModel = topo.service_boxes[ghostId];

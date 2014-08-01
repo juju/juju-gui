@@ -100,23 +100,36 @@ YUI.add('inspector-header-view', function(Y) {
 
     /**
       Updates the ghost service name when the user changes it in the inspector.
+      Also update the display name of the corresponding ghost units.
 
       @method updateGhostName
-      @param {Y.EventFacade} e event object from valuechange.
+      @param {Y.EventFacade} evt event object from valuechange.
     */
-    updateGhostName: function(e) {
+    updateGhostName: function(evt) {
       // The render method expects these parentheses around the model
       // displayName.  If you change this format, or this code, make sure you
       // look at that method too.  Hopefully the associated tests will catch it
       // as well. Also see(grep for) the resetCanvas method too.
-      var name = e.newVal,
-          options = this.options,
-          db = options.db,
-          serviceName = '(' + name + ')';
-
+      var name = evt.newVal;
+      var options = this.options;
+      var db = options.db;
+      var model = options.model;
+      var serviceName = '(' + name + ')';
+      // Validate the service name.
       var isValid = utils.validateServiceName(name, db);
-      options.model.set('displayName', serviceName);
-      this.serviceNameInputStatus(isValid, e.currentTarget);
+      if (isValid) {
+        model.set('name', name);
+        // Change the display name of all the ghost units belonging to this
+        // service.
+        var modelId = model.get('id');
+        db.units.filter(function(unit) {
+          return unit.service === modelId;
+        }).forEach(function(unit) {
+          unit.displayName = name + '/' + unit.number;
+        });
+      }
+      model.set('displayName', serviceName);
+      this.serviceNameInputStatus(isValid, evt.currentTarget);
     },
 
     /**

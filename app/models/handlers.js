@@ -217,6 +217,10 @@ YUI.add('juju-delta-handlers', function(Y) {
     serviceInfo: function(db, action, change) {
       var data = {
         id: change.Name,
+        // The name attribute is used to store the temporary name of ghost
+        // services. We set it here for consistency, even if the name of a
+        // real service can never be changed.
+        name: change.Name,
         charm: change.CharmURL,
         exposed: change.Exposed,
         life: change.Life,

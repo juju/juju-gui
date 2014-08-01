@@ -177,21 +177,23 @@ describe('Ghost Deployer Extension', function() {
 
   it('sets the proper annotations in the deploy handler', function() {
     var ghostService = new Y.Model({
-      id: 'ghostid'
+      id: 'ghostid',
+      name: 'django',
+      config: {}
     });
     var topo = ghostDeployer.views.environment.instance.topo;
     topo.annotateBoxPosition = utils.makeStubFunction();
     topo.service_boxes.ghostid = {};
-    ghostDeployer._deployCallbackHandler('foo', {}, {}, ghostService, {});
+    ghostDeployer._deployCallbackHandler(ghostService, {});
     var attrs = ghostService.getAttrs();
-    assert.equal(attrs.id, 'foo');
+    assert.equal(attrs.id, 'django');
     assert.equal(attrs.displayName, undefined);
     assert.equal(attrs.pending, false, 'pending');
     assert.equal(attrs.loading, false, 'loading');
     assert.deepEqual(attrs.config, {}, 'config');
     assert.deepEqual(attrs.constraints, {}, 'constraints');
-    assert.deepEqual(topo.service_boxes.foo, {
-      id: 'foo',
+    assert.deepEqual(topo.service_boxes.django, {
+      id: 'django',
       pending: false
     });
     assert.equal(topo.annotateBoxPosition.calledOnce(), true);
@@ -199,18 +201,19 @@ describe('Ghost Deployer Extension', function() {
 
   it('fires serviceDeployed in the deploy handler', function() {
     var ghostService = new Y.Model({
-      id: 'ghostid'
+      id: 'ghostid',
+      name: 'django'
     });
     var topo = ghostDeployer.views.environment.instance.topo;
     topo.annotateBoxPosition = utils.makeStubFunction();
     topo.service_boxes.ghostid = {clientId: 'ghostid'};
     var stubFire = ghostDeployer.get('subApps').charmbrowser.fire;
-    ghostDeployer._deployCallbackHandler('ghostid', {}, {}, ghostService, {});
+    ghostDeployer._deployCallbackHandler(ghostService, {});
     assert.deepEqual(stubFire.lastArguments(), [
       'serviceDeployed',
       {
         clientId: 'ghostid',
-        serviceName: 'ghostid'
+        serviceName: 'django'
       }
     ], 'Event not fired.');
   });
