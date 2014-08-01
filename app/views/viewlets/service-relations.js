@@ -218,9 +218,14 @@ YUI.add('service-relations-view', function(Y) {
     _removeRelation: function(e) {
       var relation = this.options.db.relations.getById(
           e.currentTarget.getData('relation')).getAttrs();
-      var relationModule = this.options.environment.topo.modules.RelationModule;
+      var relationModule = this.options.topo.modules.RelationModule;
 
-      relationModule.removeRelationConfirm(relation, relationModule);
+      if (window.flags && window.flags.mv) {
+        relationModule.removeRelation(relation, relationModule);
+      } else {
+        relationModule.removeRelationConfirm(relation, relationModule);
+      }
+
     },
     // To allow for unit testing the functions
     export: {
