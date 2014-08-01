@@ -20,21 +20,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine token view', function() {
-  var Y, container, machine, models, utils, views, view, View;
+  var container, machine, utils, views, Y;
+  var requirements = [
+    'event-simulate',
+    'juju-models',
+    'juju-tests-utils',
+    'juju-views',
+    'machine-token',
+    'node-event-simulate',
+    'node'
+  ];
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['machine-token',
-                               'juju-models',
-                               'juju-views',
-                               'juju-tests-utils',
-                               'event-simulate',
-                               'node-event-simulate',
-                               'node'], function(Y) {
-
-      models = Y.namespace('juju.models');
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
-      View = views.MachineToken;
       done();
     });
   });
@@ -42,7 +42,7 @@ describe('machine token view', function() {
   beforeEach(function() {
     container = utils.makeContainer(this, 'machine-token');
     machine = {
-      id: 0,
+      id: '0',
       hardware: {
         disk: 1024,
         mem: 1024,
@@ -50,26 +50,36 @@ describe('machine token view', function() {
         cpuCores: 1
       }
     };
-    view = new View({
-      container: container,
-      machine: machine
-    }).render();
   });
 
   afterEach(function() {
-    view.destroy();
     container.remove(true);
   });
 
+  // Create and return a machine token view with the given machine.
+  var makeView = function(test, machine) {
+    var view = new views.MachineToken({
+      container: container,
+      machine: machine
+    }).render();
+    test._cleanups.push(function() {
+      view.destroy();
+    });
+    return view;
+  };
+
   it('should apply the wrapping class to the container', function() {
+    makeView(this, machine);
     assert.equal(container.hasClass('machine-token'), true);
   });
 
   it('should set the id on the container', function() {
+    makeView(this, machine);
     assert.equal(container.one('.token').getData('id'), '0');
   });
 
   it('fires the delete event', function(done) {
+    var view = makeView(this, machine);
     view.on('deleteToken', function(e) {
       assert.isObject(e);
       done();
@@ -78,6 +88,7 @@ describe('machine token view', function() {
   });
 
   it('fires the select event', function(done) {
+    var view = makeView(this, machine);
     view.on('selectToken', function(e) {
       assert.isObject(e);
       done();
@@ -86,11 +97,13 @@ describe('machine token view', function() {
   });
 
   it('does not update the hardware object when formatting', function() {
+    var view = makeView(this, machine);
     assert.notEqual(view.get('machine').hardware,
         view.get('machine').formattedHardware);
   });
 
   it('can be marked as uncommitted', function() {
+    var view = makeView(this, machine);
     view.setUncommitted();
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         true);
@@ -98,6 +111,7 @@ describe('machine token view', function() {
   });
 
   it('can be marked as committed', function() {
+    var view = makeView(this, machine);
     view.setUncommitted();
     assert.equal(view.get('container').one('.token').hasClass('uncommitted'),
         true);
@@ -109,14 +123,8 @@ describe('machine token view', function() {
   });
 
   it('handles non-number values for hardware when formatting', function() {
-    var machine = {
-      id: 0,
-      hardware: {}
-    };
-    var view = new View({
-      container: container,
-      machine: machine
-    }).render();
+    var machine = {id: '0', hardware: {}};
+    var view = makeView(this, machine);
     var hardware = view.get('machine').formattedHardware;
     assert.equal(hardware.disk, null,
                  'Non-number disk should be formatted to null');
@@ -128,16 +136,24 @@ describe('machine token view', function() {
   });
 
   it('display a message when no hardware is available', function() {
-    var machine = {
-      id: 0,
-      hardware: {}
-    };
-    var view = new View({
-      container: container,
-      machine: machine
-    }).render();
+    var machine = {id: '0', hardware: {}};
+    var view = makeView(this, machine);
     assert.equal(view.get('container').one('.details').get('text').trim(),
                  'Hardware details not available');
+  });
+
+  it('shows when a machine is a state server', function() {
+    var machine = {id: '0', displayName: '0', isStateServer: true};
+    var view = makeView(this, machine);
+    var title = view.get('container').one('.title').get('text');
+    assert.include(title, '0 - State service');
+  });
+
+  it('shows when a machine is not a state server', function() {
+    var machine = {id: '0', isStateServer: false};
+    var view = makeView(this, machine);
+    var title = view.get('container').one('.title').get('text');
+    assert.notInclude(title, '- State service');
   });
 
   it('gets one icon for each service deployed on it', function() {
@@ -147,21 +163,20 @@ describe('machine token view', function() {
       {icon: 'foo/icon.svg', serviceName: 'mongo'},
       {icon: 'bar/icon.svg', serviceName: 'wordpress'}
     ];
-    view = new View({
-      container: container,
-      machine: machine
-    }).render();
+    makeView(this, machine);
     var service_icons = container.one('.service-icons');
     assert.isObject(service_icons);
     assert.equal(2, service_icons.all('img').size());
   });
 
   it('can be set to the droppable state', function() {
+    var view = makeView(this, machine);
     view.setDroppable();
     assert.equal(container.hasClass('droppable'), true);
   });
 
   it('can be set from the droppable state back to the default', function() {
+    var view = makeView(this, machine);
     view.setDroppable();
     assert.equal(container.hasClass('droppable'), true);
     view.setNotDroppable();

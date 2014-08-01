@@ -28,6 +28,7 @@ YUI.add('juju-models', function(Y) {
 
   var models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      environments = Y.namespace('juju.environments'),
       handlers = models.handlers;
 
   // The string representing juju-core entities' alive Life state.
@@ -994,6 +995,13 @@ YUI.add('juju-models', function(Y) {
       */
       jobs: {},
       /**
+        Whether this machine is a state server node.
+
+        @attribute isStateServer
+        @type {Boolean}
+      */
+      isStateServer: {},
+      /**
         The machine life cycle status ("alive", "dying" or "dead").
         This info is included in the juju-core mega-watcher for machines.
 
@@ -1119,6 +1127,16 @@ YUI.add('juju-models', function(Y) {
       obj.parentId = info.parentId;
       obj.containerType = info.containerType;
       obj.number = info.number;
+      if (obj.jobs) {
+        var MANAGE_ENVIRON = environments.machineJobs.MANAGE_ENVIRON;
+        obj.isStateServer = obj.jobs.indexOf(MANAGE_ENVIRON) !== -1;
+      } else {
+        // If jobs is undefined, then we are in a sandbox environment.
+        // In this case, assume all machines to be able to host units.
+        // Also, no state servers in sandbox mode.
+        obj.jobs = [environments.machineJobs.HOST_UNITS];
+        obj.isStateServer = false;
+      }
     },
 
     /**
@@ -1870,6 +1888,8 @@ YUI.add('juju-models', function(Y) {
     'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models',
+    'juju-env',
+    'juju-env-go',
     'promise'
   ]
 });

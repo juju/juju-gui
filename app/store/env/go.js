@@ -104,6 +104,15 @@ YUI.add('juju-env-go', function(Y) {
     return value;
   };
 
+  // The jobs that can be associated to a machine.
+  // See state/api/params/constants.go.
+  var machineJobs = {
+    // The machine can host units.
+    HOST_UNITS: 'JobHostUnits',
+    // The machine manages the environment: i.e. it is a state server.
+    MANAGE_ENVIRON: 'JobManageEnviron'
+  };
+
   /**
    * The Go Juju environment.
    *
@@ -911,13 +920,6 @@ YUI.add('juju-env-go', function(Y) {
     the specified machine/container.
     */
 
-    // The jobs that can be associated to a new machine.
-    // See state/api/params/constants.go.
-    machineJobs: {
-      HOST_UNITS: 'JobHostUnits',
-      MANAGE_ENVIRON: 'JobManageEnviron'
-    },
-
     /**
       Calls the environment's _addMachines method or creates a new addMachines
       record in the ECS queue.
@@ -995,7 +997,7 @@ YUI.add('juju-env-go', function(Y) {
       var machineParams = params.map(function(param) {
         var machineParam = {
           // By default the new machines we add are suitable for storing units.
-          Jobs: param.jobs || [self.machineJobs.HOST_UNITS],
+          Jobs: param.jobs || [machineJobs.HOST_UNITS],
           Series: param.series,
           ParentId: param.parentId,
           ContainerType: param.containerType
@@ -2172,6 +2174,7 @@ YUI.add('juju-env-go', function(Y) {
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;
   environments.cleanUpJSON = cleanUpJSON;
+  environments.machineJobs = machineJobs;
 
 }, '0.1.0', {
   requires: [

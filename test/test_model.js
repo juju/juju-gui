@@ -701,7 +701,11 @@ describe('test_model.js', function() {
     });
 
     describe('machines model list', function() {
-      var machines;
+      var machineJobs, machines;
+
+      before(function() {
+        machineJobs = Y.namespace('juju.environments').machineJobs;
+      });
 
       beforeEach(function() {
         machines = new models.MachineList();
@@ -768,6 +772,28 @@ describe('test_model.js', function() {
           var machine = machines.add({id: id});
           assert.deepEqual(machine.id, id);
         });
+      });
+
+      it('knows when a machine is a state server', function() {
+        var machine = machines.add({
+          id: '0',
+          jobs: [machineJobs.MANAGE_ENVIRON]
+        });
+        assert.strictEqual(machine.isStateServer, true);
+      });
+
+      it('knows when a machine is not a state server', function() {
+        var machine = machines.add({
+          id: '0',
+          jobs: [machineJobs.HOST_UNITS]
+        });
+        assert.strictEqual(machine.isStateServer, false);
+      });
+
+      it('provides a default job to machines without one', function() {
+        var machine = machines.add({id: '0'});
+        assert.lengthOf(machine.jobs, 1);
+        assert.strictEqual(machine.jobs[0], machineJobs.HOST_UNITS);
       });
 
       describe('addGhost', function() {
