@@ -102,4 +102,23 @@ describe('create machine view', function() {
     assert.equal(createFired, true,
         'the event should have been fired');
   });
+
+  it('should do nothing if the container type is not selected',
+      function() {
+        var createFired = false;
+        var constraintsStub = utils.makeStubMethod(view,
+            '_getConstraints', {});
+        this._cleanups.push(constraintsStub.reset);
+        var destroyStub = utils.makeStubMethod(view, 'destroy');
+        this._cleanups.push(destroyStub.reset);
+        view.on('createMachine', function(e) {
+          createFired = true;
+        });
+        view.set('parentId', '6');
+        container.one('.create').simulate('click');
+        assert.equal(destroyStub.calledOnce(), false,
+            'the view should not have been destroyed');
+        assert.equal(createFired, false,
+            'the event should not have been fired');
+      });
 });
