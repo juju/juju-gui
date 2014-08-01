@@ -276,7 +276,9 @@ describe('search widget autocomplete', function() {
 
     search.ac.on('results', function(ev) {
       // The results should be displaying now. Check for token nodes.
-      assert.equal(ev.results.length, 21);
+      // The results length is filtered down from 21 to 9 see charm-search.js
+      // _sortResultSet for the algo and details.
+      assert.equal(ev.results.length, 9);
       assert.isTrue(ev.results[0].display.hasClass('yui3-token'));
 
       // There are two category results now for 'a'. They appear at the start
@@ -286,9 +288,18 @@ describe('search widget autocomplete', function() {
       // charms should be sorted by the users default series in their env.
       // For these tests the default series is set to precise so they should
       // come first.
-      assert.equal(ev.results[2].raw.charm.distro_series, 'precise');
-      assert.equal(ev.results[3].raw.charm.distro_series, 'precise');
-      assert.equal(ev.results[20].raw.charm.distro_series, 'oneiric');
+      var charm = {};
+      var names = [];
+      ev.results.forEach(function(result) {
+        charm = result.raw.charm;
+        if (charm && charm.distro_series) {
+          // There should not be any Oneiric charms in the autocomplete list.
+          assert.notEqual(charm.distro_series, 'oneiric');
+          names.push(charm.name);
+        }
+      });
+      // There shoulnd't be any duplicate names in the AC result list.
+      assert.equal(names.length, Y.Array.dedupe(names).length);
       done();
     });
 

@@ -112,7 +112,8 @@ YUI.add('browser-search-widget', function(Y) {
     _sortResultSet: function(result) {
       var recommended = [],
           other = [],
-          charm;
+          charm,
+          nCharm;
       var series = this.get('envSeries')() || 'precise';
       result.forEach(function(record) {
         charm = record.charm;
@@ -121,10 +122,35 @@ YUI.add('browser-search-widget', function(Y) {
         if (charm && charm.is_approved && charm.distro_series === series) {
           recommended.push(record);
         } else {
-          other.push(record);
+          // Oneric is well past EOL and many of the Oneiric charms do not meet
+          // our standards so we are not showing them in the autocomplete list.
+          // They will still be shown in the search result.
+          if ((charm && charm.distro_series !== 'oneiric') || (record.bundle)) {
+            other.push(record);
+          }
         }
       });
-      return recommended.concat(other);
+      // We only want to show a single, most relevant, charm for the search
+      // query in the autocomplete so this removes any duplicates leaving the
+      // most relevant to the user. The full result set is uneffected if they
+      // submit the search query.
+      var all = recommended.concat(other);
+      var allLength = all.length;
+      var i, j;
+      for (i = 0; i < allLength; i += 1) {
+        charm = all[i].charm;
+        if (!charm) { continue; }
+        for (j = i + 1; j < allLength; j += 1) {
+          nCharm = all[j].charm;
+          if (!nCharm) { continue; }
+          if (charm.name === nCharm.name) {
+            all.splice(j, 1);
+            j -= 1;
+            allLength = all.length;
+          }
+        }
+      }
+      return all;
     },
 
     /**
