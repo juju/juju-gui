@@ -1,7 +1,7 @@
 <div class="token">
   <div class="top">
     <span class="title">
-      {{ displayName }}
+      {{ displayName }}{{#if isStateServer}} - State service{{/if}}
       <span class="removed">
         will be destroyed once you have committed your changes
       </span>

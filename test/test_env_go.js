@@ -82,7 +82,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('Go Juju environment', function() {
-    var conn, endpointA, endpointB, ecs, env, juju, msg, utils, Y, cleanups;
+    var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
+        utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -92,6 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ], function(Y) {
         juju = Y.namespace('juju');
         utils = Y.namespace('juju-tests.utils');
+        machineJobs = Y.namespace('juju.environments').machineJobs;
         done();
       });
     });
@@ -978,7 +980,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'AddMachines',
         Params: {
-          MachineParams: [{Jobs: [env.machineJobs.HOST_UNITS]}]
+          MachineParams: [{Jobs: [machineJobs.HOST_UNITS]}]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
@@ -993,7 +995,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
-            Jobs: [env.machineJobs.HOST_UNITS],
+            Jobs: [machineJobs.HOST_UNITS],
             Series: 'trusty',
             Constraints: constraints
           }]
@@ -1010,7 +1012,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
-            Jobs: [env.machineJobs.HOST_UNITS],
+            Jobs: [machineJobs.HOST_UNITS],
             ContainerType: 'lxc'
           }]
         }
@@ -1027,7 +1029,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
-            Jobs: [env.machineJobs.HOST_UNITS],
+            Jobs: [machineJobs.HOST_UNITS],
             ContainerType: 'lxc',
             ParentId: '42',
             Series: 'saucy'
@@ -1040,16 +1042,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('adds multiple machines/containers', function() {
       env.addMachines([
         {},
-        {jobs: [env.machineJobs.MANAGE_ENVIRON], series: 'precise'},
+        {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
         {containerType: 'kvm'},
         {containerType: 'lxc', parentId: '1'}
       ]);
       var expectedMachineParams = [
-        {Jobs: [env.machineJobs.HOST_UNITS]},
-        {Jobs: [env.machineJobs.MANAGE_ENVIRON], Series: 'precise'},
-        {Jobs: [env.machineJobs.HOST_UNITS], ContainerType: 'kvm'},
+        {Jobs: [machineJobs.HOST_UNITS]},
+        {Jobs: [machineJobs.MANAGE_ENVIRON], Series: 'precise'},
+        {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'kvm'},
         {
-          Jobs: [env.machineJobs.HOST_UNITS],
+          Jobs: [machineJobs.HOST_UNITS],
           ContainerType: 'lxc',
           ParentId: '1'
         }
