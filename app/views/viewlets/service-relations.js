@@ -151,7 +151,6 @@ YUI.add('service-relations-view', function(Y) {
 
     unitList.enter()
             .append('li')
-            .append('a')
             .text(function(d) { return d.id; });
 
     unitWrapper
