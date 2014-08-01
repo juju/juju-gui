@@ -1595,6 +1595,23 @@ describe('test_model.js', function() {
       assert.deepEqual(services, [rails]);
     });
 
+    it('returns the service name if set', function() {
+      var service = new models.Service({
+        id: 'django',
+        charm: 'cs:/trusty/django-42',
+        name: 'my-personal-django'
+      });
+      assert.strictEqual(service.get('name'), 'my-personal-django');
+    });
+
+    it('returns a default name if the name attr is not set', function() {
+      var service = new models.Service({
+        id: 'django',
+        charm: 'cs:/trusty/django-42'
+      });
+      assert.strictEqual(service.get('name'), 'django');
+    });
+
     it('can properly parse the charm url for the package name', function() {
       assert.equal(rails.get('packageName'), 'rails');
       var jujuGui = new models.Service({

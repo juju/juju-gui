@@ -371,7 +371,19 @@ YUI.add('environment-change-set', function(Y) {
     _lazyDeploy: function(args) {
       var command = {
         method: '_deploy',
-        args: this._getArgs(args)
+        args: this._getArgs(args),
+        /**
+          Update the service name, which can change from when the
+          charm is added to the canvas to the actual time the changes are
+          committed.
+
+          @method prepare
+          @param {Object} db The database instance.
+        */
+        prepare: function(db) {
+          var ghostService = db.services.getById(this.options.modelId);
+          this.args[1] = ghostService.get('name');
+        }
       };
       if (command.args.length !== args.length) {
         command.options = args[args.length - 1];
@@ -826,11 +838,18 @@ YUI.add('environment-change-set', function(Y) {
           @param {String} results The data returned by the API call.
         */
         onParentResults: function(record, results) {
-          // Assume the machine we are interested in is the first one.
-          if (record.command.method === '_addMachines') {
-            // We are only interested in machine parent results.
-            var newMachineId = results[0].machines[0].name;
-            this.args[2] = newMachineId;
+          switch (record.command.method) {
+            case '_addMachines':
+              // Assume the machine we are interested in is the first one.
+              var newMachineId = results[0].machines[0].name;
+              this.args[2] = newMachineId;
+              break;
+            case '_deploy':
+              // Update the service name. The add_unit record is first added
+              // passing the initial service name. This service name can be
+              // changed by users before the changes are committed.
+              this.args[0] = record.command.args[1];
+              break;
           }
         }
       };

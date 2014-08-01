@@ -568,6 +568,35 @@ describe('Environment Change Set', function() {
         var record = ecs.changeSet[key];
         assert.equal(record.parents[0], 'addMachines-1');
       });
+
+      it('updates the machine where to deploy on parent results', function() {
+        var args = ['django', 1, 'new1'];
+        var key = ecs.lazyAddUnits(args);
+        var command = ecs.changeSet[key].command;
+        var parentRecord = {command: {method: '_addMachines'}};
+        var parentResults = [{machines: [{name: '42'}]}];
+        command.onParentResults(parentRecord, parentResults);
+        // The unit will be added to the real machine.
+        assert.strictEqual(command.args[2], '42');
+      });
+
+      it('updates the service name on parent results', function() {
+        var args = ['django', 1, 'new1'];
+        var key = ecs.lazyAddUnits(args);
+        var command = ecs.changeSet[key].command;
+        var parentRecord = {
+          command: {
+            method: '_deploy',
+            args: ['cs:utipic/django-42', 'my-service']
+          }
+        };
+        var parentResults = {}; // Not used in this case.
+        command.onParentResults(parentRecord, parentResults);
+        // The first add_unit argument has been updated with the new service
+        // name.
+        assert.strictEqual(command.args[0], 'my-service');
+      });
+
     });
 
     describe('_lazySetConfig', function() {
@@ -792,6 +821,24 @@ describe('Environment Change Set', function() {
         assert.equal(lazyDeploy.calledOnce(), true);
         // make sure we don't call the env deploy method.
         assert.equal(envObj._deploy.callCount(), 0);
+      });
+
+      it('retrieves the updated service name on preparation', function() {
+        var options = {modelId: 'new1'};
+        var callback = testUtils.makeStubFunction();
+        var args = [
+          'cs:precise/django-42', 'django', {}, null, 1, {}, null,
+          callback, options
+        ];
+        var key = ecs._lazyDeploy(args);
+        var command = ecs.changeSet[key].command;
+        // Add the ghost service to the db.
+        var services = new Y.juju.models.ServiceList();
+        services.add({id: 'new1', name: 'renamed-service'});
+        // Execute the command preparation.
+        command.prepare({services: services});
+        // The service name has been updated.
+        assert.strictEqual(command.args[1], 'renamed-service');
       });
     });
 

@@ -285,7 +285,21 @@ YUI.add('juju-models', function(Y) {
           }
         }
       },
-      name: {},
+      /**
+        The name of the service.
+        If not set, the charm name is returned.
+
+        @attribute name
+        @type {String}
+      */
+      name: {
+        'getter': function(value) {
+          if (value) {
+            return value;
+          }
+          return this.get('packageName');
+        }
+      },
       charm: {},
       icon: {},
       config: {},

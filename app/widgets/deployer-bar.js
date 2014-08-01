@@ -283,15 +283,16 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
-      var latest = this._getLatestChangeDescription(ecs);
       // XXX  Tests start to fail on this update without the parent of the
       // container to address. This should be setup in the factory for env
       // and app to be better mocked out to not pick up changes when not
       // wanted.
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
+          // There is no need to update the container with the latest change
+          // descriptions: this is done each time the user opens the panel.
+          // For now we just need to update the changes count and the button.
           changeCount: changes,
-          latestChangeDescription: latest,
           deployed: this._deployed
         }));
         this._toggleDeployButtonStatus(changes > 0);
@@ -410,6 +411,7 @@ YUI.add('deployer-bar', function(Y) {
     */
     _generateChangeDescription: function(change, skipTime) {
       var changeItem = {};
+      var db = this.get('db');
 
       if (change && change.command) {
         // XXX: The add_unit is just the same as the service because adding
@@ -417,8 +419,10 @@ YUI.add('deployer-bar', function(Y) {
         // units as follow up.
         switch (change.command.method) {
           case '_deploy':
+            var ghostService = db.services.getById(
+                change.command.options.modelId);
             changeItem.icon = 'changes-service-added';
-            changeItem.description = ' ' + change.command.args[1] +
+            changeItem.description = ' ' + ghostService.get('name') +
                 ' has been added.';
             break;
           case '_destroyService':
@@ -427,6 +431,8 @@ YUI.add('deployer-bar', function(Y) {
                 ' has been destroyed.';
             break;
           case '_add_unit':
+            var service = this._getServiceByUnitId(
+                change.command.options.modelId);
             changeItem.icon = 'changes-units-added';
             var units = change.command.args[1],
                 msg;
@@ -436,7 +442,7 @@ YUI.add('deployer-bar', function(Y) {
               msg = 'unit has been added.';
             }
             changeItem.description = ' ' + units + ' ' +
-                change.command.args[0] + ' ' + msg;
+                service.get('name') + ' ' + msg;
             break;
           case '_remove_units':
             changeItem.icon = 'changes-units-removed';
@@ -525,6 +531,24 @@ YUI.add('deployer-bar', function(Y) {
     },
 
     /**
+      Return the service unitId belongs to.
+      Raise an error if the unit is not found.
+
+      @method _getServiceByUnitId
+      @param {String} unitId The unit identifier in the database.
+      @return {Model} The service model instance.
+    */
+    _getServiceByUnitId: function(unitId) {
+      var db = this.get('db');
+      var unit = db.units.getById(unitId);
+      if (!unit) {
+        // This should never happen in the deployer panel context.
+        throw 'unit ' + unitId + ' not found';
+      }
+      return db.services.getById(unit.service);
+    },
+
+    /**
       Return formatted time for display.
 
       @method _formatAMPM
@@ -585,15 +609,18 @@ YUI.add('deployer-bar', function(Y) {
         destroyMachines: [],
         setConfigs: []
       };
+      var db = this.get('db');
       Object.keys(ecs.changeSet).forEach(function(key) {
         var command = ecs.changeSet[key].command,
             args = command.args,
             name;
         switch (command.method) {
           case '_deploy':
-            name = args[1];
-            var icon = this._getServiceIconUrl(name);
-            changes.deployedServices.push({icon: icon, name: name});
+            var ghostService = db.services.getById(command.options.modelId);
+            changes.deployedServices.push({
+              icon: this._getServiceIconUrl(ghostService.get('packageName')),
+              name: ghostService.get('name')
+            });
             break;
           case '_destroyService':
             changes.destroyedServices.push({
@@ -617,10 +644,11 @@ YUI.add('deployer-bar', function(Y) {
             });
             break;
           case '_add_unit':
-            name = args[0];
+            // This can be either a ghost or a real deployed service.
+            var service = this._getServiceByUnitId(command.options.modelId);
             changes.addUnits.push({
-              icon: this._getServiceIconUrl(name),
-              serviceName: name,
+              icon: this._getServiceIconUrl(service.get('packageName')),
+              serviceName: service.get('name'),
               numUnits: args[1]
             });
             break;

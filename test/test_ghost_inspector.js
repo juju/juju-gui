@@ -109,6 +109,39 @@ describe('Ghost Inspector', function() {
     return inspector;
   };
 
+  describe('ghost model handling', function() {
+    var inspectorHeader, serviceNameInput;
+
+    beforeEach(function() {
+      db.services.add({id: 'ghost-id', charm: 'cs:precise/django'});
+      inspectorHeader = setUpInspector().views.inspectorHeader;
+      serviceNameInput = Y.one('input[name=service-name]');
+    });
+
+    it('updates the name of the ghost service', function() {
+      inspectorHeader.updateGhostName({
+        newVal: 'my-service',
+        currentTarget: serviceNameInput
+      });
+      var ghostService = inspectorHeader.options.model;
+      assert.strictEqual(ghostService.get('name'), 'my-service');
+      assert.strictEqual(ghostService.get('displayName'), '(my-service)');
+    });
+
+    it('updates the display name of the ghost service units', function() {
+      // Add a couple of units to this ghost service.
+      var modelId = inspectorHeader.options.model.get('id');
+      var units = db.addUnits([{id: modelId + '/0'}, {id: modelId + '/42'}]);
+      inspectorHeader.updateGhostName({
+        newVal: 'my-service',
+        currentTarget: serviceNameInput
+      });
+      assert.strictEqual(units[0].displayName, 'my-service/0');
+      assert.strictEqual(units[1].displayName, 'my-service/42');
+    });
+
+  });
+
   describe('charm name validity', function() {
     it('shows when a charm name is invalid initially', function() {
       db.services.add({id: 'mediawiki', charm: 'cs:precise/mediawiki'});
@@ -231,7 +264,7 @@ describe('Ghost Inspector', function() {
   it('opens a service inspector in place of the ghost inspector', function() {
     inspector = setUpInspector();
     // Create a second inspector.  Our stub beneath should only be called once,
-    // and only on the above insepctor.
+    // and only on the above inspector.
     setUpInspector(subordinateCharmData);
     var fireStub = utils.makeStubMethod(inspector, 'fire');
     this._cleanups.push(fireStub.reset);
