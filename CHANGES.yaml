@@ -20,7 +20,29 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.1.1:
+    - The inspector requires fewer dispatches to render different states.
+    - The sidebar can now be hidden with a keyboard shortcut (Ctrl+Alt+h).
+    - A new notification is in place for bundle deployments.
+    - Clicking relations shows the relation inspector.
+    - >
+      Upgrading a service comes with a new interface, making it easier to change
+      the version of a given service.
+    - The cookie notification now displays on top of other items.
+    - >
+      Major code-removals including several dispatch-related areas as well as
+      our reliance on the Object.observe polyfill.
+    - >
+      Under the "mv" flag, work continues on the machine view and a deployer and
+      an environment change-set which allows all changes to be queued up and
+      then committed at once. Uncommitted indicators added to all juju
+      primitives, and much styling work around getting the upcoming Machine View
+      ready for daily use.
+    - (FIX) Autocomplete search results are sorted in an expected fashion.
+    - (FIX) Unit number 0 for each service now dispatches properly.
+    - (FIX) Destroy Relation link in relations inspector works properly.
+    - (FIX) Mocha timeout was increased for SauceLabs testing.
+    - (FIX) Documentation updated for Precise.
 - 1.1.0:
     - >
       The inspector's default rendering position is now in the left hand column
