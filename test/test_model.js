@@ -94,18 +94,30 @@ describe('test_model.js', function() {
   });
 
   describe('juju models', function() {
-    var models, Y;
-    var requirements = ['juju-models', 'juju-charm-models'];
+    var models, Y, utils;
+    var requirements = ['juju-models', 'juju-charm-models', 'juju-tests-utils'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
       window._gaq = [];
+    });
+
+    it('should aggregate unit info when adding units', function() {
+      var service_unit = {id: 'mysql/0'};
+      var db = new models.Database();
+      var stub = utils.makeStubMethod(
+          db.units, 'update_service_unit_aggregates');
+      this._cleanups.push(stub.reset);
+      db.services.add({id: 'mysql'});
+      db.addUnits(service_unit);
+      assert.equal(stub.calledOnce(), true);
     });
 
     it('should be able to aggregate unit by status', function() {

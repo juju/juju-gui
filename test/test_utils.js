@@ -1722,13 +1722,15 @@ describe('utilities', function() {
       assert.equal(units.length, 2);
     }
 
-    it('creates machines, units, and places units', function() {
+    it('creates machines, units; places units; updates unit lists', function() {
       testScaleUp('myService');
     });
 
-    it('creates machines, units, and places units for ghosts', function() {
-      testScaleUp('myGhostService$');
-    });
+    it('creates machines, units; places units; updates unit lists for ghosts',
+        function() {
+          testScaleUp('myGhostService$');
+        }
+    );
 
     it('properly removes the ghost units on env add_unit callback', function() {
       var ghostUnit = { ghostUnit: 'I am' };
