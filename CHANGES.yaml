@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 1.1.1:
     - The inspector requires fewer dispatches to render different states.
     - The sidebar can now be hidden with a keyboard shortcut (Ctrl+Alt+h).
