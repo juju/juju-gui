@@ -1030,13 +1030,9 @@ YUI.add('machine-view-panel', function(Y) {
           if (show !== true && show !== false) {
             show = !this.get('db').units.filterByMachine(null).length;
           }
-          if (show) {
-            state = 'placed';
-          } else {
-            state = 'units';
-          }
+          state = show ? 'placed' : 'units';
           utils.setStateClass(this.get('container').one(
-            '.column.unplaced .units'), state);
+              '.column.unplaced .units'), state);
         },
 
         /**
