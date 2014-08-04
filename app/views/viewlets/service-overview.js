@@ -410,6 +410,7 @@ YUI.add('inspector-overview-view', function(Y) {
             var statuses = this.viewlet.updateStatusList(value);
             this.viewlet.generateAndBindStatusHeaders(
                 node, statuses, this.viewlet.options.db.environment);
+            this.viewlet.updateUnitCounts(value);
           }
         }
       },
@@ -873,6 +874,39 @@ YUI.add('inspector-overview-view', function(Y) {
         unitNames.forEach(function(unitName) {
           env.remove_units(unitName);
         });
+      }
+    },
+
+    /**
+      Update the labels for the unit counts.
+
+      @method updateUnitCounts
+      @param {Object} serviceUnitList A list of service units.
+    */
+    updateUnitCounts: function(serviceUnitList) {
+      var container = this.get('container');
+      var unitCount = 0;
+      var uncommittedUnitCount = 0;
+      var unitPlural;
+      var uncommittedLabel;
+      var unitCountNode = container.one('.unit-count');
+      var uncommittedUnitCountNode = container.one('.uncommitted-unit-count');
+      serviceUnitList.each(function(unit) {
+        if (unit.agent_state) {
+          unitCount += 1;
+        } else {
+          uncommittedUnitCount += 1;
+        }
+      });
+      unitPlural = (unitCount === 1) ? '' : 's';
+      uncommittedLabel = (uncommittedUnitCount === 0) ? '' : '(' +
+          uncommittedUnitCount + ' uncommitted)';
+      // XXX: Remove the follow checks that the nodes exist when
+      // window.flags.mv is removed as it is only there due to the way
+      // the inspector is rendered in our tests. - huwshimi 13/08/2014
+      if (unitCountNode && uncommittedUnitCountNode) {
+        unitCountNode.setContent(unitCount + ' unit' + unitPlural);
+        uncommittedUnitCountNode.setContent(uncommittedLabel);
       }
     },
 

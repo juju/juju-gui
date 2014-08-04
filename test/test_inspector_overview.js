@@ -180,11 +180,42 @@ describe('Inspector Overview', function() {
     window.flags = {};
   });
 
-  it('binds the scale up unit count', function() {
+  it('sets the scale up unit count', function() {
+    var uncommittedCount = 1;
+    var unitCount;
     window.flags = {};
     window.flags.mv = true;
     inspector = setUpInspector();
-    assert.equal(container.one('.unit-count').get('text'), db.units.size());
+    db.addUnits({
+      id: 'mediawiki/20',
+      displayName: 'mediawiki/20'
+    });
+    unitCount = db.units.size() - uncommittedCount;
+    assert.equal(container.one('.unit-count').get('text'),
+        unitCount + ' units');
+    assert.equal(container.one('.uncommitted-unit-count').get('text'),
+        '(' + uncommittedCount + ' uncommitted)');
+    window.flags = {};
+  });
+
+  it('does not show the uncommitted units label if there are none', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector();
+    assert.equal(container.one('.uncommitted-unit-count').get('text'), '');
+    window.flags = {};
+  });
+
+  it('does not pluralise the unit count if there is one unit', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector(null, true);
+    db.addUnits({
+      id: 'mediawiki/20',
+      displayName: 'mediawiki/20',
+      agent_state: 'started'
+    });
+    assert.equal(container.one('.unit-count').get('text'), '1 unit');
     window.flags = {};
   });
 
