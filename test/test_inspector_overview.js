@@ -93,7 +93,7 @@ describe('Inspector Overview', function() {
       exposed: false,
       upgrade_available: true,
       upgrade_to: 'cs:precise/mediawiki-15'
-    }, serviceAttrs, true);
+    }, serviceAttrs, true, null, 0, true);
     service = new models.Service(serviceAttrs);
     downgrades = (function() {
       var versions = [];
@@ -735,6 +735,27 @@ describe('Inspector Overview', function() {
     assert.isFalse(service.get('exposed'));
     handle = vmContainer.one(checkedSelector);
     assert.equal(handle instanceof Y.Node, false);
+  });
+
+  it('does not display the expose option', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector({pending: true, displayName: '(wordpress)'});
+    assert.equal(inspector.get('container').one('.expose').hasClass('hidden'),
+        true);
+    window.flags = {};
+  });
+
+  it('displays the expose option once deployed', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector({pending: true, displayName: '(wordpress)'});
+    var expose = inspector.get('container').one('.expose');
+    assert.equal(expose.hasClass('hidden'), true);
+    inspector.get('model').set('pending', false);
+    inspector.render();
+    assert.equal(expose.hasClass('hidden'), false);
+    window.flags = {};
   });
 
   describe('Unit action buttons', function() {
