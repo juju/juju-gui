@@ -420,9 +420,10 @@ describe('machine view panel view', function() {
           assert.strictEqual(placeArgs[0].id, 'test/1');
           assert.equal(placeArgs[1], 'new0');
 
-          // Call count will be 2--once for the create, and once when
-          // selectFirstMachine is called on render.
-          assert.equal(selectStub.callCount(), 2);
+          // Call count will be 3--once for the create, once when
+          // selectFirstMachine is called on render and once more to
+          // select the first machine that is added.
+          assert.equal(selectStub.callCount(), 3);
         }
     );
 
@@ -894,6 +895,20 @@ describe('machine view panel view', function() {
       var addedItem = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(addedItem, null,
                       'unable to find added machine in the displayed list');
+    });
+
+    it('should select the first machine when it is added', function() {
+      machines.reset();
+      assert.equal(machines.size(), 0);
+      // Have to re-init so the cached list of machines/tokens is updated.
+      view.init();
+      view.render();
+      assert.equal(view.get('selectedMachine'), undefined);
+      machines.add([{id: '0'}]);
+      assert.equal(view.get('selectedMachine'), '0');
+      assert.equal(container.one(
+          '.machines .content li:first-child .token').hasClass('active'),
+          true, 'the first machine token should be selected');
     });
 
     it('should remove tokens when machines are deleted', function() {

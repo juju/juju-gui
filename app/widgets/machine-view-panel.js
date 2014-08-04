@@ -322,6 +322,9 @@ YUI.add('machine-view-panel', function(Y) {
             this._createMachineToken(machine, committed);
             this._machinesHeader.updateLabelCount('machine', 1);
           }
+          if (!this.get('selectedMachine')) {
+            this._selectFirstMachine();
+          }
           this._hideOnboarding();
         },
 
@@ -342,6 +345,7 @@ YUI.add('machine-view-panel', function(Y) {
             // its containers.
             if (machine.id === this.get('selectedMachine')) {
               this._clearContainerColumn();
+              this.set('selectedMachine', null);
             }
           }
           tokenList[machine.id].destroy({remove: true});
