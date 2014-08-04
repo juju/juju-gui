@@ -62,6 +62,9 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.machines .onboarding .add-machine': {
             click: '_displayCreateMachine'
+          },
+          '.column.unplaced .auto-place': {
+            click: '_autoPlaceUnits'
           }
         },
 
@@ -1023,12 +1026,30 @@ YUI.add('machine-view-panel', function(Y) {
             message to be visible or not (optional).
         */
         _toggleAllPlacedMessage: function(show) {
+          var state;
           if (show !== true && show !== false) {
             show = !this.get('db').units.filterByMachine(null).length;
           }
-          this.get('container')
-              .one('.column.unplaced .all-placed')
-              .toggleView(show);
+          if (show) {
+            state = 'placed';
+          } else {
+            state = 'units';
+          }
+          utils.setStateClass(this.get('container').one(
+            '.column.unplaced .units'), state);
+        },
+
+        /**
+          Place all the units on individual machines.
+
+          @method _autoPlaceUnits
+          @param {Object} e The click event facade.
+        */
+        _autoPlaceUnits: function(e) {
+          this.get('db').units.filterByMachine(null).forEach(function(unit) {
+            var machine = this._createMachine();
+            this.get('env').placeUnit(unit, machine.id);
+          }, this);
         },
 
         /**
