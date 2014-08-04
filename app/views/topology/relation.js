@@ -687,6 +687,9 @@ YUI.add('juju-topology-relation', function(Y) {
     /**
       Shows a dialogue to the user when they are trying to remove a relation.
 
+      window.flags.mv - We no longer confirm this because it goes into the ecs.
+      This method can be removed once we remove the mv flag.
+
       @method removeRelationConfirm
       @param {Object} relation The relation model attributes.
       @param {Object} view The RelationModule instance.

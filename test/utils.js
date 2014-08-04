@@ -273,17 +273,20 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       @param {Object} View A reference to the view to render.
       @param {Object} model The object to use as the model.
       @param {Object} container The container to render the viewlet into.
+      @param {Object} options Any additional options you want to pass into the
+        viewler manager instance.
+      @return {Object} The new viewlet manager instance.
     */
-    renderViewlet: function(View, model, container) {
+    renderViewlet: function(View, model, container, options) {
       container.append('<div class="juju-inspector"></div>');
-      var viewletManager = new Y.juju.viewlets.ViewletManager({
+      var viewletManager = new Y.juju.viewlets.ViewletManager(Y.mix({
         enableDatabinding: true,
         views: [new View()],
         container: container,
         viewletContainer: '.viewlet-manager',
         model: model,
         template: '<div class="viewlet-manager"></div>'
-      });
+      }, options, true, null, 0, true));
 
       viewletManager.render();
       return viewletManager;

@@ -22,6 +22,7 @@ describe('Inspector Relations Tab', function() {
   var Y, utils, models, views, View, viewUtils, _addRelationsErrorState;
 
   var modules = [
+    'node-event-simulate',
     'juju-templates',
     'service-relations-view',
     'juju-tests-utils',
@@ -53,7 +54,7 @@ describe('Inspector Relations Tab', function() {
     this.relationType = config.relationType || 0;
   }
   ViewletGenerator.prototype = {
-    setup: function(context) {
+    setup: function(context, options) {
       this.oldGRDFS = viewUtils.getRelationDataForService;
       var relationType = this.relationType,
           _relationData = this._relationData;
@@ -64,7 +65,7 @@ describe('Inspector Relations Tab', function() {
       this.container = utils.makeContainer(context);
       this.model = new Y.Model({});
       this.viewletManager = utils.renderViewlet(
-          this.viewlet, this.model, this.container);
+          this.viewlet, this.model, this.container, options);
       return {
         viewletManager: this.viewletManager
       };
@@ -332,24 +333,41 @@ describe('Inspector Relations Tab', function() {
     assert.equal(details.item(3).getHTML(), 'Scope: global');
 
     assert.equal(
-        vmContainer.one('.status-unit-content ul li a').getHTML(),
+        vmContainer.one('.status-unit-content ul li').getHTML(),
         'wordpress/69');
 
     vg.teardown();
   });
 
   it('shows a remove relations button when units are in error', function() {
+    window.flags = {};
+    window.flags.mv = true;
+
     var vg = new ViewletGenerator({
       viewlet: View,
       relationType: 'error'
     });
 
-    var vm = vg.setup(this).viewletManager,
+    var relationStub = utils.makeStubFunction();
+    var getAttrsStub = utils.makeStubFunction('fooRelation');
+
+    var vm = vg.setup(this, {
+      db: {
+        relations: {
+          getById: utils.makeStubFunction({ getAttrs: getAttrsStub }) }},
+      topo: {
+        modules: {
+          RelationModule: {
+            removeRelation: relationStub }}}
+    }).viewletManager,
         vmContainer = vm.get('container'),
         button = vmContainer.one('button.remove-relation');
 
     assert.isNotNull(button, 'No remove relation button found');
     assert.equal(button.getData('relation'), 'wordpress:db mysql:db');
+
+    button.simulate('click');
+    assert.equal(relationStub.calledOnce(), true);
 
     vg.teardown();
   });
