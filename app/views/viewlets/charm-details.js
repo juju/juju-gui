@@ -42,7 +42,8 @@ YUI.add('charm-details-view', function(Y) {
     render: function(charm, viewletManagerAttrs) {
       var container,
           store = viewletManagerAttrs.store,
-          panel = Y.one('.charmbrowser');
+          panel = Y.one('.charmbrowser'),
+          activeTab = viewletManagerAttrs.activeTab;
       // Target the charm details div for the inspector popout content.
       container = this.get('container');
 
@@ -56,7 +57,8 @@ YUI.add('charm-details-view', function(Y) {
             entity: storeCharm,
             forInspector: true,
             renderTo: container.one('.content'),
-            store: store
+            store: store,
+            activeTab: activeTab
           });
           this.charmView.render();
         },
@@ -65,7 +67,8 @@ YUI.add('charm-details-view', function(Y) {
             entity: charm,
             forInspector: true,
             renderTo: container.one('.content'),
-            store: store
+            store: store,
+            activeTab: activeTab
           });
           this.charmView.render();
         }

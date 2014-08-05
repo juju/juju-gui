@@ -598,7 +598,8 @@ YUI.add('subapp-browser', function(Y) {
         env: this.get('env'),
         ecs: this.get('ecs'),
         topo: topo,
-        store: topo.get('store')
+        store: topo.get('store'),
+        activeTab: metadata.hash
       };
 
       if (model) {
