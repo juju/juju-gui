@@ -1,4 +1,3 @@
-
 /**
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
@@ -348,14 +347,6 @@ describe('UI State object', function() {
       it('adds the hash to the state if provided', function() {
         assert.deepEqual(
             state._parseCharmUrl('precise/mysql-38', 'foo'),
-            {
-              id: 'precise/mysql-38',
-              hash: 'foo' });
-      });
-
-      it('removes bws_ from the hash from legacy urls', function() {
-        assert.deepEqual(
-            state._parseCharmUrl('precise/mysql-38', 'bws_foo'),
             {
               id: 'precise/mysql-38',
               hash: 'foo' });
@@ -791,8 +782,12 @@ describe('UI State object', function() {
             saveStub.callCount(),
             loopcount,
             'saveState was not called on every request');
-
       });
+    });
+
+    it('sanitizes the hash', function() {
+      var hash = 'bws_foo';
+      assert.equal(state._sanitizeHash(hash), 'foo');
     });
 
     it('ignores inspector URLs if so instructed', function() {

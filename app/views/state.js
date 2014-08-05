@@ -314,10 +314,36 @@ YUI.add('juju-app-state', function(Y) {
       url = url.replace(/^search\/?/, '');
       // Split the url into its sections for the state object.
       var paths = this._splitIntoComponents(url);
+      // The window.location.hash property is '#undefined' if no hash is
+      // set in phantomjs so this is a hack to workaround that bug.
+      hash = this._sanitizeHash(hash);
       // Organize the paths into their sections.
       state = this._buildSections(paths, query, hash);
       this.saveState(state);
       return state;
+    },
+
+    /**
+       Sanitizes the hash; there are issues both in tests and with legacy hashes
+       we want to cleanup before we dispatch.
+
+       @method _sanitizeHash
+       @param {String} hash The url hash
+       @return {String} The sanitized hash
+     */
+    _sanitizeHash: function(hash) {
+      hash = hash || window.location.hash;
+      if (hash) {
+        // There are legacy hashes which have a 'bws_' prefix. This strips the
+        // bws to allow it to fall through to it's real value
+        hash = hash.replace(/^bws_/, '');
+        // Testing tools set the hash to "#undefined" if there's no hash; this
+        // cleans that up.
+        if (hash === '' || hash === '#undefined') {
+          hash = undefined;
+        }
+      }
+      return hash;
     },
 
     /**
@@ -342,7 +368,7 @@ YUI.add('juju-app-state', function(Y) {
           if (this.get('allowInspector')) {
             state.sectionA = this._addToSection({
               component: 'inspector',
-              metadata: this._parseInspectorUrl(part)
+              metadata: this._parseInspectorUrl(part, hash)
             });
           } else {
             // XXX Note, in the future, this should redirect to a proper URL.
@@ -363,11 +389,6 @@ YUI.add('juju-app-state', function(Y) {
         } else if (part.length > 0) {
           // If it's not an inspector or machine and it's more than 0 characters
           // then it's a charm url.
-          // The window.location.hash property is '#undefined' if no hash is
-          // set in phantomjs so this is a hack to workaround that bug.
-          hash = hash || window.location.hash;
-          if (hash === '#undefined') { hash = undefined; }
-          // We only support hashes for the charm urls.
           state.sectionA = this._addToSection({
             component: 'charmbrowser',
             metadata: this._parseCharmUrl(part, hash)
@@ -424,9 +445,10 @@ YUI.add('juju-app-state', function(Y) {
 
       @method _parseInspectorUrl
       @param {String} url Inspector url to be parsed.
+      @param {string} hash The hash from window.location.hash.
       @return {Object} Metadata object to be added to the inspector state.
     */
-    _parseInspectorUrl: function(url) {
+    _parseInspectorUrl: function(url, hash) {
       url = url.replace(/^inspector\/?/, '');
       var parts = url.split('/'),
           metadata = {};
@@ -444,7 +466,9 @@ YUI.add('juju-app-state', function(Y) {
           metadata[parts[1]] = parts[2] || true;
         }
       }
-
+      if (hash) {
+        metadata.hash = hash;
+      }
       return metadata;
     },
 
@@ -485,9 +509,6 @@ YUI.add('juju-app-state', function(Y) {
       }
       if (url) { state.id = url; }
       if (hash) {
-        // There are legacy hashes which have a 'bws_' prefix. This strips the
-        // bws to allow it to fall through to it's real value
-        hash = hash.replace(/^bws_/, '');
         state.hash = hash;
       }
       return state;
