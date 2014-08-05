@@ -548,14 +548,32 @@ describe('machine view panel view', function() {
     it('displays a message when there are no unplaced units', function() {
       var view = createViewNoUnits();
       view.render();
-      var message = view.get('container').one('.column.unplaced .all-placed');
-      assert.equal(message.getStyle('display'), 'block');
+      assert.equal(view.get('container').one(
+          '.column.unplaced .units').hasClass('state-placed'), true);
     });
 
-    it('doesn\'t show a message when there are no unplaced units', function() {
+    it('doesn\'t show a message when there are unplaced units', function() {
       view.render();
-      var message = view.get('container').one('.column.unplaced .all-placed');
-      assert.equal(message.getStyle('display'), 'none');
+      assert.equal(view.get('container').one(
+          '.column.unplaced .units').hasClass('state-placed'), false);
+    });
+
+    it('show the list of units when there are unplaced units', function() {
+      view.render();
+      assert.equal(view.get('container').one(
+          '.column.unplaced .units').hasClass('state-units'), true);
+    });
+
+    it('can auto place all unplaced units on machines', function() {
+      var env = view.get('env');
+      view.render();
+      container.one('.column.unplaced .auto-place').simulate('click');
+      assert.equal(env.addMachines.calledOnce(), true);
+      var placeArgs = env.placeUnit.lastArguments();
+      assert.strictEqual(placeArgs[0].id, 'test/1',
+          'The unit should be placed');
+      assert.equal(placeArgs[1], 'new0',
+          'The unit should be placed on the new machine');
     });
 
     it('should add new tokens when units are added', function() {
@@ -1374,14 +1392,12 @@ describe('machine view panel view', function() {
           var view = createViewNoUnits();
           view.render();
           // The message should be display initially.
-          var message = view.get('container').one(
-              '.column.unplaced .all-placed');
-          assert.equal(message.getStyle('display'), 'block');
+          var message = view.get('container').one('.column.unplaced .units');
+          assert.equal(message.hasClass('state-placed'), true);
           // Click the button to open the panel and the message should
           // be hidden.
           container.one('.scale-up button.closed').simulate('click');
-          message = view.get('container').one('.column.unplaced .all-placed');
-          assert.equal(message.getStyle('display'), 'none');
+          assert.equal(message.hasClass('state-placed'), false);
         });
 
     it('shows the "all placed" message when the service list is closed',
@@ -1391,13 +1407,11 @@ describe('machine view panel view', function() {
           // Click the button to open the panel and the message should
           // be hidden.
           container.one('.scale-up button.closed').simulate('click');
-          var message = view.get('container').one(
-              '.column.unplaced .all-placed');
-          assert.equal(message.getStyle('display'), 'none');
+          var message = view.get('container').one('.column.unplaced .units');
+          assert.equal(message.hasClass('state-placed'), false);
           // Close the panel and the message should displayed again.
           container.one('.scale-up button.opened').simulate('click');
-          message = view.get('container').one('.column.unplaced .all-placed');
-          assert.equal(message.getStyle('display'), 'block');
+          assert.equal(message.hasClass('state-placed'), true);
         });
   });
 
