@@ -849,7 +849,7 @@ YUI.add('machine-view-panel', function(Y) {
           }
           token.render();
           token.addTarget(this);
-          if(parentId !== this.get('selectedMachine')) {
+          if (parentId !== this.get('selectedMachine')) {
             // We don't want to display the container's token if the
             // parent machine token is not selected. The way the tokens
             // are cached we need to render the token here and then
