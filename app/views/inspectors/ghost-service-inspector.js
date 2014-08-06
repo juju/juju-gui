@@ -78,7 +78,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       // too.  Hopefully the associated tests will catch it as well.
       // Also see(grep for) the updateGhostName method too.
       var model = this.get('model');
-      model.set('displayName', '(' + model.get('packageName') + ')');
+      model.set('displayName', model.get('packageName'));
       // The emptySectionA method will destroy this inspector.
       this.fire('changeState', {
         sectionA: {

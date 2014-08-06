@@ -114,7 +114,6 @@ YUI.add('inspector-header-view', function(Y) {
       var options = this.options;
       var db = options.db;
       var model = options.model;
-      var serviceName = '(' + name + ')';
       // Validate the service name.
       var isValid = utils.validateServiceName(name, db);
       if (isValid) {
@@ -128,7 +127,7 @@ YUI.add('inspector-header-view', function(Y) {
           unit.displayName = name + '/' + unit.number;
         });
       }
-      model.set('displayName', serviceName);
+      model.set('displayName', name);
       this.serviceNameInputStatus(isValid, evt.currentTarget);
     },
 

@@ -279,11 +279,30 @@ YUI.add('juju-models', function(Y) {
       },
       displayName: {
         'getter': function(value) {
+          var name;
           if (value) {
-            return value;
+            name = value;
           } else {
-            return this.get('id').replace('service-', '');
+            name = this.get('id').replace('service-', '');
           }
+
+          // truncate if required
+          function truncate(str, max) {
+            var fill = '…';
+            if (str.length > max) {
+              str = str.substr(0, max - fill.length) + fill;
+            }
+            return str;
+          }
+
+          // add indicators for uncommitted state
+          if (this.get('pending')) {
+            name = '(' + truncate(name, 10) + ')';
+          } else {
+            name = truncate(name, 18);
+          }
+
+          return name;
         }
       },
       /**
@@ -551,7 +570,7 @@ YUI.add('juju-models', function(Y) {
       var ghostService = this.create({
         // Creating a temporary id because it's undefined by default.
         id: randomId,
-        displayName: '(' + charm.get('package_name') + ')',
+        displayName: charm.get('package_name'),
         annotations: {},
         pending: true,
         charm: charm.get('id'),

@@ -1347,7 +1347,9 @@ YUI.add('juju-topology-service', function(Y) {
                 height: 96,
                 transform: 'translate(47, 50)'
               });
-      node.append('text').append('tspan')
+      node.append('text').append('title')
+        .text(function(d) { return d.name; });
+      node.select('text').append('tspan')
         .attr('class', 'name')
         .text(function(d) { return d.displayName; });
 
