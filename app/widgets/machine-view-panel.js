@@ -1027,10 +1027,14 @@ YUI.add('machine-view-panel', function(Y) {
         */
         _toggleAllPlacedMessage: function(show) {
           var state;
+          var unitCount = this.get('db').units.filterByMachine(null).length;
           if (show !== true && show !== false) {
-            show = !this.get('db').units.filterByMachine(null).length;
+            show = !unitCount;
           }
           state = show ? 'placed' : 'units';
+          if (state === 'units' && unitCount === 0) {
+            state = 'hidden';
+          }
           utils.setStateClass(this.get('container').one(
               '.column.unplaced .units'), state);
         },

@@ -564,6 +564,14 @@ describe('machine view panel view', function() {
           '.column.unplaced .units').hasClass('state-units'), true);
     });
 
+    it('hides when the message is hidden and there are no units', function() {
+      var view = createViewNoUnits();
+      view.render();
+      view._toggleAllPlacedMessage(false);
+      assert.equal(view.get('container').one(
+          '.column.unplaced .units').hasClass('state-hidden'), true);
+    });
+
     it('can auto place all unplaced units on machines', function() {
       var env = view.get('env');
       view.render();
