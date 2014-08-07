@@ -78,6 +78,7 @@ if os.path.exists('juju-internal-ip'):
 # specified, use Chrome.
 browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
 
+CHROME_SELENIUM_VERSION = "2.30.0"
 
 def formatWebDriverError(error):
     msg = []
@@ -129,7 +130,7 @@ def get_capabilities(browser_name):
             # The saucelabs.com folks recommend using the latest version of
             # Chrome because new versions come out so quickly.
             # Therefore, there is no version specified here.
-            {'platform': 'Linux'},
+            {'platform': 'Linux', 'selenium-version': CHROME_SELENIUM_VERSION},
         ),
         'firefox': (
             desired.FIREFOX,
@@ -220,6 +221,7 @@ class TestCase(unittest.TestCase):
             capabilities = get_capabilities(browser_name)
             user = getpass.getuser()
             capabilities.update({'name': 'Juju GUI', 'tags': user})
+
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
