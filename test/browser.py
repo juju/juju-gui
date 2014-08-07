@@ -126,9 +126,9 @@ def get_capabilities(browser_name):
     choices = {
         'chrome': (
             desired.CHROME,
-            # The saucelabs.com folks recommend using the latest version of
-            # Chrome because new versions come out so quickly.
-            # Therefore, there is no version specified here.
+            # Juju GUI supports all versions of Chrome, however our browser
+            # tests currently have issues with the default chrome (35) and
+            # chromedriver (2.10). So we pin to the previous default for now.
             {'platform': 'Linux', "version": "27"},
         ),
         'firefox': (
