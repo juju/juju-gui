@@ -832,6 +832,9 @@ YUI.add('machine-view-panel', function(Y) {
             committed, units) {
           var token;
           var containerTokens = this.get('containerTokens');
+          // Root containers appear not to have a parentId here, so we
+          // need to get the parent from the id.
+          var parentId = container.parentId || container.id.split('/')[0];
           if (!units) {
             units = this.get('db').units.filterByMachine(container.id);
           }
@@ -849,6 +852,13 @@ YUI.add('machine-view-panel', function(Y) {
           }
           token.render();
           token.addTarget(this);
+          if (parentId !== this.get('selectedMachine')) {
+            // We don't want to display the container's token if the
+            // parent machine token is not selected. The way the tokens
+            // are cached we need to render the token here and then
+            // remove it from the DOM.
+            token.get('container').remove();
+          }
         },
 
         /**

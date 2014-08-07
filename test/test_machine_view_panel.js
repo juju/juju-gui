@@ -756,6 +756,45 @@ describe('machine view panel view', function() {
       });
     });
 
+    it('renders the new container token if the parent is selected', function() {
+      view.render();
+      var machineToken = container.one('.machines .machine-token .token');
+      var unit = {id: 'test/1'};
+      machineToken.simulate('click');
+      assert.equal(machineToken.hasClass('active'), true);
+      assert.equal(container.all('.containers .container-token').size(), 1);
+      view._placeServiceUnit({
+        unit: unit,
+        machine: '0',
+        container: 'lxc',
+        constraints: {}
+      });
+      // Need to call placeUnit directly as the view._placeUnit has
+      // been mocked out.
+      view.get('env').placeUnit(unit, '0');
+      assert.equal(container.all('.containers .container-token').size(), 2);
+    });
+
+    it('does not render the new container token if the parent is not selected',
+        function() {
+          view.render();
+          var machineToken = container.one('.machines .machine-token .token');
+          var unit = {id: 'test/1'};
+          machineToken.simulate('click');
+          assert.equal(machineToken.hasClass('active'), true);
+          assert.equal(container.all('.containers .container-token').size(), 1);
+          view._placeServiceUnit({
+            unit: unit,
+            machine: '1',
+            container: 'lxc',
+            constraints: {}
+          });
+          // Need to call placeUnit directly as the view._placeUnit has
+          // been mocked out.
+          view.get('env').placeUnit(unit, '1');
+          assert.equal(container.all('.containers .container-token').size(), 1);
+        });
+
     it('can move the unit to the root container', function(done) {
       view.render();
       var env = view.get('env');
@@ -1034,7 +1073,7 @@ describe('machine view panel view', function() {
       view.render();
       var selector = '.containers .token',
           list = container.all(selector),
-          id = '2/foo/999',
+          id = '0/foo/999',
           initialSize = list.size();
       assert.equal(initialSize, 1,
                    'check the initial size');
@@ -1043,12 +1082,12 @@ describe('machine view panel view', function() {
       ]);
       list = container.all(selector);
       assert.equal(list.size(), 2, 'list should have updated');
-      assert.equal(container.all(selector).item(1).getData('id'), '2/foo/999',
+      assert.equal(container.all(selector).item(1).getData('id'), '0/foo/999',
           'the container should be in the displayed list');
     });
 
     it('should remove tokens when containers are removed', function() {
-      var id = '2/foo/999';
+      var id = '0/foo/999';
       view.render();
       machines.add([{ id: id }]);
       var selector = '.containers .token',
@@ -1068,7 +1107,7 @@ describe('machine view panel view', function() {
     });
 
     it('should update tokens when containers are changed', function() {
-      var id = '2/foo/999';
+      var id = '0/foo/999';
       view.render();
       machines.add([{ id: id }]);
       var selector = '.containers .token',
@@ -1124,11 +1163,14 @@ describe('machine view panel view', function() {
       var viewStub = utils.makeStubMethod(views, 'ContainerToken', {
         render: function() { rendered = true; },
         addTarget: function(t) { target = t; },
-        destroy: function() {}
+        destroy: function() {},
+        get: function() {
+          return {remove: function() {}};
+        }
       });
       this._cleanups.push(viewStub.reset);
       var containerParent = utils.makeContainer(this, 'machine-view-panel'),
-          container = {id: '10/lxc/5'};
+          container = {id: '0/lxc/5'};
       view._createContainerToken(containerParent, container, true);
       // Verify that units for the container were looked up since they weren't
       // provided
@@ -1151,12 +1193,15 @@ describe('machine view panel view', function() {
       var viewStub = utils.makeStubMethod(views, 'ContainerToken', {
         render: function() { rendered = true; },
         addTarget: function(t) { target = t; },
-        destroy: function() {}
+        destroy: function() {},
+        get: function() {
+          return {remove: function() {}};
+        }
       });
       this._cleanups.push(viewStub.reset);
       var containerParent = utils.makeContainer(this, 'machine-view-panel'),
           units = [{}],
-          container = {id: '10/lxc/5'};
+          container = {id: '0/lxc/5'};
       view._createContainerToken(containerParent, container, true, units);
       // Verify that units for the container were provided, and not looked up.
       assert.equal(filterStub.calledOnce(), false);
