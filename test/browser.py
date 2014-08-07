@@ -129,14 +129,14 @@ def get_capabilities(browser_name):
             # The saucelabs.com folks recommend using the latest version of
             # Chrome because new versions come out so quickly.
             # Therefore, there is no version specified here.
-            {'platform': 'Linux'},
+            {'platform': 'Linux', "version": "27"},
         ),
         'firefox': (
             desired.FIREFOX,
             # Juju GUI supports Firefox >= 16 (quantal base).  At the time of
             # this comment the default version used in Saucelabs, if none is
             # specified, is 11.
-            {'platform': 'Linux', 'version': '25'},
+            {'platform': 'Linux', 'version': '31'},
         ),
         'ie': (
             desired.INTERNETEXPLORER,
