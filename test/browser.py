@@ -435,7 +435,7 @@ class TestCase(unittest.TestCase):
             juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
                  'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.wait_for_script(
             'return app && app.env.get("connected");',
             error='Impossible to connect to the API backend after restart.',

@@ -32,7 +32,7 @@ class TestBasics(browser.TestCase):
 
     def test_environment_name(self):
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         # The next line attempts to work around an IE 10 fragility.
         # The symptom we are trying to avoid is an error as follows:
         # "JavaScript error (WARNING: The server did not provide any stacktrace
@@ -44,7 +44,7 @@ class TestBasics(browser.TestCase):
     def test_environment_connection(self):
         # The GUI connects to the API backend.
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         # The next line attempts to work around an IE 10 fragility.
         # The symptom we are trying to avoid is an error as follows:
         # "JavaScript error (WARNING: The server did not provide any stacktrace
@@ -64,7 +64,7 @@ class TestAuthentication(browser.TestCase):
     def process_path(self, path):
         """Load the given path, log out, log in again."""
         self.load(path)
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.handle_login()
         # Check the initial URL.
         self.wait_for_path(path, error='Not in the initial path.')

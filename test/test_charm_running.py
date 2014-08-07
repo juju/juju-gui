@@ -119,7 +119,7 @@ class TestNotifications(browser.TestCase, DeployTestMixin):
     def setUp(self):
         super(TestNotifications, self).setUp()
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.handle_login()
 
     def get_notifications(self):
@@ -157,7 +157,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         # A charm can be deployed using the GUI.
         self.addCleanup(self.restart_api)
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         # The unit tests log us out so we want to make sure we log back in.
         self.handle_login()
         self.deploy('appflower')
@@ -166,7 +166,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
     def test_initial_services(self):
         # The staging API backend contains already deployed services.
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.handle_login()
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertEqual(set(expected), self.get_service_names())
@@ -174,7 +174,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
     def test_service_view(self):
         # The service detail page is correctly displayed.
         self.load('/:gui:/service/haproxy/')  # Navigate to service details.
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.handle_login()
 
         def service_name_displayed(driver):
@@ -192,7 +192,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
     def test_unit_view(self):
         # The unit detail page is correctly displayed.
         self.load('/:gui:/unit/haproxy-0/')  # Navigate to unit details.
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.handle_login()
         unit_name = self.driver.find_element_by_tag_name('h1').text
         self.assertEqual('haproxy/0', unit_name)
@@ -219,7 +219,7 @@ class TestSandbox(browser.TestCase, DeployTestMixin):
     def test_charm_deploy(self):
         # The sandbox mode is able to deploy a charm.
         self.load()
-        self.handle_browser_warning()
+        # self.handle_browser_warning()
         self.handle_login()
         self.deploy('appflower')
         self.assert_deployed('appflower')
