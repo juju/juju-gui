@@ -78,7 +78,7 @@ if os.path.exists('juju-internal-ip'):
 # specified, use Chrome.
 browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
 
-SELENIUM_VERSION = "2.35.0"
+CHROME_SELENIUM_VERSION = "2.30.0"
 
 def formatWebDriverError(error):
     msg = []
@@ -122,7 +122,6 @@ def get_capabilities(browser_name):
     common = {
         'command-timeout': 300,
         'idle-timeout': 100,
-        'selenium-version': SELENIUM_VERSION,
     }
     desired = selenium.webdriver.DesiredCapabilities
     choices = {
@@ -131,7 +130,7 @@ def get_capabilities(browser_name):
             # The saucelabs.com folks recommend using the latest version of
             # Chrome because new versions come out so quickly.
             # Therefore, there is no version specified here.
-            {'platform': 'Linux'},
+            {'platform': 'Linux', 'selenium-version': CHROME_SELENIUM_VERSION},
         ),
         'firefox': (
             desired.FIREFOX,
