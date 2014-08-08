@@ -230,6 +230,44 @@ describe('test_model.js', function() {
          service_unit.number.should.equal(5);
        });
 
+    it('should display service names properly', function() {
+      var db = new models.Database(),
+          longId = '1234567890123456789',
+          shortId = '12345678901234567';
+      db.services.add([{id: longId}, {id: shortId}]);
+      var longName = db.services.getById(longId).get('displayName');
+      assert.equal(longName.length, 18, 'name is not trucated');
+      var shortName = db.services.getById(shortId).get('displayName');
+      assert.equal(shortName.length, shortId.length,
+                   'name does not match');
+    });
+
+    it('should display ghost service names properly', function() {
+      var db = new models.Database(),
+          longId = '12345678901',
+          shortId = '123456789';
+      db.services.add([
+        {id: longId, pending: true},
+        {id: shortId, pending: true}
+      ]);
+      var longName = db.services.getById(longId).get('displayName');
+      var shortName = db.services.getById(shortId).get('displayName');
+      assert.equal(longName.indexOf('('), 0,
+                   'open paren not found');
+      assert.equal(longName.lastIndexOf(')'), longName.length - 1,
+                   'close paren not found');
+      assert.equal(shortName.indexOf('('), 0,
+                   'open paren not found');
+      assert.equal(shortName.lastIndexOf(')'), shortName.length - 1,
+                   'close paren not found');
+      // add 2 to the expected length to account for the parenthesis
+      // that surround ghosted names
+      assert.equal(longName.length, 10 + 2,
+                   'name is not trucated');
+      assert.equal(shortName.length, shortId.length + 2,
+                   'name does not match');
+    });
+
     it('must be able to resolve models by their name', function() {
       var db = new models.Database();
       // Add some services.
