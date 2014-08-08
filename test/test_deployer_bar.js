@@ -415,7 +415,7 @@ describe('deployer bar view', function() {
       {id: 'ghost-django-2/0'},
       {id: 'rails/1'}
     ]);
-    // XXX kadams 2014-08-08: this is a temporary hack right now
+    // XXX kadams54 2014-08-08: this is a temporary hack right now
     // because the ECS doesn't batch operations. Add 10 units and
     // you'll get 10 log entries with numUnits set to 1. Once
     // numUnits reflects the actual number being added, we can
