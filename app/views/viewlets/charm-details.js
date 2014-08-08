@@ -44,39 +44,45 @@ YUI.add('charm-details-view', function(Y) {
           store = viewletManagerAttrs.store,
           panel = Y.one('.charmbrowser'),
           activeTab = viewletManagerAttrs.activeTab;
-      // Target the charm details div for the inspector popout content.
       container = this.get('container');
 
-      container.delegate('click', this.close, '.close-slot', this);
-      panel.removeClass('animate-in');
-      container.hide();
+      var cfg = {
+        forInspector: true,
+        store: store,
+        activeTab: activeTab
+      };
 
-      store.charm(charm.get('storeId'), {
-        'success': function(data, storeCharm) {
-          this.charmView = new browserViews.BrowserCharmView({
-            entity: storeCharm,
-            forInspector: true,
-            renderTo: container.one('.content'),
-            store: store,
-            activeTab: activeTab
-          });
-          this.charmView.render();
-        },
-        'failure': function(data) {
-          this.charmView = new browserViews.BrowserCharmView({
-            entity: charm,
-            forInspector: true,
-            renderTo: container.one('.content'),
-            store: store,
-            activeTab: activeTab
-          });
-          this.charmView.render();
-        }
-      }, this, viewletManagerAttrs.db.charms);
+      if (this.get('rendered')) {
+        cfg.entity = this.charmView.get('entity');
+        this.charmView.setAttrs(cfg);
+      } else {
+        container.delegate('click', this.close, '.close-slot', this);
+        panel.removeClass('animate-in');
+        container.hide();
 
-      container.setHTML(this.templateWrapper({ initial: 'Loading...'}));
-      panel.addClass('animate-in');
-      container.show();
+        store.charm(charm.get('storeId'), {
+          'success': function(data, storeCharm) {
+            // We must set renderTo in the callback--it doesn't exist before
+            // then.
+            cfg.renderTo = container.one('.content');
+            cfg.entity = storeCharm;
+            this.charmView = new browserViews.BrowserCharmView(cfg);
+            this.charmView.render();
+          },
+          'failure': function(data) {
+            // We must set renderTo in the callback--it doesn't exist before
+            // then.
+            cfg.renderTo = container.one('.content');
+            cfg.entity = charm;
+            this.charmView = new browserViews.BrowserCharmView(cfg);
+            this.charmView.render();
+          }
+        }, this, viewletManagerAttrs.db.charms);
+        container.setHTML(this.templateWrapper({ initial: 'Loading...'}));
+        panel.addClass('animate-in');
+        container.show();
+        this.set('rendered', true);
+      }
     },
 
     /**
@@ -110,6 +116,21 @@ YUI.add('charm-details-view', function(Y) {
       if (breakout) { breakout.removeClass('with-charm'); }
       // If the view is never rendered then charmView will not exist.
       if (this.charmView) { this.charmView.destroy(); }
+      // XXX j.c.sackett Aug 11, 2014 The viewlet/slot stuff doesn't properly
+      // destroy charm details and create a new one, so we have to set rendered
+      // to false here to ensure "destruction" works.
+      this.set('rendered', false);
+    }
+  }, {
+    ATTRS: {
+      /**
+         Whether or not the viewlet has been rendered.
+
+         @attribute rendered
+         @default undefined
+         @type {Boolean}
+       */
+      rendered: {}
     }
   });
 

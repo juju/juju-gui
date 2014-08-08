@@ -305,6 +305,14 @@ describe('UI State object', function() {
               key + ' did not parse correctly');
         });
       });
+
+      it('handle hashes for charm details', function() {
+        var data = state._parseInspectorUrl(
+            'inspector/service123/charm', '#code');
+        assert.deepEqual(
+            data,
+            { id: 'service123', charm: true, hash: '#code' });
+      });
     });
 
     describe('_parseMachineUrl', function() {
