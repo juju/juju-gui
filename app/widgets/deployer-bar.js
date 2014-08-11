@@ -232,7 +232,7 @@ YUI.add('deployer-bar', function(Y) {
           addedRelations: changes.addRelations,
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
-          totalUnits: totalUnits,
+          totalUnits: changes.totalUnits,
           removedUnits: changes.removeUnits,
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
