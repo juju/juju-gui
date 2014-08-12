@@ -100,7 +100,11 @@ YUI.add('service-inspector', function(Y) {
       if (this.get('showCharm')) {
         var charmId = model.get('charm');
         var charm = db.charms.getById(charmId);
-        this.showViewlet('charmDetails', charm);
+        if (this.views.charmDetails.get('rendered')) {
+          this.views.charmDetails.render(charm, this.getAttrs());
+        } else {
+          this.showViewlet('charmDetails', charm);
+        }
       } else if (activeUnit >= 0) {
         var serviceName = model.get('id');
         var unitName = serviceName + '/' + activeUnit;
@@ -317,6 +321,15 @@ YUI.add('service-inspector', function(Y) {
          @type {Number}
        */
       activeUnit: {},
+
+      /**
+         The activeTab for the details view (if any).
+
+         @attribute activeTab
+         @default undefined
+         @type {String}
+       */
+      activeTab: {},
 
       /**
          Logs whether the inspector has already been rendered

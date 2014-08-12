@@ -95,11 +95,52 @@ describe('Service Inspector', function() {
   it('can render charm details', function() {
     var inspector = setUpInspector();
     var stubShow = utils.makeStubMethod(inspector, 'showViewlet');
+    this._cleanups.push(stubShow.reset);
     inspector.render();
     assert.equal(stubShow.lastArguments()[0], 'overview');
 
     inspector.set('showCharm', true);
     inspector.render();
+    assert.equal(stubShow.lastArguments()[0], 'charmDetails');
+  });
+
+  it('can re-render charm details', function() {
+    var inspector = setUpInspector();
+    var stubShow = utils.makeStubMethod(inspector, 'showViewlet');
+    this._cleanups.push(stubShow.reset);
+    var stubDetailsRender = utils.makeStubMethod(
+        inspector.views.charmDetails, 'render');
+    this._cleanups.push(stubDetailsRender.reset);
+    inspector.set('showCharm', true);
+    // The first call to render uses showViewlet
+    inspector.render();
+    // Call count is 3 because 'overview' and 'inspectorHeader' are also
+    // displayed.
+    assert.equal(stubShow.callCount(), 3);
+    assert.equal(stubDetailsRender.callCount(), 0);
+    assert.equal(stubShow.lastArguments()[0], 'charmDetails');
+
+    inspector.views.charmDetails.set('rendered', true);
+    inspector.render();
+    assert.equal(stubShow.callCount(), 3);
+    assert.equal(stubDetailsRender.callCount(), 1);
+  });
+
+  it('handles rendering details when they\'re "destroyed"', function() {
+    var inspector = setUpInspector();
+    var stubShow = utils.makeStubMethod(inspector, 'showViewlet');
+    this._cleanups.push(stubShow.reset);
+    inspector.set('showCharm', true);
+    // The first call to render uses showViewlet
+    inspector.render();
+    // Call count is 3 because 'overview' and 'inspectorHeader' are also
+    // displayed.
+    assert.equal(stubShow.callCount(), 3);
+    assert.equal(stubShow.lastArguments()[0], 'charmDetails');
+
+    inspector.views.charmDetails.destroy();
+    inspector.render();
+    assert.equal(stubShow.callCount(), 4);
     assert.equal(stubShow.lastArguments()[0], 'charmDetails');
   });
 
