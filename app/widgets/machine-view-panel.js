@@ -1049,6 +1049,16 @@ YUI.add('machine-view-panel', function(Y) {
           if (state === 'units' && unitCount === 0) {
             state = 'hidden';
           }
+          this._setUnitListState(state);
+        },
+
+        /**
+          Set the state of the unit list.
+
+          @method _setUnitListState
+          @param {String} state The state class to set
+        */
+        _setUnitListState: function(state) {
           utils.setStateClass(this.get('container').one(
               '.column.unplaced .units'), state);
         },
@@ -1098,6 +1108,7 @@ YUI.add('machine-view-panel', function(Y) {
           if (scaleUpView) {
             if (this.get('db').services.size() === 0) {
               scaleUpView.hideScaleUp();
+              this._setUnitListState('add');
             }
             else {
               scaleUpView.showScaleUp();

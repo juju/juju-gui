@@ -30,18 +30,17 @@
 
         &.unplaced {
             .units {
-                &.state-placed .all-placed {
-                    display: block
-                }
-                &.state-units .unit-list {
-                    display: block
+                &.state-placed .all-placed,
+                &.state-units .unit-list,
+                &.state-add .add-services {
+                    display: block;
                 }
                 .unit-list,
-                .all-placed {
+                .onboarding {
                     display: none;
                 }
-                .all-placed {
-                    padding: 20px;
+                .onboarding {
+                    padding: 10px 20px;
                     border-bottom: 1px solid @machine-view-border-colour;
                     line-height: 40px;
 
