@@ -303,7 +303,7 @@ YUI.add('juju-models', function(Y) {
       },
       charm: {},
       /**
-        If the unit has been marked for deletion via the ECS.
+        If the Service has been marked for deletion via the ECS.
 
         @attribute deleted
         @type {Boolean}
@@ -1274,7 +1274,7 @@ YUI.add('juju-models', function(Y) {
       },
       scope: {},
       /**
-        If the unit has been marked for deletion via the ECS.
+        If the relation has been marked for deletion via the ECS.
 
         @attribute deleted
         @type {Boolean}
