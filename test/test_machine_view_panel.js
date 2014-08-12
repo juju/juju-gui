@@ -548,6 +548,9 @@ describe('machine view panel view', function() {
 
     it('displays a message when there are no unplaced units', function() {
       var view = createViewNoUnits();
+      view.get('db').services.add([
+        {id: 'test', icon: 'test.svg'}
+      ]);
       view.render();
       assert.equal(view.get('container').one(
           '.column.unplaced .units').hasClass('state-placed'), true);
@@ -1378,6 +1381,17 @@ describe('machine view panel view', function() {
           '.service-scale-up-view').hasClass('hidden'), true);
     });
 
+    it('shows the onboarding when there are no services', function() {
+      var db = view.get('db');
+      // Clear all the services from the list.
+      db.services.reset();
+      assert.equal(db.services.size(), 0,
+          'There need to be 0 services for this test');
+      view.render();
+      assert.equal(view.get('container').one(
+          '.units').hasClass('state-add'), true);
+    });
+
     it('is visible when there are services', function() {
       var db = view.get('db');
       assert.equal(db.services.size() > 0, true,
@@ -1458,6 +1472,9 @@ describe('machine view panel view', function() {
     it('hides the "all placed" message when the service list is displayed',
         function() {
           var view = createViewNoUnits();
+          view.get('db').services.add([
+            {id: 'test', icon: 'test.svg'}
+          ]);
           view.render();
           // The message should be display initially.
           var message = view.get('container').one('.column.unplaced .units');
