@@ -188,7 +188,7 @@ describe('Inspector Overview', function() {
     window.flags = {};
   });
 
-  it('catches scaleUp cangeState and re-fires', function(done) {
+  it('catches scaleUp changeState and re-fires', function(done) {
     window.flags = {};
     window.flags.mv = true;
     inspector = setUpInspector();
@@ -524,6 +524,8 @@ describe('Inspector Overview', function() {
         uncommittedWrapper.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(uncommittedWrapper.one(SUC).hasClass('close-unit'), true);
     assert.equal(uncommittedWrapper.one('.unit-qty').getHTML(), 1);
+    var exampleUnit = uncommittedWrapper.all('li').item(1);
+    assert.equal(exampleUnit.get('text'), 'mysql/4');
 
     var errorWrapper = unitListWrappers.item(1);
     assert.equal(errorWrapper.one(SUH).hasClass('error'), true);
@@ -552,6 +554,8 @@ describe('Inspector Overview', function() {
     assert.equal(
         runningWrapper.one('.category-label').getHTML(), 'running units');
     assert.notEqual(runningWrapper.one(SUC).getStyle('maxHeight'), undefined);
+    exampleUnit = runningWrapper.all('li').item(1);
+    assert.equal(exampleUnit.get('text'), 'mysql/3');
 
     units = new Y.LazyModelList();
 
