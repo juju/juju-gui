@@ -430,6 +430,7 @@ YUI.add('environment-change-set', function(Y) {
       if (existingService) {
         this._destroyQueuedService(existingService);
       } else {
+        this.get('db').services.getById(args[0]).set('deleted', true);
         return this._createNewRecord('destroyService', command, []);
       }
     },
@@ -492,6 +493,7 @@ YUI.add('environment-change-set', function(Y) {
       if (existingMachine) {
         this._destroyQueuedMachine(existingMachine);
       } else {
+        this.get('db').machines.getById(command.args[0]).deleted = true;
         return this._createNewRecord('destroyMachines', command, []);
       }
     },
@@ -668,8 +670,7 @@ YUI.add('environment-change-set', function(Y) {
           method: '_remove_relation',
           args: args
         });
-        // XXX We will probably want to mark that the relation line is pending
-        // to be destroyed. Awaiting feedback from design. 06-23-2014 Jeff
+        relations.getRelationFromEndpoints(argsEndpoints).set('deleted', true);
       }
       return record;
     },
@@ -710,6 +711,7 @@ YUI.add('environment-change-set', function(Y) {
           method: '_remove_units',
           args: args
         });
+        units.getById(args[0]).deleted = true;
       }
       return record;
     },
