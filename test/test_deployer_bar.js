@@ -423,7 +423,8 @@ describe('deployer bar view', function() {
     ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django-1/0'});
     ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django-2/0'});
     ecs.lazyAddUnits(['rails', 1], {modelId: 'rails/1'});
-    var results = view._getChanges(ecs).addUnits;
+    var delta = view._getChanges(ecs),
+        results = delta.changes.addUnits;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], {
       numUnits: 2,
@@ -441,7 +442,8 @@ describe('deployer bar view', function() {
     var machine = {};
     ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
     ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
-    var results = view._getChanges(ecs).addMachines;
+    var delta = view._getChanges(ecs),
+        results = delta.changes.addMachines;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], machine);
     assert.deepEqual(results[1], machine);
@@ -454,7 +456,8 @@ describe('deployer bar view', function() {
       parentId: 'new-0', containerType: 'lxc'
     };
     ecs.lazyAddMachines([[container]], { modelId: 'new-1' });
-    var results = view._getChanges(ecs).addMachines;
+    var delta = view._getChanges(ecs),
+        results = delta.changes.addMachines;
     assert.lengthOf(results, 1);
     assert.deepEqual(results[0], machine);
   });

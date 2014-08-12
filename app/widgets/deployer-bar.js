@@ -222,7 +222,9 @@ YUI.add('deployer-bar', function(Y) {
       this.hideChanges();
       var container = this.get('container'),
           ecs = this.get('ecs');
-      var changes = this._getChanges(ecs);
+      var delta = this._getChanges(ecs),
+          changes = delta.changes,
+          totalUnits = delta.totalUnits;
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: this._getChangeCount(ecs),
@@ -232,7 +234,7 @@ YUI.add('deployer-bar', function(Y) {
           addedRelations: changes.addRelations,
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
-          totalUnits: changes.totalUnits,
+          totalUnits: totalUnits,
           removedUnits: changes.removeUnits,
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
@@ -598,7 +600,8 @@ YUI.add('deployer-bar', function(Y) {
         setConfigs: []
       };
       var db = this.get('db'),
-          unitCount = {};
+          unitCount = {},
+          totalUnits = 0;
       Object.keys(ecs.changeSet).forEach(function(key) {
         var command = ecs.changeSet[key].command,
             args = command.args,
@@ -695,7 +698,6 @@ YUI.add('deployer-bar', function(Y) {
             break;
         }
       }, this);
-      changes.totalUnits = 0;
       // The total number of units isn't just changes.addUnits.length but
       // but rather a sum of each entry's numUnits field.
       changes.addUnits.forEach(function(u) {
@@ -710,9 +712,12 @@ YUI.add('deployer-bar', function(Y) {
         }
         // </hack>
 
-        changes.totalUnits += u.numUnits;
+        totalUnits += u.numUnits;
       }, this);
-      return changes;
+      return {
+        changes: changes,
+        totalUnits: totalUnits
+      };
     },
 
     /**
