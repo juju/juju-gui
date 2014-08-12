@@ -303,7 +303,11 @@ YUI.add('inspector-overview-view', function(Y) {
       var unit = d3.select(this);
       unit.append('a').text(
           function(d) {
-            return d.unit.id;
+            if (d.unit.agent_state) {
+              return d.unit.id;
+            } else {
+              return d.unit.displayName;
+            }
           })
         .attr('data-unit', function(d) {
             return d.unit.service + '/' + d.unit.number;
