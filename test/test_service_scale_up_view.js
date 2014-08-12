@@ -49,50 +49,54 @@ describe('service scale up view', function() {
   });
 
   function generateView(db) {
-
     view = new View({
       container: container,
       services: new models.ServiceList()
     });
     return view;
   }
+  function renderEnabledView() {
+    generateView();
+    view.render();
+    view.enableScaleUp();
+  }
 
   it('should apply the wrapping class to the container', function() {
-    generateView().render();
+    renderEnabledView();
     assert.equal(container.hasClass('service-scale-up-view'), true);
   });
 
   it('removes the class from the container when destroyed', function() {
-    generateView().render();
+    renderEnabledView();
     assert.equal(container.hasClass('service-scale-up-view'), true);
     view.destroy();
     assert.equal(container.hasClass('service-scale-up-view'), false);
   });
 
-  it('can be hidden', function() {
-    generateView().render();
-    assert.equal(container.hasClass('hidden'), false);
-    view.hideScaleUp();
-    assert.equal(container.hasClass('hidden'), true);
+  it('can disable the buttons', function() {
+    renderEnabledView();
+    assert.equal(container.one('.action-block').hasClass('enabled'), true);
+    view.disableScaleUp();
+    assert.equal(container.one('.action-block').hasClass('enabled'), false);
   });
 
-  it('can be made visible', function() {
-    generateView().render();
-    view.hideScaleUp();
-    assert.equal(container.hasClass('hidden'), true);
-    view.showScaleUp();
-    assert.equal(container.hasClass('hidden'), false);
+  it('can enable the buttons', function() {
+    renderEnabledView();
+    view.disableScaleUp();
+    assert.equal(container.one('.action-block').hasClass('enabled'), false);
+    view.enableScaleUp();
+    assert.equal(container.one('.action-block').hasClass('enabled'), true);
   });
 
   it('it is closed by default', function() {
-    generateView().render();
+    renderEnabledView();
     var container = view.get('container');
     assert.equal(container.hasClass('opened'), false);
   });
 
   it('shows/hides the service list when clicking the [+]/X/Cancel buttons',
       function() {
-        generateView().render();
+        renderEnabledView();
         var container = view.get('container');
         assert.equal(container.hasClass('opened'), false);
         container.one('button.closed').simulate('click');
@@ -106,14 +110,14 @@ describe('service scale up view', function() {
       });
 
   it('shows a list of the services in the environment', function() {
-    generateView().render();
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     assert.equal(container.all('li').size(), 1);
   });
 
   it('closing and opening the view updates the list of services', function() {
-    generateView().render();
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     assert.equal(container.all('li').size(), 1);
@@ -127,7 +131,7 @@ describe('service scale up view', function() {
   });
 
   it('fires an addUnit event for scaled up services', function(done) {
-    generateView().render();
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     var input = container.one('li input[type=text]');
@@ -140,8 +144,8 @@ describe('service scale up view', function() {
     container.one('button.add-units').simulate('click');
   });
 
-  it('closes` when units are added', function() {
-    generateView().render();
+  it('closes when units are added', function() {
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     container.one('li input[type=text]').set('value', 5);
@@ -151,7 +155,7 @@ describe('service scale up view', function() {
   });
 
   it('clears the inputs when units are added', function() {
-    generateView().render();
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     var input = container.one('li input[type=text]');
@@ -162,7 +166,7 @@ describe('service scale up view', function() {
   });
 
   it('fires an event when the list is opened', function(done) {
-    generateView().render();
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     view.on('listOpened', function(e) {
       assert.isObject(e);
@@ -172,7 +176,7 @@ describe('service scale up view', function() {
   });
 
   it('fires an event when the list is closed', function(done) {
-    generateView().render();
+    renderEnabledView();
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     view.on('listClosed', function(e) {

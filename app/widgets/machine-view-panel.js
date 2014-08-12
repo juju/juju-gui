@@ -739,11 +739,6 @@ YUI.add('machine-view-panel', function(Y) {
                 dropLabel: 'Create new container'
               });
           this._containersHeader.addTarget(this);
-          this._unplacedHeader = this._renderHeader(
-              '.column.unplaced .head', {
-                title: 'Unplaced units'
-              });
-          this._unplacedHeader.addTarget(this);
           this.addEvent(this.on(
               '*:createMachine', this._displayCreateMachine, this));
         },
@@ -1107,11 +1102,11 @@ YUI.add('machine-view-panel', function(Y) {
           var scaleUpView = this._scaleUpView;
           if (scaleUpView) {
             if (this.get('db').services.size() === 0) {
-              scaleUpView.hideScaleUp();
+              scaleUpView.disableScaleUp();
               this._setUnitListState('add');
             }
             else {
-              scaleUpView.showScaleUp();
+              scaleUpView.enableScaleUp();
             }
           }
         },

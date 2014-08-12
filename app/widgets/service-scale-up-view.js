@@ -41,7 +41,7 @@ YUI.add('service-scale-up-view', function(Y) {
     itemTemplate: Templates['service-scale-up-item'],
 
     events: {
-      '.action-block button': {
+      '.enabled.action-block button': {
         click: '_onActionButtonClick'
       },
       '.actions .button.cancel': {
@@ -183,23 +183,21 @@ YUI.add('service-scale-up-view', function(Y) {
     },
 
     /**
-      Make the UI visible.
+      Enable the UI.
 
-      @method render
-      @return {Object} reference to the view instance.
+      @method enableScaleUp
     */
-    showScaleUp: function() {
-      this.get('container').removeClass('hidden');
+    enableScaleUp: function() {
+      this.get('container').one('.action-block').addClass('enabled');
     },
 
     /**
-      Hide the UI
+      Disable the UI.
 
-      @method render
-      @return {Object} reference to the view instance.
+      @method disableScaleUp
     */
-    hideScaleUp: function() {
-      this.get('container').addClass('hidden');
+    disableScaleUp: function() {
+      this.get('container').one('.action-block').removeClass('enabled');
     },
 
     /**
