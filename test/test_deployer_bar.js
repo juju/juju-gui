@@ -405,20 +405,29 @@ describe('deployer bar view', function() {
 
   it('retrieves all the unit changes', function() {
     db.services.add([
-      {id: 'ghost-django', name: 'django', charm: 'cs:trusty/django-1'},
+      {id: 'ghost-django-1', name: 'django', charm: 'cs:trusty/django-1'},
+      {id: 'ghost-django-2', name: 'django', charm: 'cs:trusty/django-1'},
       {id: 'rails', charm: 'cs:utopic/rails-42',
         icon: 'http://example.com/foo'}
     ]);
     db.addUnits([
-      {id: 'ghost-django/0'},
+      {id: 'ghost-django-1/0'},
+      {id: 'ghost-django-2/0'},
       {id: 'rails/1'}
     ]);
-    ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django/0'});
+    // XXX kadams54 2014-08-08: this is a temporary hack right now
+    // because the ECS doesn't batch operations. Add 10 units and
+    // you'll get 10 log entries with numUnits set to 1. Once
+    // numUnits reflects the actual number being added, we can
+    // update the test.
+    ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django-1/0'});
+    ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django-2/0'});
     ecs.lazyAddUnits(['rails', 1], {modelId: 'rails/1'});
-    var results = view._getChanges(ecs).addUnits;
+    var delta = view._getChanges(ecs),
+        results = delta.changes.addUnits;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], {
-      numUnits: 1,
+      numUnits: 2,
       icon: undefined,
       serviceName: 'django'
     });
@@ -433,7 +442,8 @@ describe('deployer bar view', function() {
     var machine = {};
     ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
     ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
-    var results = view._getChanges(ecs).addMachines;
+    var delta = view._getChanges(ecs),
+        results = delta.changes.addMachines;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], machine);
     assert.deepEqual(results[1], machine);
@@ -446,7 +456,8 @@ describe('deployer bar view', function() {
       parentId: 'new-0', containerType: 'lxc'
     };
     ecs.lazyAddMachines([[container]], { modelId: 'new-1' });
-    var results = view._getChanges(ecs).addMachines;
+    var delta = view._getChanges(ecs),
+        results = delta.changes.addMachines;
     assert.lengthOf(results, 1);
     assert.deepEqual(results[0], machine);
   });

@@ -222,7 +222,9 @@ YUI.add('deployer-bar', function(Y) {
       this.hideChanges();
       var container = this.get('container'),
           ecs = this.get('ecs');
-      var changes = this._getChanges(ecs);
+      var delta = this._getChanges(ecs),
+          changes = delta.changes,
+          totalUnits = delta.totalUnits;
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: this._getChangeCount(ecs),
@@ -232,6 +234,7 @@ YUI.add('deployer-bar', function(Y) {
           addedRelations: changes.addRelations,
           removedRelations: changes.removeRelations,
           addedUnits: changes.addUnits,
+          totalUnits: totalUnits,
           removedUnits: changes.removeUnits,
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
@@ -596,7 +599,9 @@ YUI.add('deployer-bar', function(Y) {
         destroyMachines: [],
         setConfigs: []
       };
-      var db = this.get('db');
+      var db = this.get('db'),
+          unitCount = {},
+          totalUnits = 0;
       Object.keys(ecs.changeSet).forEach(function(key) {
         var command = ecs.changeSet[key].command,
             args = command.args,
@@ -634,11 +639,20 @@ YUI.add('deployer-bar', function(Y) {
           case '_add_unit':
             // This can be either a ghost or a real deployed service.
             service = this._getServiceByUnitId(command.options.modelId);
-            changes.addUnits.push({
-              icon: service.get('icon'),
-              serviceName: service.get('name'),
-              numUnits: args[1]
-            });
+            // XXX kadams54 2014-08-08: this is a temporary hack right now
+            // because the ECS doesn't batch operations. Add 10 units and
+            // you'll get 10 log entries with numUnits set to 1. Once
+            // numUnits reflects the actual number being added, we can
+            // remove this hack.
+            name = service.get('name');
+            unitCount[name] = unitCount[name] ? unitCount[name] + 1 : 1;
+            if (unitCount[name] === 1) {
+              changes.addUnits.push({
+                icon: service.get('icon'),
+                serviceName: name,
+                numUnits: args[1]
+              });
+            }
             break;
           case '_remove_units':
             name = args[0][0].split('/')[0];
@@ -684,7 +698,26 @@ YUI.add('deployer-bar', function(Y) {
             break;
         }
       }, this);
-      return changes;
+      // The total number of units isn't just changes.addUnits.length but
+      // but rather a sum of each entry's numUnits field.
+      changes.addUnits.forEach(function(u) {
+        // XXX kadams54 2014-08-08: this is a temporary hack right now
+        // because the ECS doesn't batch operations. Add 10 units and
+        // you'll get 10 log entries with numUnits set to 1. Once
+        // numUnits reflects the actual number being added, we can
+        // remove this hack.
+        var name = u.serviceName;
+        if (unitCount[name]) {
+          u.numUnits = unitCount[name];
+        }
+        // </hack>
+
+        totalUnits += u.numUnits;
+      }, this);
+      return {
+        changes: changes,
+        totalUnits: totalUnits
+      };
     },
 
     /**
