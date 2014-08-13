@@ -321,6 +321,13 @@ YUI.add('juju-models', function(Y) {
         }
       },
       charm: {},
+      /**
+        If the Service has been marked for deletion via the ECS.
+
+        @attribute deleted
+        @type {Boolean}
+      */
+      deleted: {},
       icon: {},
       config: {},
       // Annotations on service are an empty dict
@@ -609,7 +616,13 @@ YUI.add('juju-models', function(Y) {
           // case is a hash mapping a local relation name to a list of services
           // on the other end, like {'cache': ['memcached']}.
           relation_errors: {},
+          /**
+            If the unit has been marked for deletion via the ECS.
 
+            @attribute deleted
+            @type {Boolean}
+          */
+          deleted: {},
           config: {},
           is_subordinate: {},
           open_ports: {},
@@ -901,6 +914,13 @@ YUI.add('juju-models', function(Y) {
         @type {String}
       */
       displayName: {},
+      /**
+        If the machine has been marked for deletion via the ECS.
+
+        @attribute deleted
+        @type {Boolean}
+      */
+      deleted: {},
       /**
         The parent machine name (e.g. "1" or "2/lxc/0"), automatically
         generated when a machine is added to the model list. For top level
@@ -1272,6 +1292,13 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       scope: {},
+      /**
+        If the relation has been marked for deletion via the ECS.
+
+        @attribute deleted
+        @type {Boolean}
+      */
+      deleted: {},
       display_name: {
         'getter': function(value) {
           if (value) { return value;}
