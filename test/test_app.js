@@ -73,8 +73,6 @@ function injectData(app, data) {
           .append(Y.Node.create('<span/>')
             .set('id', 'environment-name')
             .addClass('environment-name'))
-          .append(Y.Node.create('<span/>')
-            .addClass('provider-type'))
           .hide();
 
     });
@@ -210,21 +208,6 @@ function injectData(app, data) {
       assert.equal(container.one('.environment-name').get('text'), 'Sandbox');
     });
 
-    it('should show the provider type, when available', function() {
-      constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
-      });
-      var providerType = 'excellent provider';
-      // Since no provider type has been set yet, none is displayed.
-      assert.equal('', container.one('.provider-type').get('text'));
-      app.env.set('providerType', providerType);
-      // The provider type has been displayed.
-      assert.equal(
-          'on ' + providerType,
-          container.one('.provider-type').get('text')
-      );
-    });
-
     it('hides the browser subapp on some urls', function() {
       constructAppInstance({
         env: juju.newEnvironment({
@@ -340,8 +323,6 @@ describe('File drag over notification system', function() {
         .addClass('container')
         .append(Y.Node.create('<span/>')
           .set('id', 'environment-name'))
-        .append(Y.Node.create('<span/>')
-          .addClass('provider-type'))
         .hide();
   });
 

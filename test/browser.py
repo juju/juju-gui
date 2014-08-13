@@ -283,15 +283,15 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
-    def wait_for_provider_type(self, error=None, timeout=60):
+    def wait_for_environment_name(self, error=None, timeout=60):
         """Wait for a connection using a CSS selector."""
         # IE is very sensitive to asking for javascript before it is
         # ready, so we look at a related document element instead.
-        def provider_type(driver):
-            els = driver.find_elements_by_css_selector('#provider-type')
+        def environment_name(driver):
+            els = driver.find_elements_by_css_selector('#environment-name')
             if els:
                 return els[0].text
-        return self.wait_for(provider_type, error=error, timeout=timeout)
+        return self.wait_for(environment_name, error=error, timeout=timeout)
 
     def login(self, password='admin'):
         """Log in into the application.
@@ -315,7 +315,7 @@ class TestCase(unittest.TestCase):
 
     def handle_login(self):
         """Log in."""
-        self.wait_for_provider_type(error='Provider type not found.')
+        self.wait_for_environment_name(error='Environment name not found.')
         check_script = (
             'return app && app.env && app.env.get("connected") && ('
             'app.env.failedAuthentication || '
