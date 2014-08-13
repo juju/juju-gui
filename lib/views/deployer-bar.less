@@ -230,6 +230,22 @@
                 vertical-align: middle;
             }
         }
+        .unplaced-panel {
+            @box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+            .create-box-shadow(@box-shadow);
+            .create-border-radius(@border-radius);
+            background: #ffffff;
+            padding: 20px;
+            margin-top: 5px;
+            label {
+                display: inline-block;
+                margin-right: 20px;
+            }
+            p {
+              margin: 0;
+              margin-bottom: 10px;
+            }
+        }
         .changes {
             margin-top: 20px;
             background: @paper-dark;

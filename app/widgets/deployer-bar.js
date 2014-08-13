@@ -79,6 +79,9 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.action-list .change-mode': {
         click: '_setMode'
+      },
+      '.view-machines': {
+        click: '_viewMachines'
       }
     },
 
@@ -136,7 +139,11 @@ YUI.add('deployer-bar', function(Y) {
     deploy: function(evt) {
       evt.halt();
       var container = this.get('container'),
-          ecs = this.get('ecs');
+          ecs = this.get('ecs'),
+          autodeploy = container.one('input[value="autodeploy"]');
+      if (autodeploy && autodeploy.get('checked')) {
+        this._autoPlaceUnits();
+      }
       container.removeClass('summary-open');
       ecs.commit(this.get('env'));
       //this.update();
@@ -222,10 +229,12 @@ YUI.add('deployer-bar', function(Y) {
       // Hide the changes panel if it is visible.
       this.hideChanges();
       var container = this.get('container'),
-          ecs = this.get('ecs');
-      var delta = this._getChanges(ecs),
+          ecs = this.get('ecs'),
+          db = this.get('db'),
+          delta = this._getChanges(ecs),
           changes = delta.changes,
-          totalUnits = delta.totalUnits;
+          totalUnits = delta.totalUnits,
+          unplacedCount = db.units.filterByMachine(null).length;
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: this._getChangeCount(ecs),
@@ -241,7 +250,8 @@ YUI.add('deployer-bar', function(Y) {
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
           deployed: this._deployed,
-          majorChange: this._hasMajorChanges(changes)
+          majorChange: this._hasMajorChanges(changes),
+          unplacedCount: unplacedCount
         }));
       }
       container.addClass('summary-open');
@@ -753,6 +763,22 @@ YUI.add('deployer-bar', function(Y) {
           this.get('env'),
           this.get('db')
       );
+    },
+
+    /**
+      Navigate to the machine view.
+
+      @method _viewMachine
+      @param {Object} e The event object.
+    */
+    _viewMachines: function(e) {
+      e.halt();
+      this.hideSummary(e);
+      this.fire('changeState', {
+        sectionB: {
+          component: 'machine'
+        }
+      });
     }
 
   });
