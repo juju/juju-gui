@@ -116,8 +116,7 @@ describe('machine view panel view', function() {
 
   it('should render the header widgets', function() {
     view.render();
-    assert.equal(container.one('.column .head .title').get('text'),
-        'Unplaced units');
+    assert.equal(container.all('.machine-view-panel-header').size(), 2);
   });
 
   it('should set the initial container header label', function() {
@@ -1327,7 +1326,7 @@ describe('machine view panel view', function() {
       view.render();
       assert.equal(container.one(
           '.column.unplaced .scale-up .action-block span').get('text'),
-          'Choose a service and add units');
+          'New units');
     });
 
     it('should render the mass scale up UI', function() {
@@ -1337,7 +1336,7 @@ describe('machine view panel view', function() {
       scaleUpViewRender = utils.makeStubFunction({
         on: onStub,
         destroy: destroyStub,
-        showScaleUp: utils.makeStubFunction()
+        enableScaleUp: utils.makeStubFunction()
       });
       scaleUpView = utils.makeStubMethod(views, 'ServiceScaleUpView', {
         render: scaleUpViewRender
@@ -1358,7 +1357,7 @@ describe('machine view panel view', function() {
       scaleUpViewRender = utils.makeStubFunction({
         on: onStub,
         destroy: destroyStub,
-        showScaleUp: utils.makeStubFunction()
+        enableScaleUp: utils.makeStubFunction()
       });
       scaleUpView = utils.makeStubMethod(views, 'ServiceScaleUpView', {
         render: scaleUpViewRender
@@ -1370,7 +1369,7 @@ describe('machine view panel view', function() {
       assert.equal(destroyStub.callCount(), 1);
     });
 
-    it('is hidden when there are no services', function() {
+    it('disables when there are no services', function() {
       var db = view.get('db');
       // Clear all the services from the list.
       db.services.reset();
@@ -1378,7 +1377,7 @@ describe('machine view panel view', function() {
           'There need to be 0 services for this test');
       view.render();
       assert.equal(view.get('container').one(
-          '.service-scale-up-view').hasClass('hidden'), true);
+          '.service-scale-up-view .action-block').hasClass('enabled'), false);
     });
 
     it('shows the onboarding when there are no services', function() {
@@ -1392,28 +1391,27 @@ describe('machine view panel view', function() {
           '.units').hasClass('state-add'), true);
     });
 
-    it('is visible when there are services', function() {
+    it('enables when there are services', function() {
       var db = view.get('db');
       assert.equal(db.services.size() > 0, true,
           'There need to be some services for this test');
       view.render();
       assert.equal(view.get('container').one(
-          '.service-scale-up-view').hasClass('hidden'), false);
+          '.service-scale-up-view .action-block').hasClass('enabled'), true);
     });
 
-    it('shows when a service is added', function() {
+    it('enables when a service is added', function() {
       var db = view.get('db');
       // Clear all the services from the list.
       db.services.reset();
       assert.equal(db.services.size(), 0,
           'There initially need to be 0 services for this test');
       view.render();
-      var scaleUpNode = view.get('container').one(
-          '.service-scale-up-view');
-      assert.equal(scaleUpNode.hasClass('hidden'), true);
+      assert.equal(container.one(
+          '.service-scale-up-view .action-block').hasClass('enabled'), false);
       services.add([{id: 'test'}]);
-      assert.equal(view.get('container').one(
-          '.service-scale-up-view').hasClass('hidden'), false);
+      assert.equal(container.one(
+          '.service-scale-up-view .action-block').hasClass('enabled'), true);
     });
 
     it('hides when all services are removed', function() {
@@ -1424,14 +1422,13 @@ describe('machine view panel view', function() {
       assert.equal(db.services.size() > 0, true,
           'There initially need to be some services for this test');
       view.render();
-      var scaleUpNode = view.get('container').one(
-          '.service-scale-up-view');
-      assert.equal(scaleUpNode.hasClass('hidden'), false);
+      assert.equal(container.one(
+          '.service-scale-up-view .action-block').hasClass('enabled'), true);
       db.services.remove(0);
       assert.equal(db.services.size(), 0,
           'There now should be 0 services');
-      assert.equal(view.get('container').one(
-          '.service-scale-up-view').hasClass('hidden'), true);
+      assert.equal(container.one(
+          '.service-scale-up-view .action-block').hasClass('enabled'), false);
     });
 
     it('calls _scaleUpService on addUnit', function() {
@@ -1472,9 +1469,7 @@ describe('machine view panel view', function() {
     it('hides the "all placed" message when the service list is displayed',
         function() {
           var view = createViewNoUnits();
-          view.get('db').services.add([
-            {id: 'test', icon: 'test.svg'}
-          ]);
+          view.get('db').services.add([{id: 'test', icon: 'test.svg'}]);
           view.render();
           // The message should be display initially.
           var message = view.get('container').one('.column.unplaced .units');
@@ -1488,6 +1483,7 @@ describe('machine view panel view', function() {
     it('shows the "all placed" message when the service list is closed',
         function() {
           var view = createViewNoUnits();
+          view.get('db').services.add([{id: 'test', icon: 'test.svg'}]);
           view.render();
           // Click the button to open the panel and the message should
           // be hidden.
