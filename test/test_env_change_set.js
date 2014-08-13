@@ -809,7 +809,7 @@ describe('Environment Change Set', function() {
         var unitObj = {};
         ecs.get('db').units = {
           getById: function(arg) {
-            assert.equal(arg, 'args1');
+            assert.equal(arg.substr(0, 4), 'args');
             return unitObj;
           }
         };

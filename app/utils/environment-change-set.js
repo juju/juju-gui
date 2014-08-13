@@ -714,7 +714,9 @@ YUI.add('environment-change-set', function(Y) {
           method: '_remove_units',
           args: args
         });
-        units.getById(args[0]).deleted = true;
+        args[0].forEach(function(unit) {
+          units.getById(unit).deleted = true;
+        });
       }
       return record;
     },
