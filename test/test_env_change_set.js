@@ -394,12 +394,25 @@ describe('Environment Change Set', function() {
     describe('_lazyDestroyService', function() {
       it('creates a new destroy record', function(done) {
         var args = ['foo', done, {modelId: 'baz'}];
+        var setStub = testUtils.makeStubFunction();
+        ecs.set('db', {
+          services: {
+            getById: function(arg) {
+              assert.equal(arg, args[0]);
+              return {
+                set: setStub
+              };
+            }}
+        });
         var key = ecs._lazyDestroyService(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
         assert.equal(record.command.method, '_destroyService');
+        assert.equal(setStub.calledOnce(), true);
+        assert.equal(setStub.lastArguments()[0], 'deleted');
+        assert.equal(setStub.lastArguments()[1], true);
         // Remove the functions, which will not be equal.
         var cb = record.command.args.pop();
         args.pop();
@@ -443,12 +456,21 @@ describe('Environment Change Set', function() {
     describe('_lazyDestroyMachines', function() {
       it('creates a new destroy record', function(done) {
         var args = [['0/lxc/0'], false, done, {}];
+        var machineObj = {};
+        ecs.set('db', {
+          machines: {
+            getById: function(arg) {
+              assert.deepEqual(arg, args[0]);
+              return machineObj;
+            }}
+        });
         var key = ecs._lazyDestroyMachines(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
         assert.equal(record.command.method, '_destroyMachines');
+        assert.equal(machineObj.deleted, true);
         // Remove the functions, which will not be equal.
         var cb = record.command.args.pop();
         args.pop();
@@ -738,6 +760,13 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a remove relation record into the changeset', function() {
+        var setStub = testUtils.makeStubFunction();
+        var db = ecs.get('db');
+        db.relations = {
+          getRelationFromEndpoints: testUtils.makeStubFunction({
+            set: setStub
+          })
+        };
         var record = ecs._lazyRemoveRelation(['args1', 'args2']);
         assert.equal(record.split('-')[0], 'removeRelation');
         // Note that we cannot guarantee the duration of the tests, so we
@@ -752,6 +781,11 @@ describe('Environment Change Set', function() {
           parents: [],
           timestamp: ecs.changeSet[record].timestamp
         });
+        assert.deepEqual(
+            db.relations.getRelationFromEndpoints.lastArguments()[0],
+            ['args1', 'args2']);
+        assert.equal(setStub.calledOnce(), true);
+        assert.deepEqual(setStub.lastArguments(), ['deleted', true]);
       });
     });
 
@@ -772,6 +806,13 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a remove unit record into the changeset', function() {
+        var unitObj = {};
+        ecs.get('db').units = {
+          getById: function(arg) {
+            assert.equal(arg, 'args1');
+            return unitObj;
+          }
+        };
         var record = ecs._lazyRemoveUnit(['args1', 'args2']);
         assert.equal(record.split('-')[0], 'removeUnit');
         // Note that we cannot guarantee the duration of the tests, so we
@@ -786,6 +827,7 @@ describe('Environment Change Set', function() {
           parents: [],
           timestamp: ecs.changeSet[record].timestamp
         });
+        assert.equal(unitObj.deleted, true);
       });
     });
   });
