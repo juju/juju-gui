@@ -311,7 +311,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           function stubApp(app, ghost, notes) {
             clientId = 'foo';
             var db = {
-              charms: { getById: function() {} },
+              charms: { getById: function() { return {}; } },
               notifications: {
                 add: function(note) {
                   if (notes) {
@@ -471,6 +471,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             stubMethods(this);
             var findStub = utils.makeStubMethod(
                 app, '_findModelInServices', false);
+            this._cleanups.push(findStub);
+            var retryStub = utils.makeStubMethod(
+                app, '_retryRenderServiceInspector');
+            this._cleanups.push(retryStub.reset);
+
+            var metadata = {id: clientId};
+            app._inspectorDispatcher(metadata);
+            assert.equal(retryStub.calledOnce(), true);
+            assert.equal(retryStub.lastArguments()[0], metadata);
+          });
+
+          it('retries if it cannot find charm data', function() {
+            stubApp(app, false);
+            stubMethods(this);
+            app.get('db').charms.getById = function() { return null; };
+            var findStub = utils.makeStubMethod(app, '_findModelInServices', {
+              get: function() {
+                return 'foo';
+              }
+            });
             this._cleanups.push(findStub);
             var retryStub = utils.makeStubMethod(
                 app, '_retryRenderServiceInspector');

@@ -586,6 +586,7 @@ YUI.add('subapp-browser', function(Y) {
     renderServiceInspector: function(metadata) {
       var clientId = metadata.id,
           model = this._findModelInServices(clientId),
+          charm,
           previousInspector,
           activeInspector;
 
@@ -603,7 +604,11 @@ YUI.add('subapp-browser', function(Y) {
       };
 
       if (model) {
-        if(model.get('pending') && !(window.flags && window.flags.mv)) {
+        charm = db.charms.getById(model.get('charm'));
+      }
+
+      if (model && charm) {
+        if (model.get('pending') && !(window.flags && window.flags.mv)) {
           previousInspector = this._inspector;
           cfg.charmModel = db.charms.getById(model.get('charm'));
           activeInspector = new Y.juju.views.GhostServiceInspector(cfg);
