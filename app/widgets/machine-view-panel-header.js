@@ -69,8 +69,15 @@ YUI.add('machine-view-panel-header', function(Y) {
          * @param {Event} e the custom event created.
          */
         _afterLabelsChange: function(e) {
-          var html = this.labelTemplate({labels: this.get('labels')});
-          this.get('container').one('.labels').setHTML(html);
+          var template;
+          var customTemplate = this.get('customTemplate');
+          if (customTemplate) {
+            template = Templates[customTemplate];
+          } else {
+            template = this.labelTemplate;
+          }
+          this.get('container').one('.labels').setHTML(
+              template({labels: this.get('labels')}));
         },
 
         /**
@@ -93,14 +100,15 @@ YUI.add('machine-view-panel-header', function(Y) {
          * @param {Integer} delta the amount to change the label count
          */
         updateLabelCount: function(label, delta) {
-          var container = this.get('container'),
-              pluralize = Y.Handlebars.helpers.pluralize,
-              node = container.one('.label[data-label="' + label + '"]'),
-              oldVal = parseInt(node.getData('count'), 10),
-              newVal = oldVal + delta,
-              text = newVal + ' ' + pluralize(label, newVal);
-          node.setAttribute('data-count', newVal);
-          node.set('text', text);
+          var labels = this.get('labels');
+          labels.forEach(function(labelItem) {
+            if (labelItem.label === label) {
+              labelItem.count = labelItem.count + delta;
+            }
+          });
+          // Updating the list of labels will fire the
+          // _afterLabelsChange event which will in turn update the DOM.
+          this.set('labels', labels);
         },
 
         /**
@@ -171,7 +179,14 @@ YUI.add('machine-view-panel-header', function(Y) {
     @default undefined
     @type {String}
     */
-    dropLabel: {}
+    dropLabel: {},
+
+    /**
+    @attribute customTemplate
+    @default undefined
+    @type {String}
+    */
+    customTemplate: {}
   };
 
   views.MachineViewPanelHeaderView = MachineViewPanelHeaderView;

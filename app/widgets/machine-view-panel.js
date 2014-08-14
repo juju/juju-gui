@@ -139,6 +139,21 @@ YUI.add('machine-view-panel', function(Y) {
           this.on('*:unit-token-drop', this._unitTokenDropHandler, this);
 
           this.on('*:moveToken', this._placeServiceUnit, this);
+
+          // When the environment name becomes available, display it.
+          this.get('env').after('environmentNameChange',
+              this._displayEnvironmentName, this);
+        },
+
+        /**
+          Display the environment name in the machines header.
+
+         @method _displayEnvironmentName
+         @param {Object} e Change event facade.
+        */
+        _displayEnvironmentName: function(e) {
+          this.get('container').one('.column.machines .head .title').setHTML(
+              this.get('env').get('environmentName'));
         },
 
         /**
@@ -734,10 +749,11 @@ YUI.add('machine-view-panel', function(Y) {
         _renderHeaders: function() {
           this._machinesHeader = this._renderHeader(
               '.column.machines .head', {
-                title: 'Environment',
+                title: this.get('env').get('environmentName'),
                 action: 'machine',
                 actionLabel: 'Add machine',
-                dropLabel: 'Create new machine'
+                dropLabel: 'Create new machine',
+                customTemplate: 'machine-view-panel-header-label-alt'
               });
           this._machinesHeader.addTarget(this);
           this._containersHeader = this._renderHeader(
