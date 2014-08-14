@@ -916,14 +916,42 @@ describe('machine view panel view', function() {
       units.add([{id: 'test/5'}]);
       var firstToken = container.all('.serviceunit-token').item(0);
       var secondToken = container.all('.serviceunit-token').item(1);
-      firstToken.one('.token-move').simulate('click');
+      firstToken.one('.open-menu').simulate('click');
+      firstToken.one('li').simulate('click');
       assert.equal(firstToken.hasClass('state-select-machine'), true);
       assert.equal(secondToken.hasClass('state-select-machine'), false);
       // Clicking on a different token should make the second token
       // active, and reset the first token.
-      secondToken.one('.token-move').simulate('click');
+      secondToken.one('.open-menu').simulate('click');
+      secondToken.one('li').simulate('click');
       assert.equal(firstToken.hasClass('state-select-machine'), false);
       assert.equal(secondToken.hasClass('state-select-machine'), true);
+    });
+
+    it('can open the more menu', function() {
+      view.render();
+      var moreMenuNode = container.one('.unplaced-unit .more-menu');
+      moreMenuNode.one('.open-menu').simulate('click');
+      var moreMenu = moreMenuNode.one('.yui3-moremenu');
+      assert.equal(moreMenu.hasClass('open'), true);
+    });
+
+    it('only shows one more menu at a time', function() {
+      view.render();
+      units.add([{id: 'test/5'}]);
+      var tokens = container.all('.unplaced-unit');
+      var moreMenuNode = tokens.item(0).one('.more-menu');
+      var moreMenuNode2 = tokens.item(1).one('.more-menu');
+      // Click on both menus to render them.
+      moreMenuNode2.one('.open-menu').simulate('click');
+      moreMenuNode.one('.open-menu').simulate('click');
+      var moreMenu = moreMenuNode.one('.yui3-moremenu');
+      var moreMenu2 = moreMenuNode2.one('.yui3-moremenu');
+      assert.equal(moreMenu.hasClass('open'), true);
+      assert.equal(moreMenu2.hasClass('open'), false);
+      moreMenuNode2.one('.open-menu').simulate('click');
+      assert.equal(moreMenu.hasClass('open'), false);
+      assert.equal(moreMenu2.hasClass('open'), true);
     });
   });
 

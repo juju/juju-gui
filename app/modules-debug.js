@@ -203,6 +203,10 @@ var GlobalConfig = {
               '/juju-ui/assets/javascripts/machine-view-panel-extension.js'
         },
 
+        'more-menu': {
+          fullpath: '/juju-ui/widgets/more-menu.js'
+        },
+
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },

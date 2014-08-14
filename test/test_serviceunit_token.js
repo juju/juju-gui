@@ -94,7 +94,8 @@ describe('Service unit token', function() {
 
   it('can show the machine selection', function() {
     // Show the machine selection.
-    container.one('.token-move').simulate('click');
+    view.showMoreMenu();
+    container.one('li').simulate('click');
     assert.equal(container.hasClass('state-select-machine'), true);
   });
 
@@ -103,7 +104,8 @@ describe('Service unit token', function() {
     assert.equal(machinesSelect.all('option').size(), 2,
         'The defaults should exist');
     // Show the machine selection.
-    container.one('.token-move').simulate('click');
+    view.showMoreMenu();
+    container.one('li').simulate('click');
     var machineOptions = machinesSelect.all('option');
     assert.equal(machineOptions.size(), 3);
     assert.equal(machineOptions.item(2).get('value'), '0');
@@ -112,7 +114,8 @@ describe('Service unit token', function() {
   it('orders the machines list correctly', function() {
     view.get('db').machines.add([{id: '2'}, {id: '1'}]);
     // Show the machine selection.
-    container.one('.token-move').simulate('click');
+    view.showMoreMenu();
+    container.one('li').simulate('click');
     var machineOptions = container.one('.machines select').all('option');
     assert.equal(machineOptions.item(2).get('value'), '0');
     assert.equal(machineOptions.item(3).get('value'), '1');
@@ -192,7 +195,8 @@ describe('Service unit token', function() {
   it('resets the token on cancel', function() {
     var machinesSelect = container.one('.machines select');
     // Show the machine selection.
-    container.one('.token-move').simulate('click');
+    view.showMoreMenu();
+    container.one('li').simulate('click');
     // Select the 'New machine' option.
     machinesSelect.set('selectedIndex', 1);
     machinesSelect.simulate('change');
