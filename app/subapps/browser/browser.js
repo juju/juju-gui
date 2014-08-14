@@ -603,7 +603,13 @@ YUI.add('subapp-browser', function(Y) {
       };
 
       if (model) {
-        if ((window.flags && window.flags.mv) || model.get('config')) {
+        if(model.get('pending') && !(window.flags && window.flags.mv)) {
+          previousInspector = this._inspector;
+          cfg.charmModel = db.charms.getById(model.get('charm'));
+          activeInspector = new Y.juju.views.GhostServiceInspector(cfg);
+          activeInspector.render();
+          activeInspector.addTarget(this);
+        } else {
           // This is a service inspector.
           cfg.showCharm = metadata.charm || false;
           cfg.enableDatabinding = true;
@@ -624,12 +630,6 @@ YUI.add('subapp-browser', function(Y) {
             activeInspector.setAttrs(cfg);
             activeInspector.renderUI();
           }
-        } else {
-          previousInspector = this._inspector;
-          cfg.charmModel = db.charms.getById(model.get('charm'));
-          activeInspector = new Y.juju.views.GhostServiceInspector(cfg);
-          activeInspector.render();
-          activeInspector.addTarget(this);
         }
       } else {
         // If we found no model, begin the retry loop.
