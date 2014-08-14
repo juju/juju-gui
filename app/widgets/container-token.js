@@ -107,6 +107,15 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+          Set the token state to deleted.
+
+          @method setDeleted
+        */
+        setDeleted: function() {
+          this.get('container').one('.token').addClass('deleted');
+        },
+
+        /**
          * Render the units.
          *
          * @method renderUnits
@@ -125,6 +134,9 @@ YUI.add('container-token', function(Y) {
           var container = this.get('container'),
               machine = this.get('machine');
           container.setHTML(this.template(machine));
+          if (machine.deleted) {
+            this.setDeleted();
+          }
           this.renderUnits();
           container.addClass('container-token');
           container.one('.token').addClass(

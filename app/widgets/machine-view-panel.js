@@ -333,6 +333,9 @@ YUI.add('machine-view-panel', function(Y) {
           var parentId = machine.parentId;
           if (parentId) {
             committed = machine.id.split('/').pop().indexOf('new') !== 0;
+            // All containers added here will be real containers, so
+            // show the delete action.
+            machine.displayDelete = true;
             this._createContainerToken(containerParent, machine, committed);
             if (parentId === selectedMachine) {
               this._containersHeader.updateLabelCount('container', 1);
@@ -728,8 +731,11 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Object} e The event
          */
         deleteMachine: function(e) {
-          e.preventDefault();
           var machineName = e.currentTarget.ancestor('.token').getData('id');
+          var machine = this.get('db').machines.getById(machineName);
+          var token = this.get(machine.parentId ?
+              'containerTokens' : 'machineTokens')[machineName];
+          token.setDeleted();
           this.get('env').destroyMachines([machineName], false, function(data) {
             if (data.err) {
               this.get('db').notifications.add({

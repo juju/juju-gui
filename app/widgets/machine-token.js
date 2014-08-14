@@ -122,6 +122,15 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
+          Set the token state to deleted.
+
+          @method setDeleted
+        */
+        setDeleted: function() {
+          this.get('container').one('.token').addClass('deleted');
+        },
+
+        /**
          * Format the hardware details.
          *
          * @method _formatHardware
@@ -166,6 +175,9 @@ YUI.add('machine-token', function(Y) {
             machine.noHardware = true;
           }
           container.setHTML(this.template(machine));
+          if (machine.deleted) {
+            this.setDeleted();
+          }
           this.renderUnits();
           container.addClass('machine-token');
           container.one('.token').addClass(

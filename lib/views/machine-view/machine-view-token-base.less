@@ -36,6 +36,9 @@
     &.uncommitted .token-uncommitted {
         display: inline-block;
     }
+    &.deleted .title .removed {
+        display: inline;
+    }
     span {
         display: block;
     }
@@ -47,11 +50,7 @@
         display: none;
     }
     .removed {
-        // XXX: Hiding these states until the tokens have 'deleted' flags.
-        // - huwshimi: 31/07/2014
         display: none;
-        // Once implemented the display should be:
-        //display: inline;
     }
     .top {
         .display-flex;
@@ -59,7 +58,7 @@
 
         .title {
             .flex-basis(auto);
-            margin-right: 10px;
+            margin-right: 15px;
         }
         .title,
         .service-icons {
