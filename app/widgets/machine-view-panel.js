@@ -314,15 +314,20 @@ YUI.add('machine-view-panel', function(Y) {
           var committed;
           var containerParent = this.get('container').one(
               '.containers .content .items');
-          if (machine.parentId) {
+          var selectedMachine = this.get('selectedMachine');
+          var parentId = machine.parentId;
+          if (parentId) {
             committed = machine.id.split('/').pop().indexOf('new') !== 0;
             this._createContainerToken(containerParent, machine, committed);
+            if (parentId === selectedMachine) {
+              this._containersHeader.updateLabelCount('container', 1);
+            }
           } else {
             committed = machine.id.indexOf('new') !== 0;
             this._createMachineToken(machine, committed);
             this._machinesHeader.updateLabelCount('machine', 1);
           }
-          if (!this.get('selectedMachine')) {
+          if (!selectedMachine) {
             this._selectFirstMachine();
           }
           this._hideOnboarding();
@@ -337,22 +342,25 @@ YUI.add('machine-view-panel', function(Y) {
         _onMachineRemove: function(e) {
           var tokenList;
           var machine = e.model;
-          if (machine.parentId) {
+          var selectedMachine = this.get('selectedMachine');
+          var parentId = machine.parentId;
+          if (parentId) {
             tokenList = this.get('containerTokens');
+            if (parentId === selectedMachine) {
+              this._containersHeader.updateLabelCount('container', -1);
+            }
           } else {
             tokenList = this.get('machineTokens');
             // If the active machine is being removed then stop showing
             // its containers.
-            if (machine.id === this.get('selectedMachine')) {
+            if (machine.id === selectedMachine) {
               this._clearContainerColumn();
               this.set('selectedMachine', null);
             }
+            this._machinesHeader.updateLabelCount('machine', -1);
           }
           tokenList[machine.id].destroy({remove: true});
           delete tokenList[machine.id];
-          if (!machine.parentId) {
-            this._machinesHeader.updateLabelCount('machine', -1);
-          }
           this._showOnboarding();
         },
 

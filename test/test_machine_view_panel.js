@@ -1270,6 +1270,41 @@ describe('machine view panel view', function() {
       assert.equal(tokenArguments[0][1].displayName, 'Root container');
     });
 
+    it('displays the container count in the header', function() {
+      view.render();
+      machines.add([{id: '0/lxc/0'}]);
+      container.one('.machine-token .token').simulate('click');
+      var containerCount = Object.keys(machines.filterByParent('0')).length;
+      assert.equal(containerCount > 0, true);
+      assert.equal(container.one(
+          '.column.containers .head .label:first-child').get('text'),
+          containerCount + ' container');
+    });
+
+    it('updates the container count when a container is added', function() {
+      view.render();
+      container.one('.machine-token .token').simulate('click');
+      var selector = '.column.containers .head .label:first-child';
+      assert.equal(container.one(selector).get('text'),
+          '0 containers');
+      machines.add([{id: '0/lxc/0'}]);
+      assert.equal(container.one(selector).get('text'),
+          '1 container');
+    });
+
+    it('updates the container count when a container is removed', function() {
+      var id = '0/lxc/0';
+      view.render();
+      machines.add([{id: id}]);
+      container.one('.machine-token .token').simulate('click');
+      var selector = '.column.containers .head .label:first-child';
+      assert.equal(container.one(selector).get('text'),
+          '1 container');
+      machines.remove(machines.getById(id));
+      assert.equal(container.one(selector).get('text'),
+          '0 containers');
+    });
+
     describe('functional tests', function() {
       it('can render containers on click of machine token', function() {
         view.render();
