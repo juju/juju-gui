@@ -700,30 +700,39 @@ YUI.add('environment-change-set', function(Y) {
       // If an existing ecs record for this unit exists, remove it from the
       // queue.
       var changeSet = this.changeSet,
-          ghosted = false,
-          service = args[0],
+          toRemove = args[0],
           units = this.get('db').units,
           command, record;
+      // XXX It is currently not possible to remove pending units, there may
+      // be future work around this - Makyo 2014-08-13
       Object.keys(changeSet).forEach(function(key) {
         command = changeSet[key].command;
         if (command.method === '_add_units') {
+          // XXX Currently, modelId is a single unit's name.  In the future,
+          // this will likely be an array and an intersection between the two
+          // will need to be found. Makyo 2014-08-15
+          var unitName = command.options.modelId;
+          var unitIndex = toRemove.indexOf(unitName);
           // If there is a matching ecs unit then remove it from the queue.
-          if (command.args[0] === service) {
-            ghosted = true;
+          if (unitIndex !== -1) {
+            toRemove.splice(unitIndex, 1);
             this._removeExistingRecord(key);
             // Remove the unit from the units DB. Even the ghost units are
             // stored in the DB.
-            units.remove({service: service});
+            units.remove({id: unitName});
           }
         }
       }, this);
       // If the unit wasn't found in the ecs then it's a real unit.
-      if (!ghosted) {
+      if (toRemove.length > 0) {
+        args[0] = toRemove;
         record = this._createNewRecord('removeUnit', {
           method: '_remove_units',
           args: args
         });
-        units.getById(args[0]).deleted = true;
+        args[0].forEach(function(unit) {
+          units.getById(unit).deleted = true;
+        });
       }
       return record;
     },

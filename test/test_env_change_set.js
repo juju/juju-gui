@@ -915,8 +915,9 @@ describe('Environment Change Set', function() {
         ecs.changeSet['addUnit-982'] = {
           command: {
             args: ['arg1'],
-            method: '_add_units' }};
-        var record = ecs._lazyRemoveUnit(['arg1']);
+            method: '_add_units' ,
+            options: {modelId: 'arg1'}}};
+        var record = ecs._lazyRemoveUnit([['arg1']]);
         var remove = ecs.get('db').units.remove;
         assert.strictEqual(record, undefined);
         assert.strictEqual(ecs.changeSet['addUnit-982'], undefined);
@@ -927,17 +928,17 @@ describe('Environment Change Set', function() {
         var unitObj = {};
         ecs.get('db').units = {
           getById: function(arg) {
-            assert.equal(arg, 'args1');
+            assert.equal(arg.substr(0, 4), 'args');
             return unitObj;
           }
         };
-        var record = ecs._lazyRemoveUnit(['args1', 'args2']);
+        var record = ecs._lazyRemoveUnit([['args1', 'args2']]);
         assert.equal(record.split('-')[0], 'removeUnit');
         // Note that we cannot guarantee the duration of the tests, so we
         // need to assert against the record's timestamp below.
         assert.deepEqual(ecs.changeSet[record], {
           command: {
-            args: ['args1', 'args2'],
+            args: [['args1', 'args2']],
             method: '_remove_units'
           },
           executed: false,
