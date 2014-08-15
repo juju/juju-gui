@@ -696,14 +696,18 @@ YUI.add('environment-change-set', function(Y) {
       Object.keys(changeSet).forEach(function(key) {
         command = changeSet[key].command;
         if (command.method === '_add_units') {
-          var unitIndex = toRemove.indexOf(command.args[0]);
+          // XXX Currently, modelId is a single unit's name.  In the future,
+          // this will likely be an array and an intersection between the two
+          // will need to be found. Makyo 2014-08-15
+          var unitName = command.options.modelId;
+          var unitIndex = toRemove.indexOf(unitName);
           // If there is a matching ecs unit then remove it from the queue.
           if (unitIndex !== -1) {
             toRemove.splice(unitIndex, 1);
             this._removeExistingRecord(key);
             // Remove the unit from the units DB. Even the ghost units are
             // stored in the DB.
-            units.remove({id: key});
+            units.remove({id: unitName});
           }
         }
       }, this);

@@ -797,7 +797,8 @@ describe('Environment Change Set', function() {
         ecs.changeSet['addUnit-982'] = {
           command: {
             args: ['arg1'],
-            method: '_add_units' }};
+            method: '_add_units' ,
+            options: {modelId: 'arg1'}}};
         var record = ecs._lazyRemoveUnit([['arg1']]);
         var remove = ecs.get('db').units.remove;
         assert.strictEqual(record, undefined);
