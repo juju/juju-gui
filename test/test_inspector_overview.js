@@ -26,7 +26,8 @@ describe('Inspector Overview', function() {
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
       'event-key', 'juju-charm-store', 'juju-charm-models',
-      'node-event-simulate', 'environment-change-set'];
+      'node-event-simulate', 'environment-change-set',
+      'service-inspector'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           utils = Y.namespace('juju-tests.utils');
@@ -135,8 +136,16 @@ describe('Inspector Overview', function() {
     ].join('')).appendTo(container);
     container.append(
         '<div id="bws-sidebar"><div class="bws-content"></div></div>');
-    inspector = view.createServiceInspector(service,
-        {databinding: {interval: 0}});
+    inspector = new jujuViews.ServiceInspector({
+      db: db,
+      model: service,
+      env: env,
+      enableDatabinding: true,
+      databinding: { interval: 0 },
+      store: view.get('store')
+    });
+    inspector.render();
+
     return inspector;
   };
 
