@@ -71,16 +71,9 @@ describe('Environment Change Set', function() {
 
     describe('_translateKeysToIds', function() {
       it('calls keyToId when available', function() {
-        ecs.currentCommit = [[
-          {
-            key: 'foo-1',
-            command: { onParentResults: true },
-            parents: ['bar-1']
-          }
-        ]];
-        ecs.currentLevel = -1;
         ecs.changeSet = {
           'foo-1': {
+            parents: ['bar-1'],
             command: {
               onParentResults: testUtils.makeStubFunction()
             }
@@ -90,6 +83,69 @@ describe('Environment Change Set', function() {
 
         assert.isTrue(
             ecs.changeSet['foo-1'].command.onParentResults.calledOnce());
+      });
+    });
+
+    describe('_updateChangesetFromResults', function() {
+      beforeEach(function() {
+        // Simulates two related services being autodeployed to two machines,
+        // one unit per machine.
+        ecs.changeSet = {
+          'service-1': {
+            id: 'service-1',
+            parents: [],
+            command: {}
+          },
+          'addUnits-1': {
+            id: 'addUnits-1',
+            parents: ['service-1', 'addMachines-1'],
+            command: {
+              onParentResults: testUtils.makeStubFunction()
+            }
+          },
+          'service-2': {
+            id: 'service-2',
+            parents: [],
+            command: {}
+          },
+          'addUnits-2': {
+            id: 'addUnits-2',
+            parents: ['service-2', 'addMachines-2'],
+            command: {
+              onParentResults: testUtils.makeStubFunction()
+            }
+          },
+          'addRelation-1': {
+            id: 'addRelation-1',
+            parents: ['service-2', 'service-1'],
+            command: {}
+          },
+          'addMachines-2': {
+            id: 'addMachines-2',
+            parents: [],
+            command: {}
+          }
+        };
+      });
+
+      afterEach(function() {
+        ecs.changeSet = {};
+      });
+
+      it('only updates changeset for subrecords', function() {
+        var key = 'service-1',
+            cs = ecs.changeSet;
+        ecs._updateChangesetFromResults({key: key}, null);
+        assert.equal(
+            cs['addUnits-1'].command.onParentResults.calledOnce(),
+            true,
+            'subrecord not updated'
+        );
+        assert.equal(
+            cs['addUnits-2'].command.onParentResults.calledOnce(),
+            false,
+            'non-child record updated'
+        );
       });
     });
 
@@ -286,6 +342,14 @@ describe('Environment Change Set', function() {
     });
 
     describe('_buildHierarchy', function() {
+      var filterStub, db;
+
+      beforeEach(function() {
+        db = ecs.get('db');
+        db.units = {};
+        filterStub = testUtils.makeStubMethod(db.units, 'filterByMachine');
+      });
+
       it('acts sane with "flat" hierarchies', function() {
         ecs.changeSet = {
           a: { parents: [] },
@@ -342,9 +406,48 @@ describe('Environment Change Set', function() {
           ]
         ]));
       });
+
+      it('filters out unplaced units by default', function() {
+        ecs.changeSet = {
+          a: { parents: [], command: {
+            method: '_deploy',
+            options: { modelId: '75930989$' }
+          }},
+          b: { parents: [], command: {
+            method: '_add_unit',
+            options: { modelId: '75930989$/0' }
+          }}
+        };
+
+        filterStub = testUtils.makeStubMethod(
+            db.units, 'filterByMachine', [{id: '75930989$/0'}]);
+        var result = ecs._buildHierarchy();
+        // XXX assert.deepEqual does not seem to play well with arrays
+        // of objects.  Slack card on board - Makyo 2014-04-23
+        assert.equal(filterStub.calledOnce(), true,
+                     'no call to find unplaced units');
+        assert.equal(JSON.stringify(result), JSON.stringify([
+          [
+            {
+              parents: [],
+              command: {
+                method: '_deploy',
+                options: { modelId: '75930989$' }
+              },
+              key: 'a'
+            }
+          ]
+        ]));
+      });
     });
 
     describe('commit', function() {
+      beforeEach(function() {
+        var db = ecs.get('db');
+        db.units = {};
+        testUtils.makeStubMethod(db.units, 'filterByMachine');
+      });
+
       it('loops through the changeSet calling execute on them', function() {
         var execute = testUtils.makeStubMethod(ecs, '_execute');
         this._cleanups.push(execute.reset);
@@ -604,7 +707,11 @@ describe('Environment Change Set', function() {
 
       it('updates the service name on parent results', function() {
         var args = ['django', 1, 'new1'];
-        var key = ecs.lazyAddUnits(args);
+        var db = ecs.get('db');
+        db.units = {};
+        var unit = {};
+        var stubFinder = testUtils.makeStubMethod(db.units, 'getById', unit);
+        var key = ecs.lazyAddUnits(args, {modelId: '1'});
         var command = ecs.changeSet[key].command;
         var parentRecord = {
           command: {
@@ -616,7 +723,12 @@ describe('Environment Change Set', function() {
         command.onParentResults(parentRecord, parentResults);
         // The first add_unit argument has been updated with the new service
         // name.
-        assert.strictEqual(command.args[0], 'my-service');
+        assert.strictEqual(command.args[0], 'my-service',
+                           'service name not set properly');
+        assert.equal(stubFinder.calledOnce(), true,
+                     'did not query DB for unit');
+        assert.equal(unit.service, 'my-service',
+                     'service name not updated on unit');
       });
 
     });
@@ -698,6 +810,12 @@ describe('Environment Change Set', function() {
     });
 
     describe('_lazyAddRelation', function() {
+      beforeEach(function() {
+        var db = ecs.get('db');
+        db.units = {};
+        testUtils.makeStubMethod(db.units, 'filterByMachine');
+      });
+
       it('creates a new `addRelation` record', function() {
         ecs.changeSet = {
           'service-1': {
@@ -933,6 +1051,8 @@ describe('Environment Change Set', function() {
         var db = ecs.get('db');
         db.services = new Y.juju.models.ServiceList();
         db.services.add({ id: 'serviceId1$' });
+        db.units = {};
+        testUtils.makeStubMethod(db.units, 'filterByMachine');
         ecs.changeSet = {
           'service-1': {
             command: {

@@ -49,20 +49,16 @@ YUI.add('environment-change-set', function(Y) {
       @param {Object} results The data returned by calling the command.
     */
     _updateChangesetFromResults: function(record, results) {
-      for (var level = this.currentLevel + 1;
-          level < this.currentCommit.length;
-          level += 1) {
-        /* jshint -W083 */
-        this.currentCommit[level].forEach(function(subrecord) {
-          if (subrecord.command.onParentResults &&
-              subrecord.parents &&
-              subrecord.parents.indexOf(record.key) !== -1) {
-            // Possibly mutate the original record on the changeset.
-            this.changeSet[subrecord.key].command.onParentResults(
-                record, results);
-          } // if
-        }, this); // foreach
-      } // for
+      var changeSet = this.changeSet,
+          changeSetRecord;
+      Object.keys(changeSet).forEach(function(key) {
+        changeSetRecord = changeSet[key];
+        if (changeSetRecord.command.onParentResults &&
+            changeSetRecord.parents &&
+            changeSetRecord.parents.indexOf(record.key) !== -1) {
+          changeSetRecord.command.onParentResults(record, results);
+        }
+      });
     },
 
     /**
@@ -233,11 +229,27 @@ YUI.add('environment-change-set', function(Y) {
       var hierarchy = [[]],
           command,
           keyToLevelMap = {},
-          currLevel = 1;
+          currLevel = 1,
+          keys = Object.keys(this.changeSet),
+          db = this.get('db'),
+          unplacedUnits = db.units.filterByMachine(null);
       this.placedCount = 0;
 
+      // Filter out unplaced units; they should remain undeployed by default.
+      if (unplacedUnits) {
+        var unplacedIds = unplacedUnits.map(function(u) { return u.id; });
+        keys = keys.filter(function(key) {
+          var command = this.changeSet[key].command,
+              modelId = command.options && command.options.modelId;
+          if (command.method !== '_add_unit') {
+            return true;
+          }
+          return unplacedIds.indexOf(modelId) < 0;
+        }, this);
+      }
+
       // Take care of top-level objects quickly.
-      Object.keys(this.changeSet).forEach(Y.bind(function(key) {
+      keys.forEach(Y.bind(function(key) {
         command = this.changeSet[key];
         command.key = key;
         if (!command.parents || command.parents.length === 0) {
@@ -254,7 +266,7 @@ YUI.add('environment-change-set', function(Y) {
       // Now build the other levels of the hierarchy as long as there are still
       // commands in the change set. Functions defined outside of loop for
       // runtime efficiency (jshint W083).
-      while (this.placedCount < Object.keys(this.changeSet).length) {
+      while (this.placedCount < keys.length) {
         hierarchy.push([]);
         Y.Object.each(keyToLevelMap, Y.bind(this._placeIfNeeded, this,
             currLevel, keyToLevelMap, hierarchy));
@@ -824,6 +836,7 @@ YUI.add('environment-change-set', function(Y) {
           }
         }, this);
       }
+      var db = this.get('db');
       var command = {
         method: '_add_unit',
         args: args,
@@ -850,7 +863,11 @@ YUI.add('environment-change-set', function(Y) {
               // Update the service name. The add_unit record is first added
               // passing the initial service name. This service name can be
               // changed by users before the changes are committed.
-              this.args[0] = record.command.args[1];
+              var newService = record.command.args[1],
+                  unit = db.units.getById(this.options.modelId);
+              this.args[0] = newService;
+              // Also need to update the service name in the unit model.
+              unit.service = newService;
               break;
           }
         }
