@@ -481,9 +481,7 @@ YUI.add('juju-gui', function(Y) {
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
-      // When the provider type and environment names become available,
-      // display them.
-      this.env.after('providerTypeChange', this.onProviderTypeChange, this);
+      // When the environment name becomes available, display it.
       this.env.after('environmentNameChange',
           this.onEnvironmentNameChange, this);
       this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
@@ -1241,21 +1239,6 @@ YUI.add('juju-gui', function(Y) {
           spinner.stop();
         }
       }
-    },
-
-    /**
-     * Display the provider type.
-     *
-     * The provider type arrives asynchronously.  Instead of updating the
-     * display from the environment code (a separation of concerns violation),
-     * we update it here.
-     *
-     * @method onProviderTypeChange
-     */
-    onProviderTypeChange: function(evt) {
-      var providerType = evt.newVal;
-      this.db.environment.set('provider', providerType);
-      Y.all('.provider-type').set('text', 'on ' + providerType);
     },
 
     /**

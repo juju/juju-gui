@@ -39,7 +39,7 @@ class TestBasics(browser.TestCase):
         # information)""
         self.wait_for_css_selector('svg')
         body = self.driver.find_element_by_xpath('//body')
-        self.assertTrue('Sandbox on ' in body.text)
+        self.assertTrue('Sandbox' in body.text)
 
     def test_environment_connection(self):
         # The GUI connects to the API backend.

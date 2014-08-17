@@ -38,7 +38,18 @@ describe('machine view panel extension', function() {
         machines: new models.MachineList(),
         units: new models.ServiceUnitList()
       };
-      env = 'environment';
+      env = {
+        after: utils.makeStubFunction(),
+        get: function(arg) {
+          var returnVal;
+          switch (arg) {
+            case 'environmentName':
+              returnVal = 'Test env';
+              break;
+          }
+          return returnVal;
+        }
+      };
       View = Y.Base.create('machine-view-panel', Y.View, [
         Y.juju.MachineViewPanel
       ], {

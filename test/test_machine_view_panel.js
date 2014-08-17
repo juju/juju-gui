@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('machine view panel view', function() {
-  var Y, container, machines, machine, models, notifications, scaleUpView,
+  var Y, container, machines, machine, models, notifications, scaleUpView, env,
       scaleUpViewRender, services, utils, units, views, view, View;
 
   function createViewNoUnits() {
@@ -29,7 +29,8 @@ describe('machine view panel view', function() {
         services: new models.ServiceList(),
         machines: machines,
         units: new models.ServiceUnitList()
-      }
+      },
+      env: env
     });
   }
 
@@ -52,6 +53,18 @@ describe('machine view panel view', function() {
   });
 
   beforeEach(function() {
+    env = {
+      after: utils.makeStubFunction(),
+      get: function(arg) {
+        var returnVal;
+        switch (arg) {
+          case 'environmentName':
+            returnVal = 'Test env';
+            break;
+        }
+        return returnVal;
+      }
+    };
     container = utils.makeContainer(this, 'machine-view-panel');
     // setup machines
     machine = {
@@ -90,7 +103,8 @@ describe('machine view panel view', function() {
         notifications: notifications,
         services: services,
         units: units
-      }
+      },
+      env: env
     });
   });
 
@@ -119,12 +133,18 @@ describe('machine view panel view', function() {
     assert.equal(container.all('.machine-view-panel-header').size(), 2);
   });
 
+  it('should set the machines header to the environment name', function() {
+    view.render();
+    assert.equal(container.one('.column.machines .head .title').get('text'),
+        'Test env');
+  });
+
   it('should set the initial container header label', function() {
     var labels = ['0 containers', '0 units'];
     view.render();
     labels.forEach(function(l, index) {
       assert.equal(view._containersHeader.get(
-          'container').all('.label').item(index).get('text'), l);
+          'container').all('.label').item(index).get('text').trim(), l);
     });
   });
 
@@ -217,10 +237,9 @@ describe('machine view panel view', function() {
 
   describe('create machine view', function() {
     beforeEach(function() {
-      view.set('env', {
-        addMachines: utils.makeStubFunction('add-machine-record-key'),
-        placeUnit: utils.makeStubFunction()
-      });
+      var env = view.get('env');
+      env.addMachines = utils.makeStubFunction('add-machine-record-key');
+      env.placeUnit = utils.makeStubFunction();
     });
 
     it('displays when the machine header action is clicked', function() {
@@ -266,10 +285,9 @@ describe('machine view panel view', function() {
 
   describe('token drag and drop', function() {
     beforeEach(function() {
-      view.set('env', {
-        addMachines: utils.makeStubFunction('add-machine-record-key'),
-        placeUnit: utils.makeStubFunction()
-      });
+      var env = view.get('env');
+      env.addMachines = utils.makeStubFunction('add-machine-record-key');
+      env.placeUnit = utils.makeStubFunction();
     });
 
     it('listens for the drag start, end, drop events', function() {
@@ -527,10 +545,9 @@ describe('machine view panel view', function() {
 
   describe('unplaced units column', function() {
     beforeEach(function() {
-      view.set('env', {
-        addMachines: utils.makeStubFunction('add-machines-record-key'),
-        placeUnit: utils.makeStubFunction()
-      });
+      var env = view.get('env');
+      env.addMachines = utils.makeStubFunction('add-machine-record-key');
+      env.placeUnit = utils.makeStubFunction();
     });
 
     it('should render a list of units', function() {
@@ -908,10 +925,10 @@ describe('machine view panel view', function() {
     });
 
     it('should set the correct machine count in the header', function() {
-      var label = '1 machine';
+      var label = '(1)';
       view.render();
       assert.equal(view._machinesHeader.get(
-          'container').one('.label').get('text'), label);
+          'container').one('.label').get('text').trim(), label);
     });
 
     it('should select the first machine by default', function() {
@@ -1011,7 +1028,7 @@ describe('machine view panel view', function() {
         view.handleMachineTokenSelect(e);
         labels.forEach(function(l, index) {
           assert.equal(view._containersHeader.get(
-              'container').all('.label').item(index).get('text'), l);
+              'container').all('.label').item(index).get('text').trim(), l);
         });
         done();
       });
@@ -1277,7 +1294,7 @@ describe('machine view panel view', function() {
       var containerCount = Object.keys(machines.filterByParent('0')).length;
       assert.equal(containerCount > 0, true);
       assert.equal(container.one(
-          '.column.containers .head .label:first-child').get('text'),
+          '.column.containers .head .label:first-child').get('text').trim(),
           containerCount + ' container');
     });
 
@@ -1285,10 +1302,10 @@ describe('machine view panel view', function() {
       view.render();
       container.one('.machine-token .token').simulate('click');
       var selector = '.column.containers .head .label:first-child';
-      assert.equal(container.one(selector).get('text'),
+      assert.equal(container.one(selector).get('text').trim(),
           '0 containers');
       machines.add([{id: '0/lxc/0'}]);
-      assert.equal(container.one(selector).get('text'),
+      assert.equal(container.one(selector).get('text').trim(),
           '1 container');
     });
 
@@ -1298,10 +1315,10 @@ describe('machine view panel view', function() {
       machines.add([{id: id}]);
       container.one('.machine-token .token').simulate('click');
       var selector = '.column.containers .head .label:first-child';
-      assert.equal(container.one(selector).get('text'),
+      assert.equal(container.one(selector).get('text').trim(),
           '1 container');
       machines.remove(machines.getById(id));
-      assert.equal(container.one(selector).get('text'),
+      assert.equal(container.one(selector).get('text').trim(),
           '0 containers');
     });
 

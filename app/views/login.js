@@ -89,12 +89,9 @@ YUI.add('juju-view-login', function(Y) {
       mask.show();
       var env = this.get('env');
       var environment_name_node = Y.one('#environment-name');
-      var provider_type_node = Y.one('#provider-type');
       var environment_name = (
           environment_name_node ?
           environment_name_node.get('text') : 'Environment');
-      var provider_type = (
-          provider_type_node ? provider_type_node.get('text') : '');
       var error_text = '';
       if (env.failedAuthentication) {
         error_text = 'Unknown user or password.';
@@ -107,7 +104,6 @@ YUI.add('juju-view-login', function(Y) {
       // node, even though it is not a child of the mask node.
       this.get('container').setHTML(this.template({
         environment_name: environment_name,
-        provider_type: provider_type,
         error_text: error_text,
         user: env.get('user') || env.defaultUser,
         help_text: this.get('help_text')
