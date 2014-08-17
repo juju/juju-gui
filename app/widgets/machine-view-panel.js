@@ -732,19 +732,23 @@ YUI.add('machine-view-panel', function(Y) {
          */
         deleteMachine: function(e) {
           var machineName = e.currentTarget.ancestor('.token').getData('id');
-          var machine = this.get('db').machines.getById(machineName);
+          var db = this.get('db');
+          var machine = db.machines.getById(machineName);
           var token = this.get(machine.parentId ?
               'containerTokens' : 'machineTokens')[machineName];
-          token.setDeleted();
-          this.get('env').destroyMachines([machineName], false, function(data) {
-            if (data.err) {
-              this.get('db').notifications.add({
-                title: 'Error destroying machine or container',
-                message: data.err,
-                level: 'error'
-              });
-            }
-          }.bind(this), {modelId: machineName});
+          if (!db.machines.getById(machineName).deleted) {
+            token.setDeleted();
+            this.get('env').destroyMachines([machineName], false,
+                function(data) {
+                  if (data.err) {
+                    db.notifications.add({
+                      title: 'Error destroying machine or container',
+                      message: data.err,
+                      level: 'error'
+                    });
+                  }
+                }.bind(this), {modelId: machineName});
+          }
         },
 
         /**

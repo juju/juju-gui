@@ -1002,6 +1002,20 @@ describe('machine view panel view', function() {
       assert.equal(token.hasClass('deleted'), true);
     });
 
+    it('should not try to remove a machine more than once', function() {
+      view.render();
+      var deleteNode = container.one('.machine-token .delete');
+      view.set('env', {
+        destroyMachines: utils.makeStubFunction()
+      });
+      deleteNode.simulate('click');
+      // Manually set the deleted flag as we've stubbed out the
+      // destroyMachines method that would do this.
+      view.get('db').machines.getById('0').deleted = true;
+      deleteNode.simulate('click');
+      assert.equal(view.get('env').destroyMachines.calledOnce(), true);
+    });
+
     it('should re-render token when machine is updated', function() {
       view.render();
       var id = 999,
@@ -1342,6 +1356,23 @@ describe('machine view panel view', function() {
       token.simulate('click');
       token.one('.delete').simulate('click');
       assert.equal(token.hasClass('deleted'), true);
+    });
+
+    it('should not try to remove a container more than once', function() {
+      var id = '0/lxc/0';
+      view.render();
+      machines.add([{id: id}]);
+      container.one('.container-token:last-child .token').simulate('click');
+      var deleteNode = container.one('.container-token:last-child .delete');
+      view.set('env', {
+        destroyMachines: utils.makeStubFunction()
+      });
+      deleteNode.simulate('click');
+      // Manually set the deleted flag as we've stubbed out the
+      // destroyMachines method that would do this.
+      machines.getById(id).deleted = true;
+      deleteNode.simulate('click');
+      assert.equal(view.get('env').destroyMachines.calledOnce(), true);
     });
 
     describe('functional tests', function() {
