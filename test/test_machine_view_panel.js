@@ -993,6 +993,15 @@ describe('machine view panel view', function() {
                    'found the deleted machine still in the list');
     });
 
+    it('should show a message when the token is set for removal', function() {
+      env.destroyMachines = utils.makeStubFunction();
+      view.render();
+      var token = container.one('.machines .token');
+      assert.equal(token.hasClass('deleted'), false);
+      token.one('.delete').simulate('click');
+      assert.equal(token.hasClass('deleted'), true);
+    });
+
     it('should re-render token when machine is updated', function() {
       view.render();
       var id = 999,
@@ -1320,6 +1329,19 @@ describe('machine view panel view', function() {
       machines.remove(machines.getById(id));
       assert.equal(container.one(selector).get('text').trim(),
           '0 containers');
+    });
+
+    it('should show a message when the token is set for removal', function() {
+      env.destroyMachines = utils.makeStubFunction();
+      view.render();
+      machines.add([{ id: '0/lxc/0' }]);
+      container.one('.machine-token').simulate('click');
+      var token = container.one(
+          '.containers .container-token:last-child .token');
+      assert.equal(token.hasClass('deleted'), false);
+      token.simulate('click');
+      token.one('.delete').simulate('click');
+      assert.equal(token.hasClass('deleted'), true);
     });
 
     describe('functional tests', function() {
