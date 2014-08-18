@@ -267,6 +267,17 @@ describe('machine view panel view', function() {
                    'the container types should be visible');
     });
 
+    it('does not display in the container header when no machine is selected',
+        function() {
+          view.render();
+          view.set('selectedMachine', null);
+          var createContainer = container.one('.create-container');
+          container.one('.containers .head .action').simulate('click');
+          assert.equal(createContainer.getHTML(), '',
+                       'HTML present in container');
+        }
+    );
+
     it('creates an unplaced unit when cancelled with a unit', function() {
       var unitTokens = view.get('unitTokens');
       var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');

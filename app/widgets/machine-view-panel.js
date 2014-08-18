@@ -483,6 +483,10 @@ YUI.add('machine-view-panel', function(Y) {
           }
           if (action === 'container') {
             parentId = parentId || this.get('selectedMachine');
+            // Only begin the create container process if we have a parent ID.
+            if (!parentId) {
+              return;
+            }
             createContainer = container.one('.create-container');
           } else {
             createContainer = container.one('.create-machine');
