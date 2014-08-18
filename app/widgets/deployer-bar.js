@@ -37,7 +37,8 @@ YUI.add('deployer-bar', function(Y) {
    * @class DeployerBarView
    */
   var DeployerBarView = Y.Base.create('DeployerBarView', Y.View, [
-    Y.Event.EventTracker
+    Y.Event.EventTracker,
+    juju.widgets.AutodeployExtension
   ], {
     template: Templates['deployer-bar'],
     changesTemplate: Templates['deployer-bar-changes'],
@@ -766,6 +767,7 @@ YUI.add('deployer-bar', function(Y) {
     'event-tracker',
     'node',
     'handlebars',
-    'juju-templates'
+    'juju-templates',
+    'autodeploy-extension'
   ]
 });
