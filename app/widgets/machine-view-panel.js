@@ -310,7 +310,10 @@ YUI.add('machine-view-panel', function(Y) {
               tokenList[newId] = token;
               delete tokenList[prevId];
             } else {
-              token = tokenList[e.target.id];
+              // The machine can be a model or a POJO depending on what
+              // triggered the change.
+              var key = e.target.id || e.target.get('id');
+              token = tokenList[key];
             }
             if (!parentId) {
               this._updateMachineWithUnitData(token.get('machine'));

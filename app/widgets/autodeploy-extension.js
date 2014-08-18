@@ -118,7 +118,13 @@ YUI.add('autodeploy-extension', function(Y) {
       }
       var createdMachineName = createdMachine.name;
       if (createdMachineName) {
-        machine.id = createdMachineName;
+        machine = db.machines.updateModelId(
+            machine, createdMachineName, true);
+        // We need to revive the model so that the change event triggers
+        // the token UI to re-render.
+        var machineModel = db.machines.revive(machine);
+        machineModel.set('displayName', createdMachineName);
+        db.machines.free(machineModel);
       } else {
         shouldDestroy = true;
       }
