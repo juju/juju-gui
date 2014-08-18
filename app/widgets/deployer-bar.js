@@ -761,13 +761,13 @@ YUI.add('deployer-bar', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'view',
-    'juju-view-utils',
+    'autodeploy-extension',
     'bundle-import-helpers',
     'event-tracker',
-    'node',
     'handlebars',
     'juju-templates',
-    'autodeploy-extension'
+    'juju-view-utils',
+    'node',
+    'view'
   ]
 });

@@ -52,7 +52,7 @@ describe('Autodeploy Extension', function() {
     var units = [
       {id: 'foo'},
       {id: 'bar'}
-    ]
+    ];
     var filterStub = utils.makeStubMethod(db.units, 'filterByMachine', units),
         createStub = utils.makeStubMethod(widget, '_createMachine', {id: id}),
         placeStub = utils.makeStubMethod(env, 'placeUnit');

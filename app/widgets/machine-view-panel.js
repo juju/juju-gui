@@ -1263,18 +1263,18 @@ YUI.add('machine-view-panel', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'autodeploy-extension',
+    'container-token',
+    'create-machine-view',
     'event-tracker',
     'handlebars',
     'juju-serviceunit-token',
     'juju-templates',
     'juju-view-utils',
-    'container-token',
-    'create-machine-view',
     'machine-token',
     'machine-view-panel-header',
     'node',
     'service-scale-up-view',
-    'view',
-    'autodeploy-extension'
+    'view'
   ]
 });
