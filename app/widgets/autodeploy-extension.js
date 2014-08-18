@@ -94,15 +94,16 @@ YUI.add('autodeploy-extension', function(Y) {
       var db = this.get('db');
       var errorTitle;
       var errorMessage;
+      var shouldDestroy = false;
+      var createdMachine = response.machines[0];
       // Ensure the addMachines call executed successfully.
       if (response.err) {
         errorTitle = 'Error creating the new machine';
         errorMessage = response.err;
       } else {
-        var machineResponse = response.machines[0];
-        if (machineResponse.err) {
-          errorTitle = 'Error creating machine ' + machineResponse.name;
-          errorMessage = machineResponse.err;
+        if (createdMachine.err) {
+          errorTitle = 'Error creating machine ' + createdMachine.name;
+          errorMessage = createdMachine.err;
         }
       }
       // Add an error notification if adding a machine failed.
@@ -113,9 +114,20 @@ YUI.add('autodeploy-extension', function(Y) {
               'responded with: ' + errorMessage,
           level: 'error'
         });
+        shouldDestroy = true;
       }
-      // In both success and failure cases, destroy the ghost machine.
-      db.machines.remove(machine);
+      var createdMachineName = createdMachine.name;
+      if (createdMachineName) {
+        machine.id = createdMachineName;
+      } else {
+        shouldDestroy = true;
+      }
+      // If there was an error creating the machine OR if the newly
+      // created machine doesn't have an ID yet then we need to remove
+      // the model and have the deltas take over.
+      if (shouldDestroy === true) {
+        db.machines.remove(machine);
+      }
     }
   };
 
