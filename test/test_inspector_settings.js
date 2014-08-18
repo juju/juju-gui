@@ -109,7 +109,20 @@ describe('Inspector Settings', function() {
     ].join('')).appendTo(container);
     container.append(
         '<div id="bws-sidebar"><div class="bws-content"></div></div>');
-    return view.createServiceInspector(service, {databinding: {interval: 0}});
+    inspector = new jujuViews.ServiceInspector({
+      db: db,
+      model: service,
+      env: env,
+      topo: {
+        fire: function() {}
+      },
+      enableDatabinding: true,
+      databinding: { interval: 0 },
+      store: view.get('store')
+    });
+    inspector.render();
+
+    return inspector;
   };
 
   // Retrieve and return the config viewlet.
