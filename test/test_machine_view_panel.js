@@ -148,7 +148,7 @@ describe('machine view panel view', function() {
     });
   });
 
-  describe('_onMachineCreated', function() {
+  describe('_onMachineCreated (autodeploy_extension integration)', function() {
 
     beforeEach(function() {
       machines.reset();
@@ -157,7 +157,13 @@ describe('machine view panel view', function() {
 
     it('adds a notification if a global error occurred', function() {
       var machine = machines.addGhost();
-      view._onMachineCreated(machine, {err: 'bad wolf'});
+      view._onMachineCreated(
+          machine, {
+            err: 'bad wolf',
+            machines: [{
+              name: 'foo'
+            }]
+          });
       assert.strictEqual(notifications.size(), 1);
       var notification = notifications.item(0);
       assert.strictEqual(
@@ -184,13 +190,14 @@ describe('machine view panel view', function() {
       assert.strictEqual(notification.get('level'), 'error');
     });
 
-    it('removes the ghost machine', function() {
+    it('updates the ghost machine model to use the real id', function() {
       var machine = machines.addGhost();
       assert.strictEqual(machines.size(), 1);
       var response = {machines: [{name: '42'}]};
       view._onMachineCreated(machine, response);
-      assert.strictEqual(machines.size(), 0);
+      assert.equal(machines.item(0).id, '42');
     });
+
 
     it('removes the ghost machine even when an error occurs', function() {
       var machine = machines.addGhost();
@@ -1030,19 +1037,19 @@ describe('machine view panel view', function() {
     it('should re-render token when machine is updated', function() {
       view.render();
       var id = 999,
-          machineModel = machines.revive(0),
+          machineModel = machines.item(0),
           selector = '.machines .token',
           item = container.one(
-              selector + '[data-id="' + machineModel.get('id') + '"]');
+              selector + '[data-id="' + machineModel.id + '"]');
       assert.notEqual(item, null, 'machine was not initially displayed');
       assert.equal(item.one('.title').get(
-          'text').trim().indexOf(machineModel.get('displayName')) === 0,
+          'text').trim().indexOf(machineModel.displayName) === 0,
           true, 'initial machine names do not match');
-      machineModel.set('id', id);
+      machines.updateModelId(machineModel, id, true);
       item = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(item, null, 'machine was not displayed post-update');
       assert.equal(item.one('.title').get(
-          'text').trim().indexOf(machineModel.get('displayName')) === 0,
+          'text').trim().indexOf(machineModel.displayName) === 0,
           true, 'machine names do not match post-update');
     });
 

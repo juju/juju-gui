@@ -95,12 +95,13 @@ YUI.add('autodeploy-extension', function(Y) {
       var errorTitle;
       var errorMessage;
       var shouldDestroy = false;
-      var createdMachine = response.machines[0];
+      var createdMachine = {};
       // Ensure the addMachines call executed successfully.
       if (response.err) {
         errorTitle = 'Error creating the new machine';
         errorMessage = response.err;
       } else {
+        createdMachine = response.machines[0];
         if (createdMachine.err) {
           errorTitle = 'Error creating machine ' + createdMachine.name;
           errorMessage = createdMachine.err;

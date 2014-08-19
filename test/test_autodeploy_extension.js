@@ -36,7 +36,13 @@ describe('Autodeploy Extension', function() {
     Widget = Y.Base.create(
         'autodeployer', Y.Base, [juju.widgets.AutodeployExtension], {});
     widget = new Widget();
-    widget.set('db', {});
+    widget.set('db', {
+      machines: {
+        updateModelId: utils.makeStubFunction(),
+        revive: utils.makeStubFunction({ set: utils.makeStubFunction() }),
+        free: utils.makeStubFunction()
+      }
+    });
     widget.set('env', {});
   });
 
@@ -75,7 +81,6 @@ describe('Autodeploy Extension', function() {
   it('creates a ghost for every new machine', function() {
     var db = widget.get('db'),
         env = widget.get('env');
-    db.machines = {};
     var ghostStub = utils.makeStubMethod(db.machines, 'addGhost', {id: '0'});
     utils.makeStubMethod(env, 'addMachines');
     widget._createMachine();
@@ -86,7 +91,6 @@ describe('Autodeploy Extension', function() {
     var db = widget.get('db'),
         env = widget.get('env'),
         id = '0';
-    db.machines = {};
     utils.makeStubMethod(db.machines, 'addGhost', {id: id});
     var addStub = utils.makeStubMethod(env, 'addMachines');
     widget._createMachine();
@@ -104,7 +108,6 @@ describe('Autodeploy Extension', function() {
       machines: [{name: 'test'}]
     };
     db.notifications = {};
-    db.machines = {};
     var notifyStub = utils.makeStubMethod(db.notifications, 'add'),
         removeStub = utils.makeStubMethod(db.machines, 'remove');
     widget._onMachineCreated({}, response);
@@ -126,7 +129,6 @@ describe('Autodeploy Extension', function() {
       machines: [{name: 'test', err: message}]
     };
     db.notifications = {};
-    db.machines = {};
     var notifyStub = utils.makeStubMethod(db.notifications, 'add'),
         removeStub = utils.makeStubMethod(db.machines, 'remove');
     widget._onMachineCreated({}, response);
@@ -139,20 +141,5 @@ describe('Autodeploy Extension', function() {
                  'unexpected error message');
     assert.equal(removeStub.calledOnce(), true,
                  'did not remove machine');
-  });
-
-  it('removes ghost machine upon successful creation', function() {
-    var db = widget.get('db');
-    var machine = {id: '0', name: 'test'};
-    var response = {
-      machines: [machine]
-    };
-    db.machines = {};
-    var removeStub = utils.makeStubMethod(db.machines, 'remove');
-    widget._onMachineCreated(machine, response);
-    assert.equal(removeStub.calledOnce(), true,
-                 'did not remove machine');
-    assert.equal(removeStub.lastArguments()[0], machine,
-                 'did not remove the expected machine');
   });
 });

@@ -295,7 +295,7 @@ YUI.add('machine-view-panel', function(Y) {
           @return {Boolean} If the model is uncommitted.
         */
         _isMachineCommitted: function(id) {
-          return id.indexOf('new');
+          return String(id).indexOf('new');
         },
 
         /**
@@ -1296,6 +1296,7 @@ YUI.add('machine-view-panel', function(Y) {
     'machine-view-panel-header',
     'node',
     'service-scale-up-view',
-    'view'
+    'view',
+    'yui-patches'
   ]
 });
