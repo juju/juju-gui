@@ -50,7 +50,7 @@ YUI.add('yui-patches', function(Y) {
     delete this._idMap[model.id];
     // Update the models id field.
     if (revive === true) {
-      var revivedModel = this.revive(this.item(newId));
+      var revivedModel = this.revive(this._idMap[newId]);
       revivedModel.set('id', newId);
       this.free(revivedModel);
     } else {
