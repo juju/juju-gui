@@ -520,8 +520,15 @@ YUI.add('environment-change-set', function(Y) {
     _destroyQueuedMachine: function(machine) {
       // Search for everything that has that machine as a parent and remove it.
       Object.keys(this.changeSet).forEach(function(key) {
-        if (this.changeSet[key].parents.indexOf(machine) !== -1) {
-          this._removeExistingRecord(key);
+        var change = this.changeSet[key];
+        var idx = change.parents ? change.parents.indexOf(machine) : -1;
+        if (idx !== -1) {
+          if (change.command.method === '_add_unit') {
+            // Remove the machine record from the _add_unit's parents
+            change.parents.splice(idx, 1);
+          } else {
+            this._removeExistingRecord(key);
+          }
         }
       }, this);
       // Remove the machine itself.

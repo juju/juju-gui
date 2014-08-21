@@ -793,6 +793,32 @@ YUI.add('machine-view-panel', function(Y) {
                   }
                 }.bind(this), {modelId: machineName});
           }
+          this.removeUncommittedUnits(machine);
+        },
+
+        /**
+           Removes uncommitted units from a machine when it is being destroyed
+           and returns them to the unplaced service units column.
+
+           @method removeUncommittedUnits
+           @param {Object} machine The machine being deleted.
+         */
+        removeUncommittedUnits: function(machine) {
+          var resetUnit = false;
+
+          machine.units.forEach(function(unit) {
+            // TODO is the unit also in the parent machine's unit list? remove
+            // it.
+            if (!unit.agent_state) {
+              // Remove the unit's machine, making it an unplaced unit.
+              delete unit.machine;
+              this._createServiceUnitToken(unit);
+              resetUnit = true;
+            }
+          }, this);
+          if (resetUnit) {
+            this._showOnboarding();
+          }
         },
 
         /**

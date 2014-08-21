@@ -1087,6 +1087,36 @@ describe('machine view panel view', function() {
       assert.equal(view.get('env').destroyMachines.calledOnce(), true);
     });
 
+    it('can reset uncommitted units', function() {
+      var stubCreate = utils.makeStubMethod(view, '_createServiceUnitToken');
+      var stubShow = utils.makeStubMethod(view, '_showOnboarding');
+      this._cleanups.push(stubCreate.reset);
+      this._cleanups.push(stubShow.reset);
+
+      var machine = machines.item(0);
+      machine.units = [{
+        id: 'foo/0',
+        agent_state: 'started'
+      }, {
+        id: 'foo/1'
+      }];
+      view.removeUncommittedUnits(machine);
+      assert.equal(stubCreate.calledOnce(), true);
+      assert.equal(stubShow.calledOnce(), true);
+    });
+
+    it('resets uncommitted units when a machine is deleted', function() {
+      view.render();
+      view.set('env', {
+        destroyMachines: utils.makeStubFunction()
+      });
+      var stubRemove = utils.makeStubMethod(view, 'removeUncommittedUnits');
+      this._cleanups.push(stubRemove.reset);
+      var deleteNode = container.one('.machine-token .delete');
+      deleteNode.simulate('click');
+      assert.equal(stubRemove.calledOnce(), true);
+    });
+
     it('should re-render token when machine is updated', function() {
       view.render();
       var id = 999,

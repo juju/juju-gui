@@ -594,6 +594,50 @@ describe('Environment Change Set', function() {
         assert.equal(stubRemove.calledOnce(), true, 'remove not called');
         assert.deepEqual(ecs.changeSet, {});
       });
+
+      it('removes records for queued uncommitted machines', function() {
+        var stubDestroy = testUtils.makeStubMethod(
+            ecs, '_destroyQueuedMachine');
+        this._cleanups.push(stubDestroy.reset);
+        ecs.changeSet = {
+          'addMachines-000': {
+            command: {
+              method: '_addMachines',
+              options: {
+                modelId: 'baz'
+              }
+            }
+          }
+        };
+        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        assert.equal(stubDestroy.calledOnce(), true);
+      });
+
+      it('removes machines from uncommitted units parents', function() {
+        var stubRemove = testUtils.makeStubFunction();
+        ecs.get('db').machines = {
+          getById: function() {},
+          remove: stubRemove
+        };
+        ecs.changeSet = {
+          'addUnits-000': {
+            command: {
+              method: '_add_unit'
+            },
+            parents: ['addMachines-001']
+          },
+          'addMachines-001': {
+            command: {
+              options: {
+                modelId: 'foo'
+              }
+            }
+          }
+        };
+        ecs._destroyQueuedMachine('addMachines-001');
+        var unit = ecs.changeSet['addUnits-000'];
+        assert.deepEqual(unit.parents, []);
+      });
     });
 
     describe('lazyAddMachines', function() {
