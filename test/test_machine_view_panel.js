@@ -1101,8 +1101,35 @@ describe('machine view panel view', function() {
         id: 'foo/1'
       }];
       view.removeUncommittedUnits(machine);
+      // We should only call create once, for the 1 uncommitted unit.
       assert.equal(stubCreate.calledOnce(), true);
       assert.equal(stubShow.calledOnce(), true);
+    });
+
+    it('resetting uncommitted units updates parent machine', function() {
+      var token = view.get('machineTokens')['0'];
+      var stubRender = utils.makeStubMethod(token, 'renderUnits');
+      var stubCreate = utils.makeStubMethod(view, '_createServiceUnitToken');
+      var stubShow = utils.makeStubMethod(view, '_showOnboarding');
+      this._cleanups.push(stubRender.reset);
+      this._cleanups.push(stubCreate.reset);
+      this._cleanups.push(stubShow.reset);
+
+      var machine = machines.item(0);
+      var newMachine = {
+        id: '1',
+        containerType: 'lxc',
+        parentId: '0'
+      };
+      newMachine.units = [{ id: 'foo/1' }];
+      machine.units = [{ id: 'foo/1' }];
+
+      view.render();
+      assert.equal(stubRender.callCount(), 1); // Called once on render.
+
+      view.removeUncommittedUnits(newMachine);
+      assert.deepEqual(machine.units, []);
+      assert.equal(stubRender.callCount(), 2);
     });
 
     it('resets uncommitted units when a machine is deleted', function() {

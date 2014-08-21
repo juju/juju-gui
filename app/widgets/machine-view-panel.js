@@ -804,20 +804,31 @@ YUI.add('machine-view-panel', function(Y) {
            @param {Object} machine The machine being deleted.
          */
         removeUncommittedUnits: function(machine) {
-          var resetUnit = false;
+          var removedUnits = [],
+              parentMachine,
+              parentMachineToken;
 
           machine.units.forEach(function(unit) {
-            // TODO is the unit also in the parent machine's unit list? remove
-            // it.
             if (!unit.agent_state) {
               // Remove the unit's machine, making it an unplaced unit.
               delete unit.machine;
               this._createServiceUnitToken(unit);
-              resetUnit = true;
+              removedUnits.push(unit);
             }
           }, this);
-          if (resetUnit) {
+          if (removedUnits) {
             this._showOnboarding();
+          }
+
+          if (machine.parentId) {
+            // Remove the removed units from the parent machines unit list.
+            parentMachine = this.get('db').machines.getById(machine.parentId);
+            parentMachineToken = this.get('machineTokens')[machine.parentId];
+            removedUnits.forEach(function(unit) {
+              var idx = parentMachine.units.indexOf(unit);
+              parentMachine.units.splice(idx, 1);
+            });
+            parentMachineToken.renderUnits();
           }
         },
 
