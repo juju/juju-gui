@@ -502,10 +502,34 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       }, this);
+      var db = this.get('db');
+      var machine = db.machines.getById(command.args[0]);
+      var removedUnits = [];
+      machine.units.forEach(function(unit) {
+        if (!unit.agent_state) {
+          // Remove the unit's machine, making it an unplaced unit.
+          delete unit.machine;
+          removedUnits.push(unit);
+
+          // Update the revived model to trigger events.
+          var unitModel = db.units.revive(unit);
+          unitModel.set('machine', null);
+          db.units.free(unitModel);
+        }
+      }, this);
+      if (machine.parentId) {
+        // Remove the removed units from the parent machines unit list.
+        var parentMachine = this.get('db').machines.getById(machine.parentId);
+        removedUnits.forEach(function(unit) {
+          var idx = parentMachine.units.indexOf(unit);
+          parentMachine.units.splice(idx, 1);
+        });
+      }
+      // Remove the units record of the machine
       if (existingMachine) {
         this._destroyQueuedMachine(existingMachine);
       } else {
-        this.get('db').machines.getById(command.args[0]).deleted = true;
+        machine.deleted = true;
         return this._createNewRecord('destroyMachines', command, []);
       }
     },
@@ -523,9 +547,13 @@ YUI.add('environment-change-set', function(Y) {
         var change = this.changeSet[key];
         var idx = change.parents ? change.parents.indexOf(machine) : -1;
         if (idx !== -1) {
+          // If the child is an add unit command, we just want to remove the
+          // machine as a parent. If it's a container or something else, we want
+          // to remove the record along with this one.
           if (change.command.method === '_add_unit') {
             // Remove the machine record from the _add_unit's parents
             change.parents.splice(idx, 1);
+            change.command.args[2] = null; // remove the toMachine arg.
           } else {
             this._removeExistingRecord(key);
           }

@@ -559,7 +559,7 @@ describe('Environment Change Set', function() {
     describe('_lazyDestroyMachines', function() {
       it('creates a new destroy record', function(done) {
         var args = [['0/lxc/0'], false, done, {}];
-        var machineObj = {};
+        var machineObj = { units: [] };
         ecs.set('db', {
           machines: {
             getById: function(arg) {
@@ -586,7 +586,9 @@ describe('Environment Change Set', function() {
       it('destroys create records for undeployed services', function() {
         var stubRemove = testUtils.makeStubFunction();
         ecs.get('db').machines = {
-          getById: function() {},
+          getById: function() {
+            return { units: []};
+          },
           remove: stubRemove
         };
         ecs.lazyAddMachines([[{}], function() {}], {modelId: 'baz'});
@@ -599,6 +601,11 @@ describe('Environment Change Set', function() {
         var stubDestroy = testUtils.makeStubMethod(
             ecs, '_destroyQueuedMachine');
         this._cleanups.push(stubDestroy.reset);
+        ecs.get('db').machines = {
+          getById: function() {
+            return { units: []};
+          }
+        };
         ecs.changeSet = {
           'addMachines-000': {
             command: {
@@ -613,7 +620,7 @@ describe('Environment Change Set', function() {
         assert.equal(stubDestroy.calledOnce(), true);
       });
 
-      it('removes machines from uncommitted units parents', function() {
+      it('removes uncommitted units from machines', function() {
         var stubRemove = testUtils.makeStubFunction();
         ecs.get('db').machines = {
           getById: function() {},
@@ -622,7 +629,8 @@ describe('Environment Change Set', function() {
         ecs.changeSet = {
           'addUnits-000': {
             command: {
-              method: '_add_unit'
+              method: '_add_unit',
+              args: ['foo', 'bar', 'baz']
             },
             parents: ['addMachines-001']
           },
@@ -637,6 +645,53 @@ describe('Environment Change Set', function() {
         ecs._destroyQueuedMachine('addMachines-001');
         var unit = ecs.changeSet['addUnits-000'];
         assert.deepEqual(unit.parents, []);
+        assert.isNull(unit.command.args[2]);
+      });
+
+      it('removes machines from uncommitted units', function() {
+        var stubSet = testUtils.makeStubFunction();
+        var db = ecs.get('db');
+        var unit = { machine: 'foo'};
+        db.machines = {
+          getById: function() {
+            return { units: [unit] };
+          }
+        };
+        db.units = {
+          revive: function() { return { set: stubSet }; },
+          free: function() {}
+        };
+        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        assert.deepEqual(unit, {});
+        assert.deepEqual(stubSet.lastArguments(), ['machine', null]);
+      });
+
+      it('removes uncommitted units from the parent machine', function() {
+        var stubSet = testUtils.makeStubFunction();
+        var db = ecs.get('db');
+        var unit = { machine: 'foo'};
+        var machine = {
+          parentId: 1,
+          units: [unit]
+        };
+        var parentMachine = {
+          units: [unit]
+        };
+        db.machines = {
+          getById: function(key) {
+            if (key === 1) {
+              return parentMachine;
+            } else {
+              return machine;
+            }
+          }
+        };
+        db.units = {
+          revive: function() { return { set: stubSet }; },
+          free: function() {}
+        };
+        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        assert.deepEqual(parentMachine.units, []);
       });
     });
 

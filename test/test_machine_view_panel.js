@@ -1088,10 +1088,10 @@ describe('machine view panel view', function() {
     });
 
     it('can reset uncommitted units', function() {
-      var stubCreate = utils.makeStubMethod(view, '_createServiceUnitToken');
-      var stubShow = utils.makeStubMethod(view, '_showOnboarding');
-      this._cleanups.push(stubCreate.reset);
-      this._cleanups.push(stubShow.reset);
+      var stubRender = utils.makeStubMethod(view, '_renderUnplacedUnits');
+      var stubToggle = utils.makeStubMethod(view, '_toggleOnboarding');
+      this._cleanups.push(stubRender.reset);
+      this._cleanups.push(stubToggle.reset);
 
       var machine = machines.item(0);
       machine.units = [{
@@ -1100,36 +1100,12 @@ describe('machine view panel view', function() {
       }, {
         id: 'foo/1'
       }];
-      view.removeUncommittedUnits(machine);
-      // We should only call create once, for the 1 uncommitted unit.
-      assert.equal(stubCreate.calledOnce(), true);
-      assert.equal(stubShow.calledOnce(), true);
-    });
-
-    it('resetting uncommitted units updates parent machine', function() {
-      var token = view.get('machineTokens')['0'];
-      var stubRender = utils.makeStubMethod(token, 'renderUnits');
-      var stubCreate = utils.makeStubMethod(view, '_createServiceUnitToken');
-      var stubShow = utils.makeStubMethod(view, '_showOnboarding');
-      this._cleanups.push(stubRender.reset);
-      this._cleanups.push(stubCreate.reset);
-      this._cleanups.push(stubShow.reset);
-
-      var machine = machines.item(0);
-      var newMachine = {
-        id: '1',
-        containerType: 'lxc',
-        parentId: '0'
-      };
-      newMachine.units = [{ id: 'foo/1' }];
-      machine.units = [{ id: 'foo/1' }];
-
       view.render();
-      assert.equal(stubRender.callCount(), 1); // Called once on render.
-
-      view.removeUncommittedUnits(newMachine);
-      assert.deepEqual(machine.units, []);
-      assert.equal(stubRender.callCount(), 2);
+      assert.equal(stubRender.calledOnce(), true, 'Render not called');
+      assert.equal(stubToggle.calledOnce(), true, 'Toggle not called');
+      view.removeUncommittedUnitsFromMachine(machine);
+      assert.equal(stubRender.callCount(), 2, 'Render not called');
+      assert.equal(stubToggle.callCount(), 2, 'Toggle not called');
     });
 
     it('resets uncommitted units when a machine is deleted', function() {
@@ -1137,9 +1113,11 @@ describe('machine view panel view', function() {
       view.set('env', {
         destroyMachines: utils.makeStubFunction()
       });
-      var stubRemove = utils.makeStubMethod(view, 'removeUncommittedUnits');
+      var stubRemove = utils.makeStubMethod(
+          view, 'removeUncommittedUnitsFromMachine');
       this._cleanups.push(stubRemove.reset);
-      var deleteNode = container.one('.machine-token .delete');
+      container.one('.machine-token .more-menu .open-menu').simulate('click');
+      var deleteNode = container.one('.machine-token .moreMenuItem-0');
       deleteNode.simulate('click');
       assert.equal(stubRemove.calledOnce(), true);
     });

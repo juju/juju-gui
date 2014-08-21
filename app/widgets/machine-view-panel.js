@@ -262,24 +262,31 @@ YUI.add('machine-view-panel', function(Y) {
             // Need to update any machines and containers that now have
             // new units.
             if (changed.machine) {
-              var machineTokens = this.get('machineTokens'),
-                  containerTokens = this.get('containerTokens'),
-                  id = changed.machine.newVal,
-                  machineToken = machineTokens[id],
-                  containerToken = containerTokens[id];
-              if (containerToken) {
-                var container = containerToken.get('machine');
-                this._updateMachineWithUnitData(container);
-                containerToken.renderUnits();
-                // Get the parent machine token to update as well.
-                machineToken = machineTokens[container.parentId];
+              if (changed.machine.newVal) {
+                var machineTokens = this.get('machineTokens'),
+                    containerTokens = this.get('containerTokens'),
+                    id = changed.machine.newVal,
+                    machineToken = machineTokens[id],
+                    containerToken = containerTokens[id];
+                if (containerToken) {
+                  var container = containerToken.get('machine');
+                  this._updateMachineWithUnitData(container);
+                  containerToken.renderUnits();
+                  // Get the parent machine token to update as well.
+                  machineToken = machineTokens[container.parentId];
+                }
+                // Update the machine/parent token. This is always updated
+                // as the unit is either added to the root container or a
+                // child container. Either way we need to display the unit
+                // on the parent.
+                this._updateMachineWithUnitData(machineToken.get('machine'));
+                machineToken.renderUnits();
+              } else {
+                // This is a (now unplaced) uncommitted unit from a destroyed
+                // machine. Add it to the unittokens.
+                var unit = this.get('db').units.getById(target.get('id'));
+                this._createServiceUnitToken(unit);
               }
-              // Update the machine/parent token. This is always updated
-              // as the unit is either added to the root container or a
-              // child container. Either way we need to display the unit
-              // on the parent.
-              this._updateMachineWithUnitData(machineToken.get('machine'));
-              machineToken.renderUnits();
             }
             if (target.get('machine')) {
               // It's a placed unit; make sure it gets removed from our
@@ -793,43 +800,26 @@ YUI.add('machine-view-panel', function(Y) {
                   }
                 }.bind(this), {modelId: machineName});
           }
-          this.removeUncommittedUnits(machine);
+          this.removeUncommittedUnitsFromMachine(machine);
         },
 
         /**
            Removes uncommitted units from a machine when it is being destroyed
            and returns them to the unplaced service units column.
 
-           @method removeUncommittedUnits
+           @method removeUncommittedUnitsFromMachine
            @param {Object} machine The machine being deleted.
          */
-        removeUncommittedUnits: function(machine) {
-          var removedUnits = [],
-              parentMachine,
-              parentMachineToken;
-
-          machine.units.forEach(function(unit) {
-            if (!unit.agent_state) {
-              // Remove the unit's machine, making it an unplaced unit.
-              delete unit.machine;
-              this._createServiceUnitToken(unit);
-              removedUnits.push(unit);
-            }
-          }, this);
-          if (removedUnits) {
-            this._showOnboarding();
-          }
-
+        removeUncommittedUnitsFromMachine: function(machine) {
           if (machine.parentId) {
             // Remove the removed units from the parent machines unit list.
-            parentMachine = this.get('db').machines.getById(machine.parentId);
-            parentMachineToken = this.get('machineTokens')[machine.parentId];
-            removedUnits.forEach(function(unit) {
-              var idx = parentMachine.units.indexOf(unit);
-              parentMachine.units.splice(idx, 1);
-            });
+            var machineTokens = this.get('machineTokens');
+            var parentMachineToken = machineTokens[machine.parentId];
             parentMachineToken.renderUnits();
           }
+
+          this._renderUnplacedUnits();
+          this._toggleOnboarding();
         },
 
         /**
