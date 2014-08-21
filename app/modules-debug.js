@@ -127,6 +127,9 @@ var GlobalConfig = {
     juju: {
       modules: {
         // Primitives
+        'yui-patches': {
+          fullpath: '/juju-ui/assets/javascripts/yui-patches.js'
+        },
 
         'notifier': {
           fullpath: '/juju-ui/widgets/notifier.js'

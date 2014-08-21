@@ -287,6 +287,18 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+          Determines if the machine or container id that's been passed in is
+          for an uncommitted model.
+
+          @method _isMachineCommitted
+          @param {String} id The id of the model.
+          @return {Boolean} If the model is uncommitted.
+        */
+        _isMachineCommitted: function(id) {
+          return String(id).indexOf('new');
+        },
+
+        /**
           Handles changes to the machines in the db model list.
 
          @method _onMachineChange
@@ -310,11 +322,16 @@ YUI.add('machine-view-panel', function(Y) {
               tokenList[newId] = token;
               delete tokenList[prevId];
             } else {
-              token = tokenList[e.target.id];
+              // The machine can be a model or a POJO depending on what
+              // triggered the change.
+              var key = e.target.id || e.target.get('id');
+              token = tokenList[key];
             }
+            var machine = token.get('machine');
             if (!parentId) {
-              this._updateMachineWithUnitData(token.get('machine'));
+              this._updateMachineWithUnitData(machine);
             }
+            token.set('committed', this._isMachineCommitted(machine.id));
             token.render();
           }
         },
@@ -1279,6 +1296,7 @@ YUI.add('machine-view-panel', function(Y) {
     'machine-view-panel-header',
     'node',
     'service-scale-up-view',
-    'view'
+    'view',
+    'yui-patches'
   ]
 });
