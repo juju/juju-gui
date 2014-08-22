@@ -859,6 +859,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         db: this.db
       }).render();
+      this.deployerBar.addTarget(this);
     },
 
     /**

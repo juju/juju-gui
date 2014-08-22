@@ -102,6 +102,14 @@
     <section>
         <div class="content">
             <h2 class="title">Confirm your changes</h2>
+            {{#if unplacedCount}}
+            <div class="unplaced-panel">
+              <p>You have {{unplacedCount}} unplaced {{pluralize 'unit' unplacedCount}}, do you want to:</p>
+              <label><input type="radio" name="unplaced-units" value="leave" checked> Leave unplaced</label>
+              <label><input type="radio" name="unplaced-units" value="autodeploy"> Automatically place</label>
+              <a href="" class="view-machines link">View machines</a>
+            </div>
+            {{/if}}
             {{#if majorChange}}
             <div class="summary-panel">
                 {{#if changeCount}}
