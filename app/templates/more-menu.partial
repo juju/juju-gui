@@ -1,0 +1,5 @@
+<span class="more-menu">
+  <span class="open-menu link" tabindex="0" role="button">
+    <i class="sprite more-menu-icon"></i>
+  </span>
+</span>

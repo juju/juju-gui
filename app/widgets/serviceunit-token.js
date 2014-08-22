@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-serviceunit-token', function(Y) {
 
   var views = Y.namespace('juju.views'),
+      widgets = Y.namespace('juju.widgets'),
       utils = views.utils,
       Templates = views.Templates;
 
@@ -42,9 +43,6 @@ YUI.add('juju-serviceunit-token', function(Y) {
     template: Templates['serviceunit-token'],
 
     events: {
-      '.unplaced-unit .token-move': {
-        click: '_handleMoveIconClick'
-      },
       '.unplaced-unit .machines select': {
         change: '_handleMachineSelection'
       },
@@ -57,6 +55,48 @@ YUI.add('juju-serviceunit-token', function(Y) {
       '.unplaced-unit .actions .cancel': {
         click: '_handleCancelClick'
       }
+    },
+
+    /**
+      Initialise the more menu.
+
+     @method _initMoreMenu
+    */
+    _initMoreMenu: function() {
+      this._moreMenu = new widgets.MoreMenu({
+        items: [
+          {label: 'Deploy to...', callback:
+                this._handleMoveIconClick.bind(this)}
+        ]
+      });
+    },
+
+    /**
+      Show the more menu.
+
+     @method showMoreMenu
+     @param {Object} e Click event facade.
+    */
+    showMoreMenu: function(e) {
+      // If the token has been re-rendered the menu will have been
+      // destroyed, so we need to recreate it here.
+      if (!this._moreMenu) {
+        this._initMoreMenu();
+      }
+      if (!this._moreMenu.get('rendered')) {
+        this._moreMenu.render(this.get('container').one('.more-menu'));
+      }
+      this._moreMenu.showMenu(e);
+      return this._moreMenu;
+    },
+
+    /**
+     * Handle initial view setup.
+     *
+     * @method initializer
+     */
+    initializer: function() {
+      this._initMoreMenu();
     },
 
     /**
@@ -291,6 +331,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     reset: function() {
       // In lieu of resetting every element, just re-render the HTML.
       this._renderTemplate();
+      this._destroyMoreMenu();
     },
 
     /**
@@ -327,6 +368,20 @@ YUI.add('juju-serviceunit-token', function(Y) {
       @method destructor
     */
     destructor: function() {
+      this._destroyMoreMenu();
+    },
+
+    /**
+      Destroy the more menu widget.
+
+      @method _destroyMoreMenu
+    */
+    _destroyMoreMenu: function() {
+      if (this._moreMenu) {
+        this._moreMenu.destroy();
+        // Null the more menu so we can check if we need to reinitialise it.
+        this._moreMenu = null;
+      }
     },
 
     ATTRS: {
@@ -371,6 +426,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     'base',
     'view',
     'event-tracker',
+    'more-menu',
     'node',
     'juju-templates',
     'juju-view-utils',

@@ -58,7 +58,7 @@ YUI.add('machine-view-panel', function(Y) {
           '.container-token .delete': {
             click: 'deleteMachine'
           },
-          '.unplaced-unit .token-move': {
+          '.unplaced-unit .moreMenuItem-0': {
             click: '_cancelUnitPlacement'
           },
           '.machines .onboarding .add-machine': {
@@ -66,6 +66,9 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.column.unplaced .auto-place': {
             click: '_autoPlaceUnits'
+          },
+          '.unplaced-unit .more-menu .open-menu': {
+            click: '_unplacedUnitMoreMenuClick'
           }
         },
 
@@ -144,6 +147,26 @@ YUI.add('machine-view-panel', function(Y) {
           // When the environment name becomes available, display it.
           this.get('env').after('environmentNameChange',
               this._displayEnvironmentName, this);
+        },
+
+
+        /**
+          Render the more menu.
+
+         @method _unplacedUnitMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _unplacedUnitMoreMenuClick: function(e) {
+          var id = e.currentTarget.ancestor('.unplaced-unit').getData('id');
+          // Need to manually close the currently open more menu here as
+          // clicks on the "open menu" button have e.halt() to prevent
+          // the clickoutside from triggering (so the menu would open
+          // and then instantly close). Only close it if it exists in the DOM.
+          if (this._visibleMoreMenu && this._visibleMoreMenu.get(
+              'boundingBox')._node) {
+            this._visibleMoreMenu.hideMenu();
+          }
+          this._visibleMoreMenu = this.get('unitTokens')[id].showMoreMenu(e);
         },
 
         /**
