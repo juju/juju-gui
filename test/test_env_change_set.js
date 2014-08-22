@@ -473,6 +473,126 @@ describe('Environment Change Set', function() {
     });
   });
 
+  describe('clear', function() {
+    beforeEach(function() {
+      var db = ecs.get('db');
+      db.units = {};
+      testUtils.makeStubMethod(db.units, 'filterByMachine');
+    });
+
+    it('clears the change set', function() {
+      var stubClearDB = testUtils.makeStubMethod(ecs, '_clearFromDB');
+      this._cleanups.push(stubClearDB.reset);
+      var changeSet = {
+        'service-568': {
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        }
+      };
+      ecs.changeSet = changeSet;
+      ecs.clear();
+      assert.deepEqual(ecs.changeSet, {}, 'changeSet not emptied');
+      assert.equal(stubClearDB.calledOnce(), true, 'clearFromDB not called');
+    });
+  });
+
+  describe('_clearFromDB', function() {
+    it('clears deployed services', function() {
+      var db = ecs.get('db');
+      db.services = {};
+      var stubRemove = testUtils.makeStubMethod(db.services, 'remove');
+      testUtils.makeStubMethod(db.services, 'getById');
+      ecs._clearFromDB({method: '_deploy', options: {modelId: 1}});
+      assert.equal(stubRemove.calledOnce(), true, 'Service not removed');
+    });
+
+    it('undeletes deleted services', function() {
+      var db = ecs.get('db');
+      var stubSet = testUtils.makeStubFunction();
+      db.services = {
+        getById: function() {
+          return {
+            set: stubSet
+          };
+        }
+      };
+      ecs._clearFromDB({method: '_destroyService', args: [1]});
+      assert.deepEqual(stubSet.lastArguments(), ['deleted', false]);
+    });
+
+    it('undeletes deleted machines', function() {
+      var db = ecs.get('db');
+      var attrs = {deleted: true};
+      db.machines = {
+        getById: function() {
+          return attrs;
+        }
+      };
+      ecs._clearFromDB({method: '_destroyMachines', args: [1]});
+      assert.deepEqual(attrs, {deleted: false});
+    });
+
+    it.skip('backs out config changes', function() {
+      // XXX Config changed is not included in here pending current work on
+      // storing the previous config values. Makyo 2014-08-22
+    });
+
+    it('clears added relations', function() {
+      var db = ecs.get('db');
+      db.relations = {};
+      var stubRemove = testUtils.makeStubMethod(db.relations, 'remove');
+      testUtils.makeStubMethod(db.relations, 'getById');
+      ecs._clearFromDB({method: '_add_relation', options: {modelId: 1}});
+      assert.equal(stubRemove.calledOnce(), true, 'Relation not removed');
+    });
+
+    it('undeletes deleted relations', function() {
+      var db = ecs.get('db');
+      var stubSet = testUtils.makeStubFunction();
+      db.relations = {
+        getRelationFromEndpoints: function() {
+          return {
+            set: stubSet
+          };
+        }
+      };
+      ecs._clearFromDB({method: '_remove_relation', args: [1, 2]});
+      assert.deepEqual(stubSet.lastArguments(), ['deleted', false]);
+    });
+
+    it('undeletes deleted units', function() {
+      var db = ecs.get('db');
+      var attrs = {deleted: true};
+      db.units = {
+        getById: function() {
+          return attrs;
+        }
+      };
+      ecs._clearFromDB({method: '_remove_units', args: [[1]]});
+      assert.deepEqual(attrs, {deleted: false});
+    });
+
+    it('clears added machines', function() {
+      var db = ecs.get('db');
+      db.machines = {};
+      var stubRemove = testUtils.makeStubMethod(db.machines, 'remove');
+      testUtils.makeStubMethod(db.machines, 'getById');
+      ecs._clearFromDB({method: '_addMachines', options: {modelId: 1}});
+      assert.equal(stubRemove.calledOnce(), true, 'Machine not removed');
+    });
+
+    it('clears added units', function() {
+      var db = ecs.get('db');
+      db.units = {};
+      var stubRemove = testUtils.makeStubMethod(db, 'removeUnits');
+      testUtils.makeStubMethod(db.units, 'getById');
+      ecs._clearFromDB({method: '_add_unit', options: {modelId: 1}});
+      assert.equal(stubRemove.calledOnce(), true, 'Unit not removed');
+    });
+  });
+
   describe('private ENV methods', function() {
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
