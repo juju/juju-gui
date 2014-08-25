@@ -307,7 +307,10 @@ YUI.add('machine-view-panel', function(Y) {
         _onMachineChange: function(e) {
           var token,
               tokenList,
-              changed = e.changed;
+              changed = e.changed,
+              prevId,
+              newId,
+              key;
           var parentId = e.target.get('parentId');
           if (changed) {
             if (parentId) {
@@ -316,23 +319,35 @@ YUI.add('machine-view-panel', function(Y) {
               tokenList = this.get('machineTokens');
             }
             if (changed.id) {
-              var prevId = changed.id.prevVal,
-                  newId = changed.id.newVal;
+              prevId = changed.id.prevVal;
+              newId = changed.id.newVal;
               token = tokenList[prevId];
               tokenList[newId] = token;
               delete tokenList[prevId];
             } else {
               // The machine can be a model or a POJO depending on what
               // triggered the change.
-              var key = e.target.id || e.target.get('id');
+              key = e.target.id || e.target.get('id');
               token = tokenList[key];
             }
-            var machine = token.get('machine');
+            var machine = token.get('machine'),
+                machineId = machine.id;
             if (!parentId) {
               this._updateMachineWithUnitData(machine);
             }
-            token.set('committed', this._isMachineCommitted(machine.id));
+            token.set('committed', this._isMachineCommitted(machineId));
             token.render();
+            var selectedMachine = this.get('selectedMachine');
+            if ((selectedMachine === machineId) ||
+                (selectedMachine === prevId) ||
+                (selectedMachine === key)) {
+              // If the selected machine is the machine id then we also want to
+              // update the container lists committed status. If the machines
+              // id changes we still want to select the same machine token
+              // so it compares against the prevVal as well.
+              this._selectMachineToken(
+                  tokenList[machineId].get('container').one('.token'));
+            }
           }
         },
 
