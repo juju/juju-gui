@@ -229,8 +229,8 @@ describe('machine view panel view', function() {
         function() {
           var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
           this._cleanups.push(clearStub.reset);
-          var showOnboaringStub = utils.makeStubMethod(view, '_showOnboarding');
-          this._cleanups.push(showOnboaringStub.reset);
+          var onboardingStub = utils.makeStubMethod(view, '_showOnboarding');
+          this._cleanups.push(onboardingStub.reset);
           view._machinesHeader = {};
           var labelStub = utils.makeStubMethod(view._machinesHeader,
               'updateLabelCount');
@@ -244,8 +244,8 @@ describe('machine view panel view', function() {
         function() {
           var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
           this._cleanups.push(clearStub.reset);
-          var showOnboaringStub = utils.makeStubMethod(view, '_showOnboarding');
-          this._cleanups.push(showOnboaringStub.reset);
+          var onboardingStub = utils.makeStubMethod(view, '_showOnboarding');
+          this._cleanups.push(onboardingStub.reset);
           view._machinesHeader = {};
           var labelStub = utils.makeStubMethod(view._machinesHeader,
               'updateLabelCount');
@@ -369,8 +369,8 @@ describe('machine view panel view', function() {
           // 'listens for the drag start, end, drop events'
           var onStub = utils.makeStubMethod(view, 'on');
           this._cleanups.push(onStub.reset);
-          var hideOnboaringStub = utils.makeStubMethod(view, '_hideOnboarding');
-          this._cleanups.push(hideOnboaringStub.reset);
+          var onboardingStub = utils.makeStubMethod(view, '_hideOnboarding');
+          this._cleanups.push(onboardingStub.reset);
           container.append(Y.Node.create('<div class="containers">' +
               '<div class="content"><div class="items"></div></div></div>'));
           // Add a container.
@@ -397,8 +397,8 @@ describe('machine view panel view', function() {
       // 'listens for the drag start, end, drop events'
       var onStub = utils.makeStubMethod(view, 'on');
       this._cleanups.push(onStub.reset);
-      var hideOnboaringStub = utils.makeStubMethod(view, '_hideOnboarding');
-      this._cleanups.push(hideOnboaringStub.reset);
+      var hideOnboardingStub = utils.makeStubMethod(view, '_hideOnboarding');
+      this._cleanups.push(hideOnboardingStub.reset);
       container.append(Y.Node.create('<div class="containers">' +
           '<div class="content"><div class="items"></div></div></div>'));
       machines.add([{id: '0/lxc/3'}]);
@@ -1695,20 +1695,21 @@ describe('machine view panel view', function() {
         });
   });
 
-  describe('onboarding', function() {
+  describe('onboarding for zero machines', function() {
     it('should display on MV render if there are no machines', function() {
       var machines = view.get('db').machines;
       machines.reset();
       assert.equal(machines.size(), 0);
       view.render();
-      assert.equal(container.one('.machines .onboarding').hasClass('hidden'),
-          false);
+      var onboarding = container.one('.column.machines .onboarding.zero');
+      assert.equal(onboarding.hasClass('hidden'), false);
     });
 
     it('should not display on MV render if there are machines', function() {
       assert.equal(view.get('db').machines.size() > 0, true);
       view.render();
-      assert.equal(container.one('.machines .onboarding').hasClass('hidden'),
+      var onboarding = container.one('.column.machines .onboarding.zero');
+      assert.equal(onboarding.hasClass('hidden'),
           true);
     });
 
@@ -1718,7 +1719,7 @@ describe('machine view panel view', function() {
       assert.equal(machines.size(), 0);
       view.render();
       var container = view.get('container');
-      var onboarding = container.one('.machines .onboarding');
+      var onboarding = container.one('.column.machines .onboarding.zero');
       assert.equal(onboarding.hasClass('hidden'), false);
       // Need to click on the more menu to make it render.
       container.one('.machine-view-panel-header .more-menu .open-menu')
@@ -1734,7 +1735,7 @@ describe('machine view panel view', function() {
       assert.equal(machines.size(), 0);
       view.render();
       var container = view.get('container');
-      var onboarding = container.one('.machines .onboarding');
+      var onboarding = container.one('.column.machines .onboarding.zero');
       // Need to click on the more menu to make it render.
       container.one('.machine-view-panel-header .more-menu .open-menu')
           .simulate('click');
@@ -1749,7 +1750,8 @@ describe('machine view panel view', function() {
       var machines = view.get('db').machines;
       assert.equal(machines.size(), 1);
       view.render();
-      var onboarding = view.get('container').one('.machines .onboarding');
+      var container = view.get('container');
+      var onboarding = container.one('.column.machines .onboarding.zero');
       assert.equal(onboarding.hasClass('hidden'), true);
       machines.remove(0);
       assert.equal(machines.size(), 0);
@@ -1761,11 +1763,54 @@ describe('machine view panel view', function() {
       machines.reset();
       assert.equal(machines.size(), 0);
       view.render();
-      var onboarding = view.get('container').one('.machines .onboarding');
+      var container = view.get('container');
+      var onboarding = container.one('.column.machines .onboarding.zero');
       assert.equal(onboarding.hasClass('hidden'), false);
       machines.add([{id: '0'}]);
       assert.equal(machines.size(), 1);
       assert.equal(onboarding.hasClass('hidden'), true);
+    });
+  });
+
+  describe('onboarding for one machine', function() {
+    it('should display on MV render if there is one machine', function() {
+      var machines = view.get('db').machines;
+      assert.equal(machines.size(), 1);
+      view.render();
+      var onboarding = container.one('.column.machines .onboarding.one');
+      assert.equal(onboarding.hasClass('hidden'), false);
+    });
+
+    it('should not display on MV render if there are no machines', function() {
+      var machines = view.get('db').machines;
+      machines.reset();
+      assert.equal(machines.size(), 0);
+      view.render();
+      var onboarding = container.one('.column.machines .onboarding.one');
+      assert.equal(onboarding.hasClass('hidden'), true);
+    });
+
+    it('should hide when "create machine" is opened', function() {
+      var machines = view.get('db').machines;
+      assert.equal(machines.size(), 1);
+      view.render();
+      var container = view.get('container');
+      var onboarding = container.one('.column.machines .onboarding.one');
+      assert.equal(onboarding.hasClass('hidden'), false);
+      container.one('.machine-view-panel-header .action').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), true);
+    });
+
+    it('should show when "create machine" is cancelled', function() {
+      var machines = view.get('db').machines;
+      assert.equal(machines.size(), 1);
+      view.render();
+      var container = view.get('container');
+      var onboarding = container.one('.column.machines .onboarding.one');
+      container.one('.machine-view-panel-header .action').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), true);
+      container.one('.create-machine .cancel').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), false);
     });
   });
 });

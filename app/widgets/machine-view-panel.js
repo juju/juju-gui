@@ -61,7 +61,7 @@ YUI.add('machine-view-panel', function(Y) {
           '.unplaced-unit .moreMenuItem-0': {
             click: '_cancelUnitPlacement'
           },
-          '.machines .onboarding .add-machine': {
+          '.column.machines .onboarding .add-machine': {
             click: '_displayCreateMachine'
           },
           '.column.unplaced .auto-place': {
@@ -439,7 +439,7 @@ YUI.add('machine-view-panel', function(Y) {
           if (!selectedMachine) {
             this._selectFirstMachine();
           }
-          this._hideOnboarding();
+          this._showOnboarding();
         },
 
         /**
@@ -714,7 +714,7 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _selectMachineToken: function(selected) {
           var container = this.get('container'),
-              machineTokens = container.all('.machines .content .items .token'),
+              machineTokens = container.all('.column.machines .items .token'),
               parentId = selected.getData('id');
           var containers = this.get('db').machines.filterByParent(parentId);
           // A lot of things in the machine view rely on knowing when the user
@@ -829,19 +829,28 @@ YUI.add('machine-view-panel', function(Y) {
           @method _showOnboarding
         */
         _showOnboarding: function() {
-          if (this.get('db').machines.size() === 0) {
-            this.get('container').one('.machines .onboarding').removeClass(
-                'hidden');
+          // ensure everything is hidden first
+          this._hideOnboarding();
+          var machines = this.get('container').one('.column.machines');
+          switch (this.get('db').machines.size()) {
+            case 0:
+              machines.one('.onboarding.zero').removeClass('hidden');
+              break;
+            case 1:
+              machines.one('.onboarding.one').removeClass('hidden');
+              break;
           }
         },
 
         /**
-          Hide the onboarding message.
+          Hide the onboarding messages.
 
           @method _hideOnboarding
         */
         _hideOnboarding: function() {
-          this.get('container').one('.machines .onboarding').addClass('hidden');
+          var container = this.get('container'),
+              messages = container.all('.column.machines .onboarding');
+          messages.addClass('hidden');
         },
 
         /**
@@ -952,7 +961,8 @@ YUI.add('machine-view-panel', function(Y) {
         _renderMachines: function() {
           var machineTokens = this.get('machineTokens'),
               machineIds = Object.keys(machineTokens),
-              nodeContainer = this.get('container').one('.machines .items');
+              container = this.get('container'),
+              nodeContainer = container.one('.column.machines .items');
 
           // Update the header to show the machine count.
           this._machinesHeader.set('labels', [
@@ -988,7 +998,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._updateMachineWithUnitData(machine);
           token.render();
           token.addTarget(this);
-          this.get('container').one('.machines .items').append(
+          this.get('container').one('.column.machines .items').append(
               token.get('container'));
         },
 
