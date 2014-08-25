@@ -1,19 +1,15 @@
 <div class="token">
-  <div class="top">
-    <span class="title">
-      {{ displayName }}
-      <span class="removed">
-        will be destroyed once you have committed your changes
-      </span>
-      <span class="token-uncommitted">&deg;</span>
-    </span>
-    <ul class="service-icons"></ul>
-  </div>
   {{#if displayDelete}}
-    <span class="delete">
-      <i class="sprite mv-token-destroy"></i>
-    </span>
+    {{>more-menu}}
   {{/if}}
+  <span class="title">
+    {{ displayName }}
+    <span class="removed">
+      will be destroyed once you have committed your changes
+    </span>
+    <span class="token-uncommitted">&deg;</span>
+  </span>
+  <ul class="service-icons"></ul>
   <div class="drop">
     <span>Add to container {{ displayName }}</span>
   </div>

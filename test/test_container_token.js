@@ -77,7 +77,8 @@ describe('container token view', function() {
       assert.isObject(e);
       done();
     });
-    container.one('.delete').simulate('click');
+    view.showMoreMenu();
+    container.one('.moreMenuItem-0').simulate('click');
   });
 
   it('can be marked as uncommitted', function() {
@@ -120,5 +121,11 @@ describe('container token view', function() {
     assert.equal(viewContainer.hasClass('droppable'), true);
     view.setNotDroppable();
     assert.equal(viewContainer.hasClass('droppable'), false);
+  });
+
+  it('can display the more menu', function() {
+    assert.equal(container.one('.yui3-moremenu'), null);
+    view.showMoreMenu();
+    assert.equal(container.one('.yui3-moremenu') !== null, true);
   });
 });
