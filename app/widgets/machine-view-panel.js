@@ -1315,8 +1315,9 @@ YUI.add('machine-view-panel', function(Y) {
             unitTokens[id].destroy();
             delete unitTokens[id];
           });
-        },
+        }
 
+      }, {
         ATTRS: {
           /**
             The container element for the view.

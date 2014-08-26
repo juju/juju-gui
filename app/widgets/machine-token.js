@@ -222,8 +222,9 @@ YUI.add('machine-token', function(Y) {
           if (this._moreMenu) {
             this._moreMenu.destroy();
           }
-        },
+        }
 
+      }, {
         ATTRS: {
           /**
            * @attribute machine
