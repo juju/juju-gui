@@ -75,6 +75,9 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.container-token .more-menu .open-menu': {
             click: '_tokenMoreMenuClick'
+          },
+          '.head .more-menu .open-menu': {
+            click: '_headerMoreMenuClick'
           }
         },
 
@@ -200,6 +203,20 @@ YUI.add('machine-view-panel', function(Y) {
               'containerTokens' : 'machineTokens')[id];
           this._hideVisibleMoreMenu();
           this._visibleMoreMenu = token.showMoreMenu(e);
+        },
+
+
+        /**
+          Render the more menu for the headers.
+
+         @method _headerMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _headerMoreMenuClick: function(e) {
+          var header = e.currentTarget.ancestor('.column').hasClass(
+              'machines') ? this._machinesHeader : this._containersHeader;
+          this._hideVisibleMoreMenu();
+          this._visibleMoreMenu = header.showMoreMenu(e);
         },
 
         /**
@@ -552,7 +569,8 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               createContainer;
           if (unit._event) {
-            action = action || unit.action;
+            action = action || unit.currentTarget.ancestor(
+                '.column').hasClass('machines') ? 'machine' : 'container';
             unit = undefined;
           }
           if (action === 'container') {
@@ -772,20 +790,24 @@ YUI.add('machine-view-panel', function(Y) {
               '.column.machines .head', {
                 title: this.get('env').get('environmentName'),
                 action: 'machine',
-                actionLabel: 'Add machine',
                 dropLabel: 'Create new machine',
-                customTemplate: 'machine-view-panel-header-label-alt'
+                customTemplate: 'machine-view-panel-header-label-alt',
+                menuItems: [
+                  {label: 'Add machine',
+                    callback: this._displayCreateMachine.bind(this)}
+                ]
               });
           this._machinesHeader.addTarget(this);
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'container',
-                actionLabel: 'Add container',
-                dropLabel: 'Create new container'
+                dropLabel: 'Create new container',
+                menuItems: [
+                  {label: 'Add container',
+                    callback: this._displayCreateMachine.bind(this)}
+                ]
               });
           this._containersHeader.addTarget(this);
-          this.addEvent(this.on(
-              '*:createMachine', this._displayCreateMachine, this));
         },
 
         /**

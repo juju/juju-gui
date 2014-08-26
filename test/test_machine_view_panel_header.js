@@ -44,7 +44,9 @@ describe('machine view panel header view', function() {
       title: 'test title',
       dropLabel: 'test drop label',
       action: 'test action',
-      actionLabel: 'test action label'
+      menuItems: [
+        {label: 'test label', callback: function() {}}
+      ]
     }).render();
   });
 
@@ -59,7 +61,6 @@ describe('machine view panel header view', function() {
 
   it('should have the correct attributes set', function() {
     assert.equal(container.one('.title').get('text'), 'test title');
-    assert.equal(container.one('.action').get('text'), 'test action label');
     assert.equal(container.one('.drop span').get('text'), 'test drop label');
   });
 
@@ -88,14 +89,6 @@ describe('machine view panel header view', function() {
     assert.equal(container.one('.label').get('text').trim(), '0 tests');
   });
 
-  it('fires an event on clicking on the action', function(done) {
-    view.on('createMachine', function(e) {
-      assert.isObject(e);
-      done();
-    });
-    container.one('.action').simulate('click');
-  });
-
   it('can be set to the droppable state', function() {
     view.setDroppable();
     assert.equal(container.hasClass('droppable'), true);
@@ -106,5 +99,11 @@ describe('machine view panel header view', function() {
     assert.equal(container.hasClass('droppable'), true);
     view.setNotDroppable();
     assert.equal(container.hasClass('droppable'), false);
+  });
+
+  it('can display the more menu', function() {
+    assert.equal(container.one('.yui3-moremenu'), null);
+    view.showMoreMenu();
+    assert.equal(container.one('.yui3-moremenu') !== null, true);
   });
 });

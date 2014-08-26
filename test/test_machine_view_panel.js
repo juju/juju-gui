@@ -148,6 +148,20 @@ describe('machine view panel view', function() {
     });
   });
 
+  it('can open the machines header more menu', function() {
+    view.render();
+    var moreMenuNode = container.one('.column.machines .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+  });
+
+  it('can open the containers header more menu', function() {
+    view.render();
+    var moreMenuNode = container.one('.column.containers .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+  });
+
   describe('_onMachineCreated (autodeploy_extension integration)', function() {
 
     beforeEach(function() {
@@ -252,7 +266,9 @@ describe('machine view panel view', function() {
     it('displays when the machine header action is clicked', function() {
       view.render();
       var createMachine = container.one('.create-machine');
-      container.one('.machines .head .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machines .head .more-menu .open-menu').simulate('click');
+      container.one('.machines .head .moreMenuItem-0').simulate('click');
       assert.equal(createMachine.hasClass('create-machine-view'), true,
                    'expected class is not present');
       assert.equal(createMachine.getHTML() === '', false,
@@ -265,7 +281,10 @@ describe('machine view panel view', function() {
       view.render();
       view.set('selectedMachine', '0');
       var createContainer = container.one('.create-container');
-      container.one('.containers .head .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.containers .head .more-menu .open-menu').simulate(
+          'click');
+      container.one('.containers .head .moreMenuItem-0').simulate('click');
       assert.equal(createContainer.hasClass('create-machine-view'), true,
                    'expected class is not present');
       assert.equal(createContainer.getHTML() === '', false,
@@ -279,7 +298,10 @@ describe('machine view panel view', function() {
           view.render();
           view.set('selectedMachine', null);
           var createContainer = container.one('.create-container');
-          container.one('.containers .head .action').simulate('click');
+          // Need to click on the more menu to make it render.
+          container.one('.containers .head .more-menu .open-menu').simulate(
+              'click');
+          container.one('.containers .head .moreMenuItem-0').simulate('click');
           assert.equal(createContainer.getHTML(), '',
                        'HTML present in container');
         }
@@ -1698,7 +1720,11 @@ describe('machine view panel view', function() {
       var container = view.get('container');
       var onboarding = container.one('.machines .onboarding');
       assert.equal(onboarding.hasClass('hidden'), false);
-      container.one('.machine-view-panel-header .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-view-panel-header .more-menu .open-menu')
+          .simulate('click');
+      container.one('.machine-view-panel-header .moreMenuItem-0').simulate(
+          'click');
       assert.equal(onboarding.hasClass('hidden'), true);
     });
 
@@ -1709,7 +1735,11 @@ describe('machine view panel view', function() {
       view.render();
       var container = view.get('container');
       var onboarding = container.one('.machines .onboarding');
-      container.one('.machine-view-panel-header .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-view-panel-header .more-menu .open-menu')
+          .simulate('click');
+      container.one('.machine-view-panel-header .moreMenuItem-0').simulate(
+          'click');
       assert.equal(onboarding.hasClass('hidden'), true);
       container.one('.create-machine .cancel').simulate('click');
       assert.equal(onboarding.hasClass('hidden'), false);
