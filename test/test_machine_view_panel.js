@@ -1106,6 +1106,26 @@ describe('machine view panel view', function() {
           true, 'machine names do not match post-update');
     });
 
+    it('re-renders the container tokens then machine is updated', function() {
+      // When a machine is updated if it's selected we want to re-render
+      // any of it's container tokens so that they can also updated with the
+      // new status. Such as uncommitted to committed.
+      //
+      // This test relies on the previous test passing successfully
+      //   'should re-render token when machine is updated'
+      view.render();
+      var id = 999,
+          machineModel = machines.item(0),
+          selector = '.machines .token',
+          item = container.one(
+              selector + '[data-id="' + machineModel.id + '"]');
+      var selectToken = utils.makeStubMethod(view, '_selectMachineToken');
+      view.set('selectedMachine', 999);
+      machines.updateModelId(machineModel, id, true);
+      assert.equal(
+          selectToken.calledOnce(), true, 'Selected token not called once');
+    });
+
     it('should set the correct counts in the container header', function(done) {
       var labels = ['2 containers', '1 unit'];
       view.render();
