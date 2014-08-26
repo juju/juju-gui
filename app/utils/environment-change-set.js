@@ -672,7 +672,7 @@ YUI.add('environment-change-set', function(Y) {
       @method _lazyAddRelation
       @param {Array} args The arguments to add the relation with.
     */
-    _lazyAddRelation: function(args) {
+    _lazyAddRelation: function(args, options) {
       var serviceA;
       var serviceB;
       Y.Object.each(this.changeSet, function(value, key) {
@@ -689,6 +689,7 @@ YUI.add('environment-change-set', function(Y) {
       var command = {
         method: '_add_relation',
         args: args,
+        options: options,
         /**
           Replace changeSet keys with real service names returned from the call.
 

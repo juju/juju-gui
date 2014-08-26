@@ -1881,7 +1881,7 @@ YUI.add('juju-env-go', function(Y) {
       if (!window.flags.mv || options && options.immediate) {
         this._add_relation.apply(this, args);
       } else {
-        ecs._lazyAddRelation(args);
+        ecs._lazyAddRelation(args, options);
       }
     },
 
