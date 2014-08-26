@@ -43,9 +43,6 @@ YUI.add('container-token', function(Y) {
         unitsTemplate: Templates['container-token-units'],
 
         events: {
-          '.delete': {
-            click: 'handleDelete'
-          }
         },
 
         /**
@@ -55,6 +52,20 @@ YUI.add('container-token', function(Y) {
         */
         initializer: function() {
           this._attachDragEvents(); // drop-target-view-extension
+        },
+
+        /**
+          Show the more menu.
+
+         @method showMoreMenu
+         @param {Object} e Click event facade.
+        */
+        showMoreMenu: function(e) {
+          if (!this._moreMenu.get('rendered')) {
+            this._moreMenu.render(this.get('container').one('.more-menu'));
+          }
+          this._moreMenu.showMenu(e);
+          return this._moreMenu;
         },
 
         /**
@@ -150,7 +161,35 @@ YUI.add('container-token', function(Y) {
           // to read.
           token.setAttribute('data-id', machine.id);
           this.get('containerParent').append(container);
+          // when the token is rerendered the more menu will have been
+          // removed from the dom so we need to (re)initialise it here.
+          this._destroyMoreMenu();
+          this._moreMenu = new widgets.MoreMenu({
+            items: [
+              {label: 'Destroy', callback: this.handleDelete.bind(this)}
+            ]
+          });
           return this;
+        },
+
+        /**
+          Removes the view container and all its contents.
+
+          @method destructor
+        */
+        destructor: function() {
+          this._destroyMoreMenu();
+        },
+
+        /**
+          Destroy the more menu widget.
+
+          @method _destroyMoreMenu
+        */
+        _destroyMoreMenu: function() {
+          if (this._moreMenu) {
+            this._moreMenu.destroy();
+          }
         }
       }, {
         ATTRS: {
@@ -189,6 +228,7 @@ YUI.add('container-token', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
+    'more-menu',
     'mv-drop-target-view-extension'
   ]
 });

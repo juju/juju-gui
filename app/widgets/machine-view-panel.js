@@ -52,10 +52,10 @@ YUI.add('machine-view-panel', function(Y) {
           '.container-token .token': {
             click: 'handleContainerTokenSelect'
           },
-          '.machine-token .delete': {
+          '.machine-token .moreMenuItem-0': {
             click: 'deleteMachine'
           },
-          '.container-token .delete': {
+          '.container-token .moreMenuItem-0': {
             click: 'deleteMachine'
           },
           '.unplaced-unit .moreMenuItem-0': {
@@ -69,6 +69,12 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.unplaced-unit .more-menu .open-menu': {
             click: '_unplacedUnitMoreMenuClick'
+          },
+          '.machine-token .more-menu .open-menu': {
+            click: '_tokenMoreMenuClick'
+          },
+          '.container-token .more-menu .open-menu': {
+            click: '_tokenMoreMenuClick'
           }
         },
 
@@ -151,14 +157,13 @@ YUI.add('machine-view-panel', function(Y) {
 
 
         /**
-          Render the more menu.
+          Hide the currently visible more menu.
 
-         @method _unplacedUnitMoreMenuClick
+         @method _hideVisibleMoreMenu
          @param {Object} e Click event facade.
         */
-        _unplacedUnitMoreMenuClick: function(e) {
-          var id = e.currentTarget.ancestor('.unplaced-unit').getData('id');
-          // Need to manually close the currently open more menu here as
+        _hideVisibleMoreMenu: function(e) {
+          // Need to manually close the currently open more menu as
           // clicks on the "open menu" button have e.halt() to prevent
           // the clickoutside from triggering (so the menu would open
           // and then instantly close). Only close it if it exists in the DOM.
@@ -166,7 +171,35 @@ YUI.add('machine-view-panel', function(Y) {
               'boundingBox')._node) {
             this._visibleMoreMenu.hideMenu();
           }
+        },
+
+
+        /**
+          Render the more menu for unplaced units.
+
+         @method _unplacedUnitMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _unplacedUnitMoreMenuClick: function(e) {
+          var id = e.currentTarget.ancestor('.unplaced-unit').getData('id');
+          this._hideVisibleMoreMenu();
           this._visibleMoreMenu = this.get('unitTokens')[id].showMoreMenu(e);
+        },
+
+
+        /**
+          Render the more menu for machine tokens.
+
+         @method _tokenMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _tokenMoreMenuClick: function(e) {
+          var id = e.currentTarget.ancestor('.token').getData('id');
+          var machine = this.get('db').machines.getById(id);
+          var token = this.get(machine.parentId ?
+              'containerTokens' : 'machineTokens')[id];
+          this._hideVisibleMoreMenu();
+          this._visibleMoreMenu = token.showMoreMenu(e);
         },
 
         /**

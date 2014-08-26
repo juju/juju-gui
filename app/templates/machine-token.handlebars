@@ -1,14 +1,12 @@
 <div class="token">
-  <div class="top">
-    <span class="title">
-      {{ displayName }}{{#if isStateServer}} - State service{{/if}}
-      <span class="removed">
-        will be destroyed once you have committed your changes
-      </span>
-      <span class="token-uncommitted">&deg;</span>
+  {{>more-menu}}
+  <span class="title">
+    {{ displayName }}{{#if isStateServer}} - State service{{/if}}
+    <span class="removed">
+      will be destroyed once you have committed your changes
     </span>
-    <span class="service-icons"></span>
-  </div>
+    <span class="token-uncommitted">&deg;</span>
+  </span>
   <span class="details">
     {{#if noHardware}}
       Hardware details not available
@@ -24,9 +22,7 @@
       {{/if}}
     {{/if}}
   </span>
-  <span class="delete">
-    <i class="sprite mv-token-destroy"></i>
-  </span>
+  <span class="service-icons"></span>
   <div class="drop">
     <span>Add to machine {{ displayName }}</span>
   </div>

@@ -84,7 +84,8 @@ describe('machine token view', function() {
       assert.isObject(e);
       done();
     });
-    container.one('.delete').simulate('click');
+    view.showMoreMenu();
+    container.one('.moreMenuItem-0').simulate('click');
   });
 
   it('fires the select event', function(done) {
@@ -181,5 +182,12 @@ describe('machine token view', function() {
     assert.equal(container.hasClass('droppable'), true);
     view.setNotDroppable();
     assert.equal(container.hasClass('droppable'), false);
+  });
+
+  it('can display the more menu', function() {
+    var view = makeView(this, machine);
+    assert.equal(container.one('.yui3-moremenu'), null);
+    view.showMoreMenu();
+    assert.equal(container.one('.yui3-moremenu') !== null, true);
   });
 });

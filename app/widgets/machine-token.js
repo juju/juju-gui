@@ -44,9 +44,6 @@ YUI.add('machine-token', function(Y) {
         unitsTemplate: Templates['machine-token-units'],
 
         events: {
-          '.delete': {
-            click: 'handleDelete'
-          },
           '.token': {
             click: 'handleTokenSelect'
           }
@@ -59,6 +56,27 @@ YUI.add('machine-token', function(Y) {
         */
         initializer: function() {
           this._attachDragEvents(); // drop-target-view-extension
+          // This token does not get re-rendered so we can initialise
+          // the menu here.
+          this._moreMenu = new widgets.MoreMenu({
+            items: [
+              {label: 'Destroy', callback: this.handleDelete.bind(this)}
+            ]
+          });
+        },
+
+        /**
+          Show the more menu.
+
+         @method showMoreMenu
+         @param {Object} e Click event facade.
+        */
+        showMoreMenu: function(e) {
+          if (!this._moreMenu.get('rendered')) {
+            this._moreMenu.render(this.get('container').one('.more-menu'));
+          }
+          this._moreMenu.showMenu(e);
+          return this._moreMenu;
         },
 
         /**
@@ -195,6 +213,17 @@ YUI.add('machine-token', function(Y) {
           return this;
         },
 
+        /**
+          Removes the view container and all its contents.
+
+          @method destructor
+        */
+        destructor: function() {
+          if (this._moreMenu) {
+            this._moreMenu.destroy();
+          }
+        },
+
         ATTRS: {
           /**
            * @attribute machine
@@ -225,6 +254,7 @@ YUI.add('machine-token', function(Y) {
     'handlebars',
     'juju-templates',
     'machine-token-header',
+    'more-menu',
     'mv-drop-target-view-extension'
   ]
 });
