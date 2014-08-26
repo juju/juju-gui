@@ -395,16 +395,20 @@ YUI.add('environment-change-set', function(Y) {
       @param {Object} command The command from the changeset.
     */
     _clearFromDB: function(command) {
-      var db = this.get('db');
+      var db = this.get('db'),
+          services = db.services,
+          machines = db.machines,
+          relations = db.relations,
+          units = db.units;
       switch (command.method) {
         case '_deploy':
-          db.services.remove(db.services.getById(command.options.modelId));
+          services.remove(services.getById(command.options.modelId));
           break;
         case '_destroyService':
-          db.services.getById(command.args[0]).set('deleted', false);
+          services.getById(command.args[0]).set('deleted', false);
           break;
         case '_destroyMachines':
-          db.machines.getById(command.args[0]).deleted = false;
+          machines.getById(command.args[0]).deleted = false;
           break;
         case '_set_config':
           // XXX Config changed is not included in here pending current work on
@@ -412,24 +416,24 @@ YUI.add('environment-change-set', function(Y) {
           console.warn('Clearing config changes not yet supported');
           break;
         case '_add_relation':
-          db.relations.remove(db.relations.getById(command.options.modelId));
+          relations.remove(relations.getById(command.options.modelId));
           break;
         case '_remove_relation':
-          db.relations.getRelationFromEndpoints([
+          relations.getRelationFromEndpoints([
             command.args[0],
             command.args[1]
           ]).set('deleted', false);
           break;
         case '_remove_units':
           command.args[0].forEach(function(unit) {
-            db.units.getById(unit).deleted = false;
+            units.getById(unit).deleted = false;
           });
           break;
         case '_addMachines':
-          db.machines.remove(db.machines.getById(command.options.modelId));
+          machines.remove(machines.getById(command.options.modelId));
           break;
         case '_add_unit':
-          db.removeUnits(db.units.getById(command.options.modelId));
+          db.removeUnits(units.getById(command.options.modelId));
           break;
       }
     },

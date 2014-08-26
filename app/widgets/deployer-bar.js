@@ -179,7 +179,8 @@ YUI.add('deployer-bar', function(Y) {
     */
     confirmClear: function(evt) {
       evt.halt();
-      var container = this.get('container');
+      this.get('container').one('.deployed-message').addClass('hidden');
+      var container = evt.currentTarget.ancestor();
       container.one('.clear-button').addClass('hidden');
       container.one('.clear-confirm').removeClass('hidden');
     },
@@ -192,7 +193,8 @@ YUI.add('deployer-bar', function(Y) {
     */
     cancelClear: function(evt) {
       evt.halt();
-      var container = this.get('container');
+      this.get('container').one('.deployed-message').removeClass('hidden');
+      var container = evt.currentTarget.ancestor().ancestor();
       container.one('.clear-button').removeClass('hidden');
       container.one('.clear-confirm').addClass('hidden');
     },
@@ -208,8 +210,11 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       container.removeClass('summary-open');
-      // XXX Need to clear the state so that inspectors won't linger, but no
-      // events fired from here will reach state. Makyo 2014-08-22
+      container.one('.deployed-message').removeClass('hidden');
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: {id: null}}});
       ecs.clear();
     },
 
