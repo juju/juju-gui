@@ -439,7 +439,7 @@ YUI.add('machine-view-panel', function(Y) {
           if (!selectedMachine) {
             this._selectFirstMachine();
           }
-          this._showOnboarding();
+          this._toggleOnboarding();
         },
 
         /**
@@ -470,7 +470,7 @@ YUI.add('machine-view-panel', function(Y) {
           }
           tokenList[machine.id].destroy({remove: true});
           delete tokenList[machine.id];
-          this._showOnboarding();
+          this._toggleOnboarding();
         },
 
         /**
@@ -638,7 +638,7 @@ YUI.add('machine-view-panel', function(Y) {
           if (e.unit) {
             this._createServiceUnitToken(e.unit);
           }
-          this._showOnboarding();
+          this._toggleOnboarding();
         },
 
         /**
@@ -824,21 +824,20 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Show the onboarding message.
+          Toggle the onboarding to the appropriate message given the
+          number of machines present.
 
-          @method _showOnboarding
+          @method _toggleOnboarding
         */
-        _showOnboarding: function() {
+        _toggleOnboarding: function() {
           // ensure everything is hidden first
           this._hideOnboarding();
-          var machines = this.get('container').one('.column.machines');
-          switch (this.get('db').machines.size()) {
-            case 0:
-              machines.one('.onboarding.zero').removeClass('hidden');
-              break;
-            case 1:
-              machines.one('.onboarding.one').removeClass('hidden');
-              break;
+          var machines = this.get('container').one('.column.machines'),
+              machineCount = this.get('db').machines.size();
+          if (machineCount === 0) {
+            machines.one('.onboarding.zero').removeClass('hidden');
+          } else if (machineCount === 1) {
+            machines.one('.onboarding.one').removeClass('hidden');
           }
         },
 
@@ -1262,7 +1261,7 @@ YUI.add('machine-view-panel', function(Y) {
           this._renderScaleUp();
           this._clearContainerColumn();
           this._selectFirstMachine();
-          this._showOnboarding();
+          this._toggleOnboarding();
           return this;
         },
 

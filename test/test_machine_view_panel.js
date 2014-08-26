@@ -229,7 +229,7 @@ describe('machine view panel view', function() {
         function() {
           var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
           this._cleanups.push(clearStub.reset);
-          var onboardingStub = utils.makeStubMethod(view, '_showOnboarding');
+          var onboardingStub = utils.makeStubMethod(view, '_toggleOnboarding');
           this._cleanups.push(onboardingStub.reset);
           view._machinesHeader = {};
           var labelStub = utils.makeStubMethod(view._machinesHeader,
@@ -244,7 +244,7 @@ describe('machine view panel view', function() {
         function() {
           var clearStub = utils.makeStubMethod(view, '_clearContainerColumn');
           this._cleanups.push(clearStub.reset);
-          var onboardingStub = utils.makeStubMethod(view, '_showOnboarding');
+          var onboardingStub = utils.makeStubMethod(view, '_toggleOnboarding');
           this._cleanups.push(onboardingStub.reset);
           view._machinesHeader = {};
           var labelStub = utils.makeStubMethod(view._machinesHeader,
@@ -1709,8 +1709,7 @@ describe('machine view panel view', function() {
       assert.equal(view.get('db').machines.size() > 0, true);
       view.render();
       var onboarding = container.one('.column.machines .onboarding.zero');
-      assert.equal(onboarding.hasClass('hidden'),
-          true);
+      assert.equal(onboarding.hasClass('hidden'), true);
     });
 
     it('should hide when "create machine" is opened', function() {
@@ -1790,6 +1789,25 @@ describe('machine view panel view', function() {
       assert.equal(onboarding.hasClass('hidden'), true);
     });
 
+    it('should not display on MV render if more than one machine', function() {
+      var machines = view.get('db').machines;
+      // must render before machines can be added
+      view.render();
+      var machine = {
+        id: '1',
+        hardware: {
+          disk: 1024,
+          mem: 1024,
+          cpuPower: 1024,
+          cpuCores: 1
+        }
+      };
+      machines.add([machine]);
+      assert.equal(machines.size(), 2);
+      var onboarding = container.one('.column.machines .onboarding.one');
+      assert.equal(onboarding.hasClass('hidden'), true);
+    });
+
     it('should hide when "create machine" is opened', function() {
       var machines = view.get('db').machines;
       assert.equal(machines.size(), 1);
@@ -1797,7 +1815,11 @@ describe('machine view panel view', function() {
       var container = view.get('container');
       var onboarding = container.one('.column.machines .onboarding.one');
       assert.equal(onboarding.hasClass('hidden'), false);
-      container.one('.machine-view-panel-header .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-view-panel-header .more-menu .open-menu')
+          .simulate('click');
+      container.one('.machine-view-panel-header .moreMenuItem-0').simulate(
+          'click');
       assert.equal(onboarding.hasClass('hidden'), true);
     });
 
@@ -1807,7 +1829,11 @@ describe('machine view panel view', function() {
       view.render();
       var container = view.get('container');
       var onboarding = container.one('.column.machines .onboarding.one');
-      container.one('.machine-view-panel-header .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-view-panel-header .more-menu .open-menu')
+          .simulate('click');
+      container.one('.machine-view-panel-header .moreMenuItem-0').simulate(
+          'click');
       assert.equal(onboarding.hasClass('hidden'), true);
       container.one('.create-machine .cancel').simulate('click');
       assert.equal(onboarding.hasClass('hidden'), false);
