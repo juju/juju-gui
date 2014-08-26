@@ -46,12 +46,6 @@ YUI.add('machine-view-panel-header', function(Y) {
 
         labelTemplate: Templates['machine-view-panel-header-label'],
 
-        events: {
-          'a': {
-            click: 'clickAction'
-          }
-        },
-
         /**
          * Handle initial view setup.
          *
@@ -60,6 +54,23 @@ YUI.add('machine-view-panel-header', function(Y) {
         initializer: function() {
           this.addEvent(this.after(
               'labelsChange', this._afterLabelsChange, this));
+          this._moreMenu = new widgets.MoreMenu({
+            items: this.get('menuItems')
+          });
+        },
+
+        /**
+          Show the more menu.
+
+         @method showMoreMenu
+         @param {Object} e Click event facade.
+        */
+        showMoreMenu: function(e) {
+          if (!this._moreMenu.get('rendered')) {
+            this._moreMenu.render(this.get('container').one('.more-menu'));
+          }
+          this._moreMenu.showMenu(e);
+          return this._moreMenu;
         },
 
         /**
@@ -78,18 +89,6 @@ YUI.add('machine-view-panel-header', function(Y) {
           }
           this.get('container').one('.labels').setHTML(
               template({labels: this.get('labels')}));
-        },
-
-        /**
-         * Fire the action event; the action attached to the event will either
-         * be 'machine' (create machine), or 'container (create container).
-         *
-         * @method clickAction
-         * @param {Event} ev the click event created.
-         */
-        clickAction: function(e) {
-          e.halt();
-          this.fire('createMachine', {action: this.get('action')});
         },
 
         /**
@@ -142,6 +141,17 @@ YUI.add('machine-view-panel-header', function(Y) {
           container.addClass('machine-view-panel-header');
           this._attachDragEvents();
           return this;
+        },
+
+        /**
+          Removes the view container and all its contents.
+
+          @method destructor
+        */
+        destructor: function() {
+          if (this._moreMenu) {
+            this._moreMenu.destroy();
+          }
         }
       });
 
@@ -168,11 +178,11 @@ YUI.add('machine-view-panel-header', function(Y) {
     action: {},
 
     /**
-    @attribute actionLabel
+    @attribute menuItems
     @default undefined
     @type {String}
     */
-    actionLabel: {},
+    menuItems: {},
 
     /**
     @attribute dropLabel
@@ -199,6 +209,7 @@ YUI.add('machine-view-panel-header', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
+    'more-menu',
     'mv-drop-target-view-extension'
   ]
 });

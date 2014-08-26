@@ -148,7 +148,21 @@ describe('machine view panel view', function() {
     });
   });
 
-  describe('_onMachineCreated', function() {
+  it('can open the machines header more menu', function() {
+    view.render();
+    var moreMenuNode = container.one('.column.machines .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+  });
+
+  it('can open the containers header more menu', function() {
+    view.render();
+    var moreMenuNode = container.one('.column.containers .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+  });
+
+  describe('_onMachineCreated (autodeploy_extension integration)', function() {
 
     beforeEach(function() {
       machines.reset();
@@ -157,7 +171,13 @@ describe('machine view panel view', function() {
 
     it('adds a notification if a global error occurred', function() {
       var machine = machines.addGhost();
-      view._onMachineCreated(machine, {err: 'bad wolf'});
+      view._onMachineCreated(
+          machine, {
+            err: 'bad wolf',
+            machines: [{
+              name: 'foo'
+            }]
+          });
       assert.strictEqual(notifications.size(), 1);
       var notification = notifications.item(0);
       assert.strictEqual(
@@ -184,13 +204,14 @@ describe('machine view panel view', function() {
       assert.strictEqual(notification.get('level'), 'error');
     });
 
-    it('removes the ghost machine', function() {
+    it('updates the ghost machine model to use the real id', function() {
       var machine = machines.addGhost();
       assert.strictEqual(machines.size(), 1);
       var response = {machines: [{name: '42'}]};
       view._onMachineCreated(machine, response);
-      assert.strictEqual(machines.size(), 0);
+      assert.equal(machines.item(0).id, '42');
     });
+
 
     it('removes the ghost machine even when an error occurs', function() {
       var machine = machines.addGhost();
@@ -245,7 +266,9 @@ describe('machine view panel view', function() {
     it('displays when the machine header action is clicked', function() {
       view.render();
       var createMachine = container.one('.create-machine');
-      container.one('.machines .head .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machines .head .more-menu .open-menu').simulate('click');
+      container.one('.machines .head .moreMenuItem-0').simulate('click');
       assert.equal(createMachine.hasClass('create-machine-view'), true,
                    'expected class is not present');
       assert.equal(createMachine.getHTML() === '', false,
@@ -258,7 +281,10 @@ describe('machine view panel view', function() {
       view.render();
       view.set('selectedMachine', '0');
       var createContainer = container.one('.create-container');
-      container.one('.containers .head .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.containers .head .more-menu .open-menu').simulate(
+          'click');
+      container.one('.containers .head .moreMenuItem-0').simulate('click');
       assert.equal(createContainer.hasClass('create-machine-view'), true,
                    'expected class is not present');
       assert.equal(createContainer.getHTML() === '', false,
@@ -272,7 +298,10 @@ describe('machine view panel view', function() {
           view.render();
           view.set('selectedMachine', null);
           var createContainer = container.one('.create-container');
-          container.one('.containers .head .action').simulate('click');
+          // Need to click on the more menu to make it render.
+          container.one('.containers .head .more-menu .open-menu').simulate(
+              'click');
+          container.one('.containers .head .moreMenuItem-0').simulate('click');
           assert.equal(createContainer.getHTML(), '',
                        'HTML present in container');
         }
@@ -909,14 +938,41 @@ describe('machine view panel view', function() {
       units.add([{id: 'test/5'}]);
       var firstToken = container.all('.serviceunit-token').item(0);
       var secondToken = container.all('.serviceunit-token').item(1);
-      firstToken.one('.token-move').simulate('click');
+      firstToken.one('.open-menu').simulate('click');
+      firstToken.one('li').simulate('click');
       assert.equal(firstToken.hasClass('state-select-machine'), true);
       assert.equal(secondToken.hasClass('state-select-machine'), false);
       // Clicking on a different token should make the second token
       // active, and reset the first token.
-      secondToken.one('.token-move').simulate('click');
+      secondToken.one('.open-menu').simulate('click');
+      secondToken.one('li').simulate('click');
       assert.equal(firstToken.hasClass('state-select-machine'), false);
       assert.equal(secondToken.hasClass('state-select-machine'), true);
+    });
+
+    it('can open the more menu', function() {
+      view.render();
+      var moreMenuNode = container.one('.unplaced-unit .more-menu');
+      moreMenuNode.one('.open-menu').simulate('click');
+      assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+    });
+
+    it('only shows one more menu at a time', function() {
+      view.render();
+      units.add([{id: 'test/5'}]);
+      var tokens = container.all('.unplaced-unit');
+      var moreMenuNode = tokens.item(0).one('.more-menu');
+      var moreMenuNode2 = tokens.item(1).one('.more-menu');
+      // Click on both menus to render them.
+      moreMenuNode2.one('.open-menu').simulate('click');
+      moreMenuNode.one('.open-menu').simulate('click');
+      var moreMenu = moreMenuNode.one('.yui3-moremenu');
+      var moreMenu2 = moreMenuNode2.one('.yui3-moremenu');
+      assert.equal(moreMenu.hasClass('open'), true);
+      assert.equal(moreMenu2.hasClass('open'), false);
+      moreMenuNode2.one('.open-menu').simulate('click');
+      assert.equal(moreMenu.hasClass('open'), false);
+      assert.equal(moreMenu2.hasClass('open'), true);
     });
   });
 
@@ -1009,13 +1065,17 @@ describe('machine view panel view', function() {
       view.render();
       var token = container.one('.machines .token');
       assert.equal(token.hasClass('deleted'), false);
-      token.one('.delete').simulate('click');
+      // Need to click on the more menu to make it render.
+      token.one('.more-menu .open-menu').simulate('click');
+      token.one('.moreMenuItem-0').simulate('click');
       assert.equal(token.hasClass('deleted'), true);
     });
 
     it('should not try to remove a machine more than once', function() {
       view.render();
-      var deleteNode = container.one('.machine-token .delete');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-token .more-menu .open-menu').simulate('click');
+      var deleteNode = container.one('.machine-token .moreMenuItem-0');
       view.set('env', {
         destroyMachines: utils.makeStubFunction()
       });
@@ -1030,19 +1090,19 @@ describe('machine view panel view', function() {
     it('should re-render token when machine is updated', function() {
       view.render();
       var id = 999,
-          machineModel = machines.revive(0),
+          machineModel = machines.item(0),
           selector = '.machines .token',
           item = container.one(
-              selector + '[data-id="' + machineModel.get('id') + '"]');
+              selector + '[data-id="' + machineModel.id + '"]');
       assert.notEqual(item, null, 'machine was not initially displayed');
       assert.equal(item.one('.title').get(
-          'text').trim().indexOf(machineModel.get('displayName')) === 0,
+          'text').trim().indexOf(machineModel.displayName) === 0,
           true, 'initial machine names do not match');
-      machineModel.set('id', id);
+      machines.updateModelId(machineModel, id, true);
       item = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(item, null, 'machine was not displayed post-update');
       assert.equal(item.one('.title').get(
-          'text').trim().indexOf(machineModel.get('displayName')) === 0,
+          'text').trim().indexOf(machineModel.displayName) === 0,
           true, 'machine names do not match post-update');
     });
 
@@ -1216,6 +1276,13 @@ describe('machine view panel view', function() {
       assert.equal(Y.all('.unplaced .unplaced-unit').size(), 0,
                    'No service unit DOM elements should exist');
     });
+
+    it('can open the more menu', function() {
+      view.render();
+      var moreMenuNode = container.one('.machine-token .more-menu');
+      moreMenuNode.one('.open-menu').simulate('click');
+      assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+    });
   });
 
   describe('container column', function() {
@@ -1365,7 +1432,9 @@ describe('machine view panel view', function() {
           '.containers .container-token:last-child .token');
       assert.equal(token.hasClass('deleted'), false);
       token.simulate('click');
-      token.one('.delete').simulate('click');
+      // Need to click on the more menu to make it render.
+      token.one('.more-menu .open-menu').simulate('click');
+      token.one('.moreMenuItem-0').simulate('click');
       assert.equal(token.hasClass('deleted'), true);
     });
 
@@ -1374,7 +1443,11 @@ describe('machine view panel view', function() {
       view.render();
       machines.add([{id: id}]);
       container.one('.container-token:last-child .token').simulate('click');
-      var deleteNode = container.one('.container-token:last-child .delete');
+      // Need to click on the more menu to make it render.
+      container.one('.container-token:last-child .more-menu .open-menu')
+          .simulate('click');
+      var deleteNode = container.one(
+          '.container-token:last-child .moreMenuItem-0');
       view.set('env', {
         destroyMachines: utils.makeStubFunction()
       });
@@ -1384,6 +1457,16 @@ describe('machine view panel view', function() {
       machines.getById(id).deleted = true;
       deleteNode.simulate('click');
       assert.equal(view.get('env').destroyMachines.calledOnce(), true);
+    });
+
+    it('can open the more menu', function() {
+      view.render();
+      machines.add([{id: '0/lxc/0'}]);
+      var token = container.one('.container-token:last-child .token');
+      token.simulate('click');
+      var moreMenuNode = token.one('.more-menu');
+      moreMenuNode.one('.open-menu').simulate('click');
+      assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
     });
 
     describe('functional tests', function() {
@@ -1637,7 +1720,11 @@ describe('machine view panel view', function() {
       var container = view.get('container');
       var onboarding = container.one('.machines .onboarding');
       assert.equal(onboarding.hasClass('hidden'), false);
-      container.one('.machine-view-panel-header .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-view-panel-header .more-menu .open-menu')
+          .simulate('click');
+      container.one('.machine-view-panel-header .moreMenuItem-0').simulate(
+          'click');
       assert.equal(onboarding.hasClass('hidden'), true);
     });
 
@@ -1648,7 +1735,11 @@ describe('machine view panel view', function() {
       view.render();
       var container = view.get('container');
       var onboarding = container.one('.machines .onboarding');
-      container.one('.machine-view-panel-header .action').simulate('click');
+      // Need to click on the more menu to make it render.
+      container.one('.machine-view-panel-header .more-menu .open-menu')
+          .simulate('click');
+      container.one('.machine-view-panel-header .moreMenuItem-0').simulate(
+          'click');
       assert.equal(onboarding.hasClass('hidden'), true);
       container.one('.create-machine .cancel').simulate('click');
       assert.equal(onboarding.hasClass('hidden'), false);

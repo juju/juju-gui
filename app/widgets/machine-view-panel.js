@@ -40,7 +40,8 @@ YUI.add('machine-view-panel', function(Y) {
    */
   var MachineViewPanelView = Y.Base.create('MachineViewPanelView', Y.View,
       [
-        Y.Event.EventTracker
+        Y.Event.EventTracker,
+        widgets.AutodeployExtension
       ], {
         template: Templates['machine-view-panel'],
 
@@ -51,13 +52,13 @@ YUI.add('machine-view-panel', function(Y) {
           '.container-token .token': {
             click: 'handleContainerTokenSelect'
           },
-          '.machine-token .delete': {
+          '.machine-token .moreMenuItem-0': {
             click: 'deleteMachine'
           },
-          '.container-token .delete': {
+          '.container-token .moreMenuItem-0': {
             click: 'deleteMachine'
           },
-          '.unplaced-unit .token-move': {
+          '.unplaced-unit .moreMenuItem-0': {
             click: '_cancelUnitPlacement'
           },
           '.machines .onboarding .add-machine': {
@@ -65,6 +66,18 @@ YUI.add('machine-view-panel', function(Y) {
           },
           '.column.unplaced .auto-place': {
             click: '_autoPlaceUnits'
+          },
+          '.unplaced-unit .more-menu .open-menu': {
+            click: '_unplacedUnitMoreMenuClick'
+          },
+          '.machine-token .more-menu .open-menu': {
+            click: '_tokenMoreMenuClick'
+          },
+          '.container-token .more-menu .open-menu': {
+            click: '_tokenMoreMenuClick'
+          },
+          '.head .more-menu .open-menu': {
+            click: '_headerMoreMenuClick'
           }
         },
 
@@ -143,6 +156,67 @@ YUI.add('machine-view-panel', function(Y) {
           // When the environment name becomes available, display it.
           this.get('env').after('environmentNameChange',
               this._displayEnvironmentName, this);
+        },
+
+
+        /**
+          Hide the currently visible more menu.
+
+         @method _hideVisibleMoreMenu
+         @param {Object} e Click event facade.
+        */
+        _hideVisibleMoreMenu: function(e) {
+          // Need to manually close the currently open more menu as
+          // clicks on the "open menu" button have e.halt() to prevent
+          // the clickoutside from triggering (so the menu would open
+          // and then instantly close). Only close it if it exists in the DOM.
+          if (this._visibleMoreMenu && this._visibleMoreMenu.get(
+              'boundingBox')._node) {
+            this._visibleMoreMenu.hideMenu();
+          }
+        },
+
+
+        /**
+          Render the more menu for unplaced units.
+
+         @method _unplacedUnitMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _unplacedUnitMoreMenuClick: function(e) {
+          var id = e.currentTarget.ancestor('.unplaced-unit').getData('id');
+          this._hideVisibleMoreMenu();
+          this._visibleMoreMenu = this.get('unitTokens')[id].showMoreMenu(e);
+        },
+
+
+        /**
+          Render the more menu for machine tokens.
+
+         @method _tokenMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _tokenMoreMenuClick: function(e) {
+          var id = e.currentTarget.ancestor('.token').getData('id');
+          var machine = this.get('db').machines.getById(id);
+          var token = this.get(machine.parentId ?
+              'containerTokens' : 'machineTokens')[id];
+          this._hideVisibleMoreMenu();
+          this._visibleMoreMenu = token.showMoreMenu(e);
+        },
+
+
+        /**
+          Render the more menu for the headers.
+
+         @method _headerMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _headerMoreMenuClick: function(e) {
+          var header = e.currentTarget.ancestor('.column').hasClass(
+              'machines') ? this._machinesHeader : this._containersHeader;
+          this._hideVisibleMoreMenu();
+          this._visibleMoreMenu = header.showMoreMenu(e);
         },
 
         /**
@@ -286,6 +360,18 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+          Determines if the machine or container id that's been passed in is
+          for an uncommitted model.
+
+          @method _isMachineCommitted
+          @param {String} id The id of the model.
+          @return {Boolean} If the model is uncommitted.
+        */
+        _isMachineCommitted: function(id) {
+          return String(id).indexOf('new');
+        },
+
+        /**
           Handles changes to the machines in the db model list.
 
          @method _onMachineChange
@@ -309,11 +395,16 @@ YUI.add('machine-view-panel', function(Y) {
               tokenList[newId] = token;
               delete tokenList[prevId];
             } else {
-              token = tokenList[e.target.id];
+              // The machine can be a model or a POJO depending on what
+              // triggered the change.
+              var key = e.target.id || e.target.get('id');
+              token = tokenList[key];
             }
+            var machine = token.get('machine');
             if (!parentId) {
-              this._updateMachineWithUnitData(token.get('machine'));
+              this._updateMachineWithUnitData(machine);
             }
+            token.set('committed', this._isMachineCommitted(machine.id));
             token.render();
           }
         },
@@ -478,7 +569,8 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               createContainer;
           if (unit._event) {
-            action = action || unit.action;
+            action = action || unit.currentTarget.ancestor(
+                '.column').hasClass('machines') ? 'machine' : 'container';
             unit = undefined;
           }
           if (action === 'container') {
@@ -604,73 +696,6 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Create a new machine/container.
-
-          @method _createMachine
-          @param {String} containerType The container type to create.
-          @param {String} parentId The parent for the container.
-          @param {Object} constraints The machine/container constraints.
-          @return {Object} The newly created ghost machine model instance.
-        */
-        _createMachine: function(containerType, parentId, constraints) {
-          var db = this.get('db');
-          var machine = db.machines.addGhost(parentId, containerType);
-          // XXX A callback param MUST be provided even if it's just an
-          // empty function, the ECS relies on wrapping this function so if
-          // it's null it'll just stop executing. This should probably be
-          // handled properly on the ECS side. Jeff May 12 2014
-          var callback = Y.bind(this._onMachineCreated, this, machine);
-          this.get('env').addMachines([{
-            containerType: containerType,
-            parentId: parentId,
-            constraints: constraints || {}
-          }], callback, {modelId: machine.id});
-          return machine;
-        },
-
-        /**
-          Callback called when a new machine is created.
-
-          @method _onMachineCreated
-          @param {Object} machine The corresponding ghost machine.
-          @param {Object} response The juju-core response. The response is an
-            object like the following:
-            {
-              err: 'only defined if a global error occurred'
-              machines: [
-                {name: '1', err: 'a machine error occurred'},
-              ]
-            }
-        */
-        _onMachineCreated: function(machine, response) {
-          var db = this.get('db');
-          var errorTitle;
-          var errorMessage;
-          // Ensure the addMachines call executed successfully.
-          if (response.err) {
-            errorTitle = 'Error creating the new machine';
-            errorMessage = response.err;
-          } else {
-            var machineResponse = response.machines[0];
-            if (machineResponse.err) {
-              errorTitle = 'Error creating machine ' + machineResponse.name;
-              errorMessage = machineResponse.err;
-            }
-          }
-          // Add an error notification if adding a machine failed.
-          if (errorTitle) {
-            db.notifications.add({
-              title: errorTitle,
-              message: 'Could not add the requested machine. Server ' +
-                  'responded with: ' + errorMessage,
-              level: 'error'
-            });
-          }
-          // In both success and failure cases, destroy the ghost machine.
-          db.machines.remove(machine);
-        },
-
-        /**
          * Handle the click event to show containers for the selected machine.
          *
          * @method handleMachineTokenSelect
@@ -765,20 +790,24 @@ YUI.add('machine-view-panel', function(Y) {
               '.column.machines .head', {
                 title: this.get('env').get('environmentName'),
                 action: 'machine',
-                actionLabel: 'Add machine',
                 dropLabel: 'Create new machine',
-                customTemplate: 'machine-view-panel-header-label-alt'
+                customTemplate: 'machine-view-panel-header-label-alt',
+                menuItems: [
+                  {label: 'Add machine',
+                    callback: this._displayCreateMachine.bind(this)}
+                ]
               });
           this._machinesHeader.addTarget(this);
           this._containersHeader = this._renderHeader(
               '.column.containers .head', {
                 action: 'container',
-                actionLabel: 'Add container',
-                dropLabel: 'Create new container'
+                dropLabel: 'Create new container',
+                menuItems: [
+                  {label: 'Add container',
+                    callback: this._displayCreateMachine.bind(this)}
+                ]
               });
           this._containersHeader.addTarget(this);
-          this.addEvent(this.on(
-              '*:createMachine', this._displayCreateMachine, this));
         },
 
         /**
@@ -1097,19 +1126,6 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Place all the units on individual machines.
-
-          @method _autoPlaceUnits
-          @param {Object} e The click event facade.
-        */
-        _autoPlaceUnits: function(e) {
-          this.get('db').units.filterByMachine(null).forEach(function(unit) {
-            var machine = this._createMachine();
-            this.get('env').placeUnit(unit, machine.id);
-          }, this);
-        },
-
-        /**
          * Render the scale up UI.
          *
          * @method _renderScaleUp
@@ -1346,17 +1362,19 @@ YUI.add('machine-view-panel', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'autodeploy-extension',
+    'container-token',
+    'create-machine-view',
     'event-tracker',
     'handlebars',
     'juju-serviceunit-token',
     'juju-templates',
     'juju-view-utils',
-    'container-token',
-    'create-machine-view',
     'machine-token',
     'machine-view-panel-header',
     'node',
     'service-scale-up-view',
-    'view'
+    'view',
+    'yui-patches'
   ]
 });

@@ -1,46 +1,29 @@
 .container-token {
     .token {
-        &.active {
-            .top {
-                display: block;
-            }
-            .service-icons {
-                float: none;
-                padding-top: 15px;
-
-                .unit {
-                    float: none;
-                    margin: 0 -20px;
-                    padding: 5px 20px;
-
-                    &.uncommitted .unit-uncommitted {
-                        display: inline-block;
-                    }
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                    .unit-uncommitted {
-                        display: none;
-                    }
-                    img {
-                        vertical-align: middle;
-                        float: left;
-                        margin: 0 7px 0 0;
-                    }
-                    .name {
-                        display: block;
-                    }
-                }
-            }
-        }
-        .delete {
-            top: 10px;
-        }
         .service-icons {
             list-style: none;
 
-            .name {
-                display: none;
+            .unit {
+                margin: 0 -20px;
+                padding: 5px 20px;
+
+                &.uncommitted .unit-uncommitted {
+                    display: inline-block;
+                }
+                &:last-child {
+                    margin-bottom: 0;
+                }
+                .unit-uncommitted {
+                    display: none;
+                }
+                img {
+                    vertical-align: middle;
+                    float: left;
+                    margin: 0 7px 0 0;
+                }
+                .name {
+                    display: block;
+                }
             }
         }
     }

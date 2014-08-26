@@ -1,0 +1,57 @@
+.more-menu {
+    position: relative;
+
+    .yui3-moremenu.open {
+        .menu,
+        .menu:before {
+            display: block;
+            position: absolute;
+            z-index: 1000;
+            background-color: #fff;
+            border: 1px solid #bbb;
+        }
+        .menu {
+            top: 35px;
+            right: -7px;
+            padding: 0 10px;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 13px;
+            white-space: nowrap;
+
+            &:before {
+                content: '';
+                top: -4px;
+                right: 8px;
+                width: 6px;
+                height: 6px;
+                border-width: 1px 0 0 1px;
+                -ms-transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            li {
+                float: none;
+                border-bottom: 1px solid #e2e2e2;
+                line-height: 30px;
+                color: @text-colour;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+    .open-menu {
+        display: block;
+        width: 10px;
+        text-align: center;
+
+        &:focus {
+            outline: none;
+        }
+    }
+    .menu {
+        display: none;
+    }
+}

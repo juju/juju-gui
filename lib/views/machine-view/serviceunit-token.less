@@ -5,16 +5,14 @@
     padding: 0 10px;
     background-color: #fff;
     border: 1px solid @machine-view-border-colour;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
     line-height: 38px;
 
     // States
     &.state-initial {
         cursor: move;
 
-        &:hover {
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-        }
-        .token-move {
+        .more-menu {
             display: block;
         }
         .title {
@@ -86,11 +84,6 @@
                 vertical-align: -5px;
             }
         }
-        .token-move {
-            float: right;
-            margin-top: -1px;
-            cursor: pointer;
-        }
     }
     .machines {
         position: absolute;
@@ -108,7 +101,12 @@
             color: @charm-panel-orange;
         }
     }
-    .token-move,
+    .more-menu {
+        position: absolute;
+        right: 5px;
+        cursor: default;
+    }
+    .more-menu,
     .title,
     .containers,
     .constraints,

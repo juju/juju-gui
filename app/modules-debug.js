@@ -127,6 +127,9 @@ var GlobalConfig = {
     juju: {
       modules: {
         // Primitives
+        'yui-patches': {
+          fullpath: '/juju-ui/assets/javascripts/yui-patches.js'
+        },
 
         'notifier': {
           fullpath: '/juju-ui/widgets/notifier.js'
@@ -198,6 +201,10 @@ var GlobalConfig = {
         'machine-view-panel-extension': {
           fullpath:
               '/juju-ui/assets/javascripts/machine-view-panel-extension.js'
+        },
+
+        'more-menu': {
+          fullpath: '/juju-ui/widgets/more-menu.js'
         },
 
         'sub-app': {
@@ -516,6 +523,10 @@ var GlobalConfig = {
 
         'search-widget-mgmt-extension': {
           fullpath: '/juju-ui/utils/search-widget-mgmt-extension.js'
+        },
+
+        'autodeploy-extension': {
+          fullpath: '/juju-ui/widgets/autodeploy-extension.js'
         },
 
         'juju-controllers': {

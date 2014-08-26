@@ -522,4 +522,31 @@ describe('deployer bar view', function() {
     view.render();
     assert.equal(deployButton.get('text').trim(), 'Commit');
   });
+
+  it('should display if there are unplaced units', function() {
+    addEntities(db);
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
+    container.one('.deploy-button').simulate('click');
+    assert.notEqual(container.one('.unplaced-panel'), null);
+  });
+
+  it('should not display if there are no unplaced units', function() {
+    addEntities(db);
+    var unit = db.units.getById('django/0');
+    unit.machine = '0';
+    ecs.lazyAddUnits(['django', 1, '0'], {modelId: 'django/0'});
+    container.one('.deploy-button').simulate('click');
+    assert.equal(container.one('.unplaced-panel'), null);
+  });
+
+  it('should autodeploy unplaced units if instructed', function() {
+    addEntities(db);
+    var autoplaceStub = utils.makeStubMethod(view, '_autoPlaceUnits');
+    utils.makeStubMethod(view.get('ecs'), 'commit');
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
+    container.one('.deploy-button').simulate('click');
+    container.one('input[value="autodeploy"]').set('checked', true);
+    view.deploy({halt: utils.makeStubFunction()});
+    assert.equal(autoplaceStub.calledOnce(), true);
+  });
 });
