@@ -236,7 +236,8 @@ describe('Inspector Relations Tab', function() {
 
     assert.equal(
         vm.get('container').one('.view-content').getHTML(),
-        'This service has no relations.');
+        'This service doesn\'t have any relations. Build relationships ' +
+        'between services and find out about them here.');
 
     vg.teardown();
   });
