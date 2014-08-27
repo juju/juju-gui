@@ -41,6 +41,7 @@ YUI.add('deployer-bar', function(Y) {
     widgets.AutodeployExtension
   ], {
     template: Templates['deployer-bar'],
+    summaryTemplate: Templates['deployer-bar-summary'],
     changesTemplate: Templates['deployer-bar-changes'],
 
     events: {
@@ -236,7 +237,7 @@ YUI.add('deployer-bar', function(Y) {
           totalUnits = delta.totalUnits,
           unplacedCount = db.units.filterByMachine(null).length;
       if (container && container.get('parentNode')) {
-        container.setHTML(this.template({
+        container.one('.panel.summary section').setHTML(this.summaryTemplate({
           changeCount: this._getChangeCount(ecs),
           latestChangeDescription: '',
           deployServices: changes.deployedServices,
@@ -249,7 +250,6 @@ YUI.add('deployer-bar', function(Y) {
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
-          deployed: this._deployed,
           majorChange: this._hasMajorChanges(changes),
           unplacedCount: unplacedCount
         }));
