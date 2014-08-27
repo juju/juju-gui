@@ -2,29 +2,13 @@
     @panel-header: 50px;
     @paper-dark: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
 
-    &.mode-min,
-    &.mode-mid {
-        .panel {
-            top: auto;
-        }
-    }
-    &.mode-min .panel {
-        height: 25%;
-    }
-    &.mode-mid .panel {
-        height: 50%;
-    }
-    .panel,
-    &.mode-max .panel {
-        top: @navbar-height + @environment-header-height + 10px;
-    }
     time {
         color: #bfbab5;
     }
     .bar {
         box-sizing: border-box;
         position: absolute;
-        z-index: 652;
+        z-index: 653;
         bottom: 0;
         left: 0;
         right: 0;
@@ -139,17 +123,17 @@
         }
     }
     .panel {
-        display: none;
         position: absolute;
         // Needs to be above .bar so that the shadow does not appear
         // above the panel.
         z-index: 652;
+        top: 100%;
         bottom: @deployer-bar-height;
         left: 0;
         width: 100%;
         background: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg.jpg) repeat 0 0;
         border: 1px solid #D9D9D9;
-        transistion: height .3s;
+        transition: top 0.4s;
 
         header {
             .border-box;
@@ -320,10 +304,19 @@
             }
         }
     }
+    &.summary-open .panel.summary,
+    &.changes-open .panel.changes,
+    &.changes-open.mode-max .panel.changes {
+        top: @navbar-height + @environment-header-height + 10px;
+    }
     &.changes-open {
+        &.mode-min .panel.changes {
+            top: 75%;
+        }
+        &.mode-mid .panel.changes {
+            top: 50%;
+        }
         .panel.changes {
-            display: block;
-
             .action-list {
                 .hide {
                     display: block;
