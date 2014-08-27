@@ -143,11 +143,12 @@ YUI.add('juju-serviceunit-token', function(Y) {
       @method _getConstraints
     */
     _getConstraints: function() {
-      var constraintsForm = this.get('container').one('.constraints');
+      var form = this.get('container').one('.constraints-form');
       return {
-        'cpu-power': constraintsForm.one('input[name="cpu"]').get('value'),
-        mem: constraintsForm.one('input[name="ram"]').get('value'),
-        'root-disk': constraintsForm.one('input[name="disk"]').get('value')
+        'cpu-power': form.one('input[name="cpu-power"]').get('value'),
+        'cpu-cores': form.one('input[name="cpu-cores"]').get('value'),
+        mem: form.one('input[name="ram"]').get('value'),
+        'root-disk': form.one('input[name="root-disk"]').get('value')
       };
     },
 

@@ -13,17 +13,17 @@
         }
     }
     &.state-constraints {
-        .constraints {
+        .constraints-form {
             display: block;
         }
     }
     &.state-container-constraints {
         .containers,
-        .constraints {
+        .constraints-form {
             display: block;
         }
     }
-    .constraints,
+    .constraints-form,
     .containers {
         display: none;
     }
@@ -62,11 +62,9 @@
         }
     }
 }
-/* This style applies to both create-machine-view and serviceunit-token */
-.machine-view-panel {
-    .constraints fieldset {
-        border: none;
-        margin: 0;
-        padding: 0;
-    }
+/* This style applies to create-machine-view, serviceunit-token, and scale-up */
+.constraints-form fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
 }

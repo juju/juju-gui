@@ -180,9 +180,10 @@ YUI.add('scale-up-view', function(Y) {
           db = this.get('db'),
           machine;
       var constraints = {
-        'cpu-power': container.one('input[name="cpu"]').get('value'),
+        'cpu-power': container.one('input[name="cpu-power"]').get('value'),
+        'cpu-cores': container.one('input[name="cpu-cores"]').get('value'),
         mem: container.one('input[name="mem"]').get('value'),
-        arch: container.one('input[name="arch"]').get('value')
+        'root-disk': container.one('input[name="root-disk"]').get('value')
       };
       // "Don't make functions in a loop"
       // jshint -W083
