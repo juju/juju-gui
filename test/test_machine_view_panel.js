@@ -1087,6 +1087,41 @@ describe('machine view panel view', function() {
       assert.equal(view.get('env').destroyMachines.calledOnce(), true);
     });
 
+    it('can reset uncommitted units', function() {
+      var stubRender = utils.makeStubMethod(view, '_renderUnplacedUnits');
+      var stubToggle = utils.makeStubMethod(view, '_toggleOnboarding');
+      this._cleanups.push(stubRender.reset);
+      this._cleanups.push(stubToggle.reset);
+
+      var machine = machines.item(0);
+      machine.units = [{
+        id: 'foo/0',
+        agent_state: 'started'
+      }, {
+        id: 'foo/1'
+      }];
+      view.render();
+      assert.equal(stubRender.calledOnce(), true, 'Render not called');
+      assert.equal(stubToggle.calledOnce(), true, 'Toggle not called');
+      view.removeUncommittedUnitsFromMachine(machine);
+      assert.equal(stubRender.callCount(), 2, 'Render not called');
+      assert.equal(stubToggle.callCount(), 2, 'Toggle not called');
+    });
+
+    it('resets uncommitted units when a machine is deleted', function() {
+      view.render();
+      view.set('env', {
+        destroyMachines: utils.makeStubFunction()
+      });
+      var stubRemove = utils.makeStubMethod(
+          view, 'removeUncommittedUnitsFromMachine');
+      this._cleanups.push(stubRemove.reset);
+      container.one('.machine-token .more-menu .open-menu').simulate('click');
+      var deleteNode = container.one('.machine-token .moreMenuItem-0');
+      deleteNode.simulate('click');
+      assert.equal(stubRemove.calledOnce(), true);
+    });
+
     it('should re-render token when machine is updated', function() {
       view.render();
       var id = 999,
