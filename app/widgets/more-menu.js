@@ -85,7 +85,10 @@ YUI.add('more-menu', function(Y) {
       this.hideMenu();
       e.currentTarget.get('className').split(' ').forEach(function(className) {
         if (className.indexOf('moreMenuItem-') === 0) {
-          this.get('items')[className.split('-')[1]].callback(e);
+          var item = this.get('items')[className.split('-')[1]];
+          if (!item.disabled) {
+            item.callback(e);
+          }
         }
       }, this);
     },
@@ -101,11 +104,27 @@ YUI.add('more-menu', function(Y) {
         item.id = 'moreMenuItem-' + attrs.items.indexOf(item);
       });
       this.get('contentBox').setHTML(this.template(attrs));
-    }
+    },
 
+    /**
+       Disable an item in the menu.
+
+       @method disableItems
+       @param {Array} labels The labels of the items to disable.
+     */
+    disableItems: function(labels) {
+      var items = this.get('items');
+      items.forEach(function(item) {
+        if (labels.indexOf(item.label) !== -1) {
+          item.disabled = true;
+        }
+      });
+    }
   }, {
     ATTRS: {
       /**
+        Items in the menu.
+
         @attribute items
         @default undefined
         @type {Array}
