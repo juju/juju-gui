@@ -200,7 +200,9 @@ YUI.add('service-relations-view', function(Y) {
             _generateAndBindRelationsList(node, relations, db);
           } else {
             node.setHTML(
-                '<div class="view-content">This service has no relations.' +
+                '<div class="view-content">' +
+                'This service doesn\'t have any relations. Build ' +
+                'relationships between services and find out about them here.' +
                 '</div>');
           }
         }
