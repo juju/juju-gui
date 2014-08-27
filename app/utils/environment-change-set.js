@@ -367,6 +367,77 @@ YUI.add('environment-change-set', function(Y) {
       this._commitNext(env);
     },
 
+    /**
+      Clears all of the items in the changeset and all of their corresponding
+      database changes.
+
+      @method clear
+    */
+    clear: function() {
+      var toClear = this._buildHierarchy();
+      // We need to work through the hierarchy of changes in reverse, otherwise
+      // removing units will fail as the service might not exist anymore.
+      toClear.reverse().forEach(function(level) {
+        level.forEach(function(change) {
+          this._clearFromDB(change.command);
+        }.bind(this));
+      }.bind(this));
+      this.changeSet = {};
+      this.currentCommit = [];
+      this.fire('changeSetModified');
+    },
+
+    /**
+      Removes a model or a change from the database corresponding to an item
+      in the changeSet.
+
+      @method _clearFromDB
+      @param {Object} command The command from the changeset.
+    */
+    _clearFromDB: function(command) {
+      var db = this.get('db'),
+          services = db.services,
+          machines = db.machines,
+          relations = db.relations,
+          units = db.units;
+      switch (command.method) {
+        case '_deploy':
+          services.remove(services.getById(command.options.modelId));
+          break;
+        case '_destroyService':
+          services.getById(command.args[0]).set('deleted', false);
+          break;
+        case '_destroyMachines':
+          machines.getById(command.args[0]).deleted = false;
+          break;
+        case '_set_config':
+          // XXX Config changed is not included in here pending current work on
+          // storing the previous config values. Makyo 2014-08-22
+          console.warn('Clearing config changes not yet supported');
+          break;
+        case '_add_relation':
+          relations.remove(relations.getById(command.options.modelId));
+          break;
+        case '_remove_relation':
+          relations.getRelationFromEndpoints([
+            command.args[0],
+            command.args[1]
+          ]).set('deleted', false);
+          break;
+        case '_remove_units':
+          command.args[0].forEach(function(unit) {
+            units.getById(unit).deleted = false;
+          });
+          break;
+        case '_addMachines':
+          machines.remove(machines.getById(command.options.modelId));
+          break;
+        case '_add_unit':
+          db.removeUnits(units.getById(command.options.modelId));
+          break;
+      }
+    },
+
     /* End ECS methods */
 
     /* Private environment methods. */
@@ -605,7 +676,7 @@ YUI.add('environment-change-set', function(Y) {
       @method _lazyAddRelation
       @param {Array} args The arguments to add the relation with.
     */
-    _lazyAddRelation: function(args) {
+    _lazyAddRelation: function(args, options) {
       var serviceA;
       var serviceB;
       Y.Object.each(this.changeSet, function(value, key) {
@@ -622,6 +693,7 @@ YUI.add('environment-change-set', function(Y) {
       var command = {
         method: '_add_relation',
         args: args,
+        options: options,
         /**
           Replace changeSet keys with real service names returned from the call.
 

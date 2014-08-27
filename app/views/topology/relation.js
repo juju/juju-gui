@@ -943,7 +943,8 @@ YUI.add('juju-topology-relation', function(Y) {
       // This needs to specify interface in the future.
       env.add_relation(endpoints[0], endpoints[1],
           Y.bind(this._addRelationCallback, this,
-                 module, relation.get('relation_id'))
+                 module, relation.get('relation_id')),
+          {modelId: relation.get('id')}
       );
       module.set('currentServiceClickAction', 'hideServiceMenu');
     },

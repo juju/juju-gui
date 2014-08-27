@@ -59,6 +59,15 @@ YUI.add('deployer-bar', function(Y) {
       '.confirm-button': {
         click: 'deploy'
       },
+      '.clear-button': {
+        click: 'confirmClear'
+      },
+      '.clear-no': {
+        click: 'cancelClear'
+      },
+      '.clear-yes': {
+        click: 'clear'
+      },
       '.action-list .show': {
         click: 'showRecentChanges'
       },
@@ -160,6 +169,53 @@ YUI.add('deployer-bar', function(Y) {
     _setDeployed: function() {
       this._deployed = true;
       this.get('container').one('.deploy-button').set('text', 'Commit');
+    },
+
+    /**
+      Confirm clearing staged changes.
+
+      @method confirmClear
+      @param {Object} evt The event facade
+    */
+    confirmClear: function(evt) {
+      evt.halt();
+      this.get('container').one('.deployed-message').addClass('hidden');
+      var container = evt.currentTarget.ancestor();
+      container.one('.clear-button').addClass('hidden');
+      container.one('.clear-confirm').removeClass('hidden');
+    },
+
+    /**
+      Cancel clearing staged changes.
+
+      @method cancelClear
+      @param {Object} evt The event facade.
+    */
+    cancelClear: function(evt) {
+      evt.halt();
+      this.get('container').one('.deployed-message').removeClass('hidden');
+      var container = evt.currentTarget.ancestor().ancestor();
+      container.one('.clear-button').removeClass('hidden');
+      container.one('.clear-confirm').addClass('hidden');
+    },
+
+    /**
+      Clear the list of changes.
+
+      @method clear
+      @param {Object} evt The event facade.
+    */
+    clear: function(evt) {
+      evt.halt();
+      var container = this.get('container'),
+          ecs = this.get('ecs');
+      container.removeClass('summary-open');
+      container.one('.deployed-message').removeClass('hidden');
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: {id: null}}});
+      ecs.clear();
     },
 
     /**
