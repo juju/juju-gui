@@ -606,8 +606,18 @@ YUI.add('machine-view-panel', function(Y) {
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
+            // We need to store this ID because it's the ID that we use to
+            // represent the token in the DOM.
+            var tokenId = parentId;
+            // Before proceeding, rename the machine in the case the top level
+            // container has been selected.
+            if (parentId === selected + '/' + ROOT_CONTAINER_PLACEHOLDER) {
+              parentId = selected;
+            }
             this._placeUnit(unit, parentId);
-            var token = this._findMachineOrContainerToken(parentId, true);
+            var token = this._findMachineOrContainerToken(tokenId, true);
+            this._selectMachineToken(
+                this.get('machineTokens')[parentId].get('container').one('.token'));
             this._selectContainerToken(token);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);
@@ -1028,6 +1038,10 @@ YUI.add('machine-view-panel', function(Y) {
             containerTokens[container.id] = token;
           } else {
             token = containerTokens[container.id];
+            token.setAttrs({
+              committed: committed,
+              machine: container
+            });
           }
           token.render();
           token.addTarget(this);
