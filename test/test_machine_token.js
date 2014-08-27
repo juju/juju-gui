@@ -190,4 +190,21 @@ describe('machine token view', function() {
     view.showMoreMenu();
     assert.equal(container.one('.yui3-moremenu') !== null, true);
   });
+
+  it('can show the constraints', function() {
+    var view = makeView(this, machine);
+    var detailsNode = container.one('.details');
+    assert.equal(detailsNode.hasClass('hidden'), true);
+    view.showConstraints();
+    assert.equal(detailsNode.hasClass('hidden'), false);
+  });
+
+  it('can hide the constraints', function() {
+    var view = makeView(this, machine);
+    var detailsNode = container.one('.details');
+    view.showConstraints();
+    assert.equal(detailsNode.hasClass('hidden'), false);
+    view.hideConstraints();
+    assert.equal(detailsNode.hasClass('hidden'), true);
+  });
 });

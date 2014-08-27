@@ -93,12 +93,14 @@ YUI.add('machine-view-panel', function(Y) {
               machineTokens = {},
               units = db.units.filterByMachine(null),
               unitTokens = {};
+          var tokenConstraintsVisible = this.get('tokenConstraintsVisible');
           // Turn machine models into tokens and store internally.
           machines.forEach(function(machine) {
             var token = new views.MachineToken({
               containerTemplate: '<li/>',
               machine: machine,
-              committed: machine.id.indexOf('new') !== 0
+              committed: machine.id.indexOf('new') !== 0,
+              constraintsVisible: tokenConstraintsVisible
             });
             machineTokens[machine.id] = token;
           });
@@ -836,7 +838,9 @@ YUI.add('machine-view-panel', function(Y) {
                 customTemplate: 'machine-view-panel-header-label-alt',
                 menuItems: [
                   {label: 'Add machine',
-                    callback: this._displayCreateMachine.bind(this)}
+                    callback: this._displayCreateMachine.bind(this)},
+                  {label: 'Hide constraints',
+                    callback: this._toggleTokenConstraints.bind(this)}
                 ]
               });
           this._machinesHeader.addTarget(this);
@@ -850,6 +854,32 @@ YUI.add('machine-view-panel', function(Y) {
                 ]
               });
           this._containersHeader.addTarget(this);
+        },
+
+        /**
+          Toggle the visibility of the constraints on machine tokens.
+
+         @method _toggleTokenConstraints
+         @param {Object} e Click event facade.
+        */
+        _toggleTokenConstraints: function(e) {
+          var makeVisible = !this.get('tokenConstraintsVisible');
+          var machineTokens = this.get('machineTokens');
+          var label;
+          var machineToken;
+          this.set('tokenConstraintsVisible', makeVisible);
+          Object.keys(machineTokens).forEach(function(token) {
+            machineToken = machineTokens[token];
+            if (makeVisible) {
+              machineToken.showConstraints();
+              label = 'Hide constraints';
+            } else {
+              machineToken.hideConstraints();
+              label = 'Show constraints';
+            }
+          });
+          this._machinesHeader.get('container').one('.moreMenuItem-1').set(
+              'text', label);
         },
 
         /**
@@ -1033,7 +1063,8 @@ YUI.add('machine-view-panel', function(Y) {
           token = new views.MachineToken({
             containerTemplate: '<li/>',
             machine: machine,
-            committed: committed
+            committed: committed,
+            constraintsVisible: this.get('tokenConstraintsVisible')
           });
           machineTokens[machine.id] = token;
           this._updateMachineWithUnitData(machine);
@@ -1377,6 +1408,17 @@ YUI.add('machine-view-panel', function(Y) {
             @type {String}
            */
           selectedMachine: {},
+
+          /**
+            A flag for whether token constraints are visible.
+
+            @attribute tokenConstraintsVisible
+            @default true
+            @type {Bool}
+           */
+          tokenConstraintsVisible: {
+            value: true
+          },
 
           /**
             The key/value store of machine tokens currently displayed in the

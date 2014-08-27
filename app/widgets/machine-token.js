@@ -149,6 +149,26 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
+          Show the constraints details.
+
+          @method showConstraints
+        */
+        showConstraints: function() {
+          this.get('container').one('.details').removeClass('hidden');
+          this.set('constraintsVisible', true);
+        },
+
+        /**
+          Hide the constraints details.
+
+          @method hideConstraints
+        */
+        hideConstraints: function() {
+          this.get('container').one('.details').addClass('hidden');
+          this.set('constraintsVisible', false);
+        },
+
+        /**
          * Format the hardware details.
          *
          * @method _formatHardware
@@ -196,6 +216,9 @@ YUI.add('machine-token', function(Y) {
           if (machine.deleted) {
             this.setDeleted();
           }
+          if (!this.get('constraintsVisible')) {
+            this.hideConstraints();
+          }
           this.renderUnits();
           container.addClass('machine-token');
           container.one('.token').addClass(
@@ -240,7 +263,13 @@ YUI.add('machine-token', function(Y) {
           */
           committed: {
             value: true
-          }
+          },
+
+          /**
+           * @attribute constraintsVisible
+           * @type {Bool}
+          */
+          constraintsVisible: {}
         }
       });
 

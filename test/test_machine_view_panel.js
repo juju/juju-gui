@@ -1338,6 +1338,43 @@ describe('machine view panel view', function() {
       moreMenuNode.one('.open-menu').simulate('click');
       assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
     });
+
+    it('can toggle the constraints', function() {
+      view.render();
+      var tokenDetails = container.one('.machine-token .details');
+      var headerMenu = container.one('.column.machines .head .more-menu');
+      // Need to click on the more menu to render the items.
+      headerMenu.one('.open-menu').simulate('click');
+      var menuItem = headerMenu.one('.moreMenuItem-1');
+      // Check the initial state.
+      assert.equal(tokenDetails.hasClass('hidden'), false);
+      assert.equal(menuItem.get('text').trim(), 'Hide constraints');
+      // Toggle to the hidden state.
+      menuItem.simulate('click');
+      assert.equal(tokenDetails.hasClass('hidden'), true);
+      assert.equal(menuItem.get('text').trim(), 'Show constraints');
+      // Toggle back to the visible state.
+      headerMenu.one('.open-menu').simulate('click');
+      menuItem.simulate('click');
+      assert.equal(tokenDetails.hasClass('hidden'), false);
+      assert.equal(menuItem.get('text').trim(), 'Hide constraints');
+    });
+
+    it('has the correct constraints state on new machine tokens', function() {
+      view.render();
+      var tokenDetails = container.one('.machine-token .details');
+      var headerMenu = container.one('.column.machines .head .more-menu');
+      // Need to click on the more menu to render the items.
+      headerMenu.one('.open-menu').simulate('click');
+      var menuItem = headerMenu.one('.moreMenuItem-1');
+      // Toggle to the hidden state.
+      menuItem.simulate('click');
+      assert.equal(tokenDetails.hasClass('hidden'), true);
+      assert.equal(menuItem.get('text').trim(), 'Show constraints');
+      machines.add([{id: '17'}]);
+      assert.equal(container.one('.machine-token:last-child .details').hasClass(
+          'hidden'), true);
+    });
   });
 
   describe('container column', function() {
