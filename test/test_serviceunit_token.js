@@ -152,7 +152,7 @@ describe('Service unit token', function() {
                  'unexpected container value in list');
     // Check the "Choose location" item is still at the top of the list.
     assert.equal(containerOptions.item(0).get('text').trim(),
-        'Choose location', 'default container text incorrect');
+        'Choose container type…', 'default container text incorrect');
     // Check the root container option is the second item.
     assert.equal(containerOptions.item(1).get('value'), 'root-container',
                  'root container value is not the second option');

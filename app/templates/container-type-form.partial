@@ -1,6 +1,6 @@
 <div class="containers">
   <select>
-    <option value="" selected disabled class="default">Choose location</option>
+    <option value="" selected disabled class="default">Choose container type&hellip;</option>
     <option value="lxc" class="default">lxc</option>
     <option value="kvm" class="default">kvm</option>
   </select>
