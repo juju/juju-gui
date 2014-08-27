@@ -124,7 +124,15 @@ YUI.add('autodeploy-extension', function(Y) {
         // We need to revive the model so that the change event triggers
         // the token UI to re-render.
         var machineModel = db.machines.revive(machine);
-        machineModel.set('displayName', createdMachineName);
+        var parentId;
+        var parts = createdMachineName.split('/');
+        if (parts.length === 3) {
+          parentId = parts[0];
+        }
+        machineModel.setAttrs({
+          displayName: createdMachineName,
+          parentId: parentId
+        });
         db.machines.free(machineModel);
       } else {
         shouldDestroy = true;

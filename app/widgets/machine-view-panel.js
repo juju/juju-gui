@@ -89,9 +89,9 @@ YUI.add('machine-view-panel', function(Y) {
         initializer: function() {
           var db = this.get('db'),
               env = this.get('env'),
-              machines = db.machines.filterByParent(null),
+              machines = db.machines.filterByParent(),
               machineTokens = {},
-              units = db.units.filterByMachine(null),
+              units = db.units.filterByMachine(),
               unitTokens = {};
           var tokenConstraintsVisible = this.get('tokenConstraintsVisible');
           // Turn machine models into tokens and store internally.
@@ -617,7 +617,7 @@ YUI.add('machine-view-panel', function(Y) {
             this._placeUnit(unit, parentId);
             var token = this._findMachineOrContainerToken(tokenId, true);
             this._selectMachineToken(
-                this.get('machineTokens')[parentId].get('container').one('.token'));
+                this.get('machineTokens')[selected].get('container').one('.token'));
             this._selectContainerToken(token);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);

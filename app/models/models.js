@@ -1243,6 +1243,9 @@ YUI.add('juju-models', function(Y) {
     */
     filterByParent: function(parentId) {
       return this.filter(function(item) {
+        if (!parentId) {
+          return item.parentId === null || item.parentId === undefined;
+        }
         return item.parentId === parentId;
       });
     },
