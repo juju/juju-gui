@@ -123,7 +123,7 @@ describe('more menu widget', function() {
     instance = new Y.juju.widgets.MoreMenu({
       items: items
     });
-    instance.disableItems(['First item']);
+    instance.disableItem('First item');
     assert.equal(items[0].disabled, true);
     assert.equal(items[1].disabled, undefined);
   });
@@ -133,6 +133,16 @@ describe('more menu widget', function() {
       items: [{ label: 'First item', disabled: true, callback: function() {} }]
     });
     instance.render(container);
+    var item = container.one('.yui3-moremenu li');
+    assert.equal(item.hasClass('disabled'), true);
+  });
+
+  it('shows that items are disabled after render', function() {
+    instance = new Y.juju.widgets.MoreMenu({
+      items: [{ label: 'First item', callback: function() {} }]
+    });
+    instance.render(container);
+    instance.disableItem('First item');
     var item = container.one('.yui3-moremenu li');
     assert.equal(item.hasClass('disabled'), true);
   });

@@ -191,6 +191,16 @@ describe('machine token view', function() {
     assert.equal(container.one('.yui3-moremenu') !== null, true);
   });
 
+  it('disables destroy in the more menu for deleted machines', function() {
+    machine.deleted = true;
+    var view = makeView(this, machine);
+    var stubDisable = utils.makeStubMethod(view._moreMenu, 'disableItem');
+    this._cleanups.push(stubDisable);
+    view.showMoreMenu();
+    assert.equal(stubDisable.calledOnce(), true);
+    assert.deepEqual(stubDisable.lastArguments(), ['Destroy']);
+  });
+
   it('can show the constraints', function() {
     var view = makeView(this, machine);
     var detailsNode = container.one('.details');

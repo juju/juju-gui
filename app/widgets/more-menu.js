@@ -110,13 +110,18 @@ YUI.add('more-menu', function(Y) {
        Disable an item in the menu.
 
        @method disableItems
-       @param {Array} labels The labels of the items to disable.
+       @param {String} label The label of the item to disable.
      */
-    disableItems: function(labels) {
-      var items = this.get('items');
+    disableItem: function(label) {
+      var items = this.get('items'),
+          rendered = this.get('rendered'),
+          box = this.get('boundingBox');
       items.forEach(function(item) {
-        if (labels.indexOf(item.label) !== -1) {
+        if (item.label === label) {
           item.disabled = true;
+        }
+        if (rendered) {
+          box.one('li.' + item.id).addClass('disabled');
         }
       });
     }
