@@ -28,12 +28,12 @@ YUI.add('scale-up-view', function(Y) {
   ns.ScaleUp = Y.Base.create(name, Y.View, [], {
     template: templates['scale-up'],
     events: {
-      '.add.button': { click: '_showScaleUp' },
-      '.placement .cancel.button': { click: '_hideScaleUp' },
+      '.add.button': { click: 'showScaleUp' },
+      '.placement .cancel.button': { click: 'hideScaleUp' },
       'input[name="placement"]': { change: '_toggleConstraints' },
       'form': { submit: '_preventFormSubmit' },
       '.edit.link': { click: '_toggleEditConstraints' },
-      '.inspector-buttons .cancel': { click: '_hideScaleUp' },
+      '.inspector-buttons .cancel': { click: 'hideScaleUp' },
       '.inspector-buttons .confirm': { click: '_submitScaleUp' }
     },
 
@@ -77,21 +77,23 @@ YUI.add('scale-up-view', function(Y) {
     /**
       Calls to set the class on the container to show the scale-up UI.
 
-      @method _showScaleUp
+      @method showScaleUp
       @param {Object} e The click event facade.
     */
-    _showScaleUp: function(e) {
-      e.preventDefault();
+    showScaleUp: function(e) {
+      if (e && e.preventDefault) {
+        e.preventDefault();
+      }
       this.updateStateClass('per-machine');
     },
 
     /**
       Calls to set the class on the container to hide the scale-up UI.
 
-      @method _hideScaleUp
+      @method hideScaleUp
       @param {Object} e The click event facade.
     */
-    _hideScaleUp: function(e) {
+    hideScaleUp: function(e) {
       if (e && e.preventDefault) {
         e.preventDefault();
       }
@@ -160,7 +162,7 @@ YUI.add('scale-up-view', function(Y) {
       } else {
         this._createMachinesPlaceUnits(numUnits, service);
       }
-      this._hideScaleUp();
+      this.hideScaleUp();
     },
 
     /**

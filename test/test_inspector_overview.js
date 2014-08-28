@@ -183,9 +183,29 @@ describe('Inspector Overview', function() {
     var ScaleUp = Y.juju.viewlets.ScaleUp;
     var render = utils.makeStubMethod(ScaleUp.prototype, 'render');
     this._cleanups.push(render.reset);
+    var hideScaleUp = utils.makeStubMethod(ScaleUp.prototype, 'hideScaleUp');
+    this._cleanups.push(hideScaleUp.reset);
     inspector = setUpInspector();
     assert.equal(inspector.views.overview.scaleUp instanceof ScaleUp, true);
     assert.equal(render.calledOnce(), true, 'render not called once');
+    window.flags = {};
+  });
+
+  it('opens the scale up view on a pending service', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector({pending: true});
+    assert.equal(container.one('.scale-up-view').hasClass('state-per-machine'),
+        true);
+    window.flags = {};
+  });
+
+  it('closes the scale up view on a deployed service', function() {
+    window.flags = {};
+    window.flags.mv = true;
+    inspector = setUpInspector({pending: false});
+    assert.equal(container.one('.scale-up-view').hasClass('state-default'),
+        true);
     window.flags = {};
   });
 
