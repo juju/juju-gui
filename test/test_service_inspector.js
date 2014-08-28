@@ -204,4 +204,21 @@ describe('Service Inspector', function() {
     inspector.get('container').one('span[dismiss]').simulate('click');
     assert.equal(stubDismiss.callCount(), 1);
   });
+
+  it('shows the footer for the overview', function() {
+    var inspector = setUpInspector();
+    inspector.render();
+    container.one('.tab').simulate('click');
+    assert.equal(container.one('.viewlet-manager-footer').hasClass('hidden'),
+        false);
+  });
+
+  it('does not show the footer for non-overview tabs', function() {
+    var inspector = setUpInspector();
+    inspector.render();
+    container.one('.viewlet-manager-navigation li:last-child .tab').simulate(
+        'click');
+    assert.equal(container.one('.viewlet-manager-footer').hasClass('hidden'),
+        true);
+  });
 });

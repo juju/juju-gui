@@ -442,7 +442,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
     /**
       Switch tab viewlet.
 
-      @method _switchTab
+      @method switchTab
       @param {String} viewName the name of the new active tab.
     */
     switchTab: function(viewName) {

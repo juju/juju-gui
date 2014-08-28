@@ -194,7 +194,13 @@ YUI.add('service-inspector', function(Y) {
       ev.halt();
       var target = ev.currentTarget,
           viewName = target.getData('viewlet');
+      var footerNode = this.get('container').one('.viewlet-manager-footer');
       this.switchTab(viewName);
+      if (viewName === 'overview') {
+        footerNode.removeClass('hidden');
+      } else {
+        footerNode.addClass('hidden');
+      }
     },
 
     /**
