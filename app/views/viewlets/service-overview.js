@@ -434,16 +434,22 @@ YUI.add('inspector-overview-view', function(Y) {
     render: function(attributes) {
       var container = this.get('container'),
           rendered = this.get('rendered');
+      var pending = this.viewletManager.get('model').get('pending');
       if (window.flags && window.flags.mv) {
         this._instantiateScaleUp();
         if (!rendered) {
           container.append(this.scaleUp.render());
         }
+        if (pending) {
+          this.scaleUp.showScaleUp();
+        } else {
+          this.scaleUp.hideScaleUp();
+        }
       }
       if (!rendered) {
         this.set('rendered', true);
         container.append(this.template(attributes.model.getAttrs()));
-      } else if (!this.viewletManager.get('model').get('pending')) {
+      } else if (!pending) {
         // If the inspector is open when the service is deployed we need
         // to update the inspector.
         container.one('.expose').removeClass('hidden');

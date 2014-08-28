@@ -88,14 +88,14 @@ describe('scale-up view', function() {
 
   it('clicking the + calls to open the scale up options', function() {
     testEventBinding({
-      stubMethod: '_showScaleUp',
+      stubMethod: 'showScaleUp',
       buttonSelector: '.add.button'
     }, this);
   });
 
   it('clicking the x calls to close the scale up options', function() {
     testEventBinding({
-      stubMethod: '_hideScaleUp',
+      stubMethod: 'hideScaleUp',
       buttonSelector: '.placement .cancel.button'
     }, this);
   });
@@ -118,7 +118,7 @@ describe('scale-up view', function() {
 
   it('clicking the cancel button calls to close the scale-up UI', function() {
     testEventBinding({
-      stubMethod: '_hideScaleUp',
+      stubMethod: 'hideScaleUp',
       buttonSelector: '.inspector-buttons .cancel'
     }, this);
   });
@@ -138,16 +138,16 @@ describe('scale-up view', function() {
     }, this);
   });
 
-  it('_showScaleUp calls to set the proper state class', function() {
+  it('showScaleUp calls to set the proper state class', function() {
     testSetStateClass({
-      method: '_showScaleUp',
+      method: 'showScaleUp',
       className: 'per-machine'
     }, this);
   });
 
-  it('_hideScaleUp calls to the proper state class', function() {
+  it('hideScaleUp calls to the proper state class', function() {
     testSetStateClass({
-      method: '_hideScaleUp',
+      method: 'hideScaleUp',
       className: 'default'
     }, this);
   });
@@ -198,7 +198,7 @@ describe('scale-up view', function() {
       eventObj = { preventDefault: utils.makeStubFunction() };
       create = utils.makeStubMethod(view, '_createMachinesPlaceUnits');
       this._cleanups.push(create.reset);
-      hide = utils.makeStubMethod(view, '_hideScaleUp');
+      hide = utils.makeStubMethod(view, 'hideScaleUp');
       this._cleanups.push(hide.reset);
       addGhost = utils.makeStubMethod(jujuUtils, 'addGhostAndEcsUnits');
       this._cleanups.push(addGhost.reset);
