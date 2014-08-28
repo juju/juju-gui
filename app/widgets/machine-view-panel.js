@@ -345,6 +345,10 @@ YUI.add('machine-view-panel', function(Y) {
             if (machineToken) {
               this._updateMachineWithUnitData(machineToken.get('machine'));
               machineToken.renderUnits();
+              if (this.get('selectedMachine') === machineId) {
+                this._selectMachineToken(
+                    machineToken.get('container').one('.token'));
+              }
             }
           }
         },
