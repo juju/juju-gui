@@ -324,9 +324,28 @@ YUI.add('machine-view-panel', function(Y) {
          @param {Object} e Custom model change event facade.
         */
         _onUnitAdd: function(e) {
-          var unit = e.model;
-          if (!unit.machine) {
+          var unit = e.model,
+              machineId = unit.machine;
+          if (!machineId) {
             this._createServiceUnitToken(unit);
+          } else {
+            // Units are removed and added in again when the deltas come in.
+            // So we need to make sure we update all of the appropriate
+            // tokens.
+            var machineTokens = this.get('machineTokens'),
+                containerTokens = this.get('containerTokens');
+            var containerToken = containerTokens[machineId];
+            var machineToken = machineTokens[machineId];
+            if (containerToken) {
+              var containerMachine = containerToken.get('machine');
+              this._updateMachineWithUnitData(containerMachine);
+              containerToken.renderUnits();
+              machineToken = machineTokens[containerMachine.parentId];
+            }
+            if (machineToken) {
+              this._updateMachineWithUnitData(machineToken.get('machine'));
+              machineToken.renderUnits();
+            }
           }
         },
 
@@ -617,7 +636,8 @@ YUI.add('machine-view-panel', function(Y) {
             this._placeUnit(unit, parentId);
             var token = this._findMachineOrContainerToken(tokenId, true);
             this._selectMachineToken(
-                this.get('machineTokens')[selected].get('container').one('.token'));
+                this.get('machineTokens')[selected]
+                    .get('container').one('.token'));
             this._selectContainerToken(token);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);
@@ -1005,18 +1025,18 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-           Create a container token
-           @param {Y.Node} containerParent The parent node for the token's
-             container
-           @param {Object} container The lxc or kvm container object
-           @param {Bool} committed The committed state.
-           @param {Array} units Optional list of units on the container.
-             If not provided, the container's units will be looked up.
-           @method
-           _createContainerToken
+          Create a container token
+
+          @method _createContainerToken
+          @param {Y.Node} containerParent The parent node for the token's
+            container
+          @param {Object} container The lxc or kvm container object
+          @param {Bool} committed The committed state.
+          @param {Array} units Optional list of units on the container.
+            If not provided, the container's units will be looked up.
          */
-        _createContainerToken: function(containerParent, container,
-            committed, units) {
+        _createContainerToken: function(
+            containerParent, container, committed, units) {
           var token;
           var containerTokens = this.get('containerTokens');
           // Root containers appear not to have a parentId here, so we
