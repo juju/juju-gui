@@ -1124,7 +1124,7 @@ describe('machine view panel view', function() {
 
     it('should re-render token when machine is updated', function() {
       view.render();
-      var id = 999,
+      var id = '999',
           machineModel = machines.item(0),
           selector = '.machines .token',
           item = container.one(
@@ -1460,7 +1460,7 @@ describe('machine view panel view', function() {
     it('creates tokens for containers including the root', function() {
       view.render();
       machines.add([{ id: '0/lxc/0' }]);
-      var containers = machines.filterByParent('0');
+      var containers = machines.filterByAncestor('0');
       var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
       this._cleanups.push(tokenStub.reset);
       view._renderContainerTokens(containers, '0');
@@ -1468,6 +1468,19 @@ describe('machine view panel view', function() {
       var tokenArguments = tokenStub.allArguments();
       assert.equal(tokenArguments[0][1].displayName, 'Root container');
       assert.equal(tokenArguments[1][1].displayName, '0/lxc/0');
+    });
+
+    it('creates tokens for nested containers', function() {
+      var id = '0/kvm/0/lxc/0';
+      view.render();
+      machines.add([{id: id}]);
+      var containers = machines.filterByAncestor('0');
+      var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
+      this._cleanups.push(tokenStub.reset);
+      view._renderContainerTokens(containers, '0');
+      assert.equal(tokenStub.callCount(), 2);
+      var tokenArguments = tokenStub.allArguments();
+      assert.equal(tokenArguments[1][1].displayName, id);
     });
 
     it('always creates a root container token', function() {
@@ -1484,7 +1497,7 @@ describe('machine view panel view', function() {
       view.render();
       machines.add([{id: '0/lxc/0'}]);
       container.one('.machine-token .token').simulate('click');
-      var containerCount = Object.keys(machines.filterByParent('0')).length;
+      var containerCount = Object.keys(machines.filterByAncestor('0')).length;
       assert.equal(containerCount > 0, true);
       assert.equal(container.one(
           '.column.containers .head .label:first-child').get('text').trim(),
