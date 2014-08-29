@@ -72,6 +72,9 @@ YUI.add('machine-token', function(Y) {
          @param {Object} e Click event facade.
         */
         showMoreMenu: function(e) {
+          if (this.get('machine').deleted) {
+            this._moreMenu.setItemDisabled('Destroy', true);
+          }
           if (!this._moreMenu.get('rendered')) {
             this._moreMenu.render(this.get('container').one('.more-menu'));
           }

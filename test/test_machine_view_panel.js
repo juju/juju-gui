@@ -162,6 +162,20 @@ describe('machine view panel view', function() {
     assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
   });
 
+  it('disables add container in the menu on deleted machines', function() {
+    view.render();
+    machine.deleted = true;
+    var stubDisable = utils.makeStubMethod(
+        view._containersHeader, 'disableHeaderMenuItem');
+    this._cleanups.push(stubDisable.reset);
+    view.set('selectedMachine', machine.id);
+    var moreMenuNode = container.one('.column.containers .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+    assert.equal(stubDisable.callCount(), 1);
+    assert.deepEqual(stubDisable.lastArguments(), ['Add container', true]);
+  });
+
   describe('_onMachineCreated (autodeploy_extension integration)', function() {
 
     beforeEach(function() {
@@ -581,6 +595,29 @@ describe('machine view panel view', function() {
           assert.equal(selectStub.callCount(), 1);
         }
     );
+
+    it('does not allow placement on machines being deleted', function() {
+      var notes;
+      view.render();
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      var placeStub = utils.makeStubMethod(view, '_placeUnit');
+      this._cleanups.push(toggleStub.reset);
+      view.get('db').notifications = {
+        add: function(args) {
+          notes = args;
+        }
+      };
+      machine.deleted = true;
+      view._unitTokenDropHandler({
+        dropAction: 'container',
+        targetId: '0',
+        unit: 'test/1'
+      });
+      assert.equal(placeStub.callCount(), 0);
+      assert.equal(
+          notes.title,
+          'Unable to place the unit on a pending destroyed machine');
+    });
   });
 
   describe('unplaced units column', function() {

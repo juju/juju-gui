@@ -74,6 +74,17 @@ YUI.add('machine-view-panel-header', function(Y) {
         },
 
         /**
+           Disable items in the header menu.
+
+           @method disableHeaderMenuItem
+           @param {String} label The label of the item to disable.
+           @param {Bool} disabled Whether the item is disabled.
+         */
+        disableHeaderMenuItem: function(label, disabled) {
+          this._moreMenu.setItemDisabled(label, disabled);
+        },
+
+        /**
          * Handle label change events
          *
          * @method _afterLabelsChange
