@@ -595,6 +595,29 @@ describe('machine view panel view', function() {
           assert.equal(selectStub.callCount(), 1);
         }
     );
+
+    it('does not allow placement on machines being deleted', function() {
+      var notes;
+      view.render();
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      var placeStub = utils.makeStubMethod(view, '_placeUnit');
+      this._cleanups.push(toggleStub.reset);
+      view.get('db').notifications = {
+        add: function(args) {
+          notes = args;
+        }
+      };
+      machine.deleted = true;
+      view._unitTokenDropHandler({
+        dropAction: 'container',
+        targetId: '0',
+        unit: 'test/1'
+      });
+      assert.equal(placeStub.callCount(), 0);
+      assert.equal(
+          notes.title,
+          'Unable to place the unit on a pending destroyed machine');
+    });
   });
 
   describe('unplaced units column', function() {

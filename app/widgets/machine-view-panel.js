@@ -566,7 +566,9 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} evt The custom drop event facade.
         */
         _unitTokenDropHandler: function(evt) {
+          var db = this.get('db');
           var selected = this.get('selectedMachine');
+
           var dropAction = evt.dropAction;
           var parentId = evt.targetId;
           // When an unplaced unit is dropped on the container header drop
@@ -575,19 +577,31 @@ YUI.add('machine-view-panel', function(Y) {
           if (dropAction === 'container' && !parentId) {
             parentId = selected;
           }
-          var db = this.get('db');
-          var unit = db.units.getById(evt.unit);
+          // Before proceeding, rename the machine in the case the top level
+          // container has been selected.
+          if (parentId === selected + '/' + ROOT_CONTAINER_PLACEHOLDER) {
+            parentId = selected;
+          }
 
+          var machine = db.machines.getById(parentId);
+          if (machine && machine.deleted) {
+            // Do not place the unit; just quit.
+            var err = 'You cannot place uncommitted units on machines that ' +
+                'will be destroyed';
+            this.get('db').notifications.add({
+              title: 'Unable to place the unit on a pending destroyed machine',
+              message: err,
+              level: 'error'
+            });
+            return;
+          }
+
+          var unit = db.units.getById(evt.unit);
           this._hideDraggingUI();
           if (dropAction === 'container' &&
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
-            // Before proceeding, rename the machine in the case the top level
-            // container has been selected.
-            if (parentId === selected + '/' + ROOT_CONTAINER_PLACEHOLDER) {
-              parentId = selected;
-            }
             this._placeUnit(unit, parentId);
             var token = this._findMachineOrContainerToken(parentId, true);
             this._selectContainerToken(token);
