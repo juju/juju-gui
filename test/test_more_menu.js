@@ -123,9 +123,20 @@ describe('more menu widget', function() {
     instance = new Y.juju.widgets.MoreMenu({
       items: items
     });
-    instance.disableItem('First item');
+    instance.setItemDisabled('First item', true);
     assert.equal(items[0].disabled, true);
     assert.equal(items[1].disabled, undefined);
+  });
+
+  it('can re-enable items', function() {
+    var items = [
+      {label: 'First item', disabled: true, callback: function() {}}
+    ];
+    instance = new Y.juju.widgets.MoreMenu({
+      items: items
+    });
+    instance.setItemDisabled('First item', false);
+    assert.equal(items[0].disabled, false);
   });
 
   it('shows that items are disabled', function() {
@@ -142,7 +153,7 @@ describe('more menu widget', function() {
       items: [{ label: 'First item', callback: function() {} }]
     });
     instance.render(container);
-    instance.disableItem('First item');
+    instance.setItemDisabled('First item', true);
     var item = container.one('.yui3-moremenu li');
     assert.equal(item.hasClass('disabled'), true);
   });

@@ -107,21 +107,26 @@ YUI.add('more-menu', function(Y) {
     },
 
     /**
-       Disable an item in the menu.
+       Set if an item is disabled.
 
-       @method disableItems
+       @method setItemDisabled
        @param {String} label The label of the item to disable.
+       @param {Bool} disabled Whether the item is disabled.
      */
-    disableItem: function(label) {
+    setItemDisabled: function(label, disabled) {
       var items = this.get('items'),
           rendered = this.get('rendered'),
           box = this.get('boundingBox');
       items.forEach(function(item) {
         if (item.label === label) {
-          item.disabled = true;
+          item.disabled = disabled;
         }
         if (rendered) {
-          box.one('li.' + item.id).addClass('disabled');
+          if (disabled) {
+            box.one('li.' + item.id).addClass('disabled');
+          } else {
+            box.one('li.' + item.id).removeClass('disabled');
+          }
         }
       });
     }

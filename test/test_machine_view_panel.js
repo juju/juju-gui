@@ -162,6 +162,20 @@ describe('machine view panel view', function() {
     assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
   });
 
+  it('disables add container in the menu on deleted machines', function() {
+    view.render();
+    machine.deleted = true;
+    var stubDisable = utils.makeStubMethod(
+        view._containersHeader, 'disableHeaderMenuItem');
+    this._cleanups.push(stubDisable.reset);
+    view.set('selectedMachine', machine.id);
+    var moreMenuNode = container.one('.column.containers .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+    assert.equal(stubDisable.callCount(), 1);
+    assert.deepEqual(stubDisable.lastArguments(), ['Add container', true]);
+  });
+
   describe('_onMachineCreated (autodeploy_extension integration)', function() {
 
     beforeEach(function() {

@@ -131,10 +131,10 @@ describe('container token view', function() {
 
   it('disables destroy in the more menu for deleted machines', function() {
     machine.deleted = true;
-    var stubDisable = utils.makeStubMethod(view._moreMenu, 'disableItem');
+    var stubDisable = utils.makeStubMethod(view._moreMenu, 'setItemDisabled');
     this._cleanups.push(stubDisable);
     view.showMoreMenu();
     assert.equal(stubDisable.calledOnce(), true);
-    assert.deepEqual(stubDisable.lastArguments(), ['Destroy']);
+    assert.deepEqual(stubDisable.lastArguments(), ['Destroy', true]);
   });
 });

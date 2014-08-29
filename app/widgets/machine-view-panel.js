@@ -215,8 +215,21 @@ YUI.add('machine-view-panel', function(Y) {
          @param {Object} e Click event facade.
         */
         _headerMoreMenuClick: function(e) {
-          var header = e.currentTarget.ancestor('.column').hasClass(
-              'machines') ? this._machinesHeader : this._containersHeader;
+          var column = e.currentTarget.ancestor('.column'),
+              header;
+
+          if (column.hasClass('machines')) {
+            header = this._machinesHeader;
+          } else {
+            var machineId = this.get('selectedMachine');
+            var machine = this.get('db').machines.getById(machineId);
+            header = this._containersHeader;
+            if (machine && machine.deleted) {
+              header.disableHeaderMenuItem('Add container', true);
+            } else {
+              header.disableHeaderMenuItem('Add container', false);
+            }
+          }
           this._hideVisibleMoreMenu();
           this._visibleMoreMenu = header.showMoreMenu(e);
         },

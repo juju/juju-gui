@@ -73,7 +73,7 @@ YUI.add('machine-token', function(Y) {
         */
         showMoreMenu: function(e) {
           if (this.get('machine').deleted) {
-            this._moreMenu.disableItem('Destroy');
+            this._moreMenu.setItemDisabled('Destroy', true);
           }
           if (!this._moreMenu.get('rendered')) {
             this._moreMenu.render(this.get('container').one('.more-menu'));
