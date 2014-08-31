@@ -285,10 +285,14 @@ YUI.add('machine-view-panel', function(Y) {
                     containerToken = containerTokens[id];
                 if (containerToken) {
                   var container = containerToken.get('machine');
+                  // Need to get the parent machine id (if this is a
+                  // nested container parentId will be the parent
+                  // container).
+                  var parentId = container.parentId.split('/')[0];
                   this._updateMachineWithUnitData(container);
                   containerToken.renderUnits();
                   // Get the parent machine token to update as well.
-                  machineToken = machineTokens[container.parentId];
+                  machineToken = machineTokens[parentId];
                 }
                 // Update the machine/parent token. This is always updated
                 // as the unit is either added to the root container or a
@@ -465,7 +469,7 @@ YUI.add('machine-view-panel', function(Y) {
             // show the delete action.
             machine.displayDelete = true;
             this._createContainerToken(containerParent, machine, committed);
-            if (parentId === selectedMachine) {
+            if (parentId.split('/')[0] === selectedMachine) {
               this._containersHeader.updateLabelCount('container', 1);
             }
           } else {
@@ -492,7 +496,7 @@ YUI.add('machine-view-panel', function(Y) {
           var parentId = machine.parentId;
           if (parentId) {
             tokenList = this.get('containerTokens');
-            if (parentId === selectedMachine) {
+            if (parentId.split('/')[0] === selectedMachine) {
               this._containersHeader.updateLabelCount('container', -1);
             }
           } else {
@@ -767,7 +771,7 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container'),
               machineTokens = container.all('.column.machines .items .token'),
               parentId = selected.getData('id');
-          var containers = this.get('db').machines.filterByParent(parentId);
+          var containers = this.get('db').machines.filterByAncestor(parentId);
           // A lot of things in the machine view rely on knowing when the user
           // selects a machine.
           this.set('selectedMachine', parentId);
@@ -1008,6 +1012,8 @@ YUI.add('machine-view-panel', function(Y) {
           // Root containers appear not to have a parentId here, so we
           // need to get the parent from the id.
           var parentId = container.parentId || container.id.split('/')[0];
+          // Get the machine id if this is a nested container.
+          parentId = parentId.split('/')[0];
           if (!units) {
             units = this.get('db').units.filterByMachine(container.id);
           }
