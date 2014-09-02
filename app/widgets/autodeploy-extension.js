@@ -125,12 +125,18 @@ YUI.add('autodeploy-extension', function(Y) {
         // the token UI to re-render.
         var machineModel = db.machines.revive(machine);
         var parentId;
+        // The createdMachineName may be a container so it will be in the format
+        // machine/type/number. If it is then we just need the parent machine
+        // id which we extract by splitting and grabbing the first element.
         var parts = createdMachineName.split('/');
         if (parts.length === 3) {
           parentId = parts[0];
         }
         machineModel.setAttrs({
           displayName: createdMachineName,
+          // The parentId needs to be set when the machine is created so that
+          // the machine token will be properly rendered with it's assigned
+          // units.
           parentId: parentId
         });
         db.machines.free(machineModel);

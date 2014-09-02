@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Autodeploy Extension', function() {
 
-  var Y, juju, utils, widget, Widget;
+  var Y, juju, reviveStub, setAttrsStub, utils, widget, Widget;
 
   before(function(done) {
     var requires = ['base', 'base-build', 'autodeploy-extension',
@@ -36,10 +36,15 @@ describe('Autodeploy Extension', function() {
     Widget = Y.Base.create(
         'autodeployer', Y.Base, [juju.widgets.AutodeployExtension], {});
     widget = new Widget();
+    setAttrsStub = utils.makeStubFunction();
+    reviveStub = utils.makeStubFunction({
+      set: utils.makeStubFunction(),
+      setAttrs: setAttrsStub
+    });
     widget.set('db', {
       machines: {
         updateModelId: utils.makeStubFunction(),
-        revive: utils.makeStubFunction({ set: utils.makeStubFunction() }),
+        revive: reviveStub,
         free: utils.makeStubFunction()
       }
     });
@@ -141,5 +146,24 @@ describe('Autodeploy Extension', function() {
                  'unexpected error message');
     assert.equal(removeStub.calledOnce(), true,
                  'did not remove machine');
+  });
+
+  it('properly sets up the model when creating new machine', function() {
+    var db = widget.get('db');
+    var response = {
+      machines: [{name: 'test/lxc/0'}]
+    };
+    widget._onMachineCreated({}, response);
+    assert.equal(db.machines.updateModelId.callCount(), 1);
+    assert.deepEqual(
+        db.machines.updateModelId.lastArguments(),
+        [{}, 'test/lxc/0', true]);
+    assert.equal(setAttrsStub.callCount(), 1);
+    assert.deepEqual(
+        setAttrsStub.lastArguments(),
+        [{
+          displayName: 'test/lxc/0',
+          parentId: 'test'
+        }]);
   });
 });
