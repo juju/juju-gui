@@ -65,10 +65,13 @@ YUI.add('juju-serviceunit-token', function(Y) {
     _initMoreMenu: function() {
       this._moreMenu = new widgets.MoreMenu({
         items: [
-          {label: 'Deploy to...', callback:
-                this._handleMoveIconClick.bind(this)},
-          {label: 'Remove', callback:
-                this._handleRemoveUnplaced.bind(this)}
+          {
+            label: 'Deploy to...',
+            callback: this._handleMoveIconClick.bind(this)
+          }, {
+            label: 'Remove',
+            callback: this._handleRemoveUnplaced.bind(this)
+          }
         ]
       });
     },
