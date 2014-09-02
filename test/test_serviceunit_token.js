@@ -315,11 +315,19 @@ describe('Service unit token', function() {
     this._cleanups.push(stubRemoveUnits.reset);
     var stubRemove = utils.makeStubMethod(view, 'remove');
     this._cleanups.push(stubRemove.reset);
+    var stubRemoveFromECS = utils.makeStubFunction();
+    view.get('env').get = function() {
+      return {
+        removeByModelId: stubRemoveFromECS
+      };
+    };
 
     view._handleRemoveUnplaced({preventDefault: function() {}});
     assert.equal(stubRemoveUnits.calledOnce(), true,
         'Unit not removed');
     assert.equal(stubRemove.calledOnce(), true,
         'Unplaced service unit token not removed');
+    assert.equal(stubRemoveFromECS.calledOnce(), true,
+        'Unit not removed from ECS');
   });
 });
