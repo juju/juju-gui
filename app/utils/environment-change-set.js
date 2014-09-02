@@ -438,6 +438,22 @@ YUI.add('environment-change-set', function(Y) {
       }
     },
 
+    /**
+      Remove any changeSet record whose modelId matches the given ID.
+
+      @method removeByModelId
+      @param {String} modelId The id of the model to remove.
+    */
+    removeByModelId: function(modelId) {
+      Object.keys(this.changeSet).forEach(function(key) {
+        var command = this.changeSet[key].command;
+        if (command.options && command.options.modelId === modelId) {
+          delete this.changeSet[key];
+          this.fire('changeSetModified');
+        }
+      }.bind(this));
+    },
+
     /* End ECS methods */
 
     /* Private environment methods. */

@@ -593,6 +593,25 @@ describe('Environment Change Set', function() {
     });
   });
 
+  describe('removeByModelId', function() {
+    it('removes a record given a modelId', function() {
+      ecs.changeSet = {
+        'service-568': {
+          executed: false,
+          command: {
+            method: '_deploy',
+            options: {
+              modelId: 'bad-wolf'
+            }
+          }
+        }
+      };
+      ecs.removeByModelId('bad-wolf');
+      assert.equal(ecs.changeSet['service-568'], undefined,
+          'Record was not removed from the change set');
+    });
+  });
+
   describe('private ENV methods', function() {
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {

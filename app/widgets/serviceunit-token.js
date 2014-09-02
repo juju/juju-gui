@@ -121,7 +121,9 @@ YUI.add('juju-serviceunit-token', function(Y) {
      */
     _handleRemoveUnplaced: function(e) {
       e.preventDefault();
-      this.get('db').removeUnits(this.get('unit'));
+      var unit = this.get('unit');
+      this.get('db').removeUnits(unit);
+      this.get('env').get('ecs').removeByModelId(unit.id);
       this.remove();
     },
 
