@@ -4,8 +4,8 @@
     {{#if unplacedCount}}
     <div class="unplaced-panel">
       <p>You have {{unplacedCount}} unplaced {{pluralize 'unit' unplacedCount}}, do you want to:</p>
-      <input id="leave-unplaced" type="radio" name="unplaced-units" value="leave" checked><label for="leave-unplaced"><span><span></span></span>Leave unplaced</label>
-      <input id="autodeploy" type="radio" name="unplaced-units" value="autodeploy"><label for="autodeploy"><span><span></span></span>Automatically place</label>
+      <input id="leave-unplaced" type="radio" name="unplaced-units" value="leave" checked><label for="leave-unplaced"><span class="outer"><span class="inner"></span></span>Leave unplaced</label>
+      <input id="autodeploy" type="radio" name="unplaced-units" value="autodeploy"><label for="autodeploy"><span class="outer"><span class="inner"></span></span>Automatically place</label>
       <a href="" class="view-machines link">View machines</a>
     </div>
     {{/if}}
