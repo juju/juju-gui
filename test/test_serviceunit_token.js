@@ -308,4 +308,18 @@ describe('Service unit token', function() {
     // Move the unit.
     container.one('.actions .move').simulate('click');
   });
+
+  it('can be removed', function() {
+    var db = view.get('db');
+    var stubRemoveUnits = utils.makeStubMethod(db, 'removeUnits');
+    this._cleanups.push(stubRemoveUnits.reset);
+    var stubRemove = utils.makeStubMethod(view, 'remove');
+    this._cleanups.push(stubRemove.reset);
+
+    view._handleRemoveUnplaced({preventDefault: function() {}});
+    assert.equal(stubRemoveUnits.calledOnce(), true,
+        'Unit not removed');
+    assert.equal(stubRemove.calledOnce(), true,
+        'Unplaced service unit token not removed');
+  });
 });
