@@ -346,7 +346,7 @@ describe('Inspector Overview', function() {
     assert.include(details, 'default CPU power');
     assert.include(details, 'default CPU cores');
     assert.include(details, 'default memory');
-    assert.include(details, 'default arch');
+    assert.include(details, 'default disk');
   });
 
   it('shows customized constraint values when upscaling', function() {
@@ -354,7 +354,7 @@ describe('Inspector Overview', function() {
       'cpu-power': 42,
       'cpu-cores': 1,
       mem: 1024,
-      arch: 'i386'
+      'root-disk': 2048
     };
     setUpInspector({constraints: constraints});
     scaleUnits(10);
@@ -362,7 +362,7 @@ describe('Inspector Overview', function() {
     assert.include(details, '42Ghz');
     assert.include(details, '1 core');
     assert.include(details, '1024MB');
-    assert.include(details, 'i386');
+    assert.include(details, '2048MB');
   });
 
   it('pluralizes the number of cores when upscaling', function() {
@@ -372,7 +372,7 @@ describe('Inspector Overview', function() {
     assert.include(details, 'default CPU power');
     assert.include(details, '4 cores');
     assert.include(details, 'default memory');
-    assert.include(details, 'default arch');
+    assert.include(details, 'default disk');
   });
 
   it('should set the constraints before deploying any more units',
