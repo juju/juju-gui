@@ -593,21 +593,24 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} evt The custom drop event facade.
         */
         _unitTokenDropHandler: function(evt) {
-          var db = this.get('db');
-          var selected = this.get('selectedMachine');
+          var db = this.get('db'),
+              selected = this.get('selectedMachine'),
+              dropAction = evt.dropAction,
+              parentId = evt.targetId,
+              rootDrop = false;
 
-          var dropAction = evt.dropAction;
-          var parentId = evt.targetId;
           // When an unplaced unit is dropped on the container header drop
           // target, we need to pull the parentId from the currently selected
           // machine.
           if (dropAction === 'container' && !parentId) {
             parentId = selected;
           }
+
           // Before proceeding, rename the machine in the case the top level
           // container has been selected.
           if (parentId === selected + '/' + ROOT_CONTAINER_PLACEHOLDER) {
             parentId = selected;
+            rootDrop = true;
           }
 
           var machine = db.machines.getById(parentId);
@@ -626,7 +629,7 @@ YUI.add('machine-view-panel', function(Y) {
           var unit = db.units.getById(evt.unit);
           this._hideDraggingUI();
           if (dropAction === 'container' &&
-              (parentId && parentId.indexOf('/') !== -1)) {
+              (rootDrop || (parentId && parentId.indexOf('/') !== -1))) {
             // If the user drops a unit on an already created container then
             // place the unit.
             // We need to store this ID because it's the ID that we use to

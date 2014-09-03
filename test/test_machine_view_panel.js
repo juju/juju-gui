@@ -601,6 +601,40 @@ describe('machine view panel view', function() {
         }
     );
 
+    it('places the unit on and selects the existing root conatiner',
+        function() {
+          var toggleStub = utils.makeStubMethod(
+              view, '_toggleAllPlacedMessage');
+          this._cleanups.push(toggleStub.reset);
+          var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
+          this._cleanups.push(selectStub.reset);
+          view._machinesHeader = {
+            setNotDroppable: utils.makeStubFunction(),
+            updateLabelCount: utils.makeStubFunction()
+          };
+          view._containersHeader = {
+            setNotDroppable: utils.makeStubFunction()
+          };
+          view.set('selectedMachine', 0);
+          view.render();
+          assert.equal(selectStub.callCount(), 1); // called once by render
+          view._unitTokenDropHandler({
+            dropAction: 'container',
+            targetId: '0/root-container',
+            unit: 'test/1'
+          });
+          var env = view.get('env');
+          // The machine is already created so we don't create a new one.
+          assert.equal(env.addMachines.callCount(), 0);
+          var placeArgs = env.placeUnit.lastArguments();
+          assert.strictEqual(placeArgs[0].id, 'test/1');
+          assert.equal(placeArgs[1], '0');
+          // selectContainerToken called once by selectMachineToken and once
+          // directly.
+          assert.equal(selectStub.callCount(), 3);
+        }
+    );
+
     it('does not allow placement on machines being deleted', function() {
       var notes;
       view.render();
