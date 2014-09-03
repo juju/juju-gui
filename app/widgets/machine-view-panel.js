@@ -89,9 +89,9 @@ YUI.add('machine-view-panel', function(Y) {
         initializer: function() {
           var db = this.get('db'),
               env = this.get('env'),
-              machines = db.machines.filterByParent(null),
+              machines = db.machines.filterByParent(),
               machineTokens = {},
-              units = db.units.filterByMachine(null),
+              units = db.units.filterByMachine(),
               unitTokens = {};
           var tokenConstraintsVisible = this.get('tokenConstraintsVisible');
           // Turn machine models into tokens and store internally.
@@ -324,9 +324,32 @@ YUI.add('machine-view-panel', function(Y) {
          @param {Object} e Custom model change event facade.
         */
         _onUnitAdd: function(e) {
-          var unit = e.model;
-          if (!unit.machine) {
+          var unit = e.model,
+              machineId = unit.machine;
+          if (!machineId) {
             this._createServiceUnitToken(unit);
+          } else {
+            // Units are removed and added in again when the deltas come in.
+            // So we need to make sure we update all of the appropriate
+            // tokens.
+            var machineTokens = this.get('machineTokens'),
+                containerTokens = this.get('containerTokens');
+            var containerToken = containerTokens[machineId];
+            var machineToken = machineTokens[machineId];
+            if (containerToken) {
+              var containerMachine = containerToken.get('machine');
+              this._updateMachineWithUnitData(containerMachine);
+              containerToken.renderUnits();
+              machineToken = machineTokens[containerMachine.parentId];
+            }
+            if (machineToken) {
+              this._updateMachineWithUnitData(machineToken.get('machine'));
+              machineToken.renderUnits();
+              if (this.get('selectedMachine') === machineId) {
+                this._selectMachineToken(
+                    machineToken.get('container').one('.token'));
+              }
+            }
           }
         },
 
@@ -606,8 +629,19 @@ YUI.add('machine-view-panel', function(Y) {
               (parentId && parentId.indexOf('/') !== -1)) {
             // If the user drops a unit on an already created container then
             // place the unit.
+            // We need to store this ID because it's the ID that we use to
+            // represent the token in the DOM.
+            var tokenId = parentId;
+            // Before proceeding, rename the machine in the case the top level
+            // container has been selected.
+            if (parentId === selected + '/' + ROOT_CONTAINER_PLACEHOLDER) {
+              parentId = selected;
+            }
             this._placeUnit(unit, parentId);
-            var token = this._findMachineOrContainerToken(parentId, true);
+            var token = this._findMachineOrContainerToken(tokenId, true);
+            this._selectMachineToken(
+                this.get('machineTokens')[selected]
+                    .get('container').one('.token'));
             this._selectContainerToken(token);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);
@@ -995,18 +1029,18 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-           Create a container token
-           @param {Y.Node} containerParent The parent node for the token's
-             container
-           @param {Object} container The lxc or kvm container object
-           @param {Bool} committed The committed state.
-           @param {Array} units Optional list of units on the container.
-             If not provided, the container's units will be looked up.
-           @method
-           _createContainerToken
+          Create a container token
+
+          @method _createContainerToken
+          @param {Y.Node} containerParent The parent node for the token's
+            container
+          @param {Object} container The lxc or kvm container object
+          @param {Bool} committed The committed state.
+          @param {Array} units Optional list of units on the container.
+            If not provided, the container's units will be looked up.
          */
-        _createContainerToken: function(containerParent, container,
-            committed, units) {
+        _createContainerToken: function(
+            containerParent, container, committed, units) {
           var token;
           var containerTokens = this.get('containerTokens');
           // Root containers appear not to have a parentId here, so we
@@ -1028,6 +1062,10 @@ YUI.add('machine-view-panel', function(Y) {
             containerTokens[container.id] = token;
           } else {
             token = containerTokens[container.id];
+            token.setAttrs({
+              committed: committed,
+              machine: container
+            });
           }
           token.render();
           token.addTarget(this);

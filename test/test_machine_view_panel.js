@@ -574,6 +574,9 @@ describe('machine view panel view', function() {
           this._cleanups.push(toggleStub.reset);
           var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
           this._cleanups.push(selectStub.reset);
+          var selectMachineStub = utils.makeStubMethod(
+              view, '_selectMachineToken');
+          this._cleanups.push(selectMachineStub.reset);
           view._machinesHeader = {
             setNotDroppable: utils.makeStubFunction(),
             updateLabelCount: utils.makeStubFunction()
@@ -581,6 +584,7 @@ describe('machine view panel view', function() {
           view._containersHeader = {
             setNotDroppable: utils.makeStubFunction()
           };
+          view.set('selectedMachine', 0);
           view._unitTokenDropHandler({
             dropAction: 'container',
             targetId: '0/lxc/1',
@@ -593,6 +597,7 @@ describe('machine view panel view', function() {
           assert.strictEqual(placeArgs[0].id, 'test/1');
           assert.equal(placeArgs[1], '0/lxc/1');
           assert.equal(selectStub.callCount(), 1);
+          assert.equal(selectMachineStub.callCount(), 1);
         }
     );
 
@@ -695,6 +700,42 @@ describe('machine view panel view', function() {
       var addedItem = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(addedItem, null,
                       'unable to find added unit in the displayed list');
+    });
+
+    it('update machine token with units when added to machines', function() {
+      // The machine tokens which have this unit placed need to be updated
+      // with the appropriate unit data to show the tokens after deploy.
+      view.render();
+      var machineToken = view.get('machineTokens')[0];
+      var renderUnits = utils.makeStubMethod(machineToken, 'renderUnits');
+      this._cleanups.push(renderUnits.reset);
+      var selectMachineToken = utils.makeStubMethod(
+          view, '_selectMachineToken');
+      this._cleanups.push(selectMachineToken);
+      units.add({
+        id: 'test/2',
+        machine: '0'
+      });
+      assert.equal(renderUnits.callCount(), 1);
+      assert.equal(selectMachineToken.callCount(), 1);
+    });
+
+    it('update container token with units when added to container', function() {
+      // The container tokens which have this unit placed need to be updated
+      // with the appropriate unit data to show the tokens after deploy.
+      view.render();
+      var containerToken = view.get('containerTokens')['0/root-container'];
+      var renderUnits = utils.makeStubMethod(containerToken, 'renderUnits');
+      this._cleanups.push(renderUnits.reset);
+      var updateMachine = utils.makeStubMethod(
+          view, '_updateMachineWithUnitData');
+      this._cleanups.push(updateMachine.reset);
+      units.add({
+        id: 'test/2',
+        machine: '0/root-container'
+      });
+      assert.equal(updateMachine.callCount(), 1);
+      assert.equal(renderUnits.callCount(), 1);
     });
 
     it('should remove tokens when units are deleted', function() {
