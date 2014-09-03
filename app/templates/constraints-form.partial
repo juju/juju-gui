@@ -5,8 +5,8 @@
     <label for="constraints-cpu-power">CPU (GHz)</label>
     <input type="text" name="cpu-cores" id="constraints-cpu-cores">
     <label for="constraints-cpu-cores">CPU Cores</label>
-    <input type="text" name="ram" id="constraints-ram">
-    <label for="constraints-ram">RAM (MB)</label>
+    <input type="text" name="mem" id="constraints-mem">
+    <label for="constraints-mem">RAM (MB)</label>
     <input type="text" name="root-disk" id="constraints-disk">
     <label for="constraints-disk">Disk (MB)</label>
   </fieldset>

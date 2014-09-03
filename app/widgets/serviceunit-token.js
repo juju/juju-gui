@@ -147,7 +147,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
       return {
         'cpu-power': form.one('input[name="cpu-power"]').get('value'),
         'cpu-cores': form.one('input[name="cpu-cores"]').get('value'),
-        mem: form.one('input[name="ram"]').get('value'),
+        mem: form.one('input[name="mem"]').get('value'),
         'root-disk': form.one('input[name="root-disk"]').get('value')
       };
     },
