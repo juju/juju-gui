@@ -324,7 +324,9 @@ describe('Service unit token', function() {
 
   it('can be removed', function() {
     var stubEnvRemoveUnits = utils.makeStubFunction();
-    view.get('env').remove_units = stubEnvRemoveUnits;
+    view.set('env', {
+      remove_units: stubEnvRemoveUnits
+    });
 
     view._handleRemoveUnplaced({preventDefault: function() {}});
     assert.equal(stubEnvRemoveUnits.calledOnce(), true,
