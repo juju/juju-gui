@@ -1057,10 +1057,14 @@ describe('Environment Change Set', function() {
         var key = ecs._lazyAddRelation(args);
         var record = ecs.changeSet[key];
         assert.equal(record.command.method, '_add_relation');
-        assert.deepEqual(record.command.args, [
-          ['serviceId1$', ['db', 'client']],
-          ['serviceId2$', ['db', 'server']]
-        ]);
+        assert.equal(record.command.args.length, 3);
+        assert.deepEqual(
+            record.command.args[0],
+            ['serviceId1$', ['db', 'client']]);
+        assert.deepEqual(
+            record.command.args[1],
+            ['serviceId2$', ['db', 'server']]);
+        assert.equal(typeof record.command.args[2], 'function');
         assert.equal(typeof record.command.onParentResults, 'function');
         assert.equal(record.executed, false);
         assert.equal(record.id, key);
@@ -1106,18 +1110,17 @@ describe('Environment Change Set', function() {
         };
         var record = ecs._lazyRemoveRelation(['args1', 'args2']);
         assert.equal(record.split('-')[0], 'removeRelation');
-        // Note that we cannot guarantee the duration of the tests, so we
-        // need to assert against the record's timestamp below.
-        assert.deepEqual(ecs.changeSet[record], {
-          command: {
-            args: ['args1', 'args2'],
-            method: '_remove_relation'
-          },
-          executed: false,
-          id: record,
-          parents: [],
-          timestamp: ecs.changeSet[record].timestamp
-        });
+        var ecsRecord = ecs.changeSet[record];
+        assert.strictEqual(ecsRecord.executed, false);
+        assert.equal(ecsRecord.id, record);
+        assert.deepEqual(ecsRecord.parents, []);
+        // We just need to make this the timestamp is not undefined.
+        assert.equal(typeof ecsRecord.timestamp, 'number');
+        assert.equal(ecsRecord.command.args.length, 3);
+        assert.equal(ecsRecord.command.args[0], 'args1');
+        assert.equal(ecsRecord.command.args[1], 'args2');
+        assert.equal(typeof ecsRecord.command.args[2], 'function');
+        assert.equal(ecsRecord.command.method, '_remove_relation');
         assert.deepEqual(
             db.relations.getRelationFromEndpoints.lastArguments()[0],
             ['args1', 'args2']);
@@ -1153,18 +1156,16 @@ describe('Environment Change Set', function() {
         };
         var record = ecs._lazyRemoveUnit([['args1', 'args2']]);
         assert.equal(record.split('-')[0], 'removeUnit');
-        // Note that we cannot guarantee the duration of the tests, so we
-        // need to assert against the record's timestamp below.
-        assert.deepEqual(ecs.changeSet[record], {
-          command: {
-            args: [['args1', 'args2']],
-            method: '_remove_units'
-          },
-          executed: false,
-          id: record,
-          parents: [],
-          timestamp: ecs.changeSet[record].timestamp
-        });
+        var ecsRecord = ecs.changeSet[record];
+        assert.strictEqual(ecsRecord.executed, false);
+        assert.equal(ecsRecord.id, record);
+        assert.deepEqual(ecsRecord.parents, []);
+        // We just need to make this the timestamp is not undefined.
+        assert.equal(typeof ecsRecord.timestamp, 'number');
+        assert.equal(ecsRecord.command.args.length, 2);
+        assert.deepEqual(ecsRecord.command.args[0], ['args1', 'args2']);
+        assert.equal(typeof ecsRecord.command.args[1], 'function');
+        assert.equal(ecsRecord.command.method, '_remove_units');
         assert.equal(unitObj.deleted, true);
       });
     });
