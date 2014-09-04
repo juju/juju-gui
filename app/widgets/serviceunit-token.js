@@ -342,7 +342,10 @@ YUI.add('juju-serviceunit-token', function(Y) {
     _renderTemplate: function() {
       var container = this.get('container');
       var unit = this.get('unit');
-      container.setHTML(this.template(unit));
+      container.setHTML(this.template({
+        unit: unit,
+        containerTypes: this.get('supportedContainerTypes')
+      }));
       // This must be setAttribute, not setData, as setData does not
       // manipulate the dom, which we need for our namespaced code
       // to read.
@@ -402,7 +405,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
       unit: {},
 
       /**
-        Reference to the application db
+        Reference to the application db.
 
         @attribute db
         @type {Object}
@@ -410,12 +413,15 @@ YUI.add('juju-serviceunit-token', function(Y) {
       db: {},
 
       /**
-        Reference to the application env
+        The environment's provider supported container types.
+        Each container type is an object with a label and a value, e.g.
+          [{label: 'LXC', value: 'lxc'}, {label: 'KVM', value: 'kvm'}].
 
-        @attribute env
-        @type {Object}
-       */
-      env: {}
+        @attribute supportedContainerTypes
+        @default undefined
+        @type {Array}
+      */
+      supportedContainerTypes: {}
     }
   });
 

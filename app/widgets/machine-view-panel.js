@@ -26,7 +26,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view-panel', function(Y) {
 
-  var views = Y.namespace('juju.views'),
+  var environments = Y.namespace('juju.environments'),
+      views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
@@ -94,6 +95,7 @@ YUI.add('machine-view-panel', function(Y) {
               units = db.units.filterByMachine(),
               unitTokens = {};
           var tokenConstraintsVisible = this.get('tokenConstraintsVisible');
+          this.supportedContainerTypes = [];
           // Turn machine models into tokens and store internally.
           machines.forEach(function(machine) {
             var token = new views.MachineToken({
@@ -356,8 +358,8 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Handle creating and rendering the token for the unit.
 
-         @method _createServiceUnitToken
-         @param {Object} unit The unit to create the token for.
+          @method _createServiceUnitToken
+          @param {Object} unit The unit to create the token for.
         */
         _createServiceUnitToken: function(unit) {
           var token,
@@ -368,7 +370,7 @@ YUI.add('machine-view-panel', function(Y) {
             container: node,
             unit: unit,
             db: this.get('db'),
-            env: this.get('env')
+            supportedContainerTypes: this.supportedContainerTypes
           });
           unitTokens[unit.id] = token;
           token.render();
@@ -380,8 +382,8 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Handle units removed from the db unit model list.
 
-         @method _onUnitRemove
-         @param {Object} e Custom model change event facade.
+          @method _onUnitRemove
+          @param {Object} e Custom model change event facade.
         */
         _onUnitRemove: function(e) {
           var unit = e.model;
@@ -395,8 +397,8 @@ YUI.add('machine-view-panel', function(Y) {
         /**
           Helper method that removes/cleans up a single unit token.
 
-         @method _removeUnit
-         @param {Integer} id the ID of the unit token to remove
+          @method _removeUnit
+          @param {Integer} id the ID of the unit token to remove
         */
         _removeUnit: function(id) {
           var unitTokens = this.get('unitTokens'),
@@ -553,14 +555,19 @@ YUI.add('machine-view-panel', function(Y) {
             this._containersHeader.setDroppable();
           }
           // Show the drop states for all visible machines and containers.
-          Object.keys(machineTokens).forEach(function(id) {
-            var token = machineTokens[id];
-            token.setDroppable();
-          }, this);
-          Object.keys(containerTokens).forEach(function(id) {
-            var token = containerTokens[id];
-            token.setDroppable();
-          }, this);
+          // Since "hulk smash" is not allowed, enable dropping to
+          // machines/containers only if the current Juju provider supports at
+          // least one container type.
+          if (this.supportedContainerTypes.length !== 0) {
+            Object.keys(machineTokens).forEach(function(id) {
+              var token = machineTokens[id];
+              token.setDroppable();
+            }, this);
+            Object.keys(containerTokens).forEach(function(id) {
+              var token = containerTokens[id];
+              token.setDroppable();
+            }, this);
+          }
         },
 
         /**
@@ -659,7 +666,7 @@ YUI.add('machine-view-panel', function(Y) {
         */
         _displayCreateMachine: function(unit, action, parentId) {
           var container = this.get('container'),
-              createContainer;
+              createMachineViewContainer;
           if (unit._event) {
             action = action || unit.currentTarget.ancestor(
                 '.column').hasClass('machines') ? 'machine' : 'container';
@@ -671,14 +678,15 @@ YUI.add('machine-view-panel', function(Y) {
             if (!parentId) {
               return;
             }
-            createContainer = container.one('.create-container');
+            createMachineViewContainer = container.one('.create-container');
           } else {
-            createContainer = container.one('.create-machine');
+            createMachineViewContainer = container.one('.create-machine');
           }
           var createMachine = new views.CreateMachineView({
-            container: createContainer,
+            container: createMachineViewContainer,
             parentId: parentId,
-            unit: unit
+            unit: unit,
+            supportedContainerTypes: this.supportedContainerTypes
           }).render();
           if (unit) {
             this._removeUnit(unit.id);
@@ -874,12 +882,12 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-           Removes uncommitted units from a machine when it is being destroyed
-           and returns them to the unplaced service units column.
+          Removes uncommitted units from a machine when it is being destroyed
+          and returns them to the unplaced service units column.
 
-           @method removeUncommittedUnitsFromMachine
-           @param {Object} machine The machine being deleted.
-         */
+          @method removeUncommittedUnitsFromMachine
+          @param {Object} machine The machine being deleted.
+        */
         removeUncommittedUnitsFromMachine: function(machine) {
           if (machine.parentId) {
             // Remove the removed units from the parent machines unit list.
@@ -898,30 +906,91 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderHeaders
          */
         _renderHeaders: function() {
-          this._machinesHeader = this._renderHeader(
-              '.column.machines .head', {
-                title: this.get('env').get('environmentName'),
-                action: 'machine',
-                dropLabel: 'Create new machine',
-                customTemplate: 'machine-view-panel-header-label-alt',
-                menuItems: [
-                  {label: 'Add machine',
-                    callback: this._displayCreateMachine.bind(this)},
-                  {label: 'Hide constraints',
-                    callback: this._toggleTokenConstraints.bind(this)}
-                ]
-              });
+          var env = this.get('env');
+
+          // Create and render the machines header.
+          this._machinesHeader = new views.MachineViewPanelHeaderView({
+            container: this.get('container').one('.column.machines .head'),
+            title: this.get('env').get('environmentName'),
+            action: 'machine',
+            dropLabel: 'Create new machine',
+            customTemplate: 'machine-view-panel-header-label-alt',
+            menuItems: [
+              {label: 'Add machine',
+                callback: this._displayCreateMachine.bind(this)},
+              {label: 'Hide constraints',
+                callback: this._toggleTokenConstraints.bind(this)}
+            ]
+          }).render();
           this._machinesHeader.addTarget(this);
-          this._containersHeader = this._renderHeader(
-              '.column.containers .head', {
-                action: 'container',
-                dropLabel: 'Create new container',
-                menuItems: [
-                  {label: 'Add container',
-                    callback: this._displayCreateMachine.bind(this)}
-                ]
-              });
-          this._containersHeader.addTarget(this);
+
+          // Check containerization support based on the current provider type.
+          var providerType = env.get('providerType');
+          if (!providerType) {
+            // The provider type is not yet available: wait for the
+            // EnvironmentInfo request to set the provider type in the
+            // environment. For the time being, disable containerization.
+            env.once('providerTypeChange', function(evt) {
+              if (this._containersHeader) {
+                this._containersHeader.destroy();
+              }
+              this._containersHeader = this._renderContainerHeader(evt.newVal);
+            }, this);
+          }
+          this._containersHeader = this._renderContainerHeader(providerType);
+        },
+
+        /**
+          Create and render the containers header.
+
+          @method _renderContainerHeader
+          @param {String} providerType The Juju environment's provider type
+            (e.g. "local" or "ec2").
+        */
+        _renderContainerHeader: function(providerType) {
+          var headerContainer = this.get('container').one(
+              '.column.containers .head');
+
+          if (!providerType) {
+            // We don't know the provider type yet. For the time being, disable
+            // containerization: the header will be eventually replaced when
+            // the environment's provider type becomes available
+            // (see _renderHeaders above).
+            return new views.MachineViewPanelNoopHeaderView({
+              container: headerContainer,
+              title: 'Checking sub-containers support'
+            }).render();
+          }
+
+          // Check what container types are supported by the environment.
+          var features = environments.providerFeatures[providerType];
+          if (!features) {
+            // Unknown provider type: this should never happen.
+            console.error('unknown provider type', providerType);
+            return;
+          }
+          this.supportedContainerTypes = features.supportedContainerTypes;
+
+          if (this.supportedContainerTypes.length === 0) {
+            // The current environment does not support containerization.
+            return new views.MachineViewPanelNoopHeaderView({
+              container: headerContainer,
+              title: 'Sub-containers not supported'
+            }).render();
+          } else {
+            // Containers are supported.
+            var headerView = new views.MachineViewPanelHeaderView({
+              container: headerContainer,
+              action: 'container',
+              dropLabel: 'Create new container',
+              menuItems: [{
+                label: 'Add container',
+                callback: this._displayCreateMachine.bind(this)
+              }]
+            }).render();
+            headerView.addTarget(this);
+            return headerView;
+          }
         },
 
         /**
@@ -948,19 +1017,6 @@ YUI.add('machine-view-panel', function(Y) {
           });
           this._machinesHeader.get('container').one('.moreMenuItem-1').set(
               'text', label);
-        },
-
-        /**
-         * Render a header widget.
-         *
-         * @method _renderHeader
-         * @param {String} container the column class the header will be
-         * rendered to.
-         * @param {Object} attrs the attributes to be passed to the view.
-         */
-        _renderHeader: function(container, attrs) {
-          attrs.container = this.get('container').one(container);
-          return new views.MachineViewPanelHeaderView(attrs).render();
         },
 
         /**
@@ -1535,6 +1591,8 @@ YUI.add('machine-view-panel', function(Y) {
     'create-machine-view',
     'event-tracker',
     'handlebars',
+    'juju-env',
+    'juju-env-go',
     'juju-serviceunit-token',
     'juju-templates',
     'juju-view-utils',
