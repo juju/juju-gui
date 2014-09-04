@@ -816,28 +816,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert(Y.Object.hasKey(interfaceIntro, 'manyRequiresManyProvides'));
         });
 
-    it('displays a provider warning due to failed tests', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true);
-      // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
-      // Add a failing test to the charm data.
-      data.charm.tested_providers = {
-        'ec2': 'FAILURE',
-        'local': 'SUCCESS',
-        'openstack': 'FAILURE'
-      };
-
-      view = new CharmView({
-        entity: new models.Charm(data.charm),
-        container: utils.makeContainer(this)
-      });
-
-      view.render();
-      // Basics that we have the right number of nodes.
-      node.all('.providers .successes li').size().should.eql(1);
-      node.all('.providers .failures li').size().should.eql(2);
-    });
-
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
