@@ -20,17 +20,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine view panel extension', function() {
-  var Y, container, utils, models, view, View, db, env;
+  var container, db, env, models, utils, View, view, Y;
+  var requirements = [
+    'event-simulate', 'juju-models', 'juju-tests-utils', 'juju-views',
+    'machine-view-panel-extension', 'node', 'node-event-simulate'
+  ];
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['machine-view-panel-extension',
-                               'juju-tests-utils',
-                               'event-simulate',
-                               'node-event-simulate',
-                               'juju-models',
-                               'juju-views',
-                               'node'], function(Y) {
-
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
       db = {
@@ -41,13 +38,12 @@ describe('machine view panel extension', function() {
       env = {
         after: utils.makeStubFunction(),
         get: function(arg) {
-          var returnVal;
           switch (arg) {
             case 'environmentName':
-              returnVal = 'Test env';
-              break;
+              return 'Test env';
+            case 'providerType':
+              return 'demonstration';
           }
-          return returnVal;
         }
       };
       View = Y.Base.create('machine-view-panel', Y.View, [

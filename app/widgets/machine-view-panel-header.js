@@ -62,8 +62,8 @@ YUI.add('machine-view-panel-header', function(Y) {
         /**
           Show the more menu.
 
-         @method showMoreMenu
-         @param {Object} e Click event facade.
+          @method showMoreMenu
+          @param {Object} e Click event facade.
         */
         showMoreMenu: function(e) {
           if (!this._moreMenu.get('rendered')) {
@@ -74,12 +74,12 @@ YUI.add('machine-view-panel-header', function(Y) {
         },
 
         /**
-           Disable items in the header menu.
+          Disable items in the header menu.
 
-           @method disableHeaderMenuItem
-           @param {String} label The label of the item to disable.
-           @param {Bool} disabled Whether the item is disabled.
-         */
+          @method disableHeaderMenuItem
+          @param {String} label The label of the item to disable.
+          @param {Bool} disabled Whether the item is disabled.
+        */
         disableHeaderMenuItem: function(label, disabled) {
           this._moreMenu.setItemDisabled(label, disabled);
         },
@@ -105,7 +105,7 @@ YUI.add('machine-view-panel-header', function(Y) {
         /**
          * Update a particular label's count.
          *
-         * @method _updateLabelCount
+         * @method updateLabelCount
          * @param {String} label the label to update
          * @param {Integer} delta the amount to change the label count
          */
@@ -168,49 +168,149 @@ YUI.add('machine-view-panel-header', function(Y) {
 
   MachineViewPanelHeaderView.ATTRS = {
     /**
-    @attribute title
-    @default undefined
-    @type {String}
+      @attribute title
+      @default undefined
+      @type {String}
     */
     title: {},
 
     /**
-    @attribute label
-    @default undefined
-    @type {String}
+      @attribute label
+      @default undefined
+      @type {String}
     */
     label: {},
 
     /**
-    @attribute action
-    @default undefined
-    @type {String}
+      @attribute action
+      @default undefined
+      @type {String}
     */
     action: {},
 
     /**
-    @attribute menuItems
-    @default undefined
-    @type {String}
+      @attribute menuItems
+      @default undefined
+      @type {String}
     */
     menuItems: {},
 
     /**
-    @attribute dropLabel
-    @default undefined
-    @type {String}
+      @attribute dropLabel
+      @default undefined
+      @type {String}
     */
     dropLabel: {},
 
     /**
-    @attribute customTemplate
-    @default undefined
-    @type {String}
+      @attribute customTemplate
+      @default undefined
+      @type {String}
     */
     customTemplate: {}
   };
 
+  /**
+    A disabled panel header.
+    This view basically does nothing but rendering the given title, but it
+    implements the machine view header interface.
+
+    @class MachineViewPanelNoopHeaderView
+  */
+  var MachineViewPanelNoopHeaderView = Y.Base.create(
+      'MachineViewPanelNoopHeaderView', Y.View, [], {
+
+        /**
+          See MachineViewPanelHeaderView.addEvent.
+
+          @method addEvent
+          @param {Object} handler The event handler.
+        */
+        addEvent: function(handler) {},
+
+        /**
+          See MachineViewPanelHeaderView.template.
+
+          @method template
+          @param {Object} context The template context.
+        */
+        template: function(context) {},
+
+        /**
+          See MachineViewPanelHeaderView.labelTemplate.
+
+          @method labelTemplate
+          @param {Object} context The template context.
+        */
+        labelTemplate: function(context) {},
+
+        /**
+          See MachineViewPanelHeaderView.showMoreMenu.
+
+          @method showMoreMenu
+          @param {Object} evt Click event facade.
+        */
+        showMoreMenu: function(evt) {},
+
+        /**
+          See MachineViewPanelHeaderView.disableHeaderMenuItem.
+
+          @method disableHeaderMenuItem
+          @param {String} label The label of the item to disable.
+          @param {Bool} disabled Whether the item is disabled.
+        */
+        disableHeaderMenuItem: function(label, disabled) {},
+
+        /**
+          See MachineViewPanelHeaderView.updateLabelCount.
+
+          @method updateLabelCount
+          @param {String} label the label to update
+          @param {Integer} delta the amount to change the label count
+        */
+        updateLabelCount: function(label, delta) {},
+
+        /**
+          See MachineViewPanelHeaderView.setDroppable.
+
+          @method setDroppable
+        */
+        setDroppable: function() {},
+
+        /**
+          See MachineViewPanelHeaderView.setNotDroppable.
+
+          @method setNotDroppable
+        */
+        setNotDroppable: function() {},
+
+        /**
+          Render the header title.
+
+          @method render
+        */
+        render: function() {
+          var label = Y.Node.create('<a3>').addClass('title');
+          label.setContent(this.get('title'));
+          var container = this.get('container');
+          container.setHTML(label);
+          return this;
+        }
+      });
+
+  MachineViewPanelNoopHeaderView.ATTRS = {
+    /**
+      The title displayed in the header.
+
+      @attribute title
+      @default undefined
+      @type {String}
+    */
+    title: {}
+  };
+
   views.MachineViewPanelHeaderView = MachineViewPanelHeaderView;
+  views.MachineViewPanelNoopHeaderView = MachineViewPanelNoopHeaderView;
 
 }, '0.1.0', {
   requires: [

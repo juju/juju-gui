@@ -50,10 +50,10 @@ describe('Service unit token', function() {
         machines: new models.MachineList(),
         units: units
       },
-      env: {
-        addMachines: utils.makeStubFunction({id: '7'}),
-        placeUnit: utils.makeStubFunction()
-      }
+      supportedContainerTypes: [
+        {label: 'LXC', value: 'lxc'},
+        {label: 'KVM', value: 'kvm'}
+      ]
     }).render();
     view.get('db').machines.add([{id: '0'}, {id: '0/lxc/12'}]);
   });
@@ -141,8 +141,10 @@ describe('Service unit token', function() {
     var selectedMachineStub = utils.makeStubMethod(view,
         '_getSelectedMachine', '0');
     this._cleanups.push(selectedMachineStub.reset);
-    assert.equal(containersSelect.all('option').size(), 3,
-        'The defaults should exist');
+    var options = containersSelect.all('option:not([disabled])');
+    assert.equal(options.size(), 2, 'the default options should exist');
+    assert.deepEqual(options.getContent(), ['LXC', 'KVM']);
+    assert.deepEqual(options.get('value'), ['lxc', 'kvm']);
     // Select a machine option.
     container.one('.machines select').simulate('change');
     var containerOptions = containersSelect.all('option');
@@ -158,6 +160,17 @@ describe('Service unit token', function() {
                  'root container value is not the second option');
     assert.equal(containerOptions.item(1).get('text'), '0/root container',
                  'root container text is not the second option');
+  });
+
+  it('does not show container options if containers are disabled', function() {
+    view.set('supportedContainerTypes', []);
+    view.render();
+    var containersSelect = container.one('.containers select');
+    var selectedMachineStub = utils.makeStubMethod(view,
+        '_getSelectedMachine', '0');
+    this._cleanups.push(selectedMachineStub.reset);
+    var options = containersSelect.all('option:not([disabled])');
+    assert.equal(options.size(), 0, 'the default options should not exist');
   });
 
   it('orders the containers list correctly', function() {
