@@ -85,7 +85,10 @@ YUI.add('more-menu', function(Y) {
       this.hideMenu();
       e.currentTarget.get('className').split(' ').forEach(function(className) {
         if (className.indexOf('moreMenuItem-') === 0) {
-          this.get('items')[className.split('-')[1]].callback(e);
+          var item = this.get('items')[className.split('-')[1]];
+          if (!item.disabled) {
+            item.callback(e);
+          }
         }
       }, this);
     },
@@ -101,11 +104,37 @@ YUI.add('more-menu', function(Y) {
         item.id = 'moreMenuItem-' + attrs.items.indexOf(item);
       });
       this.get('contentBox').setHTML(this.template(attrs));
-    }
+    },
 
+    /**
+       Set if an item is disabled.
+
+       @method setItemDisabled
+       @param {String} label The label of the item to disable.
+       @param {Bool} disabled Whether the item is disabled.
+     */
+    setItemDisabled: function(label, disabled) {
+      var items = this.get('items'),
+          rendered = this.get('rendered'),
+          box = this.get('boundingBox');
+      items.forEach(function(item) {
+        if (item.label === label) {
+          item.disabled = disabled;
+        }
+        if (rendered) {
+          if (disabled) {
+            box.one('li.' + item.id).addClass('disabled');
+          } else {
+            box.one('li.' + item.id).removeClass('disabled');
+          }
+        }
+      });
+    }
   }, {
     ATTRS: {
       /**
+        Items in the menu.
+
         @attribute items
         @default undefined
         @type {Array}

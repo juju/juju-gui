@@ -2176,6 +2176,43 @@ YUI.add('juju-env-go', function(Y) {
   environments.cleanUpJSON = cleanUpJSON;
   environments.machineJobs = machineJobs;
 
+  var KVM = {label: 'LXC', value: 'lxc'},
+      LXC = {label: 'KVM', value: 'kvm'};
+
+  // Define features exposed by each Juju provider type.
+  // To enable/disable containerization in the machine view, just add/remove
+  // supportedContainerTypes to the provider types below.
+  environments.providerFeatures = {
+    // Microsoft Azure.
+    azure: {
+      supportedContainerTypes: []
+    },
+    // Sandbox mode.
+    demonstration: {
+      supportedContainerTypes: [KVM, LXC]
+    },
+    // Amazon EC2.
+    ec2: {
+      supportedContainerTypes: []
+    },
+    // Joyent Cloud.
+    joyent: {
+      supportedContainerTypes: []
+    },
+    // Local (LXC).
+    local: {
+      supportedContainerTypes: []
+    },
+    // Canonical MAAS.
+    maas: {
+      supportedContainerTypes: [KVM, LXC]
+    },
+    // OpenStack or HP Public Cloud.
+    openstack: {
+      supportedContainerTypes: []
+    }
+  };
+
 }, '0.1.0', {
   requires: [
     'base',

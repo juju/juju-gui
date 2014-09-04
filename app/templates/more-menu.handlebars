@@ -1,6 +1,10 @@
 <ul class="menu">
   {{#each items}}
-    <li class="link {{ id }}" tabindex="0" role="button">
+  {{#if disabled}}
+  <li class="link {{ id }} disabled" tabindex="0" role="button">
+  {{else}}
+  <li class="link {{ id }}" tabindex="0" role="button">
+  {{/if}}
       {{ label }}
     </li>
   {{/each}}

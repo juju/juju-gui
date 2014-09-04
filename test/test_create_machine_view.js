@@ -20,28 +20,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('create machine view', function() {
-  var Y, container, machine, models, utils, views, view, View;
+  var container, machine, models, utils, view, views, Y;
+  var requirements = [
+    'create-machine-view', 'event-simulate', 'juju-models', 'juju-tests-utils',
+    'juju-views', 'node', 'node-event-simulate'];
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['create-machine-view',
-                               'juju-models',
-                               'juju-views',
-                               'juju-tests-utils',
-                               'event-simulate',
-                               'node-event-simulate',
-                               'node'], function(Y) {
-
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
-      View = views.CreateMachineView;
       done();
     });
   });
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'create-machine-view');
-    view = new View({
+    view = new views.CreateMachineView({
       container: container,
       unit: {id: 'test/1'}
     }).render();
@@ -103,22 +98,32 @@ describe('create machine view', function() {
         'the event should have been fired');
   });
 
-  it('should do nothing if the container type is not selected',
-      function() {
-        var createFired = false;
-        var constraintsStub = utils.makeStubMethod(view,
-            '_getConstraints', {});
-        this._cleanups.push(constraintsStub.reset);
-        var destroyStub = utils.makeStubMethod(view, 'destroy');
-        this._cleanups.push(destroyStub.reset);
-        view.on('createMachine', function(e) {
-          createFired = true;
-        });
-        view.set('parentId', '6');
-        container.one('.create').simulate('click');
-        assert.equal(destroyStub.calledOnce(), false,
-            'the view should not have been destroyed');
-        assert.equal(createFired, false,
-            'the event should not have been fired');
-      });
+  it('should do nothing if the container type is not selected', function() {
+    var createFired = false;
+    var constraintsStub = utils.makeStubMethod(view,
+        '_getConstraints', {});
+    this._cleanups.push(constraintsStub.reset);
+    var destroyStub = utils.makeStubMethod(view, 'destroy');
+    this._cleanups.push(destroyStub.reset);
+    view.on('createMachine', function(e) {
+      createFired = true;
+    });
+    view.set('parentId', '6');
+    container.one('.create').simulate('click');
+    assert.equal(destroyStub.calledOnce(), false,
+        'the view should not have been destroyed');
+    assert.equal(createFired, false,
+        'the event should not have been fired');
+  });
+
+  it('allows creating supported containers', function() {
+    view.set('supportedContainerTypes', [
+      {label: 'LXC', value: 'lxc'},
+      {label: 'VmWare', value: 'vmw'}
+    ]);
+    view.render();
+    var options = container.all('.containers option:not([disabled])');
+    assert.deepEqual(options.getContent(), ['LXC', 'VmWare']);
+    assert.deepEqual(options.get('value'), ['lxc', 'vmw']);
+  });
 });

@@ -115,4 +115,64 @@ describe('more menu widget', function() {
     assert.equal(event.type, 'click');
   });
 
+  it('can disable items', function() {
+    var items = [
+      {label: 'First item', callback: function() {}},
+      {label: 'Second item', callback: function() {}}
+    ];
+    instance = new Y.juju.widgets.MoreMenu({
+      items: items
+    });
+    instance.setItemDisabled('First item', true);
+    assert.equal(items[0].disabled, true);
+    assert.equal(items[1].disabled, undefined);
+  });
+
+  it('can re-enable items', function() {
+    var items = [
+      {label: 'First item', disabled: true, callback: function() {}}
+    ];
+    instance = new Y.juju.widgets.MoreMenu({
+      items: items
+    });
+    instance.setItemDisabled('First item', false);
+    assert.equal(items[0].disabled, false);
+  });
+
+  it('shows that items are disabled', function() {
+    instance = new Y.juju.widgets.MoreMenu({
+      items: [{ label: 'First item', disabled: true, callback: function() {} }]
+    });
+    instance.render(container);
+    var item = container.one('.yui3-moremenu li');
+    assert.equal(item.hasClass('disabled'), true);
+  });
+
+  it('shows that items are disabled after render', function() {
+    instance = new Y.juju.widgets.MoreMenu({
+      items: [{ label: 'First item', callback: function() {} }]
+    });
+    instance.render(container);
+    instance.setItemDisabled('First item', true);
+    var item = container.one('.yui3-moremenu li');
+    assert.equal(item.hasClass('disabled'), true);
+  });
+
+  it('does not fire the callback when a disabled item is clicked on',
+      function() {
+        var eventFired = false;
+        instance = new Y.juju.widgets.MoreMenu({
+          items: [
+            {label: 'First item', disabled: true, callback: function() {
+              eventFired = true;
+            }}
+          ]
+        });
+        instance.render(container);
+        instance.showMenu();
+        container.one('.yui3-moremenu li').simulate('click');
+        assert.equal(eventFired, false);
+      }
+  );
+
 });

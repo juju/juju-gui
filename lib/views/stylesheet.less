@@ -103,6 +103,46 @@ input[type="password"] {
     border: 1px solid @bws-border;
     border-radius: @border-radius;
 }
+/*
+  Taken from:
+  http://code.stephenmorley.org/html-and-css/styling-checkboxes-and-radio-buttons/
+  The :not(old) selector just prevents unsupported browsers from getting these
+  styles. They'll just fall back to the normal rendering on radio buttons.
+*/
+input[type="radio"]:not(old) {
+  width: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  opacity: 0;
+}
+input[type="radio"]:not(old) + label {
+  display: inline-block;
+  margin-left: -2em;
+  line-height: 1.5em;
+}
+input[type="radio"]:not(old) + label > .outer {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 4px 0.5em 4px 0.25em;
+  border: 1px solid rgb(192,192,192);
+  border-radius: 7px;
+  background: #ebecee;
+  vertical-align: bottom;
+}
+input[type="radio"]:not(old):checked + label > .outer {
+  background: @charm-panel-orange;
+  border-color: @charm-panel-orange;
+}
+input[type="radio"]:not(old):checked + label > .outer > .inner {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 3px;
+  border-radius: 3px;
+  background: white;
+}
 svg {
     stroke-width: 0;
     overflow: hidden;

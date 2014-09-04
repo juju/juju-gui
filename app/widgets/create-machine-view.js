@@ -134,7 +134,9 @@ YUI.add('create-machine-view', function(Y) {
         */
         render: function() {
           var container = this.get('container');
-          container.setHTML(this.template());
+          container.setHTML(this.template({
+            containerTypes: this.get('supportedContainerTypes')
+          }));
           container.addClass('create-machine-view');
           // If this is a container (i.e., has a parent machine), show the
           // container type select and hide the constraints.
@@ -159,6 +161,8 @@ YUI.add('create-machine-view', function(Y) {
 
         ATTRS: {
           /**
+            The optional unit to assign to the newly created machine.
+
             @attribute unit
             @default undefined
             @type {Object}
@@ -166,6 +170,8 @@ YUI.add('create-machine-view', function(Y) {
           unit: {},
 
           /**
+            The optional parent machine into which create a new container.
+
             @attribute parentId
             @default undefined
             @type {String}
@@ -173,11 +179,24 @@ YUI.add('create-machine-view', function(Y) {
           parentId: {},
 
           /**
+            The optional container type.
+
             @attribute containerType
             @default undefined
             @type {String}
           */
-          containerType: {}
+          containerType: {},
+
+          /**
+            The environment's provider supported container types.
+            Each container type is an object with a label and a value, e.g.
+              [{label: 'LXC', value: 'lxc'}, {label: 'KVM', value: 'kvm'}].
+
+            @attribute supportedContainerTypes
+            @default undefined
+            @type {Array}
+          */
+          supportedContainerTypes: {}
         }
       });
 

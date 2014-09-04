@@ -18,8 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('machine view panel view', function() {
-  var Y, container, machines, machine, models, notifications, scaleUpView, env,
-      scaleUpViewRender, services, utils, units, views, view, View;
+  var container, env, machines, machine, models, notifications, providerType,
+      scaleUpView, scaleUpViewRender, services, units, utils, View, view,
+      views, Y;
+  var requirements = [
+    'drop-target-view-extension', 'event-simulate', 'juju-env', 'juju-env-go',
+    'juju-models', 'juju-views', 'juju-tests-utils', 'machine-view-panel',
+    'node', 'node-event-simulate'];
 
   function createViewNoUnits() {
     // Create a test-specific view that has no units to start
@@ -35,15 +40,7 @@ describe('machine view panel view', function() {
   }
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['machine-view-panel',
-                               'juju-models',
-                               'juju-views',
-                               'juju-tests-utils',
-                               'event-simulate',
-                               'node-event-simulate',
-                               'drop-target-view-extension',
-                               'node'], function(Y) {
-
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
@@ -53,17 +50,18 @@ describe('machine view panel view', function() {
   });
 
   beforeEach(function() {
+    providerType = 'demonstration';
     env = {
       after: utils.makeStubFunction(),
       get: function(arg) {
-        var returnVal;
         switch (arg) {
           case 'environmentName':
-            returnVal = 'Test env';
-            break;
+            return 'Test env';
+          case 'providerType':
+            return providerType;
         }
-        return returnVal;
-      }
+      },
+      once: utils.makeStubFunction()
     };
     container = utils.makeContainer(this, 'machine-view-panel');
     // setup machines
@@ -160,6 +158,20 @@ describe('machine view panel view', function() {
     var moreMenuNode = container.one('.column.containers .more-menu');
     moreMenuNode.one('.open-menu').simulate('click');
     assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+  });
+
+  it('disables add container in the menu on deleted machines', function() {
+    view.render();
+    machine.deleted = true;
+    var stubDisable = utils.makeStubMethod(
+        view._containersHeader, 'disableHeaderMenuItem');
+    this._cleanups.push(stubDisable.reset);
+    view.set('selectedMachine', machine.id);
+    var moreMenuNode = container.one('.column.containers .more-menu');
+    moreMenuNode.one('.open-menu').simulate('click');
+    assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+    assert.equal(stubDisable.callCount(), 1);
+    assert.deepEqual(stubDisable.lastArguments(), ['Add container', true]);
   });
 
   describe('_onMachineCreated (autodeploy_extension integration)', function() {
@@ -323,6 +335,89 @@ describe('machine view panel view', function() {
     });
   });
 
+  // Add a provider type with the given name to the provider features list.
+  // The provider will support the given list of supportedContainerTypes.
+  // Clean up the provider features on exit.
+  var mockProviderType = function(test, name, supportedContainerTypes) {
+    var environments = Y.namespace('juju.environments');
+    var original = environments.providerFeatures;
+    environments.providerFeatures = Y.clone(original);
+    environments.providerFeatures[name] = {
+      supportedContainerTypes: supportedContainerTypes
+    };
+    // Restore the original providerFeatures on exit.
+    test._cleanups.push(function() {
+      environments.providerFeatures = original;
+    });
+  };
+
+  describe('containerization support', function() {
+    var KVM = {label: 'LXC', value: 'lxc'},
+        LXC = {label: 'KVM', value: 'kvm'},
+        VMW = {label: 'VmWare', value: 'vmw'};
+
+    it('disables containers if no container types are supported', function() {
+      mockProviderType(this, 'testing', []);
+      providerType = 'testing';
+      view.render();
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelNoopHeaderView');
+      var head = container.one('.column.containers .head a3');
+      assert.strictEqual(head.getContent(), 'Sub-containers not supported');
+      assert.deepEqual(view.supportedContainerTypes, []);
+    });
+
+    it('enables containers if container types are supported', function() {
+      mockProviderType(this, 'testing', [KVM, LXC]);
+      providerType = 'testing';
+      view.render();
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelHeaderView');
+      assert.deepEqual(view.supportedContainerTypes, [KVM, LXC]);
+    });
+
+    it('uses the supported container when creating machines', function() {
+      mockProviderType(this, 'testing', [KVM, LXC, VMW]);
+      providerType = 'testing';
+      view.render();
+      // Need to click on the more menu to make it render.
+      var menu = container.one('.containers .head .more-menu .open-menu');
+      menu.simulate('click');
+      container.one('.containers .head .moreMenuItem-0').simulate('click');
+      // The create machine view container includes the expected options.
+      var createMachineViewContainer = container.one('.create-container');
+      var options = createMachineViewContainer.all(
+          '.containers option:not([disabled])');
+      assert.deepEqual(options.getContent(), ['LXC', 'KVM', 'VmWare']);
+      assert.deepEqual(options.get('value'), ['lxc', 'kvm', 'vmw']);
+    });
+
+    it('wait until the provider type is available', function() {
+      mockProviderType(this, 'testing', [LXC]);
+      providerType = null;
+      view.render();
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelNoopHeaderView');
+      var head = container.one('.column.containers .head a3');
+      assert.strictEqual(head.getContent(), 'Checking sub-containers support');
+      // A callback has been registered listening for provider type changes.
+      var env = view.get('env');
+      assert.strictEqual(env.once.calledOnce(), true);
+      var args = env.once.lastArguments();
+      assert.strictEqual(args[0], 'providerTypeChange');
+      // The callback is bound to the current view.
+      assert.deepEqual(args[2], view);
+      // Simulate the provider type becomes available.
+      var callback = args[1];
+      callback.call(view, {newVal: 'testing'});
+      // Now containerization is enabled.
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelHeaderView');
+      assert.deepEqual(view.supportedContainerTypes, [LXC]);
+    });
+
+  });
+
   describe('token drag and drop', function() {
     beforeEach(function() {
       var env = view.get('env');
@@ -345,8 +440,11 @@ describe('machine view panel view', function() {
 
     it('converts the headers and tokens to drop targets when dragging',
         function() {
-          // This tests assumes the previous test passed.
-          // 'listens for the drag start, end, drop events'
+          // This tests assumes the previous test passed:
+          // 'listens for the drag start, end, drop events'.
+          view.render();
+          // The first machine token is automatically selected on render.
+          view.set('selectedMachine', null);
           var onStub = utils.makeStubMethod(view, 'on');
           this._cleanups.push(onStub.reset);
           var machineToken = view.get('machineTokens')['0'];
@@ -356,41 +454,102 @@ describe('machine view panel view', function() {
           machineToken.setDroppable = utils.makeStubFunction();
           // unit-drag start handler _showDraggingUI
           onStub.allArguments()[0][1].call(view);
-          assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
-          assert.equal(machineToken.setDroppable.calledOnce(), true);
+          assert.equal(
+              view._machinesHeader.setDroppable.calledOnce(), true,
+              'machines header setDroppable not called');
+          assert.equal(
+              machineToken.setDroppable.calledOnce(), true,
+              'machine token setDroppable not called');
           // The user hasn't selected a machine so this header should not be
           // a drop target.
-          assert.equal(view._containersHeader.setDroppable.calledOnce(), false);
+          assert.equal(
+              view._containersHeader.setDroppable.calledOnce(), false,
+              'containers header setDroppable unexpectedly called');
         });
 
-    it('converts headers and tokens to drop targets when machine selected',
-        function() {
-          // This tests assumes the previous test passed.
-          // 'listens for the drag start, end, drop events'
-          var onStub = utils.makeStubMethod(view, 'on');
-          this._cleanups.push(onStub.reset);
-          var onboardingStub = utils.makeStubMethod(view, '_hideOnboarding');
-          this._cleanups.push(onboardingStub.reset);
-          container.append(Y.Node.create('<div class="containers">' +
-              '<div class="content"><div class="items"></div></div></div>'));
-          // Add a container.
-          machines.add([{id: '0/lxc/3'}]);
-          var machineToken = view.get('machineTokens')['0'];
-          var containerToken = view.get('containerTokens')['0/lxc/3'];
-          view._bindEvents();
-          view._machinesHeader = { setDroppable: utils.makeStubFunction() };
-          view._containersHeader = { setDroppable: utils.makeStubFunction() };
-          machineToken.setDroppable = utils.makeStubFunction();
-          containerToken.setDroppable = utils.makeStubFunction();
-          view.set('selectedMachine', 1);
-          // unit-drag start handler _showDraggingUI
-          onStub.allArguments()[0][1].call(view);
-          assert.equal(view._machinesHeader.setDroppable.calledOnce(), true);
-          assert.equal(machineToken.setDroppable.calledOnce(), true);
-          // The user selected a machine so this header should be a drop target.
-          assert.equal(view._containersHeader.setDroppable.calledOnce(), true);
-          assert.equal(containerToken.setDroppable.calledOnce(), true);
-        });
+    // Start dragging a unit on the machine view with a machine selected.
+    // Return the machine and container tokens.
+    var startDragging = function(test, view) {
+      view.render();
+      var onStub = utils.makeStubMethod(view, 'on');
+      test._cleanups.push(onStub.reset);
+      var onboardingStub = utils.makeStubMethod(view, '_hideOnboarding');
+      test._cleanups.push(onboardingStub.reset);
+      container.append(Y.Node.create(
+          '<div class="containers">' +
+          '  <div class="content">' +
+          '    <div class="items"></div>' +
+          '  </div>' +
+          '</div>'));
+      // Add a container.
+      machines.add([{id: '0/lxc/3'}]);
+      var machineToken = view.get('machineTokens')['0'];
+      var containerToken = view.get('containerTokens')['0/lxc/3'];
+      view._bindEvents();
+      view._machinesHeader = { setDroppable: utils.makeStubFunction() };
+      view._containersHeader = { setDroppable: utils.makeStubFunction() };
+      machineToken.setDroppable = utils.makeStubFunction();
+      containerToken.setDroppable = utils.makeStubFunction();
+      view.set('selectedMachine', 1);
+      // unit-drag start handler _showDraggingUI
+      onStub.allArguments()[0][1].call(view);
+      return {machine: machineToken, container: containerToken};
+    };
+
+    it('turns headers/tokens to drop targets (machine selected)', function() {
+      // This tests assumes the previous test passed.
+      // 'listens for the drag start, end, drop events'
+      var tokens = startDragging(this, view);
+      // All the headers and tokens are drop targets.
+      assert.equal(
+          view._machinesHeader.setDroppable.calledOnce(), true,
+          'machines header setDroppable not called');
+      assert.equal(
+          tokens.machine.setDroppable.calledOnce(), true,
+          'machine token setDroppable not called');
+      // The user selected a machine so this header should be a drop target.
+      assert.equal(
+          view._containersHeader.setDroppable.calledOnce(), true,
+          'containers header setDroppable not called');
+      assert.equal(
+          tokens.container.setDroppable.calledOnce(), true,
+          'container token setDroppable not called');
+    });
+
+    it('turns headers/tokens to drop targets (unknown provider)', function() {
+      // This tests assumes the previous test passed.
+      // 'listens for the drag start, end, drop events'
+      providerType = null;
+      // The tokens are not converted to drop targets.
+      var tokens = startDragging(this, view);
+      assert.equal(
+          view._machinesHeader.setDroppable.calledOnce(), true,
+          'machines header setDroppable not called');
+      assert.equal(
+          tokens.machine.setDroppable.calledOnce(), false,
+          'machine token setDroppable unexpectedly called');
+      assert.equal(
+          tokens.container.setDroppable.calledOnce(), false,
+          'container token setDroppable unexpectedly called');
+    });
+
+    it('turns headers/tokens to drop targets (no containers)', function() {
+      // This tests assumes the previous test passed.
+      // 'listens for the drag start, end, drop events'
+      mockProviderType(this, 'testing', []);
+      providerType = 'testing';
+      // The tokens are not converted to drop targets.
+      var tokens = startDragging(this, view);
+      assert.equal(
+          view._machinesHeader.setDroppable.calledOnce(), true,
+          'machines header setDroppable not called');
+      assert.equal(
+          tokens.machine.setDroppable.calledOnce(), false,
+          'machine token setDroppable unexpectedly called');
+      assert.equal(
+          tokens.container.setDroppable.calledOnce(), false,
+          'container token setDroppable unexpectedly called');
+    });
 
     it('converts headers to non-drop targets when drag stopped', function() {
       // This tests assumes the previous test passed.
@@ -560,6 +719,9 @@ describe('machine view panel view', function() {
           this._cleanups.push(toggleStub.reset);
           var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
           this._cleanups.push(selectStub.reset);
+          var selectMachineStub = utils.makeStubMethod(
+              view, '_selectMachineToken');
+          this._cleanups.push(selectMachineStub.reset);
           view._machinesHeader = {
             setNotDroppable: utils.makeStubFunction(),
             updateLabelCount: utils.makeStubFunction()
@@ -567,6 +729,7 @@ describe('machine view panel view', function() {
           view._containersHeader = {
             setNotDroppable: utils.makeStubFunction()
           };
+          view.set('selectedMachine', 0);
           view._unitTokenDropHandler({
             dropAction: 'container',
             targetId: '0/lxc/1',
@@ -579,8 +742,66 @@ describe('machine view panel view', function() {
           assert.strictEqual(placeArgs[0].id, 'test/1');
           assert.equal(placeArgs[1], '0/lxc/1');
           assert.equal(selectStub.callCount(), 1);
+          assert.equal(selectMachineStub.callCount(), 1);
         }
     );
+
+    it('places the unit on and selects the existing root conatiner',
+        function() {
+          var toggleStub = utils.makeStubMethod(
+              view, '_toggleAllPlacedMessage');
+          this._cleanups.push(toggleStub.reset);
+          var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
+          this._cleanups.push(selectStub.reset);
+          view._machinesHeader = {
+            setNotDroppable: utils.makeStubFunction(),
+            updateLabelCount: utils.makeStubFunction()
+          };
+          view._containersHeader = {
+            setNotDroppable: utils.makeStubFunction()
+          };
+          view.set('selectedMachine', 0);
+          view.render();
+          assert.equal(selectStub.callCount(), 1); // called once by render
+          view._unitTokenDropHandler({
+            dropAction: 'container',
+            targetId: '0/root-container',
+            unit: 'test/1'
+          });
+          var env = view.get('env');
+          // The machine is already created so we don't create a new one.
+          assert.equal(env.addMachines.callCount(), 0);
+          var placeArgs = env.placeUnit.lastArguments();
+          assert.strictEqual(placeArgs[0].id, 'test/1');
+          assert.equal(placeArgs[1], '0');
+          // selectContainerToken called once by selectMachineToken and once
+          // directly.
+          assert.equal(selectStub.callCount(), 3);
+        }
+    );
+
+    it('does not allow placement on machines being deleted', function() {
+      var notes;
+      view.render();
+      var toggleStub = utils.makeStubMethod(view, '_toggleAllPlacedMessage');
+      var placeStub = utils.makeStubMethod(view, '_placeUnit');
+      this._cleanups.push(toggleStub.reset);
+      view.get('db').notifications = {
+        add: function(args) {
+          notes = args;
+        }
+      };
+      machine.deleted = true;
+      view._unitTokenDropHandler({
+        dropAction: 'container',
+        targetId: '0',
+        unit: 'test/1'
+      });
+      assert.equal(placeStub.callCount(), 0);
+      assert.equal(
+          notes.title,
+          'Unable to place the unit on a pending destroyed machine');
+    });
   });
 
   describe('unplaced units column', function() {
@@ -658,6 +879,42 @@ describe('machine view panel view', function() {
       var addedItem = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(addedItem, null,
                       'unable to find added unit in the displayed list');
+    });
+
+    it('update machine token with units when added to machines', function() {
+      // The machine tokens which have this unit placed need to be updated
+      // with the appropriate unit data to show the tokens after deploy.
+      view.render();
+      var machineToken = view.get('machineTokens')[0];
+      var renderUnits = utils.makeStubMethod(machineToken, 'renderUnits');
+      this._cleanups.push(renderUnits.reset);
+      var selectMachineToken = utils.makeStubMethod(
+          view, '_selectMachineToken');
+      this._cleanups.push(selectMachineToken);
+      units.add({
+        id: 'test/2',
+        machine: '0'
+      });
+      assert.equal(renderUnits.callCount(), 1);
+      assert.equal(selectMachineToken.callCount(), 1);
+    });
+
+    it('update container token with units when added to container', function() {
+      // The container tokens which have this unit placed need to be updated
+      // with the appropriate unit data to show the tokens after deploy.
+      view.render();
+      var containerToken = view.get('containerTokens')['0/root-container'];
+      var renderUnits = utils.makeStubMethod(containerToken, 'renderUnits');
+      this._cleanups.push(renderUnits.reset);
+      var updateMachine = utils.makeStubMethod(
+          view, '_updateMachineWithUnitData');
+      this._cleanups.push(updateMachine.reset);
+      units.add({
+        id: 'test/2',
+        machine: '0/root-container'
+      });
+      assert.equal(updateMachine.callCount(), 1);
+      assert.equal(renderUnits.callCount(), 1);
     });
 
     it('should remove tokens when units are deleted', function() {
@@ -1124,7 +1381,7 @@ describe('machine view panel view', function() {
 
     it('should re-render token when machine is updated', function() {
       view.render();
-      var id = 999,
+      var id = '999',
           machineModel = machines.item(0),
           selector = '.machines .token',
           item = container.one(
@@ -1460,7 +1717,7 @@ describe('machine view panel view', function() {
     it('creates tokens for containers including the root', function() {
       view.render();
       machines.add([{ id: '0/lxc/0' }]);
-      var containers = machines.filterByParent('0');
+      var containers = machines.filterByAncestor('0');
       var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
       this._cleanups.push(tokenStub.reset);
       view._renderContainerTokens(containers, '0');
@@ -1468,6 +1725,19 @@ describe('machine view panel view', function() {
       var tokenArguments = tokenStub.allArguments();
       assert.equal(tokenArguments[0][1].displayName, 'Root container');
       assert.equal(tokenArguments[1][1].displayName, '0/lxc/0');
+    });
+
+    it('creates tokens for nested containers', function() {
+      var id = '0/kvm/0/lxc/0';
+      view.render();
+      machines.add([{id: id}]);
+      var containers = machines.filterByAncestor('0');
+      var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
+      this._cleanups.push(tokenStub.reset);
+      view._renderContainerTokens(containers, '0');
+      assert.equal(tokenStub.callCount(), 2);
+      var tokenArguments = tokenStub.allArguments();
+      assert.equal(tokenArguments[1][1].displayName, id);
     });
 
     it('always creates a root container token', function() {
@@ -1484,7 +1754,7 @@ describe('machine view panel view', function() {
       view.render();
       machines.add([{id: '0/lxc/0'}]);
       container.one('.machine-token .token').simulate('click');
-      var containerCount = Object.keys(machines.filterByParent('0')).length;
+      var containerCount = Object.keys(machines.filterByAncestor('0')).length;
       assert.equal(containerCount > 0, true);
       assert.equal(container.one(
           '.column.containers .head .label:first-child').get('text').trim(),
