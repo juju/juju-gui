@@ -310,24 +310,11 @@ describe('Service unit token', function() {
   });
 
   it('can be removed', function() {
-    var db = view.get('db');
-    var stubRemoveUnits = utils.makeStubMethod(db, 'removeUnits');
-    this._cleanups.push(stubRemoveUnits.reset);
-    var stubRemove = utils.makeStubMethod(view, 'remove');
-    this._cleanups.push(stubRemove.reset);
-    var stubRemoveFromECS = utils.makeStubFunction();
-    view.get('env').get = function() {
-      return {
-        removeByModelId: stubRemoveFromECS
-      };
-    };
+    var stubEnvRemoveUnits = utils.makeStubFunction();
+    view.get('env').remove_units = stubEnvRemoveUnits;
 
     view._handleRemoveUnplaced({preventDefault: function() {}});
-    assert.equal(stubRemoveUnits.calledOnce(), true,
-        'Unit not removed');
-    assert.equal(stubRemove.calledOnce(), true,
-        'Unplaced service unit token not removed');
-    assert.equal(stubRemoveFromECS.calledOnce(), true,
-        'Unit not removed from ECS');
+    assert.equal(stubEnvRemoveUnits.calledOnce(), true,
+        'Unit not removed from env');
   });
 });

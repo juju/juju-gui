@@ -438,22 +438,6 @@ YUI.add('environment-change-set', function(Y) {
       }
     },
 
-    /**
-      Remove any changeSet record whose modelId matches the given ID.
-
-      @method removeByModelId
-      @param {String} modelId The id of the model to remove.
-    */
-    removeByModelId: function(modelId) {
-      Object.keys(this.changeSet).forEach(function(key) {
-        var command = this.changeSet[key].command;
-        if (command.options && command.options.modelId === modelId) {
-          delete this.changeSet[key];
-          this.fire('changeSetModified');
-        }
-      }.bind(this));
-    },
-
     /* End ECS methods */
 
     /* Private environment methods. */
@@ -824,13 +808,14 @@ YUI.add('environment-change-set', function(Y) {
       // queue.
       var changeSet = this.changeSet,
           toRemove = args[0],
-          units = this.get('db').units,
+          db = this.get('db'),
+          units = db.units,
           command, record;
       // XXX It is currently not possible to remove pending units, there may
       // be future work around this - Makyo 2014-08-13
       Object.keys(changeSet).forEach(function(key) {
         command = changeSet[key].command;
-        if (command.method === '_add_units') {
+        if (command.method === '_add_unit') {
           // XXX Currently, modelId is a single unit's name.  In the future,
           // this will likely be an array and an intersection between the two
           // will need to be found. Makyo 2014-08-15
@@ -842,7 +827,7 @@ YUI.add('environment-change-set', function(Y) {
             this._removeExistingRecord(key);
             // Remove the unit from the units DB. Even the ghost units are
             // stored in the DB.
-            units.remove({id: unitName});
+            db.removeUnits(units.getById(unitName));
           }
         }
       }, this);

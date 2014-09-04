@@ -593,25 +593,6 @@ describe('Environment Change Set', function() {
     });
   });
 
-  describe('removeByModelId', function() {
-    it('removes a record given a modelId', function() {
-      ecs.changeSet = {
-        'service-568': {
-          executed: false,
-          command: {
-            method: '_deploy',
-            options: {
-              modelId: 'bad-wolf'
-            }
-          }
-        }
-      };
-      ecs.removeByModelId('bad-wolf');
-      assert.equal(ecs.changeSet['service-568'], undefined,
-          'Record was not removed from the change set');
-    });
-  });
-
   describe('private ENV methods', function() {
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
@@ -1147,16 +1128,17 @@ describe('Environment Change Set', function() {
 
     describe('_lazyRemoveUnit', function() {
       it('can remove a ghost unit from the changeset', function() {
+        ecs.get('db').removeUnits = testUtils.makeStubFunction();
         ecs.get('db').units = {
-          remove: testUtils.makeStubFunction()
+          getById: testUtils.makeStubFunction()
         };
         ecs.changeSet['addUnit-982'] = {
           command: {
             args: ['arg1'],
-            method: '_add_units' ,
+            method: '_add_unit' ,
             options: {modelId: 'arg1'}}};
         var record = ecs._lazyRemoveUnit([['arg1']]);
-        var remove = ecs.get('db').units.remove;
+        var remove = ecs.get('db').removeUnits;
         assert.strictEqual(record, undefined);
         assert.strictEqual(ecs.changeSet['addUnit-982'], undefined);
         assert.equal(remove.calledOnce(), true);
