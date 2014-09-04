@@ -432,6 +432,14 @@ YUI.add('juju-serviceunit-token', function(Y) {
       db: {},
 
       /**
+        Reference to the application environment.
+
+        @attribute env
+        @type {Object}
+      */
+      env: {},
+
+      /**
         The environment's provider supported container types.
         Each container type is an object with a label and a value, e.g.
           [{label: 'LXC', value: 'lxc'}, {label: 'KVM', value: 'kvm'}].

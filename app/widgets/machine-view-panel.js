@@ -369,6 +369,7 @@ YUI.add('machine-view-panel', function(Y) {
           token = new views.ServiceUnitToken({
             container: node,
             unit: unit,
+            env: this.get('env'),
             db: this.get('db'),
             supportedContainerTypes: this.supportedContainerTypes
           });
