@@ -1128,16 +1128,17 @@ describe('Environment Change Set', function() {
 
     describe('_lazyRemoveUnit', function() {
       it('can remove a ghost unit from the changeset', function() {
+        ecs.get('db').removeUnits = testUtils.makeStubFunction();
         ecs.get('db').units = {
-          remove: testUtils.makeStubFunction()
+          getById: testUtils.makeStubFunction()
         };
         ecs.changeSet['addUnit-982'] = {
           command: {
             args: ['arg1'],
-            method: '_add_units' ,
+            method: '_add_unit' ,
             options: {modelId: 'arg1'}}};
         var record = ecs._lazyRemoveUnit([['arg1']]);
-        var remove = ecs.get('db').units.remove;
+        var remove = ecs.get('db').removeUnits;
         assert.strictEqual(record, undefined);
         assert.strictEqual(ecs.changeSet['addUnit-982'], undefined);
         assert.equal(remove.calledOnce(), true);

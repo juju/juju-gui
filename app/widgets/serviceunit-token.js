@@ -65,8 +65,13 @@ YUI.add('juju-serviceunit-token', function(Y) {
     _initMoreMenu: function() {
       this._moreMenu = new widgets.MoreMenu({
         items: [
-          {label: 'Deploy to...', callback:
-                this._handleMoveIconClick.bind(this)}
+          {
+            label: 'Deploy to...',
+            callback: this._handleMoveIconClick.bind(this)
+          }, {
+            label: 'Remove',
+            callback: this._handleRemoveUnplaced.bind(this)
+          }
         ]
       });
     },
@@ -102,13 +107,27 @@ YUI.add('juju-serviceunit-token', function(Y) {
     /**
      * Handles clicks on the Move icon.
      *
-     * @method _startMoveHandler
+     * @method _handleMoveIconClick
      * @param {Y.Event} e EventFacade object.
      */
     _handleMoveIconClick: function(e) {
       e.preventDefault();
       this._populateMachines();
       utils.setStateClass(this.get('container'), 'select-machine');
+    },
+
+    /**
+     * Handles clicks on the Remove menu item.
+     *
+     * @method _handleRemoveUnplaced
+     * @param {Y.Event} e EventFacade object
+     */
+    _handleRemoveUnplaced: function(e) {
+      e.preventDefault();
+      var unit = this.get('unit');
+      // Removing the unit from the DB will cause the token to be destroyed
+      // from the machine view panel.
+      this.get('env').remove_units([unit.id]);
     },
 
     /**
@@ -411,6 +430,14 @@ YUI.add('juju-serviceunit-token', function(Y) {
         @type {Object}
        */
       db: {},
+
+      /**
+        Reference to the application environment.
+
+        @attribute env
+        @type {Object}
+      */
+      env: {},
 
       /**
         The environment's provider supported container types.

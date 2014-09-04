@@ -321,4 +321,15 @@ describe('Service unit token', function() {
     // Move the unit.
     container.one('.actions .move').simulate('click');
   });
+
+  it('can be removed', function() {
+    var stubEnvRemoveUnits = utils.makeStubFunction();
+    view.set('env', {
+      remove_units: stubEnvRemoveUnits
+    });
+
+    view._handleRemoveUnplaced({preventDefault: function() {}});
+    assert.equal(stubEnvRemoveUnits.calledOnce(), true,
+        'Unit not removed from env');
+  });
 });
