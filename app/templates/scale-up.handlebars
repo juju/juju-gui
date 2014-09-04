@@ -30,29 +30,12 @@
   <div class="constraints">
     Scale out with these constraints?
     <span class="constraints-defaults">
-      Default CPU, default Mem, default Arch.
+      Default CPU, default Mem, default Disk.
       <span class="edit link">Edit</span>
     </span>
   </div>
   <div class="edit-constraints">
-    <form>
-      <ul>
-        <li>
-          <label for="constraints-cpu">CPU power</label>
-          <input type="text" name="cpu" id="constraints-cpu" />
-          <span class="text-in-input">GHz</span>
-        </li>
-        <li>
-          <label for="constraints-mem">Memory</label>
-          <input type="text" name="mem" id="constraints-mem" />
-          <span class="text-in-input">GB</span>
-        </li>
-        <li>
-          <label for="constraints-arch">Architecture</label>
-          <input type="text" name="arch" id="constraints-arch" />
-        </li>
-      </ul>
-    </form>
+    {{>constraints-form}}
   </div>
   <div class="inspector-buttons">
     <button class="cancel">Cancel</button>

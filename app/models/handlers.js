@@ -334,6 +334,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       // is not yet provisioned.
       var hardwareCharacteristics = change.HardwareCharacteristics;
       if (hardwareCharacteristics) {
+        /* TODO: Should this be standardized to cpu-cores, cpu-power, etc.? */
         data.hardware = {
           arch: hardwareCharacteristics.Arch,
           cpuCores: hardwareCharacteristics.CpuCores,

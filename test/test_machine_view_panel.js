@@ -626,6 +626,7 @@ describe('machine view panel view', function() {
             parentId: undefined,
             constraints: {
               'cpu-power': '',
+              'cpu-cores': '',
               mem: '',
               'root-disk': ''
             }
@@ -679,6 +680,7 @@ describe('machine view panel view', function() {
             parentId: '5',
             constraints: {
               'cpu-power': '',
+              'cpu-cores': '',
               mem: '',
               'root-disk': ''
             }
