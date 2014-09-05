@@ -1114,7 +1114,7 @@ describe('Environment Change Set', function() {
         assert.strictEqual(ecsRecord.executed, false);
         assert.equal(ecsRecord.id, record);
         assert.deepEqual(ecsRecord.parents, []);
-        // We just need to make this the timestamp is not undefined.
+        // We just need to make that the timestamp is not undefined.
         assert.equal(typeof ecsRecord.timestamp, 'number');
         assert.equal(ecsRecord.command.args.length, 3);
         assert.equal(ecsRecord.command.args[0], 'args1');
@@ -1160,7 +1160,7 @@ describe('Environment Change Set', function() {
         assert.strictEqual(ecsRecord.executed, false);
         assert.equal(ecsRecord.id, record);
         assert.deepEqual(ecsRecord.parents, []);
-        // We just need to make this the timestamp is not undefined.
+        // We just need to make that the timestamp is not undefined.
         assert.equal(typeof ecsRecord.timestamp, 'number');
         assert.equal(ecsRecord.command.args.length, 2);
         assert.deepEqual(ecsRecord.command.args[0], ['args1', 'args2']);
