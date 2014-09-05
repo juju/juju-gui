@@ -954,7 +954,7 @@ YUI.add('juju-view-utils', function(Y) {
           entry.isNumeric = true;
         }
 
-        entry.value = config[field_name];
+        entry.value = config[field_name] || '';
       }
       settings.push(Y.mix(entry, field_def));
     });
