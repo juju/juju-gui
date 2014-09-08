@@ -82,11 +82,11 @@ YUI.add('more-menu', function(Y) {
       @param {Object} e Click event facade.
      */
     _clickItem: function(e) {
-      this.hideMenu();
       e.currentTarget.get('className').split(' ').forEach(function(className) {
         if (className.indexOf('moreMenuItem-') === 0) {
           var item = this.get('items')[className.split('-')[1]];
-          if (!item.disabled) {
+          if (!item.disabled && item.callback) {
+            this.hideMenu();
             item.callback(e);
           }
         }

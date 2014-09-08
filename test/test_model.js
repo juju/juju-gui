@@ -937,7 +937,7 @@ describe('test_model.js', function() {
         it('returns the children of a machine', function() {
           assertMachinesNames(machines.filterByParent('1'), ['1/lxc/0']);
           assertMachinesNames(
-              machines.filterByParent('2'), ['2/lxc/42', '2/kvm/0']);
+              machines.filterByParent('2'), ['2/kvm/0', '2/lxc/42']);
         });
 
         it('returns the children of a container', function() {
@@ -963,7 +963,7 @@ describe('test_model.js', function() {
           assertMachinesNames(machines.filterByAncestor('1'), ['1/lxc/0']);
           assertMachinesNames(
               machines.filterByAncestor('2'),
-              ['2/lxc/42', '2/kvm/0', '2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+              ['2/kvm/0', '2/kvm/0/lxc/0', '2/kvm/0/lxc/1', '2/lxc/42']);
         });
 
         it('filters machines by container ancestor', function() {
