@@ -91,11 +91,10 @@ YUI.add('inspector-header-view', function(Y) {
           pojoModel.invalidName = 'valid';
         }
       }
+      // Just passing this value on through from the containing view.
+      pojoModel.hideHelp = viewContainerAttrs.hideHelp;
       var container = this.get('container');
       container.setHTML(this.template(pojoModel));
-      if (window.flags && window.flags.mv && pojoModel.pending) {
-        container.one('.ghost-message').removeClass('hidden');
-      }
     },
 
     /**

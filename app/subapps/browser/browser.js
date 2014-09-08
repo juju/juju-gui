@@ -586,6 +586,7 @@ YUI.add('subapp-browser', function(Y) {
     renderServiceInspector: function(metadata) {
       var clientId = metadata.id,
           model = this._findModelInServices(clientId),
+          hideHelp = (metadata.flash && metadata.flash.hideHelp) || false,
           charm,
           previousInspector,
           activeInspector;
@@ -600,7 +601,8 @@ YUI.add('subapp-browser', function(Y) {
         ecs: this.get('ecs'),
         topo: topo,
         store: topo.get('store'),
-        activeTab: metadata.hash
+        activeTab: metadata.hash,
+        hideHelp: hideHelp
       };
 
       if (model) {
