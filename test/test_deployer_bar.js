@@ -210,8 +210,7 @@ describe('deployer bar view', function() {
                  'ECS commit not called');
     assert.equal(container.hasClass('summary-open'), false,
                  'summary-open class still present');
-    assert.equal(container.one('.confirm-button').hasClass('disabled'), true,
-                 'Commit button not disabled');
+    assert.equal(view._deploying, true, 'View not marked as deploying');
   });
 
   it('closes the summary', function() {
