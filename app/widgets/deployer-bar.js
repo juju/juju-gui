@@ -150,8 +150,12 @@ YUI.add('deployer-bar', function(Y) {
       evt.halt();
       var container = this.get('container'),
           ecs = this.get('ecs'),
-          autodeploy = container.one('input[value="autodeploy"]');
-      container.one('.confirm-button').addClass('disabled');
+          autodeploy = container.one('input[value="autodeploy"]'),
+          confirmButton = container.one('.confirm-button');
+      if (confirmButton.hasClass('disabled')) {
+        return;
+      }
+      confirmButton.addClass('disabled');
       if (autodeploy && autodeploy.get('checked')) {
         this._autoPlaceUnits();
       }
