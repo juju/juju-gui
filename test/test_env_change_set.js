@@ -612,6 +612,50 @@ describe('Environment Change Set', function() {
         assert.deepEqual(record.command.options, {modelId: 'baz'});
         cb(); // Will call done().
       });
+
+      it('retrieves the updated service name on preparation', function() {
+        var options = {modelId: 'new1'};
+        var callback = testUtils.makeStubFunction();
+        var args = [
+          'cs:precise/django-42', 'django', {}, null, 1, {}, null,
+          callback, options
+        ];
+        var key = ecs._lazyDeploy(args);
+        var command = ecs.changeSet[key].command;
+        // Add the ghost service to the db.
+        var services = new Y.juju.models.ServiceList();
+        services.add({id: 'new1', name: 'renamed-service'});
+        // Execute the command preparation.
+        command.prepare({services: services});
+        // The service name has been updated.
+        assert.strictEqual(command.args[1], 'renamed-service');
+      });
+
+      it('filters out any undefined settings on commit', function() {
+        var options = {modelId: 'new1'};
+        var callback = testUtils.makeStubFunction();
+        var args = [
+          'cs:precise/django-42', 'django', {
+            foo: 'bar',
+            baz: undefined
+          }, null, 1, {}, null,
+          callback, options
+        ];
+        var key = ecs._lazyDeploy(args);
+        var command = ecs.changeSet[key].command;
+        // Add the ghost service to the db.
+        var services = new Y.juju.models.ServiceList();
+        services.add({id: 'new1'});
+        // Execute the command preparation.
+        command.prepare.call({
+          args: args,
+          options: options
+        }, {services: services});
+        // Ensure that the undefined key is not still in the config param.
+        assert.deepEqual(args[2], {
+          foo: 'bar'
+        });
+      });
     });
 
     describe('_lazyDestroyService', function() {
@@ -1202,24 +1246,6 @@ describe('Environment Change Set', function() {
         assert.equal(lazyDeploy.calledOnce(), true);
         // make sure we don't call the env deploy method.
         assert.equal(envObj._deploy.callCount(), 0);
-      });
-
-      it('retrieves the updated service name on preparation', function() {
-        var options = {modelId: 'new1'};
-        var callback = testUtils.makeStubFunction();
-        var args = [
-          'cs:precise/django-42', 'django', {}, null, 1, {}, null,
-          callback, options
-        ];
-        var key = ecs._lazyDeploy(args);
-        var command = ecs.changeSet[key].command;
-        // Add the ghost service to the db.
-        var services = new Y.juju.models.ServiceList();
-        services.add({id: 'new1', name: 'renamed-service'});
-        // Execute the command preparation.
-        command.prepare({services: services});
-        // The service name has been updated.
-        assert.strictEqual(command.args[1], 'renamed-service');
       });
     });
 
