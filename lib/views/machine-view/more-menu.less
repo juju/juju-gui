@@ -34,15 +34,21 @@
                 float: none;
                 border-bottom: 1px solid #e2e2e2;
                 line-height: 30px;
-                color: @text-colour;
+                color: #b2b2b2;
 
                 &:last-child {
                     border-bottom: none;
                 }
+                &.link {
+                    color: @text-colour;
 
-                &.disabled {
-                    color: #909090;
-                    cursor: default;
+                    &.disabled {
+                        cursor: default;
+                        color: #b2b2b2;
+                    }
+                }
+                &.child {
+                    padding-left: 10px;
                 }
             }
         }

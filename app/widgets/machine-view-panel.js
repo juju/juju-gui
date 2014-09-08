@@ -30,6 +30,7 @@ YUI.add('machine-view-panel', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       utils = Y.namespace('juju.views.utils'),
+      models = Y.namespace('juju.models'),
       Templates = views.Templates;
 
   var ROOT_CONTAINER_PLACEHOLDER = 'root-container';
@@ -162,7 +163,6 @@ YUI.add('machine-view-panel', function(Y) {
               this._displayEnvironmentName, this);
         },
 
-
         /**
           Hide the currently visible more menu.
 
@@ -180,7 +180,6 @@ YUI.add('machine-view-panel', function(Y) {
           }
         },
 
-
         /**
           Render the more menu for unplaced units.
 
@@ -192,7 +191,6 @@ YUI.add('machine-view-panel', function(Y) {
           this._hideVisibleMoreMenu();
           this._visibleMoreMenu = this.get('unitTokens')[id].showMoreMenu(e);
         },
-
 
         /**
           Render the more menu for machine tokens.
@@ -208,7 +206,6 @@ YUI.add('machine-view-panel', function(Y) {
           this._hideVisibleMoreMenu();
           this._visibleMoreMenu = token.showMoreMenu(e);
         },
-
 
         /**
           Render the more menu for the headers.
@@ -920,7 +917,20 @@ YUI.add('machine-view-panel', function(Y) {
               {label: 'Add machine',
                 callback: this._displayCreateMachine.bind(this)},
               {label: 'Hide constraints',
-                callback: this._toggleTokenConstraints.bind(this)}
+                callback: this._toggleTokenConstraints.bind(this)},
+              {label: 'Sort by:', heading: true},
+              {label: 'Name', child: true,
+                callback: this._sortMachineColumn.bind(this, 'name')},
+              {label: 'No. services', child: true,
+                callback: this._sortMachineColumn.bind(this, 'services')},
+              {label: 'No. units', child: true,
+                callback: this._sortMachineColumn.bind(this, 'units')},
+              {label: 'Disk', child: true,
+                callback: this._sortMachineColumn.bind(this, 'disk')},
+              {label: 'RAM', child: true,
+                callback: this._sortMachineColumn.bind(this, 'ram')},
+              {label: 'CPU', child: true,
+                callback: this._sortMachineColumn.bind(this, 'cpu')}
             ]
           }).render();
           this._machinesHeader.addTarget(this);
@@ -984,10 +994,17 @@ YUI.add('machine-view-panel', function(Y) {
               container: headerContainer,
               action: 'container',
               dropLabel: 'Create new container',
-              menuItems: [{
-                label: 'Add container',
-                callback: this._displayCreateMachine.bind(this)
-              }]
+              menuItems: [
+                {label: 'Add container',
+                  callback: this._displayCreateMachine.bind(this)},
+                {label: 'Sort by:', heading: true},
+                {label: 'Name', child: true,
+                  callback: this._sortContainerColumn.bind(this, 'name')},
+                {label: 'No. units', child: true,
+                  callback: this._sortContainerColumn.bind(this, 'units')},
+                {label: 'Service', child: true,
+                  callback: this._sortContainerColumn.bind(this, 'service')}
+              ]
             }).render();
             headerView.addTarget(this);
             return headerView;
@@ -1018,6 +1035,30 @@ YUI.add('machine-view-panel', function(Y) {
           });
           this._machinesHeader.get('container').one('.moreMenuItem-1').set(
               'text', label);
+        },
+
+        /**
+          Sort the machine tokens in the machine column.
+
+          @method _sortMachineColumn
+          @param {Object} e Click event facade.
+        */
+        _sortMachineColumn: function(sort, e) {
+          this.set('machinesSort', sort);
+          this._renderMachines();
+        },
+
+        /**
+          Sort the machine tokens in the machine column.
+
+          @method _sortContainerColumn
+          @param {Object} e Click event facade.
+        */
+        _sortContainerColumn: function(sort, e) {
+          var parentId = this.get('selectedMachine');
+          var containers = this.get('db').machines.filterByAncestor(parentId);
+          this.set('containersSort', sort);
+          this._renderContainerTokens(containers, parentId);
         },
 
         /**
@@ -1062,6 +1103,11 @@ YUI.add('machine-view-panel', function(Y) {
               '.containers .content .items');
           var numUnits = db.units.filterByMachine(parentId, true).length;
           var committed = parentId.indexOf('new') !== 0;
+          var rootUnits = db.units.filterByMachine(parentId);
+          // To allow sorting create a new model list that contains just
+          // the list of containers. This means we don't have to loop over
+          // the entire list of machines.
+          var machinesModelList = new models.MachineList();
 
           this._clearContainerColumn();
           this._containersHeader.set('labels', [
@@ -1071,19 +1117,24 @@ YUI.add('machine-view-panel', function(Y) {
 
           // Create the root container. Should be above other
           // containers.
-          var units = db.units.filterByMachine(parentId);
-          var machine = {
+          var rootContainer = {
             displayDelete: false,
             displayName: 'Root container',
             id: parentId + '/' + ROOT_CONTAINER_PLACEHOLDER
           };
-          this._createContainerToken(containerParent, machine,
-              committed, units);
+          this._createContainerToken(containerParent, rootContainer,
+              committed, rootUnits);
 
           if (containers.length > 0) {
-            Y.Object.each(containers, function(container) {
-              container.displayDelete = true;
-              this._createContainerToken(containerParent, container, committed);
+            machinesModelList.add(containers);
+            machinesModelList.set('sortMethod', this.get('containersSort'));
+            machinesModelList.sort();
+            machinesModelList.each(function(container) {
+              // Get the real machine so that we are only dealing with
+              // the correct data and so that the events work etc.
+              var machine = db.machines.getById(container.id);
+              machine.displayDelete = true;
+              this._createContainerToken(containerParent, machine, committed);
             }, this);
           }
         },
@@ -1165,20 +1216,35 @@ YUI.add('machine-view-panel', function(Y) {
               machineIds = Object.keys(machineTokens),
               container = this.get('container'),
               nodeContainer = container.one('.column.machines .items');
-
+          var machines = this.get('db').machines.filterByParent(null);
+          var selectedMachine = this.get('selectedMachine');
+          // To allow sorting create a new model list that contains just
+          // the list of machines. This means we don't have to loop over
+          // the entire list of machines.
+          var machinesModelList = new models.MachineList();
           // Update the header to show the machine count.
           this._machinesHeader.set('labels', [
             {label: 'machine', count: machineIds.length}
           ]);
-
-          // Render each of the machine tokens out to a list
-          machineIds.forEach(function(id) {
-            var token = machineTokens[id];
-            this._updateMachineWithUnitData(token.get('machine'));
-            token.render();
-            token.addTarget(this);
-            nodeContainer.append(token.get('container'));
-          }, this);
+          if (machines) {
+            machinesModelList.add(machines);
+            // Clear the column if there are existing machines.
+            nodeContainer.get('childNodes').remove();
+            machinesModelList.set('sortMethod', this.get('machinesSort'));
+            machinesModelList.sort();
+            // Render each of the machine tokens out to a list
+            machinesModelList.each(function(machine) {
+              var token = machineTokens[machine.id];
+              this._updateMachineWithUnitData(token.get('machine'));
+              token.render();
+              token.addTarget(this);
+              nodeContainer.append(token.get('container'));
+            }, this);
+            if (selectedMachine) {
+              this._selectMachineToken(machineTokens[selectedMachine].get(
+                  'container').one('.token'));
+            }
+          }
         },
 
         /**
@@ -1549,6 +1615,28 @@ YUI.add('machine-view-panel', function(Y) {
            */
           tokenConstraintsVisible: {
             value: true
+          },
+
+          /**
+            The sort method for machine tokens in the machine column.
+
+            @attribute machinesSort
+            @default 'name'
+            @type {String}
+           */
+          machinesSort: {
+            value: 'name'
+          },
+
+          /**
+            The sort method for container tokens in the container column.
+
+            @attribute containersSort
+            @default 'name'
+            @type {String}
+           */
+          containersSort: {
+            value: 'name'
           },
 
           /**

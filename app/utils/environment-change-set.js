@@ -167,9 +167,16 @@ YUI.add('environment-change-set', function(Y) {
     _wrapCallback: function(record) {
       var args = record.command.args;
       var index = args.length - 1;
-      var callback = args[index];
-      if (!Y.Lang.isFunction(callback)) {
-        return;
+      var callback;
+      // If the dev doesn't provide a callback when the env call is made we
+      // need to supply one and increment the index that the wrapper gets
+      // placed in. The wrapper must execute as it's required to keep the
+      // changeset in sync.
+      if (Y.Lang.isFunction(args[index])) {
+        callback = args[index];
+      } else {
+        callback = function() {};
+        index += 1;
       }
       /* jshint -W040 */
       // Possible strict violation.

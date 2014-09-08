@@ -1277,9 +1277,114 @@ YUI.add('juju-models', function(Y) {
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {});
+    },
+
+    /**
+      Set the sorting method for the list of machines.
+
+      @method filterByAncestor
+      @param {String} model What to sort the machines by.
+      @return {Function} The sorting method function.
+    */
+    comparator: function(model) {
+      return this._getSortMethod(this.get('sortMethod'))(model);
+    },
+
+    /**
+       Get the sort method for the given sort type.
+
+       @method _getSortMethod
+       @param {String} sort The sort type.
+     */
+    _getSortMethod: function(sort) {
+      var sortMethod;
+      var weight = 0;
+      switch (sort) {
+        case 'units':
+          sortMethod = function(model) {
+            if (model.units) {
+              weight = model.units.length;
+            }
+            return -weight;
+          };
+          break;
+        case 'name':
+          sortMethod = function(model) {
+            return model.displayName;
+          };
+          break;
+        case 'disk':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.disk;
+            }
+            return -weight;
+          };
+          break;
+        case 'ram':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.mem;
+            }
+            return -weight;
+          };
+          break;
+        case 'cpu':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.cpuPower;
+            }
+            return -weight;
+          };
+          break;
+        case 'service':
+          sortMethod = function(model) {
+            if (model.units) {
+              var services = {};
+              model.units.forEach(function(unit) {
+                services[unit.service] = true;
+              });
+              weight = Object.keys(services);
+            }
+            return weight;
+          };
+          break;
+        case 'services':
+          sortMethod = function(model) {
+            if (model.units) {
+              var services = {};
+              model.units.forEach(function(unit) {
+                services[unit.service] = true;
+              });
+              weight = Object.keys(services).length;
+            }
+            return -weight;
+          };
+          break;
+        case 'size':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.mem + model.hardware.disk;
+            }
+            return -weight;
+          };
+          break;
+      }
+      return sortMethod;
     }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        The method for sorting the list of machines.
+
+        @attribute sortMethod
+        @default 'name'
+        @type {String}
+       */
+      sortMethod: {
+        value: 'name'
+      }
+    }
   });
   models.MachineList = MachineList;
 

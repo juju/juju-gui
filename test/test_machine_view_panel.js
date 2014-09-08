@@ -1634,6 +1634,133 @@ describe('machine view panel view', function() {
       assert.equal(container.one('.machine-token:last-child .details').hasClass(
           'hidden'), true);
     });
+
+    it('can sort the machines by name', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '11'},
+        {id: '12'},
+        {id: '10'}
+      ]);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-3').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '10');
+      assert.equal(machineTokens.item(1).getData('id'), '11');
+      assert.equal(machineTokens.item(2).getData('id'), '12');
+    });
+
+    it('can sort the machines by the number of services', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '11'},
+        {id: '12'},
+        {id: '10'}
+      ]);
+      machines.getById('12').units = [{service: '1'}, {service: '2'}];
+      machines.getById('10').units = [{service: '1'}];
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-4').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '12');
+      assert.equal(machineTokens.item(1).getData('id'), '10');
+      assert.equal(machineTokens.item(2).getData('id'), '11');
+    });
+
+    it('can sort the machines by the number of units', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '11'},
+        {id: '12'},
+        {id: '10'}
+      ]);
+      machines.getById('12').units = [{id: 'test/1'}];
+      machines.getById('10').units = [{id: 'test/2'}, {id: 'test/3'}];
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-5').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '10');
+      assert.equal(machineTokens.item(1).getData('id'), '12');
+      assert.equal(machineTokens.item(2).getData('id'), '11');
+    });
+
+    it('can sort the machines by disk', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '12', hardware:
+              {disk: 1024, mem: 1024, cpuPower: 1024, cpuCores: 1}},
+        {id: '11', hardware:
+              {disk: null, mem: 1024, cpuPower: 1024, cpuCores: 1}},
+        {id: '10', hardware:
+              {disk: 2048, mem: 1024, cpuPower: 1024, cpuCores: 1}}
+      ]);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-6').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '10');
+      assert.equal(machineTokens.item(1).getData('id'), '12');
+      assert.equal(machineTokens.item(2).getData('id'), '11');
+    });
+
+    it('can sort the machines by ram', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '12', hardware:
+              {disk: 1024, mem: null, cpuPower: 1024, cpuCores: 1}},
+        {id: '11', hardware:
+              {disk: null, mem: 2024, cpuPower: 1024, cpuCores: 1}},
+        {id: '10', hardware:
+              {disk: 2048, mem: 1024, cpuPower: 1024, cpuCores: 1}}
+      ]);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-7').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '11');
+      assert.equal(machineTokens.item(1).getData('id'), '10');
+      assert.equal(machineTokens.item(2).getData('id'), '12');
+    });
+
+    it('can sort the machines by cpu', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '12', hardware:
+              {disk: 1024, mem: null, cpuPower: 1024, cpuCores: 1}},
+        {id: '11', hardware:
+              {disk: null, mem: 2024, cpuPower: null, cpuCores: 1}},
+        {id: '10', hardware:
+              {disk: 2048, mem: 1024, cpuPower: 2024, cpuCores: 1}}
+      ]);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-8').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '10');
+      assert.equal(machineTokens.item(1).getData('id'), '12');
+      assert.equal(machineTokens.item(2).getData('id'), '11');
+    });
   });
 
   describe('container column', function() {
@@ -1831,6 +1958,64 @@ describe('machine view panel view', function() {
       var moreMenuNode = token.one('.more-menu');
       moreMenuNode.one('.open-menu').simulate('click');
       assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
+    });
+
+    it('can sort the containers by name', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.containers .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var containerTokens;
+      machines.add([
+        {id: '0/lxc/11'},
+        {id: '0/lxc/12'},
+        {id: '0/lxc/10'}
+      ]);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-2').simulate('click');
+      containerTokens = container.all('.container-token .token');
+      assert.equal(containerTokens.item(1).getData('id'), '0/lxc/10');
+      assert.equal(containerTokens.item(2).getData('id'), '0/lxc/11');
+      assert.equal(containerTokens.item(3).getData('id'), '0/lxc/12');
+    });
+
+    it('can sort the containers by service', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.containers .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var containerTokens;
+      machines.add([
+        {id: '0/lxc/11'},
+        {id: '0/lxc/12'},
+        {id: '0/lxc/10'}
+      ]);
+      machines.getById('0/lxc/12').units = [{service: '2'}];
+      machines.getById('0/lxc/10').units = [{service: '1'}];
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-4').simulate('click');
+      containerTokens = container.all('.container-token .token');
+      assert.equal(containerTokens.item(1).getData('id'), '0/lxc/11');
+      assert.equal(containerTokens.item(2).getData('id'), '0/lxc/10');
+      assert.equal(containerTokens.item(3).getData('id'), '0/lxc/12');
+    });
+
+    it('can sort the containers by the number of units', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.containers .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var containerTokens;
+      machines.add([
+        {id: '0/lxc/11'},
+        {id: '0/lxc/12'},
+        {id: '0/lxc/10'}
+      ]);
+      machines.getById('0/lxc/12').units = [{id: 'test/1'}];
+      machines.getById('0/lxc/10').units = [{id: 'test/2'}, {id: 'test/3'}];
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-3').simulate('click');
+      containerTokens = container.all('.container-token .token');
+      assert.equal(containerTokens.item(1).getData('id'), '0/lxc/10');
+      assert.equal(containerTokens.item(2).getData('id'), '0/lxc/12');
+      assert.equal(containerTokens.item(3).getData('id'), '0/lxc/11');
     });
 
     describe('functional tests', function() {
