@@ -1,14 +1,35 @@
 .container-token {
     .token {
+        &.active {
+            .service-icons .unit:hover {
+                background-color: #ddd;
+            }
+        }
+        .title {
+            margin-right: 10px;
+        }
         .service-icons {
+            margin-top: 2px;
             list-style: none;
 
             .unit {
+                position: relative;
+                min-height: 20px;
                 margin: 0 -20px;
                 padding: 5px 20px;
 
                 &.uncommitted .unit-uncommitted {
                     display: inline-block;
+                }
+                &.deleted .removed {
+                    display: inline;
+                }
+                &:hover {
+                    background-color: #eee;
+
+                    .more-menu .open-menu {
+                        display: block;
+                    }
                 }
                 &:last-child {
                     margin-bottom: 0;
@@ -23,6 +44,14 @@
                 }
                 .name {
                     display: block;
+                }
+                .more-menu {
+                    display: block;
+                    top: 4px;
+
+                    .open-menu {
+                        display: none;
+                    }
                 }
             }
         }

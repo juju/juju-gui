@@ -72,6 +72,26 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+          Show the more menu for a unit.
+
+         @method showUnitMoreMenu
+         @param {Object} e Click event facade.
+         @param {String} id The id of the unit.
+        */
+        showUnitMoreMenu: function(e, id) {
+          var moreMenu = this._unitMoreMenus[id];
+          if (this.get('machine').deleted) {
+            moreMenu.setItemDisabled('Destroy', true);
+          }
+          if (!moreMenu.get('rendered')) {
+            moreMenu.render(this.get('container').one(
+                '.unit[data-id="' + id + '"] .more-menu'));
+          }
+          moreMenu.showMenu(e);
+          return moreMenu;
+        },
+
+        /**
          * Fire the delete event.
          *
          * @method handleDelete
@@ -80,6 +100,17 @@ YUI.add('container-token', function(Y) {
         handleDelete: function(e) {
           e.preventDefault();
           this.fire('deleteToken');
+        },
+
+        /**
+         * Fire the delete unit event.
+         *
+         * @method handleDeleteUnit
+         * @param {Event} ev the click event created.
+         */
+        handleDeleteUnit: function(e) {
+          e.preventDefault();
+          this.fire('deleteContainerUnit');
         },
 
         /**
@@ -130,13 +161,48 @@ YUI.add('container-token', function(Y) {
         },
 
         /**
+          Set a unit's state to deleted.
+
+          @method setUnitDeleted
+          @param {Object} unit the unit to change state.
+        */
+        setUnitDeleted: function(unit) {
+          var unitNode = this.get('container').one(
+              '.unit[data-id="' + unit.id + '"]');
+          if (!unit.agent_state) {
+            unitNode.remove(true);
+          } else {
+            unitNode.addClass('deleted');
+          }
+        },
+
+        /**
          * Render the units.
          *
          * @method renderUnits
          */
         renderUnits: function() {
+          var machine = this.get('machine');
+          var units = machine.units;
           this.get('container').one('.service-icons').setHTML(
-              this.unitsTemplate(this.get('machine')));
+              this.unitsTemplate(machine));
+          // Create the more menus for the units.
+          if (units.length > 0) {
+            Object.keys(units).forEach(function(index) {
+              var id = units[index].id;
+              if (!this._unitMoreMenus) {
+                this._unitMoreMenus = [];
+              }
+              if (!this._unitMoreMenus[id]) {
+                this._unitMoreMenus[id] = new widgets.MoreMenu({
+                  items: [
+                    {label: 'Destroy',
+                      callback: this.handleDeleteUnit.bind(this)}
+                  ]
+                });
+              }
+            }, this);
+          }
         },
 
         /**
@@ -151,6 +217,14 @@ YUI.add('container-token', function(Y) {
           if (machine.deleted) {
             this.setDeleted();
           }
+          // when the token is rerendered the more menus will have been
+          // removed from the dom so we need to (re)initialise them here.
+          this._destroyMoreMenus();
+          this._moreMenu = new widgets.MoreMenu({
+            items: [
+              {label: 'Destroy', callback: this.handleDelete.bind(this)}
+            ]
+          });
           this.renderUnits();
           container.addClass('container-token');
           container.one('.token').addClass(
@@ -164,14 +238,6 @@ YUI.add('container-token', function(Y) {
           // to read.
           token.setAttribute('data-id', machine.id);
           this.get('containerParent').append(container);
-          // when the token is rerendered the more menu will have been
-          // removed from the dom so we need to (re)initialise it here.
-          this._destroyMoreMenu();
-          this._moreMenu = new widgets.MoreMenu({
-            items: [
-              {label: 'Destroy', callback: this.handleDelete.bind(this)}
-            ]
-          });
           return this;
         },
 
@@ -181,7 +247,7 @@ YUI.add('container-token', function(Y) {
           @method destructor
         */
         destructor: function() {
-          this._destroyMoreMenu();
+          this._destroyMoreMenus();
         },
 
         /**
@@ -189,9 +255,16 @@ YUI.add('container-token', function(Y) {
 
           @method _destroyMoreMenu
         */
-        _destroyMoreMenu: function() {
+        _destroyMoreMenus: function() {
           if (this._moreMenu) {
             this._moreMenu.destroy();
+          }
+          if (this._unitMoreMenus) {
+            this._unitMoreMenus.forEach(function(moreMenu) {
+              moreMenu.destroy();
+            });
+            // Set this to null so we know it needs to be recreated.
+            this._unitMoreMenus = null;
           }
         }
       }, {

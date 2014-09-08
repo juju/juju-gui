@@ -1,5 +1,7 @@
 {{#units}}
-  <li class="unit {{#unless agent_state }}uncommitted{{/unless}}">
+  <li class="unit {{#unless agent_state }}uncommitted{{/unless}} {{#if deleted }}deleted{{/if}}"
+      data-id="{{id}}">
+    {{>more-menu}}
     <img src="{{icon}}" alt="{{service}}"/>
     <span class="name">
       {{displayName}}
