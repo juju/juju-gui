@@ -456,16 +456,24 @@ YUI.add('environment-change-set', function(Y) {
         method: '_deploy',
         args: this._getArgs(args),
         /**
-          Update the service name, which can change from when the
-          charm is added to the canvas to the actual time the changes are
-          committed.
+          Called immediately before executing the deploy command.
 
           @method prepare
           @param {Object} db The database instance.
         */
         prepare: function(db) {
           var ghostService = db.services.getById(this.options.modelId);
+          // Update the service name, which can change from when the
+          // charm is added to the canvas to the actual time the changes are
+          // committed.
           this.args[1] = ghostService.get('name');
+          // Loop through the services settings and remove any which have
+          // undefined values so that they aren't set as 'undefined'.
+          Object.keys(this.args[2]).forEach(function(key) {
+            if (this.args[2][key] === undefined) {
+              delete this.args[2][key];
+            }
+          }, this);
         }
       };
       if (command.args.length !== args.length) {
