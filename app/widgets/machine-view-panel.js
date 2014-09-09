@@ -812,15 +812,27 @@ YUI.add('machine-view-panel', function(Y) {
          */
         _selectMachineToken: function(selected) {
           var container = this.get('container'),
-              machineTokens = container.all('.column.machines .items .token'),
+              previousActive = container.one(
+                  '.column.machines .items .token.active'),
               parentId = selected.getData('id');
           var containers = this.get('db').machines.filterByAncestor(parentId);
+          var constraintsVisible = this.get('tokenConstraintsVisible');
+          var machineTokens = this.get('machineTokens');
           // A lot of things in the machine view rely on knowing when the user
           // selects a machine.
           this.set('selectedMachine', parentId);
+          // Deselect the currently active token.
+          if (previousActive) {
+            previousActive.removeClass('active');
+            if (!constraintsVisible) {
+              machineTokens[previousActive.getData('id')].hideConstraints();
+            }
+          }
           // Select the active token.
-          machineTokens.removeClass('active');
           selected.addClass('active');
+          if (!constraintsVisible) {
+            machineTokens[parentId].showConstraints();
+          }
           this._renderContainerTokens(containers, parentId);
           this._selectRootContainer(parentId);
         },
@@ -1020,19 +1032,18 @@ YUI.add('machine-view-panel', function(Y) {
         _toggleTokenConstraints: function(e) {
           var makeVisible = !this.get('tokenConstraintsVisible');
           var machineTokens = this.get('machineTokens');
-          var label;
+          var label = makeVisible ? 'Hide constraints' : 'Show constraints';
           var machineToken;
           this.set('tokenConstraintsVisible', makeVisible);
           Object.keys(machineTokens).forEach(function(token) {
             machineToken = machineTokens[token];
             if (makeVisible) {
               machineToken.showConstraints();
-              label = 'Hide constraints';
-            } else {
+            } else if (machineToken.get('machine').id !== this.get(
+                'selectedMachine')) {
               machineToken.hideConstraints();
-              label = 'Show constraints';
             }
-          });
+          }, this);
           this._machinesHeader.get('container').one('.moreMenuItem-1').set(
               'text', label);
         },

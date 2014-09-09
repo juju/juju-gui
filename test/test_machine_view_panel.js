@@ -1600,7 +1600,8 @@ describe('machine view panel view', function() {
 
     it('can toggle the constraints', function() {
       view.render();
-      var tokenDetails = container.one('.machine-token .details');
+      machines.add([{id: '17'}]);
+      var tokenDetails = container.one('.machine-token:last-child .details');
       var headerMenu = container.one('.column.machines .head .more-menu');
       // Need to click on the more menu to render the items.
       headerMenu.one('.open-menu').simulate('click');
@@ -1619,9 +1620,29 @@ describe('machine view panel view', function() {
       assert.equal(menuItem.get('text').trim(), 'Hide constraints');
     });
 
+    it('still shows the constraints for the selected machine', function() {
+      view.render();
+      machines.add([{id: '17'}]);
+      var firstTokenDetails = container.one('.machine-token .details');
+      var secondTokenDetails = container.one(
+          '.machine-token:last-child .details');
+      var headerMenu = container.one('.column.machines .head .more-menu');
+      // Need to click on the more menu to render the items.
+      headerMenu.one('.open-menu').simulate('click');
+      var menuItem = headerMenu.one('.moreMenuItem-1');
+      menuItem.simulate('click');
+      assert.equal(firstTokenDetails.hasClass('hidden'), false);
+      assert.equal(secondTokenDetails.hasClass('hidden'), true);
+      // Now select the second token.
+      secondTokenDetails.simulate('click');
+      assert.equal(firstTokenDetails.hasClass('hidden'), true);
+      assert.equal(secondTokenDetails.hasClass('hidden'), false);
+    });
+
     it('has the correct constraints state on new machine tokens', function() {
       view.render();
-      var tokenDetails = container.one('.machine-token .details');
+      machines.add([{id: '16'}]);
+      var tokenDetails = container.one('.machine-token:last-child .details');
       var headerMenu = container.one('.column.machines .head .more-menu');
       // Need to click on the more menu to render the items.
       headerMenu.one('.open-menu').simulate('click');
