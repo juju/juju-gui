@@ -144,4 +144,16 @@ describe('container token view', function() {
     view.showUnitMoreMenu({halt: utils.makeStubFunction()}, 'test/1');
     assert.equal(container.one('.unit .yui3-moremenu') !== null, true);
   });
+
+  it('can set a class on deleted commited units', function() {
+    assert.equal(container.one('.unit').hasClass('deleted'), false);
+    view.setUnitDeleted({id: 'test/1', agent_state: 'started'});
+    assert.equal(container.one('.unit').hasClass('deleted'), true);
+  });
+
+  it('can removed deleted uncommited units', function() {
+    assert.equal(container.one('.unit') !== null, true);
+    view.setUnitDeleted({id: 'test/1'});
+    assert.equal(container.one('.unit'), null);
+  });
 });
