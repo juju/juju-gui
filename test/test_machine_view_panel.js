@@ -719,8 +719,6 @@ describe('machine view panel view', function() {
           var toggleStub = utils.makeStubMethod(
               view, '_toggleAllPlacedMessage');
           this._cleanups.push(toggleStub.reset);
-          var selectStub = utils.makeStubMethod(view, '_selectContainerToken');
-          this._cleanups.push(selectStub.reset);
           var selectMachineStub = utils.makeStubMethod(
               view, '_selectMachineToken');
           this._cleanups.push(selectMachineStub.reset);
@@ -743,7 +741,6 @@ describe('machine view panel view', function() {
           var placeArgs = env.placeUnit.lastArguments();
           assert.strictEqual(placeArgs[0].id, 'test/1');
           assert.equal(placeArgs[1], '0/lxc/1');
-          assert.equal(selectStub.callCount(), 1);
           assert.equal(selectMachineStub.callCount(), 1);
         }
     );
@@ -776,11 +773,43 @@ describe('machine view panel view', function() {
           var placeArgs = env.placeUnit.lastArguments();
           assert.strictEqual(placeArgs[0].id, 'test/1');
           assert.equal(placeArgs[1], '0');
-          // selectContainerToken called once by selectMachineToken and once
-          // directly.
-          assert.equal(selectStub.callCount(), 3);
+          // selectContainerToken called once by selectMachineToken.
+          assert.equal(selectStub.callCount(), 2);
         }
     );
+
+    it('can select the root container when selecting the machine', function() {
+      var selectRootStub = utils.makeStubMethod(view, '_selectRootContainer');
+      this._cleanups.push(selectRootStub.reset);
+      var selectContainerStub = utils.makeStubMethod(
+          view, '_selectContainerToken');
+      this._cleanups.push(selectContainerStub.reset);
+      view.set('selectedMachine', 0);
+      view.render();
+      var machineToken = container.one('.column.machines .items .token');
+      assert.equal(selectRootStub.callCount(), 1); // called once by render
+      assert.equal(selectContainerStub.callCount(), 0);
+      view._selectMachineToken(machineToken);
+      assert.equal(selectRootStub.callCount(), 2);
+      assert.equal(selectContainerStub.callCount(), 0);
+    });
+
+    it('can select another container when selecting the machine', function() {
+      var selectRootStub = utils.makeStubMethod(view, '_selectRootContainer');
+      this._cleanups.push(selectRootStub.reset);
+      var selectContainerStub = utils.makeStubMethod(
+          view, '_selectContainerToken');
+      this._cleanups.push(selectContainerStub.reset);
+      view.set('selectedMachine', 0);
+      view.render();
+      var machineToken = container.one('.column.machines .items .token');
+      var fakeContainerToken = {};
+      assert.equal(selectRootStub.callCount(), 1); // called once by render
+      assert.equal(selectContainerStub.callCount(), 0);
+      view._selectMachineToken(machineToken, fakeContainerToken);
+      assert.equal(selectRootStub.callCount(), 1);
+      assert.equal(selectContainerStub.callCount(), 1);
+    });
 
     it('does not allow placement on machines being deleted', function() {
       var notes;
