@@ -973,8 +973,9 @@ describe('utilities', function() {
 
       // The service config value is not complete in that it does not have an
       // entry for 'another_string'.  As such, the value returned for that
-      // entry is undefined.
-      assert.isUndefined(settings[1].value);
+      // entry is undefined but we want to display an empty field instead
+      // of 'undefined'
+      assert.equal(settings[1].value, '');
 
       assert.isUndefined(settings[2].isBool);
       assert.equal(3.14159, settings[2].value);
