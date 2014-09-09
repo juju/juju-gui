@@ -943,14 +943,20 @@ YUI.add('machine-view-panel', function(Y) {
           var unit = db.units.getById(unitId);
           var machineId = unit.machine;
           var machine = db.machines.getById(machineId);
+          var parentMachine = machine.parentId ?
+              db.machines.getById(machine.parentId) : machine;
           var containerTokens = this.get('containerTokens');
           var token = containerTokens[machine.parentId ?
               machineId : machineId + '/root-container'];
           token.setUnitDeleted(unit);
+          this.get('env').remove_units([unitId]);
           if (!unit.agent_state) {
             this._containersHeader.updateLabelCount('unit', -1);
+            // Update the icons on the parent machine.
+            this._updateMachineWithUnitData(parentMachine);
+            console.log(parentMachine.units);
+            this.get('machineTokens')[parentMachine.id].render();
           }
-          this.get('env').remove_units([unitId]);
         },
 
         /**
