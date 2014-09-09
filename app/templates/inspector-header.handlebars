@@ -28,8 +28,18 @@
   <div data-bind="life" class="inspector-header-message hidden">
     <p>This service is being destroyed</p>
   </div>
-  <div class="inspector-header-message ghost-message hidden">
+{{/unless}}
+{{!--
+  Only display this message if 1) the inspector is for a pending service
+  and 2) the hideHelp flag is not set. See the comments in
+  app/views/topology/service.js in the showServiceDetails function for
+  more details.
+--}}
+{{#if pending}}
+{{#unless hideHelp}}
+  <div class="inspector-header-message ghost-message">
     Your service has been added. Configure using the tabs below.
     <span dismiss>Dismiss</span>
   </div>
 {{/unless}}
+{{/if}}

@@ -193,6 +193,17 @@ describe('service module events', function() {
     serviceModule.update();
   });
 
+  it('hides onboarding for existing services', function(done) {
+    topo.on('changeState', function(e) {
+      var state = e.details[0];
+      assert.equal(true, state.sectionA.metadata.flash.hideHelp);
+      done();
+    });
+    var menuStub = utils.makeStubMethod(serviceModule, 'showServiceMenu');
+    this._cleanups.push(menuStub.reset);
+    serviceModule.showServiceDetails({id: 'test'}, topo);
+  });
+
   // Click the provided service so that the service menu is shown.
   // Return the service menu.
   var clickService = function(service) {

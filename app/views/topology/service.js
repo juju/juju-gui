@@ -1466,10 +1466,20 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} topo The reference to the topology object.
     */
     showServiceDetails: function(box, topo) {
+      // We set the hideHelp flag when the user clicks on an existing service in
+      // the canvas; in otherwords, we're not in the "create a service"
+      // workflow, which is the only one where we want to display the help
+      // notification. Right now there are multiple entrances to the "create a
+      // service" workflow, but only one to "show details for existing service",
+      // so it was easier to hide the help on that one entrance and then show it
+      // by default for all the rest.
       topo.fire('changeState', {
         sectionA: {
           component: 'inspector',
-          metadata: { id: box.id }
+          metadata: {
+            id: box.id,
+            flash: { hideHelp: true }
+          }
         }});
       this.showServiceMenu(box);
     },

@@ -237,7 +237,7 @@ describe('UI State object', function() {
         var newState = { sectionA: {}, sectionB: {} };
         state.set('flash', {foo: 'bar'});
         state.dispatch(newState);
-        assert.deepEqual({}, state.get('flash'));
+        assert.deepEqual(undefined, state.get('flash'));
       });
 
       it('_dispatchSection: calls registered sectionB dispatcher', function() {
@@ -264,40 +264,39 @@ describe('UI State object', function() {
   describe('url part parsing', function() {
 
     describe('_parseInspectorUrl', function() {
+      var flash = {
+        file: 'foo',
+        services: ['bar', 'baz']
+      };
+
       var parts = {
         'inspector': undefined,
         'inspector/service123': {
-          id: 'service123'
+          id: 'service123',
+          flash: flash
         },
         'inspector/service123/charm': {
           id: 'service123',
-          charm: true
+          charm: true,
+          flash: flash
         },
         'inspector/service123/unit/13': {
           id: 'service123',
-          unit: '13'
+          unit: '13',
+          flash: flash
         },
         'inspector/local/new': {
           localType: 'new',
-          flash: {
-            file: 'foo',
-            services: ['bar', 'baz']
-          }
+          flash: flash
         },
         'inspector/local/upgrade': {
           localType: 'upgrade',
-          flash: {
-            file: 'foo',
-            services: ['bar', 'baz']
-          }
+          flash: flash
         }
       };
 
       it('can parse the inspector url parts', function() {
-        state.set('flash', {
-          file: 'foo',
-          services: ['bar', 'baz']
-        });
+        state.set('flash', flash);
         Object.keys(parts).forEach(function(key) {
           assert.deepEqual(
               state._parseInspectorUrl(key),
@@ -311,7 +310,7 @@ describe('UI State object', function() {
             'inspector/service123/charm', '#code');
         assert.deepEqual(
             data,
-            { id: 'service123', charm: true, hash: '#code' });
+            { id: 'service123', charm: true, hash: '#code', flash: {} });
       });
     });
 
@@ -609,7 +608,8 @@ describe('UI State object', function() {
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: 'service123'
+            id: 'service123',
+            flash: {}
           }
         }, sectionB: {}
       },
@@ -618,7 +618,8 @@ describe('UI State object', function() {
           component: 'inspector',
           metadata: {
             id: 'service123',
-            charm: true
+            charm: true,
+            flash: {}
           }
         }, sectionB: {}
       },
@@ -627,7 +628,8 @@ describe('UI State object', function() {
           component: 'inspector',
           metadata: {
             id: 'service123',
-            unit: '13'
+            unit: '13',
+            flash: {}
           }
         }, sectionB: {}
       },
@@ -675,7 +677,8 @@ describe('UI State object', function() {
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: 'apache2'
+            id: 'apache2',
+            flash: {}
           }
         },
         sectionB: {
@@ -690,7 +693,8 @@ describe('UI State object', function() {
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: 'apache2'
+            id: 'apache2',
+            flash: {}
           }
         },
         sectionB: {

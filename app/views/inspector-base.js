@@ -57,6 +57,17 @@ YUI.add('inspector-base', function(Y) {
         'valueFn': function() {
           return Y.Node.create(ns.Templates['service-inspector']());
         }
+      },
+
+      /**
+         Determines whether the help text needs to be hidden.
+
+         @attribute hideHelp
+         @default false
+         @type {Boolean}
+       */
+      hideHelp: {
+        value: false
       }
     }
   });

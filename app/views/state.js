@@ -123,7 +123,7 @@ YUI.add('juju-app-state', function(Y) {
       }, this);
       // Reset flash, because we don't want arbitrary potentially large objects
       // (e.g. files from local charm upload) hanging out.
-      this.set('flash', {});
+      this.set('flash', undefined);
     },
 
     /**
@@ -458,7 +458,6 @@ YUI.add('juju-app-state', function(Y) {
         return;
       } else if (parts[0] === 'local') {
         metadata.localType = parts[1];
-        metadata.flash = this.get('flash');
       } else {
         // The first index is the service id except in the above cases.
         metadata.id = parts[0];
@@ -466,6 +465,7 @@ YUI.add('juju-app-state', function(Y) {
           metadata[parts[1]] = parts[2] || true;
         }
       }
+      metadata.flash = this.get('flash');
       if (hash) {
         metadata.hash = hash;
       }
