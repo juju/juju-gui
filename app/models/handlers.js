@@ -240,6 +240,12 @@ YUI.add('juju-delta-handlers', function(Y) {
         var changeConfig = change.Config || {};
         var combined = Y.merge(serviceConfig, changeConfig);
         service.set('config', combined);
+        // Update the remoteConfig config options. This should never be done
+        // by anything but this method so that it says as representation of the
+        // config options as juju sees it.
+        service.set(
+            'remoteConfig',
+            Y.merge(service.get('remoteConfig'), changeConfig));
         // Execute the registered service hooks.
         var hooks = serviceChangedHooks[change.Name] || [];
         hooks.forEach(function(hook) {

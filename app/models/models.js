@@ -330,6 +330,18 @@ YUI.add('juju-models', function(Y) {
       deleted: {},
       icon: {},
       config: {},
+      /**
+        The remote configuration is kept in sync with what juju believes is the
+        real configuration values for this service. You should treat this as
+        a read only attribute as it's to be modified only by the delta stream.
+
+        @attribute remoteConfig
+        @type {Object}
+        @default {}
+      */
+      remoteConfig: {
+        value: {}
+      },
       // Annotations on service are an empty dict
       // rather than undefined. This helps make
       // some checks in the code simpler to write.
