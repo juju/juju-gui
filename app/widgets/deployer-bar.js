@@ -392,7 +392,8 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container');
       container.removeClass('summary-open');
 
-      this._toggleDeployButtonStatus(this._getChangeCount(this.get('ecs')) > 0 && !this._deploying);
+      this._toggleDeployButtonStatus(
+          this._getChangeCount(this.get('ecs')) > 0 && !this._deploying);
     },
 
     /**
