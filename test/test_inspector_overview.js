@@ -191,11 +191,11 @@ describe('Inspector Overview', function() {
     window.flags = {};
   });
 
-  it('opens the scale up view on a pending service', function() {
+  it('closes the scale up view on a pending service', function() {
     window.flags = {};
     window.flags.mv = true;
     inspector = setUpInspector({pending: true});
-    assert.equal(container.one('.scale-up-view').hasClass('state-per-machine'),
+    assert.equal(container.one('.scale-up-view').hasClass('state-default'),
         true);
     window.flags = {};
   });

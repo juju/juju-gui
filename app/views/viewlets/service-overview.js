@@ -440,11 +440,7 @@ YUI.add('inspector-overview-view', function(Y) {
         if (!rendered) {
           container.append(this.scaleUp.render());
         }
-        if (pending) {
-          this.scaleUp.showScaleUp();
-        } else {
-          this.scaleUp.hideScaleUp();
-        }
+        this.scaleUp.hideScaleUp();
       }
       if (!rendered) {
         this.set('rendered', true);
