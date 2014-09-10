@@ -20,16 +20,9 @@
     }
     &:hover,
     &.active {
-        .more-menu {
+        & > .more-menu {
             display: block;
-            position: absolute;
             top: 10px;
-            right: 20px;
-
-            .menu {
-                top: 26px;
-                right: -8px;
-            }
         }
     }
     &.active {
@@ -48,10 +41,18 @@
     .token-uncommitted {
         .uncommitted-circle;
     }
+    .more-menu {
+        position: absolute;
+        right: 20px;
+
+        .yui3-moremenu.open .menu {
+            top: 26px;
+            right: -8px;
+        }
+    }
     .more-menu,
     .removed,
     .token-uncommitted {
-        display: none;
         display: none;
     }
     .service-icons {

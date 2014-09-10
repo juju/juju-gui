@@ -57,8 +57,11 @@ YUI.add('machine-view-panel', function(Y) {
           '.machine-token .moreMenuItem-0': {
             click: 'deleteMachine'
           },
-          '.container-token .moreMenuItem-0': {
+          '.container-token .token > .more-menu .moreMenuItem-0': {
             click: 'deleteMachine'
+          },
+          '.container-token .unit .more-menu .moreMenuItem-0': {
+            click: 'deleteContainerUnit'
           },
           '.unplaced-unit .moreMenuItem-0': {
             click: '_cancelUnitPlacement'
@@ -75,8 +78,11 @@ YUI.add('machine-view-panel', function(Y) {
           '.machine-token .more-menu .open-menu': {
             click: '_tokenMoreMenuClick'
           },
-          '.container-token .more-menu .open-menu': {
+          '.container-token .token > .more-menu .open-menu': {
             click: '_tokenMoreMenuClick'
+          },
+          '.container-token .unit .more-menu .open-menu': {
+            click: '_containerUnitMoreMenuClick'
           },
           '.head .more-menu .open-menu': {
             click: '_headerMoreMenuClick'
@@ -205,6 +211,21 @@ YUI.add('machine-view-panel', function(Y) {
               'containerTokens' : 'machineTokens')[id];
           this._hideVisibleMoreMenu();
           this._visibleMoreMenu = token.showMoreMenu(e);
+        },
+
+        /**
+          Render the more menu for units on a container tokens.
+
+         @method _containerUnitMoreMenuClick
+         @param {Object} e Click event facade.
+        */
+        _containerUnitMoreMenuClick: function(e) {
+          var target = e.currentTarget;
+          var unitId = target.ancestor('.unit').getData('id');
+          var containerId = target.ancestor('.token').getData('id');
+          var token = this.get('containerTokens')[containerId];
+          this._hideVisibleMoreMenu();
+          this._visibleMoreMenu = token.showUnitMoreMenu(e, unitId);
         },
 
         /**
@@ -908,6 +929,34 @@ YUI.add('machine-view-panel', function(Y) {
 
           this._renderUnplacedUnits();
           this._toggleOnboarding();
+        },
+
+        /**
+          Destroy a unit that has been placed on a container.
+
+          @method deleteContainerUnit
+          @param {Object} e The click event
+        */
+        deleteContainerUnit: function(e) {
+          var unitId = e.currentTarget.ancestor('.unit').getData('id');
+          var db = this.get('db');
+          var unit = db.units.getById(unitId);
+          var machineId = unit.machine;
+          var machine = db.machines.getById(machineId);
+          var parentMachine = machine.parentId ?
+              db.machines.getById(machine.parentId) : machine;
+          var containerTokens = this.get('containerTokens');
+          var token = containerTokens[machine.parentId ?
+              machineId : machineId + '/root-container'];
+          token.setUnitDeleted(unit);
+          this.get('env').remove_units([unitId]);
+          if (!unit.agent_state) {
+            this._containersHeader.updateLabelCount('unit', -1);
+            // Update the icons on the parent machine.
+            this._updateMachineWithUnitData(parentMachine);
+            console.log(parentMachine.units);
+            this.get('machineTokens')[parentMachine.id].render();
+          }
         },
 
         /**

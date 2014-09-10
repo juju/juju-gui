@@ -43,7 +43,8 @@ describe('container token view', function() {
     container = utils.makeContainer(this, 'container-token');
     machine = {
       displayDelete: true,
-      title: 'test title'
+      title: 'test title',
+      units: [{id: 'test/1'}]
     };
     view = new View({
       containerParent: container,
@@ -136,5 +137,23 @@ describe('container token view', function() {
     view.showMoreMenu();
     assert.equal(stubDisable.calledOnce(), true);
     assert.deepEqual(stubDisable.lastArguments(), ['Destroy', true]);
+  });
+
+  it('can display the more menu for units', function() {
+    assert.equal(container.one('.unit .yui3-moremenu'), null);
+    view.showUnitMoreMenu({halt: utils.makeStubFunction()}, 'test/1');
+    assert.equal(container.one('.unit .yui3-moremenu') !== null, true);
+  });
+
+  it('can set a class on deleted commited units', function() {
+    assert.equal(container.one('.unit').hasClass('deleted'), false);
+    view.setUnitDeleted({id: 'test/1', agent_state: 'started'});
+    assert.equal(container.one('.unit').hasClass('deleted'), true);
+  });
+
+  it('can removed deleted uncommited units', function() {
+    assert.equal(container.one('.unit') !== null, true);
+    view.setUnitDeleted({id: 'test/1'});
+    assert.equal(container.one('.unit'), null);
   });
 });

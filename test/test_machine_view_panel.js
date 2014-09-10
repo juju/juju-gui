@@ -2039,6 +2039,70 @@ describe('machine view panel view', function() {
       assert.equal(containerTokens.item(3).getData('id'), '0/lxc/11');
     });
 
+    it('can render the more menu on container units', function() {
+      view.render();
+      units.add({
+        id: 'test/2',
+        machine: '0'
+      });
+      var moreMenuNode = container.one('.container-token .unit .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      assert.equal(moreMenuNode.one('.yui3-moremenu'), null);
+      openMenu.simulate('click');
+      assert.equal(moreMenuNode.one('.yui3-moremenu') !== null, true);
+    });
+
+    it('can delete uncommitted units', function() {
+      env.remove_units = utils.makeStubFunction();
+      view.render();
+      units.add({
+        id: 'test/2',
+        machine: '0'
+      });
+      var unitNode = container.one('.container-token .unit');
+      var moreMenuNode = unitNode.one('.more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      assert.equal(unitNode !== null, true);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-0').simulate('click');
+      assert.equal(container.one('.container-token .unit'), null);
+      assert.equal(env.remove_units.calledOnce(), true);
+    });
+
+    it('updates the unit count when uncommitted units are deleted', function() {
+      env.remove_units = utils.makeStubFunction();
+      view.render();
+      units.add({
+        id: 'test/2',
+        machine: '0'
+      });
+      var moreMenuNode = container.one('.container-token .unit .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var labelSelector = '.column.containers .head .label:last-child';
+      assert.equal(container.one(labelSelector).get('text').trim(), '1 unit');
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-0').simulate('click');
+      assert.equal(container.one(labelSelector).get('text').trim(), '0 units');
+    });
+
+    it('can delete committed units', function() {
+      env.remove_units = utils.makeStubFunction();
+      view.render();
+      units.add({
+        id: 'test/2',
+        machine: '0',
+        agent_state: 'started'
+      });
+      var unitNode = container.one('.container-token .unit');
+      var moreMenuNode = unitNode.one('.more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      assert.equal(unitNode.hasClass('.deleted'), false);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-0').simulate('click');
+      assert.equal(unitNode.hasClass('.deleted'), true);
+      assert.equal(env.remove_units.calledOnce(), true);
+    });
+
     describe('functional tests', function() {
       it('can render containers on click of machine token', function() {
         view.render();
