@@ -667,11 +667,11 @@ YUI.add('machine-view-panel', function(Y) {
               parentId = selected;
             }
             this._placeUnit(unit, parentId);
-            var token = this._findMachineOrContainerToken(tokenId, true);
-            this._selectMachineToken(
-                this.get('machineTokens')[selected]
-                    .get('container').one('.token'));
-            this._selectContainerToken(token);
+            var containerToken = this._findMachineOrContainerToken(
+                tokenId, true);
+            var machineToken = this.get('machineTokens')[selected].get(
+                'container').one('.token');
+            this._selectMachineToken(machineToken, containerToken);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);
           }
@@ -829,9 +829,10 @@ YUI.add('machine-view-panel', function(Y) {
          * Display containers for the selected machine.
          *
          * @method _selectMachineToken
-         * @param {Object} selected the node for the token that was selected.
+         * @param {Object} selected The node for the token that was selected.
+         * @param {Object} selectedContainer Optional active container.
          */
-        _selectMachineToken: function(selected) {
+        _selectMachineToken: function(selected, selectedContainer) {
           var container = this.get('container'),
               previousActive = container.one(
                   '.column.machines .items .token.active'),
@@ -855,7 +856,11 @@ YUI.add('machine-view-panel', function(Y) {
             machineTokens[parentId].showConstraints();
           }
           this._renderContainerTokens(containers, parentId);
-          this._selectRootContainer(parentId);
+          if (selectedContainer) {
+            this._selectContainerToken(selectedContainer);
+          } else {
+            this._selectRootContainer(parentId);
+          }
         },
 
         /**
