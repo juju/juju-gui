@@ -912,6 +912,17 @@ describe('machine view panel view', function() {
                       'unable to find added unit in the displayed list');
     });
 
+    it('should display added units on root containers', function() {
+      view.render();
+      var selector = '.container-token .unit';
+      assert.equal(container.all(selector).size(), 0);
+      units.add({
+        id: 'test/2',
+        machine: '0'
+      });
+      assert.equal(container.all(selector).size(), 1);
+    });
+
     it('update machine token with units when added to machines', function() {
       // The machine tokens which have this unit placed need to be updated
       // with the appropriate unit data to show the tokens after deploy.

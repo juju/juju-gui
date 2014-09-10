@@ -301,9 +301,9 @@ YUI.add('machine-view-panel', function(Y) {
               if (changed.machine.newVal) {
                 var machineTokens = this.get('machineTokens'),
                     containerTokens = this.get('containerTokens'),
+                    machineId,
+                    units,
                     id = changed.machine.newVal;
-                var machineId;
-                var units;
                 // Check if this is a machine.
                 if (id.indexOf('/') === -1) {
                   machineId = id;
@@ -311,16 +311,20 @@ YUI.add('machine-view-panel', function(Y) {
                 }
                 var containerToken = containerTokens[machineId ?
                     machineId + '/root-container' : id];
-                var container = containerToken.get('machine');
-                // Need to get the machine, if this is a nested
-                // container parentId will be the parent container, so
-                // we need to split for the machine id.
-                var machineToken = machineTokens[machineId ||
-                    container.parentId.split('/')[0]];
-                // Update the container with the unit.
-                this._updateMachineWithUnitData(container, units);
-                containerToken.renderUnits();
+                // Only need to update the container token if it has
+                // been created.
+                if (containerToken) {
+                  var container = containerToken.get('machine');
+                  // Need to get the machine, if this is a nested
+                  // container parentId will be the parent container, so
+                  // we need to split for the machine id.
+                  machineId = machineId || container.parentId.split('/')[0];
+                  // Update the container with the unit.
+                  this._updateMachineWithUnitData(container, units);
+                  containerToken.renderUnits();
+                }
                 // Update the machine with the unit.
+                var machineToken = machineTokens[machineId];
                 this._updateMachineWithUnitData(machineToken.get('machine'));
                 machineToken.renderUnits();
               } else {
