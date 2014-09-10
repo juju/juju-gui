@@ -397,7 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charm: 'cs:quantal/wordpress-11',
           exposed: true,
           config: {moon: 'beam', cow: 'boy'},
-          remoteConfig: {moon: 'beam', cow: 'boy'}
+          environmentConfig: {moon: 'beam', cow: 'boy'}
         });
         var change = {
           Name: 'wordpress',
@@ -411,7 +411,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var service = db.services.getById('wordpress');
         assert.deepEqual({moon: 'beam', cow: 'pie'}, service.get('config'));
         assert.deepEqual(
-            {moon: 'beam', cow: 'pie'}, service.get('remoteConfig'));
+            {moon: 'beam', cow: 'pie'}, service.get('environmentConfig'));
       });
 
       it('removes a service from the database', function() {
