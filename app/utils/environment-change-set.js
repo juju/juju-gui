@@ -418,9 +418,16 @@ YUI.add('environment-change-set', function(Y) {
           machines.getById(command.args[0]).deleted = false;
           break;
         case '_set_config':
-          // XXX Config changed is not included in here pending current work on
-          // storing the previous config values. Makyo 2014-08-22
-          console.warn('Clearing config changes not yet supported');
+          var service = services.getById(command.args[0]);
+          var config = service.get('config');
+          var envConfig = service.get('environmentConfig');
+          Object.keys(config).forEach(function(key) {
+            // Return the local configuration values to the values in the env.
+            // The local config value has keys with undefined values where as
+            // the one from the environment only has values with truthy values.
+            config[key] = envConfig[key];
+          });
+          service.set('config', config);
           break;
         case '_add_relation':
           relations.remove(relations.getById(command.options.modelId));
