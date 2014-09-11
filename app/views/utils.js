@@ -1497,15 +1497,18 @@ YUI.add('juju-view-utils', function(Y) {
         var unhealthy = Y.Array.some(this.relations, function(relation) {
           return relation.hasRelationError();
         });
+        var pendingDeletion = Y.Array.some(this.relations, function(relation) {
+          return relation.deleted;
+        });
         if (unhealthy) {
-          return 'error';
+          return (pendingDeletion ? 'pending-' : '') + 'error';
         }
         // Return subordinate if the collection is marked as such, otherwise
         // return healthy.
         if (this.isSubordinate) {
           return 'subordinate';
         } else {
-          return 'healthy';
+          return (pendingDeletion ? 'pending-' : '') + 'healthy';
         }
       }
     },

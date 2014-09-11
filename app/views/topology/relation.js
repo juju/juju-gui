@@ -255,10 +255,9 @@ YUI.add('juju-topology-relation', function(Y) {
     updateLinks: function() {
       // Enter.
       var g = this.drawRelationGroup();
-      var link = g.selectAll('line.relation');
 
       // Update (+ enter selection).
-      link.each(this.drawRelation);
+      g.each(this.drawRelation);
       if (this.get('relationMenuActive')) {
         this.showRelationMenu(this.get('relationMenuRelation'));
       }
@@ -373,15 +372,15 @@ YUI.add('juju-topology-relation', function(Y) {
                      Math.max(s[1], t[1]) -
                      Math.abs((s[1] - t[1]) / 2)] + ')';
           });
-      g.selectAll('image')
-        .filter(function(d) {
-            var currStatus = d3.select(this)
+      g.filter(function(d) {
+        var currStatus = d3.select(this).select('image')
             .attr('xlink:href') || '';
-            currStatus = currStatus.split('-')
+        currStatus = currStatus.split('relation-icon-')
             .reverse()[0]
             .split('.')[0];
-            return currStatus !== d.aggregatedStatus;
-          })
+        return currStatus !== d.aggregatedStatus;
+      })
+        .selectAll('image')
         .attr('xlink:href', function(d) {
             return (
                 '/juju-ui/assets/svgs/relation-icon-' +
@@ -396,7 +395,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var s = connectors[0];
       var t = connectors[1];
       var length = relation.source._distance(s, t);
-      var link = d3.select(this);
+      var link = d3.select(this).select('line');
       var imageSize = 20;
 
       link
@@ -408,7 +407,7 @@ YUI.add('juju-topology-relation', function(Y) {
           [length / 2 - (imageSize / 2), imageSize])
                 .attr('class', function(d) {
             // Style relation lines differently depending on status.
-            return 'relation ' + d.aggregatedStatus;
+            return 'relation ' + relation.aggregatedStatus;
           });
       return link;
     },
