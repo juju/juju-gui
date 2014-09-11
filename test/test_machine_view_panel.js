@@ -795,6 +795,7 @@ describe('machine view panel view', function() {
     });
 
     it('can select another container when selecting the machine', function() {
+      var containerId = '0/lxc/12';
       var selectRootStub = utils.makeStubMethod(view, '_selectRootContainer');
       this._cleanups.push(selectRootStub.reset);
       var selectContainerStub = utils.makeStubMethod(
@@ -802,13 +803,15 @@ describe('machine view panel view', function() {
       this._cleanups.push(selectContainerStub.reset);
       view.set('selectedMachine', 0);
       view.render();
+      machines.add([{id: containerId}]);
       var machineToken = container.one('.column.machines .items .token');
-      var fakeContainerToken = {};
       assert.equal(selectRootStub.callCount(), 1); // called once by render
       assert.equal(selectContainerStub.callCount(), 0);
-      view._selectMachineToken(machineToken, fakeContainerToken);
+      view._selectMachineToken(machineToken, containerId);
       assert.equal(selectRootStub.callCount(), 1);
       assert.equal(selectContainerStub.callCount(), 1);
+      assert.deepEqual(selectContainerStub.lastArguments()[0], container.one(
+          '.container-token .token[data-id="' + containerId + '"]'));
     });
 
     it('does not allow placement on machines being deleted', function() {
