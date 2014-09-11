@@ -758,6 +758,15 @@ YUI.add('deployer-bar', function(Y) {
           case '_set_config':
             name = args[0];
             service = db.services.getById(name);
+            if (service === null) {
+              db.services.some(function(dbService) {
+                if (dbService.get('displayName')
+                           .replace(/^\(/, '').replace(/\)$/, '') === name) {
+                  service = dbService;
+                  return true;
+                }
+              });
+            }
             changes.setConfigs.push({
               icon: service.get('icon'),
               serviceName: name
