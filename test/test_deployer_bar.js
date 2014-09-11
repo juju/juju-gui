@@ -462,6 +462,37 @@ describe('deployer bar view', function() {
     assert.deepEqual(results[0], machine);
   });
 
+  it('retrieves all of the _set_config changes', function() {
+    db.services.add([
+      { id: 'foo-1', displayName: 'foo', icon: 'foo-icon' },
+      // To test the ghost config set.
+      { id: '$12345', displayName: '(bar)', icon: 'bar-icon' }
+    ]);
+    var command1 = {
+      method: '_set_config',
+      args: ['foo']
+    };
+    var command2 = {
+      method: '_set_config',
+      args: ['bar']
+    };
+    ecs._createNewRecord('setConfig', command1, []);
+    ecs._createNewRecord('setConfig', command2, []);
+    var delta = view._getChanges(ecs),
+        results = delta.changes.setConfigs;
+    assert.lengthOf(results, 2);
+    assert.deepEqual(results, [
+      {
+        icon: 'foo-icon',
+        serviceName: 'foo'
+      },
+      {
+        icon: 'bar-icon',
+        serviceName: 'bar'
+      }
+    ]);
+  });
+
   it('can export the environment', function() {
     var exportStub = utils.makeStubMethod(bundleHelpers, 'exportYAML');
     this._cleanups.push(exportStub.reset);
