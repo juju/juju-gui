@@ -534,9 +534,33 @@ describe('Environment Change Set', function() {
       assert.deepEqual(attrs, {deleted: false});
     });
 
-    it.skip('backs out config changes', function() {
-      // XXX Config changed is not included in here pending current work on
-      // storing the previous config values. Makyo 2014-08-22
+    it('backs out config changes', function() {
+      var db = ecs.get('db');
+      var setStub = testUtils.makeStubFunction();
+      var getStub = function(key) {
+        if (key === 'config') {
+          return {
+            foo: 'bar',
+            bax: undefined
+          };
+        }
+        if (key === 'environmentConfig') {
+          return { foo: 'baz' };
+        }
+      };
+      db.services = {
+        getById: function() {
+          return {
+            get: getStub,
+            set: setStub
+          };
+        }
+      };
+      ecs._clearFromDB({method: '_set_config', args: [1]});
+      assert.deepEqual(setStub.lastArguments()[1], {
+        foo: 'baz',
+        bax: undefined
+      });
     });
 
     it('clears added relations', function() {
