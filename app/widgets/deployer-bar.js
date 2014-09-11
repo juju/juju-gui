@@ -758,6 +758,11 @@ YUI.add('deployer-bar', function(Y) {
           case '_set_config':
             name = args[0];
             service = db.services.getById(name);
+            // The ecs changes the set config service name to the real name
+            // before the services model id has changed to its deploy name.
+            // So if no service is found then it's because the name hasn't
+            // yet been changed and we need to search through the services
+            // for the one which matches.
             if (service === null) {
               db.services.some(function(dbService) {
                 if (dbService.get('displayName')
