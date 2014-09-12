@@ -293,6 +293,7 @@ YUI.add('machine-view-panel', function(Y) {
           var unitTokens = this.get('unitTokens'),
               changed = e.changed,
               target = e.target;
+          var db = this.get('db');
           if (changed) {
             // Need to update any machines and containers that now have
             // new units.
@@ -300,30 +301,36 @@ YUI.add('machine-view-panel', function(Y) {
               if (changed.machine.newVal) {
                 var machineTokens = this.get('machineTokens'),
                     containerTokens = this.get('containerTokens'),
-                    id = changed.machine.newVal,
-                    machineToken = machineTokens[id],
-                    containerToken = containerTokens[id];
+                    machineId,
+                    units,
+                    id = changed.machine.newVal;
+                // Check if this is a machine.
+                if (id.indexOf('/') === -1) {
+                  machineId = id;
+                  units = db.units.filterByMachine(machineId);
+                }
+                var containerToken = containerTokens[machineId ?
+                    machineId + '/root-container' : id];
+                // Only need to update the container token if it has
+                // been created.
                 if (containerToken) {
                   var container = containerToken.get('machine');
-                  // Need to get the parent machine id (if this is a
-                  // nested container parentId will be the parent
-                  // container).
-                  var parentId = container.parentId.split('/')[0];
-                  this._updateMachineWithUnitData(container);
+                  // Need to get the machine, if this is a nested
+                  // container parentId will be the parent container, so
+                  // we need to split for the machine id.
+                  machineId = machineId || container.parentId.split('/')[0];
+                  // Update the container with the unit.
+                  this._updateMachineWithUnitData(container, units);
                   containerToken.renderUnits();
-                  // Get the parent machine token to update as well.
-                  machineToken = machineTokens[parentId];
                 }
-                // Update the machine/parent token. This is always updated
-                // as the unit is either added to the root container or a
-                // child container. Either way we need to display the unit
-                // on the parent.
+                // Update the machine with the unit.
+                var machineToken = machineTokens[machineId];
                 this._updateMachineWithUnitData(machineToken.get('machine'));
                 machineToken.renderUnits();
               } else {
                 // This is a (now unplaced) uncommitted unit from a destroyed
                 // machine. Add it to the unittokens.
-                var unit = this.get('db').units.getById(target.get('id'));
+                var unit = db.units.getById(target.get('id'));
                 this._createServiceUnitToken(unit);
               }
             }
