@@ -602,6 +602,9 @@ YUI.add('juju-databinding', function(Y) {
     */
     BindingEngine.prototype.unbind = function() {
       var self = this;
+      // Make sure we don't try to update the DOM after everything has been
+      // unbound.
+      this._updateTimeout.cancel();
       // Unbind each model
       Y.each(this._models, function(handles) {
         handles.forEach(function(handle) {
