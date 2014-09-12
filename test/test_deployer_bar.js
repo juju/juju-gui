@@ -582,6 +582,10 @@ describe('deployer bar view', function() {
   });
 
   describe('Commit onboarding', function() {
+    afterEach(function() {
+      localStorage.clear();
+    });
+
     it('should hide commit onboarding when dismissed', function() {
       var onboarding = container.one('.commit-onboarding');
       onboarding.removeClass('hidden');
@@ -590,7 +594,6 @@ describe('deployer bar view', function() {
     });
 
     it('should show commit onboarding one time only', function() {
-      localStorage.setItem('commit-onboarding-shown', 'false');
       var onboarding = container.one('.commit-onboarding');
       view._showCommitOnboarding();
       assert.equal(onboarding.hasClass('hidden'), false,
