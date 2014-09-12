@@ -140,3 +140,12 @@
     font-size: 32px;
     line-height: 0px;
 }
+.diamond(@color: inherit) {
+  .rotate(45deg);
+  content: '';
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  display: block;
+  background-color: @color;
+}
