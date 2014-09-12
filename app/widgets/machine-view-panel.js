@@ -674,11 +674,9 @@ YUI.add('machine-view-panel', function(Y) {
               parentId = selected;
             }
             this._placeUnit(unit, parentId);
-            var containerToken = this._findMachineOrContainerToken(
-                tokenId, true);
             var machineToken = this.get('machineTokens')[selected].get(
                 'container').one('.token');
-            this._selectMachineToken(machineToken, containerToken);
+            this._selectMachineToken(machineToken, tokenId);
           } else {
             this._displayCreateMachine(unit, dropAction, parentId);
           }
@@ -837,9 +835,9 @@ YUI.add('machine-view-panel', function(Y) {
          *
          * @method _selectMachineToken
          * @param {Object} selected The node for the token that was selected.
-         * @param {Object} selectedContainer Optional active container.
+         * @param {String} selectedContainerId Optional active container id.
          */
-        _selectMachineToken: function(selected, selectedContainer) {
+        _selectMachineToken: function(selected, selectedContainerId) {
           var container = this.get('container'),
               previousActive = container.one(
                   '.column.machines .items .token.active'),
@@ -863,8 +861,13 @@ YUI.add('machine-view-panel', function(Y) {
             machineTokens[parentId].showConstraints();
           }
           this._renderContainerTokens(containers, parentId);
-          if (selectedContainer) {
-            this._selectContainerToken(selectedContainer);
+          // Need to get the container token after they have been
+          // rendered otherwise we'll be getting a node that no longer
+          // exists in the DOM.
+          var containerToken = this._findMachineOrContainerToken(
+              selectedContainerId, true);
+          if (containerToken) {
+            this._selectContainerToken(containerToken);
           } else {
             this._selectRootContainer(parentId);
           }
@@ -888,11 +891,11 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Object} selected the node for the token that was selected.
          */
         _selectContainerToken: function(selected) {
-          var container = this.get('container');
-          var containerTokens = container.all(
-              '.containers .content .items .token');
-          // Select the active token.
-          containerTokens.removeClass('active');
+          var lastActive = this.get('container').one(
+              '.containers .content .items .token.active');
+          if (lastActive) {
+            lastActive.removeClass('active');
+          }
           selected.addClass('active');
         },
 
@@ -966,7 +969,6 @@ YUI.add('machine-view-panel', function(Y) {
             this._containersHeader.updateLabelCount('unit', -1);
             // Update the icons on the parent machine.
             this._updateMachineWithUnitData(parentMachine);
-            console.log(parentMachine.units);
             this.get('machineTokens')[parentMachine.id].render();
           }
         },
