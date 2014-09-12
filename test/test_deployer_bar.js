@@ -598,8 +598,8 @@ describe('deployer bar view', function() {
       view._showCommitOnboarding();
       assert.equal(onboarding.hasClass('hidden'), false,
                    'onboarding should be shown initially');
-      assert.equal(localStorage.getItem('commit-onboarding-shown'), 'true',
-                   'flag indicating onboarding has been shown should be set');
+      assert.equal(localStorage.getItem('commit-onboarding'), 'dismissed',
+                   'flag indicating onboarding dismissed should be set');
       onboarding.one('.close').simulate('click');
       assert.equal(onboarding.hasClass('hidden'), true,
                    'onboarding should be hidden');

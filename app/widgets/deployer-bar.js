@@ -862,9 +862,8 @@ YUI.add('deployer-bar', function(Y) {
       @method _showCommitOnboarding
     */
     _showCommitOnboarding: function() {
-      if (localStorage.getItem('commit-onboarding-shown') !== 'true') {
+      if (localStorage.getItem('commit-onboarding') !== 'dismissed') {
         this.get('container').one('.commit-onboarding').removeClass('hidden');
-        localStorage.setItem('commit-onboarding-shown', 'true');
       }
     },
 
@@ -878,6 +877,7 @@ YUI.add('deployer-bar', function(Y) {
       if (e) {
         e.halt();
       }
+      localStorage.setItem('commit-onboarding', 'dismissed');
       this.get('container').one('.commit-onboarding').addClass('hidden');
     }
 
