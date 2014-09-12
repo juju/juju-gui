@@ -1,6 +1,8 @@
 .deployer-bar {
     @panel-header: 50px;
     @paper-dark: #ebecee url(/juju-ui/assets/images/non-sprites/paper-bg-dark.jpg) repeat 0 0;
+    @dark-bg: #221e1b;
+    @light-text: #d7d3d0;
 
     time {
         color: #bfbab5;
@@ -362,5 +364,27 @@
                 border-left: 1px solid #D9D9D9;
             }
         }
+    }
+    .commit-onboarding {
+      .create-border-radius(@border-radius);
+      position: absolute;
+      bottom: 60px;
+      z-index: 654;
+      right: 10px;
+      background: @dark-bg;
+      color: @light-text;
+      padding: 10px;
+      width: 200px;
+      .close {
+        display: block;
+        margin-top: 1em;
+        color: @light-text;
+        text-decoration: underline;
+      }
+      &:after {
+        .diamond(@dark-bg);
+        bottom: -3px;
+        right: 50px;
+      }
     }
 }

@@ -92,6 +92,9 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.view-machines': {
         click: '_viewMachines'
+      },
+      '.commit-onboarding .close': {
+        click: '_hideCommitOnboarding'
       }
     },
 
@@ -272,6 +275,7 @@ YUI.add('deployer-bar', function(Y) {
     */
     showDeployConfirmation: function(evt) {
       evt.halt();
+      this._hideCommitOnboarding();
       if (this._getChangeCount(this.get('ecs')) > 0) {
         this._showSummary();
       }
@@ -437,6 +441,7 @@ YUI.add('deployer-bar', function(Y) {
     */
     _toggleDeployButtonStatus: function(enabled) {
       if (enabled) {
+        this._showCommitOnboarding();
         this.get('container').one('.deploy-button').removeClass('disabled');
       } else {
         this.get('container').one('.deploy-button').addClass('disabled');
@@ -849,6 +854,31 @@ YUI.add('deployer-bar', function(Y) {
           component: 'machine'
         }
       });
+    },
+
+    /**
+      Optionally show the onboarding message for the commit button.
+
+      @method _showCommitOnboarding
+    */
+    _showCommitOnboarding: function() {
+      if (localStorage.getItem('commit-onboarding') !== 'dismissed') {
+        this.get('container').one('.commit-onboarding').removeClass('hidden');
+      }
+    },
+
+    /**
+      Hide the onboarding message for the commit button.
+
+      @method _hideCommitOnboarding
+      @param {Object} e The event object.
+    */
+    _hideCommitOnboarding: function(e) {
+      if (e) {
+        e.halt();
+      }
+      localStorage.setItem('commit-onboarding', 'dismissed');
+      this.get('container').one('.commit-onboarding').addClass('hidden');
     }
 
   });
