@@ -107,6 +107,7 @@ YUI.add('deployer-bar', function(Y) {
           this.on('hideChangeDescription', this._hideChangeDescription)
       );
       this._deployed = false;
+      this._deploying = false;
     },
 
     /**
@@ -135,7 +136,7 @@ YUI.add('deployer-bar', function(Y) {
         deployed: this._deployed
       }));
       container.addClass('deployer-bar');
-      this._toggleDeployButtonStatus(changes > 0);
+      this._toggleDeployButtonStatus(changes > 0 && !this._deploying);
       ecs.on('changeSetModified', Y.bind(this.update, this));
       return this;
     },
@@ -148,15 +149,16 @@ YUI.add('deployer-bar', function(Y) {
     */
     deploy: function(evt) {
       evt.halt();
+      this._deploying = true;
       var container = this.get('container'),
           ecs = this.get('ecs'),
           autodeploy = container.one('input[value="autodeploy"]');
+      this._toggleDeployButtonStatus(false);
       if (autodeploy && autodeploy.get('checked')) {
         this._autoPlaceUnits();
       }
       container.removeClass('summary-open');
       ecs.commit(this.get('env'));
-      //this.update();
       if (this._deployed === false) {
         this._setDeployed();
       }
@@ -358,6 +360,9 @@ YUI.add('deployer-bar', function(Y) {
       // and app to be better mocked out to not pick up changes when not
       // wanted.
       if (container && container.get('parentNode')) {
+        if (changes === 0) {
+          this._deploying = false;
+        }
         container.setHTML(this.template({
           // There is no need to update the container with the latest change
           // descriptions: this is done each time the user opens the panel.
@@ -365,7 +370,7 @@ YUI.add('deployer-bar', function(Y) {
           changeCount: changes,
           deployed: this._deployed
         }));
-        this._toggleDeployButtonStatus(changes > 0);
+        this._toggleDeployButtonStatus(changes > 0 && !this._deploying);
         // XXX frankban 2014-05-12: the code below makes the changeset
         // description disappear the first time the panel is visited. Why
         // do we want this? This breaks the user experience, and after removing
@@ -387,7 +392,8 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container');
       container.removeClass('summary-open');
 
-      this._toggleDeployButtonStatus(this._getChangeCount(this.get('ecs')) > 0);
+      this._toggleDeployButtonStatus(
+          this._getChangeCount(this.get('ecs')) > 0 && !this._deploying);
     },
 
     /**
