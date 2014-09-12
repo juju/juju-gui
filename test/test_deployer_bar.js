@@ -580,4 +580,11 @@ describe('deployer bar view', function() {
     view.deploy({halt: utils.makeStubFunction()});
     assert.equal(autoplaceStub.calledOnce(), true);
   });
+
+  it('should hide commit onboarding when dismissed', function() {
+    var onboarding = container.one('.commit-onboarding');
+    onboarding.removeClass('hidden');
+    onboarding.one('.close').simulate('click');
+    assert.equal(onboarding.hasClass('hidden'), true);
+  });
 });

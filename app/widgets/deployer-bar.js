@@ -92,6 +92,9 @@ YUI.add('deployer-bar', function(Y) {
       },
       '.view-machines': {
         click: '_viewMachines'
+      },
+      '.commit-onboarding .close': {
+        click: '_hideCommitOnboarding'
       }
     },
 
@@ -849,6 +852,17 @@ YUI.add('deployer-bar', function(Y) {
           component: 'machine'
         }
       });
+    },
+
+    /**
+      Navigate to the machine view.
+
+      @method _viewMachine
+      @param {Object} e The event object.
+    */
+    _hideCommitOnboarding: function(e) {
+      e.halt();
+      this.get('container').one('.commit-onboarding').addClass('hidden');
     }
 
   });
