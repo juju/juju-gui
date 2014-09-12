@@ -139,11 +139,10 @@ YUI.add('service-config-view', function(Y) {
     _highlightUncommitted: function(e) {
       var container = this.get('container'),
           dirtyFields = e.newVal || e;
-      container.all('label.uncommitted').removeClass('uncommitted');
+      container.all('.settings-wrapper').removeClass('uncommitted');
       dirtyFields.forEach(function(configKey) {
         container.one('[data-bind=config.' + configKey + ']')
                  .ancestor('.settings-wrapper')
-                 .one('label')
                  .addClass('uncommitted');
       });
     },
