@@ -1868,6 +1868,54 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+       Macps machine placement for sesrvices
+
+       @method _mapServicesToMachines
+       @param {Object}  machineList The list of machines.
+     */
+    _mapServicesToMachines: function(machineList) {
+      var machinePlacement = {};
+      var owners = {};
+      machineList.each(function(machine) {
+        //TODO Throw notification if one service has more than one unit on the
+        //same machine.
+        //TODO LXCs
+        if (machine.id.indexOf('new') !== -1) {
+          return; // Ignore uncommitted machines.
+        }
+        // Strip out uncommitted units.
+        var units = machine.units.filter(function(unit) {
+          return unit.agent_state;
+        });
+        units.sort(function(a, b) {
+          if (a.id > b.id) { // lexical sort by id is sufficient
+            return 1;
+          } else if (a.id < b.id) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        var owner = units[0].id.split('/')[0];
+        var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
+        owners[owner] = ownerIndex;
+        var machineName = owner + '=' + ownerIndex;
+        units.forEach(function(unit) {
+          var serviceName = unit.id.split('/')[0];
+          if (serviceName === owner) {
+            return;
+          }
+          if (machinePlacement[serviceName]) {
+            machinePlacement[serviceName].push(machineName);
+          } else {
+            machinePlacement[serviceName] = [machineName];
+          }
+        });
+      }, this);
+      return machinePlacement;
+    },
+
+    /**
      * Export deployer formatted dump of the current environment.
      * Note: When we have a selection UI in place this should honor
      * that.
@@ -1876,8 +1924,7 @@ YUI.add('juju-models', function(Y) {
      * @return {Object} export object suitable for serialization.
      */
     exportDeployer: function() {
-      var self = this,
-          serviceList = this.services,
+      var serviceList = this.services,
           relationList = this.relations,
           defaultSeries = this.environment.get('defaultSeries'),
           result = {
@@ -1893,7 +1940,7 @@ YUI.add('juju-models', function(Y) {
 
       serviceList.each(function(service) {
         var units = service.get('units');
-        var charm = self.charms.getById(service.get('charm'));
+        var charm = this.charms.getById(service.get('charm'));
         var serviceOptions = {};
         var charmOptions = charm.get('options');
         var serviceName = service.get('id');
@@ -1967,9 +2014,16 @@ YUI.add('juju-models', function(Y) {
           serviceData.annotations = {'gui-x': anno['gui-x'],
             'gui-y': anno['gui-y']};
         }
-
         result.envExport.services[serviceName] = serviceData;
-      });
+      }, this);
+
+      if (window.flags && window.flags.mv) {
+        var machinePlacement = this._mapServicesToMachines(this.machines);
+        Object.keys(machinePlacement).forEach(function(serviceName) {
+          var placement = machinePlacement[serviceName];
+          result.envExport.services[serviceName].to = placement;
+        });
+      }
 
       relationList.each(function(relation) {
         var endpoints = relation.get('endpoints');
@@ -1992,7 +2046,7 @@ YUI.add('juju-models', function(Y) {
           return endpoint[0] + ':' + endpoint[1].name;
         });
         result.envExport.relations.push(relationData);
-      });
+      }, this);
 
       return result;
     },
