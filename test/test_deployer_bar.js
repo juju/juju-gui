@@ -581,10 +581,28 @@ describe('deployer bar view', function() {
     assert.equal(autoplaceStub.calledOnce(), true);
   });
 
-  it('should hide commit onboarding when dismissed', function() {
-    var onboarding = container.one('.commit-onboarding');
-    onboarding.removeClass('hidden');
-    onboarding.one('.close').simulate('click');
-    assert.equal(onboarding.hasClass('hidden'), true);
+  describe('Commit onboarding', function() {
+    it('should hide commit onboarding when dismissed', function() {
+      var onboarding = container.one('.commit-onboarding');
+      onboarding.removeClass('hidden');
+      onboarding.one('.close').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), true);
+    });
+
+    it('should show commit onboarding one time only', function() {
+      localStorage.setItem('commit-onboarding-shown', 'false');
+      var onboarding = container.one('.commit-onboarding');
+      view._showCommitOnboarding();
+      assert.equal(onboarding.hasClass('hidden'), false,
+                   'onboarding should be shown initially');
+      assert.equal(localStorage.getItem('commit-onboarding-shown'), 'true',
+                   'flag indicating onboarding has been shown should be set');
+      onboarding.one('.close').simulate('click');
+      assert.equal(onboarding.hasClass('hidden'), true,
+                   'onboarding should be hidden');
+      view._showCommitOnboarding();
+      assert.equal(onboarding.hasClass('hidden'), true,
+                   'onboarding should still be hidden');
+    });
   });
 });
