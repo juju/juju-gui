@@ -1202,15 +1202,22 @@ describe('utilities', function() {
       assert.equal(collections[0].aggregatedStatus, 'healthy');
       // Any error relations - error.
       assert.equal(collections[1].aggregatedStatus, 'error');
+
       // n-1 or fewer subordinate relations - healthy.
       collections[0].relations[0].isSubordinate = true;
       assert.equal(collections[0].aggregatedStatus, 'healthy');
+      // Healthy relation pending deletion.
+      collections[0].relations[0].deleted = true;
+      assert.equal(collections[0].aggregatedStatus, 'pending-healthy');
       // n subordinate relations - subordinate.
       collections[0].relations[1].isSubordinate = true;
       assert.equal(collections[0].aggregatedStatus, 'subordinate');
       // Any subordinate relations with any errors - error.
       collections[1].relations[0].isSubordinate = true;
       assert.equal(collections[1].aggregatedStatus, 'error');
+      // Errored relations pending deletion.
+      collections[1].relations[0].deleted = true;
+      assert.equal(collections[1].aggregatedStatus, 'pending-error');
       // Any pending relation - pending.
       collections[1].relations[0].pending = true;
       assert.equal(collections[1].aggregatedStatus, 'pending');
