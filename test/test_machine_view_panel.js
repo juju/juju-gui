@@ -1974,6 +1974,21 @@ describe('machine view panel view', function() {
       assert.equal(tokenArguments[0][1].displayName, 'Root container');
     });
 
+    it('creates container tokens with proper committed state', function() {
+      view.render();
+      machines.add([{ id: '0/lxc/new1' }]);
+      var containers = machines.filterByAncestor('0');
+      var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
+      this._cleanups.push(tokenStub.reset);
+      view._renderContainerTokens(containers, '0');
+      assert.equal(tokenStub.callCount(), 2);
+      var tokenArguments = tokenStub.allArguments();
+      assert.equal(tokenArguments[0][2], true,
+                   'root container does not have expected committed state');
+      assert.equal(tokenArguments[1][2], false,
+                   'new container does not have expected uncommitted state');
+    });
+
     it('displays the container count in the header', function() {
       view.render();
       machines.add([{id: '0/lxc/0'}]);

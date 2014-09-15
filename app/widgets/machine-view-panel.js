@@ -1185,7 +1185,7 @@ YUI.add('machine-view-panel', function(Y) {
           var containerParent = this.get('container').one(
               '.containers .content .items');
           var numUnits = db.units.filterByMachine(parentId, true).length;
-          var committed = parentId.indexOf('new') !== 0;
+          var parentCommitted = parentId.indexOf('new') !== 0;
           var rootUnits = db.units.filterByMachine(parentId);
           // To allow sorting create a new model list that contains just
           // the list of containers. This means we don't have to loop over
@@ -1205,8 +1205,10 @@ YUI.add('machine-view-panel', function(Y) {
             displayName: 'Root container',
             id: parentId + '/' + ROOT_CONTAINER_PLACEHOLDER
           };
+          // The root container inherits the committed/uncommitted state of its
+          // parent machine.
           this._createContainerToken(containerParent, rootContainer,
-              committed, rootUnits);
+              parentCommitted, rootUnits);
 
           if (containers.length > 0) {
             machinesModelList.add(containers);
@@ -1215,7 +1217,9 @@ YUI.add('machine-view-panel', function(Y) {
             machinesModelList.each(function(container) {
               // Get the real machine so that we are only dealing with
               // the correct data and so that the events work etc.
-              var machine = db.machines.getById(container.id);
+              var id = container.id,
+                  machine = db.machines.getById(id),
+                  committed = id.indexOf('new') < 0;
               machine.displayDelete = true;
               this._createContainerToken(containerParent, machine, committed);
             }, this);
