@@ -1932,7 +1932,7 @@ YUI.add('juju-env-go', function(Y) {
     handleAddRelation: function(userCallback, endpoint_a, endpoint_b, data) {
       var result = {};
       var response = data.Response;
-      if (response) {
+      if (response && response.Endpoints) {
         var serviceNameA = endpoint_a.split(':')[0];
         var serviceNameB = endpoint_b.split(':')[0];
         result.endpoints = [];

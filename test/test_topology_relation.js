@@ -147,6 +147,39 @@ describe('topology relation module', function() {
         'canceled or completed');
   });
 
+  it('gracefully handles errors on creation', function() {
+    var stubNotification = utils.makeStubFunction();
+    var topo = {
+      get: function() {
+        return {
+          get: function() {
+            return {
+              relations: {
+                remove: function() {},
+                getById: function() {}
+              },
+              notifications: {
+                add: stubNotification
+              }
+            };
+          },
+          vis: {
+            select: function() {
+              return {
+                remove: function() {}
+              };
+            }
+          },
+          update: function() {},
+          bindAllD3Events: function() {}
+        };
+      }
+    };
+    view._addRelationCallback(topo, 'foo', {err: 'Oh no!'});
+    assert.equal(stubNotification.calledOnce(), true,
+        'Notification of error not created');
+  });
+
   it('has a list of relations', function() {
     assert.deepEqual(view.relations, []);
   });
