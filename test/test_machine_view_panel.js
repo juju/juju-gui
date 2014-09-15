@@ -523,16 +523,22 @@ describe('machine view panel view', function() {
       // Add a container.
       machines.add([{id: '0/lxc/3'}]);
       var machineToken = view.get('machineTokens')['0'];
+      var rootToken = view.get('containerTokens')['0/root-container'];
       var containerToken = view.get('containerTokens')['0/lxc/3'];
       view._bindEvents();
       view._machinesHeader = { setDroppable: utils.makeStubFunction() };
       view._containersHeader = { setDroppable: utils.makeStubFunction() };
       machineToken.setDroppable = utils.makeStubFunction();
       containerToken.setDroppable = utils.makeStubFunction();
+      rootToken.setDroppable = utils.makeStubFunction();
       view.set('selectedMachine', 1);
       // unit-drag start handler _showDraggingUI
       onStub.allArguments()[0][1].call(view);
-      return {machine: machineToken, container: containerToken};
+      return {
+        machine: machineToken,
+        rootContainer: rootToken,
+        container: containerToken
+      };
     };
 
     it('turns headers/tokens to drop targets (machine selected)', function() {
@@ -553,6 +559,9 @@ describe('machine view panel view', function() {
       assert.equal(
           tokens.container.setDroppable.calledOnce(), true,
           'container token setDroppable not called');
+      assert.equal(
+          tokens.rootContainer.setDroppable.calledOnce(), true,
+          'root container not set droppable when it should be.');
     });
 
     it('turns headers/tokens to drop targets (unknown provider)', function() {
@@ -570,6 +579,9 @@ describe('machine view panel view', function() {
       assert.equal(
           tokens.container.setDroppable.calledOnce(), false,
           'container token setDroppable unexpectedly called');
+      assert.equal(
+          tokens.rootContainer.setDroppable.calledOnce(), true,
+          'root container not set droppable when it should be.');
     });
 
     it('turns headers/tokens to drop targets (no containers)', function() {
