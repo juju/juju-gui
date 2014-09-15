@@ -118,12 +118,15 @@ YUI.add('machine-view-panel', function(Y) {
           // Turn unit models into tokens and store internally.
           this._addIconsToUnits(units);
           units.forEach(function(unit) {
-            var token = new views.ServiceUnitToken({
-              unit: unit,
-              db: db,
-              env: env
-            });
-            unitTokens[unit.id] = token;
+            // We don't want any subordinates in the unitToken list.
+            if (!db.services.getById(unit.service).get('subordinate')) {
+              var token = new views.ServiceUnitToken({
+                unit: unit,
+                db: db,
+                env: env
+              });
+              unitTokens[unit.id] = token;
+            }
           }, this);
           this.set('unitTokens', unitTokens);
           this._bindEvents();
@@ -389,13 +392,19 @@ YUI.add('machine-view-panel', function(Y) {
         _createServiceUnitToken: function(unit) {
           var token,
               unitTokens = this.get('unitTokens'),
-              node = Y.Node.create('<li></li>');
+              node = Y.Node.create('<li></li>'),
+              db = this.get('db');
+          // If we create a new unit but it's a subordinate then skip creating
+          // the token.
+          if (db.services.getById(unit.service).get('subordinate')) {
+            return;
+          }
           this._addIconToUnit(unit);
           token = new views.ServiceUnitToken({
             container: node,
             unit: unit,
             env: this.get('env'),
-            db: this.get('db'),
+            db: db,
             supportedContainerTypes: this.supportedContainerTypes
           });
           unitTokens[unit.id] = token;

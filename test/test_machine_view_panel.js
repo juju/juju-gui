@@ -83,13 +83,15 @@ describe('machine view panel view', function() {
     // setup unplaced service units
     units = new models.ServiceUnitList();
     units.add([
-      {id: 'test/1'}
+      {id: 'test/1'},
+      {id: 'sub/1'}
     ]);
     // setup test services
     services = new models.ServiceList();
     services.add([
       {id: 'test', icon: 'test.svg'},
-      {id: 'baz', icon: 'baz.svg'}
+      {id: 'baz', icon: 'baz.svg'},
+      {id: 'sub', icon: 'sub.svg', subordinate: true}
     ]);
     // Set up test notifications.
     notifications = new models.NotificationList();
@@ -172,6 +174,12 @@ describe('machine view panel view', function() {
     assert.equal(moreMenuNode.one('.yui3-moremenu').hasClass('open'), true);
     assert.equal(stubDisable.callCount(), 1);
     assert.deepEqual(stubDisable.lastArguments(), ['Add container', true]);
+  });
+
+  it('only instantiates non-subordinate unit tokens', function() {
+    var unitTokens = view.get('unitTokens');
+    assert.equal(Object.keys(unitTokens).length, 1);
+    assert.equal(unitTokens['test/1'].get('unit').service, 'test');
   });
 
   describe('_onMachineCreated (autodeploy_extension integration)', function() {
@@ -879,7 +887,7 @@ describe('machine view panel view', function() {
     it('should render a list of units', function() {
       view.render();
       var list = container.all('.unplaced .unplaced-unit');
-      assert.equal(list.size(), units.size(),
+      assert.equal(list.size(), 1,
                    'models are out of sync with displayed list');
       list.each(function(item, index) {
         var u = units.item(index),
@@ -922,8 +930,8 @@ describe('machine view panel view', function() {
       var env = view.get('env');
       view.render();
       container.one('.column.unplaced .auto-place').simulate('click');
-      assert.equal(env.addMachines.calledOnce(), true);
-      var placeArgs = env.placeUnit.lastArguments();
+      assert.equal(env.addMachines.callCount(), 2);
+      var placeArgs = env.placeUnit.allArguments()[0];
       assert.strictEqual(placeArgs[0].id, 'test/1',
           'The unit should be placed');
       assert.equal(placeArgs[1], 'new0',
@@ -935,11 +943,11 @@ describe('machine view panel view', function() {
       var selector = '.unplaced .unplaced-unit',
           list = container.all(selector),
           id = 'test/2';
-      assert.equal(list.size(), units.size(),
+      assert.equal(list.size(), 1,
                    'initial displayed list is out of sync with unplaced units');
       units.add([{ id: id }]);
       list = container.all(selector);
-      assert.equal(list.size(), units.size(),
+      assert.equal(list.size(), 2,
                    'final displayed list is out of sync with unplaced units');
       var addedItem = container.one(selector + '[data-id="' + id + '"]');
       assert.notEqual(addedItem, null,
@@ -997,11 +1005,11 @@ describe('machine view panel view', function() {
       view.render();
       var selector = '.unplaced .unplaced-unit',
           list = container.all(selector);
-      assert.equal(list.size(), units.size(),
+      assert.equal(list.size(), 1,
                    'initial displayed list is out of sync with unplaced units');
       units.remove(0);
       list = container.all(selector);
-      assert.equal(list.size(), units.size(),
+      assert.equal(list.size(), 0,
                    'final displayed list is out of sync with unplaced units');
       var deletedSelector = selector + '[data-id="test/1"]';
       var deletedItem = container.one(deletedSelector);
