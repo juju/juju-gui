@@ -98,22 +98,14 @@ YUI.add('machine-view-panel', function(Y) {
           var db = this.get('db'),
               env = this.get('env'),
               machines = db.machines.filterByParent(),
-              machineTokens = {},
               units = db.units.filterByMachine(),
               unitTokens = {};
-          var tokenConstraintsVisible = this.get('tokenConstraintsVisible');
           this.supportedContainerTypes = [];
           // Turn machine models into tokens and store internally.
+          this.set('machineTokens', {});
           machines.forEach(function(machine) {
-            var token = new views.MachineToken({
-              containerTemplate: '<li/>',
-              machine: machine,
-              committed: machine.id.indexOf('new') !== 0,
-              constraintsVisible: tokenConstraintsVisible
-            });
-            machineTokens[machine.id] = token;
-          });
-          this.set('machineTokens', machineTokens);
+            this._createMachineToken(machine);
+          }, this);
           this.set('containerTokens', {});
           // Turn unit models into tokens and store internally.
           this._addIconsToUnits(units);
@@ -533,8 +525,7 @@ YUI.add('machine-view-panel', function(Y) {
               this._containersHeader.updateLabelCount('container', 1);
             }
           } else {
-            committed = machine.id.indexOf('new') !== 0;
-            this._createMachineToken(machine, committed);
+            this._renderMachineToken(this._createMachineToken(machine));
             this._machinesHeader.updateLabelCount('machine', 1);
           }
           if (!selectedMachine) {
@@ -1330,11 +1321,7 @@ YUI.add('machine-view-panel', function(Y) {
             machinesModelList.sort();
             // Render each of the machine tokens out to a list
             machinesModelList.each(function(machine) {
-              var token = machineTokens[machine.id];
-              this._updateMachineWithUnitData(token.get('machine'));
-              token.render();
-              token.addTarget(this);
-              nodeContainer.append(token.get('container'));
+              this._renderMachineToken(machineTokens[machine.id]);
             }, this);
             if (selectedMachine) {
               this._selectMachineToken(machineTokens[selectedMachine].get(
@@ -1351,16 +1338,24 @@ YUI.add('machine-view-panel', function(Y) {
            @param {Bool} committed The committed state.
          */
         _createMachineToken: function(machine, committed) {
-          var token;
-          var machineTokens = this.get('machineTokens');
-          token = new views.MachineToken({
+          var token = new views.MachineToken({
             containerTemplate: '<li/>',
             machine: machine,
-            committed: committed,
+            committed: machine.id.indexOf('new') !== 0,
             constraintsVisible: this.get('tokenConstraintsVisible')
           });
-          machineTokens[machine.id] = token;
-          this._updateMachineWithUnitData(machine);
+          this.get('machineTokens')[machine.id] = token;
+          return token;
+        },
+
+        /**
+         * Render a machine token.
+         *
+         * @method _renderMachineToken
+           @param {Object} token The machine token to render
+         */
+        _renderMachineToken: function(token) {
+          this._updateMachineWithUnitData(token.get('machine'));
           token.render();
           token.addTarget(this);
           this.get('container').one('.column.machines .items').append(
