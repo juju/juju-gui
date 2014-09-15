@@ -934,6 +934,15 @@ YUI.add('juju-models', function(Y) {
     // machine lazy instances' properties.
     ATTRS: {
       /**
+        The committed status of the machine. Possible values are 'uncommitted',
+        'inProgress' and 'committed'.
+
+        @attribute commitStatus
+        @type {String}
+        @default undefined
+      */
+      commitStatus: {},
+      /**
         The machine display name (e.g. "1" or "2/lxc/0"), automatically
         generated when a machine is added to the model list.
 

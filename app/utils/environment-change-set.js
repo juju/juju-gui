@@ -187,6 +187,7 @@ YUI.add('environment-change-set', function(Y) {
       */
       function _callbackWrapper() {
         record.executed = true;
+        self._markCommitStatus('committed', record.command);
         // `this` here is in context that the callback is called
         //  under. In most cases this will be `env`.
         var result = callback.apply(this, self._getArgs(arguments));
@@ -219,6 +220,7 @@ YUI.add('environment-change-set', function(Y) {
       if (command.prepare) {
         command.prepare(this.get('db'));
       }
+      this._markCommitStatus('inProgress', record.command);
       env[command.method].apply(env, command.args);
     },
 
@@ -358,6 +360,34 @@ YUI.add('environment-change-set', function(Y) {
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
+        }
+      }
+    },
+
+    /**
+      Mark the supplied commands associated model to the supplied commit status.
+
+      @method _markCommitStatus
+      @param {String} status The status to set the 'commitStatus' attr to.
+      @param {Object} command The command from the changeSet record.
+    */
+    _markCommitStatus: function(status, command) {
+      var db = this.get('db'),
+          committed = 'committed',
+          modelList;
+      switch (command.method) {
+        case '_addMachines':
+          modelList = db.machines;
+          break;
+      }
+      if (modelList) {
+        var model = modelList.getById(command.options.modelId);
+        if (!(model instanceof Y.Model)) {
+          model = modelList.revive(model);
+        }
+        model.set('commitStatus', committed);
+        if (typeof modelList.free === 'function') {
+          modelList.free(model);
         }
       }
     },
