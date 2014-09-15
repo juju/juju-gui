@@ -99,7 +99,7 @@ YUI.add('container-token', function(Y) {
          */
         handleDelete: function(e) {
           e.preventDefault();
-          this.fire('deleteToken');
+          this.fire('deleteToken', {machineId: this.get('machine').id});
         },
 
         /**
@@ -110,7 +110,8 @@ YUI.add('container-token', function(Y) {
          */
         handleDeleteUnit: function(e) {
           e.preventDefault();
-          this.fire('deleteContainerUnit');
+          this.fire('deleteContainerUnit',
+              {unitId: e.currentTarget.ancestor('.unit').getData('id')});
         },
 
         /**

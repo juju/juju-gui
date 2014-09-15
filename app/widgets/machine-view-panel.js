@@ -54,15 +54,6 @@ YUI.add('machine-view-panel', function(Y) {
           '.container-token .token': {
             click: 'handleContainerTokenSelect'
           },
-          '.machine-token .moreMenuItem-0': {
-            click: 'deleteMachine'
-          },
-          '.container-token .token > .more-menu .moreMenuItem-0': {
-            click: 'deleteMachine'
-          },
-          '.container-token .unit .more-menu .moreMenuItem-0': {
-            click: 'deleteContainerUnit'
-          },
           '.unplaced-unit .moreMenuItem-0': {
             click: '_cancelUnitPlacement'
           },
@@ -103,9 +94,7 @@ YUI.add('machine-view-panel', function(Y) {
           this.supportedContainerTypes = [];
           // Turn machine models into tokens and store internally.
           this.set('machineTokens', {});
-          machines.forEach(function(machine) {
-            this._createMachineToken(machine);
-          }, this);
+          machines.forEach(this._createMachineToken, this);
           this.set('containerTokens', {});
           // Turn unit models into tokens and store internally.
           this._addIconsToUnits(units);
@@ -162,6 +151,10 @@ YUI.add('machine-view-panel', function(Y) {
           // When the environment name becomes available, display it.
           this.get('env').after('environmentNameChange',
               this._displayEnvironmentName, this);
+
+          // Token event handers
+          this.on('*:deleteToken', this.deleteMachine, this);
+          this.on('*:deleteContainerUnit', this.deleteContainerUnit, this);
         },
 
         /**
@@ -906,7 +899,7 @@ YUI.add('machine-view-panel', function(Y) {
          * @param {Object} e The event
          */
         deleteMachine: function(e) {
-          var machineName = e.currentTarget.ancestor('.token').getData('id');
+          var machineName = e.machineId;
           var db = this.get('db');
           var machine = db.machines.getById(machineName);
           var token = this.get(machine.parentId ?
@@ -953,7 +946,7 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Object} e The click event
         */
         deleteContainerUnit: function(e) {
-          var unitId = e.currentTarget.ancestor('.unit').getData('id');
+          var unitId = e.unitId;
           var db = this.get('db');
           var unit = db.units.getById(unitId);
           var machineId = unit.machine;
@@ -1341,7 +1334,7 @@ YUI.add('machine-view-panel', function(Y) {
           var token = new views.MachineToken({
             containerTemplate: '<li/>',
             machine: machine,
-            committed: machine.id.indexOf('new') !== 0,
+            committed: this._isMachineCommitted(machine.id),
             constraintsVisible: this.get('tokenConstraintsVisible')
           });
           this.get('machineTokens')[machine.id] = token;

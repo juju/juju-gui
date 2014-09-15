@@ -90,7 +90,7 @@ YUI.add('machine-token', function(Y) {
          */
         handleDelete: function(e) {
           e.preventDefault();
-          this.fire('deleteToken');
+          this.fire('deleteToken', {machineId: this.get('machine').id});
         },
 
         /**
