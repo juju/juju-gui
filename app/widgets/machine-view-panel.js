@@ -1010,6 +1010,12 @@ YUI.add('machine-view-panel', function(Y) {
           }).render();
           this._machinesHeader.addTarget(this);
 
+          // Check containerization support based on provided feature flags.
+          if (window.flags.containers) {
+            this._containersHeader = this._renderContainerHeader('all');
+            return;
+          }
+
           // Check containerization support based on the current provider type.
           var providerType = env.get('providerType');
           if (!providerType) {
@@ -1031,7 +1037,10 @@ YUI.add('machine-view-panel', function(Y) {
 
           @method _renderContainerHeader
           @param {String} providerType The Juju environment's provider type
-            (e.g. "local" or "ec2").
+            (e.g. "local" or "ec2"). If undefined or null is passed, the
+            containers header is disabled until the provider type becomes
+            available. If "all" is passed, then all container types are enabled
+            regardless of the provider type.
         */
         _renderContainerHeader: function(providerType) {
           var headerContainer = this.get('container').one(

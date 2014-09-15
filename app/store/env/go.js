@@ -2183,6 +2183,10 @@ YUI.add('juju-env-go', function(Y) {
   // To enable/disable containerization in the machine view, just add/remove
   // supportedContainerTypes to the provider types below.
   environments.providerFeatures = {
+    // All container types (used when the "containers" feature flags is set).
+    all: {
+      supportedContainerTypes: [KVM, LXC]
+    },
     // Microsoft Azure.
     azure: {
       supportedContainerTypes: []
