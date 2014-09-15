@@ -356,6 +356,13 @@ describe('machine view panel view', function() {
         LXC = {label: 'KVM', value: 'kvm'},
         VMW = {label: 'VmWare', value: 'vmw'};
 
+    beforeEach(function() {
+      window.flags = {};
+      this._cleanups.push(function() {
+        window.flags = {};
+      });
+    });
+
     it('disables containers if no container types are supported', function() {
       mockProviderType(this, 'testing', []);
       providerType = 'testing';
@@ -374,6 +381,19 @@ describe('machine view panel view', function() {
       assert.strictEqual(
           view._containersHeader.name, 'MachineViewPanelHeaderView');
       assert.deepEqual(view.supportedContainerTypes, [KVM, LXC]);
+    });
+
+    it('enables all containers types if the feature flag is set', function() {
+      mockProviderType(this, 'all', [KVM, LXC, VMW]);
+      mockProviderType(this, 'testing', []);
+      providerType = 'testing';
+      window.flags.containers = true;
+      view.render();
+      // All the container types are enabled even if the current provider type
+      // does not support containerization.
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelHeaderView');
+      assert.deepEqual(view.supportedContainerTypes, [KVM, LXC, VMW]);
     });
 
     it('uses the supported container when creating machines', function() {
@@ -414,6 +434,17 @@ describe('machine view panel view', function() {
       assert.strictEqual(
           view._containersHeader.name, 'MachineViewPanelHeaderView');
       assert.deepEqual(view.supportedContainerTypes, [LXC]);
+    });
+
+    it('does not wait for the provider if the flag is set', function() {
+      mockProviderType(this, 'all', [KVM, LXC]);
+      providerType = null;
+      window.flags.containers = true;
+      view.render();
+      // Containerization is enabled even if the provider is not known yet.
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelHeaderView');
+      assert.deepEqual(view.supportedContainerTypes, [KVM, LXC]);
     });
 
   });
