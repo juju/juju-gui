@@ -1868,41 +1868,81 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-       Macps machine placement for sesrvices
+       Maps machine placement for services.
+
+       The machine mapping is bound by current limitations of the juju-deployer
+       tool.  For example, we cannot place multiple units onto the same lxc,
+       merely designate that they go on an lxc on a given machine. Similiary,
+       we can't place multiple units on the same machine, b/c juju-deployer
+       doesn't understand such a placement and simply places those units into
+       new machines.
+
+       These limitations will be addressed when juju-deployer is updated to
+       understand new charmstore bundle placement rules.
 
        @method _mapServicesToMachines
-       @param {Object}  machineList The list of machines.
+       @param {Object} machineList The list of machines.
      */
     _mapServicesToMachines: function(machineList) {
       var machinePlacement = {};
       var owners = {};
-      machineList.each(function(machine) {
-        //TODO Throw notification if one service has more than one unit on the
-        //same machine.
-        //TODO LXCs
-        if (machine.id.indexOf('new') !== -1) {
-          return; // Ignore uncommitted machines.
+      var machineNames = {};
+
+      // Strip uncommitted machines and containers from the machine list.
+      var db = this; // machineList.filter does not respect bindscope.
+      var machines = machineList.filter(function(machine) {
+        if (machine.id.indexOf('new') !== -1 ||
+            db.units.filterByMachine(machine.id).length === 0) {
+          return false;
         }
-        // Strip out uncommitted units.
-        var units = machine.units.filter(function(unit) {
-          return unit.agent_state;
-        });
-        units.sort(function(a, b) {
-          if (a.id > b.id) { // lexical sort by id is sufficient
-            return 1;
-          } else if (a.id < b.id) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
-        var owner = units[0].id.split('/')[0];
-        var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
-        owners[owner] = ownerIndex;
-        var machineName = owner + '=' + ownerIndex;
+        return true;
+      });
+
+      // "Sort" machines w/ parents (e.g. containers) to the back of the list.
+      machines.sort(function(a, b) {
+        var aLxc = 0,
+            bLxc = 0;
+        if (a.parentId) {
+          aLxc = -1;
+        }
+        if (b.parentId) {
+          bLxc = -1;
+        }
+        return bLxc - aLxc;
+      });
+
+      machines.forEach(function(machine) {
+        // We're only intested in committed units on the machine.
+        var units = this.units.filterByMachine(machine.id).filter(
+            function(unit) {
+              return unit.agent_state;
+            });
+
+        var machineName;
+        if (machine.containerType === 'lxc') {
+          // If the machine is an LXC, we just base the name off of the
+          // machine's parent, which we've already created a name for.
+          machineName = 'lxc:' + machineNames[machine.parentId];
+        } else {
+          // The "owner" is the service that deployer will use to allocate other
+          // service units, e.g. "put this unit of mysql on the machine with
+          // wordpress."
+          //
+          // We need to get both the "owner" of the machine and how many times
+          // we have seen the owner to generate a deployer designation (e.g.
+          // wordpress=2, the second machine owned by wordpress).
+          var owner = units[0].service;
+          var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
+          owners[owner] = ownerIndex;
+          machineName = owner + '=' + ownerIndex;
+          machineNames[machine.id] = machineName;
+        }
+
         units.forEach(function(unit) {
-          var serviceName = unit.id.split('/')[0];
+          var serviceName = unit.service;
           if (serviceName === owner) {
+            // Deployer doesn't allow placing units on a machine owned by a unit
+            // of the same service.
             return;
           }
           if (machinePlacement[serviceName]) {
