@@ -145,7 +145,7 @@ describe('deployer bar view', function() {
   });
 
   it('shows only the changelog if there are no major changes', function() {
-    // We must add at least one chan
+    // We must add at least one change
     var containerMachine = {
       parentId: 'new-0', containerType: 'lxc'
     };
@@ -559,6 +559,18 @@ describe('deployer bar view', function() {
     ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
     container.one('.deploy-button').simulate('click');
     assert.notEqual(container.one('.unplaced-panel'), null);
+  });
+
+  it('only displays the count of non-subordinate unplaced units', function() {
+    addEntities(db);
+    db.services.add({id: 'subs', charm: 'cs:trusty/subs-1', subordinate: true});
+    db.addUnits({id: 'subs/0'});
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
+    ecs.lazyAddUnits(['subs', 1], {modelId: 'subs/0'});
+    container.one('.deploy-button').simulate('click');
+    assert.equal(
+        container.one('.unplaced-panel p').get('text'),
+        'You have 1 unplaced unit, do you want to:');
   });
 
   it('should not display if there are no unplaced units', function() {
