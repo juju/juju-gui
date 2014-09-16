@@ -509,7 +509,8 @@ describe('Inspector Settings', function() {
     service.fire('_dirtyFieldsChange', {
       newVal: ['admins']
     });
-    assert.equal(inspector.get('container').all('label.uncommitted').size(), 1);
+    assert.equal(inspector.get('container')
+      .all('.settings-wrapper.uncommitted').size(), 1);
   });
 
 });
