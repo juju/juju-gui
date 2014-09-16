@@ -691,7 +691,10 @@ describe('Environment Change Set', function() {
             getById: function(arg) {
               assert.equal(arg, args[0]);
               return {
-                set: setStub
+                set: setStub,
+                get: function() {
+                  return new Y.LazyModelList();
+                }
               };
             }}
         });
@@ -741,6 +744,31 @@ describe('Environment Change Set', function() {
         assert.equal(
             stubRemoveUnits.calledOnce(), true, 'remove units not called');
         assert.deepEqual(ecs.changeSet, {});
+      });
+
+      it('destroys unplaced units', function(done) {
+        var args = ['foo', done, {modelId: 'baz'}];
+        var units = new Y.juju.models.ServiceUnitList();
+        var unitId = 'test/1';
+        units.add([{id: unitId}]);
+        ecs.set('db', {
+          services: {
+            getById: function(arg) {
+              return {
+                get: function() {
+                  return units;
+                },
+                set: testUtils.makeStubFunction()
+              };
+            }
+          }
+        });
+        var removeStub = testUtils.makeStubMethod(ecs, '_lazyRemoveUnit');
+        this._cleanups.push(removeStub.reset);
+        ecs._lazyDestroyService(args);
+        assert.equal(removeStub.calledOnce(), true);
+        assert.deepEqual(removeStub.lastArguments()[0], [[unitId]]);
+        done();
       });
     });
 
