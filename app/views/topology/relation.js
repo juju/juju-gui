@@ -1000,7 +1000,7 @@ YUI.add('juju-topology-relation', function(Y) {
             new models.Notification({
               title: 'Error adding relation',
               message: 'Relation ' + ev.endpoint_a +
-                  ' to ' + ev.endpoint_b,
+                  ' to ' + ev.endpoint_b + ': ' + ev.err,
               level: 'error'
             })
         );
