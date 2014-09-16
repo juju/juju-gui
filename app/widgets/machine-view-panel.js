@@ -574,19 +574,27 @@ YUI.add('machine-view-panel', function(Y) {
             this._containersHeader.setDroppable();
           }
           // Show the drop states for all visible machines and containers.
-          // Since "hulk smash" is not allowed, enable dropping to
-          // machines/containers only if the current Juju provider supports at
-          // least one container type.
+
+          // Machine tokens are only droppable if the environment allows
+          // containers (e.g. MAAS), as dropping on a machine token creates a
+          // new container.
           if (this.supportedContainerTypes.length !== 0) {
             Object.keys(machineTokens).forEach(function(id) {
               var token = machineTokens[id];
               token.setDroppable();
             }, this);
-            Object.keys(containerTokens).forEach(function(id) {
+          }
+
+          // Container tokens are always droppable if they're for the root
+          // container. Otherwise they are only enabled if the environment
+          // supports containers.
+          Object.keys(containerTokens).forEach(function(id) {
+            if (this.supportedContainerTypes.length !== 0 ||
+                id.indexOf(ROOT_CONTAINER_PLACEHOLDER) !== -1) {
               var token = containerTokens[id];
               token.setDroppable();
-            }, this);
-          }
+            }
+          }, this);
         },
 
         /**
