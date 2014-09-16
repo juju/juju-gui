@@ -90,7 +90,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
             id: unitId,
             displayName: serviceName + '/0',
             charmUrl: charmId,
-            is_subordinate: charm.get('is_subordinate')
+            subordinate: charm.get('is_subordinate')
           });
           // Add an ECS add_unit record. Attach a callback that, when called,
           // removes the ghost unit from the database. The real unit should then

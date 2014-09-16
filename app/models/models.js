@@ -388,6 +388,12 @@ YUI.add('juju-models', function(Y) {
       exposed: {
         value: false
       },
+      /**
+        Whether the service's charm is a subordinate charm.
+
+        @attribute subordinate
+        @type {Boolean}
+      */
       subordinate: {
         value: false
       },
@@ -636,7 +642,14 @@ YUI.add('juju-models', function(Y) {
           */
           deleted: {},
           config: {},
-          is_subordinate: {},
+          /**
+            Whether the unit belongs to a service deployed from a subordinate
+            charm.
+
+            @attribute subordinate
+            @type {Boolean}
+          */
+          subordinate: {},
           open_ports: {},
           public_address: {},
           private_address: {}

@@ -315,7 +315,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               tuning: 'single',
               'wp-content': ''
             },
-            'Constraints': {}
+            'Constraints': {},
+            'Subordinate': false
           }], 'serviceChange'
         );
         assert.deepEqual(machineChange, [
@@ -345,7 +346,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'Series': 'precise',
             'CharmURL': 'cs:precise/wordpress-15',
             'MachineId': '0',
-            'Status': 'started'
+            'Status': 'started',
+            'Subordinate': false
           }], 'unitChange'
         );
         done();

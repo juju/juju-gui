@@ -426,26 +426,30 @@ YUI.add('inspector-overview-view', function(Y) {
       }
     },
     /**
-      View render method
+      Render the view, including the scale up component if required.
 
       @method render
-      @param {Object} attributes the viewlet manager attributes.
+      @param {Object} attributes The viewlet manager attributes.
     */
     render: function(attributes) {
       var container = this.get('container'),
           rendered = this.get('rendered');
-      var pending = this.viewletManager.get('model').get('pending');
+      var model = this.viewletManager.get('model');
       if (window.flags && window.flags.mv) {
-        this._instantiateScaleUp();
-        if (!rendered) {
-          container.append(this.scaleUp.render());
+        // Do not create the scale up view if the current service's charm is a
+        // subordinate charm.
+        if (!model.get('subordinate')) {
+          this._createOrUpdateScaleUpView(model);
+          if (!rendered) {
+            container.append(this.scaleUp.render());
+          }
+          this.scaleUp.hideScaleUp();
         }
-        this.scaleUp.hideScaleUp();
       }
       if (!rendered) {
         this.set('rendered', true);
         container.append(this.template(attributes.model.getAttrs()));
-      } else if (!pending) {
+      } else if (!model.get('pending')) {
         // If the inspector is open when the service is deployed we need
         // to update the inspector.
         container.one('.expose').removeClass('hidden');
@@ -458,30 +462,31 @@ YUI.add('inspector-overview-view', function(Y) {
     },
 
     /**
-      Instantiates the scale up view.
+      Instantiate or update the scale up view for the given service model.
 
-      @method _instantiateScaleUp
+      @method _createOrUpdateScaleUpView
+      @param {Object} model The current service model.
     */
-    _instantiateScaleUp: function() {
-      var model = this.viewletManager.get('model'),
-          serviceId = model.get('id');
-      if (!this.scaleUp && !model.get('is_subordinate')) {
-        this.scaleUp = new ns.ScaleUp({
-          env: this.options.env,
-          db: this.options.db,
-          serviceId: serviceId
-        });
-        // XXX July 14 2014 Jeff - There is an issue where the changeState
-        // events don't bubble like they should to get around this we need to
-        // manually re-fire the event with the changeState details.
-        this.scaleUp.on('changeState', function(e) {
-          this.fire('changeState', e.details[0]);
-        }, this);
-      } else {
+    _createOrUpdateScaleUpView: function(model) {
+      if (this.scaleUp) {
+        // We already have a scale up view: just switch the service model.
         this.scaleUp.setAttrs({
-          serviceId: serviceId
+          serviceId: model.get('id')
         });
+        return;
       }
+      // Instantiate the scale up view.
+      this.scaleUp = new ns.ScaleUp({
+        env: this.options.env,
+        db: this.options.db,
+        serviceId: model.get('id')
+      });
+      // XXX July 14 2014 Jeff - There is an issue where the changeState
+      // events don't bubble like they should to get around this we need to
+      // manually re-fire the event with the changeState details.
+      this.scaleUp.on('changeState', function(e) {
+        this.fire('changeState', e.details[0]);
+      }, this);
     },
 
     /**

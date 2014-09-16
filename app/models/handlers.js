@@ -191,7 +191,11 @@ YUI.add('juju-delta-handlers', function(Y) {
         agent_state_data: change.StatusData,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
-        open_ports: utils.convertOpenPorts(change.Ports)
+        open_ports: utils.convertOpenPorts(change.Ports),
+        // Since less recent versions of juju-core do not include the
+        // Subordinate field in the mega-watcher for units, the following
+        // attribute could be undefined.
+        subordinate: change.Subordinate
       };
       var machineData = {
         id: change.MachineId,
@@ -229,7 +233,11 @@ YUI.add('juju-delta-handlers', function(Y) {
         charm: change.CharmURL,
         exposed: change.Exposed,
         life: change.Life,
-        constraints: utils.convertConstraints(change.Constraints)
+        constraints: utils.convertConstraints(change.Constraints),
+        // Since less recent versions of juju-core do not include the
+        // Subordinate field in the mega-watcher for services, the following
+        // attribute could be undefined.
+        subordinate: change.Subordinate
       };
       // Process the stream.
       db.services.process_delta(action, data);

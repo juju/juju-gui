@@ -1981,7 +1981,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var self = this;
       fakebackend.deploy('cs:precise/wordpress-15', function() {
         // Simulate the service is a subordinate.
-        fakebackend.db.services.item(0).set('is_subordinate', true);
+        fakebackend.db.services.item(0).set('subordinate', true);
         var unitId = 'wordpress/0';
         var mockRemoveUnits = utils.makeStubMethod(
             fakebackend.db, 'removeUnits');

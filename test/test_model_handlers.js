@@ -121,18 +121,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           StatusInfo: 'info',
           PublicAddress: 'example.com',
           PrivateAddress: '10.0.0.1',
+          Subordinate: false,
           Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
         // Retrieve the unit from the list.
         var unit = list.getById('django/1');
-        assert.strictEqual('django', unit.service);
-        assert.strictEqual('1', unit.machine);
-        assert.strictEqual('pending', unit.agent_state);
-        assert.strictEqual('info', unit.agent_state_info);
-        assert.strictEqual('example.com', unit.public_address);
-        assert.strictEqual('10.0.0.1', unit.private_address);
-        assert.deepEqual(['80/tcp', '42/udp'], unit.open_ports);
+        assert.strictEqual(unit.service, 'django');
+        assert.strictEqual(unit.machine, '1');
+        assert.strictEqual(unit.agent_state, 'pending');
+        assert.strictEqual(unit.agent_state_info, 'info');
+        assert.strictEqual(unit.public_address, 'example.com');
+        assert.strictEqual(unit.private_address, '10.0.0.1');
+        assert.strictEqual(unit.subordinate, false, 'subordinate');
+        assert.deepEqual(unit.open_ports, ['80/tcp', '42/udp']);
       };
 
       it('creates a unit in the database (global list)', function() {
@@ -158,14 +160,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Service: 'django',
           Status: 'started',
           PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1'
+          PrivateAddress: '192.168.0.1',
+          Subordinate: true
         };
         unitInfo(db, 'change', change);
         // Retrieve the unit from the database.
         var unit = list.getById('django/2');
-        assert.strictEqual('started', unit.agent_state);
-        assert.strictEqual('example.com', unit.public_address);
-        assert.strictEqual('192.168.0.1', unit.private_address);
+        assert.strictEqual(unit.agent_state, 'started');
+        assert.strictEqual(unit.public_address, 'example.com');
+        assert.strictEqual(unit.private_address, '192.168.0.1');
+        assert.strictEqual(unit.subordinate, true, 'subordinate');
       };
 
       it('updates a unit in the database (global list)', function() {
@@ -259,20 +263,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Exposed: true,
           Constraints: constraints,
           Config: config,
-          Life: 'alive'
+          Life: 'alive',
+          Subordinate: true
         };
         serviceInfo(db, 'add', change);
-        assert.strictEqual(1, db.services.size());
+        assert.strictEqual(db.services.size(), 1);
         // Retrieve the service from the database.
         var service = db.services.getById('django');
-        assert.strictEqual('cs:precise/django-42', service.get('charm'));
-        assert.isTrue(service.get('exposed'));
-        assert.deepEqual(constraints, service.get('constraints'));
+        assert.strictEqual(service.get('charm'), 'cs:precise/django-42');
+        assert.strictEqual(service.get('exposed'), true, 'exposed');
+        assert.deepEqual(service.get('constraints'), constraints);
         // The config on the service is initially set to the customized subset
         // in the delta stream.  The full config will be gotten via a call to
         // get_service.
-        assert.deepEqual(config, service.get('config'));
-        assert.strictEqual('alive', service.get('life'));
+        assert.deepEqual(service.get('config'), config);
+        assert.strictEqual(service.get('life'), 'alive');
+        assert.strictEqual(service.get('subordinate'), true, 'subordinate');
       });
 
       it('updates a service in the database', function() {
@@ -285,15 +291,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Name: 'wordpress',
           CharmURL: 'cs:quantal/wordpress-11',
           Exposed: false,
-          Life: 'dying'
+          Life: 'dying',
+          Subordinate: false
         };
         serviceInfo(db, 'change', change);
-        assert.strictEqual(1, db.services.size());
+        assert.strictEqual(db.services.size(), 1);
         // Retrieve the service from the database.
         var service = db.services.getById('wordpress');
-        assert.strictEqual('cs:quantal/wordpress-11', service.get('charm'));
-        assert.isFalse(service.get('exposed'));
+        assert.strictEqual(service.get('charm'), 'cs:quantal/wordpress-11');
+        assert.strictEqual(service.get('exposed'), false, 'exposed');
         assert.strictEqual('dying', service.get('life'));
+        assert.strictEqual(service.get('subordinate'), false, 'subordinate');
       });
 
       it('handles missing constraints', function() {

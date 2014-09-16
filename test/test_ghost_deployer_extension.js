@@ -148,7 +148,7 @@ describe('Ghost Deployer Extension', function() {
       id: 'ghost-service-id/0',
       displayName: charm.get('name') + '/0',
       charmUrl: charm.get('id'),
-      is_subordinate: charm.get('is_subordinate')
+      subordinate: charm.get('is_subordinate')
     };
     assert.deepEqual(args[0], expectedUnit);
   });
