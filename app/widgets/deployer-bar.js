@@ -295,7 +295,13 @@ YUI.add('deployer-bar', function(Y) {
           delta = this._getChanges(ecs),
           changes = delta.changes,
           totalUnits = delta.totalUnits,
-          unplacedCount = db.units.filterByMachine(null).length;
+          unplacedUnits = db.units.filterByMachine(null);
+      // We need to filter the unplaced units down so that we can exclude ones
+      // which are subordinates.
+      var unplacedCount = unplacedUnits.filter(function(unit) {
+        return !db.services.getById(unit.service).get('subordinate');
+      }).length;
+
       if (container && container.get('parentNode')) {
         container.one('.panel.summary section').setHTML(this.summaryTemplate({
           changeCount: this._getChangeCount(ecs),
