@@ -535,7 +535,12 @@ YUI.add('environment-change-set', function(Y) {
       if (existingService) {
         this._destroyQueuedService(existingService);
       } else {
-        this.get('db').services.getById(args[0]).set('deleted', true);
+        var service = this.get('db').services.getById(args[0]);
+        // Remove any unplaced units.
+        service.get('units').each(function(unit) {
+          this._lazyRemoveUnit([[unit.id]]);
+        }, this);
+        service.set('deleted', true);
         return this._createNewRecord('destroyService', command, []);
       }
     },
@@ -823,7 +828,7 @@ YUI.add('environment-change-set', function(Y) {
       "_remove_unit" method with the exception of the ECS options object.
 
       @method _lazyRemoveUnit
-      @param {Array} args The arguments to remove the relation with.
+      @param {Array} args The arguments to remove the unit with.
     */
     _lazyRemoveUnit: function(args) {
       // If an existing ecs record for this unit exists, remove it from the
