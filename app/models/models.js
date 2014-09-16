@@ -1868,6 +1868,94 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+       Maps machine placement for services.
+
+       The machine mapping is bound by current limitations of the juju-deployer
+       tool.  For example, we cannot place multiple units onto the same lxc,
+       merely designate that they go on an lxc on a given machine. Similiary,
+       we can't place multiple units on the same machine, b/c juju-deployer
+       doesn't understand such a placement and simply places those units into
+       new machines.
+
+       These limitations will be addressed when juju-deployer is updated to
+       understand new charmstore bundle placement rules.
+
+       @method _mapServicesToMachines
+       @param {Object} machineList The list of machines.
+     */
+    _mapServicesToMachines: function(machineList) {
+      var machinePlacement = {};
+      var owners = {};
+      var machineNames = {};
+
+      // Strip uncommitted machines and containers from the machine list.
+      var db = this; // machineList.filter does not respect bindscope.
+      var machines = machineList.filter(function(machine) {
+        if (machine.id.indexOf('new') !== -1 ||
+            db.units.filterByMachine(machine.id).length === 0) {
+          return false;
+        }
+        return true;
+      });
+
+      // "Sort" machines w/ parents (e.g. containers) to the back of the list.
+      machines.sort(function(a, b) {
+        var aLxc = 0,
+            bLxc = 0;
+        if (a.parentId) {
+          aLxc = -1;
+        }
+        if (b.parentId) {
+          bLxc = -1;
+        }
+        return bLxc - aLxc;
+      });
+
+      machines.forEach(function(machine) {
+        // We're only intested in committed units on the machine.
+        var units = this.units.filterByMachine(machine.id).filter(
+            function(unit) {
+              return unit.agent_state;
+            });
+
+        var machineName;
+        if (machine.containerType === 'lxc') {
+          // If the machine is an LXC, we just base the name off of the
+          // machine's parent, which we've already created a name for.
+          machineName = 'lxc:' + machineNames[machine.parentId];
+        } else {
+          // The "owner" is the service that deployer will use to allocate other
+          // service units, e.g. "put this unit of mysql on the machine with
+          // wordpress."
+          //
+          // We need to get both the "owner" of the machine and how many times
+          // we have seen the owner to generate a deployer designation (e.g.
+          // wordpress=2, the second machine owned by wordpress).
+          var owner = units[0].service;
+          var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
+          owners[owner] = ownerIndex;
+          machineName = owner + '=' + ownerIndex;
+          machineNames[machine.id] = machineName;
+        }
+
+        units.forEach(function(unit) {
+          var serviceName = unit.service;
+          if (serviceName === owner) {
+            // Deployer doesn't allow placing units on a machine owned by a unit
+            // of the same service.
+            return;
+          }
+          if (machinePlacement[serviceName]) {
+            machinePlacement[serviceName].push(machineName);
+          } else {
+            machinePlacement[serviceName] = [machineName];
+          }
+        });
+      }, this);
+      return machinePlacement;
+    },
+
+    /**
      * Export deployer formatted dump of the current environment.
      * Note: When we have a selection UI in place this should honor
      * that.
@@ -1876,8 +1964,7 @@ YUI.add('juju-models', function(Y) {
      * @return {Object} export object suitable for serialization.
      */
     exportDeployer: function() {
-      var self = this,
-          serviceList = this.services,
+      var serviceList = this.services,
           relationList = this.relations,
           defaultSeries = this.environment.get('defaultSeries'),
           result = {
@@ -1893,7 +1980,7 @@ YUI.add('juju-models', function(Y) {
 
       serviceList.each(function(service) {
         var units = service.get('units');
-        var charm = self.charms.getById(service.get('charm'));
+        var charm = this.charms.getById(service.get('charm'));
         var serviceOptions = {};
         var charmOptions = charm.get('options');
         var serviceName = service.get('id');
@@ -1967,9 +2054,16 @@ YUI.add('juju-models', function(Y) {
           serviceData.annotations = {'gui-x': anno['gui-x'],
             'gui-y': anno['gui-y']};
         }
-
         result.envExport.services[serviceName] = serviceData;
-      });
+      }, this);
+
+      if (window.flags && window.flags.mv) {
+        var machinePlacement = this._mapServicesToMachines(this.machines);
+        Object.keys(machinePlacement).forEach(function(serviceName) {
+          var placement = machinePlacement[serviceName];
+          result.envExport.services[serviceName].to = placement;
+        });
+      }
 
       relationList.each(function(relation) {
         var endpoints = relation.get('endpoints');
@@ -1992,7 +2086,7 @@ YUI.add('juju-models', function(Y) {
           return endpoint[0] + ':' + endpoint[1].name;
         });
         result.envExport.relations.push(relationData);
-      });
+      }, this);
 
       return result;
     },

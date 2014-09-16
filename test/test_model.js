@@ -1604,6 +1604,222 @@ describe('test_model.js', function() {
       assert.isTrue(result.services.wordpress.expose);
     });
 
+    it('can determine simple machine placement for services', function() {
+      var machine = {id: '0'};
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }];
+      db.machines.add(machine);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines);
+      var expected = {
+        'mysql': ['wordpress=0']
+      };
+      assert.deepEqual(placement, expected);
+    });
+
+    it('can determine complex machine placement for services', function() {
+      var machines = [{ id: '0' }, { id: '1' }, { id: '2' }];
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/1',
+        agent_state: 'started',
+        machine: '1'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '1'
+      }, {
+        service: 'wordpress',
+        id: 'wordpress/1',
+        agent_state: 'started',
+        machine: '2'
+      }, {
+        service: 'apache2',
+        id: 'apache2/1',
+        agent_state: 'started',
+        machine: '2'
+      }, {
+        service: 'mysql',
+        id: 'mysql/2',
+        agent_state: 'started',
+        machine: '2'
+      }];
+      db.machines.add(machines);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines);
+      var expected = {
+        'mysql': ['wordpress=0', 'wordpress=1'],
+        'apache2': ['mysql=0', 'wordpress=1']
+      };
+      assert.deepEqual(placement, expected);
+    });
+
+    it('can determinte lxc placement for units', function() {
+      var machines = [{
+        id: '0'
+      }, {
+        id: '0/lxc/0',
+        containerType: 'lxc',
+        parentId: '0'
+      }];
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '0/lxc/0'
+      }];
+      db.machines.add(machines);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines);
+      var expected = {
+        'mysql': ['wordpress=0'],
+        'apache2': ['lxc:wordpress=0']
+      };
+      assert.deepEqual(placement, expected);
+    });
+
+    it('ignores uncommmitted units when determining placement', function() {
+      var machine = { id: '0' };
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '0'
+      }];
+      db.machines.add(machine);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines);
+      var expected = {
+        'apache2': ['mysql=0']
+      };
+      assert.deepEqual(placement, expected);
+    });
+
+    it('ignores uncommitted machines when determining placements', function() {
+      var machine = { id: 'new0' };
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }];
+      db.machines.add(machine);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines);
+      assert.deepEqual(placement, {});
+    });
+
+    it('ignores machines with no units when determining placements',
+        function() {
+          var machine = { id: '0' };
+          db.machines.add(machine);
+          var placement = db._mapServicesToMachines(db.machines);
+          assert.deepEqual(placement, {});
+        });
+
+    it('annotates services with placement info', function() {
+      db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
+      db.services.add({id: 'wordpress', charm: 'precise/wordpress-1'});
+      db.machines.add({ id: '0'});
+      db.units.add([{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }], true);
+      db.charms.add([{
+        id: 'precise/mysql-1',
+        options: {
+          one: {
+            'default': ''
+          },
+          two: {
+            'default': null
+          },
+          three: {
+            'default': undefined
+          }
+        }
+      }, {
+        id: 'precise/wordpress-1',
+        options: {
+          one: {
+            'default': ''
+          },
+          two: {
+            'default': null
+          },
+          three: {
+            'default': undefined
+          },
+          four: {
+            'default': '0'
+          },
+          five: {
+            'default': false
+          }
+        }
+      }]);
+      var oldFlags = window.flags;
+      window.flags.mv = true;
+      var result = db.exportDeployer().envExport;
+      assert.deepEqual(result.services.mysql.to, ['wordpress=0']);
+      window.flags = oldFlags;
+    });
   });
 
   describe('service models', function() {
