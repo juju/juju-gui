@@ -76,6 +76,7 @@ describe('container token view', function() {
   it('fires the delete event', function(done) {
     view.on('deleteToken', function(e) {
       assert.isObject(e);
+      assert.equal(e.machineId, machine.id);
       done();
     });
     view.showMoreMenu();
@@ -155,5 +156,15 @@ describe('container token view', function() {
     assert.equal(container.one('.unit') !== null, true);
     view.setUnitDeleted({id: 'test/1'});
     assert.equal(container.one('.unit'), null);
+  });
+
+  it('fires a delete event for units', function(done) {
+    view.on('deleteContainerUnit', function(e) {
+      assert.isObject(e);
+      assert.equal(e.unitId, 'test/1');
+      done();
+    });
+    view.showUnitMoreMenu({halt: utils.makeStubFunction()}, 'test/1');
+    container.one('.unit .moreMenuItem-0').simulate('click');
   });
 });

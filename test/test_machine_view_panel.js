@@ -1882,6 +1882,9 @@ describe('machine view panel view', function() {
         destroy: function() {},
         get: function() {
           return {remove: function() {}};
+        },
+        on: function() {
+          return {detach: function() {}};
         }
       });
       this._cleanups.push(viewStub.reset);
@@ -1912,6 +1915,9 @@ describe('machine view panel view', function() {
         destroy: function() {},
         get: function() {
           return {remove: function() {}};
+        },
+        on: function() {
+          return {detach: function() {}};
         }
       });
       this._cleanups.push(viewStub.reset);

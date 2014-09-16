@@ -82,6 +82,7 @@ describe('machine token view', function() {
     var view = makeView(this, machine);
     view.on('deleteToken', function(e) {
       assert.isObject(e);
+      assert.equal(e.machineId, machine.id);
       done();
     });
     view.showMoreMenu();
