@@ -1351,7 +1351,14 @@ YUI.add('juju-models', function(Y) {
           break;
         case 'name':
           sortMethod = function(model) {
-            return model.displayName;
+            var name = model.displayName;
+            var nameAsNumber = parseInt(name, 10);
+            // Check that the name is a number by checking that the
+            // parsed value matches the name.
+            var isNumber = nameAsNumber.toString() === name;
+            // If the name is a number return it as a number so that it
+            // will be sorted as such.
+            return isNumber ? nameAsNumber : name;
           };
           break;
         case 'disk':
