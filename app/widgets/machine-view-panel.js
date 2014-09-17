@@ -479,7 +479,7 @@ YUI.add('machine-view-panel', function(Y) {
             if (!parentId) {
               this._updateMachineWithUnitData(machine);
             }
-            token.set('committed', this._isMachineCommitted(machineId));
+            token.set('commitStatus', machine.commitStatus);
             token.render();
             var selectedMachine = this.get('selectedMachine');
             if ((selectedMachine === machineId) ||
@@ -1335,14 +1335,13 @@ YUI.add('machine-view-panel', function(Y) {
          * Create a machine token widget.
          *
          * @method _createMachineToken
-           @param {Object} machine The machine model object
-           @param {Bool} committed The committed state.
+         * @param {Object} machine The machine model object
          */
-        _createMachineToken: function(machine, committed) {
+        _createMachineToken: function(machine) {
           var token = new views.MachineToken({
             containerTemplate: '<li/>',
             machine: machine,
-            committed: this._isMachineCommitted(machine.id),
+            commitStatus: machine.commitStatus,
             constraintsVisible: this.get('tokenConstraintsVisible')
           });
           this.get('machineTokens')[machine.id] = token;

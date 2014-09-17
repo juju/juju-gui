@@ -1249,6 +1249,7 @@ YUI.add('juju-models', function(Y) {
       var obj = attrs ? Y.clone(attrs) : {};
       // Define the fully qualified ghost machine identifier.
       obj.id = 'new' + this._ghostCounter;
+      obj.commitStatus = 'uncommitted';
       this._ghostCounter += 1;
       if (parentId) {
         if (!containerType) {
