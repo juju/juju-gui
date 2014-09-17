@@ -550,6 +550,20 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Filter the service model list to only include principals.
+      In essence, the resulting list does not include services deployed from
+      a subordinate charm.
+
+      @method principals
+      @return {ModelList} A list of non-subordinate services.
+    */
+    principals: function() {
+      return this.filter({asList: true}, function(service) {
+        return !service.get('subordinate');
+      });
+    },
+
+    /**
       Fetches the services which were deployed with a charm matching
       a supplied charm name.
 
@@ -1309,9 +1323,8 @@ YUI.add('juju-models', function(Y) {
     /**
       Set the sorting method for the list of machines.
 
-      @method filterByAncestor
-      @param {String} model What to sort the machines by.
-      @return {Function} The sorting method function.
+      @method comparator
+      @param {String} model The machine model.
     */
     comparator: function(model) {
       return this._getSortMethod(this.get('sortMethod'))(model);
@@ -1322,6 +1335,7 @@ YUI.add('juju-models', function(Y) {
 
        @method _getSortMethod
        @param {String} sort The sort type.
+       @return {Function} The sorting method function.
      */
     _getSortMethod: function(sort) {
       var sortMethod;

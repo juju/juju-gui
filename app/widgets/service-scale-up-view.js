@@ -66,7 +66,7 @@ YUI.add('service-scale-up-view', function(Y) {
       if (!serviceList) {
         return;
       }
-      serviceList.each(function(service) {
+      serviceList.principals().each(function(service) {
         service = service.getAttrs();
         services.push({
           id: service.id,

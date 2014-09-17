@@ -114,6 +114,21 @@ describe('service scale up view', function() {
     view.get('services').add({ id: 'foo' });
     container.one('button.closed').simulate('click');
     assert.equal(container.all('li').size(), 1);
+    assert.deepEqual(container.all('li .service-name').getContent(), ['foo']);
+  });
+
+  it('excludes subordinate services from the list', function() {
+    renderEnabledView();
+    view.get('services').add([
+      {id: 'django', subordinate: false},
+      {id: 'puppet', subordinate: true},
+      {id: 'rails', subordinate: false}
+    ]);
+    container.one('button.closed').simulate('click');
+    assert.equal(container.all('li').size(), 2);
+    assert.deepEqual(
+        container.all('li .service-name').getContent(),
+        ['django', 'rails']);
   });
 
   it('closing and opening the view updates the list of services', function() {
