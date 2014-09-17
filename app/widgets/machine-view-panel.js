@@ -431,18 +431,6 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Determines if the machine or container id that's been passed in is
-          for an uncommitted model.
-
-          @method _isMachineCommitted
-          @param {String} id The id of the model.
-          @return {Boolean} If the model is uncommitted.
-        */
-        _isMachineCommitted: function(id) {
-          return String(id).indexOf('new');
-        },
-
-        /**
           Handles changes to the machines in the db model list.
 
          @method _onMachineChange
@@ -503,17 +491,16 @@ YUI.add('machine-view-panel', function(Y) {
         */
         _onMachineAdd: function(e) {
           var machine = e.model;
-          var committed;
           var containerParent = this.get('container').one(
               '.containers .content .items');
           var selectedMachine = this.get('selectedMachine');
           var parentId = machine.parentId;
           if (parentId) {
-            committed = machine.id.split('/').pop().indexOf('new') !== 0;
             // All containers added here will be real containers, so
             // show the delete action.
             machine.displayDelete = true;
-            this._createContainerToken(containerParent, machine, committed);
+            this._createContainerToken(
+                containerParent, machine, machine.commitStatus);
             if (parentId.split('/')[0] === selectedMachine) {
               this._containersHeader.updateLabelCount('container', 1);
             }
@@ -1186,7 +1173,6 @@ YUI.add('machine-view-panel', function(Y) {
           var containerParent = this.get('container').one(
               '.containers .content .items');
           var numUnits = db.units.filterByMachine(parentId, true).length;
-          var parentCommitted = parentId.indexOf('new') !== 0;
           var rootUnits = db.units.filterByMachine(parentId);
           // To allow sorting create a new model list that contains just
           // the list of containers. This means we don't have to loop over
@@ -1209,7 +1195,7 @@ YUI.add('machine-view-panel', function(Y) {
           // The root container inherits the committed/uncommitted state of its
           // parent machine.
           this._createContainerToken(containerParent, rootContainer,
-              parentCommitted, rootUnits);
+              db.machines.getById(parentId).commitStatus, rootUnits);
 
           if (containers.length > 0) {
             machinesModelList.add(containers);
@@ -1218,11 +1204,10 @@ YUI.add('machine-view-panel', function(Y) {
             machinesModelList.each(function(container) {
               // Get the real machine so that we are only dealing with
               // the correct data and so that the events work etc.
-              var id = container.id,
-                  machine = db.machines.getById(id),
-                  committed = id.indexOf('new') < 0;
+              var machine = db.machines.getById(container.id);
               machine.displayDelete = true;
-              this._createContainerToken(containerParent, machine, committed);
+              this._createContainerToken(
+                  containerParent, machine, container.commitStatus);
             }, this);
           }
         },
@@ -1234,12 +1219,12 @@ YUI.add('machine-view-panel', function(Y) {
           @param {Y.Node} containerParent The parent node for the token's
             container
           @param {Object} container The lxc or kvm container object
-          @param {Bool} committed The committed state.
+          @param {String} commitStatus The commit status string.
           @param {Array} units Optional list of units on the container.
             If not provided, the container's units will be looked up.
          */
         _createContainerToken: function(
-            containerParent, container, committed, units) {
+            containerParent, container, commitStatus, units) {
           var token;
           var containerTokens = this.get('containerTokens');
           // Root containers appear not to have a parentId here, so we
@@ -1256,13 +1241,13 @@ YUI.add('machine-view-panel', function(Y) {
               containerTemplate: '<li/>',
               containerParent: containerParent,
               machine: container,
-              committed: committed
+              commitStatus: commitStatus
             });
             containerTokens[container.id] = token;
           } else {
             token = containerTokens[container.id];
             token.setAttrs({
-              committed: committed,
+              commitStatus: commitStatus,
               machine: container
             });
           }
