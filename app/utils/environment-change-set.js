@@ -537,9 +537,11 @@ YUI.add('environment-change-set', function(Y) {
       } else {
         var service = this.get('db').services.getById(args[0]);
         // Remove any unplaced units.
+        var units = [];
         service.get('units').each(function(unit) {
-          this._lazyRemoveUnit([[unit.id]]);
+          units.push(unit.id);
         }, this);
+        this._lazyRemoveUnit([units]);
         service.set('deleted', true);
         return this._createNewRecord('destroyService', command, []);
       }

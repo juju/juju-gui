@@ -746,11 +746,11 @@ describe('Environment Change Set', function() {
         assert.deepEqual(ecs.changeSet, {});
       });
 
-      it('destroys unplaced units', function(done) {
+      it('destroys unplaced units when the service is removed', function(done) {
         var args = ['foo', done, {modelId: 'baz'}];
         var units = new Y.juju.models.ServiceUnitList();
-        var unitId = 'test/1';
-        units.add([{id: unitId}]);
+        var unitIds = ['test/1', 'test/2'];
+        units.add([{id: unitIds[0]}, {id: unitIds[1]}]);
         ecs.set('db', {
           services: {
             getById: function(arg) {
@@ -767,7 +767,7 @@ describe('Environment Change Set', function() {
         this._cleanups.push(removeStub.reset);
         ecs._lazyDestroyService(args);
         assert.equal(removeStub.calledOnce(), true);
-        assert.deepEqual(removeStub.lastArguments()[0], [[unitId]]);
+        assert.deepEqual(removeStub.lastArguments()[0], [unitIds]);
         done();
       });
     });
