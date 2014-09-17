@@ -649,7 +649,9 @@ YUI.add('juju-models', function(Y) {
             @attribute subordinate
             @type {Boolean}
           */
-          subordinate: {},
+          subordinate: {
+            value: false
+          },
           open_ports: {},
           public_address: {},
           private_address: {}
