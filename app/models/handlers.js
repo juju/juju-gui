@@ -192,8 +192,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
         open_ports: utils.convertOpenPorts(change.Ports),
-        // Since less recent versions of juju-core do not include the
-        // Subordinate field in the mega-watcher for units, the following
+        // Since less recent versions of juju-core (<= 1.20.7) do not include
+        // the Subordinate field in the mega-watcher for units, the following
         // attribute could be undefined.
         subordinate: change.Subordinate
       };
@@ -234,9 +234,9 @@ YUI.add('juju-delta-handlers', function(Y) {
         exposed: change.Exposed,
         life: change.Life,
         constraints: utils.convertConstraints(change.Constraints),
-        // Since less recent versions of juju-core do not include the
-        // Subordinate field in the mega-watcher for services, the following
-        // attribute could be undefined.
+        // Since less recent versions of juju-core (<= 1.20.7) do not include
+        // the Subordinate field in the mega-watcher for services, the
+        // following attribute could be undefined.
         subordinate: change.Subordinate
       };
       // Process the stream.
