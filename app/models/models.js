@@ -935,7 +935,7 @@ YUI.add('juju-models', function(Y) {
     ATTRS: {
       /**
         The committed status of the machine. Possible values are 'uncommitted',
-        'inProgress' and 'committed'.
+        'in-progress' and 'committed'.
 
         @attribute commitStatus
         @type {String}

@@ -220,7 +220,7 @@ YUI.add('environment-change-set', function(Y) {
       if (command.prepare) {
         command.prepare(this.get('db'));
       }
-      this._markCommitStatus('inProgress', record.command);
+      this._markCommitStatus('in-progress', record.command);
       env[command.method].apply(env, command.args);
     },
 
@@ -373,7 +373,6 @@ YUI.add('environment-change-set', function(Y) {
     */
     _markCommitStatus: function(status, command) {
       var db = this.get('db'),
-          committed = 'committed',
           modelList;
       switch (command.method) {
         case '_addMachines':
@@ -385,7 +384,7 @@ YUI.add('environment-change-set', function(Y) {
         if (!(model instanceof Y.Model)) {
           model = modelList.revive(model);
         }
-        model.set('commitStatus', committed);
+        model.set('commitStatus', status);
         if (typeof modelList.free === 'function') {
           modelList.free(model);
         }
