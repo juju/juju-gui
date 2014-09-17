@@ -2328,6 +2328,16 @@ describe('machine view panel view', function() {
           '.service-scale-up-view .action-block').hasClass('enabled'), false);
     });
 
+    it('disables when there are no principal services', function() {
+      var db = view.get('db');
+      // Clear all the services from the list and add a subordinate service.
+      db.services.reset();
+      db.services.add({id: 'puppet', 'subordinate': true});
+      view.render();
+      assert.strictEqual(view.get('container').one(
+          '.service-scale-up-view .action-block').hasClass('enabled'), false);
+    });
+
     it('shows the onboarding when there are no services', function() {
       var db = view.get('db');
       // Clear all the services from the list.

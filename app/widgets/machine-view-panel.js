@@ -1526,7 +1526,8 @@ YUI.add('machine-view-panel', function(Y) {
         _toggleScaleUp: function() {
           var scaleUpView = this._scaleUpView;
           if (scaleUpView) {
-            if (this.get('db').services.size() === 0) {
+            // Disable scaling up services if no principals are found.
+            if (this.get('db').services.principals().size() === 0) {
               scaleUpView.disableScaleUp();
               this._setUnitListState('add');
             }

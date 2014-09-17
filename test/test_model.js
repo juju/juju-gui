@@ -609,6 +609,56 @@ describe('test_model.js', function() {
 
     });
 
+    describe('services.principals', function() {
+      var services;
+
+      beforeEach(function() {
+        services = new models.ServiceList();
+      });
+
+      afterEach(function() {
+        services.destroy();
+      });
+
+      // Ensure the services in the given model list have the expected names.
+      var assertServices = function(services, expectedNames) {
+        var names = services.map(function(service) {
+          return service.get('id');
+        });
+        names.sort();
+        expectedNames.sort();
+        assert.deepEqual(names, expectedNames);
+      };
+
+      it('returns the principal services', function() {
+        services.add([
+          {id: 'django', subordinate: false},
+          {id: 'puppet', subordinate: true},
+          {id: 'rails', subordinate: false},
+          {id: 'storage', subordinate: true}
+        ]);
+        assertServices(services.principals(), ['django', 'rails']);
+      });
+
+      it('returns an empty list if there are no principals', function() {
+        services.add([
+          {id: 'puppet', subordinate: true},
+          {id: 'nagios', subordinate: true}
+        ]);
+        assert.strictEqual(services.principals().size(), 0);
+      });
+
+      it('returns all the services if there are no subordinates', function() {
+        services.add([
+          {id: 'redis', subordinate: false},
+          {id: 'react', subordinate: false},
+          {id: 'postgres', subordinate: false}
+        ]);
+        assertServices(services.principals(), ['postgres', 'react', 'redis']);
+      });
+
+    });
+
     describe('serviceUnits.preventDirectChanges', function() {
 
       it('changes are disallowed when instantiating the db', function() {
