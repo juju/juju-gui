@@ -305,7 +305,7 @@ YUI.add('deployer-bar', function(Y) {
       if (container && container.get('parentNode')) {
         container.one('.panel.summary section').setHTML(this.summaryTemplate({
           changeCount: this._getChangeCount(ecs),
-          latestChangeDescription: '',
+          changeNotification: '',
           deployServices: changes.deployedServices,
           destroyedServices: changes.destroyedServices,
           addedRelations: changes.addRelations,
@@ -363,16 +363,15 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
+      var changeNotification = this._getChangeNotification(ecs);
       // XXX  Tests start to fail on this update without the parent of the
       // container to address. This should be setup in the factory for env
       // and app to be better mocked out to not pick up changes when not
       // wanted.
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
-          // There is no need to update the container with the latest change
-          // descriptions: this is done each time the user opens the panel.
-          // For now we just need to update the changes count and the button.
           changeCount: changes,
+          changeNotification: changeNotification,
           deployed: this._deployed
         }));
         this._toggleDeployButtonStatus(changes > 0);
@@ -457,10 +456,10 @@ YUI.add('deployer-bar', function(Y) {
     /**
       Return the latest change description.
 
-      @method _getLatestChangeDescription
+      @method _getChangeNotification
       @param {Object} ecs The environment change set.
     */
-    _getLatestChangeDescription: function(ecs) {
+    _getChangeNotification: function(ecs) {
       var latest = ecs.changeSet[this._getLatestChange()];
       return this._generateChangeDescription(latest);
     },
