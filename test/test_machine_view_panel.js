@@ -1769,6 +1769,31 @@ describe('machine view panel view', function() {
       assert.equal(machineTokens.item(2).getData('id'), '12');
     });
 
+    it('can sort the machines by names as numbers', function() {
+      view.render();
+      var moreMenuNode = container.one('.column.machines .head .more-menu');
+      var openMenu = moreMenuNode.one('.open-menu');
+      var machineTokens;
+      machines.reset();
+      machines.add([
+        {id: '10'},
+        {id: '0'},
+        {id: 'new1'},
+        {id: '1'},
+        {id: '2'},
+        {id: 'new0'}
+      ]);
+      openMenu.simulate('click');
+      moreMenuNode.one('.moreMenuItem-3').simulate('click');
+      machineTokens = container.all('.machine-token .token');
+      assert.equal(machineTokens.item(0).getData('id'), '0');
+      assert.equal(machineTokens.item(1).getData('id'), '1');
+      assert.equal(machineTokens.item(2).getData('id'), '2');
+      assert.equal(machineTokens.item(3).getData('id'), '10');
+      assert.equal(machineTokens.item(4).getData('id'), 'new0');
+      assert.equal(machineTokens.item(5).getData('id'), 'new1');
+    });
+
     it('can sort the machines by the number of services', function() {
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
