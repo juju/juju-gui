@@ -1676,7 +1676,7 @@ describe('utilities', function() {
             case 'charm':
               returnVal = 'I am a charm url';
               break;
-            case 'is_subordinate':
+            case 'subordinate':
               returnVal = false;
               break;
           }
@@ -1702,13 +1702,13 @@ describe('utilities', function() {
         id: serviceName + '/' + 2,
         displayName: serviceName + '/' + 2,
         charmUrl: 'I am a charm url',
-        is_subordinate: false
+        subordinate: false
       });
       assert.deepEqual(addUnitsArgs[1][0], {
         id: serviceName + '/' + 3,
         displayName: serviceName + '/' + 3,
         charmUrl: 'I am a charm url',
-        is_subordinate: false
+        subordinate: false
       });
       // Test the env.add_unit call.
       assert.equal(env.add_unit.callCount(), 2);
@@ -1730,9 +1730,11 @@ describe('utilities', function() {
       assert.equal(units.length, 2);
     }
 
-    it('creates machines, units; places units; updates unit lists', function() {
-      testScaleUp('myService');
-    });
+    it('creates machines, units; places units; updates unit lists',
+       function() {
+         testScaleUp('myService');
+       }
+    );
 
     it('creates machines, units; places units; updates unit lists for ghosts',
         function() {

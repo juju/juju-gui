@@ -2220,7 +2220,7 @@ YUI.add('juju-view-utils', function(Y) {
         id: unitId,
         displayName: displayName + '/' + unitIdCount,
         charmUrl: service.get('charm'),
-        is_subordinate: service.get('is_subordinate')
+        subordinate: service.get('subordinate')
       });
       env.add_unit(
           serviceName,

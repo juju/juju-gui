@@ -888,7 +888,8 @@ YUI.add('juju-env-sandbox', function(Y) {
           }
           return constraints;
         },
-        Config: 'config'
+        Config: 'config',
+        Subordinate: 'subordinate'
       },
       machine: {
         Id: 'id',
@@ -943,7 +944,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         Ports: 'open_ports',
         Status: 'agent_state',
         StatusInfo: 'agent_state_info',
-        StatusData: 'agent_state_data'
+        StatusData: 'agent_state_data',
+        Subordinate: 'subordinate'
       },
       relation: {
         Key: 'relation_id',

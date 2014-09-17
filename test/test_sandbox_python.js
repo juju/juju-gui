@@ -731,7 +731,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(data.err.length, 1);
           done();
         };
-        state.db.services.getById('wordpress').set('is_subordinate', true);
+        state.db.services.getById('wordpress').set('subordinate', true);
         client.send(Y.JSON.stringify(data));
       }
       // Generate the services base data then execute the test.

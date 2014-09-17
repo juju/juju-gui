@@ -937,13 +937,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
-      var is_subordinate = service.get('subordinate');
+      var isSubordinate = service.get('subordinate');
       if (Y.Lang.isUndefined(numUnits)) {
-        numUnits = is_subordinate ? 0 : 1;
+        numUnits = isSubordinate ? 0 : 1;
       }
       if (!Y.Lang.isNumber(numUnits) ||
-          (!is_subordinate && numUnits < 1 ||
-          (is_subordinate && numUnits !== 0))) {
+          (!isSubordinate && numUnits < 1 ||
+          (isSubordinate && numUnits !== 0))) {
         return {
           error: 'Invalid number of units [' + numUnits +
               '] for service: ' + serviceName
@@ -979,7 +979,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
           'machine': machine.id,
           // The models use underlines, not hyphens (see
           // app/models/models.js in _process_delta.)
-          'agent_state': 'started'
+          'agent_state': 'started',
+          subordinate: isSubordinate
         });
         units.push(unit);
         service.unitSequence += 1;
@@ -1057,7 +1058,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       Y.Array.each(unitNames, function(unitName) {
         service = this.db.services.getById(unitName.split('/')[0]);
-        if (service && service.get('is_subordinate')) {
+        if (service && service.get('subordinate')) {
           if (!Y.Lang.isArray(error)) { error = []; }
           error.push(unitName + ' is a subordinate, cannot remove.');
         } else {
