@@ -1351,7 +1351,16 @@ YUI.add('juju-models', function(Y) {
           break;
         case 'name':
           sortMethod = function(model) {
-            return model.displayName;
+            // A fairly arbitrary string length to pad out the strings
+            // to. If there are sort issues, try increasing this value.
+            var maxLength = 50;
+            var name = model.displayName;
+            // Pad the string out to our max value so that the numbers
+            // inside the strings sort correctly.
+            for (var i = 0; i < maxLength - name.length; i += 1) {
+              name = '0' + name;
+            }
+            return name;
           };
           break;
         case 'disk':

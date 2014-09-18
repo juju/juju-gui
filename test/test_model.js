@@ -1013,7 +1013,7 @@ describe('test_model.js', function() {
           assertMachinesNames(machines.filterByAncestor('1'), ['1/lxc/0']);
           assertMachinesNames(
               machines.filterByAncestor('2'),
-              ['2/kvm/0', '2/kvm/0/lxc/0', '2/kvm/0/lxc/1', '2/lxc/42']);
+              ['2/kvm/0', '2/lxc/42', '2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
         });
 
         it('filters machines by container ancestor', function() {
