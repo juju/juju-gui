@@ -1751,11 +1751,11 @@ describe('machine view panel view', function() {
     });
 
     it('can sort the machines by name', function() {
+      machines.reset();
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
       var machineTokens;
-      machines.reset();
       machines.add([
         {id: '11'},
         {id: '12'},
@@ -1770,11 +1770,11 @@ describe('machine view panel view', function() {
     });
 
     it('can sort the machines by the number of services', function() {
+      machines.reset();
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
       var machineTokens;
-      machines.reset();
       machines.add([
         {id: '11'},
         {id: '12'},
@@ -1791,11 +1791,11 @@ describe('machine view panel view', function() {
     });
 
     it('can sort the machines by the number of units', function() {
+      machines.reset();
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
       var machineTokens;
-      machines.reset();
       machines.add([
         {id: '11'},
         {id: '12'},
@@ -1812,11 +1812,11 @@ describe('machine view panel view', function() {
     });
 
     it('can sort the machines by disk', function() {
+      machines.reset();
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
       var machineTokens;
-      machines.reset();
       machines.add([
         {id: '12', hardware:
               {disk: 1024, mem: 1024, cpuPower: 1024, cpuCores: 1}},
@@ -1834,11 +1834,11 @@ describe('machine view panel view', function() {
     });
 
     it('can sort the machines by ram', function() {
+      machines.reset();
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
       var machineTokens;
-      machines.reset();
       machines.add([
         {id: '12', hardware:
               {disk: 1024, mem: null, cpuPower: 1024, cpuCores: 1}},
@@ -1856,11 +1856,11 @@ describe('machine view panel view', function() {
     });
 
     it('can sort the machines by cpu', function() {
+      machines.reset();
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
       var machineTokens;
-      machines.reset();
       machines.add([
         {id: '12', hardware:
               {disk: 1024, mem: null, cpuPower: 1024, cpuCores: 1}},
@@ -2002,16 +2002,17 @@ describe('machine view panel view', function() {
 
     it('creates container tokens with proper committed state', function() {
       view.render();
-      machines.add([{ id: '0/lxc/new1' }]);
+      machines.getById('0').commitStatus = 'in-progress';
+      machines.add([{ id: '0/lxc/new1', commitStatus: 'uncommitted' }]);
       var containers = machines.filterByAncestor('0');
       var tokenStub = utils.makeStubMethod(view, '_createContainerToken');
       this._cleanups.push(tokenStub.reset);
       view._renderContainerTokens(containers, '0');
       assert.equal(tokenStub.callCount(), 2);
       var tokenArguments = tokenStub.allArguments();
-      assert.equal(tokenArguments[0][2], true,
+      assert.equal(tokenArguments[0][2], 'in-progress',
                    'root container does not have expected committed state');
-      assert.equal(tokenArguments[1][2], false,
+      assert.equal(tokenArguments[1][2], 'uncommitted',
                    'new container does not have expected uncommitted state');
     });
 
