@@ -1769,7 +1769,7 @@ describe('machine view panel view', function() {
       assert.equal(machineTokens.item(2).getData('id'), '12');
     });
 
-    it('can sort the machines by names as numbers', function() {
+    it('can correctly sort numbers', function() {
       view.render();
       var moreMenuNode = container.one('.column.machines .head .more-menu');
       var openMenu = moreMenuNode.one('.open-menu');
@@ -1777,11 +1777,13 @@ describe('machine view panel view', function() {
       machines.reset();
       machines.add([
         {id: '10'},
-        {id: '0'},
         {id: 'new1'},
         {id: '1'},
         {id: '2'},
-        {id: 'new0'}
+        {id: 'new0'},
+        {id: '0'},
+        {id: 'new12'},
+        {id: 'new3'}
       ]);
       openMenu.simulate('click');
       moreMenuNode.one('.moreMenuItem-3').simulate('click');
@@ -1792,6 +1794,10 @@ describe('machine view panel view', function() {
       assert.equal(machineTokens.item(3).getData('id'), '10');
       assert.equal(machineTokens.item(4).getData('id'), 'new0');
       assert.equal(machineTokens.item(5).getData('id'), 'new1');
+      // new12 and new3 can not be sorted correctly as the number
+      // padding only helps with strings that contain only integers.
+      assert.equal(machineTokens.item(6).getData('id'), 'new12');
+      assert.equal(machineTokens.item(7).getData('id'), 'new3');
     });
 
     it('can sort the machines by the number of services', function() {
