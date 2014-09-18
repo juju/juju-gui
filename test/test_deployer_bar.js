@@ -212,6 +212,24 @@ describe('deployer bar view', function() {
                  'summary-open class still present');
   });
 
+  it('updates when the change set is modified', function(done) {
+    var called = false;
+    view.update = function(evt) {
+      called = true;
+      done();
+    };
+    view.render();
+    view.get('ecs').fire('changeSetModified');
+    assert.equal(called, true);
+  });
+
+  it('displays the most recent change as a notification on update', function() {
+    var stubGet = utils.makeStubMethod(view, '_getChangeNotification');
+    view.render();
+    view.update();
+    assert.equal(stubGet.calledOnce(), true);
+  });
+
   it('closes the summary', function() {
     view.hideSummary(mockEvent);
     assert.equal(container.hasClass('summary-open'), false);
