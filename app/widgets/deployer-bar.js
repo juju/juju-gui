@@ -436,7 +436,7 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} ecs The environment change set.
     */
     _getChangeCount: function(ecs) {
-      return Object.keys(ecs.changeSet).length;
+      return Object.keys(ecs.changeSets[0]).length;
     },
 
     /**
@@ -460,7 +460,7 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} ecs The environment change set.
     */
     _getChangeNotification: function(ecs) {
-      var latest = ecs.changeSet[this._getLatestChange()];
+      var latest = ecs.changeSets[0][this._getLatestChange()];
       return this._generateChangeDescription(latest);
     },
 
@@ -473,8 +473,8 @@ YUI.add('deployer-bar', function(Y) {
     _generateAllChangeDescriptions: function(ecs) {
       var changes = [],
           change;
-      Object.keys(ecs.changeSet).forEach(function(key) {
-        change = this._generateChangeDescription(ecs.changeSet[key]);
+      Object.keys(ecs.changeSets[0]).forEach(function(key) {
+        change = this._generateChangeDescription(ecs.changeSets[0][key]);
         if (change) {
           changes.push(change);
         }
@@ -653,8 +653,8 @@ YUI.add('deployer-bar', function(Y) {
      */
     _getLatestChange: function() {
       var ecs = this.get('ecs');
-      var len = Object.keys(ecs.changeSet).length - 1;
-      return Object.keys(ecs.changeSet)[len];
+      var len = Object.keys(ecs.changeSets[0]).length - 1;
+      return Object.keys(ecs.changeSets[0])[len];
     },
 
     /**
@@ -679,8 +679,8 @@ YUI.add('deployer-bar', function(Y) {
       var db = this.get('db'),
           unitCount = {},
           totalUnits = 0;
-      Object.keys(ecs.changeSet).forEach(function(key) {
-        var command = ecs.changeSet[key].command,
+      Object.keys(ecs.changeSets[0]).forEach(function(key) {
+        var command = ecs.changeSets[0][key].command,
             args = command.args,
             name, service;
         switch (command.method) {

@@ -32,7 +32,7 @@ YUI.add('environment-change-set', function(Y) {
       @method initializer
     */
     initializer: function() {
-      this.changeSet = {};
+      this.changeSets = [{}];
       this.currentCommit = [];
     },
 
@@ -49,15 +49,16 @@ YUI.add('environment-change-set', function(Y) {
       @param {Object} results The data returned by calling the command.
     */
     _updateChangesetFromResults: function(record, results) {
-      var changeSet = this.changeSet,
-          changeSetRecord;
-      Object.keys(changeSet).forEach(function(key) {
-        changeSetRecord = changeSet[key];
-        if (changeSetRecord.command.onParentResults &&
-            changeSetRecord.parents &&
-            changeSetRecord.parents.indexOf(record.key) !== -1) {
-          changeSetRecord.command.onParentResults(record, results);
-        }
+      var changeSetRecord;
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(changeSet).forEach(function(key) {
+          changeSetRecord = changeSet[key];
+          if (changeSetRecord.command.onParentResults &&
+              changeSetRecord.parents &&
+              changeSetRecord.parents.indexOf(record.key) !== -1) {
+            changeSetRecord.command.onParentResults(record, results);
+          }
+        });
       });
     },
 
@@ -101,7 +102,12 @@ YUI.add('environment-change-set', function(Y) {
     */
     _generateUniqueKey: function(type) {
       var key = this._generateRandomNumber();
-      while (this.changeSet[type + '-' + key] !== undefined) {
+      var currentKeys = Y.Array.flatten(
+        this.changeSets.map(function(changeSet) {
+          return Object.keys(changeSet);
+        })
+      );
+      while (currentKeys.indexOf(type + '-' + key) !== -1) {
         key = this._generateRandomNumber();
       }
       return key;
@@ -130,7 +136,7 @@ YUI.add('environment-change-set', function(Y) {
     _createNewRecord: function(type, command, parents) {
       var key = type + '-' + this._generateUniqueKey(type);
       parents = parents || [];
-      this.changeSet[key] = {
+      this.changeSets[0][key] = {
         id: key,
         parents: Y.Array.filter(parents, function(parent) {
           return !!parent;
@@ -140,7 +146,7 @@ YUI.add('environment-change-set', function(Y) {
         timestamp: Date.now()
       };
       this.fire('changeSetModified');
-      this._wrapCallback(this.changeSet[key]);
+      this._wrapCallback(this.changeSets[0][key]);
       return key;
     },
 
@@ -151,7 +157,11 @@ YUI.add('environment-change-set', function(Y) {
       @param {String} id The id of the record to remove.
     */
     _removeExistingRecord: function(id) {
-      delete this.changeSet[id];
+      this.changeSets.forEach(function(changeSet) {
+        if (changeSet[id]) {
+          delete this.changeSet[id];
+        }
+      });
       // We need to fire this event so other items in the application know this
       // list has changed.
       this.fire('changeSetModified');
@@ -199,7 +209,11 @@ YUI.add('environment-change-set', function(Y) {
         // Signal that this record has been completed by decrementing the
         // count of records to complete and deleting it from the changeset.
         self.levelRecordCount -= 1;
-        delete self.changeSet[record.id];
+        self.changeSets.forEach(function(changeSet) {
+          if (changeSet[id]) {
+            delete changeSet[id];
+          }
+        });
         self._updateChangesetFromResults(record, arguments);
         self.fire('changeSetModified');
         return result;
@@ -239,7 +253,7 @@ YUI.add('environment-change-set', function(Y) {
           command,
           keyToLevelMap = {},
           currLevel = 1,
-          keys = Object.keys(this.changeSet),
+          keys = Object.keys(this.changeSets[0]),
           db = this.get('db'),
           unplacedUnits = db.units.filterByMachine(null);
       this.placedCount = 0;
@@ -248,7 +262,7 @@ YUI.add('environment-change-set', function(Y) {
       if (unplacedUnits) {
         var unplacedIds = unplacedUnits.map(function(u) { return u.id; });
         keys = keys.filter(function(key) {
-          var command = this.changeSet[key].command,
+          var command = this.changeSets[0][key].command,
               modelId = command.options && command.options.modelId;
           if (command.method !== '_add_unit') {
             return true;
@@ -259,7 +273,7 @@ YUI.add('environment-change-set', function(Y) {
 
       // Take care of top-level objects quickly.
       keys.forEach(Y.bind(function(key) {
-        command = this.changeSet[key];
+        command = this.changeSets[0][key];
         command.key = key;
         if (!command.parents || command.parents.length === 0) {
           hierarchy[0].push(Y.clone(command));
@@ -297,7 +311,7 @@ YUI.add('environment-change-set', function(Y) {
       @param {String} key The current level key.
     */
     _placeIfNeeded: function(currLevel, keyToLevelMap, hierarchy, value, key) {
-      var command = this.changeSet[key];
+      var command = this.changeSets[0][key];
 
       if (!command || command.placed) {
         return;
@@ -399,6 +413,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     commit: function(env) {
       this.currentCommit = this._buildHierarchy();
+      this.changeSets.unshift({});
       this.currentLevel = -1;
       this._commitNext(env);
     },
@@ -418,7 +433,7 @@ YUI.add('environment-change-set', function(Y) {
           this._clearFromDB(change.command);
         }.bind(this));
       }.bind(this));
-      this.changeSet = {};
+      this.changeSets[0] = {};
       this.currentCommit = [];
       this.fire('changeSetModified');
     },
@@ -481,6 +496,16 @@ YUI.add('environment-change-set', function(Y) {
       }
     },
 
+    getChangeSetRecord: function(id) {
+      var record = null;
+      this.changeSets.forEach(function(changeSet) {
+        if (!record && changeSet[id]) {
+          record = changeSet[id];
+        }
+      });
+      return record;
+    },
+    
     /* End ECS methods */
 
     /* Private environment methods. */
@@ -524,7 +549,7 @@ YUI.add('environment-change-set', function(Y) {
       }
       // The 6th param is the toMachine param of the env deploy call.
       var toMachine = command.args[6];
-      if (!this.changeSet[parent]) {
+      if (!this.getChangeSetRecord(parent)) {
         // If the toMachine isn't a record in the changeSet that means it's
         // an existing machine or that the machine does not exist and one
         // will be created to host this unit. This means that this does not
