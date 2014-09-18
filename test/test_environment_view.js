@@ -325,6 +325,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
     );
 
+    it('must be able to display service icons as pending deletion', function() {
+      window.flags = {};
+      window.flags.mv = true;
+      db.services.getById('wordpress').set('deleted', true);
+      // Create an instance of EnvironmentView with custom env
+      db.services.getById('wordpress').set('deleted', true);
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      });
+      view.render();
+      assert.equal(container.one('.service .service-block-image').get(
+          'href').baseVal.indexOf('service_module_pending.svg') >= 0, true);
+      window.flags = {};
+    });
+
     it('must properly count subordinate relations', function() {
       var view = new views.environment({
         container: container,

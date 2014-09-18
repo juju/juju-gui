@@ -139,7 +139,7 @@ YUI.add('juju-topology-service', function(Y) {
           new_href = '/juju-ui/assets/svgs/';
       if (d.subordinate) {
         new_href += 'sub_module.svg';
-      } else if (d.pending && window.flags.mv) {
+      } else if ((d.pending || d.deleted) && window.flags.mv) {
         new_href += 'service_module_pending.svg';
       } else {
         new_href += 'service_module.svg';
