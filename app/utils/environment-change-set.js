@@ -159,7 +159,7 @@ YUI.add('environment-change-set', function(Y) {
     _removeExistingRecord: function(id) {
       this.changeSets.forEach(function(changeSet) {
         if (changeSet[id]) {
-          delete this.changeSet[id];
+          delete changeSet[id];
         }
       });
       // We need to fire this event so other items in the application know this
@@ -210,8 +210,8 @@ YUI.add('environment-change-set', function(Y) {
         // count of records to complete and deleting it from the changeset.
         self.levelRecordCount -= 1;
         self.changeSets.forEach(function(changeSet) {
-          if (changeSet[id]) {
-            delete changeSet[id];
+          if (changeSet[record.id]) {
+            delete changeSet[record.id];
           }
         });
         self._updateChangesetFromResults(record, arguments);
@@ -347,7 +347,18 @@ YUI.add('environment-change-set', function(Y) {
       this.currentLevel += 1;
       this.levelRecordCount = this.currentCommit[this.currentLevel].length;
       this.currentCommit[this.currentLevel].forEach(function(changeSetRecord) {
-        record = this.changeSet[changeSetRecord.key];
+        record = null;
+        this.changeSets.some(function(changeSet) {
+          Y.Object.some(changeSet, function(value, key) {
+            if (key === changeSetRecord.key) {
+              record = value;
+              return true
+            }
+          });
+          if (record) {
+            return true;
+          }
+        });
         this._execute(env, record);
         this.fire('commit', record);
       }, this);
@@ -579,13 +590,15 @@ YUI.add('environment-change-set', function(Y) {
       }
       var existingService;
       // Check if the service is pending in the change set.
-      Object.keys(this.changeSet).forEach(function(key) {
-        if (this.changeSet[key].command.method === '_deploy') {
-          if (this.changeSet[key].command.options.modelId === args[0]) {
-            existingService = key;
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(changeSet).forEach(function(key) {
+          if (changeSet[key].command.method === '_deploy') {
+            if (changeSet[key].command.options.modelId === args[0]) {
+              existingService = key;
+            }
           }
-        }
-      }, this);
+        }, this);
+      });
       if (existingService) {
         this._destroyQueuedService(existingService);
       } else {
@@ -610,14 +623,16 @@ YUI.add('environment-change-set', function(Y) {
     */
     _destroyQueuedService: function(service) {
       // Search for everything that has that service as a parent and remove it.
-      Object.keys(this.changeSet).forEach(function(key) {
-        if (this.changeSet[key].parents.indexOf(service) !== -1) {
-          this._removeExistingRecord(key);
-        }
-      }, this);
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(changeSet).forEach(function(key) {
+          if (changeSet[key].parents.indexOf(service) !== -1) {
+            this._removeExistingRecord(key);
+          }
+        }, this);
+      }.bind(this));
       // Remove the service itself.
       var db = this.get('db');
-      var modelId = this.changeSet[service].command.options.modelId;
+      var modelId = this.changeSets[0][service].command.options.modelId;
       var model = db.services.getById(modelId);
       var units = model.get('units');
       // Remove the unplaced service units
@@ -649,13 +664,15 @@ YUI.add('environment-change-set', function(Y) {
       }
       // Search for already queued machines.
       var existingMachine;
-      Object.keys(this.changeSet).forEach(function(key) {
-        if (this.changeSet[key].command.method === '_addMachines') {
-          if (this.changeSet[key].command.options.modelId === args[0][0]) {
-            existingMachine = key;
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(changeSet).forEach(function(key) {
+          if (changeSet[key].command.method === '_addMachines') {
+            if (changeSet[key].command.options.modelId === args[0][0]) {
+              existingMachine = key;
+            }
           }
-        }
-      }, this);
+        }, this);
+      });
       var db = this.get('db');
       var machine = db.machines.getById(command.args[0]);
       var removedUnits = [];
@@ -697,25 +714,27 @@ YUI.add('environment-change-set', function(Y) {
     */
     _destroyQueuedMachine: function(machine) {
       // Search for everything that has that machine as a parent and remove it.
-      Object.keys(this.changeSet).forEach(function(key) {
-        var change = this.changeSet[key];
-        var idx = change.parents ? change.parents.indexOf(machine) : -1;
-        if (idx !== -1) {
-          // If the child is an add unit command, we just want to remove the
-          // machine as a parent. If it's a container or something else, we want
-          // to remove the record along with this one.
-          if (change.command.method === '_add_unit') {
-            // Remove the machine record from the _add_unit's parents
-            change.parents.splice(idx, 1);
-            change.command.args[2] = null; // remove the toMachine arg.
-          } else {
-            this._removeExistingRecord(key);
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(this.changeSet).forEach(function(key) {
+          var change = changeSet[key];
+          var idx = change.parents ? change.parents.indexOf(machine) : -1;
+          if (idx !== -1) {
+            // If the child is an add unit command, we just want to remove the
+            // machine as a parent. If it's a container or something else, we want
+            // to remove the record along with this one.
+            if (change.command.method === '_add_unit') {
+              // Remove the machine record from the _add_unit's parents
+              change.parents.splice(idx, 1);
+              change.command.args[2] = null; // remove the toMachine arg.
+            } else {
+              this._removeExistingRecord(key);
+            }
           }
-        }
-      }, this);
+        }, this);
+      }.bind(this));
       // Remove the machine itself.
       var db = this.get('db');
-      var modelId = this.changeSet[machine].command.options.modelId;
+      var modelId = this.changeSets[0][machine].command.options.modelId;
       db.machines.remove(db.machines.getById(modelId));
       this._removeExistingRecord(machine);
     },
@@ -733,13 +752,15 @@ YUI.add('environment-change-set', function(Y) {
       var ghostServiceName = args[0],
           parent = [];
       // Search for and add the service to parent.
-      Y.Object.each(this.changeSet, function(value, key) {
-        if (value.command.method === '_deploy') {
-          if (value.command.options.modelId === args[0]) {
-            parent.push(key);
-            args[0] = value.command.args[1];
+      this.changeSets.forEach(function(changeSet) {
+        Y.Object.each(changeSet, function(value, key) {
+          if (value.command.method === '_deploy') {
+            if (value.command.options.modelId === args[0]) {
+              parent.push(key);
+              args[0] = value.command.args[1];
+            }
           }
-        }
+        });
       });
 
       var command = {
@@ -797,15 +818,17 @@ YUI.add('environment-change-set', function(Y) {
     _lazyAddRelation: function(args, options) {
       var serviceA;
       var serviceB;
-      Y.Object.each(this.changeSet, function(value, key) {
-        if (value.command.method === '_deploy') {
-          if (value.command.options.modelId === args[0][0]) {
-            serviceA = key;
+      this.changeSets.forEach(function(changeSet) {
+        Y.Object.each(changeSet, function(value, key) {
+          if (value.command.method === '_deploy') {
+            if (value.command.options.modelId === args[0][0]) {
+              serviceA = key;
+            }
+            if (value.command.options.modelId === args[1][0]) {
+              serviceB = key;
+            }
           }
-          if (value.command.options.modelId === args[1][0]) {
-            serviceB = key;
-          }
-        }
+        });
       });
       var parent = [serviceA, serviceB];
       var command = {
@@ -846,26 +869,27 @@ YUI.add('environment-change-set', function(Y) {
     _lazyRemoveRelation: function(args) {
       // If an existing ecs record for this relation exists, remove it from the
       // queue.
-      var changeSet = this.changeSet,
-          argsEndpoints = [args[0], args[1]],
+      var argsEndpoints = [args[0], args[1]],
           ghosted = false,
           command, record;
       var relations = this.get('db').relations;
-      Object.keys(changeSet).forEach(function(key) {
-        command = changeSet[key].command;
-        if (command.method === '_add_relation') {
-          // If there is a matching ecs relation then remove it from the queue.
-          if (relations.compareRelationEndpoints(
-                                        [command.args[0], command.args[1]],
-                                        argsEndpoints)) {
-            ghosted = true;
-            this._removeExistingRecord(key);
-            // Remove the relation from the relations db. Even the ghost
-            // relations are stored in the db.
-            relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(changeSet).forEach(function(key) {
+          command = changeSet[key].command;
+          if (command.method === '_add_relation') {
+            // If there is a matching ecs relation then remove it from the queue.
+            if (relations.compareRelationEndpoints(
+                                          [command.args[0], command.args[1]],
+                                          argsEndpoints)) {
+              ghosted = true;
+              this._removeExistingRecord(key);
+              // Remove the relation from the relations db. Even the ghost
+              // relations are stored in the db.
+              relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
+            }
           }
-        }
-      }, this);
+        }, this);
+      }.bind(this));
       // If the relation wasn't found in the ecs then it's a real relation.
       if (!ghosted) {
         record = this._createNewRecord('removeRelation', {
@@ -896,24 +920,26 @@ YUI.add('environment-change-set', function(Y) {
           command, record;
       // XXX It is currently not possible to remove pending units, there may
       // be future work around this - Makyo 2014-08-13
-      Object.keys(changeSet).forEach(function(key) {
-        command = changeSet[key].command;
-        if (command.method === '_add_unit') {
-          // XXX Currently, modelId is a single unit's name.  In the future,
-          // this will likely be an array and an intersection between the two
-          // will need to be found. Makyo 2014-08-15
-          var unitName = command.options.modelId;
-          var unitIndex = toRemove.indexOf(unitName);
-          // If there is a matching ecs unit then remove it from the queue.
-          if (unitIndex !== -1) {
-            toRemove.splice(unitIndex, 1);
-            this._removeExistingRecord(key);
-            // Remove the unit from the units DB. Even the ghost units are
-            // stored in the DB.
-            db.removeUnits(units.getById(unitName));
+      this.changeSets.forEach(function(changeSet) {
+        Object.keys(changeSet).forEach(function(key) {
+          command = changeSet[key].command;
+          if (command.method === '_add_unit') {
+            // XXX Currently, modelId is a single unit's name.  In the future,
+            // this will likely be an array and an intersection between the two
+            // will need to be found. Makyo 2014-08-15
+            var unitName = command.options.modelId;
+            var unitIndex = toRemove.indexOf(unitName);
+            // If there is a matching ecs unit then remove it from the queue.
+            if (unitIndex !== -1) {
+              toRemove.splice(unitIndex, 1);
+              this._removeExistingRecord(key);
+              // Remove the unit from the units DB. Even the ghost units are
+              // stored in the DB.
+              db.removeUnits(units.getById(unitName));
+            }
           }
-        }
-      }, this);
+        }, this);
+      }.bind(this));
       // If the unit wasn't found in the ecs then it's a real unit.
       if (toRemove.length > 0) {
         args[0] = toRemove;
@@ -943,13 +969,15 @@ YUI.add('environment-change-set', function(Y) {
       // Search for and add the container to its parent machine.
       args[0].forEach(function(param) {
         if (param.parentId) {
-          Y.Object.each(this.changeSet, function(value, key) {
-            var command = value.command;
-            if (command.method === '_addMachines' &&
-                command.options.modelId === param.parentId) {
-              parent.push(key);
-            }
-          }, this);
+          this.changeSets.forEach(function(changeSet) {
+            Y.Object.each(changeSet, function(value, key) {
+              var command = value.command;
+              if (command.method === '_addMachines' &&
+                  command.options.modelId === param.parentId) {
+                parent.push(key);
+              }
+            }, this);
+          });
         }
       }, this);
       var command = {
@@ -1017,24 +1045,28 @@ YUI.add('environment-change-set', function(Y) {
     lazyAddUnits: function(args, options) {
       var parent = [];
       // Search for and add the service to parent.
-      Y.Object.each(this.changeSet, function(value, key) {
-        if (value.command.method === '_deploy') {
-          if (value.command.options.modelId === args[0]) {
-            parent.push(key);
-            args[0] = value.command.args[1];
+      this.changeSets.forEach(function(changeSet) {
+        Y.Object.each(changeSet, function(value, key) {
+          if (value.command.method === '_deploy') {
+            if (value.command.options.modelId === args[0]) {
+              parent.push(key);
+              args[0] = value.command.args[1];
+            }
           }
-        }
+        });
       });
       // If toMachine is specified, search for and add the machine to parent.
       var toMachine = args[2];
       if (toMachine) {
-        Y.Object.each(this.changeSet, function(value, key) {
-          var command = value.command;
-          if (command.method === '_addMachines' &&
-              command.options.modelId === toMachine) {
-            parent.push(key);
-          }
-        }, this);
+        this.changeSets.forEach(function(changeSet) {
+          Y.Object.each(this.changeSet, function(value, key) {
+            var command = value.command;
+            if (command.method === '_addMachines' &&
+                command.options.modelId === toMachine) {
+              parent.push(key);
+            }
+          }, this);
+        });
       }
       var db = this.get('db');
       var command = {
@@ -1084,7 +1116,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     _retrieveUnitRecord: function(unitId) {
       var record;
-      Y.Object.some(this.changeSet, function(value, key) {
+      Y.Object.some(this.changeSets[0], function(value, key) {
         var command = value.command;
         if (command.method === '_add_unit' &&
             command.options.modelId === unitId) {
@@ -1127,7 +1159,7 @@ YUI.add('environment-change-set', function(Y) {
       });
       // Add the new addMachines parent.
       var containerExists = true;
-      Y.Object.each(this.changeSet, function(value, key) {
+      Y.Object.each(this.changeSets[0], function(value, key) {
         var command = value.command;
         if (command.method === '_addMachines' &&
             command.options.modelId === machineId) {
