@@ -205,6 +205,46 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Updates the appropriate configuration objects based on the passed in delta
+      from handlers.js. It also updates the conflictedFields attribute.
+
+      @method updateConfig
+      @param {Object} changeConfig The configuration change delta.
+    */
+    updateConfig: function(changeConfig) {
+      changeConfig = changeConfig || {};
+      // Set up config options.
+      var serviceConfig = this.get('config') || {};
+      var combined = Y.merge(serviceConfig, changeConfig);
+      // Compare the local and new config objects.
+      var conflicted = [];
+      Object.keys(combined).forEach(function(key) {
+        if (combined[key] !== serviceConfig[key]) {
+          conflicted.push(key);
+        }
+      });
+      // If there are any fields where the local version is different from the
+      // new environment fields that means that it has been changed locally.
+      if (conflicted.length > 0) {
+        // Loop through the conflicted values and make sure we don't update the
+        // local values of those properties in the model.
+        conflicted.forEach(function(key) {
+          combined[key] = serviceConfig[key];
+        });
+        this.set('_conflictedFields', conflicted);
+      }
+      // Update the config property with the appropriate values.
+      this.set('config', combined);
+      // Update the environmentConfig config options with the values as they are
+      // in the real Juju environment. This should never be
+      // done by anything but this method so that it says as representation of
+      // the config options as juju sees it.
+      this.set(
+          'environmentConfig',
+          Y.merge(this.get('environmentConfig'), changeConfig));
+    },
+
+    /**
       Return true if this service life is 'alive' or 'dying', false otherwise.
 
       A model instance is alive if its life cycle (i.e. the "life" attribute)
@@ -275,6 +315,17 @@ YUI.add('juju-models', function(Y) {
         @default []
       */
       _dirtyFields: {
+        value: []
+      },
+      /**
+        Stores the fields which are in conflict between the ecs change values
+        and the environment values.
+
+        @attribute _conflictedFields
+        @type {Array}
+        @default []
+      */
+      _conflictedFields: {
         value: []
       },
       displayName: {
