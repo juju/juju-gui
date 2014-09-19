@@ -105,26 +105,6 @@ YUI.add('machine-token', function(Y) {
         },
 
         /**
-         * Mark the token as uncommitted.
-         *
-         * @method setUncommitted
-         */
-        setUncommitted: function() {
-          this.set('committed', false);
-          this.get('container').one('.token').addClass('uncommitted');
-        },
-
-        /**
-         * Mark the token as committed.
-         *
-         * @method setCommitted
-         */
-        setCommitted: function() {
-          this.set('committed', true);
-          this.get('container').one('.token').removeClass('uncommitted');
-        },
-
-        /**
          * Change the token to the drop state.
          *
          * @method setDroppable
@@ -224,8 +204,7 @@ YUI.add('machine-token', function(Y) {
           }
           this.renderUnits();
           container.addClass('machine-token');
-          container.one('.token').addClass(
-              this.get('committed') ? 'committed' : 'uncommitted');
+          container.one('.token').addClass(this.get('commitStatus'));
           // Tells the machine view panel drop handler where the unplaced unit
           // token was dropped.
           var token = container.one('.token');
@@ -260,12 +239,12 @@ YUI.add('machine-token', function(Y) {
           machine: {},
 
           /**
-           * @attribute committed
-           * @default true
-           * @type {Bool}
+           * @attribute commitStatus
+           * @default 'committed'
+           * @type {String}
           */
-          committed: {
-            value: true
+          commitStatus: {
+            value: 'committed'
           },
 
           /**

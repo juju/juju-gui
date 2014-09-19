@@ -187,6 +187,7 @@ YUI.add('environment-change-set', function(Y) {
       */
       function _callbackWrapper() {
         record.executed = true;
+        self._markCommitStatus('committed', record.command);
         // `this` here is in context that the callback is called
         //  under. In most cases this will be `env`.
         var result = callback.apply(this, self._getArgs(arguments));
@@ -219,6 +220,7 @@ YUI.add('environment-change-set', function(Y) {
       if (command.prepare) {
         command.prepare(this.get('db'));
       }
+      this._markCommitStatus('in-progress', record.command);
       env[command.method].apply(env, command.args);
     },
 
@@ -358,6 +360,41 @@ YUI.add('environment-change-set', function(Y) {
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
+        }
+      }
+    },
+
+    /**
+      Mark the supplied commands associated model to the supplied commit status.
+
+      @method _markCommitStatus
+      @param {String} status The status to set the 'commitStatus' attr to.
+      @param {Object} command The command from the changeSet record.
+    */
+    _markCommitStatus: function(status, command) {
+      var db = this.get('db'),
+          modelList;
+      // When we add commit status changes to services, relations etc they will
+      // be switched here.
+      switch (command.method) {
+        case '_addMachines':
+          modelList = db.machines;
+          break;
+      }
+      if (modelList) {
+        // When working with ghost services we are passed a modelId which points
+        // to the proper model. So we fetch that model.
+        var model = modelList.getById(command.options.modelId);
+        // Depending on the modellist this model may be an object from a
+        // lazymodellist or a Y.Model from a regular model list.
+        if (!(model instanceof Y.Model)) {
+          // We need to revive the model if it's an Object so that other
+          // parts of the application can listen for the change event.
+          model = modelList.revive(model);
+        }
+        model.set('commitStatus', status);
+        if (typeof modelList.free === 'function') {
+          modelList.free(model);
         }
       }
     },

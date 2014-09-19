@@ -948,6 +948,15 @@ YUI.add('juju-models', function(Y) {
     // machine lazy instances' properties.
     ATTRS: {
       /**
+        The committed status of the machine. Possible values are 'uncommitted',
+        'in-progress' and 'committed'.
+
+        @attribute commitStatus
+        @type {String}
+        @default undefined
+      */
+      commitStatus: {},
+      /**
         The machine display name (e.g. "1" or "2/lxc/0"), automatically
         generated when a machine is added to the model list.
 
@@ -1254,6 +1263,7 @@ YUI.add('juju-models', function(Y) {
       var obj = attrs ? Y.clone(attrs) : {};
       // Define the fully qualified ghost machine identifier.
       obj.id = 'new' + this._ghostCounter;
+      obj.commitStatus = 'uncommitted';
       this._ghostCounter += 1;
       if (parentId) {
         if (!containerType) {
