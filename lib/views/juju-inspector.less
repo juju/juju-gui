@@ -731,7 +731,7 @@
                 }
             }
             .settings-wrapper {
-                &.uncommitted label::after {
+                &.uncommitted > label::after {
                     .uncommitted-circle;
                     content: "\00B0";
                     margin-left: 4px;
@@ -782,6 +782,9 @@
                 &.uncommitted .modified {
                   background-image: none;
                   background-color: white;
+                  &.boolean {
+                    display: none;
+                  }
                 }
                 .conflict-pending {
                   background-color: @inspector-changed-field;
