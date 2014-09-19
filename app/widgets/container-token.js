@@ -208,8 +208,6 @@ YUI.add('container-token', function(Y) {
           });
           this.renderUnits();
           container.addClass('container-token');
-          // If the commitStatus is undefined then we will default to showing
-          // it as committed.
           container.one('.token').addClass(this.get('commitStatus'));
           // Tells the machine view panel drop handler where the unplaced unit
           // token was dropped.

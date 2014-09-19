@@ -374,14 +374,22 @@ YUI.add('environment-change-set', function(Y) {
     _markCommitStatus: function(status, command) {
       var db = this.get('db'),
           modelList;
+      // When we add commit status changes to services, relations etc they will
+      // be switched here.
       switch (command.method) {
         case '_addMachines':
           modelList = db.machines;
           break;
       }
       if (modelList) {
+        // When working with ghost services we are passed a modelId which points
+        // to the proper model. So we fetch that model.
         var model = modelList.getById(command.options.modelId);
+        // Depending on the modellist this model may be an object from a
+        // lazymodellist or a Y.Model from a regular model list.
         if (!(model instanceof Y.Model)) {
+          // We need to revive the model if it's an Object so that other
+          // parts of the application can listen for the change event.
           model = modelList.revive(model);
         }
         model.set('commitStatus', status);
