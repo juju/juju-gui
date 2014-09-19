@@ -423,6 +423,7 @@ th {
     }
     div.content {
         height: 450px;
+        padding: @environment-header-height 0 0 @left-panel-width;
     }
     h1 {
         line-height: normal;
@@ -437,6 +438,10 @@ th {
         margin-right: auto;
         margin-top: 2ex;
     }
+}
+.state-sidebar-hidden #environment-help .content {
+    // When the sidebar is hidden center the onboarding to the full width.
+    padding-left: 0;
 }
 /*
  * The actions menu that appears next to a service block.
