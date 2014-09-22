@@ -92,7 +92,7 @@ describe('deployer bar view', function() {
   });
 
   it('should increase changes when a service is added', function() {
-    ecs.changeSet.abc123 = { foo: 'foo' };
+    ecs.changeSet.abc123 = { foo: 'foo', index: 0 };
     assert.equal(view._getChangeCount(ecs), 1);
   });
 
@@ -416,7 +416,7 @@ describe('deployer bar view', function() {
         view,
         '_generateChangeDescription');
     this._cleanups.push(stubDescription.reset);
-    ecs.changeSet = { foo: {}, bar: {} };
+    ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
     view._generateAllChangeDescriptions(ecs);
     assert.equal(stubDescription.callCount(), 2);
   });

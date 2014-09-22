@@ -34,9 +34,26 @@ YUI.add('environment-change-set', function(Y) {
     initializer: function() {
       this.changeSet = {};
       this.currentCommit = [];
+      this.currentIndex = 0;
     },
 
     /* ECS methods */
+
+    /**
+      Retrieve only the changeSet items for the current index.
+
+      @method getCurrentChangeSet
+      @return {Object} The current set of changeSet items
+    */
+    getCurrentChangeSet: function() {
+      var currentChangeSet = {};
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.index === this.currentIndex) {
+          currentChangeSet[key] = value;
+        }
+      }, this);
+      return currentChangeSet;
+    },
 
     /**
       When a command finishes executing, if that command provides a means of
@@ -132,6 +149,7 @@ YUI.add('environment-change-set', function(Y) {
       parents = parents || [];
       this.changeSet[key] = {
         id: key,
+        index: this.currentIndex,
         parents: Y.Array.filter(parents, function(parent) {
           return !!parent;
         }),
@@ -234,18 +252,25 @@ YUI.add('environment-change-set', function(Y) {
       @return {Array} An array of arrays of commands to commit, separated by
         level.
     */
-    _buildHierarchy: function() {
+    _buildHierarchy: function(removeUnplaced) {
       var hierarchy = [[]],
           command,
           keyToLevelMap = {},
           currLevel = 1,
-          keys = Object.keys(this.changeSet),
+          keys = [],
           db = this.get('db'),
           unplacedUnits = db.units.filterByMachine(null);
       this.placedCount = 0;
 
-      // Filter out unplaced units; they should remain undeployed by default.
-      if (unplacedUnits) {
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.index === this.currentIndex) {
+          keys.push(key);
+        }
+      }, this);
+
+      // Filter out unplaced units and increment their changeSet index;
+      // they should remain undeployed by default.
+      if (unplacedUnits && removeUnplaced) {
         var unplacedIds = unplacedUnits.map(function(u) { return u.id; });
         keys = keys.filter(function(key) {
           var command = this.changeSet[key].command,
@@ -253,7 +278,12 @@ YUI.add('environment-change-set', function(Y) {
           if (command.method !== '_add_unit') {
             return true;
           }
-          return unplacedIds.indexOf(modelId) < 0;
+          if (unplacedIds.indexOf(modelId) < 0) {
+            return true;
+          } else {
+            this.changeSet[key].index += 1;
+            return false;
+          }
         }, this);
       }
 
@@ -406,7 +436,8 @@ YUI.add('environment-change-set', function(Y) {
       @method commit
     */
     commit: function(env) {
-      this.currentCommit = this._buildHierarchy();
+      this.currentCommit = this._buildHierarchy(true);
+      this.currentIndex += 1;
       this.currentLevel = -1;
       this._commitNext(env);
     },
@@ -418,7 +449,7 @@ YUI.add('environment-change-set', function(Y) {
       @method clear
     */
     clear: function() {
-      var toClear = this._buildHierarchy();
+      var toClear = this._buildHierarchy(false);
       // We need to work through the hierarchy of changes in reverse, otherwise
       // removing units will fail as the service might not exist anymore.
       toClear.reverse().forEach(function(level) {
@@ -426,7 +457,13 @@ YUI.add('environment-change-set', function(Y) {
           this._clearFromDB(change.command);
         }.bind(this));
       }.bind(this));
-      this.changeSet = {};
+      // Wipe out the current index from the changeset.
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.index === this.currentIndex) {
+          delete this.changeSet[key];
+        }
+      }, this);
+      this.currentIndex += 1;
       this.currentCommit = [];
       this.fire('changeSetModified');
     },

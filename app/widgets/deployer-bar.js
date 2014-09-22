@@ -436,7 +436,7 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} ecs The environment change set.
     */
     _getChangeCount: function(ecs) {
-      return Object.keys(ecs.changeSet).length;
+      return Object.keys(ecs.getCurrentChangeSet()).length;
     },
 
     /**
@@ -460,7 +460,7 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} ecs The environment change set.
     */
     _getChangeNotification: function(ecs) {
-      var latest = ecs.changeSet[this._getLatestChange()];
+      var latest = ecs.getCurrentChangeSet()[this._getLatestChange()];
       return this._generateChangeDescription(latest);
     },
 
@@ -472,9 +472,10 @@ YUI.add('deployer-bar', function(Y) {
     */
     _generateAllChangeDescriptions: function(ecs) {
       var changes = [],
-          change;
-      Object.keys(ecs.changeSet).forEach(function(key) {
-        change = this._generateChangeDescription(ecs.changeSet[key]);
+          change,
+          changeSet = ecs.getCurrentChangeSet();
+      Object.keys(changeSet).forEach(function(key) {
+        change = this._generateChangeDescription(changeSet[key]);
         if (change) {
           changes.push(change);
         }
@@ -652,9 +653,10 @@ YUI.add('deployer-bar', function(Y) {
      *
      */
     _getLatestChange: function() {
-      var ecs = this.get('ecs');
-      var len = Object.keys(ecs.changeSet).length - 1;
-      return Object.keys(ecs.changeSet)[len];
+      var ecs = this.get('ecs'),
+          changeSet = ecs.getCurrentChangeSet();
+      var len = Object.keys(changeSet).length - 1;
+      return Object.keys(changeSet)[len];
     },
 
     /**
@@ -678,9 +680,10 @@ YUI.add('deployer-bar', function(Y) {
       };
       var db = this.get('db'),
           unitCount = {},
-          totalUnits = 0;
-      Object.keys(ecs.changeSet).forEach(function(key) {
-        var command = ecs.changeSet[key].command,
+          totalUnits = 0,
+          changeSet = ecs.getCurrentChangeSet();
+      Object.keys(changeSet).forEach(function(key) {
+        var command = changeSet[key].command,
             args = command.args,
             name, service;
         switch (command.method) {
