@@ -557,9 +557,9 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('mode-max'), true);
   });
 
-  it('changes the deploy label after the first deploy', function() {
+  it('does not change the deploy label after the first deploy', function() {
     var deployButton = container.one('.deploy-button');
-    assert.equal(deployButton.get('text').trim(), 'Deploy');
+    assert.equal(deployButton.get('text').trim(), 'Commit');
     view.deploy({halt: utils.makeStubFunction()});
     assert.equal(deployButton.get('text').trim(), 'Commit');
   });
