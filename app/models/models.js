@@ -220,9 +220,13 @@ YUI.add('juju-models', function(Y) {
       var conflicted = [];
       Object.keys(combined).forEach(function(key) {
         if (combined[key] !== serviceConfig[key]) {
-          conflicted.push(key);
+          this.get('_dirtyFields').forEach(function(dirtyKey) {
+            if (dirtyKey === key) {
+              conflicted.push(key);
+            }
+          });
         }
-      });
+      }, this);
       // If there are any fields where the local version is different from the
       // new environment fields that means that it has been changed locally.
       if (conflicted.length > 0) {

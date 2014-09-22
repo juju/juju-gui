@@ -1023,7 +1023,6 @@ YUI.add('juju-databinding', function(Y) {
             delete binding.resolve;
             delete binding.conflicted;
           };
-          if (nodeValue === formattedValue) { return; }
           binding.viewlet.conflict(
               node, nodeValue, formattedValue, binding.resolve,
               binding);
