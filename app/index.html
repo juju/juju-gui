@@ -151,17 +151,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <li id="environment-switcher">
               <span id="environment-name" class="environment-name" draggable="true"></span>
             </li>
-            <!-- Can be removed when flags.mv is removed. -->
-            <li class="import-export">
-              <a href="" id="import-trigger" title="Import Bundle">
-                <i class="sprite icon-import-normal normal"></i>
-                <i class="sprite icon-import-hover hover"></i>
-              </a>
-              <input type="file" />
-              <a href="" id="export-trigger" title="Export Bundle">
-                <i class="sprite icon-export-normal normal"></i>
-                <i class="sprite icon-export-hover hover"></i>
-              </a>
             </li>
             <li class="notifications-nav">
               <span id="notifications"></span>
@@ -186,7 +175,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <script src="/juju-ui/assets/javascripts/spin.min.js"></script>
     <script id="app-startup">
-      var flags = {}; // Declare an empty set of feature flags.
+      //var flags = {}; // Declare an empty set of feature flags.
       startSpinner = function() {
         var opts = {
           lines: 17, // The number of lines to draw
@@ -391,6 +380,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             window.location.href,
             window.juju_config.flags || {}
         );
+        // XXX j.c.sackett This can be removed when the flag is completely
+        // removed elsewhere.
+        window.flags.mv = true;
 
         // Add the current flags to the body so they can be used to flag CSS.
         for (var flag in window.flags) {
