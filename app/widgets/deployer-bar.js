@@ -155,7 +155,7 @@ YUI.add('deployer-bar', function(Y) {
       }
       container.removeClass('summary-open');
       ecs.commit(this.get('env'));
-      //this.update();
+      this._toggleDeployButtonStatus(false);
     },
 
     /**

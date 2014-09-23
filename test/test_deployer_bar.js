@@ -557,6 +557,12 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('mode-max'), true);
   });
 
+  it('disables the deploy button after deploy', function() {
+    var stubToggle = utils.makeStubMethod(view, '_toggleDeployButtonStatus');
+    view.deploy({halt: utils.makeStubFunction()});
+    assert.equal(stubToggle.calledOnce(), true, 'Button not disabled');
+  });
+
   it('does not change the deploy label after the first deploy', function() {
     var deployButton = container.one('.deploy-button');
     assert.equal(deployButton.get('text').trim(), 'Commit');
