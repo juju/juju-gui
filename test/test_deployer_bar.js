@@ -223,6 +223,17 @@ describe('deployer bar view', function() {
     assert.equal(called, true);
   });
 
+  it('notifies the user when a change set is completed', function(done) {
+    var called = false;
+    view.notifyCommitFinished = function(evt) {
+      called = true;
+      done();
+    };
+    view.render();
+    view.get('ecs').fire('currentCommitFinished');
+    assert.equal(called, true);
+  });
+
   it('displays the most recent change as a notification on update', function() {
     var stubGet = utils.makeStubMethod(view, '_getChangeNotification');
     view.render();

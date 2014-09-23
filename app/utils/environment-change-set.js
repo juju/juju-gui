@@ -398,6 +398,7 @@ YUI.add('environment-change-set', function(Y) {
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
+          this.fire('currentCommitFinished');
         }
       }
     },

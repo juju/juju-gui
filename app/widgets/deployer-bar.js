@@ -136,6 +136,7 @@ YUI.add('deployer-bar', function(Y) {
       container.addClass('deployer-bar');
       this._toggleDeployButtonStatus(changes > 0);
       ecs.on('changeSetModified', Y.bind(this.update, this));
+      ecs.on('currentCommitFinished', Y.bind(this.notifyCommitFinished, this));
       return this;
     },
 
@@ -365,6 +366,20 @@ YUI.add('deployer-bar', function(Y) {
             Y.bind(function() { this.fire('hideChangeDescription'); }, this),
             4000);
       }
+    },
+
+    /**
+      Notify the user that a change-set commit has completed.
+
+      @method notifyCommitFinished
+    */
+    notifyCommitFinished: function() {
+      var db = this.get('db');
+      db.notifications.add(new Y.juju.models.Notification({
+        title: 'All changes committed',
+        message: 'All requested changes have been sent to Juju and committed.',
+        level: 'important'
+      }));
     },
 
     /**
