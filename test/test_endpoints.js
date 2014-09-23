@@ -73,17 +73,6 @@ describe('Relation endpoints logic', function() {
         ['mediawiki', 'puppet', 'rsyslog-forwarder', 'wiki-lb', 'wordpress']);
   });
 
-  it('should ignore pending services', function() {
-    db.services.getById('wordpress').set('pending', true);
-    app.endpointsController.endpointsMap = sample_endpoints;
-    var service = db.services.getById('blog-lb'),
-        available_svcs = Y.Object.keys(models.getEndpoints(
-            service, app.endpointsController));
-    available_svcs.sort();
-    available_svcs.should.eql(
-        ['mediawiki', 'puppet', 'rsyslog-forwarder', 'wiki-lb']);
-  });
-
   it('should find valid targets including subordinates', function() {
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('memcached'),
