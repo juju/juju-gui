@@ -1962,6 +1962,27 @@ describe('test_model.js', function() {
       });
       assert.equal(jujuGui.get('packageName'), 'juju-gui');
     });
+
+    describe('updateConfig', function() {
+      it('updates local config if fields are not dirty', function() {
+        django.set('config', {debug: 'foo'});
+        django.updateConfig({debug: 'bar'});
+        assert.deepEqual(django.get('_conflictedFields'), []);
+        assert.deepEqual(django.get('config'), {debug: 'bar'});
+        assert.deepEqual(django.get('environmentConfig'), {debug: 'bar'});
+      });
+
+      it('does not update local config if field is drity', function() {
+        django.set('config', {python: 'snake', debug: 'foo'});
+        django.set('environmentConfig', {python: 'snake', debug: 'foo'});
+        django.set('_dirtyFields', ['debug']);
+        django.updateConfig({debug: 'bar'});
+        assert.deepEqual(django.get('_conflictedFields'), ['debug']);
+        assert.deepEqual(django.get('config'), {python: 'snake', debug: 'foo'});
+        assert.deepEqual(
+            django.get('environmentConfig'), {python: 'snake', debug: 'bar'});
+      });
+    });
   });
 
   describe('db.charms.addFromCharmData', function() {

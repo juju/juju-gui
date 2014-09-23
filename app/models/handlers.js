@@ -242,18 +242,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       // Process the stream.
       db.services.process_delta(action, data);
       if (action !== 'remove') {
-        var service = db.services.getById(change.Name);
-        // Set up config options.
-        var serviceConfig = service.get('config') || {};
-        var changeConfig = change.Config || {};
-        var combined = Y.merge(serviceConfig, changeConfig);
-        service.set('config', combined);
-        // Update the environmentConfig config options. This should never be
-        // done by anything but this method so that it says as representation of
-        // the config options as juju sees it.
-        service.set(
-            'environmentConfig',
-            Y.merge(service.get('environmentConfig'), changeConfig));
+        db.services.getById(change.Name).updateConfig(change.Config);
         // Execute the registered service hooks.
         var hooks = serviceChangedHooks[change.Name] || [];
         hooks.forEach(function(hook) {

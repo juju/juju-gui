@@ -200,47 +200,4 @@ describe('Inspector Conflict UX', function() {
       done();
     });
   });
-
-  it('should indicate conflict of boolean config values', function(done) {
-    var input = container.one('#input-debug');
-    assert.equal(input.get('checked'), false);
-
-    modifyAndWait(input, true, function() {
-      // See that the modified node is placed next to it.
-      var parentNode = input.ancestor('.toggle');
-      assert.equal(
-          parentNode.all('.modified').size(),
-          1,
-          'missing modified node');
-
-      service.set('config', {debug: true});
-      assert.equal(
-          parentNode.all('.conflict-pending').size(),
-          1,
-          'missing conflict-pending node');
-
-      // In the checkbox form we don't open up values to display and choose
-      // from. You may simply check/uncheck again to resolve the conflict.
-
-      // Before we finish testing we need to unbind the modify and wait
-      // handler so that we don't cause another loop when we simulate
-      // changing the checkbox again.
-      modifyAndWaitHandler.detach();
-
-      // Click the conflict-pending marker to clear the conflict.
-      parentNode.one('.conflict-pending').simulate('click');
-
-      // Verify the form is updated.
-      assert.equal(
-          parentNode.all('.modified').size(),
-          0,
-          'found a modified node');
-
-      assert.equal(
-          parentNode.all('.conflict-pending').size(),
-          0,
-          'found a conflict-pending node');
-      done();
-    });
-  });
 });

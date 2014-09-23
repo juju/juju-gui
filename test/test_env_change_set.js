@@ -1117,10 +1117,10 @@ describe('Environment Change Set', function() {
 
       it('sets the changed values to the service model', function() {
         var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz', bax: 'qux' }];
+        service.set = testUtils.makeStubFunction();
         ecs._lazySetConfig(args);
-        assert.equal(service.setAttrs.calledOnce(), true);
-        assert.deepEqual(service.setAttrs.lastArguments()[0], { foo: 'bar' });
-        assert.deepEqual(service.setAttrs.lastArguments()[1], { foo: 'bar' });
+        assert.equal(service.set.callCount(), 2);
+        assert.deepEqual(service.set.lastArguments()[1], { foo: 'bar' });
       });
     });
 

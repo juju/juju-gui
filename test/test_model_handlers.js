@@ -266,6 +266,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Life: 'alive',
           Subordinate: true
         };
+        var oldUpdateConfig = models.Service.prototype.updateConfig;
+        models.Service.prototype.updateConfig = testUtils.makeStubFunction();
         serviceInfo(db, 'add', change);
         assert.strictEqual(db.services.size(), 1);
         // Retrieve the service from the database.
@@ -276,7 +278,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The config on the service is initially set to the customized subset
         // in the delta stream.  The full config will be gotten via a call to
         // get_service.
-        assert.deepEqual(service.get('config'), config);
+        assert.equal(db.services.item(0).updateConfig.callCount(), 1);
+        models.Service.prototype.updateConfig = oldUpdateConfig;
         assert.strictEqual(service.get('life'), 'alive');
         assert.strictEqual(service.get('subordinate'), true, 'subordinate');
       });
@@ -397,29 +400,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Retrieve the service from the database.
         var service = db.services.getById('wordpress');
         assert.deepEqual(changedConstraints, service.get('constraints'));
-      });
-
-      it('handles config changes', function() {
-        db.services.add({
-          id: 'wordpress',
-          charm: 'cs:quantal/wordpress-11',
-          exposed: true,
-          config: {moon: 'beam', cow: 'boy'},
-          environmentConfig: {moon: 'beam', cow: 'boy'}
-        });
-        var change = {
-          Name: 'wordpress',
-          CharmURL: 'cs:quantal/wordpress-11',
-          Exposed: false,
-          Config: config
-        };
-        serviceInfo(db, 'change', change);
-        assert.strictEqual(1, db.services.size());
-        // Retrieve the service from the database.
-        var service = db.services.getById('wordpress');
-        assert.deepEqual({moon: 'beam', cow: 'pie'}, service.get('config'));
-        assert.deepEqual(
-            {moon: 'beam', cow: 'pie'}, service.get('environmentConfig'));
       });
 
       it('removes a service from the database', function() {
