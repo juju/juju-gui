@@ -45,7 +45,8 @@ describe('Relation endpoints logic', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       var conn = new utils.SocketStub();
-      env = juju.newEnvironment({conn: conn});
+      var ecs = new juju.EnvironmentChangeSet();
+      env = juju.newEnvironment({conn: conn, ecs: ecs});
       env.connect();
       app = new Y.juju.App({env: env});
       app.navigate = function() { return true; };
@@ -343,7 +344,8 @@ describe('Endpoints map handlers', function() {
   beforeEach(function() {
     destroyMe = [];
     conn = new utils.SocketStub();
-    env = juju.newEnvironment({conn: conn});
+    var ecs = new juju.EnvironmentChangeSet();
+    env = juju.newEnvironment({conn: conn, ecs: ecs});
     env.connect();
     destroyMe.push(env);
     app = new Y.juju.App({

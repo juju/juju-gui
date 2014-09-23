@@ -78,15 +78,15 @@ describe('notifications', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-views',
-      'juju-gui',
+      'environment-change-set',
       'juju-env',
-      'node-event-simulate',
+      'juju-gui',
+      'juju-models',
       'juju-tests-utils',
-      'ns-routing-app-extension'],
-
-    function(Y) {
+      'juju-views',
+      'node-event-simulate',
+      'ns-routing-app-extension'
+    ], function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
@@ -217,7 +217,10 @@ describe('notifications', function() {
         '<div id="test" class="container"></div>'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
         env = juju.newEnvironment({conn: conn}, 'python');
+    var ecs = new juju.EnvironmentChangeSet();
+    env.set('ecs', ecs);
     app = new Y.juju.App({
+      ecs: ecs,
       env: env,
       container: container,
       viewContainer: container
@@ -262,6 +265,8 @@ describe('notifications', function() {
         var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
         var env = juju.newEnvironment({conn: conn}, 'python');
         env.connect();
+        var ecs = new juju.EnvironmentChangeSet();
+        env.set('ecs', ecs);
         app = new Y.juju.App({
           env: env,
           container: container,
