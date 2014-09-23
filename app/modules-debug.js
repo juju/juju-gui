@@ -360,10 +360,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/inspectors/local-new-upgrade.js'
         },
 
-        'ghost-service-inspector': {
-          fullpath: '/juju-ui/views/inspectors/ghost-service-inspector.js'
-        },
-
         'service-inspector': {
           fullpath: '/juju-ui/views/inspectors/service-inspector.js'
         },

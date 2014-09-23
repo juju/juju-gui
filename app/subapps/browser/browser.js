@@ -539,9 +539,7 @@ YUI.add('subapp-browser', function(Y) {
       @method machine
     */
     machine: function(req, res, next) {
-      if (window.flags.mv) {
-        this._renderMachineViewPanelView(this.get('db'));
-      }
+      this._renderMachineViewPanelView(this.get('db'));
     },
 
     /**
@@ -576,8 +574,8 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Renders the service or ghost service inspector, handling updates to the
-       existing service inspector if necessary.
+       Renders the service inspector, handling updates to the existing service
+       inspector if necessary.
 
        @method renderServiceInspector
        @param {Object} metadata The dispatched view metadata.
@@ -610,33 +608,24 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (model && charm) {
-        if (model.get('pending') && !(window.flags && window.flags.mv)) {
+        cfg.showCharm = metadata.charm || false;
+        cfg.enableDatabinding = true;
+        cfg.activeUnit = metadata.unit;
+
+        if (!this._inspector ||
+            this._inspector.name !== 'service-inspector' ||
+            (this._inspector.get('model').get('id') !==
+                model.get('id'))) {
+          // This is a new service.
           previousInspector = this._inspector;
-          cfg.charmModel = db.charms.getById(model.get('charm'));
-          activeInspector = new Y.juju.views.GhostServiceInspector(cfg);
+          activeInspector = new Y.juju.views.ServiceInspector(cfg);
           activeInspector.render();
           activeInspector.addTarget(this);
         } else {
-          // This is a service inspector.
-          cfg.showCharm = metadata.charm || false;
-          cfg.enableDatabinding = true;
-          cfg.activeUnit = metadata.unit;
-
-          if (!this._inspector ||
-              this._inspector.name !== 'service-inspector' ||
-              (this._inspector.get('model').get('id') !==
-                  model.get('id'))) {
-            // This is a new service.
-            previousInspector = this._inspector;
-            activeInspector = new Y.juju.views.ServiceInspector(cfg);
-            activeInspector.render();
-            activeInspector.addTarget(this);
-          } else {
-            // This is a dispatch for the existing inspector
-            activeInspector = this._inspector;
-            activeInspector.setAttrs(cfg);
-            activeInspector.renderUI();
-          }
+          // This is a dispatch for the existing inspector
+          activeInspector = this._inspector;
+          activeInspector.setAttrs(cfg);
+          activeInspector.renderUI();
         }
       } else {
         // If we found no model, begin the retry loop.

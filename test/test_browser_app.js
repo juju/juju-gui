@@ -342,19 +342,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app.set('topo', { get: function() {} });
           }
 
-          it('renders a ghost inspector', function() {
-            stubMethods(this);
-            stubApp(app, true);
-            app._inspectorDispatcher({ id: clientId });
-            assert.equal(ghostStub.callCount(), 1);
-            assert.equal(serviceStub.callCount(), 0);
-            assert.equal(requestSeriesStub.callCount(), 0);
-            assert.equal(upgradeOrNewStub.callCount(), 0);
-          });
-
           it('renders a service inspector with ghost data', function() {
-            window.flags = {};
-            window.flags.mv = {};
             stubMethods(this);
             stubApp(app, false);
             app._inspectorDispatcher({ id: clientId });

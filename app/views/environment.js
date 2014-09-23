@@ -91,37 +91,17 @@ YUI.add('juju-view-environment', function(Y) {
           charm = db.charms.getById(model.get('charm')),
           inspector = {};
 
-      // This method is called with a charm or service. If it's called with a
-      // charm then it needs to show the ghost inspector instead of the service
-      // inspector.
-      if (model.get('pending') && (window.flags && !window.flags.mv)) {
-        model.set('packageName', charm.get('package_name'));
-        // XXX In order to support the events below we need to use the same
-        // object structure. Once the Service inspector is converted to
-        // an inspector subclass the following events can be fixed.
-        inspector = new Y.juju.views.GhostServiceInspector({
-          db: db,
-          model: model,
-          env: env,
-          ecs: ecs,
-          environment: this,
-          charmModel: charm,
-          topo: topo,
-          store: topo.get('store')
-        }).render();
-      } else {
-        var inspectorConfig = Y.mix({
-          db: db,
-          model: model,
-          env: env,
-          ecs: ecs,
-          environment: this,
-          enableDatabinding: true,
-          topo: topo,
-          store: topo.get('store')
-        }, config, true);
-        inspector = new Y.juju.views.ServiceInspector(inspectorConfig).render();
-      }
+      var inspectorConfig = Y.mix({
+        db: db,
+        model: model,
+        env: env,
+        ecs: ecs,
+        environment: this,
+        enableDatabinding: true,
+        topo: topo,
+        store: topo.get('store')
+      }, config, true);
+      inspector = new Y.juju.views.ServiceInspector(inspectorConfig).render();
 
       // Because the inspector can trigger it's own destruction we need to
       // listen for the event and remove it from the list of open inspectors
@@ -286,7 +266,6 @@ YUI.add('juju-view-environment', function(Y) {
     'juju-topology',
     'juju-view-utils',
     'service-inspector',
-    'ghost-service-inspector',
     'node',
     'view'
   ]
