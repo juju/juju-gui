@@ -1624,30 +1624,42 @@ YUI.add('juju-models', function(Y) {
       @return {Boolean} If the endpoint sets match.
     */
     compareRelationEndpoints: function(endpointSetA, endpointSetB) {
-      return endpointSetA.some(function(endpointA) {
-        return endpointSetB.some(function(endpointB) {
-          return this._compareEndpoints(endpointA, endpointB);
-        }, this);
-      }, this);
+      var matched = true;
+      if (!this._compareEndpointSets(endpointSetA, endpointSetB)) {
+        // We need to see if one endpoint set is just a mirror of the other,
+        // which is still a match. Copy the array so we're not reversing the
+        // original set.
+        var reversedSetB = endpointSetB.slice(0).reverse();
+        if (!this._compareEndpointSets(endpointSetA, reversedSetB)) {
+          matched = false;
+        }
+      }
+      return matched;
     },
 
     /**
-      Recursive function to compare two endpoints forwards and backwards.
+      Function to compare two endpoint sets, forwards and backwards.
 
       @method _compareEndpoints
-      @param {Object} endpointA An endpoint object.
-      @param {Object} endpointB An endpoint object.
-      @param {Boolean} done Pass true if it's done comparing and can return.
-      @return {Boolean} If the endpoints match.
+      @param {Object} endpointSetA An set of endpoint objects.
+      @param {Object} endpointSetB An set of endpoint objects.
+      @return {Boolean} If the endpoint sets match.
     */
-    _compareEndpoints: function(endpointA, endpointB, done) {
-      if (endpointA[0] === endpointB[0] &&
-          endpointA[1].name === endpointB[1].name) {
-        return true;
-      } else if (!done) {
-        return this._compareEndpoints(endpointB, endpointA, true);
+    _compareEndpointSets: function(endpointSetA, endpointSetB) {
+      if (endpointSetA.length !== endpointSetB.length) {
+        return false;
       }
-      return false;
+      // If any of the endpoints don't match their counterparts in the other
+      // set, it's not a match.
+      for (var i = 0, l = endpointSetA.length; i < l; i += 1) {
+        var endpointA = endpointSetA[i],
+            endpointB = endpointSetB[i];
+        if (endpointA[0] !== endpointB[0] ||
+            endpointA[1].name !== endpointB[1].name) {
+          return false;
+        }
+      }
+      return true;
     },
 
     /* Return true if a relation exists for the given endpoint.
