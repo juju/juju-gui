@@ -864,6 +864,10 @@ YUI.add('juju-view-utils', function(Y) {
     }
     var newValues = Object.create(null);
     Object.keys(config).forEach(function(key) {
+      // Automatic coercion doesn't properly handle comparisons between
+      // booleans and strings, e.g., true == 'true' = false, so we need
+      // to explicitly convert to a string.
+      var newValue = String(config[key]);
       // Find the config options which are not different from the charm or
       // service defaults intentionally letting the browser do the type
       // conversion.
@@ -871,12 +875,12 @@ YUI.add('juju-view-utils', function(Y) {
       /* jshint -W116 */
       if (Y.Lang.isObject(options[key])) {
         // Options represents a charm config.
-        if (config[key] == (options[key]['default'] || '')) {
+        if (newValue == (options[key]['default'] || '')) {
           return;
         }
       } else {
         // Options represents a service config.
-        if (config[key] == (options[key] || '')) {
+        if (newValue == (options[key] || '')) {
           return;
         }
       }
