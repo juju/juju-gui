@@ -574,8 +574,8 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Renders the service or ghost service inspector, handling updates to the
-       existing service inspector if necessary.
+       Renders the service inspector, handling updates to the existing service
+       inspector if necessary.
 
        @method renderServiceInspector
        @param {Object} metadata The dispatched view metadata.
@@ -608,7 +608,6 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (model && charm) {
-        // This is a service inspector.
         cfg.showCharm = metadata.charm || false;
         cfg.enableDatabinding = true;
         cfg.activeUnit = metadata.unit;
