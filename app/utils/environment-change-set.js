@@ -40,7 +40,9 @@ YUI.add('environment-change-set', function(Y) {
     /* ECS methods */
 
     /**
-      Retrieve only the changeSet items for the current index.
+      Retrieve only the changeSet items for the current index, a utility method
+      used by the deployer bar to only show the currently active change set
+      items.
 
       @method getCurrentChangeSet
       @return {Object} The current set of changeSet items
@@ -247,8 +249,9 @@ YUI.add('environment-change-set', function(Y) {
       executed first.
 
       @method _buildHierarchy
-      @param {Object} changeSet A cloned changeSet.  Make sure to clone, as it
-        will be mutated in the process of building the hierarchy.
+      @param {Boolean} removeUnplaced Whether to remove unplaced units from the
+        hierarchy, as in the instance of committing changes, or not, as in the
+        case of clearing changes.
       @return {Array} An array of arrays of commands to commit, separated by
         level.
     */
@@ -262,6 +265,7 @@ YUI.add('environment-change-set', function(Y) {
           unplacedUnits = db.units.filterByMachine(null);
       this.placedCount = 0;
 
+      // Retrieve only the keys for changeSet entries in the current index.
       Y.Object.each(this.changeSet, function(value, key) {
         if (value.index === this.currentIndex) {
           keys.push(key);
@@ -275,9 +279,13 @@ YUI.add('environment-change-set', function(Y) {
         keys = keys.filter(function(key) {
           var command = this.changeSet[key].command,
               modelId = command.options && command.options.modelId;
+          // Return all non-add-unit records
           if (command.method !== '_add_unit') {
             return true;
           }
+          // If the unit isn't unplaced, return that.  If it is unplaced,
+          // remove it from the list and increment its indiex so that it
+          // can be committed next time.
           if (unplacedIds.indexOf(modelId) < 0) {
             return true;
           } else {
@@ -436,6 +444,7 @@ YUI.add('environment-change-set', function(Y) {
       @method commit
     */
     commit: function(env) {
+      // Build the hierarchy, but do not include unplaced units.
       this.currentCommit = this._buildHierarchy(true);
       this.currentIndex += 1;
       this.currentLevel = -1;
@@ -449,6 +458,8 @@ YUI.add('environment-change-set', function(Y) {
       @method clear
     */
     clear: function() {
+      // Build the hierarchy, but include unplaced units, as they will be
+      // removed as well.
       var toClear = this._buildHierarchy(false);
       // We need to work through the hierarchy of changes in reverse, otherwise
       // removing units will fail as the service might not exist anymore.

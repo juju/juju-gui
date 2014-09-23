@@ -491,6 +491,35 @@ describe('Environment Change Set', function() {
         assert.equal(fireArgs[0], 'commit');
         assert.equal(fireArgs[1], changeSet['service-568']);
       });
+
+      it('commits one index at a time', function() {
+        var execute = testUtils.makeStubMethod(ecs, '_execute');
+        this._cleanups.push(execute.reset);
+        var fire = testUtils.makeStubMethod(ecs, 'fire');
+        this._cleanups.push(fire.reset);
+        var changeSet = {
+          'service-568': {
+            index: 0,
+            executed: false,
+            command: {
+              method: '_deploy'
+            }
+          },
+          'service-123': {
+            index: 1,
+            executed: false,
+            command: {
+              method: '_deploy'
+            }
+          }
+        };
+        ecs.changeSet = changeSet;
+        ecs.commit();
+        assert.equal(execute.callCount(), 1);
+        assert.equal(ecs.currentIndex, 1, 'Current index not incremented');
+        assert.equal(ecs.changeSet['service-123'].index, 1,
+            'uncommitted record\'s index changed');
+      });
     });
   });
 
@@ -518,6 +547,40 @@ describe('Environment Change Set', function() {
       assert.deepEqual(ecs.changeSet, {}, 'changeSet not emptied');
       assert.equal(stubClearDB.calledOnce(), true, 'clearFromDB not called');
     });
+
+    it('works with multiple indices', function() {
+      var stubClearDB = testUtils.makeStubMethod(ecs, '_clearFromDB');
+      this._cleanups.push(stubClearDB.reset);
+      var changeSet = {
+        'service-568': {
+          index: 0,
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        },
+        'service-123': {
+          index: 1,
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        }
+      };
+      ecs.changeSet = changeSet;
+      ecs.clear();
+      assert.deepEqual(ecs.changeSet, {
+        'service-123': {
+          index: 1,
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        }
+      }, 'other indices removed.');
+      assert.equal(ecs.currentIndex, 1, 'Current index not incremented');
+    });
+
   });
 
   describe('_clearFromDB', function() {
