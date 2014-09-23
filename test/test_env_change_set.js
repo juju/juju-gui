@@ -217,6 +217,7 @@ describe('Environment Change Set', function() {
         // need to assert against the record's timestamp below.
         assert.deepEqual(wrapCallback.lastArguments()[0], {
           id: key,
+          index: 0,
           parents: [],
           executed: false,
           command: command,
@@ -224,6 +225,7 @@ describe('Environment Change Set', function() {
         });
         assert.deepEqual(ecs.changeSet[key], {
           id: key,
+          index: 0,
           parents: [],
           executed: false,
           command: command,
@@ -243,6 +245,7 @@ describe('Environment Change Set', function() {
         // need to assert against the record's timestamp below.
         assert.deepEqual(wrapCallback.lastArguments()[0], {
           id: key,
+          index: 0,
           parents: parent,
           executed: false,
           command: command,
@@ -250,6 +253,7 @@ describe('Environment Change Set', function() {
         });
         assert.deepEqual(ecs.changeSet[key], {
           id: key,
+          index: 0,
           parents: parent,
           executed: false,
           command: command,
@@ -350,39 +354,54 @@ describe('Environment Change Set', function() {
         filterStub = testUtils.makeStubMethod(db.units, 'filterByMachine');
       });
 
-      it('acts sane with "flat" hierarchies', function() {
+      it('only acts on the current index', function() {
         ecs.changeSet = {
-          a: { parents: [] },
-          b: { parents: [] },
-          c: { parents: [] },
-          d: { parents: [] },
-          e: { parents: [] },
-          f: { } // Can handle missing parents attribute.
+          a: { index: 0, parents: [] },
+          b: { index: 0, parents: [] },
+          c: { index: 1, parents: [] }
         };
-
         var result = ecs._buildHierarchy();
         // XXX assert.deepEqual does not seem to play well with arrays
         // of objects.  Slack card on board - Makyo 2014-04-23
         assert.deepEqual(JSON.stringify(result), JSON.stringify([
           [
-            { parents: [], key: 'a' },
-            { parents: [], key: 'b' },
-            { parents: [], key: 'c' },
-            { parents: [], key: 'd' },
-            { parents: [], key: 'e' },
-            { key: 'f' }
+            { index: 0, parents: [], key: 'a' },
+            { index: 0, parents: [], key: 'b' }
+          ]
+        ]));
+      });
+
+      it('acts sane with "flat" hierarchies', function() {
+        ecs.changeSet = {
+          a: { index: 0, parents: [] },
+          b: { index: 0, parents: [] },
+          c: { index: 0, parents: [] },
+          d: { index: 0, parents: [] },
+          e: { index: 0, parents: [] },
+          f: { index: 0 } // Can handle missing parents attribute.
+        };
+
+        var result = ecs._buildHierarchy();
+        assert.deepEqual(JSON.stringify(result), JSON.stringify([
+          [
+            { index: 0, parents: [], key: 'a' },
+            { index: 0, parents: [], key: 'b' },
+            { index: 0, parents: [], key: 'c' },
+            { index: 0, parents: [], key: 'd' },
+            { index: 0, parents: [], key: 'e' },
+            { index: 0, key: 'f' }
           ]
         ]));
       });
 
       it('splits commands into dependency levels', function() {
         ecs.changeSet = {
-          a: { parents: [] },
-          b: { parents: [] },
-          c: { parents: ['a', 'b'] },
-          d: { parents: ['a'] },
-          e: { parents: ['a', 'c'] },
-          f: { parents: ['e'] }
+          a: { index: 0, parents: [] },
+          b: { index: 0, parents: [] },
+          c: { index: 0, parents: ['a', 'b'] },
+          d: { index: 0, parents: ['a'] },
+          e: { index: 0, parents: ['a', 'c'] },
+          f: { index: 0, parents: ['e'] }
         };
 
         var result = ecs._buildHierarchy();
@@ -391,29 +410,29 @@ describe('Environment Change Set', function() {
         assert.equal(JSON.stringify(result), JSON.stringify([
           // Top-level.
           [
-            { parents: [], key: 'a' },
-            { parents: [], key: 'b' }
+            { index: 0, parents: [], key: 'a' },
+            { index: 0, parents: [], key: 'b' }
           ],
           [
-            { parents: ['a', 'b'], key: 'c' },
-            { parents: ['a'], key: 'd' }
+            { index: 0, parents: ['a', 'b'], key: 'c' },
+            { index: 0, parents: ['a'], key: 'd' }
           ],
           [
-            { parents: ['a', 'c'], key: 'e' }
+            { index: 0, parents: ['a', 'c'], key: 'e' }
           ],
           [
-            { parents: ['e'], key: 'f' }
+            { index: 0, parents: ['e'], key: 'f' }
           ]
         ]));
       });
 
-      it('filters out unplaced units by default', function() {
+      it('filters out unplaced units when instructed to', function() {
         ecs.changeSet = {
-          a: { parents: [], command: {
+          a: { index: 0, parents: [], command: {
             method: '_deploy',
             options: { modelId: '75930989$' }
           }},
-          b: { parents: [], command: {
+          b: { index: 0, parents: [], command: {
             method: '_add_unit',
             options: { modelId: '75930989$/0' }
           }}
@@ -421,7 +440,7 @@ describe('Environment Change Set', function() {
 
         filterStub = testUtils.makeStubMethod(
             db.units, 'filterByMachine', [{id: '75930989$/0'}]);
-        var result = ecs._buildHierarchy();
+        var result = ecs._buildHierarchy(true);
         // XXX assert.deepEqual does not seem to play well with arrays
         // of objects.  Slack card on board - Makyo 2014-04-23
         assert.equal(filterStub.calledOnce(), true,
@@ -429,6 +448,7 @@ describe('Environment Change Set', function() {
         assert.equal(JSON.stringify(result), JSON.stringify([
           [
             {
+              index: 0,
               parents: [],
               command: {
                 method: '_deploy',
@@ -455,6 +475,7 @@ describe('Environment Change Set', function() {
         this._cleanups.push(fire.reset);
         var changeSet = {
           'service-568': {
+            index: 0,
             executed: false,
             command: {
               method: '_deploy'
@@ -469,6 +490,35 @@ describe('Environment Change Set', function() {
         var fireArgs = fire.lastArguments();
         assert.equal(fireArgs[0], 'commit');
         assert.equal(fireArgs[1], changeSet['service-568']);
+      });
+
+      it('commits one index at a time', function() {
+        var execute = testUtils.makeStubMethod(ecs, '_execute');
+        this._cleanups.push(execute.reset);
+        var fire = testUtils.makeStubMethod(ecs, 'fire');
+        this._cleanups.push(fire.reset);
+        var changeSet = {
+          'service-568': {
+            index: 0,
+            executed: false,
+            command: {
+              method: '_deploy'
+            }
+          },
+          'service-123': {
+            index: 1,
+            executed: false,
+            command: {
+              method: '_deploy'
+            }
+          }
+        };
+        ecs.changeSet = changeSet;
+        ecs.commit();
+        assert.equal(execute.callCount(), 1);
+        assert.equal(ecs.currentIndex, 1, 'Current index not incremented');
+        assert.equal(ecs.changeSet['service-123'].index, 1,
+            'uncommitted record\'s index changed');
       });
     });
   });
@@ -485,6 +535,7 @@ describe('Environment Change Set', function() {
       this._cleanups.push(stubClearDB.reset);
       var changeSet = {
         'service-568': {
+          index: 0,
           executed: false,
           command: {
             method: '_deploy'
@@ -496,6 +547,40 @@ describe('Environment Change Set', function() {
       assert.deepEqual(ecs.changeSet, {}, 'changeSet not emptied');
       assert.equal(stubClearDB.calledOnce(), true, 'clearFromDB not called');
     });
+
+    it('works with multiple indices', function() {
+      var stubClearDB = testUtils.makeStubMethod(ecs, '_clearFromDB');
+      this._cleanups.push(stubClearDB.reset);
+      var changeSet = {
+        'service-568': {
+          index: 0,
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        },
+        'service-123': {
+          index: 1,
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        }
+      };
+      ecs.changeSet = changeSet;
+      ecs.clear();
+      assert.deepEqual(ecs.changeSet, {
+        'service-123': {
+          index: 1,
+          executed: false,
+          command: {
+            method: '_deploy'
+          }
+        }
+      }, 'other indices removed.');
+      assert.equal(ecs.currentIndex, 1, 'Current index not incremented');
+    });
+
   });
 
   describe('_clearFromDB', function() {
