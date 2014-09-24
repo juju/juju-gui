@@ -674,45 +674,7 @@ YUI.add('juju-topology-relation', function(Y) {
         // Redraw the graph and reattach events.
         topo.update();
       }
-      if (!window.flags || !window.flags.mv) {
-        view.get('rmrelation_dialog').hide();
-        view.get('rmrelation_dialog').destroy();
-        // There is no remove relation dialogue when running with the ecs.
-        confirmButton.set('disabled', false);
-      }
       topo.fire('clearState');
-    },
-
-    /**
-      Shows a dialogue to the user when they are trying to remove a relation.
-
-      window.flags.mv - We no longer confirm this because it goes into the ecs.
-      This method can be removed once we remove the mv flag.
-
-      @method removeRelationConfirm
-      @param {Object} relation The relation model attributes.
-      @param {Object} view The RelationModule instance.
-    */
-    removeRelationConfirm: function(relation, view) {
-      // Destroy the dialog if it already exists to prevent cluttering
-      // up the DOM.
-      if (!Y.Lang.isUndefined(view.get('rmrelation_dialog'))) {
-        view.get('rmrelation_dialog').destroy();
-      }
-      view.set('rmrelation_dialog', views.createModalPanel(
-          'Are you sure you want to remove this relation? ' +
-              'This cannot be undone.',
-          '#rmrelation-modal-panel',
-          'Remove Relation',
-          Y.bind(function(ev) {
-            ev.preventDefault();
-            var confirmButton = ev.target;
-            confirmButton.set('disabled', true);
-            view.removeRelation(
-                relation,
-                view, confirmButton);
-          },
-          this)));
     },
 
     /**
@@ -761,17 +723,8 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.buildingRelation = true;
       this.clickAddRelation = true;
 
-      // make sure all services are shown (not faded or hidden), except for
-      // those in pending state, which are ghost services that have not been
-      // created yet.
-      topo.fire('show', {
-        selection: vis.selectAll('.service')
-          .filter(function(d) {
-              if (!window.flags.mv) {
-                return !d.pending;
-              }
-            })
-      });
+      // make sure all services are shown (not faded or hidden)
+      topo.fire('show', { selection: vis.selectAll('.service') });
 
       var db = topo.get('db');
       var endpointsController = topo.get('endpointsController');
@@ -1133,12 +1086,8 @@ YUI.add('juju-topology-relation', function(Y) {
         topo.fire('clearState');
         self.showSubRelDialog();
       } else {
-        if (!window.flags || !window.flags.mv) {
-          self.removeRelationConfirm(relation.relations[0], self);
-        } else {
-          self.removeRelation(relation.relations[0], self);
-          topo.fire('clearState');
-        }
+        self.removeRelation(relation.relations[0], self);
+        topo.fire('clearState');
       }
     },
 
