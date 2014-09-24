@@ -1383,6 +1383,26 @@ describe('machine view panel view', function() {
                       'unable to find added machine in the displayed list');
     });
 
+    it('appends new real machines to the end of the list', function() {
+      machines.reset();
+      view.render();
+      machines.add({id: '1', parentId: null});
+      machines.add({id: '2', parentId: null});
+      var tokens = container.all('.machines .token');
+      assert.strictEqual(tokens.size(), 2);
+      assert.deepEqual(tokens.getData('id'), ['1', '2']);
+    });
+
+    it('prepends new ghost machines to the beginning of the list', function() {
+      machines.reset();
+      view.render();
+      machines.add({id: '1', parentId: null});
+      machines.add({id: 'new2', parentId: null});
+      var tokens = container.all('.machines .token');
+      assert.strictEqual(tokens.size(), 2);
+      assert.deepEqual(tokens.getData('id'), ['new2', '1']);
+    });
+
     it('should select the first machine when it is added', function() {
       machines.reset();
       assert.equal(machines.size(), 0);
