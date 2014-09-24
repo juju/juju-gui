@@ -221,12 +221,7 @@ YUI.add('service-relations-view', function(Y) {
           e.currentTarget.getData('relation')).getAttrs();
       var relationModule = this.options.topo.modules.RelationModule;
 
-      if (window.flags && window.flags.mv) {
-        relationModule.removeRelation(relation, relationModule);
-      } else {
-        relationModule.removeRelationConfirm(relation, relationModule);
-      }
-
+      relationModule.removeRelation(relation, relationModule);
     },
     // To allow for unit testing the functions
     export: {

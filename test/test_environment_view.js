@@ -326,8 +326,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     );
 
     it('must be able to display service icons as pending deletion', function() {
-      window.flags = {};
-      window.flags.mv = true;
       db.services.getById('wordpress').set('deleted', true);
       // Create an instance of EnvironmentView with custom env
       db.services.getById('wordpress').set('deleted', true);
@@ -340,7 +338,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
       assert.equal(container.one('.service .service-block-image').get(
           'href').baseVal.indexOf('service_module_pending.svg') >= 0, true);
-      window.flags = {};
     });
 
     it('must properly count subordinate relations', function() {
@@ -1017,25 +1014,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               '#' + views.utils.generateSafeDOMId('relation-0000000001',
          getParentId(view)) +
               ' .rel-indicator'),
-         dialog_btn,
-         menu,
-         panel;
+         menu;
 
          relation.simulate('click');
          menu = container.one('#relation-menu');
          menu.one('.relation-remove').simulate('click');
-         panel = Y.one('#rmrelation-modal-panel');
-
-         // There should be a 'remove relation' button and a 'cancel' button
-         // on the dialog.
-         panel.all('button').size().should.equal(2);
-
-         dialog_btn = panel.one('.button');
-         dialog_btn.simulate('click');
          container.all('.to-remove')
               .size()
               .should.equal(1);
-         view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
          view.destroy();
        });
 
@@ -1152,13 +1138,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           '#' + views.utils.generateSafeDOMId('relation-0000000001',
           getParentId(view)) +
           ' .rel-indicator'),
-          dialog_btn,
-          panel,
           menu;
 
       relation.simulate('click');
       menu = Y.one('#relation-menu .menu');
-      panel = Y.one('#rmrelation-modal-panel');
 
       // Click the first endpoint.
       var endpoints = menu.all('.inspect-relation'),
@@ -1191,27 +1174,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           '#' + views.utils.generateSafeDOMId('relation-0000000001',
           getParentId(view)) +
           ' .rel-indicator'),
-          dialog_btn,
-          panel,
           menu;
 
       relation.simulate('click');
       menu = Y.one('#relation-menu .menu');
-      panel = Y.one('#rmrelation-modal-panel');
 
       // Click the first relation.
       menu.one('.relation-remove').simulate('click');
 
-      // There should be a 'remove relation' button and a 'cancel' button
-      // on the dialog.
-      panel.all('button').size().should.equal(2);
-
-      dialog_btn = panel.one('.button');
-      dialog_btn.simulate('click');
       container.all('.to-remove')
            .size()
            .should.equal(1);
-      view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
 
       // Multiple relations.
       relation = container.one(
@@ -1222,24 +1195,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       relation.simulate('click');
       menu = Y.one('#relation-menu .menu');
-      panel = Y.one('#rmrelation-modal-panel');
 
       // Click the first relation.
       menu.one('.relation-remove').simulate('click');
 
-      // There should be a 'remove relation' button and a 'cancel' button
-      // on the dialog.
-      panel.all('button').size().should.equal(2);
-
-      dialog_btn = panel.one('.button');
-      dialog_btn.simulate('click');
       // Note that there should now be two .to-remove relations due to the
       // previous case having added one of those classes. We're simply looking
       // for the number to have increased.
       container.all('.to-remove')
            .size()
            .should.equal(2);
-      view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
       view.destroy();
     });
 
