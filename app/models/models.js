@@ -1638,11 +1638,19 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Function to compare two endpoint sets, forwards and backwards.
+      Compare two endpoint sets, forwards and backwards. An endpoint set is
+      an Array of two endpoints. Each endpoint is itself an array of the
+      service name (a string) and an object of relation metatada. Here's what
+      a typical endpoint set might look like:
+
+      [
+        ['wordpress', {name: 'db', role: 'client'}],
+        ['mysql', {name: 'db', role: 'server'}]
+      ]
 
       @method _compareEndpoints
-      @param {Object} endpointSetA An set of endpoint objects.
-      @param {Object} endpointSetB An set of endpoint objects.
+      @param {Array} endpointSetA A set of endpoint objects.
+      @param {Array} endpointSetB A set of endpoint objects.
       @return {Boolean} If the endpoint sets match.
     */
     _compareEndpointSets: function(endpointSetA, endpointSetB) {
@@ -1654,6 +1662,12 @@ YUI.add('juju-models', function(Y) {
       for (var i = 0, l = endpointSetA.length; i < l; i += 1) {
         var endpointA = endpointSetA[i],
             endpointB = endpointSetB[i];
+        // Each endpoint is an array of two things:
+        //   index 0: the service name
+        //   index 1: an object with the name and role of the relation
+        // ['mysql', {name: 'db', role: 'server'}]
+        // In order to be considered a match, the service name and relation
+        // name should match.
         if (endpointA[0] !== endpointB[0] ||
             endpointA[1].name !== endpointB[1].name) {
           return false;
