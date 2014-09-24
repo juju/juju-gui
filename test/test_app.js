@@ -104,7 +104,7 @@ function injectData(app, data) {
       }
       config.container = container;
       config.viewContainer = container;
-      
+
 
       app = new Y.juju.App(config);
       app.navigate = function() {};
