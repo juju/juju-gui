@@ -55,13 +55,17 @@ function injectData(app, data) {
     var Y, app, container, utils, juju, env, conn;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
-          function(Y) {
-            utils = Y.namespace('juju-tests.utils');
-            juju = Y.namespace('juju');
-            done();
-          });
+      Y = YUI(GlobalConfig).use([
+        'environment-change-set',
+        'juju-gui',
+        'juju-tests-utils',
+        'juju-view-utils',
+        'juju-views'
+      ], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        juju = Y.namespace('juju');
+        done();
+      });
     });
 
     beforeEach(function() {
@@ -89,11 +93,18 @@ function injectData(app, data) {
 
     function constructAppInstance(config) {
       config = config || {};
-      if (config.env && config.env.connect) {
-        config.env.connect();
+      if (!config.ecs) {
+        config.ecs = new juju.EnvironmentChangeSet();
+      }
+      if (config.env) {
+        config.env.set('ecs', config.ecs);
+        if (config.env.connect) {
+          config.env.connect();
+        }
       }
       config.container = container;
       config.viewContainer = container;
+
 
       app = new Y.juju.App(config);
       app.navigate = function() {};
@@ -153,6 +164,7 @@ function injectData(app, data) {
 
     it('should produce a valid index', function() {
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
       var container = app.get('container');
@@ -163,6 +175,7 @@ function injectData(app, data) {
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({
           conn: {
             send: function() {},
@@ -179,6 +192,7 @@ function injectData(app, data) {
     it('should show a generic environment name if none configured',
        function() {
          constructAppInstance({
+           ecs: new juju.EnvironmentChangeSet(),
            env: juju.newEnvironment({
              conn: {
                send: function() {},
@@ -193,6 +207,7 @@ function injectData(app, data) {
 
     it('should show a the environment name if one is configured', function() {
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({
           conn: {
             send: function() {},
@@ -210,6 +225,7 @@ function injectData(app, data) {
 
     it('hides the browser subapp on some urls', function() {
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({
           conn: {
             send: function() {},
@@ -244,6 +260,7 @@ function injectData(app, data) {
 
     it('should display a zoom message on small browsers', function() {
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
       app._displayZoomMessage(1024, 'linux');
@@ -253,6 +270,7 @@ function injectData(app, data) {
 
     it('should not display the zoom message more than once', function() {
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
       assert.equal(app.db.notifications.size(), 0);
@@ -264,8 +282,10 @@ function injectData(app, data) {
     });
 
     it('should show the correct message on a mac', function() {
+      var ecs = new juju.EnvironmentChangeSet();
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        ecs: ecs,
+        env: juju.newEnvironment({ conn: new utils.SocketStub(), ecs: ecs })
       });
       app._displayZoomMessage(1024, 'macintosh');
       assert.isTrue(app.db.notifications.item(0).get(
@@ -274,6 +294,7 @@ function injectData(app, data) {
 
     it('should show the correct message for non mac', function() {
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
       app._displayZoomMessage(1024, 'linux');
@@ -282,10 +303,10 @@ function injectData(app, data) {
     });
 
     it('renders the environment header', function(done) {
-      window.flags.mv = true;
       container.appendChild(Y.Node.create(
           '<div id="environment-header"></div>'));
       constructAppInstance({
+        ecs: new juju.EnvironmentChangeSet(),
         env: juju.newEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
@@ -295,7 +316,6 @@ function injectData(app, data) {
         assert.isObject(app.environmentHeader);
         assert.equal(container.one('#environment-header').hasClass(
             'environment-header'), true);
-        delete window.flags.mv;
         done();
       });
     });
@@ -576,8 +596,13 @@ describe('File drag over notification system', function() {
     });
 
     // Create and return a new app. If connect is True, also connect the env.
+    // XXX j.c.sackett 2014-09-23 This can probably be merged with
+    // `constructAppInstance` above.
     var makeApp = function(connect, fakeview) {
+      var ecs = new juju.EnvironmentChangeSet();
+      env.set('ecs', ecs);
       var app = new Y.juju.App({
+        ecs: ecs,
         env: env,
         viewContainer: container,
         consoleEnabled: true

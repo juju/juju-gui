@@ -455,7 +455,6 @@ YUI.add('juju-gui', function(Y) {
           // requests to the juju-core API.
           envOptions.webHandler = new webModule.WebHandler();
         }
-
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
 
@@ -565,10 +564,8 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
-        if (window.flags.mv) {
-          this._renderDeployerBarView();
-          this._renderEnvironmentHeaderView();
-        }
+        this._renderDeployerBarView();
+        this._renderEnvironmentHeaderView();
       }, this);
 
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
@@ -593,37 +590,6 @@ YUI.add('juju-gui', function(Y) {
           this.logout();
         }
       }, this);
-
-      if (!window.flags.mv) {
-        var exportNode = Y.one('#export-trigger');
-        // Tests won't have this node.
-        if (exportNode) {
-          exportNode.on('click', function(e) {
-            e.halt();
-            importHelpers.exportYAML(this.db);
-          }, this);
-        }
-
-        var importNode = Y.one('#import-trigger');
-        var importFileInput = Y.one('.import-export input[type=file]');
-
-        // Tests won't have this node.
-        if (importNode && importFileInput) {
-          importNode.on('click', function(e) {
-            e.halt();
-            e.currentTarget.siblings('input[type=file]')
-            .item(0).getDOMNode().click();
-          });
-
-          importFileInput.on('change', function(e) {
-            importHelpers.deployBundleFiles(
-                e.currentTarget.get('files')._nodes,
-                this.env,
-                this.db
-            );
-          }, this);
-        }
-      }
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;

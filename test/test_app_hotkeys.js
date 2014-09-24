@@ -19,26 +19,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  var app, container, env, windowNode, Y;
+  var app, container, env, ecs, windowNode, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        ['juju-gui', 'juju-tests-utils', 'node-event-simulate'], function(Y) {
-          env = {
-            after: function() {},
-            get: function() {},
-            on: function() {},
-            set: function() {}
-          };
-          windowNode = Y.one(window);
-          done();
-        });
+    Y = YUI(GlobalConfig).use([
+      'environment-change-set',
+      'juju-gui',
+      'juju-tests-utils',
+      'node-event-simulate'
+    ], function(Y) {
+      ecs = new Y.juju.EnvironmentChangeSet();
+      env = {
+        after: function() {},
+        get: function(key) {
+          if (key === 'ecs') {
+            return ecs;
+          }
+        },
+        on: function() {},
+        set: function() {}
+      };
+      windowNode = Y.one(window);
+      done();
+    });
 
   });
 
   beforeEach(function() {
     container = Y.namespace('juju-tests.utils').makeContainer(this);
     app = new Y.juju.App({
+      ecs: ecs,
       env: env,
       container: container,
       viewContainer: container
