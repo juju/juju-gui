@@ -227,6 +227,16 @@ YUI.add('juju-models', function(Y) {
           });
         }
       }, this);
+      // Update the environmentConfig config options with the values as they are
+      // in the real Juju environment. This should never be
+      // done by anything but this method so that it says as representation of
+      // the config options as juju sees it.
+      // The order that we set the environmentConfig and conflicted fields is
+      // important so that the inspector databinding can pick up the correct
+      // values.
+      this.set(
+          'environmentConfig',
+          Y.merge(this.get('environmentConfig'), changeConfig));
       // If there are any fields where the local version is different from the
       // new environment fields that means that it has been changed locally.
       if (conflicted.length > 0) {
@@ -239,13 +249,6 @@ YUI.add('juju-models', function(Y) {
       }
       // Update the config property with the appropriate values.
       this.set('config', combined);
-      // Update the environmentConfig config options with the values as they are
-      // in the real Juju environment. This should never be
-      // done by anything but this method so that it says as representation of
-      // the config options as juju sees it.
-      this.set(
-          'environmentConfig',
-          Y.merge(this.get('environmentConfig'), changeConfig));
     },
 
     /**

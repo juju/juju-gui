@@ -163,6 +163,17 @@ describe('Inspector Settings', function() {
     assert.equal(highlight.callCount(), 2);
   });
 
+  it('attaches the conflictedFieldsChange event', function() {
+    var conflicted = utils.makeStubMethod(
+        Y.juju.viewlets.Config.prototype, '_showConflictUI');
+    this._cleanups.push(conflicted.reset);
+    inspector = setUpInspector();
+    service.fire('_conflictedFieldsChange');
+    // It is called twice, once in the render method and once when the
+    // _conflictedFields event is fired from the service model.
+    assert.equal(conflicted.callCount(), 2);
+  });
+
   it('properly renders charm options with booleans', function() {
     inspector = setUpInspector();
     // Verify the viewlet rendered, previously it would raise.
@@ -440,67 +451,6 @@ describe('Inspector Settings', function() {
         parentNode.all('.modified').size(),
         0,
         'found a modified node');
-  });
-
-  it('can cancel pending conflicts', function() {
-    // Set up.
-    inspector = setUpInspector();
-    env.connect();
-    var viewlet = getViewlet(inspector);
-    var node = viewlet.get('container').one('textarea[name="admins"]');
-    var parentNode = node.ancestor('.settings-wrapper');
-    changeForm(viewlet, 'admins', 'k:t');
-    inspector.get('model').set('config', {admins: 'g:s'});
-    assert.equal(
-        parentNode.all('[name=admins].conflict-pending').size(),
-        1,
-        'did not find a conflict-pending node');
-    // Act.
-    viewlet.get('container').one('button.cancel').simulate('click');
-    // Validate.
-    assert.equal(node.get('value'), 'g:s');
-    // No conflict or modified markers are shown.
-    assert.equal(
-        parentNode.all('.modified').size(),
-        0,
-        'found a modified node');
-    assert.equal(
-        parentNode.all('.conflict-pending').size(),
-        0,
-        'found a conflict-pending node');
-  });
-
-  it('can cancel conflicts that are being resolved', function() {
-    // Set up.
-    inspector = setUpInspector();
-    env.connect();
-    var viewlet = getViewlet(inspector);
-    var node = viewlet.get('container').one('textarea[name="admins"]');
-    var parentNode = node.ancestor('.settings-wrapper');
-    changeForm(viewlet, 'admins', 'k:t');
-    inspector.get('model').set('config', {admins: 'g:s'});
-    node.simulate('click');
-    assert.equal(
-        parentNode.all('[name=admins].conflict').size(),
-        1,
-        'did not find the conflict node');
-    // Act.
-    viewlet.get('container').one('button.cancel').simulate('click');
-    // Validate.
-    assert.equal(node.get('value'), 'g:s');
-    // No conflict or modified markers are shown.
-    assert.equal(
-        parentNode.all('.modified').size(),
-        0,
-        'found a modified node');
-    assert.equal(
-        parentNode.all('.conflict-pending').size(),
-        0,
-        'found a conflict-pending node');
-    assert.equal(
-        parentNode.all('[name=admins].conflict').size(),
-        0,
-        'found the conflict node');
   });
 
   it('adds the uncommitted class to uncommitted config fields', function() {

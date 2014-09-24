@@ -114,6 +114,7 @@ YUI.add('service-config-view', function(Y) {
       this.attachExpandingTextarea();
       this._attachEvents(service);
       this._highlightUncommitted(service.get('_dirtyFields'));
+      this._showConflictUI(service.get('_conflictedFields'));
     },
 
     /**
@@ -125,6 +126,73 @@ YUI.add('service-config-view', function(Y) {
     _attachEvents: function(service) {
       this.addEvent(
           service.on('*:_dirtyFieldsChange', this._highlightUncommitted, this));
+      this.addEvent(
+          service.on('*:_conflictedFieldsChange', this._showConflictUI, this));
+    },
+
+    /**
+      When the conflictedFields attribute changes on the service this handles
+      updating the inspector UI to allow the user to select the value that
+      they want for the fields.
+
+      @method _showConflictUI
+      @param {Object} e The change event facade
+    */
+    _showConflictUI: function(e) {
+      var fields = e.newVal || e;
+      var container = this.get('container');
+      var viewletManager = this.viewletManager;
+      var model = viewletManager.get('model');
+      var envConfig = model.get('environmentConfig');
+      var input;
+      fields.forEach(function(fieldName) {
+        input = container.one('[name=' + fieldName + ']');
+        this.conflict(
+            input,
+            input.get('value'),
+            envConfig[fieldName],
+            /**
+              Handles resolving the conflict for the config fields when the
+              user changed value is different from the value coming in from
+              the environment.
+
+              XXX Having this method defined here is less than ideal but it's
+              necessary because of how the conflict resolution extension
+              modifies the resolver method.
+
+              @method resolve
+              @param {String} The selected value for the input. Either the value
+                from the environment or the one the user had inputted.
+            */
+            function resolve(value) {
+              var config = model.get('config');
+              config[fieldName] = value;
+              model.set('config', config);
+              input.set('value', value);
+              var changeSet = viewletManager.get('env').get('ecs').changeSet;
+              Object.keys(changeSet).forEach(function(key) {
+                if (key.indexOf('setConfig') > -1) {
+                  changeSet[key].command.args[1][fieldName] = value;
+                }
+              });
+              // Update the conflicted fields array as the user has chosen
+              // which values they wanted to keep.
+              var conflictedFields = model.get('_conflictedFields');
+              conflictedFields.splice(
+                  conflictedFields.indexOf(fieldName), 1);
+              model.set('_conflictedFields', conflictedFields);
+              // If the user has chosen the value which is in the envConfig
+              // then remove it from the dirtyfields array as it's no longer
+              // dirty.
+              if (envConfig[fieldName] === value) {
+                var dirtyFields = model.get('_dirtyFields');
+                dirtyFields.splice(
+                    dirtyFields.indexOf(fieldName), 1);
+                model.set('_dirtyFields', dirtyFields);
+              }
+              resolve.cleanup();
+            });
+      }, this);
     },
 
     /**

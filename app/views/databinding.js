@@ -962,7 +962,6 @@ YUI.add('juju-databinding', function(Y) {
         if (binding.conflicted) {
           binding.resolve(nodeValue, true);
         }
-
         // Now get and normalize some state that we will need...
         var formattedValue = value;
         if (binding.format) {
@@ -975,58 +974,29 @@ YUI.add('juju-databinding', function(Y) {
           changed = true;
           delete viewlet.changedValues[binding.name];
         }
-        // ...and our paths diverge: pristine (not edited) or edited.
-        if (!edited) {
-          // The user has not edited the field and we should set the value.
-          binding.formattedValue = formattedValue;
-          optionalCallback(binding,
-                           'beforeUpdate', node, binding.formattedValue);
-          optionalCallbacks(delta.wildcards['+'],
-                            'beforeUpdate', node, binding.formattedValue);
+        // The user has not edited the field and we should set the value.
+        binding.formattedValue = formattedValue;
+        optionalCallback(binding,
+                         'beforeUpdate', node, binding.formattedValue);
+        optionalCallbacks(delta.wildcards['+'],
+                          'beforeUpdate', node, binding.formattedValue);
 
-          // If an apply callback was provided use it to update
-          // the DOM otherwise used the field type default.
-          if (binding.update) {
-            binding.update.call(binding, node, binding.formattedValue);
-          } else {
-            binding.field.set(node, binding.formattedValue);
-          }
-          if (changed) {
-            bindingEngine._nodeChanged(node, viewlet);
-          }
-          optionalCallbacks(delta.wildcards['+'],
-                            'update', node, binding.formattedValue);
-          optionalCallback(binding,
-                           'afterUpdate', node, binding.formattedValue);
-          optionalCallbacks(delta.wildcards['+'],
-                            'afterUpdate', node, binding.formattedValue);
+        // If an apply callback was provided use it to update
+        // the DOM otherwise used the field type default.
+        if (binding.update) {
+          binding.update.call(binding, node, binding.formattedValue);
         } else {
-          // The user has edited the field, and the value has changed.  This
-          // is a conflict of one sort or another--that is, it is conceivable
-          // that the value has changed to what the user selected, but we will
-          // still ask the viewlet to resolve the issue, one way or another.
-          binding.conflicted = true;
-          viewlet.unsyncedFields();
-          // This closure lets viewlets attach a cleanup function to it.
-          // This is a hook point that lets viewlets define what should
-          // happen when either participant (user or engine) resolves the
-          // conflict.
-          binding.resolve = function(selectedValue, cleanupOnly) {
-            if (binding.resolve.cleanup) {
-              binding.resolve.cleanup();
-            }
-            if (!cleanupOnly) {
-              binding.formattedValue = formattedValue;
-              bindingEngine._resolve(
-                  node, binding.viewlet.name, selectedValue);
-            }
-            delete binding.resolve;
-            delete binding.conflicted;
-          };
-          binding.viewlet.conflict(
-              node, nodeValue, formattedValue, binding.resolve,
-              binding);
+          binding.field.set(node, binding.formattedValue);
         }
+        if (changed) {
+          bindingEngine._nodeChanged(node, viewlet);
+        }
+        optionalCallbacks(delta.wildcards['+'],
+                          'update', node, binding.formattedValue);
+        optionalCallback(binding,
+                         'afterUpdate', node, binding.formattedValue);
+        optionalCallbacks(delta.wildcards['+'],
+                          'afterUpdate', node, binding.formattedValue);
       });
 
       // Run Once, Any update.
