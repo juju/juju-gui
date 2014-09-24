@@ -2160,13 +2160,11 @@ YUI.add('juju-models', function(Y) {
         result.envExport.services[serviceName] = serviceData;
       }, this);
 
-      if (window.flags && window.flags.mv) {
-        var machinePlacement = this._mapServicesToMachines(this.machines);
-        Object.keys(machinePlacement).forEach(function(serviceName) {
-          var placement = machinePlacement[serviceName];
-          result.envExport.services[serviceName].to = placement;
-        });
-      }
+      var machinePlacement = this._mapServicesToMachines(this.machines);
+      Object.keys(machinePlacement).forEach(function(serviceName) {
+        var placement = machinePlacement[serviceName];
+        result.envExport.services[serviceName].to = placement;
+      });
 
       relationList.each(function(relation) {
         var endpoints = relation.get('endpoints');

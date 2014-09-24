@@ -1864,11 +1864,8 @@ describe('test_model.js', function() {
           }
         }
       }]);
-      var oldFlags = window.flags;
-      window.flags.mv = true;
       var result = db.exportDeployer().envExport;
       assert.deepEqual(result.services.mysql.to, ['wordpress=0']);
-      window.flags = oldFlags;
     });
   });
 
