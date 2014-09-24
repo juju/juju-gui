@@ -114,6 +114,7 @@ YUI.add('service-config-view', function(Y) {
       this.attachExpandingTextarea();
       this._attachEvents(service);
       this._highlightUncommitted(service.get('_dirtyFields'));
+      this._showConflictUI(service.get('_conflictedFields'));
     },
 
     /**
@@ -138,12 +139,13 @@ YUI.add('service-config-view', function(Y) {
       @param {Object} e The change event facade
     */
     _showConflictUI: function(e) {
+      var fields = e.newVal || e;
       var container = this.get('container');
       var viewletManager = this.viewletManager;
       var model = viewletManager.get('model');
       var envConfig = model.get('environmentConfig');
       var input;
-      e.newVal.forEach(function(fieldName) {
+      fields.forEach(function(fieldName) {
         input = container.one('[name=' + fieldName + ']');
         this.conflict(
             input,
