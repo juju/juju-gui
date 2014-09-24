@@ -505,7 +505,11 @@ YUI.add('machine-view-panel', function(Y) {
               this._containersHeader.updateLabelCount('container', 1);
             }
           } else {
-            this._renderMachineToken(this._createMachineToken(machine));
+            // If this is a ghost machine, put its corresponding token at the
+            // top of the machine column.
+            var prepend = machine.id.indexOf('new') !== -1;
+            this._renderMachineToken(
+                this._createMachineToken(machine), prepend);
             this._machinesHeader.updateLabelCount('machine', 1);
           }
           if (!selectedMachine) {
@@ -1213,12 +1217,12 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Create a container token
+          Create a container token.
 
           @method _createContainerToken
           @param {Y.Node} containerParent The parent node for the token's
-            container
-          @param {Object} container The lxc or kvm container object
+            container.
+          @param {Object} container The lxc or kvm container object.
           @param {String} commitStatus The commit status string.
           @param {Array} units Optional list of units on the container.
             If not provided, the container's units will be looked up.
@@ -1320,7 +1324,7 @@ YUI.add('machine-view-panel', function(Y) {
          * Create a machine token widget.
          *
          * @method _createMachineToken
-         * @param {Object} machine The machine model object
+         * @param {Object} machine The machine model object.
          */
         _createMachineToken: function(machine) {
           var token = new views.MachineToken({
@@ -1334,17 +1338,24 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-         * Render a machine token.
-         *
-         * @method _renderMachineToken
-           @param {Object} token The machine token to render
-         */
-        _renderMachineToken: function(token) {
+          Render a machine token.
+
+          @method _renderMachineToken
+          @param {Object} token The machine token to render.
+          @param {Boolean} prepend Whether to prepend the new token at the
+            top of the list.
+        */
+        _renderMachineToken: function(token, prepend) {
           this._updateMachineWithUnitData(token.get('machine'));
           token.render();
           token.addTarget(this);
-          this.get('container').one('.column.machines .items').append(
-              token.get('container'));
+          var items = this.get('container').one('.column.machines .items');
+          var content = token.get('container');
+          if (prepend) {
+            items.prepend(content);
+          } else {
+            items.append(content);
+          }
         },
 
         /**
