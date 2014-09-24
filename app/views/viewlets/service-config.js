@@ -173,6 +173,21 @@ YUI.add('service-config-view', function(Y) {
                   changeSet[key].command.args[1][fieldName] = value;
                 }
               });
+              // Update the conflicted fields array as the user has chosen
+              // which values they wanted to keep.
+              var conflictedFields = model.get('_conflictedFields');
+              conflictedFields.splice(
+                  conflictedFields.indexOf(fieldName), 1);
+              model.set('_conflictedFields', conflictedFields);
+              // If the user has chosen the value which is in the envConfig
+              // then remove it from the dirtyfields array as it's no longer
+              // dirty.
+              if (envConfig[fieldName] === value) {
+                var dirtyFields = model.get('_dirtyFields');
+                dirtyFields.splice(
+                    dirtyFields.indexOf(fieldName), 1);
+                model.set('_dirtyFields', dirtyFields);
+              }
               resolve.cleanup();
             });
       }, this);
