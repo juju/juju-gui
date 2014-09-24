@@ -55,6 +55,13 @@ describe('Inspector Conflict UX', function() {
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
     env.update_annotations = function() {};
+    env.set('ecs', {
+      changeSet: {
+        'setConfig-123': {
+          command: {
+            args: ['service', {'logo': 'superlogo.gif'}]
+          }
+        }}});
     inspector = setUpInspector();
   });
 
@@ -181,7 +188,11 @@ describe('Inspector Conflict UX', function() {
       assert.equal(input.hasClass('modified'), true,
           'missing modified class');
 
-      service.set('config', {logo: 'conflicting value'});
+      service.set('environmentConfig', {logo: 'conflicting value'});
+      // Setting of this conflicted Fields attribute is what tells us that the
+      // handlers are attached properly because the conflict-pending class
+      // assert would fail if it's not.
+      service.set('_conflictedFields', ['logo']);
       assert.equal(input.hasClass('conflict-pending'), true,
           'missing conflict-pending class');
 
@@ -197,6 +208,11 @@ describe('Inspector Conflict UX', function() {
       assert.equal(input.get('value'), 'conflicting value');
       assert.equal(input.hasClass('modified'), false);
       assert.equal(input.hasClass('conflict'), false);
+      assert.equal(
+          env.get('ecs').changeSet['setConfig-123'].command.args[1].logo,
+          'conflicting value');
+      assert.deepEqual(service.get('_conflictedFields'), []);
+      assert.deepEqual(service.get('_dirtyFields'), []);
       done();
     });
   });
