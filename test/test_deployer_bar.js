@@ -213,7 +213,6 @@ describe('deployer bar view', function() {
   });
 
   it('updates when the change set is modified', function(done) {
-    var called = false;
     view.update = function(evt) {
       done();
     };
@@ -222,7 +221,6 @@ describe('deployer bar view', function() {
   });
 
   it('notifies the user when a change set is completed', function(done) {
-    var called = false;
     view.notifyCommitFinished = function(evt) {
       done();
     };
