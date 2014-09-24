@@ -93,11 +93,18 @@ function injectData(app, data) {
 
     function constructAppInstance(config) {
       config = config || {};
-      if (config.env && config.env.connect) {
-        config.env.connect();
+      if (!config.ecs) {
+        config.ecs = new juju.EnvironmentChangeSet();
+      }
+      if (config.env) {
+        config.env.set('ecs', config.ecs);
+        if (config.env.connect) {
+          config.env.connect();
+        }
       }
       config.container = container;
       config.viewContainer = container;
+      
 
       app = new Y.juju.App(config);
       app.navigate = function() {};
@@ -275,9 +282,10 @@ function injectData(app, data) {
     });
 
     it('should show the correct message on a mac', function() {
+      var ecs = new juju.EnvironmentChangeSet();
       constructAppInstance({
-        ecs: new juju.EnvironmentChangeSet(),
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        ecs: ecs,
+        env: juju.newEnvironment({ conn: new utils.SocketStub(), ecs: ecs })
       });
       app._displayZoomMessage(1024, 'macintosh');
       assert.isTrue(app.db.notifications.item(0).get(
