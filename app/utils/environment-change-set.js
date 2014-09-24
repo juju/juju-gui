@@ -377,7 +377,8 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.
-      this.levelTimer = Y.later(200, this, this._waitOnLevel, [env, currentIndex], true);
+      this.levelTimer = Y.later(200, this, this._waitOnLevel,
+          [env, currentIndex], true);
     },
 
     /**

@@ -377,7 +377,7 @@ YUI.add('deployer-bar', function(Y) {
       var db = this.get('db');
       db.notifications.add({
         title: 'Changes completed commit: #' + evt.index,
-        message: 'All requested changes for commit #' + evt.index + 
+        message: 'All requested changes for commit #' + evt.index +
             ' have been sent to Juju and committed.',
         level: 'important'
       });
