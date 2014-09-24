@@ -213,14 +213,19 @@ describe('deployer bar view', function() {
   });
 
   it('updates when the change set is modified', function(done) {
-    var called = false;
     view.update = function(evt) {
-      called = true;
       done();
     };
     view.render();
     view.get('ecs').fire('changeSetModified');
-    assert.equal(called, true);
+  });
+
+  it('notifies the user when a change set is completed', function(done) {
+    view.notifyCommitFinished = function(evt) {
+      done();
+    };
+    view.render();
+    view.get('ecs').fire('currentCommitFinished');
   });
 
   it('displays the most recent change as a notification on update', function() {
