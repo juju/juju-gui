@@ -349,6 +349,7 @@ describe('Endpoints map handlers', function() {
     env.connect();
     destroyMe.push(env);
     app = new Y.juju.App({
+      ecs: ecs,
       env: env,
       consoleEnabled: true,
       store: factory.makeFakeStore()
