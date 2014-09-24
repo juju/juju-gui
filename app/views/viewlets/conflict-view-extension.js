@@ -160,7 +160,7 @@ YUI.add('conflict-view-extension', function(Y) {
       }
     },
 
-    'conflict': function(node, nodeValue, modelValue, resolve, binding) {
+    'conflict': function(node, nodeValue, modelValue, resolve) {
       if (nodeValue === modelValue) { return; }
       // Not all nodes need to show the conflict ux. This is true when
       // multiple binds to a single model field are set, such as in the
@@ -202,7 +202,7 @@ YUI.add('conflict-view-extension', function(Y) {
         if (e.currentTarget.hasClass('conflicted-env')) {
           resolve(modelValue);
         } else {
-          resolve(binding.field.get(node));
+          resolve(node.get('value'));
         }
       }
 
