@@ -212,22 +212,20 @@ describe('deployer bar view', function() {
                  'summary-open class still present');
   });
 
-  it('updates when the change set is modified', function(done) {
+  it('updates when the change set is modified', function() {
     var called = false;
     view.update = function(evt) {
       called = true;
-      done();
     };
     view.render();
     view.get('ecs').fire('changeSetModified');
     assert.equal(called, true);
   });
 
-  it('notifies the user when a change set is completed', function(done) {
+  it('notifies the user when a change set is completed', function() {
     var called = false;
     view.notifyCommitFinished = function(evt) {
       called = true;
-      done();
     };
     view.render();
     view.get('ecs').fire('currentCommitFinished');

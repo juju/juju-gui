@@ -520,6 +520,16 @@ describe('Environment Change Set', function() {
         assert.equal(ecs.changeSet['service-123'].index, 1,
             'uncommitted record\'s index changed');
       });
+
+      it('passes the commit index through an event', function() {
+        var fire = testUtils.makeStubMethod(ecs, 'fire');
+        this._cleanups.push(fire.reset);
+        ecs.levelRecordCount = 0;
+        ecs.levelTimer = { cancel: testUtils.makeStubFunction() };
+        ecs._waitOnLevel(null, 0);
+        assert.equal(fire.lastArguments()[0], 'currentCommitFinished');
+        assert.deepEqual(fire.lastArguments()[1], {index: 0});
+      });
     });
   });
 

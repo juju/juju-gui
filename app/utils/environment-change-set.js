@@ -366,7 +366,7 @@ YUI.add('environment-change-set', function(Y) {
 
       @method _commitNext
     */
-    _commitNext: function(env) {
+    _commitNext: function(env, currentIndex) {
       var record;
       this.currentLevel += 1;
       this.levelRecordCount = this.currentCommit[this.currentLevel].length;
@@ -377,7 +377,7 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       // Wait until the entire level has completed (received RPC callbacks from
       // the state server) before starting the next level.
-      this.levelTimer = Y.later(200, this, this._waitOnLevel, env, true);
+      this.levelTimer = Y.later(200, this, this._waitOnLevel, [env, currentIndex], true);
     },
 
     /**
@@ -389,16 +389,16 @@ YUI.add('environment-change-set', function(Y) {
 
       @method _waitOnLevel
     */
-    _waitOnLevel: function(env) {
+    _waitOnLevel: function(env, currentIndex) {
       if (this.levelRecordCount === 0) {
         this.levelTimer.cancel();
         if (this.currentLevel < this.currentCommit.length - 1) {
           // Defer execution to prevent stack overflow.
-          Y.soon(Y.bind(this._commitNext, this, env));
+          Y.soon(Y.bind(this._commitNext, this, [env, currentIndex]));
         } else {
           this.currentLevel = -1;
           delete this.currentCommit;
-          this.fire('currentCommitFinished');
+          this.fire('currentCommitFinished', {index: currentIndex});
         }
       }
     },
@@ -449,7 +449,7 @@ YUI.add('environment-change-set', function(Y) {
       this.currentCommit = this._buildHierarchy(true);
       this.currentIndex += 1;
       this.currentLevel = -1;
-      this._commitNext(env);
+      this._commitNext(env, this.currentIndex - 1);
     },
 
     /**

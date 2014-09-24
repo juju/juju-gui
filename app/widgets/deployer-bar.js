@@ -373,13 +373,14 @@ YUI.add('deployer-bar', function(Y) {
 
       @method notifyCommitFinished
     */
-    notifyCommitFinished: function() {
+    notifyCommitFinished: function(evt) {
       var db = this.get('db');
-      db.notifications.add(new Y.juju.models.Notification({
-        title: 'All changes committed',
-        message: 'All requested changes have been sent to Juju and committed.',
+      db.notifications.add({
+        title: 'Changes completed commit: #' + evt.index,
+        message: 'All requested changes for commit #' + evt.index + 
+            ' have been sent to Juju and committed.',
         level: 'important'
-      }));
+      });
     },
 
     /**
