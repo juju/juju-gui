@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // the addition of puppet subordinate relations.
 
 describe('Relation endpoints logic', function() {
-  var Y, juju, utils, db, app, models, sample_endpoints, sample_env, env;
+  var Y, juju, utils, db, app, models, sample_endpoints, sample_env, env, ecs;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -40,12 +40,14 @@ describe('Relation endpoints logic', function() {
                                'juju-models',
                                'juju-gui',
                                'juju-tests-utils',
-                               'juju-controllers'],
+                               'juju-controllers',
+                               'environment-change-set'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       var conn = new utils.SocketStub();
-      env = juju.newEnvironment({conn: conn});
+      ecs = new juju.EnvironmentChangeSet();
+      env = juju.newEnvironment({conn: conn, ecs: ecs});
       env.connect();
       app = new Y.juju.App({env: env});
       app.navigate = function() { return true; };
@@ -309,7 +311,8 @@ describe('Endpoints map', function() {
 });
 
 describe('Endpoints map handlers', function() {
-  var app, conn, controller, destroyMe, env, factory, juju, models, utils, Y;
+  var app, conn, controller, destroyMe, ecs, _renderDeployerBarView,
+      env, factory, juju, models, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
@@ -333,8 +336,12 @@ describe('Endpoints map handlers', function() {
     destroyMe = [];
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
+    env.setCredentials({user: 'user', password: 'password'});
     env.connect();
     destroyMe.push(env);
+    var _renderDeployerBarView = utils.makeStubMethod(
+        Y.juju.App.prototype, '_renderDeployerBarView');
+    this._cleanups.push(_renderDeployerBarView.reset);
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
@@ -506,7 +513,8 @@ describe('Service config handlers', function() {
                                'juju-endpoints-controller',
                                'juju-controllers',
                                'juju-charm-store',
-                               'datasource-local'],
+                               'datasource-local',
+                               'environment-change-set'],
     function(Y) {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
@@ -518,7 +526,8 @@ describe('Service config handlers', function() {
   beforeEach(function() {
     destroyMe = [];
     conn = new utils.SocketStub();
-    env = juju.newEnvironment({conn: conn});
+    var ecs = new juju.EnvironmentChangeSet();
+    env = juju.newEnvironment({conn: conn, ecs: ecs});
     env.connect();
     app = new Y.juju.App({env: env, consoleEnabled: true });
     destroyMe.push(app);
