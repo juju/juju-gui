@@ -1022,6 +1022,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          container.all('.to-remove')
               .size()
               .should.equal(1);
+         view.topo.modules.RelationModule.
+           _removeRelationCallback(view, relation, 'relation-0000000001',
+             null, {});
+         assert.equal(db.relations.getById('relation-0000000001'), null,
+             'Relation not removed from db');
+         assert.deepEqual(db.services.getById('wordpress').get('relations')
+             .getById('relation-0000000001'), null,
+             'Relation not removed from services')
          view.destroy();
        });
 

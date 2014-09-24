@@ -635,20 +635,6 @@ YUI.add('juju-topology-relation', function(Y) {
       var relationElement = view.get('container')
         .one('#' + utils.generateSafeDOMId(relation.relation_id, topo._yuid));
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      // Because we keep a copy of the relation models on each service we
-      // also need to remove the relation from those models.
-      var service, serviceRelations;
-      relation.endpoints.forEach(function(endpoint) {
-        // Some of the tests pass fake data with invalid endpoints
-        // this check just makes sure it doesn't blow up.
-        // fixTests
-        if (!endpoint) {
-          console.error('invalid endpoints on relation');
-          return;
-        }
-        service = db.services.getById(endpoint[0]);
-        service.removeRelations(relation.relation_id);
-      });
       env.remove_relation(relation.endpoints[0], relation.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
           relationElement, relation.relation_id, confirmButton));
@@ -669,8 +655,23 @@ YUI.add('juju-topology-relation', function(Y) {
         utils.removeSVGClass(this.relationElement,
             'to-remove pending-relation');
       } else {
+        var relation = db.relations.getById(relationId);
+        // Because we keep a copy of the relation models on each service we
+        // also need to remove the relation from those models.
+        var service, serviceRelations;
+        relation.get('endpoints').forEach(function(endpoint) {
+          // Some of the tests pass fake data with invalid endpoints
+          // this check just makes sure it doesn't blow up.
+          // fixTests
+          if (!endpoint) {
+            console.error('invalid endpoints on relation');
+            return;
+          }
+          service = db.services.getById(endpoint[0]);
+          service.removeRelations(relation.get('relation_id'));
+        });
         // Remove the relation from the DB.
-        db.relations.remove(db.relations.getById(relationId));
+        db.relations.remove(relation);
         // Redraw the graph and reattach events.
         topo.update();
       }
