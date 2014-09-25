@@ -20,7 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-#- unreleased:
+- unreleased:
 - 1.2.0:
     - >
       New Feature: Machine View!
