@@ -523,8 +523,15 @@ describe('test_model.js', function() {
               [endpointSetA[0], endpointSetA[0]],
               [endpointSetB[1], endpointSetB[1]]),
           false, 'compare set 4 failed');
+      // Compare endpoints that share the same origin but connect to different
+      // services on the other end. (e.g., wordpress related to both mysql and
+      // haproxy)
+      assert.equal(
+          relations.compareRelationEndpoints(
+              [endpointSetA[0], endpointSetA[0]],
+              [endpointSetB[0], endpointSetB[1]]),
+          false, 'compare set 4 failed');
     });
-
 
     it('must be able to reference the Environment model', function() {
       var db = new models.Database();
