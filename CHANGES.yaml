@@ -20,7 +20,27 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+#- unreleased:
+- 1.2.0:
+    - >
+      New Feature: Machine View!
+
+      The Juju GUI now provides two views of your environment. In addition to
+      the service view there is not a new machine view. It will list out the
+      underlying machines in your environment along with the services deployed
+      on those machines. Machine view allows you to manually place services
+      onto machines and containers on providers that support network access to
+      containers.
+
+      Along with the new machine view is a new deployer bar. This bottom bar
+      allows you to stage up multiple changes to your environment before
+      committing them to the Juju environment. This lets you add many
+      machines, add services, and place them carefully, and verify your list
+      of changes before any requests are made to Juju.
+    - >
+      Many small tweaks to the UI for machine view including an updated
+      header, inspector look, and a new scale up UI for the inspector.
+    - (FIX) Standardize the constraints units across the GUI
 - 1.1.1:
     - The inspector requires fewer dispatches to render different states.
     - The sidebar can now be hidden with a keyboard shortcut (Ctrl+Alt+h).
