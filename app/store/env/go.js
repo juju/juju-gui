@@ -810,7 +810,7 @@ YUI.add('juju-env-go', function(Y) {
                      constraints, toMachine, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         // Call the deploy method right away bypassing the queue.
         this._deploy.apply(this, args);
       } else {
@@ -936,7 +936,7 @@ YUI.add('juju-env-go', function(Y) {
     addMachines: function(params, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         return this._addMachines.apply(this, args);
       } else {
         return ecs.lazyAddMachines(args, options);
@@ -1074,7 +1074,7 @@ YUI.add('juju-env-go', function(Y) {
     destroyMachines: function(params, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         return this._destroyMachines.apply(this, args);
       } else {
         return ecs._lazyDestroyMachines(args, options);
@@ -1209,7 +1209,7 @@ YUI.add('juju-env-go', function(Y) {
     add_unit: function(service, numUnits, toMachine, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         this._add_unit.apply(this, args);
       } else {
         ecs.lazyAddUnits(args, options);
@@ -1314,7 +1314,7 @@ YUI.add('juju-env-go', function(Y) {
     remove_units: function(unit_names, callback, options) {
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         this._remove_units.apply(this, args);
       } else {
         ecs._lazyRemoveUnit(args);
@@ -1698,7 +1698,7 @@ YUI.add('juju-env-go', function(Y) {
         options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         // Need to check that the serviceName is a real service name and not
         // a queued service id before allowing immediate or not.
         if (ecs.changeSet[serviceName]) {
@@ -1768,7 +1768,7 @@ YUI.add('juju-env-go', function(Y) {
     destroy_service: function(service, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         this._destroyService.apply(this, args);
       } else {
         ecs._lazyDestroyService(args);
@@ -1920,7 +1920,7 @@ YUI.add('juju-env-go', function(Y) {
     add_relation: function(endpointA, endpointB, callback, options) {
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         this._add_relation.apply(this, args);
       } else {
         ecs._lazyAddRelation(args, options);
@@ -2010,7 +2010,7 @@ YUI.add('juju-env-go', function(Y) {
     remove_relation: function(endpointA, endpointB, callback, options) {
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
-      if (!window.flags.mv || options && options.immediate) {
+      if (options && options.immediate) {
         this._remove_relation.apply(this, args);
       } else {
         ecs._lazyRemoveRelation(args);

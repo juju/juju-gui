@@ -437,7 +437,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct AddServiceUnits message', function() {
-      env.add_unit('django', 3);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_unit('django', 3);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -449,7 +450,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds new service units to a specific machine', function() {
-      env.add_unit('django', 3, '42');
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_unit('django', 3, '42');
       var expectedMessage = {
         Type: 'Client',
         Request: 'AddServiceUnits',
@@ -460,7 +462,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully adds units to a service', function(done) {
-      env.add_unit('django', 2, null, function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_unit('django', 2, null, function(data) {
         assert.strictEqual('django', data.service_name);
         assert.strictEqual(2, data.num_units);
         assert.deepEqual(['django/2', 'django/3'], data.result);
@@ -475,7 +478,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures adding units to a service', function(done) {
-      env.add_unit('django', 0, null, function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_unit('django', 0, null, function(data) {
         assert.strictEqual('django', data.service_name);
         assert.strictEqual(0, data.num_units);
         assert.strictEqual('must add at least one unit', data.err);
@@ -489,7 +493,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct DestroyServiceUnits message', function() {
-      env.remove_units(['django/2', 'django/3']);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_units(['django/2', 'django/3']);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -501,7 +506,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully removes units from a service', function(done) {
-      env.remove_units(['django/2', 'django/3'], function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_units(['django/2', 'django/3'], function(data) {
         assert.deepEqual(['django/2', 'django/3'], data.unit_names);
         assert.isUndefined(data.err);
         done();
@@ -514,7 +520,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures removing units from a service', function(done) {
-      env.remove_units(['django/2'], function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_units(['django/2'], function(data) {
         assert.deepEqual(['django/2'], data.unit_names);
         assert.strictEqual('unit django/2 does not exist', data.err);
         done();
@@ -844,7 +851,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service', function() {
-      env.deploy('precise/mysql');
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._deploy('precise/mysql');
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -872,7 +880,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      env.deploy('precise/mediawiki', null, config);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._deploy('precise/mediawiki', null, config);
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -892,7 +901,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      env.deploy('precise/mysql', null, null, config_raw);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._deploy('precise/mysql', null, null, config_raw);
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -906,7 +916,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'root-disk': '8000',
         tags: 'tag1,tag2'
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, constraints);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._deploy('precise/mediawiki', null, null, null, 1, constraints);
       msg = conn.last_message();
       assert.deepEqual(msg.Params.Constraints, {
         'cpu-cores': 1,
@@ -931,7 +942,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, null, '42');
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._deploy('precise/mediawiki', null, null, null, 1, null, '42');
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
@@ -939,7 +951,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var charm_url;
       var err;
       var service_name;
-      env.deploy(
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
           function(data) {
             charm_url = data.charm_url;
@@ -959,7 +972,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed service deploy', function() {
       var err;
-      env.deploy(
+      env._deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
           function(data) {
             err = data.err;
@@ -974,7 +987,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds a machine', function() {
-      env.addMachines([{}]);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([{}]);
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -988,7 +1002,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('adds a machine with the given series and constraints', function() {
       var constraints = {'cpu-cores': 4, 'mem': 4000};
-      env.addMachines([{series: 'trusty', constraints: constraints}]);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([{series: 'trusty', constraints: constraints}]);
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -1005,7 +1020,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds a container', function() {
-      env.addMachines([{containerType: 'lxc'}]);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([{containerType: 'lxc'}]);
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -1021,7 +1037,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds a saucy container to a specific machine', function() {
-      env.addMachines(
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines(
           [{containerType: 'lxc', parentId: '42', series: 'saucy'}]);
       var expectedMsg = {
         RequestId: 1,
@@ -1040,7 +1057,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds multiple machines/containers', function() {
-      env.addMachines([
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([
         {},
         {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
         {containerType: 'kvm'},
@@ -1066,13 +1084,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('avoids sending calls if no machines are added', function() {
-      env.addMachines([]);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([]);
       assert.equal(conn.messages.length, 0);
     });
 
     it('handles successful addMachines server responses', function() {
       var response;
-      env.addMachines([{}, {containerType: 'lxc'}], function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([{}, {containerType: 'lxc'}], function(data) {
         response = data;
       });
       // Mimic the server AddMachines response.
@@ -1090,7 +1110,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles addMachines server failures', function() {
       var response;
-      env.addMachines([{}], function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([{}], function(data) {
         response = data;
       });
       // Mimic the server AddMachines response.
@@ -1105,7 +1126,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles addMachines errors adding a specific machine', function() {
       var response;
-      env.addMachines([{}, {}, {parentId: '42'}], function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._addMachines([{}, {}, {parentId: '42'}], function(data) {
         response = data;
       });
       // Mimic the server AddMachines response.
@@ -1138,38 +1160,45 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     it('removes a machine', function() {
-      env.destroyMachines(['1']);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['1']);
       assertDestroyMachinesRequestSent(['1'], false);
     });
 
     it('forces a machine removal', function() {
-      env.destroyMachines(['42'], true);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['42'], true);
       assertDestroyMachinesRequestSent(['42'], true);
     });
 
     it('removes a container', function() {
-      env.destroyMachines(['2/lxc/0']);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['2/lxc/0']);
       assertDestroyMachinesRequestSent(['2/lxc/0'], false);
     });
 
     it('forces a container removal', function() {
-      env.destroyMachines(['1/kvm/42'], true);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['1/kvm/42'], true);
       assertDestroyMachinesRequestSent(['1/kvm/42'], true);
     });
 
     it('removes multiple machines/containers', function() {
-      env.destroyMachines(['1', '47', '42/lxc/0']);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['1', '47', '42/lxc/0']);
       assertDestroyMachinesRequestSent(['1', '47', '42/lxc/0'], false);
     });
 
     it('avoids sending calls if no machines are removed', function() {
-      env.destroyMachines([]);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines([]);
       assert.equal(conn.messages.length, 0);
     });
 
     it('handles successful destroyMachines server responses', function() {
       var response;
-      env.destroyMachines(['42', '1/lxc/2'], false, function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['42', '1/lxc/2'], false, function(data) {
         response = data;
       });
       // Mimic the server DestroyMachines response.
@@ -1180,7 +1209,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles destroyMachines server failures', function() {
       var response;
-      env.destroyMachines(['1'], false, function(data) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyMachines(['1'], false, function(data) {
         response = data;
       });
       // Mimic the server DestroyMachines response.
@@ -1469,21 +1499,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must error if neither data nor config are passed', function() {
-      assert.throws(
-          function() {env.set_config('mysql', undefined, undefined);},
-          'Exactly one of config and data must be provided');
+      assert.throws(function() {
+        // Use the private method b/c we're not interested in the ECS behavior.
+        env._set_config('mysql', undefined, undefined);
+      }, 'Exactly one of config and data must be provided');
     });
 
     it('must error if both data and config are passed', function() {
-      assert.throws(
-          function() {
-            env.set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML');},
-          'Exactly one of config and data must be provided');
+      assert.throws(function() {
+        // Use the private method b/c we're not interested in the ECS behavior.
+        env._set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML');
+      }, 'Exactly one of config and data must be provided');
     });
 
     it('can set a service config', function() {
       // This also tests that it only sends the changed values
-      env.set_config('mysql', {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._set_config('mysql', {
         'cfg-key': 'cfg-val',
         'unchanged': 'bar'
       }, null, {
@@ -1509,7 +1541,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       /*jshint multistr:true */
       var data = 'tuning-level: \nexpert-mojo';
       /*jshint multistr:false */
-      env.set_config('mysql', null, data);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._set_config('mysql', null, data);
       msg = conn.last_message();
       var expected = {
         RequestId: msg.RequestId,
@@ -1525,7 +1558,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed set config', function() {
       var err, service_name;
-      env.set_config('yoursql', {}, null, {}, function(evt) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._set_config('yoursql', {}, null, {}, function(evt) {
         err = evt.err;
         service_name = evt.service_name;
       });
@@ -1542,7 +1576,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var dataReturned;
       var oldConfig = {key1: 'value1', key2: 'value2', key3: 'value3'};
       var newConfig = {key1: 'value1', key2: 'CHANGED!', key3: 'value3'};
-      env.set_config('django', newConfig, null, oldConfig, function(evt) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._set_config('django', newConfig, null, oldConfig, function(evt) {
         dataReturned = evt;
       });
       msg = conn.last_message();
@@ -1563,7 +1598,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can destroy a service', function() {
       var service_name = '';
-      env.destroy_service('mysql', function(evt) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyService('mysql', function(evt) {
         service_name = evt.service_name;
       });
       var expected = {
@@ -1585,7 +1621,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed destroy service', function() {
       var err, service_name;
-      env.destroy_service('yoursql', function(evt) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._destroyService('yoursql', function(evt) {
         err = evt.err;
         service_name = evt.service_name;
       });
@@ -1601,7 +1638,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sends the correct AddRelation message', function() {
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_relation(endpointA, endpointB);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -1619,7 +1657,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var jujuEndpoints = {};
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB, function(ev) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
       });
       msg = conn.last_message();
@@ -1653,7 +1692,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var evt;
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB, function(ev) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._add_relation(endpointA, endpointB, function(ev) {
         evt = ev;
       });
       msg = conn.last_message();
@@ -1669,7 +1709,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sends the correct DestroyRelation message', function() {
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_relation(endpointA, endpointB);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -1686,19 +1727,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove relation', function() {
-      window.flags = { mv: true };
       var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveRelation');
       this._cleanups.push(lazy.reset);
       env.remove_relation([], [], function() {});
       assert.equal(lazy.calledOnce(), true);
-      window.flags = {};
     });
 
     it('successfully removes a relation', function() {
       var endpoint_a, endpoint_b;
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB, function(ev) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_relation(endpointA, endpointB, function(ev) {
         endpoint_a = ev.endpoint_a;
         endpoint_b = ev.endpoint_b;
       });
@@ -1715,7 +1755,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var endpoint_a, endpoint_b, err;
       endpointA = ['yoursql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB, function(ev) {
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_relation(endpointA, endpointB, function(ev) {
         endpoint_a = ev.endpoint_a;
         endpoint_b = ev.endpoint_b;
         err = ev.err;
@@ -2028,7 +2069,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a unit', function() {
       var unit_name = 'mysql/0';
-      env.remove_units([unit_name]);
+      // Use the private method b/c we're not interested in the ECS behavior.
+      env._remove_units([unit_name]);
       msg = conn.last_message();
       assert.equal(msg.Type, 'Client');
       assert.equal(msg.Request, 'DestroyServiceUnits');

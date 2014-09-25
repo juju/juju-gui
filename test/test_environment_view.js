@@ -134,7 +134,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         models = Y.namespace('juju.models');
         conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
-        ecs = new juju.EnvironmentChangeSet();
+        db = new models.Database();
+        ecs = new juju.EnvironmentChangeSet({db: db});
         env = juju.newEnvironment({conn: conn, ecs: ecs});
         env.connect();
         conn.open();
@@ -155,7 +156,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = testUtils.makeContainer(this, 'content');
-      db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
       // annotations, its a direct reference).
@@ -180,6 +180,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function(done) {
+      db.reset();
       db.destroy();
       charm.destroy();
       env._txn_callbacks = {};
@@ -214,7 +215,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
-      db = new models.Database();
+      var db = new models.Database();
       view.set('db', db);
       view.render().rendered();
 

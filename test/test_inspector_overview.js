@@ -257,6 +257,7 @@ describe('Inspector Overview', function() {
      function() {
        inspector = setUpInspector();
        scaleUnits(1);
+       ecs.commit(env);
        var message = conn.last_message();
        assert.equal('DestroyServiceUnits', message.Request);
        assert.deepEqual(
@@ -267,6 +268,7 @@ describe('Inspector Overview', function() {
      function() {
        setUpInspector();
        var control = scaleUnits(0);
+       ecs.commit(env);
        assert.isUndefined(conn.last_message());
        control.get('value').should.equal('3');
      });
@@ -280,6 +282,7 @@ describe('Inspector Overview', function() {
        assert.equal(container.one('.unit-constraints-confirm')
                        .one('span:first-child')
                        .getHTML(), 'Scale out with these constraints?');
+       ecs.commit(env);
        var message = conn.last_message();
        assert.equal('AddServiceUnits', message.Request);
        assert.equal('mediawiki', message.Params.ServiceName);
@@ -294,6 +297,7 @@ describe('Inspector Overview', function() {
     // During scaling the control is disabled.
     assert.isTrue(control.get('disabled'));
     // Generate a message that indicates the service is done scaling.
+    ecs.commit(env);
     var message = conn.last_message();
     conn.msg({
       RequestId: message.RequestId,
@@ -312,7 +316,8 @@ describe('Inspector Overview', function() {
     // Scale the number of units down and show that the control is reenabled.
     control.set('value', 1);
     control.simulate('keydown', { keyCode: ENTER });
-    // During scaling the control is disabled.
+    ecs.commit(env);
+    //  During scaling the control is disabled.
     assert.isTrue(control.get('disabled'), 'disabled while scaling down');
     // Generate a message that indicates the service is done scaling.
     var message = conn.last_message();
@@ -855,6 +860,7 @@ describe('Inspector Overview', function() {
         ['unit', 'add', {id: unitId, agent_state: 'error'}]
       ]}});
 
+
       var mgrContainer = inspector.get('container');
       var removeButton = mgrContainer.one('button.unit-action-button.remove');
       var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
@@ -874,6 +880,7 @@ describe('Inspector Overview', function() {
         Type: 'Client'
       };
 
+      ecs.commit(env);
       assert.deepEqual(env.ws.last_message(), expected);
     });
 
