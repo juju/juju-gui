@@ -289,39 +289,6 @@ th {
                     margin-right: 6px;
                 }
             }
-            // Can be removed when flags.mv is removed.
-            &.import-export {
-                padding: 17px 0 0 0;
-
-                a {
-                    .sprite-hover;
-                    display: block;
-                    float: left;
-                    height: 15px;
-                    padding:  0 10px;
-                    line-height: 15px;
-
-                    &:first-child {
-                        border-left: 1px solid @navbar-border-dark;
-                    }
-                    &:last-child {
-                        border-right: 1px solid @navbar-border-light;
-                    }
-                    .sprite {
-                        display: block;
-                        margin: 1px 0 0 0;
-                    }
-                    &:focus,
-                    &:hover {
-                        .sprite.hover {
-                            display: block;
-                        }
-                    }
-                }
-                input[type=file] {
-                    display: none;
-                }
-            }
             &.notifications-nav {
                 position: relative;
 
@@ -802,7 +769,7 @@ g.unit {
     right: 20px;
     top: 40px;
 }
-.flag-mv .zoom-controls {
+.zoom-controls {
     top: 80px;
 }
 .yui3-slider-y .yui3-slider-rail,
@@ -968,12 +935,6 @@ g.unit {
     }
     #loading-spinner {
         height: 100px;
-    }
-}
-
-body.flag-mv {
-    #browser-nav .import-export {
-        display: none;
     }
 }
 
