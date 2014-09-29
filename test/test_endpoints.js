@@ -353,23 +353,30 @@ describe('Endpoints map handlers', function() {
     });
   });
 
-  it('should not update endpoints map when pending services are added',
+  it('should update endpoints map when pending services are added',
      function(done) {
+       var store = factory.makeFakeStore();
+       var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
-       app.db.services.add({
-         id: 'wordpress',
-         pending: true,
-         charm: charm_id});
-       // This timeout is here because we now add the endpoints async via
-       // a response from a promise so checking for an id will always be null
-       // immediately after requesting it. So in 100ms if it's not there,
-       // it won't be because the code would have had a chance to execute.
-       setTimeout(function() {
-         assert.deepEqual(controller.endpointsMap, {});
-         // No charm should have tried to load (see bug 1166222).
-         assert.isNull(app.db.charms.getById(charm_id));
+       app.db.charms.add({id: charm_id});
+       var charm = app.db.charms.getById(charm_id);
+       destroyMe.push(charm);
+       charm.loaded = true;
+
+       controller.on('endpointMapAdded', function() {
+         controller.endpointsMap.should.eql({wordpress: {
+           requires: [],
+           provides: []}});
+         // This will hang forever if the endpoint map doesn't update.
          done();
-       }, 100);
+       });
+       app.db.services.add({
+         id: service_name,
+         pending: true,
+         loaded: true,
+         store: store,
+         charm: charm_id
+       });
      });
 
   it('should update endpoints map when non-pending services are added',
@@ -381,26 +388,24 @@ describe('Endpoints map handlers', function() {
        var charm = app.db.charms.getById(charm_id);
        destroyMe.push(charm);
        charm.loaded = true;
-       app.db.services.add({
-         id: service_name,
-         pending: true,
-         loaded: true,
-         store: store,
-         charm: charm_id});
 
        controller.on('endpointMapAdded', function() {
          controller.endpointsMap.should.eql({wordpress: {
            requires: [],
            provides: []}});
+         // This will hang forever if the endpoint map doesn't update.
          done();
        });
-
-       var svc = app.db.services.getById(service_name);
-       svc.set('pending', false);
-       destroyMe.push(svc);
+       app.db.services.add({
+         id: service_name,
+         pending: false,
+         loaded: true,
+         store: store,
+         charm: charm_id
+       });
      });
 
-  it('should update is_subordinate value when non-pending services are added',
+  it('updates subordinate value when non-pending services are added',
       function(done) {
         var service_name = 'puppet';
         var charm_id = 'cs:precise/puppet-2';
@@ -408,20 +413,21 @@ describe('Endpoints map handlers', function() {
         var charm = app.db.charms.getById(charm_id);
         destroyMe.push(charm);
         charm.loaded = true;
-        app.db.services.add({
-          id: service_name,
-          pending: true,
-          loaded: true,
-          charm: charm_id});
 
         controller.on('endpointMapAdded', function() {
+          var svc = app.db.services.getById(service_name);
           assert.isTrue(svc.get('subordinate'));
+          destroyMe.push(svc);
           done();
         });
 
-        var svc = app.db.services.getById(service_name);
-        svc.set('pending', false);
-        destroyMe.push(svc);
+        app.db.services.add({
+          id: service_name,
+          pending: false,
+          loaded: true,
+          charm: charm_id
+        });
+
       });
 
   it('should update endpoints map when a service\'s charm changes', function() {
@@ -558,10 +564,8 @@ describe('Service config handlers', function() {
        charm.loaded = true;
        app.db.services.add({
          id: service_name,
-         pending: true,
+         pending: false,
          charm: charm_id});
-       var svc = app.db.services.getById(service_name);
-       svc.set('pending', false);
        assertServiceGetCalled();
      });
 

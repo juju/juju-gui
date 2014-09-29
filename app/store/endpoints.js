@@ -133,28 +133,18 @@ YUI.add('juju-endpoints-controller', function(Y) {
         handleServiceEvent: function(service) {
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
-          var process = true;
-          if (!window.flags.mv) {
-            process = !service.get('pending');
-          }
-          if (process) {
-            var mController = this.get('modelController'),
-                servicePromise = mController.getServiceWithCharm(
-                    service.get('id')),
-                self = this;
+          var mController = this.get('modelController'),
+              servicePromise = mController.getServiceWithCharm(
+                  service.get('id')),
+              self = this;
 
-            servicePromise.then(
-                function(data) {
-                  data.service.set(
-                      'subordinate', data.charm.get('is_subordinate'));
-                  self.addServiceToEndpointsMap(
-                      data.service.get('id'), data.charm);
-                },
-                function(err) {
-                  console.warn('Unable to fetch service information', err);
-                }
-            );
-          }
+          servicePromise.then(function(data) {
+            data.service.set('subordinate', data.charm.get('is_subordinate'));
+            self.addServiceToEndpointsMap(
+                data.service.get('id'), data.charm);
+          }, function(err) {
+            console.warn('Unable to fetch service information', err);
+          });
         },
 
         /**
