@@ -2023,7 +2023,8 @@ YUI.add('juju-models', function(Y) {
       // Strip uncommitted machines and containers from the machine list.
       var db = this; // machineList.filter does not respect bindscope.
       var machines = machineList.filter(function(machine) {
-        if (machine.id.indexOf('new') !== -1 ||
+        if (machine.commitStatus === 'uncommitted' ||
+            machine.commitStatus === 'in-progress' ||
             db.units.filterByMachine(machine.id).length === 0) {
           return false;
         }

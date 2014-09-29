@@ -1396,8 +1396,8 @@ describe('machine view panel view', function() {
     it('prepends new ghost machines to the beginning of the list', function() {
       machines.reset();
       view.render();
-      machines.add({id: '1', parentId: null});
-      machines.add({id: 'new2', parentId: null});
+      machines.add({id: '1', parentId: null, commitStatus: 'committed'});
+      machines.add({id: 'new2', parentId: null, commitStatus: 'uncommitted'});
       var tokens = container.all('.machines .token');
       assert.strictEqual(tokens.size(), 2);
       assert.deepEqual(tokens.getData('id'), ['new2', '1']);

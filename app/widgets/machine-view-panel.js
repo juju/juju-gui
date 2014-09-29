@@ -507,7 +507,7 @@ YUI.add('machine-view-panel', function(Y) {
           } else {
             // If this is a ghost machine, put its corresponding token at the
             // top of the machine column.
-            var prepend = machine.id.indexOf('new') !== -1;
+            var prepend = machine.commitStatus === 'uncommitted';
             this._renderMachineToken(
                 this._createMachineToken(machine), prepend);
             this._machinesHeader.updateLabelCount('machine', 1);
