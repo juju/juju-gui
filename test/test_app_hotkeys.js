@@ -38,6 +38,9 @@ describe('application hotkeys', function() {
 
   beforeEach(function() {
     container = Y.namespace('juju-tests.utils').makeContainer(this);
+    var _renderDeployerBarView = Y.namespace('juju-tests.utils').makeStubMethod(
+        Y.juju.App.prototype, '_renderDeployerBarView');
+    this._cleanups.push(_renderDeployerBarView.reset);
     app = new Y.juju.App({
       env: env,
       container: container,

@@ -84,7 +84,8 @@ describe('notifications', function() {
       'juju-env',
       'node-event-simulate',
       'juju-tests-utils',
-      'ns-routing-app-extension'],
+      'ns-routing-app-extension',
+      'environment-change-set'],
 
     function(Y) {
       juju = Y.namespace('juju');
@@ -216,7 +217,8 @@ describe('notifications', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-        env = juju.newEnvironment({conn: conn}, 'python');
+        ecs = new juju.EnvironmentChangeSet(),
+        env = juju.newEnvironment({conn: conn, ecs: ecs}, 'python');
     app = new Y.juju.App({
       env: env,
       container: container,
@@ -260,7 +262,8 @@ describe('notifications', function() {
         var container = Y.Node.create(
            '<div id="test" class="container"></div>');
         var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
-        var env = juju.newEnvironment({conn: conn}, 'python');
+        var ecs = new juju.EnvironmentChangeSet();
+        var env = juju.newEnvironment({conn: conn, ecs: ecs}, 'python');
         env.connect();
         app = new Y.juju.App({
           env: env,

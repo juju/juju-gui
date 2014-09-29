@@ -55,13 +55,18 @@ function injectData(app, data) {
     var Y, app, container, utils, juju, env, conn;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
-          function(Y) {
-            utils = Y.namespace('juju-tests.utils');
-            juju = Y.namespace('juju');
-            done();
-          });
+      Y = YUI(GlobalConfig).use([
+        'juju-gui',
+        'juju-tests-utils',
+        'juju-view-utils',
+        'juju-views',
+        'environment-change-set'
+      ],
+      function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        juju = Y.namespace('juju');
+        done();
+      });
     });
 
     beforeEach(function() {
@@ -87,14 +92,18 @@ function injectData(app, data) {
       app.destroy();
     });
 
-    function constructAppInstance(config) {
+    function constructAppInstance(config, context) {
       config = config || {};
       if (config.env && config.env.connect) {
         config.env.connect();
       }
       config.container = container;
       config.viewContainer = container;
-
+      if (context) {
+        var _renderDeployerBarView = utils.makeStubMethod(
+            Y.juju.App.prototype, '_renderDeployerBarView');
+        context._cleanups.push(_renderDeployerBarView.reset);
+      }
       app = new Y.juju.App(config);
       app.navigate = function() {};
       app.showView(new Y.View());
@@ -106,7 +115,7 @@ function injectData(app, data) {
         function() {
           constructAppInstance({
             env: juju.newEnvironment({ conn: new utils.SocketStub() })
-          });
+          }, this);
           assert.equal(app.env.get('user'), undefined);
           assert.equal(app.env.get('password'), undefined);
         });
@@ -127,6 +136,9 @@ function injectData(app, data) {
         function(done) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
+          var _renderDeployerBarView = utils.makeStubMethod(
+              Y.juju.App.prototype, '_renderDeployerBarView');
+          this._cleanups.push(_renderDeployerBarView.reset);
           app = new Y.juju.App(
               { container: container,
                 user: the_username,
@@ -142,6 +154,9 @@ function injectData(app, data) {
         });
 
     it('propagates the readOnly option from the configuration', function() {
+      var _renderDeployerBarView = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderDeployerBarView');
+      this._cleanups.push(_renderDeployerBarView.reset);
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -154,7 +169,7 @@ function injectData(app, data) {
     it('should produce a valid index', function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
-      });
+      }, this);
       var container = app.get('container');
       container.getAttribute('id').should.equal('test-container');
       container.getAttribute('class').should.include('container');
@@ -170,7 +185,7 @@ function injectData(app, data) {
           }
         }),
         environment_name: environment_name
-      });
+      }, this);
       assert.equal(
           container.one('#environment-name').get('text'),
           environment_name);
@@ -199,7 +214,7 @@ function injectData(app, data) {
             close: function() {}
           }
         })
-      });
+      }, this);
       var name = 'Sandbox';
       assert.equal(
           'Environment',
@@ -216,7 +231,7 @@ function injectData(app, data) {
             close: function() {}
           }
         })
-      });
+      }, this);
 
       // XXX bug:1217383
       // Force an app._controlEvents so that we don't try to bind viewmode
@@ -244,7 +259,10 @@ function injectData(app, data) {
 
     it('should display a zoom message on small browsers', function() {
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       });
       app._displayZoomMessage(1024, 'linux');
       assert.equal(app.db.notifications.item(0).get('title'),
@@ -253,7 +271,10 @@ function injectData(app, data) {
 
     it('should not display the zoom message more than once', function() {
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       });
       assert.equal(app.db.notifications.size(), 0);
       app._displayZoomMessage(1024, 'linux');
@@ -265,7 +286,10 @@ function injectData(app, data) {
 
     it('should show the correct message on a mac', function() {
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       });
       app._displayZoomMessage(1024, 'macintosh');
       assert.isTrue(app.db.notifications.item(0).get(
@@ -274,7 +298,10 @@ function injectData(app, data) {
 
     it('should show the correct message for non mac', function() {
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       });
       app._displayZoomMessage(1024, 'linux');
       assert.isTrue(app.db.notifications.item(0).get(
@@ -324,6 +351,9 @@ describe('File drag over notification system', function() {
         .append(Y.Node.create('<span/>')
           .set('id', 'environment-name'))
         .hide();
+    var _renderDeployerBarView = testUtils.makeStubMethod(
+        Y.juju.App.prototype, '_renderDeployerBarView');
+    this._cleanups.push(_renderDeployerBarView.reset);
   });
 
   afterEach(function(done) {
@@ -545,8 +575,9 @@ describe('File drag over notification system', function() {
 
   describe('Application authentication', function() {
     var FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
-    var conn, container, destroyMe, env, juju, utils, Y;
-    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views'];
+    var conn, container, destroyMe, ecs, env, juju, utils, Y;
+    var requirements = [
+      'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -561,9 +592,10 @@ describe('File drag over notification system', function() {
     beforeEach(function(done) {
       container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
-      env = juju.newEnvironment({conn: conn});
+      ecs = new juju.EnvironmentChangeSet();
+      env = juju.newEnvironment({conn: conn, ecs: ecs});
       env.setCredentials({user: 'user', password: 'password'});
-      destroyMe = [env];
+      destroyMe = [env, ecs];
       done();
     });
 
