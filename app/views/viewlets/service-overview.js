@@ -372,6 +372,9 @@ YUI.add('inspector-overview-view', function(Y) {
   ns.Overview = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     template: templates.serviceOverview,
     events: {
+      // XXX j.c.sackett 2014-09-29 modifyUnits and related functionality can
+      // be removed; it's part of the older scale up UI which is no longer
+      // exposed.
       '.num-units-control': { keydown: 'modifyUnits' },
       '.cancel-num-units': { click: '_closeUnitConfirm'},
       '.confirm-num-units': { click: '_confirmUnitChange'},
@@ -435,16 +438,14 @@ YUI.add('inspector-overview-view', function(Y) {
       var container = this.get('container'),
           rendered = this.get('rendered');
       var model = this.viewletManager.get('model');
-      if (window.flags && window.flags.mv) {
-        // Do not create the scale up view if the current service's charm is a
-        // subordinate charm.
-        if (!model.get('subordinate')) {
-          this._createOrUpdateScaleUpView(model);
-          if (!rendered) {
-            container.append(this.scaleUp.render());
-          }
-          this.scaleUp.hideScaleUp();
+      // Do not create the scale up view if the current service's charm is a
+      // subordinate charm.
+      if (!model.get('subordinate')) {
+        this._createOrUpdateScaleUpView(model);
+        if (!rendered) {
+          container.append(this.scaleUp.render());
         }
+        this.scaleUp.hideScaleUp();
       }
       if (!rendered) {
         this.set('rendered', true);
@@ -913,13 +914,8 @@ YUI.add('inspector-overview-view', function(Y) {
       unitPlural = (unitCount === 1) ? '' : 's';
       uncommittedLabel = (uncommittedUnitCount === 0) ? '' : '(' +
           uncommittedUnitCount + ' uncommitted)';
-      // XXX: Remove the follow checks that the nodes exist when
-      // window.flags.mv is removed as it is only there due to the way
-      // the inspector is rendered in our tests. - huwshimi 13/08/2014
-      if (unitCountNode && uncommittedUnitCountNode) {
-        unitCountNode.setContent(unitCount + ' unit' + unitPlural);
-        uncommittedUnitCountNode.setContent(uncommittedLabel);
-      }
+      unitCountNode.setContent(unitCount + ' unit' + unitPlural);
+      uncommittedUnitCountNode.setContent(uncommittedLabel);
     },
 
     /**

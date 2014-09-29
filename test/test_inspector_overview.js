@@ -178,42 +178,38 @@ describe('Inspector Overview', function() {
   });
 
   it('renders the scale up view', function() {
-    window.flags = {};
-    window.flags.mv = true;
     var ScaleUp = Y.juju.viewlets.ScaleUp;
+    var Overview = Y.juju.viewlets.Overview;
+
     var render = utils.makeStubMethod(ScaleUp.prototype, 'render');
-    this._cleanups.push(render.reset);
     var hideScaleUp = utils.makeStubMethod(ScaleUp.prototype, 'hideScaleUp');
+    var update = utils.makeStubMethod(Overview.prototype, 'updateUnitCounts');
+
+    this._cleanups.push(render.reset);
     this._cleanups.push(hideScaleUp.reset);
+    this._cleanups.push(update.reset);
+
     inspector = setUpInspector();
     assert.equal(inspector.views.overview.scaleUp instanceof ScaleUp, true);
     assert.equal(render.calledOnce(), true, 'render not called once');
-    window.flags = {};
+    assert.equal((update.callCount() > 0), true, 'unit counts not updating');
   });
 
   it('closes the scale up view on a pending service', function() {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector({pending: true});
     assert.equal(container.one('.scale-up-view').hasClass('state-default'),
         true);
-    window.flags = {};
   });
 
   it('closes the scale up view on a deployed service', function() {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector({pending: false});
     assert.equal(container.one('.scale-up-view').hasClass('state-default'),
         true);
-    window.flags = {};
   });
 
   it('sets the scale up unit count', function() {
     var uncommittedCount = 1;
     var unitCount;
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector();
     db.addUnits({
       id: 'mediawiki/20',
@@ -224,20 +220,14 @@ describe('Inspector Overview', function() {
         unitCount + ' units');
     assert.equal(container.one('.uncommitted-unit-count').get('text'),
         '(' + uncommittedCount + ' uncommitted)');
-    window.flags = {};
   });
 
   it('does not show the uncommitted units label if there are none', function() {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector();
     assert.equal(container.one('.uncommitted-unit-count').get('text'), '');
-    window.flags = {};
   });
 
   it('does not pluralise the unit count if there is one unit', function() {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector(null, true);
     db.addUnits({
       id: 'mediawiki/20',
@@ -245,19 +235,15 @@ describe('Inspector Overview', function() {
       agent_state: 'started'
     });
     assert.equal(container.one('.unit-count').get('text'), '1 unit');
-    window.flags = {};
   });
 
   it('catches scaleUp changeState and re-fires', function(done) {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector();
     inspector.on('*:changeState', function(e) {
       assert.equal(e.details[0], 'foo');
       done();
     });
     inspector.views.overview.scaleUp.fire('changeState', 'foo');
-    window.flags = {};
   });
 
   it('should start with the proper number of units shown in the text field',
@@ -374,30 +360,6 @@ describe('Inspector Overview', function() {
     assert.include(details, 'default memory');
     assert.include(details, 'default disk');
   });
-
-  it('should set the constraints before deploying any more units',
-     function() {
-       setUpInspector();
-       scaleUnits(7);
-       var editConstraintsButton = container.one('.edit-constraints');
-       editConstraintsButton.simulate('click');
-       // It should be hidden after being clicked to display the constraints
-       assert.equal(editConstraintsButton.getStyle('display'), 'none');
-       var constraintsWrapper = container.one('.editable-constraints');
-       assert.equal(constraintsWrapper.getStyle('display'), 'block');
-       var constraints = {arch: 'amd64', 'cpu-cores': 4, mem: 8};
-       Y.Object.each(constraints, function(value, key) {
-          var node = constraintsWrapper.one('input[name=' + key + ']');
-          node.set('value', value);
-       });
-
-       // confirm the 'please confirm constraints' dialogue
-       container.one('.confirm-num-units').simulate('click');
-       var message = conn.last_message();
-       assert.equal('SetServiceConstraints', message.Request);
-       assert.equal('mediawiki', message.Params.ServiceName);
-       assert.deepEqual(constraints, message.Params.Constraints);
-     });
 
   it('does not display the unit scaling widgets if subordinate', function() {
     inspector = setUpInspector({subordinate: true});
@@ -802,24 +764,18 @@ describe('Inspector Overview', function() {
   });
 
   it('does not display the expose option', function() {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector({pending: true, displayName: '(wordpress)'});
     assert.equal(inspector.get('container').one('.expose').hasClass('hidden'),
         true);
-    window.flags = {};
   });
 
   it('displays the expose option once deployed', function() {
-    window.flags = {};
-    window.flags.mv = true;
     inspector = setUpInspector({pending: true, displayName: '(wordpress)'});
     var expose = inspector.get('container').one('.expose');
     assert.equal(expose.hasClass('hidden'), true);
     inspector.get('model').set('pending', false);
     inspector.render();
     assert.equal(expose.hasClass('hidden'), false);
-    window.flags = {};
   });
 
   describe('Unit action buttons', function() {
