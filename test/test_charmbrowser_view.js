@@ -249,7 +249,9 @@ describe('charmbrowser view', function() {
 
       it('fires a changeState event when the search changes', function(done) {
         var change = {
-          filter: 'foo',
+          filter: {
+            text: 'foo'
+          },
           charmID: 'bar'
         };
         charmBrowser._renderSearchWidget();
@@ -265,6 +267,7 @@ describe('charmbrowser view', function() {
         });
         var searchWidget = charmBrowser.searchWidget;
         searchWidget.fire(searchWidget.EVT_SEARCH_CHANGED, {
+          newVal: 'foo',
           change: change
         });
       });
