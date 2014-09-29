@@ -474,7 +474,21 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var config = {};
       var explicitConfig = options.config || {};
       Object.keys(charmOptions).forEach(function(key) {
-        config[key] = explicitConfig[key] || charmOptions[key]['default'];
+        var opt = charmOptions[key],
+            value = explicitConfig[key] || opt['default'],
+            type = opt.type;
+        // Need to cast string config values to their proper type.
+        if (typeof value === 'string' && type !== 'string') {
+          if (type === 'int') {
+            config[key] = parseInt(value, 10);
+          } else if (type === 'boolean') {
+            config[key] = (value.toLowerCase() === 'true');
+          } else if (type === 'float') {
+            config[key] = parseFloat(value);
+          }
+        } else {
+          config[key] = value;
+        }
       });
 
       var service = this.db.services.add({
