@@ -1792,7 +1792,7 @@ describe('test_model.js', function() {
     });
 
     it('ignores uncommitted machines when determining placements', function() {
-      var machine = { id: 'new0' };
+      var machine = { id: 'new0', commitStatus: 'uncommitted' };
       var units = [{
         service: 'wordpress',
         id: 'wordpress/0',
