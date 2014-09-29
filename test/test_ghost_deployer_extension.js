@@ -33,7 +33,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   beforeEach(function() {
-    window.flags = {};
     GhostDeployer = Y.Base.create(
         'deployer', Y.Base, [juju.GhostDeployer], {
           views: {
@@ -70,7 +69,6 @@ describe('Ghost Deployer Extension', function() {
 
   afterEach(function() {
     ghostDeployer.destroy();
-    window.flags = {};
   });
 
   // Create and return a charm model instance.
@@ -83,7 +81,6 @@ describe('Ghost Deployer Extension', function() {
   };
 
   it('sets the ghost service config to its defaults', function() {
-    window.flags.mv = true;
     var charm = makeCharm();
     charm.set('options', { foo: { default: 'bar' }});
     ghostDeployer.db.services = new Y.juju.models.ServiceList();
@@ -93,7 +90,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('calls the env deploy method with default charm data', function() {
-    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
@@ -107,7 +103,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {
-    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
@@ -137,7 +132,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('can create a ghost unit', function() {
-    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     var db = ghostDeployer.db;
@@ -154,7 +148,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('does not create a ghost unit for subordinates', function() {
-    window.flags.mv = true;
     var charm = makeCharm();
     charm.set('is_subordinate', true);
     ghostDeployer.deployService(charm);
@@ -163,7 +156,6 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('deploys the ghost unit using the ECS', function() {
-    window.flags.mv = true;
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     var env = ghostDeployer.env;
