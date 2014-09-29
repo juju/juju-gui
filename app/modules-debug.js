@@ -570,10 +570,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/charmresults.js'
         },
 
-        'subapp-browser-searchview': {
-          fullpath: '/juju-ui/subapps/browser/views/search.js'
-        },
-
         'subapp-browser-sidebar': {
           fullpath: '/juju-ui/subapps/browser/views/sidebar.js',
           requires: [

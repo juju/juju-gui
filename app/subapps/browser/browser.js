@@ -788,7 +788,6 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
-    'subapp-browser-searchview',
     'subapp-browser-charmresults',
     'subapp-browser-bundleview',
     'subapp-browser-sidebar',
