@@ -96,12 +96,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
-    var Y, factory, fakebackend, utils, result, callback;
+    var Y, factory, fakebackend, utils, result, callback, models;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         factory = Y.namespace('juju-tests.factory');
+        models = Y.namespace('juju.models');
         done();
       });
     });
@@ -286,6 +287,44 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         tuning: 'single',
         'wp-content': ''
       });
+    });
+
+    it('casts configs to their proper types', function() {
+      var existingConfig = {
+        boolean_1: 'false',
+        boolean_2: 'True',
+        int_1: '3',
+        int_2: '-1',
+        float_1: '3.00',
+        float_2: '-1.00',
+        string_1: 'http'
+      };
+      var options = {config: existingConfig};
+      var charm = new models.Charm({
+        id: 'cs:precise/test',
+        options: {
+          'boolean_1': {default: false, type: 'boolean'},
+          'boolean_2': {default: false, type: 'boolean'},
+          'int_1': {default: 1, type: 'int'},
+          'int_2': {default: 1, type: 'int'},
+          'float_1': {default: 1.00, type: 'float'},
+          'float_2': {default: 1.00, type: 'float'},
+          'string_1': {default: '', type: 'string'}
+        }
+      });
+      fakebackend._deployFromCharm(charm, callback, options);
+      var config = result.service.get('config');
+      // Boolean
+      assert.strictEqual(config.boolean_1, false);
+      assert.strictEqual(config.boolean_2, true);
+      // Int
+      assert.strictEqual(config.int_1, 3);
+      assert.strictEqual(config.int_2, -1);
+      // Float
+      assert.strictEqual(config.float_1, 3.00);
+      assert.strictEqual(config.float_2, -1.00);
+      // String
+      assert.strictEqual(config.string_1, 'http');
     });
 
     it('deploys a charm with no config options', function(done) {
