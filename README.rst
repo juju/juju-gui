@@ -57,7 +57,7 @@ If you are using `the charm <https://jujucharms.com/precise/juju-gui>`_, the
 end-user configuration is available from the charm configuration.
 
 Demonstration Mode
-===================
+==================
 
 When giving a demonstration with the Gui you often want to help the visual
 presentation by showing icons for charms that are not yet reviewed and
@@ -71,6 +71,24 @@ Open a console and enter:
 ::
 
   localStorage.setItem('demo-mode', true);
+
+Containerization support
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, the Juju GUI only allows containers' management on providers fully
+supporting containerization, including creation/deletion and networking
+(e.g. port forwarding for exposed services).
+
+If containerization is not supported in the current Juju environment, the
+header of the third column in machine view shows the
+"Sub-containers not supported" message.
+
+When giving a demonstration, or in the case the networking aspects are
+manually handled, it is possible to override those checks and force containers
+support to be enabled by activating the `containers` flag,
+like in the example below::
+
+    https://<juju-gui-address>/:flags:/containers
 
 
 .. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
