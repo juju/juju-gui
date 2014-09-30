@@ -112,7 +112,7 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
       // might come from places, such as autocomplete, which are a search
       // change, but also want to select a charm id as well.
       if (e.change) {
-        change = Y.merge(change, e.change);
+        change = Y.mix(change, e.change, false, null, 0, true);
       }
       this.fire('changeState', {
         sectionA: {
