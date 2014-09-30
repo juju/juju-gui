@@ -292,12 +292,13 @@ describe('test_model.js', function() {
       assert.equal(db.resolveModelByName('env'), db.environment);
     });
 
-    describe.only('onDelta', function() {
+    describe('onDelta', function() {
       it('should update service units on change', function() {
         var db = new models.Database();
         var mysql = new models.Service({id: 'mysql'});
         db.services.add([mysql]);
-        assert.equal(mysql.get('units') instanceof models.ServiceUnitList, true);
+        assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
+                     true);
         db.onDelta({data: {result: [
           ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
           ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
@@ -307,6 +308,42 @@ describe('test_model.js', function() {
           ['unit', 'remove', 'mysql/1']
         ]}});
         assert.equal(mysql.get('units').size(), 1);
+      });
+
+      it('should create non-existing machines on change', function() {
+        // Sometimes we may try to change a machine that doesn't exist yet;
+        // for example, a unit change needs to trigger a machine delta
+        // change, but the actual create machine delta may not have arrived.
+        // In these cases we check to see if the instance exists, and if not,
+        // we create it before applying the changes.
+        var db = new models.Database(),
+            id = '0';
+        assert.equal(db.machines.size(), 0,
+                     'the machine list is not be empty');
+        db.onDelta({data: {result: [
+          ['machine', 'change', {id: id}]
+        ]}});
+        assert.equal(db.machines.size(), 1,
+                     'the machines list did not have the expected size');
+        var machine = db.machines.getById(id);
+        assert.notEqual(machine, undefined,
+                        'the expected machine was not found in the database');
+      });
+
+      it('should change machines when units change', function() {
+        var db = new models.Database();
+        var machinesStub = utils.makeStubMethod(db.machines, 'process_delta'),
+            unitsStub = utils.makeStubMethod(db.units, 'process_delta');
+        this._cleanups.push(machinesStub.reset);
+        this._cleanups.push(unitsStub.reset);
+        db.onDelta({data: {result: [
+          ['unitInfo', 'remove', {MachineId: '0'}]
+        ]}});
+        var args = machinesStub.lastArguments();
+        assert.equal(args[0], 'change',
+                     'the expected action was not applied to machines');
+        assert.equal(args[1].id, '0',
+                     'the expected machine ID was not changed');
       });
 
       it('should handle remove changes correctly',
@@ -354,7 +391,10 @@ describe('test_model.js', function() {
       it.skip('should reset relation_errors',
           function() {
             var db = new models.Database();
-            var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
+            var my0 = {
+              id: 'mysql/0',
+              relation_errors: {'cache': ['memcached']}
+            };
             db.addUnits([my0]);
             // Note that relation_errors is not set.
             db.onDelta({data: {result: [
