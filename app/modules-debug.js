@@ -389,10 +389,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-config.js'
         },
 
-        'service-ghost-view': {
-          fullpath: '/juju-ui/views/viewlets/service-ghost.js'
-        },
-
         'local-new-upgrade-view': {
           fullpath: '/juju-ui/views/viewlets/local-new-upgrade-view.js'
         },
