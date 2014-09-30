@@ -136,17 +136,33 @@ YUI.add('notifier', function(Y) {
       this.timer = null;
       if (this.get('boundingBox').getDOMNode()) {
         // Animate and destroy the notification if it still exists in the DOM.
-        var anim = new Y.Anim({
+        this.anim = new Y.Anim({
           node: this.get('boundingBox'),
           to: {opacity: 0},
           easing: 'easeIn',
           duration: 0.2
         });
-        anim.on('end', this.destroy, this);
-        anim.run();
+        this.anim.on('end', this.destroy, this);
+        this.anim.run();
       } else {
         // Otherwise, just destroy the notification.
         this.destroy();
+      }
+    },
+
+    /**
+      Stops the timer on destroy.
+
+      @method destructor
+    */
+    destructor: function() {
+      if (this.timer) {
+        this.timer.stop();
+        this.timer = null;
+      }
+      if (this.anim && this.anim.stop) {
+        this.anim.stop();
+        this.anim = null;
       }
     }
 

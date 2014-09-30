@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('notifier widget', function() {
-  var makeContainer, Notifier, notifierBox, Y;
+  var makeContainer, Notifier, notifiers, notifierBox, utils, Y;
 
   // These tests relying on crazy timing to work properly. We cannot clean up
   // the containers automatically as this will cause things to blow up when
@@ -40,14 +40,22 @@ describe('notifier widget', function() {
       'juju-tests-utils',
       'node-event-simulate'], function(Y) {
       Notifier = Y.namespace('juju.widgets').Notifier;
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   // Create the notifier box and attach it as first element of the body.
   beforeEach(function() {
+    notifiers = [];
     notifierBox = makeContainer();
     notifierBox.addClass('notifier-box');
+  });
+
+  afterEach(function() {
+    notifiers.forEach(function(notifier) {
+      notifier.destroy();
+    });
   });
 
   // Factory rendering and returning a notifier instance.
@@ -58,6 +66,7 @@ describe('notifier widget', function() {
       timeout: timeout || 10000
     });
     notifier.render(notifierBox);
+    notifiers.push(notifier);
     return notifier;
   };
 
@@ -124,6 +133,22 @@ describe('notifier widget', function() {
       assertNumNotifiers(1);
       done();
     }, 500);
+  });
+
+  it('stops the timer and animations on destroy', function() {
+    var notify = new Notifier({
+      title: 'foo',
+      message: 'bar',
+      timeout: 10000
+    });
+    notifiers.push(notify);
+    notify.timer = {};
+    notify.anim = {};
+    var timer = utils.makeStubMethod(notify.timer, 'stop');
+    var anim = utils.makeStubMethod(notify.anim, 'stop');
+    notify.destroy();
+    assert.equal(timer.callCount(), 1);
+    assert.equal(anim.callCount(), 1);
   });
 
 });
