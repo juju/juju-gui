@@ -20,7 +20,10 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.2.1:
+    - >
+      (FIX) Using a search category with an empty input no longer uses the
+      previously searched for query.
 - 1.2.0:
     - >
       New Feature: Machine View!
