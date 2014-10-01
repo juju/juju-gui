@@ -516,6 +516,37 @@ describe('deployer bar view', function() {
     ]);
   });
 
+  describe('config conflict', function() {
+    it('shows a message if there are conflicting config values', function() {
+      db.services.add({
+        id: 'foo', _conflictedFields: ['bar']
+      });
+      view._showSummary();
+      assert.equal(
+          container.one('a.resolve-conflict').get('text'),
+          'foo');
+    });
+
+    it('will navigate to the inspector on click', function() {
+      db.services.add({
+        id: 'foo', _conflictedFields: ['bar']
+      });
+      view._showSummary();
+      var hide = utils.makeStubMethod(view, 'hideSummary');
+      var fire = utils.makeStubMethod(view, 'fire');
+      this._cleanups.concat([hide, fire]);
+      container.one('a.resolve-conflict').simulate('click');
+      assert.equal(hide.callCount(), 1);
+      assert.equal(fire.lastArguments()[0], 'changeState');
+      assert.deepEqual(fire.lastArguments()[1], {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: 'foo'
+          }}});
+    });
+  });
+
   it('can export the environment', function() {
     var exportStub = utils.makeStubMethod(bundleHelpers, 'exportYAML');
     this._cleanups.push(exportStub.reset);
