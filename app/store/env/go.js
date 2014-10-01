@@ -1071,7 +1071,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method destroyMachines
     */
-    destroyMachines: function(params, callback, options) {
+    destroyMachines: function(params, force, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {

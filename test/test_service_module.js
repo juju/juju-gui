@@ -288,8 +288,6 @@ describe('service module events', function() {
   });
 
   it('should display an indicator for pending services', function() {
-    window.flags = {};
-    window.flags.mv = true;
     db.services.add([
       {id: 'apache2', pending: true}
     ]);
@@ -300,7 +298,6 @@ describe('service module events', function() {
     // the pending indicator.
     assert.equal(topo.vis.selectAll('.service')[0].length, 2);
     assert.equal(topo.vis.selectAll('.pending-indicator')[0].length, 1);
-    window.flags = {};
   });
 
   it('should deploy a service on charm token drop events', function(done) {

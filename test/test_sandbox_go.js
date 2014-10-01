@@ -411,8 +411,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         );
         done();
       };
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy(
+      env.deploy(
           'cs:precise/mediawiki-8',
           'kumquat',
           {logo: 'test logo'},
@@ -444,8 +443,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         done();
       };
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy(
+      env.deploy(
           'cs:precise/wordpress-15',
           'kumquat',
           {llama: 'pajama'},
@@ -465,8 +463,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             result.err, 'A service with this name already exists (wordpress).');
         done();
       };
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy('cs:precise/wordpress-15', undefined, undefined, undefined,
+      env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined,
           1, null, null, callback, {immediate: true});
     });
 
@@ -510,8 +507,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._addMachines(
+      env.addMachines(
           [{}, {parentId: '1/kvm/2', containerType: 'lxc'}],
           callback, {immediate: true});
     });
@@ -527,8 +523,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._addMachines(
+      env.addMachines(
           [{parentId: '47'}, {parentId: '42', containerType: 'lxc'}],
           callback, {immediate: true});
     });
@@ -559,8 +554,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._destroyMachines(
+      env.destroyMachines(
           ['0', '1/kvm/2'], false, callback, {immediate: true});
     });
 
@@ -573,8 +567,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._destroyMachines(['42'], false, callback, {immediate: true});
+      env.destroyMachines(['42'], false, callback, {immediate: true});
     });
 
     it('can destroy a service', function(done) {
@@ -609,8 +602,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isNull(state.db.services.getById('wordpress'));
           done();
         };
-        // Use private method b/c we're interested in env integration, not ECS.
-        env._destroyService('wordpress', callback);
+        env.destroy_service('wordpress', callback, {immediate: true});
       });
     });
 
@@ -648,8 +640,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(state.db.services.item(0).get('units').size(), 0);
           done();
         };
-        // Use private method b/c we're interested in env integration, not ECS.
-        env._remove_units('wordpress/0', callback);
+        env.remove_units('wordpress/0', callback, {immediate: true});
       });
     });
 
@@ -794,10 +785,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           done();
         };
-        // Use private method b/c we're interested in env integration, not ECS.
-        env._set_config('wordpress', {
-          engine: 'apache'
-        }, undefined, {}, callback);
+        env.set_config('wordpress', {engine: 'apache'}, undefined, {},
+            callback, {immediate: true});
       });
     });
 
@@ -843,9 +832,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           done();
         };
-        // Use private method b/c we're interested in env integration, not ECS.
-        env._set_config('wordpress', undefined,
-            'wordpress:\n  engine: apache', {}, callback);
+        env.set_config('wordpress', undefined,
+            'wordpress:\n  engine: apache', {}, callback, {immediate: true});
       });
     });
 
@@ -970,15 +958,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
     function generateIntegrationServices(callback) {
       var localCb = function(result) {
-        // Use private method b/c we're interested in env integration, not ECS.
-        env._add_unit('kumquat', 2, null, function(data) {
+        env.add_unit('kumquat', 2, null, function(data) {
           // After finished generating integrated services.
           callback(data);
-        });
+        }, {immediate: true});
       };
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy(
+      env.deploy(
           'cs:precise/wordpress-15',
           'kumquat',
           {llama: 'pajama'},
@@ -986,7 +972,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           null,
           null,
-          localCb);
+          localCb,
+          {immediate: true});
     }
 
     /**
@@ -1032,8 +1019,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }, {immediate: true});
       };
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy(
+      env.deploy(
           'cs:precise/wordpress-15',
           'kumquat',
           {llama: 'pajama'},
@@ -1041,7 +1027,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           null,
           null,
-          localCb);
+          localCb,
+          {immediate: true});
     }
 
     it('can add additional units', function(done) {
@@ -1285,20 +1272,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation (integration)', function(done) {
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy(
+      env.deploy(
           'cs:precise/wordpress-15', null, null, null, 1, null, null,
           function() {
-            // Use private method b/c we're interested in env integration, not
-            // ECS.
-            env._deploy(
+            env.deploy(
                 'cs:precise/mysql-26', null, null, null, 1, null, null,
                 function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
-                  // Use private method b/c we're interested in env
-                  // integration, not ECS.
-                  env._add_relation(endpointA, endpointB, function(recData) {
+                  env.add_relation(endpointA, endpointB, function(recData) {
                     assert.equal(recData.err, undefined);
                     assert.equal(recData.endpoint_a, 'wordpress:db');
                     assert.equal(recData.endpoint_b, 'mysql:db');
@@ -1306,11 +1288,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     assert.isObject(
                         state.db.relations.getById('wordpress:db mysql:db'));
                     done();
-                  });
-                }
-            );
-          }
-      );
+                  }, {immediate: true});
+                }, {immediate: true});
+          }, {immediate: true});
     });
 
     it('is able to add a relation with a subordinate service', function(done) {
@@ -1414,33 +1394,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a relation(integration)', function(done) {
       env.connect();
-      // Use private method b/c we're interested in env integration, not ECS.
-      env._deploy(
+      env.deploy(
           'cs:precise/wordpress-15', null, null, null, 1, null, null,
           function() {
-            // Use private method b/c we're interested in env integration, not
-            // ECS.
-            env._deploy(
+            env.deploy(
                 'cs:precise/mysql-26', null, null, null, 1, null, null,
                 function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
-                  // Use private methods b/c we're interested in env
-                  // integration, not ECS.
-                  env._add_relation(endpointA, endpointB, function() {
-                    env._remove_relation(
+                  env.add_relation(endpointA, endpointB, function() {
+                    env.remove_relation(
                         endpointA, endpointB, function(recData) {
                           assert.equal(recData.err, undefined);
                           assert.equal(recData.endpoint_a, 'wordpress:db');
                           assert.equal(recData.endpoint_b, 'mysql:db');
                           done();
-                        }
-                    );
-                  });
-                }
-            );
-          }
-      );
+                        }, {immediate: true});
+                  }, {immediate: true});
+                }, {immediate: true});
+          }, {immediate: true});
     });
 
     it('should support deployer import', function(done) {

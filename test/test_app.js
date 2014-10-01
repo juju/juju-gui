@@ -330,7 +330,6 @@ function injectData(app, data) {
     });
 
     it('renders the environment header', function(done) {
-      window.flags.mv = true;
       container.appendChild(Y.Node.create(
           '<div id="environment-header"></div>'));
       constructAppInstance({
@@ -343,7 +342,6 @@ function injectData(app, data) {
         assert.isObject(app.environmentHeader);
         assert.equal(container.one('#environment-header').hasClass(
             'environment-header'), true);
-        delete window.flags.mv;
         done();
       });
     });
