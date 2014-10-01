@@ -1,6 +1,16 @@
 
 <div class="content">
     <h2 class="title">Confirm your changes</h2>
+    {{#if conflictedServiceCount}}
+        <div class="unplaced-panel">
+            <p>You have {{conflictedServiceCount}} {{pluralize 'service' conflictedServiceCount}} with conflicting configurations. Click the {{pluralize 'link' conflictedServiceCount}} below resolve these conflicts to continue.</p>
+            <ul>
+            {{#each conflictedServices}}
+                <a href="" class="resolve-conflict" service="{{id}}">{{id}}</a>
+            {{/each}}
+            </ul>
+        </div>
+    {{/if}}
     {{#if unplacedCount}}
     <div class="unplaced-panel">
       <p>You have {{unplacedCount}} unplaced {{pluralize 'unit' unplacedCount}}, do you want to:</p>

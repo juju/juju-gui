@@ -93,6 +93,9 @@ YUI.add('deployer-bar', function(Y) {
       '.view-machines': {
         click: '_viewMachines'
       },
+      '.resolve-conflict': {
+        click: '_showInspectorConfig'
+      },
       '.commit-onboarding .close': {
         click: '_hideCommitOnboarding'
       }
@@ -286,6 +289,13 @@ YUI.add('deployer-bar', function(Y) {
         return !db.services.getById(unit.service).get('subordinate');
       }).length;
 
+      var conflictedServices = [];
+      db.services.each(function(service) {
+        if (service.get('_conflictedFields').length > 0) {
+          conflictedServices.push(service.getAttrs());
+        }
+      });
+
       if (container && container.get('parentNode')) {
         container.one('.panel.summary section').setHTML(this.summaryTemplate({
           changeCount: this._getChangeCount(ecs),
@@ -301,7 +311,9 @@ YUI.add('deployer-bar', function(Y) {
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
           majorChange: this._hasMajorChanges(changes),
-          unplacedCount: unplacedCount
+          unplacedCount: unplacedCount,
+          conflictedServiceCount: conflictedServices.length,
+          conflictedServices: conflictedServices
         }));
       }
       container.addClass('summary-open');
@@ -441,6 +453,7 @@ YUI.add('deployer-bar', function(Y) {
       Toggle the status of the deploy button.
 
       @method _toggleDeployButtonStatus
+      @param {Boolean} enabled Whether the commit button should be active.
     */
     _toggleDeployButtonStatus: function(enabled) {
       if (enabled) {
@@ -858,6 +871,26 @@ YUI.add('deployer-bar', function(Y) {
       this.fire('changeState', {
         sectionB: {
           component: 'machine'
+        }
+      });
+    },
+
+    /**
+      Closes the summary and opens the inspector that the user clicked on to
+      resolve config conflicts.
+
+      @method _showInspectorconfig
+      @param {Object} e The click event facade.
+    */
+    _showInspectorConfig: function(e) {
+      e.halt();
+      this.hideSummary(e);
+      this.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: e.currentTarget.getAttribute('service')
+          }
         }
       });
     },
