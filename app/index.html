@@ -380,9 +380,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             window.location.href,
             window.juju_config.flags || {}
         );
-        // XXX j.c.sackett This can be removed when the flag is completely
-        // removed elsewhere.
-        window.flags.mv = true;
 
         // Add the current flags to the body so they can be used to flag CSS.
         for (var flag in window.flags) {
