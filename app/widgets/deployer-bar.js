@@ -151,9 +151,6 @@ YUI.add('deployer-bar', function(Y) {
     */
     deploy: function(evt) {
       evt.halt();
-      if (evt.currentTarget.hasClass('disabled')) {
-        return;
-      }
       var container = this.get('container'),
           ecs = this.get('ecs'),
           autodeploy = container.one('input[value="autodeploy"]');
@@ -298,14 +295,6 @@ YUI.add('deployer-bar', function(Y) {
           conflictedServices.push(service.getAttrs());
         }
       });
-      // We do not allow people to commit their config changes if there are
-      // conflicted config values.
-      var confirmButton = container.one('.confirm-button');
-      if (conflictedServices.length > 0) {
-        confirmButton.addClass('disabled');
-      } else {
-        confirmButton.removeClass('disabled');
-      }
 
       if (container && container.get('parentNode')) {
         container.one('.panel.summary section').setHTML(this.summaryTemplate({
