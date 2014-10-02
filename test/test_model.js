@@ -386,8 +386,8 @@ describe('test_model.js', function() {
            my0.agent_state.should.equal('another');
          });
 
-      // We no longer use relation_errors but this test should remain until it's
-      // completely removed from the codebase.
+      // XXX - We no longer use relation_errors but this test should remain
+      // until it's completely removed from the codebase.
       it.skip('should reset relation_errors',
           function() {
             var db = new models.Database();
