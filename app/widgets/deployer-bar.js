@@ -307,6 +307,8 @@ YUI.add('deployer-bar', function(Y) {
           addedUnits: changes.addUnits,
           totalUnits: totalUnits,
           removedUnits: changes.removeUnits,
+          exposed: changes.exposed,
+          unexposed: changes.unexposed,
           addedMachines: changes.addMachines,
           destroyedMachines: changes.destroyMachines,
           configsChanged: changes.setConfigs,
@@ -544,6 +546,12 @@ YUI.add('deployer-bar', function(Y) {
                 (units.length === 1 ? ' has' : 's have') +
                 ' been removed from ' + units[0].split('/')[0];
             break;
+          case '_expose':
+            changeItem.description = change.command.args[0] + ' exposed';
+            break;
+          case '_unexpose':
+            changeItem.description = change.command.args[0] + ' unexposed';
+            break;
           case '_add_relation':
             var services = this._getRealRelationEndpointNames(
                 change.command.args);
@@ -685,6 +693,8 @@ YUI.add('deployer-bar', function(Y) {
         removeRelations: [],
         addUnits: [],
         removeUnits: [],
+        exposed: [],
+        unexposed: [],
         addMachines: [],
         destroyMachines: [],
         setConfigs: []
@@ -752,6 +762,18 @@ YUI.add('deployer-bar', function(Y) {
               icon: service.get('icon'),
               numUnits: args[0].length,
               serviceName: name
+            });
+            break;
+          case '_expose':
+            changes.exposed.push({
+              icon: db.services.getById(args[0]).get('icon'),
+              serviceName: args[0]
+            });
+            break;
+          case '_unexpose':
+            changes.unexposed.push({
+              icon: db.services.getById(args[0]).get('icon'),
+              serviceName: args[0]
             });
             break;
           case '_addMachines':
