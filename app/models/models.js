@@ -78,11 +78,13 @@ YUI.add('juju-models', function(Y) {
           instance.setAttrs(data);
         } else {
           // This must be from a LazyModelList.
+          var changed = {};
           Y.each(data, function(value, key) {
+            changed[key] = {prevVal: instance[key], newVal: value};
             instance[key] = value;
           });
           // Lazy model lists don't fire change events
-          list.fire('change');
+          list.fire('change', {changed: changed, instance: instance});
         }
       }
     }
