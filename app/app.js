@@ -149,8 +149,39 @@ YUI.add('juju-gui', function(Y) {
                 bindings.push({key: k, label: v.label || k, help: v.help});
               }
             }, this);
+
             target.setHTML(
-                views.Templates.shortcuts({bindings: bindings}));
+                views.Templates.shortcuts({
+                  bindings: bindings,
+                  environmentName: this.env.get('environmentName'),
+                  'force-containers': localStorage.getItem('force-containers'),
+                  'disable-cookie': localStorage.getItem('disable-cookie')
+                })
+            );
+
+            // This is only added to the DOM once and is checked if it exists
+            // above. It's hidden and then shown, so this event is not auto
+            // cleaned up, but can only occur once.
+            target.one('#save-settings').on('click', function(ev) {
+              var fields = target.all('input');
+              fields.each(function(node) {
+                // If it's a checkbox:
+                if (node.get('type') === 'checkbox') {
+                  // and if it's checked set that value to localStorage.
+                  if (node.get('checked')) {
+                    localStorage.setItem(node.getAttribute('name'), true);
+                  } else {
+                    // otherwise unset it from the localStorage.
+                    localStorage.removeItem(node.getAttribute('name'));
+                  }
+                } else {
+                  localStorage.setItem(
+                      node.getAttribute('name'), node.get('value'));
+                }
+              });
+              // Force the GUI to reload so the settings take effect.
+              window.location.reload();
+            });
           }
         },
         help: 'Display this help',
@@ -160,7 +191,7 @@ YUI.add('juju-gui', function(Y) {
         callback: function(evt) {
           this.fire('navigateTo', { url: '/:gui:/' });
         },
-        help: 'Navigate to the Environment overview.',
+        help: 'Navigate to the Environment overview',
         label: 'Alt + e'
       },
       'S-+': {
@@ -1233,6 +1264,10 @@ YUI.add('juju-gui', function(Y) {
     */
     onEnvironmentNameChange: function(evt) {
       var environmentName = evt.newVal;
+      // If there's an override in the custom settings use that instead.
+      if (localStorage.getItem('environmentName')) {
+        environmentName = localStorage.getItem('environmentName');
+      }
       this.db.environment.set('name', environmentName);
       Y.all('.environment-name').set('text', environmentName);
     },

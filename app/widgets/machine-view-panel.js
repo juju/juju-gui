@@ -1002,8 +1002,10 @@ YUI.add('machine-view-panel', function(Y) {
           }).render();
           this._machinesHeader.addTarget(this);
 
-          // Check containerization support based on provided feature flags.
-          if (window.flags.containers) {
+          // Check containerization support based on provided feature flags
+          // and custom settings.
+          if (window.flags.containers ||
+              localStorage.getItem('force-containers')) {
             this._containersHeader = this._renderContainerHeader('all');
             return;
           }

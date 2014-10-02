@@ -369,6 +369,7 @@ describe('machine view panel view', function() {
       this._cleanups.push(function() {
         window.flags = {};
       });
+      localStorage.removeItem('force-containers');
     });
 
     it('disables containers if no container types are supported', function() {
@@ -403,6 +404,21 @@ describe('machine view panel view', function() {
           view._containersHeader.name, 'MachineViewPanelHeaderView');
       assert.deepEqual(view.supportedContainerTypes, [KVM, LXC, VMW]);
     });
+
+    it('enables all containers types if user sets it', function() {
+      localStorage.setItem('force-containers', 'true');
+      mockProviderType(this, 'all', [KVM, LXC, VMW]);
+      mockProviderType(this, 'testing', []);
+      providerType = 'testing';
+      view.render();
+      // All the container types are enabled even if the current provider type
+      // does not support containerization.
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelHeaderView');
+      assert.deepEqual(view.supportedContainerTypes, [KVM, LXC, VMW]);
+    });
+
+
 
     it('uses the supported container when creating machines', function() {
       mockProviderType(this, 'testing', [KVM, LXC, VMW]);

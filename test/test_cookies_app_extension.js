@@ -43,6 +43,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       Y.Cookie.remove('_cookies_accepted');
+      localStorage.removeItem('disable-cookie');
     });
 
     it('calling check makes the node visible', function() {
@@ -60,6 +61,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('the cookie prevents the node from getting visible', function() {
       Y.Cookie.set('_cookies_accepted', 'true');
+      cookieHandler.check();
+      assert.equal(node.getStyle('display'), 'none');
+    });
+
+    it('the custom setting also does', function() {
+      localStorage.setItem('disable-cookie', 'true');
       cookieHandler.check();
       assert.equal(node.getStyle('display'), 'none');
     });

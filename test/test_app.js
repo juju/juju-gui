@@ -223,6 +223,27 @@ function injectData(app, data) {
       assert.equal(container.one('.environment-name').get('text'), 'Sandbox');
     });
 
+    it('should show the environment name override when requested', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      }, this);
+      var name = 'Sandbox';
+      localStorage.setItem('environmentName', 'not sandbox');
+      assert.equal(
+          'Environment',
+          container.one('.environment-name').get('text'));
+      app.env.set('environmentName', name);
+      assert.equal(
+          container.one('.environment-name').get('text'),
+          'not sandbox');
+      localStorage.removeItem('environmentName');
+    });
+
     it('hides the browser subapp on some urls', function() {
       constructAppInstance({
         env: juju.newEnvironment({
