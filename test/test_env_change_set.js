@@ -693,6 +693,34 @@ describe('Environment Change Set', function() {
       assert.deepEqual(attrs, {deleted: false});
     });
 
+    it('unexposes exposed services', function() {
+      var db = ecs.get('db');
+      var stubSet = testUtils.makeStubFunction();
+      db.services = {
+        getById: function() {
+          return {
+            set: stubSet
+          };
+        }
+      };
+      ecs._clearFromDB({method: '_expose', args: [1]});
+      assert.deepEqual(stubSet.lastArguments(), ['exposed', false]);
+    });
+
+    it('exposes unexposed services', function() {
+      var db = ecs.get('db');
+      var stubSet = testUtils.makeStubFunction();
+      db.services = {
+        getById: function() {
+          return {
+            set: stubSet
+          };
+        }
+      };
+      ecs._clearFromDB({method: '_unexpose', args: [1]});
+      assert.deepEqual(stubSet.lastArguments(), ['exposed', true]);
+    });
+
     it('clears added machines', function() {
       var db = ecs.get('db');
       db.machines = {};
@@ -1359,6 +1387,76 @@ describe('Environment Change Set', function() {
         assert.equal(typeof ecsRecord.command.args[1], 'function');
         assert.equal(ecsRecord.command.method, '_remove_units');
         assert.equal(unitObj.deleted, true);
+      });
+    });
+
+    describe('lazyExpose', function() {
+      it('can add an expose record into the changeset', function() {
+        var stubSet = testUtils.makeStubFunction();
+        ecs.get('db').services = {
+          getById: function() {
+            return { set: stubSet };
+          }
+        };
+        var record = ecs.lazyExpose(['service']);
+        assert.equal(record.split('-')[0], 'expose');
+        var ecsRecord = ecs.changeSet[record];
+        assert.strictEqual(ecsRecord.executed, false);
+        assert.equal(ecsRecord.id, record);
+        assert.deepEqual(ecsRecord.parents, []);
+        // We just need to make that the timestamp is not undefined.
+        assert.equal(typeof ecsRecord.timestamp, 'number');
+        assert.equal(ecsRecord.command.args.length, 2);
+        assert.equal(ecsRecord.command.args[0], 'service');
+        assert.equal(typeof ecsRecord.command.args[1], 'function');
+        assert.equal(ecsRecord.command.method, '_expose');
+        assert.deepEqual(stubSet.lastArguments(), ['exposed', true]);
+      });
+    });
+
+    describe('lazyUnexpose', function() {
+      it('can add an unexpose record into the changeset', function() {
+        var stubSet = testUtils.makeStubFunction();
+        ecs.get('db').services = {
+          getById: function() {
+            return { set: stubSet };
+          }
+        };
+        var record = ecs.lazyUnexpose(['service']);
+        assert.equal(record.split('-')[0], 'unexpose');
+        var ecsRecord = ecs.changeSet[record];
+        assert.strictEqual(ecsRecord.executed, false);
+        assert.equal(ecsRecord.id, record);
+        assert.deepEqual(ecsRecord.parents, []);
+        // We just need to make that the timestamp is not undefined.
+        assert.equal(typeof ecsRecord.timestamp, 'number');
+        assert.equal(ecsRecord.command.args.length, 2);
+        assert.equal(ecsRecord.command.args[0], 'service');
+        assert.equal(typeof ecsRecord.command.args[1], 'function');
+        assert.equal(ecsRecord.command.method, '_unexpose');
+        assert.deepEqual(stubSet.lastArguments(), ['exposed', false]);
+      });
+
+      it('can remove an existing expose record', function() {
+        var stubSet = testUtils.makeStubFunction();
+        ecs.get('db').services = {
+          getById: function() {
+            return { set: stubSet };
+          }
+        };
+        ecs.changeSet = {
+          'expose-123': {
+            command: {
+              args: ['service'],
+              method: '_expose'
+            }
+          }
+        };
+        var stubRemove = testUtils.makeStubMethod(ecs, '_removeExistingRecord');
+        ecs.lazyUnexpose(['service']);
+        assert.deepEqual(stubSet.lastArguments(), ['exposed', false]);
+        assert.equal(stubRemove.calledOnce(), true);
+        assert.deepEqual(stubRemove.lastArguments(), ['expose-123']);
       });
     });
   });

@@ -1362,9 +1362,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environment's _expose method or adds an expose record to
+      the ECS.
+
+      Parameters match the parameters for the _expose method below.
+      The only new parameter is the last one (ECS options).
+
+      @method expose
+    */
+    expose: function(service, callback, options) {
+      var ecs = this.get('ecs'),
+          args = ecs._getArgs(arguments);
+      if (options.immediate) {
+        this._expose.apply(this, args);
+      } else {
+        ecs.lazyExpose(args);
+      }
+    },
+
+    /**
      * Expose the given service.
      *
-     * @method expose
+     * @method _expose
      * @param {String} service The service name.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object with an "err"
@@ -1373,7 +1392,7 @@ YUI.add('juju-env-go', function(Y) {
      *  the service.
      * @return {undefined} Sends a message to the server only.
      */
-    expose: function(service, callback) {
+    _expose: function(service, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and service.  No context is passed.
@@ -1388,9 +1407,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environment's _unexpose method or adds an unexpose record to
+      the ECS.
+
+      Parameters match the parameters for the _unexpose method below.
+      The only new parameter is the last one (ECS options).
+
+      @method unexpose
+    */
+    unexpose: function(service, callback, options) {
+      var ecs = this.get('ecs'),
+          args = ecs._getArgs(arguments);
+      if (options.immediate) {
+        this._unexpose.apply(this, args);
+      } else {
+        ecs.lazyUnexpose(args);
+      }
+    },
+
+    /**
      * Unexpose the given service.
      *
-     * @method unexpose
+     * @method _unexpose
      * @param {String} service The service name.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object with an "err"
@@ -1399,7 +1437,7 @@ YUI.add('juju-env-go', function(Y) {
      *  the service.
      * @return {undefined} Sends a message to the server only.
      */
-    unexpose: function(service, callback) {
+    _unexpose: function(service, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and service.  No context is passed.

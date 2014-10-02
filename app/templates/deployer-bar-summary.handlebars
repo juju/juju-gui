@@ -86,6 +86,34 @@
                     {{/each}}
                 </ul>
             {{/if}}
+            {{#if exposed.length}}
+                <h3>
+                    {{exposed.length}}
+                    {{ pluralize 'service' exposed.length}} exposed
+                </h3>
+                <ul>
+                    {{#each exposed}}
+                        <li>
+                            <img src="{{icon}}" alt="" class="icon" />
+                            {{serviceName}}
+                        </li>
+                    {{/each}}
+                </ul>
+            {{/if}}
+            {{#if unexposed.length}}
+                <h3>
+                    {{unexposed.length}}
+                    {{ pluralize 'service' unexposed.length}} exposed
+                </h3>
+                <ul>
+                    {{#each unexposed}}
+                        <li>
+                            <img src="{{icon}}" alt="" class="icon" />
+                            {{serviceName}}
+                        </li>
+                    {{/each}}
+                </ul>
+            {{/if}}
             {{#if addedMachines.length}}
                 <h3>
                     {{addedMachines.length}}

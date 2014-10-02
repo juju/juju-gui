@@ -530,6 +530,12 @@ YUI.add('environment-change-set', function(Y) {
             units.getById(unit).deleted = false;
           });
           break;
+        case '_expose':
+          services.getById(command.args[0]).set('exposed', false);
+          break;
+        case '_unexpose':
+          services.getById(command.args[0]).set('exposed', true);
+          break;
         case '_addMachines':
           machines.remove(machines.getById(command.options.modelId));
           break;
@@ -960,6 +966,66 @@ YUI.add('environment-change-set', function(Y) {
       }
       return record;
     },
+
+    /**
+      Creates a new entry in the queue for exposing a service.
+
+      Receives all the parameters received by the environment's "expose"
+      method with the exception of the ECS options object.
+
+      @method lazyExpose
+      @param {Array} args The arguments to unexpose with.
+    */
+    lazyExpose: function(args) {
+      var db = this.get('db');
+      var parent = [];
+      // Search for and add the service to parent.
+      Y.Object.each(this.changeSet, function(value, key) {
+        if (value.command.method === '_deploy') {
+          if (value.command.options.modelId === args[0]) {
+            parent.push(key);
+            args[0] = value.command.args[1];
+          }
+        }
+      });
+      db.services.getById(args[0]).set('exposed', true);
+      return this._createNewRecord('expose', {
+        method: '_expose',
+        args: args
+      }, parent);
+    },
+
+    /**
+      Creates a new entry in the queue for unexposing a service.
+
+      Receives all the parameters received by the environment's "unexpose"
+      method with the exception of the ECS options object.
+
+      @method lazyUnexpose
+      @param {Array} args The arguments to unexpose with.
+    */
+    lazyUnexpose: function(args) {
+      var existingExpose;
+      var db = this.get('db');
+      // Check if the service is pending in the change set.
+      Object.keys(this.changeSet).forEach(function(key) {
+        if (this.changeSet[key].command.method === '_expose') {
+          if (this.changeSet[key].command.args[0] === args[0]) {
+            existingExpose = key;
+          }
+        }
+      }, this);
+      db.services.getById(args[0]).set('exposed', false);
+      if (existingExpose) {
+        this._removeExistingRecord(existingExpose);
+      } else {
+        return this._createNewRecord('unexpose', {
+          method: '_unexpose',
+          args: args
+        });
+      }
+    },
+
     /**
       Creates a new entry in the queue for adding machines/containers.
 

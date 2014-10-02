@@ -1012,7 +1012,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var localCb = function(result) {
         env.expose(result.service_name, function(rec) {
           callback(rec);
-        });
+        }, {immediate: true});
       };
       env.connect();
       env.deploy(
@@ -1186,7 +1186,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isUndefined(rec.result);
           done();
         }
-        env.unexpose(service_name, localCb);
+        env.unexpose(service_name, localCb, {immediate: true});
       }
       generateAndExposeIntegrationService(unexposeService);
     });

@@ -759,7 +759,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct expose message', function() {
-      env.expose('apache');
+      env.expose('apache', function() {}, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -774,7 +774,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var service_name;
       env.expose('mysql', function(data) {
         service_name = data.service_name;
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -789,7 +789,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.expose('mysql', function(data) {
         service_name = data.service_name;
         err = data.err;
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -800,7 +800,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct unexpose message', function() {
-      env.unexpose('apache');
+      env.unexpose('apache', function() {}, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -817,7 +817,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.unexpose('mysql', function(data) {
         err = data.err;
         service_name = data.service_name;
-      });
+      }, {immediate: true});
       // Mimic response, assuming ServiceUnexpose to be the first request.
       conn.msg({
         RequestId: 1,
@@ -833,7 +833,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.unexpose('mysql', function(data) {
         err = data.err;
         service_name = data.service_name;
-      });
+      }, {immediate: true});
       // Mimic response, assuming ServiceUnexpose to be the first request.
       conn.msg({
         RequestId: 1,
