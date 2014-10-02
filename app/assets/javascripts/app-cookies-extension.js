@@ -42,7 +42,8 @@ YUI.add('app-cookies-extension', function(Y) {
     */
     check: function() {
       var self = this;
-      if (Y.Cookie.get('_cookies_accepted') !== 'true') {
+      if (Y.Cookie.get('_cookies_accepted') !== 'true' &&
+          !localStorage.getItem('disable-cookie')) {
         this.node.setStyle('display', 'block');
         Y.one('.link-cta').once('click', function(evt) {
           evt.preventDefault();

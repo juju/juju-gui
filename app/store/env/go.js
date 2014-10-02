@@ -467,7 +467,11 @@ YUI.add('juju-env-go', function(Y) {
         var response = data.Response;
         this.set('defaultSeries', response.DefaultSeries);
         this.set('providerType', response.ProviderType);
-        this.set('environmentName', response.Name);
+        if (localStorage.getItem('environmentName')) {
+          this.set('environmentName', localStorage.getItem('environmentName'));
+        } else {
+          this.set('environmentName', response.Name);
+        }
       }
     },
 

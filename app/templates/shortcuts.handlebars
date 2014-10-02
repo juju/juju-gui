@@ -1,3 +1,4 @@
+<div class="left">
 <h2>Keyboard Shortcuts</h2>
 
 <table>
@@ -16,5 +17,48 @@
     </tr>
   {{/bindings}}
   </tbody>
-
 </table>
+</div>
+
+
+<div class="left">
+    <h2>Custom GUI Settings</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td class="binding">
+            <input type="checkbox" name="disable-cookie" id="disable-cookie"
+              {{#if disable-cookie}}
+                  checked="checked"
+              {{/if}}
+            />
+          </td>
+          <td><label for="disable-cookie">Disable the EU cookie warning.</label></td>
+        </tr>
+
+        <tr>
+          <td class="binding">
+            <input type="checkbox" name="force-containers" id="force-containers"
+              {{#if force-containers}}
+                  checked="checked"
+              {{/if}}
+            />
+          </td>
+          <td><label for="force-containers">Enable container control for this provider.</label></td>
+        </tr>
+        <tr>
+            <td class="binding">
+              <input type="input" name="environmentName" id="environmentName" value="{{environmentName}}"/>
+            </td>
+            <td><label for="environment-name">Change the name of this environment in the GUI.</label></td>
+        </tr>
+        <tr>
+            <td class="binding">
+              <input type="button" class="button" name="save-settings" id="save-settings" value="Save"/>
+            </td>
+            <td>NOTE: saving will reload the GUI so the settings take effect.</td>
+        </tr>
+
+      </tbody>
+    </table>
+</div>
