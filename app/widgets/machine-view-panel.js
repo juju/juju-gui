@@ -280,6 +280,14 @@ YUI.add('machine-view-panel', function(Y) {
         _onUnitChange: function(e) {
           var unitTokens = this.get('unitTokens'),
               changed = e.changed;
+          // XXX kadams 01/10/2014 - Bit of a hack. Since LazyModelLists don't
+          // fire change events, we have to fire them off manually. In those
+          // cases the target is set to the list, rather than what it should
+          // be, the model instance. The model instance is passed as part of
+          // the object that gets mixed into the EventFacade, so we need to
+          // check there first for the actual target. See app/model/models.js,
+          // in the _process_delta helper function, where it handles change
+          // actions.
           var target = e.instance || e.target;
           var db = this.get('db');
           if (changed) {
@@ -442,6 +450,14 @@ YUI.add('machine-view-panel', function(Y) {
               changed = e.changed,
               prevId,
               newId;
+          // XXX kadams 01/10/2014 - Bit of a hack. Since LazyModelLists don't
+          // fire change events, we have to fire them off manually. In those
+          // cases the target is set to the list, rather than what it should
+          // be, the model instance. The model instance is passed as part of
+          // the object that gets mixed into the EventFacade, so we need to
+          // check there first for the actual target. See app/model/models.js,
+          // in the _process_delta helper function, where it handles change
+          // actions.
           var target = e.instance || e.target;
           // The machine can be a model or a POJO depending on what
           // triggered the change.
