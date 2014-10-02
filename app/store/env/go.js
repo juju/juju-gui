@@ -2218,6 +2218,10 @@ YUI.add('juju-env-go', function(Y) {
     // OpenStack or HP Public Cloud.
     openstack: {
       supportedContainerTypes: []
+    },
+    // Manual provider.
+    manual: {
+      supportedContainerTypes: []
     }
   };
 

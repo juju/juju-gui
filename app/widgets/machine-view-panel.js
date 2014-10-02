@@ -1056,7 +1056,11 @@ YUI.add('machine-view-panel', function(Y) {
           if (!features) {
             // Unknown provider type: this should never happen.
             console.error('unknown provider type', providerType);
-            return;
+            // If the provider is unknown then we err on the side of caution
+            // and don't allow them to create containers.
+            features = {
+              supportedContainerTypes: []
+            };
           }
           this.supportedContainerTypes = features.supportedContainerTypes;
 
