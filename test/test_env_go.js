@@ -2050,6 +2050,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('provides provider features for all supported providers', function() {
+      var providers = [
+        'all',
+        'azure',
+        'demonstration',
+        'ec2',
+        'joyent',
+        'local',
+        'maas',
+        'openstack',
+        'manual'
+      ];
+      var providerFeatures = Y.juju.environments.providerFeatures;
+      providers.forEach(function(provider) {
+        assert.equal(
+            Y.Lang.isArray(providerFeatures[provider].supportedContainerTypes),
+            true);
+      });
+    });
+
   });
 
 })();

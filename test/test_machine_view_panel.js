@@ -455,6 +455,16 @@ describe('machine view panel view', function() {
       assert.deepEqual(view.supportedContainerTypes, [KVM, LXC]);
     });
 
+    it('disables container support if provider is unknown', function() {
+      providerType = 'bad-provider';
+      view.render();
+      assert.strictEqual(
+          view._containersHeader.name, 'MachineViewPanelNoopHeaderView');
+      var head = container.one('.column.containers .head a3');
+      assert.strictEqual(head.getContent(), 'Sub-containers not supported');
+      assert.deepEqual(view.supportedContainerTypes, []);
+    });
+
   });
 
   describe('token drag and drop', function() {
