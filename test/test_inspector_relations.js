@@ -341,9 +341,6 @@ describe('Inspector Relations Tab', function() {
   });
 
   it('shows a remove relations button when units are in error', function() {
-    window.flags = {};
-    window.flags.mv = true;
-
     var vg = new ViewletGenerator({
       viewlet: View,
       relationType: 'error'

@@ -437,7 +437,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct AddServiceUnits message', function() {
-      env.add_unit('django', 3);
+      env.add_unit('django', 3, null, null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -449,7 +449,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds new service units to a specific machine', function() {
-      env.add_unit('django', 3, '42');
+      env.add_unit('django', 3, '42', null, {immediate: true});
       var expectedMessage = {
         Type: 'Client',
         Request: 'AddServiceUnits',
@@ -466,7 +466,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(['django/2', 'django/3'], data.result);
         assert.isUndefined(data.err);
         done();
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -475,7 +475,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures adding units to a service', function(done) {
-      env.add_unit('django', 0, null, function(data) {
+      env._add_unit('django', 0, null, function(data) {
         assert.strictEqual('django', data.service_name);
         assert.strictEqual(0, data.num_units);
         assert.strictEqual('must add at least one unit', data.err);
@@ -489,7 +489,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct DestroyServiceUnits message', function() {
-      env.remove_units(['django/2', 'django/3']);
+      env.remove_units(['django/2', 'django/3'], null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -505,7 +505,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(['django/2', 'django/3'], data.unit_names);
         assert.isUndefined(data.err);
         done();
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -518,7 +518,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(['django/2'], data.unit_names);
         assert.strictEqual('unit django/2 does not exist', data.err);
         done();
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -844,7 +844,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service', function() {
-      env.deploy('precise/mysql');
+      env.deploy('precise/mysql', null, null, null, null, null, null, null,
+          {immediate: true});
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -872,7 +873,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      env.deploy('precise/mediawiki', null, config);
+      env.deploy('precise/mediawiki', null, config, null, null, null, null,
+          null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -892,7 +894,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      env.deploy('precise/mysql', null, null, config_raw);
+      env.deploy('precise/mysql', null, null, config_raw, null, null, null,
+          null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -906,7 +909,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'root-disk': '8000',
         tags: 'tag1,tag2'
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, constraints);
+      env.deploy('precise/mediawiki', null, null, null, 1, constraints, null,
+          null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(msg.Params.Constraints, {
         'cpu-cores': 1,
@@ -931,7 +935,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, null, '42');
+      env.deploy('precise/mediawiki', null, null, null, 1, null, '42', null,
+          {immediate: true});
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
@@ -945,8 +950,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             charm_url = data.charm_url;
             err = data.err;
             service_name = data.service_name;
-          }
-      );
+          }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -963,8 +967,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'precise/mysql', 'mysql', null, null, null, null, null,
           function(data) {
             err = data.err;
-          }
-      );
+          }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -974,7 +977,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds a machine', function() {
-      env.addMachines([{}]);
+      env.addMachines([{}], null, {immediate: true});
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -988,7 +991,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('adds a machine with the given series and constraints', function() {
       var constraints = {'cpu-cores': 4, 'mem': 4000};
-      env.addMachines([{series: 'trusty', constraints: constraints}]);
+      env.addMachines([{series: 'trusty', constraints: constraints}], null,
+          {immediate: true});
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -1005,7 +1009,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds a container', function() {
-      env.addMachines([{containerType: 'lxc'}]);
+      env.addMachines([{containerType: 'lxc'}], null, {immediate: true});
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -1022,7 +1026,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('adds a saucy container to a specific machine', function() {
       env.addMachines(
-          [{containerType: 'lxc', parentId: '42', series: 'saucy'}]);
+          [{containerType: 'lxc', parentId: '42', series: 'saucy'}],
+          null, {immediate: true});
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
@@ -1045,7 +1050,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
         {containerType: 'kvm'},
         {containerType: 'lxc', parentId: '1'}
-      ]);
+      ], null, {immediate: true});
       var expectedMachineParams = [
         {Jobs: [machineJobs.HOST_UNITS]},
         {Jobs: [machineJobs.MANAGE_ENVIRON], Series: 'precise'},
@@ -1066,7 +1071,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('avoids sending calls if no machines are added', function() {
-      env.addMachines([]);
+      env.addMachines([], null, {immediate: true});
       assert.equal(conn.messages.length, 0);
     });
 
@@ -1074,7 +1079,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var response;
       env.addMachines([{}, {containerType: 'lxc'}], function(data) {
         response = data;
-      });
+      }, {immediate: true});
       // Mimic the server AddMachines response.
       conn.msg({
         RequestId: 1,
@@ -1092,7 +1097,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var response;
       env.addMachines([{}], function(data) {
         response = data;
-      });
+      }, {immediate: true});
       // Mimic the server AddMachines response.
       conn.msg({
         RequestId: 1,
@@ -1107,7 +1112,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var response;
       env.addMachines([{}, {}, {parentId: '42'}], function(data) {
         response = data;
-      });
+      }, {immediate: true});
       // Mimic the server AddMachines response.
       conn.msg({
         RequestId: 1,
@@ -1138,32 +1143,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     it('removes a machine', function() {
-      env.destroyMachines(['1']);
+      env.destroyMachines(['1'], null, null, {immediate: true});
       assertDestroyMachinesRequestSent(['1'], false);
     });
 
     it('forces a machine removal', function() {
-      env.destroyMachines(['42'], true);
+      env.destroyMachines(['42'], true, null, {immediate: true});
       assertDestroyMachinesRequestSent(['42'], true);
     });
 
     it('removes a container', function() {
-      env.destroyMachines(['2/lxc/0']);
+      env.destroyMachines(['2/lxc/0'], null, null, {immediate: true});
       assertDestroyMachinesRequestSent(['2/lxc/0'], false);
     });
 
     it('forces a container removal', function() {
-      env.destroyMachines(['1/kvm/42'], true);
+      env.destroyMachines(['1/kvm/42'], true, null, {immediate: true});
       assertDestroyMachinesRequestSent(['1/kvm/42'], true);
     });
 
     it('removes multiple machines/containers', function() {
-      env.destroyMachines(['1', '47', '42/lxc/0']);
+      env.destroyMachines(['1', '47', '42/lxc/0'], null, null,
+          {immediate: true});
       assertDestroyMachinesRequestSent(['1', '47', '42/lxc/0'], false);
     });
 
     it('avoids sending calls if no machines are removed', function() {
-      env.destroyMachines([]);
+      env.destroyMachines([], null, null, {immediate: true});
       assert.equal(conn.messages.length, 0);
     });
 
@@ -1171,7 +1177,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var response;
       env.destroyMachines(['42', '1/lxc/2'], false, function(data) {
         response = data;
-      });
+      }, {immediate: true});
       // Mimic the server DestroyMachines response.
       conn.msg({RequestId: 1, Response: {}});
       assert.isUndefined(response.err);
@@ -1182,7 +1188,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var response;
       env.destroyMachines(['1'], false, function(data) {
         response = data;
-      });
+      }, {immediate: true});
       // Mimic the server DestroyMachines response.
       conn.msg({RequestId: 1, Error: 'bad wolf', Response: {}});
       assert.strictEqual(response.err, 'bad wolf');
@@ -1469,16 +1475,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must error if neither data nor config are passed', function() {
-      assert.throws(
-          function() {env.set_config('mysql', undefined, undefined);},
-          'Exactly one of config and data must be provided');
+      assert.throws(function() {
+        env.set_config(
+            'mysql', undefined, undefined, null, null, {immediate: true});
+      }, 'Exactly one of config and data must be provided');
     });
 
     it('must error if both data and config are passed', function() {
-      assert.throws(
-          function() {
-            env.set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML');},
-          'Exactly one of config and data must be provided');
+      assert.throws(function() {
+        env.set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML', null,
+            null, {immediate: true});
+      }, 'Exactly one of config and data must be provided');
     });
 
     it('can set a service config', function() {
@@ -1489,7 +1496,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, null, {
         'cfg-key': 'foo',
         'unchanged': 'bar'
-      });
+      }, null, {immediate: true});
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -1509,7 +1516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       /*jshint multistr:true */
       var data = 'tuning-level: \nexpert-mojo';
       /*jshint multistr:false */
-      env.set_config('mysql', null, data);
+      env.set_config('mysql', null, data, null, null, {immediate: true});
       msg = conn.last_message();
       var expected = {
         RequestId: msg.RequestId,
@@ -1528,7 +1535,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.set_config('yoursql', {}, null, {}, function(evt) {
         err = evt.err;
         service_name = evt.service_name;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
@@ -1544,7 +1551,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var newConfig = {key1: 'value1', key2: 'CHANGED!', key3: 'value3'};
       env.set_config('django', newConfig, null, oldConfig, function(evt) {
         dataReturned = evt;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
@@ -1565,7 +1572,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var service_name = '';
       env.destroy_service('mysql', function(evt) {
         service_name = evt.service_name;
-      });
+      }, {immediate: true});
       var expected = {
         Type: 'Client',
         Request: 'ServiceDestroy',
@@ -1588,7 +1595,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy_service('yoursql', function(evt) {
         err = evt.err;
         service_name = evt.service_name;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
@@ -1601,7 +1608,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sends the correct AddRelation message', function() {
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB);
+      env.add_relation(endpointA, endpointB, null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -1621,7 +1628,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       jujuEndpoints.haproxy = {
         Name: 'reverseproxy',
@@ -1655,7 +1662,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         evt = ev;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
@@ -1669,7 +1676,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sends the correct DestroyRelation message', function() {
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB);
+      env.remove_relation(endpointA, endpointB, null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -1686,12 +1693,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove relation', function() {
-      window.flags = { mv: true };
       var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveRelation');
       this._cleanups.push(lazy.reset);
       env.remove_relation([], [], function() {});
       assert.equal(lazy.calledOnce(), true);
-      window.flags = {};
     });
 
     it('successfully removes a relation', function() {
@@ -1701,7 +1706,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.remove_relation(endpointA, endpointB, function(ev) {
         endpoint_a = ev.endpoint_a;
         endpoint_b = ev.endpoint_b;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
@@ -1719,7 +1724,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         endpoint_a = ev.endpoint_a;
         endpoint_b = ev.endpoint_b;
         err = ev.err;
-      });
+      }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
@@ -1731,13 +1736,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove unit', function() {
-      window.flags = {};
-      window.flags.mv = true;
       var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveUnit');
       this._cleanups.push(lazy.reset);
       env.remove_units([], function() {});
       assert.equal(lazy.calledOnce(), true);
-      window.flags = {};
     });
 
     it('sends the correct CharmInfo message', function() {
@@ -2028,7 +2030,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a unit', function() {
       var unit_name = 'mysql/0';
-      env.remove_units([unit_name]);
+      env.remove_units([unit_name], null, {immediate: true});
       msg = conn.last_message();
       assert.equal(msg.Type, 'Client');
       assert.equal(msg.Request, 'DestroyServiceUnits');

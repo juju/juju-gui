@@ -43,7 +43,7 @@ describe('Inspector Settings', function() {
     container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
-    ecs = new juju.EnvironmentChangeSet();
+    ecs = new juju.EnvironmentChangeSet({db: db});
     env = juju.newEnvironment({conn: conn, ecs: ecs});
     env.update_annotations = function() {};
   });
@@ -322,7 +322,6 @@ describe('Inspector Settings', function() {
     assert.isTrue(notificationAdded);
     // Check that changeState was fired.
     assert.equal(stubFire.calledOnce(), true, 'Fire not called');
-    window.flags = {};
   });
 
   /**** End service destroy UI tests. ****/
@@ -402,6 +401,7 @@ describe('Inspector Settings', function() {
     inspector.bindingEngine._nodeChanged(
         input, inspector.views.config);
     button.simulate('click');
+    ecs.commit(env);
     var message = env.ws.last_message();
     assert.equal('foo', message.Params.Options.admins);
     // Send back a success message.

@@ -44,7 +44,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state = factory.makeFakeBackend();
       juju = new sandboxModule.GoJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
-      ecs = new ns.EnvironmentChangeSet();
+      ecs = new ns.EnvironmentChangeSet({db: state.db});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
     });
 
@@ -419,7 +419,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           {},
           null,
-          callback);
+          callback,
+          {immediate: true});
     });
 
     it('can deploy with constraints', function(done) {
@@ -450,7 +451,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           constraints,
           null,
-          callback);
+          callback,
+          {immediate: true});
     });
 
     it('can communicate errors after attempting to deploy', function(done) {
@@ -462,7 +464,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined,
-                 1, null, null, callback);
+          1, null, null, callback, {immediate: true});
     });
 
     it('can add machines', function(done) {
@@ -506,7 +508,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.addMachines(
-          [{}, {parentId: '1/kvm/2', containerType: 'lxc'}], callback);
+          [{}, {parentId: '1/kvm/2', containerType: 'lxc'}],
+          callback, {immediate: true});
     });
 
     it('can report errors occurred while adding machines', function(done) {
@@ -522,7 +525,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.addMachines(
           [{parentId: '47'}, {parentId: '42', containerType: 'lxc'}],
-          callback);
+          callback, {immediate: true});
     });
 
     it('can destroy machines', function(done) {
@@ -551,7 +554,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.connect();
-      env.destroyMachines(['0', '1/kvm/2'], false, callback);
+      env.destroyMachines(
+          ['0', '1/kvm/2'], false, callback, {immediate: true});
     });
 
     it('can report errors occurred while destroying machines', function(done) {
@@ -563,7 +567,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.connect();
-      env.destroyMachines(['42'], false, callback);
+      env.destroyMachines(['42'], false, callback, {immediate: true});
     });
 
     it('can destroy a service', function(done) {
@@ -598,7 +602,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isNull(state.db.services.getById('wordpress'));
           done();
         };
-        env.destroy_service('wordpress', callback);
+        env.destroy_service('wordpress', callback, {immediate: true});
       });
     });
 
@@ -636,7 +640,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(state.db.services.item(0).get('units').size(), 0);
           done();
         };
-        env.remove_units('wordpress/0', callback);
+        env.remove_units('wordpress/0', callback, {immediate: true});
       });
     });
 
@@ -781,9 +785,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           done();
         };
-        env.set_config('wordpress', {
-          engine: 'apache'
-        }, undefined, {}, callback);
+        env.set_config('wordpress', {engine: 'apache'}, undefined, {},
+            callback, {immediate: true});
       });
     });
 
@@ -830,7 +833,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         env.set_config('wordpress', undefined,
-            'wordpress:\n  engine: apache', {}, callback);
+            'wordpress:\n  engine: apache', {}, callback, {immediate: true});
       });
     });
 
@@ -958,7 +961,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.add_unit('kumquat', 2, null, function(data) {
           // After finished generating integrated services.
           callback(data);
-        });
+        }, {immediate: true});
       };
       env.connect();
       env.deploy(
@@ -969,7 +972,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           null,
           null,
-          localCb);
+          localCb,
+          {immediate: true});
     }
 
     /**
@@ -1023,7 +1027,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           null,
           null,
-          localCb);
+          localCb,
+          {immediate: true});
     }
 
     it('can add additional units', function(done) {
@@ -1281,13 +1286,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     assert.equal(recData.endpoint_b, 'mysql:db');
                     assert.isObject(recData.result);
                     assert.isObject(
-                       state.db.relations.getById('wordpress:db mysql:db'));
+                        state.db.relations.getById('wordpress:db mysql:db'));
                     done();
-                  });
-                }
-            );
-          }
-      );
+                  }, {immediate: true});
+                }, {immediate: true});
+          }, {immediate: true});
     });
 
     it('is able to add a relation with a subordinate service', function(done) {
@@ -1406,13 +1409,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                           assert.equal(recData.endpoint_a, 'wordpress:db');
                           assert.equal(recData.endpoint_b, 'mysql:db');
                           done();
-                        }
-                    );
-                  });
-                }
-            );
-          }
-      );
+                        }, {immediate: true});
+                  }, {immediate: true});
+                }, {immediate: true});
+          }, {immediate: true});
     });
 
     it('should support deployer import', function(done) {

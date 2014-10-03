@@ -34,7 +34,5 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('has reset feature flags', function() {
       assert.deepEqual({}, window.flags);
     });
-
-
   });
 })();
