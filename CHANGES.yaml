@@ -20,7 +20,25 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.2.2:
+    - >
+      New settings UI in the keyboard help.
+      Use the keyboard shortcut key ? to view the settings and to adjust things
+      like the name of the environment, force enable containers support in
+      machine view, and disable the cookie banner.
+      All changes are local to the specific browser and not currently shared or
+      synced across all users of the Juju environment.
+    - >
+      Add the expose/unexpose command to the deployer bar as a pending change
+      vs immediate.
+    - >
+      If you have a pending service config change and that config is also
+      changed by someone else, the potential conflict is now a warning on the
+      commit summary page.
+    - >
+      (FIX) Prevent cascading deletes from happening to containers/machines
+      when a unit/service they host is deleted.
+    - (FIX) Container header rendering bug (1376353).
 - 1.2.1:
     - >
       (FIX) Using a search category with an empty input no longer uses the
