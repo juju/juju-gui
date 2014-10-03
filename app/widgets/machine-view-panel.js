@@ -279,8 +279,16 @@ YUI.add('machine-view-panel', function(Y) {
         */
         _onUnitChange: function(e) {
           var unitTokens = this.get('unitTokens'),
-              changed = e.changed,
-              target = e.target;
+              changed = e.changed;
+          // XXX kadams 01/10/2014 - Bit of a hack. Since LazyModelLists don't
+          // fire change events, we have to fire them off manually. In those
+          // cases the target is set to the list, rather than what it should
+          // be, the model instance. The model instance is passed as part of
+          // the object that gets mixed into the EventFacade, so we need to
+          // check there first for the actual target. See app/model/models.js,
+          // in the _process_delta helper function, where it handles change
+          // actions.
+          var target = e.instance || e.target;
           var db = this.get('db');
           if (changed) {
             // Need to update any machines and containers that now have
@@ -441,26 +449,40 @@ YUI.add('machine-view-panel', function(Y) {
               tokenList,
               changed = e.changed,
               prevId,
-              newId,
-              key;
-          var parentId = e.target.get('parentId');
+              newId;
+          // XXX kadams 01/10/2014 - Bit of a hack. Since LazyModelLists don't
+          // fire change events, we have to fire them off manually. In those
+          // cases the target is set to the list, rather than what it should
+          // be, the model instance. The model instance is passed as part of
+          // the object that gets mixed into the EventFacade, so we need to
+          // check there first for the actual target. See app/model/models.js,
+          // in the _process_delta helper function, where it handles change
+          // actions.
+          var target = e.instance || e.target;
+          // The machine can be a model or a POJO depending on what
+          // triggered the change.
+          var parentId, id;
+          if (target instanceof Y.Model) {
+            id = target.get('id');
+            parentId = target.get('parentId');
+          } else {
+            id = target.id;
+            parentId = target.parentId;
+          }
           if (changed) {
             if (parentId) {
               tokenList = this.get('containerTokens');
             } else {
               tokenList = this.get('machineTokens');
             }
-            if (changed.id) {
+            if (changed.id && changed.id.newVal !== changed.id.prevVal) {
               prevId = changed.id.prevVal;
               newId = changed.id.newVal;
               token = tokenList[prevId];
               tokenList[newId] = token;
               delete tokenList[prevId];
             } else {
-              // The machine can be a model or a POJO depending on what
-              // triggered the change.
-              key = e.target.id || e.target.get('id');
-              token = tokenList[key];
+              token = tokenList[id];
             }
             var machine = token.get('machine'),
                 machineId = machine.id;
@@ -472,7 +494,7 @@ YUI.add('machine-view-panel', function(Y) {
             var selectedMachine = this.get('selectedMachine');
             if ((selectedMachine === machineId) ||
                 (selectedMachine === prevId) ||
-                (selectedMachine === key)) {
+                (selectedMachine === id)) {
               // If the selected machine is the machine id then we also want to
               // update the container lists committed status. If the machines
               // id changes we still want to select the same machine token

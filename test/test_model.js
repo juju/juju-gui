@@ -292,75 +292,117 @@ describe('test_model.js', function() {
       assert.equal(db.resolveModelByName('env'), db.environment);
     });
 
-    it('should update service units on change', function() {
-      var db = new models.Database();
-      var mysql = new models.Service({id: 'mysql'});
-      db.services.add([mysql]);
-      assert.equal(mysql.get('units') instanceof models.ServiceUnitList, true);
-      db.onDelta({data: {result: [
-        ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
-        ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
-      ]}});
-      assert.equal(mysql.get('units').size(), 2);
-      db.onDelta({data: {result: [
-        ['unit', 'remove', 'mysql/1']
-      ]}});
-      assert.equal(mysql.get('units').size(), 1);
+    describe('onDelta', function() {
+      it('should update service units on change', function() {
+        var db = new models.Database();
+        var mysql = new models.Service({id: 'mysql'});
+        db.services.add([mysql]);
+        assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
+                     true);
+        db.onDelta({data: {result: [
+          ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
+          ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
+        ]}});
+        assert.equal(mysql.get('units').size(), 2);
+        db.onDelta({data: {result: [
+          ['unit', 'remove', 'mysql/1']
+        ]}});
+        assert.equal(mysql.get('units').size(), 1);
+      });
+
+      it('should create non-existing machines on change', function() {
+        // Sometimes we may try to change a machine that doesn't exist yet;
+        // for example, a unit change needs to trigger a machine delta
+        // change, but the actual create machine delta may not have arrived.
+        // In these cases we check to see if the instance exists, and if not,
+        // we create it before applying the changes.
+        var db = new models.Database(),
+            id = '0';
+        assert.equal(db.machines.size(), 0,
+                     'the machine list is not be empty');
+        db.onDelta({data: {result: [
+          ['machine', 'change', {id: id}]
+        ]}});
+        assert.equal(db.machines.size(), 1,
+                     'the machines list did not have the expected size');
+        var machine = db.machines.getById(id);
+        assert.notEqual(machine, undefined,
+                        'the expected machine was not found in the database');
+      });
+
+      it('should change machines when units change', function() {
+        var db = new models.Database();
+        var machinesStub = utils.makeStubMethod(db.machines, 'process_delta'),
+            unitsStub = utils.makeStubMethod(db.units, 'process_delta');
+        this._cleanups.push(machinesStub.reset);
+        this._cleanups.push(unitsStub.reset);
+        db.onDelta({data: {result: [
+          ['unitInfo', 'remove', {MachineId: '0'}]
+        ]}});
+        var args = machinesStub.lastArguments();
+        assert.equal(args[0], 'change',
+                     'the expected action was not applied to machines');
+        assert.equal(args[1].id, '0',
+                     'the expected machine ID was not changed');
+      });
+
+      it('should handle remove changes correctly',
+         function() {
+           var db = new models.Database();
+           var mysql = db.services.add({id: 'mysql'});
+           var my0 = {id: 'mysql/0', agent_state: 'pending'};
+           var my1 = {id: 'mysql/1', agent_state: 'pending'};
+           db.addUnits([my0, my1]);
+           db.onDelta({data: {result: [
+             ['unit', 'remove', 'mysql/1']
+           ]}});
+           var names = mysql.get('units').get('id');
+           names.length.should.equal(1);
+           names[0].should.equal('mysql/0');
+         });
+
+      it('should be able to reuse existing services with add',
+         function() {
+           var db = new models.Database();
+           var my0 = new models.Service({id: 'mysql', exposed: true});
+           db.services.add([my0]);
+           // Note that exposed is not set explicitly to false.
+           db.onDelta({data: {result: [
+             ['service', 'add', {id: 'mysql'}]
+           ]}});
+           my0.get('exposed').should.equal(false);
+         });
+
+      it('should be able to reuse existing units with add',
+         // Units are special because they use the LazyModelList.
+         function() {
+           var db = new models.Database();
+           db.services.add({id: 'mysql'});
+           var my0 = {id: 'mysql/0', agent_state: 'pending'};
+           db.addUnits([my0]);
+           db.onDelta({data: {result: [
+             ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
+           ]}});
+           my0.agent_state.should.equal('another');
+         });
+
+      // XXX - We no longer use relation_errors but this test should remain
+      // until it's completely removed from the codebase.
+      it.skip('should reset relation_errors',
+          function() {
+            var db = new models.Database();
+            var my0 = {
+              id: 'mysql/0',
+              relation_errors: {'cache': ['memcached']}
+            };
+            db.addUnits([my0]);
+            // Note that relation_errors is not set.
+            db.onDelta({data: {result: [
+              ['unit', 'change', {id: 'mysql/0'}]
+            ]}});
+            my0.relation_errors.should.eql({});
+          });
     });
-
-    it('onDelta should handle remove changes correctly',
-       function() {
-         var db = new models.Database();
-         var mysql = db.services.add({id: 'mysql'});
-         var my0 = {id: 'mysql/0', agent_state: 'pending'};
-         var my1 = {id: 'mysql/1', agent_state: 'pending'};
-         db.addUnits([my0, my1]);
-         db.onDelta({data: {result: [
-           ['unit', 'remove', 'mysql/1']
-         ]}});
-         var names = mysql.get('units').get('id');
-         names.length.should.equal(1);
-         names[0].should.equal('mysql/0');
-       });
-
-    it('onDelta should be able to reuse existing services with add',
-       function() {
-         var db = new models.Database();
-         var my0 = new models.Service({id: 'mysql', exposed: true});
-         db.services.add([my0]);
-         // Note that exposed is not set explicitly to false.
-         db.onDelta({data: {result: [
-           ['service', 'add', {id: 'mysql'}]
-         ]}});
-         my0.get('exposed').should.equal(false);
-       });
-
-    it('onDelta should be able to reuse existing units with add',
-       // Units are special because they use the LazyModelList.
-       function() {
-         var db = new models.Database();
-         db.services.add({id: 'mysql'});
-         var my0 = {id: 'mysql/0', agent_state: 'pending'};
-         db.addUnits([my0]);
-         db.onDelta({data: {result: [
-           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
-         ]}});
-         my0.agent_state.should.equal('another');
-       });
-
-    // We no longer use relation_errors but this test should remain until it's
-    // completely removed from the codebase.
-    it.skip('onDelta should reset relation_errors',
-        function() {
-          var db = new models.Database();
-          var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
-          db.addUnits([my0]);
-          // Note that relation_errors is not set.
-          db.onDelta({data: {result: [
-            ['unit', 'change', {id: 'mysql/0'}]
-          ]}});
-          my0.relation_errors.should.eql({});
-        });
 
     it('ServiceUnitList should accept a list of units at instantiation and ' +
        'decorate them', function() {

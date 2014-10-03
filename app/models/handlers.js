@@ -208,7 +208,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       // a deploy fails due to an error. In that case the unit is unplaced and
       // we don't need to process machine info.
       if (machineData.id) {
-        db.machines.process_delta(action, machineData, db);
+        db.machines.process_delta('change', machineData, db);
       }
     },
 
