@@ -400,14 +400,6 @@ You will need to bootstrap the local environment, and deploy one service.
 The API server needs access to the provisioning credentials which are
 lazily initialized in Juju upon usage.
 
-``Juju-gui`` and ``rapi-rollup`` can communicate via an encrypted WebSocket
-connection: to enable it, add the following line to the config above::
-
-  api-secure: true
-
-You will also need to edit ``app/config-debug.js`` and ``app/config-prod.js``
-replacing ``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
-
 By default, ``rapi-rollup`` uses a self-signed certificate; because of that you
 will need to visit the <https://localhost:8081/ws> WebSocket URL with your
 browser and accept the included self-signed certificate, or the WebSocket
