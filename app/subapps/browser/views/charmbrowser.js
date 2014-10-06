@@ -371,8 +371,10 @@ YUI.add('juju-charmbrowser', function(Y) {
       container.appendTo(this.get('parentContainer'));
       // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();
-      // Provided by 'added-services-button.jd'.
-      this._renderAddedServicesButton();
+      if (window.flags && window.flags.as) {
+        // Provided by 'added-services-button.js'.
+        this._renderAddedServicesButton();
+      }
 
       this.showIndicator(container.one('.charm-list'));
 
