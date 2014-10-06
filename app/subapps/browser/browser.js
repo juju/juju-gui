@@ -181,7 +181,8 @@ YUI.add('subapp-browser', function(Y) {
           sectionA: {
             charmbrowser: this._charmBrowserDispatcher.bind(this),
             inspector: this._inspectorDispatcher.bind(this),
-            empty: this.emptySectionA.bind(this)
+            empty: this.emptySectionA.bind(this),
+            services: this._addedServicesDispatcher.bind(this)
           },
           sectionB: {
             machine: this._machine.bind(this),
@@ -237,8 +238,6 @@ YUI.add('subapp-browser', function(Y) {
     */
     _charmBrowserDispatcher: function(metadata) {
       this.renderCharmBrowser(metadata);
-      // XXX Won't be needed once window.flags.il becomes the norm. The details
-      // template should be updated to hide by default.
       if (this._shouldShowCharm()) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
@@ -364,6 +363,16 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Handles rendering and/or updating the added services UI component.
+
+      @method _addedServicesDispatcher
+    */
+    _addedServicesDispatcher: function() {
+      this._detailsVisible(false);
+      this.renderAddedServices();
+    },
+
+    /**
       Empties out the sectionA UI making sure to properly clean up.
 
       @method emptySectionA
@@ -390,6 +399,10 @@ YUI.add('subapp-browser', function(Y) {
       if (this._inspector) {
         this._inspector.destroy();
         this._inspector = null;
+      }
+      if (this._addedServices) {
+        this._addedServices.destroy();
+        this._addedServices = null;
       }
     },
 
@@ -487,6 +500,22 @@ YUI.add('subapp-browser', function(Y) {
       }));
       // Render is idempotent
       this._charmbrowser.render(metadata, this._searchChanged());
+    },
+
+    /**
+       Render added services view content into the parent view when required.
+
+       @method renderAddedServices
+     */
+    renderAddedServices: function() {
+      if (!this._addedServices) {
+        this._addedServices = new views.AddedServices(this._getViewCfg({
+          container: this._sidebar.get('container').one('.bws-content')
+        }));
+        this._addedServices.addTarget(this);
+      }
+      // Render is idempotent
+      this._addedServices.render();
     },
 
     /**
@@ -792,6 +821,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-bundleview',
     'subapp-browser-sidebar',
     'machine-view-panel-extension',
-    'juju-charmbrowser'
+    'juju-charmbrowser',
+    'juju-addedservices'
   ]
 });

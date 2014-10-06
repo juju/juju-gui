@@ -153,6 +153,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(render.callCount(), 2);
       });
     });
+
+    describe('renderAddedServices', function() {
+      var app, render;
+
+      beforeEach(function() {
+        app = new Y.juju.subapps.Browser({});
+        app._sidebar = {
+          get: function() {
+            return {
+              one: function() {}
+            };
+          },
+          destroy: function() {}
+        };
+        render = utils.makeStubMethod(views.AddedServices.prototype, 'render');
+        this._cleanups.push(render.reset);
+      });
+
+      afterEach(function() {
+        app.destroy();
+      });
+
+      it('creates a new instance', function() {
+        assert.strictEqual(app._addedServices, undefined);
+        app.renderAddedServices();
+        assert.equal(app._addedServices instanceof views.AddedServices, true);
+      });
+
+      it('adds the browser as a bubble target', function(done) {
+        app.on('*:baaar', function() {
+          // If this is never called then this test will fail.
+          done();
+        });
+        app.renderAddedServices();
+        app._addedServices.fire('baaar');
+      });
+
+      it('skips creating a new instance if one exists', function() {
+        app.renderAddedServices();
+        // Setting a nonsense attribute on the instance. If this
+        // attribute is no longer there after rendering again, it created a
+        // new instance when it shouldn't have.
+        app._addedServices.set('flag', true);
+        app.renderAddedServices();
+        assert.equal(app._addedServices.get('flag'), true);
+      });
+
+      it('renders on every call', function() {
+        assert.equal(render.callCount(), 0);
+        app.renderAddedServices();
+        assert.equal(render.callCount(), 1);
+        app.renderAddedServices();
+        assert.equal(render.callCount(), 2);
+      });
+    });
   });
 
   (function() {
@@ -193,8 +248,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       describe('state dispatchers', function() {
-        var showSearchStub, setHome, renderCharmBrowser, entityStub,
-            cleanupEntity, metadata, onboarding;
+        var showSearchStub, setHome, renderCharmBrowser, renderAddedServices,
+            entityStub, cleanupEntity, metadata, onboarding;
 
         beforeEach(function() {
           app = new browser.Browser({});
@@ -526,6 +581,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         });
 
+        describe('_addedServicesDispatcher', function() {
+          var detailsVisible;
+
+          function stubRenderers(context) {
+            renderAddedServices = utils.makeStubMethod(
+                app, 'renderAddedServices');
+            context._cleanups.push(renderAddedServices.reset);
+            detailsVisible = utils.makeStubMethod(
+                app, '_detailsVisible');
+            context._cleanups.push(detailsVisible.reset);
+          }
+
+          it('calls to render the added services view', function() {
+            stubRenderers(this);
+            app._addedServicesDispatcher();
+            assert.equal(renderAddedServices.callCount(), 1);
+          });
+
+          it('hides the details panel', function() {
+            stubRenderers(this);
+            app._addedServicesDispatcher();
+            assert.equal(detailsVisible.callCount(), 1);
+            assert.equal(detailsVisible.lastArguments()[0], false);
+          });
+        });
+
+
         describe('_machine', function() {
           var renderMachineStub, setSelectedStub;
           function stubRenderers(context) {
@@ -559,25 +641,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               destroy: function() {},
               hideSearch: utils.makeStubFunction() };
             app._details = { destroy: utils.makeStubFunction() };
+            app._addedServices = { destroy: utils.makeStubFunction() };
             app.machineViewPanel = { destroy: utils.makeStubFunction() };
           }
 
           it('emptySectionA', function() {
             stubMethods(app);
             var bwsdata = utils.makeContainer(this),
-                destroyMethod = app._charmbrowser.destroy,
-                destroyCalled = false;
+                charmbrowserDestroyMethod = app._charmbrowser.destroy,
+                addedServicesDestroyMethod = app._addedServices.destroy,
+                charmbrowserDestroyCalled = false,
+                addedServicesDestroyCalled = false;
             bwsdata.addClass('bws-view-data');
             // The original destroy method is set to null after the
             // destroy is called so we need to stub out the method here
             // so that we can track the destroy.
             app._charmbrowser.destroy = function() {
-              destroyCalled = true;
-              app._charmbrowser.destroy = destroyMethod;
+              charmbrowserDestroyCalled = true;
+              app._charmbrowser.destroy = charmbrowserDestroyMethod;
+            };
+            app._addedServices.destroy = function() {
+              addedServicesDestroyCalled = true;
+              app._addedServices.destroy = addedServicesDestroyMethod;
             };
             app.emptySectionA();
-            assert.equal(destroyCalled, true);
             assert.equal(app._sidebar.hideSearch.callCount(), 1);
+            assert.equal(charmbrowserDestroyCalled, true);
+            assert.equal(addedServicesDestroyCalled, true);
             assert.equal(app._details.destroy.callCount(), 1);
             assert.equal(bwsdata.getStyle('display'), 'none');
           });
