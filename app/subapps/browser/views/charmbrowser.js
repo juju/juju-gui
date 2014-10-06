@@ -51,8 +51,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       'new': 2
     },
 
-    // XXX This template will be moved to an external file soon.
-    template: '<div class="search-widget"></div><div class="charm-list"></div>',
+    template: templates.charmbrowser,
     curatedTemplate: templates.editorial,
     searchResultTemplate: templates.search,
 
@@ -368,7 +367,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       var container = this.get('container'),
           renderType = this.get('renderType');
       this._cleanUp(); // Clear out any existing tokens.
-      container.setHTML(this.template); // XXX
+      container.setHTML(this.template());
       container.appendTo(this.get('parentContainer'));
       // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();

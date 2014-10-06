@@ -23,7 +23,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 YUI.add('added-services-button', function(Y) {
 
-  var views = Y.namespace('juju.views');
+  var views = Y.namespace('juju.views'),
+      templates = views.Templates;
 
   /**
     Adds the added services button render method.
@@ -39,7 +40,17 @@ YUI.add('added-services-button', function(Y) {
 
       @method _renderAddedServicesButton
     */
-    _renderAddedServicesButton: function() {}
+    _renderAddedServicesButton: function(serviceCount, closed) {
+      if (!this._addedServicesButton) {
+        this._addedServicesButton = new views.AddedServicesButton();
+      }
+      this._addedServicesButton.setAttrs({
+        serviceCount: serviceCount || 0,
+        closed: closed || false
+      });
+      this.get('container').one('.added-services-button').setHTML(
+          this._addedServicesButton.render().get('container'));
+    }
   };
 
   views.AddedServicesButtonExtension = AddedServicesButtonExtension;
@@ -52,6 +63,8 @@ YUI.add('added-services-button', function(Y) {
   */
   var AddedServicesButton = Y.Base.create('added-services-button', Y.View, [], {
 
+    template: templates['added-services-button'],
+
     /**
       Sets up the added services button.
 
@@ -60,12 +73,50 @@ YUI.add('added-services-button', function(Y) {
     initializer: function() {},
 
     /**
+      Renders the Added Services Button to the views container. Render is
+      idempotent.
+
+      @method render
+      @return {Object} reference to the view.
+    */
+    render: function() {
+      this.get('container').setHTML(this.template({
+        count: this.get('serviceCount'),
+        closed: this.get('closed')
+      }));
+      return this;
+    },
+
+    /**
       Property tears down the added services button.
 
       @method destructor
     */
     destructor: function() {}
 
+  }, {
+    ATTRS: {
+      /**
+        The number of services the user has in their environment.
+
+        @attribute serviceCount
+        @type {Integer}
+        @default 0
+      */
+      serviceCount: {
+        value: 0
+      },
+      /**
+        Used to indicate weather or not the added services view is shown or not.
+
+        @attribute closed
+        @type {Boolean}
+        @default false
+      */
+      closed: {
+        value: false
+      }
+    }
   });
 
   views.AddedServicesButton = AddedServicesButton;
@@ -73,6 +124,7 @@ YUI.add('added-services-button', function(Y) {
 }, '', {
   requires: [
     'base-build',
+    'juju-templates',
     'view'
   ]
 });
