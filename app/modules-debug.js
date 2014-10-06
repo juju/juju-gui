@@ -319,6 +319,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/ghost-deployer-extension.js'
         },
 
+        'added-services-button': {
+          fullpath: '/juju-ui/subapps/browser/views/added-services-button.js'
+        },
+
         'juju-views': {
           use: [
             'handlebars',

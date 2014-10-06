@@ -35,7 +35,8 @@ YUI.add('juju-charmbrowser', function(Y) {
     views.utils.apiFailingView,
     Y.Event.EventTracker,
     widgets.browser.IndicatorManager,
-    views.SearchWidgetMgmtExtension
+    views.SearchWidgetMgmtExtension,
+    views.AddedServicesButtonExtension
   ], {
 
     events: {
@@ -371,6 +372,8 @@ YUI.add('juju-charmbrowser', function(Y) {
       container.appendTo(this.get('parentContainer'));
       // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();
+      // Provided by 'added-services-button.jd'.
+      this._renderAddedServicesButton();
 
       this.showIndicator(container.one('.charm-list'));
 
@@ -469,6 +472,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     'juju-view-utils',
     'view',
     'juju-models',
-    'querystring'
+    'querystring',
+    'added-services-button'
   ]
 });
