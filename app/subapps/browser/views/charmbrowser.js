@@ -373,7 +373,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       this._renderSearchWidget();
       if (window.flags && window.flags.as) {
         // Provided by 'added-services-button.js'.
-        this._renderAddedServicesButton();
+        this._renderAddedServicesButton(this.get('db').services.size(), true);
       }
 
       this.showIndicator(container.one('.charm-list'));

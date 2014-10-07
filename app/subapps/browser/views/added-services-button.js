@@ -43,6 +43,7 @@ YUI.add('added-services-button', function(Y) {
     _renderAddedServicesButton: function(serviceCount, closed) {
       if (!this._addedServicesButton) {
         this._addedServicesButton = new views.AddedServicesButton();
+        this._addedServicesButton.addTarget(this);
       }
       this._addedServicesButton.setAttrs({
         serviceCount: serviceCount || 0,
@@ -70,7 +71,24 @@ YUI.add('added-services-button', function(Y) {
 
       @method initializer
     */
-    initializer: function() {},
+    initializer: function() {
+      this._clickEvent = this.get('container')
+                             .on('click', this._clickHandler, this);
+    },
+
+    /**
+      Click event handler for the container. Fires a 'toggleAddedServices' event
+      with a payload about whether it should show or hide the Added Services.
+
+      @method _clickHandler
+      @param {Object} e The click event facade.
+    */
+    _clickHandler: function(e) {
+      e.preventDefault();
+      this.fire('changeState', {
+        sectionA: this.get('closed') ? 'services' : 'charmbrowser'
+      });
+    },
 
     /**
       Renders the Added Services Button to the views container. Render is
@@ -92,7 +110,9 @@ YUI.add('added-services-button', function(Y) {
 
       @method destructor
     */
-    destructor: function() {}
+    destructor: function() {
+      this._clickEvent.detach();
+    }
 
   }, {
     ATTRS: {
