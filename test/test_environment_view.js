@@ -834,7 +834,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.render();
           view.topo.fire('fade', {serviceNames: ['mysql']});
           // Do this behind a timeout due to the 400ms transition.
-          Y.later(500, this, function() {
+          setTimeout(function() {
             assert.equal(view.topo.vis.selectAll('.rel-group')
               .filter(function(d) {
              return d.id === 'relation-0000000001';
@@ -848,7 +848,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             view.topo.fire('show', {serviceNames: ['mysql']});
             // To minimize test length, ensure that the 'show' transition is
             // underway.
-            Y.later(200, this, function() {
+            setTimeout(function() {
               assert.equal(parseFloat(view.topo.vis.selectAll('.rel-group')
                 .filter(function(d) {
                return d.id === 'relation-0000000001';
@@ -860,8 +860,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
              })
                 .attr('opacity'), 10) > 0.2, true);
               done();
-            });
-          });
+            }.bind(this), 200);
+          }.bind(this), 500);
         }
     );
 
