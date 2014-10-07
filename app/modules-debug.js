@@ -586,6 +586,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/charmbrowser.js'
         },
 
+        'juju-addedservices': {
+          fullpath: '/juju-ui/subapps/browser/views/addedservices.js'
+        },
+
         //Browser Models
         'juju-browser-models': {
           fullpath: '/juju-ui/models/browser.js'
