@@ -87,7 +87,6 @@ YUI.add('juju-topology', function(Y) {
       return;
     },
 
-
     renderOnce: function() {
       var svg,
           vis,

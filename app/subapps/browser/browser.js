@@ -227,6 +227,29 @@ YUI.add('subapp-browser', function(Y) {
           }
         }
       }, this);
+
+      this.on('highlight', function(e) {
+        this.get('topo').fire('highlight', { serviceName: e.serviceName,
+          highlightRelated: e.highlightRelated });
+      });
+
+      this.on('unhighlight', function(e) {
+        this.get('topo').fire('unhighlight', { serviceName: e.serviceName,
+          unhighlightRelated: e.unhighlightRelated });
+      });
+
+      this.on('fade', function(e) {
+        var fadeLevels = {
+          'dim': '0.6',
+          'hidden': '0.2'
+        };
+        this.get('topo').fire('fade', { serviceNames: e.serviceNames,
+          alpha: fadeLevels[e.fadeLevel] });
+      }, this);
+
+      this.on('show', function(e) {
+        this.get('topo').fire('show', { serviceNames: e.serviceNames });
+      }, this);
     },
 
     /**

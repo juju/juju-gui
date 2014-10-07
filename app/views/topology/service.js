@@ -141,6 +141,8 @@ YUI.add('juju-topology-service', function(Y) {
         new_href += 'sub_module.svg';
       } else if ((d.pending || d.deleted)) {
         new_href += 'service_module_pending.svg';
+      } else if (d.highlighted) {
+        new_href += 'service_module_selected.svg';
       } else {
         new_href += 'service_module.svg';
       }
@@ -362,6 +364,22 @@ YUI.add('juju-topology-service', function(Y) {
       },
       yui: {
         /**
+          Highlight a service and, if specified, related services.
+
+          @event highlight
+          @param {Object} An object with a service name and a flag indicating
+            whether or not to highlight related services.
+        */
+        highlight: 'highlight',
+        /**
+          Unhighlight a service and, if specified, related services.
+
+          @event unhighlight
+          @param {Object} An object with a service name and a flag indicating
+            whether or not to unhighlight related services.
+        */
+        unhighlight: 'unhighlight',
+        /**
           Show a hidden service (set opacity to 1.0).
 
           @event show
@@ -379,7 +397,8 @@ YUI.add('juju-topology-service', function(Y) {
           Fade a given service (set opacity to 0.2).
 
           @event fade
-          @param {Object} An object with a d3 selection attribute.
+          @param {Object} An object with a d3 selection attribute or a service
+            name attribute.
         */
         fade: 'fade',
         /**
@@ -1369,10 +1388,73 @@ YUI.add('juju-topology-service', function(Y) {
     /*
      * Show/hide/fade selection.
      */
+    /**
+      Add the highlight attribute from a service and, optionally, related
+      services.
+
+      @method highlight
+      @param {Object} evt The event facade.
+    */
+    highlight: function(evt) {
+      var serviceNames = [evt.serviceName];
+      var topo = this.get('component');
+      // Get related services and add to serviceNames.
+      if (evt.highlightRelated) {
+        var service = topo.service_boxes[serviceNames[0]].model;
+        var relationData = utils.getRelationDataForService(
+            topo.get('db'), service);
+        relationData.forEach(function(relation) {
+          serviceNames.push(relation.far.service);
+        });
+      }
+      serviceNames.forEach(function(service) {
+        topo.service_boxes[service].highlighted = true;
+      });
+      var selection = this.selectionFromServiceNames(serviceNames);
+      selection.select('.service-block-image')
+        .attr('href', '/juju-ui/assets/svgs/service_module_selected.svg');
+    },
+
+    /**
+      Remove the highlight attribute from a service and, optionally, related
+      services.
+
+      @method unhighlight
+      @param {Object} evt The event facade.
+    */
+    unhighlight: function(evt) {
+      var serviceNames = [evt.serviceName];
+      var topo = this.get('component');
+      // Get related services and add to serviceNames.
+      if (evt.unhighlightRelated) {
+        var service = topo.service_boxes[serviceNames[0]].model;
+        var relationData = utils.getRelationDataForService(
+            topo.get('db'), service);
+        relationData.forEach(function(relation) {
+          serviceNames.push(relation.far.service);
+        });
+      }
+      serviceNames.forEach(function(service) {
+        topo.service_boxes[service].highlighted = false;
+      });
+      var selection = this.selectionFromServiceNames(serviceNames);
+      selection.select('.service-block-image')
+        .attr('href', '/juju-ui/assets/svgs/service_module.svg');
+    },
+
     show: function(evt) {
       var selection = evt.selection;
-      selection.attr('opacity', '1.0')
-                .style('display', 'block');
+      if (!selection) {
+        var serviceNames = evt.serviceNames;
+        if (!serviceNames || serviceNames.length === 0) {
+          serviceNames = Object.keys(this.get('component').service_boxes);
+        }
+        selection = this.selectionFromServiceNames(serviceNames);
+      }
+      selection.transition()
+        .duration(400)
+        .attr('opacity', '1.0')
+        .style('display', 'block');
     },
 
     hide: function(evt) {
@@ -1384,9 +1466,32 @@ YUI.add('juju-topology-service', function(Y) {
     fade: function(evt) {
       var selection = evt.selection,
               alpha = evt.alpha;
+      if (!selection) {
+        var serviceNames = evt.serviceNames;
+        if (!serviceNames) {
+          return;
+        }
+        selection = this.selectionFromServiceNames(serviceNames);
+      }
       selection.transition()
             .duration(400)
             .attr('opacity', alpha !== undefined && alpha || '0.2');
+    },
+
+
+    /**
+      Given a list of service names, return a D3 selection of those service
+      blocks.
+
+      @method selectionFromServiceNames
+      @param {Array} serviceNames A list of service names.
+    */
+    selectionFromServiceNames: function(serviceNames) {
+      var topo = this.get('component');
+      return topo.vis.selectAll('.service')
+        .filter(function(d) {
+            return serviceNames.indexOf(d.id) > -1;
+          });
     },
 
     /**

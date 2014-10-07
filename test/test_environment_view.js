@@ -829,6 +829,42 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        }
     );
 
+    it('should be able to fade and show services and relations',
+        function(done) {
+          view.render();
+          view.topo.fire('fade', {serviceNames: ['mysql']});
+          // Do this behind a timeout due to the 400ms transition.
+          setTimeout(function() {
+            assert.equal(view.topo.vis.selectAll('.rel-group')
+              .filter(function(d) {
+             return d.id === 'relation-0000000001';
+           })
+              .attr('opacity'), '0.2');
+            assert.equal(view.topo.vis.selectAll('.service')
+              .filter(function(d) {
+             return d.id === 'mysql';
+           })
+              .attr('opacity'), '0.2');
+            view.topo.fire('show', {serviceNames: ['mysql']});
+            // To minimize test length, ensure that the 'show' transition is
+            // underway.
+            setTimeout(function() {
+              assert.equal(parseFloat(view.topo.vis.selectAll('.rel-group')
+                .filter(function(d) {
+               return d.id === 'relation-0000000001';
+             })
+                .attr('opacity'), 10) > 0.2, true);
+              assert.equal(parseFloat(view.topo.vis.selectAll('.service')
+                .filter(function(d) {
+               return d.id === 'mysql';
+             })
+                .attr('opacity'), 10) > 0.2, true);
+              done();
+            }.bind(this), 200);
+          }.bind(this), 500);
+        }
+    );
+
     // Tests for the service menu.
     it('must be able to toggle the service menu', function(done) {
       var view = new views.environment({
