@@ -35,7 +35,8 @@ YUI.add('juju-charmbrowser', function(Y) {
     views.utils.apiFailingView,
     Y.Event.EventTracker,
     widgets.browser.IndicatorManager,
-    views.SearchWidgetMgmtExtension
+    views.SearchWidgetMgmtExtension,
+    views.AddedServicesButtonExtension
   ], {
 
     events: {
@@ -50,8 +51,7 @@ YUI.add('juju-charmbrowser', function(Y) {
       'new': 2
     },
 
-    // XXX This template will be moved to an external file soon.
-    template: '<div class="search-widget"></div><div class="charm-list"></div>',
+    template: templates.charmbrowser,
     curatedTemplate: templates.editorial,
     searchResultTemplate: templates.search,
 
@@ -367,10 +367,14 @@ YUI.add('juju-charmbrowser', function(Y) {
       var container = this.get('container'),
           renderType = this.get('renderType');
       this._cleanUp(); // Clear out any existing tokens.
-      container.setHTML(this.template); // XXX
+      container.setHTML(this.template());
       container.appendTo(this.get('parentContainer'));
       // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();
+      if (window.flags && window.flags.as) {
+        // Provided by 'added-services-button.js'.
+        this._renderAddedServicesButton(this.get('db').services.size(), true);
+      }
 
       this.showIndicator(container.one('.charm-list'));
 
@@ -462,13 +466,14 @@ YUI.add('juju-charmbrowser', function(Y) {
 
 }, '', {
   requires: [
+    'added-services-button',
     'browser-token-container',
     'browser-overlay-indicator',
-    'search-widget-mgmt-extension',
     'event-tracker',
-    'juju-view-utils',
-    'view',
     'juju-models',
-    'querystring'
+    'juju-view-utils',
+    'querystring',
+    'search-widget-mgmt-extension',
+    'view'
   ]
 });

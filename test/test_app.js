@@ -114,7 +114,10 @@ function injectData(app, data) {
     it('should not have login credentials if missing from the configuration',
         function() {
           constructAppInstance({
-            env: juju.newEnvironment({ conn: new utils.SocketStub() })
+            env: juju.newEnvironment({
+              conn: new utils.SocketStub(),
+              ecs: new juju.EnvironmentChangeSet()
+            })
           }, this);
           assert.equal(app.env.get('user'), undefined);
           assert.equal(app.env.get('password'), undefined);
@@ -144,7 +147,8 @@ function injectData(app, data) {
                 user: the_username,
                 password: the_password,
                 viewContainer: container,
-                conn: {close: function() {}}});
+                conn: {close: function() {}},
+                ecs: new juju.EnvironmentChangeSet()});
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
             credentials.user.should.equal(the_username);
@@ -161,14 +165,18 @@ function injectData(app, data) {
         container: container,
         readOnly: true,
         viewContainer: container,
-        conn: {close: function() {}}
+        conn: {close: function() {}},
+        ecs: new juju.EnvironmentChangeSet()
       });
       assert.isTrue(app.env.get('readOnly'));
     });
 
     it('should produce a valid index', function() {
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       }, this);
       var container = app.get('container');
       container.getAttribute('id').should.equal('test-container');
@@ -182,7 +190,8 @@ function injectData(app, data) {
           conn: {
             send: function() {},
             close: function() {}
-          }
+          },
+          ecs: new juju.EnvironmentChangeSet()
         }),
         environment_name: environment_name
       }, this);
@@ -198,7 +207,8 @@ function injectData(app, data) {
              conn: {
                send: function() {},
                close: function() {}
-             }
+             },
+             ecs: new juju.EnvironmentChangeSet()
            })
          });
          assert.equal(
@@ -212,7 +222,8 @@ function injectData(app, data) {
           conn: {
             send: function() {},
             close: function() {}
-          }
+          },
+          ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
       var name = 'Sandbox';
@@ -229,7 +240,8 @@ function injectData(app, data) {
           conn: {
             send: function() {},
             close: function() {}
-          }
+          },
+          ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
       var name = 'Sandbox';
@@ -250,7 +262,8 @@ function injectData(app, data) {
           conn: {
             send: function() {},
             close: function() {}
-          }
+          },
+          ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
 
