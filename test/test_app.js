@@ -99,6 +99,7 @@ function injectData(app, data) {
       }
       config.container = container;
       config.viewContainer = container;
+      config.ecs = new juju.EnvironmentChangeSet();
       if (context) {
         var _renderDeployerBarView = utils.makeStubMethod(
             Y.juju.App.prototype, '_renderDeployerBarView');
