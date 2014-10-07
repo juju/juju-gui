@@ -369,49 +369,60 @@ The easiest way to work with a real Juju installation, See
 <http://jujucharms.com/~juju-gui/precise/juju-gui> or
 <http://jujucharms.com/charms/precise/juju-gui> for details.
 
-Alternatively, you can try the instructions below, but be warned that they
-have bit-rotted and we have not felt the need to update them.  If you get them
-to work, please update the docs and submit a branch for review (see below).
+You can try the following instructions to connect to a local juju deployment.
 
-Bit-Rotted Instructions
------------------------
+Local Juju deployment
+---------------------
 
-You can use the GUI with any environment, but for development purposes, a
-local environment works well. One environment option specific to this branch
-is the ``api-port``. An appropriate sample configuration::
+Once your local Juju deployment is up and running, you will need to
+refer to the .jenv file to get a few of the settings needed to configure
+the development server for juju-gui.
 
-  default: dev
-  environments:
-    dev:
-      type: local
-      data-dir: /home/kapil/.juju/local
-      admin-secret: b3a5dee4fb8c4fc9a4db04751e5936f4
-      default-series: precise
-      juju-origin: ppa
-      api-port: 8081
+The current environment name will be in `~/.juju/current-environment` (by
+default for a local deployment it will be 'local')
 
-Note that ``juju-origin`` is set to the PPA, the API server runs outside of
-the container, and it is launched using whichever branch you are using.
+The .jenv file will be in ~/.juju/environments/<environment name>.jenv
+(so by default `~/.juju/environments/local.jenv` )
 
-Also note that the ``api-port`` should be set at ``8081``, which the GUI's
-initial environment connection currently defaults to.
+Within the .jenv file, find the section starting with `state-servers:`,
+and in the following lines starting with a hyphen will be a list of host
+name and port combinations that describe where the juju state server is
+exposing the web socket API. Pick the one that will allow you access
+from the web browser, and remember it for the instructions below. For
+example, we will use `trusty-dev:17070` as the API endpoint.
 
-You will need to bootstrap the local environment, and deploy one service.
-The API server needs access to the provisioning credentials which are
-lazily initialized in Juju upon usage.
+Before running the devel or debug targets, first modify the
+app/config-debug.js file to turn off the sandbox mode, use the local
+juju credentials, and configure the websockets url:
 
-By default, ``rapi-rollup`` uses a self-signed certificate; because of that you
-will need to visit the <https://localhost:8081/ws> WebSocket URL with your
-browser and accept the included self-signed certificate, or the WebSocket
-encrypted connection will not work.
+ * remove the `socket_protocol` and `socket_port` keys from the 
+   `juju_config` map.
 
-In order to use a different certificate you add an ``api-keys`` option to the
-config above: its value will be the path of the directory containing the
-certificate and the private key, whose filenames will have to be respectively
-``juju.crt`` and ``juju.key``.
+ * add a new key `socket_url` and, using the host and port from the
+   .jenv file above, set the value to 'wss://<host>:<port>/'. Using 
+   the example that would be: `wss://trusty-dev:17070/`. Because 
+   the TLS certificate won't be trusted by default, you'll need to
+   first visit `https://<host>:<port>` in your browser to add an 
+   exception for the certificate.  If you forget to do this you may
+   see an error in juju-gui web console indicating that the websocket
+   opening handshake was canceled, or some similar error.
 
-After this, the GUI should be functional (it automatically polls the
-API server for establishing a websocket).
+ * change the `sandbox` and `simulateEvents` keys to `false`.
+
+ * remove the `user` and `password` keys to default back to the juju
+   environment credentials.
+
+ * optionally: add help text to remind you which credentials to use
+   when logging in; modify the `login_help` key to show text that
+   instructs the user to use the password from the .jenv file.
+
+
+Once you've made these changes you can run `make devel` to start the
+local node.js dev server, or you can run `make debug` to start the local
+python server. Either way, once the server is running you can browse the
+local juju deployment through the gui. Congratulations.
+
+
 
 Running Unit Tests
 ==================
