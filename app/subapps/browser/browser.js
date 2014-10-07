@@ -845,6 +845,6 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-sidebar',
     'machine-view-panel-extension',
     'juju-charmbrowser',
-    'juju-addedservices'
+    'juju-added-services'
   ]
 });
