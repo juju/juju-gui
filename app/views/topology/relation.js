@@ -119,6 +119,13 @@ YUI.add('juju-topology-relation', function(Y) {
         */
         clearState: 'clearState',
         /**
+          Fade relations related to a service.
+
+          @event fade
+          @param {Object} An object with a service name to hide
+        */
+        fade: 'fade',
+        /**
           Ensure that mousemove events bubble to canvas when moving over a
           relation line/label.
 
@@ -152,6 +159,12 @@ YUI.add('juju-topology-relation', function(Y) {
           @param {Object} service The model for the service that was moved.
         */
         servicesRendered: 'updateLinks',
+        /**
+          Show relations.
+  
+          @event show
+        */
+        show: 'show',
         /**
           Ensure the dragline follows the cursor outside of services.
 
@@ -690,6 +703,11 @@ YUI.add('juju-topology-relation', function(Y) {
       this.set('relationMenuRelation', undefined);
     },
 
+    /**
+      Stop the process of building a relation between two services.
+
+      @method cancelRelationBuild
+    */
     cancelRelationBuild: function() {
       var topo = this.get('component');
       var vis = topo.vis;
@@ -705,6 +723,51 @@ YUI.add('juju-topology-relation', function(Y) {
       vis.selectAll('.service').classed('selectable-service', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
+    },
+
+    /**
+      Show faded relations for a given service or services.
+
+      @method show
+      @param {Object} evt The event facade.
+    */
+    show: function(evt) {
+      var serviceNames = evt.serviceNames;
+      var topo = this.get('component');
+      if (!serviceNames || serviceNames.length === 0) {
+        serviceNames = Object.keys(topo.service_boxes);
+      }
+      var selection = topo.vis.selectAll('.rel-group')
+        .filter(function(d) {
+          return serviceNames.indexOf(d.source.id) > -1 ||
+            serviceNames.indexOf(d.target.id) > -1;
+        });
+      selection.transition()
+        .duration(400)
+        .attr('opacity', '1.0');
+    },
+
+    /**
+      Fade relations for a given service or services.
+
+      @method fade
+      @param {Object} evt The event facade
+    */
+    fade: function(evt) {
+      var serviceNames = evt.serviceNames;
+      var alpha = evt.alpha;
+      if (!serviceNames) {
+        return;
+      }
+      var topo = this.get('component');
+      var selection = topo.vis.selectAll('.rel-group')
+        .filter(function(d) {
+          return serviceNames.indexOf(d.source.id) > -1 ||
+            serviceNames.indexOf(d.target.id) > -1;
+        });
+      selection.transition()
+        .duration(400)
+        .attr('opacity', alpha !== undefined ? alpha : '0.2');
     },
 
     /**
@@ -755,7 +818,8 @@ YUI.add('juju-topology-relation', function(Y) {
                 return (d.id in invalidRelationTargets &&
                           d.id !== service.id);
               });
-      topo.fire('fade', { selection: sel });
+      topo.fire('fade', { selection: sel,
+            serviceNames: Object.keys(invalidRelationTargets) });
       sel.classed('selectable-service', false);
 
       // Store possible endpoints.
