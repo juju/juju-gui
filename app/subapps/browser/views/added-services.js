@@ -23,16 +23,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   @module juju.views
 */
-YUI.add('juju-addedservices', function(Y) {
+YUI.add('juju-added-services', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
       Templates = views.Templates;
 
-  ns.AddedServices = Y.Base.create('addedservices', Y.View, [
+  ns.AddedServices = Y.Base.create('added-services', Y.View, [
     views.SearchWidgetMgmtExtension
   ], {
 
-    template: Templates.addedservices,
+    template: Templates['added-services'],
 
     /**
       Sets the default properties.

@@ -24,7 +24,7 @@ describe('added services view', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'juju-tests-utils',
-        'juju-addedservices',
+        'juju-added-services',
         function(Y) {
           utils = Y.namespace('juju-tests.utils');
           View = Y.juju.browser.views.AddedServices;
