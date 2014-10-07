@@ -243,7 +243,7 @@ YUI.add('subapp-browser', function(Y) {
           'hidden': '0.2'
         };
         this.get('topo').fire('fade', { serviceNames: e.serviceNames,
-          alpha: fadeLevels[e.fadeLevel] })
+          alpha: fadeLevels[e.fadeLevel] });
       }, this);
 
       this.on('show', function(e) {

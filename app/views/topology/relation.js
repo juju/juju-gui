@@ -161,7 +161,7 @@ YUI.add('juju-topology-relation', function(Y) {
         servicesRendered: 'updateLinks',
         /**
           Show relations.
-  
+
           @event show
         */
         show: 'show',
@@ -739,9 +739,9 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       var selection = topo.vis.selectAll('.rel-group')
         .filter(function(d) {
-          return serviceNames.indexOf(d.source.id) > -1 ||
-            serviceNames.indexOf(d.target.id) > -1;
-        });
+            return serviceNames.indexOf(d.source.id) > -1 ||
+                serviceNames.indexOf(d.target.id) > -1;
+          });
       selection.transition()
         .duration(400)
         .attr('opacity', '1.0');
@@ -762,9 +762,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = this.get('component');
       var selection = topo.vis.selectAll('.rel-group')
         .filter(function(d) {
-          return serviceNames.indexOf(d.source.id) > -1 ||
-            serviceNames.indexOf(d.target.id) > -1;
-        });
+            return serviceNames.indexOf(d.source.id) > -1 ||
+                serviceNames.indexOf(d.target.id) > -1;
+          });
       selection.transition()
         .duration(400)
         .attr('opacity', alpha !== undefined ? alpha : '0.2');
@@ -819,7 +819,7 @@ YUI.add('juju-topology-relation', function(Y) {
                           d.id !== service.id);
               });
       topo.fire('fade', { selection: sel,
-            serviceNames: Object.keys(invalidRelationTargets) });
+        serviceNames: Object.keys(invalidRelationTargets) });
       sel.classed('selectable-service', false);
 
       // Store possible endpoints.

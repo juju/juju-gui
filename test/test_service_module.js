@@ -278,11 +278,11 @@ describe('service module events', function() {
     serviceModule.highlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, true);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
-      '/juju-ui/assets/svgs/service_module_selected.svg');
+        '/juju-ui/assets/svgs/service_module_selected.svg');
     serviceModule.unhighlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, false);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
-      '/juju-ui/assets/svgs/service_module.svg');
+        '/juju-ui/assets/svgs/service_module.svg');
   });
 
   it('should highlight and unhighlight related services', function() {
@@ -307,7 +307,7 @@ describe('service module events', function() {
 
   it('can generate a selection from a list of service names', function() {
     assert.deepEqual(serviceModule.selectionFromServiceNames(['haproxy']),
-      topo.vis.selectAll('.service'));
+        topo.vis.selectAll('.service'));
   });
 
   it('should fade pending services but not deployed services', function() {

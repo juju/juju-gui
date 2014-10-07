@@ -1490,8 +1490,8 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       return topo.vis.selectAll('.service')
         .filter(function(d) {
-          return serviceNames.indexOf(d.id) > -1;
-        });
+            return serviceNames.indexOf(d.id) > -1;
+          });
     },
 
     /**

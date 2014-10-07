@@ -837,13 +837,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Y.later(500, this, function() {
             assert.equal(view.topo.vis.selectAll('.rel-group')
               .filter(function(d) {
-                return d.id === 'relation-0000000001';
-              })
+             return d.id === 'relation-0000000001';
+           })
               .attr('opacity'), '0.2');
             assert.equal(view.topo.vis.selectAll('.service')
               .filter(function(d) {
-                return d.id === 'mysql';
-              })
+             return d.id === 'mysql';
+           })
               .attr('opacity'), '0.2');
             view.topo.fire('show', {serviceNames: ['mysql']});
             // To minimize test length, ensure that the 'show' transition is
@@ -851,13 +851,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Y.later(200, this, function() {
               assert.equal(parseFloat(view.topo.vis.selectAll('.rel-group')
                 .filter(function(d) {
-                  return d.id === 'relation-0000000001';
-                })
+               return d.id === 'relation-0000000001';
+             })
                 .attr('opacity'), 10) > 0.2, true);
               assert.equal(parseFloat(view.topo.vis.selectAll('.service')
                 .filter(function(d) {
-                  return d.id === 'mysql';
-                })
+               return d.id === 'mysql';
+             })
                 .attr('opacity'), 10) > 0.2, true);
               done();
             });
