@@ -113,6 +113,25 @@ describe('charmbrowser view', function() {
       assert.notEqual(indicator.lastArguments()[0], null);
     });
 
+    it('calls to render the added services button', function() {
+      window.flags = {};
+      window.flags.as = true;
+      var renderAdded = utils.makeStubMethod(
+          charmBrowser, '_renderAddedServicesButton');
+      this._cleanups.push(renderAdded.reset);
+      var sizeStub = utils.makeStubFunction(7);
+      charmBrowser.set('db', {
+        services: {
+          size: sizeStub
+        }
+      });
+      charmBrowser.render();
+      assert.equal(renderAdded.callCount(), 1);
+      assert.deepEqual(renderAdded.lastArguments(), [7, true]);
+      assert.equal(sizeStub.callCount(), 1);
+      window.flags = {};
+    });
+
     it('calls to render the search results when requested', function() {
       var searchResults = utils.makeStubMethod(
           charmBrowser, '_loadSearchResults');

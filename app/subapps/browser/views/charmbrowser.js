@@ -466,14 +466,14 @@ YUI.add('juju-charmbrowser', function(Y) {
 
 }, '', {
   requires: [
+    'added-services-button',
     'browser-token-container',
     'browser-overlay-indicator',
-    'search-widget-mgmt-extension',
     'event-tracker',
-    'juju-view-utils',
-    'view',
     'juju-models',
+    'juju-view-utils',
     'querystring',
-    'added-services-button'
+    'search-widget-mgmt-extension',
+    'view'
   ]
 });

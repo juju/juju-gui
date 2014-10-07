@@ -106,7 +106,7 @@ YUI.add('added-services-button', function(Y) {
     },
 
     /**
-      Property tears down the added services button.
+      Properly tears down the added services button.
 
       @method destructor
     */
@@ -144,6 +144,7 @@ YUI.add('added-services-button', function(Y) {
 }, '', {
   requires: [
     'base-build',
+    'event',
     'juju-templates',
     'view'
   ]
