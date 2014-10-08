@@ -115,7 +115,7 @@ function injectData(app, data) {
     it('should not have login credentials if missing from the configuration',
         function() {
           constructAppInstance({
-            env: juju.newEnvironment({
+            env: new juju.environments.GoEnvironment({
               conn: new utils.SocketStub(),
               ecs: new juju.EnvironmentChangeSet()
             })
@@ -123,18 +123,6 @@ function injectData(app, data) {
           assert.equal(app.env.get('user'), undefined);
           assert.equal(app.env.get('password'), undefined);
         });
-
-    it('should report backend misconfiguration', function() {
-      var config = {
-        sandbox: true,
-        apiBackend: 'not really a backend'};
-      assert.throws(
-          function() {
-            /* jshint -W031*/
-            new Y.juju.App(config);
-          },
-          'unrecognized backend type: not really a backend');
-    });
 
     it('should propagate login credentials from the configuration',
         function(done) {
@@ -174,7 +162,7 @@ function injectData(app, data) {
 
     it('should produce a valid index', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
@@ -187,7 +175,7 @@ function injectData(app, data) {
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: {
             send: function() {},
             close: function() {}
@@ -204,7 +192,7 @@ function injectData(app, data) {
     it('should show a generic environment name if none configured',
        function() {
          constructAppInstance({
-           env: juju.newEnvironment({
+           env: new juju.environments.GoEnvironment({
              conn: {
                send: function() {},
                close: function() {}
@@ -219,7 +207,7 @@ function injectData(app, data) {
 
     it('should show a the environment name if one is configured', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: {
             send: function() {},
             close: function() {}
@@ -237,7 +225,7 @@ function injectData(app, data) {
 
     it('should show the environment name override when requested', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: {
             send: function() {},
             close: function() {}
@@ -259,7 +247,7 @@ function injectData(app, data) {
 
     it('hides the browser subapp on some urls', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: {
             send: function() {},
             close: function() {}
@@ -294,7 +282,7 @@ function injectData(app, data) {
 
     it('should display a zoom message on small browsers', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
@@ -306,7 +294,7 @@ function injectData(app, data) {
 
     it('should not display the zoom message more than once', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
@@ -321,7 +309,7 @@ function injectData(app, data) {
 
     it('should show the correct message on a mac', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
@@ -333,7 +321,7 @@ function injectData(app, data) {
 
     it('should show the correct message for non mac', function() {
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
@@ -347,7 +335,7 @@ function injectData(app, data) {
       container.appendChild(Y.Node.create(
           '<div id="environment-header"></div>'));
       constructAppInstance({
-        env: juju.newEnvironment({
+        env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
@@ -402,7 +390,7 @@ describe('File drag over notification system', function() {
   function constructAppInstance(config) {
     config = config || {};
     if (!config.env) {
-      config.env = juju.newEnvironment({
+      config.env = new juju.environments.GoEnvironment({
         conn: {
           send: function() {},
           close: function() {}
@@ -626,7 +614,7 @@ describe('File drag over notification system', function() {
       container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
-      env = juju.newEnvironment({conn: conn, ecs: ecs});
+      env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
       env.setCredentials({user: 'user', password: 'password'});
       destroyMe = [env, ecs];
       done();
@@ -1017,7 +1005,7 @@ describe('File drag over notification system', function() {
     it('should be able to handle env connection status changes', function() {
       var juju = Y.namespace('juju'),
           conn = new Y['juju-tests'].utils.SocketStub(),
-          env = juju.newEnvironment({
+          env = new juju.environments.GoEnvironment({
             conn: conn,
             user: 'user',
             password: 'password'
@@ -1101,7 +1089,6 @@ describe('File drag over notification system', function() {
           { container: container,
             viewContainer: container,
             sandbox: true,
-            apiBackend: 'python',
             consoleEnabled: true,
             user: 'admin',
             password: 'admin',
@@ -1118,7 +1105,6 @@ describe('File drag over notification system', function() {
         container: container,
         viewContainer: container,
         sandbox: true,
-        apiBackend: 'go',
         store: new Y.juju.charmworld.APIv3({})
       });
       app.showView(new Y.View());

@@ -453,29 +453,20 @@ YUI.add('juju-gui', function(Y) {
           readOnly: this.get('readOnly'),
           conn: this.get('conn')
         };
-        var apiBackend = this.get('apiBackend');
-        var webModule = Y.namespace('juju.environments.web');
+        var environments = Y.namespace('juju.environments');
+        var webModule = environments.web;
         if (this.get('sandbox')) {
           // The GUI is running in sandbox mode.
-          var sandboxModule = Y.namespace('juju.environments.sandbox');
-          var State = Y.namespace('juju.environments').FakeBackend;
+          var sandboxModule = environments.sandbox;
+          var State = environments.FakeBackend;
           var state = new State({store: this.get('store')});
           if (envOptions.user && envOptions.password) {
             var credentials = {};
             credentials[envOptions.user] = envOptions.password;
             state.set('authorizedUsers', credentials);
           }
-          if (apiBackend === 'python') {
-            envOptions.conn = new sandboxModule.ClientConnection(
-                {juju: new sandboxModule.PyJujuAPI({state: state})});
-          } else if (apiBackend === 'go') {
-            envOptions.conn = new sandboxModule.ClientConnection(
-                {juju: new sandboxModule.GoJujuAPI({state: state})});
-          } else {
-            // Clean ourselves up before giving up the ghost, for tests' sake.
-            this.destroy();
-            throw 'unrecognized backend type: ' + apiBackend;
-          }
+          envOptions.conn = new sandboxModule.ClientConnection(
+              {juju: new sandboxModule.GoJujuAPI({state: state})});
           // Instantiate a fake Web handler, which simulates the
           // request/response communication between the GUI and the juju-core
           // HTTPS API.
@@ -487,7 +478,7 @@ YUI.add('juju-gui', function(Y) {
           envOptions.webHandler = new webModule.WebHandler();
         }
 
-        this.env = juju.newEnvironment(envOptions, apiBackend);
+        this.env = new environments.GoEnvironment(envOptions);
       }
 
       // Create an event simulator where possible.
@@ -1573,7 +1564,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-controllers',
     'juju-notification-controller',
     'juju-endpoints-controller',
-    'juju-env',
     'juju-env-fakebackend',
     'juju-fakebackend-simulator',
     'juju-env-sandbox',

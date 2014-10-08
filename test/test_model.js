@@ -1105,7 +1105,7 @@ describe('test_model.js', function() {
 
     beforeEach(function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
-      env = juju.newEnvironment({conn: conn});
+      env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');

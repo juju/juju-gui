@@ -35,7 +35,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       conn = new utils.SocketStub();
-      env = juju.newEnvironment({conn: conn});
+      env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
       conn.open();
     });
@@ -70,7 +70,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     test('credentials passed to the constructor are stored', function() {
       var user = 'Will Smith';
       var password = 'I am legend!';
-      var env = juju.newEnvironment({
+      var env = new juju.environments.GoEnvironment({
         user: user,
         password: password,
         conn: conn
@@ -120,7 +120,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       conn = new utils.SocketStub();
-      env = juju.newEnvironment({conn: conn});
+      env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = utils.makeContainer(this);

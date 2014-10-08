@@ -42,7 +42,7 @@ describe('Service Inspector', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     ecs = new Y.juju.EnvironmentChangeSet();
-    env = Y.juju.newEnvironment({conn: conn, ecs: ecs});
+    env = new Y.juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     env.connect();
   });
 

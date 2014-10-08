@@ -32,7 +32,6 @@ describe.skip('juju application notifications', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-env',
       'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
@@ -65,7 +64,6 @@ describe.skip('juju application notifications', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-env',
       'juju-tests-utils',
       'node-event-simulate',
       'ns-routing-app-extension'],

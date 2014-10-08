@@ -24,7 +24,6 @@ describe('Environment Change Set', function() {
   before(function(done) {
     var modules = [
       'environment-change-set',
-      'juju-env',
       'juju-models',
       'juju-tests-utils'
     ];
@@ -41,7 +40,7 @@ describe('Environment Change Set', function() {
     ecs = new ECS({
       db: dbObj
     });
-    envObj = Y.namespace('juju').newEnvironment({
+    envObj = new Y.juju.environments.GoEnvironment({
       connection: new testUtils.SocketStub(),
       user: 'user',
       password: 'password',

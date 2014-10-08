@@ -273,7 +273,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('bundle helpers watchAll', function() {
     var bundleHelpers, conn, db, env, juju, testUtils, Y;
     var requirements = [
-      'bundle-import-helpers', 'juju-env', 'juju-tests-utils'];
+      'bundle-import-helpers', 'juju-tests-utils'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -286,7 +286,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       conn = new testUtils.SocketStub();
-      env = juju.newEnvironment({
+      env = new juju.environments.GoEnvironment({
         conn: conn, user: 'user', password: 'password'
       }, 'go');
       env.connect();

@@ -1796,7 +1796,6 @@ YUI.add('machine-view-panel', function(Y) {
     'create-machine-view',
     'event-tracker',
     'handlebars',
-    'juju-env',
     'juju-env-go',
     'juju-serviceunit-token',
     'juju-templates',

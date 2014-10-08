@@ -22,7 +22,7 @@ describe('machine view panel view', function() {
       scaleUpView, scaleUpViewRender, services, units, utils, View, view,
       views, Y;
   var requirements = [
-    'drop-target-view-extension', 'event-simulate', 'juju-env', 'juju-env-go',
+    'drop-target-view-extension', 'event-simulate', 'juju-env-go',
     'juju-models', 'juju-views', 'juju-tests-utils', 'machine-view-panel',
     'node', 'node-event-simulate'];
 

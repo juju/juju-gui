@@ -88,7 +88,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'environment-change-set',
-        'juju-env',
         'juju-tests-utils'
       ], function(Y) {
         juju = Y.namespace('juju');
@@ -101,9 +100,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
-      env = juju.newEnvironment({
+      env = new juju.environments.GoEnvironment({
         conn: conn, user: 'user', password: 'password', ecs: ecs
-      }, 'go');
+      });
       env.connect();
       cleanups = [];
     });

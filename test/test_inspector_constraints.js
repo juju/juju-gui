@@ -90,7 +90,7 @@ describe('Inspector Constraints', function() {
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };
-    env = juju.newEnvironment({conn: conn});
+    env = new juju.environments.GoEnvironment({conn: conn});
     env.update_annotations = function() {};
     env.connect();
     view = new views.environment({

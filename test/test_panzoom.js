@@ -26,7 +26,6 @@ describe('pan zoom module', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-env',
       'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
