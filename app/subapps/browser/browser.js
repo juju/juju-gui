@@ -229,26 +229,90 @@ YUI.add('subapp-browser', function(Y) {
       }, this);
 
       this.on('highlight', function(e) {
-        this.get('topo').fire('highlight', { serviceName: e.serviceName,
+        var serviceName = e.serviceName;
+        var db = this.get('db');
+        this.get('topo').fire('highlight', { serviceName: serviceName,
           highlightRelated: e.highlightRelated });
+        var changedMachines = [];
+        db.units.each(function(unit) {
+          if (unit.displayName.split('/')[0] !== serviceName) {
+            unit.hide = true;
+            db.units.fire('change', {
+              changed: {machine: {newVal: unit.machine}},
+              instance: unit
+            });
+            if (changedMachines.indexOf(unit.machine) === -1) {
+              changedMachines.push(unit.machine);
+            }
+          }
+        });
+        changedMachines.forEach(function(machineId) {
+          db.machines.fire('change', {
+            changed: true,
+            instance: db.machines.getById(machineId)
+          })
+        });
       });
 
       this.on('unhighlight', function(e) {
-        this.get('topo').fire('unhighlight', { serviceName: e.serviceName,
+        var db = this.get('db');
+        var serviceName = e.serviceName;
+        this.get('topo').fire('unhighlight', { serviceName: serviceName,
           unhighlightRelated: e.unhighlightRelated });
+        var changedMachines = [];
+        db.units.each(function(unit) {
+          if (unit.displayName.split('/')[0] !== serviceName) {
+            unit.hide = false;
+            db.units.fire('change', {
+              changed: {machine: {newVal: unit.machine}},
+              instance: unit
+            });
+            if (changedMachines.indexOf(unit.machine) === -1) {
+              changedMachines.push(unit.machine);
+            }
+          }
+        });
+        changedMachines.forEach(function(machineId) {
+          db.machines.fire('change', {
+            changed: true,
+            instance: db.machines.getById(machineId)
+          })
+        });
       });
 
       this.on('fade', function(e) {
+        var serviceNames = e.serviceNames;
         var fadeLevels = {
           'dim': '0.6',
           'hidden': '0.2'
         };
-        this.get('topo').fire('fade', { serviceNames: e.serviceNames,
+        var db = this.get('db');
+        this.get('topo').fire('fade', { serviceNames: serviceNames,
           alpha: fadeLevels[e.fadeLevel] });
+        db.units.each(function(unit) {
+          if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
+            unit.fade = true;
+            db.units.fire('change', {
+              changed: {machine: {newVal: unit.machine}},
+              instance: unit
+            });
+          }
+        });
       }, this);
 
       this.on('show', function(e) {
-        this.get('topo').fire('show', { serviceNames: e.serviceNames });
+        var serviceNames = e.serviceNames;
+        var db = this.get('db')
+        this.get('topo').fire('show', { serviceNames: serviceNames });
+        db.units.each(function(unit) {
+          if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
+            unit.fade = false;
+            db.units.fire('change', {
+              changed: {machine: {newVal: unit.machine}},
+              instance: unit
+            });
+          }
+        });
       }, this);
     },
 

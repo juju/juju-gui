@@ -5,6 +5,9 @@
                 background-color: #ddd;
             }
         }
+        &.hidden {
+            display: none;
+        }
         .title {
             margin-right: 10px;
         }
@@ -23,6 +26,12 @@
                 }
                 &.deleted .removed {
                     display: inline;
+                }
+                &.fade {
+                    opacity: 0.2;
+                }
+                &.hide {
+                    display: none;
                 }
                 &:hover {
                     background-color: #eee;

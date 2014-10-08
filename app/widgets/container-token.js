@@ -194,6 +194,14 @@ YUI.add('container-token', function(Y) {
         render: function() {
           var container = this.get('container'),
               machine = this.get('machine');
+          var showMachine = Y.Array.some(machine.units, function(unit) {
+            return !unit.hide
+          });
+          if (!showMachine) {
+            container.addClass('hidden');
+          } else {
+            container.removeClass('hidden');
+          }
           container.setHTML(this.template(machine));
           if (machine.deleted) {
             this.setDeleted();

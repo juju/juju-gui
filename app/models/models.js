@@ -715,6 +715,12 @@ YUI.add('juju-models', function(Y) {
             @type {Boolean}
           */
           deleted: {},
+          hide: {
+            value: false
+          },
+          fade: {
+            value: false
+          },
           config: {},
           /**
             Whether the unit belongs to a service deployed from a subordinate

@@ -1,5 +1,5 @@
 {{#units}}
-  <li class="unit {{#unless agent_state }}uncommitted{{/unless}} {{#if deleted }}deleted{{/if}}"
+  <li class="unit {{#unless agent_state }}uncommitted{{/unless}} {{#if deleted }}deleted{{/if}} {{#if fade}}fade{{/if}} {{#if hide}}hide{{/if}}"
       data-id="{{id}}">
     {{>more-menu}}
     <img src="{{icon}}" alt="{{service}}"/>
