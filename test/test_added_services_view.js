@@ -19,13 +19,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('added services view', function() {
-  var Y, view, View, utils;
+  var models, utils, view, View, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'juju-tests-utils',
+        'juju-models',
         'juju-added-services',
         function(Y) {
+          models = Y.namespace('juju.models');
           utils = Y.namespace('juju-tests.utils');
           View = Y.juju.browser.views.AddedServices;
           done();
@@ -33,7 +35,15 @@ describe('added services view', function() {
   });
 
   beforeEach(function() {
-    view = new View();
+    var db = new models.Database();
+    db.services.add([
+      {id: 'service-foo', name: 'foo', unit_count: 1, icon: 'foo.png'},
+      {id: 'service-bar', name: 'bar', unit_count: 2, icon: 'bar.png'},
+      {id: 'service-baz', name: 'baz', unit_count: 3, icon: 'baz.png'}
+    ]);
+    view = new View({
+      db: db
+    });
   });
 
   afterEach(function(done) {
@@ -47,12 +57,28 @@ describe('added services view', function() {
     assert.notEqual(view._renderSearchWidget, undefined);
   });
 
+  describe('initializer', function() {
+    it('sets up the internal list of service tokens', function() {
+      var serviceTokens = view.get('serviceTokens'),
+          db = view.get('db'),
+          keys = Object.keys(serviceTokens);
+      assert.equal(db.services.size(), keys.length,
+                   'Internal list size does not match DB size');
+      keys.forEach(function(key, index) {
+        assert.notEqual(db.services.getById(key), undefined,
+                        'ID not found in the DB');
+      });
+    });
+  });
+
   describe('render', function() {
-    var renderSearch;
+    var renderSearch, renderButton;
 
     beforeEach(function() {
       renderSearch = utils.makeStubMethod(view, '_renderSearchWidget');
       this._cleanups.push(renderSearch.reset);
+      renderButton = utils.makeStubMethod(view, '_renderAddedServicesButton');
+      this._cleanups.push(renderButton.reset);
     });
 
     it('appends the template to the container', function() {
@@ -62,26 +88,152 @@ describe('added services view', function() {
       assert.notEqual(container.one('.services-list'), null);
     });
 
+    it('creates a token for each service', function() {
+      view.render();
+      var container = view.get('container');
+      view.get('db').services.each(function(service) {
+        var id = service.get('id');
+        assert.notEqual(container.one('.token[data-id="' + id + '"]'), null,
+                        'Unable to find a token for service: ' + id);
+      });
+    });
+
     it('calls to render the search widget on render', function() {
       view.render();
       assert.equal(renderSearch.calledOnce(), true);
     });
+
+    it('calls to render the nav button on render', function() {
+      view.render();
+      assert.equal(renderButton.calledOnce(), true);
+    });
+  });
+
+  describe('bind events', function() {
+    var renderButton;
+
+    beforeEach(function() {
+      renderButton = utils.makeStubMethod(view, '_renderAddedServicesButton');
+      this._cleanups.push(renderButton.reset);
+    });
+
+    it('adds tokens when services are added', function() {
+      var db = view.get('db'),
+          container = view.get('container');
+      view.render();
+      assert.equal(container.all('.token').size(), db.services.size(),
+                   'Initial sizes do not match');
+      db.services.add([
+        {id: 'service-fuz', unit_count: 1, icon: 'fuz.png'}
+      ]);
+      assert.equal(container.all('.token').size(), db.services.size(),
+                   'Token not added to list');
+    });
+
+    it('updates service count in nav button on add', function() {
+      var db = view.get('db'),
+          container = view.get('container');
+      view.render();
+      assert.equal(renderButton.lastArguments()[0], db.services.size(),
+                   'Initial sizes do not match');
+      db.services.add([
+        {id: 'service-fuz', unit_count: 1, icon: 'fuz.png'}
+      ]);
+      assert.equal(renderButton.lastArguments()[0], db.services.size(),
+                   'Incorrect service size sent to button render');
+    });
+
+    it('removes tokens when services are removed', function() {
+      var db = view.get('db'),
+          container = view.get('container');
+      view.render();
+      assert.equal(container.all('.token').size(), db.services.size(),
+                   'Initial sizes do not match');
+      db.services.remove(0);
+      assert.equal(container.all('.token').size(), db.services.size(),
+                   'Token not removed from list');
+    });
+
+    it('updates service count in nav button on remove', function() {
+      var db = view.get('db'),
+          container = view.get('container');
+      view.render();
+      assert.equal(renderButton.lastArguments()[0], db.services.size(),
+                   'Initial sizes do not match');
+      db.services.add([
+        {id: 'service-fuz', unit_count: 1, icon: 'fuz.png'}
+      ]);
+      assert.equal(renderButton.lastArguments()[0], db.services.size(),
+                   'Incorrect service size sent to button render');
+    });
+
+    it('updates tokens when service IDs are changed', function() {
+      var db = view.get('db'),
+          container = view.get('container');
+      view.render();
+      var service = db.services.item(0),
+          oldID = service.get('id'),
+          newID = 'scooby';
+      assert.notEqual(container.one('.token[data-id="' + oldID + '"]'), null,
+                      'Unable to find old ID in HTML');
+      assert.notEqual(view.get('serviceTokens')[oldID], undefined,
+                      'Unable to find old ID in internal list');
+      service.set('id', newID);
+      assert.equal(container.one('.token[data-id="' + oldID + '"]'), null,
+                   'Old ID should not be in HTML');
+      assert.equal(view.get('serviceTokens')[oldID], undefined,
+                   'Old ID should not be in internal list');
+      assert.notEqual(container.one('.token[data-id="' + newID + '"]'), null,
+                      'Unable to find new ID in HTML');
+      assert.notEqual(view.get('serviceTokens')[newID], undefined,
+                      'Unable to find new ID in internal list');
+    });
+
+    it('updates tokens when services are changed', function() {
+      var db = view.get('db'),
+          container = view.get('container');
+      view.render();
+      var service = db.services.item(0),
+          id = service.get('id'),
+          oldName = service.get('name'),
+          newName = 'scooby',
+          token = container.one('.token[data-id="' + id + '"]');
+      assert.equal(token.one('.name').get('text'), oldName,
+                   'Token does not start out with the old name');
+      service.set('name', newName);
+      assert.equal(token.one('.name').get('text'), newName,
+                   'Token name does not match the expected name');
+    });
   });
 
   describe('destroy', function() {
-
-    it('removes the container from the DOM', function() {
+    it('empties the container', function() {
       view.render();
       var container = view.get('container');
-      assert.notEqual(container.getDOMNode(), null,
-                      'Container is not present in DOM.');
+      assert.notEqual(container.one('.search-widget'), null,
+                      'Search widget HTML not found');
+      assert.notEqual(container.one('.added-services-button'), null,
+                      'Button widget HTML not found');
       assert.notEqual(container.one('.services-list'), null,
-                      'Template HTML is not present in DOM');
+                      'Services list HTML not found');
       view.destroy();
-      assert.equal(container.getDOMNode(), null,
-                   'Container is still present in DOM');
+      assert.equal(container.one('.search-widget'), null,
+                   'Search widget HTML found');
+      assert.equal(container.one('.added-services-button'), null,
+                   'Button widget HTML found');
       assert.equal(container.one('.services-list'), null,
-                   'Template HTML is still present in DOM');
+                   'Services list HTML found');
+    });
+
+    it('destroys the tokens', function() {
+      view.render();
+      var serviceTokens = view.get('serviceTokens'),
+          db = view.get('db');
+      assert.equal(Object.keys(serviceTokens).length, db.services.size(),
+                   'Token list not the same size as services in the db');
+      view.destroy();
+      assert.equal(Object.keys(serviceTokens).length, 0,
+                   'Token list not cleared out by destroy');
     });
   });
 });

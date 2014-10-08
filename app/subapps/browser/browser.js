@@ -531,10 +531,17 @@ YUI.add('subapp-browser', function(Y) {
        @method renderAddedServices
      */
     renderAddedServices: function() {
+      // deployBundle and deployServices are needed by the search widget. It
+      // uses them to enable deploying via the plus button next to each
+      // result in the autocomplete dropdown.
+      var extraCfg = {
+        container: this._sidebar.get('container').one('.bws-content'),
+        deployBundle: this.get('deployBundle'),
+        deployService: this.get('deployService')
+      };
+      var cfg = this._getViewCfg(extraCfg);
       if (!this._addedServices) {
-        this._addedServices = new views.AddedServices(this._getViewCfg({
-          container: this._sidebar.get('container').one('.bws-content')
-        }));
+        this._addedServices = new views.AddedServices(cfg);
         this._addedServices.addTarget(this);
       }
       // Render is idempotent

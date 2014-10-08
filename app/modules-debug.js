@@ -580,6 +580,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/added-services.js'
         },
 
+        'juju-added-service-token': {
+          fullpath: '/juju-ui/subapps/browser/views/added-service-token.js'
+        },
+
         //Browser Models
         'juju-browser-models': {
           fullpath: '/juju-ui/models/browser.js'
