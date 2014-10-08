@@ -475,6 +475,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('ignores MAAS data on EnvironmentGet results not in MAAS', function() {
+      env.set('providerType', 'ec2');
       env.environmentGet();
       conn.msg({
         RequestId: 1,

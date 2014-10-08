@@ -472,8 +472,7 @@ YUI.add('juju-env-go', function(Y) {
         } else {
           this.set('environmentName', response.Name);
         }
-        // For now we only need calling environmentGet if the current provider
-        // is MAAS.
+        // For now we only need to call environmentGet if the provider is MAAS.
         if (response.ProviderType === 'maas') {
           this.environmentGet();
         }
