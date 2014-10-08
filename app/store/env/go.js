@@ -472,6 +472,10 @@ YUI.add('juju-env-go', function(Y) {
         } else {
           this.set('environmentName', response.Name);
         }
+        // For now we only need to call environmentGet if the provider is MAAS.
+        if (response.ProviderType === 'maas') {
+          this.environmentGet();
+        }
       }
     },
 
@@ -487,6 +491,38 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'EnvironmentInfo'
       }, this.handleEnvironmentInfo);
+    },
+
+    /**
+      Send a client EnvironmentGet request to retrieve info about the
+      environment definition.
+
+      @method environmentGet
+    */
+    environmentGet: function() {
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'EnvironmentGet'
+      }, this._handleEnvironmentGet);
+    },
+
+    /**
+      Handle the results of calling the EnvironmentGet API endpoint.
+      Specifically, if the current provider is MAAS, store the MAAS
+      controller address as an attribute of this environment.
+
+      @method _handleEnvironmentGet
+      @param {Object} data The response returned by the server.
+    */
+    _handleEnvironmentGet: function(data) {
+      if (data.Error) {
+        console.warn('error calling EnvironmentGet API: ' + data.Error);
+        return;
+      }
+      var config = data.Response.Config;
+      if (this.get('providerType') === 'maas') {
+        this.set('maasServer', config['maas-server']);
+      }
     },
 
     /**

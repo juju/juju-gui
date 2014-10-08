@@ -264,7 +264,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(0, conn.messages.length);
       });
 
-      it('calls environmentInfo and watchAll ofter login', function() {
+      it('calls environmentInfo and watchAll after login', function() {
         env.login();
         // Assume login to be the first request.
         conn.msg({RequestId: 1, Response: {}});
@@ -366,7 +366,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isFalse(result);
       });
 
-      it('calls environmentInfo and watchAll ofter token login', function() {
+      it('calls environmentInfo and watchAll after token login', function() {
         env.tokenLogin('demoToken');
         // Assume login to be the first request.
         conn.msg({
@@ -434,6 +434,91 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal('precise', env.get('defaultSeries'));
       assert.equal('ec2', env.get('providerType'));
       assert.equal('envname', env.get('environmentName'));
+    });
+
+    it('sends the correct EnvironmentGet request', function() {
+      env.environmentGet();
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'EnvironmentGet',
+        RequestId: 1,
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
+    it('warns on environmentGet errors', function() {
+      env.environmentGet();
+      // Mock "console.warn" so that it is possible to collect warnings.
+      var original = console.warn;
+      var warning = null;
+      console.warn = function(msg) {
+        warning = msg;
+      };
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      assert.strictEqual(
+          warning, 'error calling EnvironmentGet API: bad wolf');
+      // Restore the original "console.warn".
+      console.warn = original;
+    });
+
+    it('stores the MAAS server on EnvironmentGet results on MAAS', function() {
+      env.environmentGet();
+      env.set('providerType', 'maas');
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Config: {'maas-server': '1.2.3.4/MAAS'}
+        }
+      });
+      assert.equal(env.get('maasServer'), '1.2.3.4/MAAS');
+    });
+
+    it('ignores MAAS data on EnvironmentGet results not in MAAS', function() {
+      env.set('providerType', 'ec2');
+      env.environmentGet();
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Config: {'maas-server': '1.2.3.4/MAAS'}
+        }
+      });
+      assert.isUndefined(env.get('maasServer'));
+    });
+
+    it('calls EnvironmentGet after EnvironmentInfo on MAAS', function() {
+      // Simulate an EnvironmentInfo request/response.
+      env.environmentInfo();
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          DefaultSeries: 'utopic',
+          'ProviderType': 'maas',
+          'Name': 'envname'
+        }
+      });
+      assert.lengthOf(conn.messages, 2);
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'EnvironmentGet',
+        RequestId: 2,
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
+    it('does not call EnvironmentGet after Info when not on MAAS', function() {
+      // Simulate an EnvironmentInfo request/response.
+      env.environmentInfo();
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          DefaultSeries: 'utopic',
+          'ProviderType': 'ec2',
+          'Name': 'envname'
+        }
+      });
+      assert.lengthOf(conn.messages, 1);
     });
 
     it('sends the correct AddServiceUnits message', function() {
