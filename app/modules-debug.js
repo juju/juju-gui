@@ -520,7 +520,7 @@ var GlobalConfig = {
         'juju-controllers': {
           use: [
             'juju-env-base',
-            'env-juju-go',
+            'juju-env-go',
             'juju-charm-store',
             'juju-notification-controller']
         },
