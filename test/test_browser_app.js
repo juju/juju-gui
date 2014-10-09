@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   };
 
   describe('browser', function() {
-    var Y, container, utils, views;
+    var Y, container, models, utils, views;
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-browser',
@@ -46,6 +46,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           function(Y) {
             views = Y.namespace('juju.browser.views');
             utils = Y.namespace('juju-tests.utils');
+            models = Y.namespace('juju.models');
             done();
           });
     });
@@ -158,7 +159,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var app, render;
 
       beforeEach(function() {
-        app = new Y.juju.subapps.Browser({});
+        var db = new models.Database();
+        app = new Y.juju.subapps.Browser({db: db});
         app._sidebar = {
           get: function() {
             return {

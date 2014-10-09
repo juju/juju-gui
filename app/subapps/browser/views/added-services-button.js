@@ -86,7 +86,9 @@ YUI.add('added-services-button', function(Y) {
     _clickHandler: function(e) {
       e.preventDefault();
       this.fire('changeState', {
-        sectionA: this.get('closed') ? 'services' : 'charmbrowser'
+        sectionA: {
+          component: this.get('closed') ? 'services' : 'charmbrowser'
+        }
       });
     },
 
@@ -127,7 +129,7 @@ YUI.add('added-services-button', function(Y) {
         value: 0
       },
       /**
-        Used to indicate weather or not the added services view is shown or not.
+        Used to indicate whether or not the added services view is shown or not.
 
         @attribute closed
         @type {Boolean}
