@@ -341,7 +341,7 @@ YUI.add('machine-view-panel', function(Y) {
             if (machine) {
               // It's a placed unit; make sure it gets removed from our
               // internal list.
-              this._removeUnit(id);
+              this._removeUnit(unitId);
             } else {
               unitTokens[unitId].render();
             }

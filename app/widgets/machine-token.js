@@ -196,7 +196,7 @@ YUI.add('machine-token', function(Y) {
             machine.noHardware = true;
           }
           var showMachine = Y.Array.some(machine.units, function(unit) {
-            return !unit.hide
+            return !unit.hide;
           });
           if (!showMachine) {
             container.addClass('hidden');

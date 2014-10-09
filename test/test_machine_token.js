@@ -48,7 +48,8 @@ describe('machine token view', function() {
         mem: 1024,
         cpuPower: 1024,
         cpuCores: 1
-      }
+      },
+      units: []
     };
   });
 
@@ -105,7 +106,7 @@ describe('machine token view', function() {
   });
 
   it('handles non-number values for hardware when formatting', function() {
-    var machine = {id: '0', hardware: {}};
+    var machine = {id: '0', hardware: {}, units: []};
     var view = makeView(this, machine);
     var hardware = view.get('machine').formattedHardware;
     assert.equal(hardware.disk, null,
@@ -118,21 +119,21 @@ describe('machine token view', function() {
   });
 
   it('display a message when no hardware is available', function() {
-    var machine = {id: '0', hardware: {}};
+    var machine = {id: '0', hardware: {}, units: []};
     var view = makeView(this, machine);
     assert.equal(view.get('container').one('.details').get('text').trim(),
                  'Hardware details not available');
   });
 
   it('shows when a machine is a state server', function() {
-    var machine = {id: '0', displayName: '0', isStateServer: true};
+    var machine = {id: '0', displayName: '0', isStateServer: true, units: []};
     var view = makeView(this, machine);
     var title = view.get('container').one('.title').get('text');
     assert.include(title, '0 - State service');
   });
 
   it('shows when a machine is not a state server', function() {
-    var machine = {id: '0', isStateServer: false};
+    var machine = {id: '0', isStateServer: false, units: []};
     var view = makeView(this, machine);
     var title = view.get('container').one('.title').get('text');
     assert.notInclude(title, '- State service');
@@ -149,6 +150,14 @@ describe('machine token view', function() {
     var service_icons = container.one('.service-icons');
     assert.isObject(service_icons);
     assert.equal(2, service_icons.all('img').size());
+  });
+
+  it('hides the machine if all units are hidden', function() {
+    machine.units = [
+      {hide: true, serviceName: 'mongo'}
+    ];
+    makeView(this, machine);
+    assert.equal(container.hasClass('hidden'), true);
   });
 
   it('can be set to the droppable state', function() {

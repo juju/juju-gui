@@ -250,7 +250,7 @@ YUI.add('subapp-browser', function(Y) {
           db.machines.fire('change', {
             changed: true,
             instance: db.machines.getById(machineId)
-          })
+          });
         });
       });
 
@@ -276,7 +276,7 @@ YUI.add('subapp-browser', function(Y) {
           db.machines.fire('change', {
             changed: true,
             instance: db.machines.getById(machineId)
-          })
+          });
         });
       });
 
@@ -302,7 +302,7 @@ YUI.add('subapp-browser', function(Y) {
 
       this.on('show', function(e) {
         var serviceNames = e.serviceNames;
-        var db = this.get('db')
+        var db = this.get('db');
         this.get('topo').fire('show', { serviceNames: serviceNames });
         db.units.each(function(unit) {
           if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
