@@ -96,10 +96,10 @@ function injectData(app, data) {
       config = config || {};
       if (config.env && config.env.connect) {
         config.env.connect();
+        config.env.set('ecs', new juju.EnvironmentChangeSet());
       }
       config.container = container;
       config.viewContainer = container;
-      config.ecs = new juju.EnvironmentChangeSet();
       if (context) {
         var _renderDeployerBarView = utils.makeStubMethod(
             Y.juju.App.prototype, '_renderDeployerBarView');
