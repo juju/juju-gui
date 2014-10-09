@@ -96,7 +96,7 @@ function injectData(app, data) {
       config = config || {};
       if (config.env && config.env.connect) {
         config.env.connect();
-        config.env.set('ecs', new juju.EnvironmentChangeSet());
+        config.env.ecs = new juju.EnvironmentChangeSet();
       }
       config.container = container;
       config.viewContainer = container;
