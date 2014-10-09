@@ -289,6 +289,14 @@ YUI.add('machine-view-panel', function(Y) {
           // in the _process_delta helper function, where it handles change
           // actions.
           var target = e.instance || e.target;
+          var machine, unitId;
+          if (target instanceof Y.Model) {
+            machine = target.get('machine');
+            unitId = target.get('id');
+          } else {
+            machine = target.machine;
+            unitId = target.id;
+          }
           var db = this.get('db');
           if (changed) {
             // Need to update any machines and containers that now have
@@ -326,16 +334,16 @@ YUI.add('machine-view-panel', function(Y) {
               } else {
                 // This is a (now unplaced) uncommitted unit from a destroyed
                 // machine. Add it to the unittokens.
-                var unit = db.units.getById(target.get('id'));
+                var unit = db.units.getById(unitId);
                 this._createServiceUnitToken(unit);
               }
             }
-            if (target.get('machine')) {
+            if (machine) {
               // It's a placed unit; make sure it gets removed from our
               // internal list.
-              this._removeUnit(target.get('id'));
+              this._removeUnit(unitId);
             } else {
-              unitTokens[target.get('id')].render();
+              unitTokens[unitId].render();
             }
           }
         },

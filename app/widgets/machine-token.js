@@ -195,6 +195,14 @@ YUI.add('machine-token', function(Y) {
               !machine.formattedHardware.cpuCores) {
             machine.noHardware = true;
           }
+          var showMachine = Y.Array.some(machine.units, function(unit) {
+            return !unit.hide;
+          });
+          if (!showMachine) {
+            container.addClass('hidden');
+          } else {
+            container.removeClass('hidden');
+          }
           container.setHTML(this.template(machine));
           if (machine.deleted) {
             this.setDeleted();

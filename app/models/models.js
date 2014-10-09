@@ -715,6 +715,26 @@ YUI.add('juju-models', function(Y) {
             @type {Boolean}
           */
           deleted: {},
+          /**
+            If the unit has been marked as hidden when another was highlighted.
+
+            @attribute hide
+            @type {Boolean}
+            @default false
+          */
+          hide: {
+            value: false
+          },
+          /**
+            If the unit has been marked as faded.
+
+            @attribute fade
+            @type {Boolean}
+            @default false
+          */
+          fade: {
+            value: false
+          },
           config: {},
           /**
             Whether the unit belongs to a service deployed from a subordinate

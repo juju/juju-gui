@@ -247,6 +247,88 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         window.juju_config = undefined;
       });
 
+      describe('fade and highlight', function() {
+        var db, models;
+
+        before(function(done) {
+          Y.use('juju-models', function(Y) {
+            models = Y.namespace('juju.models');
+            done();
+          });
+        });
+
+        beforeEach(function() {
+          db = new models.Database();
+          db.machines.add({
+            machine_id: 1
+          });
+          db.units.add({
+            id: 'mysql/0',
+            displayName: 'mysql/0',
+            machine: 1
+          }, true);
+          db.units.add({
+            id: 'wordpress/0',
+            displayName: 'wordpress/0',
+            machine: 1
+          }, true);
+          app = new browser.Browser({
+            db: db,
+            topo: {
+              fire: utils.makeStubFunction()
+            }
+          });
+        });
+
+        it('handles highlight events', function(done) {
+          db.units.after('change', function(e) {
+            assert.equal(e.instance.id, 'wordpress/0');
+            assert.equal(e.instance.hide, true);
+          });
+          db.machines.after('change', function(e) {
+            assert.equal(e.instance.id, 1);
+            assert.equal(app.get('topo').fire.calledOnce(), true);
+            done();
+          });
+          app.fire('highlight', {serviceName: 'mysql'});
+        });
+
+        it('handles unhighlight events', function(done) {
+          db.units.getById('wordpress/0').hide = true;
+          db.units.after('change', function(e) {
+            assert.equal(e.instance.id, 'wordpress/0');
+            assert.equal(e.instance.hide, false);
+          });
+          db.machines.after('change', function(e) {
+            assert.equal(e.instance.id, 1);
+            assert.equal(app.get('topo').fire.calledOnce(), true);
+            done();
+          });
+          app.fire('unhighlight', {serviceName: 'mysql'});
+        });
+
+        it('handles fade events', function(done) {
+          db.units.after('change', function(e) {
+            assert.equal(e.instance.id, 'mysql/0');
+            assert.equal(e.instance.fade, true);
+            assert.equal(app.get('topo').fire.calledOnce(), true);
+            done();
+          });
+          app.fire('fade', {serviceNames: ['mysql']});
+        });
+
+        it('handles show events', function(done) {
+          db.units.getById('mysql/0').fade = true;
+          db.units.after('change', function(e) {
+            assert.equal(e.instance.id, 'mysql/0');
+            assert.equal(e.instance.fade, false);
+            assert.equal(app.get('topo').fire.calledOnce(), true);
+            done();
+          });
+          app.fire('show', {serviceNames: ['mysql']});
+        });
+      });
+
       describe('state dispatchers', function() {
         var showSearchStub, setHome, renderCharmBrowser, renderAddedServices,
             entityStub, cleanupEntity, metadata, onboarding;
