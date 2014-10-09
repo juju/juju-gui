@@ -453,20 +453,12 @@ var GlobalConfig = {
         },
 
         // Connectivity
-        'juju-env': {
-          fullpath: '/juju-ui/store/env/env.js'
-        },
-
         'juju-env-base': {
           fullpath: '/juju-ui/store/env/base.js'
         },
 
         'juju-env-go': {
           fullpath: '/juju-ui/store/env/go.js'
-        },
-
-        'juju-env-python': {
-          fullpath: '/juju-ui/store/env/python.js'
         },
 
         'juju-env-fakebackend': {
@@ -527,10 +519,8 @@ var GlobalConfig = {
 
         'juju-controllers': {
           use: [
-            'juju-env',
             'juju-env-base',
             'juju-env-go',
-            'juju-env-python',
             'juju-charm-store',
             'juju-notification-controller']
         },

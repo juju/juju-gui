@@ -99,7 +99,7 @@ describe('Change version viewlet', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     ecs = new juju.EnvironmentChangeSet({ db: db });
-    env = juju.newEnvironment({conn: conn, ecs: ecs});
+    env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     env.connect();
     conn.open();
     inspector = setUpInspector();

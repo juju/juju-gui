@@ -30,7 +30,7 @@ describe('Model Controller Promises', function() {
           var environments = Y.juju.environments;
           yui = Y;
           load = Y.juju.models.Charm.prototype.load;
-          getService = environments.PythonEnvironment.prototype.get_service;
+          getService = environments.GoEnvironment.prototype.get_service;
           aEach = Y.Array.each;
           utils = Y.namespace('juju-tests.utils');
           factory = Y.namespace('juju-tests.factory');
@@ -40,8 +40,7 @@ describe('Model Controller Promises', function() {
 
   beforeEach(function() {
     conn = new utils.SocketStub();
-    environment = env = yui.juju.newEnvironment(
-        {conn: conn});
+    environment = env = new yui.juju.environments.GoEnvironment({conn: conn});
     db = new yui.juju.models.Database();
     env.connect();
     modelController = new yui.juju.ModelController({
@@ -123,7 +122,7 @@ describe('Model Controller Promises', function() {
     @static
   */
   function restoreGetService() {
-    yui.juju.environments.PythonEnvironment.prototype.get_service = getService;
+    yui.juju.environments.GoEnvironment.prototype.get_service = getService;
   }
 
   it('will return a promise with a stored loaded charm', function(done) {

@@ -48,10 +48,8 @@ var GlobalConfig = {
         // requiring all the modules below.
         'juju-controllers': {
           use: [
-            'juju-env',
             'juju-env-base',
             'juju-env-go',
-            'juju-env-python',
             'juju-charm-store',
             'juju-notification-controller',
             'juju-endpoints-controller'

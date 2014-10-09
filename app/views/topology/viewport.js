@@ -146,7 +146,6 @@ YUI.add('juju-topology-viewport', function(Y) {
     'd3-components',
     'node',
     'event',
-    'juju-models',
-    'juju-env'
+    'juju-models'
   ]
 });
