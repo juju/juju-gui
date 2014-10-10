@@ -22,16 +22,17 @@ describe('added services view', function() {
   var models, utils, view, View, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        'juju-tests-utils',
-        'juju-models',
-        'juju-added-services',
-        function(Y) {
-          models = Y.namespace('juju.models');
-          utils = Y.namespace('juju-tests.utils');
-          View = Y.juju.browser.views.AddedServices;
-          done();
-        });
+    Y = YUI(GlobalConfig).use([
+      'juju-tests-utils',
+      'juju-models',
+      'juju-added-services',
+      'node-event-simulate'
+    ], function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      View = Y.juju.browser.views.AddedServices;
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -41,7 +42,9 @@ describe('added services view', function() {
       {id: 'service-bar', name: 'bar', unit_count: 2, icon: 'bar.png'},
       {id: 'service-baz', name: 'baz', unit_count: 3, icon: 'baz.png'}
     ]);
+    var container = utils.makeContainer(this, 'added-services-view');
     view = new View({
+      container: container,
       db: db
     });
   });
@@ -203,6 +206,70 @@ describe('added services view', function() {
       service.set('name', newName);
       assert.equal(token.one('.name').get('text'), newName,
                    'Token name does not match the expected name');
+    });
+  });
+
+  describe('actions', function() {
+    function testClick(options, done) {
+      // Ensure the visibility flag on the token is set correctly.
+      var service = view.get('db').services.item(0),
+          token = view.get('serviceTokens')[service.get('id')];
+      token.set(options.attr, options.attrVal);
+      // Proceed with the actual test.
+      view.render();
+      var index = options.attr === 'visible' ? 0 : 1,
+          tokenElement = token.get('container'),
+          icon = tokenElement.all('.action').item(index),
+          action = icon.getAttribute('data-action'),
+          oldState = options.oldState,
+          newState = options.newState;
+      assert.equal(action, newState,
+                   'Button is not in expected ' + newState + ' mode');
+      token.on(newState, function() {
+        // Can't reuse action variable because the underlying attribute has
+        // changed.
+        var changedIcon = tokenElement.all('.action').item(index);
+        assert.equal(changedIcon.getAttribute('data-action'), oldState,
+                     'Button is not in ' + oldState + ' mode after clicking');
+        done();
+      });
+      icon.simulate('click');
+    }
+
+    it('triggers a change from show to fade state', function(done) {
+      testClick({
+        attr: 'visible',
+        attrVal: true,
+        oldState: 'show',
+        newState: 'fade'
+      }, done);
+    });
+
+    it('triggers a change from fade to show state', function(done) {
+      testClick({
+        attr: 'visible',
+        attrVal: false,
+        oldState: 'fade',
+        newState: 'show'
+      }, done);
+    });
+
+    it('triggers a change from unhighlighted to highlighted', function(done) {
+      testClick({
+        attr: 'highlight',
+        attrVal: false,
+        oldState: 'unhighlight',
+        newState: 'highlight'
+      }, done);
+    });
+
+    it('triggers a change from highlighted to unhighlighted', function(done) {
+      testClick({
+        attr: 'highlight',
+        attrVal: true,
+        oldState: 'highlight',
+        newState: 'unhighlight'
+      }, done);
     });
   });
 

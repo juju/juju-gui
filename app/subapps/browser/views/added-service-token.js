@@ -32,6 +32,33 @@ YUI.add('juju-added-service-token', function(Y) {
 
     template: Templates['added-service-token'],
 
+    events: {
+      '.action': {'click': '_onActionClick'}
+    },
+
+    /**
+      Fires the proper event when an action button is clicked.
+
+      @method _onActionClick
+     */
+    _onActionClick: function(e) {
+      e.preventDefault();
+      var button = e.currentTarget,
+          action = button.getAttribute('data-action'),
+          service = this.get('service'),
+          args = {};
+      if (action === 'fade' || action === 'show') {
+        args.serviceNames = [service.get('name')];
+        this.set('visible', action === 'show');
+      } else if (action === 'highlight' || action === 'unhighlight') {
+        args.serviceName = service.get('name');
+        this.set('highlight', action === 'highlight');
+      }
+      // Re-render because we changed the token's attributes
+      this.render();
+      this.fire(action, args);
+    },
+
     /**
       Renders the token.
 
@@ -92,6 +119,7 @@ YUI.add('juju-added-service-token', function(Y) {
 
 }, '', {
   requires: [
+    'juju-templates',
     'view'
   ]
 });
