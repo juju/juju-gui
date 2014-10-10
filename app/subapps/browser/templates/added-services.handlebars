@@ -1,5 +1,7 @@
 <div class="search-widget"></div>
 <div class="added-services-button"></div>
 <div class="services-list">
-  {{!-- service tokens will be rendered here --}}
+  <div class="no-services {{#if servicesCount}}hide{{/if}}">
+    No services deployed.
+  </div>
 </div>
