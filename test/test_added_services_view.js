@@ -209,7 +209,7 @@ describe('added services view', function() {
     });
   });
 
-  describe('actions', function() {
+  describe('added services visibility', function() {
     function testClick(options, done) {
       // Ensure the visibility flag on the token is set correctly.
       var service = view.get('db').services.item(0),

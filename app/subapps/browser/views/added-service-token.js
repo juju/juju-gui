@@ -40,19 +40,33 @@ YUI.add('juju-added-service-token', function(Y) {
       Fires the proper event when an action button is clicked.
 
       @method _onActionClick
+      @param {Object} e Event facade.
      */
     _onActionClick: function(e) {
       e.preventDefault();
       var button = e.currentTarget,
           action = button.getAttribute('data-action'),
           service = this.get('service'),
+          serviceName = service.get('name'),
           args = {};
       if (action === 'fade' || action === 'show') {
-        args.serviceNames = [service.get('name')];
+        // Need to pass as an array because the show/hide event handlers
+        // need to handle hiding/showing multiple services.
+        args.serviceNames = [serviceName];
         this.set('visible', action === 'show');
+        // Toggle the other button
+        if (action === 'fade') {
+          this.set('highlight', false);
+          this.fire('unhighlight', {serviceName: serviceName});
+        }
       } else if (action === 'highlight' || action === 'unhighlight') {
-        args.serviceName = service.get('name');
+        args.serviceName = serviceName;
         this.set('highlight', action === 'highlight');
+        // Toggle the other button
+        if (action === 'highlight') {
+          this.set('visible', true);
+          this.fire('show', {serviceNames: [serviceName]});
+        }
       }
       // Re-render because we changed the token's attributes
       this.render();
