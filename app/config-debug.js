@@ -44,10 +44,10 @@ var juju_config = {
   user: 'admin',
   password: 'admin',
   sandbox: true,
-  // When in sandbox mode should we create events to simulate a live env.
+  // When in sandbox mode should we can create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.
   // There is also a hotkey to toggle the simulator.
-  simulateEvents: true,
+  simulateEvents: false,
   readOnly: false,
   // Set the GA_key to enable Google Analytics usage and calls. Also implies
   // using cookies. For the debug configuration, the GA_key should be blank to
