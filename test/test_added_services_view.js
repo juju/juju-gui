@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.only('added services view', function() {
+describe('added services view', function() {
   var models, utils, view, View, Y;
 
   before(function(done) {
