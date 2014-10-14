@@ -202,7 +202,7 @@ YUI.add('juju-added-services', function(Y) {
         @default undefined
         @type {Object}
       */
-      serviceTokens: {},
+      serviceTokens: {}
     }
   });
 
