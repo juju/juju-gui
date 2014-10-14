@@ -29,6 +29,7 @@ describe('charmbrowser view', function() {
         'base', // Why this is necessary?? Nobody knows!
         'view', // Why this is necessary?? Nobody knows!
         'browser-tabview', // Why this is necessary?? Nobody knows!
+        'juju-models',
         'juju-tests-utils',
         'juju-charmbrowser',
         'event-tracker',
@@ -113,23 +114,67 @@ describe('charmbrowser view', function() {
       assert.notEqual(indicator.lastArguments()[0], null);
     });
 
-    it('calls to render the added services button', function() {
-      window.flags = {};
-      window.flags.as = true;
-      var renderAdded = utils.makeStubMethod(
-          charmBrowser, '_renderAddedServicesButton');
-      this._cleanups.push(renderAdded.reset);
-      var sizeStub = utils.makeStubFunction(7);
-      charmBrowser.set('db', {
-        services: {
-          size: sizeStub
-        }
+    describe('Added services button', function() {
+      var db, renderAdded;
+
+      beforeEach(function() {
+        window.flags = {};
+        window.flags.as = true;
+        db = new Y.juju.models.Database();
+        // Need to re-initialize charmbrowser after window.flags.as is set.
+        charmBrowser = new CharmBrowser({
+          parentContainer: utils.makeContainer(this),
+          db: db,
+          store: {
+            cancelInFlightRequest: utils.makeStubFunction()
+          }
+        });
+        renderAdded = utils.makeStubMethod(
+            charmBrowser, '_renderAddedServicesButton');
+        this._cleanups.push(renderAdded.reset);
+        var curatedStub = utils.makeStubMethod(
+            charmBrowser, '_loadCurated');
+        this._cleanups.push(curatedStub.reset);
       });
-      charmBrowser.render();
-      assert.equal(renderAdded.callCount(), 1);
-      assert.deepEqual(renderAdded.lastArguments(), [7, true]);
-      assert.equal(sizeStub.callCount(), 1);
-      window.flags = {};
+
+      afterEach(function() {
+        window.flags = {};
+      });
+
+      it('calls to render the added services button', function() {
+        charmBrowser.render();
+        assert.equal(renderAdded.callCount(), 1);
+        assert.deepEqual(renderAdded.lastArguments(), [0, true]);
+      });
+
+      it('updates the services count when service is added', function(done) {
+        charmBrowser.render();
+        assert.deepEqual(renderAdded.lastArguments(), [0, true],
+                         'Initial service count is incorrect');
+        db.services.after('add', function(e) {
+          assert.deepEqual(renderAdded.lastArguments(), [1, true],
+                           'Post-add service count is incorrect');
+          done();
+        });
+        db.services.add([
+          {id: 'service-test', name: 'test', unit_count: 1, icon: 'test.png'}
+        ]);
+      });
+
+      it('updates the services count when service is removed', function(done) {
+        db.services.add([
+          {id: 'service-test', name: 'test', unit_count: 1, icon: 'test.png'}
+        ]);
+        charmBrowser.render();
+        assert.deepEqual(renderAdded.lastArguments(), [1, true],
+                         'Initial service count is incorrect');
+        db.services.after('remove', function(e) {
+          assert.deepEqual(renderAdded.lastArguments(), [0, true],
+                           'Post-remove service count is incorrect');
+          done();
+        });
+        db.services.remove(0);
+      });
     });
 
     it('calls to render the search results when requested', function() {

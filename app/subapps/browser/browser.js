@@ -571,12 +571,16 @@ YUI.add('subapp-browser', function(Y) {
       var meta = this.state.getState('current', 'sectionA', 'metadata');
       if (meta) { activeID = meta.id; }
 
+      var extraCfg = {
+        deployService: this.get('deployService'),
+        deployBundle: this.get('deployBundle'),
+        cache: this._cache
+      };
+      // Charmbrowser needs the DB in order to update the service count in the
+      // added services button.
+      var cfg = this._getViewCfg(extraCfg);
       if (!this._charmbrowser) {
-        this._charmbrowser = new views.CharmBrowser({
-          deployService: this.get('deployService'),
-          deployBundle: this.get('deployBundle'),
-          cache: this._cache
-        });
+        this._charmbrowser = new views.CharmBrowser(cfg);
         this._charmbrowser.addTarget(this);
       }
       // See the _getViewCfg method for the extra objects which are passed in

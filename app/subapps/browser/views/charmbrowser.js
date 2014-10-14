@@ -79,6 +79,19 @@ YUI.add('juju-charmbrowser', function(Y) {
             this.updateActive(
                 this.get('container').one('.token[data-charmid="' + id + '"]'));
           }));
+      if (window.flags && window.flags.as) {
+        var services = this.get('db').services;
+        this.addEvent(
+            services.after('add', function(e) {
+              // Provided by 'added-services-button.js'.
+              this._renderAddedServicesButton(services.size(), true);
+            }, this));
+        this.addEvent(
+            services.after('remove', function(e) {
+              // Provided by 'added-services-button.js'.
+              this._renderAddedServicesButton(services.size(), true);
+            }, this));
+      }
     },
 
     /**

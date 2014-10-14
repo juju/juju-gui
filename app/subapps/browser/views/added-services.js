@@ -79,14 +79,22 @@ YUI.add('juju-added-services', function(Y) {
     _onServiceAdd: function(e) {
       var service = e.model,
           list = this.get('container').one('.services-list'),
+          serviceTokens = this.get('serviceTokens'),
           token;
       token = new ns.AddedServiceToken({service: service});
-      this.get('serviceTokens')[service.get('id')] = token;
+      serviceTokens[service.get('id')] = token;
       token.render();
       token.addTarget(this);
-      list.append(token.get('container'));
-      // Re-render to update the services count on the button.
-      this._renderAddedServicesButton(this.get('db').services.size(), false);
+      // If the list DOM element is present, we've already rendered.
+      if (list) {
+        list.append(token.get('container'));
+        // Re-render to update the services count on the button.
+        this._renderAddedServicesButton(this.get('db').services.size(), false);
+        // Hide the "no services" message if needed.
+        if (Object.keys(serviceTokens).length > 0) {
+          this.get('container').one('.no-services').addClass('hide');
+        }
+      }
     },
 
     /**
@@ -97,13 +105,21 @@ YUI.add('juju-added-services', function(Y) {
     */
     _onServiceRemove: function(e) {
       var service = e.model,
+          list = this.get('container').one('.services-list'),
           id = service.get('id'),
           serviceTokens = this.get('serviceTokens'),
           token = serviceTokens[id];
       token.destroy({remove: true});
       delete serviceTokens[id];
-      // Re-render to update the services count on the button.
-      this._renderAddedServicesButton(this.get('db').services.size(), false);
+      // If the list DOM element is present, we've already rendered.
+      if (list) {
+        // Re-render to update the services count on the button.
+        this._renderAddedServicesButton(this.get('db').services.size(), false);
+        // Show the "no services" message if needed.
+        if (Object.keys(serviceTokens).length === 0) {
+          this.get('container').one('.no-services').removeClass('hide');
+        }
+      }
     },
 
     /**
@@ -144,13 +160,16 @@ YUI.add('juju-added-services', function(Y) {
     render: function() {
       var serviceTokens = this.get('serviceTokens'),
           container = this.get('container'),
+          servicesCount = this.get('db').services.size(),
           list;
       // Render the template.
-      container.setHTML(this.template());
+      container.setHTML(this.template({
+        servicesCount: servicesCount
+      }));
       // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();
       // Provided by 'added-services-button.js'.
-      this._renderAddedServicesButton(this.get('db').services.size(), false);
+      this._renderAddedServicesButton(servicesCount, false);
       // Render each token in the list
       list = container.one('.services-list');
       Object.keys(serviceTokens).forEach(function(key) {

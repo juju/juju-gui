@@ -110,6 +110,17 @@ describe('added services view', function() {
       view.render();
       assert.equal(renderButton.calledOnce(), true);
     });
+
+    it('displays the "no services" message when needed', function() {
+      view.get('db').services.reset();
+      view.set('serviceTokens', {});
+      view.render();
+      var message = view.get('container').one('.no-services');
+      assert.notEqual(message, null,
+                      '"No services" message not found');
+      assert.equal(message.hasClass('hide'), false,
+                   '"No services" message is not displayed');
+    });
   });
 
   describe('bind events', function() {
@@ -146,6 +157,21 @@ describe('added services view', function() {
                    'Incorrect service size sent to button render');
     });
 
+    it('hides the "no services" message after adding', function() {
+      var db = view.get('db');
+      db.services.reset();
+      view.set('serviceTokens', {});
+      view.render();
+      var message = view.get('container').one('.no-services');
+      assert.equal(message.hasClass('hide'), false,
+                   '"No services" message is not displayed');
+      db.services.add([
+        {id: 'service-fuz', unit_count: 1, icon: 'fuz.png'}
+      ]);
+      assert.equal(message.hasClass('hide'), true,
+                   '"No services" message is still displayed');
+    });
+
     it('removes tokens when services are removed', function() {
       var db = view.get('db'),
           container = view.get('container');
@@ -163,11 +189,25 @@ describe('added services view', function() {
       view.render();
       assert.equal(renderButton.lastArguments()[0], db.services.size(),
                    'Initial sizes do not match');
+      db.services.remove(0);
+      assert.equal(renderButton.lastArguments()[0], db.services.size(),
+                   'Incorrect service size sent to button render');
+    });
+
+    it('displays the "no services" message after removing', function() {
+      var db = view.get('db');
+      db.services.reset();
+      view.set('serviceTokens', {});
       db.services.add([
         {id: 'service-fuz', unit_count: 1, icon: 'fuz.png'}
       ]);
-      assert.equal(renderButton.lastArguments()[0], db.services.size(),
-                   'Incorrect service size sent to button render');
+      view.render();
+      var message = view.get('container').one('.no-services');
+      assert.equal(message.hasClass('hide'), true,
+                   '"No services" message is displayed');
+      db.services.remove(0);
+      assert.equal(message.hasClass('hide'), false,
+                   '"No services" message is not displayed');
     });
 
     it('updates tokens when service IDs are changed', function() {
