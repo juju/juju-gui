@@ -48,6 +48,7 @@ YUI.add('juju-added-services', function(Y) {
       this.get('db').services.each(function(service) {
         key = service.get('id');
         serviceTokens[key] = new ns.AddedServiceToken({service: service});
+        serviceTokens[key].addTarget(this);
       }, this);
       this.set('serviceTokens', serviceTokens);
       // search widget set on render

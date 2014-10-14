@@ -228,7 +228,7 @@ YUI.add('subapp-browser', function(Y) {
         }
       }, this);
 
-      this.on('highlight', function(e) {
+      this.on('*:highlight', function(e) {
         var serviceName = e.serviceName;
         var db = this.get('db');
         this.get('topo').fire('highlight', { serviceName: serviceName,
@@ -254,7 +254,7 @@ YUI.add('subapp-browser', function(Y) {
         });
       });
 
-      this.on('unhighlight', function(e) {
+      this.on('*:unhighlight', function(e) {
         var db = this.get('db');
         var serviceName = e.serviceName;
         this.get('topo').fire('unhighlight', { serviceName: serviceName,
@@ -280,7 +280,7 @@ YUI.add('subapp-browser', function(Y) {
         });
       });
 
-      this.on('fade', function(e) {
+      this.on('*:fade', function(e) {
         var serviceNames = e.serviceNames;
         var fadeLevels = {
           'dim': '0.6',
@@ -300,7 +300,7 @@ YUI.add('subapp-browser', function(Y) {
         });
       }, this);
 
-      this.on('show', function(e) {
+      this.on('*:show', function(e) {
         var serviceNames = e.serviceNames;
         var db = this.get('db');
         this.get('topo').fire('show', { serviceNames: serviceNames });

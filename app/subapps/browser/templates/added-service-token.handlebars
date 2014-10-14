@@ -2,10 +2,14 @@
   <img class="icon" src="{{service.icon}}" title="{{service.name}}" alt="{{service.name}}">
   <div class="name">{{service.name}}</div>
   <div class="unitCount">({{service.unit_count}})</div>
-  <a class="action">
-    <i class="sprite inspector_status {{#if visible}}active{{/if}}"></i>
+  <a class="action"
+     data-action="{{#if visible}}fade{{else}}show{{/if}}"
+     title="{{#if visible}}Fade{{else}}Show{{/if}} the service">
+    <i class="sprite {{#if visible}}eye-default{{else}}eye-selected{{/if}}"></i>
   </a>
-  <a class="action">
-    <i class="sprite inspector_relations {{#if highlight}}active{{/if}}"></i>
+  <a class="action"
+     data-action="{{#if highlight}}unhighlight{{else}}highlight{{/if}}"
+     title="{{#if highlight}}Unhighlight{{else}}Highlight{{/if}} the service">
+    <i class="sprite {{#if highlight}}highlight-selected{{else}}highlight-default{{/if}}"></i>
   </a>
 </div>

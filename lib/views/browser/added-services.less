@@ -33,6 +33,34 @@
       float: right;
       border-radius: 3px;
       margin-left: 10px;
+      display: block;
     }
+    .sprite.eye-selected {
+      width: 21px;
+    }
+    &:hover {
+      .sprite {
+        height: 22px;
+        width: 22px;
+      }
+      .sprite.eye-default {
+        background-position: 0 0;
+        background-image: url("/juju-ui/assets/images/eye-hover.png");
+        margin-top: 6px;
+      }
+      .sprite.highlight-default {
+        background-position: 0 0;
+        background-image: url("/juju-ui/assets/images/highlight-hover.png");
+      }
+      .sprite.eye-selected {
+        width: 21px;
+      }
+    }
+  }
+}
+#subapp-browser #bws-sidebar .bws-content {
+  .added-services-button:hover {
+    border-top: 1px solid #b7b7b9;
+    background-color: #eee;
   }
 }
