@@ -1163,6 +1163,30 @@ YUI.add('juju-env-fakebackend', function(Y) {
       };
     },
 
+    addRelations: function(endpointA, endpoints, useRelationCount) {
+        if (!this.get('authenticated')) {
+            return UNAUTHENTICATED_ERROR;
+          }
+          if (typeof endpointA !== 'string') {
+            return {error: 'Relation source not a string'};
+          }
+
+          if (typeof endpoints === 'string') {
+              return self.addRelation(endpointA, endpointB, useRelationCount);
+          }
+
+          if (typeof endpoints === 'object') {
+              var result = null;
+              var self = this;
+              endpoints.forEach(function(ep) {
+                result = self.addRelation(endpointA, ep, useRelationCount);
+              });
+              // last result :-/
+              return result;
+          }
+          return {error: 'Relations in unexpected format'};
+    },
+
     /**
       Add a relation between two services.
 
@@ -1815,7 +1839,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
             // Create requested relations.
             ingestedData.relations.forEach(function(relationData) {
-              var relResult = self.addRelation(
+              var relResult = self.addRelations(
                   relationData[0], relationData[1], true);
               self.changes.relations[relResult.relation.get('id')] = [
                 relResult.relation, true];
