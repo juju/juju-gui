@@ -347,6 +347,77 @@ function injectData(app, data) {
         done();
       });
     });
+
+    describe('MAAS support', function() {
+      var env, maasNode;
+
+      beforeEach(function() {
+        // Set up the MAAS link node.
+        maasNode = Y.Node.create(
+            '<div id="maas-server" style="display:none">' +
+            '  <a href="">MAAS UI</a>' +
+            '</div>');
+        container.appendChild(maasNode);
+        // Create the environment.
+        env = new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        });
+      });
+
+      // Ensure the given MAAS node is shown and includes a link to the given
+      // address.
+      var assertMaasLinkExists = function(node, address) {
+        assert.strictEqual(node.getStyle('display'), 'block');
+        assert.strictEqual(node.one('a').get('href'), address);
+      };
+
+      it('shows a link to the MAAS server if provider is MAAS', function() {
+        constructAppInstance({env: env});
+        // The MAAS node is initially hidden.
+        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        env.set('maasServer', 'http://1.2.3.4/MAAS');
+        // Once the MAAS server becomes available, the node is activated and
+        // includes a link to the server.
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        // Further changes to the maasServer attribute don't change the link.
+        env.set('maasServer', 'http://example.com/MAAS');
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+      });
+
+      it('shows a link to the MAAS server if already in the env', function() {
+        env.set('maasServer', 'http://1.2.3.4/MAAS');
+        constructAppInstance({env: env});
+        // The link to the MAAS server should be already activated.
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        // Further changes to the maasServer attribute don't change the link.
+        env.set('maasServer', 'http://example.com/MAAS');
+        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+      });
+
+      it('does not show the MAAS link if provider is not MAAS', function() {
+        constructAppInstance({env: env});
+        // The MAAS node is initially hidden.
+        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        env.set('maasServer', null);
+        // The MAAS node is still hidden.
+        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        // Further changes to the maasServer attribute don't activate the link.
+        env.set('maasServer', 'http://1.2.3.4/MAAS');
+        assert.strictEqual(maasNode.getStyle('display'), 'none');
+      });
+
+      it('does not show the MAAS link if already null in the env', function() {
+        env.set('maasServer', null);
+        constructAppInstance({env: env});
+        assert.strictEqual(maasNode.getStyle('display'), 'none');
+        // Further changes to the maasServer attribute don't activate the link.
+        env.set('maasServer', 'http://1.2.3.4/MAAS');
+        assert.strictEqual(maasNode.getStyle('display'), 'none');
+      });
+
+    });
+
   });
 })();
 

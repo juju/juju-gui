@@ -475,6 +475,10 @@ YUI.add('juju-env-go', function(Y) {
         // For now we only need to call environmentGet if the provider is MAAS.
         if (response.ProviderType === 'maas') {
           this.environmentGet();
+        } else {
+          // Set the MAAS server to null, so that subscribers waiting for this
+          // attribute to be set can be released.
+          this.set('maasServer', null);
         }
       }
     },

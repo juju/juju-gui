@@ -28,6 +28,7 @@ describe('application hotkeys', function() {
             after: function() {},
             get: function() {},
             on: function() {},
+            once: function() {},
             set: function() {}
           };
           windowNode = Y.one(window);

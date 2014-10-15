@@ -511,6 +511,14 @@ YUI.add('juju-gui', function(Y) {
       // Once the user logs in, we need to redraw.
       this.env.after('login', this.onLogin, this);
 
+      // Once we know about MAAS server, update the header accordingly.
+      var maasServer = this.env.get('maasServer');
+      if (maasServer === undefined) {
+        this.env.once('maasServerChange', this._onMaasServer, this);
+      } else {
+        this._displayMaasLink(maasServer);
+      }
+
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.onDelta, this.db);
 
@@ -1213,6 +1221,34 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.showLogin();
       }
+    },
+
+    /**
+      If we are in a MAAS environment, react to the MAAS server address
+      retrieval adding a link to the header pointing to the MAAS server.
+
+      @method _onMaasServer
+      @param {Object} evt An event object (with a "newVal" attribute).
+    */
+    _onMaasServer: function(evt) {
+      this._displayMaasLink(evt.newVal);
+    },
+
+    /**
+      If the given maasServer is not null, create a link to the MAAS server
+      in the GUI header.
+
+      @method _displayMaasLink
+      @param {String} maasServer The MAAS server URL (or null if not in MAAS).
+    */
+    _displayMaasLink: function(maasServer) {
+      if (maasServer === null) {
+        // The current environment is not MAAS.
+        return;
+      }
+      var maasContainer = Y.one('#maas-server');
+      maasContainer.one('a').set('href', maasServer);
+      maasContainer.show();
     },
 
     /**

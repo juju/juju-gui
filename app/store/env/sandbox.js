@@ -846,7 +846,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle EnvironmentView messages.
+    Handle EnvironmentInfo messages.
 
     @method handleClientEnvironmentInfo
     @param {Object} data The contents of the API arguments.
@@ -861,6 +861,24 @@ YUI.add('juju-env-sandbox', function(Y) {
           ProviderType: state.get('providerType'),
           DefaultSeries: state.get('defaultSeries'),
           Name: 'Sandbox'
+        }
+      });
+    },
+
+    /**
+    Handle EnvironmentGet messages.
+
+    @method handleClientEnvironmentGet
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handleClientEnvironmentGet: function(data, client, state) {
+      client.receive({
+        RequestId: data.RequestId,
+        Response: {
+          // For now only the MAAS server is required by the GUI.
+          Config: {'maas-server': state.get('maasServer')}
         }
       });
     },
