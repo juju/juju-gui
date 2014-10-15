@@ -245,6 +245,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
+    it('returns EnvironmentGet responses', function(done) {
+      var data = {
+        RequestId: 42,
+        Type: 'Client',
+        Request: 'EnvironmentGet'
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42,
+          Response: {
+            Config: {'maas-server': state.get('maasServer')}
+          }
+        };
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
     it('can start the AllWatcher', function(done) {
       var data = {
         Type: 'Client',

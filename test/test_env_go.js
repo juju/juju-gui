@@ -507,6 +507,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('does not call EnvironmentGet after Info when not on MAAS', function() {
+      // The MAAS server attribute is initially undefined.
+      assert.isUndefined(env.get('maasServer'));
       // Simulate an EnvironmentInfo request/response.
       env.environmentInfo();
       conn.msg({
@@ -518,6 +520,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       assert.lengthOf(conn.messages, 1);
+      // The MAAS server attribute has been set to null.
+      assert.isNull(env.get('maasServer'));
     });
 
     it('sends the correct AddServiceUnits message', function() {
