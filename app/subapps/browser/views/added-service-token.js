@@ -33,7 +33,8 @@ YUI.add('juju-added-service-token', function(Y) {
     template: Templates['added-service-token'],
 
     events: {
-      '.action': {'click': '_onActionClick'}
+      '.action': {'click': '_onActionClick'},
+      '.name': {'click': '_onNameClick'}
     },
 
     /**
@@ -71,6 +72,25 @@ YUI.add('juju-added-service-token', function(Y) {
       // Re-render because we changed the token's attributes
       this.render();
       this.fire(action, args);
+    },
+
+    /**
+      Fires the proper state change to open an inspector when a service name is
+      clicked on.
+
+      @method _onNameClick
+      @param {Object} e Event facade.
+     */
+    _onNameClick: function(e) {
+      this.fire('changeState', {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.get('service').get('id'),
+            flash: { hideHelp: true }
+          }
+        }
+      });
     },
 
     /**
