@@ -44,23 +44,24 @@ YUI.add('juju-added-services', function(Y) {
     initializer: function() {
       var serviceTokens = {},
           key;
-      // load services into internal token list
+      // Load services into the internal token list.
       this.get('db').services.each(function(service) {
         key = service.get('id');
         serviceTokens[key] = new ns.AddedServiceToken({service: service});
         serviceTokens[key].addTarget(this);
       }, this);
       this.set('serviceTokens', serviceTokens);
-      // search widget set on render
+      // Widgets are set on render.
       this.searchWidget = null;
+      this.environmentCounts = null;
       this._bindEvents();
     },
 
     /**
-     * Bind the events to the models.
-     *
-     * @method _bindEvents
-     */
+      Bind the events to the models.
+
+      @method _bindEvents
+    */
     _bindEvents: function() {
       var services = this.get('db').services;
 
@@ -151,6 +152,22 @@ YUI.add('juju-added-services', function(Y) {
     },
 
     /**
+      Renders (and instantiates, if needed) the widget that displays the unit,
+      service, and machine counts.
+
+      @method _renderEnvironmentCounts
+    */
+    _renderEnvironmentCounts: function() {
+      if (!this.environmentCounts) {
+        this.environmentCounts = new ns.EnvironmentCounts({
+          container: this.get('container').one('.environment-counts'),
+          db: this.get('db')
+        });
+      }
+      this.environmentCounts.render();
+    },
+
+    /**
       Renders the added services list.
 
       This method should always be idempotent.
@@ -161,15 +178,21 @@ YUI.add('juju-added-services', function(Y) {
       var serviceTokens = this.get('serviceTokens'),
           container = this.get('container'),
           servicesCount = this.get('db').services.size(),
+          unitsCount = this.get('db').units.size(),
+          machinesCount = this.get('db').machines.size(),
           list;
       // Render the template.
       container.setHTML(this.template({
-        servicesCount: servicesCount
+        servicesCount: servicesCount,
+        unitsCount: unitsCount,
+        machinesCount: machinesCount
       }));
       // Provided by 'search-widget-mgmt-extension'.
       this._renderSearchWidget();
       // Provided by 'added-services-button.js'.
       this._renderAddedServicesButton(servicesCount, false);
+      // Render the environment counts widget.
+      this._renderEnvironmentCounts();
       // Render each token in the list
       list = container.one('.services-list');
       Object.keys(serviceTokens).forEach(function(key) {
@@ -185,11 +208,19 @@ YUI.add('juju-added-services', function(Y) {
       @method destructor
     */
     destructor: function() {
+      // Destroy all the tokens.
       var serviceTokens = this.get('serviceTokens');
       Object.keys(serviceTokens).forEach(function(key) {
         serviceTokens[key].destroy();
         delete serviceTokens[key];
       });
+      // Destroy the various subviews
+      if (this.environmentCounts) {
+        this.environmentCounts.destroy();
+      }
+      if (this.searchWidget) {
+        this.searchWidget.destroy();
+      }
       // Don't want to destroy the container, since it's shared with other
       // sidebar components, e.g., inspector.
       this.get('container').setHTML('');
@@ -211,6 +242,7 @@ YUI.add('juju-added-services', function(Y) {
     'added-services-button',
     'event-tracker',
     'juju-added-service-token',
+    'juju-environment-counts',
     'search-widget-mgmt-extension',
     'view'
   ]

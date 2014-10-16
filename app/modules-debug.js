@@ -584,6 +584,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/added-service-token.js'
         },
 
+        'juju-environment-counts': {
+          fullpath: '/juju-ui/subapps/browser/views/environment-counts.js'
+        },
+
         //Browser Models
         'juju-browser-models': {
           fullpath: '/juju-ui/models/browser.js'
