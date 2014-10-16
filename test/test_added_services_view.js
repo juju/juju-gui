@@ -60,6 +60,16 @@ describe('added services view', function() {
     assert.notEqual(view._renderSearchWidget, undefined);
   });
 
+  it('navs to the service inspector on a service name click', function(done) {
+    view.render();
+    var container = view.get('container');
+    view.on('*:changeState', function(e) {
+      assert.equal(e.sectionA.component, 'inspector');
+      done();
+    });
+    container.one('.name').simulate('click');
+  });
+
   describe('initializer', function() {
     it('sets up the internal list of service tokens', function() {
       var serviceTokens = view.get('serviceTokens'),
