@@ -1,5 +1,6 @@
 #subapp-browser #bws-sidebar .bws-content .services-list {
   .bws-list;
+  top: 207px;
   .token {
     border: 1px #ccc;
     border-bottom-style: solid;
@@ -63,13 +64,32 @@
   }
 }
 #subapp-browser #bws-sidebar .bws-content {
-  .added-services-button:hover {
-    background-color: #eee;
-  }
   .no-services {
     padding: 10px 20px;
     &.hide {
       display: none;
+    }
+  }
+  .environment-counts {
+    position: absolute;
+    top: 137px;
+    width: 250px;
+    height: 50px;
+    margin-left: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+    li:nth-child(1) {
+      margin-left: 10px;
+    }
+    li {
+      list-style-type: none;
+      width: 30%;
+      float: left;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+      margin-top: 8px;
     }
   }
 }
