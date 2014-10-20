@@ -2288,6 +2288,29 @@ YUI.add('juju-models', function(Y) {
         this.units.update_service_unit_aggregates(service);
       }, this);
       return unitOrUnits;
+    },
+
+    /**
+      Returns a list of the deployed (both uncommitted and committed) services
+      that are not related to the provided service.
+
+      @method findUnrelatedServices
+      @param {Object} service The origin service.
+      @return {Array} A list of the service names of unrelated services.
+    */
+    findUnrelatedServices: function(service) {
+      var relationData = utils.getRelationDataForService(this, service);
+      var related = [service.get('name')],  // Add own name to related list.
+          unrelated;
+      // Compile the list of related services.
+      relationData.forEach(function(relation) {
+        related.push(relation.far.service);
+      });
+      // Find the unrelated by filtering out the related.
+      unrelated = this.services.filter(function(s) {
+        return related.indexOf(s.get('name')) === -1;
+      });
+      return unrelated;
     }
 
   });

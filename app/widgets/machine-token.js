@@ -172,8 +172,13 @@ YUI.add('machine-token', function(Y) {
           @method renderUnits
         */
         renderUnits: function() {
+          // Only display shown units.
+          // TODO refactor filter method to be reused
+          var shownUnits = this.get('machine').units.filter(function(u) {
+            return !(u.fade || u.hide);
+          });
           this.get('container').one('.service-icons').setHTML(
-              this.unitsTemplate(this.get('machine')));
+              this.unitsTemplate({units: shownUnits}));
         },
 
         /**

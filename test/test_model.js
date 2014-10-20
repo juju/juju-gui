@@ -94,19 +94,44 @@ describe('test_model.js', function() {
   });
 
   describe('juju models', function() {
-    var models, Y, utils;
-    var requirements = ['juju-models', 'juju-charm-models', 'juju-tests-utils'];
+    var models, Y, utils, viewUtils;
+    var requirements = [
+      'juju-models',
+      'juju-charm-models',
+      'juju-tests-utils',
+      'juju-view-utils'
+    ];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         utils = Y.namespace('juju-tests.utils');
+        viewUtils = Y.namespace('juju.views.utils');
         done();
       });
     });
 
     beforeEach(function() {
       window._gaq = [];
+    });
+
+    it('finds unrelated services', function() {
+      var db = new models.Database(),
+          service = new models.Service({name: 'mysql'});
+      db.services.add([
+        {id: 'mysql', name: 'mysql'},
+        {id: 'wordpress', name: 'wordpress'},
+        {id: 'haproxy', name: 'haproxy'}
+      ]);
+      var relations = [
+        {far: {service: 'wordpress'}}
+      ];
+      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
+                                      relations);
+      this._cleanups.push(stub.reset);
+      var unrelated = db.findUnrelatedServices(service);
+      assert.equal(unrelated.length, 1);
+      assert.equal(unrelated[0].get('name'), 'haproxy');
     });
 
     it('should aggregate unit info when adding units', function() {
