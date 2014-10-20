@@ -1170,7 +1170,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method addRelations
       @param {String} endpointA The relation endpoint name.
-      @param {String|Object} endpoints Depending on the bundle the relation(s)
+      @param {String|Array} endpoints Depending on the bundle the relation(s)
         to add may be a single endpoint string or a list of endpoints.
       @param {Boolean} useRelationCount whether or not to generate an
         incremented relation id or to just use the name and types of the
@@ -1188,9 +1188,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (typeof endpoints === 'string') {
         return this.addRelation(endpointA, endpoints, useRelationCount);
       }
-      // If the endpoints provided is an object then loop through them creating
+      // If the endpoints provided is an array then loop through them creating
       // the relations.
-      if (typeof endpoints === 'object') {
+      if (Y.Lang.isArray(endpoints) === true) {
         var result = [];
         endpoints.forEach(function(ep) {
           result.push(this.addRelation(endpointA, ep, useRelationCount));
