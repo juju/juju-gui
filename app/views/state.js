@@ -113,7 +113,7 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state The current state object.
     */
     dispatch: function(state) {
-      var sections = ['sectionA', 'sectionB'];
+      var sections = ['app', 'sectionA', 'sectionB'];
       // If the component of a section has changed then clean out that section.
       sections.forEach(function(section) {
         if (this.hasChanged(section, 'component')) {
@@ -135,11 +135,25 @@ YUI.add('juju-app-state', function(Y) {
     */
     _dispatchSection: function(section, state) {
       var sections = {
+        app: 'App',
         sectionA: 'SectionA',
         sectionB: 'SectionB'
       };
       // calls _dispatchSectionA or _dispatchSectionB
       this['_dispatch' + sections[section]](state);
+    },
+
+    /**
+      Calls the dispatcher subscribed on instantiation for the overall app.
+
+      @method _dispatchApp
+      @param {Object} state App's state object.
+    */
+    _dispatchApp: function(state) {
+      var dispatchers = this.get('dispatchers');
+      Object.keys(state).forEach(function(key) {
+        dispatchers.app[key](state[key]);
+      });
     },
 
     /**
@@ -399,11 +413,15 @@ YUI.add('juju-app-state', function(Y) {
           });
         }
       }, this);
-      // There's always a query component, but we only care if it reflects a
-      // search.
+      // There's always a query component, if it reflects a search.
       if (query && (query.text || query.categories)) {
         // `state` is passed in by reference and modified in place.
         this._addQueryState(state, query);
+      }
+      // For demonstration purposes it's nice to open the GUI to an already
+      // deployed bundle or charm.
+      if (query && query['deploy-target']) {
+        this._addDeployTarget(state, query);
       }
       return state;
     },
@@ -416,12 +434,29 @@ YUI.add('juju-app-state', function(Y) {
 
       @method _addQueryState
       @param {Object} state The built state object.
-      @param {String} query The text of the search query value.
+      @param {Object} query The query param object.
     */
     _addQueryState: function(state, query) {
       Y.namespace.call(state, 'sectionA.metadata.search');
+      // This gets passed the entire query even fields which are not search
+      // related.
       state.sectionA.metadata.search = query;
       this.filter.update(query);
+    },
+
+    /**
+      Add the deploy target into the state object. Unlike the _addQueryState
+      method which adds the entire query into the search metadata this only
+      adds the deploy-target component to the deployTarget component in the
+      state object.
+
+      @method _addDeployTarget
+      @param {Object} state The built state object.
+      @param {Object} query The query param object.
+    */
+    _addDeployTarget: function(state, query) {
+      Y.namespace.call(state, 'app.deployTarget');
+      state.app.deployTarget = query['deploy-target'];
     },
 
     /**

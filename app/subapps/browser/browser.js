@@ -178,6 +178,9 @@ YUI.add('subapp-browser', function(Y) {
         // model to be inspected will not be available.
         allowInspector: !cfg.sandbox,
         dispatchers: {
+          app: {
+            deployTarget: this._deployTargetDispatcher.bind(this)
+          },
           sectionA: {
             charmbrowser: this._charmBrowserDispatcher.bind(this),
             inspector: this._inspectorDispatcher.bind(this),
@@ -315,6 +318,15 @@ YUI.add('subapp-browser', function(Y) {
         });
       }, this);
     },
+
+    /**
+      Handles deploying the charm or bundle id passed in as a deploy-target
+      as a query param on app load.
+
+      @method _deployTargetDispatcher
+      @param {String} entityId The id of the charm or bundle to deploy.
+    */
+    _deployTargetDispatcher: function(entityId) { },
 
     /**
       Handles rendering and/or updating the charmbrowser UI component.
