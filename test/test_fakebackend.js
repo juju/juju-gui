@@ -2455,6 +2455,74 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
+  describe('FakeBackend.addRelations', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = factory.makeFakeBackend();
+      fakebackend.set('authenticated', true);
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('returns with an error if not authenticated', function() {
+      fakebackend.set('authenticated', false);
+      assert.deepEqual(fakebackend.addRelations(), {error: 'Please log in.'});
+    });
+
+    it('returns with an error if initial endpoint is not a string', function() {
+      assert.deepEqual(
+          fakebackend.addRelations({}),
+          {error: 'Relation source not a string'});
+    });
+
+    it('returns with an error if endpoint format is unkown', function() {
+      assert.deepEqual(
+          fakebackend.addRelations('foo', null),
+          {error: 'Relations in unexpected format'});
+    });
+
+    it('calls addRelation once if both endpoints are strings', function() {
+      var addRelation = utils.makeStubMethod(fakebackend, 'addRelation', 'foo');
+      var result = fakebackend.addRelations('bar:baz', 'bax:qux', true);
+      assert.equal(result, 'foo');
+      assert.equal(addRelation.callCount(), 1);
+      assert.deepEqual(
+          addRelation.lastArguments(),
+          ['bar:baz', 'bax:qux', true]);
+    });
+
+    it('calls addRelation in loop if endpoints are one-many', function() {
+      var addRelation = utils.makeStubMethod(
+          fakebackend, 'addRelation', 'foo', 'bar');
+      var result = fakebackend.addRelations(
+          'bar:baz', ['bax:qux', 'foo:bar'], true);
+      assert.deepEqual(result, ['foo', 'bar']);
+      assert.equal(addRelation.callCount(), 2);
+      assert.deepEqual(
+          addRelation.allArguments()[0],
+          ['bar:baz', 'bax:qux', true]);
+      assert.deepEqual(
+          addRelation.allArguments()[1],
+          ['bar:baz', 'foo:bar', true]);
+
+    });
+  });
+
   describe('FakeBackend.removeRelation', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',

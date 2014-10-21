@@ -1165,6 +1165,45 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Adds all relations outlined in the imported bundle YAML file. Some bundles
+      contain a list of relations from a single endpoint instead of just a
+      single relation.
+
+      @method addRelations
+      @param {String} endpointA The relation endpoint name.
+      @param {String|Array} endpoints Depending on the bundle the relation(s)
+        to add may be a single endpoint string or a list of endpoints.
+      @param {Boolean} useRelationCount whether or not to generate an
+        incremented relation id or to just use the name and types of the
+        endpoint.
+    */
+    addRelations: function(endpointA, endpoints, useRelationCount) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATED_ERROR;
+      }
+      if (typeof endpointA !== 'string') {
+        return {error: 'Relation source not a string'};
+      }
+      // If the endpoints provided is just a string then there is only a single
+      // remote endpoint.
+      if (typeof endpoints === 'string') {
+        return this.addRelation(endpointA, endpoints, useRelationCount);
+      }
+      // If the endpoints provided is an array then loop through them creating
+      // the relations.
+      if (Y.Lang.isArray(endpoints) === true) {
+        var result = [];
+        endpoints.forEach(function(ep) {
+          result.push(this.addRelation(endpointA, ep, useRelationCount));
+        }, this);
+        return result;
+      }
+      // We should never hit here but if we do it's because the endpoint format
+      // provided is invalid.
+      return {error: 'Relations in unexpected format'};
+    },
+
+    /**
       Add a relation between two services.
 
       @method addRelation
@@ -1816,10 +1855,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
             // Create requested relations.
             ingestedData.relations.forEach(function(relationData) {
-              var relResult = self.addRelation(
+              var relResult = self.addRelations(
                   relationData[0], relationData[1], true);
-              self.changes.relations[relResult.relation.get('id')] = [
-                relResult.relation, true];
+              // If the bungle provides a list of endpoints to relate to a
+              // single endpoint then we need to add each relation to the
+              // result list.
+              if (!Y.Lang.isArray(relResult)) {
+                relResult = [relResult];
+              }
+              relResult.forEach(function(result) {
+                self.changes.relations[result.relation.get('id')] = [
+                  result.relation, true];
+              });
             });
           })
       .then(function() {
