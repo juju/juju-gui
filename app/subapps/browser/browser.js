@@ -326,7 +326,21 @@ YUI.add('subapp-browser', function(Y) {
       @method _deployTargetDispatcher
       @param {String} entityId The id of the charm or bundle to deploy.
     */
-    _deployTargetDispatcher: function(entityId) { },
+    _deployTargetDispatcher: function(entityId) {
+      // Fully qualified urls like cs:precise/mysql-48 and
+      // bundle:mediawiki/7/single make it easy to check what type of entity
+      // the id is referring to.
+      if (entityId.indexOf('bundle') === 0) {
+        // Query the charmstore for the bundle data
+        this.get('store').bundle(entityId.replace(':', '/'), {
+          'success': function(bundle) {
+            this.get('deployBundle')(bundle.data, bundle.id);
+          }
+        }, this);
+      } else {
+        // If it's not a bundle then it's a charm.
+      }
+    },
 
     /**
       Handles rendering and/or updating the charmbrowser UI component.
