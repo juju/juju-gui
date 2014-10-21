@@ -361,6 +361,7 @@ YUI.add('subapp-browser', function(Y) {
                 1, // number of units
                 {}, //constraints
                 null); // toMachine
+            this.fire('autoplaceAndCommitAll');
           }.bind(this)
         });
       }

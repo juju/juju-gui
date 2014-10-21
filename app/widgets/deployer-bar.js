@@ -150,7 +150,9 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} evt The event object.
     */
     deploy: function(evt) {
-      evt.halt();
+      if (evt && typeof evt.halt === 'function') {
+        evt.halt();
+      }
       var container = this.get('container'),
           ecs = this.get('ecs'),
           autodeploy = container.one('input[value="autodeploy"]');
