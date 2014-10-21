@@ -151,9 +151,11 @@ YUI.add('juju-app-state', function(Y) {
     */
     _dispatchApp: function(state) {
       var dispatchers = this.get('dispatchers');
-      Object.keys(state).forEach(function(key) {
-        dispatchers.app[key](state[key]);
-      });
+      if (Y.Lang.isObject(state)) {
+        Object.keys(state).forEach(function(key) {
+          dispatchers.app[key](state[key]);
+        });
+      }
     },
 
     /**
