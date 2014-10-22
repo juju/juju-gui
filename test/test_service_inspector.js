@@ -205,6 +205,38 @@ describe('Service Inspector', function() {
     assert.equal(stubDismiss.callCount(), 1);
   });
 
+  it('actually dismisses the "added service" message', function() {
+    // Create a ghost service with a fake charm.
+    var charm = new models.Charm(charmData.charm);
+    db.charms.add(charm);
+    service = db.services.ghostService(charm);
+    var inspector = setUpInspector(service);
+    inspector.render();
+    var message = container.one('.ghost-message');
+    // The message is initially displayed.
+    assert.strictEqual(message.hasClass('hidden'), false);
+    // Click the "Dismiss" button.
+    inspector.get('container').one('span[dismiss]').simulate('click');
+    // The message is now hidden.
+    assert.strictEqual(message.hasClass('hidden'), true);
+    // The model has been annotated so that the message will not be displayed
+    // in the future.
+    assert.strictEqual(service.get('hideHelp'), true);
+  });
+
+  it('does not show the "added service" message if dismissed', function() {
+    // Create a ghost service with a fake charm.
+    var charm = new models.Charm(charmData.charm);
+    db.charms.add(charm);
+    service = db.services.ghostService(charm);
+    service.set('hideHelp', true);
+    var inspector = setUpInspector(service);
+    inspector.render();
+    var message = container.one('.ghost-message');
+    // The message is not displayed.
+    assert.isNull(message);
+  });
+
   it('shows the footer for the overview', function() {
     var inspector = setUpInspector();
     inspector.render();

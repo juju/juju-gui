@@ -91,8 +91,6 @@ YUI.add('inspector-header-view', function(Y) {
           pojoModel.invalidName = 'valid';
         }
       }
-      // Just passing this value on through from the containing view.
-      pojoModel.hideHelp = viewContainerAttrs.hideHelp;
       var container = this.get('container');
       container.setHTML(this.template(pojoModel));
     },
@@ -156,6 +154,9 @@ YUI.add('inspector-header-view', function(Y) {
     _dismissMessage: function(e) {
       e.preventDefault();
       e.currentTarget.get('parentElement').addClass('hidden');
+      // Remember the user dismissed the "service added" message for this
+      // model, so that it's not displayed again in this session.
+      this.options.model.set('hideHelp', true);
     }
   });
 
