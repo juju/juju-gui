@@ -343,13 +343,10 @@ YUI.add('subapp-browser', function(Y) {
         // If it's not a bundle then it's a charm.
         store.charm(entityId.replace('cs:', ''), {
           'success': function(data) {
-            //var model = new models.Charm(data.charm);
-            //model.set('metadata', data.metadata);
-            //this.get('deployService')(model);
             var charm = data.charm,
                 config = {};
             Object.keys(charm.options).forEach(function(key) {
-              config[key] = charm.options[key];
+              config[key] = charm.options[key]['default'];
             });
             // We call the env deploy method directly because we don't want the
             // ghost inspector to open.

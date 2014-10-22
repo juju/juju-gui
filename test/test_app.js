@@ -105,7 +105,7 @@ function injectData(app, data) {
             Y.juju.App.prototype, '_renderDeployerBarView');
         context._cleanups.push(_renderDeployerBarView.reset);
       }
-      app = new Y.juju.App(config);
+      app = new Y.juju.App(Y.mix(config, {consoleEnabled: true}));
       app.navigate = function() {};
       app.showView(new Y.View());
       injectData(app);
@@ -278,6 +278,30 @@ function injectData(app, data) {
         app.toggleStaticViews(req, undefined, next);
         app.get('subApps').charmbrowser.hidden.should.eql(check.hidden);
       });
+    });
+
+    it('attaches a handler for autoplaceAndCommitAll event', function(done) {
+      constructAppInstance({}, this);
+      app._autoplaceAndCommitAll = function() {
+        // This test will hang if this method is not called from the following
+        // event being fired.
+        done();
+      };
+      app.after('ready', function() {
+        app.get('subApps').charmbrowser.fire('autoplaceAndCommitAll');
+      });
+    });
+
+    it('autoplaceAndCommitAll places and deploys', function() {
+      constructAppInstance({}, this);
+      app.deployerBar = {
+        _autoPlaceUnits: utils.makeStubFunction(),
+        deploy: utils.makeStubFunction(),
+        destroy: function() {}
+      };
+      app._autoplaceAndCommitAll();
+      assert.equal(app.deployerBar._autoPlaceUnits.callCount(), 1);
+      assert.equal(app.deployerBar.deploy.callCount(), 1);
     });
 
     it('should display a zoom message on small browsers', function() {
@@ -465,7 +489,8 @@ describe('File drag over notification system', function() {
         conn: {
           send: function() {},
           close: function() {}
-        }
+        },
+        ecs: new juju.EnvironmentChangeSet()
       });
     }
     if (config.env && config.env.connect) {
