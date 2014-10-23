@@ -195,13 +195,17 @@ YUI.add('machine-token', function(Y) {
               !machine.formattedHardware.cpuCores) {
             machine.noHardware = true;
           }
-          var showMachine = Y.Array.some(machine.units, function(unit) {
-            return !unit.hide;
-          });
-          if (!showMachine) {
-            container.addClass('hidden');
-          } else {
+          var showMachine = true;
+          if (machine.units.length) {
+            // Do not show the machine if all its units are currently hidden.
+            showMachine = Y.Array.some(machine.units, function(unit) {
+              return !unit.hide;
+            });
+          }
+          if (showMachine) {
             container.removeClass('hidden');
+          } else {
+            container.addClass('hidden');
           }
           container.setHTML(this.template(machine));
           if (machine.deleted) {
