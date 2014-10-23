@@ -597,6 +597,8 @@ YUI.add('juju-gui', function(Y) {
         this._renderHelpDropdownView();
         this._renderDeployerBarView();
         this._renderEnvironmentHeaderView();
+        this.get('subApps').charmbrowser.on(
+            '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
 
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
@@ -857,6 +859,18 @@ YUI.add('juju-gui', function(Y) {
         db: this.db
       }).render();
       this.deployerBar.addTarget(this);
+    },
+
+    /**
+      When the user provides a charm id in the deploy-target query param we want
+      to auto deploy that charm. This calls the appropriate methods in the
+      deployer bar to auto place any outstanding units and deploy the charm.
+
+      @method _autoplaceAndCommitAll
+    */
+    _autoplaceAndCommitAll: function() {
+      this.deployerBar._autoPlaceUnits();
+      this.deployerBar.deploy();
     },
 
     /**

@@ -178,6 +178,9 @@ YUI.add('subapp-browser', function(Y) {
         // model to be inspected will not be available.
         allowInspector: !cfg.sandbox,
         dispatchers: {
+          app: {
+            deployTarget: this._deployTargetDispatcher.bind(this)
+          },
           sectionA: {
             charmbrowser: this._charmBrowserDispatcher.bind(this),
             inspector: this._inspectorDispatcher.bind(this),
@@ -314,6 +317,51 @@ YUI.add('subapp-browser', function(Y) {
           }
         });
       }, this);
+    },
+
+    /**
+      Handles deploying the charm or bundle id passed in as a deploy-target
+      as a query param on app load.
+
+      Be sure to use the fully qualified urls like cs:precise/mysql-48 and
+      bundle:mediawiki/7/single because it make it easy to check what type of
+      entity the id is referring to.
+
+      @method _deployTargetDispatcher
+      @param {String} entityId The id of the charm or bundle to deploy.
+    */
+    _deployTargetDispatcher: function(entityId) {
+      var store = this.get('store');
+      if (entityId.indexOf('bundle') === 0) {
+        // Query the charmstore for the bundle data
+        store.bundle(entityId.replace(':', '/'), {
+          'success': function(bundle) {
+            this.get('deployBundle')(bundle.data, bundle.id);
+          }
+        }, this);
+      } else {
+        // If it's not a bundle then it's a charm.
+        store.charm(entityId.replace('cs:', ''), {
+          'success': function(data) {
+            var charm = data.charm,
+                config = {};
+            Object.keys(charm.options).forEach(function(key) {
+              config[key] = charm.options[key]['default'];
+            });
+            // We call the env deploy method directly because we don't want the
+            // ghost inspector to open.
+            this.get('env').deploy(
+                charm.id,
+                charm.name,
+                config,
+                undefined, //config file content
+                1, // number of units
+                {}, //constraints
+                null); // toMachine
+            this.fire('autoplaceAndCommitAll');
+          }.bind(this)
+        });
+      }
     },
 
     /**

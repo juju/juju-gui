@@ -150,7 +150,9 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} evt The event object.
     */
     deploy: function(evt) {
-      evt.halt();
+      if (evt && typeof evt.halt === 'function') {
+        evt.halt();
+      }
       var container = this.get('container'),
           ecs = this.get('ecs'),
           autodeploy = container.one('input[value="autodeploy"]');
@@ -513,6 +515,12 @@ YUI.add('deployer-bar', function(Y) {
         // units as follow up.
         switch (change.command.method) {
           case '_deploy':
+            if (!change.command.options || !change.command.options.modelId) {
+              // When using the deploy-target query parameter we want to auto
+              // deploy so we can skip generating the line item in the deployer
+              // bar.
+              return;
+            }
             var ghostService = db.services.getById(
                 change.command.options.modelId);
             changeItem.icon = 'changes-service-added';

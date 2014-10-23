@@ -184,7 +184,7 @@ describe('UI State object', function() {
         state.dispatch(newState);
         // It shouldn't empty the section if the component didn't change.
         assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 2);
+        assert.equal(dispatchSectionStub.callCount(), 3);
       });
 
       it('leaves sections when components don\'t change', function() {
@@ -201,7 +201,7 @@ describe('UI State object', function() {
         // bit of an integration test.
         state.dispatch(newState);
         assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 2);
+        assert.equal(dispatchSectionStub.callCount(), 3);
       });
     });
 
@@ -210,6 +210,9 @@ describe('UI State object', function() {
 
       beforeEach(function() {
         dispatchers = {
+          app: {
+            deployTarget: testUtils.makeStubFunction()
+          },
           sectionA: {
             charmbrowser: testUtils.makeStubFunction(),
             empty: testUtils.makeStubFunction()
@@ -249,6 +252,16 @@ describe('UI State object', function() {
         var machine = dispatchers.sectionB.machine;
         assert.equal(machine.calledOnce(), true);
         assert.equal(machine.lastArguments()[0], newState.metadata);
+      });
+
+      it('_dispatchSection: calls registered app dispatchers', function() {
+        var newState = {
+          deployTarget: 'bundle:foo/4/bar'
+        };
+        state._dispatchSection('app', newState);
+        var deployTarget = dispatchers.app.deployTarget;
+        assert.equal(deployTarget.callCount(), 1);
+        assert.equal(deployTarget.lastArguments()[0], 'bundle:foo/4/bar');
       });
 
       it('_emptySection: calls registered empty dispatcher', function() {
@@ -489,6 +502,37 @@ describe('UI State object', function() {
           }
         },
         sectionB: {}
+      },
+      // Deploy Target urls.
+      '/?deploy-target=bundle:foo/5/bar': {
+        app: {
+          deployTarget: 'bundle:foo/5/bar'
+        },
+        sectionA: {},
+        sectionB: {}
+      },
+      '/?text=apache&deploy-target=bundle:foo/5/bar': {
+        sectionA: {
+          metadata: {
+            search: {
+              text: 'apache',
+              'deploy-target': 'bundle:foo/5/bar'
+            }
+          }
+        },
+        sectionB: {},
+        app: {
+          deployTarget: 'bundle:foo/5/bar'
+        }
+      },
+      '/machine/?deploy-target=bundle:foo/5/bar': {
+        app: {
+          deployTarget: 'bundle:foo/5/bar'
+        },
+        sectionA: {},
+        sectionB: {
+          component: 'machine'
+        }
       },
       // Charm search urls.
       '/search/precise/cassandra-1/': {

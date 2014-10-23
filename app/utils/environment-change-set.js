@@ -569,6 +569,12 @@ YUI.add('environment-change-set', function(Y) {
           @param {Object} db The database instance.
         */
         prepare: function(db) {
+          if (!this.options || !this.options.modelId) {
+            // When using the deploy-target query parameter we want to auto
+            // deploy so we can skip generating the line item in the deployer
+            // bar.
+            return;
+          }
           var ghostService = db.services.getById(this.options.modelId);
           // Update the service name, which can change from when the
           // charm is added to the canvas to the actual time the changes are

@@ -691,6 +691,65 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         });
 
+        describe('_deployTargetDispatcher', function() {
+          it('requests bundle id from store then deploys', function() {
+            app.set('store', {
+              bundle: utils.makeStubFunction()
+            });
+            app.set('deployBundle', utils.makeStubFunction());
+            app._deployTargetDispatcher('bundle:elasticsearch/15/cluster');
+            var store = app.get('store');
+            assert.equal(store.bundle.callCount(), 1);
+            var bundleArgs = store.bundle.lastArguments();
+            assert.equal(bundleArgs[0], 'bundle/elasticsearch/15/cluster',
+                'api requires ids to have \/ instead of the : from the id');
+            // The second param is the callback for the store response. So
+            // we need to manually trigger it to test it.
+            var bundleData = {data: 'foo', id: 'bar'};
+            bundleArgs[1].success.call(app, bundleData);
+            var deploy = app.get('deployBundle');
+            assert.equal(deploy.callCount(), 1);
+            assert.deepEqual(
+                deploy.lastArguments(),
+                [bundleData.data, bundleData.id]);
+            assert.deepEqual(bundleArgs[2], app);
+          });
+
+          it('requests charm id from store then deploys', function() {
+            app.setAttrs({
+              store: { charm: utils.makeStubFunction() },
+              env: { deploy: utils.makeStubFunction() }
+            });
+            app._deployTargetDispatcher('cs:precise/apache2-25');
+            var store = app.get('store');
+            assert.equal(store.charm.callCount(), 1);
+            var charmArgs = store.charm.lastArguments();
+            assert.equal(charmArgs[0], 'precise/apache2-25',
+                'api requires removal of cs:');
+            // The second param is the callback for the store response. So we
+            // need to manually trigger it to test it.
+            var charmData = {
+              charm: {
+                id: 'foo',
+                name: 'bar',
+                options: {
+                  opt1: { 'default': 'opt1default' }
+                }
+              }
+            };
+            charmArgs[1].success(charmData);
+            var deploy = app.get('env').deploy;
+            assert.equal(deploy.callCount(), 1);
+            var deployArgs = deploy.lastArguments();
+            assert.equal(deployArgs[0], charmData.charm.id);
+            assert.equal(deployArgs[1], charmData.charm.name);
+            assert.deepEqual(deployArgs[2], { opt1: 'opt1default' });
+            assert.strictEqual(deployArgs[3], undefined);
+            assert.equal(deployArgs[4], 1);
+            assert.deepEqual(deployArgs[5], {});
+            assert.strictEqual(deployArgs[6], null);
+          });
+        });
 
         describe('_machine', function() {
           var renderMachineStub, setSelectedStub;
