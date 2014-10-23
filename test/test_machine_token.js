@@ -160,6 +160,21 @@ describe('machine token view', function() {
     assert.equal(container.hasClass('hidden'), true);
   });
 
+  it('shows the machine if not all units are hidden', function() {
+    machine.units = [
+      {hide: true, serviceName: 'mongo'},
+      {hide: false, serviceName: 'django'}
+    ];
+    makeView(this, machine);
+    assert.strictEqual(container.hasClass('hidden'), false);
+  });
+
+  it('shows the machine if it does not host any units', function() {
+    machine.units = [];
+    makeView(this, machine);
+    assert.strictEqual(container.hasClass('hidden'), false);
+  });
+
   it('can be set to the droppable state', function() {
     var view = makeView(this, machine);
     view.setDroppable();
