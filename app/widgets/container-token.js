@@ -164,13 +164,16 @@ YUI.add('container-token', function(Y) {
          */
         renderUnits: function() {
           var machine = this.get('machine');
-          var units = machine.units;
+          // Display shown units and faded units in two different lists.
+          var shownUnits = machine.units.filter(function(u) {
+            return !(u.fade || u.hide);
+          });
           this.get('container').one('.service-icons').setHTML(
-              this.unitsTemplate(machine));
+              this.unitsTemplate({units: shownUnits}));
           // Create the more menus for the units.
-          if (units.length > 0) {
-            Object.keys(units).forEach(function(index) {
-              var id = units[index].id;
+          if (shownUnits.length > 0) {
+            Object.keys(shownUnits).forEach(function(index) {
+              var id = shownUnits[index].id;
               if (!this._unitMoreMenus) {
                 this._unitMoreMenus = [];
               }
@@ -184,6 +187,12 @@ YUI.add('container-token', function(Y) {
               }
             }, this);
           }
+          // Add faded units to the second list.
+          var fadedUnits = machine.units.filter(function(u) {
+            return u.fade;
+          });
+          this.get('container').one('.service-icons-faded').setHTML(
+              this.unitsTemplate({units: fadedUnits}));
         },
 
         /**
