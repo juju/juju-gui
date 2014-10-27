@@ -538,6 +538,10 @@ var GlobalConfig = {
           requires: ['subapp-browser-charmview']
         },
 
+        'subapp-browser-events': {
+          fullpath: '/juju-ui/subapps/browser/events-extension.js'
+        },
+
         'juju-app-state': {
           fullpath: '/juju-ui/views/state.js',
           requires: []

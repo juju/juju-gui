@@ -36,7 +36,10 @@ YUI.add('subapp-browser', function(Y) {
      @extends {juju.SubApp}
 
    */
-  var extensions = [Y.juju.MachineViewPanel];
+  var extensions = [
+    Y.juju.MachineViewPanel,
+    Y.juju.browser.BrowserEventsExtension
+  ];
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, extensions, {
     // Mark the entire subapp has hidden.
     hidden: false,
@@ -196,127 +199,13 @@ YUI.add('subapp-browser', function(Y) {
 
       this._registerSubappHelpers();
 
-      this.on('*:changeState', function(e) {
-        // Cancel the inspectorRetryTimer, if there is one.
-        // The user may be navigating away from the inspector, but first
-        // triggered the inspector's retry mechanism. This makes sure the timer
-        // won't suddenly have the inspector show up after the user navigates
-        // away.
-        var timer = this.get('inspectorRetryTimer');
-        if (timer) {
-          timer.cancel();
-          this.set('inspectorRetries', 0);
-        }
-        this.state.set('allowInspector', true);
-        var state = e.details[0];
-        var url = this.state.generateUrl(state);
-        this.navigate(url);
-      }, this);
-
-      this.on('*:serviceDeployed', function(e) {
-        var activeInspector = this._inspector;
-        if (activeInspector && !activeInspector.get('destroyed')) {
-          var activeClientId = activeInspector.get('model')
-            .get('clientId');
-          // Because multiple services can be deployed at once we only want to
-          // switch to a deployed inspector if there is currently one open.
-          // And we only want to switch to that specific inspector.
-          if (activeClientId === e.clientId) {
-            this.fire('changeState', {
-              sectionA: {
-                component: 'inspector',
-                metadata: { id: e.serviceName }
-              }});
-          }
-        }
-      }, this);
-
-      this.on('*:highlight', function(e) {
-        var serviceName = e.serviceName;
-        var db = this.get('db');
-        this.get('topo').fire('highlight', { serviceName: serviceName,
-          highlightRelated: e.highlightRelated });
-        var changedMachines = [];
-        db.units.each(function(unit) {
-          if (unit.displayName.split('/')[0] !== serviceName) {
-            unit.hide = true;
-            db.units.fire('change', {
-              changed: {machine: {newVal: unit.machine}},
-              instance: unit
-            });
-            if (changedMachines.indexOf(unit.machine) === -1) {
-              changedMachines.push(unit.machine);
-            }
-          }
-        });
-        changedMachines.forEach(function(machineId) {
-          db.machines.fire('change', {
-            changed: true,
-            instance: db.machines.getById(machineId)
-          });
-        });
-      });
-
-      this.on('*:unhighlight', function(e) {
-        var db = this.get('db');
-        var serviceName = e.serviceName;
-        this.get('topo').fire('unhighlight', { serviceName: serviceName,
-          unhighlightRelated: e.unhighlightRelated });
-        var changedMachines = [];
-        db.units.each(function(unit) {
-          if (unit.displayName.split('/')[0] !== serviceName) {
-            unit.hide = false;
-            db.units.fire('change', {
-              changed: {machine: {newVal: unit.machine}},
-              instance: unit
-            });
-            if (changedMachines.indexOf(unit.machine) === -1) {
-              changedMachines.push(unit.machine);
-            }
-          }
-        });
-        changedMachines.forEach(function(machineId) {
-          db.machines.fire('change', {
-            changed: true,
-            instance: db.machines.getById(machineId)
-          });
-        });
-      });
-
-      this.on('*:fade', function(e) {
-        var serviceNames = e.serviceNames;
-        var fadeLevels = {
-          'dim': '0.6',
-          'hidden': '0.2'
-        };
-        var db = this.get('db');
-        this.get('topo').fire('fade', { serviceNames: serviceNames,
-          alpha: fadeLevels[e.fadeLevel] });
-        db.units.each(function(unit) {
-          if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
-            unit.fade = true;
-            db.units.fire('change', {
-              changed: {machine: {newVal: unit.machine}},
-              instance: unit
-            });
-          }
-        });
-      }, this);
-
-      this.on('*:show', function(e) {
-        var serviceNames = e.serviceNames;
-        var db = this.get('db');
-        this.get('topo').fire('show', { serviceNames: serviceNames });
-        db.units.each(function(unit) {
-          if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
-            unit.fade = false;
-            db.units.fire('change', {
-              changed: {machine: {newVal: unit.machine}},
-              instance: unit
-            });
-          }
-        });
-      }, this);
+      // Setup event handlers.
+      this.on('*:changeState', this._onChangeState, this);
+      this.on('*:serviceDeployed', this._onServiceDeployed, this);
+      this.on('*:highlight', this._onHighlight, this);
+      this.on('*:unhighlight', this._onUnhighlight, this);
+      this.on('*:fade', this._onFade, this);
+      this.on('*:show', this._onShow, this);
     },
 
     /**
@@ -955,19 +844,20 @@ YUI.add('subapp-browser', function(Y) {
   requires: [
     'browser-cache',
     'handlebars',
+    'juju-added-services',
     'juju-app-state',
     'juju-browser-models',
     'juju-charm-store',
+    'juju-charmbrowser',
     'juju-models',
     'juju-view-onboarding',
+    'machine-view-panel-extension',
     'querystring',
     'sub-app',
+    'subapp-browser-bundleview',
     'subapp-browser-charmview',
     'subapp-browser-charmresults',
-    'subapp-browser-bundleview',
-    'subapp-browser-sidebar',
-    'machine-view-panel-extension',
-    'juju-charmbrowser',
-    'juju-added-services'
+    'subapp-browser-events',
+    'subapp-browser-sidebar'
   ]
 });
