@@ -1289,6 +1289,8 @@ YUI.add('juju-topology-service', function(Y) {
             delete topo.service_boxes[d.id];
           })
         .remove();
+
+      this.updateElementVisibility();
     },
 
     /**
@@ -1389,6 +1391,45 @@ YUI.add('juju-topology-service', function(Y) {
      * Show/hide/fade selection.
      */
     /**
+      Determines what services and relations need to be faded or highlighted
+      then calls the appropriate methods to update the UI.
+
+      @method updateElementVisibility
+    */
+    updateElementVisibility: function() {
+      // Loop through services and organize them into lists of
+      // faded, highlighted
+      var actions = {
+        fade: [],
+        highlight: [],
+        show: []
+      };
+      var db = this.get('component').get('db');
+      var fade, highlight, name;
+      db.services.each(function(service) {
+        fade = service.get('fade');
+        highlight = service.get('highlight');
+        name = service.get('id');
+        if (fade) { actions.fade.push(name); }
+        if (highlight) { actions.highlight.push(name); }
+        if (!fade && !highlight) { actions.show.push(name); }
+      });
+      if (actions.fade.length > 0) {
+        // If any services are highlighted we need to make sure we unhighlight
+        // them before fading.
+        this.unhighlight({serviceName: actions.fade});
+        this.fade({serviceNames: actions.fade});
+      }
+      if (actions.highlight.length > 0) {
+        this.show({serviceNames: actions.highlight});
+        this.highlight({serviceName: actions.highlight});
+      }
+      if (actions.show.length > 0) {
+        this.unhighlight({serviceName: actions.show});
+        this.show({serviceNames: actions.show});
+      }
+    },
+    /**
       Add the highlight attribute from a service and, optionally, related
       services.
 
@@ -1397,6 +1438,9 @@ YUI.add('juju-topology-service', function(Y) {
     */
     highlight: function(evt) {
       var serviceNames = [evt.serviceName];
+      if (Y.Lang.isArray(evt.serviceName)) {
+        serviceNames = evt.serviceName;
+      }
       var topo = this.get('component');
       // Get related services and add to serviceNames.
       if (evt.highlightRelated) {
@@ -1424,6 +1468,10 @@ YUI.add('juju-topology-service', function(Y) {
     */
     unhighlight: function(evt) {
       var serviceNames = [evt.serviceName];
+      if (Y.Lang.isArray(evt.serviceName)) {
+        serviceNames = evt.serviceName;
+      }
+
       var topo = this.get('component');
       // Get related services and add to serviceNames.
       if (evt.unhighlightRelated) {
