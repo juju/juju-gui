@@ -391,6 +391,26 @@ YUI.add('juju-models', function(Y) {
       icon: {},
       config: {},
       /**
+        Marker whether or not the service should be faded on the canvas.
+
+        @Attribute fade
+        @type {Boolean}
+        @default false
+      */
+      fade: {
+        value: false
+      },
+      /**
+        Marker whether or not the service should be highlighted on the canvas.
+
+        @attribute highlight
+        @type {Boolean}
+        @default false
+      */
+      highlight: {
+        value: false
+      },
+      /**
         The environment configuration is kept in sync with what juju believes is
         the real configuration values for this service. You should treat this as
         a read only attribute as it's to be modified only by the delta stream.
