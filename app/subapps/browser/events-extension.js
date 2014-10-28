@@ -90,21 +90,24 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onHighlight: function(e) {
-      var serviceName = e.serviceName;
-      var db = this.get('db');
-      this.get('topo').fire('highlight', { serviceName: serviceName,
-        highlightRelated: e.highlightRelated });
-      var changedMachines = [];
-      db.units.each(function(unit) {
-        if (unit.displayName.split('/')[0] !== serviceName) {
-          unit.hide = true;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-          if (changedMachines.indexOf(unit.machine) === -1) {
-            changedMachines.push(unit.machine);
-          }
+      var serviceName = e.serviceName,
+          db = this.get('db'),
+          changedMachines = [];
+      var service = db.services.getById(serviceName);
+      service.set('highlight', true);
+      db.updateUnitFlag(service, 'highlight');
+      // Unrelated services need to be faded.
+      var unrelated = db.findUnrelatedServices(service);
+      unrelated.forEach(function(unrelatedService) {
+        unrelatedService.set('fade', true);
+        db.updateUnitFlag(unrelatedService, 'fade');
+      });
+      // We also need to fire change events for the related machines in order
+      // to trigger re-rendering in machine view
+      service.get('units').each(function(unit) {
+        var machine = unit.machine;
+        if (changedMachines.indexOf(machine) === -1) {
+          changedMachines.push(machine);
         }
       });
       changedMachines.forEach(function(machineId) {
@@ -122,21 +125,24 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onUnhighlight: function(e) {
-      var db = this.get('db');
-      var serviceName = e.serviceName;
-      this.get('topo').fire('unhighlight', { serviceName: serviceName,
-        unhighlightRelated: e.unhighlightRelated });
-      var changedMachines = [];
-      db.units.each(function(unit) {
-        if (unit.displayName.split('/')[0] !== serviceName) {
-          unit.hide = false;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-          if (changedMachines.indexOf(unit.machine) === -1) {
-            changedMachines.push(unit.machine);
-          }
+      var db = this.get('db'),
+          serviceName = e.serviceName,
+          changedMachines = [];
+      var service = db.services.getById(serviceName);
+      service.set('highlight', false);
+      db.updateUnitFlag(service, 'highlight');
+      // Unrelated services need to be unfaded.
+      var unrelated = db.findUnrelatedServices(service);
+      unrelated.forEach(function(unrelatedService) {
+        unrelatedService.set('fade', false);
+        db.updateUnitFlag(unrelatedService, 'fade');
+      });
+      // We also need to fire change events for the related machines in order
+      // to trigger re-rendering in machine view
+      service.get('units').each(function(unit) {
+        var machine = unit.machine;
+        if (changedMachines.indexOf(machine) === -1) {
+          changedMachines.push(machine);
         }
       });
       changedMachines.forEach(function(machineId) {
@@ -154,22 +160,13 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onFade: function(e) {
-      var serviceNames = e.serviceNames;
-      var fadeLevels = {
-        'dim': '0.6',
-        'hidden': '0.2'
-      };
-      var db = this.get('db');
-      this.get('topo').fire('fade', { serviceNames: serviceNames,
-        alpha: fadeLevels[e.fadeLevel] });
-      db.units.each(function(unit) {
-        if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
-          unit.fade = true;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-        }
+      var serviceNames = e.serviceNames,
+          db = this.get('db'),
+          service;
+      serviceNames.forEach(function(serviceName) {
+        service = db.services.getById(serviceName);
+        service.set('fade', true);
+        db.updateUnitFlag(service, 'fade');
       });
     },
 
@@ -180,17 +177,13 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onShow: function(e) {
-      var serviceNames = e.serviceNames;
-      var db = this.get('db');
-      this.get('topo').fire('show', { serviceNames: serviceNames });
-      db.units.each(function(unit) {
-        if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
-          unit.fade = false;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-        }
+      var serviceNames = e.serviceNames,
+          db = this.get('db'),
+          service;
+      serviceNames.forEach(function(serviceName) {
+        service = db.services.getById(serviceName);
+        service.set('fade', false);
+        db.updateUnitFlag(service, 'fade');
       });
     }
   };

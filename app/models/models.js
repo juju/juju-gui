@@ -571,7 +571,31 @@ YUI.add('juju-models', function(Y) {
             return charmName;
           }
         }
-      }
+      },
+
+      /**
+        The highlight flag, service-level edition.
+
+        @attribute highlight
+        @type {Boolean}
+      */
+      highlight: {},
+
+      /**
+        The hide flag, service-level edition.
+
+        @attribute hide
+        @type {Boolean}
+      */
+      hide: {},
+
+      /**
+        The fade flag, service-level edition.
+
+        @attribute fade
+        @type {Boolean}
+      */
+      fade: {}
     }
   });
   models.Service = Service;
@@ -2311,6 +2335,28 @@ YUI.add('juju-models', function(Y) {
         return related.indexOf(s.get('name')) === -1;
       });
       return unrelated;
+    },
+
+    /**
+      Percolates a service flag into the units under that service, which are
+      stored in two locations: within the service itself, and in db.units.
+
+      @method updateUnitFlag
+      @param {Object} service The service which has the flag.
+      @param {String} flag The flag that needs updating.
+    */
+    updateUnitFlag: function(service, flag) {
+      var value = service.get(flag),
+          dbUnits = this.units,
+          units = service.get('units');
+      units.each(function(unit) {
+        var dbUnit = dbUnits.getById(unit.id);
+        // Revive so that this update triggers change events.
+        unit = units.revive(unit);
+        dbUnit = dbUnits.revive(dbUnit);
+        unit.set(flag, value);
+        dbUnit.set(flag, value);
+      });
     }
 
   });
