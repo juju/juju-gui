@@ -242,7 +242,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       showGetJujuButton = function(logoutTrigger, showGetJujuButton) {
         if (showGetJujuButton) {
-          logoutTrigger.innerHTML = 'Get Started<i class="get-started sprite external-link-grey"></i>';
+          var link = '<i class="get-started sprite external-link-grey"></i>';
+          logoutTrigger.innerHTML = 'Get Started' + link;
           logoutTrigger.href = 'http://jujucharms.com';
           logoutTrigger.target = '_blank';
         } else {
