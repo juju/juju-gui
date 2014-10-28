@@ -201,6 +201,7 @@ YUI.add('juju-topology-relation', function(Y) {
       this.relations = this.decorateRelations(relations);
       this.updateLinks();
       this.updateSubordinateRelationsCount();
+      this.updateRelationVisibility();
 
       return this;
     },
@@ -723,6 +724,35 @@ YUI.add('juju-topology-relation', function(Y) {
       vis.selectAll('.service').classed('selectable-service', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
+    },
+
+    /**
+      Sorts then updates the visibility of the relation lines based on their
+      related services visibility settings.
+
+      @method updateRelationVisibility
+    */
+    updateRelationVisibility: function() {
+      var db = this.get('component').get('db');
+      var actions = {
+        fade: [],
+        show: []
+      };
+      var name;
+      db.services.each(function(service) {
+        name = service.get('id');
+        if (service.get('fade')) {
+          actions.fade.push(name);
+        } else {
+          actions.show.push(name);
+        }
+      });
+      if (actions.fade.length > 0) {
+        this.fade({serviceNames: actions.fade});
+      }
+      if (actions.show.length > 0) {
+        this.show({serviceNames: actions.show});
+      }
     },
 
     /**
