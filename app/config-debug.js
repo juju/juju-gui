@@ -55,6 +55,6 @@ var juju_config = {
   GA_key: '',
   login_help: 'For this demonstration, use the password "admin" to connect.',
   isJujucharms: false,
-  // Switches the logout button to a 'Get Juju' button
+  // Switches the logout button to a 'Get Started' button
   showGetJujuButton: false
 };

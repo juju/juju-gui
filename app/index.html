@@ -242,8 +242,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       showGetJujuButton = function(logoutTrigger, showGetJujuButton) {
         if (showGetJujuButton) {
-          logoutTrigger.innerHTML = 'Get Juju';
-          logoutTrigger.href = 'https://juju.ubuntu.com/get-started/';
+          logoutTrigger.innerHTML = 'Get Started<i class="get-started sprite external-link-grey"></i>';
+          logoutTrigger.href = 'http://jujucharms.com';
           logoutTrigger.target = '_blank';
         } else {
           logoutTrigger.innerHTML = 'Logout';
@@ -392,7 +392,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }
 
-        // If we are supposed to show the Get Juju button or the logout button
+        // If we are supposed to show the Get Started button or the logout
+        // button.
         var logoutTrigger = getDocument().getElementById('logout-trigger');
         // This config property is passed in to allow for testing.
         showGetJujuButton(logoutTrigger, juju_config.showGetJujuButton);

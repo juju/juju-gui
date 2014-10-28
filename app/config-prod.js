@@ -65,6 +65,6 @@ var juju_config = {
       'can automate logging in, as well as other parts of installing and ' +
       'starting Juju.'),
   isJujucharms: false,
-  // Switches the logout button to a 'Get Juju' button
+  // Switches the logout button to a 'Get Started' button
   showGetJujuButton: false
 };

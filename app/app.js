@@ -617,7 +617,7 @@ YUI.add('juju-gui', function(Y) {
       }
 
       Y.one('#logout-trigger').on('click', function(e) {
-        // If this is not a Get Juju link then allow it to work as normal.
+        // If this is not a Get Started link then allow it to work as normal.
         if (!this.get('showGetJujuButton')) {
           e.halt();
           this.logout();
