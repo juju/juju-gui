@@ -84,35 +84,61 @@ YUI.add('subapp-browser-events', function(Y) {
     },
 
     /**
+      Fire a change event on all machine models associated with a service.
+
+      @method _fireMachineChanges
+      @param {Object} service The service that the machines are associated with
+          via units.
+    */
+    _fireMachineChanges: function(service) {
+      var db = this.get('db'),
+          services;
+      if (service) {
+        services = [service]
+      } else {
+        services = db.services.toArray();
+      }
+      // We also need to fire change events for the related machines in order
+      // to trigger re-rendering in machine view
+      services.forEach(function(service) {
+        var changedMachines = [];
+        service.get('units').each(function(unit) {
+          var machine = unit.machine;
+          if (changedMachines.indexOf(machine) === -1) {
+            changedMachines.push(machine);
+          }
+        });
+        changedMachines.forEach(function(machineId) {
+          db.machines.fire('change', {
+            changed: true,
+            instance: db.machines.getById(machineId)
+          });
+        });
+      });
+    },
+
+    /**
       Handle highlight events for services/units.
 
       @method _onHighlight
       @param {Object} e The event facade.
     */
     _onHighlight: function(e) {
-      var serviceName = e.serviceName;
-      var db = this.get('db');
-      this.get('topo').fire('highlight', { serviceName: serviceName,
-        highlightRelated: e.highlightRelated });
-      var changedMachines = [];
-      db.units.each(function(unit) {
-        if (unit.displayName.split('/')[0] !== serviceName) {
-          unit.hide = true;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-          if (changedMachines.indexOf(unit.machine) === -1) {
-            changedMachines.push(unit.machine);
-          }
-        }
+      var serviceName = e.serviceName,
+          db = this.get('db'),
+          changedMachines = [];
+      var service = db.services.getById(serviceName);
+      service.set('highlight', true);
+      db.updateUnitFlags(service, 'highlight');
+      // Unrelated services need to be faded.
+      var unrelated = db.findUnrelatedServices(service);
+      //unrelated.set('fade', true);
+      unrelated.each(function(model) {
+        model.set('hide', true);
       });
-      changedMachines.forEach(function(machineId) {
-        db.machines.fire('change', {
-          changed: true,
-          instance: db.machines.getById(machineId)
-        });
-      });
+      //db.updateUnitFlags(unrelated, 'hide');
+      //this.updateMachineFlags(unrelated, 'hide');
+      this._fireMachineChanges();
     },
 
     /**
@@ -122,29 +148,21 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onUnhighlight: function(e) {
-      var db = this.get('db');
-      var serviceName = e.serviceName;
-      this.get('topo').fire('unhighlight', { serviceName: serviceName,
-        unhighlightRelated: e.unhighlightRelated });
-      var changedMachines = [];
-      db.units.each(function(unit) {
-        if (unit.displayName.split('/')[0] !== serviceName) {
-          unit.hide = false;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-          if (changedMachines.indexOf(unit.machine) === -1) {
-            changedMachines.push(unit.machine);
-          }
-        }
+      var db = this.get('db'),
+          serviceName = e.serviceName,
+          changedMachines = [];
+      var service = db.services.getById(serviceName);
+      service.set('highlight', false);
+      db.updateUnitFlags(service, 'highlight');
+      // Unrelated services need to be unfaded.
+      var unrelated = db.findUnrelatedServices(service);
+      //unrelated.set('fade', false);
+      unrelated.each(function(model) {
+        model.set('hide', false);
       });
-      changedMachines.forEach(function(machineId) {
-        db.machines.fire('change', {
-          changed: true,
-          instance: db.machines.getById(machineId)
-        });
-      });
+      //db.updateUnitFlags(unrelated, 'hide');
+      //this.updateMachineFlags(unrelated, 'hide');
+      this._fireMachineChanges();
     },
 
     /**
@@ -154,23 +172,15 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onFade: function(e) {
-      var serviceNames = e.serviceNames;
-      var fadeLevels = {
-        'dim': '0.6',
-        'hidden': '0.2'
-      };
-      var db = this.get('db');
-      this.get('topo').fire('fade', { serviceNames: serviceNames,
-        alpha: fadeLevels[e.fadeLevel] });
-      db.units.each(function(unit) {
-        if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
-          unit.fade = true;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-        }
-      });
+      var serviceNames = e.serviceNames,
+          db = this.get('db'),
+          service;
+      serviceNames.forEach(function(serviceName) {
+        service = db.services.getById(serviceName);
+        service.set('fade', true);
+        db.updateUnitFlags(service, 'fade');
+        this._fireMachineChanges(service);
+      }, this);
     },
 
     /**
@@ -180,18 +190,15 @@ YUI.add('subapp-browser-events', function(Y) {
       @param {Object} e The event facade.
     */
     _onShow: function(e) {
-      var serviceNames = e.serviceNames;
-      var db = this.get('db');
-      this.get('topo').fire('show', { serviceNames: serviceNames });
-      db.units.each(function(unit) {
-        if (serviceNames.indexOf(unit.displayName.split('/')[0]) !== -1) {
-          unit.fade = false;
-          db.units.fire('change', {
-            changed: {machine: {newVal: unit.machine}},
-            instance: unit
-          });
-        }
-      });
+      var serviceNames = e.serviceNames,
+          db = this.get('db'),
+          service;
+      serviceNames.forEach(function(serviceName) {
+        service = db.services.getById(serviceName);
+        service.set('fade', false);
+        db.updateUnitFlags(service, 'fade');
+        this._fireMachineChanges(service);
+      }, this);
     }
   };
 

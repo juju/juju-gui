@@ -158,52 +158,72 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         db = new Y.juju.models.Database();
         db.services.add([
           {id: 'mysql'},
-          {id: 'wordpress'}
-        ]);
-        db.addUnits([
-          {id: 'mysql/0', machine: '0'},
-          {id: 'wordpress/0', machine: '0'}
+          {id: 'wordpress'},
+          {id: 'haproxy'}
         ]);
         browser.set('db', db);
-        browser.set('topo', {
-          fire: utils.makeStubFunction()
+        var unrelated = db.services.filter({asList: true}, function(service) {
+          return service.get('id') === 'haproxy';
         });
+        utils.makeStubMethod(db, 'findUnrelatedServices', unrelated);
       });
 
-      it('sets hide flag on all unrelated units on highlight', function() {
-        assert.equal(db.units.getById('mysql/0').hide, undefined);
-        assert.equal(db.units.getById('wordpress/0').hide, undefined);
+      it('sets highlight flag on selected service', function() {
+        var mysql = db.services.getById('mysql');
+        assert.equal(mysql.get('highlight'), false,
+                     'target service should not have flag set initially');
         browser._onHighlight({serviceName: 'mysql'});
-        assert.equal(db.units.getById('mysql/0').hide, undefined);
-        assert.equal(db.units.getById('wordpress/0').hide, true);
+        assert.equal(mysql.get('highlight'), true,
+                     'target service should have flag set to true');
       });
 
-      it('percolates the highlight event to the topology', function() {
-        var args = {serviceName: 'mysql', highlightRelated: true},
-            topo = browser.get('topo');
-        browser._onHighlight(args);
-        assert.equal(topo.fire.lastArguments()[0], 'highlight');
-        assert.deepEqual(topo.fire.lastArguments()[1], args);
+      it('sets unrelated services\' fade flag on highlight', function() {
+        var mysql = db.services.getById('mysql'), // Target service.
+            wordpress = db.services.getById('wordpress'), // Related service.
+            haproxy = db.services.getById('haproxy'); // Unrelated service.
+        assert.equal(mysql.get('fade'), false,
+                     'target service should not have flag set initially');
+        assert.equal(wordpress.get('fade'), false,
+                     'related service should not have flag set initially');
+        assert.equal(haproxy.get('fade'), false,
+                     'unrelated service should not have flag set initially');
+        browser._onHighlight({serviceName: 'mysql'});
+        assert.equal(mysql.get('fade'), false,
+                     'target service should not have flag set post-event');
+        assert.equal(wordpress.get('fade'), false,
+                     'related service should not have flag set post-event');
+        assert.equal(haproxy.get('fade'), true,
+                     'unrelated service should have flag set to true');
       });
 
-      it('unsets hide flag on all unrelated units on unhighlight', function() {
-        assert.equal(db.units.getById('mysql/0').hide, undefined);
-        assert.equal(db.units.getById('wordpress/0').hide, undefined);
+      it('unsets highlight flag on selected service', function() {
+        var mysql = db.services.getById('mysql');
+        mysql.set('highlight', true);
         browser._onUnhighlight({serviceName: 'mysql'});
-        assert.equal(db.units.getById('mysql/0').hide, undefined);
-        assert.equal(db.units.getById('wordpress/0').hide, false);
+        assert.equal(mysql.get('highlight'), false,
+                     'target service should have flag set to false');
       });
 
-      it('percolates the unhighlight event to the topology', function() {
-        var args = {serviceName: 'mysql', unhighlightRelated: true},
-            topo = browser.get('topo');
-        browser._onUnhighlight(args);
-        assert.equal(topo.fire.lastArguments()[0], 'unhighlight');
-        assert.deepEqual(topo.fire.lastArguments()[1], args);
+      it('unsets unrelated services\' fade flag on unhighlight', function() {
+        var mysql = db.services.getById('mysql'), // Target service.
+            wordpress = db.services.getById('wordpress'), // Related service.
+            haproxy = db.services.getById('haproxy'); // Unrelated service.
+        mysql.set('highlight', true);
+        assert.equal(wordpress.get('fade'), false,
+                     'related service should not have flag set initially');
+        assert.equal(haproxy.get('fade'), false,
+                     'unrelated service should not have flag set initially');
+        browser._onUnhighlight({serviceName: 'mysql'});
+        assert.equal(mysql.get('fade'), false,
+                     'target service should not have flag set post-event');
+        assert.equal(wordpress.get('fade'), false,
+                     'related service should not have flag set post-event');
+        assert.equal(haproxy.get('fade'), false,
+                     'unrelated service should have flag set to false');
       });
     });
 
-    describe('show events', function() {
+    describe('hide/fade events', function() {
       var db;
 
       beforeEach(function() {
@@ -212,46 +232,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {id: 'mysql'},
           {id: 'wordpress'}
         ]);
-        db.addUnits([
-          {id: 'mysql/0', machine: '0'},
-          {id: 'wordpress/0', machine: '0'}
-        ]);
         browser.set('db', db);
-        browser.set('topo', {
-          fire: utils.makeStubFunction()
-        });
       });
 
-      it('sets fade flag on selected units on fade', function() {
-        assert.equal(db.units.getById('mysql/0').fade, undefined);
-        assert.equal(db.units.getById('wordpress/0').fade, undefined);
+      it('sets fade flag on the selected service on fade', function() {
+        var mysql = db.services.getById('mysql'),
+            wordpress = db.services.getById('wordpress');
+        assert.equal(mysql.get('fade'), false);
+        assert.equal(wordpress.get('fade'), false);
         browser._onFade({serviceNames: ['mysql']});
-        assert.equal(db.units.getById('mysql/0').fade, true);
-        assert.equal(db.units.getById('wordpress/0').fade, undefined);
+        assert.equal(mysql.get('fade'), true);
+        assert.equal(wordpress.get('fade'), false);
       });
 
-      it('percolates the fade event to the topology', function() {
-        var topo = browser.get('topo');
-        browser._onFade({serviceNames: ['mysql'], fadeLevel: 'hidden'});
-        assert.equal(topo.fire.lastArguments()[0], 'fade');
-        assert.deepEqual(topo.fire.lastArguments()[1],
-                         {serviceNames: ['mysql'], alpha: '0.2'});
-      });
-
-      it('unsets fade flag on selected units on show', function() {
-        assert.equal(db.units.getById('mysql/0').fade, undefined);
-        assert.equal(db.units.getById('wordpress/0').fade, undefined);
+      it('unsets fade flag on show', function() {
+        var mysql = db.services.getById('mysql'),
+            wordpress = db.services.getById('wordpress');
+        mysql.set('fade', true);
+        assert.equal(wordpress.get('fade'), false);
         browser._onShow({serviceNames: ['mysql']});
-        assert.equal(db.units.getById('mysql/0').fade, false);
-        assert.equal(db.units.getById('wordpress/0').fade, undefined);
-      });
-
-      it('percolates the show event to the topology', function() {
-        var topo = browser.get('topo');
-        browser._onShow({serviceNames: ['mysql']});
-        assert.equal(topo.fire.lastArguments()[0], 'show');
-        assert.deepEqual(topo.fire.lastArguments()[1],
-                         {serviceNames: ['mysql']});
+        assert.equal(mysql.get('fade'), false);
+        assert.equal(wordpress.get('fade'), false);
       });
     });
   });

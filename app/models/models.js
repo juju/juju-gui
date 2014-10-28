@@ -571,6 +571,39 @@ YUI.add('juju-models', function(Y) {
             return charmName;
           }
         }
+      },
+
+      /**
+        The highlight flag, service-level edition.
+
+        @attribute highlight
+        @type {Boolean}
+        @default false
+      */
+      highlight: {
+        value: false
+      },
+
+      /**
+        The hide flag, service-level edition.
+
+        @attribute hide
+        @type {Boolean}
+        @default false
+      */
+      hide: {
+        value: false
+      },
+
+      /**
+        The fade flag, service-level edition.
+
+        @attribute fade
+        @type {Boolean}
+        @default false
+      */
+      fade: {
+        value: false
       }
     }
   });
@@ -2296,7 +2329,7 @@ YUI.add('juju-models', function(Y) {
 
       @method findUnrelatedServices
       @param {Object} service The origin service.
-      @return {Array} A list of the service names of unrelated services.
+      @return {Y.ModelList} A ModelList of the unrelated services.
     */
     findUnrelatedServices: function(service) {
       var relationData = utils.getRelationDataForService(this, service);
@@ -2307,10 +2340,48 @@ YUI.add('juju-models', function(Y) {
         related.push(relation.far.service);
       });
       // Find the unrelated by filtering out the related.
-      unrelated = this.services.filter(function(s) {
+      unrelated = this.services.filter({asList: true}, function(s) {
         return related.indexOf(s.get('name')) === -1;
       });
       return unrelated;
+    },
+
+    /**
+      Percolates a service flag into the units under that service, which are
+      stored in two locations: within the service itself, and in db.units.
+
+      @method updateUnitFlags
+      @param {Object|Y.ModelList} serviceOrServiceList The service(s) which has
+          the flag.
+      @param {String} flag The flag that needs updating.
+    */
+    updateUnitFlags: function(serviceOrServiceList, flag) {
+      var dbUnits = this.units;
+      /**
+        Helper function to deal with a single service.
+
+        @method updateOneService
+        @param {Object} service The service being updated.
+      */
+      function updateOneService(service) {
+        var value = service.get(flag),
+            units = service.get('units');
+        units.each(function(unit) {
+          var dbUnit = dbUnits.getById(unit.id);
+          // Revive so that this update triggers change events.
+          unit = units.revive(unit);
+          dbUnit = dbUnits.revive(dbUnit);
+          // Need to update the unit in both locations - in the service itself
+          // and in the DB.
+          unit.set(flag, value);
+          dbUnit.set(flag, value);
+        });
+      }
+      if (serviceOrServiceList instanceof models.ServiceList) {
+        serviceOrServiceList.each(updateOneService);
+      } else {
+        updateOneService(serviceOrServiceList);
+      }
     }
 
   });
