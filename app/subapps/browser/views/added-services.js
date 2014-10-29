@@ -182,13 +182,22 @@ YUI.add('juju-added-services', function(Y) {
           machinesCount = this.get('db').machines.size(),
           list;
       // Render the template.
-      container.setHTML(this.template({
-        servicesCount: servicesCount,
-        unitsCount: unitsCount,
-        machinesCount: machinesCount
-      }));
+      var noServices = container.one('.no-services');
+      // This template needs to be updated if it already exists because we use
+      // it as a container for sub views.
+      if (noServices === null) {
+        container.setHTML(this.template({
+          servicesCount: servicesCount
+        }));
+      } else if (servicesCount) {
+        noServices.addClass('hide');
+      } else {
+        noServices.removeClass('hide');
+      }
       // Provided by 'search-widget-mgmt-extension'.
-      this._renderSearchWidget();
+      if (!this.searchWidget) {
+        this._renderSearchWidget();
+      }
       // Provided by 'added-services-button.js'.
       this._renderAddedServicesButton(servicesCount, false);
       // Render the environment counts widget.

@@ -131,6 +131,19 @@ describe('added services view', function() {
       assert.equal(message.hasClass('hide'), false,
                    '"No services" message is not displayed');
     });
+
+    it('updates instead of re-rendering its template', function() {
+      view.render();
+      var id = view.get('container').one('.environment-counts').get('_yuid');
+      assert.isNotNull(id, 'environment-counts element does not exist');
+      // By rendering twice if this is overwriting the old template then the
+      // yuid's will change.
+      view.render();
+      assert.equal(
+          id,
+          view.get('container').one('.environment-counts').get('_yuid'),
+          'views template was re-rendered');
+    });
   });
 
   describe('bind events', function() {

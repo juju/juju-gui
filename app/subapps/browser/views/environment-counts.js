@@ -73,7 +73,7 @@ YUI.add('juju-environment-counts', function(Y) {
     },
 
     /**
-      Renders the Added Services Button to the views container. Render is
+      Renders the environment counts element to the views container. Render is
       idempotent.
 
       @method render
@@ -90,7 +90,7 @@ YUI.add('juju-environment-counts', function(Y) {
     },
 
     /**
-      Properly tears down the added services button.
+      Properly tears down the environment count view.
 
       @method destructor
     */
