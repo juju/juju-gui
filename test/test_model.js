@@ -115,6 +115,39 @@ describe('test_model.js', function() {
       window._gaq = [];
     });
 
+    it('percolates flags set on the service into the unit', function() {
+      // Setup the database.
+      var units = [
+        {id: 'mysql/0', service: 'mysql'},
+        {id: 'mysql/1', service: 'mysql'}
+      ];
+      var service = new models.Service({id: 'mysql'});
+      var db = new models.Database();
+      db.services.add(service);
+      db.addUnits(units);
+      // Encapsulate and re-use testing logic for each flag.
+      function tester(flag) {
+        service.set(flag, true);
+        db.updateUnitFlag(service, flag);
+        service.get('units').each(function(u) {
+          assert.equal(u[flag], true, flag + ' not true in the service');
+          var dbUnit = db.units.getById(u.id);
+          assert.equal(dbUnit[flag], true, flag + ' not true in the DB');
+        });
+        service.set(flag, false);
+        db.updateUnitFlag(service, flag);
+        service.get('units').each(function(u) {
+          assert.equal(u[flag], false, flag + ' not false in the service');
+          var dbUnit = db.units.getById(u.id);
+          assert.equal(dbUnit[flag], false, flag + ' not false in the DB');
+        });
+      }
+      // Check each flag.
+      tester('highlight');
+      tester('hide');
+      tester('fade');
+    });
+
     it('finds unrelated services', function() {
       var db = new models.Database(),
           service = new models.Service({name: 'mysql'});
