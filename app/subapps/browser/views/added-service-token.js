@@ -44,9 +44,10 @@ YUI.add('juju-added-service-token', function(Y) {
       @param {Object} e Event facade.
      */
     _onActionClick: function(e) {
-      e.preventDefault();
-      var button = e.currentTarget,
-          action = button.getAttribute('data-action'),
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      var action = e.action || e.currentTarget.getAttribute('data-action'),
           service = this.get('service'),
           serviceName = service.get('name'),
           args = {};
@@ -109,6 +110,15 @@ YUI.add('juju-added-service-token', function(Y) {
       // Make the token easily selectable in the DOM.
       container.addClass('token');
       container.setAttribute('data-id', this.get('service').get('id'));
+    },
+
+    /**
+      Convenience method for mimicing a click on the unhighlight button.
+
+      @method unhighlight
+     */
+    unhighlight: function() {
+      this._onActionClick({action: 'unhighlight'});
     },
 
     /**

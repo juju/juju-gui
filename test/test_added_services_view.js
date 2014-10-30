@@ -270,6 +270,30 @@ describe('added services view', function() {
       assert.equal(token.one('.name').get('text'), newName,
                    'Token name does not match the expected name');
     });
+
+    it('toggles off any other highlighted tokens on highlight', function(done) {
+      view.render();
+      var db = view.get('db'),
+          service = db.services.item(0),
+          id = service.get('id'),
+          tokens = view.get('serviceTokens'),
+          token = tokens[id];
+      // Highlight another service.
+      tokens[db.services.item(1).get('id')].set('highlight', true);
+      // After the highlight event, make sure all other tokens have highlight
+      // toggled off.
+      view.after('*:highlight', function() {
+        Object.keys(tokens).forEach(function(key) {
+          if (key !== id) {
+            assert.equal(tokens[key].get('highlight'), false,
+                         'Token for service "' + key + '" still highlighted');
+          }
+        });
+        done();
+      });
+      // Fire the actual event.
+      token.fire('highlight');
+    });
   });
 
   describe('added services visibility', function() {

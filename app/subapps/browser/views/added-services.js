@@ -69,6 +69,9 @@ YUI.add('juju-added-services', function(Y) {
       this.addEvent(services.after('add', this._onServiceAdd, this));
       this.addEvent(services.after('remove', this._onServiceRemove, this));
       this.addEvent(services.after('*:change', this._onServiceChange, this));
+
+      // Toggle highlight states
+      this.addEvent(this.after('*:highlight', this._onHighlightToggle, this));
     },
 
     /**
@@ -149,6 +152,23 @@ YUI.add('juju-added-services', function(Y) {
         token.set('service', target);
         token.render();
       }
+    },
+
+    /**
+      Handles toggling the highlight state across the service tokens.
+
+      @method _onHighlightToggle
+      @param {Object} e Custom model change event facade.
+    */
+    _onHighlightToggle: function(e) {
+      var serviceName = e.serviceName,
+          tokens = this.get('serviceTokens'),
+          keys = Object.keys(tokens);
+      keys.forEach(function(key) {
+        if (key !== serviceName) {
+          tokens[key].unhighlight();
+        }
+      });
     },
 
     /**
