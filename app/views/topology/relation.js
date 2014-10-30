@@ -720,7 +720,7 @@ YUI.add('juju-topology-relation', function(Y) {
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'hideServiceMenu');
       topo.buildingRelation = false;
-      topo.fire('show', { selection: vis.selectAll('.service') });
+      topo.update();
       vis.selectAll('.service').classed('selectable-service', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
@@ -736,19 +736,25 @@ YUI.add('juju-topology-relation', function(Y) {
       var db = this.get('component').get('db');
       var actions = {
         fade: [],
-        show: []
+        show: [],
+        hide: []
       };
       var name;
       db.services.each(function(service) {
         name = service.get('id');
         if (service.get('fade')) {
           actions.fade.push(name);
+        } else if (service.get('hide')) {
+          actions.hide.push(name);
         } else {
           actions.show.push(name);
         }
       });
       if (actions.fade.length > 0) {
         this.fade({serviceNames: actions.fade});
+      }
+      if (actions.hide.length > 0) {
+        this.hide({serviceNames: actions.hide});
       }
       if (actions.show.length > 0) {
         this.show({serviceNames: actions.show});
@@ -769,11 +775,13 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       var selection = topo.vis.selectAll('.rel-group')
         .filter(function(d) {
-            return serviceNames.indexOf(d.source.id) > -1 ||
-                serviceNames.indexOf(d.target.id) > -1;
+            return (serviceNames.indexOf(d.source.id) > -1 ||
+                serviceNames.indexOf(d.target.id) > -1) &&
+                d.target.hide === false;
           });
       selection.transition()
         .duration(400)
+        .style('display', 'block')
         .attr('opacity', '1.0');
     },
 
@@ -797,7 +805,30 @@ YUI.add('juju-topology-relation', function(Y) {
           });
       selection.transition()
         .duration(400)
+        .style('display', 'block')
         .attr('opacity', alpha !== undefined ? alpha : '0.2');
+    },
+
+    /**
+      Hides the relations for a given service or services. Respecting the
+      hidden status of the 'far' service relation
+
+      @method hide
+      @param {Object} evt The event object which contains the serviceNames.
+    */
+    hide: function(evt) {
+      var serviceNames = evt.serviceNames;
+      if (!serviceNames) {
+        return;
+      }
+      var topo = this.get('component');
+      var selection = topo.vis.selectAll('.rel-group')
+        .filter(function(d) {
+            return serviceNames.indexOf(d.source.id) > -1 ||
+                serviceNames.indexOf(d.target.id) > -1;
+          });
+      selection.attr('opacity', '0')
+            .style('display', 'none');
     },
 
     /**
