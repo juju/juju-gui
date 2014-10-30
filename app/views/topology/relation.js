@@ -777,7 +777,8 @@ YUI.add('juju-topology-relation', function(Y) {
         .filter(function(d) {
             return (serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1) &&
-                d.target.hide === false;
+                (d.target.hide === false && d.source.hide === false) &&
+                (d.target.fade === false && d.source.fade === false);
           });
       selection.transition()
         .duration(400)
