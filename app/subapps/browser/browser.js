@@ -202,6 +202,7 @@ YUI.add('subapp-browser', function(Y) {
       // Setup event handlers.
       this.on('*:changeState', this._onChangeState, this);
       this.on('*:serviceDeployed', this._onServiceDeployed, this);
+      // These event handlers come from app/subapps/browser/events-extension.js
       this.on('*:highlight', this._onHighlight, this);
       this.on('*:unhighlight', this._onUnhighlight, this);
       this.on('*:fade', this._onFade, this);

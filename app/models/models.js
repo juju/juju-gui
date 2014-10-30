@@ -571,6 +571,39 @@ YUI.add('juju-models', function(Y) {
             return charmName;
           }
         }
+      },
+
+      /**
+        The highlight flag, service-level edition.
+
+        @attribute highlight
+        @type {Boolean}
+        @default false
+      */
+      highlight: {
+        value: false
+      },
+
+      /**
+        The hide flag, service-level edition.
+
+        @attribute hide
+        @type {Boolean}
+        @default false
+      */
+      hide: {
+        value: false
+      },
+
+      /**
+        The fade flag, service-level edition.
+
+        @attribute fade
+        @type {Boolean}
+        @default false
+      */
+      fade: {
+        value: false
       }
     }
   });
@@ -1207,6 +1240,16 @@ YUI.add('juju-models', function(Y) {
     _ghostCounter: 0,
 
     /**
+      Stores the list of services which are hidden because of the added
+      services view.
+
+      @property _highlightedServices
+      @type {Array}
+      @default []
+    */
+    _highlightedServices: [],
+
+    /**
      * Create a display name that can be used in the views as an entity label
      * agnostic from juju type.
      *
@@ -1353,6 +1396,50 @@ YUI.add('juju-models', function(Y) {
       }
       // Add the new machine to the database.
       return this.add(obj);
+    },
+
+    /**
+      Sets the visibility of a machine based on the service name and
+      visibility modifier passed in. This is used by the machine view to
+      determine if it should show the token or not when a user clicks on
+      highlight in the added services bar.
+
+      @method setMVVisibility
+      @param {String} serviceName The service name to compare to the units
+        services in the machine.
+      @param {Boolean} visible If the machine with units matching the supplied
+        service should be visible or not.
+    */
+    setMVVisibility: function(serviceName, highlight) {
+      var highlightIndex = this._highlightedServices.indexOf(serviceName);
+      if (highlightIndex >= 0 && highlight === false) {
+        // If the service is stored as hidden but we no longer want it to be
+        // then remove it from the hidden list.
+        this._highlightedServices.splice(highlightIndex, 1);
+      } else if (highlightIndex < 0 && highlight === true) {
+        this._highlightedServices.push(serviceName);
+      }
+
+      this.each(function(machine) {
+        var keepVisible = this._highlightedServices.some(
+            function(highlightedService) {
+              return machine.units.some(function(unit) {
+                return unit.service === highlightedService;
+              });
+            });
+        // If we no longer have any services highlighted then we want to show
+        // all machine tokens.
+        if (this._highlightedServices.length < 1) {
+          keepVisible = true;
+        }
+        machine.hide = keepVisible ? false : true;
+        // In order to have the machine view update the rendered tokens we need
+        // to fire an event to tell it that it has changed.
+        this.fire('change', {
+          changed: true,
+          instance: machine
+        });
+      }, this);
     },
 
     /**
@@ -2296,7 +2383,7 @@ YUI.add('juju-models', function(Y) {
 
       @method findUnrelatedServices
       @param {Object} service The origin service.
-      @return {Array} A list of the service names of unrelated services.
+      @return {Y.ModelList} A ModelList of the unrelated services.
     */
     findUnrelatedServices: function(service) {
       var relationData = utils.getRelationDataForService(this, service);
@@ -2307,10 +2394,48 @@ YUI.add('juju-models', function(Y) {
         related.push(relation.far.service);
       });
       // Find the unrelated by filtering out the related.
-      unrelated = this.services.filter(function(s) {
+      unrelated = this.services.filter({asList: true}, function(s) {
         return related.indexOf(s.get('name')) === -1;
       });
       return unrelated;
+    },
+
+    /**
+      Percolates a service flag into the units under that service, which are
+      stored in two locations: within the service itself, and in db.units.
+
+      @method updateUnitFlags
+      @param {Object|Y.ModelList} serviceOrServiceList The service(s) which has
+          the flag.
+      @param {String} flag The flag that needs updating.
+    */
+    updateUnitFlags: function(serviceOrServiceList, flag) {
+      var dbUnits = this.units;
+      /**
+        Helper function to deal with a single service.
+
+        @method updateOneService
+        @param {Object} service The service being updated.
+      */
+      function updateOneService(service) {
+        var value = service.get(flag),
+            units = service.get('units');
+        units.each(function(unit) {
+          var dbUnit = dbUnits.getById(unit.id);
+          // Revive so that this update triggers change events.
+          unit = units.revive(unit);
+          dbUnit = dbUnits.revive(dbUnit);
+          // Need to update the unit in both locations - in the service itself
+          // and in the DB.
+          unit.set(flag, value);
+          dbUnit.set(flag, value);
+        });
+      }
+      if (serviceOrServiceList instanceof models.ServiceList) {
+        serviceOrServiceList.each(updateOneService);
+      } else {
+        updateOneService(serviceOrServiceList);
+      }
     }
 
   });
