@@ -200,16 +200,12 @@ YUI.add('machine-token', function(Y) {
               !machine.formattedHardware.cpuCores) {
             machine.noHardware = true;
           }
-          var showMachine = true;
-          if (machine.units.length) {
-            // Do not show the machine if all its units are currently hidden.
-            showMachine = Y.Array.some(machine.units, function(unit) {
-              return !unit.hide;
-            });
-          }
-          if (showMachine) {
+          // This strict boolean checks are important, because this is an
+          // object there is the possibility the hide property would be
+          // undefined.
+          if (!machine.hide) {
             container.removeClass('hidden');
-          } else {
+          } else if (machine.hide === true) {
             container.addClass('hidden');
           }
           container.setHTML(this.template(machine));

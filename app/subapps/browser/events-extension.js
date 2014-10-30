@@ -104,7 +104,7 @@ YUI.add('subapp-browser-events', function(Y) {
         var changedMachines = [];
         service.get('units').each(function(unit) {
           var machine = unit.machine;
-          if (changedMachines.indexOf(machine) === -1) {
+          if (changedMachines.indexOf(machine) < 0) {
             changedMachines.push(machine);
           }
         });
@@ -132,13 +132,11 @@ YUI.add('subapp-browser-events', function(Y) {
       db.updateUnitFlags(service, 'highlight');
       // Unrelated services need to be faded.
       var unrelated = db.findUnrelatedServices(service);
-      //unrelated.set('fade', true);
       unrelated.each(function(model) {
         model.set('hide', true);
       });
-      //db.updateUnitFlags(unrelated, 'hide');
-      //this.updateMachineFlags(unrelated, 'hide');
-      this._fireMachineChanges();
+      db.updateUnitFlags(unrelated, 'hide');
+      db.machines.setMVVisibility(serviceName, true);
     },
 
     /**
@@ -156,13 +154,11 @@ YUI.add('subapp-browser-events', function(Y) {
       db.updateUnitFlags(service, 'highlight');
       // Unrelated services need to be unfaded.
       var unrelated = db.findUnrelatedServices(service);
-      //unrelated.set('fade', false);
       unrelated.each(function(model) {
         model.set('hide', false);
       });
-      //db.updateUnitFlags(unrelated, 'hide');
-      //this.updateMachineFlags(unrelated, 'hide');
-      this._fireMachineChanges();
+      db.updateUnitFlags(unrelated, 'hide');
+      db.machines.setMVVisibility(serviceName, false);
     },
 
     /**

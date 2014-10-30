@@ -66,7 +66,6 @@ YUI.add('juju-added-service-token', function(Y) {
         // Toggle the other button
         if (action === 'highlight') {
           this.set('visible', true);
-          this.fire('show', {serviceNames: [serviceName]});
         }
       }
       // Re-render because we changed the token's attributes
