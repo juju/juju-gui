@@ -173,10 +173,26 @@ YUI.add('machine-token', function(Y) {
         */
         renderUnits: function() {
           // Only display shown units.
-          // TODO refactor filter method to be reused
-          var shownUnits = this.get('machine').units.filter(function(u) {
-            return !(u.fade || u.hide);
+          var machine = this.get('machine'),
+              shownUnits;
+          var units = {
+            highlighted: [],
+            regular: []
+          };
+          machine.units.forEach(function(unit) {
+            if (unit.highlight) {
+              units.highlighted.push(unit);
+            } else if (!(unit.fade || unit.hide)) {
+              units.regular.push(unit);
+            }
           });
+          // We only show the highlighted units if any are highlighted and skip
+          // over any that are faded or hidden.
+          if (units.highlighted.length > 0) {
+            shownUnits = units.highlighted;
+          } else {
+            shownUnits = units.regular;
+          }
           this.get('container').one('.service-icons').setHTML(
               this.unitsTemplate({units: shownUnits}));
         },

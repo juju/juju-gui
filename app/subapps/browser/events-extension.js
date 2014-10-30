@@ -135,7 +135,6 @@ YUI.add('subapp-browser-events', function(Y) {
       unrelated.each(function(model) {
         model.set('hide', true);
       });
-      db.updateUnitFlags(unrelated, 'hide');
       db.machines.setMVVisibility(serviceName, true);
     },
 
@@ -157,7 +156,6 @@ YUI.add('subapp-browser-events', function(Y) {
       unrelated.each(function(model) {
         model.set('hide', false);
       });
-      db.updateUnitFlags(unrelated, 'hide');
       db.machines.setMVVisibility(serviceName, false);
     },
 
