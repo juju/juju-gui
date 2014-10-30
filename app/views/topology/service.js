@@ -1402,17 +1402,20 @@ YUI.add('juju-topology-service', function(Y) {
       var actions = {
         fade: [],
         highlight: [],
+        hide: [],
         show: []
       };
       var db = this.get('component').get('db');
-      var fade, highlight, name;
+      var fade, hide, highlight, name;
       db.services.each(function(service) {
         fade = service.get('fade');
         highlight = service.get('highlight');
+        hide = service.get('hide');
         name = service.get('id');
         if (fade) { actions.fade.push(name); }
         if (highlight) { actions.highlight.push(name); }
-        if (!fade && !highlight) { actions.show.push(name); }
+        if (hide) { actions.hide.push(name); }
+        if (!fade && !highlight && !hide) { actions.show.push(name); }
       });
       if (actions.fade.length > 0) {
         // If any services are highlighted we need to make sure we unhighlight
@@ -1423,6 +1426,10 @@ YUI.add('juju-topology-service', function(Y) {
       if (actions.highlight.length > 0) {
         this.show({serviceNames: actions.highlight});
         this.highlight({serviceName: actions.highlight});
+      }
+      if (actions.hide.length > 0) {
+        this.unhighlight({serviceName: actions.hide});
+        this.hide({serviceNames: actions.hide});
       }
       if (actions.show.length > 0) {
         this.unhighlight({serviceName: actions.show});
@@ -1507,6 +1514,13 @@ YUI.add('juju-topology-service', function(Y) {
 
     hide: function(evt) {
       var selection = evt.selection;
+      if (!selection) {
+        var serviceNames = evt.serviceNames;
+        if (!serviceNames) {
+          return;
+        }
+        selection = this.selectionFromServiceNames(serviceNames);
+      }
       selection.attr('opacity', '0')
             .style('display', 'none');
     },
