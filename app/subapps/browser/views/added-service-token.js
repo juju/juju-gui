@@ -58,7 +58,6 @@ YUI.add('juju-added-service-token', function(Y) {
         // Toggle the other button
         if (action === 'fade') {
           this.set('highlight', false);
-          this.fire('unhighlight', {serviceName: serviceName});
         }
       } else if (action === 'highlight' || action === 'unhighlight') {
         args.serviceName = serviceName;

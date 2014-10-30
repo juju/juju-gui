@@ -177,22 +177,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                      'target service should have flag set to true');
       });
 
-      it('sets unrelated services\' fade flag on highlight', function() {
+      it('toggles fade off when highlighting', function() {
+        var mysql = db.services.getById('mysql');
+        mysql.set('fade', true);
+        browser._onHighlight({serviceName: 'mysql'});
+        assert.equal(mysql.get('fade'), false,
+                     'target service should have toggled flag to false');
+      });
+
+      it('sets unrelated services\' hide flag on highlight', function() {
         var mysql = db.services.getById('mysql'), // Target service.
             wordpress = db.services.getById('wordpress'), // Related service.
             haproxy = db.services.getById('haproxy'); // Unrelated service.
-        assert.equal(mysql.get('fade'), false,
+        assert.equal(mysql.get('hide'), false,
                      'target service should not have flag set initially');
-        assert.equal(wordpress.get('fade'), false,
+        assert.equal(wordpress.get('hide'), false,
                      'related service should not have flag set initially');
-        assert.equal(haproxy.get('fade'), false,
+        assert.equal(haproxy.get('hide'), false,
                      'unrelated service should not have flag set initially');
         browser._onHighlight({serviceName: 'mysql'});
-        assert.equal(mysql.get('fade'), false,
+        assert.equal(mysql.get('hide'), false,
                      'target service should not have flag set post-event');
-        assert.equal(wordpress.get('fade'), false,
+        assert.equal(wordpress.get('hide'), false,
                      'related service should not have flag set post-event');
-        assert.equal(haproxy.get('fade'), true,
+        assert.equal(haproxy.get('hide'), true,
                      'unrelated service should have flag set to true');
       });
 
@@ -223,14 +231,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('hide/fade events', function() {
+    describe('fade/show events', function() {
       var db;
 
       beforeEach(function() {
         db = new Y.juju.models.Database();
         db.services.add([
-          {id: 'mysql'},
-          {id: 'wordpress'}
+          {id: 'mysql', name: 'mysql'},
+          {id: 'wordpress', name: 'wordpress'}
         ]);
         browser.set('db', db);
       });
@@ -243,6 +251,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser._onFade({serviceNames: ['mysql']});
         assert.equal(mysql.get('fade'), true);
         assert.equal(wordpress.get('fade'), false);
+      });
+
+      it('toggles highlight off when fading', function() {
+        var mysql = db.services.getById('mysql');
+        mysql.set('highlight', true);
+        browser._onFade({serviceNames: ['mysql']});
+        assert.equal(mysql.get('highlight'), false);
       });
 
       it('unsets fade flag on show', function() {

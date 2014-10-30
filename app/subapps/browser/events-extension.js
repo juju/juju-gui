@@ -94,7 +94,7 @@ YUI.add('subapp-browser-events', function(Y) {
       var db = this.get('db'),
           services;
       if (service) {
-        services = [service]
+        services = [service];
       } else {
         services = db.services.toArray();
       }
@@ -130,6 +130,8 @@ YUI.add('subapp-browser-events', function(Y) {
       var service = db.services.getById(serviceName);
       service.set('highlight', true);
       db.updateUnitFlags(service, 'highlight');
+      // Need to toggle fade off.
+      this._onShow({serviceNames: [serviceName]});
       // Unrelated services need to be faded.
       var unrelated = db.findUnrelatedServices(service);
       unrelated.each(function(model) {
@@ -173,6 +175,8 @@ YUI.add('subapp-browser-events', function(Y) {
         service = db.services.getById(serviceName);
         service.set('fade', true);
         db.updateUnitFlags(service, 'fade');
+        // Need to toggle highlight off.
+        this._onUnhighlight({serviceName: service.get('name')});
         this._fireMachineChanges(service);
       }, this);
     },

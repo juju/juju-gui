@@ -152,10 +152,8 @@ describe('machine token view', function() {
     assert.equal(2, service_icons.all('img').size());
   });
 
-  it('hides the machine if all units are hidden', function() {
-    machine.units = [
-      {hide: true, serviceName: 'mongo'}
-    ];
+  it('hides the machine if the flag is set', function() {
+    machine.hide = true;
     makeView(this, machine);
     assert.equal(container.hasClass('hidden'), true);
   });
