@@ -873,6 +873,25 @@ YUI.add('juju-topology-relation', function(Y) {
         return a[0].name + a[1].name < b[0].name + b[1].name;
       });
 
+      // If the endpoints contain ghost services then we need to display their
+      // display name instead of their id's
+      var serviceName, displayName;
+      endpoints = endpoints.map(function(endpoint) {
+        endpoint.forEach(function(handle) {
+          serviceName = handle.service;
+          if (serviceName.indexOf('$') > 0) {
+            displayName = topo.get('db').services
+                                     .getById(serviceName)
+                                     .get('displayName')
+                                     .replace(/^\(/, '').replace(/\)$/, '');
+          } else {
+            displayName = serviceName;
+          }
+          handle.displayName = displayName;
+        });
+        return [endpoint[0], endpoint[1]];
+      }, this);
+
       // Stop rubberbanding on mousemove.
       view.clickAddRelation = null;
 
