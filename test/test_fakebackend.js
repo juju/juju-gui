@@ -1289,6 +1289,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('should keep both config and options properties', function() {
+      var fakebackend = factory.makeFakeBackend();
+      var db = fakebackend.db;
+      db.environment.set('defaultSeries', 'precise');
+      var YAMLData = utils.loadFixture('data/wp-deployer.yaml');
+      var promiseDeploy = utils.makeStubMethod(fakebackend, 'promiseDeploy');
+      fakebackend.importDeployer(YAMLData, undefined, function() {
+        assert.equal(promiseDeploy.callCount(), 2);
+        var args = promiseDeploy.allArguments();
+        assert.equal(typeof args[0][1].options, 'object');
+        assert.equal(typeof args[1][1].options, 'object');
+      });
+    });
+
     it('should support old-style comma-separated constraints',
         function(done) {
 
