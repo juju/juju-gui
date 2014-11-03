@@ -851,7 +851,6 @@ YUI.add('juju-topology-relation', function(Y) {
     ambiguousAddRelationCheck: function(m, view, context) {
       var endpoints = view.get(
           'addRelationStart_possibleEndpoints')[m.id];
-      var container = view.get('container');
       var topo = view.get('component');
 
       if (endpoints && endpoints.length === 1) {
@@ -873,19 +872,78 @@ YUI.add('juju-topology-relation', function(Y) {
         return a[0].name + a[1].name < b[0].name + b[1].name;
       });
 
+      // If the endpoints contain ghost services then we need to display their
+      // display name instead of their id's
+      endpoints = this._getServiceDisplayName(endpoints, topo);
+
       // Stop rubberbanding on mousemove.
       view.clickAddRelation = null;
 
       // Display menu with available endpoints.
-      var menu = container.one('#ambiguous-relation-menu');
+      var menu = this._renderAmbiguousRelationMenu(endpoints);
+      this._attachAmbiguousReleationSelect(menu, view, context);
+      this._positionAmbiguousRelationMenu(menu, topo, m, context);
+    },
+
+    /**
+      Loops through the supplied endpoints and updates the displayName
+      property then returns a new endpoints array.
+
+      @method _getServiceDisplayName
+      @param {Array} endpoints The possible endpoints for the relation.
+      @param {Object} topo A reference to the topology instance.
+      @return {Array} The new endpoints array with a displayName property on
+        each endpoint.
+    */
+    _getServiceDisplayName: function(endpoints, topo) {
+      var serviceName, displayName;
+      return endpoints.map(function(endpoint) {
+        endpoint.forEach(function(handle) {
+          serviceName = handle.service;
+          if (serviceName.indexOf('$') > 0) {
+            displayName = topo.get('db').services
+                                     .getById(serviceName)
+                                     .get('displayName')
+                                     .replace(/^\(/, '').replace(/\)$/, '');
+          } else {
+            displayName = serviceName;
+          }
+          handle.displayName = displayName;
+        });
+        return [endpoint[0], endpoint[1]];
+      }, this);
+    },
+
+    /**
+      Renders the ambiguous relation menu into the container populated with the
+      supplied endpoints data.
+
+      @method _renderAmbiguousRelationMenu
+      @param {Array} endpoints The possible endpoints for the relation.
+      @return {Object} A Y.Node instance from the menu which was added to the
+        DOM.
+    */
+    _renderAmbiguousRelationMenu: function(endpoints) {
+      var menu = this.get('container').one('#ambiguous-relation-menu');
       if (menu.one('.menu')) {
         menu.one('.menu').remove(true);
       }
-
       menu.append(Templates.ambiguousRelationList({
         endpoints: endpoints
       }));
+      return menu;
+    },
 
+    /**
+      Attaches the click events for the ambiguous relation menu so that the user
+      is able to select which relation they want.
+
+      @method _attachAmbiguousRelationSelcet
+      @param {Object} menu A reference to the popup menu node.
+      @param {Object} view A reference to the relation view.
+      @param {Object} context The target rectangle.
+    */
+    _attachAmbiguousReleationSelect: function(menu, view, context) {
       // For each endpoint choice, delegate a click event to add the specified
       // relation. Use event delegation in order to avoid weird behaviors
       // encountered when using "on" on a YUI NodeList: in some situations,
@@ -903,14 +961,24 @@ YUI.add('juju-topology-relation', function(Y) {
         menu.removeClass('active');
         view.addRelationEnd(endpoints_item, view, context);
       }, 'li');
-
       // Add a cancel item.
       menu.one('.cancel').on('click', function(evt) {
         menu.removeClass('active');
         view.cancelRelationBuild();
       });
+    },
 
-      // Display the menu at the service endpoint.
+    /**
+      Positions the ambiguous relation menu at the endpoint where the
+      relationship is beimg terminated.
+
+      @method _positionAmbiguousRelationMenu
+      @param {Object} menu A reference to the menu node.
+      @param {Object} topo A reference to the topology instance.
+      @param {Object} m The endpoint for the drop point on the service.
+      @param {Object} context The target rectangle.
+    */
+    _positionAmbiguousRelationMenu: function(menu, topo, m, context) {
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
       var locateAt = topUtils.locateRelativePointOnCanvas(m, tr, z);
@@ -919,7 +987,6 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.addClass('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
-
       // Firing resized will ensure the menu's positioned properly.
       topo.fire('resized');
     },
