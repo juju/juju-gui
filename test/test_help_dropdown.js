@@ -63,7 +63,7 @@ describe('help dropdown view', function() {
     var container = helpView.get('container');
     assert.equal(
         container.one('.landscape-url').getStyle('display'), 'none');
-    assert.equal(container.all('li').size(), 5);
+    assert.equal(container.all('li').size(), 4);
   });
 
   it('should display the Landscape menu item', function() {
