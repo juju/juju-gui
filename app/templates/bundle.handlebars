@@ -183,8 +183,8 @@
                                                     {{/if}}
                                                 </li>
                                             {{/unless}}
-                                            {{#if origService.options}}
-                                                {{#arrayObject origService.options}}
+                                            {{#if origService.data.options}}
+                                                {{#arrayObject origService.data.options}}
                                                     <li>{{ key }}: {{ value }}</li>
                                                 {{/arrayObject}}
                                             {{/if}}

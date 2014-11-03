@@ -328,6 +328,10 @@ describe('Browser bundle detail view', function() {
             annotations: {
               'gui-x': '1',
               'gui-y': '2'
+            },
+            num_units: 47,
+            options: {
+              option1: 'value1'
             }
           },
           bar: {
@@ -362,6 +366,12 @@ describe('Browser bundle detail view', function() {
         charmConfigNodes.item(0).one('li').get('text'), 'Service name: bar');
     assert.equal(
         charmConfigNodes.item(1).one('li').get('text'), 'Service name: foo');
+    assert.equal(
+        charmConfigNodes.item(1).all('li').item(2).get('text'),
+        'option1: value1');
+    assert.equal(
+        charmConfigNodes.item(1).all('li').item(1).get('text').indexOf(4) > 0,
+        true);
   });
 
   it('selects the proper tab when given one', function() {

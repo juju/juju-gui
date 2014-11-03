@@ -1822,8 +1822,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
           serviceData.unitCount = serviceData.num_units;
         }
         if (serviceData.options) {
+          // If the serviceData does not contain a config object then the
+          // inspectors won't be able to render it properly.
           serviceData.config = serviceData.options;
-          delete serviceData.options;
         }
         servicePromises.push(
             self.promiseDeploy(serviceData.charm, serviceData));
