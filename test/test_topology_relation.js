@@ -350,4 +350,198 @@ describe('topology relation module', function() {
 
   });
 
+  describe('ambiguousAddRelationCheck', function() {
+    var addRelationEnd, getDisplayName, menuStub, relSelect, posMenu;
+    function stubThemAll(context) {
+      addRelationEnd = utils.makeStubMethod(view, 'addRelationEnd');
+      context._cleanups.push(addRelationEnd.reset);
+      getDisplayName = utils.makeStubMethod(view, '_getServiceDisplayName');
+      context._cleanups.push(getDisplayName.reset);
+      menuStub = utils.makeStubMethod(view, '_renderAmbiguousRelationMenu');
+      context._cleanups.push(menuStub.reset);
+      relSelect = utils.makeStubMethod(view, '_attachAmbiguousReleationSelect');
+      context._cleanups.push(relSelect.reset);
+      posMenu = utils.makeStubMethod(view, '_positionAmbiguousRelationMenu');
+      context._cleanups.push(posMenu.reset);
+    }
+
+    it('calls addRelationEnd if relation is not ambiguous', function() {
+      stubThemAll(this);
+      view.set('addRelationStart_possibleEndpoints', {
+        'mysql': [[{
+          name: 'db', service: 'wordpress', type: 'mysql'
+        }, {
+          name: 'db', service: 'mysql', type: 'mysql'
+        }]]
+      });
+      view.ambiguousAddRelationCheck({id: 'mysql'}, view);
+      assert.equal(addRelationEnd.callCount(), 1);
+      assert.equal(getDisplayName.callCount(), 0);
+      assert.equal(menuStub.callCount(), 0);
+      assert.equal(relSelect.callCount(), 0);
+      assert.equal(posMenu.callCount(), 0);
+    });
+
+    it('calls the util methods to show ambiguous select menu', function() {
+      stubThemAll(this);
+      view.set('addRelationStart_possibleEndpoints', {
+        'postgresql': [[{
+          service: 'python-django', name: 'pgsql', type: 'pgsql'
+        },{
+          service: 'postgresql', name: 'db-admin', type: 'pgsql'
+        }], [{
+          service: 'python-django', name: 'pgsql', type: 'pgsql'
+        },{
+          service: 'postgresql', name: 'db', type: 'pgsql'
+        }], [{
+          service: 'python-django',
+          name: 'django-settings',
+          type: 'directory-path'
+        }, {
+          service: 'postgresql',
+          name: 'persistent-storage',
+          type: 'directory-path'
+        }]]
+      });
+      view.ambiguousAddRelationCheck({id: 'postgresql'}, view);
+      assert.equal(addRelationEnd.callCount(), 0);
+      assert.equal(getDisplayName.callCount(), 1);
+      assert.equal(menuStub.callCount(), 1);
+      assert.equal(relSelect.callCount(), 1);
+      assert.equal(posMenu.callCount(), 1);
+      // The endpoints need to be sorted alphabetically
+      assert.deepEqual(getDisplayName.lastArguments()[0], [[{
+        service: 'python-django', name: 'pgsql', type: 'pgsql'
+      },{
+        service: 'postgresql', name: 'db-admin', type: 'pgsql'
+      }], [{
+        service: 'python-django', name: 'pgsql', type: 'pgsql'
+      },{
+        service: 'postgresql', name: 'db', type: 'pgsql'
+      }], [{
+        service: 'python-django',
+        name: 'django-settings',
+        type: 'directory-path'
+      },{
+        service: 'postgresql',
+        name: 'persistent-storage',
+        type: 'directory-path'
+      }]]);
+    });
+
+    it('shows correct name for ghost and deployed services', function() {
+      var endpoints = [[{
+        name: 'db', service: '97813654$', type: 'mysql'
+      }, {
+        name: 'db', service: 'mysql', type: 'mysql'
+      }]];
+      var db = new models.Database();
+      db.services.add({
+        id: '97813654$',
+        displayName: '(wordpress)'
+      });
+      db.services.add({
+        id: 'mysql',
+        displayName: 'mysql'
+      });
+      var topo = {
+        get: function() {
+          return db;
+        }
+      };
+      var newEndpoints = view._getServiceDisplayName(endpoints, topo);
+      assert.deepEqual(newEndpoints, [[{
+        name: 'db',
+        service: '97813654$',
+        type: 'mysql',
+        displayName: 'wordpress'
+      }, {
+        name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
+      }]]);
+    });
+
+    it('renders the ambiguous relation menu', function() {
+      var endpoints = [[{
+        name: 'db',
+        service: '97813654$',
+        type: 'mysql',
+        displayName: 'wordpress'
+      }, {
+        name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
+      }], [{
+        name: 'db',
+        service: '97813654$',
+        type: 'mysql',
+        displayName: 'wordpress'
+      }, {
+        name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
+      }]];
+      container.append('<div id="ambiguous-relation-menu"></div>');
+      var menu = view._renderAmbiguousRelationMenu.call({
+        get: function() {
+          return container;
+        }
+      }, endpoints);
+      assert.isNotNull(menu.one('.menu'));
+      assert.equal(menu.all('li').size(), 2);
+    });
+
+    it('attaches the click events for the menu', function() {
+      var delegate = utils.makeStubFunction();
+      var on = utils.makeStubFunction();
+      var menu = {
+        one: function() {
+          return {
+            delegate: delegate,
+            on: on
+          };
+        }
+      };
+      view._attachAmbiguousReleationSelect(menu);
+      assert.equal(delegate.callCount(), 1);
+      assert.equal(on.callCount(), 1);
+    });
+
+    it('calls to position the menu to the terminating endpoint', function() {
+      var setStyle = utils.makeStubFunction();
+      var addClass = utils.makeStubFunction();
+      var set = utils.makeStubFunction();
+      var menu = {
+        setStyle: setStyle,
+        addClass: addClass
+      };
+      var topo = {
+        zoom: {
+          translate: utils.makeStubFunction('translate'),
+          scale: utils.makeStubFunction('scale')
+        },
+        set: set,
+        fire: utils.makeStubFunction()
+      };
+      var locate = utils.makeStubMethod(
+          Y.juju.topology.utils, 'locateRelativePointOnCanvas',
+          ['locate1', 'locate2']);
+      this._cleanups.push(locate.reset);
+
+      view._positionAmbiguousRelationMenu(menu, topo, 'm', 'context');
+
+      assert.equal(locate.callCount(), 1, 'locateRelativePointOnCanvas');
+      assert.deepEqual(locate.lastArguments(), ['m', 'translate', 'scale']);
+      assert.equal(setStyle.callCount(), 2);
+      assert.deepEqual(setStyle.allArguments(), [
+        ['left', 'locate1'],
+        ['top', 'locate2']
+      ]);
+      assert.equal(addClass.callCount(), 1, 'addClass');
+      assert.equal(addClass.lastArguments()[0], 'active');
+      assert.equal(set.callCount(), 2);
+      assert.deepEqual(set.allArguments(), [
+        ['active_service', 'm'],
+        ['active_context', 'context']
+      ]);
+      assert.equal(topo.fire.callCount(), 1, 'fire');
+      assert.equal(topo.fire.lastArguments()[0], 'resized');
+    });
+  });
+
 });
