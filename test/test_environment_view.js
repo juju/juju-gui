@@ -762,10 +762,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // scale portion of the transform attribute of the svg
       // element has been upped by 0.2.  The transform attribute
       // also contains translate, so test via a regex.
-      /scale\(1\.25\)/.test(attr).should.equal(true);
+      /scale\(1\.1\)/.test(attr).should.equal(true);
 
       // Ensure that the slider agrees.
-      slider.get('value').should.equal(125);
+      slider.get('value').should.equal(110);
 
       // Ensure that zooming via slider sets scale.
       slider.set('value', 150);
