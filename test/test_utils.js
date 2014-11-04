@@ -1151,14 +1151,30 @@ describe('utilities', function() {
       source._units = [Y.clone(unit)];
       target._units = [Y.clone(unit)];
       var relation = views.DecoratedRelation(inputRelation, source, target);
+      // Test no error scenario.
       assert.isFalse(relation.sourceHasError());
       assert.isFalse(relation.targetHasError());
       assert.isFalse(relation.hasRelationError());
+      // Test error scenario.
       source._units[0].agent_state = 'error';
       source._units[0].agent_state_data.hook = 'endpoint-1-relation';
       assert.isTrue(relation.sourceHasError());
       assert.isFalse(relation.targetHasError());
       assert.isTrue(relation.hasRelationError());
+      // Verify that we degrade gracefully with less data.
+      source._units[0].agent_state = 'error';
+      source._units[0].agent_state_data = null;
+      source._units[0].agent_state_info = 'hook failed: "endpoint-1-relation"';
+      assert.isTrue(relation.sourceHasError());
+      assert.isFalse(relation.targetHasError());
+      assert.isTrue(relation.hasRelationError());
+      // Verify that we degrade gracefull with no data.
+      source._units[0].agent_state = 'error';
+      source._units[0].agent_state_data = null;
+      source._units[0].agent_state_info = null;
+      assert.isFalse(relation.sourceHasError());
+      assert.isFalse(relation.targetHasError());
+      assert.isFalse(relation.hasRelationError());
     });
 
     it('can store relations in collections', function() {
