@@ -1491,8 +1491,15 @@ YUI.add('juju-topology-service', function(Y) {
         topo.service_boxes[service].highlighted = false;
       });
       var selection = this.selectionFromServiceNames(serviceNames);
-      selection.select('.service-block-image')
-        .attr('href', '/juju-ui/assets/svgs/service_module.svg');
+      var image, href;
+      selection.each(function(d) {
+        image = d3.select(this).select('.service-block-image');
+        href = '/juju-ui/assets/svgs/service_module.svg';
+        if (d.pending || d.deleted) {
+          href = '/juju-ui/assets/svgs/service_module_pending.svg';
+        }
+        image.attr('href', href);
+      });
     },
 
     show: function(evt) {
