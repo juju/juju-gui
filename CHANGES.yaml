@@ -20,7 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-#- unreleased:
+- unreleased:
 - 1.2.3:
     - Update header to fix in new upcoming site theme.
     - Link to the MAAS web ui when the GUI detects it's in a MAAS environment.
