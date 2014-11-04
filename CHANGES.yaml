@@ -20,7 +20,18 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+#- unreleased:
+- 12.3:
+    - Update header to fix in new upcoming site theme.
+    - Link to the MAAS web ui when the GUI detects it's in a MAAS environment.
+    - Add deploy-target query parameter to auto deploy something via a link.
+    - (FIX) Update to make sure bundle deployments occur with "options" set.
+    - (FIX) Auto placed units not showing in the machine list.
+    - (FIX) Update relations to work in a one to many endpoint scenario.
+    - >
+      Under the ":flags:/as" feature flag, work on the added service bar
+      progresses. Track the list of deployed services and enable you to show
+      and hide services and units in both service view and machine view.
 - 1.2.2:
     - >
       New settings UI in the keyboard help.
