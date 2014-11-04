@@ -127,7 +127,7 @@ YUI.add('subapp-browser-events', function(Y) {
       var serviceName = e.serviceName,
           db = this.get('db'),
           changedMachines = [];
-      var service = db.services.getById(serviceName);
+      var service = db.services.getServiceByName(serviceName);
       service.set('highlight', true);
       db.updateUnitFlags(service, 'highlight');
       // Need to toggle fade off.
@@ -150,7 +150,7 @@ YUI.add('subapp-browser-events', function(Y) {
       var db = this.get('db'),
           serviceName = e.serviceName,
           changedMachines = [];
-      var service = db.services.getById(serviceName);
+      var service = db.services.getServiceByName(serviceName);
       service.set('highlight', false);
       db.updateUnitFlags(service, 'highlight');
       // Unrelated services need to be unfaded.
@@ -172,7 +172,7 @@ YUI.add('subapp-browser-events', function(Y) {
           db = this.get('db'),
           service;
       serviceNames.forEach(function(serviceName) {
-        service = db.services.getById(serviceName);
+        service = db.services.getServiceByName(serviceName);
         service.set('fade', true);
         db.updateUnitFlags(service, 'fade');
         // Need to toggle highlight off.
@@ -192,7 +192,7 @@ YUI.add('subapp-browser-events', function(Y) {
           db = this.get('db'),
           service;
       serviceNames.forEach(function(serviceName) {
-        service = db.services.getById(serviceName);
+        service = db.services.getServiceByName(serviceName);
         service.set('fade', false);
         db.updateUnitFlags(service, 'fade');
         this._fireMachineChanges(service);

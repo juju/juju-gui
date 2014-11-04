@@ -613,6 +613,34 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     /**
+      When you have a ghost service its name will be user readable but its id
+      will not be. This causes the getById method to fail in fetching the
+      proper service.
+
+      Pass either a service model id or the display name into this method and
+      it will return the appropriate service model.
+
+      @method getServiceByName
+      @param {String} serviceName The service name or id.
+      @return {Object} The found service or null.
+    */
+    getServiceByName: function(serviceName) {
+      var service = this.getById(serviceName);
+      // If we found it as the id then return;
+      if (service !== null) {
+        return service;
+      } else {
+        this.some(function(serv) {
+          if (serv.get('name') === serviceName) {
+            service = serv;
+            return true;
+          }
+        });
+      }
+      return service;
+    },
+
+    /**
       Return a list of visible model instances. A model instance is visible
       when it is alive or dying, or when it includes units in an error state.
 
