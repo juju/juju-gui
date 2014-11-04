@@ -124,7 +124,6 @@ YUI.add('juju-topology-service', function(Y) {
       return d.subordinate;
     })
         .classed('subordinate', true);
-    node.classed('pending', function(d) { return d.pending; });
 
     // Size the node for drawing.
     node.attr({
@@ -1273,8 +1272,7 @@ YUI.add('juju-topology-service', function(Y) {
       .attr({
             'pointer-events': 'all', // IE needs this.
             'class': function(d) {
-              return (d.subordinate ? 'subordinate ' : '') +
-                  (d.pending ? 'pending ' : '') + 'service';
+              return (d.subordinate ? 'subordinate ' : '') + 'service';
             }})
         .call(this.dragBehavior)
         .call(self.createServiceNode, self)
