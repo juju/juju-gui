@@ -261,6 +261,8 @@ describe('service module events', function() {
       life: 'dying',
       aggregated_status: {error: 42}
     });
+    var unhighlight = utils.makeStubMethod(serviceModule, 'unhighlight');
+    this._cleanups.push(unhighlight.reset);
     serviceModule.update();
     var boxes = topo.service_boxes;
     // There are five services in total.
@@ -308,19 +310,6 @@ describe('service module events', function() {
   it('can generate a selection from a list of service names', function() {
     assert.deepEqual(serviceModule.selectionFromServiceNames(['haproxy']),
         topo.vis.selectAll('.service'));
-  });
-
-  it('should fade pending services but not deployed services', function() {
-    db.services.add([
-      {id: 'rails', pending: true}
-    ]);
-    serviceModule.update();
-    assert.isTrue(topo.service_boxes.rails.pending);
-    assert.isFalse(topo.service_boxes.haproxy.pending);
-    // Assert that there are two services on the canvas, but only one is
-    // classed pending.
-    assert.equal(topo.vis.selectAll('.service')[0].length, 2);
-    assert.equal(topo.vis.selectAll('.service.pending')[0].length, 1);
   });
 
   it('should display an indicator for pending services', function() {

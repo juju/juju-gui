@@ -124,6 +124,7 @@ describe('topology relation module', function() {
       },
       // stubs
       get: function(val) { return true; },
+      update: function() {},
       vis: {
         selectAll: function() {
           return {

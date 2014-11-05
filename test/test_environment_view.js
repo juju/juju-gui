@@ -329,7 +329,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must be able to display service icons as pending deletion', function() {
       db.services.getById('wordpress').set('deleted', true);
       // Create an instance of EnvironmentView with custom env
-      db.services.getById('wordpress').set('deleted', true);
       var view = new views.environment({
         container: container,
         db: db,
@@ -835,16 +834,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.topo.fire('fade', {serviceNames: ['mysql']});
           // Do this behind a timeout due to the 400ms transition.
           setTimeout(function() {
-            assert.equal(view.topo.vis.selectAll('.rel-group')
-              .filter(function(d) {
+            var relationOpacity = view.topo.vis.selectAll('.rel-group')
+            .filter(function(d) {
              return d.id === 'relation-0000000001';
            })
-              .attr('opacity'), '0.2');
-            assert.equal(view.topo.vis.selectAll('.service')
-              .filter(function(d) {
+            .attr('opacity');
+            assert.equal(
+                (relationOpacity > 0.19) && (relationOpacity < 0.21),
+                true);
+            var serviceOpacity = view.topo.vis.selectAll('.service')
+            .filter(function(d) {
              return d.id === 'mysql';
            })
-              .attr('opacity'), '0.2');
+            .attr('opacity');
+            assert.equal(
+                (serviceOpacity > 0.19) && (serviceOpacity < 0.21),
+                true);
             view.topo.fire('show', {serviceNames: ['mysql']});
             // To minimize test length, ensure that the 'show' transition is
             // underway.
@@ -1039,7 +1044,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        });
 
     it('must be able to remove a relation between services',
-       function() {
+       function(done) {
+         var oldRemove = env.remove_relation;
+         env.remove_relation = function() {
+           container.all('.to-remove')
+                .size()
+                .should.equal(1);
+           view.topo.modules.RelationModule.
+           _removeRelationCallback(view, relation, 'relation-0000000001',
+               null, {});
+           assert.equal(db.relations.getById('relation-0000000001'), null,
+               'Relation not removed from db');
+           assert.deepEqual(db.services.getById('wordpress').get('relations')
+               .getById('relation-0000000001'), null,
+               'Relation not removed from services');
+           view.destroy();
+           env.remove_relation = oldRemove;
+           done();
+         };
          var view = new views.environment({
            container: container,
            db: db,
@@ -1056,18 +1078,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          relation.simulate('click');
          menu = container.one('#relation-menu');
          menu.one('.relation-remove').simulate('click');
-         container.all('.to-remove')
-              .size()
-              .should.equal(1);
-         view.topo.modules.RelationModule.
-         _removeRelationCallback(view, relation, 'relation-0000000001',
-             null, {});
-         assert.equal(db.relations.getById('relation-0000000001'), null,
-             'Relation not removed from db');
-         assert.deepEqual(db.services.getById('wordpress').get('relations')
-             .getById('relation-0000000001'), null,
-             'Relation not removed from services');
-         view.destroy();
        });
 
     it('builds a menu of relations in a collection', function() {
@@ -1147,13 +1157,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         '/juju-ui/assets/svgs/relation-icon-healthy.svg'
       ]);
 
-      // Ensure the image href does not change for the subordinate relation
-      // by prefixing the path with something that will be disregarded by
-      // the filter used to pull 'subordinate' out of the url.
-      view.topo.vis.select('.rel-group image')
-        .attr('href', function() {
-            return 'iRemainUnchanged' + d3.select(this).attr('href');
-          });
       var unit = db.services.getById('mysql').get('units').item(0);
       unit.agent_state = 'error';
       unit.agent_state_data = {
@@ -1162,7 +1165,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
       assert.deepEqual(reduceData(), ['subordinate', 'error']);
       assert.deepEqual(reduceImages(), [
-        'iRemainUnchanged/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        '/juju-ui/assets/svgs/relation-icon-subordinate.svg',
         '/juju-ui/assets/svgs/relation-icon-error.svg'
       ]);
     });
@@ -1205,8 +1208,58 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpoint.simulate('click');
     });
 
-    it('allows deletion of relations within collections', function() {
+    it('allows deletion of relations within collections', function(done) {
       db.onDelta({data: additionalRelations});
+      var oldRemove = env.remove_relation;
+      var removeCallCount = 0;
+      var step1Count = 0;
+      var step2Count = 0;
+      env.remove_relation = function() {
+        removeCallCount += 1;
+        if (removeCallCount === 1) {
+          step1();
+        }
+        if (removeCallCount === 2) {
+          step2();
+          env.remove_relation = oldRemove;
+          if (step2Count < 2) {
+            done();
+          }
+        }
+      };
+
+      function step1() {
+        step1Count += 1;
+        if (step1Count !== 1) {
+          return;
+        }
+        container.all('.to-remove')
+             .size()
+             .should.equal(1);
+        // Multiple relations.
+        relation = container.one(
+            '#' +
+            views.utils.generateSafeDOMId(additionalRelations.result[0][2].id,
+            getParentId(view)) +
+            ' .rel-indicator');
+        relation.simulate('click');
+        menu = Y.one('#relation-menu .menu');
+        // Click the first relation.
+        menu.one('.relation-remove').simulate('click');
+      }
+
+      function step2() {
+        // Note that there should now be two .to-remove relations due to the
+        // previous case having added one of those classes. We're simply looking
+        // for the number to have increased.
+        step2Count += 1;
+        if (step2Count !== 1) {
+          return;
+        }
+        assert.equal(container.all('.to-remove').size(), 2, 'two relations');
+        view.destroy();
+      }
+
       view = new views.environment({
         container: container,
         db: db,
@@ -1226,31 +1279,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Click the first relation.
       menu.one('.relation-remove').simulate('click');
-
-      container.all('.to-remove')
-           .size()
-           .should.equal(1);
-
-      // Multiple relations.
-      relation = container.one(
-          '#' +
-          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id,
-          getParentId(view)) +
-          ' .rel-indicator');
-
-      relation.simulate('click');
-      menu = Y.one('#relation-menu .menu');
-
-      // Click the first relation.
-      menu.one('.relation-remove').simulate('click');
-
-      // Note that there should now be two .to-remove relations due to the
-      // previous case having added one of those classes. We're simply looking
-      // for the number to have increased.
-      container.all('.to-remove')
-           .size()
-           .should.equal(2);
-      view.destroy();
     });
 
     it('must not allow removing a subordinate relation between services',
