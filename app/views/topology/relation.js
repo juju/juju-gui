@@ -744,9 +744,11 @@ YUI.add('juju-topology-relation', function(Y) {
         name = service.get('id');
         if (service.get('fade')) {
           actions.fade.push(name);
-        } else if (service.get('hide')) {
+        }
+        if (service.get('hide')) {
           actions.hide.push(name);
-        } else {
+        }
+        if (!service.get('fade') && !service.get('hide')) {
           actions.show.push(name);
         }
       });
@@ -780,8 +782,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 (d.target.hide === false && d.source.hide === false) &&
                 (d.target.fade === false && d.source.fade === false);
           });
-      selection.transition()
-        .duration(400)
+      selection
         .style('display', 'block')
         .attr('opacity', '1.0');
     },
@@ -804,8 +805,7 @@ YUI.add('juju-topology-relation', function(Y) {
             return serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1;
           });
-      selection.transition()
-        .duration(400)
+      selection
         .style('display', 'block')
         .attr('opacity', alpha !== undefined ? alpha : '0.2');
     },

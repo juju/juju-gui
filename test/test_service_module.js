@@ -963,8 +963,9 @@ describe('updateElementVisibility', function() {
     assert.deepEqual(fade.lastArguments()[0], { serviceNames: ['foo1'] });
     assert.equal(hide.callCount(), 1);
     assert.deepEqual(hide.lastArguments()[0], { serviceNames: ['foo2'] });
-    assert.equal(show.callCount(), 2);
+    assert.equal(show.callCount(), 3);
     assert.deepEqual(show.allArguments(), [
+      [{ serviceNames: ['foo1'] }],
       [{ serviceNames: ['foo3'] }],
       [{ serviceNames: ['foo4'] }]
     ]);

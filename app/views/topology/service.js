@@ -1417,7 +1417,9 @@ YUI.add('juju-topology-service', function(Y) {
       });
       if (actions.fade.length > 0) {
         // If any services are highlighted we need to make sure we unhighlight
-        // them before fading.
+        // them before fading. If any services are hidden we need to s how them
+        // first before we can fade them.
+        this.show({serviceNames: actions.fade});
         this.unhighlight({serviceName: actions.fade});
         this.fade({serviceNames: actions.fade});
       }
@@ -1511,10 +1513,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.transition()
-        .duration(400)
-        .attr('opacity', '1.0')
-        .style('display', 'block');
+      selection.attr('opacity', '1.0').style('display', 'block');
     },
 
     hide: function(evt) {
@@ -1526,8 +1525,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.attr('opacity', '0')
-            .style('display', 'none');
+      selection.attr('opacity', '0').style('display', 'none');
     },
 
     fade: function(evt) {
@@ -1540,9 +1538,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.transition()
-            .duration(400)
-            .attr('opacity', alpha !== undefined && alpha || '0.2');
+      selection.attr('opacity', alpha !== undefined && alpha || '0.2');
     },
 
 

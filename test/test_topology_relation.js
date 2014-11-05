@@ -292,6 +292,10 @@ describe('topology relation module', function() {
         hide: true
       }, {
         id: 'foo3'
+      }, {
+        id: 'foo4',
+        fade: true,
+        hide: true
       }]);
       view.set('component', {
         get: function() {
@@ -303,8 +307,12 @@ describe('topology relation module', function() {
       assert.equal(fade.callCount(), 1);
       assert.equal(hide.callCount(), 1);
       assert.equal(show.callCount(), 1);
-      assert.deepEqual(fade.lastArguments()[0], { serviceNames: ['foo1'] });
-      assert.deepEqual(hide.lastArguments()[0], { serviceNames: ['foo2'] });
+      assert.deepEqual(fade.lastArguments()[0], {
+        serviceNames: ['foo1', 'foo4']
+      });
+      assert.deepEqual(hide.lastArguments()[0], {
+        serviceNames: ['foo2', 'foo4']
+      });
       assert.deepEqual(show.lastArguments()[0], { serviceNames: ['foo3'] });
     });
   });
