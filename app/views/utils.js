@@ -1412,11 +1412,22 @@ YUI.add('juju-view-utils', function(Y) {
       // '||' will short-circuit if the source units are in error.
       return Y.Array.some(service.units.toArray(), function(unit) {
         // Figure out whether or not the unit is in error.
-        return unit.agent_state === 'error' &&
-            // Then figure out if the error is pertinent to the relation at
-            // hand.
-            unit.agent_state_data.hook.indexOf(endpoint[1].name + '-' +
-            'relation') === 0;
+        var relationName = endpoint[1].name + '-' + 'relation',
+            relationError = false,
+            agentStateData = unit.agent_state_data,
+            agentStateInfo = unit.agent_state_info;
+        // Now we need to determine if the error is relation-related.
+        // First check the agent_state_data field.
+        if (agentStateData && agentStateData.hook) {
+          relationError = (agentStateData.hook.indexOf(relationName) === 0);
+        }
+        // Next check the agent_state_info field. In error situations, this
+        // field may have a message like 'hook failed: "foobar-relation-joined"'
+        // so we just need to see if the relation name is a substring.
+        if (!relationError && agentStateInfo) {
+          relationError = (agentStateInfo.indexOf(relationName) >= 0);
+        }
+        return unit.agent_state === 'error' && relationError;
       });
     };
     /**
