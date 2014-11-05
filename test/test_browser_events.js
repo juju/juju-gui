@@ -244,6 +244,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('sets fade flag on the selected service on fade', function() {
+        var unhighlight = utils.makeStubMethod(browser, '_onUnhighlight');
+        this._cleanups.push(unhighlight.reset);
+        var fireChange = utils.makeStubMethod(browser, '_fireMachineChanges');
+        this._cleanups.push(fireChange.reset);
         var mysql = db.services.getById('mysql'),
             wordpress = db.services.getById('wordpress');
         assert.equal(mysql.get('fade'), false);
@@ -251,6 +255,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser._onFade({serviceNames: ['mysql']});
         assert.equal(mysql.get('fade'), true);
         assert.equal(wordpress.get('fade'), false);
+        assert.equal(unhighlight.callCount(), 1);
+        assert.equal(fireChange.callCount(), 1);
+      });
+
+      it('only unhighlights on fade set if service is not hidden', function() {
+        var unhighlight = utils.makeStubMethod(browser, '_onUnhighlight');
+        this._cleanups.push(unhighlight.reset);
+        var fireChange = utils.makeStubMethod(browser, '_fireMachineChanges');
+        this._cleanups.push(fireChange.reset);
+        var mysql = db.services.getById('mysql');
+        mysql.set('hide', true);
+        browser._onFade({serviceNames: ['mysql']});
+        assert.equal(mysql.get('fade'), true);
+        assert.equal(mysql.get('hide'), true);
+        assert.equal(unhighlight.callCount(), 0);
+        assert.equal(fireChange.callCount(), 0);
       });
 
       it('toggles highlight off when fading', function() {
