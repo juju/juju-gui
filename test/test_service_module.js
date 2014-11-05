@@ -885,3 +885,97 @@ describe('_canvasDropHandler', function() {
 
 });
 
+describe('updateElementVisibility', function() {
+  var Y, views, utils, models, serviceModule;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    var viewContainer = utils.makeContainer(this);
+    var db = new models.Database();
+    var env = {
+      update_annotations: function(name, type, data) {},
+      get: function() {}};
+    var view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env
+    });
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
+  });
+
+  it('is called on update', function() {
+    serviceModule.rendered = true;
+    serviceModule.service_scale = true;
+    serviceModule.dragBehaviour = true;
+    var update = utils.makeStubMethod(serviceModule, 'updateElementVisibility');
+    var updateData = utils.makeStubMethod(serviceModule, 'updateData');
+    this._cleanups.push(updateData.reset);
+    this._cleanups.push(update.reset);
+    serviceModule.update();
+    assert.equal(update.callCount(), 1);
+  });
+
+  it('categorizes and calls the appropriate vis method', function() {
+    var fade = utils.makeStubMethod(serviceModule, 'fade');
+    var hide = utils.makeStubMethod(serviceModule, 'hide');
+    var show = utils.makeStubMethod(serviceModule, 'show');
+    var highlight = utils.makeStubMethod(serviceModule, 'highlight');
+    var unhighlight = utils.makeStubMethod(serviceModule, 'unhighlight');
+    this._cleanups.concat([
+      fade.reset, hide.reset, show.reset, highlight.reset, unhighlight.reset
+    ]);
+    var serviceList = new models.ServiceList();
+    serviceList.add([{
+      id: 'foo1',
+      fade: true
+    }, {
+      id: 'foo2',
+      hide: true
+    }, {
+      id: 'foo3',
+      highlight: true
+    }, {
+      id: 'foo4'
+    }]);
+    serviceModule.set('component', {
+      get: function() {
+        return {
+          services: serviceList
+        };
+      }});
+    serviceModule.updateElementVisibility();
+    assert.equal(fade.callCount(), 1);
+    assert.deepEqual(fade.lastArguments()[0], { serviceNames: ['foo1'] });
+    assert.equal(hide.callCount(), 1);
+    assert.deepEqual(hide.lastArguments()[0], { serviceNames: ['foo2'] });
+    assert.equal(show.callCount(), 2);
+    assert.deepEqual(show.allArguments(), [
+      [{ serviceNames: ['foo3'] }],
+      [{ serviceNames: ['foo4'] }]
+    ]);
+    assert.equal(highlight.callCount(), 1);
+    assert.deepEqual(highlight.lastArguments()[0], { serviceName: ['foo3'] });
+    assert.equal(unhighlight.callCount(), 3);
+    assert.deepEqual(unhighlight.allArguments(), [
+      [{ serviceName: ['foo1'] }],
+      [{ serviceName: ['foo2'] }],
+      [{ serviceName: ['foo4'] }]
+    ]);
+  });
+});
+
