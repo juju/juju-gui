@@ -175,9 +175,11 @@ YUI.add('subapp-browser-events', function(Y) {
         service = db.services.getServiceByName(serviceName);
         service.set('fade', true);
         db.updateUnitFlags(service, 'fade');
-        // Need to toggle highlight off.
-        this._onUnhighlight({serviceName: service.get('name')});
-        this._fireMachineChanges(service);
+        // Need to toggle highlight off but only if it's not already hidden.
+        if (!service.get('hide')) {
+          this._onUnhighlight({serviceName: service.get('name')});
+          this._fireMachineChanges(service);
+        }
       }, this);
     },
 
