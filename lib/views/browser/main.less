@@ -76,7 +76,7 @@
         z-index: 602;
         position: fixed;
         overflow: hidden;
-        top: 89px + @navbar-height;
+        top: 145px + @navbar-height;
         height: 53px;
 
         &.current {
@@ -85,7 +85,7 @@
       }
       #bws-search {
         .sticky {
-          top: 153px + @navbar-height;
+          top: 206px + @navbar-height;
         }
       }
       .yui3-token {
@@ -109,10 +109,11 @@
         border-bottom: 1px solid #b7b7b9;
       }
       .with-home .charm-list {
-        top: 145px;
+        top: 198px;
       }
       .charm-list {
         .bws-list;
+        top: 137px;
       }
     }
   }
@@ -122,24 +123,6 @@
   .animate-in .bws-view-data {
     -webkit-animation: sidebar-details-slide-in 0.5s;
     animation: sidebar-details-slide-in 0.5s;
-  }
-}
-.flag-as {
-  #subapp-browser #bws-sidebar .bws-content {
-    .with-home .charm-list {
-      top: 198px;
-    }
-    .charm-list {
-      top: 137px;
-    }
-    .sticky {
-      top: 145px + @navbar-height;
-    }
-    #bws-search {
-      .sticky {
-        top: 206px + @navbar-height;
-      }
-    }
   }
 }
 #subapp-browser.no-search {
