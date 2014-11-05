@@ -71,7 +71,7 @@ YUI.add('juju-added-services', function(Y) {
       this.addEvent(services.after('*:change', this._onServiceChange, this));
 
       // Toggle highlight states
-      this.addEvent(this.after('*:highlight', this._onHighlightToggle, this));
+      this.addEvent(this.on('*:highlight', this._onHighlightToggle, this));
     },
 
     /**

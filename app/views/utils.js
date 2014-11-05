@@ -802,7 +802,6 @@ YUI.add('juju-view-utils', function(Y) {
       console.log(endpoints);
       result = {error: 'Specified relation is unavailable.'};
     } else if (matches.length > 1) {
-      console.log(endpoints);
       result = {error: 'Ambiguous relationship is not allowed.'};
     } else {
       result = matches[0];

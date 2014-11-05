@@ -124,6 +124,7 @@ describe('topology relation module', function() {
       },
       // stubs
       get: function(val) { return true; },
+      update: function() {},
       vis: {
         selectAll: function() {
           return {
@@ -253,6 +254,68 @@ describe('topology relation module', function() {
             metadata: { id: container.get('text').split(':')[0].trim() }
           }});
       });
+
+  describe('updateRelationVisibility', function() {
+    it('is called on update', function() {
+      var updateVis = utils.makeStubMethod(view, 'updateRelationVisibility');
+      this._cleanups.push(updateVis.reset);
+      var decorate = utils.makeStubMethod(view, 'decorateRelations');
+      this._cleanups.push(decorate.reset);
+      var update = utils.makeStubMethod(view, 'updateLinks');
+      this._cleanups.push(update.reset);
+      var updateSubs = utils.makeStubMethod(
+          view, 'updateSubordinateRelationsCount');
+      this._cleanups.push(updateSubs.reset);
+      view.set('component', {
+        get: function() {
+          return {
+            relations: {
+              toArray: function() {}
+            }
+          };
+        }});
+      view.update.call(view);
+      assert.equal(updateVis.callCount(), 1);
+    });
+
+    it('categorizes and calls the appropriate vis method', function() {
+      var fade = utils.makeStubMethod(view, 'fade');
+      var hide = utils.makeStubMethod(view, 'hide');
+      var show = utils.makeStubMethod(view, 'show');
+      this._cleanups.concat([fade.reset, hide.reset, show.reset]);
+      var serviceList = new models.ServiceList();
+      serviceList.add([{
+        id: 'foo1',
+        fade: true
+      }, {
+        id: 'foo2',
+        hide: true
+      }, {
+        id: 'foo3'
+      }, {
+        id: 'foo4',
+        fade: true,
+        hide: true
+      }]);
+      view.set('component', {
+        get: function() {
+          return {
+            services: serviceList
+          };
+        }});
+      view.updateRelationVisibility();
+      assert.equal(fade.callCount(), 1);
+      assert.equal(hide.callCount(), 1);
+      assert.equal(show.callCount(), 1);
+      assert.deepEqual(fade.lastArguments()[0], {
+        serviceNames: ['foo1', 'foo4']
+      });
+      assert.deepEqual(hide.lastArguments()[0], {
+        serviceNames: ['foo2', 'foo4']
+      });
+      assert.deepEqual(show.lastArguments()[0], { serviceNames: ['foo3'] });
+    });
+  });
 
   describe('_addPendingRelation', function() {
     var db, endpoints, mockAddRelation1, mockAddRelation2, models;

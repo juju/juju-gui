@@ -2067,6 +2067,26 @@ describe('test_model.js', function() {
       assert.equal(jujuGui.get('packageName'), 'juju-gui');
     });
 
+    describe('getServiceByName', function() {
+
+      beforeEach(function() {
+        list.add({
+          id: '432178$',
+          name: 'ghost-service'
+        });
+      });
+
+      it('returns service instances when provided real id', function() {
+        var service = list.getServiceByName('mysql');
+        assert.equal(service.get('id'), 'mysql');
+      });
+
+      it('returns ghost service when provided a name', function() {
+        var service = list.getServiceByName('ghost-service');
+        assert.equal(service.get('id'), '432178$');
+      });
+    });
+
     describe('updateConfig', function() {
       it('updates local config if fields are not dirty', function() {
         django.set('config', {debug: 'foo'});

@@ -613,6 +613,34 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     /**
+      When you have a ghost service its name will be user readable but its id
+      will not be. This causes the getById method to fail in fetching the
+      proper service.
+
+      Pass either a service model id or the display name into this method and
+      it will return the appropriate service model.
+
+      @method getServiceByName
+      @param {String} serviceName The service name or id.
+      @return {Object} The found service or null.
+    */
+    getServiceByName: function(serviceName) {
+      var service = this.getById(serviceName);
+      // If we found it as the id then return;
+      if (service !== null) {
+        return service;
+      } else {
+        this.some(function(serv) {
+          if (serv.get('name') === serviceName) {
+            service = serv;
+            return true;
+          }
+        });
+      }
+      return service;
+    },
+
+    /**
       Return a list of visible model instances. A model instance is visible
       when it is alive or dying, or when it includes units in an error state.
 
@@ -1240,16 +1268,6 @@ YUI.add('juju-models', function(Y) {
     _ghostCounter: 0,
 
     /**
-      Stores the list of services which are hidden because of the added
-      services view.
-
-      @property _highlightedServices
-      @type {Array}
-      @default []
-    */
-    _highlightedServices: [],
-
-    /**
      * Create a display name that can be used in the views as an entity label
      * agnostic from juju type.
      *
@@ -1396,50 +1414,6 @@ YUI.add('juju-models', function(Y) {
       }
       // Add the new machine to the database.
       return this.add(obj);
-    },
-
-    /**
-      Sets the visibility of a machine based on the service name and
-      visibility modifier passed in. This is used by the machine view to
-      determine if it should show the token or not when a user clicks on
-      highlight in the added services bar.
-
-      @method setMVVisibility
-      @param {String} serviceName The service name to compare to the units
-        services in the machine.
-      @param {Boolean} visible If the machine with units matching the supplied
-        service should be visible or not.
-    */
-    setMVVisibility: function(serviceName, highlight) {
-      var highlightIndex = this._highlightedServices.indexOf(serviceName);
-      if (highlightIndex >= 0 && highlight === false) {
-        // If the service is stored as hidden but we no longer want it to be
-        // then remove it from the hidden list.
-        this._highlightedServices.splice(highlightIndex, 1);
-      } else if (highlightIndex < 0 && highlight === true) {
-        this._highlightedServices.push(serviceName);
-      }
-
-      this.each(function(machine) {
-        var keepVisible = this._highlightedServices.some(
-            function(highlightedService) {
-              return machine.units.some(function(unit) {
-                return unit.service === highlightedService;
-              });
-            });
-        // If we no longer have any services highlighted then we want to show
-        // all machine tokens.
-        if (this._highlightedServices.length < 1) {
-          keepVisible = true;
-        }
-        machine.hide = keepVisible ? false : true;
-        // In order to have the machine view update the rendered tokens we need
-        // to fire an event to tell it that it has changed.
-        this.fire('change', {
-          changed: true,
-          instance: machine
-        });
-      }, this);
     },
 
     /**
@@ -1985,6 +1959,16 @@ YUI.add('juju-models', function(Y) {
   };
 
   var Database = Y.Base.create('database', Y.Base, [], {
+    /**
+      Stores the list of services which are hidden because of the added
+      services view.
+
+      @property _highlightedServices
+      @type {Array}
+      @default []
+    */
+    _highlightedServices: [],
+
     initializer: function() {
       // Single model for environment database is bound to.
       this.environment = new Environment();
@@ -2436,6 +2420,57 @@ YUI.add('juju-models', function(Y) {
       } else {
         updateOneService(serviceOrServiceList);
       }
+    },
+
+    /**
+      Sets the visibility of a machine based on the service name and
+      visibility modifier passed in. This is used by the machine view to
+      determine if it should show the token or not when a user clicks on
+      highlight in the added services bar.
+
+      @method setMVVisibility
+      @param {String} serviceName The service name to compare to the units
+        services in the machine.
+      @param {Boolean} visible If the machine with units matching the supplied
+        service should be visible or not.
+    */
+    setMVVisibility: function(serviceName, highlight) {
+      var highlightIndex = this._highlightedServices.indexOf(serviceName);
+      if (highlightIndex >= 0 && highlight === false) {
+        // If the service is stored as hidden but we no longer want it to be
+        // then remove it from the hidden list.
+        this._highlightedServices.splice(highlightIndex, 1);
+      } else if (highlightIndex < 0 && highlight === true) {
+        this._highlightedServices.push(serviceName);
+      }
+
+      this.machines.each(function(machine) {
+        var units = machine.units;
+        if (!units) {
+          // If the machine view hasn't been opened yet then there won't be a
+          // units collection on the machines. So we need to get the 'real'
+          // unit list.
+          units = this.units.filterByMachine(machine.id, true);
+        }
+        var keepVisible = this._highlightedServices.some(
+            function(highlightedService) {
+              return units.some(function(unit) {
+                return unit.service === highlightedService;
+              });
+            });
+        // If we no longer have any services highlighted then we want to show
+        // all machine tokens.
+        if (this._highlightedServices.length < 1) {
+          keepVisible = true;
+        }
+        machine.hide = keepVisible ? false : true;
+        // In order to have the machine view update the rendered tokens we need
+        // to fire an event to tell it that it has changed.
+        this.machines.fire('change', {
+          changed: true,
+          instance: machine
+        });
+      }, this);
     }
 
   });

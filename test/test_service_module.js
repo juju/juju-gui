@@ -261,6 +261,8 @@ describe('service module events', function() {
       life: 'dying',
       aggregated_status: {error: 42}
     });
+    var unhighlight = utils.makeStubMethod(serviceModule, 'unhighlight');
+    this._cleanups.push(unhighlight.reset);
     serviceModule.update();
     var boxes = topo.service_boxes;
     // There are five services in total.
@@ -308,19 +310,6 @@ describe('service module events', function() {
   it('can generate a selection from a list of service names', function() {
     assert.deepEqual(serviceModule.selectionFromServiceNames(['haproxy']),
         topo.vis.selectAll('.service'));
-  });
-
-  it('should fade pending services but not deployed services', function() {
-    db.services.add([
-      {id: 'rails', pending: true}
-    ]);
-    serviceModule.update();
-    assert.isTrue(topo.service_boxes.rails.pending);
-    assert.isFalse(topo.service_boxes.haproxy.pending);
-    // Assert that there are two services on the canvas, but only one is
-    // classed pending.
-    assert.equal(topo.vis.selectAll('.service')[0].length, 2);
-    assert.equal(topo.vis.selectAll('.service.pending')[0].length, 1);
   });
 
   it('should display an indicator for pending services', function() {
@@ -894,5 +883,100 @@ describe('_canvasDropHandler', function() {
     Y.bind(serviceModule._canvasDropHandler, self)(files);
   });
 
+});
+
+describe('updateElementVisibility', function() {
+  var Y, views, utils, models, serviceModule;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    var viewContainer = utils.makeContainer(this);
+    var db = new models.Database();
+    var env = {
+      update_annotations: function(name, type, data) {},
+      get: function() {}};
+    var view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env
+    });
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
+  });
+
+  it('is called on update', function() {
+    serviceModule.rendered = true;
+    serviceModule.service_scale = true;
+    serviceModule.dragBehaviour = true;
+    var update = utils.makeStubMethod(serviceModule, 'updateElementVisibility');
+    var updateData = utils.makeStubMethod(serviceModule, 'updateData');
+    this._cleanups.push(updateData.reset);
+    this._cleanups.push(update.reset);
+    serviceModule.update();
+    assert.equal(update.callCount(), 1);
+  });
+
+  it('categorizes and calls the appropriate vis method', function() {
+    var fade = utils.makeStubMethod(serviceModule, 'fade');
+    var hide = utils.makeStubMethod(serviceModule, 'hide');
+    var show = utils.makeStubMethod(serviceModule, 'show');
+    var highlight = utils.makeStubMethod(serviceModule, 'highlight');
+    var unhighlight = utils.makeStubMethod(serviceModule, 'unhighlight');
+    this._cleanups.concat([
+      fade.reset, hide.reset, show.reset, highlight.reset, unhighlight.reset
+    ]);
+    var serviceList = new models.ServiceList();
+    serviceList.add([{
+      id: 'foo1',
+      fade: true
+    }, {
+      id: 'foo2',
+      hide: true
+    }, {
+      id: 'foo3',
+      highlight: true
+    }, {
+      id: 'foo4'
+    }]);
+    serviceModule.set('component', {
+      get: function() {
+        return {
+          services: serviceList
+        };
+      }});
+    serviceModule.updateElementVisibility();
+    assert.equal(fade.callCount(), 1);
+    assert.deepEqual(fade.lastArguments()[0], { serviceNames: ['foo1'] });
+    assert.equal(hide.callCount(), 1);
+    assert.deepEqual(hide.lastArguments()[0], { serviceNames: ['foo2'] });
+    assert.equal(show.callCount(), 3);
+    assert.deepEqual(show.allArguments(), [
+      [{ serviceNames: ['foo1'] }],
+      [{ serviceNames: ['foo3'] }],
+      [{ serviceNames: ['foo4'] }]
+    ]);
+    assert.equal(highlight.callCount(), 1);
+    assert.deepEqual(highlight.lastArguments()[0], { serviceName: ['foo3'] });
+    assert.equal(unhighlight.callCount(), 3);
+    assert.deepEqual(unhighlight.allArguments(), [
+      [{ serviceName: ['foo1'] }],
+      [{ serviceName: ['foo2'] }],
+      [{ serviceName: ['foo4'] }]
+    ]);
+  });
 });
 

@@ -124,7 +124,6 @@ YUI.add('juju-topology-service', function(Y) {
       return d.subordinate;
     })
         .classed('subordinate', true);
-    node.classed('pending', function(d) { return d.pending; });
 
     // Size the node for drawing.
     node.attr({
@@ -1273,8 +1272,7 @@ YUI.add('juju-topology-service', function(Y) {
       .attr({
             'pointer-events': 'all', // IE needs this.
             'class': function(d) {
-              return (d.subordinate ? 'subordinate ' : '') +
-                  (d.pending ? 'pending ' : '') + 'service';
+              return (d.subordinate ? 'subordinate ' : '') + 'service';
             }})
         .call(this.dragBehavior)
         .call(self.createServiceNode, self)
@@ -1289,6 +1287,8 @@ YUI.add('juju-topology-service', function(Y) {
             delete topo.service_boxes[d.id];
           })
         .remove();
+
+      this.updateElementVisibility();
     },
 
     /**
@@ -1389,6 +1389,54 @@ YUI.add('juju-topology-service', function(Y) {
      * Show/hide/fade selection.
      */
     /**
+      Determines what services and relations need to be faded or highlighted
+      then calls the appropriate methods to update the UI.
+
+      @method updateElementVisibility
+    */
+    updateElementVisibility: function() {
+      // Loop through services and organize them into lists of
+      // faded, highlighted
+      var actions = {
+        fade: [],
+        highlight: [],
+        hide: [],
+        show: []
+      };
+      var db = this.get('component').get('db');
+      var fade, hide, highlight, name;
+      db.services.each(function(service) {
+        fade = service.get('fade');
+        highlight = service.get('highlight');
+        hide = service.get('hide');
+        name = service.get('id');
+        if (fade) { actions.fade.push(name); }
+        if (highlight) { actions.highlight.push(name); }
+        if (hide) { actions.hide.push(name); }
+        if (!fade && !highlight && !hide) { actions.show.push(name); }
+      });
+      if (actions.fade.length > 0) {
+        // If any services are highlighted we need to make sure we unhighlight
+        // them before fading. If any services are hidden we need to s how them
+        // first before we can fade them.
+        this.show({serviceNames: actions.fade});
+        this.unhighlight({serviceName: actions.fade});
+        this.fade({serviceNames: actions.fade});
+      }
+      if (actions.highlight.length > 0) {
+        this.show({serviceNames: actions.highlight});
+        this.highlight({serviceName: actions.highlight});
+      }
+      if (actions.hide.length > 0) {
+        this.unhighlight({serviceName: actions.hide});
+        this.hide({serviceNames: actions.hide});
+      }
+      if (actions.show.length > 0) {
+        this.unhighlight({serviceName: actions.show});
+        this.show({serviceNames: actions.show});
+      }
+    },
+    /**
       Add the highlight attribute from a service and, optionally, related
       services.
 
@@ -1397,6 +1445,9 @@ YUI.add('juju-topology-service', function(Y) {
     */
     highlight: function(evt) {
       var serviceNames = [evt.serviceName];
+      if (Y.Lang.isArray(evt.serviceName)) {
+        serviceNames = evt.serviceName;
+      }
       var topo = this.get('component');
       // Get related services and add to serviceNames.
       if (evt.highlightRelated) {
@@ -1424,6 +1475,10 @@ YUI.add('juju-topology-service', function(Y) {
     */
     unhighlight: function(evt) {
       var serviceNames = [evt.serviceName];
+      if (Y.Lang.isArray(evt.serviceName)) {
+        serviceNames = evt.serviceName;
+      }
+
       var topo = this.get('component');
       // Get related services and add to serviceNames.
       if (evt.unhighlightRelated) {
@@ -1438,8 +1493,15 @@ YUI.add('juju-topology-service', function(Y) {
         topo.service_boxes[service].highlighted = false;
       });
       var selection = this.selectionFromServiceNames(serviceNames);
-      selection.select('.service-block-image')
-        .attr('href', '/juju-ui/assets/svgs/service_module.svg');
+      var image, href;
+      selection.each(function(d) {
+        image = d3.select(this).select('.service-block-image');
+        href = '/juju-ui/assets/svgs/service_module.svg';
+        if (d.pending || d.deleted) {
+          href = '/juju-ui/assets/svgs/service_module_pending.svg';
+        }
+        image.attr('href', href);
+      });
     },
 
     show: function(evt) {
@@ -1451,16 +1513,19 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.transition()
-        .duration(400)
-        .attr('opacity', '1.0')
-        .style('display', 'block');
+      selection.attr('opacity', '1.0').style('display', 'block');
     },
 
     hide: function(evt) {
       var selection = evt.selection;
-      selection.attr('opacity', '0')
-            .style('display', 'none');
+      if (!selection) {
+        var serviceNames = evt.serviceNames;
+        if (!serviceNames) {
+          return;
+        }
+        selection = this.selectionFromServiceNames(serviceNames);
+      }
+      selection.attr('opacity', '0').style('display', 'none');
     },
 
     fade: function(evt) {
@@ -1473,9 +1538,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.transition()
-            .duration(400)
-            .attr('opacity', alpha !== undefined && alpha || '0.2');
+      selection.attr('opacity', alpha !== undefined && alpha || '0.2');
     },
 
 
