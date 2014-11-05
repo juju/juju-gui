@@ -69,7 +69,9 @@ YUI.add('juju-added-service-token', function(Y) {
         }
       }
       // Re-render because we changed the token's attributes
-      this.render();
+      // XXX kadams54, 05/11/14 - Note that the false param is temporary, per
+      // the comment on line 111 below.
+      this.render(false);
       this.fire(action, args);
     },
 
@@ -99,12 +101,22 @@ YUI.add('juju-added-service-token', function(Y) {
 
       @method render
     */
-    render: function() {
+    render: function(useServiceVisibility) {
       var attrs = this.getAttrs(),
           container = this.get('container'),
           content;
       // Need to convert the model to a POJO for the template.
       attrs.service = attrs.service.getAttrs();
+      // Override the local flags with the service flags.
+      // XXX kadams54, 05/11/14 - Note that this is a temporary fix. Far better
+      // would be to just use the service flags directly, but that's a
+      // far-reaching change that we want to tackle at a later point.
+      // Treat useServiceVisibility as "true" if it is not set.
+      if (useServiceVisibility || useServiceVisibility === undefined) {
+        attrs.highlight = attrs.service.highlight;
+        attrs.visible = !attrs.service.fade;
+      }
+      // Render the template.
       content = this.template(attrs);
       container.setHTML(content);
       // Make the token easily selectable in the DOM.
