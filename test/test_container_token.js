@@ -73,17 +73,6 @@ describe('container token view', function() {
     assert.equal(container.one('.delete'), null);
   });
 
-  it('hides the container if all units are hidden', function() {
-    container = utils.makeContainer(this, 'container-token');
-    machine.units[0].hide = true;
-    view = new View({
-      containerParent: container,
-      container: utils.makeContainer(this, 'container'),
-      machine: machine
-    }).render();
-    assert.equal(view.get('container').hasClass('hidden'), true);
-  });
-
   it('fires the delete event', function(done) {
     view.on('deleteToken', function(e) {
       assert.isObject(e);
