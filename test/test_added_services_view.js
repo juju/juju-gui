@@ -322,7 +322,7 @@ describe('added services view', function() {
         done();
       });
       // Fire the actual event.
-      token.fire('highlight');
+      token.fire('highlight', { serviceName: service.get('name') });
     });
   });
 
