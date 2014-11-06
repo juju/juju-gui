@@ -163,12 +163,15 @@ YUI.add('juju-added-services', function(Y) {
     _onHighlightToggle: function(e) {
       var serviceName = e.serviceName,
           tokens = this.get('serviceTokens'),
-          keys = Object.keys(tokens);
+          keys = Object.keys(tokens),
+          services = this.get('db').services;
       keys.forEach(function(key) {
-        if (key !== serviceName) {
+        // Key could be a ghost service id which won't match the service name
+        // so we need to parse every key to grab the real name.
+        if (services.getServiceByName(key).get('name') !== serviceName) {
           tokens[key].unhighlight();
         }
-      });
+      }, this);
     },
 
     /**
