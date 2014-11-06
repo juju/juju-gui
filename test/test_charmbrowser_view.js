@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('charmbrowser view', function() {
-  var Y, charmBrowser, CharmBrowser, cleanIconHelper,
+  var Y, charmBrowser, CharmBrowser, cleanIconHelper, db,
       utils, views;
 
   before(function(done) {
@@ -43,8 +43,10 @@ describe('charmbrowser view', function() {
   });
 
   beforeEach(function() {
+    db = new Y.juju.models.Database();
     charmBrowser = new CharmBrowser({
       parentContainer: utils.makeContainer(this),
+      db: db,
       store: {
         cancelInFlightRequest: utils.makeStubFunction()
       }
@@ -115,30 +117,15 @@ describe('charmbrowser view', function() {
     });
 
     describe('Added services button', function() {
-      var db, renderAdded;
+      var renderAdded;
 
       beforeEach(function() {
-        window.flags = {};
-        window.flags.as = true;
-        db = new Y.juju.models.Database();
-        // Need to re-initialize charmbrowser after window.flags.as is set.
-        charmBrowser = new CharmBrowser({
-          parentContainer: utils.makeContainer(this),
-          db: db,
-          store: {
-            cancelInFlightRequest: utils.makeStubFunction()
-          }
-        });
         renderAdded = utils.makeStubMethod(
             charmBrowser, '_renderAddedServicesButton');
         this._cleanups.push(renderAdded.reset);
         var curatedStub = utils.makeStubMethod(
             charmBrowser, '_loadCurated');
         this._cleanups.push(curatedStub.reset);
-      });
-
-      afterEach(function() {
-        window.flags = {};
       });
 
       it('calls to render the added services button', function() {

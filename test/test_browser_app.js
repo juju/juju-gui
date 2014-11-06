@@ -71,7 +71,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var app, render;
 
       beforeEach(function() {
-        app = new Y.juju.subapps.Browser({});
+        app = new Y.juju.subapps.Browser({
+          db: new models.Database()
+        });
         app._sidebar = {
           get: function() {
             return {
