@@ -442,6 +442,7 @@ th {
         width: 0;
         height: 0;
         border-style: solid;
+        color: #fff;
     }
     &.right .triangle {
         left: -16px;
@@ -460,11 +461,16 @@ th {
         border-color: #fff transparent transparent transparent;
     }
     .menu-title {
-        margin: 10px;
+        padding: 20px;
     }
     .cancel {
-        margin: 10px;
-        float: right;
+        position: absolute;
+        top: 25px;
+        right: 20px;
+
+        .sprite {
+            vertical-align: top;
+        }
     }
     ul {
         margin: 0;
@@ -474,7 +480,7 @@ th {
             background-position: 10px center;
             background-repeat: no-repeat;
             cursor: pointer;
-            line-height: 32px;
+            line-height: 40px;
             padding: 0 15px;
             white-space: nowrap;
 
@@ -509,6 +515,11 @@ th {
                     background-color: inherit;
                 }
             }
+        }
+    }
+    .menu {
+        li {
+            border-top: 1px solid #e9e9e9;
         }
     }
     &#service-menu ul li {
