@@ -167,6 +167,69 @@ describe('test_model.js', function() {
       assert.equal(unrelated.item(0).get('name'), 'haproxy');
     });
 
+    describe('setMVVisibility', function() {
+      var db;
+
+      beforeEach(function() {
+        db = new models.Database();
+        db._highlightedServices = [];  // needs to be explicitly emptied
+        db.machines.add([
+          {id: '0', hide: false},
+          {id: '1', hide: false}
+        ]);
+        db.services.add([
+          {id: 'mysql', name: 'mysql'},
+          {id: '1234$', name: 'ghost'}
+        ]);
+        db.addUnits([
+          {id: 'mysql/0', service: 'mysql', machine: '0'},
+          {id: '1234$/0', service: '1234$', machine: '1'}
+        ]);
+      });
+
+      it('removes hidden services when not hidden anymore', function() {
+        db._highlightedServices.push('mysql');
+        db.setMVVisibility('mysql', false);
+        assert.equal(db._highlightedServices.indexOf('mysql'), -1);
+      });
+
+      function assertHighlight(machineId, serviceId) {
+        var targetMachine = db.machines.getById(machineId);
+        assert.equal(targetMachine.hide, false,
+                     'Target machine should not be hidden initially');
+        db.setMVVisibility(serviceId, true);
+        assert.equal(targetMachine.hide, false,
+                     'Target machine should not be hidden after highlight');
+        db.machines.each(function(machine) {
+          if (machine.id !== machineId) {
+            assert.equal(machine.hide, true,
+                         'All other machines should be hidden after highlight');
+          }
+        });
+      }
+
+      it('highlights deployed machines properly', function() {
+        assertHighlight('0', 'mysql');
+      });
+
+      it('highlights ghost machines properly', function() {
+        assertHighlight('1', '1234$');
+      });
+
+      it('fires a change event for all machines', function(done) {
+        var counter = 0,
+            machineCount = db.machines.size();
+        db.machines.after('*:change', function(e) {
+          counter += 1;
+          assert.equal(e.changed, true);
+          if (counter === machineCount) {
+            done();
+          }
+        });
+        db.setMVVisibility('mysql', true);
+      });
+    });
+
     it('should aggregate unit info when adding units', function() {
       var service_unit = {id: 'mysql/0'};
       var db = new models.Database();
