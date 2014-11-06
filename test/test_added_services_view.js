@@ -322,15 +322,23 @@ describe('added services view', function() {
         done();
       });
       // Fire the actual event.
-      token.fire('highlight');
+      token.fire('highlight', { serviceName: service.get('name') });
     });
   });
 
   describe('added services visibility', function() {
-    function testClick(options, done) {
-      // Ensure the flag on the service is set correctly.
-      var service = view.get('db').services.item(0),
-          token = view.get('serviceTokens')[service.get('id')];
+    function testClick(options, done, useGhost) {
+      // Ensure the visibility flag on the service is set correctly.
+      var service;
+      if (useGhost) {
+        service = view.get('db').services.add({
+          id: '123467$',
+          name: 'ghost-service'
+        });
+      } else {
+        service = view.get('db').services.item(0);
+      }
+      var token = view.get('serviceTokens')[service.get('id')];
       service.set(options.attr, options.attrVal);
       // Proceed with the actual test.
       view.render();
@@ -387,6 +395,15 @@ describe('added services view', function() {
         oldState: 'highlight',
         newState: 'unhighlight'
       }, done);
+    });
+
+    it('changes from highlighted to unhighlighted (ghost)', function(done) {
+      testClick({
+        attr: 'highlight',
+        attrVal: true,
+        oldState: 'highlight',
+        newState: 'unhighlight'
+      }, done, true);
     });
   });
 
