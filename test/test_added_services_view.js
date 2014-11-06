@@ -144,6 +144,36 @@ describe('added services view', function() {
           view.get('container').one('.environment-counts').get('_yuid'),
           'views template was re-rendered');
     });
+
+    it('respects existing flags on the service', function() {
+      var db = view.get('db'),
+          serviceTokens = view.get('serviceTokens'),
+          container = view.get('container');
+      var idFoo = 'service-foo',
+          idBar = 'service-bar',
+          idBaz = 'service-baz',
+          serviceFoo = db.services.getById(idFoo),
+          serviceBar = db.services.getById(idBar),
+          serviceBaz = db.services.getById(idBaz);
+      serviceFoo.set('highlight', true);
+      serviceBar.set('fade', true);
+      view.render();
+      var tokenFoo = container.one('.token[data-id="' + idFoo + '"]'),
+          tokenBar = container.one('.token[data-id="' + idBar + '"]'),
+          tokenBaz = container.one('.token[data-id="' + idBaz + '"]');
+      assert.notEqual(tokenFoo.one('.action[data-action="fade"]'), null,
+                      'Fade button not shown');
+      assert.notEqual(tokenFoo.one('.action[data-action="unhighlight"]'), null,
+                      'Unhighlight button not shown');
+      assert.notEqual(tokenBar.one('.action[data-action="show"]'), null,
+                      'Show button not shown');
+      assert.notEqual(tokenBar.one('.action[data-action="highlight"]'), null,
+                      'Highlight button not shown');
+      assert.notEqual(tokenBaz.one('.action[data-action="fade"]'), null,
+                      'Fade button not shown');
+      assert.notEqual(tokenBaz.one('.action[data-action="highlight"]'), null,
+                      'Highlight button not shown');
+    });
   });
 
   describe('bind events', function() {
@@ -298,13 +328,13 @@ describe('added services view', function() {
 
   describe('added services visibility', function() {
     function testClick(options, done) {
-      // Ensure the visibility flag on the token is set correctly.
+      // Ensure the flag on the service is set correctly.
       var service = view.get('db').services.item(0),
           token = view.get('serviceTokens')[service.get('id')];
-      token.set(options.attr, options.attrVal);
+      service.set(options.attr, options.attrVal);
       // Proceed with the actual test.
       view.render();
-      var index = options.attr === 'visible' ? 0 : 1,
+      var index = options.attr === 'fade' ? 0 : 1,
           tokenElement = token.get('container'),
           icon = tokenElement.all('.action').item(index),
           action = icon.getAttribute('data-action'),
@@ -325,8 +355,8 @@ describe('added services view', function() {
 
     it('triggers a change from show to fade state', function(done) {
       testClick({
-        attr: 'visible',
-        attrVal: true,
+        attr: 'fade',
+        attrVal: false,
         oldState: 'show',
         newState: 'fade'
       }, done);
@@ -334,8 +364,8 @@ describe('added services view', function() {
 
     it('triggers a change from fade to show state', function(done) {
       testClick({
-        attr: 'visible',
-        attrVal: false,
+        attr: 'fade',
+        attrVal: true,
         oldState: 'fade',
         newState: 'show'
       }, done);
