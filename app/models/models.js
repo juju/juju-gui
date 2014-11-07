@@ -2429,19 +2429,19 @@ YUI.add('juju-models', function(Y) {
       highlight in the added services bar.
 
       @method setMVVisibility
-      @param {String} serviceName The service name to compare to the units
+      @param {String} serviceId The service id to compare to the units
         services in the machine.
       @param {Boolean} visible If the machine with units matching the supplied
         service should be visible or not.
     */
-    setMVVisibility: function(serviceName, highlight) {
-      var highlightIndex = this._highlightedServices.indexOf(serviceName);
+    setMVVisibility: function(serviceId, highlight) {
+      var highlightIndex = this._highlightedServices.indexOf(serviceId);
       if (highlightIndex >= 0 && highlight === false) {
         // If the service is stored as hidden but we no longer want it to be
         // then remove it from the hidden list.
         this._highlightedServices.splice(highlightIndex, 1);
       } else if (highlightIndex < 0 && highlight === true) {
-        this._highlightedServices.push(serviceName);
+        this._highlightedServices.push(serviceId);
       }
 
       this.machines.each(function(machine) {
