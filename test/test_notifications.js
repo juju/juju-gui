@@ -108,6 +108,23 @@ describe('notifications', function() {
         container.destroy();
      });
 
+  it('should be marked populated when an error is notified', function() {
+    var notifications = new models.NotificationList();
+    notifications.add({title: 'mytitle', level: 'error'});
+    var container = Y.Node.create('<div id="test">');
+    var env = new juju.environments.GoEnvironment();
+    var view = new views.NotificationsView({
+      container: container,
+      notifications: notifications,
+      env: env,
+      nsRouter: nsRouter
+    });
+    view.render();
+    var indicator = container.one('#notify-indicator');
+    assert.equal(indicator.hasClass('populated'), true);
+    container.destroy();
+  });
+
   it('must be able to limit the size of notification events',
      function() {
        var note1 = new models.Notification({

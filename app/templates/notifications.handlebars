@@ -1,5 +1,5 @@
 <a href="" class="menu-link">
-    <span id="notify-indicator">{{ count }}</span>
+    <span id="notify-indicator" {{#if count}}class="populated"{{/if}}>{{ count }}</span>
 </a>
 <span class="dropdown">
     <header>
