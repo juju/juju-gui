@@ -260,6 +260,9 @@ Checklist for Making a Stable Release
 
 - Make a new release of the juju-gui charm by doing the following.
 
+  - Run ``bzr launchpad-login <username>`` if you haven't already logged in to
+    avoid an issue where the repository download appears to download gigs of
+    data into /dev/null instead of to the repository.
   - Get a clean branch of the development charm trunk owned by juju-gui:
     ``bzr branch lp:~juju-gui/charms/trusty/juju-gui/trunk/ develop-trunk``.
   - Get a clean branch of the released precise branch trunk:
