@@ -1553,11 +1553,28 @@ describe('machine view panel view', function() {
           selector = '.machines .token',
           item = container.one(
               selector + '[data-id="' + machineModel.id + '"]');
+      var unselect = utils.makeStubMethod(view, '_unselectIfHidden');
+      this._cleanups.push(unselect.reset);
       var selectToken = utils.makeStubMethod(view, '_selectMachineToken');
       view.set('selectedMachine', 999);
       machines.updateModelId(machineModel, id, true);
       assert.equal(
           selectToken.calledOnce(), true, 'Selected token not called once');
+      assert.equal(
+          unselect.callCount() > 0, true, '_unselectIfHidden not called');
+    });
+
+    it('unselects a machine token if machine is hidden', function() {
+      // It should also clear the container column.
+      view.render();
+      var clear = utils.makeStubMethod(view, '_clearContainerColumn');
+      this._cleanups.push(clear.reset);
+      view._unselectIfHidden({
+        id: '0',
+        hide: true
+      });
+      assert.equal(clear.callCount(), 1);
+      assert.strictEqual(view.get('selectedMachine'), null);
     });
 
     it('should set the correct counts in the container header', function(done) {
