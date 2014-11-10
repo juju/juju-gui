@@ -498,6 +498,7 @@ YUI.add('machine-view-panel', function(Y) {
               this._updateMachineWithUnitData(machine);
             }
             token.set('commitStatus', machine.commitStatus);
+            this._unselectIfHidden(machine);
             token.render();
             var selectedMachine = this.get('selectedMachine');
             if ((selectedMachine === machineId) ||
@@ -510,6 +511,21 @@ YUI.add('machine-view-panel', function(Y) {
               this._selectMachineToken(
                   tokenList[machineId].get('container').one('.token'));
             }
+          }
+        },
+
+        /**
+          If the machine is hidden and selected then we want to make sure we
+          unselect it and show the select machine message.
+
+          @method _unselectIfHidden
+          @param {Object} machine The machine object.
+        */
+        _unselectIfHidden: function(machine) {
+          var selectedMachine = this.get('selectedMachine');
+          if (selectedMachine === machine.id && machine.hide) {
+            this._clearContainerColumn();
+            this.set('selectedMachine', null);
           }
         },
 
