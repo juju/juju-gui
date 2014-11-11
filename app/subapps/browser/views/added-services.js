@@ -47,7 +47,9 @@ YUI.add('juju-added-services', function(Y) {
       // Load services into the internal token list.
       this.get('db').services.each(function(service) {
         key = service.get('id');
-        serviceTokens[key] = new ns.AddedServiceToken({service: service});
+        serviceTokens[key] = new ns.AddedServiceToken({
+          service: service.getAttrs()
+        });
         serviceTokens[key].addTarget(this);
       }, this);
       this.set('serviceTokens', serviceTokens);
@@ -85,7 +87,7 @@ YUI.add('juju-added-services', function(Y) {
           list = this.get('container').one('.services-list'),
           serviceTokens = this.get('serviceTokens'),
           token;
-      token = new ns.AddedServiceToken({service: service});
+      token = new ns.AddedServiceToken({service: service.getAttrs()});
       serviceTokens[service.get('id')] = token;
       token.render();
       token.addTarget(this);
@@ -149,7 +151,7 @@ YUI.add('juju-added-services', function(Y) {
           token = serviceTokens[target.get('id')];
         }
         // Update any changed fields on the token.
-        token.set('service', target);
+        token.set('service', target.getAttrs());
         token.render();
       }
     },
