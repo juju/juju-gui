@@ -47,6 +47,9 @@ YUI.add('juju-added-service-token', function(Y) {
       if (e.preventDefault) {
         e.preventDefault();
       }
+      // This function can be invoked in response to a DOM event (in which case
+      // we need to obtain the action off the DOM) or directly (in which case
+      // the action is passed in).
       var action = e.action || e.currentTarget.getAttribute('data-action');
       this.fire(action, {id: this.get('service').id});
     },

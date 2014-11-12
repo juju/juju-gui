@@ -377,7 +377,7 @@ describe('added services view', function() {
       testClick({
         attr: 'highlight',
         attrVal: true,
-        event: 'unhighlight',
+        event: 'unhighlight'
       }, done, true);
     });
   });
