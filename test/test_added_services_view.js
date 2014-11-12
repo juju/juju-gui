@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('added services view', function() {
-  var models, utils, view, View, Y;
+  var db, models, utils, view, View, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -36,11 +36,14 @@ describe('added services view', function() {
   });
 
   beforeEach(function() {
-    var db = new models.Database();
+    db = new models.Database();
     db.services.add([
       {id: 'service-foo', name: 'foo', unit_count: 1, icon: 'foo.png'},
       {id: 'service-bar', name: 'bar', unit_count: 2, icon: 'bar.png'},
-      {id: 'service-baz', name: 'baz', unit_count: 3, icon: 'baz.png'}
+      {id: 'service-baz', name: 'baz', unit_count: 3, icon: 'baz.png'},
+      {id: 'mysql', name: 'mysql'},
+      {id: 'wordpress', name: 'wordpress'},
+      {id: 'haproxy', name: 'haproxy'}
     ]);
     var container = utils.makeContainer(this, 'added-services-view');
     view = new View({
@@ -73,7 +76,6 @@ describe('added services view', function() {
   describe('initializer', function() {
     it('sets up the internal list of service tokens', function() {
       var serviceTokens = view.get('serviceTokens'),
-          db = view.get('db'),
           keys = Object.keys(serviceTokens);
       assert.equal(db.services.size(), keys.length,
                    'Internal list size does not match DB size');
@@ -104,7 +106,7 @@ describe('added services view', function() {
     it('creates a token for each service', function() {
       view.render();
       var container = view.get('container');
-      view.get('db').services.each(function(service) {
+      db.services.each(function(service) {
         var id = service.get('id');
         assert.notEqual(container.one('.token[data-id="' + id + '"]'), null,
                         'Unable to find a token for service: ' + id);
@@ -122,7 +124,7 @@ describe('added services view', function() {
     });
 
     it('displays the "no services" message when needed', function() {
-      view.get('db').services.reset();
+      db.services.reset();
       view.set('serviceTokens', {});
       view.render();
       var message = view.get('container').one('.no-services');
@@ -146,9 +148,7 @@ describe('added services view', function() {
     });
 
     it('respects existing flags on the service', function() {
-      var db = view.get('db'),
-          serviceTokens = view.get('serviceTokens'),
-          container = view.get('container');
+      var container = view.get('container');
       var idFoo = 'service-foo',
           idBar = 'service-bar',
           idBaz = 'service-baz',
@@ -185,8 +185,7 @@ describe('added services view', function() {
     });
 
     it('adds tokens when services are added', function() {
-      var db = view.get('db'),
-          container = view.get('container');
+      var container = view.get('container');
       view.render();
       assert.equal(container.all('.token').size(), db.services.size(),
                    'Initial sizes do not match');
@@ -198,8 +197,6 @@ describe('added services view', function() {
     });
 
     it('updates service count in nav button on add', function() {
-      var db = view.get('db'),
-          container = view.get('container');
       view.render();
       assert.equal(renderButton.lastArguments()[0], db.services.size(),
                    'Initial sizes do not match');
@@ -211,7 +208,6 @@ describe('added services view', function() {
     });
 
     it('hides the "no services" message after adding', function() {
-      var db = view.get('db');
       db.services.reset();
       view.set('serviceTokens', {});
       view.render();
@@ -226,8 +222,7 @@ describe('added services view', function() {
     });
 
     it('removes tokens when services are removed', function() {
-      var db = view.get('db'),
-          container = view.get('container');
+      var container = view.get('container');
       view.render();
       assert.equal(container.all('.token').size(), db.services.size(),
                    'Initial sizes do not match');
@@ -237,8 +232,6 @@ describe('added services view', function() {
     });
 
     it('updates service count in nav button on remove', function() {
-      var db = view.get('db'),
-          container = view.get('container');
       view.render();
       assert.equal(renderButton.lastArguments()[0], db.services.size(),
                    'Initial sizes do not match');
@@ -248,7 +241,6 @@ describe('added services view', function() {
     });
 
     it('displays the "no services" message after removing', function() {
-      var db = view.get('db');
       db.services.reset();
       view.set('serviceTokens', {});
       db.services.add([
@@ -264,8 +256,7 @@ describe('added services view', function() {
     });
 
     it('updates tokens when service IDs are changed', function() {
-      var db = view.get('db'),
-          container = view.get('container');
+      var container = view.get('container');
       view.render();
       var service = db.services.item(0),
           oldID = service.get('id'),
@@ -286,8 +277,7 @@ describe('added services view', function() {
     });
 
     it('updates tokens when services are changed', function() {
-      var db = view.get('db'),
-          container = view.get('container');
+      var container = view.get('container');
       view.render();
       var service = db.services.item(0),
           id = service.get('id'),
@@ -303,13 +293,12 @@ describe('added services view', function() {
 
     it('toggles off any other highlighted tokens on highlight', function(done) {
       view.render();
-      var db = view.get('db'),
-          service = db.services.item(0),
+      var service = db.services.item(0),
           id = service.get('id'),
           tokens = view.get('serviceTokens'),
           token = tokens[id];
       // Highlight another service.
-      tokens[db.services.item(1).get('id')].set('highlight', true);
+      db.services.item(1).set('highlight', true);
       // After the highlight event, make sure all other tokens have highlight
       // toggled off.
       view.after('*:highlight', function() {
@@ -322,7 +311,7 @@ describe('added services view', function() {
         done();
       });
       // Fire the actual event.
-      token.fire('highlight', { serviceName: service.get('name') });
+      token.fire('highlight', { id: service.get('id') });
     });
   });
 
@@ -331,42 +320,32 @@ describe('added services view', function() {
       // Ensure the visibility flag on the service is set correctly.
       var service;
       if (useGhost) {
-        service = view.get('db').services.add({
+        service = db.services.add({
           id: '123467$',
           name: 'ghost-service'
         });
       } else {
-        service = view.get('db').services.item(0);
+        service = db.services.item(0);
       }
       var token = view.get('serviceTokens')[service.get('id')];
       service.set(options.attr, options.attrVal);
       // Proceed with the actual test.
       view.render();
-      var index = options.attr === 'fade' ? 0 : 1,
-          tokenElement = token.get('container'),
-          icon = tokenElement.all('.action').item(index),
-          action = icon.getAttribute('data-action'),
-          oldState = options.oldState,
-          newState = options.newState;
-      assert.equal(action, newState,
-                   'Button is not in expected ' + newState + ' mode');
-      token.on(newState, function() {
-        // Can't reuse action variable because the underlying attribute has
-        // changed.
-        var changedIcon = tokenElement.all('.action').item(index);
-        assert.equal(changedIcon.getAttribute('data-action'), oldState,
-                     'Button is not in ' + oldState + ' mode after clicking');
+      token.after(options.event, function() {
+        assert.equal(service.get(options.attr), !options.attrVal,
+            '"' + options.attr + '" flag not set properly after clicking');
         done();
       });
-      icon.simulate('click');
+      var index = options.attr === 'fade' ? 0 : 1;
+      var button = token.get('container').all('.action').item(index);
+      button.simulate('click');
     }
 
     it('triggers a change from show to fade state', function(done) {
       testClick({
         attr: 'fade',
         attrVal: false,
-        oldState: 'show',
-        newState: 'fade'
+        event: 'fade'
       }, done);
     });
 
@@ -374,8 +353,7 @@ describe('added services view', function() {
       testClick({
         attr: 'fade',
         attrVal: true,
-        oldState: 'fade',
-        newState: 'show'
+        event: 'show'
       }, done);
     });
 
@@ -383,8 +361,7 @@ describe('added services view', function() {
       testClick({
         attr: 'highlight',
         attrVal: false,
-        oldState: 'unhighlight',
-        newState: 'highlight'
+        event: 'highlight'
       }, done);
     });
 
@@ -392,8 +369,7 @@ describe('added services view', function() {
       testClick({
         attr: 'highlight',
         attrVal: true,
-        oldState: 'highlight',
-        newState: 'unhighlight'
+        event: 'unhighlight'
       }, done);
     });
 
@@ -401,9 +377,128 @@ describe('added services view', function() {
       testClick({
         attr: 'highlight',
         attrVal: true,
-        oldState: 'highlight',
-        newState: 'unhighlight'
+        event: 'unhighlight'
       }, done, true);
+    });
+  });
+
+  describe('highlight events', function() {
+    beforeEach(function() {
+      var unrelated = db.services.filter({asList: true}, function(service) {
+        return service.get('id') === 'haproxy';
+      });
+      utils.makeStubMethod(db, 'findUnrelatedServices', unrelated);
+    });
+
+    it('sets highlight flag on selected service', function() {
+      var mysql = db.services.getById('mysql');
+      assert.equal(mysql.get('highlight'), false,
+                   'target service should not have flag set initially');
+      view._onHighlight({id: 'mysql'});
+      assert.equal(mysql.get('highlight'), true,
+                   'target service should have flag set to true');
+    });
+
+    it('toggles fade off when highlighting', function() {
+      var mysql = db.services.getById('mysql');
+      mysql.set('fade', true);
+      view._onHighlight({id: 'mysql'});
+      assert.equal(mysql.get('fade'), false,
+                   'target service should have toggled flag to false');
+    });
+
+    it('sets unrelated services\' hide flag on highlight', function() {
+      var mysql = db.services.getById('mysql'), // Target service.
+          wordpress = db.services.getById('wordpress'), // Related service.
+          haproxy = db.services.getById('haproxy'); // Unrelated service.
+      assert.equal(mysql.get('hide'), false,
+                   'target service should not have flag set initially');
+      assert.equal(wordpress.get('hide'), false,
+                   'related service should not have flag set initially');
+      assert.equal(haproxy.get('hide'), false,
+                   'unrelated service should not have flag set initially');
+      view._onHighlight({id: 'mysql'});
+      assert.equal(mysql.get('hide'), false,
+                   'target service should not have flag set post-event');
+      assert.equal(wordpress.get('hide'), false,
+                   'related service should not have flag set post-event');
+      assert.equal(haproxy.get('hide'), true,
+                   'unrelated service should have flag set to true');
+    });
+
+    it('unsets highlight flag on selected service', function() {
+      var mysql = db.services.getById('mysql');
+      mysql.set('highlight', true);
+      view._onUnhighlight({id: 'mysql'});
+      assert.equal(mysql.get('highlight'), false,
+                   'target service should have flag set to false');
+    });
+
+    it('unsets unrelated services\' fade flag on unhighlight', function() {
+      var mysql = db.services.getById('mysql'), // Target service.
+          wordpress = db.services.getById('wordpress'), // Related service.
+          haproxy = db.services.getById('haproxy'); // Unrelated service.
+      mysql.set('highlight', true);
+      assert.equal(wordpress.get('fade'), false,
+                   'related service should not have flag set initially');
+      assert.equal(haproxy.get('fade'), false,
+                   'unrelated service should not have flag set initially');
+      view._onUnhighlight({id: 'mysql'});
+      assert.equal(mysql.get('fade'), false,
+                   'target service should not have flag set post-event');
+      assert.equal(wordpress.get('fade'), false,
+                   'related service should not have flag set post-event');
+      assert.equal(haproxy.get('fade'), false,
+                   'unrelated service should have flag set to false');
+    });
+  });
+
+  describe('fade/show events', function() {
+    it('sets fade flag on the selected service on fade', function() {
+      var unhighlight = utils.makeStubMethod(view, '_onUnhighlight');
+      this._cleanups.push(unhighlight.reset);
+      var fireChange = utils.makeStubMethod(view, '_fireMachineChanges');
+      this._cleanups.push(fireChange.reset);
+      var mysql = db.services.getById('mysql'),
+          wordpress = db.services.getById('wordpress');
+      assert.equal(mysql.get('fade'), false);
+      assert.equal(wordpress.get('fade'), false);
+      view._onFade({id: 'mysql'});
+      assert.equal(mysql.get('fade'), true);
+      assert.equal(wordpress.get('fade'), false);
+      assert.equal(unhighlight.callCount(), 1);
+      assert.equal(fireChange.callCount(), 1);
+    });
+
+    it('only unhighlights on fade set if service is not hidden', function() {
+      var unhighlight = utils.makeStubMethod(view, '_onUnhighlight');
+      this._cleanups.push(unhighlight.reset);
+      var fireChange = utils.makeStubMethod(view, '_fireMachineChanges');
+      this._cleanups.push(fireChange.reset);
+      var mysql = db.services.getById('mysql');
+      mysql.set('hide', true);
+      view._onFade({id: 'mysql'});
+      assert.equal(mysql.get('fade'), true);
+      assert.equal(mysql.get('hide'), true);
+      assert.equal(unhighlight.callCount(), 0);
+      assert.equal(fireChange.callCount(), 0);
+    });
+
+    it('toggles highlight off when fading', function() {
+      var mysql = db.services.getById('mysql');
+      mysql.set('highlight', true);
+      view._onFade({id: 'mysql'});
+      assert.equal(mysql.get('highlight'), false);
+    });
+
+    it('unsets fade flag on show', function() {
+      var mysql = db.services.getById('mysql'),
+          wordpress = db.services.getById('wordpress');
+      mysql.set('fade', true);
+      assert.equal(wordpress.get('fade'), false);
+      view._onShow({id: 'mysql'});
+      assert.equal(mysql.get('fade'), false);
+      assert.equal(wordpress.get('fade'), false);
     });
   });
 
@@ -428,8 +523,7 @@ describe('added services view', function() {
 
     it('destroys the tokens', function() {
       view.render();
-      var serviceTokens = view.get('serviceTokens'),
-          db = view.get('db');
+      var serviceTokens = view.get('serviceTokens');
       assert.equal(Object.keys(serviceTokens).length, db.services.size(),
                    'Token list not the same size as services in the db');
       view.destroy();

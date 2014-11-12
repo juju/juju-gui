@@ -47,32 +47,11 @@ YUI.add('juju-added-service-token', function(Y) {
       if (e.preventDefault) {
         e.preventDefault();
       }
-      var action = e.action || e.currentTarget.getAttribute('data-action'),
-          service = this.get('service'),
-          serviceName = service.name,
-          args = {};
-      if (action === 'fade' || action === 'show') {
-        // Need to pass as an array because the show/hide event handlers
-        // need to handle hiding/showing multiple services.
-        args.serviceNames = [serviceName];
-        this.set('visible', action === 'show');
-        // Toggle the other button
-        if (action === 'fade') {
-          this.set('highlight', false);
-        }
-      } else if (action === 'highlight' || action === 'unhighlight') {
-        args.serviceName = serviceName;
-        this.set('highlight', action === 'highlight');
-        // Toggle the other button
-        if (action === 'highlight') {
-          this.set('visible', true);
-        }
-      }
-      // Re-render because we changed the token's attributes
-      // XXX kadams54, 05/11/14 - Note that the false param is temporary, per
-      // the comment on line 111 below.
-      this.render(false);
-      this.fire(action, args);
+      // This function can be invoked in response to a DOM event (in which case
+      // we need to obtain the action off the DOM) or directly (in which case
+      // the action is passed in).
+      var action = e.action || e.currentTarget.getAttribute('data-action');
+      this.fire(action, {id: this.get('service').id});
     },
 
     /**
@@ -105,15 +84,6 @@ YUI.add('juju-added-service-token', function(Y) {
       var attrs = this.getAttrs(),
           container = this.get('container'),
           content;
-      // Override the local flags with the service flags.
-      // XXX kadams54, 05/11/14 - Note that this is a temporary fix. Far better
-      // would be to just use the service flags directly, but that's a
-      // far-reaching change that we want to tackle at a later point.
-      // Treat useServiceVisibility as "true" if it is not set.
-      if (useServiceVisibility || useServiceVisibility === undefined) {
-        attrs.highlight = attrs.service.highlight;
-        attrs.visible = !attrs.service.fade;
-      }
       // Render the template.
       content = this.template(attrs);
       container.setHTML(content);

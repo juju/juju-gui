@@ -3,13 +3,13 @@
   <div class="name">{{service.name}}</div>
   <div class="unit-count">({{service.unit_count}})</div>
   <a class="action"
-     data-action="{{#if visible}}fade{{else}}show{{/if}}"
-     title="{{#if visible}}Fade{{else}}Show{{/if}} the service">
-    <i class="sprite {{#if visible}}eye-default{{else}}eye-selected{{/if}}"></i>
+     data-action="{{#if service.fade}}show{{else}}fade{{/if}}"
+     title="{{#if service.fade}}Show{{else}}Fade{{/if}} the service">
+    <i class="sprite {{#if service.fade}}eye-selected{{else}}eye-default{{/if}}"></i>
   </a>
   <a class="action"
-     data-action="{{#if highlight}}unhighlight{{else}}highlight{{/if}}"
-     title="{{#if highlight}}Unhighlight{{else}}Highlight{{/if}} the service">
-    <i class="sprite {{#if highlight}}highlight-selected{{else}}highlight-default{{/if}}"></i>
+     data-action="{{#if service.highlight}}unhighlight{{else}}highlight{{/if}}"
+     title="{{#if service.highlight}}Unhighlight{{else}}Highlight{{/if}} the service">
+    <i class="sprite {{#if service.highlight}}highlight-selected{{else}}highlight-default{{/if}}"></i>
   </a>
 </div>
