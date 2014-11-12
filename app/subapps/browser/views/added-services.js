@@ -12,7 +12,7 @@ ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
 SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
 General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License along
+id should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -72,8 +72,12 @@ YUI.add('juju-added-services', function(Y) {
       this.addEvent(services.after('remove', this._onServiceRemove, this));
       this.addEvent(services.after('*:change', this._onServiceChange, this));
 
-      // Toggle highlight states
+      // Button event handlers
+      this.addEvent(this.on('*:fade', this._onFade, this));
+      this.addEvent(this.on('*:show', this._onShow, this));
       this.addEvent(this.on('*:highlight', this._onHighlightToggle, this));
+      this.addEvent(this.on('*:highlight', this._onHighlight, this));
+      this.addEvent(this.on('*:unhighlight', this._onUnhighlight, this));
     },
 
     /**
@@ -163,18 +167,122 @@ YUI.add('juju-added-services', function(Y) {
       @param {Object} e Custom model change event facade.
     */
     _onHighlightToggle: function(e) {
-      var serviceName = e.serviceName,
-          tokens = this.get('serviceTokens'),
-          keys = Object.keys(tokens),
-          services = this.get('db').services;
-      // Key could be a ghost service id which won't match the service name
-      // so we need to parse the supplied service name for it's id.
-      var serviceId = services.getServiceByName(serviceName).get('id');
-      keys.forEach(function(key) {
-        if (key !== serviceId) {
+      var id = e.id,
+          tokens = this.get('serviceTokens');
+      Object.keys(tokens).forEach(function(key) {
+        if (key !== id) {
           tokens[key].unhighlight();
         }
       });
+    },
+
+    /**
+      Fire a change event on all machine models associated with a service.
+
+      @method _fireMachineChanges
+      @param {Object} service The service that the machines are associated with
+          via units.
+    */
+    _fireMachineChanges: function(service) {
+      var db = this.get('db'),
+          services;
+      if (service) {
+        services = [service];
+      } else {
+        services = db.services.toArray();
+      }
+      // We also need to fire change events for the related machines in order
+      // to trigger re-rendering in machine view
+      services.forEach(function(service) {
+        var changedMachines = [];
+        service.get('units').each(function(unit) {
+          var machine = unit.machine;
+          if (changedMachines.indexOf(machine) < 0) {
+            changedMachines.push(machine);
+          }
+        });
+        changedMachines.forEach(function(machineId) {
+          db.machines.fire('change', {
+            changed: true,
+            instance: db.machines.getById(machineId)
+          });
+        });
+      });
+    },
+
+    /**
+      Handle highlight events for services/units.
+
+      @method _onHighlight
+      @param {Object} e The event facade.
+    */
+    _onHighlight: function(e) {
+      var id = e.id,
+          db = this.get('db'),
+          service = db.services.getById(id);
+      service.set('highlight', true);
+      db.updateUnitFlags(service, 'highlight');
+      // Need to toggle fade off.
+      this._onShow({id: id});
+      // Unrelated services need to be faded.
+      var unrelated = db.findUnrelatedServices(service);
+      unrelated.each(function(model) {
+        model.set('hide', true);
+      });
+      db.setMVVisibility(id, true);
+    },
+
+    /**
+      Handle unhighlight events for services/units.
+
+      @method _onUnhighlight
+      @param {Object} e The event facade.
+    */
+    _onUnhighlight: function(e) {
+      var db = this.get('db'),
+          id = e.id,
+          service = db.services.getById(id);
+      service.set('highlight', false);
+      db.updateUnitFlags(service, 'highlight');
+      // Unrelated services need to be unfaded.
+      var unrelated = db.findUnrelatedServices(service);
+      unrelated.each(function(model) {
+        model.set('hide', false);
+      });
+      db.setMVVisibility(id, false);
+    },
+
+    /**
+      Handle fade events for services/units.
+
+      @method _onFade
+      @param {Object} e The event facade.
+    */
+    _onFade: function(e) {
+      var id = e.id,
+          db = this.get('db'),
+          service = db.services.getById(id);
+      service.set('fade', true);
+      db.updateUnitFlags(service, 'fade');
+      // Need to toggle highlight off but only if it's not already hidden.
+      if (!service.get('hide')) {
+        this._onUnhighlight({id: id});
+        this._fireMachineChanges(service);
+      }
+    },
+
+    /**
+      Handle show events for services/units.
+
+      @method _onShow
+      @param {Object} e The event facade.
+    */
+    _onShow: function(e) {
+      var db = this.get('db'),
+          service = db.services.getById(e.id);
+      service.set('fade', false);
+      db.updateUnitFlags(service, 'fade');
+      this._fireMachineChanges(service);
     },
 
     /**
