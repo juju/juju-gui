@@ -265,7 +265,7 @@ YUI.add('juju-added-services', function(Y) {
       service.set('fade', true);
       db.updateUnitFlags(service, 'fade');
       // Need to toggle highlight off but only if it's not already hidden.
-      if (!service.get('hide')) {
+      if (!service.get('hide') && service.get('highlight')) {
         this._onUnhighlight({id: id});
         this._fireMachineChanges(service);
       }
