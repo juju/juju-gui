@@ -197,7 +197,7 @@ YUI.add('juju-added-services', function(Y) {
         var changedMachines = [];
         service.get('units').each(function(unit) {
           var machine = unit.machine;
-          if (changedMachines.indexOf(machine) < 0) {
+          if (machine && changedMachines.indexOf(machine) < 0) {
             changedMachines.push(machine);
           }
         });

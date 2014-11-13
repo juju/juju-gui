@@ -742,6 +742,13 @@ YUI.add('juju-models', function(Y) {
       return ghostService;
     },
 
+    /**
+      Process service changes coming in from juju-core.
+
+      @method process_delta
+      @param {String} action The type of change: 'change', 'remove', 'add'
+      @param {Object} data The data for the model being updated
+    */
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
     }
@@ -854,6 +861,14 @@ YUI.add('juju-models', function(Y) {
       return name.replace('unit-', '').replace(/^(.+)-(\d+)$/, '$1/$2');
     },
 
+    /**
+      Process unit changes coming in from juju-core.
+
+      @method process_delta
+      @param {String} action The type of change: 'change', 'remove', 'add'
+      @param {Object} data The data for the model being updated
+      @param {Object} db The database containing the model being updated
+    */
     process_delta: function(action, data, db) {
       // If a charm_url is included in the data (that is, the Go backend
       // provides it), get the old charm so that we can compare charm URLs
@@ -876,6 +891,10 @@ YUI.add('juju-models', function(Y) {
         console.error('Units added without matching Service');
         return;
       }
+      // Copy the visibility flags from the service onto the unit.
+      instance.hide = service.get('hide');
+      instance.fade = service.get('fade');
+      instance.highlight = service.get('highlight');
       // If the charm has changed on this unit in the delta, inform the service
       // of the change (but only if it doesn't already know, so as not to fire
       // a change event).  This is required because the two instances of a)
@@ -1467,6 +1486,13 @@ YUI.add('juju-models', function(Y) {
       });
     },
 
+    /**
+      Process machine changes coming in from juju-core.
+
+      @method process_delta
+      @param {String} action The type of change: 'change', 'remove', 'add'
+      @param {Object} data The data for the model being updated
+    */
     process_delta: function(action, data) {
       _process_delta(this, action, data, {});
     },
@@ -1625,6 +1651,14 @@ YUI.add('juju-models', function(Y) {
   var RelationList = Y.Base.create('relationList', Y.ModelList, [], {
     model: Relation,
 
+    /**
+      Process relation changes coming in from juju-core.
+
+      @method process_delta
+      @param {String} action The type of change: 'change', 'remove', 'add'
+      @param {Object} data The data for the model being updated
+      @param {Object} db The database containing the model being updated
+    */
     process_delta: function(action, data, db) {
       // If the action is remove we need to parse the models before they are
       // removed from the db so that we can remove them from the relation
@@ -2431,8 +2465,8 @@ YUI.add('juju-models', function(Y) {
       @method setMVVisibility
       @param {String} serviceId The service id to compare to the units
         services in the machine.
-      @param {Boolean} visible If the machine with units matching the supplied
-        service should be visible or not.
+      @param {Boolean} highlight If the machine with units matching the supplied
+        service should be highlighted or not.
     */
     setMVVisibility: function(serviceId, highlight) {
       var highlightIndex = this._highlightedServices.indexOf(serviceId);

@@ -451,6 +451,27 @@ describe('test_model.js', function() {
                         'the expected machine was not found in the database');
       });
 
+      it('should copy visibility flags from service to unit', function() {
+        var db = new models.Database(),
+            id = 'mysql/0';
+        // By default, these flags are all false.
+        db.services.add([
+          {id: 'mysql', hide: true, fade: true, highlight: true}
+        ]);
+        var service = db.services.item(0);
+        db.onDelta({data: {result: [
+          ['unit', 'change', {id: id, service: service.get('id')}]
+        ]}});
+        var unit = db.units.getById(id);
+        assert.notEqual(unit, null, 'Unit was not created');
+        assert.equal(unit.hide, service.get('hide'),
+                     'Hide flags should match between unit and service');
+        assert.equal(unit.fade, service.get('fade'),
+                     'Fade flags should match between unit and service');
+        assert.equal(unit.highlight, service.get('highlight'),
+                     'Highlight flags should match between unit and service');
+      });
+
       it('should change machines when units change', function() {
         var db = new models.Database();
         var machinesStub = utils.makeStubMethod(db.machines, 'process_delta'),
