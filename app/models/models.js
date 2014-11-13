@@ -876,6 +876,10 @@ YUI.add('juju-models', function(Y) {
         console.error('Units added without matching Service');
         return;
       }
+      // Copy the visibility flags from the service onto the unit.
+      instance.hide = service.get('hide');
+      instance.fade = service.get('fade');
+      instance.highlight = service.get('highlight');
       // If the charm has changed on this unit in the delta, inform the service
       // of the change (but only if it doesn't already know, so as not to fire
       // a change event).  This is required because the two instances of a)
