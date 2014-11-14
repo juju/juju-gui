@@ -2409,7 +2409,11 @@ YUI.add('juju-models', function(Y) {
           unrelated;
       // Compile the list of related services.
       relationData.forEach(function(relation) {
-        related.push(relation.far.service);
+        // Some relations (e.g., peer relations) may not have the far endpoint
+        // defined.
+        if (relation.far && relation.far.service) {
+          related.push(relation.far.service);
+        }
       });
       // Find the unrelated by filtering out the related.
       unrelated = this.services.filter({asList: true}, function(s) {
