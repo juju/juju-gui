@@ -455,10 +455,6 @@ describe('added services view', function() {
 
   describe('fade/show events', function() {
     it('sets fade flag on the selected service on fade', function() {
-      var unhighlight = utils.makeStubMethod(view, '_onUnhighlight');
-      this._cleanups.push(unhighlight.reset);
-      var fireChange = utils.makeStubMethod(view, '_fireMachineChanges');
-      this._cleanups.push(fireChange.reset);
       var mysql = db.services.getById('mysql'),
           wordpress = db.services.getById('wordpress');
       assert.equal(mysql.get('fade'), false);
@@ -466,22 +462,40 @@ describe('added services view', function() {
       view._onFade({id: 'mysql'});
       assert.equal(mysql.get('fade'), true);
       assert.equal(wordpress.get('fade'), false);
-      assert.equal(unhighlight.callCount(), 1);
-      assert.equal(fireChange.callCount(), 1);
     });
 
-    it('only unhighlights on fade set if service is not hidden', function() {
+    it('only unhighlights on fade if highlighted & not hidden', function() {
       var unhighlight = utils.makeStubMethod(view, '_onUnhighlight');
       this._cleanups.push(unhighlight.reset);
       var fireChange = utils.makeStubMethod(view, '_fireMachineChanges');
       this._cleanups.push(fireChange.reset);
       var mysql = db.services.getById('mysql');
       mysql.set('hide', true);
+      mysql.set('highlight', true);
       view._onFade({id: 'mysql'});
-      assert.equal(mysql.get('fade'), true);
-      assert.equal(mysql.get('hide'), true);
-      assert.equal(unhighlight.callCount(), 0);
-      assert.equal(fireChange.callCount(), 0);
+      assert.equal(mysql.get('fade'), true,
+                   'Service is hidden: fade is set improperly');
+      assert.equal(mysql.get('hide'), true,
+                   'Service is hidden: hide is set improperly');
+      assert.equal(mysql.get('highlight'), true,
+                   'Service is hidden: highlight is set improperly');
+      assert.equal(unhighlight.callCount(), 0,
+                   'Service is hidden: unhighlight should not be called');
+      assert.equal(fireChange.callCount(), 0,
+                   'Service is hidden: machine changes should not fire');
+      mysql.set('hide', false);
+      mysql.set('highlight', false);
+      view._onFade({id: 'mysql'});
+      assert.equal(mysql.get('fade'), true,
+                   'Service not highlighted: fade is set improperly');
+      assert.equal(mysql.get('hide'), false,
+                   'Service not highlighted: hide is set improperly');
+      assert.equal(mysql.get('highlight'), false,
+                   'Service not highlighted: highlight is set improperly');
+      assert.equal(unhighlight.callCount(), 0,
+                   'Service not highlighted: unhighlight should not be called');
+      assert.equal(fireChange.callCount(), 0,
+                   'Service not highlighted: machine changes should not fire');
     });
 
     it('toggles highlight off when fading', function() {
