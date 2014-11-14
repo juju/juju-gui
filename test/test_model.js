@@ -167,6 +167,22 @@ describe('test_model.js', function() {
       assert.equal(unrelated.item(0).get('name'), 'haproxy');
     });
 
+    it('handles undefined endpoints in unrelated services', function() {
+      var db = new models.Database(),
+          service = new models.Service({name: 'mysql'});
+      db.services.add([
+        {id: 'mysql', name: 'mysql'},
+        {id: 'wordpress', name: 'wordpress'},
+        {id: 'haproxy', name: 'haproxy'}
+      ]);
+      var relations = [{}];
+      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
+                                      relations);
+      this._cleanups.push(stub.reset);
+      var unrelated = db.findUnrelatedServices(service);
+      assert.equal(unrelated.size(), 2);
+    });
+
     describe('setMVVisibility', function() {
       var db;
 
