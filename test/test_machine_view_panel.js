@@ -276,6 +276,47 @@ describe('machine view panel view', function() {
         });
   });
 
+  describe('_onMachineChanges and _onMachineChange', function() {
+    it('does nothing when there are not instances', function() {
+      var changeStub = utils.makeStubMethod(view, '_onMachineChange');
+      this._cleanups.push(changeStub.reset);
+      view._onMachineChanges({});
+      assert.equal(changeStub.callCount(), 0);
+    });
+
+    it('calls change handler for each machine in a batch', function() {
+      var changeStub = utils.makeStubMethod(view, '_onMachineChange');
+      this._cleanups.push(changeStub.reset);
+      var instances = [
+        {id: '0'},
+        {id: '1'}
+      ];
+      view._onMachineChanges({instances: instances});
+      assert.equal(changeStub.callCount(), instances.length);
+    });
+
+    it('matches deltas with their associated instances', function() {
+      var changeStub = utils.makeStubMethod(view, '_onMachineChange');
+      this._cleanups.push(changeStub.reset);
+      view.render();
+      machines.add([{id: 'foo'}]);
+      var instances = [
+        {id: '0'},
+        {id: 'bar'}
+      ];
+      var changes = [
+        {hide: {newVal: true, prevVal: false}},
+        {id: {newVal: 'bar', prevVal: 'foo'}}
+      ];
+      view._onMachineChanges({instances: instances, changes: changes});
+      var args = changeStub.allArguments();
+      assert.deepEqual(args[0], [{instance: instances[0], changed: changes[0]}],
+                       'First instance/changed pairing is incorrect');
+      assert.deepEqual(args[1], [{instance: instances[1], changed: changes[1]}],
+                       'Second instance/changed pairing is incorrect');
+    });
+  });
+
   describe('create machine view', function() {
     beforeEach(function() {
       var env = view.get('env');

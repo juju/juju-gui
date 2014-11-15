@@ -170,8 +170,9 @@ YUI.add('juju-added-services', function(Y) {
       var id = e.id,
           tokens = this.get('serviceTokens');
       Object.keys(tokens).forEach(function(key) {
-        if (key !== id) {
-          tokens[key].unhighlight();
+        var token = tokens[key];
+        if (key !== id && token.get('service').highlight) {
+          token.unhighlight();
         }
       });
     },
@@ -192,22 +193,25 @@ YUI.add('juju-added-services', function(Y) {
         services = db.services.toArray();
       }
       // We also need to fire change events for the related machines in order
-      // to trigger re-rendering in machine view
+      // to trigger re-rendering in machine view.
+      var changedMachines = [];
       services.forEach(function(service) {
-        var changedMachines = [];
         service.get('units').each(function(unit) {
           var machine = unit.machine;
           if (machine && changedMachines.indexOf(machine) < 0) {
             changedMachines.push(machine);
           }
         });
-        changedMachines.forEach(function(machineId) {
-          db.machines.fire('change', {
-            changed: true,
-            instance: db.machines.getById(machineId)
-          });
-        });
       });
+      // Fire off one event to signal changes across multiple machines.
+      if (changedMachines.length) {
+        changedMachines = changedMachines.map(function(id) {
+          return db.machines.getById(id);
+        });
+        db.machines.fire('changes', {
+          instances: changedMachines
+        });
+      }
     },
 
     /**
@@ -223,8 +227,10 @@ YUI.add('juju-added-services', function(Y) {
       service.set('highlight', true);
       db.updateUnitFlags(service, 'highlight');
       // Need to toggle fade off.
-      this._onShow({id: id});
-      // Unrelated services need to be faded.
+      if (service.get('fade')) {
+        this._onShow({id: id});
+      }
+      // Unrelated services need to be hidden.
       var unrelated = db.findUnrelatedServices(service);
       unrelated.each(function(model) {
         model.set('hide', true);
@@ -265,10 +271,14 @@ YUI.add('juju-added-services', function(Y) {
       service.set('fade', true);
       db.updateUnitFlags(service, 'fade');
       // Need to toggle highlight off but only if it's not already hidden.
+      // We also want to make sure we only toggle services that are already
+      // highlighted. Unhighlighting services that don't need it may cause
+      // unexpected side effects downstream; for example, an unrelated service
+      // becoming unhidden.
       if (!service.get('hide') && service.get('highlight')) {
         this._onUnhighlight({id: id});
-        this._fireMachineChanges(service);
       }
+      this._fireMachineChanges(service);
     },
 
     /**

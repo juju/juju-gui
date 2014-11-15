@@ -132,6 +132,8 @@ YUI.add('machine-view-panel', function(Y) {
               'remove', this._onMachineRemove, this));
           this.addEvent(db.machines.after(
               '*:change', this._onMachineChange, this));
+          this.addEvent(db.machines.after(
+              '*:changes', this._onMachineChanges, this));
 
           // Unit change handlers
           this.addEvent(db.units.after(
@@ -447,7 +449,31 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
-          Handles changes to the machines in the db model list.
+          Handles changes to multiple machines in the db model list.
+
+         @method _onMachineChanges
+         @param {Object} e Custom model change event facade.
+        */
+        _onMachineChanges: function(e) {
+          var instances = e.instances,
+              changes = e.changes || true;
+          if (instances) {
+            // changes can either be an array of deltas or a simple boolean.
+            var isArray = Array.isArray(changes);
+            // Loop through each machine and associated change and call the
+            // single machine change event handler.
+            instances.forEach(function(instance, index) {
+              var changed = isArray ? changes[index] : changes;
+              this._onMachineChange({
+                changed: changed,
+                instance: instance
+              });
+            }, this);
+          }
+        },
+
+        /**
+          Handles change to a single machine in the db model list.
 
          @method _onMachineChange
          @param {Object} e Custom model change event facade.

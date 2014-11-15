@@ -232,15 +232,26 @@ describe('test_model.js', function() {
         assertHighlight('1', '1234$');
       });
 
-      it('fires a change event for all machines', function(done) {
+      it('fires a single change event for all machines', function(done) {
         var counter = 0,
             machineCount = db.machines.size();
-        db.machines.after('*:change', function(e) {
+        db.machines.on('*:change', function(e) {
           counter += 1;
-          assert.equal(e.changed, true);
-          if (counter === machineCount) {
-            done();
-          }
+        });
+        db.machines.after('*:changes', function(e) {
+          assert.equal(counter, 0, 'single machine change events were fired');
+          done();
+        });
+        db.setMVVisibility('mysql', true);
+      });
+
+      it('doesn\'t fire change for unchanged machines', function(done) {
+        db.machines.after('*:changes', function(e) {
+          var ids = e.instances.map(function(machine) {
+            return machine.id;
+          });
+          assert.equal(ids.indexOf('0'), -1, 'machine 0 should not change');
+          done();
         });
         db.setMVVisibility('mysql', true);
       });
