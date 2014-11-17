@@ -2482,6 +2482,7 @@ YUI.add('juju-models', function(Y) {
         this._highlightedServices.push(serviceId);
       }
 
+      var changedMachines = [];
       this.machines.each(function(machine) {
         var units = machine.units;
         if (!units) {
@@ -2501,14 +2502,21 @@ YUI.add('juju-models', function(Y) {
         if (this._highlightedServices.length < 1) {
           keepVisible = true;
         }
+        var oldHideValue = machine.hide;
         machine.hide = keepVisible ? false : true;
-        // In order to have the machine view update the rendered tokens we need
-        // to fire an event to tell it that it has changed.
-        this.machines.fire('change', {
-          changed: true,
-          instance: machine
-        });
+        // Batch up machines that actually changed in order to fire an
+        // aggregated change event outside the loop.
+        if (oldHideValue !== machine.hide) {
+          changedMachines.push(machine);
+        }
       }, this);
+      // In order to have the machine view update the rendered tokens we need
+      // to fire an event to tell it that the machines have changed.
+      if (changedMachines.length) {
+        this.machines.fire('changes', {
+          instances: changedMachines
+        });
+      }
     }
 
   });

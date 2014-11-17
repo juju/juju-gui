@@ -481,8 +481,6 @@ describe('added services view', function() {
                    'Service is hidden: highlight is set improperly');
       assert.equal(unhighlight.callCount(), 0,
                    'Service is hidden: unhighlight should not be called');
-      assert.equal(fireChange.callCount(), 0,
-                   'Service is hidden: machine changes should not fire');
       mysql.set('hide', false);
       mysql.set('highlight', false);
       view._onFade({id: 'mysql'});
@@ -494,8 +492,6 @@ describe('added services view', function() {
                    'Service not highlighted: highlight is set improperly');
       assert.equal(unhighlight.callCount(), 0,
                    'Service not highlighted: unhighlight should not be called');
-      assert.equal(fireChange.callCount(), 0,
-                   'Service not highlighted: machine changes should not fire');
     });
 
     it('toggles highlight off when fading', function() {
