@@ -493,6 +493,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/charmworld.js'
         },
 
+        'charmstore-apiv4': {
+          fullpath: '/juju-ui/store/charmstore-apiv4.js'
+        },
+
         'juju-websocket-logging': {
           fullpath: '/juju-ui/websocket-logging.js'
         },

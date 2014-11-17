@@ -32,7 +32,11 @@ var juju_config = {
   // These are the main application config items used and passed down into all
   // SubApps.
   consoleEnabled: false,
+  // superseded by charmstoreURL
   charmworldURL: 'https://manage.jujucharms.com/',
+  // Path to the charmstore. This property supersedes the charmworldURL
+  // property above.
+  charmstoreURL: 'https://api.jujucharms.com/v4/',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always
   // adding "/ws" as the final path).  socket_url sets the entire websocket
