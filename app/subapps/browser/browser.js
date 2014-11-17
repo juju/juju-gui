@@ -94,12 +94,11 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     _registerSubappHelpers: function() {
-      var store = this.get('store');
+      var charmstore = this.get('charmstore');
       // Register a helper for generating the icon urls for charms.
       Y.Handlebars.registerHelper('charmIconPath', function(charmID, isBundle) {
-        return store.iconpath(charmID, isBundle);
+        return charmstore.getIconPath(charmID, isBundle);
       });
-
     },
 
     /**
@@ -755,6 +754,13 @@ YUI.add('subapp-browser', function(Y) {
          @type {Object}
        */
       store: {},
+
+      /**
+        @attribute charmstore
+        @default juju.charmstore.APIv4
+        @type {juju.charmstore.APIv4}
+      */
+      charmstore: {},
 
       /**
          @attribute routes
