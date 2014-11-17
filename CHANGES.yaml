@@ -20,7 +20,21 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+#- unreleased:
+- 1.2.4:
+    ->
+     New feature the Added Services bar! In your environment click on the
+     added services bar located beneath the search input box in the sidebar.
+     With it you can highlight and toggle the visibility of services. Use it
+     to help find and visualize your complicated environments.
+    - >
+      Hide sidebar shortcut moved to ctrl-shift-h so as to not conflict with
+      the Lastpass extension.
+    - (FIX) Notification box turns orange when an error occurs.
+    - (FIX) Improve the ambiguous relation menu appearance.
+    - >
+      (FIX) Increase the size of the canvas workspace to correct issues around
+      the layout of large environments.
 - 1.2.3:
     - Update header to fix in new upcoming site theme.
     - Link to the MAAS web ui when the GUI detects it's in a MAAS environment.
