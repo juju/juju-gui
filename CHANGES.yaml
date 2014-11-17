@@ -20,7 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-#- unreleased:
+- unreleased:
 - 1.2.4:
     ->
      New feature the Added Services bar! In your environment click on the
