@@ -283,7 +283,6 @@ Checklist for Making a Stable Release
   - Remove the old release present in the same directory, and add the new one
     to the repository, e.g.:
     ``bzr rm releases/juju-gui-0.10.1.tgz && bzr add``.
-  - Bump the charm revision up.
   - Commit the changes:
     ``bzr ci -m "Updated to the newest juju-gui release."``.
   - Switch to the trusty release charm directory: ``cd ../trusty-release``.
@@ -292,9 +291,9 @@ Checklist for Making a Stable Release
   - Commit the changes: ``bzr ci -m "New charm release."``
   - If the merge step above shows more changes than just the new GUI release,
     it is worth live testing the "upgrade charm" steps. This way we ensure any
-    production deployment (e.g. jujucharms.com) can upgrade to the new charm
-    without problems. This is done by deploying from a local repository the old
-    released juju-gui charm, setting up the options as described in
+    production deployment (e.g. demo.jujucharms.com) can upgrade to the new
+    charm without problems. This is done by deploying from a local repository
+    the old released juju-gui charm, setting up the options as described in
     <https://wiki.canonical.com/InformationInfrastructure/WebOps/CDO/JujuGui>,
     and then upgrading the charm to the new local version, verifying the hooks
     are executed correctly and the resulting GUI works well. Please ping
@@ -326,10 +325,8 @@ Checklist for Making a Stable Release
   - In 15-30 minutes, the new charm revisions should be available at the
     following locations:
 
-    - trusty: <https://jujucharms.com/search/trusty/juju-gui/> and
-      <http://manage.jujucharms.com/charms/trusty/juju-gui>;
-    - precise: <https://jujucharms.com/search/precise/juju-gui/> and
-      <http://manage.jujucharms.com/charms/precise/juju-gui>.
+    - trusty: <https://jujucharms.com/trusty/juju-gui>;
+    - precise: <https://jujucharms.com/precise/juju-gui>.
 
 You are done!
 
