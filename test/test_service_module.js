@@ -281,10 +281,14 @@ describe('service module events', function() {
     assert.equal(topo.service_boxes.haproxy.highlighted, true);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
         '/juju-ui/assets/svgs/service_module_selected.svg');
+    assert.notEqual(topo.vis.select('.service.highlight')[0][0],
+        null, 'Highlight class not found');
     serviceModule.unhighlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, false);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
         '/juju-ui/assets/svgs/service_module.svg');
+    assert.notEqual(topo.vis.select('.service.unhighlight')[0][0],
+        null, 'Unhighlight class not found');
   });
 
   it('should highlight and unhighlight related services', function() {

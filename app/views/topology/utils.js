@@ -213,7 +213,29 @@ YUI.add('juju-topology-utils', function(Y) {
     return updatedPoint;
   };
 
+  /**
+    Convenience method for toggling on one particular visibility class and
+    toggling the rest off - used in conjunction with D3's classed method.
 
+    @method getVisibilityClasses
+    @param {String} visibility The visibility class to toggle on.
+    @return {Object} An object literal that can be passed to D3's classed
+        method.
+  */
+  utils.getVisibilityClasses = function(visibility) {
+    var visibilities = [
+      'show',
+      'fade',
+      'hide',
+      'highlight',
+      'unhighlight'
+    ];
+    var css = {};
+    visibilities.forEach(function(v) {
+      css[v] = (v === visibility);
+    });
+    return css;
+  };
 
 }, '0.1.0', {
   requires: [

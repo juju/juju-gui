@@ -140,4 +140,28 @@ describe('topology utils', function() {
     );
   });
 
+  it('sets the appropriate visibility classes', function() {
+    var flags = [
+      'show',
+      'fade',
+      'hide',
+      'highlight',
+      'unhighlight'
+    ];
+    function checkFlags(trueFlag) {
+      var css = utils.getVisibilityClasses(trueFlag);
+      var label = trueFlag + 'ed: ';
+      assert.equal(css[trueFlag], true,
+                   label + trueFlag + ' should be true');
+      flags.forEach(function(flag) {
+        if (trueFlag !== flag) {
+          assert.equal(css[flag], false,
+                       label + flag + ' should be false');
+        }
+      });
+    }
+    flags.forEach(function(flag) {
+      checkFlags(flag);
+    });
+  });
 });

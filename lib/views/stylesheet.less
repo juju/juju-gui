@@ -608,6 +608,21 @@ th {
         stroke: #3333cc;
     }
 }
+.rel-group {
+    /* Visibility classes */
+    &.show {
+      opacity: 1.0;
+      display: block;
+    }
+    &.fade {
+      opacity: 0.2;
+      display: block;
+    }
+    &.hide {
+      opacity: 0;
+      display: none;
+    }
+}
 .rel-indicator {
     cursor: pointer;
 }
@@ -619,6 +634,20 @@ circle.mouse-down-indicator {
 g.service {
     fill: none;
     stroke: none;
+
+    /* Visibility classes */
+    &.show {
+      opacity: 1.0;
+      display: block;
+    }
+    &.fade {
+      opacity: 0.2;
+      display: block;
+    }
+    &.hide {
+      opacity: 0;
+      display: none;
+    }
 
     text {
         text-anchor: middle;
