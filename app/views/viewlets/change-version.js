@@ -64,7 +64,7 @@ YUI.add('change-version-view', function(Y) {
       if (maxVersion > 1) {
         // XXX Use the list of available versions from Charmworld
         // Makyo - #1246928 - 2014-06-24
-        for (var version = maxVersion - 1; version > 0; version -= 1) {
+        for (var version = maxVersion; version > 0; version -= 1) {
           if (version === currVersion) {
             continue;
           }
