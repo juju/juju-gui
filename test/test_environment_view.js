@@ -828,47 +828,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        }
     );
 
-    it('should be able to fade and show services and relations',
-        function(done) {
-          view.render();
-          view.topo.fire('fade', {serviceNames: ['mysql']});
-          // Do this behind a timeout due to the 400ms transition.
-          setTimeout(function() {
-            var relationOpacity = view.topo.vis.selectAll('.rel-group')
-            .filter(function(d) {
-             return d.id === 'relation-0000000001';
-           })
-            .attr('opacity');
-            assert.equal(
-                (relationOpacity > 0.19) && (relationOpacity < 0.21),
-                true);
-            var serviceOpacity = view.topo.vis.selectAll('.service')
-            .filter(function(d) {
-             return d.id === 'mysql';
-           })
-            .attr('opacity');
-            assert.equal(
-                (serviceOpacity > 0.19) && (serviceOpacity < 0.21),
-                true);
-            view.topo.fire('show', {serviceNames: ['mysql']});
-            // To minimize test length, ensure that the 'show' transition is
-            // underway.
-            setTimeout(function() {
-              assert.equal(parseFloat(view.topo.vis.selectAll('.rel-group')
-                .filter(function(d) {
-               return d.id === 'relation-0000000001';
-             })
-                .attr('opacity'), 10) > 0.2, true);
-              assert.equal(parseFloat(view.topo.vis.selectAll('.service')
-                .filter(function(d) {
-               return d.id === 'mysql';
-             })
-                .attr('opacity'), 10) > 0.2, true);
-              done();
-            }.bind(this), 200);
-          }.bind(this), 500);
-        }
-    );
+    function assertClassPresent(cssClass) {
+      var vis = view.topo.vis;
+      var relations = vis.selectAll('.rel-group');
+      var relation = relations.filter(function(d) {
+        return d.id === 'relation-0000000001';
+      });
+      assert.equal(relation.classed(cssClass), true,
+                   'relation does not have the ' + cssClass + ' class');
+      var services = vis.selectAll('.service');
+      var service = services.filter(function(d) {
+        return d.id === 'mysql';
+      });
+      assert.equal(service.classed(cssClass), true,
+                   'service does not have the ' + cssClass + ' class');
+    }
+
+    it('should fade services and relations', function(done) {
+      view.render();
+      view.topo.after('fade', function() {
+        assertClassPresent('fade');
+        done();
+      });
+      view.topo.fire('fade', {serviceNames: ['mysql']});
+    });
+
+    it('should show services and relations', function(done) {
+      view.render();
+      view.topo.after('show', function() {
+        assertClassPresent('show');
+        done();
+      });
+      view.topo.fire('show', {serviceNames: ['mysql']});
+    });
 
     // Tests for the service menu.
     it('must be able to toggle the service menu', function(done) {

@@ -782,9 +782,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 (d.target.hide === false && d.source.hide === false) &&
                 (d.target.fade === false && d.source.fade === false);
           });
-      selection
-        .style('display', 'block')
-        .attr('opacity', '1.0');
+      selection.classed(topUtils.getVisibilityClasses('show'));
     },
 
     /**
@@ -795,7 +793,6 @@ YUI.add('juju-topology-relation', function(Y) {
     */
     fade: function(evt) {
       var serviceNames = evt.serviceNames;
-      var alpha = evt.alpha;
       if (!serviceNames) {
         return;
       }
@@ -805,9 +802,7 @@ YUI.add('juju-topology-relation', function(Y) {
             return serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1;
           });
-      selection
-        .style('display', 'block')
-        .attr('opacity', alpha !== undefined ? alpha : '0.2');
+      selection.classed(topUtils.getVisibilityClasses('fade'));
     },
 
     /**
@@ -828,8 +823,7 @@ YUI.add('juju-topology-relation', function(Y) {
             return serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1;
           });
-      selection.attr('opacity', '0')
-            .style('display', 'none');
+      selection.classed(topUtils.getVisibilityClasses('hide'));
     },
 
     /**

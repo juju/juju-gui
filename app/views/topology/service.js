@@ -1417,7 +1417,7 @@ YUI.add('juju-topology-service', function(Y) {
       });
       if (actions.fade.length > 0) {
         // If any services are highlighted we need to make sure we unhighlight
-        // them before fading. If any services are hidden we need to s how them
+        // them before fading. If any services are hidden we need to show them
         // first before we can fade them.
         this.show({serviceNames: actions.fade});
         this.unhighlight({serviceName: actions.fade});
@@ -1436,6 +1436,7 @@ YUI.add('juju-topology-service', function(Y) {
         this.show({serviceNames: actions.show});
       }
     },
+
     /**
       Add the highlight attribute from a service and, optionally, related
       services.
@@ -1462,6 +1463,7 @@ YUI.add('juju-topology-service', function(Y) {
         topo.service_boxes[service].highlighted = true;
       });
       var selection = this.selectionFromServiceNames(serviceNames);
+      selection.classed(topoUtils.getVisibilityClasses('highlight'));
       selection.select('.service-block-image')
         .attr('href', '/juju-ui/assets/svgs/service_module_selected.svg');
     },
@@ -1493,6 +1495,7 @@ YUI.add('juju-topology-service', function(Y) {
         topo.service_boxes[service].highlighted = false;
       });
       var selection = this.selectionFromServiceNames(serviceNames);
+      selection.classed(topoUtils.getVisibilityClasses('unhighlight'));
       var image, href;
       selection.each(function(d) {
         image = d3.select(this).select('.service-block-image');
@@ -1513,7 +1516,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.attr('opacity', '1.0').style('display', 'block');
+      selection.classed(topoUtils.getVisibilityClasses('show'));
     },
 
     hide: function(evt) {
@@ -1525,12 +1528,11 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.attr('opacity', '0').style('display', 'none');
+      selection.classed(topoUtils.getVisibilityClasses('hide'));
     },
 
     fade: function(evt) {
-      var selection = evt.selection,
-              alpha = evt.alpha;
+      var selection = evt.selection;
       if (!selection) {
         var serviceNames = evt.serviceNames;
         if (!serviceNames) {
@@ -1538,7 +1540,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.attr('opacity', alpha !== undefined && alpha || '0.2');
+      selection.classed(topoUtils.getVisibilityClasses('fade'));
     },
 
 
