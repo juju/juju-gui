@@ -29,7 +29,7 @@ YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
-      topUtils = Y.namespace('juju.topology.utils'),
+      topoUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -326,7 +326,7 @@ YUI.add('juju-topology-relation', function(Y) {
             // point.
             var label = rel_group.select('.rel-indicator');
             label.attr('transform', function(d) {
-              var points = topUtils.findCenterPoint(s, t);
+              var points = topoUtils.findCenterPoint(s, t);
               return 'translate(' + points + ')';
             });
           });
@@ -782,7 +782,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 (d.target.hide === false && d.source.hide === false) &&
                 (d.target.fade === false && d.source.fade === false);
           });
-      selection.classed(topUtils.getVisibilityClasses('show'));
+      selection.classed(topoUtils.getVisibilityClasses('show'));
     },
 
     /**
@@ -802,7 +802,7 @@ YUI.add('juju-topology-relation', function(Y) {
             return serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1;
           });
-      selection.classed(topUtils.getVisibilityClasses('fade'));
+      selection.classed(topoUtils.getVisibilityClasses('fade'));
     },
 
     /**
@@ -823,7 +823,7 @@ YUI.add('juju-topology-relation', function(Y) {
             return serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1;
           });
-      selection.classed(topUtils.getVisibilityClasses('hide'));
+      selection.classed(topoUtils.getVisibilityClasses('hide'));
     },
 
     /**
@@ -1037,7 +1037,7 @@ YUI.add('juju-topology-relation', function(Y) {
     _positionAmbiguousRelationMenu: function(menu, topo, m, context) {
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
-      var locateAt = topUtils.locateRelativePointOnCanvas(m, tr, z);
+      var locateAt = topoUtils.locateRelativePointOnCanvas(m, tr, z);
       menu.setStyle('left', locateAt[0]);
       menu.setStyle('top', locateAt[1]);
       menu.addClass('active');
@@ -1239,9 +1239,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
       var line = relation.source.getConnectorPair(relation.target);
-      var coords = topUtils.findCenterPoint(line[0], line[1]);
+      var coords = topoUtils.findCenterPoint(line[0], line[1]);
       var point = { x: coords[0], y: coords[1], w: 0, h: 0 };
-      var locateAt = topUtils.locateRelativePointOnCanvas(point, tr, z);
+      var locateAt = topoUtils.locateRelativePointOnCanvas(point, tr, z);
       // Shift the menu to the left by half its width, and up by its height
       // plus the height of the arrow (16px).
       locateAt[0] -= menu.get('clientWidth') / 2;
