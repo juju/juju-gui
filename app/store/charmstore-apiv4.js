@@ -28,6 +28,7 @@ YUI.add('charmstore-apiv4', function(Y) {
   */
   function APIv4(config) {
     this.charmstoreURL = config.charmstoreURL;
+    this.apiPath = 'v4';
   }
 
   APIv4.prototype = {
@@ -58,7 +59,8 @@ YUI.add('charmstore-apiv4', function(Y) {
         // normal use to default to the charm version, but if it's a boolean,
         // then check that boolean because the author cares specifically if
         // it's a bundle or not.
-        path = this.charmstoreURL + [charmId, 'icon.svg'].join('/');
+        path = this.charmstoreURL + [
+          this.apiPath, charmId, 'icon.svg'].join('/');
       }
       return path;
     }
