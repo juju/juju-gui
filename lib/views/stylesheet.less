@@ -611,14 +611,17 @@ th {
 .rel-group {
     /* Visibility classes */
     &.show {
+      .transition(opacity 0.4s ease);
       opacity: 1.0;
       display: block;
     }
     &.fade {
+      .transition(opacity 0.4s ease);
       opacity: 0.2;
       display: block;
     }
     &.hide {
+      .transition(opacity 0.4s ease);
       opacity: 0;
       display: none;
     }
