@@ -129,7 +129,7 @@ describe('Change version viewlet', function() {
 
   it('loads versions on click', function() {
     container.one('.change-version-trigger span').simulate('click');
-    assert.equal(container.all('.upgrade-link').size(), 13);
+    assert.equal(container.all('.upgrade-link').size(), 14);
   });
 
   it('attempts to upgrade on click', function(done) {
