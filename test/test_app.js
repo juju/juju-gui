@@ -442,6 +442,43 @@ function injectData(app, data) {
 
     });
 
+    describe('_setupCharmstore', function() {
+
+      it('is called on application instantiation', function() {
+        var setup = utils.makeStubMethod(
+            Y.juju.App.prototype, '_setupCharmstore');
+        this._cleanups.push(setup.reset);
+        constructAppInstance({
+          env: new juju.environments.GoEnvironment({
+            conn: new utils.SocketStub(),
+            ecs: new juju.EnvironmentChangeSet()
+          })
+        }, this);
+        assert.equal(setup.callCount(), 1);
+      });
+
+      it('is idempotent', function() {
+        window.juju_config = {
+          charmstoreURL: 'charmurl'
+        };
+        constructAppInstance({
+          env: new juju.environments.GoEnvironment({
+            conn: new utils.SocketStub(),
+            ecs: new juju.EnvironmentChangeSet()
+          })
+        }, this);
+        // The charmstore attribute is undefined by default
+        assert.equal(typeof app.get('charmstore'), 'object');
+        assert.equal(app.get('charmstore').charmstoreURL, 'charmurl');
+        window.juju_config.charmstoreURL = 'it broke';
+        assert.equal(
+            app.get('charmstore').charmstoreURL,
+            'charmurl',
+            'It should only ever create a single instance of the charmstore');
+      });
+
+    });
+
   });
 })();
 
