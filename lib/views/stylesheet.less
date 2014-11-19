@@ -608,23 +608,28 @@ th {
         stroke: #3333cc;
     }
 }
-.rel-group {
-    /* Visibility classes */
+.visibility-classes {
+    transition: opacity 0.4s ease;
     &.show {
-      .transition(opacity 0.4s ease);
-      opacity: 1.0;
-      display: block;
+        opacity: 1.0;
+        visibility: visible;
     }
     &.fade {
-      .transition(opacity 0.4s ease);
-      opacity: 0.2;
-      display: block;
+        opacity: 0.2;
+        visibility: visible;
     }
     &.hide {
-      .transition(opacity 0.4s ease);
-      opacity: 0;
-      display: none;
+        /*
+          Put visibility on a delay so it gets hidden after the opacity is
+          finished transitioning.
+        */
+        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
+        opacity: 0;
+        visibility: hidden;
     }
+}
+.rel-group {
+    .visibility-classes;
 }
 .rel-indicator {
     cursor: pointer;
@@ -635,26 +640,9 @@ circle.mouse-down-indicator {
     fill: none;
 }
 g.service {
+    .visibility-classes;
     fill: none;
     stroke: none;
-
-    /* Visibility classes */
-    &.show {
-      .transition(opacity 0.4s ease);
-      opacity: 1.0;
-      display: block;
-    }
-    &.fade {
-      .transition(opacity 0.4s ease);
-      opacity: 0.2;
-      display: block;
-    }
-    &.hide {
-      .transition(opacity 0.4s ease);
-      opacity: 0;
-      display: none;
-    }
-
     text {
         text-anchor: middle;
     }
