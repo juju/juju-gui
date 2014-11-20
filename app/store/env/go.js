@@ -213,7 +213,7 @@ YUI.add('juju-env-go', function(Y) {
         op.Params = {};
       }
       // Serialize the operation using the cleanUpJSON replacer function.
-      var msg = Y.JSON.stringify(op, cleanUpJSON);
+      var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
     },
 
