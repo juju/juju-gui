@@ -79,7 +79,11 @@ YUI.add('juju-env-go', function(Y) {
   var stringifyObjectValues = function(obj) {
     var newObj = Object.create(null);
     Y.each(obj, function(value, key) {
-      newObj[key] = value + '';
+      if (value === null) {
+        newObj[key] = value;
+      } else {
+        newObj[key] = value + '';
+      }
     });
     return newObj;
   };
