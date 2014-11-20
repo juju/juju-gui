@@ -55,32 +55,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-
-  describe('Go Juju JSON replacer', function() {
-    var cleanUpJSON, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
-        cleanUpJSON = Y.namespace('juju.environments').cleanUpJSON;
-        done();
-      });
-    });
-
-    it('blacklists null values', function() {
-      assert.isUndefined(cleanUpJSON('mykey', null));
-    });
-
-    it('returns other allowed values as they are', function() {
-      var data = [
-        'mystring', undefined, true, false, 42, ['list', 47.2, true]
-      ];
-      Y.each(data, function(item) {
-        assert.strictEqual(item, cleanUpJSON('mykey', item));
-      });
-    });
-
-  });
-
   describe('Go Juju environment', function() {
     var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
         utils, Y;
