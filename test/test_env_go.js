@@ -48,7 +48,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('provides a way to convert object values to strings', function() {
       var obj = {key1: 42, key2: false, key3: null, key4: 'foo'},
-          expected = {key1: '42', key2: 'false', key3: 'null', key4: 'foo'},
+          expected = {key1: '42', key2: 'false', key3: null, key4: 'foo'},
           result = environments.stringifyObjectValues(obj);
       assert.deepEqual(expected, result);
     });
@@ -531,7 +531,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'AddServiceUnits',
         RequestId: 1,
-        Params: {ServiceName: 'django', NumUnits: 3}
+        Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: null}
       };
       assert.deepEqual(expected, last_message);
     });
@@ -939,9 +939,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          ServiceName: null,
+          ConfigYAML: null,
           Config: {},
           Constraints: {},
-          CharmUrl: 'precise/mysql'
+          CharmUrl: 'precise/mysql',
+          NumUnits: null,
+          ToMachineSpec: null
         },
         RequestId: 1
       };
@@ -954,10 +958,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          ServiceName: null,
           // Configuration values are sent as strings.
           Config: {debug: 'true', logo: 'example.com/mylogo.png'},
+          ConfigYAML: null,
           Constraints: {},
-          CharmUrl: 'precise/mediawiki'
+          CharmUrl: 'precise/mediawiki',
+          NumUnits: null,
+          ToMachineSpec: null
         },
         RequestId: 1
       };
@@ -975,10 +983,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          ServiceName: null,
           Config: {},
           Constraints: {},
           ConfigYAML: config_raw,
-          CharmUrl: 'precise/mysql'
+          CharmUrl: 'precise/mysql',
+          NumUnits: null,
+          ToMachineSpec: null
         },
         RequestId: 1
       };
@@ -1015,6 +1026,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          ServiceName: null,
+          ConfigYAML: null,
           Config: {},
           Constraints: {},
           CharmUrl: 'precise/mediawiki',
