@@ -27,10 +27,10 @@ PPA.
   sudo apt-get install juju-core
 
 
-Now it is time to actually get the GUI itself set up.  Juju GUI uses
-nodejs-based development tools, so you will need ``nodejs`` from Chris
-Lea's node PPA. You also need ImageMagick for sprite generation, python-sphinx
-and python-yaml to build docs, PyTZ to make releases, python-shelltoolbox and
+Now it is time to get the GUI itself set up.  Juju GUI uses nodejs-based
+development tools, so you will need ``nodejs`` from Chris Lea's node PPA.
+You also need ImageMagick for sprite generation, python-sphinx and
+python-yaml to build docs, PyTZ to make releases, python-shelltoolbox and
 python-selenium for browser tests, and python-virtualenv to build the Google
 Closure linter tools locally, and g++ for contextify::
 
@@ -48,7 +48,7 @@ For precise, selenium has to be installed from pip::
 For saucy and later::
 
   sudo apt-get install python-selenium
-  
+
 
 See :ref:`Browser Testing <browser-testing>` if you are curious about the
 reason for ``python-shelltoolbox`` and ``python-selenium``.
@@ -395,14 +395,14 @@ Before running the devel or debug targets, first modify the
 app/config-debug.js file to turn off the sandbox mode, use the local
 juju credentials, and configure the websockets url:
 
- * remove the `socket_protocol` and `socket_port` keys from the 
+ * remove the `socket_protocol` and `socket_port` keys from the
    `juju_config` map.
 
  * add a new key `socket_url` and, using the host and port from the
-   .jenv file above, set the value to 'wss://<host>:<port>/'. Using 
-   the example that would be: `wss://trusty-dev:17070/`. Because 
+   .jenv file above, set the value to 'wss://<host>:<port>/'. Using
+   the example that would be: `wss://trusty-dev:17070/`. Because
    the TLS certificate won't be trusted by default, you'll need to
-   first visit `https://<host>:<port>` in your browser to add an 
+   first visit `https://<host>:<port>` in your browser to add an
    exception for the certificate.  If you forget to do this you may
    see an error in juju-gui web console indicating that the websocket
    opening handshake was canceled, or some similar error.
