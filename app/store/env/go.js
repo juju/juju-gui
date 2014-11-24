@@ -79,29 +79,13 @@ YUI.add('juju-env-go', function(Y) {
   var stringifyObjectValues = function(obj) {
     var newObj = Object.create(null);
     Y.each(obj, function(value, key) {
-      newObj[key] = value + '';
+      if (value === null) {
+        newObj[key] = value;
+      } else {
+        newObj[key] = value + '';
+      }
     });
     return newObj;
-  };
-
-  /**
-     JSON replacer converting values to be serialized into that suitable
-     to be sent to the juju-core API server. This function can be passed to
-     Y.JSON.stringify in order to clean up data before serialization.
-
-     @method cleanUpJSON
-     @static
-     @param {Object} key The key in the key/value pair passed by
-      Y.JSON.stringify.
-     @param {Object} value The value corresponding to the provided key.
-     @return {Object} A value that will be serialized in place of the raw value.
-   */
-  var cleanUpJSON = function(key, value) {
-    // Blacklist null values.
-    if (value === null) {
-      return undefined;
-    }
-    return value;
   };
 
   // The jobs that can be associated to a machine.
@@ -208,8 +192,7 @@ YUI.add('juju-env-go', function(Y) {
       if (!op.Params) {
         op.Params = {};
       }
-      // Serialize the operation using the cleanUpJSON replacer function.
-      var msg = Y.JSON.stringify(op, cleanUpJSON);
+      var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
     },
 
@@ -2255,7 +2238,6 @@ YUI.add('juju-env-go', function(Y) {
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;
-  environments.cleanUpJSON = cleanUpJSON;
   environments.machineJobs = machineJobs;
 
   var KVM = {label: 'LXC', value: 'lxc'},
