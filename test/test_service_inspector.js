@@ -114,15 +114,15 @@ describe('Service Inspector', function() {
     inspector.set('showCharm', true);
     // The first call to render uses showViewlet
     inspector.render();
-    // Call count is 3 because 'overview' and 'inspectorHeader' are also
-    // displayed.
-    assert.equal(stubShow.callCount(), 3);
+    // Call count is 4 because 'overview', 'statusBar', and 'inspectorHeader'
+    // are also displayed.
+    assert.equal(stubShow.callCount(), 4);
     assert.equal(stubDetailsRender.callCount(), 0);
     assert.equal(stubShow.lastArguments()[0], 'charmDetails');
 
     inspector.views.charmDetails.set('rendered', true);
     inspector.render();
-    assert.equal(stubShow.callCount(), 3);
+    assert.equal(stubShow.callCount(), 4);
     assert.equal(stubDetailsRender.callCount(), 1);
   });
 
@@ -133,14 +133,14 @@ describe('Service Inspector', function() {
     inspector.set('showCharm', true);
     // The first call to render uses showViewlet
     inspector.render();
-    // Call count is 3 because 'overview' and 'inspectorHeader' are also
-    // displayed.
-    assert.equal(stubShow.callCount(), 3);
+    // Call count is 4 because 'overview', 'statusBar', and 'inspectorHeader'
+    // are also displayed.
+    assert.equal(stubShow.callCount(), 4);
     assert.equal(stubShow.lastArguments()[0], 'charmDetails');
 
     inspector.views.charmDetails.destroy();
     inspector.render();
-    assert.equal(stubShow.callCount(), 4);
+    assert.equal(stubShow.callCount(), 5);
     assert.equal(stubShow.lastArguments()[0], 'charmDetails');
   });
 
@@ -154,17 +154,23 @@ describe('Service Inspector', function() {
     var stubHeaderRender = utils.makeStubMethod(
         inspector.views.inspectorHeader, 'render');
     this._cleanups.push(stubHeaderRender.reset);
+    var stubStatusBarRender = utils.makeStubMethod(
+        inspector.views.statusBar, 'render');
+    this._cleanups.push(stubStatusBarRender.reset);
 
     inspector.renderUI();
-    // Two calls two showViewlet, one for inspectorHeader, one for overview.
-    assert.equal(stubShow.callCount(), 2);
+    // Three calls two showViewlet, one for inspectorHeader, one for overview,
+    // and one for the statusBar.
+    assert.equal(stubShow.callCount(), 3);
     assert.equal(stubOverviewRender.callCount(), 0);
     assert.equal(stubHeaderRender.callCount(), 0);
+    assert.equal(stubStatusBarRender.callCount(), 0);
 
     inspector.renderUI();
-    assert.equal(stubShow.callCount(), 2);
+    assert.equal(stubShow.callCount(), 3);
     assert.equal(stubOverviewRender.callCount(), 1);
     assert.equal(stubHeaderRender.callCount(), 1);
+    assert.equal(stubStatusBarRender.callCount(), 1);
   });
 
   it('can render unit details', function() {
