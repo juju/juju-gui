@@ -82,7 +82,8 @@ YUI.add('subapp-browser', function(Y) {
         envSeries: this.get('envSeries'),
         db: this.get('db'),
         filters: this.state.filter.getFilterData(),
-        store: this.get('store')
+        store: this.get('store'),
+        charmstore: this.get('charmstore')
       });
     },
 

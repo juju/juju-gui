@@ -160,7 +160,7 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
         var charm = new models.Charm(entity);
         var ghostAttributes;
         ghostAttributes = {
-          icon: this.get('store').iconpath(charm.get('storeId'))
+          icon: this.get('charmstore').getIconPath(charm.get('storeId'))
         };
         deployer.call(null, charm, ghostAttributes);
       }
