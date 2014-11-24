@@ -43,6 +43,7 @@ YUI.add('service-inspector', function(Y) {
     },
 
     views: {
+      statusBar: viewlets.StatusBar,
       overview: viewlets.Overview,
       charmDetails: viewlets.charmDetails,
       config: viewlets.Config,
@@ -89,10 +90,12 @@ YUI.add('service-inspector', function(Y) {
           db = this.get('db'),
           model = this.get('model');
       if (!this.get('rendered')) {
+        this.showViewlet('statusBar');
         this.showViewlet('inspectorHeader');
         this.showViewlet('overview');
         this.set('rendered', true);
       } else {
+        this.views.statusBar.render(this.getAttrs());
         this.views.inspectorHeader.render(model, this.getAttrs());
         this.views.overview.render(model, this.getAttrs());
       }
@@ -358,6 +361,7 @@ YUI.add('service-inspector', function(Y) {
     'juju-models',
     'service-inspector-utils-extension',
     'inspector-overview-view',
+    'inspector-statusbar-view',
     'charm-details-view',
     'service-config-view',
     'service-constraints-view',

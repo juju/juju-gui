@@ -386,24 +386,6 @@ YUI.add('inspector-overview-view', function(Y) {
       'button.unit-action-button': { click: '_unitActionButtonClick'}
     },
     bindings: {
-      aggregated_status: {
-        'update': function(node, value) {
-          if (value && value.uncommitted) {
-            // We don't want to update the status bar with uncommitted units.
-            delete value.uncommitted;
-          }
-          var bar = this._statusbar;
-          if (!bar) {
-            bar = this._statusbar = new views.StatusBar({
-              width: 250,
-              target: node.getDOMNode(),
-              labels: false,
-              height: 30
-            }).render();
-          }
-          bar.update(value);
-        }
-      },
       units: {
         depends: ['aggregated_status', 'upgrade_to'],
         'update': function(node, value) {
@@ -454,11 +436,6 @@ YUI.add('inspector-overview-view', function(Y) {
         // If the inspector is open when the service is deployed we need
         // to update the inspector.
         container.one('.expose').removeClass('hidden');
-        var statusBar = container.one('.status-bar');
-        // There is no status bar if it is a subordinate service.
-        if (statusBar) {
-          statusBar.removeClass('hidden');
-        }
       }
     },
 
@@ -954,7 +931,6 @@ YUI.add('inspector-overview-view', function(Y) {
   requires: [
     'node',
     'd3',
-    'd3-statusbar',
     'juju-charm-models',
     'viewlet-view-base',
     'scale-up-view',

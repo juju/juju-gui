@@ -373,6 +373,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-overview.js'
         },
 
+        'inspector-statusbar-view': {
+          fullpath: '/juju-ui/views/viewlets/service-statusbar.js'
+        },
+
         'viewlet-view-base': {
           fullpath: '/juju-ui/views/viewlets/viewlet-view-base.js'
         },
