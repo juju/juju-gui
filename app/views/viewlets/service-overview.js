@@ -438,15 +438,6 @@ YUI.add('inspector-overview-view', function(Y) {
       var container = this.get('container'),
           rendered = this.get('rendered');
       var model = this.viewletManager.get('model');
-      // Do not create the scale up view if the current service's charm is a
-      // subordinate charm.
-      if (!model.get('subordinate')) {
-        this._createOrUpdateScaleUpView(model);
-        if (!rendered) {
-          container.append(this.scaleUp.render());
-        }
-        this.scaleUp.hideScaleUp();
-      }
       if (!rendered) {
         this.set('rendered', true);
         container.append(this.template(attributes.model.getAttrs()));
@@ -459,6 +450,15 @@ YUI.add('inspector-overview-view', function(Y) {
         if (statusBar) {
           statusBar.removeClass('hidden');
         }
+      }
+      // Do not create the scale up view if the current service's charm is a
+      // subordinate charm.
+      if (!model.get('subordinate')) {
+        this._createOrUpdateScaleUpView(model);
+        if (!rendered) {
+          this.scaleUp.render();
+        }
+        this.scaleUp.hideScaleUp();
       }
     },
 
@@ -480,7 +480,8 @@ YUI.add('inspector-overview-view', function(Y) {
       this.scaleUp = new ns.ScaleUp({
         env: this.options.env,
         db: this.options.db,
-        serviceId: model.get('id')
+        serviceId: model.get('id'),
+        container: this.get('container').one('.scale-up-container')
       });
       // XXX July 14 2014 Jeff - There is an issue where the changeState
       // events don't bubble like they should to get around this we need to
