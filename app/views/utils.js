@@ -886,25 +886,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Return the URL to the charm icon, handling both charms present in the
-    store and local charms.
-
-    @method getCharmIconUrl
-    @param {String} charmUrl The charm URL.
-    @param {Object} store The charm store.
-    @param {Object} env The Juju environment.
-    @return {String} The URL to the icon.svg file.
-  */
-  utils.getCharmIconUrl = function(charmUrl, store, env) {
-    if (charmUrl.indexOf('local:') === 0) {
-      // Retrieve the icon from the Juju HTTP API.
-      return env.getLocalCharmFileUrl(charmUrl, 'icon.svg');
-    }
-    // Retrieve the icon from the charm store.
-    return store.iconpath(charmUrl);
-  };
-
-  /**
    Return a template-friendly array of settings.
 
    Used for service-configuration.partial adding isBool, isNumeric metadata.
@@ -1328,10 +1309,10 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {ServiceModule} Module holding box canvas and context.
    * @param {ModelList} services Service modellist.
    * @param {Object} existing id:box mapping.
-   * @param {Object} store The charm store.
+   * @param {Object} charmstore The charm store.
    * @return {Object} id:box mapping.
    */
-  views.toBoundingBoxes = function(module, services, existing, store, env) {
+  views.toBoundingBoxes = function(module, services, existing, charmstore) {
     var result = existing || {};
     Y.each(result, function(val, key, obj) {
       if (!Y.Lang.isValue(services.getById(key))) {
@@ -1349,14 +1330,11 @@ YUI.add('juju-view-utils', function(Y) {
           if (!service.get('icon') && service.get('charm')) {
             var icon;
             var charmID = service.get('charm');
-            icon = utils.getCharmIconUrl(charmID, this.store, this.env);
+            icon = charmstore.getIconPath(charmID);
             service.set('icon', icon);
           }
           result[id].icon = service.get('icon');
-        },
-        // Pass 'env' and 'store' into the closure through the context variable
-        // 'this'.
-        {env: env, store: store}
+        }
     );
     return result;
   };

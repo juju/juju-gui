@@ -618,7 +618,8 @@ YUI.add('subapp-browser', function(Y) {
       var cfg = {
         file: file,
         env: this.get('env'),
-        db: this.get('db')
+        db: this.get('db'),
+        charmstore: this.get('charmstore')
       };
       if (metadata.localType === 'new') {
         activeInspector = new Y.juju.views.RequestSeriesInspector(cfg);
@@ -660,6 +661,7 @@ YUI.add('subapp-browser', function(Y) {
         ecs: this.get('ecs'),
         topo: topo,
         store: topo.get('store'),
+        charmstore: this.get('charmstore'),
         activeTab: metadata.hash,
         hideHelp: hideHelp
       };
