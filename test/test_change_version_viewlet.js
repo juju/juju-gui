@@ -24,7 +24,7 @@ describe('Change version viewlet', function() {
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
       'event-key', 'juju-charm-store', 'juju-charm-models',
-      'node-event-simulate', 'environment-change-set'];
+      'node-event-simulate', 'environment-change-set', 'charmstore-apiv4'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
@@ -70,8 +70,8 @@ describe('Change version viewlet', function() {
             charmUrl: 'cs:precise/mediaWiki-14'}]
       ]}});
     }
-    var fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.iconpath = function(id) {
+    var fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getIconPath = function(id) {
       if (allowIcon) {
         return '/icon/' + id;
       }
@@ -81,7 +81,7 @@ describe('Change version viewlet', function() {
       container: container,
       db: db,
       env: env,
-      store: fakeStore
+      charmstore: fakeStore
     });
     view.render();
     Y.Node.create([

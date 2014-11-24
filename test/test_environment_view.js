@@ -124,7 +124,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-views', 'juju-tests-utils',
+        'juju-views', 'juju-tests-utils', 'charmstore-apiv4',
         'node-event-simulate', 'juju-gui', 'slider',
         'landscape', 'dump', 'juju-view-utils', 'juju-charm-store',
         'juju-charm-models', 'environment-change-set'
@@ -139,8 +139,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
         env.connect();
         conn.open();
-        fakeStore = new Y.juju.charmworld.APIv3({});
-        fakeStore.iconpath = function() {
+        fakeStore = new Y.juju.charmstore.APIv4({});
+        fakeStore.getIconPath = function() {
           return 'charm icon url';
         };
         charmConfig = testUtils.loadFixture(
@@ -175,7 +175,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           url: function() { return; }
         },
         getModelURL: function() {},
-        store: fakeStore
+        charmstore: fakeStore
       });
     });
 
@@ -258,7 +258,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            store: fakeStore
+            charmstore: fakeStore
           });
           view.render();
           container.all('.service').size().should.equal(4);
@@ -298,7 +298,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            store: fakeStore
+            charmstore: fakeStore
           });
           view.render();
           container.all('.service').size().should.equal(4);
@@ -315,7 +315,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            store: fakeStore
+            charmstore: fakeStore
           });
           view.render();
           var service = container.one('.service');
@@ -333,7 +333,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       });
       view.render();
       assert.equal(container.one('.service .service-block-image').get(
@@ -345,7 +345,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       });
       var addSubordinate = {
         result: [
@@ -412,7 +412,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       });
       var tmp_data = {
         result: [
@@ -454,7 +454,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            store: fakeStore
+            charmstore: fakeStore
           });
           /* jshint +W031 */
           var tmp_data = {
@@ -502,7 +502,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            store: fakeStore
+            charmstore: fakeStore
           }).render();
           var tmp_data = {
            result: [
@@ -580,7 +580,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }),
           tmp_data = {
             result: [
@@ -726,7 +726,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
          var rel_block = container.one('.sub-rel-count').getDOMNode();
 
@@ -743,7 +743,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       // Attach the view to the DOM so that sizes get set properly
       // from the viewport (only available from DOM).
@@ -780,7 +780,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
@@ -811,7 +811,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
@@ -868,7 +868,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       container.all('.service').each(function(node, i) {
         node.after('click', function() {
@@ -888,7 +888,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation');
@@ -923,7 +923,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation'),
@@ -958,7 +958,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation'),
@@ -1058,7 +1058,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
 
          var relation = container.one(
@@ -1078,7 +1078,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       var module = view.topo.modules.RelationModule;
 
@@ -1168,7 +1168,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       // This stops the simulate() call later on from causing a 'script error'
       container.append(
@@ -1256,7 +1256,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
 
       // Single relation.
@@ -1279,7 +1279,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           store: fakeStore
+           charmstore: fakeStore
          }).render();
 
          // Get a subordinate relation.
@@ -1316,7 +1316,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 db: db,
                 endpointsController: fauxController,
                 env: env,
-                store: fakeStore
+                charmstore: fakeStore
               });
           var service = new models.Service({
             id: 'service-1',
@@ -1346,7 +1346,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       var module = view.topo.modules.RelationModule;
       // RelationCollections have an aggregatedStatus.
@@ -1372,7 +1372,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         db: db,
         env: env,
         getModelURL: getModelURL,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
@@ -1385,7 +1385,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         db: db,
         endpointsController: 'hidy ho',
         env: env,
-        store: fakeStore
+        charmstore: fakeStore
       }).render();
       var endpointsController = view.topo.get('endpointsController');
       assert.equal('hidy ho', endpointsController);
@@ -1397,7 +1397,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var Y, views, models, module, service;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-views', 'juju-models'],
+      Y = YUI(GlobalConfig).use(
+          ['juju-views', 'juju-models', 'charmstore-apiv4'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
@@ -1550,16 +1551,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('retrieves local charms icons from the Juju env', function() {
-      var iconFakeStore = new Y.juju.charmworld.APIv3({
-        apiHost: 'http://localhost'
+      var iconFakeStore = new Y.juju.charmstore.APIv4({
+        charmstoreURL: 'http://localhost/'
       });
-      var fakeEnv = {
-        getLocalCharmFileUrl: function(charmUrl, filename) {
-          assert.strictEqual(charmUrl, 'local:ceph-1');
-          assert.strictEqual(filename, 'icon.svg');
-          return 'https://example.com/icon.svg';
-        }
-      };
       var services = new models.ServiceList();
       services.add([
         {
@@ -1583,18 +1577,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var boxes = views.toBoundingBoxes(
-          module, services, existing, iconFakeStore, fakeEnv);
+          module, services, existing, iconFakeStore);
 
       // the ceph charm should have the default icon path.
       assert.equal(
           boxes['local:ceph-1'].icon,
-          'https://example.com/icon.svg'
+          '/juju-ui/assets/images/non-sprites/charm_160.svg'
       );
 
       // The mysql charm has an icon from on the server.
       assert.equal(
           boxes['cs:mysql-1'].icon,
-          'http://localhost/api/3/charm/mysql-1/file/icon.svg'
+          'http://localhost/v4/mysql-1/icon.svg'
       );
     });
   });

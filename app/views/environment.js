@@ -99,7 +99,8 @@ YUI.add('juju-view-environment', function(Y) {
         environment: this,
         enableDatabinding: true,
         topo: topo,
-        store: topo.get('store')
+        store: topo.get('store'),
+        charmstore: topo.get('charmstore')
       }, config, true);
       inspector = new Y.juju.views.ServiceInspector(inspectorConfig).render();
 

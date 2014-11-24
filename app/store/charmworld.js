@@ -390,60 +390,6 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-      Generate the API path to a charm icon.
-      This is useful when generating links and references in HTML to the
-      charm's icon and is constructing the correct icon based on reviewed
-      status and categories on the charm.
-
-      @method iconpath
-      @param {String} charmID The id of the charm to grab the icon for.
-      @param {Boolean} isBundle Is this an icon for a bundle?
-      @return {String} The URL of the charm's icon.
-     */
-    iconpath: function(charmID, isBundle) {
-      var demo_mode = '';
-
-      // If this is a local charm, then we need use a hard coded path to the
-      // default icon since we cannot fetch its category data or its own
-      // icon.
-      // XXX: #1202703 - this is a short term fix for the bug. Need longer
-      // term solution.
-      if (charmID.indexOf('local:') === 0) {
-        // XXX frankban: this place should become unreachable soon.
-        return this.get('apiHost') +
-            'static/img/charm_160.svg';
-
-      } else {
-        // Get the charm ID from the service.  In some cases, this will be
-        // the charm URL with a protocol, which will need to be removed.
-        // The following regular expression removes everything up to the
-        // colon portion of the quote and leaves behind a charm ID.
-        charmID = charmID.replace(/^[^:]+:/, '');
-
-        // If the user has selected to be in Demo mode then add a parameter to
-        // the url to enable indicating to charmworld to override permission
-        // checks for icons sent back.
-        if (localStorage.getItem('demo-mode')) {
-          demo_mode = '?demo=true';
-        }
-
-        // Note that we make sure isBundle is Boolean. It's coming from a
-        // handlebars template helper which will make the second argument the
-        // context object when it's not supplied. We want it optional for
-        // normal use to default to the charm version, but if it's a boolean,
-        // then check that boolean because the author care specifically if
-        // it's a bundle or not.
-        return this.get('apiHost') + [
-          this._apiRoot,
-          Y.Lang.isBoolean(isBundle) && isBundle === true ? 'bundle' : 'charm',
-          charmID,
-          'file',
-          'icon.svg' + demo_mode
-        ].join('/');
-      }
-    },
-
-    /**
      * Generate the url to an icon for the category specified.
      *
      * @method buildCategoryIconPath

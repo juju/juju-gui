@@ -27,6 +27,7 @@ describe('topology bundle module', function() {
       'juju-topology',
       'juju-view-bundle',
       'juju-charm-store',
+      'charmstore-apiv4',
       'juju-models',
       'juju-tests-utils',
       'juju-tests-factory',
@@ -57,7 +58,8 @@ describe('topology bundle module', function() {
           bundle = new views.BundleTopology(Y.mix({
             db: fakebackend.db,
             container: container,
-            store: fakebackend.get('store')
+            store: fakebackend.get('store'),
+            charmstore: new Y.juju.charmstore.APIv4({})
           }, options)).render();
           bundleModule = bundle.topology.modules.BundleModule;
           bundleModule.set('useTransitions', false);

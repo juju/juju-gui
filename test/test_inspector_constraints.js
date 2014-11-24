@@ -70,7 +70,8 @@ describe('Inspector Constraints', function() {
 
   before(function(done) {
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
-      'node-event-simulate', 'juju-charm-store', 'juju-charm-models'];
+      'node-event-simulate', 'juju-charm-store', 'juju-charm-models',
+      'charmstore-apiv4'];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -86,8 +87,8 @@ describe('Inspector Constraints', function() {
     var conn = new utils.SocketStub();
     var db = new models.Database();
     var service = makeService(db);
-    var fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.iconpath = function() {
+    var fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getIconPath = function() {
       return 'charm icon url';
     };
     env = new juju.environments.GoEnvironment({conn: conn});
@@ -97,7 +98,7 @@ describe('Inspector Constraints', function() {
       container: container,
       db: db,
       env: env,
-      store: fakeStore
+      charmstore: fakeStore
     });
     view.render();
     container.append(

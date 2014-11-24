@@ -29,6 +29,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'datatype-date',
           'datatype-date-format',
+          'charmstore-apiv4',
           'json-stringify',
           'juju-charm-models',
           'juju-charm-store',
@@ -344,8 +345,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.iconpath = function() {
+      var fakeStore = new Y.juju.charmstore.APIv4({});
+      fakeStore.getIconPath = function() {
         return 'charm icon url';
       };
       view = new CharmView({
@@ -361,7 +362,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }),
         container: utils.makeContainer(this),
-        store: fakeStore
+        charmstore: fakeStore
       });
 
       var fireStub = utils.makeStubMethod(view, 'fire');
