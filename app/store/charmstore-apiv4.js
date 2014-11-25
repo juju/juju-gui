@@ -28,6 +28,10 @@ YUI.add('charmstore-apiv4', function(Y) {
   */
   function APIv4(config) {
     this.charmstoreURL = config.charmstoreURL;
+    // In the typical app instantiation the env isn't set when this class is
+    // instantiated because the env isn't yet set up. It will be added by the
+    // app after it's ready.
+    this.env = config.env;
     this.apiPath = 'v4';
   }
 
@@ -44,7 +48,7 @@ YUI.add('charmstore-apiv4', function(Y) {
     getIconPath: function(charmId, isBundle) {
       var path;
       if (charmId.indexOf('local:') > -1) {
-        path = '/juju-ui/assets/images/non-sprites/charm_160.svg';
+        path = this.env.getLocalCharmFileUrl(charmId, 'icon.svg');
       } else if (typeof isBundle === 'boolean' && isBundle) {
         path = '/juju-ui/assets/images/non-sprites/bundle.svg';
       } else {

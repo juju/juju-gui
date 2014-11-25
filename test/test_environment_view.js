@@ -1394,14 +1394,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('view model support infrastructure', function() {
-    var Y, views, models, module, service;
+    var Y, views, models, module, service, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-views', 'juju-models', 'charmstore-apiv4'],
+          ['juju-views', 'juju-models', 'charmstore-apiv4', 'juju-tests-utils'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
+            testUtils = Y.namespace('juju-tests').utils;
             done();
           });
     });
@@ -1552,6 +1553,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('retrieves local charms icons from the Juju env', function() {
       var iconFakeStore = new Y.juju.charmstore.APIv4({
+        env: {
+          getLocalCharmFileUrl: testUtils.makeStubFunction('localiconpath')
+        },
         charmstoreURL: 'http://localhost/'
       });
       var services = new models.ServiceList();
@@ -1580,10 +1584,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           module, services, existing, iconFakeStore);
 
       // the ceph charm should have the default icon path.
-      assert.equal(
-          boxes['local:ceph-1'].icon,
-          '/juju-ui/assets/images/non-sprites/charm_160.svg'
-      );
+      assert.equal(boxes['local:ceph-1'].icon, 'localiconpath');
 
       // The mysql charm has an icon from on the server.
       assert.equal(

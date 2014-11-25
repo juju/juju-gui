@@ -491,6 +491,11 @@ YUI.add('juju-gui', function(Y) {
 
         this.env = new environments.GoEnvironment(envOptions);
       }
+      // In app tests charmstore may not be available.
+      if (this.get('charmstore')) {
+        // The charmstore needs access to the env for the local charm icons.
+        this.get('charmstore').env = this.env;
+      }
 
       // Create an event simulator where possible.
       // Starting the simulator is handled by hotkeys

@@ -22,15 +22,19 @@ describe('Charmstore API v4', function() {
   var APIv4, charmstore, utils, Y;
 
   before(function(done) {
-    var modules = ['charmstore-apiv4'];
+    var modules = ['charmstore-apiv4', 'juju-tests-utils'];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       APIv4 = Y.juju.charmstore.APIv4;
+      utils = Y['juju-tests'].utils;
       done();
     });
   });
 
   beforeEach(function() {
     charmstore = new APIv4({
+      env: {
+        getLocalCharmFileUrl: utils.makeStubFunction('localcharmpath')
+      },
       charmstoreURL: 'local/'
     });
   });
@@ -47,7 +51,8 @@ describe('Charmstore API v4', function() {
 
     it('returns local default icon location for local charms', function() {
       var path = charmstore.getIconPath('local:precise/wodpress');
-      assert.equal(path, '/juju-ui/assets/images/non-sprites/charm_160.svg');
+      assert.equal(path, 'localcharmpath');
+      assert.equal(charmstore.env.getLocalCharmFileUrl.callCount(), 1);
     });
 
     it('returns local default bundle icon location for bundles', function() {
