@@ -28,10 +28,6 @@ YUI.add('charmstore-api', function(Y) {
   */
   function APIv4(config) {
     this.charmstoreURL = config.charmstoreURL;
-    // In the typical app instantiation the env isn't set when this class is
-    // instantiated because the env isn't yet set up. It will be added by the
-    // app after it's ready.
-    this.env = config.env;
     this.apiPath = 'v4';
   }
 
@@ -40,6 +36,10 @@ YUI.add('charmstore-api', function(Y) {
       Returns the correct path for a charm or bundle icon provided an id and
       whether or not it is a bundle.
 
+      This method should not be called directly from within the application.
+      Instead use utils.getIconPath() as it handles local charms as well and
+      then defaults to this method if it's not local.
+
       @method getIconPath
       @param {String} charmId The id of the charm to fetch the icon for.
       @param {Boolean} isBundle Whether or not this is an icon for a bundle.
@@ -47,9 +47,7 @@ YUI.add('charmstore-api', function(Y) {
     */
     getIconPath: function(charmId, isBundle) {
       var path;
-      if (charmId.indexOf('local:') > -1) {
-        path = this.env.getLocalCharmFileUrl(charmId, 'icon.svg');
-      } else if (typeof isBundle === 'boolean' && isBundle) {
+      if (typeof isBundle === 'boolean' && isBundle) {
         path = '/juju-ui/assets/images/non-sprites/bundle.svg';
       } else {
         // Get the charm ID from the service.  In some cases, this will be

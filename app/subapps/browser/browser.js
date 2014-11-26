@@ -27,7 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
       models = Y.namespace('juju.models'),
-      views = Y.namespace('juju.browser.views');
+      views = Y.namespace('juju.browser.views'),
+      utils = Y.namespace('juju.views.utils');
 
   /**
      Browser Sub App for the Juju Gui.
@@ -98,7 +99,7 @@ YUI.add('subapp-browser', function(Y) {
       var charmstore = this.get('charmstore');
       // Register a helper for generating the icon urls for charms.
       Y.Handlebars.registerHelper('charmIconPath', function(charmID, isBundle) {
-        return charmstore.getIconPath(charmID, isBundle);
+        return utils.getIconPath(charmID, isBundle, charmstore);
       });
     },
 
@@ -857,6 +858,7 @@ YUI.add('subapp-browser', function(Y) {
     'juju-charmbrowser',
     'juju-models',
     'juju-view-onboarding',
+    'juju-view-utils',
     'machine-view-panel-extension',
     'querystring',
     'sub-app',

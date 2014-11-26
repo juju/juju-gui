@@ -2264,6 +2264,30 @@ YUI.add('juju-view-utils', function(Y) {
     return serviceName;
   };
 
+  /**
+    Returns the icon path result from either the Juju environment (for local
+    charms) or the charmstore (for all others). You should call this method
+    instead of the others directly to maintain consistency throughout the app.
+
+    @method getIconPath
+    @param {String} charmId The id of the charm to fetch the icon for.
+    @param {Boolean} isBundle Whether or not this is an icon for a bundle.
+  */
+  utils.getIconPath = function(charmId, isBundle, charmstore, env) {
+    var localIndex = charmId.indexOf('local:');
+    var path;
+    if (localIndex > -1 && env) {
+      path = env.getLocalCharmFileUrl(charmId, 'icon.svg');
+    } else if (localIndex === -1 && charmstore) {
+      path = charmstore.getIconPath(charmId, isBundle);
+    } else {
+      // If no charmstore or env if provided as necessary then return the
+      // default icon.
+      path = '/juju-ui/assets/images/non-sprites/charm_160.svg';
+    }
+    return path;
+  };
+
 
 }, '0.1.0', {
   requires: [

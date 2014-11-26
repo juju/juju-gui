@@ -49,12 +49,6 @@ describe('Charmstore API v4', function() {
 
   describe('getIconpath', function() {
 
-    it('returns local default icon location for local charms', function() {
-      var path = charmstore.getIconPath('local:precise/wodpress');
-      assert.equal(path, 'localcharmpath');
-      assert.equal(charmstore.env.getLocalCharmFileUrl.callCount(), 1);
-    });
-
     it('returns local default bundle icon location for bundles', function() {
       var path = charmstore.getIconPath('bundle:elasticsearch', true);
       assert.equal(path, '/juju-ui/assets/images/non-sprites/bundle.svg');
