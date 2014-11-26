@@ -20,7 +20,15 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.2.5:
+    ->
+     Modifying the visibility of a service using the Added Services bar now
+     animates the service icons on the canvas.
+    - UI tweaks for the Inspector, Canvas, and Machine View.
+    - (FIX) Change Version option now includes the most recent release version.
+    ->
+     (FIX) Charm configuration options with null default values are now
+     respected when being deployed or when exporting bundle configurations.
 - 1.2.4:
     ->
      New feature the Added Services bar! In your environment click on the
