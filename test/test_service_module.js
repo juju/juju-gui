@@ -108,7 +108,7 @@ describe('service module events', function() {
     Y = YUI(GlobalConfig).use(['node',
       'juju-tests-utils',
       'juju-landscape',
-      'charmstore-apiv4',
+      'charmstore-api',
       'juju-models',
       'juju-views',
       'juju-gui',

@@ -24,7 +24,7 @@ describe('Change version viewlet', function() {
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
       'event-key', 'juju-charm-store', 'juju-charm-models',
-      'node-event-simulate', 'environment-change-set', 'charmstore-apiv4'];
+      'node-event-simulate', 'environment-change-set', 'charmstore-api'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');

@@ -35,7 +35,7 @@ describe('Inspector Conflict UX', function() {
                     'juju-charm-store',
                     'juju-charm-models',
                     'base',
-                    'charmstore-apiv4',
+                    'charmstore-api',
                     'juju-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       juju = Y.namespace('juju');

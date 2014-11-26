@@ -29,7 +29,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'datatype-date',
           'datatype-date-format',
-          'charmstore-apiv4',
+          'charmstore-api',
           'json-stringify',
           'juju-charm-models',
           'juju-charm-store',

@@ -408,7 +408,7 @@ YUI.add('juju-gui', function(Y) {
       // Create a client side database to store state.
       this.db = new models.Database();
       // Creates and sets up a new instance of the charmstore.
-      this._setupCharmstore();
+      this._setupCharmstore(Y.juju.charmstore.APIv4);
 
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
@@ -710,8 +710,10 @@ YUI.add('juju-gui', function(Y) {
       charmstore attribute. Idempotent.
 
       @method _setupCharmstore
+      @param {Object} Charmstore The Charmstore class to instantiate and store
+        in the app.
     */
-    _setupCharmstore: function() {
+    _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
         var jujuConfig = window.juju_config,
             charmstoreURL;
@@ -720,7 +722,7 @@ YUI.add('juju-gui', function(Y) {
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
         }
-        this.set('charmstore', new Y.juju.charmstore.APIv4({
+        this.set('charmstore', new Charmstore({
           charmstoreURL: charmstoreURL
         }));
       }
@@ -1681,7 +1683,7 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'bundle-import-helpers',
-    'charmstore-apiv4',
+    'charmstore-api',
     'event-tracker',
     'node',
     'model',

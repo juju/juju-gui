@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('charmstore-apiv4', function(Y) {
+YUI.add('charmstore-api', function(Y) {
 
   /**
     Implementation of the charmstore v4 api.

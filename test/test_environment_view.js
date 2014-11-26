@@ -124,7 +124,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-views', 'juju-tests-utils', 'charmstore-apiv4',
+        'juju-views', 'juju-tests-utils', 'charmstore-api',
         'node-event-simulate', 'juju-gui', 'slider',
         'landscape', 'dump', 'juju-view-utils', 'juju-charm-store',
         'juju-charm-models', 'environment-change-set'
@@ -1398,7 +1398,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-views', 'juju-models', 'charmstore-apiv4', 'juju-tests-utils'],
+          ['juju-views', 'juju-models', 'charmstore-api', 'juju-tests-utils'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');

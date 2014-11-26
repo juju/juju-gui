@@ -27,7 +27,7 @@ describe('topology bundle module', function() {
       'juju-topology',
       'juju-view-bundle',
       'juju-charm-store',
-      'charmstore-apiv4',
+      'charmstore-api',
       'juju-models',
       'juju-tests-utils',
       'juju-tests-factory',

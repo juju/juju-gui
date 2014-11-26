@@ -23,7 +23,7 @@ describe('Service Inspector', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'environment-change-set',
-      'charmstore-apiv4',
+      'charmstore-api',
       'juju-tests-utils',
       'juju-views',
       'node-event-simulate',
