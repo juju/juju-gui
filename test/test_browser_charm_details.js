@@ -29,6 +29,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'datatype-date',
           'datatype-date-format',
+          'charmstore-api',
           'json-stringify',
           'juju-charm-models',
           'juju-charm-store',
@@ -344,10 +345,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.iconpath = function() {
-        return 'charm icon url';
-      };
+      var fakeStore = new Y.juju.charmstore.APIv4({
+        charmstoreURL: 'localhost/'
+      });
       view = new CharmView({
         entity: new models.Charm({
           files: [
@@ -361,7 +361,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }),
         container: utils.makeContainer(this),
-        store: fakeStore
+        charmstore: fakeStore
       });
 
       var fireStub = utils.makeStubMethod(view, 'fire');
@@ -371,7 +371,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var serviceCharm = view.get('entity');
         assert.deepEqual(charm, serviceCharm);
         assert.equal(charm.get('id'), 'cs:precise/ceph-9');
-        assert.equal(serviceAttrs.icon, 'charm icon url');
+        assert.equal(serviceAttrs.icon, 'localhost/v4/precise/ceph-9/icon.svg');
         assert.equal(fireStub.calledOnce(), true);
         var fireArgs = fireStub.lastArguments();
         assert.equal(fireArgs[0], 'changeState');

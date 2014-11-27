@@ -80,7 +80,10 @@ describe('Browser bundle detail view', function() {
       store: factory.makeFakeStore(),
       db: {},
       entityId: data.id,
-      renderTo: container
+      renderTo: container,
+      charmstore: {
+        getIconPath: utils.makeStubFunction()
+      }
     };
     var bundleView = Y.mix(defaults, options, true);
     view = new Y.juju.browser.views.BrowserBundleView(bundleView);

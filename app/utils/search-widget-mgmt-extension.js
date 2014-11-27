@@ -28,7 +28,8 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
 
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils');
 
   /**
     Adds the search widget functionality to a view.
@@ -160,7 +161,8 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
         var charm = new models.Charm(entity);
         var ghostAttributes;
         ghostAttributes = {
-          icon: this.get('store').iconpath(charm.get('storeId'))
+          icon: utils.getIconPath(
+              charm.get('storeId'), false, this.get('charmstore'))
         };
         deployer.call(null, charm, ghostAttributes);
       }
@@ -171,6 +173,7 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
 
 }, '', {
   requires: [
-    'browser-search-widget'
+    'browser-search-widget',
+    'juju-view-utils'
   ]
 });

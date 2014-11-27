@@ -407,11 +407,14 @@ YUI.add('juju-gui', function(Y) {
 
       // Create a client side database to store state.
       this.db = new models.Database();
+      // Creates and sets up a new instance of the charmstore.
+      this._setupCharmstore(Y.juju.charmstore.APIv4);
 
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db,
-        store: this.get('store')
+        store: this.get('store'),
+        charmstore: this.get('charmstore')
       });
 
       // Update the on-screen environment name provided in the configuration,
@@ -464,7 +467,10 @@ YUI.add('juju-gui', function(Y) {
           // The GUI is running in sandbox mode.
           var sandboxModule = environments.sandbox;
           var State = environments.FakeBackend;
-          var state = new State({store: this.get('store')});
+          var state = new State({
+            store: this.get('store'),
+            charmstore: this.get('charmstore')
+          });
           if (envOptions.user && envOptions.password) {
             var credentials = {};
             credentials[envOptions.user] = envOptions.password;
@@ -667,6 +673,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');
+      cfg.charmstore = this.get('charmstore');
       cfg.envSeries = this.getEnvDefaultSeries.bind(this);
       cfg.env = this.env;
       cfg.ecs = this.env.ecs;
@@ -691,6 +698,29 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+    },
+
+    /**
+      Creates a new instance of the new charmstore api and assigns it to the
+      charmstore attribute. Idempotent.
+
+      @method _setupCharmstore
+      @param {Object} Charmstore The Charmstore class to instantiate and store
+        in the app.
+    */
+    _setupCharmstore: function(Charmstore) {
+      if (this.get('charmstore') === undefined) {
+        var jujuConfig = window.juju_config,
+            charmstoreURL;
+        if (!jujuConfig || !jujuConfig.charmstoreURL) {
+          console.error('No juju config for charmstoreURL availble');
+        } else {
+          charmstoreURL = jujuConfig.charmstoreURL;
+        }
+        this.set('charmstore', new Charmstore({
+          charmstoreURL: charmstoreURL
+        }));
+      }
     },
 
     /**
@@ -1379,7 +1409,9 @@ YUI.add('juju-gui', function(Y) {
         db: this.db,
         env: this.env,
         ecs: this.env.ecs,
-        store: this.get('store')};
+        store: this.get('store'),
+        charmstore: this.get('charmstore')
+      };
 
       this.showView('environment', options, {
         /**
@@ -1565,6 +1597,16 @@ YUI.add('juju-gui', function(Y) {
       },
 
       /**
+        Store the instance of the charmstore api that we will be using
+        throughout the application.
+
+        @attribute charmstore
+        @type {Y.juju.charmstore.APIv4}
+        @default undefined
+      */
+      charmstore: {},
+
+      /**
        * Routes
        *
        * Each request path is evaluated against all hereby defined routes,
@@ -1636,6 +1678,7 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'bundle-import-helpers',
+    'charmstore-api',
     'event-tracker',
     'node',
     'model',

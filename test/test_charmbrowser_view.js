@@ -236,8 +236,7 @@ describe('charmbrowser view', function() {
         cancelInFlightRequest: utils.makeStubFunction(),
         autocomplete: utils.makeStubFunction(),
         transformResults: utils.makeStubFunction(),
-        buildCategoryIconPath: utils.makeStubFunction(),
-        iconpath: utils.makeStubFunction()
+        buildCategoryIconPath: utils.makeStubFunction()
       });
       charmBrowser.set('filters', { text: 'apache' });
       charmBrowser.get('container')
@@ -337,7 +336,10 @@ describe('charmbrowser view', function() {
       beforeEach(function() {
         charmBrowser.setAttrs({
           deployBundle: utils.makeStubFunction(),
-          deployService: utils.makeStubFunction()
+          deployService: utils.makeStubFunction(),
+          charmstore: {
+            getIconPath: utils.makeStubFunction()
+          }
         });
       });
 
@@ -359,7 +361,8 @@ describe('charmbrowser view', function() {
         charmBrowser._deployEntity(Y.clone(data));
         assert.equal(charmBrowser.get('deployBundle').calledOnce(), false);
         assert.equal(charmBrowser.get('deployService').callCount(), true);
-        assert.equal(charmBrowser.get('store').iconpath.calledOnce(), true);
+        assert.equal(
+            charmBrowser.get('charmstore').getIconPath.calledOnce(), true);
       });
     });
   });

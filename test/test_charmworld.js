@@ -210,47 +210,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       api.autocomplete({text: 'mys'}, {'success': noop});
     });
 
-    it('constructs iconpaths correctly', function() {
-      var iconPath = api.iconpath('precise/mysql-1');
-      assert.equal(
-          iconPath,
-          hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
-    });
-
     it('constructs cateogry icon paths correctly', function() {
       var iconPath = api.buildCategoryIconPath('app-servers');
       assert.equal(
           iconPath,
           hostname + 'static/img/category-app-servers-bw.svg');
-    });
-
-    it('constructs an icon path for local charms', function() {
-      var iconPath = api.iconpath('local:precise/mysql-1');
-      assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
-    });
-
-    it('removes cs: from the icon path when necessary', function() {
-      var iconPath = api.iconpath('cs:precise/mysql-1');
-      assert.equal(
-          iconPath,
-          hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
-    });
-
-    it('constructs bundle icon paths', function() {
-      var iconPath = api.iconpath('wiki/3/wiki', true);
-      assert.equal(
-          iconPath,
-          hostname + 'api/3/bundle/wiki/3/wiki/file/icon.svg');
-    });
-
-    it('allows for a demo mode on icon urls', function() {
-      localStorage.setItem('demo-mode', true);
-      var iconPath = api.iconpath('wiki/3/wiki', true);
-      assert.equal(
-          iconPath,
-          hostname + 'api/3/bundle/wiki/3/wiki/file/icon.svg?demo=true');
-
-      localStorage.removeItem('demo-mode');
     });
 
     it('can assemble proper urls to fetch files', function(done) {

@@ -23,6 +23,7 @@ describe('Service Inspector', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'environment-change-set',
+      'charmstore-api',
       'juju-tests-utils',
       'juju-views',
       'node-event-simulate',
@@ -63,8 +64,8 @@ describe('Service Inspector', function() {
       });
     }
 
-    var fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.iconpath = function(id) {
+    var fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getIconPath = function(id) {
       return '/icon/' + id;
     };
 
@@ -72,7 +73,7 @@ describe('Service Inspector', function() {
       container: container,
       db: db,
       env: env,
-      store: fakeStore
+      charmstore: fakeStore
     });
 
     view.render();
@@ -87,7 +88,7 @@ describe('Service Inspector', function() {
       environment: view,
       charmModel: charm,
       topo: view.topo,
-      store: fakeStore
+      charmstore: fakeStore
     });
     return inspector;
   };

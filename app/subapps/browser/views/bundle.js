@@ -213,14 +213,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         self.environment = new views.BundleTopology(Y.mix({
           db: self.fakebackend.db,
           container: node.one('#bundle'), // Id because of Y.TabView
-          store: self.get('store')
+          store: self.get('store'),
+          charmstore: self.get('charmstore')
         }, options));
         self.environment.render();
         // Fire event to listen to during the tests so that we know when
         // it's rendered.
         self.fire('topologyRendered');
       }).then(null, function(error) {
-        console.error(error.message, error);
+        console.error(error.message, error, error.stack);
       });
 
       renderTo.setHTML(node);

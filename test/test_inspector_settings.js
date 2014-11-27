@@ -25,7 +25,7 @@ describe('Inspector Settings', function() {
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
       'juju-charm-store', 'juju-charm-models', 'node-event-simulate',
-      'environment-change-set'];
+      'environment-change-set', 'charmstore-api'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
@@ -93,15 +93,15 @@ describe('Inspector Settings', function() {
         ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
       ]}});
     }
-    var fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.iconpath = function() {
+    var fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getIconPath = function() {
       return 'charm icon url';
     };
     view = new jujuViews.environment({
       container: container,
       db: db,
       env: env,
-      store: fakeStore
+      charmstore: fakeStore
     });
     view.render();
     Y.Node.create([
@@ -118,7 +118,7 @@ describe('Inspector Settings', function() {
       },
       enableDatabinding: true,
       databinding: { interval: 0 },
-      store: view.get('store')
+      charmstore: view.get('charmstore')
     });
     inspector.render();
 

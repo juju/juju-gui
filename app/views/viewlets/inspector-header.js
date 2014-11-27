@@ -75,9 +75,8 @@ YUI.add('inspector-header-view', function(Y) {
       pojoModel.charmUrl = pojoModel.charm;
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.
-      pojoModel.icon = utils.getCharmIconUrl(
-          pojoModel.charmUrl, viewContainerAttrs.store,
-          viewContainerAttrs.env);
+      pojoModel.icon = utils.getIconPath(
+          pojoModel.charmUrl, false, viewContainerAttrs.charmstore);
       if (pojoModel.pending) {
         // Check if there is already a service using the default name to
         // trigger the name ux.

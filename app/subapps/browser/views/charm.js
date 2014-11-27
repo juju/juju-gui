@@ -23,7 +23,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      utils = Y.namespace('juju.views.utils');
 
   /**
    * View for the Charm details UI.
@@ -117,7 +118,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
             id: null }}});
       var ghostAttributes;
       ghostAttributes = {
-        icon: this.get('store').iconpath(charm.get('storeId'))
+        icon: utils.getIconPath(
+            charm.get('storeId'), false, this.get('charmstore'))
       };
       this.get('deployService').call(null, charm, ghostAttributes);
     },

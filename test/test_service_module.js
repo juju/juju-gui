@@ -108,6 +108,7 @@ describe('service module events', function() {
     Y = YUI(GlobalConfig).use(['node',
       'juju-tests-utils',
       'juju-landscape',
+      'charmstore-api',
       'juju-models',
       'juju-views',
       'juju-gui',
@@ -123,8 +124,8 @@ describe('service module events', function() {
   });
 
   beforeEach(function(done) {
-    fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.iconpath = function() {
+    fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getIconPath = function() {
       return 'charm icon url';
     };
     viewContainer = utils.makeContainer(this, 'content');
@@ -143,7 +144,7 @@ describe('service module events', function() {
       nsRouter: {
         url: function() { return; }
       },
-      store: fakeStore
+      charmstore: fakeStore
     });
     view.render();
     view.rendered();
@@ -153,7 +154,6 @@ describe('service module events', function() {
   });
 
   afterEach(function() {
-    fakeStore.destroy();
     charm.destroy();
     db.destroy();
     topo.destroy();

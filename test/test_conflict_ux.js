@@ -35,6 +35,7 @@ describe('Inspector Conflict UX', function() {
                     'juju-charm-store',
                     'juju-charm-models',
                     'base',
+                    'charmstore-api',
                     'juju-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       juju = Y.namespace('juju');
@@ -89,15 +90,15 @@ describe('Inspector Conflict UX', function() {
       ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}]
     ]}});
 
-    var fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.iconpath = function() {
+    var fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getIconPath = function() {
       return 'charm icon url';
     };
     view = new views.environment({
       container: container,
       db: db,
       env: env,
-      store: fakeStore
+      charmstore: fakeStore
     });
     view.render();
     Y.Node.create(['<div id="content">'].join('')).appendTo(container);

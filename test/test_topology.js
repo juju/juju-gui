@@ -125,7 +125,10 @@ describe('topology', function() {
         container: container,
         size: [320, 240],
         db: fakebackend.db,
-        store: fakebackend.get('store')}).render();
+        store: fakebackend.get('store'),
+        charmstore: {
+          getIconPath: function() {}
+        }}).render();
 
       // The size of the element should reflect the passed in params
       var svg = d3.select(container.getDOMNode()).select('svg');

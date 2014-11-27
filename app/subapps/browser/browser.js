@@ -27,7 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
       models = Y.namespace('juju.models'),
-      views = Y.namespace('juju.browser.views');
+      views = Y.namespace('juju.browser.views'),
+      utils = Y.namespace('juju.views.utils');
 
   /**
      Browser Sub App for the Juju Gui.
@@ -82,7 +83,8 @@ YUI.add('subapp-browser', function(Y) {
         envSeries: this.get('envSeries'),
         db: this.get('db'),
         filters: this.state.filter.getFilterData(),
-        store: this.get('store')
+        store: this.get('store'),
+        charmstore: this.get('charmstore')
       });
     },
 
@@ -94,12 +96,11 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     _registerSubappHelpers: function() {
-      var store = this.get('store');
+      var charmstore = this.get('charmstore');
       // Register a helper for generating the icon urls for charms.
       Y.Handlebars.registerHelper('charmIconPath', function(charmID, isBundle) {
-        return store.iconpath(charmID, isBundle);
+        return utils.getIconPath(charmID, isBundle, charmstore);
       });
-
     },
 
     /**
@@ -618,7 +619,8 @@ YUI.add('subapp-browser', function(Y) {
       var cfg = {
         file: file,
         env: this.get('env'),
-        db: this.get('db')
+        db: this.get('db'),
+        charmstore: this.get('charmstore')
       };
       if (metadata.localType === 'new') {
         activeInspector = new Y.juju.views.RequestSeriesInspector(cfg);
@@ -660,6 +662,7 @@ YUI.add('subapp-browser', function(Y) {
         ecs: this.get('ecs'),
         topo: topo,
         store: topo.get('store'),
+        charmstore: this.get('charmstore'),
         activeTab: metadata.hash,
         hideHelp: hideHelp
       };
@@ -757,6 +760,13 @@ YUI.add('subapp-browser', function(Y) {
       store: {},
 
       /**
+        @attribute charmstore
+        @default juju.charmstore.APIv4
+        @type {juju.charmstore.APIv4}
+      */
+      charmstore: {},
+
+      /**
          @attribute routes
          @default Array of subapp routes.
          @type {Array}
@@ -848,6 +858,7 @@ YUI.add('subapp-browser', function(Y) {
     'juju-charmbrowser',
     'juju-models',
     'juju-view-onboarding',
+    'juju-view-utils',
     'machine-view-panel-extension',
     'querystring',
     'sub-app',
