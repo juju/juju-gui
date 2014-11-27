@@ -1555,6 +1555,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var iconFakeStore = new Y.juju.charmstore.APIv4({
         charmstoreURL: 'http://localhost/'
       });
+      var fakeEnv = {
+        getLocalCharmFileUrl: testUtils.makeStubFunction('local charm icon')
+      };
       var services = new models.ServiceList();
       services.add([
         {
@@ -1578,11 +1581,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var boxes = views.toBoundingBoxes(
-          module, services, existing, iconFakeStore);
+          module, services, existing, iconFakeStore, fakeEnv);
 
-      // the ceph charm should have the default icon path.
-      assert.equal(
-          boxes['local:ceph-1'].icon, 'http://localhost/v4/ceph-1/icon.svg');
+      assert.equal(boxes['local:ceph-1'].icon, 'local charm icon');
 
       // The mysql charm has an icon from on the server.
       assert.equal(

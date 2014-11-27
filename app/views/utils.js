@@ -1312,7 +1312,8 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {Object} charmstore The charm store.
    * @return {Object} id:box mapping.
    */
-  views.toBoundingBoxes = function(module, services, existing, charmstore) {
+  views.toBoundingBoxes = function(
+      module, services, existing, charmstore, env) {
     var result = existing || {};
     Y.each(result, function(val, key, obj) {
       if (!Y.Lang.isValue(services.getById(key))) {
@@ -1329,8 +1330,8 @@ YUI.add('juju-view-utils', function(Y) {
           }
           if (!service.get('icon') && service.get('charm')) {
             var icon;
-            var charmID = service.get('charm');
-            icon = charmstore.getIconPath(charmID);
+            var charmId = service.get('charm');
+            icon = utils.getIconPath(charmId, null, charmstore, env);
             service.set('icon', icon);
           }
           result[id].icon = service.get('icon');
