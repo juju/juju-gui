@@ -82,78 +82,6 @@ describe('browser search widget', function() {
     container.one('input').get('value').should.eql('test');
   });
 
-  it('adds the search text to the suggestions api call', function(done) {
-    search = new Search({
-      autocompleteSource: function(filters, callbacks, scope) {
-        assert.equal(filters.text, 'test');
-        done();
-      },
-      filters: {}
-    });
-
-    search._fetchSuggestions('test', function() {});
-  });
-
-  it('routes to a search with charm when selected', function(done) {
-    // We're testing against the internal interface here to avoid going
-    // through the event forcing loops to verify we get the right change
-    // events for navigation.
-    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
-      assert.equal(ev.newVal, 'Ceph');
-      assert.equal(ev.change.charmID, 'precise/ceph-10');
-      assert.equal(ev.change.filter.categories.length, 0);
-      assert.equal(ev.change.filter.text, 'Ceph');
-      done();
-    });
-
-    search._suggestionSelected({
-      halt: function() {},
-      result: {
-        raw: {charm: {id: 'precise/ceph-10'}},
-        text: 'Ceph'
-      }
-    });
-  });
-
-  it('generates a proper change event for category selection', function(done) {
-    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
-      // The search term is empty because we selected a category, not a
-      // specific charm to search for.
-      assert.equal(ev.newVal, '');
-      // There's no charm id selected, we want search results to display.
-      assert.equal(ev.change.charmID, null);
-      assert.equal(ev.change.search, true);
-      assert.equal(ev.change.filter.categories[0], 'app-servers');
-      done();
-    });
-
-    search._suggestionSelected({
-      halt: function() {},
-      result: {
-        raw: {charm: {id: 'cat:~gui/cat/app-servers-10'}},
-        text: 'App Servers'
-      }
-    });
-  });
-
-  it('generates a bundle change event when bundle selected', function(done) {
-    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
-      assert.equal(ev.newVal, 'TestBundle');
-      // The bundle id gets prefixed with the /bundle to help routing.
-      assert.equal(ev.change.charmID, '/bundle/~hatch/wiki/7/TestBundle');
-      assert.equal(ev.change.filter.categories.length, 0);
-      done();
-    });
-
-    search._suggestionSelected({
-      halt: function() {},
-      result: {
-        raw: {bundle: {id: '~hatch/wiki/7/TestBundle'}},
-        text: 'TestBundle'
-      }
-    });
-  });
-
   it('clicking on the home link also works', function(done) {
     search.on(search.EVT_SEARCH_GOHOME, function() {
       done();
@@ -222,7 +150,6 @@ describe('search widget autocomplete', function() {
       envSeries: function() {}
     });
     search.render(container);
-    search.ac.queryDelay = 0;
   });
 
   afterEach(function() {
@@ -233,14 +160,6 @@ describe('search widget autocomplete', function() {
 
   after(function() {
     Y.Handlebars.helpers.charmFilePath = undefined;
-  });
-
-  it('sets the positioning for autocomplete as absolute', function() {
-    // We need to ensure that the boundingBox is always in position: absolute.
-    // In IE10 it can be set to position: relative, causing rendering problems
-    // in the header.
-    var bb = search.ac.get('boundingBox');
-    assert.equal(bb.getStyle('position'), 'absolute');
   });
 
   it('defaults to listening to suggestions state', function() {
@@ -268,15 +187,4 @@ describe('search widget autocomplete', function() {
     assert.equal(search.ignoreInFlight, false);
   });
 
-  it('shows categories when search text is empty', function(done) {
-    search._fetchSuggestions('', function(data) {
-      assert.equal(data.result.length, 6);
-      // Each of these is a category and should have an id that starts with
-      // cat: to help us ID them.
-      data.result.forEach(function(suggestion) {
-        assert.equal(suggestion.charm.id.substr(0, 4), 'cat:');
-      });
-      done();
-    });
-  });
 });
