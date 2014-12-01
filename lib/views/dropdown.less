@@ -26,8 +26,9 @@
         top: @navbar-height;
         left: 0;
         width: 290px;
-        background-color: #eee;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        border-radius: 0 0 4px 4px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 
         &.right {
             left: auto;
@@ -35,7 +36,7 @@
             text-align: right;
         }
         &.narrow {
-            width: 230px;
+            min-width: 140px;
         }
         a,
         p,
@@ -57,29 +58,16 @@
         }
         footer {
             padding: 20px;
-            border-radius: 0 0 @border-radius @border-radius;
+
         }
         ul {
             max-height: 500px;
             overflow-y: auto;
 
             li {
-                border-top: 1px solid #efefef;
-                border-bottom: 1px solid #e2e2e2;
-
-                &:first-child {
-                    border-top: none;
-                }
-                &:last-child {
-                    border-bottom: none;
-                }
                 a {
                     display: block;
                     padding: 15px 20px;
-
-                    &:hover {
-                        background-color: #e2e2e2;
-                    }
                 }
             }
             // Notification items

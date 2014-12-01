@@ -606,6 +606,9 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
+        if (window.flags && window.flags.sso) {
+          this._renderUserDropdownView();
+        }
         this._renderDeployerBarView();
         this._renderEnvironmentHeaderView();
         this.get('subApps').charmbrowser.on(
@@ -882,6 +885,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Handles rendering the user dropdown view on application load.
+     *
+     * @method _renderUserDropdownView
+     */
+    _renderUserDropdownView: function() {
+      this.userDropdown = new views.UserDropdownView({
+        container: Y.one('#user-dropdown')
+      }).render();
+    },
+
+    /**
      * Handles rendering the deployer bar view on application load.
      *
      * @method _renderDeployerBarView
@@ -986,6 +1000,9 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this.helpDropdown) {
         this.helpDropdown.destroy();
+      }
+      if (this.userDropdown) {
+        this.userDropdown.destroy();
       }
       if (this.deployerBar) {
         this.deployerBar.destroy();
@@ -1699,6 +1716,7 @@ YUI.add('juju-gui', function(Y) {
     'deployer-bar',
     'environment-header-extension',
     'local-charm-import-helpers',
-    'environment-change-set'
+    'environment-change-set',
+    'user-dropdown'
   ]
 });

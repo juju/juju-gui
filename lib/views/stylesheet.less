@@ -323,8 +323,39 @@ th {
             margin-left: 7px;
             vertical-align: top;
         }
+        .user-dropdown {
+            display: none;
+
+            .menu-link {
+                .sprite {
+                    margin-right: 10px;
+
+                    &.hover {
+                        display: none;
+                    }
+                    &.normal {
+                        display: inline-block;
+                    }
+                }
+            }
+            .open .menu-link,
+            .menu-link:hover {
+                .sprite.hover {
+                    display: inline-block;
+                }
+                .sprite.normal {
+                    display: none;
+                }
+            }
+        }
     }
 }
+.flag-sso .navbar .right-nav .user-dropdown {
+    display: block;
+}
+
+
+
 #content {
     position: relative;
     background-color: #fff;
