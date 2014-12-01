@@ -535,7 +535,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderAddedServices: function() {
       var extraCfg = {
-        container: this._sidebar.get('container').one('.bws-content'),
+        container: this._sidebar.get('container').one('.bws-content')
       };
       var cfg = this._getViewCfg(extraCfg);
       if (!this._addedServices) {
