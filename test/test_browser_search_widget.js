@@ -268,68 +268,6 @@ describe('search widget autocomplete', function() {
     assert.equal(search.ignoreInFlight, false);
   });
 
-  it('supports autocompletion while entering text', function(done) {
-    // Create our own search instance.
-    search.destroy();
-    container.remove(true);
-    container = utils.makeContainer(this, 'container');
-
-    search.ac.on('results', function(ev) {
-      // The results should be displaying now. Check for token nodes.
-      // The results length is filtered down from 21 to 9 see charm-search.js
-      // _sortResultSet for the algo and details.
-      assert.equal(ev.results.length, 9);
-      assert.isTrue(ev.results[0].display.hasClass('yui3-token'));
-
-      // There are two category results now for 'a'. They appear at the start
-      // of the list of completion options.
-      assert.equal(ev.results[0].text, 'App Servers');
-      assert.equal(ev.results[1].text, 'Applications');
-      // charms should be sorted by the users default series in their env.
-      // For these tests the default series is set to precise so they should
-      // come first.
-      var charm = {};
-      var names = [];
-      ev.results.forEach(function(result) {
-        charm = result.raw.charm;
-        if (charm && charm.distro_series) {
-          // There should not be any Oneiric charms in the autocomplete list.
-          assert.notEqual(charm.distro_series, 'oneiric');
-          names.push(charm.name);
-        }
-      });
-      // There shoulnd't be any duplicate names in the AC result list.
-      assert.equal(names.length, Y.Array.dedupe(names).length);
-      done();
-    });
-
-    // hack into the ac widget to simulate the valueChange event
-    search.ac._afterValueChange({
-      newVal: 'a',
-      src: 'ui'
-    });
-  });
-
-  it('properly identifies categories in the html results', function(done) {
-    search.ac.on('results', function(ev) {
-      // The first two results should be category
-      assert.isTrue(
-          ev.results[0].display.one('.token').hasClass('category'));
-      assert.isTrue(
-          ev.results[1].display.one('.token').hasClass('category'));
-
-      // The second category is the last category and is labeled as such.
-      assert.isTrue(ev.results[1].display.hasClass('last-category'));
-      done();
-    });
-
-    // hack into the ac widget to simulate the valueChange event
-    search.ac._afterValueChange({
-      newVal: 'a',
-      src: 'ui'
-    });
-  });
-
   it('shows categories when search text is empty', function(done) {
     search._fetchSuggestions('', function(data) {
       assert.equal(data.result.length, 6);
@@ -341,31 +279,4 @@ describe('search widget autocomplete', function() {
       done();
     });
   });
-
-  it('fires deploy event when the deploy button is selected', function(done) {
-    // This is heading into the private, non-publicized events of the AC
-    // widget in an effort to hit the html on render after results come
-    // back.
-    search.ac.after('resultsChange', function(ev) {
-      //Find one of the deployable results and trigger click event.
-      var chosenOne = container.one('.search_add_to_canvas');
-      chosenOne.simulate('click');
-    });
-
-    search.on(search.EVT_DEPLOY, function(ev) {
-      // Verify that the event was called with the correct payload to deploy.
-      assert.equal(ev.entityType, 'charm');
-      assert.equal(ev.id, 'precise/apache2-passenger-3');
-      assert.equal(ev.data.url, 'cs:precise/apache2-passenger-3');
-      done();
-    });
-
-    // hack into the ac widget to simulate the valueChange event
-    search.ac._afterValueChange({
-      newVal: 'a',
-      src: 'ui'
-    });
-
-  });
-
 });
