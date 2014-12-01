@@ -41,7 +41,7 @@ describe('user dropdown view', function() {
   beforeEach(function() {
     viewNode = utils.makeContainer(this, 'user-dropdown');
     userView = new views.UserDropdownView({
-      container: viewNode,
+      container: viewNode
     });
     userView.render();
   });
