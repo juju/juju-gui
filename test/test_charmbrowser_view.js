@@ -310,40 +310,6 @@ describe('charmbrowser view', function() {
         });
       });
     });
-
-    describe('_deployEntity', function() {
-      beforeEach(function() {
-        charmBrowser.setAttrs({
-          deployBundle: utils.makeStubFunction(),
-          deployService: utils.makeStubFunction(),
-          charmstore: {
-            getIconPath: utils.makeStubFunction()
-          }
-        });
-      });
-
-      it('calls to deploy a bundle', function() {
-        var data = {
-          entityType: 'bundle',
-          data: { foo: 'bar' },
-          id: 'bundle-123' };
-        charmBrowser._deployEntity(Y.clone(data));
-        assert.equal(charmBrowser.get('deployBundle').calledOnce(), true);
-        assert.equal(charmBrowser.get('deployService').callCount(), false);
-      });
-
-      it('calls to deploy a charm', function() {
-        var data = {
-          entityType: 'charm',
-          data: { id: 'cs:precise/mysql-44' },
-          id: 'cs:precise/mysql-44' };
-        charmBrowser._deployEntity(Y.clone(data));
-        assert.equal(charmBrowser.get('deployBundle').calledOnce(), false);
-        assert.equal(charmBrowser.get('deployService').callCount(), true);
-        assert.equal(
-            charmBrowser.get('charmstore').getIconPath.calledOnce(), true);
-      });
-    });
   });
 
   describe('_loadSearchResults', function() {
