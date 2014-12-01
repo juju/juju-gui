@@ -232,12 +232,6 @@ describe('charmbrowser view', function() {
 
   describe('search-widget-mgmt-extension', function() {
     beforeEach(function() {
-      charmBrowser.set('store', {
-        cancelInFlightRequest: utils.makeStubFunction(),
-        autocomplete: utils.makeStubFunction(),
-        transformResults: utils.makeStubFunction(),
-        buildCategoryIconPath: utils.makeStubFunction()
-      });
       charmBrowser.set('filters', { text: 'apache' });
       charmBrowser.get('container')
                   .append('<div class="search-widget"></div>');
@@ -255,12 +249,6 @@ describe('charmbrowser view', function() {
         charmBrowser._renderSearchWidget();
         var search = charmBrowser.searchWidget,
             store = charmBrowser.get('store');
-        search.get('autocompleteSource')();
-        assert.equal(store.autocomplete.calledOnce(), true);
-        search.get('autocompleteDataFormatter')();
-        assert.equal(store.transformResults.calledOnce(), true);
-        search.get('categoryIconGenerator')();
-        assert.equal(store.buildCategoryIconPath.calledOnce(), true);
         assert.deepEqual(search.get('filters'), charmBrowser.get('filters'));
       });
 
@@ -320,15 +308,6 @@ describe('charmbrowser view', function() {
           newVal: 'foo',
           change: change
         });
-      });
-
-      it('calls to deploy charm when the deploy button is clicked', function() {
-        var deploy = utils.makeStubMethod(charmBrowser, '_deployEntity');
-        this._cleanups.push(deploy.reset);
-        charmBrowser._renderSearchWidget();
-        var searchWidget = charmBrowser.searchWidget;
-        searchWidget.fire(searchWidget.EVT_DEPLOY);
-        assert.equal(deploy.calledOnce(), true);
       });
     });
 

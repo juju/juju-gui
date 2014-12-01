@@ -29,7 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
-      models = Y.namespace('juju.models.browser'),
       templates = Y.namespace('juju.views').Templates;
 
   /**
@@ -48,23 +47,8 @@ YUI.add('browser-search-widget', function(Y) {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_SEARCH_CHANGED: 'search_changed',
     EVT_SEARCH_GOHOME: 'go_home',
-    EVT_DEPLOY: 'charm_deploy',
 
     TEMPLATE: templates['browser-search'],
-
-    /**
-     * When the AC input has focus adjust css properties to note it's active.
-     *
-     * @method _handleInputFocus
-     * @param {Event} ev the focus event from YUI.
-     *
-     */
-    _handleInputFocus: function(ev) {
-      // Make sure we reset to respond to suggestions coming in.
-      this.ignoreInFlight = false;
-      // Update the styling to represent an active input.
-      this._setActive();
-    },
 
     /**
      * Halt page reload from form submit and let the app know we have a new
@@ -75,14 +59,8 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _handleSubmit: function(ev) {
       ev.halt();
-      this.ignoreInFlight = true;
       var form = this.get('boundingBox').one('form'),
           value = form.one('input').get('value');
-
-      // Make sure we close the suggestions container.
-      if (this.ac) {
-        this.ac.hide();
-      }
 
       this.fire(this.EVT_SEARCH_CHANGED, {
         newVal: value
@@ -103,36 +81,6 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
-     * Set the form to active so that we can change the search appearance.
-     *
-     * @method _setActive
-     * @private
-     *
-     */
-    _setActive: function() {
-      this.get('boundingBox').one('form').addClass('active');
-    },
-
-    /**
-     * Toggle the active state depending on the content in the search box.
-     *
-     * @method _toggleActive
-     * @private
-     *
-     */
-    _toggleActive: function() {
-      var form = this.get('boundingBox').one('form'),
-          value = form.one('input').get('value');
-
-      if (value === '') {
-        form.removeClass('active');
-      }
-      else {
-        form.addClass('active');
-      }
-    },
-
-    /**
      * bind the UI events to the DOM making up the widget control.
      *
      * @method bindUI
@@ -144,13 +92,6 @@ YUI.add('browser-search-widget', function(Y) {
       this.addEvent(
           container.one('form').on(
               'submit', this._handleSubmit, this)
-      );
-      this.addEvent(
-          container.one('input').on('focus', this._handleInputFocus, this)
-      );
-      this.addEvent(
-          container.one('input').on(
-              'blur', this._toggleActive, this)
       );
 
       this.addEvent(
@@ -181,18 +122,6 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
-     * Clean up instances of objects we create
-     *
-     * @method destroy
-     *
-     */
-    destroy: function() {
-      if (this.ac) {
-        this.ac.destroy();
-      }
-    },
-
-    /**
      * Generic initializer for the widget. Publish events we expose for
      * outside use.
      *
@@ -209,9 +138,6 @@ YUI.add('browser-search-widget', function(Y) {
        */
       this.publish(this.EVT_SEARCH_CHANGED);
       this.publish(this.EVT_SEARCH_GOHOME);
-
-      // Make sure we default to responding to AC calls.
-      this.ignoreInFlight = false;
     },
 
     /**
@@ -228,57 +154,12 @@ YUI.add('browser-search-widget', function(Y) {
 
       // If there's an existing search term, make sure we toggle active.
       if (data.filters.text) {
-        this._toggleActive();
+        this.get('boundingBox').one('form').addClass('active');
       }
-    },
-
-    /**
-     * Update the search input to contain the string passed. This is meant to
-     * be used by outside links that want to perform a pre-canned search and
-     * display results.
-     *
-     * @method update_search
-     * @param {String} newval the sting to update the input to.
-     *
-     */
-    updateSearch: function(newval) {
-      var input = this.get('contentBox').one('input');
-      input.focus();
-      input.set('value', newval);
     }
 
   }, {
     ATTRS: {
-      /**
-        @attribute autocompleteSource
-        @default {undefined} The api point for fetching the suggestions.
-        @type {function}
-
-      */
-      autocompleteSource: {
-
-      },
-
-      /**
-       * @attribute autoCompleteDataFormatter
-       * @default {undefined}
-       * @type {function}
-       *
-       */
-      autocompleteDataFormatter: {
-
-      },
-
-      /**
-       * @attribute categoryIconGenerator
-       * @default {undefined}
-       * @type {function}
-       *
-       */
-      categoryIconGenerator: {
-
-      },
-
       /**
          @attribute filters
          @default {Object} text: ''
@@ -289,34 +170,22 @@ YUI.add('browser-search-widget', function(Y) {
         value: {
           text: ''
         }
-      },
-
-      /**
-         A callable passsed in from the top level application which fetches the
-         default env series.
-
-         @attribute envSeries
-         @default undefined
-         @type {Function}
-       */
-      envSeries: {}
+      }
     }
   });
 
 }, '0.1.0', {
   requires: [
     'autocomplete',
+    // XXX Dec 1 2014 Jeff - The above autocomplete module must remain here else
+    // we get a huge number of test failures around dom query selectors.
     'base',
-    'browser-token',
     'browser-filter-widget',
     'event',
     'event-delegate',
     'event-tracker',
     'event-mouseenter',
-    'event-valuechange',
-    'juju-browser-models',
     'juju-templates',
-    'juju-views',
     'widget'
   ]
 });

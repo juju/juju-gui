@@ -76,10 +76,6 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
         );
         this.addEvent(
             searchWidget.on(
-                searchWidget.EVT_DEPLOY, this._deployEntity, this)
-        );
-        this.addEvent(
-            searchWidget.on(
                 searchWidget.EVT_SEARCH_GOHOME, this._goHome, this)
         );
 
