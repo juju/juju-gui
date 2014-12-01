@@ -188,28 +188,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
-    it('makes autocomplete requests to correct URL', function(done) {
-      var noop = function() {};
-
-      api._makeRequest = function(endpoint, callbacks, filters) {
-        assert.equal(endpoint, 'search');
-        done();
-      };
-
-      api.autocomplete({text: 'mys'}, {'success': noop});
-    });
-
-    it('makes autocomplete requests with right query flag', function(done) {
-      var noop = function() {};
-
-      api._makeRequest = function(endpoint, callbacks, filters) {
-        assert.equal(filters.autocomplete, 'true');
-        done();
-      };
-
-      api.autocomplete({text: 'mys'}, {'success': noop});
-    });
-
     it('constructs cateogry icon paths correctly', function() {
       var iconPath = api.buildCategoryIconPath('app-servers');
       assert.equal(

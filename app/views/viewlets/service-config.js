@@ -208,6 +208,7 @@ YUI.add('service-config-view', function(Y) {
       var container = this.get('container'),
           dirtyFields = e.newVal || e;
       container.all('.settings-wrapper').removeClass('uncommitted');
+      debugger;
       dirtyFields.forEach(function(configKey) {
         container.one('[data-bind=config.' + configKey + ']')
                  .ancestor('.settings-wrapper')
