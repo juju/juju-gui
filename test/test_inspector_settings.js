@@ -388,7 +388,7 @@ describe('Inspector Settings', function() {
     });
   });
 
-  it.only('saves changes to settings values', function() {
+  it('saves changes to settings values', function() {
     inspector = setUpInspector();
     env.connect();
     var vmContainer = inspector.get('container'),
@@ -403,7 +403,6 @@ describe('Inspector Settings', function() {
     button.simulate('click');
     ecs.commit(env);
     var message = env.ws.last_message();
-    debugger;
     assert.equal('foo', message.Params.Options.admins);
     // Send back a success message.
     env.ws.msg({RequestId: message.RequestId});

@@ -798,7 +798,8 @@ describe('Inspector Overview', function() {
 
       var mgrContainer = inspector.get('container');
       var retryButton = mgrContainer.one('button.unit-action-button.resolve');
-      var unit = mgrContainer.one('input[type=checkbox][name="' + unitId + '"]');
+      var unit = mgrContainer.one(
+          'input[type=checkbox][name="' + unitId + '"]');
 
       assert.equal(retryButton instanceof Y.Node, true);
       assert.equal(unit instanceof Y.Node, true);
@@ -832,7 +833,8 @@ describe('Inspector Overview', function() {
 
       var mgrContainer = inspector.get('container');
       var retryButton = mgrContainer.one('button.unit-action-button.retry');
-      var unit = mgrContainer.one('input[type=checkbox][name="' + unitId + '"]');
+      var unit = mgrContainer.one(
+          'input[type=checkbox][name="' + unitId + '"]');
 
       assert.equal(retryButton instanceof Y.Node, true);
       assert.equal(unit instanceof Y.Node, true);
@@ -863,7 +865,8 @@ describe('Inspector Overview', function() {
 
       var mgrContainer = inspector.get('container');
       var removeButton = mgrContainer.one('button.unit-action-button.remove');
-      var unit = mgrContainer.one('input[type=checkbox][name="' + unitId + '"]');
+      var unit = mgrContainer.one(
+          'input[type=checkbox][name="' + unitId + '"]');
 
       assert.equal(removeButton instanceof Y.Node, true,
           'removeButton is not an instance of Y.Node');
