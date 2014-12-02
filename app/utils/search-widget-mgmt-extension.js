@@ -49,13 +49,7 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
       var store = this.get('store');
       if (store) {
         this.searchWidget = new widgets.browser.Search({
-          autocompleteSource: Y.bind(
-              store.autocomplete,
-              store),
-          autocompleteDataFormatter: store.transformResults,
-          categoryIconGenerator: Y.bind(store.buildCategoryIconPath, store),
-          filters: this.get('filters'),
-          envSeries: this.get('envSeries')
+          filters: this.get('filters')
         });
         this.searchWidget.render(this.get('container').one('.search-widget'));
         this._bindSearchWidgetEvents();
@@ -73,10 +67,6 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
         this.addEvent(
             searchWidget.on(
                 searchWidget.EVT_SEARCH_CHANGED, this._searchChanged, this)
-        );
-        this.addEvent(
-            searchWidget.on(
-                searchWidget.EVT_DEPLOY, this._deployEntity, this)
         );
         this.addEvent(
             searchWidget.on(
@@ -138,34 +128,6 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
           component: null
         }
       });
-    },
-
-    /**
-      Deploy either a bundle or charm given by the quicksearch widget.
-
-      @method _deployEntity
-      @param {Y.Event} e The event object from the widget.
-    */
-    _deployEntity: function(e) {
-      var entityType = e.entityType,
-          entity = e.data,
-          entityId = e.id,
-          deployer;
-
-      if (entityType === 'bundle') {
-        deployer = this.get('deployBundle');
-        var bundle = new models.Bundle(entity);
-        deployer(bundle.get('data'));
-      } else {
-        deployer = this.get('deployService');
-        var charm = new models.Charm(entity);
-        var ghostAttributes;
-        ghostAttributes = {
-          icon: utils.getIconPath(
-              charm.get('storeId'), false, this.get('charmstore'))
-        };
-        deployer.call(null, charm, ghostAttributes);
-      }
     }
   };
 
