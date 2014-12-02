@@ -45,16 +45,39 @@ YUI.add('charmstore-api', function(Y) {
 
       @method _makeRequest
       @param {String} The path to make the api request to.
-      @param {Function} callback The callback to call after the request has
-        completed.
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
     */
-    _makeRequest: function(path, callback) {
+    _makeRequest: function(path, successCallback, failureCallback) {
       this.requestHandler.sendGetRequest(
           path,
           // The WebHandler methods allow you to pass in headers, username,
           // password, progressCallback which we do not need.
           null, null, null, null,
-          callback);
+          this._requestHandler.bind(this, successCallback, failureCallback));
+    },
+
+    /**
+      Handles the request response from the _makeRequest method, calling the
+      supplied failure callback if the response status was >= 400 or passing the
+      response object to the supplied success callback.
+
+      @method _requestHandler
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
+      @param {Object} response The XHR response object.
+    */
+    _requestHandler: function(successCallback, failureCallback, response) {
+      var target = response.target;
+      if (target.status >= 400) {
+        failureCallback(response);
+        return;
+      }
+      successCallback(response);
     },
 
     /**
@@ -74,14 +97,32 @@ YUI.add('charmstore-api', function(Y) {
     },
 
     /**
+      Transforms the results from a charmstore query into model objects.
+
+      @method _transformQueryResults
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Object} response Thre XHR response object.
+    */
+    _transformQueryResults: function(successCallback, response) {
+      var data = JSON.parse(response.target.responseText);
+    },
+
+    /**
       Makes a search request using the supplied filters and returns the
       results to the supplied callback.
 
       @method search
+      @param {Object} filters The additional filters to use to make the
+        search request such as { text: 'apache' }.
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
     */
-    search: function(filters, callback) {
+    search: function(filters, successCallback, failureCallback) {
       var defaultFilters =
-                        '&limit=600&' +
+                        '&limit=20&' +
                         'include=charm-metadata&' +
                         'include=bundle-metadata&' +
                         'include=extra-info&' +
@@ -89,7 +130,10 @@ YUI.add('charmstore-api', function(Y) {
 
       var path = this._generatePath(
           'search', Y.QueryString.stringify(filters) + defaultFilters);
-      this._makeRequest(path, callback);
+      this._makeRequest(
+          path,
+          this._transformQueryResults.bind(this, successCallback),
+          failureCallback);
     },
 
     /**
