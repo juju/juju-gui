@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('charmstore-api', function(Y) {
 
+  var jujuModels = Y.juju.models;
+
   /**
     Implementation of the charmstore v4 api.
 
@@ -105,7 +107,58 @@ YUI.add('charmstore-api', function(Y) {
       @param {Object} response Thre XHR response object.
     */
     _transformQueryResults: function(successCallback, response) {
-      var data = JSON.parse(response.target.responseText);
+      var data = JSON.parse(response.target.responseText).Results;
+      var models = data.map(function(entity) {
+        var entityData = this._processEntityQueryData(entity);
+        if (entityData.entityType === 'charm') {
+          return new jujuModels.Charm(entityData);
+        } else {
+          return new jujuModels.Bundle(entityData);
+        }
+      }, this);
+      successCallback(models);
+    },
+
+    /**
+      The response object returned from the apiv4 search endpoint is a complex
+      object with golang style keys. This parses the complex object and
+      returns something that we use to instantiate new charm and bundle models.
+
+      @method _processEntityQueryData
+      @param {Object} data The entities data from the charmstore search api.
+      @return {Object} The processed data structure.
+    */
+    _processEntityQueryData: function(data) {
+      var meta = data.Meta,
+          extraInfo = meta['extra-info'],
+          charmMeta = meta['charm-metadata'],
+          bundleMeta = meta['bundle-metadata'];
+      // Singletons and keys which are outside of the common structure
+      var processed = {
+        id: data.Id,
+        downloads: meta.stats.ArchiveDownloadCount,
+        entityType: (charmMeta) ? 'charm' : 'bundle',
+        // If the id has a user segment then it has not been promulgated.
+        is_approved: data.Id.indexOf('~') > 0 ? false : true,
+        owner: extraInfo['bzr-owner'],
+        revisions: extraInfo['bzr-revisions']
+      };
+      // An entity will only have one or the other.
+      var metadata = (charmMeta) ? charmMeta : bundleMeta;
+      Object.keys(metadata).forEach(function(key) {
+        processed[key.toLowerCase()] = metadata[key];
+      });
+      // Bundles do not have a provided name from the api so we need to parse
+      // the name from the id to match the model.
+      if (!processed.name) {
+        var idParts = data.Id.split('/');
+        // The last section will have the name of the bundle.
+        idParts = idParts[idParts.length - 1];
+        // Need to strip the revision number off of the end.
+        idParts = idParts.split('-').slice(0, -1);
+        processed.name = idParts.join('-');
+      }
+      return processed;
     },
 
     /**
@@ -122,7 +175,7 @@ YUI.add('charmstore-api', function(Y) {
     */
     search: function(filters, successCallback, failureCallback) {
       var defaultFilters =
-                        '&limit=20&' +
+                        '&limit=30&' +
                         'include=charm-metadata&' +
                         'include=bundle-metadata&' +
                         'include=extra-info&' +
@@ -177,6 +230,8 @@ YUI.add('charmstore-api', function(Y) {
 }, '', {
   requires: [
     'juju-env-web-handler',
-    'querystring-stringify'
+    'querystring-stringify',
+    'juju-charm-models',
+    'juju-bundle-models'
   ]
 });
