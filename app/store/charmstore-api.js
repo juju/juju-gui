@@ -29,9 +29,69 @@ YUI.add('charmstore-api', function(Y) {
   function APIv4(config) {
     this.charmstoreURL = config.charmstoreURL;
     this.apiPath = 'v4';
+    // We are using the webHandler class included in our source as a wrapper
+    // around XHR. In the future if we would like to provide this class
+    // as a public module for people to interact with the charmstore v4 api
+    // then we should accept a requestHandler class being passed in on
+    // instantiation as well as a different _makeRequest method for the
+    // prototype.
+    this.requestHandler = new Y.juju.environments.web.WebHandler();
   }
 
   APIv4.prototype = {
+    /**
+      Takes the path supplied by the caller and makes a request to the
+      requestHandler instance.
+
+      @method _makeRequest
+      @param {String} The path to make the api request to.
+      @param {Function} callback The callback to call after the request has
+        completed.
+    */
+    _makeRequest: function(path, callback) {
+      this.requestHandler.sendGetRequest(
+          path,
+          // The WebHandler methods allow you to pass in headers, username,
+          // password, progressCallback which we do not need.
+          null, null, null, null,
+          callback);
+    },
+
+    /**
+      Generates a path to the charmstore apiv4 based on the query and endpoint
+      params passed in.
+
+      @method _generatePath
+      @param {String} endpoint The endpoint to call at the charmstore.
+      @param {Object} query The query parameters that are required for the
+        request.
+      @return {String} A charmstore url based on the query and endpoint params
+        passed in.
+    */
+    _generatePath: function(endpoint, query) {
+      query = query ? '?' + query : '';
+      return this.charmstoreURL + this.apiPath + '/' + endpoint + query;
+    },
+
+    /**
+      Makes a search request using the supplied filters and returns the
+      results to the supplied callback.
+
+      @method search
+    */
+    search: function(filters, callback) {
+      var defaultFilters =
+                        '&limit=600&' +
+                        'include=charm-metadata&' +
+                        'include=bundle-metadata&' +
+                        'include=extra-info&' +
+                        'include=stats';
+
+      var path = this._generatePath(
+          'search', Y.QueryString.stringify(filters) + defaultFilters);
+      this._makeRequest(path, callback);
+    },
+
     /**
       Returns the correct path for a charm or bundle icon provided an id and
       whether or not it is a bundle.
@@ -70,4 +130,9 @@ YUI.add('charmstore-api', function(Y) {
 
   Y.namespace('juju.charmstore').APIv4 = APIv4;
 
+}, '', {
+  requires: [
+    'juju-env-web-handler',
+    'querystring-stringify'
+  ]
 });
