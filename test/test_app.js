@@ -372,6 +372,41 @@ function injectData(app, data) {
       });
     });
 
+    it('renders the user dropdown with flags.login', function(done) {
+      window.flags = {};
+      window.flags.login = true;
+      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
+      constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
+      });
+      app.after('ready', function() {
+        assert.isObject(app.userDropdown);
+        assert.equal(container.one('#user-dropdown').hasClass(
+            'dropdown-menu'), true);
+        done();
+      });
+      window.flags = {};
+    });
+
+    it('does not render the user dropdown without flags.login', function(done) {
+      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
+      constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
+      });
+      app.after('ready', function() {
+        assert.isNotObject(app.userDropdown);
+        assert.equal(container.one('#user-dropdown').hasClass(
+            'dropdown-menu'), false);
+        done();
+      });
+    });
+
     describe('MAAS support', function() {
       var env, maasNode;
 

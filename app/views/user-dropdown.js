@@ -37,18 +37,15 @@ YUI.add('user-dropdown', function(Y) {
    */
   var UserDropdownView = Y.Base.create('UserDropdownView', Y.View,
       [
-        Y.juju.Dropdown,
-        Y.Event.EventTracker
+        Y.juju.Dropdown
       ], {
         template: Templates['user-dropdown'],
-
-        events: {
-        },
 
         /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
+         * @return {Object} The UserDropdownView view object.
          */
         render: function() {
           var container = this.get('container');
@@ -65,7 +62,6 @@ YUI.add('user-dropdown', function(Y) {
   requires: [
     'view',
     'juju-view-utils',
-    'event-tracker',
     'node',
     'handlebars',
     'view-dropdown-extension'
