@@ -361,24 +361,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     render: function() {
       this.showIndicator(this.get('renderTo'));
-
-      if (this.get('entity')) {
-        this._renderCharmView(this.get('entity'));
-        this.hideIndicator(this.get('renderTo'));
-      } else {
-        this.get('store').charm(this.get('entityId'), {
-          'success': function(data) {
-            var charm = new models.Charm(data.charm);
-            if (data.metadata) {
-              charm.set('metadata', data.metadata);
-            }
-            this.set('charm', charm);
-            this._renderCharmView(charm);
-            this.hideIndicator(this.get('renderTo'));
-          },
-          'failure': this.apiFailure
-        }, this);
-      }
+      this.get('store').charm(this.get('entityId'), {
+        'success': function(data) {
+          var charm = new models.Charm(data.charm);
+          if (data.metadata) {
+            charm.set('metadata', data.metadata);
+          }
+          this.set('charm', charm);
+          this._renderCharmView(charm);
+          this.hideIndicator(this.get('renderTo'));
+        },
+        'failure': this.apiFailure
+      }, this);
     }
   }, {
     ATTRS: {} // See entity-base.js for attributes
