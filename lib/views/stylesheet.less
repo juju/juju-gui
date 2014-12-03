@@ -245,7 +245,7 @@ th {
             .border-box;
             display: block;
             height: @navbar-height;
-            padding: 14px 20px 0 30px;
+            padding: 14px 20px 0 20px;
         }
         & > li {
             float: left;
@@ -295,7 +295,7 @@ th {
                 #notify-indicator {
                   .create-border-radius(4px);
                   border: 1px solid #d7d3d0;
-                  margin: -5px 9px 0 0;
+                  margin: -5px 0 0 0;
                   padding: 2px 6px;
                   &.populated {
                     background-color: @charm-panel-orange;
@@ -323,8 +323,42 @@ th {
             margin-left: 7px;
             vertical-align: top;
         }
+        .user-dropdown {
+            display: none;
+
+            .menu-link {
+                &:hover {
+                    background-color: @charm-panel-orange;
+                }
+                .sprite {
+                    margin-right: 10px;
+
+                    &.hover {
+                        display: none;
+                    }
+                    &.normal {
+                        display: inline-block;
+                    }
+                }
+            }
+            .open .menu-link,
+            .menu-link:hover {
+                .sprite.hover {
+                    display: inline-block;
+                }
+                .sprite.normal {
+                    display: none;
+                }
+            }
+        }
     }
 }
+.flag-login .navbar .right-nav .user-dropdown {
+    display: block;
+}
+
+
+
 #content {
     position: relative;
     background-color: #fff;

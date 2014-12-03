@@ -259,6 +259,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/help-dropdown.js'
         },
 
+        'juju-user-dropdown': {
+          fullpath: '/juju-ui/views/user-dropdown.js'
+        },
+
         'juju-container-token': {
           fullpath: '/juju-ui/widgets/container-token.js'
         },
@@ -331,6 +335,7 @@ var GlobalConfig = {
             'juju-templates',
             'juju-notifications',
             'juju-help-dropdown',
+            'juju-user-dropdown',
             'juju-create-machine-view',
             'juju-deployer-bar',
             'juju-environment-header',

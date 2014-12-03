@@ -83,6 +83,8 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
+      // Reset the flags.
+      window.flags = {};
       app.after('destroy', function() {
         container.remove(true);
         sessionStorage.setItem('credentials', null);
@@ -368,6 +370,40 @@ function injectData(app, data) {
         assert.isObject(app.environmentHeader);
         assert.equal(container.one('#environment-header').hasClass(
             'environment-header'), true);
+        done();
+      });
+    });
+
+    it('renders the user dropdown with flags.login', function(done) {
+      window.flags = {};
+      window.flags.login = true;
+      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
+      constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
+      });
+      app.after('ready', function() {
+        assert.isObject(app.userDropdown);
+        assert.equal(container.one('#user-dropdown').hasClass(
+            'dropdown-menu'), true);
+        done();
+      });
+    });
+
+    it('does not render the user dropdown without flags.login', function(done) {
+      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
+      constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
+      });
+      app.after('ready', function() {
+        assert.isNotObject(app.userDropdown);
+        assert.equal(container.one('#user-dropdown').hasClass(
+            'dropdown-menu'), false);
         done();
       });
     });
