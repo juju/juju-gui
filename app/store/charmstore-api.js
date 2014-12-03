@@ -120,6 +120,29 @@ YUI.add('charmstore-api', function(Y) {
     },
 
     /**
+      Recursively converts all keys to lowercase when assigning them to the
+      supplied host object.
+
+      @method lowerCaseKeys
+      @param {Object} obj The source object with the uppercase keys.
+      @param {Object} host The host object in which the keys will be assigned.
+      @return {Undefined} Does not return a value, modifies the supplied host
+        object in place.
+    */
+    _lowerCaseKeys: function(obj, host) {
+      Object.keys(obj).forEach(function(key) {
+        host[key.toLowerCase()] = obj[key];
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          this._lowerCaseKeys(obj[key], host[key.toLowerCase()]);
+        } else {
+          // This technique will create a version with a capitalized key so we
+          // need to delete it from the host object.
+          delete host[key];
+        }
+      }, this);
+    },
+
+    /**
       The response object returned from the apiv4 search endpoint is a complex
       object with golang style keys. This parses the complex object and
       returns something that we use to instantiate new charm and bundle models.
@@ -141,13 +164,15 @@ YUI.add('charmstore-api', function(Y) {
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
         owner: extraInfo['bzr-owner'],
-        revisions: extraInfo['bzr-revisions']
+        revisions: extraInfo['bzr-revisions'],
+        code_source: {
+          location: extraInfo['bzr-url']
+        }
       };
       // An entity will only have one or the other.
       var metadata = (charmMeta) ? charmMeta : bundleMeta;
-      Object.keys(metadata).forEach(function(key) {
-        processed[key.toLowerCase()] = metadata[key];
-      });
+      // Convert the remaining metadata keys to lowercase.
+      this._lowerCaseKeys(metadata, processed);
       // Bundles do not have a provided name from the api so we need to parse
       // the name from the id to match the model.
       if (!processed.name) {
