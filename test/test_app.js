@@ -83,6 +83,8 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
+      // Reset the flags.
+      window.flags = {};
       app.after('destroy', function() {
         container.remove(true);
         sessionStorage.setItem('credentials', null);
@@ -388,7 +390,6 @@ function injectData(app, data) {
             'dropdown-menu'), true);
         done();
       });
-      window.flags = {};
     });
 
     it('does not render the user dropdown without flags.login', function(done) {

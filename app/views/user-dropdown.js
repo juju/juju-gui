@@ -37,6 +37,8 @@ YUI.add('user-dropdown', function(Y) {
    */
   var UserDropdownView = Y.Base.create('UserDropdownView', Y.View,
       [
+        // Required by the view-dropdown-extension.js
+        Y.Event.EventTracker,
         Y.juju.Dropdown
       ], {
         template: Templates['user-dropdown'],
@@ -60,6 +62,7 @@ YUI.add('user-dropdown', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'event-tracker',
     'view',
     'juju-view-utils',
     'node',
