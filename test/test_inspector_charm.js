@@ -108,7 +108,8 @@ describe('Inspector Charm', function() {
     var bcvArgs = browserCharmView.lastArguments();
     assert.equal(bcvArgs[0].forInspector, true);
     assert.equal(typeof bcvArgs[0].store, 'object');
-    assert.equal(bcvArgs[0].entity.get('id'), charmID);
+    // We are temporarily not passing the entity in.
+    //assert.equal(bcvArgs[0].entity.get('id'), charmID);
 
     assert.equal(tabviewRender.calledOnce(), true);
   });
@@ -132,8 +133,9 @@ describe('Inspector Charm', function() {
     views.BrowserCharmView = function(cfg) {
       assert.isTrue(cfg.forInspector);
       assert.equal(typeof cfg.store, 'object');
-      assert.equal(cfg.entity.get('id'), charmID);
-      assert.isTrue(cfg.entity.get('cached'));
+      // We are temporarily not passing the entity in
+      // assert.equal(cfg.entity.get('id'), charmID);
+      // assert.isTrue(cfg.entity.get('cached'));
       return {
         render: function() { done(); },
         destroy: function() {}

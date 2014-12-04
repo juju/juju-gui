@@ -321,9 +321,11 @@ describe('charmbrowser view', function() {
       render = utils.makeStubMethod(charmBrowser, '_renderCharmTokens');
       context._cleanups.push(render.reset);
       charmBrowser.set('store', {
-        search: utils.makeStubFunction(),
         transformResults: utils.makeStubFunction([]),
         cancelInFlightRequest: utils.makeStubFunction()
+      });
+      charmBrowser.set('charmstore', {
+        search: utils.makeStubFunction()
       });
       charmBrowser.set('filters', { text: 'apache' });
       charmBrowser.set('cache', {
@@ -337,7 +339,7 @@ describe('charmbrowser view', function() {
     function callLoadSearchResults(context) {
       makeStubs(context);
       charmBrowser._loadSearchResults();
-      search = charmBrowser.get('store').search;
+      search = charmBrowser.get('charmstore').search;
       transform = charmBrowser.get('store').transformResults;
       searchArgs = search.lastArguments();
     }
@@ -348,24 +350,21 @@ describe('charmbrowser view', function() {
     it('requests the store for curated results', function() {
       callLoadSearchResults(this);
       assert.deepEqual(searchArgs[0], { text: 'apache' });
-      assert.deepEqual(Object.keys(searchArgs[1]), ['success', 'failure']);
-      assert.deepEqual(searchArgs[2], charmBrowser);
+      assert.deepEqual(typeof searchArgs[1], 'function');
+      assert.deepEqual(typeof searchArgs[2], 'function');
     });
 
     it('passes the api failure call off properly', function() {
       callLoadSearchResults(this);
-      searchArgs[1].failure();
+      searchArgs[2](); // Failure callback.
       assert.equal(failure.calledOnce(), true);
       assert.equal(failure.lastArguments()[0], 'search');
     });
 
     it('calls to render the search results', function() {
       callLoadSearchResults(this);
-      var data = {
-        recommended: [],
-        other: [] };
-      searchArgs[1].success.call(charmBrowser, data);
-      assert.equal(transform.callCount(), 1);
+      var data = [];
+      searchArgs[1].call(charmBrowser, data);
       // Make sure it updates the cache with the search results.
       var cache = charmBrowser.get('cache');
       assert.equal(cache.set.calledOnce(), true, 'set not called');
@@ -379,7 +378,10 @@ describe('charmbrowser view', function() {
       // Make sure it calls to render the results.
       assert.equal(render.calledOnce(), true);
       var renderArgs = render.lastArguments();
-      assert.deepEqual(renderArgs[0], data);
+      assert.deepEqual(renderArgs[0], {
+        recommended: [],
+        other: []
+      });
       assert.deepEqual(renderArgs[1], ['recommended', 'other']);
       assert.equal(renderArgs[2], 'searchResultTemplate');
     });
