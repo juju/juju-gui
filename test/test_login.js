@@ -97,7 +97,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.login();
       var message = conn.last_message();
       assert.equal('Login', message.Request);
-      assert.equal('user', message.Params.AuthTag);
+      assert.equal('user-user', message.Params.AuthTag);
       assert.equal('password', message.Params.Password);
     });
 
@@ -145,7 +145,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       loginView.login(ev);
       var message = conn.last_message();
       assert.equal('Login', message.Request);
-      assert.equal('user', message.Params.AuthTag);
+      assert.equal('user-user', message.Params.AuthTag);
       assert.equal('password', message.Params.Password);
     });
 

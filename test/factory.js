@@ -64,7 +64,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       var fakebackend = new Y.juju.environments.FakeBackend({
         store: fakeStore
       });
-      fakebackend.login('admin', 'password');
+      fakebackend.login('user-admin', 'password');
       return fakebackend;
     }
 

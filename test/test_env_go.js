@@ -178,7 +178,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Type: 'Admin',
           Request: 'Login',
           RequestId: 1,
-          Params: {AuthTag: 'user', Password: 'password'}
+          Params: {AuthTag: 'user-user', Password: 'password'}
         };
         assert.deepEqual(expected, last_message);
       });
