@@ -257,11 +257,13 @@ YUI.add('juju-bundle-models', function(Y) {
         getter: function() {
           var data = this.get('data');
           var rels = [];
-          Y.Array.each(data.relations, function(thing) {
-            var map = {};
-            map[thing[0]] = thing[1];
-            rels.push(map);
-          });
+          if (data && data.relations) {
+            Y.Array.each(data.relations, function(thing) {
+              var map = {};
+              map[thing[0]] = thing[1];
+              rels.push(map);
+            });
+          }
           return rels;
         }
       },
@@ -274,7 +276,9 @@ YUI.add('juju-bundle-models', function(Y) {
          */
         getter: function() {
           var data = this.get('data');
-          return data.series;
+          if (data) {
+            return data.series;
+          }
         }
       },
       services: {
@@ -286,19 +290,26 @@ YUI.add('juju-bundle-models', function(Y) {
 
          */
         getter: function() {
-          return this.get('data').services;
+          // XXX This getter can be removed entirely once the interesting/new
+          // charm list has been migrated to apiv4.
+          var data = this.get('data');
+          if (data) {
+            return this.get('data').services;
+          }
         }
       },
 
       /**
-       * @attribute service_count
+       * @attribute serviceCount
        * @default 0
        * @type {Number}
        *
        */
       serviceCount: {
         'getter': function() {
-          return Y.Object.keys(this.get('services')).length;
+          if (this.get('services')) {
+            return Y.Object.keys(this.get('services')).length;
+          }
         }
       },
 

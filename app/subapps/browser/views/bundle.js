@@ -289,20 +289,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     */
     render: function() {
       this.showIndicator(this.get('renderTo'));
-      var entity = this.get('entity');
-      if (entity) {
-        this._renderBundleView();
-      } else {
-        this.get('store').bundle(
-            this.get('entityId'), {
-              'success': function(data) {
-                this.set('entity', new models.Bundle(data));
-                this._renderBundleView();
-              },
-              'failure': this.apiFailure
+      this.get('store').bundle(
+          this.get('entityId'), {
+            'success': function(data) {
+              this.set('entity', new models.Bundle(data));
+              this._renderBundleView();
             },
-            this);
-      }
+            'failure': this.apiFailure
+          },
+          this);
     }
 
   }, {

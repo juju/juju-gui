@@ -155,7 +155,8 @@ YUI.add('charmstore-api', function(Y) {
       var meta = data.Meta,
           extraInfo = meta['extra-info'],
           charmMeta = meta['charm-metadata'],
-          bundleMeta = meta['bundle-metadata'];
+          bundleMeta = meta['bundle-metadata'],
+          bzrOwner = extraInfo['bzr-owner'];
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
@@ -163,7 +164,7 @@ YUI.add('charmstore-api', function(Y) {
         entityType: (charmMeta) ? 'charm' : 'bundle',
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
-        owner: extraInfo['bzr-owner'],
+        owner: bzrOwner,
         revisions: extraInfo['bzr-revisions'],
         code_source: {
           location: extraInfo['bzr-url']
@@ -182,6 +183,20 @@ YUI.add('charmstore-api', function(Y) {
         // Need to strip the revision number off of the end.
         idParts = idParts.split('-').slice(0, -1);
         processed.name = idParts.join('-');
+      }
+      // To allow the user to click on a bundle search result and display the
+      // details from the old apiv3 we need to try and generate the old url.
+      // This is a temporary fix and will be removed once the bundle details
+      // page supports apiv4.
+      if (processed.entityType === 'bundle') {
+        var basket = extraInfo['bzr-url'].split('/')[3];
+        console.log('original id', data.Id);
+        console.log('bzr url', extraInfo['bzr-url']);
+        var rev = data.Id.split('-');
+        // Grab only the revision;
+        rev = rev[rev.length - 1];
+        var user = bzrOwner !== 'charmers' ? '~' + bzrOwner + '/' : '';
+        processed.id = user + basket + '/' + rev + '/' + processed.name;
       }
       return processed;
     },
