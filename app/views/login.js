@@ -102,10 +102,14 @@ YUI.add('juju-view-login', function(Y) {
       // In order to have events work and the view cleanly be replaced by
       // other views, we need to put the contents in the usual "container"
       // node, even though it is not a child of the mask node.
+      var user = env.get('user') || env.defaultUser;
+      if (/^user-/.test(user)) {
+        user = user.substring(5);
+      }
       this.get('container').setHTML(this.template({
         environment_name: environment_name,
         error_text: error_text,
-        user: env.get('user') || env.defaultUser,
+        user: user,
         help_text: this.get('help_text')
       }));
       return this;
