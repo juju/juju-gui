@@ -190,8 +190,6 @@ YUI.add('charmstore-api', function(Y) {
       // page supports apiv4.
       if (processed.entityType === 'bundle') {
         var basket = extraInfo['bzr-url'].split('/')[3];
-        console.log('original id', data.Id);
-        console.log('bzr url', extraInfo['bzr-url']);
         var rev = data.Id.split('-');
         // Grab only the revision;
         rev = rev[rev.length - 1];

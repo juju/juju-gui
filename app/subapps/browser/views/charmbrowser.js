@@ -300,7 +300,6 @@ YUI.add('juju-charmbrowser', function(Y) {
       @param {Object} data The data from the store search results call.
     */
     _loadSearchSuccessHandler: function(data) {
-      //var results = this.get('store').transformResults(data.result);
       var recommended = [],
           other = [];
       var series = this.get('envSeries')() || 'precise';
