@@ -173,7 +173,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       client.onmessage = function(received) {
         var expected = {
-          RequestId: 42, Response: {AuthTag: 'user-admin', Password: 'password'}};
+          RequestId: 42, Response: {
+            AuthTag: 'user-admin',
+            Password: 'password'
+          }
+        };
         assert.deepEqual(Y.JSON.parse(received.data), expected);
         assert.isTrue(state.get('authenticated'));
         done();
