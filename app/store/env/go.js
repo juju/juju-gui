@@ -152,7 +152,7 @@ YUI.add('juju-env-go', function(Y) {
     initializer: function() {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
-      this.defaultUser = 'user-admin';
+      this.defaultUser = 'admin';
       this.on('_rpc_response', this._handleRpcResponse);
     },
 
@@ -402,7 +402,7 @@ YUI.add('juju-env-go', function(Y) {
           Type: 'Admin',
           Request: 'Login',
           Params: {
-            AuthTag: credentials.user,
+            AuthTag: 'user-' + credentials.user,
             Password: credentials.password
           }
         }, this.handleLogin);
