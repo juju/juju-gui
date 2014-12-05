@@ -286,10 +286,10 @@ YUI.add('juju-charmbrowser', function(Y) {
             // If you change these change them in _loadSearchSuccessHandler too.
             searchCache, ['recommended', 'other'], 'searchResultTemplate');
       } else {
-        this.activeRequestId = this.get('store').search(filters, {
-          'success': this._loadSearchSuccessHandler,
-          'failure': this.apiFailure.bind(this, 'search')
-        }, this);
+        this.activeRequestId = this.get('charmstore').search(
+            filters,
+            this._loadSearchSuccessHandler.bind(this),
+            this.apiFailure.bind(this, 'search'));
       }
     },
 
@@ -300,11 +300,10 @@ YUI.add('juju-charmbrowser', function(Y) {
       @param {Object} data The data from the store search results call.
     */
     _loadSearchSuccessHandler: function(data) {
-      var results = this.get('store').transformResults(data.result);
       var recommended = [],
           other = [];
       var series = this.get('envSeries')() || 'precise';
-      results.map(function(entity) {
+      data.map(function(entity) {
         // If this is a charm, make sure it's approved and is of the
         // correct series to be recommended.
         var approved = entity.get('is_approved');

@@ -484,10 +484,12 @@ YUI.add('subapp-browser', function(Y) {
         EntityView = views.BrowserCharmView;
       }
       // Gotten from the charmbrowser creating the cache.
-      var model = this._cache.getEntity(entityId);
-      if (model) {
-        extraCfg.entity = model;
-      }
+      // The cfg.entity settings is being commented out because it will
+      // need to be re-enabled in a shortly upcoming branch.
+      // var model = this._cache.getEntity(entityId);
+      // if (model) {
+      //   extraCfg.entity = model;
+      // }
       this._details = new EntityView(this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);

@@ -53,7 +53,9 @@ YUI.add('charm-details-view', function(Y) {
       };
 
       if (this.get('rendered')) {
-        cfg.entity = this.charmView.get('entity');
+        // The cfg.entity settings is being commented out because it will
+        // need to be re-enabled in a shortly upcoming branch.
+        // cfg.entity = this.charmView.get('entity');
         this.charmView.setAttrs(cfg);
       } else {
         container.delegate('click', this.close, '.close-slot', this);
@@ -65,7 +67,9 @@ YUI.add('charm-details-view', function(Y) {
             // We must set renderTo in the callback--it doesn't exist before
             // then.
             cfg.renderTo = container.one('.content');
-            cfg.entity = storeCharm;
+            // The cfg.entity settings is being commented out because it will
+            // need to be re-enabled in a shortly upcoming branch.
+            // cfg.entity = storeCharm;
             this.charmView = new browserViews.BrowserCharmView(cfg);
             this.charmView.render();
           },
@@ -73,7 +77,9 @@ YUI.add('charm-details-view', function(Y) {
             // We must set renderTo in the callback--it doesn't exist before
             // then.
             cfg.renderTo = container.one('.content');
-            cfg.entity = charm;
+            // The cfg.entity settings is being commented out because it will
+            // need to be re-enabled in a shortly upcoming branch.
+            // cfg.entity = charm;
             this.charmView = new browserViews.BrowserCharmView(cfg);
             this.charmView.render();
           }
