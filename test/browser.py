@@ -310,7 +310,7 @@ class TestCase(unittest.TestCase):
 
     def logout(self):
         """Log out from the application, clicking the "logout" link."""
-        logout_link = self.driver.find_element_by_id('logout-trigger')
+        logout_link = self.driver.find_element_by_class_name('logout-trigger')
         self.click(logout_link)
 
     def handle_login(self):

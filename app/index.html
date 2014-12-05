@@ -167,8 +167,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <li id="maas-server" style="display:none">
               <a href="" target="_blank">MAAS UI</a>
             </li>
-            <li>
-              <a href="" id="logout-trigger" class="button inverse">Logout</a>
+            <li id="logout-trigger">
+              <!-- When flags.login is removed the logout-trigger button can
+                be removed -->
+              <a href="" class="logout-trigger button inverse">Logout</a>
+            </li>
+            <li id="get-started" class="hidden">
+              <a href="http://jujucharms.com"
+                 class="button inverse" target="_blank">
+                Get started
+                <i class="get-started sprite external-link-grey"></i>
+              </a>
             </li>
           </ul>
         </div>
@@ -243,14 +252,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .getElementById('loading-message').style.display = 'none';
       };
 
-      showGetJujuButton = function(logoutTrigger, showGetJujuButton) {
+      showGetJujuButton = function(logoutTrigger, getStarted, userDropdown,
+          showGetJujuButton) {
         if (showGetJujuButton) {
-          var link = '<i class="get-started sprite external-link-grey"></i>';
-          logoutTrigger.innerHTML = 'Get Started' + link;
-          logoutTrigger.href = 'http://jujucharms.com';
-          logoutTrigger.target = '_blank';
+          getStarted.classList.remove('hidden');
+          logoutTrigger.classList.add('hidden');
+          userDropdown.classList.add('hidden');
         } else {
-          logoutTrigger.innerHTML = 'Logout';
+          logoutTrigger.classList.remove('hidden');
         }
       };
 
@@ -399,8 +408,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // If we are supposed to show the Get Started button or the logout
         // button.
         var logoutTrigger = getDocument().getElementById('logout-trigger');
+        var getStarted = getDocument().getElementById('get-started');
+        var userDropdown = getDocument().getElementsByClassName(
+            'user-dropdown')[0];
         // This config property is passed in to allow for testing.
-        showGetJujuButton(logoutTrigger, juju_config.showGetJujuButton);
+        showGetJujuButton(logoutTrigger, getStarted, userDropdown,
+                          juju_config.showGetJujuButton);
 
         YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
           app = new Y.juju.App(juju_config);

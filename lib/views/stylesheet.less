@@ -259,6 +259,9 @@ th {
                     margin: -8px 0 0 0;
                 }
             }
+            &.hidden {
+                display: none !important;
+            }
         }
     }
     #browser-nav {
@@ -297,6 +300,7 @@ th {
                   border: 1px solid #d7d3d0;
                   margin: -5px 0 0 0;
                   padding: 2px 6px;
+
                   &.populated {
                     background-color: @charm-panel-orange;
                   }
@@ -325,6 +329,7 @@ th {
         }
         .user-dropdown {
             display: none;
+            margin-right: 20px;
 
             .menu-link {
                 &:hover {
@@ -353,11 +358,16 @@ th {
         }
     }
 }
-.flag-login .navbar .right-nav .user-dropdown {
-    display: block;
+// Styles for flags.login.
+.flag-login .navbar .right-nav {
+    .user-dropdown {
+        display: block;
+    }
+    #logout-trigger {
+        // When this flag is removed the #logout-trigger button can be removed.
+        display: none;
+    }
 }
-
-
 
 #content {
     position: relative;
