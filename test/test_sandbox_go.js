@@ -130,7 +130,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Admin',
         Request: 'Login',
         Params: {
-          AuthTag: 'admin',
+          AuthTag: 'user-admin',
           Password: 'password'
         },
         RequestId: 42
@@ -173,7 +173,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       client.onmessage = function(received) {
         var expected = {
-          RequestId: 42, Response: {AuthTag: 'admin', Password: 'password'}};
+          RequestId: 42, Response: {
+            AuthTag: 'user-admin',
+            Password: 'password'
+          }
+        };
         assert.deepEqual(Y.JSON.parse(received.data), expected);
         assert.isTrue(state.get('authenticated'));
         done();
@@ -216,7 +220,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.after('login', function() {
         assert.isTrue(env.userIsAuthenticated);
         assert.deepEqual(env.getCredentials(),
-                         {user: 'admin', password: 'password'});
+                         {user: 'user-admin', password: 'password'});
         done();
       });
       env.connect();

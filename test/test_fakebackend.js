@@ -48,14 +48,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('authenticates', function() {
       fakebackend = new environmentsModule.FakeBackend();
       assert.equal(fakebackend.get('authenticated'), false);
-      assert.equal(fakebackend.login('admin', 'password'), true);
+      assert.equal(fakebackend.login('user-admin', 'password'), true);
       assert.equal(fakebackend.get('authenticated'), true);
     });
 
     it('refuses to authenticate', function() {
       fakebackend = new environmentsModule.FakeBackend();
       assert.equal(fakebackend.get('authenticated'), false);
-      assert.equal(fakebackend.login('admin', 'not my password'), false);
+      assert.equal(fakebackend.login('user-admin', 'not my password'), false);
       assert.equal(fakebackend.get('authenticated'), false);
     });
   });
@@ -79,7 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend = new environmentsModule.FakeBackend();
       assert.equal(fakebackend.get('authenticated'), false);
       assert.deepEqual(
-          fakebackend.tokenlogin('demoToken'), ['admin', 'password']);
+          fakebackend.tokenlogin('demoToken'), ['user-admin', 'password']);
       assert.equal(fakebackend.get('authenticated'), true);
     });
 

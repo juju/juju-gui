@@ -473,7 +473,7 @@ YUI.add('juju-gui', function(Y) {
           });
           if (envOptions.user && envOptions.password) {
             var credentials = {};
-            credentials[envOptions.user] = envOptions.password;
+            credentials['user-' + envOptions.user] = envOptions.password;
             state.set('authorizedUsers', credentials);
           }
           envOptions.conn = new sandboxModule.ClientConnection(

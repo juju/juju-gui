@@ -333,7 +333,7 @@ class TestCase(unittest.TestCase):
         # following tests can access the other elements
         exe('document.getElementsByTagName("body")[0]'
             '.removeChild(document.getElementById("full-screen-mask"));'
-            'app.env.setCredentials({user: "admin", password: "admin"});'
+            'app.env.setCredentials({user: "user-admin", password: "admin"});'
             'app.env.login();')
         self.wait_for_script('return app.env.userIsAuthenticated;')
 
