@@ -90,11 +90,16 @@ YUI.add('charmstore-api', function(Y) {
       @param {String} endpoint The endpoint to call at the charmstore.
       @param {Object} query The query parameters that are required for the
         request.
+      @param {Boolean} metaAny If fetching data about a single charm or bundle
+        then /meta/any needs to be appended to the end of the endpoint.
       @return {String} A charmstore url based on the query and endpoint params
         passed in.
     */
-    _generatePath: function(endpoint, query) {
+    _generatePath: function(endpoint, query, metaAny) {
       query = query ? '?' + query : '';
+      if (metaAny) {
+        endpoint = endpoint + '/meta/any';
+      }
       return this.charmstoreURL + this.apiPath + '/' + endpoint + query;
     },
 
@@ -107,7 +112,10 @@ YUI.add('charmstore-api', function(Y) {
       @param {Object} response Thre XHR response object.
     */
     _transformQueryResults: function(successCallback, response) {
-      var data = JSON.parse(response.target.responseText).Results;
+      var data = JSON.parse(response.target.responseText);
+      // If there is a single charm or bundle being requested then we need
+      // to wrap it in an array so we can use the same map code.
+      data = data.Results ? data.Results : [data];
       var models = data.map(function(entity) {
         var entityData = this._processEntityQueryData(entity);
         if (entityData.entityType === 'charm') {
@@ -133,12 +141,11 @@ YUI.add('charmstore-api', function(Y) {
       Object.keys(obj).forEach(function(key) {
         host[key.toLowerCase()] = obj[key];
         if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this._lowerCaseKeys(obj[key], host[key.toLowerCase()]);
-        } else {
-          // This technique will create a version with a capitalized key so we
-          // need to delete it from the host object.
-          delete host[key];
+          this._lowerCaseKeys(host[key.toLowerCase()], host[key.toLowerCase()]);
         }
+        // This technique will create a version with a capitalized key so we
+        // need to delete it from the host object.
+        delete host[key];
       }, this);
     },
 
@@ -160,7 +167,7 @@ YUI.add('charmstore-api', function(Y) {
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
-        downloads: meta.stats.ArchiveDownloadCount,
+        downloads: meta.stats && meta.stats.ArchiveDownloadCount,
         entityType: (charmMeta) ? 'charm' : 'bundle',
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
@@ -184,19 +191,31 @@ YUI.add('charmstore-api', function(Y) {
         idParts = idParts.split('-').slice(0, -1);
         processed.name = idParts.join('-');
       }
-      // To allow the user to click on a bundle search result and display the
-      // details from the old apiv3 we need to try and generate the old url.
-      // This is a temporary fix and will be removed once the bundle details
-      // page supports apiv4.
-      if (processed.entityType === 'bundle') {
-        var basket = extraInfo['bzr-url'].split('/')[3];
-        var rev = data.Id.split('-');
-        // Grab only the revision;
-        rev = rev[rev.length - 1];
-        var user = bzrOwner !== 'charmers' ? '~' + bzrOwner + '/' : '';
-        processed.id = user + basket + '/' + rev + '/' + processed.name;
+      if (meta.manifest) {
+        processed.files = [];
+        meta.manifest.forEach(function(file) {
+          this._lowerCaseKeys(file, file);
+          processed.files.push(file.name);
+        }, this);
       }
       return processed;
+    },
+
+    /**
+      Makes a request to the charmstore api for the supplied id. Whether that
+      be a charm or bundle.
+    */
+    getEntity: function(entityId, successCallback, failureCallback) {
+      var filters;
+      if (entityId.indexOf('bundle') > -1) {
+        filters = 'include=bundle-metadata&include=manifest&include=extra-info';
+      } else {
+        filters = '';
+      }
+      this._makeRequest(
+          this._generatePath(entityId, filters, true),
+          this._transformQueryResults.bind(this, successCallback),
+          failureCallback);
     },
 
     /**
