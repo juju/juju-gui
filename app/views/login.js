@@ -65,6 +65,24 @@ YUI.add('juju-view-login', function(Y) {
     },
 
     /**
+     * Check the version of juju-core to see if the username should be
+     * locked to admin.
+     *
+     * @method _shouldLockAdmin
+     * @return {Boolean} Whether the username should be locked to admin.
+     */
+    _shouldLockAdmin: function() {
+      if (window.juju_config && window.juju_config.jujuCoreVersion) {
+        var version = parseFloat(window.juju_config.jujuCoreVersion.split(
+            '.').slice(0, 2).join('.'));
+        if (version < 1.21) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    /**
      * Render the page.
      *
      * Reveal the mask element, and show the login form.
@@ -110,6 +128,7 @@ YUI.add('juju-view-login', function(Y) {
         environment_name: environment_name,
         error_text: error_text,
         user: user,
+        lockAdmin: this._shouldLockAdmin(),
         help_text: this.get('help_text')
       }));
       return this;

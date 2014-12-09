@@ -156,6 +156,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'Login');
     });
 
+    test('the username disables depending on the juju version', function() {
+      var versions = [
+        {version: '1.20.0-beta.1', disabled: true},
+        {version: '1.21.0-beta.1', disabled: false},
+        {version: '1.20-beta3-utopic-amd64', disabled: true},
+        {version: '1.21-beta3-utopic-amd64', disabled: false},
+        {version: '1.20', disabled: true},
+        {version: '1.21', disabled: false},
+        {version: '1.20.0-x.7.z.92', disabled: true},
+        {version: '1.21.0-x.7.z.92', disabled: false}
+      ];
+      versions.forEach(function(version) {
+        window.juju_config = {jujuCoreVersion: version.version};
+        loginView.render();
+        assert.equal(
+            container.one('#login-form input[type=text]').get('disabled'),
+            version.disabled);
+      });
+    });
+
   });
 
 })();
