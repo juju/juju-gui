@@ -364,8 +364,9 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       var entity = this.get('entity');
       // If this is a bundle it won't have a storeId
       var id = entity.get('storeId') || entity.get('id');
-      this.get('store').file(id, filename, entity.constructor.entityType, {
-        'success': function(data) {
+      this.get('charmstore').getFile(id, filename,
+        function(data) {
+          data = data.target.responseText;
           if (prettify) {
             // If we say we want JS-prettified, use the prettify module.
             Y.prettify.renderPrettyPrintedFile(container, Y.Escape.html(data));
@@ -378,9 +379,8 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
           }
 
           this.hideIndicator(container);
-        },
-        'failure': this.apiFailure
-      }, this);
+        }.bind(this),
+        this.apiFailure.bind(this));
     },
 
     /**

@@ -90,15 +90,15 @@ YUI.add('charmstore-api', function(Y) {
       @param {String} endpoint The endpoint to call at the charmstore.
       @param {Object} query The query parameters that are required for the
         request.
-      @param {Boolean} metaAny If fetching data about a single charm or bundle
+      @param {Boolean} extension Any extension to add to the endpoint
         then /meta/any needs to be appended to the end of the endpoint.
       @return {String} A charmstore url based on the query and endpoint params
         passed in.
     */
-    _generatePath: function(endpoint, query, metaAny) {
+    _generatePath: function(endpoint, query, extension) {
       query = query ? '?' + query : '';
-      if (metaAny) {
-        endpoint = endpoint + '/meta/any';
+      if (extension) {
+        endpoint = endpoint + extension;
       }
       return this.charmstoreURL + this.apiPath + '/' + endpoint + query;
     },
@@ -213,8 +213,34 @@ YUI.add('charmstore-api', function(Y) {
     },
 
     /**
+      Fetch an individual file from the specified bundle or charm.
+
+      @method getFile
+      @param {String} entityId The id of the charm or bundle's file we want.
+      @param {String} filename The path/name of the file to fetch.
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
+    */
+    getFile: function(entityId, filename, successCallback, failureCallback) {
+      entityId = entityId.replace('cs:', '');
+      this._makeRequest(
+        this._generatePath(entityId, null, '/archive/' + filename),
+        successCallback,
+        failureCallback);
+    },
+
+    /**
       Makes a request to the charmstore api for the supplied id. Whether that
       be a charm or bundle.
+
+      @method getEntity
+      @param {String} entityId The id of the charm or bundle to fetch.
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
     */
     getEntity: function(entityId, successCallback, failureCallback) {
       var filters;
@@ -224,7 +250,7 @@ YUI.add('charmstore-api', function(Y) {
         filters = '';
       }
       this._makeRequest(
-          this._generatePath(entityId, filters, true),
+          this._generatePath(entityId, filters,  '/meta/any'),
           this._transformQueryResults.bind(this, successCallback),
           failureCallback);
     },
