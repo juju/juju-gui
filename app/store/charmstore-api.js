@@ -226,9 +226,9 @@ YUI.add('charmstore-api', function(Y) {
     getFile: function(entityId, filename, successCallback, failureCallback) {
       entityId = entityId.replace('cs:', '');
       this._makeRequest(
-        this._generatePath(entityId, null, '/archive/' + filename),
-        successCallback,
-        failureCallback);
+          this._generatePath(entityId, null, '/archive/' + filename),
+          successCallback,
+          failureCallback);
     },
 
     /**
@@ -250,7 +250,7 @@ YUI.add('charmstore-api', function(Y) {
         filters = '';
       }
       this._makeRequest(
-          this._generatePath(entityId, filters,  '/meta/any'),
+          this._generatePath(entityId, filters, '/meta/any'),
           this._transformQueryResults.bind(this, successCallback),
           failureCallback);
     },

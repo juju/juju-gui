@@ -365,22 +365,23 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       // If this is a bundle it won't have a storeId
       var id = entity.get('storeId') || entity.get('id');
       this.get('charmstore').getFile(id, filename,
-        function(data) {
-          data = data.target.responseText;
-          if (prettify) {
-            // If we say we want JS-prettified, use the prettify module.
-            Y.prettify.renderPrettyPrintedFile(container, Y.Escape.html(data));
-          } else if (filename.slice(-3) === '.md') {
-            // else if it's a .md file, render the markdown to html.
-            container.setHTML(Y.Markdown.toHTML(data));
-          } else {
-            // Else just stick the content in a pre so it's blocked.
-            container.setHTML(Y.Node.create('<pre/>').setContent(data));
-          }
+          function(data) {
+            data = data.target.responseText;
+            if (prettify) {
+              // If we say we want JS-prettified, use the prettify module.
+              Y.prettify.renderPrettyPrintedFile(
+                  container, Y.Escape.html(data));
+            } else if (filename.slice(-3) === '.md') {
+              // else if it's a .md file, render the markdown to html.
+              container.setHTML(Y.Markdown.toHTML(data));
+            } else {
+              // Else just stick the content in a pre so it's blocked.
+              container.setHTML(Y.Node.create('<pre/>').setContent(data));
+            }
 
-          this.hideIndicator(container);
-        }.bind(this),
-        this.apiFailure.bind(this));
+            this.hideIndicator(container);
+          }.bind(this),
+          this.apiFailure.bind(this));
     },
 
     /**

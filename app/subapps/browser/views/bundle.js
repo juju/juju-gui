@@ -104,7 +104,11 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     */
     _parseData: function(bundle) {
       return this.fakebackend.promiseImport({
-        import: bundle.get('data')
+        import: {
+          relations: bundle.get('relations'),
+          series: bundle.get('series'),
+          services: bundle.get('services')
+        }
       });
     },
 
@@ -181,10 +185,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     */
     _renderBundleView: function() {
       var bundle = this.get('entity');
-      var bundleData = bundle.getAttrs();
-      // Copy the bundle for use in the template so we can modify the content
-      // without manipulating the entity.
-      var templateData = Y.merge(bundleData);
+      var templateData = bundle.getAttrs();
       templateData.charmIcons = utils.charmIconParser(templateData.services);
       // Remove the svg files from the file list
       templateData.files = templateData.files.filter(function(fileName) {
@@ -200,25 +201,25 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var options = {size: [720, 500]};
       this.hideIndicator(renderTo);
 
-      // options.positionServices = !this._positionAnnotationsIncluded(
-      //     bundleData.data.services);
+      options.positionServices = !this._positionAnnotationsIncluded(
+          templateData.services);
 
-      // this._setupLocalFakebackend();
-      // var self = this;
-      // this._parseData(bundle).then(function() {
-      //   self.environment = new views.BundleTopology(Y.mix({
-      //     db: self.fakebackend.db,
-      //     container: node.one('#bundle'), // Id because of Y.TabView
-      //     store: self.get('store'),
-      //     charmstore: self.get('charmstore')
-      //   }, options));
-      //   self.environment.render();
-      //   // Fire event to listen to during the tests so that we know when
-      //   // it's rendered.
-      //   self.fire('topologyRendered');
-      // }).then(null, function(error) {
-      //   console.error(error.message, error, error.stack);
-      // });
+      this._setupLocalFakebackend();
+      var self = this;
+      this._parseData(bundle).then(function() {
+        self.environment = new views.BundleTopology(Y.mix({
+          db: self.fakebackend.db,
+          container: node.one('#bundle'), // Id because of Y.TabView
+          store: self.get('store'),
+          charmstore: self.get('charmstore')
+        }, options));
+        self.environment.render();
+        // Fire event to listen to during the tests so that we know when
+        // it's rendered.
+        self.fire('topologyRendered');
+      }).then(null, function(error) {
+        console.error(error.message, error, error.stack);
+      });
 
       renderTo.setHTML(node);
 

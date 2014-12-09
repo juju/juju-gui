@@ -207,7 +207,6 @@ YUI.add('juju-bundle-models', function(Y) {
           return Y.Lang.isNumber(val);
         }
       },
-      data: {},
       /**
         The url which can be used by the deployer to deploy the bundle file.
 
@@ -263,40 +262,8 @@ YUI.add('juju-bundle-models', function(Y) {
           return this.get('permanent_url');
         }
       },
-      relations: {
-        /**
-         Return the relations data as a list of objects.
-
-         @method getter
-
-         */
-        getter: function() {
-          var data = this.get('data');
-          var rels = [];
-          if (data && data.relations) {
-            Y.Array.each(data.relations, function(thing) {
-              var map = {};
-              map[thing[0]] = thing[1];
-              rels.push(map);
-            });
-          }
-          return rels;
-        }
-      },
-      series: {
-        /**
-         Return the series data directly.
-
-         @method getter
-
-         */
-        getter: function() {
-          var data = this.get('data');
-          if (data) {
-            return data.series;
-          }
-        }
-      },
+      relations: {},
+      series: {},
       /**
         The services used in this bundle.
 
