@@ -150,26 +150,28 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       Build and order a list of charms.
 
       @method _buildCharmList
-      @param {Object} the bundle entity attrs.
+      @param {Object} services The services collection from the bundle data.
       @return {Array} the ordered list of charms in the bundle.
-
      */
-    _buildCharmList: function(bundleData) {
-      var services = [];
-      Y.Object.each(bundleData.services, function(service, key) {
-        var charm = bundleData.charm_metadata[key];
-        services.push({
+    _buildCharmList: function(services) {
+      var serviceData = [];
+      Object.keys(services).forEach(function(key) {
+        var service = services[key];
+        serviceData.push({
           origService: {
             name: key,
             data: service
           },
-          charmModel: new Y.juju.models.Charm(charm)
+          charmModel: new Y.juju.models.Charm({
+            id: service.charm,
+            name: key
+          })
         });
-      }, this);
-      services.sort(function(a, b) {
+      });
+      serviceData.sort(function(a, b) {
         return a.charmModel.get('name') > b.charmModel.get('name') ? 1 : -1;
       });
-      return services;
+      return serviceData;
     },
 
     /**
@@ -183,46 +185,40 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       // Copy the bundle for use in the template so we can modify the content
       // without manipulating the entity.
       var templateData = Y.merge(bundleData);
-      templateData.charmIcons = utils.charmIconParser(
-          templateData.charm_metadata);
+      templateData.charmIcons = utils.charmIconParser(templateData.services);
       // Remove the svg files from the file list
       templateData.files = templateData.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
-      templateData.services = this._buildCharmList(bundleData);
-      templateData.sourceLink = this._getSourceLink(
-          'lp:' + bundle.get('branch_spec'));
+      templateData.services = this._buildCharmList(templateData.services);
+      templateData.sourceLink = templateData.code_source.location;
       templateData.prettyCommits = this._formatCommitsForHtml(
-          templateData.recentCommits, templateData.sourceLink);
-      if (templateData.deployer_file_url) {
-        templateData.deployer_file_url = decodeURI(
-            templateData.deployer_file_url);
-      }
+          templateData.revisions, templateData.sourceLink);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
       var options = {size: [720, 500]};
       this.hideIndicator(renderTo);
 
-      options.positionServices = !this._positionAnnotationsIncluded(
-          bundleData.data.services);
+      // options.positionServices = !this._positionAnnotationsIncluded(
+      //     bundleData.data.services);
 
-      this._setupLocalFakebackend();
-      var self = this;
-      this._parseData(bundle).then(function() {
-        self.environment = new views.BundleTopology(Y.mix({
-          db: self.fakebackend.db,
-          container: node.one('#bundle'), // Id because of Y.TabView
-          store: self.get('store'),
-          charmstore: self.get('charmstore')
-        }, options));
-        self.environment.render();
-        // Fire event to listen to during the tests so that we know when
-        // it's rendered.
-        self.fire('topologyRendered');
-      }).then(null, function(error) {
-        console.error(error.message, error, error.stack);
-      });
+      // this._setupLocalFakebackend();
+      // var self = this;
+      // this._parseData(bundle).then(function() {
+      //   self.environment = new views.BundleTopology(Y.mix({
+      //     db: self.fakebackend.db,
+      //     container: node.one('#bundle'), // Id because of Y.TabView
+      //     store: self.get('store'),
+      //     charmstore: self.get('charmstore')
+      //   }, options));
+      //   self.environment.render();
+      //   // Fire event to listen to during the tests so that we know when
+      //   // it's rendered.
+      //   self.fire('topologyRendered');
+      // }).then(null, function(error) {
+      //   console.error(error.message, error, error.stack);
+      // });
 
       renderTo.setHTML(node);
 
@@ -293,15 +289,13 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       if (entity) {
         this._renderBundleView();
       } else {
-        this.get('store').bundle(
-            this.get('entityId'), {
-              'success': function(data) {
-                this.set('entity', new models.Bundle(data));
-                this._renderBundleView();
-              },
-              'failure': this.apiFailure
-            },
-            this);
+        this.get('charmstore').getEntity(
+            this.get('entityId'),
+            function(bundles) {
+              this.set('entity', bundles[0]);
+              this._renderBundleView();
+            }.bind(this),
+            this.apiFailure.bind(this));
       }
     }
 

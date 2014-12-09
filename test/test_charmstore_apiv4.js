@@ -149,7 +149,7 @@ describe('Charmstore API v4', function() {
   describe('_lowerCaseKeys', function() {
 
     it('can recursively transform an objects keys to lowercase', function() {
-      var uppercase = { Baz: '', Foo: { Bar: ''}};
+      var uppercase = { Baz: '', Foo: { Bar: { Baz: '' }}};
       var host = {};
       charmstore._lowerCaseKeys(uppercase, host);
       assert.deepEqual(host, { baz: '', foo: { bar: ''}});

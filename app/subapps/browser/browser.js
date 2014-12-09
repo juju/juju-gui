@@ -480,16 +480,12 @@ YUI.add('subapp-browser', function(Y) {
       var EntityView;
       if (entityId.indexOf('bundle') !== -1) {
         EntityView = views.BrowserBundleView;
+        // XXX When we convert the BrowserCharmView to use apiv4 as well then
+        // this assignment can move outside of is conditional.
+        extraCfg.entity = this._cache.getEntity(entityId);
       } else {
         EntityView = views.BrowserCharmView;
       }
-      // Gotten from the charmbrowser creating the cache.
-      // The cfg.entity settings is being commented out because it will
-      // need to be re-enabled in a shortly upcoming branch.
-      // var model = this._cache.getEntity(entityId);
-      // if (model) {
-      //   extraCfg.entity = model;
-      // }
       this._details = new EntityView(this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);

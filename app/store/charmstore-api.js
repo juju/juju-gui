@@ -139,13 +139,17 @@ YUI.add('charmstore-api', function(Y) {
     */
     _lowerCaseKeys: function(obj, host) {
       Object.keys(obj).forEach(function(key) {
-        host[key.toLowerCase()] = obj[key];
+        host[key.toLowerCase()] = Y.clone(obj[key]);
         if (typeof obj[key] === 'object' && obj[key] !== null) {
           this._lowerCaseKeys(host[key.toLowerCase()], host[key.toLowerCase()]);
         }
         // This technique will create a version with a capitalized key so we
-        // need to delete it from the host object.
-        delete host[key];
+        // need to delete it from the host object. To protect against keys
+        // which are already lower case then we test to make sure we don't
+        // delte those.
+        if (key.toLowerCase() !== key) {
+          delete host[key];
+        }
       }, this);
     },
 
@@ -197,6 +201,13 @@ YUI.add('charmstore-api', function(Y) {
           this._lowerCaseKeys(file, file);
           processed.files.push(file.name);
         }, this);
+      }
+      if (processed.entityType === 'bundle') {
+        processed.deployerFileUrl =
+            this.charmstoreURL +
+            this.apiPath + '/' +
+            processed.id.replace('cs:', '') +
+            '/archive/bundles.yaml.orig';
       }
       return processed;
     },

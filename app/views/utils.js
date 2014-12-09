@@ -2148,24 +2148,23 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Given a set of charm metadata, extract the parts that we need and return
-    a sorted array of data to generate charm icon lists for the bundle
-    visualizations from.
+    Given a set of services from bundle metadata, generate image html tags for
+    the bundles charm icons.
 
     @method charmIconParser
-    @param {Object} data charm_metadata from bundle object.
-    @return {Array} Array of charm icon data.
+    @param {Object} services The service object from charmstore apiv4 bundle
+      data response.
+    @return {Array} Array of charm icon html.
   */
-  utils.charmIconParser = function(data) {
+  utils.charmIconParser = function(services) {
     var charmIcons = [];
-    Object.keys(data).forEach(function(key) {
-      // We only show icons for the approved charms.
-      if (data[key].is_approved) {
-        var iconData = '<img src="' +
-            Y.Template.Handlebars.helpers.charmIconPath(data[key].id) +
-            '" alt="' + data[key].name + '"/>';
-        charmIcons.push(iconData);
-      }
+    Object.keys(services).forEach(function(key) {
+      var iconData = '<img src="' +
+          // The handlebars helper has reference to the charmstore so that's
+          // why we are calling it from here.
+          Y.Template.Handlebars.helpers.charmIconPath(services[key].charm) +
+          '" alt="' + key + '"/>';
+      charmIcons.push(iconData);
     });
 
     if (charmIcons.length > 9) {

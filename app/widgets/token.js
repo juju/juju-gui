@@ -178,7 +178,9 @@ YUI.add('browser-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE(this.getAttrs());
+      var attrs = this.getAttrs();
+      attrs.id = attrs.id.replace(/^cs:/, '');
+      var content = this.TEMPLATE(attrs);
       var container = this.get('contentBox');
       container.ancestor('.yui3-token').addClass('yui3-u');
       container.setHTML(content);
@@ -194,13 +196,13 @@ YUI.add('browser-token', function(Y) {
       /**
         Bundle charm metadata
 
-        @attribute charm_metadata
+        @attribute services
         @default undefined
         @type {Object}
       */
-      charm_metadata: {
+      services: {
         /**
-          Sets the charmIcons attribute with the charm_metadata.
+          Sets the charmIcons attribute with the services.
 
           @method setter
           @param {Object} data The charm metadata.
@@ -214,7 +216,7 @@ YUI.add('browser-token', function(Y) {
       /**
         An array of the data required to display the appropriate
         number of charm icons in the proper order for bundle tokens.
-        This value is set by the setter for the charm_metadata
+        This value is set by the setter for the services
         attribute.
 
         @attribute charmIcons

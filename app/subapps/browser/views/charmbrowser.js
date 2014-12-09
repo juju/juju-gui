@@ -327,7 +327,6 @@ YUI.add('juju-charmbrowser', function(Y) {
         other: other
       };
       cache.set(Y.QueryString.stringify(this.get('filters')), entityData);
-      cache.updateEntityList(entityData);
       this._renderCharmTokens(
           // If you change these change them in _loadSearchResults too.
           entityData, ['recommended', 'other'], 'searchResultTemplate');

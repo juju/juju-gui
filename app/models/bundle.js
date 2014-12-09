@@ -208,7 +208,23 @@ YUI.add('juju-bundle-models', function(Y) {
         }
       },
       data: {},
-      deployer_file_url: {},
+      /**
+        The url which can be used by the deployer to deploy the bundle file.
+
+        @attribute deployerFileURL
+        @default undefined
+        @type {String}
+      */
+      deployerFileURL: {},
+
+      /**
+        A collection of files in the bundle.
+
+        @attribute files
+        @default undefined
+        @type {Array}
+      */
+      files: {},
 
       /**
         @attribute downloads
@@ -281,23 +297,14 @@ YUI.add('juju-bundle-models', function(Y) {
           }
         }
       },
-      services: {
-        /**
-         Return the services data as a nested object
-         of the form { 'servicename': {config} }.
+      /**
+        The services used in this bundle.
 
-         @method getter
-
-         */
-        getter: function() {
-          // XXX This getter can be removed entirely once the interesting/new
-          // charm list has been migrated to apiv4.
-          var data = this.get('data');
-          if (data) {
-            return this.get('data').services;
-          }
-        }
-      },
+        @attribute services
+        @default undefined
+        @type {Object}
+      */
+      services: {},
 
       /**
        * @attribute serviceCount
@@ -335,25 +342,6 @@ YUI.add('juju-bundle-models', function(Y) {
             }
           });
           return count;
-        }
-      },
-      /**
-       * @attribute recentCommits
-       * @default undefined
-       * @type {Array} list of objects for each commit.
-       *
-       */
-      recentCommits: {
-        /**
-         * Return the commits of the charm in a format we can live with from
-         * the source code data provided by the API.
-         *
-         * @method recentCommits.valueFn
-         *
-         */
-        valueFn: function() {
-          var changes = this.get('changes');
-          return this.extractRecentCommits(changes);
         }
       }
     }
