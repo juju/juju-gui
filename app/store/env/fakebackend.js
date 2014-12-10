@@ -48,7 +48,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
   FakeBackend.NAME = 'fake-backend';
   FakeBackend.ATTRS = {
     authenticated: {value: false},
-    authorizedUsers: {value: {'user-admin': 'password'}},
+    authorizedUsers: {
+      value: {
+        'user-admin': 'password',
+        'user-test': 'test'
+      }
+    },
     defaultSeries: {value: 'precise'},
     name: {value: 'Environment'},
     maasServer: {value: null},

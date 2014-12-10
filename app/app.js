@@ -472,7 +472,7 @@ YUI.add('juju-gui', function(Y) {
             charmstore: this.get('charmstore')
           });
           if (envOptions.user && envOptions.password) {
-            var credentials = {};
+            var credentials = state.get('authorizedUsers');
             credentials['user-' + envOptions.user] = envOptions.password;
             state.set('authorizedUsers', credentials);
           }

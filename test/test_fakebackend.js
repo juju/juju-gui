@@ -50,6 +50,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(fakebackend.get('authenticated'), false);
       assert.equal(fakebackend.login('user-admin', 'password'), true);
       assert.equal(fakebackend.get('authenticated'), true);
+      fakebackend.logout();
+      assert.equal(fakebackend.get('authenticated'), false);
+      assert.equal(fakebackend.login('user-test', 'test'), true);
+      assert.equal(fakebackend.get('authenticated'), true);
     });
 
     it('refuses to authenticate', function() {
