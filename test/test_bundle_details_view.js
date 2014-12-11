@@ -20,8 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Browser bundle detail view', function() {
 
-  var browser, cleanUp, container, data, factory, fakestore, models, utils,
-      view, Y;
+  var browser, charmstore, cleanUp, container, data, factory, fakestore, models,
+      utils, view, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -39,12 +39,11 @@ describe('Browser bundle detail view', function() {
         'juju-tests-factory',
         'event-simulate',
         'node-event-simulate',
+        'charmstore-api',
         function(Y) {
           models = Y.namespace('juju.models');
           utils = Y.namespace('juju-tests.utils');
           factory = Y.namespace('juju-tests.factory');
-          data = utils.loadFixture('data/browserbundle.json', true);
-
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
             store: factory.makeFakeStore()
@@ -55,6 +54,11 @@ describe('Browser bundle detail view', function() {
   });
 
   beforeEach(function() {
+    charmstore = new Y.juju.charmstore.APIv4({
+      charmstoreURL: 'local/'
+    });
+    data = charmstore._processEntityQueryData(
+        utils.loadFixture('data/apiv4-bundle.json', true));
     view = generateBundleView(this);
     view._setupLocalFakebackend = function() {
       this.fakebackend = factory.makeFakeBackend();
@@ -81,9 +85,7 @@ describe('Browser bundle detail view', function() {
       db: {},
       entityId: data.id,
       renderTo: container,
-      charmstore: {
-        getIconPath: utils.makeStubFunction()
-      }
+      charmstore: charmstore
     };
     var bundleView = Y.mix(defaults, options, true);
     view = new Y.juju.browser.views.BrowserBundleView(bundleView);
@@ -99,52 +101,35 @@ describe('Browser bundle detail view', function() {
     view.render();
     assert.isNotNull(container.one('.yui3-juju-browser-tabview'));
 
-    assert.notEqual(container.get('innerHTML').indexOf('Deployed 5'), -1,
+    assert.notEqual(container.get('innerHTML').indexOf('Deployed 0'), -1,
         'Download count is not added to the page.');
 
     // Verify that the num_units is represented correctly.
     assert(
-        container.one('.charm-config').get('innerHTML').match(/units:\s+5/),
+        container.one('.charm-config').get('innerHTML').match(/units:\s+1/),
         'Expected to find the number of units to be 5, but not found.');
   });
 
-  it('fetches the readme when requested', function(done) {
-    var fakeStore = factory.makeFakeStore();
-    fakeStore.file = function(id, filename, entityType, callbacks) {
-      assert.equal(entityType, 'bundle');
-      assert.equal(id, data.id);
-      assert.equal(filename, 'README');
-      assert.isFunction(callbacks.success);
-      assert.isFunction(callbacks.failure);
-      callbacks.success.call(view, '<div id="testit"></div>');
-      assert.isNotNull(container.one('#testit'));
-      done();
-    };
-    view.set('store', fakeStore);
+  it('fetches the readme when requested', function() {
+    var getFile = utils.makeStubMethod(view.get('charmstore'), 'getFile');
+    this._cleanups.push(getFile.reset);
     view.set('entity', new models.Bundle(data));
     view.render();
     // Bypass any routing that might take place for testing sanity.
     view.tabview.set('skipAnchorNavigation', true);
-
     container.one('a.readme').simulate('click');
+    assert.equal(getFile.callCount(), 1);
+    var getArgs = getFile.lastArguments();
+    assert.equal(getArgs[0], data.id);
+    assert.equal(getArgs[1], 'README.md');
+    assert.equal(typeof getArgs[2] === 'function', true);
+    assert.equal(typeof getArgs[3] === 'function', true);
   });
 
-  it('fetches a source file when requested', function(done) {
-    var fakeStore = factory.makeFakeStore();
-    fakeStore.file = function(id, filename, entityType, callbacks) {
-      assert.equal(entityType, 'bundle');
-      assert.equal(id, data.id);
-      assert.equal(filename, 'bundles.yaml');
-      assert.isFunction(callbacks.success);
-      assert.isFunction(callbacks.failure);
-      var fileContent = '<div id="testit"></div>';
-      callbacks.success.call(view, fileContent);
-      // The content has been escaped.
-      assert.equal(
-          container.one('.filecontent').get('text'), fileContent);
-      done();
-    };
-    view.set('store', fakeStore);
+  it('fetches a source file when requested', function() {
+    var getFile = utils.makeStubMethod(view.get('charmstore'), 'getFile');
+    this._cleanups.push(getFile.reset);
+
     view.set('entity', new models.Bundle(data));
     view.render();
     // Bypass any routing that might take place for testing sanity.
@@ -153,13 +138,23 @@ describe('Browser bundle detail view', function() {
     var codeNode = container.one('#code');
     codeNode.all('select option').item(2).set('selected', 'selected');
     codeNode.one('select').simulate('change');
+
+    view.set('entity', new models.Bundle(data));
+    view.render();
+
+    assert.equal(getFile.callCount(), 1);
+    var getArgs = getFile.lastArguments();
+    assert.equal(getArgs[0], data.id);
+    assert.equal(getArgs[1], 'bundle.yaml');
+    assert.equal(typeof getArgs[2] === 'function', true);
+    assert.equal(typeof getArgs[3] === 'function', true);
   });
 
   it('renders the proper charm icons into the header', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
     assert.equal(
-        container.one('.header .details .charms').all('img').size(), 4);
+        container.one('.header .details .charms').all('img').size(), 5);
   });
 
   it('shows a confirmation when trying to deploy a bundle', function() {
@@ -204,7 +199,7 @@ describe('Browser bundle detail view', function() {
 
   it('generates positions if services don\'t provide xy annotations',
      function(done) {
-       Y.Object.values(data.data.services).forEach(function(service) {
+       Y.Object.values(data.services).forEach(function(service) {
          service.annotations = {};
        });
        view.set('entity', new models.Bundle(data));
@@ -241,65 +236,26 @@ describe('Browser bundle detail view', function() {
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
-    var entity = {
-      charm_metadata: {
-        foo: {
-          id: 'precise/foo-9',
-          storeId: 'testid',
-          name: 'foo'
-        },
-        bar: {
-          id: 'precise/bar-10',
-          storeId: 'testid',
-          name: 'bar'
-        }
-      },
-      files: [],
-      data: {
-        services: {
-          foo: {
-            annotations: {
-              'gui-x': '1',
-              'gui-y': '2'
-            }
-          },
-          bar: {
-            annotations: {
-              'gui-x': '3',
-              'gui-y': '4'
-            }
-          }
-        }
-      }
-    };
     view.on('topologyRendered', function(e) {
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
       assert.equal(view.tabview.get('selection').get('hash'), '#bundle');
       done();
     });
-    view.set('entity', new models.Bundle(entity));
+    view.set('entity', new models.Bundle(data));
     view.render();
   });
 
   it('disabled relation line and label click interactions', function(done) {
-
     Y.juju.views.createModalPanel = function(rel, self) {
       // If we hit this method then the relationInteractive flag was not
       // respected and we are showing a modal panel to remove the relation.
       assert.fail();
     };
-
-    view.on('topologyRendered', function(e) {
-      var relIndicator = container.one('.rel-indicator');
-      assert.isNotNull(relIndicator);
-      relIndicator.simulate('click');
-      assert.isNotNull(container.one('.topology-canvas'));
-      // Check that the bundle topology tab is the landing tab.
-      assert.equal(view.tabview.get('selection').get('hash'), '#bundle');
+    view.after('topologyRendered', function(e) {
+      container.one('.rel-indicator').simulate('click');
       done();
     });
-
     view.set('entity', new models.Bundle(data));
     view.render();
   });
@@ -310,70 +266,22 @@ describe('Browser bundle detail view', function() {
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
-
-    var entity = {
-      charm_metadata: {
-        foo: {
-          id: 'precise/foo-9',
-          storeId: 'testid',
-          name: 'foo'
-        },
-        bar: {
-          id: 'precise/bar-10',
-          storeId: 'testid',
-          name: 'bar'
-        }
-      },
-      files: [],
-      data: {
-        services: {
-          foo: {
-            annotations: {
-              'gui-x': '1',
-              'gui-y': '2'
-            },
-            num_units: 47,
-            options: {
-              option1: 'value1'
-            }
-          },
-          bar: {
-            annotations: {
-              'gui-x': '3',
-              'gui-y': '4'
-            }
-          }
-        }
-      },
-      services: {
-        foo: {
-          annotations: {
-            'gui-x': '1',
-            'gui-y': '2'
-          }
-        },
-        bar: {
-          annotations: {
-            'gui-x': '3',
-            'gui-y': '4'
-          }
-        }
-      }
-    };
-    view.set('entity', new models.Bundle(entity));
+    view.set('entity', new models.Bundle(data));
     view.render();
     var tab = container.one('#services');
-    assert.equal(tab.all('.token').size(), 2);
+    assert.equal(tab.all('.token').size(), 5);
     var charmConfigNodes = tab.all('.charm-config');
     assert.equal(
-        charmConfigNodes.item(0).one('li').get('text'), 'Service name: bar');
+        charmConfigNodes.item(0).one('li').get('text'),
+        'Service name: configsvr');
     assert.equal(
-        charmConfigNodes.item(1).one('li').get('text'), 'Service name: foo');
+        charmConfigNodes.item(1).one('li').get('text'),
+        'Service name: mongos');
     assert.equal(
-        charmConfigNodes.item(1).all('li').item(2).get('text'),
-        'option1: value1');
+        charmConfigNodes.item(2).all('li').item(2).get('text'),
+        'replicaset: shard1');
     assert.equal(
-        charmConfigNodes.item(1).all('li').item(1).get('text').indexOf(4) > 0,
+        charmConfigNodes.item(1).all('li').item(1).get('text').indexOf(1) > 0,
         true);
   });
 
@@ -407,13 +315,14 @@ describe('Browser bundle detail view', function() {
 
   it('can generate source and revno links from its charm', function() {
     view.set('entity', new models.Bundle(data));
-    var branchUrl = 'lp:' + view.get('entity').get('branch_spec');
+    var branchUrl = view.get('entity').get('code_source').location;
     var url = view._getSourceLink(branchUrl);
     var expected =
-        'http://bazaar.launchpad.net/~benji/charms/bundles/wiki/bundle';
-    assert.equal(expected, url);
+        'http://bazaar.launchpad.net/' +
+        '~charmers/charms/bundles/mongodb-cluster/bundle';
+    assert.equal(url, expected);
     var revnoLink = view._getRevnoLink(url, 1);
-    assert.equal(expected + '/1', revnoLink);
+    assert.equal(revnoLink, expected + '/1');
   });
 
 });

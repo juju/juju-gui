@@ -149,10 +149,10 @@ describe('Charmstore API v4', function() {
   describe('_lowerCaseKeys', function() {
 
     it('can recursively transform an objects keys to lowercase', function() {
-      var uppercase = { Baz: '', Foo: { Bar: { Baz: '' }}};
+      var uppercase = { Baz: '1', Foo: { Bar: { Baz: '1' }}};
       var host = {};
       charmstore._lowerCaseKeys(uppercase, host);
-      assert.deepEqual(host, { baz: '', foo: { bar: ''}});
+      assert.deepEqual(host, { baz: '1', foo: { bar: { baz: '1'}}});
     });
   });
 
@@ -212,9 +212,11 @@ describe('Charmstore API v4', function() {
         code_source: {
           location: 'lp:~charmers/charms/bundles/mongodb-cluster/bundle'
         },
+        deployerFileUrl: 'local/v4/~charmers/bundle/mongodb-cluster-4/' +
+            'archive/bundles.yaml.orig',
         downloads: 10,
         entityType: 'bundle',
-        id: '~hatch/mongodb-cluster/4/mongodb-cluster',
+        id: 'cs:~charmers/bundle/mongodb-cluster-4',
         is_approved: false,
         name: 'mongodb-cluster',
         owner: 'hatch',

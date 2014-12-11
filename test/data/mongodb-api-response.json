@@ -1,0 +1,457 @@
+
+{
+  "charm": {
+    "categories": [
+      "databases"
+    ],
+    "code_source": {
+      "bugs_link": "https://bugs.launchpad.net/charms/+source/mongodb",
+      "last_log": "[r=lazypower] Backports from trusty charm\n    jrwren@xmtp.net 2014-11-18 prevent unneeded package install\n    Jos\u00e9 Antonio Rey 2014-11-12 [merge] Matt Bruzek 2014-09-23 Making the 00-setup file executabl...\n    Matt Bruzek 2014-09-23 Making the 00-setup file executable so it is run by juju test\n    Jorge Niedbalski 2014-11-05 [merge] [evarlast, r=niedbalski,tvansteenburgh] Mongodb charm is ...\n    Tim Van Steenburgh 2014-11-05 [merge] [dannf] Make amulet test target trusty\n    Tim Van Steenburgh 2014-11-05 [merge] [dannf] Fix readme typo\n    dann frazier 2014-10-31 Fix typo: s/Specificlly/Specifically/\n",
+      "location": "lp:~charmers/charms/precise/mongodb/trunk",
+      "revision": "56",
+      "revisions": [
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-11-19T01:07:34Z",
+          "message": "[r=lazypower] Backports from trusty charm\n    jrwren@xmtp.net 2014-11-18 prevent unneeded package install\n    Jos\u00e9 Antonio Rey 2014-11-12 [merge] Matt Bruzek 2014-09-23 Making the 00-setup file executabl...\n    Matt Bruzek 2014-09-23 Making the 00-setup file executable so it is run by juju test\n    Jorge Niedbalski 2014-11-05 [merge] [evarlast, r=niedbalski,tvansteenburgh] Mongodb charm is ...\n    Tim Van Steenburgh 2014-11-05 [merge] [dannf] Make amulet test target trusty\n    Tim Van Steenburgh 2014-11-05 [merge] [dannf] Fix readme typo\n    dann frazier 2014-10-31 Fix typo: s/Specificlly/Specifically/\n",
+          "revno": 56
+        },
+        {
+          "authors": [
+            {
+              "email": "matthew.bruzek@canonical.com",
+              "name": "Matt Bruzek"
+            }
+          ],
+          "date": "2014-11-17T21:40:00Z",
+          "message": "[tvansteenburgh] Refactor tests. No tests have been removed, only restructured.\n",
+          "revno": 55
+        },
+        {
+          "authors": [
+            {
+              "email": "jose@ubuntu.com",
+              "name": "Jos\u00e9 Antonio Rey"
+            }
+          ],
+          "date": "2014-11-12T20:31:41Z",
+          "message": "Matt Bruzek 2014-09-23 Changing permissions of 00-setup so it is run by juju test\n",
+          "revno": 54
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-10-29T18:50:35Z",
+          "message": "[dannf] Fix typo: s/Specificlly/Specifically/\n",
+          "revno": 53
+        },
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-09-19T20:32:12Z",
+          "message": "  Wes Mason 2014-09-15 Ensure relation_id() is used to set mountpoint\n",
+          "revno": 52
+        },
+        {
+          "authors": [
+            {
+              "email": "tom.haddon@canonical.com",
+              "name": "Tom Haddon"
+            }
+          ],
+          "date": "2014-08-26T13:00:04Z",
+          "message": "[moon127,r=mthaddon] Add exec.d charm preinstall support from charmhelpers to allow for pre-install hooks to be executed",
+          "revno": 51
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-07-30T17:49:09Z",
+          "message": "[lazypower] Adds charmhelpers, and refactors to green light deployments\n",
+          "revno": 50
+        },
+        {
+          "authors": [
+            {
+              "email": "stuart@stuartbishop.net",
+              "name": "Stuart Bishop"
+            }
+          ],
+          "date": "2014-07-29T10:22:56Z",
+          "message": "[wesmason] Storage subordinate support for persistent storage, per https://code.launchpad.net/~wesmason/charms/precise/mongodb/add-storage-subordinate-support/+merge/223539",
+          "revno": 49
+        },
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com",
+              "name": "Juan L. Negron"
+            }
+          ],
+          "date": "2014-07-21T19:41:20Z",
+          "message": "Fix race condition where mongos tries to start without enough config servers available.",
+          "revno": 48
+        },
+        {
+          "authors": [
+            {
+              "email": "juan@ubuntu.com",
+              "name": "Juan L. Negron"
+            }
+          ],
+          "date": "2014-04-14T16:18:45Z",
+          "message": "Adding source option. MP:215514",
+          "revno": 47
+        }
+      ],
+      "type": "bzr"
+    },
+    "date_created": "2012-04-16T18:29:41Z",
+    "description": "MongoDB is a high-performance, open source, schema-free document-\noriented  data store that's easy to deploy, manage and use. It's\nnetwork accessible, written in C++ and offers the following features:\n\n- Collection oriented storage - easy storage of object-style data\n- Full index support, including on inner objects\n- Query profiling\n- Replication and fail-over support\n- Efficient storage of binary data including large\n  objects (e.g. videos)\n- Auto-sharding for cloud-level scalability (Q209)\n  High performance, scalability, and reasonable depth of functionality\n  are the goals for the project.\n",
+    "distro_series": "precise",
+    "downloads": 3711,
+    "downloads_in_past_30_days": 85,
+    "files": [
+      "hooks/data-relation-changed",
+      "hooks/database-relation-joined",
+      "hooks/data-relation-departed",
+      "hooks/hooks.py",
+      "hooks/configsvr-relation-joined",
+      "hooks/charmhelpers/core/host.py",
+      "hooks/start",
+      "hooks/config-changed",
+      "metadata.yaml",
+      "hooks/mongos-cfg-relation-broken",
+      "hooks/charmhelpers/core/fstab.py",
+      "revision",
+      "hooks/mongos-relation-changed",
+      "hooks/replica-set-relation-joined",
+      "hooks/replica-set-relation-changed",
+      "hooks/stop",
+      "hooks/configsvr-relation-changed",
+      "hooks/data-relation-joined",
+      "hooks/charmhelpers/fetch/bzrurl.py",
+      "hooks/mongos-relation-joined",
+      "hooks/charmhelpers/payload/execd.py",
+      "hooks/mongos-cfg-relation-changed",
+      "hooks/mongos-relation-broken",
+      "hooks/mongos-cfg-relation-joined",
+      "icon.svg",
+      "hooks/charmhelpers/fetch/archiveurl.py",
+      "README.md",
+      "hooks/charmhelpers/payload/__init__.py",
+      "hooks/charmhelpers/core/hookenv.py",
+      "hooks/install",
+      "config.yaml"
+    ],
+    "id": "precise/mongodb-40",
+    "is_approved": true,
+    "is_subordinate": false,
+    "maintainer": {
+      "email": "chuck@dasroot.net",
+      "name": "Charles Butler"
+    },
+    "maintainers": [
+      {
+        "email": "chuck@dasroot.net",
+        "name": "Charles Butler"
+      },
+      {
+        "email": "juan.negron@canonical.com",
+        "name": "Juan Negron"
+      },
+      {
+        "email": "marco@ceppi.net",
+        "name": "Marco Ceppi"
+      }
+    ],
+    "name": "mongodb",
+    "options": {
+      "arbiter": {
+        "default": "disabled",
+        "description": "Enable arbiter mode. Possible values are 'disabled' for no arbiter, 'enable' to become an arbiter or 'host:port' to declare another host as an arbiter.  replicaset_master must be set for this option to work.",
+        "type": "string"
+      },
+      "auth": {
+        "default": false,
+        "description": "Turn on/off security",
+        "type": "boolean"
+      },
+      "autoresync": {
+        "default": false,
+        "description": "Automatically resync if slave data is stale",
+        "type": "boolean"
+      },
+      "backup_copies_kept": {
+        "default": 7,
+        "description": "Number of backups to keep. Keeps one week's worth by default.",
+        "type": "int"
+      },
+      "backup_directory": {
+        "default": "/home/ubuntu/backups",
+        "description": "Where can the backups be found.",
+        "type": "string"
+      },
+      "backups_enabled": {
+        "default": false,
+        "description": "Enable daily backups to disk.",
+        "type": "boolean"
+      },
+      "bind_ip": {
+        "default": "all",
+        "description": "IP address that mongodb should listen for connections.",
+        "type": "string"
+      },
+      "config_server_dbpath": {
+        "default": "/mnt/var/lib/mongodb/configsvr",
+        "description": "The path where the config server data files will be kept.",
+        "type": "string"
+      },
+      "config_server_logpath": {
+        "default": "/mnt/var/log/mongodb/configsvr.log",
+        "description": "The path where to send config server log data.",
+        "type": "string"
+      },
+      "config_server_port": {
+        "default": 27019,
+        "description": "Port number to use for the config-server",
+        "type": "int"
+      },
+      "cpu": {
+        "default": false,
+        "description": "Enables periodic logging of CPU utilization and I/O wait",
+        "type": "boolean"
+      },
+      "dbpath": {
+        "default": "/var/lib/mongodb",
+        "description": "The path where the data files will be kept.",
+        "type": "string"
+      },
+      "diaglog": {
+        "default": 0,
+        "description": "Set oplogging level where n is 0=off (default), 1=W, 2=R, 3=both, 7=W+some reads",
+        "type": "int"
+      },
+      "extra_config_options": {
+        "default": "none",
+        "description": "Extra options ( comma separated ) to be included ( at the end ) in the mongodb.conf file.",
+        "type": "string"
+      },
+      "extra_daemon_options": {
+        "default": "none",
+        "description": "Extra options ( exactly as you would type them in the command line ) to be added via the command line to the mongodb daemon",
+        "type": "string"
+      },
+      "journal": {
+        "default": true,
+        "description": "Enable journaling, http://www.mongodb.org/display/DOCS/Journaling",
+        "type": "boolean"
+      },
+      "key": {
+        "default": null,
+        "description": "Key ID to import to the apt keyring to support use with arbitary source configuration from outside of Launchpad archives or PPA's.\n",
+        "type": "string"
+      },
+      "logappend": {
+        "default": true,
+        "description": "Append log entries to existing log file",
+        "type": "boolean"
+      },
+      "logpath": {
+        "default": "/var/log/mongodb/mongodb.log",
+        "description": "The path where to send log data.",
+        "type": "string"
+      },
+      "logrotate-frequency": {
+        "default": "daily",
+        "description": "How often should the logs be rotated. Use values from logrotate.",
+        "type": "string"
+      },
+      "logrotate-maxsize": {
+        "default": "500M",
+        "description": "Maximum log size before rotating.",
+        "type": "string"
+      },
+      "logrotate-rotate": {
+        "default": 5,
+        "description": "Number of log files to keep.",
+        "type": "int"
+      },
+      "master": {
+        "default": "self",
+        "description": "Who is the master DB. If not \"self\", put the Master DB here as \"host:port\"",
+        "type": "string"
+      },
+      "mms-interval": {
+        "default": "disabled",
+        "description": "Ping interval for Mongo monitoring server ( in number of seconds )",
+        "type": "string"
+      },
+      "mms-name": {
+        "default": "disabled",
+        "description": "Server name for Mongo monitoring server",
+        "type": "string"
+      },
+      "mms-token": {
+        "default": "disabled",
+        "description": "Accout token for Mongo monitoring server",
+        "type": "string"
+      },
+      "mongos_logpath": {
+        "default": "/mnt/var/log/mongodb/mongos.log",
+        "description": "The path where to send log data from the mongo router.",
+        "type": "string"
+      },
+      "mongos_port": {
+        "default": 27021,
+        "description": "Port number to use for the mongo router",
+        "type": "int"
+      },
+      "nocursors": {
+        "default": false,
+        "description": "Diagnostic/debugging option",
+        "type": "boolean"
+      },
+      "nohints": {
+        "default": false,
+        "description": "Ignore query hints",
+        "type": "boolean"
+      },
+      "noprealloc": {
+        "default": false,
+        "description": "Disable data file preallocation",
+        "type": "boolean"
+      },
+      "noscripting": {
+        "default": false,
+        "description": "Turns off server-side scripting.  This will result in greatly limited functionality",
+        "type": "boolean"
+      },
+      "notablescan": {
+        "default": false,
+        "description": "Turns off table scans.  Any query that would do a table scan fails",
+        "type": "boolean"
+      },
+      "nssize": {
+        "default": "default",
+        "description": "Specify .ns file size for new databases",
+        "type": "string"
+      },
+      "objcheck": {
+        "default": false,
+        "description": "Inspect all client data for validity on receipt (useful for developing drivers)",
+        "type": "boolean"
+      },
+      "opIdMem": {
+        "default": "default",
+        "description": "Size limit for in-memory storage of op ids",
+        "type": "string"
+      },
+      "oplogSize": {
+        "default": "default",
+        "description": "Custom size for replication operation log",
+        "type": "string"
+      },
+      "port": {
+        "default": 27017,
+        "description": "Default MongoDB port",
+        "type": "int"
+      },
+      "quota": {
+        "default": false,
+        "description": "Enable db quota management",
+        "type": "boolean"
+      },
+      "replicaset": {
+        "default": "myset",
+        "description": "Name of the replica set",
+        "type": "string"
+      },
+      "replicaset_master": {
+        "default": "auto",
+        "description": "Replica Set master (optional). Possible values are 'auto' for automatic detection based on install time or 'host:port' to connect to 'host' on 'port' and register as a member.",
+        "type": "string"
+      },
+      "source": {
+        "default": "None",
+        "description": "Optional configuration to support use of additional sources such as:\n  - ppa:myteam/ppa\n  - cloud:precise-proposed/icehouse\n  - http://my.archive.com/ubuntu main\nThe last option should be used in conjunction with the key configuration option.\n",
+        "type": "string"
+      },
+      "verbose": {
+        "default": false,
+        "description": "Verbose logging output",
+        "type": "boolean"
+      },
+      "volume-dev-regexp": {
+        "default": "/dev/vd[b-z]",
+        "description": "Deprecated, use the storage subordinate. Block device for attached volumes as seen by the VM, will be \"scanned\" for an unused device when \"volume-map\" is valid for the unit.\n",
+        "type": "string"
+      },
+      "volume-ephemeral-storage": {
+        "default": true,
+        "description": "Deprecated, use the storage subordinate. If false, a configure-error state will be raised if\n   volume-map[$JUJU_UNIT_NAME] is not set (see \"volume-map\"\n   below) - see \"volume-map\" below.\nIf true, service units won't try to use \"volume-map\" (and\n   related variables) to mount and use external (EBS) volumes,\n   thus storage lifetime will equal VM, thus ephemeral.\n   YOU'VE BEEN WARNED.\n",
+        "type": "boolean"
+      },
+      "volume-map": {
+        "default": "",
+        "description": "Deprecated, use the storage subordinate. YAML map as e.g. \"{ mongodb/0: vol-0000010, mongodb/1: vol-0000016 }\". Service units will raise a \"configure-error\" condition if no volume-map value is set for it - it expects a human to set it properly to resolve it.\n",
+        "type": "string"
+      },
+      "web_admin_ui": {
+        "default": true,
+        "description": "Replica Set Admin UI (accessible via default_port + 1000)",
+        "type": "boolean"
+      }
+    },
+    "owner": "charmers",
+    "rating_denominator": 0,
+    "rating_numerator": 0,
+    "relations": {
+      "provides": {
+        "configsvr": {
+          "interface": "shard"
+        },
+        "data": {
+          "interface": "block-storage",
+          "optional": true,
+          "scope": "container"
+        },
+        "database": {
+          "interface": "mongodb"
+        }
+      },
+      "requires": {
+        "mongos": {
+          "interface": "mongodb"
+        },
+        "mongos-cfg": {
+          "interface": "shard"
+        }
+      }
+    },
+    "revision": 30,
+    "summary": "An open-source document database, and the leading NoSQL database",
+    "tested_providers": {},
+    "url": "cs:precise/mongodb-40"
+  },
+  "metadata": {
+    "doctype": "charm"
+  }
+}

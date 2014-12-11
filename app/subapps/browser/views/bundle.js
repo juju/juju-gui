@@ -92,7 +92,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           component: 'charmbrowser',
           metadata: { id: null }
         }});
-      this.get('deployBundle')(bundle.get('data'), bundle.get('id'));
+      this.get('deployBundle')(bundle, bundle.get('id'));
     },
 
     /**
@@ -241,7 +241,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _positionAnnotationsIncluded: function(services) {
       // Some returns true if it's stopped early, this inverts before returning.
       return !Object.keys(services).some(function(key) {
-        var annotations = services[key].annotations;
+        var annotations = services[key].origService.data.annotations;
         // If there is no annotations for the position coords
         // return true stopping the 'some' loop.
         if (!annotations ||

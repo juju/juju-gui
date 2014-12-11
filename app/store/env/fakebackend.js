@@ -1880,7 +1880,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             callback({DeploymentId: self._deploymentId});
           }, function(err) {
             deployStatus.Status = 'failed';
-            console.log(err);
+            console.log(err, err.stack);
             callback({Error: err.error});
           });
     },

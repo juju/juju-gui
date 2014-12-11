@@ -262,7 +262,22 @@ YUI.add('juju-bundle-models', function(Y) {
           return this.get('permanent_url');
         }
       },
-      relations: {},
+      relations: {
+        /**
+          The relations are parsed as a map containing the relations. This
+          converts it to an array to make it easier to work with and to match
+          the old apiv3 functionality.
+
+          @method setter
+        */
+        setter: function(value) {
+          var relations = [];
+          Y.Object.keys(value).forEach(function(key) {
+            relations.push(value[key]);
+          });
+          return relations;
+        }
+      },
       series: {},
       /**
         The services used in this bundle.

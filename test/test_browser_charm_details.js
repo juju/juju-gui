@@ -285,20 +285,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: 'README content.'
-              }]
-            }
-          });
-        }
-      });
-
       view = new CharmView({
         activeTab: '#readme',
         entity: new models.Charm({
@@ -310,7 +296,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo'}
         }),
         container: utils.makeContainer(this),
-        store: fakeStore
+        charmstore: {
+          getFile: function(url, filename, success, failure) {
+            success({
+              target: {
+                responseText: 'README content.'
+              }
+            });
+          }
+        }
       });
 
       view.render();
@@ -387,20 +381,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: '<install hook content>'
-              }]
-            }
-          });
-        }
-      });
-
       view = new CharmView({
         entity: new models.Charm({
           files: [
@@ -411,7 +391,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo' }
         }),
         container: utils.makeContainer(this),
-        store: fakeStore
+        charmstore: {
+          getFile: function(url, filename, success, failure) {
+            success({
+              target: {
+                responseText: '<install hook content>'
+              }
+            });
+          }
+        }
       });
 
       view.render();
@@ -455,7 +443,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo' }
         }),
         container: utils.makeContainer(this),
-        store: fakeStore
+        charmstore: {
+          getFile: function(url, filename, success, failure) {
+            success({
+              target: {
+                responseText: 'README Header\n============='
+              }
+            });
+          }
+        }
       });
 
       view.render();

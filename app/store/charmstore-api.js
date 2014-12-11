@@ -139,7 +139,8 @@ YUI.add('charmstore-api', function(Y) {
     */
     _lowerCaseKeys: function(obj, host) {
       Object.keys(obj).forEach(function(key) {
-        host[key.toLowerCase()] = Y.clone(obj[key]);
+        host[key.toLowerCase()] =
+            typeof obj[key] === 'object' ? Y.merge(obj[key]) : obj[key];
         if (typeof obj[key] === 'object' && obj[key] !== null) {
           this._lowerCaseKeys(host[key.toLowerCase()], host[key.toLowerCase()]);
         }
