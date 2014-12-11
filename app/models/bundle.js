@@ -235,33 +235,6 @@ YUI.add('juju-bundle-models', function(Y) {
         value: 0
       },
 
-      /**
-        @attribute recent_download_count
-        @default 0
-        @type {Integer}
-
-       */
-      recent_download_count: {
-        value: 0
-      },
-
-      bundleURL: {
-        /**
-          Return the bundle URL.
-          Use the simplified form if the bundle is promulgated.
-
-          @method getter
-        */
-        getter: function() {
-          if (this.get('promulgated')) {
-            var basket = this.get('basket_name');
-            var revision = this.get('basket_revision');
-            var name = this.get('name');
-            return 'bundle:' + basket + '/' + revision + '/' + name;
-          }
-          return this.get('permanent_url');
-        }
-      },
       relations: {
         /**
           The relations are parsed as a map containing the relations. This

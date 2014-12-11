@@ -2141,7 +2141,7 @@ YUI.add('juju-view-utils', function(Y) {
     // It would be nice to restructure the token widget so that it takes
     // a model instead of a jumble of attributes.  If we did so, this
     // would just be a type check over the class of the model.
-    if (entityData && 'basket_name' in entityData) {
+    if (entityData && entityData.id && entityData.id.indexOf('bundle') > -1) {
       return 'bundle';
     }
     return 'charm';

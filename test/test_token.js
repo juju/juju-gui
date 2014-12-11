@@ -157,7 +157,7 @@ describe('charm/bundle token', function() {
   it('can report that it represents a bundle', function() {
     var bundleToken = new Token({
       size: 'small',
-      basket_name: 'BASKET-NAME'
+      id: 'cs:bundle/foo'
     });
 
     assert.equal(bundleToken.get('type'), 'bundle');
@@ -165,8 +165,7 @@ describe('charm/bundle token', function() {
 
   it('can render bundles', function() {
     var token = new Token({
-      size: 'small',
-      basket_name: 'BASKET-NAME'
+      size: 'small'
     });
 
     token.render(token_container);
@@ -175,7 +174,7 @@ describe('charm/bundle token', function() {
 
   it('renders a bundle token properly with data', function() {
     var token = new Token({
-      basket_name: 'BASKET-NAME',
+      id: 'cs:bundle/foo',
       downloads: 5,
       serviceCount: 4,
       size: 'small',
@@ -196,7 +195,7 @@ describe('charm/bundle token', function() {
         -1
     );
     assert.notEqual(
-        token_container.one('a').getData('charmid').indexOf('bundle'),
+        token_container.one('a').getData('charmid').indexOf('/'),
         -1
     );
   });
@@ -225,9 +224,9 @@ describe('charm/bundle token', function() {
       }
     };
     var token = new Token({
+      id: 'cs:bundle/foo',
       size: 'small',
-      basket_name: 'BASKET-NAME',
-      charm_metadata: bundleData
+      services: bundleData
     });
     // The token needs to be rendered for the attributes to be set???
     token.render(token_container);
@@ -249,7 +248,7 @@ describe('charm/bundle token', function() {
   it('renders the deployer button when asked to', function() {
     var token = new Token({
       size: 'tiny',
-      storeId: 'test',
+      id: 'test',
       deployButton: true,
       description: 'some description',
       mainCategory: 'app-servers',
