@@ -52,7 +52,6 @@ YUI.add('juju-charmbrowser', function(Y) {
     },
 
     template: templates.charmbrowser,
-    curatedTemplate: templates.editorial,
     searchResultTemplate: templates.search,
 
     /*
@@ -98,7 +97,6 @@ YUI.add('juju-charmbrowser', function(Y) {
 
         @method _handleCharmSelection
         @param {Event} ev the click event handler for the charm selected.
-
      */
     _handleCharmSelection: function(ev) {
       ev.halt();
@@ -126,39 +124,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     },
 
     /**
-      Loads the curated charm lists from charmworld.
-
-      @method _loadCurated
-    */
-    _loadCurated: function() {
-      var cache = this.get('cache'),
-          curated = cache.get('curated'),
-          tokenHeaders = ['featured', 'popular', 'new'],
-          templateName = 'curatedTemplate';
-      if (curated) {
-        this._renderCharmTokens(curated, tokenHeaders, templateName);
-      } else {
-        var store = this.get('store');
-        this.activeRequestId = store.interesting({
-          'success': function(data) {
-            var result = data.result,
-                transform = store.transformResults;
-            var results = {
-              featured: transform(result.featured),
-              popular: transform(result.popular),
-              'new': transform(result['new'])
-            };
-            cache.set('curated', results);
-            cache.updateEntityList(results);
-            this._renderCharmTokens(results, tokenHeaders, templateName);
-          },
-          failure: this.apiFailure.bind(this, 'curated')
-        }, this);
-      }
-    },
-
-    /**
-      Renders the curated charm list into the container.
+      Renders the charm list into the container.
 
       @method _renderCharmTokens
       @param {Object} results The curated charm list.
@@ -276,10 +242,14 @@ YUI.add('juju-charmbrowser', function(Y) {
       Requests the search results from the charm store.
 
       @method _loadSearchResults
+      @param {Object} filters The set of filters to pass to the charmstore api
+        request instead of using the ones which were passed into the view. This
+        is only used to load the 'curated' result list. Any search filters
+        should still be done by setting the attribute on the charmbrowser view.
     */
-    _loadSearchResults: function() {
-      var filters = this.get('filters'),
-          cacheKey = Y.QueryString.stringify(filters),
+    _loadSearchResults: function(filters) {
+      filters = filters || this.get('filters');
+      var cacheKey = Y.QueryString.stringify(filters),
           searchCache = this.get('cache').get(cacheKey);
       if (searchCache) {
         this._renderCharmTokens(
@@ -392,7 +362,10 @@ YUI.add('juju-charmbrowser', function(Y) {
 
       if (renderType === 'curated') {
         this.set('withHome', false);
-        this._loadCurated();
+        this._loadSearchResults({
+          limit: 10,
+          sort: '-downloads'
+        });
       } else if (renderType === 'search') {
         this.set('withHome', true);
         this._loadSearchResults();

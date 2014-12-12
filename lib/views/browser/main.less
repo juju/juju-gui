@@ -83,11 +83,7 @@
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
       }
-      #bws-search {
-        .sticky {
-          top: 206px + @navbar-height;
-        }
-      }
+
       .yui3-token {
         width: 100%;
         border-top: 1px solid @bws-groove-light;
@@ -114,6 +110,11 @@
       .charm-list {
         .bws-list;
         top: 137px;
+      }
+    }
+    .bws-content not(.with-home) #bws-search {
+      .sticky {
+        top: 206px + @navbar-height;
       }
     }
   }
