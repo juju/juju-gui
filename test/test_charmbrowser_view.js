@@ -373,8 +373,6 @@ describe('charmbrowser view', function() {
       assert.deepEqual(cacheArgs[1], {
         recommended: [],
         other: [] });
-      assert.equal(cache.updateEntityList.calledOnce(), true,
-          'updateEntityList not called');
       // Make sure it calls to render the results.
       assert.equal(render.calledOnce(), true);
       var renderArgs = render.lastArguments();

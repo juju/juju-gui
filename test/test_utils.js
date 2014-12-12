@@ -1511,7 +1511,8 @@ describe('utilities', function() {
       Y = YUI(GlobalConfig).use(
           ['browser-token',
            'juju-view-utils',
-           'juju-tests-utils'], function(Y) {
+           'juju-tests-utils',
+           'charmstore-api'], function(Y) {
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
             done();
@@ -1524,7 +1525,11 @@ describe('utilities', function() {
     });
 
     it('Parses and sorts charm data into the required icon format', function() {
-      var bundleData = testUtils.loadFixture('data/browserbundle.json', true);
+      var charmstore = new Y.juju.charmstore.APIv4({
+        charmstoreURL: 'local/'
+      });
+      var bundleData = charmstore._processEntityQueryData(
+          testUtils.loadFixture('data/apiv4-bundle.json', true));
       var extra = {
         id: 'fooId',
         name: 'fooName',
@@ -1532,14 +1537,16 @@ describe('utilities', function() {
       };
 
       // Add an extra unapproved charm to make sure it's removed
-      bundleData.charm_metadata.foo = extra;
+      bundleData.services.foo = extra;
 
-      var parsed = utils.charmIconParser(bundleData.charm_metadata);
+      var parsed = utils.charmIconParser(bundleData.services);
       var expected = [
-        '<img src="/path/to/charm/undefined" alt="haproxy"/>',
-        '<img src="/path/to/charm/undefined" alt="mediawiki"/>',
-        '<img src="/path/to/charm/undefined" alt="memcached"/>',
-        '<img src="/path/to/charm/undefined" alt="mysql"/>'
+        '<img src="/path/to/charm/undefined" alt="configsvr"/>',
+        '<img src="/path/to/charm/undefined" alt="mongos"/>',
+        '<img src="/path/to/charm/undefined" alt="shard1"/>',
+        '<img src="/path/to/charm/undefined" alt="shard2"/>',
+        '<img src="/path/to/charm/undefined" alt="shard3"/>',
+        '<img src="/path/to/charm/undefined" alt="foo"/>'
       ];
       assert.deepEqual(parsed, expected);
     });

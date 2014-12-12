@@ -38,17 +38,23 @@ describe('Bundle initialization', function() {
 });
 
 describe('The bundle model', function() {
-  var data, expected, instance, models, origData, relatedData, utils, Y;
+  var charmstore, data, expected, instance, models, origData, relatedData,
+      utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'io',
       'juju-bundle-models',
-      'juju-tests-utils'
+      'juju-tests-utils',
+      'charmstore-api'
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
-      origData = utils.loadFixture('data/browserbundle.json', true);
+      charmstore = new Y.juju.charmstore.APIv4({
+        charmstoreURL: 'local/'
+      });
+      origData = charmstore._processEntityQueryData(
+          utils.loadFixture('data/apiv4-bundle.json', true));
       done();
     });
   });
@@ -98,18 +104,6 @@ describe('The bundle model', function() {
     assert.equal(expected, instance.get('promulgated'));
   });
 
-  it('returns the proper bundle URL for non-promulgated bundles', function() {
-    data.promulgated = false;
-    instance = new models.Bundle(data);
-    assert.strictEqual(instance.get('bundleURL'), 'bundle:~benji/wiki/5/wiki');
-  });
-
-  it('returns the proper bundle URL for promulgated bundles', function() {
-    data.promulgated = true;
-    instance = new models.Bundle(data);
-    assert.strictEqual(instance.get('bundleURL'), 'bundle:wiki/5/wiki');
-  });
-
   it('must support is_approved as a proxy to promulgated', function() {
     instance = new models.Bundle({promulgated: true});
     assert.equal(instance.get('is_approved'), true);
@@ -122,25 +116,13 @@ describe('The bundle model', function() {
     assert.equal(expected, instance.get('title'));
   });
 
-  it('must store the basket_name', function() {
-    expected = 'wiki-basket';
-    data.basket_name = expected;
-    instance = new models.Bundle(data);
-    assert.equal(expected, instance.get('basket_name'));
-  });
-
-  it('must store the basket_revision', function() {
-    expected = 5;
-    instance = new models.Bundle(data);
-    assert.equal(instance.get('basket_revision'), expected);
-  });
-
   it('must have a relations getter', function() {
     instance = new models.Bundle(data);
     expected = [
-      { 'mediawiki:cache': 'memcached:cache' },
-      { 'mediawiki:db': 'mysql:db' },
-      { 'haproxy:reverseproxy': 'mediawiki:website' }
+      {'0': 'mongos:mongos', '1': 'shard3:database'},
+      {'0': 'mongos:mongos-cfg', '1': 'configsvr:configsvr'},
+      {'0': 'mongos:mongos', '1': 'shard1:database'},
+      {'0': 'mongos:mongos', '1': 'shard2:database'}
     ];
     var results = instance.get('relations');
     assert.deepEqual(results, expected);
@@ -148,30 +130,30 @@ describe('The bundle model', function() {
 
   it('must have a series getter', function() {
     expected = 'saucy';
-    data.data.series = expected;
+    data.series = expected;
     instance = new models.Bundle(data);
     assert.equal(expected, instance.get('series'));
   });
 
   it('must have a services getter', function() {
-    expected = data.data.services;
+    expected = data.services;
     instance = new models.Bundle(data);
     assert.equal(expected, instance.get('services'));
   });
 
   it('must provide a serviceCount attribute', function() {
     instance = new models.Bundle(data);
-    assert.equal(instance.get('serviceCount'), 4);
+    assert.equal(instance.get('serviceCount'), 5);
   });
 
   it('must provide a unitCount attribute', function() {
     instance = new models.Bundle(data);
-    assert.equal(instance.get('unitCount'), 20);
+    assert.equal(instance.get('unitCount'), 5);
   });
 
   it('must provide a downloads attribute', function() {
     instance = new models.Bundle(data);
-    assert.equal(instance.get('downloads'), 5);
+    assert.equal(instance.get('downloads'), 0);
   });
 
   it('must init a downloads attribute to 0', function() {
@@ -179,64 +161,39 @@ describe('The bundle model', function() {
     assert.equal(instance.get('downloads'), 0);
   });
 
-  it('must provide a recent_download_count attribute', function() {
-    instance = new models.Bundle(data);
-    assert.equal(instance.get('recent_download_count'), 3);
-  });
-
-  it('must init a receent_download_count attribute to 0', function() {
-    instance = new models.Bundle();
-    assert.equal(instance.get('recent_download_count'), 0);
-  });
-
   it('has an entityType static property', function() {
     instance = new models.Bundle(data);
     assert.equal(instance.constructor.entityType, 'bundle');
   });
 
-  it('has recent commits', function() {
-    instance = new models.Bundle(data);
-    var commits = instance.get('recentCommits');
-    assert.lengthOf(commits, 5);
-  });
-
   it('parses author name correctly', function() {
     instance = new models.Bundle(data);
-    var commits = instance.get('recentCommits');
-    assert.equal('Benji York', commits[0].author.name);
-    assert.equal('benji.york@canonical.com', commits[0].author.email);
-  });
-
-  it('only the first author is shown', function() {
-    // Manually added a second author into the test data from the server.
-    // Jorge O. O'Castro <jorge@example.com>
-    instance = new models.Bundle(data);
-    var commits = instance.get('recentCommits');
-    assert.equal('Jorge O. O\'Castro', commits[1].author.name);
-    assert.equal('jorge@example.com', commits[1].author.email);
+    var revisions = instance.get('revisions');
+    assert.equal('Jorge O. Castro', revisions[1].authors[0].name);
+    assert.equal('jorge@ubuntu.com', revisions[1].authors[0].email);
   });
 
   it('has the revnos in reverse order', function() {
     instance = new models.Bundle(data);
-    var commits = instance.get('recentCommits');
-    assert.equal(5, commits[0].revno);
-    assert.equal(4, commits[1].revno);
-    assert.equal(3, commits[2].revno);
+    var commits = instance.get('revisions');
+    assert.equal(4, commits[0].revno);
+    assert.equal(3, commits[1].revno);
+    assert.equal(2, commits[2].revno);
   });
 
   it('has the correct date in GMT', function() {
     instance = new models.Bundle(data);
     // IE doesn't format 03 but as just 3. They also end in UTC vs GMT. So we
     // regex the match to say this is close enough to work in each browser.
-    var expected = /^Thu, 0?3 Oct 2013 15:29:36/;
-    var commits = instance.get('recentCommits');
-    assert(commits[0].date.toUTCString().match(expected));
+    var expected = 'Thu 2014-03-06 11:39:13 -0500';
+    var commits = instance.get('revisions');
+    assert.equal(commits[0].date, expected);
   });
 
   it('has the commit message', function() {
     instance = new models.Bundle(data);
-    var commits = instance.get('recentCommits');
-    assert.equal('add a series to the bundle\n', commits[0].message);
+    var commits = instance.get('revisions');
+    assert.equal(commits[0].message, '  Bump charm revision.\n');
   });
 
   it('parses full name-email string', function() {
@@ -263,7 +220,7 @@ describe('The bundle model', function() {
 
   it('creates a stateId when the id attribute is set', function() {
     instance = new models.Bundle(data);
-    assert.equal(instance.get('stateId'), 'bundle/~benji/wiki/5/wiki');
+    assert.equal(instance.get('stateId'), 'bundle/cs:bundle/mongodb-cluster-4');
   });
   // See comment above regarding these two tests
 

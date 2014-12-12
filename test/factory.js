@@ -26,7 +26,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
         charms = {},
         names = [
           'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
-          'memcached', 'puppetmaster'
+          'memcached', 'puppetmaster', 'mongodb'
         ];
     Y.Array.each(names, function(name) {
       url = 'data/' + name + '-api-response.json';

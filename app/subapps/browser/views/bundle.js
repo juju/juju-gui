@@ -92,7 +92,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           component: 'charmbrowser',
           metadata: { id: null }
         }});
-      this.get('deployBundle')(bundle.get('data'), bundle.get('id'));
+      this.get('deployBundle')(bundle, bundle.get('id'));
     },
 
     /**
@@ -104,7 +104,11 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     */
     _parseData: function(bundle) {
       return this.fakebackend.promiseImport({
-        import: bundle.get('data')
+        import: {
+          relations: bundle.get('relations'),
+          series: bundle.get('series'),
+          services: bundle.get('services')
+        }
       });
     },
 
@@ -150,26 +154,28 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       Build and order a list of charms.
 
       @method _buildCharmList
-      @param {Object} the bundle entity attrs.
+      @param {Object} services The services collection from the bundle data.
       @return {Array} the ordered list of charms in the bundle.
-
      */
-    _buildCharmList: function(bundleData) {
-      var services = [];
-      Y.Object.each(bundleData.services, function(service, key) {
-        var charm = bundleData.charm_metadata[key];
-        services.push({
+    _buildCharmList: function(services) {
+      var serviceData = [];
+      Object.keys(services).forEach(function(key) {
+        var service = services[key];
+        serviceData.push({
           origService: {
             name: key,
             data: service
           },
-          charmModel: new Y.juju.models.Charm(charm)
+          charmModel: new Y.juju.models.Charm({
+            id: service.charm,
+            name: key
+          })
         });
-      }, this);
-      services.sort(function(a, b) {
+      });
+      serviceData.sort(function(a, b) {
         return a.charmModel.get('name') > b.charmModel.get('name') ? 1 : -1;
       });
-      return services;
+      return serviceData;
     },
 
     /**
@@ -179,25 +185,16 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     */
     _renderBundleView: function() {
       var bundle = this.get('entity');
-      var bundleData = bundle.getAttrs();
-      // Copy the bundle for use in the template so we can modify the content
-      // without manipulating the entity.
-      var templateData = Y.merge(bundleData);
-      templateData.charmIcons = utils.charmIconParser(
-          templateData.charm_metadata);
+      var templateData = bundle.getAttrs();
+      templateData.charmIcons = utils.charmIconParser(templateData.services);
       // Remove the svg files from the file list
       templateData.files = templateData.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
-      templateData.services = this._buildCharmList(bundleData);
-      templateData.sourceLink = this._getSourceLink(
-          'lp:' + bundle.get('branch_spec'));
+      templateData.services = this._buildCharmList(templateData.services);
+      templateData.sourceLink = templateData.code_source.location;
       templateData.prettyCommits = this._formatCommitsForHtml(
-          templateData.recentCommits, templateData.sourceLink);
-      if (templateData.deployer_file_url) {
-        templateData.deployer_file_url = decodeURI(
-            templateData.deployer_file_url);
-      }
+          templateData.revisions, templateData.sourceLink);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
@@ -205,7 +202,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this.hideIndicator(renderTo);
 
       options.positionServices = !this._positionAnnotationsIncluded(
-          bundleData.data.services);
+          templateData.services);
 
       this._setupLocalFakebackend();
       var self = this;
@@ -244,7 +241,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _positionAnnotationsIncluded: function(services) {
       // Some returns true if it's stopped early, this inverts before returning.
       return !Object.keys(services).some(function(key) {
-        var annotations = services[key].annotations;
+        var annotations = services[key].origService.data.annotations;
         // If there is no annotations for the position coords
         // return true stopping the 'some' loop.
         if (!annotations ||
@@ -293,15 +290,13 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       if (entity) {
         this._renderBundleView();
       } else {
-        this.get('store').bundle(
-            this.get('entityId'), {
-              'success': function(data) {
-                this.set('entity', new models.Bundle(data));
-                this._renderBundleView();
-              },
-              'failure': this.apiFailure
-            },
-            this);
+        this.get('charmstore').getEntity(
+            this.get('entityId'),
+            function(bundles) {
+              this.set('entity', bundles[0]);
+              this._renderBundleView();
+            }.bind(this),
+            this.apiFailure.bind(this));
       }
     }
 

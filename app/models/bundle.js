@@ -207,8 +207,23 @@ YUI.add('juju-bundle-models', function(Y) {
           return Y.Lang.isNumber(val);
         }
       },
-      data: {},
-      deployer_file_url: {},
+      /**
+        The url which can be used by the deployer to deploy the bundle file.
+
+        @attribute deployerFileURL
+        @default undefined
+        @type {String}
+      */
+      deployerFileURL: {},
+
+      /**
+        A collection of files in the bundle.
+
+        @attribute files
+        @default undefined
+        @type {Array}
+      */
+      files: {},
 
       /**
         @attribute downloads
@@ -220,84 +235,31 @@ YUI.add('juju-bundle-models', function(Y) {
         value: 0
       },
 
-      /**
-        @attribute recent_download_count
-        @default 0
-        @type {Integer}
-
-       */
-      recent_download_count: {
-        value: 0
-      },
-
-      bundleURL: {
-        /**
-          Return the bundle URL.
-          Use the simplified form if the bundle is promulgated.
-
-          @method getter
-        */
-        getter: function() {
-          if (this.get('promulgated')) {
-            var basket = this.get('basket_name');
-            var revision = this.get('basket_revision');
-            var name = this.get('name');
-            return 'bundle:' + basket + '/' + revision + '/' + name;
-          }
-          return this.get('permanent_url');
-        }
-      },
       relations: {
         /**
-         Return the relations data as a list of objects.
+          The relations are parsed as a map containing the relations. This
+          converts it to an array to make it easier to work with and to match
+          the old apiv3 functionality.
 
-         @method getter
-
-         */
-        getter: function() {
-          var data = this.get('data');
-          var rels = [];
-          if (data && data.relations) {
-            Y.Array.each(data.relations, function(thing) {
-              var map = {};
-              map[thing[0]] = thing[1];
-              rels.push(map);
-            });
-          }
-          return rels;
+          @method setter
+        */
+        setter: function(value) {
+          var relations = [];
+          Y.Object.keys(value).forEach(function(key) {
+            relations.push(value[key]);
+          });
+          return relations;
         }
       },
-      series: {
-        /**
-         Return the series data directly.
+      series: {},
+      /**
+        The services used in this bundle.
 
-         @method getter
-
-         */
-        getter: function() {
-          var data = this.get('data');
-          if (data) {
-            return data.series;
-          }
-        }
-      },
-      services: {
-        /**
-         Return the services data as a nested object
-         of the form { 'servicename': {config} }.
-
-         @method getter
-
-         */
-        getter: function() {
-          // XXX This getter can be removed entirely once the interesting/new
-          // charm list has been migrated to apiv4.
-          var data = this.get('data');
-          if (data) {
-            return this.get('data').services;
-          }
-        }
-      },
+        @attribute services
+        @default undefined
+        @type {Object}
+      */
+      services: {},
 
       /**
        * @attribute serviceCount
@@ -335,25 +297,6 @@ YUI.add('juju-bundle-models', function(Y) {
             }
           });
           return count;
-        }
-      },
-      /**
-       * @attribute recentCommits
-       * @default undefined
-       * @type {Array} list of objects for each commit.
-       *
-       */
-      recentCommits: {
-        /**
-         * Return the commits of the charm in a format we can live with from
-         * the source code data provided by the API.
-         *
-         * @method recentCommits.valueFn
-         *
-         */
-        valueFn: function() {
-          var changes = this.get('changes');
-          return this.extractRecentCommits(changes);
         }
       }
     }

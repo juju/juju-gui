@@ -90,11 +90,16 @@ YUI.add('charmstore-api', function(Y) {
       @param {String} endpoint The endpoint to call at the charmstore.
       @param {Object} query The query parameters that are required for the
         request.
+      @param {Boolean} extension Any extension to add to the endpoint
+        then /meta/any needs to be appended to the end of the endpoint.
       @return {String} A charmstore url based on the query and endpoint params
         passed in.
     */
-    _generatePath: function(endpoint, query) {
+    _generatePath: function(endpoint, query, extension) {
       query = query ? '?' + query : '';
+      if (extension) {
+        endpoint = endpoint + extension;
+      }
       return this.charmstoreURL + this.apiPath + '/' + endpoint + query;
     },
 
@@ -107,7 +112,10 @@ YUI.add('charmstore-api', function(Y) {
       @param {Object} response Thre XHR response object.
     */
     _transformQueryResults: function(successCallback, response) {
-      var data = JSON.parse(response.target.responseText).Results;
+      var data = JSON.parse(response.target.responseText);
+      // If there is a single charm or bundle being requested then we need
+      // to wrap it in an array so we can use the same map code.
+      data = data.Results ? data.Results : [data];
       var models = data.map(function(entity) {
         var entityData = this._processEntityQueryData(entity);
         if (entityData.entityType === 'charm') {
@@ -131,12 +139,16 @@ YUI.add('charmstore-api', function(Y) {
     */
     _lowerCaseKeys: function(obj, host) {
       Object.keys(obj).forEach(function(key) {
-        host[key.toLowerCase()] = obj[key];
+        host[key.toLowerCase()] =
+            typeof obj[key] === 'object' ? Y.merge(obj[key]) : obj[key];
         if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this._lowerCaseKeys(obj[key], host[key.toLowerCase()]);
-        } else {
-          // This technique will create a version with a capitalized key so we
-          // need to delete it from the host object.
+          this._lowerCaseKeys(host[key.toLowerCase()], host[key.toLowerCase()]);
+        }
+        // This technique will create a version with a capitalized key so we
+        // need to delete it from the host object. To protect against keys
+        // which are already lower case then we test to make sure we don't
+        // delte those.
+        if (key.toLowerCase() !== key) {
           delete host[key];
         }
       }, this);
@@ -160,7 +172,7 @@ YUI.add('charmstore-api', function(Y) {
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
-        downloads: meta.stats.ArchiveDownloadCount,
+        downloads: meta.stats && meta.stats.ArchiveDownloadCount,
         entityType: (charmMeta) ? 'charm' : 'bundle',
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
@@ -184,19 +196,64 @@ YUI.add('charmstore-api', function(Y) {
         idParts = idParts.split('-').slice(0, -1);
         processed.name = idParts.join('-');
       }
-      // To allow the user to click on a bundle search result and display the
-      // details from the old apiv3 we need to try and generate the old url.
-      // This is a temporary fix and will be removed once the bundle details
-      // page supports apiv4.
+      if (meta.manifest) {
+        processed.files = [];
+        meta.manifest.forEach(function(file) {
+          this._lowerCaseKeys(file, file);
+          processed.files.push(file.name);
+        }, this);
+      }
       if (processed.entityType === 'bundle') {
-        var basket = extraInfo['bzr-url'].split('/')[3];
-        var rev = data.Id.split('-');
-        // Grab only the revision;
-        rev = rev[rev.length - 1];
-        var user = bzrOwner !== 'charmers' ? '~' + bzrOwner + '/' : '';
-        processed.id = user + basket + '/' + rev + '/' + processed.name;
+        processed.deployerFileUrl =
+            this.charmstoreURL +
+            this.apiPath + '/' +
+            processed.id.replace('cs:', '') +
+            '/archive/bundles.yaml.orig';
       }
       return processed;
+    },
+
+    /**
+      Fetch an individual file from the specified bundle or charm.
+
+      @method getFile
+      @param {String} entityId The id of the charm or bundle's file we want.
+      @param {String} filename The path/name of the file to fetch.
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
+    */
+    getFile: function(entityId, filename, successCallback, failureCallback) {
+      entityId = entityId.replace('cs:', '');
+      this._makeRequest(
+          this._generatePath(entityId, null, '/archive/' + filename),
+          successCallback,
+          failureCallback);
+    },
+
+    /**
+      Makes a request to the charmstore api for the supplied id. Whether that
+      be a charm or bundle.
+
+      @method getEntity
+      @param {String} entityId The id of the charm or bundle to fetch.
+      @param {Function} successCallback Called when the api request completes
+        successfully.
+      @param {Function} failureCallback Called when the api request fails
+        with a response of >= 400.
+    */
+    getEntity: function(entityId, successCallback, failureCallback) {
+      var filters;
+      if (entityId.indexOf('bundle') > -1) {
+        filters = 'include=bundle-metadata&include=manifest&include=extra-info';
+      } else {
+        filters = '';
+      }
+      this._makeRequest(
+          this._generatePath(entityId, filters, '/meta/any'),
+          this._transformQueryResults.bind(this, successCallback),
+          failureCallback);
     },
 
     /**
