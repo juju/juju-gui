@@ -113,8 +113,13 @@ describe('Charmstore API v4', function() {
   describe('_transformQueryResults', function() {
     var responseText = JSON.stringify({
       Results: [
-        { entityType: 'charm', id: 'cs:precise/foo' },
-        { entityType: 'bundle', id: 'cs:bundle/foo' }
+        { entityType: 'charm', id: 'cs:precise/foo',
+          Meta: { 'extra-info' : { 'bzr-owner': ''}}},
+        { entityType: 'charm', id: 'cs:~charmers/precise/foo',
+          Id: 'cs:~charmers/precise/foo',
+          Meta: { 'extra-info' : { 'bzr-owner': 'charmers'}}},
+        { entityType: 'bundle', id: 'cs:bundle/foo',
+          Meta: { 'extra-info' : { 'bzr-owner': ''}}}
       ]});
     var success;
     var response = { target: { responseText: responseText } };
@@ -132,6 +137,8 @@ describe('Charmstore API v4', function() {
           charmstore, '_processEntityQueryData', {});
       this._cleanups.push(process.reset);
       charmstore._transformQueryResults(success, response);
+      // If this is only called twice that means it has correctly skipped the
+      // ~charmers records.
       assert.equal(process.callCount(), 2);
     });
 
