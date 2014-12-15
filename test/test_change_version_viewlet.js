@@ -132,6 +132,16 @@ describe('Change version viewlet', function() {
     assert.equal(container.all('.upgrade-link').size(), 14);
   });
 
+  it('closes when clicking the x leaving the inspector open', function() {
+    container.one('.change-version-trigger span').simulate('click');
+    assert.equal(container.all('.upgrade-link').size(), 14);
+    var showViewlet = utils.makeStubMethod(inspector, 'showViewlet');
+    this._cleanups.push(showViewlet.reset);
+    container.one('.change-version-close').simulate('click');
+    assert.equal(showViewlet.callCount(), 1);
+    assert.equal(showViewlet.lastArguments()[0], 'overview');
+  });
+
   it('attempts to upgrade on click', function(done) {
     // Ensure that get_charm is called to get the new charm.
     env.setCharm = function(serviceName, upgradeTo, force, callback) {

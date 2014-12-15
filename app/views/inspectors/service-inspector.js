@@ -65,7 +65,8 @@ YUI.add('service-inspector', function(Y) {
       '.initiate-destroy': {click: '_onInitiateDestroy'},
       '.cancel-destroy': {click: '_onCancelDestroy'},
       '.destroy-service-trigger span': {click: '_onDestroyClick'},
-      '.change-version-trigger span': {click: '_onChangeVersionClick'}
+      '.change-version-trigger span': {click: '_onChangeVersionClick'},
+      '.change-version-close': {click: '_closeChangeVersion'}
     },
 
     /**
