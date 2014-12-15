@@ -123,8 +123,7 @@ YUI.add('charmstore-api', function(Y) {
         // get the promulgated version in the results list. This conditional
         // can be removed once that bug is fixed in the charmstore. Est around
         // the end of Jan 2015
-        if (entity.Meta['extra-info']['bzr-owner'] === 'charmers' &&
-            entity.Id.indexOf('~charmers') > -1) {
+        if (entity.Id.match(/~(.)*charmers/g)) {
           return;
         }
         var entityData = this._processEntityQueryData(entity);
