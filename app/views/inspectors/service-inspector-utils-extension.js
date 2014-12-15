@@ -98,6 +98,16 @@ YUI.add('service-inspector-utils-extension', function(Y) {
     },
 
     /**
+      Handles showing the overview viewlet when the user closes the change
+      version pane.
+
+      @method _closeChangeVersion
+    */
+    _closeChangeVersion: function() {
+      this.showViewlet('overview');
+    },
+
+    /**
       React to the user clicking on or otherwise activating the cancel button
       on the "destroy this service" prompt.
 
