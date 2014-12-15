@@ -181,13 +181,16 @@ describe('charmbrowser view', function() {
           charmBrowser, '_loadSearchResults');
       this._cleanups.push(searchResults.reset);
       charmBrowser.set('renderType', 'curated');
+      charmBrowser.set('envSeries', function() { return 'precise'; });
       assert.equal(charmBrowser.get('withHome'), undefined);
       charmBrowser.render('curated');
       // Make sure we don't also render the search result list.
       assert.equal(searchResults.callCount(), 1);
       assert.deepEqual(searchResults.lastArguments()[0], {
-        limit: 10,
-        sort: '-downloads'
+        limit: 20,
+        owner: '',
+        sort: '-downloads',
+        series: 'precise'
       });
       assert.equal(charmBrowser.get('withHome'), false);
     });
@@ -334,9 +337,9 @@ describe('charmbrowser view', function() {
       charmBrowser.set('envSeries', utils.makeStubFunction());
     }
 
-    function callLoadSearchResults(context) {
+    function callLoadSearchResults(context, popular) {
       makeStubs(context);
-      charmBrowser._loadSearchResults();
+      charmBrowser._loadSearchResults(null, popular);
       search = charmBrowser.get('charmstore').search;
       transform = charmBrowser.get('store').transformResults;
       searchArgs = search.lastArguments();
@@ -380,6 +383,26 @@ describe('charmbrowser view', function() {
       });
       assert.deepEqual(renderArgs[1], ['recommended', 'other']);
       assert.equal(renderArgs[2], 'searchResultTemplate');
+    });
+
+    it('calls to render the popular results', function() {
+      callLoadSearchResults(this, true);
+      var data = [];
+      searchArgs[1].call(charmBrowser, data);
+      // Make sure it updates the cache with the search results.
+      var cache = charmBrowser.get('cache');
+      assert.equal(cache.set.calledOnce(), true, 'set not called');
+      var cacheArgs = cache.set.lastArguments();
+      assert.equal(cacheArgs[0], 'text=apache');
+      assert.deepEqual(cacheArgs[1], {
+        popular: [] });
+      // Make sure it calls to render the results.
+      assert.equal(render.calledOnce(), true);
+      var renderArgs = render.lastArguments();
+      assert.deepEqual(renderArgs[0], {
+        popular: [] });
+      assert.deepEqual(renderArgs[1], ['popular']);
+      assert.equal(renderArgs[2], 'popularTemplate');
     });
 
     it('calls to render search results when cached results exist', function() {
