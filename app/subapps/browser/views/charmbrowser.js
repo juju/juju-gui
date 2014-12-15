@@ -28,6 +28,7 @@ YUI.add('juju-charmbrowser', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
+      utils = views.utils,
       templates = views.Templates,
       widgets = Y.namespace('juju.widgets');
 
@@ -46,12 +47,13 @@ YUI.add('juju-charmbrowser', function(Y) {
     },
 
     curatedQtys: {
-      featured: 3,
-      popular: 2,
-      'new': 2
+      recommended: 3,
+      other: 7,
+      popular: 10
     },
 
     template: templates.charmbrowser,
+    popularTemplate: templates.popular,
     searchResultTemplate: templates.search,
 
     /*
@@ -246,21 +248,47 @@ YUI.add('juju-charmbrowser', function(Y) {
         request instead of using the ones which were passed into the view. This
         is only used to load the 'curated' result list. Any search filters
         should still be done by setting the attribute on the charmbrowser view.
+      @param {Boolean} popular A flag to determine if the UI to render should be
+        for the popular results or the normal search results.
     */
-    _loadSearchResults: function(filters) {
+    _loadSearchResults: function(filters, popular) {
       filters = filters || this.get('filters');
       var cacheKey = Y.QueryString.stringify(filters),
-          searchCache = this.get('cache').get(cacheKey);
+          searchCache = this.get('cache').get(cacheKey),
+          headers = ['recommended', 'other'],
+          template = 'searchResultTemplate',
+          successHandler = '_loadSearchSuccessHandler';
+      if (popular) {
+        headers = ['popular'];
+        template = 'popularTemplate';
+        successHandler = '_loadPopularSuccessHanlder';
+      }
       if (searchCache) {
-        this._renderCharmTokens(
-            // If you change these change them in _loadSearchSuccessHandler too.
-            searchCache, ['recommended', 'other'], 'searchResultTemplate');
+        this._renderCharmTokens(searchCache, headers, template);
       } else {
         this.activeRequestId = this.get('charmstore').search(
             filters,
-            this._loadSearchSuccessHandler.bind(this),
+            this[successHandler].bind(this),
             this.apiFailure.bind(this, 'search'));
       }
+    },
+
+    /**
+      The success handler for the store's search call from _loadSearchResults
+      for the popular list of charms.
+
+      @method _loadPopularSuccessHanlder
+      @param {Object} data The data from the store search results call.
+    */
+    _loadPopularSuccessHanlder: function(data) {
+      // Shuffle the results to keep them appearing fresh
+      data = utils.shuffleArray(data);
+      var entityData = {
+        popular: data
+      };
+      this.get('cache').set(
+          Y.QueryString.stringify(this.get('filters')), entityData);
+      this._renderCharmTokens(entityData, ['popular'], 'popularTemplate');
     },
 
     /**
@@ -363,9 +391,11 @@ YUI.add('juju-charmbrowser', function(Y) {
       if (renderType === 'curated') {
         this.set('withHome', false);
         this._loadSearchResults({
-          limit: 10,
-          sort: '-downloads'
-        });
+          limit: 20,
+          owner: '',
+          sort: '-downloads',
+          series: this.get('envSeries')()
+        }, true);
       } else if (renderType === 'search') {
         this.set('withHome', true);
         this._loadSearchResults();
