@@ -606,9 +606,7 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
-        if (window.flags && window.flags.login) {
-          this._renderUserDropdownView();
-        }
+        this._renderUserDropdownView();
         this._renderDeployerBarView();
         this._renderEnvironmentHeaderView();
         this.get('subApps').charmbrowser.on(
