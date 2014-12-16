@@ -181,7 +181,9 @@ describe('charmbrowser view', function() {
           charmBrowser, '_loadSearchResults');
       this._cleanups.push(searchResults.reset);
       charmBrowser.set('renderType', 'curated');
-      charmBrowser.set('envSeries', function() { return 'precise'; });
+      // This envSeries value is being intentionally set to undefined so that we
+      // can test that the series property gets populated with the default.
+      charmBrowser.set('envSeries', function() { return undefined; });
       assert.equal(charmBrowser.get('withHome'), undefined);
       charmBrowser.render('curated');
       // Make sure we don't also render the search result list.
@@ -190,7 +192,7 @@ describe('charmbrowser view', function() {
         limit: 20,
         owner: '',
         sort: '-downloads',
-        series: 'precise'
+        series: 'trusty'
       });
       assert.equal(charmBrowser.get('withHome'), false);
     });
