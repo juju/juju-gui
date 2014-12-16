@@ -192,7 +192,7 @@ describe('charmbrowser view', function() {
         limit: 20,
         owner: '',
         sort: '-downloads',
-        series: 'precise'
+        series: 'trusty'
       });
       assert.equal(charmBrowser.get('withHome'), false);
     });
