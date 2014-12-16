@@ -167,11 +167,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <li id="maas-server" style="display:none">
               <a href="" target="_blank">MAAS UI</a>
             </li>
-            <li id="logout-trigger">
-              <!-- When flags.login is removed the logout-trigger button can
-                be removed -->
-              <a href="" class="logout-trigger button inverse">Logout</a>
-            </li>
             <li id="get-started" class="hidden">
               <a href="http://jujucharms.com"
                  class="button inverse" target="_blank">
@@ -252,14 +247,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .getElementById('loading-message').style.display = 'none';
       };
 
-      showGetJujuButton = function(logoutTrigger, getStarted, userDropdown,
-          showGetJujuButton) {
-        if (showGetJujuButton) {
-          getStarted.classList.remove('hidden');
-          logoutTrigger.classList.add('hidden');
-          userDropdown.classList.add('hidden');
+      showLoginButton = function(getStarted, userDropdown, showLoginButton) {
+        if (showLoginButton) {
+          getStarted.classList.add('hidden');
+          userDropdown.classList.remove('hidden');
         } else {
-          logoutTrigger.classList.remove('hidden');
+          getStarted.classList.remove('hidden');
+          userDropdown.classList.add('hidden');
         }
       };
 
@@ -405,15 +399,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }
 
-        // If we are supposed to show the Get Started button or the logout
-        // button.
-        var logoutTrigger = getDocument().getElementById('logout-trigger');
+        // This config property is passed in to allow for testing.
         var getStarted = getDocument().getElementById('get-started');
         var userDropdown = getDocument().getElementsByClassName(
             'user-dropdown')[0];
-        // This config property is passed in to allow for testing.
-        showGetJujuButton(logoutTrigger, getStarted, userDropdown,
-                          juju_config.showGetJujuButton);
+        showLoginButton(getStarted, userDropdown, juju_config.showLoginButton);
 
         YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
           app = new Y.juju.App(juju_config);
