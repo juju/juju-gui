@@ -906,6 +906,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           testContainer.all('#related-charms .token').size(),
           9);
+      assert.equal(view.get('entity').get('id'), 'cs:precise/apache2-10');
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
 

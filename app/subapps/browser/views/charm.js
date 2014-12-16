@@ -281,6 +281,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
             ].join('-');
 
             charm.size = 'tiny';
+            // XXX This id assignment is only necessary until we switch the
+            // charm details view over to apiv4.
+            charm.id = charm.storeId;
             var ct = new widgets.browser.Token(charm);
             var node = Y.one('[data-interface="' + uiID + '"]');
             ct.render(node);
