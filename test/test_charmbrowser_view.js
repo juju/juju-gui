@@ -123,9 +123,6 @@ describe('charmbrowser view', function() {
         renderAdded = utils.makeStubMethod(
             charmBrowser, '_renderAddedServicesButton');
         this._cleanups.push(renderAdded.reset);
-        var curatedStub = utils.makeStubMethod(
-            charmBrowser, '_loadCurated');
-        this._cleanups.push(curatedStub.reset);
       });
 
       it('calls to render the added services button', function() {
@@ -183,14 +180,18 @@ describe('charmbrowser view', function() {
       var searchResults = utils.makeStubMethod(
           charmBrowser, '_loadSearchResults');
       this._cleanups.push(searchResults.reset);
-      var curated = utils.makeStubMethod(charmBrowser, '_loadCurated');
-      this._cleanups.push(curated.reset);
       charmBrowser.set('renderType', 'curated');
+      charmBrowser.set('envSeries', function() { return 'precise'; });
       assert.equal(charmBrowser.get('withHome'), undefined);
       charmBrowser.render('curated');
-      assert.equal(curated.calledOnce(), true);
       // Make sure we don't also render the search result list.
-      assert.equal(searchResults.callCount(), 0);
+      assert.equal(searchResults.callCount(), 1);
+      assert.deepEqual(searchResults.lastArguments()[0], {
+        limit: 20,
+        owner: '',
+        sort: '-downloads',
+        series: 'precise'
+      });
       assert.equal(charmBrowser.get('withHome'), false);
     });
 
@@ -336,9 +337,9 @@ describe('charmbrowser view', function() {
       charmBrowser.set('envSeries', utils.makeStubFunction());
     }
 
-    function callLoadSearchResults(context) {
+    function callLoadSearchResults(context, popular) {
       makeStubs(context);
-      charmBrowser._loadSearchResults();
+      charmBrowser._loadSearchResults(null, popular);
       search = charmBrowser.get('charmstore').search;
       transform = charmBrowser.get('store').transformResults;
       searchArgs = search.lastArguments();
@@ -384,6 +385,26 @@ describe('charmbrowser view', function() {
       assert.equal(renderArgs[2], 'searchResultTemplate');
     });
 
+    it('calls to render the popular results', function() {
+      callLoadSearchResults(this, true);
+      var data = [];
+      searchArgs[1].call(charmBrowser, data);
+      // Make sure it updates the cache with the search results.
+      var cache = charmBrowser.get('cache');
+      assert.equal(cache.set.calledOnce(), true, 'set not called');
+      var cacheArgs = cache.set.lastArguments();
+      assert.equal(cacheArgs[0], 'text=apache');
+      assert.deepEqual(cacheArgs[1], {
+        popular: [] });
+      // Make sure it calls to render the results.
+      assert.equal(render.calledOnce(), true);
+      var renderArgs = render.lastArguments();
+      assert.deepEqual(renderArgs[0], {
+        popular: [] });
+      assert.deepEqual(renderArgs[1], ['popular']);
+      assert.equal(renderArgs[2], 'popularTemplate');
+    });
+
     it('calls to render search results when cached results exist', function() {
       makeStubs(this);
       var searchCache = { foo: 'bar' };
@@ -397,91 +418,6 @@ describe('charmbrowser view', function() {
       assert.deepEqual(renderArgs[0], searchCache);
       assert.deepEqual(renderArgs[1], ['recommended', 'other']);
       assert.equal(renderArgs[2], 'searchResultTemplate');
-    });
-  });
-
-  describe('_loadCurated', function() {
-    var interesting, intArgs, failure, render, transform;
-
-    function makeStubs(context) {
-      failure = utils.makeStubMethod(charmBrowser, 'apiFailure');
-      context._cleanups.push(failure.reset);
-      render = utils.makeStubMethod(charmBrowser, '_renderCharmTokens');
-      context._cleanups.push(render.reset);
-      charmBrowser.set('store', {
-        interesting: utils.makeStubFunction(),
-        transformResults: utils.makeStubFunction({}),
-        cancelInFlightRequest: utils.makeStubFunction()
-      });
-      charmBrowser.set('cache', {
-        get: utils.makeStubFunction(),
-        set: utils.makeStubFunction(),
-        updateEntityList: utils.makeStubFunction()
-      });
-    }
-
-    function callLoadCurated(context) {
-      makeStubs(context);
-      charmBrowser._loadCurated();
-      interesting = charmBrowser.get('store').interesting;
-      transform = charmBrowser.get('store').transformResults;
-      intArgs = interesting.lastArguments();
-    }
-
-    beforeEach(function() {});
-    afterEach(function() {});
-
-    it('requests the store for curated results', function() {
-      callLoadCurated(this);
-      assert.deepEqual(Object.keys(intArgs[0]), ['success', 'failure']);
-      assert.deepEqual(intArgs[1], charmBrowser);
-    });
-
-    it('passes the api failure call off properly', function() {
-      callLoadCurated(this);
-      intArgs[0].failure();
-      assert.equal(failure.calledOnce(), true);
-      assert.equal(failure.lastArguments()[0], 'curated');
-    });
-
-    it('calls to render the results', function() {
-      callLoadCurated(this);
-      var data = {
-        result: {
-          featured: {},
-          popular: {},
-          'new': {} }};
-      intArgs[0].success.call(charmBrowser, data);
-      assert.equal(transform.callCount(), 3);
-      // Make sure it updates the cache for any curated data.
-      var cache = charmBrowser.get('cache');
-      assert.equal(cache.set.calledOnce(), true);
-      var cacheArgs = cache.set.lastArguments();
-      assert.equal(cacheArgs[0], 'curated');
-      assert.deepEqual(cacheArgs[1], data.result);
-      assert.equal(cache.updateEntityList.calledOnce(), true);
-      assert.deepEqual(cache.updateEntityList.lastArguments()[0], data.result);
-      // Make sure it calls to render
-      assert.equal(render.calledOnce(), true);
-      var renderArgs = render.lastArguments();
-      assert.deepEqual(renderArgs[0], data.result);
-      assert.deepEqual(renderArgs[1], ['featured', 'popular', 'new']);
-      assert.equal(renderArgs[2], 'curatedTemplate');
-    });
-
-    it('calls to render cached results if they exist', function() {
-      makeStubs(this);
-      var cached = { foo: 'bar' };
-      charmBrowser.get('cache').get = utils.makeStubFunction(cached),
-      /* jshint -W030 */
-      // Linter doesn't like this call for some reason.
-      charmBrowser._loadCurated();
-      // Make sure it calls to render
-      assert.equal(render.calledOnce(), true);
-      var renderArgs = render.lastArguments();
-      assert.deepEqual(renderArgs[0], cached);
-      assert.deepEqual(renderArgs[1], ['featured', 'popular', 'new']);
-      assert.equal(renderArgs[2], 'curatedTemplate');
     });
   });
 
@@ -501,41 +437,6 @@ describe('charmbrowser view', function() {
       // Type is intentionally left off so that it doesn't load the curated
       // results.
       charmBrowser.render();
-    });
-
-    it('renders a loaded curated list', function() {
-      // Contains bundles and charms so this tests that both render orrectly.
-      var results = {
-        featured: [{
-          getAttrs: utils.makeStubFunction({
-            id: '~bac/wiki/3/wiki',
-            name: 'wiki',
-            basket_name: 'mediawiki',
-            basket_revision: 3,
-            branch_deleted: false
-          })
-        }],
-        popular: [{
-          getAttrs: utils.makeStubFunction({
-            id: 'precise/bar-2',
-            name: 'foo',
-            description: 'some charm named bar',
-            files: [],
-            is_approved: true
-          })
-        }],
-        'new': []
-      };
-      charmBrowser._renderCharmTokens.call(
-          charmBrowser,
-          results,
-          ['featured', 'popular', 'new'],
-          'curatedTemplate');
-      var container = charmBrowser.get('container');
-      assert.notEqual(container.one('.featured'), null);
-      assert.notEqual(container.one('.popular'), null);
-      assert.notEqual(container.one('.new'), null);
-      assert.equal(container.all('.yui3-token').size(), 2);
     });
 
     it('renders a loaded search result list', function() {
@@ -572,29 +473,27 @@ describe('charmbrowser view', function() {
 
     it('hides the loading indicator on rendering the charm tokens', function() {
       var results = {
-        featured: [],
-        popular: [],
-        'new': []
+        recommended: [],
+        other: []
       };
       charmBrowser._renderCharmTokens.call(
           charmBrowser,
           results,
-          ['featured', 'popular', 'new'],
-          'curatedTemplate');
+          ['recommended', 'other'],
+          'searchResultTemplate');
       assert.equal(hideIndicator.calledOnce(), true);
     });
 
     it('calls to mark the selected charm in the charm list', function() {
       var results = {
-        featured: [],
-        popular: [],
-        'new': []
+        recommended: [],
+        other: []
       };
       charmBrowser._renderCharmTokens.call(
           charmBrowser,
           results,
-          ['featured', 'popular', 'new'],
-          'curatedTemplate');
+          ['recommended', 'other'],
+          'searchResultTemplate');
       // It's called once in the initial render call.
       assert.equal(updateActive.callCount(), 2);
       assert.equal(updateActive.lastArguments()[0], null);
@@ -602,15 +501,14 @@ describe('charmbrowser view', function() {
 
     it('calls to make the headers sticky', function() {
       var results = {
-        featured: [],
-        popular: [],
-        'new': []
+        recommended: [],
+        other: []
       };
       charmBrowser._renderCharmTokens.call(
           charmBrowser,
           results,
-          ['featured', 'popular', 'new'],
-          'curatedTemplate');
+          ['recommended', 'other'],
+          'searchResultTemplate');
       assert.equal(sticky.callCount(), 1);
     });
   });
@@ -624,7 +522,7 @@ describe('charmbrowser view', function() {
       this._cleanups.push(hideIndicator.reset);
       charmBrowser.render();
       var results = {
-        featured: [{
+        recommended: [{
           getAttrs: utils.makeStubFunction({
             id: '~bac/wiki/3/wiki',
             name: 'wiki',
@@ -633,7 +531,7 @@ describe('charmbrowser view', function() {
             branch_deleted: false
           })
         }],
-        popular: [{
+        other: [{
           getAttrs: utils.makeStubFunction({
             id: 'precise/bar-2',
             name: 'foo',
@@ -641,16 +539,15 @@ describe('charmbrowser view', function() {
             files: [],
             is_approved: true
           })
-        }],
-        'new': []
+        }]
       };
       charmBrowser._renderCharmTokens.call(
           charmBrowser,
           results,
-          ['featured', 'popular', 'new'],
-          'curatedTemplate');
+          ['recommended', 'other'],
+          'searchResultTemplate');
       var stickys = charmBrowser.get('container').all('.stickable');
-      assert.equal(stickys.size(), 3);
+      assert.equal(stickys.size(), 2);
       // The first header needs to be stuck to start with (see code comments).
       assert.notEqual(stickys.item(0).hasClass('stickky'), null);
     });

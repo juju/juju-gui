@@ -91,7 +91,7 @@ YUI.add('charmstore-api', function(Y) {
       @param {Object} query The query parameters that are required for the
         request.
       @param {Boolean} extension Any extension to add to the endpoint
-        then /meta/any needs to be appended to the end of the endpoint.
+        such as /meta/any or /archive.
       @return {String} A charmstore url based on the query and endpoint params
         passed in.
     */
@@ -116,12 +116,21 @@ YUI.add('charmstore-api', function(Y) {
       // If there is a single charm or bundle being requested then we need
       // to wrap it in an array so we can use the same map code.
       data = data.Results ? data.Results : [data];
-      var models = data.map(function(entity) {
+      var models = [];
+      data.forEach(function(entity) {
+        // XXX The current charmstore api returns duplicate results for
+        // promulgated charms and bundles. This filters those out so we only
+        // get the promulgated version in the results list. This conditional
+        // can be removed once that bug is fixed in the charmstore. Est around
+        // the end of Jan 2015
+        if (entity.Id.match(/~(.)*charmers/g)) {
+          return;
+        }
         var entityData = this._processEntityQueryData(entity);
         if (entityData.entityType === 'charm') {
-          return new jujuModels.Charm(entityData);
+          models.push(new jujuModels.Charm(entityData));
         } else {
-          return new jujuModels.Bundle(entityData);
+          models.push(new jujuModels.Bundle(entityData));
         }
       }, this);
       successCallback(models);
@@ -147,7 +156,7 @@ YUI.add('charmstore-api', function(Y) {
         // This technique will create a version with a capitalized key so we
         // need to delete it from the host object. To protect against keys
         // which are already lower case then we test to make sure we don't
-        // delte those.
+        // delete those.
         if (key.toLowerCase() !== key) {
           delete host[key];
         }

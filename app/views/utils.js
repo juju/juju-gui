@@ -2288,6 +2288,28 @@ YUI.add('juju-view-utils', function(Y) {
     return path;
   };
 
+  /**
+    Shuffles the elements on the supplied array, returning the shuffled version.
+
+    @method shuffleArray
+    @param {Array} array The array to shuffle
+    @return {Array} The shuffled array.
+  */
+  utils.shuffleArray = function(array) {
+    var length = array.length;
+    var temp, index;
+    while (length) {
+      // Pick a random element.
+      index = Math.floor(Math.random() * length);
+      length -= 1;
+      // Swap the random element with the current index.
+      temp = array[length];
+      array[length] = array[index];
+      array[index] = temp;
+    }
+    return array;
+  };
+
 
 }, '0.1.0', {
   requires: [
