@@ -394,7 +394,10 @@ YUI.add('juju-charmbrowser', function(Y) {
           limit: 20,
           owner: '',
           sort: '-downloads',
-          series: this.get('envSeries')()
+          // If the user visits the application with a hash in the url there is
+          // a race condition and the envSeries is not yet populated so we
+          // need to default it.
+          series: this.get('envSeries')() || 'precise'
         }, true);
       } else if (renderType === 'search') {
         this.set('withHome', true);
