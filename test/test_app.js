@@ -374,9 +374,7 @@ function injectData(app, data) {
       });
     });
 
-    it('renders the user dropdown with flags.login', function(done) {
-      window.flags = {};
-      window.flags.login = true;
+    it('renders the user dropdown', function(done) {
       container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
@@ -392,7 +390,8 @@ function injectData(app, data) {
       });
     });
 
-    it('does not render the user dropdown without flags.login', function(done) {
+    it('does not render user dropdown with hideLoginButton', function(done) {
+      window.juju_config = { hideLoginButton: true };
       container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
@@ -404,6 +403,7 @@ function injectData(app, data) {
         assert.isNotObject(app.userDropdown);
         assert.equal(container.one('#user-dropdown').hasClass(
             'dropdown-menu'), false);
+        delete window.juju_config.hideLoginButton;
         done();
       });
     });
