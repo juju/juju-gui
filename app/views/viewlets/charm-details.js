@@ -49,6 +49,7 @@ YUI.add('charm-details-view', function(Y) {
       var cfg = {
         forInspector: true,
         store: store,
+        charmstore: viewletManagerAttrs.charmstore,
         activeTab: activeTab
       };
 
@@ -70,6 +71,8 @@ YUI.add('charm-details-view', function(Y) {
             // The cfg.entity settings is being commented out because it will
             // need to be re-enabled in a shortly upcoming branch.
             // cfg.entity = storeCharm;
+            cfg.entityId = (data.charm && data.charm.id) ||
+                storeCharm.get('id');
             this.charmView = new browserViews.BrowserCharmView(cfg);
             this.charmView.render();
           },
