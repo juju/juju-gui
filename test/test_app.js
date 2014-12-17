@@ -376,7 +376,6 @@ function injectData(app, data) {
 
     it('renders the user dropdown', function(done) {
       container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
-      window.juju_config = { showLoginButton: true };
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
@@ -387,7 +386,24 @@ function injectData(app, data) {
         assert.isObject(app.userDropdown);
         assert.equal(container.one('#user-dropdown').hasClass(
             'dropdown-menu'), true);
-        delete window.juju_config.showLoginButton;
+        done();
+      });
+    });
+
+    it('does not render user dropdown with hideLoginButton', function(done) {
+      window.juju_config = { hideLoginButton: true };
+      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
+      constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
+      });
+      app.after('ready', function() {
+        assert.isNotObject(app.userDropdown);
+        assert.equal(container.one('#user-dropdown').hasClass(
+            'dropdown-menu'), false);
+        delete window.juju_config.hideLoginButton;
         done();
       });
     });

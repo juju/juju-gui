@@ -606,7 +606,7 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
-        if (window.juju_config && window.juju_config.showLoginButton) {
+        if (!window.juju_config || !window.juju_config.hideLoginButton) {
           // We only want to show the user dropdown view if the gui isn't in
           // demo mode.
           this._renderUserDropdownView();

@@ -247,13 +247,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .getElementById('loading-message').style.display = 'none';
       };
 
-      showLoginButton = function(getStarted, userDropdown, showLoginButton) {
-        if (showLoginButton) {
-          getStarted.classList.add('hidden');
-          userDropdown.classList.remove('hidden');
-        } else {
+      hideLoginButton = function(getStarted, userDropdown, hideLoginButton) {
+        if (hideLoginButton) {
           getStarted.classList.remove('hidden');
           userDropdown.classList.add('hidden');
+        } else {
+          getStarted.classList.add('hidden');
+          userDropdown.classList.remove('hidden');
         }
       };
 
@@ -403,7 +403,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var getStarted = getDocument().getElementById('get-started');
         var userDropdown = getDocument().getElementsByClassName(
             'user-dropdown')[0];
-        showLoginButton(getStarted, userDropdown, juju_config.showLoginButton);
+        hideLoginButton(getStarted, userDropdown, juju_config.hideLoginButton);
 
         YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
           app = new Y.juju.App(juju_config);

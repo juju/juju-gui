@@ -83,20 +83,20 @@
       assert.equal(loadingStyle.display, 'block');
     });
 
-    it('shows user dropdown button when showLoginButton is true', function() {
+    it('shows user dropdown button when hideLoginButton is true', function() {
       var getStartedMock = document.createElement('div');
       var userDropdownMock = document.createElement('div');
-      showLoginButton(getStartedMock, userDropdownMock, true);
-      assert.equal(getStartedMock.className, 'hidden');
-      assert.equal(userDropdownMock.className, '');
-    });
-
-    it('shows Get Started button when showLoginButton is false', function() {
-      var getStartedMock = document.createElement('div');
-      var userDropdownMock = document.createElement('div');
-      showLoginButton(getStartedMock, userDropdownMock, false);
+      hideLoginButton(getStartedMock, userDropdownMock, true);
       assert.equal(getStartedMock.className, '');
       assert.equal(userDropdownMock.className, 'hidden');
+    });
+
+    it('shows Get Started button when hideLoginButton is false', function() {
+      var getStartedMock = document.createElement('div');
+      var userDropdownMock = document.createElement('div');
+      hideLoginButton(getStartedMock, userDropdownMock, false);
+      assert.equal(getStartedMock.className, 'hidden');
+      assert.equal(userDropdownMock.className, '');
     });
 
   });

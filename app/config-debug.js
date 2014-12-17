@@ -61,7 +61,7 @@ var juju_config = {
   isJujucharms: false,
   // Shows the user dropdown view which contains the login button and hides
   // the get started link.
-  showLoginButton: true,
+  hideLoginButton: false,
   // Set a juju-core version so the GUI can adapt its available features.
   jujuCoreVersion: ''
 };
