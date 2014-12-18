@@ -306,7 +306,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(result);
         assert.isTrue(fromToken);
         var credentials = env.getCredentials();
-        assert.equal('tokenuser', credentials.user);
+        assert.equal('user-tokenuser', credentials.user);
         assert.equal('tokenpasswd', credentials.password);
       });
 
@@ -733,7 +733,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(
             lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
-        assert.strictEqual(lastArguments[3], 'user'); // User name.
+        assert.strictEqual(lastArguments[3], 'user-user'); // User name.
         assert.strictEqual(lastArguments[4], 'password'); // Password.
         assert.strictEqual(
             lastArguments[5](), 'progress'); // Progress callback.
@@ -759,7 +759,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(
             lastArguments[0],
             '/juju-core/charms?url=local:trusty/django-42&file=icon.svg');
-        assert.strictEqual(lastArguments[1], 'user'); // User name.
+        assert.strictEqual(lastArguments[1], 'user-user'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
       });
 
@@ -782,7 +782,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(
             lastArguments[0], '/juju-core/charms?url=local:trusty/django-42');
         assert.deepEqual(lastArguments[1], {}); // Headers.
-        assert.strictEqual(lastArguments[2], 'user'); // User name.
+        assert.strictEqual(lastArguments[2], 'user-user'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
             lastArguments[4](), 'progress'); // Progress callback.
@@ -810,7 +810,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             lastArguments[0],
             '/juju-core/charms?url=local:trusty/django-42&file=hooks/install');
         assert.deepEqual(lastArguments[1], {}); // Headers.
-        assert.strictEqual(lastArguments[2], 'user'); // User name.
+        assert.strictEqual(lastArguments[2], 'user-user'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
             lastArguments[4](), 'progress'); // Progress callback.

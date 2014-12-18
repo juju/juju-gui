@@ -61,7 +61,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(setItemValue, {key: 'credentials', value: 'null'});
       var creds = env.getCredentials();
       assert.isTrue(creds.areAvailable);
-      assert.equal(creds.user, 'foo');
+      assert.equal(creds.user, 'user-foo');
       assert.equal(creds.password, 'kumquat');
       // Clean up.
       environments.sessionStorage = original;

@@ -142,8 +142,8 @@ function injectData(app, data) {
                 ecs: new juju.EnvironmentChangeSet()});
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
-            credentials.user.should.equal(the_username);
-            credentials.password.should.equal(the_password);
+            assert.equal(credentials.user, 'user-' + the_username);
+            assert.equal(credentials.password, the_password);
             done();
           });
         });

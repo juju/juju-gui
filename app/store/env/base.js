@@ -214,7 +214,7 @@ YUI.add('juju-env-base', function(Y) {
       var credentials = this.getCredentials() || {};
       if (Y.Lang.isValue(this.get('user'))) {
         credentials.user = credentials.user ||
-            this.get('user');
+            'user-' + this.get('user');
         if (Y.Lang.isValue(this.get('password'))) {
           credentials.password = credentials.password ||
               this.get('password');
@@ -329,9 +329,14 @@ YUI.add('juju-env-base', function(Y) {
      *                   'password' attribute.
      */
     getCredentials: function() {
-      var credentials = Y.JSON.parse(
+      var credentials = JSON.parse(
           module.sessionStorage.getItem('credentials'));
       if (credentials) {
+        // All juju-core interactions require the 'user-' prefix on the username
+        // but we hide that from the user so we prefix that here instead.
+        if (credentials.user && credentials.user.indexOf('user-') !== 0) {
+          credentials.user = 'user-' + credentials.user;
+        }
         Object.defineProperties(credentials, {
           areAvailable: {
             /**
