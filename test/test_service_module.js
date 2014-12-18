@@ -392,6 +392,12 @@ describe('service module events', function() {
           }
         };
 
+    var _charmstore = view.topo.get('charmstore');
+    view.topo.set('charmstore', {
+      _makeRequest: function(url, cb) {
+        cb({target: {responseText: 'bundle: BUNDLE DATA'}});
+      }
+    });
     // mock out the Y.BundleHelpers call.
     var _deployBundle = juju.BundleHelpers.deployBundle;
     juju.BundleHelpers.deployBundle = function(deployerData, id, env, db) {
@@ -399,6 +405,7 @@ describe('service module events', function() {
       assert.equal(id, '~jorge/bundle/thing');
       // Restore the deployBundle call for future tests.
       juju.BundleHelpers.deployBundle = _deployBundle;
+      view.topo.set('charmstore', _charmstore);
       done();
     };
 

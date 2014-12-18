@@ -187,9 +187,14 @@ describe('Browser bundle detail view', function() {
         // app.js sets this to its deploy bundle method so
         // as long as it's called it's successful.
         view.set('deployBundle', function(data) {
-          assert.isObject(data);
+          assert.equal(data, 'bundle: data');
           assert.equal(changeStateFired, true);
           done();
+        });
+        view.set('charmstore', {
+          _makeRequest: function(url, cb) {
+            cb({target: {responseText: 'bundle: data'}});
+          }
         });
         view.set('entity', new models.Bundle(data));
         view.render();
