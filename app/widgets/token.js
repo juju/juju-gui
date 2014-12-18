@@ -140,10 +140,6 @@ YUI.add('browser-token', function(Y) {
     _addDraggability: function() {
       var tokenData,
           container = this.get('boundingBox');
-      // Adjust the ID to meet model expectations.
-      if (this.tokenData.type === 'charm') {
-        this.tokenData.id = this.tokenData.url;
-      }
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the data.  This passed-in config includes
       // charm/bundle attributes.

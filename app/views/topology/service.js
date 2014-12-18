@@ -933,7 +933,7 @@ YUI.add('juju-topology-service', function(Y) {
           // encode it this way.
           bundleImportHelpers.deployBundle(
               Y.JSON.stringify({
-                bundle: entityData.data
+                bundle: entityData
               }),
               entityData.id,
               topo.get('env'),

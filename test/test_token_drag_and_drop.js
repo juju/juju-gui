@@ -93,7 +93,7 @@ describe('token drag and drop', function() {
     draggable = Y.Array.dedupe(draggable);
     assert.equal(draggable.length, 1);
     // All of the tokens are made draggable.
-    assert.deepEqual(draggable, ['cs:test']);
+    assert.deepEqual(draggable, ['test']);
   });
 
   it('can make an element draggable', function() {
@@ -214,7 +214,7 @@ describe('token drag and drop', function() {
 
   it('fixes the charm id in _addDraggability', function() {
     var cfg = {
-      id: 'test',
+      id: 'cs:test',
       url: 'cs:test',
       boundingBox: container
     };
