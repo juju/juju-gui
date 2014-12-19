@@ -29,6 +29,8 @@ YUI.add('juju-env-base', function(Y) {
 
   var module = Y.namespace('juju.environments');
   var _sessionStorageData = {};
+  var API_USER_TAG = 'user-';
+
   module.stubSessionStorage = {
     /**
      * Implement simple sessionStorage getItem work-alike.
@@ -214,7 +216,7 @@ YUI.add('juju-env-base', function(Y) {
       var credentials = this.getCredentials() || {};
       if (Y.Lang.isValue(this.get('user'))) {
         credentials.user = credentials.user ||
-            'user-' + this.get('user');
+            API_USER_TAG + this.get('user');
         if (Y.Lang.isValue(this.get('password'))) {
           credentials.password = credentials.password ||
               this.get('password');
@@ -334,8 +336,8 @@ YUI.add('juju-env-base', function(Y) {
       if (credentials) {
         // All juju-core interactions require the 'user-' prefix on the username
         // but we hide that from the user so we prefix that here instead.
-        if (credentials.user && credentials.user.indexOf('user-') !== 0) {
-          credentials.user = 'user-' + credentials.user;
+        if (credentials.user && credentials.user.indexOf(API_USER_TAG) !== 0) {
+          credentials.user = API_USER_TAG + credentials.user;
         }
         Object.defineProperties(credentials, {
           areAvailable: {
