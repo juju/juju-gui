@@ -42,6 +42,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       env.destroy();
+      sessionStorage.setItem('credentials', null);
     });
 
     // These duplicate more thorough tests in test_env_go.js.
@@ -70,16 +71,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     test('credentials passed to the constructor are stored', function() {
       var user = 'Will Smith';
       var password = 'I am legend!';
+      // Make sure that the session is empty from the 'beforeEach' instantiation
+      sessionStorage.setItem('credentials', null);
       var env = new juju.environments.GoEnvironment({
         user: user,
         password: password,
         conn: conn
       });
       var credentials = env.getCredentials();
-      assert.equal(credentials.user, user);
+      assert.equal(credentials.user, 'user-' + user);
       assert.equal(credentials.password, password);
-      assert.equal(JSON.stringify(credentials),
-          sessionStorage.getItem('credentials'));
+      assert.equal(JSON.stringify({
+        user: 'user-' + user,
+        password: password
+      }), sessionStorage.getItem('credentials'));
     });
 
     test('login requests are sent in response to a connection', function() {

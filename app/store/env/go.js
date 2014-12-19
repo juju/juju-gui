@@ -402,7 +402,7 @@ YUI.add('juju-env-go', function(Y) {
           Type: 'Admin',
           Request: 'Login',
           Params: {
-            AuthTag: 'user-' + credentials.user,
+            AuthTag: credentials.user,
             Password: credentials.password
           }
         }, this.handleLogin);
