@@ -66,8 +66,13 @@ YUI.add('bundle-import-helpers', function(Y) {
       };
 
       if (Y.Lang.isFunction(env.deployerImport)) {
+        // XXX For now, the deployer is expecting the original bundle basket
+        // format, and requires the bundle name to be the top level YAML
+        // element, so grab that naively.  Future deployer work will allow the
+        // new bundle format.  Makyo - 2012-12-19
+        var bundleName = bundle.split(':', 1)[0];
         var bundleData = {
-          name: null,
+          name: bundleName,
           id: bundleId
         };
 

@@ -927,17 +927,20 @@ YUI.add('juju-topology-service', function(Y) {
           var charm = new models.Charm(entityData);
           Y.fire('initiateDeploy', charm, ghostAttributes);
         } else {
-          // The deployer format requires a top-level key to hold the bundle
-          // data, so we wrap the entity data in a mapping. The deployer
-          // format is YAML, but JSON is a subset of YAML, so we can just
-          // encode it this way.
-          bundleImportHelpers.deployBundle(
-              Y.JSON.stringify({
-                bundle: entityData.data
-              }),
-              entityData.id,
-              topo.get('env'),
-              topo.get('db')
+          // XXX For now, simply send the bundles.yaml.orig file contents to
+          // the deployer.  Future deployer work will allow us to use the
+          // bundle file as returned by the charmstore. Makyo - 2012-12-19
+          topo.get('charmstore')._makeRequest(entityData.deployerFileUrl,
+              function(data) {
+                bundleImportHelpers.deployBundle(
+                    data.target.responseText,
+                    entityData.id,
+                    topo.get('env'),
+                    topo.get('db')
+                );
+              }, function(error) {
+                console.error(error);
+              }
           );
         }
       }

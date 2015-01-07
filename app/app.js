@@ -653,9 +653,7 @@ YUI.add('juju-gui', function(Y) {
         // The other views will hand us an Object vs a YAML string. The import
         // helpers want the yaml string instead.
         importHelpers.deployBundle(
-            Y.JSON.stringify({
-              bundle: bundle
-            }),
+            bundle,
             bundleId,
             env,
             db

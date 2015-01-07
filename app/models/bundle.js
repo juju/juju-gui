@@ -210,11 +210,11 @@ YUI.add('juju-bundle-models', function(Y) {
       /**
         The url which can be used by the deployer to deploy the bundle file.
 
-        @attribute deployerFileURL
+        @attribute deployerFileUrl
         @default undefined
         @type {String}
       */
-      deployerFileURL: {},
+      deployerFileUrl: {},
 
       /**
         A collection of files in the bundle.

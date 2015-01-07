@@ -97,11 +97,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Stub out the env call to make sure we check the params and call the
       // provided callback.
       env.deployerImport = function(bundle, bundleData, callback) {
-        assert.equal(bundle, 'test bundle');
+        assert.equal(bundle, 'test: bundle');
         assert.equal(bundleData.id, '~jorge/wiki/wiki');
         assert.equal(
-            bundleData.name, null,
-            'The name is not currently supported or passed.');
+            bundleData.name, 'test',
+            'The name was not pulled from the bundle.');
         // This is the default callback from the deployBundle method.
         callback({
           err: undefined,
@@ -124,7 +124,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleHelpers.deployBundle('test bundle', '~jorge/wiki/wiki', env, db);
+      ns.BundleHelpers.deployBundle('test: bundle', '~jorge/wiki/wiki',
+          env, db);
     });
 
     it('provides a notification when a deploy watch updates', function(done) {
