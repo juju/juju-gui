@@ -147,6 +147,9 @@ YUI.add('charmstore-api', function(Y) {
         object in place.
     */
     _lowerCaseKeys: function(obj, host) {
+      if (!obj) {
+        return;
+      }
       Object.keys(obj).forEach(function(key) {
         host[key.toLowerCase()] =
             typeof obj[key] === 'object' ? Y.merge(obj[key]) : obj[key];
@@ -218,6 +221,14 @@ YUI.add('charmstore-api', function(Y) {
             this.apiPath + '/' +
             processed.id.replace('cs:', '') +
             '/archive/bundles.yaml.orig';
+      } else {
+        processed.relations = {
+          provides: processed.provides === undefined ? {} : processed.provides,
+          requires: processed.requires === undefined ? {} : processed.requires
+        };
+        delete processed.provides;
+        delete processed.requires;
+        processed.is_subordinate = !!metadata.Subordinate;
       }
       return processed;
     },

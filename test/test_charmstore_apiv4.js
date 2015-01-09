@@ -175,7 +175,17 @@ describe('Charmstore API v4', function() {
         Id: 'cs:trusty/mongodb-9',
         Meta: {
           'charm-metadata': {
-            Name: 'mongodb'
+            Name: 'mongodb',
+            Provides: {
+              db: {
+                'Name': 'db',
+                'Role': 'requirer',
+                'Interface': 'mongo',
+                'Optional': false,
+                'Limit': 1,
+                'Scope': 'global'
+              }
+            }
           },
           'extra-info': {
             'bzr-owner': 'hatch',
@@ -189,16 +199,30 @@ describe('Charmstore API v4', function() {
       };
       var processed = charmstore._processEntityQueryData(data);
       assert.deepEqual(processed, {
+        id: 'cs:trusty/mongodb-9',
+        downloads: 10,
+        entityType: 'charm',
+        is_approved: true,
+        is_subordinate: false,
+        owner: 'hatch',
+        revisions: 5,
         code_source: {
           location: 'cs:precise/mongodb'
         },
-        downloads: 10,
-        entityType: 'charm',
-        id: 'cs:trusty/mongodb-9',
-        is_approved: true,
         name: 'mongodb',
-        owner: 'hatch',
-        revisions: 5
+        relations: {
+          provides: {
+            db: {
+              'name': 'db',
+              'role': 'requirer',
+              'interface': 'mongo',
+              'optional': false,
+              'limit': 1,
+              'scope': 'global'
+            }
+          },
+          requires: {}
+        }
       });
     });
 
