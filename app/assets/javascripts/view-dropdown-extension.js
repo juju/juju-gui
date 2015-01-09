@@ -40,7 +40,6 @@ YUI.add('view-dropdown-extension', function(Y) {
      * @param {Event} ev the click event from the control.
      */
     __toggleDropdown: function(ev) {
-      ev.halt();
       this.get('container').toggleClass('open');
     },
 

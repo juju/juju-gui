@@ -311,7 +311,7 @@ class TestCase(unittest.TestCase):
     def logout(self):
         """Log out from the application, clicking the "logout" link."""
         dropdown_menu = self.driver.find_elements_by_css_selector(
-            '.user-dropdown a.menu-link')
+            '.user-dropdown .menu-link')
         self.click(dropdown_menu[0])
         logout_link = self.driver.find_element_by_class_name('logout-trigger')
         self.click(logout_link)
