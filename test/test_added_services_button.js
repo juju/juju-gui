@@ -110,12 +110,12 @@ describe('added services button', function() {
     it('shows the proper indicator to open or close the view', function() {
       button.render();
       var btnContainer = button.get('container');
-      assert.equal(btnContainer.get('text').indexOf('>') > 0, true);
-      assert.equal(btnContainer.get('text').indexOf('x') > 0, false);
+      assert.isNotNull(btnContainer.one('.added-services-open'));
+      assert.isNull(btnContainer.one('.added-services-close'));
       button.set('closed', false);
       button.render();
-      assert.equal(btnContainer.get('text').indexOf('>') > 0, false);
-      assert.equal(btnContainer.get('text').indexOf('x') > 0, true);
+      assert.isNull(btnContainer.one('.added-services-open'));
+      assert.isNotNull(btnContainer.one('.added-services-close'));
     });
   });
 
