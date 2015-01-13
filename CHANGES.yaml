@@ -20,7 +20,21 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.3.0:
+    ->
+     The GUI now uses the new v4 API of the Juju Charmstore. This change
+     affects everything from service icons to charm and bundle details to
+     the results of searching for a charm.  This also removes the auto-
+     complete feature from the charm browser and search until they are 
+     implemented in the new charmstore.
+    ->
+     Login and logout items have been added to the menu with upcomming support
+     for multiple users in Juju Core; if a user has been created in the state
+     server, that user can log in with their password in the GUI.  If logging
+     in as multiple users is not supported, then the user remains locked down
+     to admin as before.  Multiple users are supported in the sandbox mode.
+    - (FIX) Closing the Change Version view doesn't close the inspector.
+    - (FIX) The correct icons are used for the added services bar.
 - 1.2.5:
     ->
      Modifying the visibility of a service using the Added Services bar now
