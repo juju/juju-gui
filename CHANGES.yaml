@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 1.3.0:
     ->
      The GUI now uses the new v4 API of the Juju Charmstore. This change
