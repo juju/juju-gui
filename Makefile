@@ -173,6 +173,7 @@ help:
 sysdeps:
 	apt-get install -y software-properties-common
 	sh vagrant-provision.sh
+	npm install --cache-min=999999999
 
 build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p build-shared/juju-ui/assets
