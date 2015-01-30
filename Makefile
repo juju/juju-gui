@@ -155,6 +155,7 @@ help:
 	@echo "devel: run the development environment (dynamic templates/CSS)"
 	@echo "debug: run the debugging environment (static templates/CSS)"
 	@echo "prod: run the production environment (aggregated, compressed files)"
+	@echo "sysdeps: build the system dependencies (run as root)"
 	@echo "clean: remove the generated build directories"
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test-debug: run tests on the cli from the debug environment"
@@ -168,6 +169,11 @@ help:
 	@echo "view-docs: generate both doc sets and view them in the browser"
 	@echo "help: this description"
 	@echo "Other targets are available.  See the Makefile."
+
+sysdeps:
+	apt-get install -y software-properties-common
+	sh install-sysdeps.sh
+	npm install --cache-min=999999999
 
 build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p build-shared/juju-ui/assets
@@ -714,8 +720,8 @@ endif
 .PHONY: beautify build build-files build-devel ci-check clean clean-all \
 	clean-deps clean-docs code-doc custom-d3 debug devel docs dist \
 	gjslint help install-npm-packages jshint lint lint-yuidoc main-doc \
-	npm-cache npm-cache-file prep prod recess server spritegen test \
-	test-debug test-misc test-prep test-prod undocumented view-code-doc \
-	view-docs view-main-doc
+	npm-cache npm-cache-file prep prod recess server spritegen sysdeps \
+	test test-debug test-misc test-prep test-prod undocumented \
+	view-code-doc view-docs view-main-doc
 
 .DEFAULT_GOAL := all
