@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :private_network, ip: "192.168.33.10"
 
   # Provision with dependencies.
-  config.vm.provision :shell, :path => "vagrant-provision.sh"
+  config.vm.provision :shell, :path => "install-sysdeps.sh"
 
   config.vm.synced_folder ENV['HOME'], "/vagrant", type: "nfs"
 
