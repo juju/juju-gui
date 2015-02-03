@@ -152,7 +152,8 @@ YUI.add('charmstore-api', function(Y) {
       }
       Object.keys(obj).forEach(function(key) {
         host[key.toLowerCase()] =
-            typeof obj[key] === 'object' ? Y.merge(obj[key]) : obj[key];
+            (typeof obj[key] === 'object' && obj[key] !== null) ?
+                Y.merge(obj[key]) : obj[key];
         if (typeof obj[key] === 'object' && obj[key] !== null) {
           this._lowerCaseKeys(host[key.toLowerCase()], host[key.toLowerCase()]);
         }
@@ -179,6 +180,7 @@ YUI.add('charmstore-api', function(Y) {
       var meta = data.Meta,
           extraInfo = meta['extra-info'],
           charmMeta = meta['charm-metadata'],
+          charmConfig = meta['charm-config'],
           bundleMeta = meta['bundle-metadata'],
           bzrOwner = extraInfo['bzr-owner'];
       // Singletons and keys which are outside of the common structure
@@ -194,6 +196,11 @@ YUI.add('charmstore-api', function(Y) {
           location: extraInfo['bzr-url']
         }
       };
+      // Convert the options keys to lowercase.
+      if (charmConfig && typeof charmConfig.Options === 'object') {
+        this._lowerCaseKeys(charmConfig.Options, charmConfig.Options);
+        processed.options = charmConfig.Options;
+      }
       // An entity will only have one or the other.
       var metadata = (charmMeta) ? charmMeta : bundleMeta;
       // Convert the remaining metadata keys to lowercase.
@@ -292,6 +299,7 @@ YUI.add('charmstore-api', function(Y) {
       var defaultFilters =
                         '&limit=30&' +
                         'include=charm-metadata&' +
+                        'include=charm-config&' +
                         'include=bundle-metadata&' +
                         'include=extra-info&' +
                         'include=stats';
