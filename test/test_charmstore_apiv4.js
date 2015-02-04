@@ -192,6 +192,15 @@ describe('Charmstore API v4', function() {
             'bzr-revisions': 5,
             'bzr-url': 'cs:precise/mongodb'
           },
+          'charm-config': {
+            Options: {
+              'foo-optn': {
+                Default: 'foo',
+                Description: 'foo is awesome',
+                Type: 'String'
+              }
+            }
+          },
           stats: {
             ArchiveDownloadCount: 10
           }
@@ -222,6 +231,13 @@ describe('Charmstore API v4', function() {
             }
           },
           requires: {}
+        },
+        options: {
+          'foo-optn': {
+            'default': 'foo',
+            description: 'foo is awesome',
+            type: 'String'
+          }
         }
       });
     });
@@ -297,6 +313,7 @@ describe('Charmstore API v4', function() {
         'text=foo&' +
             'limit=30&' +
             'include=charm-metadata&' +
+            'include=charm-config&' +
             'include=bundle-metadata&' +
             'include=extra-info&' +
             'include=stats']);
