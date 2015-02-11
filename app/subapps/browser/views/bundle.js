@@ -193,16 +193,20 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _renderBundleView: function() {
       var bundle = this.get('entity');
       var templateData = bundle.getAttrs();
+      var sourceLocation = templateData.code_source.location;
       templateData.charmIcons = utils.charmIconParser(templateData.services);
       // Remove the svg files from the file list
       templateData.files = templateData.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
       templateData.services = this._buildCharmList(templateData.services);
-      templateData.sourceLink = this._getSourceLink(
-          templateData.code_source.location);
+      templateData.sourceLink = this._getSourceLink(sourceLocation);
+      var locationParts = sourceLocation.split('/');
+      // Get the basket name from the source url as the v4 API does not
+      // contain the basket name.
+      var basketName = locationParts[locationParts.length - 2];
       templateData.bugsLink = 'https://bugs.launchpad.net/charms/+source/' +
-          templateData.name;
+          basketName;
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.revisions, templateData.sourceLink);
       var content = this.template(templateData);
