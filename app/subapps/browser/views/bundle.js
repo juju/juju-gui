@@ -199,7 +199,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         return !/\.svg$/.test(fileName);
       });
       templateData.services = this._buildCharmList(templateData.services);
-      templateData.sourceLink = templateData.code_source.location;
+      templateData.sourceLink = this._getSourceLink(
+          templateData.code_source.location);
+      templateData.bugsLink = 'https://bugs.launchpad.net/charms/+source/' +
+          templateData.name;
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.revisions, templateData.sourceLink);
       var content = this.template(templateData);
