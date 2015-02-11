@@ -330,4 +330,12 @@ describe('Browser bundle detail view', function() {
     assert.equal(revnoLink, expected + '/1');
   });
 
+  it('can generate a bugs link', function() {
+    view.set('entity', new models.Bundle(data));
+    var branchUrl = view.get('entity').get('code_source').location;
+    var url = view._getBugsLink(branchUrl);
+    var expected = 'https://bugs.launchpad.net/charms/+source/mongodb-cluster';
+    assert.equal(url, expected);
+  });
+
 });
