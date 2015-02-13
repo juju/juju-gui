@@ -193,13 +193,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _renderBundleView: function() {
       var bundle = this.get('entity');
       var templateData = bundle.getAttrs();
+      var sourceLocation = templateData.code_source.location;
       templateData.charmIcons = utils.charmIconParser(templateData.services);
       // Remove the svg files from the file list
       templateData.files = templateData.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
       templateData.services = this._buildCharmList(templateData.services);
-      templateData.sourceLink = templateData.code_source.location;
+      templateData.sourceLink = this._getSourceLink(sourceLocation);
+      templateData.bugsLink = this._getBugsLink(sourceLocation);
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.revisions, templateData.sourceLink);
       var content = this.template(templateData);
@@ -257,6 +259,22 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           return true;
         }
       });
+    },
+
+    /**
+       Creates the bugs link.
+
+       @method _getBugsLink
+       @private
+       @param {String} sourceLocation The bundle's source URL.
+       @return {String} Launchpad bugs URL.
+     */
+    _getBugsLink: function(sourceLocation) {
+      var locationParts = sourceLocation.split('/');
+      // Get the basket name from the source url as the v4 API does not
+      // contain the basket name.
+      var basketName = locationParts[locationParts.length - 2];
+      return 'https://bugs.launchpad.net/charms/+source/' + basketName;
     },
 
     /**

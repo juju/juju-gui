@@ -164,7 +164,8 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      */
     _getSourceLink: function(lp_url) {
       var url = lp_url.replace('lp:', 'http://bazaar.launchpad.net/');
-      return url;
+      // Append the file-browsing part.
+      return url + '/files';
     },
 
     /**
