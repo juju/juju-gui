@@ -139,6 +139,7 @@ function injectData(app, data) {
                 password: the_password,
                 viewContainer: container,
                 conn: {close: function() {}},
+                jujuCoreVersion: '1.21.1.1-trusty-amd64',
                 ecs: new juju.EnvironmentChangeSet()});
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
@@ -157,6 +158,7 @@ function injectData(app, data) {
         readOnly: true,
         viewContainer: container,
         conn: {close: function() {}},
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
         ecs: new juju.EnvironmentChangeSet()
       });
       assert.isTrue(app.env.get('readOnly'));
@@ -254,7 +256,8 @@ function injectData(app, data) {
             send: function() {},
             close: function() {}
           },
-          ecs: new juju.EnvironmentChangeSet()
+          ecs: new juju.EnvironmentChangeSet(),
+          jujuCoreVersion: '1.21.1.1-trusty-amd64'
         })
       }, this);
 
@@ -283,7 +286,9 @@ function injectData(app, data) {
     });
 
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
-      constructAppInstance({}, this);
+      constructAppInstance({
+        jujuCoreVersion: '1.21.1.1-trusty-amd64'
+      }, this);
       app._autoplaceAndCommitAll = function() {
         // This test will hang if this method is not called from the following
         // event being fired.
@@ -295,7 +300,9 @@ function injectData(app, data) {
     });
 
     it('autoplaceAndCommitAll places and deploys', function() {
-      constructAppInstance({}, this);
+      constructAppInstance({
+        jujuCoreVersion: '1.21.1.1-trusty-amd64'
+      }, this);
       app.deployerBar = {
         _autoPlaceUnits: utils.makeStubFunction(),
         deploy: utils.makeStubFunction(),
@@ -1261,6 +1268,7 @@ describe('File drag over notification system', function() {
             consoleEnabled: true,
             user: 'admin',
             password: 'admin',
+            jujuCoreVersion: '1.21.1.1-trusty-amd64',
             store: new Y.juju.charmworld.APIv3({})
           });
       app.showView(new Y.View());
@@ -1274,6 +1282,7 @@ describe('File drag over notification system', function() {
         container: container,
         viewContainer: container,
         sandbox: true,
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
         store: new Y.juju.charmworld.APIv3({})
       });
       app.showView(new Y.View());
@@ -1314,78 +1323,18 @@ describe('File drag over notification system', function() {
       app.destroy();
     });
 
-    it('should honor socket_url', function() {
-      // The app passes it through to the environment.
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            socket_url: 'wss://example.com/',
-            conn: {close: function() {}} });
-      app.showView(new Y.View());
-      assert.equal(app.env.get('socket_url'), 'wss://example.com/');
-    });
-
-    it('should honor socket_port', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            socket_port: '8080' ,
-            conn: {close: function() {}} });
-      app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'wss://example.net:8080/ws');
-    });
-
-    it('should honor socket_protocol', function() {
+    it('should honor socket_protocol and uuid', function() {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
             socket_protocol: 'ws',
+            jujuCoreVersion: '1.21.1.1-trusty-amd64',
+            jujuEnvUUID: '1234-1234',
             conn: {close: function() {}} });
       app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
-          'ws://example.net:71070/ws');
-    });
-
-    it('should support combining socket_port and socket_protocol', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            socket_protocol: 'ws',
-            socket_port: '8080',
-            conn: {close: function() {}} });
-      app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'ws://example.net:8080/ws');
-    });
-
-    it('should allow socket_port to override socket_url', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            socket_port: '8080',
-            socket_url: 'fnord',
-            conn: {close: function() {}} });
-      app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'wss://example.net:8080/ws');
-    });
-
-    it('should allow socket_protocol to override socket_url', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            socket_protocol: 'ws',
-            socket_url: 'fnord',
-            conn: {close: function() {}} });
-      app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'ws://example.net:71070/ws');
+          'ws://example.net:71070/ws/environment/1234-1234/api');
     });
   });
 
