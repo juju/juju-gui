@@ -29,7 +29,9 @@ describe('Namespaced Routing', function() {
   });
 
   beforeEach(function() {
-    app = new juju.App({conn: {close: function() {}}});
+    app = new juju.App({
+      jujuCoreVersion: '1.21.1.1-trusty-amd64',
+      conn: {close: function() {}}});
     app.showView(new Y.View());
   });
 

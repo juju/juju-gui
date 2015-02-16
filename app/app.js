@@ -431,23 +431,6 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('env')) {
         this.env = this.get('env');
       } else {
-        // Calculate the socket_url.
-        var socketUrl = this.get('socket_url');
-        var socketPort = this.get('socket_port');
-        var socketProtocol = this.get('socket_protocol');
-        if (socketPort || socketProtocol) {
-          // Assemble a socket URL from the Location.
-          var loc = Y.getLocation();
-          socketPort = socketPort || loc.port;
-          socketProtocol = socketProtocol || 'wss';
-          socketUrl = socketProtocol + '://' + loc.hostname;
-          if (socketPort) {
-            socketUrl += ':' + socketPort;
-          }
-          socketUrl += '/ws';
-          this.set('socket_url', socketUrl);
-        }
-
         var ecs = new juju.EnvironmentChangeSet({
           db: this.db
         });
@@ -455,7 +438,7 @@ YUI.add('juju-gui', function(Y) {
         // between the available implementations, currently Go and Python.
         var envOptions = {
           ecs: ecs,
-          socket_url: socketUrl,
+          socket_url: this._generateSocketUrl(),
           user: this.get('user'),
           password: this.get('password'),
           readOnly: this.get('readOnly'),
@@ -698,6 +681,36 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+    },
+
+    /**
+      Composes the various socket paths and protocols and returns the corret
+      url that the GUI should use to communicate with the environment.
+
+      @method _generateSocketUrl
+      @return {String} The fully qualified socket url.
+    */
+    _generateSocketUrl: function() {
+      var socketProtocol = this.get('socket_protocol');
+      // Assemble a socket URL from the Location.
+      var loc = Y.getLocation();
+      socketProtocol = socketProtocol || 'wss';
+      var socketUrl = socketProtocol + '://' + loc.hostname;
+      if (loc.port) {
+        socketUrl += ':' + loc.port;
+      }
+      // If the Juju version is over 1.21 then we need to make requests to the
+      // api using the environments uuid.
+      var jujuVersion = this.get('jujuCoreVersion').split('.');
+      var suffix = '';
+      var majorVersion = parseInt(jujuVersion[0], 10);
+      var minorVersion = parseInt(jujuVersion[1], 10);
+      if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
+        suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
+      }
+      socketUrl = socketUrl + '/ws' + suffix;
+      this.set('socket_url', socketUrl);
+      return socketUrl;
     },
 
     /**
