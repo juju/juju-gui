@@ -219,13 +219,13 @@ YUI.add('subapp-browser', function(Y) {
     */
     _deployTargetDispatcher: function(entityId) {
       var store = this.get('store');
+      var charmstore = this.get('charmstore');
       if (entityId.indexOf('bundle') === 0) {
-        // Query the charmstore for the bundle data
-        store.bundle(entityId.replace(':', '/'), {
-          'success': function(bundle) {
-            this.get('deployBundle')(bundle.data, bundle.id);
-          }
-        }, this);
+        charmstore.getBundleYAML(
+            entityId,
+            function(yaml) {
+              this.get('deployBundle')(yaml, entityId);
+            }.bind(this));
       } else {
         // If it's not a bundle then it's a charm.
         store.charm(entityId.replace('cs:', ''), {
