@@ -345,6 +345,43 @@ YUI.add('charmstore-api', function(Y) {
           this.apiPath, charmId, 'icon.svg'].join('/');
       }
       return path;
+    },
+
+    /**
+      Takes the bundle id and fetches the bundle YAML contents. Required for
+      deploying a bundle via the deployer.
+
+      @method getBundleYAML
+      @param {String} id Bundle id in apiv4 format.
+      @param {Function} successCallback The success callback.
+      @param {Function} failureCallback The failure callback.
+    */
+    getBundleYAML: function(id, successCallback, failureCallback) {
+      this.getEntity(
+          id, this._getBundleYAMLResponse.bind(
+              this, successCallback, failureCallback), failureCallback);
+    },
+
+    /**
+      getEntity success response handler which grabs the deployerFileUrl from
+      the recieved bundle details and requests the YAML.
+
+      @method _getBundleYAMLResponse
+      @param {Function} successCallback The success callback.
+      @param {Function} failureCallback The failure callback.
+      @param {Array} bundle An array containing the requested bundle model.
+    */
+    _getBundleYAMLResponse: function(successCallback, failureCallback, bundle) {
+      // XXX Jeff 17-02-15 The deployerFileUrl is generated after the response
+      // in the _processEntityQueryData method. Once the deployer supports the
+      // new bundle format this can be updated to grab the real yaml not the
+      // 'orig' version.
+      this._makeRequest(
+          bundle[0].get('deployerFileUrl'),
+          function(resp) {
+            successCallback(resp.currentTarget.responseText);
+          },
+          failureCallback);
     }
   };
 

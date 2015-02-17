@@ -334,4 +334,51 @@ describe('Charmstore API v4', function() {
       assert.equal(transform.lastArguments()[0], 'success');
     });
   });
+
+  describe('getBundleYAML', function() {
+    var success, failure;
+
+    beforeEach(function() {
+      success = utils.makeStubFunction();
+      failure = utils.makeStubFunction();
+    });
+
+    it('calls to get the bundle entity', function() {
+      var getEntity = utils.makeStubMethod(charmstore, 'getEntity');
+      var response = utils.makeStubMethod(charmstore, '_getBundleYAMLResponse');
+      var bundleId = 'bundle/elasticsearch';
+      charmstore.getBundleYAML(bundleId, success, failure);
+      var getEntityArgs = getEntity.lastArguments();
+      assert.equal(getEntity.callCount(), 1);
+      assert.equal(getEntityArgs[0], bundleId);
+      getEntityArgs[1](); // Should be a bound copy of _getBundleYAMLResponse.
+      // We need to make sure it's bound with the proper callbacks.
+      var responseArgs = response.lastArguments();
+      responseArgs[0](); // Should be the success callback.
+      assert.equal(success.callCount(), 1);
+      responseArgs[1](); // Should be the failure callback.
+      assert.equal(failure.callCount(), 1);
+      getEntityArgs[2](); // Should be the failure callback.
+      assert.equal(failure.callCount(), 2);
+    });
+
+    it('_getBundleYAMLResponse fetches yaml file contents', function() {
+      var getStub = utils.makeStubFunction('deployer file');
+      var makeRequest = utils.makeStubMethod(charmstore, '_makeRequest');
+      charmstore._getBundleYAMLResponse(success, failure, [{ get: getStub }]);
+      assert.equal(getStub.callCount(), 1);
+      var requestArgs = makeRequest.lastArguments();
+      assert.equal(requestArgs[0], 'deployer file');
+      // Should be the anon success callback handler.
+      requestArgs[1]({
+        currentTarget: {
+          responseText: 'yaml'
+        }
+      });
+      assert.equal(success.callCount(), 1);
+      assert.equal(success.lastArguments()[0], 'yaml');
+      requestArgs[2](); // Should be the failure handler.
+      assert.equal(failure.callCount(), 1);
+    });
+  });
 });
