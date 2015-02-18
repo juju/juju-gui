@@ -220,7 +220,10 @@ YUI.add('subapp-browser', function(Y) {
     _deployTargetDispatcher: function(entityId) {
       var store = this.get('store');
       var charmstore = this.get('charmstore');
-      if (entityId.indexOf('bundle') === 0) {
+      // The charmstore apiv4 format can have the bundle keyword either at the
+      // start, for charmers bundles, or after the username, for namespaced
+      // bundles. ex) bundle/swift & ~jorge/bundle/swift
+      if (entityId.indexOf('bundle/') > -1) {
         charmstore.getBundleYAML(
             entityId,
             function(yaml) {
