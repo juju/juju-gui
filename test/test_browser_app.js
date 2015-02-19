@@ -634,6 +634,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 [bundleYAML, bundleId]);
           });
 
+          it('requests bundle id from charmstore then deploys (namespaced)',
+              function() {
+                var bundleId = '~jorge/bundle/elasticsearch';
+                app.set('charmstore', {
+                  getBundleYAML: utils.makeStubFunction()
+                });
+                app.set('deployBundle', utils.makeStubFunction());
+                app._deployTargetDispatcher(bundleId);
+                var charmstore = app.get('charmstore');
+                assert.equal(charmstore.getBundleYAML.callCount(), 1);
+                var bundleArgs = charmstore.getBundleYAML.lastArguments();
+                assert.equal(bundleArgs[0], bundleId);
+                // The second param is the callback for the store response. So
+                // we need to manually trigger it to test it.
+                var bundleYAML = 'foo:';
+                bundleArgs[1].call(app, bundleYAML);
+                var deploy = app.get('deployBundle');
+                assert.equal(deploy.callCount(), 1);
+                assert.deepEqual(
+                    deploy.lastArguments(),
+                    [bundleYAML, bundleId]);
+              });
+
           it('requests charm id from store then deploys', function() {
             app.setAttrs({
               store: { charm: utils.makeStubFunction() },
