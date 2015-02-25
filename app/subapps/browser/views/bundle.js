@@ -204,6 +204,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       templateData.bugsLink = this._getBugsLink(sourceLocation);
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.revisions, templateData.sourceLink);
+      templateData.quickstartId = templateData.id.replace('cs:', '')
+                                  // Add u/ if there is a username in the id.
+                                                 .replace('~', 'u/')
+                                                 .replace('bundle/', '');
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
