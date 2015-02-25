@@ -330,6 +330,22 @@ describe('Browser bundle detail view', function() {
     assert.equal(revnoLink, expected + '/1');
   });
 
+  it('can generate a quickstart deploy id', function() {
+    view.set('entity', new models.Bundle(data));
+    view.render();
+    var text = view.get('container').one('#deploy').get('text');
+    assert.equal(text.indexOf('juju-quickstart mongodb-cluster/4') > 0, true);
+  });
+
+  it('can generate a namespaced quickstart deploy id', function() {
+    data.id = 'cs:~jorge/bundle/mongodb-cluster-4';
+    view.set('entity', new models.Bundle(data));
+    view.render();
+    var text = view.get('container').one('#deploy').get('text');
+    assert.equal(
+        text.indexOf('juju-quickstart u/jorge/mongodb-cluster/4') > 0, true);
+  });
+
   it('can generate a bugs link', function() {
     view.set('entity', new models.Bundle(data));
     var branchUrl = view.get('entity').get('code_source').location;
