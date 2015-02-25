@@ -207,7 +207,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       templateData.quickstartId = templateData.id.replace('cs:', '')
                                   // Add u/ if there is a username in the id.
                                                  .replace('~', 'u/')
-                                                 .replace('bundle/', '');
+                                                 .replace('bundle/', '')
+                                  // Grab the last - and replace it with a /
+                                  // because the following value is the revno.
+                                                 .replace(/-(?!.*-)/g, '/');
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');

@@ -334,7 +334,7 @@ describe('Browser bundle detail view', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
     var text = view.get('container').one('#deploy').get('text');
-    assert.equal(text.indexOf('juju-quickstart mongodb-cluster-4') > 0, true);
+    assert.equal(text.indexOf('juju-quickstart mongodb-cluster/4') > 0, true);
   });
 
   it('can generate a namespaced quickstart deploy id', function() {
@@ -343,7 +343,7 @@ describe('Browser bundle detail view', function() {
     view.render();
     var text = view.get('container').one('#deploy').get('text');
     assert.equal(
-        text.indexOf('juju-quickstart u/jorge/mongodb-cluster-4') > 0, true);
+        text.indexOf('juju-quickstart u/jorge/mongodb-cluster/4') > 0, true);
   });
 
   it('can generate a bugs link', function() {
