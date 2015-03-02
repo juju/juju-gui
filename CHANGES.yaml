@@ -20,12 +20,18 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.3.2:
+    - Include links to code source and bugs pages in the bundle detail panel.
+    - Deploy bundles using the new charm store API version 4.
+    - >
+      Update Juju Quickstart bundle deployment instructions. Now the new and
+      simplified jujucharm.com syntax is used. e.g.
+      "juju quickstart mediawiki-single".
 - 1.3.1:
     - Added system dependencies make target to make development setup easier.
     - >
-     (FIX) When dragging a charm from the charmbrowser to the canvas the
-     configuration doesn't show up.
+      (FIX) When dragging a charm from the charmbrowser to the canvas the
+      configuration doesn't show up.
 - 1.3.0:
     ->
      The GUI now uses the new v4 API of the Juju Charmstore. This change
