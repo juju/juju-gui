@@ -83,7 +83,7 @@ YUI.add('charm-details-view', function(Y) {
        @param {Event} ev The event.
      */
     close: function(ev) {
-      ev.halt();
+      ev.preventDefault();
       var panel = Y.one('.charmbrowser'),
           container = this.get('container');
       panel.removeClass('animate-in');
@@ -94,6 +94,10 @@ YUI.add('charm-details-view', function(Y) {
       this.viewletManager.hideSlot(ev);
       container.empty();
       this.destroy();
+      // When this close method is called multiple times the destructor stops
+      // being called. This appears to be a bug in the YUI implementation so
+      // we need to call the destructor manually here.
+      this.destructor();
     },
     /**
       Removes the class from the left breakout panel saying there is a charm.
