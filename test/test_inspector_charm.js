@@ -194,7 +194,7 @@ describe('Inspector Charm', function() {
     var fakeManager = {'hideSlot': hideSlot};
 
     var fakeEvent = {
-      halt: function() {},
+      preventDefault: function() {},
       currentTarget: {
         getData: function() { return 'left-hand-panel'; }
       }
@@ -203,6 +203,7 @@ describe('Inspector Charm', function() {
     view = new viewlets.charmDetails();
     view.container = testContainer;
     view.viewletManager = fakeManager;
+    var destructor = utils.makeStubMethod(view, 'destructor');
 
     view.render(fakeCharm, viewletAttrs);
     view.close(fakeEvent);
@@ -210,7 +211,8 @@ describe('Inspector Charm', function() {
     assert.equal(hideSlot.calledOnce(), true);
     assert.equal(Y.one('.charmbrowser').hasClass('animate-in'), false);
     assert.equal(view.get('container').getHTML(), '');
-
+    assert.equal(destructor.callCount(), 1);
+    destructor.passThroughToOriginalMethod.call(view);
   });
 });
 

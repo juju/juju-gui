@@ -67,7 +67,7 @@ YUI.add('charm-details-view', function(Y) {
         container.setHTML(this.templateWrapper({ initial: 'Loading...'}));
         panel.addClass('animate-in');
         container.show();
-        cfg.renderTo = container.one('.content')
+        cfg.renderTo = container.one('.content');
         // Browser Charm View uses the id to fetch the charm details if one
         // isn't provided.
         this.charmView = new browserViews.BrowserCharmView(cfg);
