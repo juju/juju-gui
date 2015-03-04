@@ -45,9 +45,9 @@ YUI.add('search-widget-mgmt-extension', function(Y) {
       @method _renderSearchWidget
     */
     _renderSearchWidget: function() {
-      // Only render search if we have a store.
-      var store = this.get('store');
-      if (store) {
+      // Only render search if we have access to the charmstore.
+      var charmstore = this.get('charmstore');
+      if (charmstore) {
         this.searchWidget = new widgets.browser.Search({
           filters: this.get('filters')
         });

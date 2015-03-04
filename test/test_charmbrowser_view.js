@@ -47,6 +47,7 @@ describe('charmbrowser view', function() {
     charmBrowser = new CharmBrowser({
       parentContainer: utils.makeContainer(this),
       db: db,
+      charmstore: {},
       store: {
         cancelInFlightRequest: utils.makeStubFunction()
       }
@@ -250,8 +251,7 @@ describe('charmbrowser view', function() {
 
       it('instantiates the search widget properly', function() {
         charmBrowser._renderSearchWidget();
-        var search = charmBrowser.searchWidget,
-            store = charmBrowser.get('store');
+        var search = charmBrowser.searchWidget;
         assert.deepEqual(search.get('filters'), charmBrowser.get('filters'));
       });
 
