@@ -265,7 +265,7 @@ describe('Charmstore API v4', function() {
           location: 'lp:~charmers/charms/bundles/mongodb-cluster/bundle'
         },
         deployerFileUrl: 'local/v4/~charmers/bundle/mongodb-cluster-4/' +
-            'archive/bundles.yaml.orig',
+            'archive/bundle.yaml',
         downloads: 10,
         entityType: 'bundle',
         id: 'cs:~charmers/bundle/mongodb-cluster-4',
@@ -379,6 +379,13 @@ describe('Charmstore API v4', function() {
       assert.equal(success.lastArguments()[0], 'yaml');
       requestArgs[2](); // Should be the failure handler.
       assert.equal(failure.callCount(), 1);
+    });
+  });
+
+  describe('downConvertBundleYAML', function() {
+    it('wraps a supplied bundle yaml', function() {
+      var wrapped = charmstore.downConvertBundleYAML('bundle:\n  test');
+      assert.equal(wrapped, '"bundle-deploy": \n  bundle: test\n');
     });
   });
 });

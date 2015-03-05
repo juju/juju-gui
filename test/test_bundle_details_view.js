@@ -192,8 +192,11 @@ describe('Browser bundle detail view', function() {
           done();
         });
         view.set('charmstore', {
-          _makeRequest: function(url, cb) {
-            cb({target: {responseText: 'bundle: data'}});
+          getBundleYAML: function(id, callback) {
+            callback({target: {responseText: 'bundle: data'}});
+          },
+          downConvertBundleYAML: function() {
+            return 'bundle: data';
           }
         });
         view.set('entity', new models.Bundle(data));

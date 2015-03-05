@@ -612,10 +612,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
         describe('_deployTargetDispatcher', function() {
-          it('requests bundle id from charmstore then deploys', function() {
+          it('gets bundle yaml from charmstore then deploys', function() {
             var bundleId = 'bundle/elasticsearch';
             app.set('charmstore', {
-              getBundleYAML: utils.makeStubFunction()
+              getBundleYAML: utils.makeStubFunction(),
+              downConvertBundleYAML: utils.makeStubFunction('yamlres')
             });
             app.set('deployBundle', utils.makeStubFunction());
             app._deployTargetDispatcher(bundleId);
@@ -625,20 +626,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(bundleArgs[0], bundleId);
             // The second param is the callback for the store response. So
             // we need to manually trigger it to test it.
-            var bundleYAML = 'foo:';
-            bundleArgs[1].call(app, bundleYAML);
+            bundleArgs[1].call(app, 'yaml');
             var deploy = app.get('deployBundle');
+            assert.equal(charmstore.downConvertBundleYAML.callCount(), 1);
             assert.equal(deploy.callCount(), 1);
             assert.deepEqual(
                 deploy.lastArguments(),
-                [bundleYAML, bundleId]);
+                ['yamlres', bundleId]);
           });
 
           it('requests bundle id from charmstore then deploys (namespaced)',
               function() {
                 var bundleId = '~jorge/bundle/elasticsearch';
                 app.set('charmstore', {
-                  getBundleYAML: utils.makeStubFunction()
+                  getBundleYAML: utils.makeStubFunction(),
+                  downConvertBundleYAML: utils.makeStubFunction('yamlres')
                 });
                 app.set('deployBundle', utils.makeStubFunction());
                 app._deployTargetDispatcher(bundleId);
@@ -648,13 +650,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 assert.equal(bundleArgs[0], bundleId);
                 // The second param is the callback for the store response. So
                 // we need to manually trigger it to test it.
-                var bundleYAML = 'foo:';
-                bundleArgs[1].call(app, bundleYAML);
+                bundleArgs[1].call(app, 'yaml');
                 var deploy = app.get('deployBundle');
+                assert.equal(charmstore.downConvertBundleYAML.callCount(), 1);
                 assert.equal(deploy.callCount(), 1);
                 assert.deepEqual(
                     deploy.lastArguments(),
-                    [bundleYAML, bundleId]);
+                    ['yamlres', bundleId]);
               });
 
           it('requests charm id from store then deploys', function() {
