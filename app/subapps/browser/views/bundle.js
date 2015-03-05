@@ -92,14 +92,14 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           component: 'charmbrowser',
           metadata: { id: null }
         }});
-      this.get('charmstore')._makeRequest(bundle.get('deployerFileUrl'),
-          function(data) {
-            var bundle = data.target.responseText;
-            var bundleName = bundle.split(':', 1)[0];
-            this.get('deployBundle')(bundle, bundleName);
-          }.bind(this), function(error) {
-            console.error(error);
-          });
+      var charmstore = this.get('charmstore');
+      var bundleId = bundle.get('id').replace('cs:', '');
+      charmstore.getBundleYAML(
+          bundleId,
+          function(yaml) {
+            var bundleYAML = charmstore.downConvertBundleYAML(yaml);
+            this.get('deployBundle')(bundleYAML, bundleId);
+          }.bind(this));
     },
 
     /**

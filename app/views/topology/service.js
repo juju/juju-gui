@@ -927,21 +927,18 @@ YUI.add('juju-topology-service', function(Y) {
           var charm = new models.Charm(entityData);
           Y.fire('initiateDeploy', charm, ghostAttributes);
         } else {
-          // XXX For now, simply send the bundles.yaml.orig file contents to
-          // the deployer.  Future deployer work will allow us to use the
-          // bundle file as returned by the charmstore. Makyo - 2012-12-19
-          topo.get('charmstore')._makeRequest(entityData.deployerFileUrl,
-              function(data) {
+          var charmstore = topo.get('charmstore');
+          charmstore.getBundleYAML(
+              entityData.id.replace('cs:', ''),
+              function(yaml) {
+                var bundleYAML = charmstore.downConvertBundleYAML(yaml);
                 bundleImportHelpers.deployBundle(
-                    data.target.responseText,
+                    bundleYAML,
                     entityData.id,
                     topo.get('env'),
                     topo.get('db')
                 );
-              }, function(error) {
-                console.error(error);
-              }
-          );
+              }.bind(this));
         }
       }
     },
