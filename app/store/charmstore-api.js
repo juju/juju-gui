@@ -144,7 +144,9 @@ YUI.add('charmstore-api', function(Y) {
       @param {Object} obj The source object with the uppercase keys.
       @param {Object} host The host object in which the keys will be assigned.
       @param {Object} exclude Exclude a particular level from lowercasing when
-        recursing.
+        recursing; uses a 0-based index, so if 0 is specified, the keys at the
+        first level of recursion will not be lowercased. If 3 is specified, the
+        keys at the fourth level of recursion will not be lowercased.
       @return {Undefined} Does not return a value, modifies the supplied host
         object in place.
     */
