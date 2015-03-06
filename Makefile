@@ -171,8 +171,8 @@ help:
 	@echo "Other targets are available.  See the Makefile."
 
 sysdeps:
-	apt-get install -y software-properties-common
-	sh install-sysdeps.sh
+	sudo apt-get install -y software-properties-common
+	sudo sh install-sysdeps.sh
 	npm install --cache-min=999999999
 
 build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
