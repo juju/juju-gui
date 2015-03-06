@@ -227,7 +227,7 @@ YUI.add('charmstore-api', function(Y) {
             this.charmstoreURL +
             this.apiPath + '/' +
             processed.id.replace('cs:', '') +
-            '/archive/bundles.yaml.orig';
+            '/archive/bundle.yaml';
       } else {
         processed.relations = {
           provides: processed.provides === undefined ? {} : processed.provides,
@@ -372,16 +372,26 @@ YUI.add('charmstore-api', function(Y) {
       @param {Array} bundle An array containing the requested bundle model.
     */
     _getBundleYAMLResponse: function(successCallback, failureCallback, bundle) {
-      // XXX Jeff 17-02-15 The deployerFileUrl is generated after the response
-      // in the _processEntityQueryData method. Once the deployer supports the
-      // new bundle format this can be updated to grab the real yaml not the
-      // 'orig' version.
       this._makeRequest(
           bundle[0].get('deployerFileUrl'),
           function(resp) {
             successCallback(resp.currentTarget.responseText);
           },
           failureCallback);
+    },
+
+    /**
+      Takes the supplied YAML and wraps it in another layer to simulate the
+      apiv3 format.
+
+      @method downConvertBundleYAML
+      @param {String} bundleYAML The bundle YAML file contents.
+      @return {String} The wrapped bundle YAML.
+    */
+    downConvertBundleYAML: function(bundleYAML) {
+      var bundle = jsyaml.safeLoad(bundleYAML);
+      var wrapped = { 'bundle-deploy': bundle };
+      return jsyaml.safeDump(wrapped);
     }
   };
 

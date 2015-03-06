@@ -227,7 +227,8 @@ YUI.add('subapp-browser', function(Y) {
         charmstore.getBundleYAML(
             entityId,
             function(yaml) {
-              this.get('deployBundle')(yaml, entityId);
+              var bundleYAML = charmstore.downConvertBundleYAML(yaml);
+              this.get('deployBundle')(bundleYAML, entityId);
             }.bind(this));
       } else {
         // If it's not a bundle then it's a charm.

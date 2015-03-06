@@ -394,8 +394,11 @@ describe('service module events', function() {
 
     var _charmstore = view.topo.get('charmstore');
     view.topo.set('charmstore', {
-      _makeRequest: function(url, cb) {
-        cb({target: {responseText: 'bundle: BUNDLE DATA'}});
+      getBundleYAML: function(id, callback) {
+        callback({target: {responseText: 'bundle: BUNDLE DATA'}});
+      },
+      downConvertBundleYAML: function() {
+        return 'bundle: BUNDLE DATA';
       }
     });
     // mock out the Y.BundleHelpers call.
