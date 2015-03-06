@@ -67,7 +67,7 @@ YUI.add('inspector-header-view', function(Y) {
 
       @method render
       @param {Object} charm the charm model to display the details of.
-      @param {Object} viewletManagerAttrs the attributes passed to the
+      @param {Object} viewContainerAttrs the attributes passed to the
         viewlet manager.
     */
     render: function(model, viewContainerAttrs) {
@@ -76,7 +76,8 @@ YUI.add('inspector-header-view', function(Y) {
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.
       pojoModel.icon = utils.getIconPath(
-          pojoModel.charmUrl, false, viewContainerAttrs.charmstore);
+          pojoModel.charmUrl, false,
+          viewContainerAttrs.charmstore, viewContainerAttrs.env);
       if (pojoModel.pending) {
         // Check if there is already a service using the default name to
         // trigger the name ux.

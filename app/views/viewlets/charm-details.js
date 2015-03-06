@@ -50,7 +50,8 @@ YUI.add('charm-details-view', function(Y) {
         forInspector: true,
         store: store,
         charmstore: viewletManagerAttrs.charmstore,
-        activeTab: activeTab
+        activeTab: activeTab,
+        entityId: charm.get('id')
       };
 
       if (this.get('rendered')) {
@@ -60,36 +61,17 @@ YUI.add('charm-details-view', function(Y) {
         this.charmView.setAttrs(cfg);
       } else {
         container.delegate('click', this.close, '.close-slot', this);
-        panel.removeClass('animate-in');
-        container.hide();
-
-        store.charm(charm.get('storeId'), {
-          'success': function(data, storeCharm) {
-            // We must set renderTo in the callback--it doesn't exist before
-            // then.
-            cfg.renderTo = container.one('.content');
-            // The cfg.entity settings is being commented out because it will
-            // need to be re-enabled in a shortly upcoming branch.
-            // cfg.entity = storeCharm;
-            cfg.entityId = (data.charm && data.charm.id) ||
-                storeCharm.get('id');
-            this.charmView = new browserViews.BrowserCharmView(cfg);
-            this.charmView.render();
-          },
-          'failure': function(data) {
-            // We must set renderTo in the callback--it doesn't exist before
-            // then.
-            cfg.renderTo = container.one('.content');
-            // The cfg.entity settings is being commented out because it will
-            // need to be re-enabled in a shortly upcoming branch.
-            // cfg.entity = charm;
-            this.charmView = new browserViews.BrowserCharmView(cfg);
-            this.charmView.render();
-          }
-        }, this, viewletManagerAttrs.db.charms);
+        if (charm.get('scheme') === 'local') {
+          cfg.entity = charm;
+        }
         container.setHTML(this.templateWrapper({ initial: 'Loading...'}));
         panel.addClass('animate-in');
         container.show();
+        cfg.renderTo = container.one('.content');
+        // Browser Charm View uses the id to fetch the charm details if one
+        // isn't provided.
+        this.charmView = new browserViews.BrowserCharmView(cfg);
+        this.charmView.render();
         this.set('rendered', true);
       }
     },
@@ -101,7 +83,7 @@ YUI.add('charm-details-view', function(Y) {
        @param {Event} ev The event.
      */
     close: function(ev) {
-      ev.halt();
+      ev.preventDefault();
       var panel = Y.one('.charmbrowser'),
           container = this.get('container');
       panel.removeClass('animate-in');
@@ -112,6 +94,10 @@ YUI.add('charm-details-view', function(Y) {
       this.viewletManager.hideSlot(ev);
       container.empty();
       this.destroy();
+      // When this close method is called multiple times the destructor stops
+      // being called. This appears to be a bug in the YUI implementation so
+      // we need to call the destructor manually here.
+      this.destructor();
     },
     /**
       Removes the class from the left breakout panel saying there is a charm.
