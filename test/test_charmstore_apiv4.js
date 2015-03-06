@@ -166,6 +166,13 @@ describe('Charmstore API v4', function() {
       charmstore._lowerCaseKeys(uppercase, host);
       assert.deepEqual(host, { baz: '1', foo: { bar: { baz: '1'}}});
     });
+
+    it('can skip one level of keys in an object', function() {
+      var uppercase = { Baz: '1', Foo: { Bar: { Baz: '1' }}, Fee: '2'};
+      var host = {};
+      charmstore._lowerCaseKeys(uppercase, host, 0);
+      assert.deepEqual(host, { Baz: '1', Foo: { bar: { baz: '1'}}, Fee: '2'});
+    });
   });
 
   describe('_processEntityQueryData', function() {
@@ -197,6 +204,11 @@ describe('Charmstore API v4', function() {
               'foo-optn': {
                 Default: 'foo',
                 Description: 'foo is awesome',
+                Type: 'String'
+              },
+              'barOptn': {
+                Default: 'bar',
+                Description: 'bar is less awesome',
                 Type: 'String'
               }
             }
@@ -236,6 +248,11 @@ describe('Charmstore API v4', function() {
           'foo-optn': {
             'default': 'foo',
             description: 'foo is awesome',
+            type: 'String'
+          },
+          'barOptn': {
+            'default': 'bar',
+            description: 'bar is less awesome',
             type: 'String'
           }
         }

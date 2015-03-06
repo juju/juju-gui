@@ -143,25 +143,37 @@ YUI.add('charmstore-api', function(Y) {
       @method lowerCaseKeys
       @param {Object} obj The source object with the uppercase keys.
       @param {Object} host The host object in which the keys will be assigned.
+      @param {Object} exclude Exclude a particular level from lowercasing when
+        recursing.
       @return {Undefined} Does not return a value, modifies the supplied host
         object in place.
     */
-    _lowerCaseKeys: function(obj, host) {
+    _lowerCaseKeys: function(obj, host, exclude) {
       if (!obj) {
         return;
       }
       Object.keys(obj).forEach(function(key) {
-        host[key.toLowerCase()] =
+        // An exclude of 0 means "don't lowercase this level".
+        var newKey = key;
+        if (exclude !== 0) {
+          newKey = key.toLowerCase();
+        }
+        host[newKey] =
             (typeof obj[key] === 'object' && obj[key] !== null) ?
                 Y.merge(obj[key]) : obj[key];
         if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this._lowerCaseKeys(host[key.toLowerCase()], host[key.toLowerCase()]);
+          // Decrement exclude by one if it exists.
+          var newExclude = exclude;
+          if (newExclude !== undefined) {
+            newExclude = exclude - 1;
+          }
+          this._lowerCaseKeys(host[newKey], host[newKey], newExclude);
         }
         // This technique will create a version with a capitalized key so we
         // need to delete it from the host object. To protect against keys
         // which are already lower case then we test to make sure we don't
         // delete those.
-        if (key.toLowerCase() !== key) {
+        if (newKey !== key) {
           delete host[key];
         }
       }, this);
@@ -198,7 +210,7 @@ YUI.add('charmstore-api', function(Y) {
       };
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
-        this._lowerCaseKeys(charmConfig.Options, charmConfig.Options);
+        this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);
         processed.options = charmConfig.Options;
       }
       // An entity will only have one or the other.
