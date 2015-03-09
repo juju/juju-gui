@@ -624,14 +624,6 @@ describe('charmbrowser view', function() {
       assert.equal(charmBrowser.get('container').getDOMNode(), null);
       window.flags = null;
     });
-
-    it('calls to abort any in flight store requests', function() {
-      charmBrowser.activeRequestId = 42;
-      charmBrowser.destroy();
-      var cancel = charmBrowser.get('store').cancelInFlightRequest;
-      assert.equal(cancel.calledOnce(), true);
-      assert.equal(cancel.lastArguments()[0], charmBrowser.activeRequestId);
-    });
   });
 
   describe('_bindEvents', function() {
