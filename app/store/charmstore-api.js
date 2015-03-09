@@ -285,12 +285,8 @@ YUI.add('charmstore-api', function(Y) {
         with a response of >= 400.
     */
     getEntity: function(entityId, successCallback, failureCallback) {
-      var filters;
-      if (entityId.indexOf('bundle') > -1) {
-        filters = 'include=bundle-metadata&include=manifest&include=extra-info';
-      } else {
-        filters = '';
-      }
+      var filters = 'include=bundle-metadata&include=charm-metadata' +
+                    '&include=charm-config&include=manifest&include=extra-info';
       this._makeRequest(
           this._generatePath(entityId, filters, '/meta/any'),
           this._transformQueryResults.bind(this, successCallback),

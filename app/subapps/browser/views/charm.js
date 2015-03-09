@@ -305,7 +305,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         templateData.sourceLink = this._getSourceLink(
             this.get('entity').get('code_source').location);
         templateData.prettyCommits = this._formatCommitsForHtml(
-            templateData.recentCommits, templateData.sourceLink);
+            templateData.revisions, templateData.sourceLink);
       }
       templateData.interfaceIntro = this._getInterfaceIntroFlag(
           templateData.requires, templateData.provides);
@@ -345,7 +345,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
        data it needs to render.
 
        @method render
-
      */
     render: function() {
       this.showIndicator(this.get('renderTo'));
@@ -354,18 +353,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this._renderCharmView(this.get('entity'));
         this.hideIndicator(this.get('renderTo'));
       } else {
-        this.get('store').charm(this.get('entityId'), {
-          'success': function(data) {
-            var charm = new models.Charm(data.charm);
-            if (data.metadata) {
-              charm.set('metadata', data.metadata);
-            }
-            this.set('charm', charm);
-            this._renderCharmView(charm);
-            this.hideIndicator(this.get('renderTo'));
-          },
-          'failure': this.apiFailure
-        }, this);
+        this.get('charmstore').getEntity(
+            this.get('entityId'),
+            function(charms) {
+              var charm = charms[0];
+              this.set('charm', charm);
+              this._renderCharmView(charm);
+              this.hideIndicator(this.get('renderTo'));
+            }.bind(this),
+            this.apiFailure);
       }
     }
   }, {
