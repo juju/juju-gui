@@ -91,7 +91,6 @@ YUI.add('change-version-view', function(Y) {
       var viewletManager = this.viewletManager,
           db = viewletManager.get('db'),
           env = viewletManager.get('env'),
-          store = viewletManager.get('store'),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
