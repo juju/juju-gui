@@ -171,7 +171,7 @@ help:
 	@echo "Other targets are available.  See the Makefile."
 
 sysdeps:
-	apt-get install -y software-properties-common
+	sudo apt-get install -y software-properties-common
 	sh install-sysdeps.sh
 	npm install --cache-min=999999999
 
