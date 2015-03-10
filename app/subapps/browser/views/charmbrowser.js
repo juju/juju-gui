@@ -230,7 +230,7 @@ YUI.add('juju-charmbrowser', function(Y) {
             var newOffset = -(headingHeight - (offsetTop - scrollTop));
             // Get the currently visible sticky heading.
             // Because the browser sometimes scrolls the container to the top
-            // when switching between search and editorial views the above code
+            // when switching between search views the above code
             // which adds the sticky class to the first header is required to
             // avoid throwing an error here.
             charmContainer.one('.sticky:last-child .section-title')
@@ -435,7 +435,7 @@ YUI.add('juju-charmbrowser', function(Y) {
     },
 
     /**
-      Update the node in the editorial list marked as 'active'.
+      Update the node in the charm list marked as 'active'.
 
       @method updateActive
       @param {Node} clickTarget the token clicked on to activate.

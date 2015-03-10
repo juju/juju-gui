@@ -861,7 +861,6 @@ YUI.add('subapp-browser', function(Y) {
     'sub-app',
     'subapp-browser-bundleview',
     'subapp-browser-charmview',
-    'subapp-browser-charmresults',
     'subapp-browser-events',
     'subapp-browser-sidebar'
   ]
