@@ -35,10 +35,9 @@ YUI.add('subapp-browser-charmresults', function(Y) {
   /**
      Charm results view.
 
-     The Editorial and the Search results view share some basic info. This
-     View is there to provide common handling of events shared in both uses.
+     This view provides common handling of events in results views.
      Since this view is incomplete (has no render, template, etc.) it's not
-     tested directly, but through the SearchView and the EditorialView which
+     tested directly, but through the SearchView which
      verify both rendering and expected event behavior.
 
      @class CharmReults
@@ -102,7 +101,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
     },
 
     /**
-      Update the node in the editorial list marked as 'active'.
+      Update the node in the charm list marked as 'active'.
 
       @method updateActive
       @param {Node} clickTarget the token clicked on to activate.
@@ -176,7 +175,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
             var newOffset = -(headingHeight - (offsetTop - scrollTop));
             // Get the currently visible sticky heading.
             // Because the browser sometimes scrolls the container to the top
-            // when switching between search and editorial views the above code
+            // when switching between search views the above code
             // which adds the sticky class to the first header is required to
             // avoid throwing an error here.
             charmContainer.one('.sticky:last-child .section-title')
