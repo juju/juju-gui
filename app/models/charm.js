@@ -27,8 +27,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-charm-models', function(Y) {
 
-  var RECENT_DAYS = 30;
-
   var models = Y.namespace('juju.models');
   var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)(?:-(\d+|HEAD))?$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
@@ -65,33 +63,6 @@ YUI.add('juju-charm-models', function(Y) {
         return result;
       }
     }
-  };
-
-  /**
-
-   Extract the recent commits into a format we can use nicely.
-
-   @method extractRecentCommits
-   @return {array} Commit objects.
-
-  */
-  var extractRecentCommits = function(revisions) {
-    var commits = [];
-
-    if (revisions) {
-      Y.Array.each(revisions, function(commit) {
-        commits.push({
-          author: {
-            name: commit.authors[0].name,
-            email: commit.authors[0].email
-          },
-          date: new Date(commit.date),
-          message: commit.message,
-          revno: commit.revno
-        });
-      });
-    }
-    return commits;
   };
 
   /**
@@ -431,11 +402,9 @@ YUI.add('juju-charm-models', function(Y) {
          *
          */
         valueFn: function() {
-          var source = this.get('code_source');
-          if (source) {
-            return parseInt(source.revision, 10);
-          } else {
-            return undefined;
+          var revisions = this.get('revisions');
+          if (revisions) {
+            return Object.keys(revisions).length;
           }
         }
       },
@@ -627,56 +596,6 @@ YUI.add('juju-charm-models', function(Y) {
       },
       rating_numerator: {},
       rating_denominator: {},
-      /**
-       * @attribute recent_commit_count
-       * @default 0
-       * @type {Int}
-       *
-       */
-      'recent_commit_count': {
-        /**
-         * @method recent_commit_count.getter
-         * @return {Int} count of the commits in 'recent' time.
-         *
-         */
-        getter: function() {
-          var count = 0,
-              commits = this.get('recentCommits'),
-              today = new Date(),
-              recentAgo = new Date();
-          recentAgo.setDate(today.getDate() - RECENT_DAYS);
-
-          Y.Array.each(commits, function(commit) {
-            if (commit.date > recentAgo) {
-              count += 1;
-            }
-          });
-          return count;
-        }
-      },
-      /**
-       * @attribute recentCommits
-       * @default undefined
-       * @type {Array} list of objects for each commit.
-       *
-       */
-      recentCommits: {
-        /**
-         * Return the commits of the charm in a format we can live with from
-         * the source code data provided by the api.
-         *
-         * @method recentCommits.valueFn
-         *
-         */
-        valueFn: function() {
-          var source = this.get('code_source');
-          var commits = [];
-          if (source) {
-            commits = extractRecentCommits(source.revisions);
-          }
-          return commits;
-        }
-      },
       /**
        * Mapped from the downloads_in_past_30_days in the API.
        *

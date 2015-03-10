@@ -1440,40 +1440,19 @@ describe('test_model.js', function() {
     });
 
     it('maps api downloads in 30 days to recent downloads', function() {
-      data.charm.downloads_in_past_30_days = 10;
-      instance = new models.Charm(data.charm);
+      data.downloads_in_past_30_days = 10;
+      instance = new models.Charm(data);
       instance.get('recent_download_count').should.eql(10);
     });
 
     it('maps relations to keep with the original charm model', function() {
-      instance = new models.Charm(data.charm);
+      instance = new models.Charm(data);
       var requires = instance.get('requires');
       // Interface is quoted for lint purposes.
       requires.balancer['interface'].should.eql('http');
 
       var provides = instance.get('provides');
       provides.website['interface'].should.eql('http');
-    });
-
-    it('maps revisions nicely for us with converted dates', function() {
-      instance = new models.Charm(data.charm);
-      var commits = instance.get('recentCommits');
-      commits.length.should.equal(10);
-
-      // Check that our commits have the right keys constructed from the api
-      // data provided.
-      var sample = commits[0];
-      assert(Y.Object.hasKey(sample, 'author'));
-      assert(Y.Object.hasKey(sample, 'date'));
-      assert(Y.Object.hasKey(sample, 'message'));
-      assert(Y.Object.hasKey(sample, 'revno'));
-
-      // Commits should be ordered new to old.
-      var checkDate = new Date();
-      Y.Array.each(commits, function(commit) {
-        assert(checkDate > commit.date);
-        checkDate = commit.date;
-      });
     });
 
     it('must be able to determine if an icon should be shown', function() {
@@ -1529,34 +1508,20 @@ describe('test_model.js', function() {
           ]);
     });
 
-    it('tracks recent commits in the last 30 days', function() {
-      instance = new models.Charm(data.charm);
-      var commits = instance.get('recentCommits'),
-          today = new Date();
-
-      // adjust the dates on there manually because the tests will be run on
-      // different days throwing things off.
-      Y.each([0, 1, 2], function(index) {
-        commits[index].date = new Date();
-        commits[index].date.setDate(today.getDate() - (1 + index));
-      });
-      instance.get('recent_commit_count').should.equal(3);
-    });
-
     it('tracks the total commits of the charm', function() {
-      instance = new models.Charm(data.charm);
-      assert.equal(instance.get('commitCount'), 44);
+      instance = new models.Charm(data);
+      assert.equal(instance.get('commitCount'), 10);
     });
 
     it('provides a providers attr', function() {
       // The charm details needs the failing providers generated from the list
       // of tested_providers.
-      data.charm.tested_providers = {
+      data.tested_providers = {
         'ec2': 'SUCCESS',
         'local': 'FAILURE',
         'openstack': 'FAILURE'
       };
-      instance = new models.Charm(data.charm);
+      instance = new models.Charm(data);
       instance.get('providers').should.eql(
           {successes: ['ec2'], failures: ['local', 'openstack']});
     });
@@ -1567,13 +1532,10 @@ describe('test_model.js', function() {
     // CharmMode.getAttrs() would have sent out to the token widget.
     it('maps related data to the model-ish api', function() {
       var providesData = relatedData.provides.http[0];
-      instance = new models.Charm(data.charm);
+      instance = new models.Charm(data);
       var converted = instance._convertRelatedData(providesData);
       assert.equal(providesData.name, converted.name);
       assert.equal(providesData.id, converted.storeId);
-      assert.equal(
-          providesData.commits_in_past_30_days,
-          converted.recent_commit_count);
       assert.equal(
           providesData.downloads_in_past_30_days,
           converted.recent_download_count);
@@ -1585,7 +1547,7 @@ describe('test_model.js', function() {
     });
 
     it('builds proper relatedCharms object', function() {
-      instance = new models.Charm(data.charm);
+      instance = new models.Charm(data);
       instance.buildRelatedCharms(relatedData.provides, relatedData.requires);
       var relatedObject = instance.get('relatedCharms');
 
@@ -1604,7 +1566,7 @@ describe('test_model.js', function() {
     });
 
     it('has an entity type static property', function() {
-      instance = new models.Charm(data.charm);
+      instance = new models.Charm(data);
       assert.equal(instance.constructor.entityType, 'charm');
     });
 
