@@ -569,10 +569,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/bundle.js'
         },
 
-        'subapp-browser-charmresults': {
-          fullpath: '/juju-ui/subapps/browser/views/charmresults.js'
-        },
-
         'subapp-browser-sidebar': {
           fullpath: '/juju-ui/subapps/browser/views/sidebar.js',
           requires: [
