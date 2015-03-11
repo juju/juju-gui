@@ -41,7 +41,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
   ], {
 
     template: views.Templates.browser_charm,
-    qatemplate: views.Templates.browser_qa,
 
     /**
      * List the DOM based events to watch for in the container.
