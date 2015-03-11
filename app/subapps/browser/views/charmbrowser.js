@@ -455,7 +455,6 @@ YUI.add('juju-charmbrowser', function(Y) {
     destructor: function() {
       this._cleanUp();
       this.get('container').remove(true);
-      this.get('store').cancelInFlightRequest(this.activeRequestId);
     }
   },
   {

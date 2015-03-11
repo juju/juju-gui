@@ -1,352 +1,455 @@
 {
-  "charm": {
-    "categories": [
-      "app-servers"
-    ], 
-    "code_source": {
-      "bugs_link": "https://bugs.launchpad.net/charms/+source/apache2", 
-      "last_log": "[hloeung,r=mthaddon] Fix error below when SSL chain certificate file is missing, and create cert from template for self-signed cert", 
-      "location": "lp:~charmers/charms/precise/apache2/trunk", 
-      "revision": "44", 
-      "revisions": [
+  "id": "cs:precise\/apache2-27",
+  "entityType": "charm",
+  "is_approved": true,
+  "owner": "charmers",
+  "revisions": [
+    {
+      "authors": [
         {
-          "authors": [
-            {
-              "email": "tom.haddon@canonical.com", 
-              "name": "Tom Haddon"
-            }
-          ], 
-          "date": "2013-05-02T10:05:32Z", 
-          "message": "[hloeung,r=mthaddon] Fix error below when SSL chain certificate file is missing, and create cert from template for self-signed cert", 
-          "revno": 44
-        }, 
-        {
-          "authors": [
-            {
-              "email": "marco@ceppi.net", 
-              "name": "Marco Ceppi"
-            }
-          ], 
-          "date": "2013-04-27T00:12:42Z", 
-          "message": "Added icon.svg\n", 
-          "revno": 43
-        }, 
-        {
-          "authors": [
-            {
-              "email": "tom.haddon@canonical.com", 
-              "name": "Tom Haddon"
-            }
-          ], 
-          "date": "2013-04-25T14:16:13Z", 
-          "message": "[wedgwood,r=mthaddon] Handle the chain file in the same way other cert components are handled", 
-          "revno": 42
-        }, 
-        {
-          "authors": [
-            {
-              "email": "jorge@ubuntu.com", 
-              "name": "Jorge O. Castro"
-            }
-          ], 
-          "date": "2013-04-22T19:37:55Z", 
-          "message": "Add category\n", 
-          "revno": 41
-        }, 
-        {
-          "authors": [
-            {
-              "email": "juan.negron@canonical.com", 
-              "name": "Juan L. Negron"
-            }
-          ], 
-          "date": "2013-03-18T17:15:02Z", 
-          "message": "Merging MP:153721. Allow config option for providing SSL chain certificates file very much like what we have for certificates and private keys. Also fixed up so that ssl_key is ignored when ssl_cert is specified as SELFSIGNED like what the description in config.yaml says.", 
-          "revno": 40
-        }, 
-        {
-          "authors": [
-            {
-              "email": "mark.mims@canonical.com", 
-              "name": "Mark Mims"
-            }
-          ], 
-          "date": "2013-03-13T21:30:13Z", 
-          "message": "remove website-relation-changed hook... just do this in joined", 
-          "revno": 39
-        }, 
-        {
-          "authors": [
-            {
-              "email": "mark.mims@canonical.com", 
-              "name": "Mark Mims"
-            }
-          ], 
-          "date": "2013-03-13T21:28:57Z", 
-          "message": "merging lp:~davidpbritton/charms/precise/apache2/reverseproxy-move", 
-          "revno": 38
-        }, 
-        {
-          "authors": [
-            {
-              "email": "me@brandonholtsclaw.com", 
-              "name": "Brandon Holtsclaw"
-            }
-          ], 
-          "date": "2013-02-11T03:25:21Z", 
-          "message": "MP #147476 - Matthew Wedgwood", 
-          "revno": 37
-        }, 
-        {
-          "authors": [
-            {
-              "email": "robert.ayres@canonical.com", 
-              "name": "Robert Ayres"
-            }
-          ], 
-          "date": "2013-02-05T10:34:47Z", 
-          "message": "Merge David's changes", 
-          "revno": 36
-        }, 
-        {
-          "authors": [
-            {
-              "email": "me@brandonholtsclaw.com", 
-              "name": "Brandon Holtsclaw"
-            }
-          ], 
-          "date": "2013-02-03T01:03:30Z", 
-          "message": "Merge of MP# 146242 - davidpbritton", 
-          "revno": 35
+          "email": "haw.loeung@canonical.com",
+          "name": "Haw Loeung (hloeung)"
         }
-      ], 
-      "type": "bzr"
-    }, 
-    "date_created": "2013-02-01T21:15:47Z", 
-    "description": "The Apache Software Foundation's goal is to build a secure, efficient\nand extensible HTTP server as standards-compliant open source\nsoftware. The result has long been the number one web server on the\nInternet.  It features support for HTTPS, virtual hosting, CGI, SSI,\nIPv6, easy scripting and database integration, request/response\nfiltering, many flexible authentication schemes, and more.\n", 
-    "distro_series": "precise", 
-    "downloads": 36, 
-    "downloads_in_past_30_days": 36, 
-    "files": [
-      "hooks/website-relation-joined", 
-      "hooks/reverseproxy-relation-joined", 
-      "hooks/hooks.py", 
-      "hooks/balancer-relation-changed", 
-      "metadata.yaml", 
-      "hooks/balancer-relation-broken", 
-      "hooks/stop", 
-      "hooks/reverseproxy-relation-changed", 
-      "README.md", 
-      "hooks/start", 
-      "hooks/website-cache-relation-joined", 
-      "hooks/config-changed", 
-      "hooks/nrpe-external-master-relation-changed", 
-      "hooks/website-cache-relation-changed", 
-      "icon.svg", 
-      "hooks/balancer-relation-joined", 
-      "revision", 
-      "config.yaml", 
-      "hooks/install", 
-      "hooks/upgrade-charm"
-    ], 
-    "id": "precise/apache2-10", 
-    "is_approved": true, 
-    "is_subordinate": false, 
-    "maintainer": {
-      "email": "liam.young@canonical.com", 
-      "name": "Liam Young"
-    }, 
-    "name": "apache2", 
-    "options": {
-      "config_change_command": {
-        "default": "reload", 
-        "description": "The command to run whenever config has changed. Accepted values are\n\"reload\" or \"restart\" - any other value will mean neither is executed\nafter a config change (which may be desired, if you're running a\nproduction server and would rather handle these out of band). Note:\nsome variables like the mpm settings require a restart to go into effect.\n", 
-        "type": "string"
-      }, 
-      "disable_modules": {
-        "default": "status autoindex", 
-        "description": "List of modules to disable", 
-        "type": "string"
-      }, 
-      "enable_modules": {
-        "default": "", 
-        "description": "List of modules to enable", 
-        "type": "string"
-      }, 
-      "lb_balancer_timeout": {
-        "default": 60, 
-        "description": "How long the backends in mod_proxy_balancer will timeout, in seconds\n", 
-        "type": "int"
-      }, 
-      "logrotate_count": {
-        "default": 365, 
-        "description": "The number of days we want to retain logs for", 
-        "type": "int"
-      }, 
-      "logrotate_dateext": {
-        "default": true, 
-        "description": "Use daily extension like YYYMMDD instead of simply adding a number\n", 
-        "type": "boolean"
-      }, 
-      "logrotate_rotate": {
-        "default": "daily", 
-        "description": "daily, weekly, monthly, or yearly?", 
-        "type": "string"
-      }, 
-      "mpm_maxclients": {
-        "default": 2048, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_maxrequestsperchild": {
-        "default": 0, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_maxsparethreads": {
-        "default": 75, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_minsparethreads": {
-        "default": 25, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_serverlimit": {
-        "default": 128, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_startservers": {
-        "default": 2, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_threadlimit": {
-        "default": 64, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_threadsperchild": {
-        "default": 64, 
-        "description": "Add desc", 
-        "type": "int"
-      }, 
-      "mpm_type": {
-        "default": "worker", 
-        "description": "worker or prefork", 
-        "type": "string"
-      }, 
-      "nagios_check_http_params": {
-        "default": "", 
-        "description": "The parameters to pass to the nrpe plugin check_http.", 
-        "type": "string"
-      }, 
-      "nagios_context": {
-        "default": "juju", 
-        "description": "Used by the nrpe-external-master subordinate charm. A string that will be prepended to instance name to set the host name in nagios. So for instance the hostname would be something like:\n    juju-postgresql-0\nIf you're running multiple environments with the same services in them this allows you to differentiate between them.\n", 
-        "type": "string"
-      }, 
-      "server_signature": {
-        "default": "On", 
-        "description": "Security setting. Set to one of  On  Off  EMail", 
-        "type": "string"
-      }, 
-      "server_tokens": {
-        "default": "OS", 
-        "description": "Security setting. Set to one of  Full  OS  Minimal  Minor  Major  Prod", 
-        "type": "string"
-      }, 
-      "servername": {
-        "default": "", 
-        "description": "ServerName for vhost, defaults to the units public-address", 
-        "type": "string"
-      }, 
-      "ssl_cert": {
-        "default": "", 
-        "description": "base64 encoded server certificate.  If the keyword 'SELFSIGNED'\nis used, the certificate and key will be autogenerated as\nself-signed.\n", 
-        "type": "string"
-      }, 
-      "ssl_certlocation": {
-        "default": "", 
-        "description": "Name and location of ssl certificate in charm/data directory.\nIf not found, will ignore.  Basename of this file will be used\nas the basename of the cert rooted at /etc/ssl/certs.  Can\nbe used in conjunction with the ssl_cert parameter to specify\nthe cert as a configuration setting.\n", 
-        "type": "string"
-      }, 
-      "ssl_chain": {
-        "default": "", 
-        "description": "base64 encoded chain certificates file.  If ssl_cert is\nspecified as SELFSIGNED, this will be ignored.\n", 
-        "type": "string"
-      }, 
-      "ssl_chainlocation": {
-        "default": "", 
-        "description": "Name and location of the ssl chain file.  Basename of this file\nwill be used as the basename of the chain file rooted at\n/etc/ssl/certs.\n", 
-        "type": "string"
-      }, 
-      "ssl_key": {
-        "default": "", 
-        "description": "base64 encoded server certificate key.  If ssl_cert is\nspecified as SELFSIGNED, this will be ignored.\n", 
-        "type": "string"
-      }, 
-      "ssl_keylocation": {
-        "default": "", 
-        "description": "Name and location of ssl keyfile in charm/data directory.\nIf not found, will ignore.  Basename of this file will be used\nas the basename of the key rooted at /etc/ssl/private.  Can\nbe used in conjuntion with the ssl_key parameter to specify\nthe key as a configuration setting.\n", 
-        "type": "string"
-      }, 
-      "trace_enabled": {
-        "default": "On", 
-        "description": "Security setting. Set to one of  On  Off  extended", 
-        "type": "string"
-      }, 
-      "use_rsyslog": {
-        "default": false, 
-        "description": "Change logging behaviour to log both access and error logs via rsyslog", 
-        "type": "boolean"
-      }, 
-      "vhost_http_template": {
-        "default": "", 
-        "description": "Apache vhost template (base64 encoded).", 
-        "type": "string"
-      }, 
-      "vhost_https_template": {
-        "default": "", 
-        "description": "Apache vhost template (base64 encoded).", 
-        "type": "string"
+      ],
+      "date": "2014-12-12T03:38:32Z",
+      "message": "[r=aisrael] Add option to override supported SSL protocol and cipher suites; Enforce server's preference instead of browser\/client and ship out Canonical IS recommended cipher suites by default.",
+      "revno": 60
+    },
+    {
+      "authors": [
+        {
+          "email": "matthew.bruzek@canonical.com",
+          "name": "Matt Bruzek"
+        }
+      ],
+      "date": "2014-09-11T18:17:22Z",
+      "message": "[tvansteenburgh] Fix test\/lint errors\n",
+      "revno": 59
+    },
+    {
+      "authors": [
+        {
+          "email": "marco@ceppi.net",
+          "name": "Marco Ceppi"
+        }
+      ],
+      "date": "2014-06-30T14:19:30Z",
+      "message": "[davidpbritton] Don't fail self-signed cert generation if we can't install\/import python-pyasn1-modules\n",
+      "revno": 58
+    },
+    {
+      "authors": [
+        {
+          "email": "marco@ceppi.net",
+          "name": "Marco Ceppi"
+        }
+      ],
+      "date": "2014-06-27T11:46:03Z",
+      "message": "[davidpbritton] Don't regen a self-signed cert unless we need to\n",
+      "revno": 57
+    },
+    {
+      "authors": [
+        {
+          "email": "matthew.bruzek@canonical.com",
+          "name": "Matt Bruzek"
+        }
+      ],
+      "date": "2014-06-20T21:25:50Z",
+      "message": "[gnuoy] Fix default security config to have new format when apache 2.4 is installed. \n",
+      "revno": 56
+    },
+    {
+      "authors": [
+        {
+          "email": "chuck@dasroot.net",
+          "name": "Charles Butler"
+        }
+      ],
+      "date": "2014-06-11T17:57:47Z",
+      "message": "    David Britton 2014-05-21 - cleanup some language in README, docstrings.\n    David Britton 2014-05-21 - fixed failing tests if apache2 was not installed\n    David Britton 2014-05-20 removing lint\n    David Britton 2014-05-20 - Add some variables for testing purposes in config-changed\n    David Britton 2014-05-20 - Adding note about opening non-standard ports to README\n    David Britton 2014-05-20 extra param removed\n    David Britton 2014-05-20 Add test_hooks file (oops)\n    David Britton 2014-05-20 add bit about servername and ssl_cert in the vhost-config relation\n    David Britton 2014-05-20 update readme to talk about the vhost-config relation\n    David Britton 2014-05-19 - Remove lint\n    David Britton 2014-05-19 - Added tests for enable_vhost()\n    David Britton 2014-05-19 remove disable_vhost: unused\n    David Britton 2014-05-19 - Adding generic hooks.py tests\n    David Britton 2014-04-30 call vhost update from config_changed, ala other relations in apache2\n    David Britton 2014-04-30 base64decode too early\n    David Britton 2014-04-30 typo on keyword arg to create_vhost\n    David Britton 2014-04-30 expect vhosts in a list of dicts\n    David Britton 2014-04-30 yaml\n    David Britton 2014-04-30 Add relation_data into log message\n    David Britton 2014-04-30 relation_set on the particular id from config_changed\n    David Britton 2014-04-30 vhost_config_relation_changed should set ssl_cert and servername a...\n    David Britton 2014-04-30 jinja2 imported too early\n    David Britton 2014-04-30 inform vhost of config changes in all cases, not just if an ssl_ce...\n    David Britton 2014-04-29 Adding tests for new vhost_config_relation changes\n    David Britton 2014-04-25 add vhost hook\n    David Britton 2014-04-25 don't need the yaml.load I don't think\n    David Britton 2014-04-25 re-arrange vhost-config order\n    David Britton 2014-04-25 Add the relation, still need tests.\n",
+      "revno": 55
+    },
+    {
+      "authors": [
+        {
+          "email": "marco@ceppi.net",
+          "name": "Marco Ceppi"
+        }
+      ],
+      "date": "2014-06-11T17:41:39Z",
+      "message": "[cjohnston] Run apt-get update prior to apt-get install\n",
+      "revno": 54
+    },
+    {
+      "authors": [
+        {
+          "email": "marco@ceppi.net",
+          "name": "Marco Ceppi"
+        }
+      ],
+      "date": "2014-02-08T15:03:12Z",
+      "message": "[jjo] support apache 2.4 site setup\n",
+      "revno": 53
+    },
+    {
+      "authors": [
+        {
+          "email": "marco@ceppi.net",
+          "name": "Marco Ceppi"
+        }
+      ],
+      "date": "2014-02-04T22:08:56Z",
+      "message": "[gnuoy] Add config option to sepcify a comma seperated list of OpenID providers\n",
+      "revno": 52
+    },
+    {
+      "authors": [
+        {
+          "email": "marco@ceppi.net",
+          "name": "Marco Ceppi"
+        }
+      ],
+      "date": "2014-01-16T13:46:52Z",
+      "message": "[jjo] support apache 2.4 config filenames\n",
+      "revno": 51
+    }
+  ],
+  "code_source": {
+    "location": "lp:~charmers\/charms\/precise\/apache2\/trunk"
+  },
+  "options": {
+    "config_change_command": {
+      "type": "string",
+      "description": "The command to run whenever config has changed. Accepted values are\n\"reload\" or \"restart\" - any other value will mean neither is executed\nafter a config change (which may be desired, if you're running a\nproduction server and would rather handle these out of band). Note:\nsome variables like the mpm settings require a restart to go into effect.\n",
+      "default": "reload"
+    },
+    "disable_modules": {
+      "type": "string",
+      "description": "List of modules to disable",
+      "default": "status autoindex"
+    },
+    "enable_modules": {
+      "type": "string",
+      "description": "List of modules to enable",
+      "default": ""
+    },
+    "extra_packages": {
+      "type": "string",
+      "description": "List of extra packages to be installed (e.g. commercial GeoIP package)",
+      "default": ""
+    },
+    "lb_balancer_timeout": {
+      "type": "int",
+      "description": "How long the backends in mod_proxy_balancer will timeout, in seconds\n",
+      "default": 60
+    },
+    "logrotate_count": {
+      "type": "int",
+      "description": "The number of days we want to retain logs for",
+      "default": 365
+    },
+    "logrotate_dateext": {
+      "type": "boolean",
+      "description": "Use daily extension like YYYMMDD instead of simply adding a number\n",
+      "default": true
+    },
+    "logrotate_rotate": {
+      "type": "string",
+      "description": "daily, weekly, monthly, or yearly?",
+      "default": "daily"
+    },
+    "mpm_maxclients": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 2048
+    },
+    "mpm_maxrequestsperchild": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 0
+    },
+    "mpm_maxsparethreads": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 75
+    },
+    "mpm_minsparethreads": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 25
+    },
+    "mpm_serverlimit": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 128
+    },
+    "mpm_startservers": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 2
+    },
+    "mpm_threadlimit": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 64
+    },
+    "mpm_threadsperchild": {
+      "type": "int",
+      "description": "Add desc",
+      "default": 64
+    },
+    "mpm_type": {
+      "type": "string",
+      "description": "worker or prefork",
+      "default": "worker"
+    },
+    "nagios_check_http_params": {
+      "type": "string",
+      "description": "The parameters to pass to the nrpe plugin check_http.",
+      "default": ""
+    },
+    "nagios_context": {
+      "type": "string",
+      "description": "Used by the nrpe-external-master subordinate charm. A string that will be prepended to instance name to set the host name in nagios. So for instance the hostname would be something like:\n    juju-postgresql-0\nIf you're running multiple environments with the same services in them this allows you to differentiate between them.\n",
+      "default": "juju"
+    },
+    "openid_provider": {
+      "type": "string",
+      "description": "Comma seperated list of OpenID providers for authentication.",
+      "default": ""
+    },
+    "package_status": {
+      "type": "string",
+      "description": "The status of service-affecting packages will be set to this value in the dpkg database. Useful valid values are \"install\" and \"hold\".\n",
+      "default": "install"
+    },
+    "server_signature": {
+      "type": "string",
+      "description": "Security setting. Set to one of  On  Off  EMail",
+      "default": "On"
+    },
+    "server_tokens": {
+      "type": "string",
+      "description": "Security setting. Set to one of  Full  OS  Minimal  Minor  Major  Prod",
+      "default": "OS"
+    },
+    "servername": {
+      "type": "string",
+      "description": "ServerName for vhost, defaults to the units public-address",
+      "default": ""
+    },
+    "ssl_cert": {
+      "type": "string",
+      "description": "base64 encoded server certificate.  If the keyword 'SELFSIGNED'\nis used, the certificate and key will be autogenerated as\nself-signed.\n",
+      "default": ""
+    },
+    "ssl_certlocation": {
+      "type": "string",
+      "description": "Name and location of ssl certificate in charm\/data directory.\nIf not found, will ignore.  Basename of this file will be used\nas the basename of the cert rooted at \/etc\/ssl\/certs.  Can\nbe used in conjunction with the ssl_cert parameter to specify\nthe cert as a configuration setting.\n",
+      "default": ""
+    },
+    "ssl_chain": {
+      "type": "string",
+      "description": "base64 encoded chain certificates file.  If ssl_cert is\nspecified as SELFSIGNED, this will be ignored.\n",
+      "default": ""
+    },
+    "ssl_chainlocation": {
+      "type": "string",
+      "description": "Name and location of the ssl chain file.  Basename of this file\nwill be used as the basename of the chain file rooted at\n\/etc\/ssl\/certs.\n",
+      "default": ""
+    },
+    "ssl_cipher_suite": {
+      "type": "string",
+      "description": "List of server cipher suites.",
+      "default": "EECDH+AESGCM+AES128:EDH+AESGCM+AES128:EECDH+AES128:EDH+AES128:ECDH+AESGCM+AES128:aRSA+AESGCM+AES128:ECDH+AES128:DH+AES128:aRSA+AES128:EECDH+AESGCM:EDH+AESGCM:EECDH:EDH:ECDH+AESGCM:aRSA+AESGCM:ECDH:DH:aRSA:HIGH:!MEDIUM:!aNULL:!NULL:!LOW:!3DES:!DSS:!EXP:!PSK:!SRP"
+    },
+    "ssl_honor_cipher_order": {
+      "type": "string",
+      "description": "Enable server cipher suite preference.",
+      "default": "On"
+    },
+    "ssl_key": {
+      "type": "string",
+      "description": "base64 encoded server certificate key.  If ssl_cert is\nspecified as SELFSIGNED, this will be ignored.\n",
+      "default": ""
+    },
+    "ssl_keylocation": {
+      "type": "string",
+      "description": "Name and location of ssl keyfile in charm\/data directory.\nIf not found, will ignore.  Basename of this file will be used\nas the basename of the key rooted at \/etc\/ssl\/private.  Can\nbe used in conjuntion with the ssl_key parameter to specify\nthe key as a configuration setting.\n",
+      "default": ""
+    },
+    "ssl_protocol": {
+      "type": "string",
+      "description": "SSL Protocols to enable.",
+      "default": "ALL -SSLv2 -SSLv3"
+    },
+    "trace_enabled": {
+      "type": "string",
+      "description": "Security setting. Set to one of  On  Off  extended",
+      "default": "On"
+    },
+    "use_rsyslog": {
+      "type": "boolean",
+      "description": "Change logging behaviour to log both access and error logs via rsyslog",
+      "default": false
+    },
+    "vhost_http_template": {
+      "type": "string",
+      "description": "Apache vhost template (base64 encoded).",
+      "default": ""
+    },
+    "vhost_https_template": {
+      "type": "string",
+      "description": "Apache vhost template (base64 encoded).",
+      "default": ""
+    }
+  },
+  "name": "apache2",
+  "summary": "Apache HTTP Server metapackage",
+  "description": "The Apache Software Foundation's goal is to build a secure, efficient\nand extensible HTTP server as standards-compliant open source\nsoftware. The result has long been the number one web server on the\nInternet.  It features support for HTTPS, virtual hosting, CGI, SSI,\nIPv6, easy scripting and database integration, request\/response\nfiltering, many flexible authentication schemes, and more.\n",
+  "subordinate": false,
+  "peers": null,
+  "format": 1,
+  "oldrevision": 0,
+  "categories": {
+    "0": "app-servers"
+  },
+  "tags": null,
+  "series": "",
+  "files": [
+    "revision",
+    "Makefile",
+    "README.md",
+    "charm-helpers.yaml",
+    "cm.py",
+    "config-manager.txt",
+    "config.yaml",
+    "copyright",
+    "data\/balancer.template",
+    "data\/logrotate.conf.template",
+    "data\/mpm_worker.template",
+    "data\/openssl.cnf",
+    "data\/security.template",
+    "data\/syslog-apache.conf",
+    "data\/syslog-rsyslog.conf",
+    "hooks\/balancer-relation-broken",
+    "hooks\/balancer-relation-changed",
+    "hooks\/balancer-relation-joined",
+    "hooks\/charmhelpers\/__init__.py",
+    "hooks\/charmhelpers\/contrib\/__init__.py",
+    "hooks\/charmhelpers\/contrib\/charmsupport\/__init__.py",
+    "hooks\/charmhelpers\/contrib\/charmsupport\/nrpe.py",
+    "hooks\/charmhelpers\/contrib\/charmsupport\/volumes.py",
+    "hooks\/charmhelpers\/core\/__init__.py",
+    "hooks\/charmhelpers\/core\/hookenv.py",
+    "hooks\/charmhelpers\/core\/host.py",
+    "hooks\/charmhelpers\/fetch\/__init__.py",
+    "hooks\/charmhelpers\/fetch\/archiveurl.py",
+    "hooks\/charmhelpers\/fetch\/bzrurl.py",
+    "hooks\/config-changed",
+    "hooks\/hooks.py",
+    "hooks\/install",
+    "hooks\/local-monitors-relation-changed",
+    "hooks\/nrpe-external-master-relation-changed",
+    "hooks\/reverseproxy-relation-changed",
+    "hooks\/reverseproxy-relation-joined",
+    "hooks\/start",
+    "hooks\/stop",
+    "hooks\/tests\/__init__.py",
+    "hooks\/tests\/fixtures\/bar.balancer",
+    "hooks\/tests\/fixtures\/foo.balancer",
+    "hooks\/tests\/fixtures\/nrpe_check_config",
+    "hooks\/tests\/fixtures\/nrpe_service_config",
+    "hooks\/tests\/test_balancer_hook.py",
+    "hooks\/tests\/test_cert.py",
+    "hooks\/tests\/test_config_changed.py",
+    "hooks\/tests\/test_create_vhost.py",
+    "hooks\/tests\/test_hooks.py",
+    "hooks\/tests\/test_nrpe_hooks.py",
+    "hooks\/tests\/test_vhost_config_relation.py",
+    "hooks\/upgrade-charm",
+    "hooks\/vhost-config-relation-changed",
+    "hooks\/website-cache-relation-changed",
+    "hooks\/website-cache-relation-joined",
+    "hooks\/website-relation-joined",
+    "icon.svg",
+    "metadata.yaml",
+    "setup.cfg",
+    "tarmac_tests.sh",
+    "tests\/00-setup",
+    "tests\/10-bundles-test.py",
+    "tests\/bundles.yaml"
+  ],
+  "relations": {
+    "provides": {
+      "local-monitors": {
+        "name": "local-monitors",
+        "role": "provider",
+        "interface": "local-monitors",
+        "optional": false,
+        "limit": 0,
+        "scope": "container"
+      },
+      "nrpe-external-master": {
+        "name": "nrpe-external-master",
+        "role": "provider",
+        "interface": "nrpe-external-master",
+        "optional": false,
+        "limit": 0,
+        "scope": "container"
+      },
+      "website": {
+        "name": "website",
+        "role": "provider",
+        "interface": "http",
+        "optional": false,
+        "limit": 0,
+        "scope": "global"
       }
-    }, 
-    "owner": "charmers", 
-    "rating_denominator": 0, 
-    "rating_numerator": 0, 
-    "relations": {
-      "provides": {
-        "nrpe-external-master": {
-          "interface": "nrpe-external-master", 
-          "scope": "container"
-        }, 
-        "website": {
-          "interface": "http"
-        }
-      }, 
-      "requires": {
-        "balancer": {
-          "interface": "http"
-        }, 
-        "reverseproxy": {
-          "interface": "http"
-        }, 
-        "website-cache": {
-          "interface": "http"
-        }
+    },
+    "requires": {
+      "balancer": {
+        "name": "balancer",
+        "role": "requirer",
+        "interface": "http",
+        "optional": false,
+        "limit": 1,
+        "scope": "global"
+      },
+      "logging": {
+        "name": "logging",
+        "role": "requirer",
+        "interface": "syslog",
+        "optional": false,
+        "limit": 1,
+        "scope": "global"
+      },
+      "reverseproxy": {
+        "name": "reverseproxy",
+        "role": "requirer",
+        "interface": "http",
+        "optional": false,
+        "limit": 1,
+        "scope": "global"
+      },
+      "vhost-config": {
+        "name": "vhost-config",
+        "role": "requirer",
+        "interface": "apache-vhost-config",
+        "optional": false,
+        "limit": 1,
+        "scope": "global"
+      },
+      "website-cache": {
+        "name": "website-cache",
+        "role": "requirer",
+        "interface": "http",
+        "optional": false,
+        "limit": 1,
+        "scope": "global"
       }
-    }, 
-    "revision": 5, 
-    "summary": "Apache HTTP Server metapackage", 
-    "tested_providers": {
-      "ec2": "SUCCESS", 
-      "local": "SUCCESS", 
-      "openstack": "SUCCESS"
-    }, 
-    "url": "cs:precise/apache2-10"
-  }, 
-  "metadata": {}
+    }
+  },
+  "is_subordinate": false
 }

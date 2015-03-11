@@ -126,7 +126,7 @@ describe('Inspector Charm', function() {
 
     fakeStore = new Y.juju.charmworld.APIv3({});
     var cache = new Y.juju.models.CharmList();
-    var charm = new Y.juju.models.Charm(data.charm);
+    var charm = new Y.juju.models.Charm(data);
     charm.set('cached', true);
     cache.add(charm);
 

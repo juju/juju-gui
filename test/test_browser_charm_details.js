@@ -84,9 +84,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('renders for inspector mode correctly', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
       view = new CharmView({
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this),
         forInspector: true
       });
@@ -101,11 +101,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var makeHeading = function(context, is_subordinate) {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
-      data.charm.is_subordinate = is_subordinate;
+      data.files = [];
+      data.is_subordinate = is_subordinate;
       utils.makeContainer(context);
       view = new CharmView({
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(context)
       });
       view.render();
@@ -129,9 +129,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('renders local charms for inspector mode correctly', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
-      data.charm.url = 'local:precise/apache2-10';
-      var charm = new models.Charm(data.charm);
+      data.files = [];
+      data.url = 'local:precise/apache2-10';
+      var charm = new models.Charm(data);
       charm.set('scheme', 'local');
       view = new CharmView({
         entity: charm,
@@ -580,9 +580,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should catch when the open log is clicked', function(done) {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
       view = new CharmView({
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this)
       });
 
@@ -599,9 +599,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('changelog is reformatted and displayed', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
       view = new CharmView({
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this)
       });
 
@@ -817,9 +817,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
       view = new CharmView({
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this)
       });
 
@@ -837,11 +837,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('selects the proper tab when given one', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
 
       view = new CharmView({
         activeTab: '#configuration',
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this)
       });
 
@@ -855,11 +855,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sets the proper change request when closed', function(done) {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
 
       view = new CharmView({
         activeTab: '#configuration',
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this)
       });
 
@@ -876,7 +876,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('loads related charms when interface tab selected', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var data = utils.loadFixture('data/browsercharm.json', true);
       testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
@@ -906,12 +906,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           testContainer.all('#related-charms .token').size(),
           9);
-      assert.equal(view.get('entity').get('id'), 'cs:precise/apache2-10');
+      assert.equal(view.get('entity').get('id'), 'cs:precise/apache2-27');
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
 
     it('only loads the interface data once', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var data = utils.loadFixture('data/browsercharm.json', true);
       testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
@@ -956,7 +956,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('ignore invalid tab selections', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var data = utils.loadFixture('data/browsercharm.json', true);
       testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
@@ -991,9 +991,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should open header links in a new tab', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
+      data.files = [];
       view = new CharmView({
-        entity: new models.Charm(data.charm),
+        entity: new models.Charm(data),
         container: utils.makeContainer(this)
       });
       view.render();

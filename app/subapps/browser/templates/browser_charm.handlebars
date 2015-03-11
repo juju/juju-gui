@@ -102,12 +102,12 @@
 
                         <div class="changelog">
                             <h3 class="section-title">
-                                {{#if recentCommits}}
+                                {{#if revisions}}
                                     <a href="" class="expandToggle"
                                         data-state="closed">
                                 {{/if}}
                                 Change log
-                                {{#if recentCommits}}
+                                {{#if revisions}}
                                         <span class="expand">
                                             <i class="sprite expand_icon more"></i>
                                             <i class="sprite contract_icon less hidden"></i>
@@ -115,7 +115,7 @@
                                     </a>
                                 {{/if}}
                             </h3>
-                            {{#if recentCommits}}
+                            {{#if revisions}}
                                 <div class="first">
                                     <p>
                                         Latest change:
