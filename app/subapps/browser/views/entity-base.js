@@ -45,50 +45,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
-     * The API retuns the questions and the scores. Combine the data into a
-     * single source to make looping in the handlebars templates nicer.
-     *
-     * @method _buildQAData
-     * @param {Object} responseData the qa data from the store.
-     *
-     */
-    _buildQAData: function(responseData) {
-      var questions = responseData.result.questions,
-          scores = responseData.scores,
-          totalAvailable = 0,
-          totalScore = 0;
-
-      Y.Array.each(questions, function(category) {
-        var sum = 0;
-
-        Y.Array.each(category.questions, function(question, idx) {
-          var categoryName = category.name,
-              questionIndex = categoryName + '_' + idx;
-
-          if (scores && scores[categoryName] &&
-              scores[categoryName][questionIndex]) {
-            var score = parseInt(scores[categoryName][questionIndex], 10);
-            sum += score;
-            category.questions[idx].score = score;
-          } else {
-            category.questions[idx].score = undefined;
-          }
-        });
-
-        category.score = sum;
-        totalAvailable += category.questions.length;
-        totalScore += sum;
-      });
-
-      return {
-        charm: this.get('entity').getAttrs(),
-        questions: questions,
-        totalAvailable: totalAvailable,
-        totalScore: totalScore
-      };
-    },
-
-    /**
      * Event handler for clicking on a hook filename to load that file.
      *
      * @method _loadHookContent
@@ -115,11 +71,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       @param {TabView} tabview the tab control to monitor.
     */
     /**
-      Flag to indicate that we have loaded the qa content
-
-      @property _qaContentLoaded
-    */
-    /**
       Flag to indicate that we have loaded the interfaces content
 
       @property _interfacesContentLoaded
@@ -133,12 +84,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       this.addEvent(
           tabview.after('selectionChange', function(e) {
             switch (e.newVal.get('hash')) {
-              case '#features':
-                if (!this._qaContentLoaded) {
-                  this._loadQAContent();
-                }
-                this._qaContentLoaded = true;
-                break;
               case '#related-charms':
                 if (!this._interfacesContentLoaded) {
                   this._loadInterfacesTabCharms();
@@ -262,29 +207,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
           }
         });
       }
-    },
-
-    /**
-     * Load the charm's QA data and fill it into the tab when selected.
-     *
-     * @method _loadQAContent
-     *
-     */
-    _loadQAContent: function() {
-      var node = Y.one('#features');
-      this.showIndicator(node);
-      // Only load the QA data once.
-      this.get('store').qa(
-          this.get('entity').get('storeId'), {
-            'success': function(data) {
-              data = this._buildQAData(data);
-              node.setHTML(this.qatemplate(data));
-              this.hideIndicator(node);
-            },
-            'failure': function(data, request) {
-
-            }
-          }, this);
     },
 
     /**
