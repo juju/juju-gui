@@ -190,16 +190,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _loadInterfacesTabCharms: function() {
       // If we don't have our related-charms data then force it to load.
       var relatedCharms = this.get('entity').get('relatedCharms');
-
-      if (!relatedCharms) {
-        // If we don't have the related charm data, go get and call us back
-        // when it's done loading so we can update the display.
-        this._loadRelatedCharms(this._loadInterfacesTabCharms);
-      } else {
-        this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
-        this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
-        this.loadedRelatedInterfaceCharms = true;
-      }
+      this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
+      this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
+      this.loadedRelatedInterfaceCharms = true;
     },
 
     /**

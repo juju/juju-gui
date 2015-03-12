@@ -277,6 +277,120 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     /**
+      Setter for the relatedCharms attribute. Processes the related charms
+      value. Chooses the newest version of a related charm and then picks the
+      top three charms per interface.
+
+      @method _processRelatedCharms
+      @param {Object} relatedCharms The list of related charm id's from apiv4
+      @return {Object} The processed related charms.
+    */
+    _processRelatedCharms: function(relatedCharms) {
+      return {
+        all: relatedCharms,
+        provides: this._dedupeRelatedCharms(relatedCharms.provides),
+        requires: this._dedupeRelatedCharms(relatedCharms.requires)
+      };
+    },
+
+    /**
+      Removes all of the duplicate versions of the same charm from the related
+      charms lists keeping the highest revision.
+
+      @method _dedupeRelatedCharms
+      @param {Object} charmList The interface delimited list from the provides
+        or requires objects.
+      @return {Object} The interface delimited list without duplicates.
+    */
+    _dedupeRelatedCharms: function(charmList) {
+      // Loop through all of the interfaces.
+      var names = Object.keys(charmList);
+      var collection = {};
+      names.forEach(function(name) {
+        // Loop through all of the charms.
+        var indexes = Object.keys(charmList[name]);
+        var charms = this._splitIntoCharmCollections(indexes, name, charmList);
+        charms = this._keepLatestRevision(charms);
+        collection[name] = charms;
+      }, this);
+      return collection;
+    },
+
+    /**
+      Splits charm list into a key value delimited list of charms.
+
+      @method _splitIntoCharmCollections
+      @param {Array} indexes The list of id's for the charm list. It's an
+        integer list.
+      @param {String} name The interface name that the charms are sorted under.
+      @param {Object} charmList The full requires or provides interfact ordered
+        charmlist.
+      @return {Object} The top three charm id collections from the supplied
+        collection.
+    */
+    _splitIntoCharmCollections: function(indexes, name, charmList) {
+      var charms = {};
+      indexes.forEach(function(index) {
+        var id = charmList[name][index].id;
+        var charm = id.replace('cs:', '').split('-').slice(0, -1).join('-');
+        if (charms[charm]) {
+          charms[charm].push(id);
+        } else {
+          charms[charm] = [id];
+        }
+      });
+      return this._keepTopThreeCharms(charms);
+    },
+
+    /**
+      Keeps only the top three charm collections in the object, discarding the
+      others.
+
+      @method _keepTopTheeCharms
+      @param {Object} charms The charm collections from
+        _splitIntoCharmCollections.
+      @return {Object} An object in the same format that was passed in but with
+        a maximum of three charms.
+    */
+    _keepTopThreeCharms: function(charms) {
+      var keys = Object.keys(charms);
+      var length = keys.length;
+      if (length > 3) {
+        for (var i = 3; i < keys.length; i += 1) {
+          delete charms[keys[i]];
+        }
+      }
+      return charms;
+    },
+
+    /**
+      We only want to keep the latest revision in the list so this sorts out
+      anything but.
+
+      @method _keepLatestRevision
+      @param {Object} charms The object charm collection.
+      @return {Array} An array of only the latest revisions from the collection.
+    */
+    _keepLatestRevision: function(charms) {
+      var keys = Object.keys(charms);
+      var ids = [];
+      keys.forEach(function(key) {
+        var keepId = '';
+        var keepRevno;
+        // Loop through each Id
+        charms[key].forEach(function(id) {
+          var revno = parseInt(id.split('-').pop(), 10);
+          if (keepRevno === undefined || revno > keepRevno) {
+            keepId = id;
+            keepRevno = revno;
+          }
+        });
+        ids.push(keepId);
+      });
+      return ids;
+    },
+
+    /**
       Build the relatedCharms attribute from api data
 
       @method buildRelatedCharms
@@ -619,9 +733,10 @@ YUI.add('juju-charm-models', function(Y) {
         @attribute relatedCharms
         @default undefined
         @type {Object}
-
        */
-      relatedCharms: {},
+      relatedCharms: {
+        setter: '_processRelatedCharms'
+      },
       relations: {},
 
       /**
