@@ -90,7 +90,7 @@ describe('Inspector Charm', function() {
 
     fakeStore = new Y.juju.charmstore.APIv4({});
     fakeStore.getEntity = function(entityId, callback) {
-      callback()
+      callback();
     };
 
     var viewletAttrs = {
