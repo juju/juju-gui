@@ -875,84 +875,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.get('container').one('.charm .back').simulate('click');
     });
 
-    it('loads related charms when interface tab selected', function() {
+    it('renders related charms when interface tab selected', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: utils.loadFixture('data/related.json')
-              }]
-            }
-          });
-        }
-      });
-
       view = new CharmView({
         activeTab: '#related-charms',
         entity: new models.Charm(data),
-        renderTo: testContainer,
-        store: fakeStore
+        renderTo: testContainer
       });
       view.render();
 
       assert.equal(
           testContainer.all('#related-charms .token').size(),
-          9);
+          18);
       assert.equal(view.get('entity').get('id'), 'cs:precise/apache2-27');
       assert.isTrue(view.loadedRelatedInterfaceCharms);
-    });
-
-    it('only loads the interface data once', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true);
-      testContainer = utils.makeContainer(this);
-      // We don't want any files so we don't have to mock/load them.
-      data.files = [];
-
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: utils.loadFixture('data/related.json')
-              }]
-            }
-          });
-        }
-      });
-
-      view = new CharmView({
-        activeTab: '#related-charms',
-        entity: new models.Charm(data),
-        renderTo: testContainer,
-        store: fakeStore
-      });
-
-      var origLoadRelatedCharms = view._loadRelatedCharms;
-      var state = {
-        loadCount: 0,
-        hitTabRender: false
-      };
-      view._loadRelatedCharms = function(callback) {
-        state.loadCount += 1;
-        origLoadRelatedCharms.call(view, callback);
-      };
-      view._renderRelatedInterfaceCharms = function() {
-        state.hitTabRender = true;
-      };
-      view.render();
-
-      assert.equal(state.loadCount, 1);
-      assert.isTrue(state.hitTabRender);
     });
 
     it('ignore invalid tab selections', function() {

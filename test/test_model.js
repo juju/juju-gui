@@ -1526,45 +1526,6 @@ describe('test_model.js', function() {
           {successes: ['ec2'], failures: ['local', 'openstack']});
     });
 
-    // Testing a private method because if this test fails it'll provide a much
-    // nicer hint as to why something in a View or such doesn't work correctly.
-    // The api data that we get must be converted into what the
-    // CharmMode.getAttrs() would have sent out to the token widget.
-    it('maps related data to the model-ish api', function() {
-      var providesData = relatedData.provides.http[0];
-      instance = new models.Charm(data);
-      var converted = instance._convertRelatedData(providesData);
-      assert.equal(providesData.name, converted.name);
-      assert.equal(providesData.id, converted.storeId);
-      assert.equal(
-          providesData.downloads_in_past_30_days,
-          converted.recent_download_count);
-      assert.equal(
-          providesData.downloads,
-          converted.downloads);
-      assert.equal(providesData.has_icon, converted.shouldShowIcon);
-      assert.equal(converted.is_approved, providesData.is_approved);
-    });
-
-    it('builds proper relatedCharms object', function() {
-      instance = new models.Charm(data);
-      instance.buildRelatedCharms(relatedData.provides, relatedData.requires);
-      var relatedObject = instance.get('relatedCharms');
-
-      // The overall should have the default 5 max charms listed.
-      assert.equal(5, relatedObject.overall.length);
-      // The requires for mysql should be truncated to the max of 5 as well.
-      assert.equal(5, relatedObject.requires.http.length);
-      // There's only one key in the provides section.
-      assert.equal(1, Y.Object.keys(relatedObject.provides).length);
-
-      // The overall should be sorted by their weights.
-      var weights = relatedObject.overall.map(function(charm) {
-        return charm.weight;
-      });
-      assert.equal(weights.sort(), weights);
-    });
-
     it('has an entity type static property', function() {
       instance = new models.Charm(data);
       assert.equal(instance.constructor.entityType, 'charm');

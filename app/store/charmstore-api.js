@@ -210,8 +210,10 @@ YUI.add('charmstore-api', function(Y) {
           location: extraInfo['bzr-url']
         }
       };
-      this._lowerCaseKeys(meta['charm-related'], meta['charm-related']);
-      processed.relatedCharms = meta['charm-related'];
+      if (meta['charm-related']) {
+        this._lowerCaseKeys(meta['charm-related'], meta['charm-related']);
+        processed.relatedCharms = meta['charm-related'];
+      }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);

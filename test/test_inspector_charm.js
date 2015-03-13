@@ -26,6 +26,7 @@ describe('Inspector Charm', function() {
     Y = YUI(GlobalConfig).use([
       'charm-details-view',
       'juju-charm-store',
+      'charmstore-api',
       'juju-tests-utils',
       'subapp-browser-views'
     ], function(Y) {
@@ -49,7 +50,7 @@ describe('Inspector Charm', function() {
   });
 
   afterEach(function(done) {
-    if (fakeStore) {
+    if (fakeStore && fakeStore.destroy) {
       fakeStore.destroy();
     }
     view.after('destroy', function() {
@@ -87,9 +88,14 @@ describe('Inspector Charm', function() {
       }
     });
 
+    fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore.getEntity = function(entityId, callback) {
+      callback()
+    };
+
     var viewletAttrs = {
       db: new Y.juju.models.Database(),
-      store: fakeStore
+      charmstore: fakeStore
     };
 
     var tabviewRender = utils.makeStubFunction();
@@ -107,10 +113,7 @@ describe('Inspector Charm', function() {
     assert.equal(browserCharmView.calledOnce(), true);
     var bcvArgs = browserCharmView.lastArguments();
     assert.equal(bcvArgs[0].forInspector, true);
-    assert.equal(typeof bcvArgs[0].store, 'object');
-    // We are temporarily not passing the entity in.
-    //assert.equal(bcvArgs[0].entity.get('id'), charmID);
-
+    assert.equal(typeof bcvArgs[0].charmstore, 'object');
     assert.equal(tabviewRender.calledOnce(), true);
   });
 
@@ -124,7 +127,7 @@ describe('Inspector Charm', function() {
       '</div>'
     ].join(''));
 
-    fakeStore = new Y.juju.charmworld.APIv3({});
+    fakeStore = new Y.juju.charmstore.APIv4({});
     var cache = new Y.juju.models.CharmList();
     var charm = new Y.juju.models.Charm(data);
     charm.set('cached', true);
@@ -132,10 +135,7 @@ describe('Inspector Charm', function() {
 
     views.BrowserCharmView = function(cfg) {
       assert.isTrue(cfg.forInspector);
-      assert.equal(typeof cfg.store, 'object');
-      // We are temporarily not passing the entity in
-      // assert.equal(cfg.entity.get('id'), charmID);
-      // assert.isTrue(cfg.entity.get('cached'));
+      assert.equal(typeof cfg.charmstore, 'object');
       return {
         render: function() { done(); },
         destroy: function() {}
@@ -145,7 +145,7 @@ describe('Inspector Charm', function() {
       db: {
         charms: cache
       },
-      store: fakeStore
+      charmstore: fakeStore
     };
 
     view = new viewlets.charmDetails();
