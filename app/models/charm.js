@@ -257,10 +257,18 @@ YUI.add('juju-charm-models', function(Y) {
       @return {Object} The processed related charms.
     */
     _processRelatedCharms: function(relatedCharms) {
+      var provides, requires;
+      // Not all charms have related charms on both the provides and requires.
+      if (relatedCharms.provides) {
+        provides = this._dedupeRelatedCharms(relatedCharms.provides);
+      }
+      if (relatedCharms.requires) {
+        requires = this._dedupeRelatedCharms(relatedCharms.requires);
+      }
       return {
         all: relatedCharms,
-        provides: this._dedupeRelatedCharms(relatedCharms.provides),
-        requires: this._dedupeRelatedCharms(relatedCharms.requires)
+        provides: provides,
+        requires: requires
       };
     },
 
