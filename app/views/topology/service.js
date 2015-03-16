@@ -1248,7 +1248,7 @@ YUI.add('juju-topology-service', function(Y) {
             var existing = box.model.get('annotations') || {};
             if (!existing || !existing['gui-x']) {
               vertices.push([box.x || 0, box.y || 0]);
-              topo.annotateBoxPosition(box, false);
+              topo.annotateBoxPosition(box);
             } else {
               if (vertices.length > 0) {
                 vertices.push([
