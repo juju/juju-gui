@@ -228,29 +228,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         this.loadedReadme = true;
       }
     },
-    /**
-      Load the related charm data into the model for use.
-
-      @method _loadRelatedCharms
-
-     */
-    _loadRelatedCharms: function(callback) {
-      this.get('store').related(
-          this.get('entity').get('storeId'), {
-            'success': function(data) {
-              this.get('entity').buildRelatedCharms(
-                  data.result.provides, data.result.requires);
-              if (callback) {
-                callback.call(this);
-              }
-            },
-            'failure': function(data, request) {
-              console.log('Error loading related charm data.');
-              console.log(data);
-            }
-          },
-          this);
-    },
 
     /**
      * The readme file in a charm can be upper/lower/etc. This helps find a

@@ -189,16 +189,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _loadInterfacesTabCharms: function() {
       // If we don't have our related-charms data then force it to load.
       var relatedCharms = this.get('entity').get('relatedCharms');
-
-      if (!relatedCharms) {
-        // If we don't have the related charm data, go get and call us back
-        // when it's done loading so we can update the display.
-        this._loadRelatedCharms(this._loadInterfacesTabCharms);
-      } else {
-        this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
-        this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
-        this.loadedRelatedInterfaceCharms = true;
-      }
+      this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
+      this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
+      this.loadedRelatedInterfaceCharms = true;
     },
 
     /**
@@ -256,21 +249,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (!this.loadedRelatedInterfaceCharms) {
         this.charmTokens = [];
         Y.Object.each(relatedCharms, function(list, iface) {
-          // we only care about the top three charms in the list.
-          var charms = list.slice(0, 3);
-          charms.forEach(function(charm) {
-            var uiID = [
-              type,
-              iface
-            ].join('-');
-
-            charm.size = 'tiny';
-            // XXX This id assignment is only necessary until we switch the
-            // charm details view over to apiv4.
-            charm.id = charm.storeId;
+          var charms = Object.keys(list);
+          charms.forEach(function(fullCharmName) {
+            var charmName = fullCharmName.split('/')[1];
+            var charm = {
+              size: 'tiny',
+              id: list[fullCharmName],
+              name: charmName
+            };
             var ct = new widgets.browser.Token(charm);
-            var node = Y.one('[data-interface="' + uiID + '"]');
-            ct.render(node);
+            var node = Y.one('[data-interface="' + type + '-' + iface + '"]');
+            if (node) {
+              ct.render(node);
+            }
             this.charmTokens.push(ct);
           }, this);
         }, this);

@@ -143,7 +143,7 @@ YUI.add('charmstore-api', function(Y) {
       @method lowerCaseKeys
       @param {Object} obj The source object with the uppercase keys.
       @param {Object} host The host object in which the keys will be assigned.
-      @param {Object} exclude Exclude a particular level from lowercasing when
+      @param {Integer} exclude Exclude a particular level from lowercasing when
         recursing; uses a 0-based index, so if 0 is specified, the keys at the
         first level of recursion will not be lowercased. If 3 is specified, the
         keys at the fourth level of recursion will not be lowercased.
@@ -210,6 +210,10 @@ YUI.add('charmstore-api', function(Y) {
           location: extraInfo['bzr-url']
         }
       };
+      if (meta['charm-related']) {
+        this._lowerCaseKeys(meta['charm-related'], meta['charm-related']);
+        processed.relatedCharms = meta['charm-related'];
+      }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);
@@ -286,7 +290,8 @@ YUI.add('charmstore-api', function(Y) {
     */
     getEntity: function(entityId, successCallback, failureCallback) {
       var filters = 'include=bundle-metadata&include=charm-metadata' +
-                    '&include=charm-config&include=manifest&include=extra-info';
+                    '&include=charm-config&include=manifest' +
+                    '&include=charm-related&include=extra-info';
       this._makeRequest(
           this._generatePath(entityId, filters, '/meta/any'),
           this._transformQueryResults.bind(this, successCallback),

@@ -199,6 +199,14 @@ describe('Charmstore API v4', function() {
             'bzr-revisions': 5,
             'bzr-url': 'cs:precise/mongodb'
           },
+          'charm-related': {
+            Requires: {
+              'ceph-client': { id: 'cs:foo' }
+            },
+            Provides: {
+              haproxy: { id: 'cs:bar' }
+            }
+          },
           'charm-config': {
             Options: {
               'foo-optn': {
@@ -243,6 +251,14 @@ describe('Charmstore API v4', function() {
             }
           },
           requires: {}
+        },
+        relatedCharms: {
+          requires: {
+            'ceph-client': { id: 'cs:foo' }
+          },
+          provides: {
+            haproxy: { id: 'cs:bar' }
+          }
         },
         options: {
           'foo-optn': {

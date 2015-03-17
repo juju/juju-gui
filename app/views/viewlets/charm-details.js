@@ -41,14 +41,12 @@ YUI.add('charm-details-view', function(Y) {
     */
     render: function(charm, viewletManagerAttrs) {
       var container,
-          store = viewletManagerAttrs.store,
           panel = Y.one('.charmbrowser'),
           activeTab = viewletManagerAttrs.activeTab;
       container = this.get('container');
 
       var cfg = {
         forInspector: true,
-        store: store,
         charmstore: viewletManagerAttrs.charmstore,
         activeTab: activeTab,
         entityId: charm.get('id')
