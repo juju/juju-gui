@@ -31,7 +31,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
   var ziputils = Y.namespace('juju.ziputils');
   var viewUtils = Y.namespace('juju.views.utils');
 
-  var DEFAULT_CHARM_ICON_PATH = 'static/img/charm_160.svg';
   var VALUE_ERROR = {error: 'Unparsable environment data.'};
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
@@ -59,6 +58,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     maasServer: {value: null},
     providerType: {value: 'demonstration'},
     store: {required: true},
+    charmstore: {},
     token: {value: 'demoToken'}
   };
 
@@ -2143,8 +2143,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (filename === 'icon.svg') {
         // This is a request for a local charm icon URL. Just return the
         // fallback icon hosted by charmworld.
-        var store = this.get('store');
-        return store.get('apiHost') + DEFAULT_CHARM_ICON_PATH;
+        return '/juju-ui/assets/images/non-sprites/charm_160.svg';
       }
       // This is in theory unreachable: with the exception of the icon, other
       // file URLs are not currently requested.

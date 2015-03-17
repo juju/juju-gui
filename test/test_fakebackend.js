@@ -3074,7 +3074,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var url = fakebackend.getLocalCharmFileUrl(
           'local:trusty/django-42', 'icon.svg');
       assert.strictEqual(
-          url, 'https://charmworld.example.comstatic/img/charm_160.svg');
+          url, '/juju-ui/assets/images/non-sprites/charm_160.svg');
     });
 
     it('prints a console error if other files are requested', function() {
