@@ -369,10 +369,9 @@ YUI.add('juju-view-bundle', function(Y) {
       this.db = new models.Database();
       this._cleanups.push(this.db.destroy);
     }
-    this.store = options.store;
-    if (!this.store) {
-      this.store = new juju.charmworld.APIv3({});
-      this._cleanups.push(this.store.destroy);
+    this.charmstore = options.charmstore;
+    if (!this.charmstore) {
+      this.charmstore = new juju.charmstore.APIv4({});
     }
     this.container = options.container;
     if (!this.container) {
@@ -393,7 +392,7 @@ YUI.add('juju-view-bundle', function(Y) {
       interactive: true,
       container: this.container,
       db: this.db,
-      store: this.store
+      charmstore: this.charmstore
     }, true));
 
     // Service view doesn't support Level Of Detail views.
@@ -486,9 +485,9 @@ YUI.add('juju-view-bundle', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'charmstore-api',
     'd3',
     'd3-components',
-    'juju-charm-store',
     'juju-models',
     'juju-topology',
     'juju-view-utils'

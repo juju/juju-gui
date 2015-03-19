@@ -132,7 +132,7 @@ describe('topology bundle module', function() {
 
           var details = container.one('.topo-info');
           // Verify the template contains expected details.
-          assert.match(details.getHTML(), /cs:precise\/mysql\-26/);
+          assert.match(details.getHTML(), /cs:precise\/mysql\-51/);
           assert.match(details.getHTML(), /Units: 1/);
           done();
         }).then(undefined, done);

@@ -59,10 +59,45 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       return fakeStore;
     },
 
+    _fetchCharmData: function() {
+      var names = [
+        'wordpress', 'mongodb', 'mysql', 'mediawiki', 'puppet', 'haproxy',
+        'puppetmaster'];
+      var charms = {};
+      names.forEach(function(charmName) {
+        var url = 'data/' + charmName + '-apiv4-response.json';
+        charms[charmName] = Y.io(url, {sync: true}).responseText;
+      });
+      return charms;
+    },
+
+    makeFakeCharmstore: function() {
+      var charms = this._fetchCharmData();
+      var fakeCharmstore = new Y.juju.charmstore.APIv4({
+        charmstoreURL: 'local/'
+      });
+      // We need to stub out the _makeRequest method so that we can simulate
+      // api responses from the server.
+      fakeCharmstore._makeRequest = function(path, success, failure) {
+        // Remove the includes and the charmstore path.
+        path = path.split('/meta/any')[0].replace('local/v4/', '');
+        // Get just the charm name
+        path = path.split('/')[1].split('-').slice(0, -1).join('-');
+        console.log(path);
+        if (charms[path]) {
+          success({ target: { responseText: charms[path]}});
+        } else {
+          failure(new Error('Unable to load charm ' + path));
+        }
+      };
+      return fakeCharmstore;
+    },
+
     makeFakeBackend: function() {
       var fakeStore = this.makeFakeStore();
       var fakebackend = new Y.juju.environments.FakeBackend({
-        store: fakeStore
+        store: fakeStore,
+        charmstore: this.makeFakeCharmstore()
       });
       fakebackend.login('user-admin', 'password');
       return fakebackend;
@@ -72,6 +107,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'juju-tests-utils'
+    'juju-tests-utils',
+    'charmstore-api'
   ]
 });
