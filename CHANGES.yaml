@@ -20,7 +20,14 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.3.4:
+    - >
+      (FIX) Service icons on the canvas no longer bounce back to their original
+      positions when being repositioned.
+    - (FIX) Bundle deploys no longer fail with invalid name error.
+    - Removed the Features tab from the charm details pane.
+    - Updated a number of api calls to the new v4 api.
+    - Updated sysdeps makefile target for easier development.
 - 1.3.3:
     - (FIX) bug #1428751: prevent incorrect lowercasing of config options.
     - (FIX) bug #1427162: Show local charm icon in inspector.
