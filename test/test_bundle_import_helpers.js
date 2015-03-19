@@ -99,9 +99,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deployerImport = function(bundle, bundleData, callback) {
         assert.equal(bundle, 'test: bundle');
         assert.equal(bundleData.id, '~jorge/wiki/wiki');
-        assert.equal(
-            bundleData.name, 'test',
-            'The name was not pulled from the bundle.');
+        assert.isUndefined(bundleData.name);
         // This is the default callback from the deployBundle method.
         callback({
           err: undefined,

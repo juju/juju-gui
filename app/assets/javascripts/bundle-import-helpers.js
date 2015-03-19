@@ -66,25 +66,19 @@ YUI.add('bundle-import-helpers', function(Y) {
       };
 
       if (Y.Lang.isFunction(env.deployerImport)) {
-        // XXX For now, the deployer is expecting the original bundle basket
-        // format, and requires the bundle name to be the top level YAML
-        // element, so grab that naively.  Future deployer work will allow the
-        // new bundle format.  Makyo - 2012-12-19
-        var bundleName = bundle.split(':', 1)[0];
-        var bundleData = {
-          name: bundleName,
-          id: bundleId
-        };
-
         notifications.add({
           title: 'Bundle deployment requested',
           message: 'Waiting for bundle deployment request confirmation.',
           level: 'important'
         });
 
+        // Note that sending the bundle name to the GUI server is not required
+        // since we always send YAML encoded contents including only one
+        // bundle. See
+        // https://api.jujucharms.com/v4/juju-gui/archive/server/guiserver/bundles/__init__.py.
         env.deployerImport(
             bundle,
-            bundleData,
+            {id: bundleId},
             customCallback ? customCallback : defaultCallback
         );
       } else {
