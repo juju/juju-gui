@@ -1,0 +1,3331 @@
+{
+  "Id": "cs:precise/hadoop-16",
+  "Meta": {
+    "charm-config": {
+      "Options": {
+        "dfs_block_size": {
+          "Type": "int",
+          "Description": "The default block size for new files (default to 64MB).  Increase this in\nlarger deployments for better large data set performance.\n",
+          "Default": 134217728
+        },
+        "dfs_datanode_max_xcievers": {
+          "Type": "int",
+          "Description": "The number of files that an datanode will serve at any one time.\nAn Hadoop HDFS datanode has an upper bound on the number of files that it\nwill serve at any one time. This defaults to 256 (which is low) in hadoop\n1.x - however this charm increases that to 4096.\n",
+          "Default": 4096
+        },
+        "dfs_heartbeat_interval": {
+          "Type": "int",
+          "Description": "Determines datanode heartbeat interval in seconds.\n",
+          "Default": 3
+        },
+        "dfs_namenode_handler_count": {
+          "Type": "int",
+          "Description": "The number of server threads for the namenode.  Increase this in larger\ndeployments to ensure the namenode can cope with the number of datanodes\nthat it has to deal with.\n",
+          "Default": 10
+        },
+        "dfs_namenode_heartbeat_recheck_interval": {
+          "Type": "int",
+          "Description": "Determines datanode recheck heartbeat interval in milliseconds\nIt is used to calculate the final tineout value for namenode. Calcultion process is    \nas follow: 10.30 minutes = 2 x (dfs.namenode.heartbeat.recheck-interval=5*60*1000)\n                           + 10 * 1000 * (dfs.heartbeat.interval=3)\n",
+          "Default": 300000
+        },
+        "dfs_replication": {
+          "Type": "int",
+          "Description": "Default block replication. The actual number of replications can be specified when\nthe file is created. The default is used if replication is not specified in create time\n",
+          "Default": 1
+        },
+        "hadoop_dir_base": {
+          "Type": "string",
+          "Description": "The directory under which all other hadoop data is stored.  Use this\nto take advantage of extra storage that might be avaliable.\n.\nYou can change this in a running deployment but all existing data in\nHDFS will be inaccessible; you can of course switch it back if you\ndo this by mistake.\n",
+          "Default": "/usr/local/hadoop/data"
+        },
+        "hbase": {
+          "Type": "boolean",
+          "Description": "Setting this configuration parameter to 'True' configures HDFS for\nuse with HBase including turning on 'append' mode which is not\ndesirable in all deployment scenarios.\n",
+          "Default": false
+        },
+        "heap": {
+          "Type": "int",
+          "Description": "The maximum heap size in MB to allocate for daemons processes within the\nservice units managed by this charm.\n.\nThe recommended configurations vary based on role and the amount of\nraw disk storage available in the hadoop cluster:\n.\n * NameNode: 1GB of heap for every 100TB of raw data stored.\n * SecondaryNameNode: Must be paired with the NameNode.\n * JobTracker: 2GB.\n * DataNode: 1GB.\n * TaskTracker: 1GB.\n.\nThe above recommendations are taken from HBase: The Definitive Guide by\nLars George.\n.\nObviously you need to ensure that the servers supporting each service unit\nhave sufficient memory to accomodate this setting - it should be no more\nthan 75% of the total memory in the system excluding swap.\n.\nIf you are also mixing MapReduce and DFS roles on the same units you need to\ntake this into account as well (see README for more details).\n",
+          "Default": 1024
+        },
+        "io_file_buffer_size": {
+          "Type": "int",
+          "Description": "The size of buffer for use in sequence files. The size of this buffer should\nprobably be a multiple of hardware page size (4096 on Intel x86), and it\ndetermines how much data is buffered during read and write operations.\n",
+          "Default": 4096
+        },
+        "mapred_child_java_opts": {
+          "Type": "string",
+          "Description": "Java opts for the task tracker child processes. The following symbol,\nif present, will be interpolated: @taskid@ is replaced by current TaskID.\nAny other occurrences of '@' will go unchanged. For example, to enable\nverbose gc logging to a file named for the taskid in /tmp and to set\nthe heap maximum to be a gigabyte, pass a 'value' of:\n.\n  -Xmx1024m -verbose:gc -Xloggc:/tmp/@taskid@.gc\n.\nThe configuration variable mapred.child.ulimit can be used to control\nthe maximum virtual memory of the child processes.\n",
+          "Default": "-Xmx200m"
+        },
+        "mapred_job_tracker_handler_count": {
+          "Type": "int",
+          "Description": "The number of server threads for the JobTracker. This should be roughly\n4% of the number of tasktracker nodes.\n",
+          "Default": 10
+        },
+        "mapreduce_framework_name": {
+          "Type": "string",
+          "Description": "Execution framework set to Hadoop YARN.** DO NOT CHANGE **\n",
+          "Default": "yarn"
+        },
+        "mapreduce_reduce_shuffle_parallelcopies": {
+          "Type": "int",
+          "Description": "The default number of parallel transfers run by reduce during the\ncopy(shuffle) phase.\n",
+          "Default": 5
+        },
+        "mapreduce_task_io_sort_factor": {
+          "Type": "int",
+          "Description": "More streams merged at once while sorting files.. This\ndetermines the number of open file handles.\n",
+          "Default": 10
+        },
+        "mapreduce_task_io_sort_mb": {
+          "Type": "int",
+          "Description": "Higher memory-limit while sorting data for efficiency..\n",
+          "Default": 100
+        },
+        "pig": {
+          "Type": "boolean",
+          "Description": "To install Apache Pig on all service units alongside Hadoop set this\nconfiguration to 'True'.\n.\nApache Pig is a platform for analyzing large data sets that consists\nof a high-level language for expressing data analysis programs, coupled\nwith infrastructure for evaluating these programs. The salient property\nof Pig programs is that their structure is amenable to substantial\nparallelization, which in turns enables them to handle very large data\nsets.\n",
+          "Default": false
+        },
+        "source": {
+          "Type": "string",
+          "Description": "Location and packages to install hadoop:\n.\n * dev:     Install using the hadoop packages from\n            ppa:hadoop-ubuntu/dev.\n * testing: Install using the hadoop packages from\n            ppa:hadoop-ubuntu/testing.\n * stable:  Install using the hadoop packages from\n            ppa:hadoop-ubuntu/stable.\n.\nThe packages provided in the hadoop-ubuntu team PPA's are based\ndirectly on upstream hadoop releases but are not fully built from\nsource.\n",
+          "Default": "stable"
+        },
+        "tasktracker_http_threads": {
+          "Type": "int",
+          "Description": "The number of worker threads that for the http server. This is used for\nmap output fetching.\n",
+          "Default": 40
+        },
+        "webhdfs": {
+          "Type": "boolean",
+          "Description": "Hadoop includes a RESTful API over HTTP to HDFS.  Setting this flag\nto True enables this part of the HDFS service.\n",
+          "Default": false
+        },
+        "yarn_nodemanager_aux-services": {
+          "Type": "string",
+          "Description": "Shuffle service that needs to be set for Map Reduce applications.\n",
+          "Default": "mapreduce_shuffle"
+        },
+        "yarn_nodemanager_aux-services_mapreduce_shuffle_class": {
+          "Type": "string",
+          "Description": "Shuffle service that needs to be set for Map Reduce applications.\n",
+          "Default": "org.apache.hadoop.mapred.ShuffleHandler"
+        }
+      }
+    },
+    "charm-metadata": {
+      "Name": "hadoop",
+      "Summary": "Software platform for processing vast amounts of data",
+      "Description": "Hadoop is a software platform that lets one easily write and\nrun applications that process vast amounts of data.\n",
+      "Subordinate": false,
+      "Provides": {
+        "ganglia": {
+          "Name": "ganglia",
+          "Role": "provider",
+          "Interface": "monitor",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        },
+        "namenode": {
+          "Name": "namenode",
+          "Role": "provider",
+          "Interface": "dfs",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        },
+        "resourcemanager": {
+          "Name": "resourcemanager",
+          "Role": "provider",
+          "Interface": "mapred",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        }
+      },
+      "Requires": {
+        "datanode": {
+          "Name": "datanode",
+          "Role": "requirer",
+          "Interface": "dfs",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "elasticsearch": {
+          "Name": "elasticsearch",
+          "Role": "requirer",
+          "Interface": "elasticsearch",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "mapred-namenode": {
+          "Name": "mapred-namenode",
+          "Role": "requirer",
+          "Interface": "dfs",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "nodemanager": {
+          "Name": "nodemanager",
+          "Role": "requirer",
+          "Interface": "mapred",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "secondarynamenode": {
+          "Name": "secondarynamenode",
+          "Role": "requirer",
+          "Interface": "dfs",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        }
+      },
+      "Peers": null,
+      "Format": 1,
+      "OldRevision": 0,
+      "Categories": [
+        "applications"
+      ],
+      "Tags": null,
+      "Series": "",
+      "Storage": null
+    },
+    "charm-related": {
+      "Requires": {
+        "dfs": [
+          {
+            "Id": "cs:~a.rosales/trusty/datameer-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/flume-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/kafka-1"
+          },
+          {
+            "Id": "cs:~asanjar/precise/hive2-0"
+          },
+          {
+            "Id": "cs:~asanjar/precise/hive2-1"
+          },
+          {
+            "Id": "cs:~asanjar/precise/hive2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-18"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-19"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-20"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-os-elk-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-18"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-19"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/vstorm-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/vstorm-1"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-hive-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-4"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-pig-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-4"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-5"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-zookeeper-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-16"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-17"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-18"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-19"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-20"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-21"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-22"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-23"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-24"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-25"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-26"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-27"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-28"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-29"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-30"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-31"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-32"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-33"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-34"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-35"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-36"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-37"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-38"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-39"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-40"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-41"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-42"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-43"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-secondary-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-16"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-17"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-18"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-19"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-20"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-21"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-22"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-23"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-24"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-25"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-26"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-27"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-28"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-29"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-30"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-31"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-32"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-33"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-34"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-35"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-36"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-37"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-38"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-39"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-40"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hue-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hue-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hue-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-accumulo-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hive-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hive-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hive-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-pig-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/spark-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/vstorm-connector-0"
+          },
+          {
+            "Id": "cs:~ce-hyperscale/trusty/hadoop2test-1"
+          },
+          {
+            "Id": "cs:~ce-hyperscale/trusty/hadoop2test-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:precise/hadoop-1"
+          },
+          {
+            "Id": "cs:precise/hadoop-10"
+          },
+          {
+            "Id": "cs:precise/hadoop-11"
+          },
+          {
+            "Id": "cs:precise/hadoop-12"
+          },
+          {
+            "Id": "cs:precise/hadoop-13"
+          },
+          {
+            "Id": "cs:precise/hadoop-14"
+          },
+          {
+            "Id": "cs:precise/hadoop-15"
+          },
+          {
+            "Id": "cs:precise/hadoop-16"
+          },
+          {
+            "Id": "cs:precise/hadoop-2"
+          },
+          {
+            "Id": "cs:precise/hadoop-3"
+          },
+          {
+            "Id": "cs:precise/hadoop-4"
+          },
+          {
+            "Id": "cs:precise/hadoop-5"
+          },
+          {
+            "Id": "cs:precise/hadoop-6"
+          },
+          {
+            "Id": "cs:precise/hadoop-7"
+          },
+          {
+            "Id": "cs:precise/hadoop-8"
+          },
+          {
+            "Id": "cs:precise/hadoop-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/hbase-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/hbase-1"
+          },
+          {
+            "Id": "cs:precise/hbase-2"
+          },
+          {
+            "Id": "cs:precise/hbase-3"
+          },
+          {
+            "Id": "cs:precise/hbase-4"
+          },
+          {
+            "Id": "cs:precise/hbase-5"
+          },
+          {
+            "Id": "cs:precise/hbase-6"
+          },
+          {
+            "Id": "cs:precise/hbase-7"
+          },
+          {
+            "Id": "cs:precise/hbase-8"
+          },
+          {
+            "Id": "cs:precise/hive-0"
+          },
+          {
+            "Id": "cs:precise/hive-1"
+          },
+          {
+            "Id": "cs:precise/hive-2"
+          },
+          {
+            "Id": "cs:precise/hive-3"
+          },
+          {
+            "Id": "cs:precise/hive-4"
+          },
+          {
+            "Id": "cs:precise/hive-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-12"
+          },
+          {
+            "Id": "cs:trusty/hadoop-13"
+          },
+          {
+            "Id": "cs:trusty/hadoop-14"
+          },
+          {
+            "Id": "cs:trusty/hadoop-15"
+          },
+          {
+            "Id": "cs:trusty/hadoop-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hive2-0"
+          },
+          {
+            "Id": "cs:trusty/hive2-1"
+          },
+          {
+            "Id": "cs:trusty/hive2-2"
+          },
+          {
+            "Id": "cs:trusty/hive2-3"
+          },
+          {
+            "Id": "cs:~craig.magina/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~daisy-pluckers/precise/hadoop-cassandra-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~maarten-ectors/precise/presto-0"
+          },
+          {
+            "Id": "cs:~robert-ayres/precise/hive-0"
+          },
+          {
+            "Id": "cs:~robert-ayres/precise/hive-1"
+          },
+          {
+            "Id": "cs:~unmaintained-charms/trusty/hive2-0"
+          }
+        ],
+        "mapred": [
+          {
+            "Id": "cs:~a.rosales/trusty/datameer-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/flume-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/kafka-1"
+          },
+          {
+            "Id": "cs:~asanjar/precise/hive2-0"
+          },
+          {
+            "Id": "cs:~asanjar/precise/hive2-1"
+          },
+          {
+            "Id": "cs:~asanjar/precise/hive2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-accumulo-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-18"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-19"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-20"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hive-os-elk-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-18"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-19"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-pig-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-tez-9"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hive2-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-7"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-hive-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-hive-4"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-pig-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-pig-4"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-tez-5"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-zookeeper-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-16"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-17"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-18"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-19"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-20"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-21"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-22"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-23"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-24"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-25"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-26"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-27"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-28"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-29"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-30"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-31"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-32"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-33"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-34"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-35"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-36"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-37"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-38"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-39"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-40"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-41"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-42"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-43"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-client-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-16"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-17"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-18"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-19"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-20"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-21"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-22"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-23"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-24"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-25"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-26"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-27"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-28"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-29"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-30"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-31"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-32"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-33"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-34"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-35"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-compute-slave-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hue-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hue-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hue-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-accumulo-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hive-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hive-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hive-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-pig-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-tez-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/spark-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:precise/hadoop-1"
+          },
+          {
+            "Id": "cs:precise/hadoop-10"
+          },
+          {
+            "Id": "cs:precise/hadoop-11"
+          },
+          {
+            "Id": "cs:precise/hadoop-12"
+          },
+          {
+            "Id": "cs:precise/hadoop-13"
+          },
+          {
+            "Id": "cs:precise/hadoop-14"
+          },
+          {
+            "Id": "cs:precise/hadoop-15"
+          },
+          {
+            "Id": "cs:precise/hadoop-16"
+          },
+          {
+            "Id": "cs:precise/hadoop-2"
+          },
+          {
+            "Id": "cs:precise/hadoop-3"
+          },
+          {
+            "Id": "cs:precise/hadoop-4"
+          },
+          {
+            "Id": "cs:precise/hadoop-5"
+          },
+          {
+            "Id": "cs:precise/hadoop-6"
+          },
+          {
+            "Id": "cs:precise/hadoop-7"
+          },
+          {
+            "Id": "cs:precise/hadoop-8"
+          },
+          {
+            "Id": "cs:precise/hadoop-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/hbase-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/hbase-1"
+          },
+          {
+            "Id": "cs:precise/hbase-2"
+          },
+          {
+            "Id": "cs:precise/hbase-3"
+          },
+          {
+            "Id": "cs:precise/hbase-4"
+          },
+          {
+            "Id": "cs:precise/hbase-5"
+          },
+          {
+            "Id": "cs:precise/hbase-6"
+          },
+          {
+            "Id": "cs:precise/hbase-7"
+          },
+          {
+            "Id": "cs:precise/hbase-8"
+          },
+          {
+            "Id": "cs:precise/hive-0"
+          },
+          {
+            "Id": "cs:precise/hive-1"
+          },
+          {
+            "Id": "cs:precise/hive-2"
+          },
+          {
+            "Id": "cs:precise/hive-3"
+          },
+          {
+            "Id": "cs:precise/hive-4"
+          },
+          {
+            "Id": "cs:precise/hive-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-12"
+          },
+          {
+            "Id": "cs:trusty/hadoop-13"
+          },
+          {
+            "Id": "cs:trusty/hadoop-14"
+          },
+          {
+            "Id": "cs:trusty/hadoop-15"
+          },
+          {
+            "Id": "cs:trusty/hadoop-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hive2-0"
+          },
+          {
+            "Id": "cs:trusty/hive2-1"
+          },
+          {
+            "Id": "cs:trusty/hive2-2"
+          },
+          {
+            "Id": "cs:trusty/hive2-3"
+          },
+          {
+            "Id": "cs:~craig.magina/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~daisy-pluckers/precise/hadoop-cassandra-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~robert-ayres/precise/hive-0"
+          },
+          {
+            "Id": "cs:~robert-ayres/precise/hive-1"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/camus-0"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/camus-1"
+          },
+          {
+            "Id": "cs:~unmaintained-charms/trusty/hive2-0"
+          }
+        ],
+        "monitor": [
+          {
+            "Id": "cs:~asanjar/trusty/spark-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/spark-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/spark-0"
+          },
+          {
+            "Id": "cs:oneiric/ganglia-0"
+          },
+          {
+            "Id": "cs:precise/ganglia-0"
+          },
+          {
+            "Id": "cs:precise/ganglia-1"
+          },
+          {
+            "Id": "cs:precise/ganglia-2"
+          },
+          {
+            "Id": "cs:precise/ganglia-3"
+          },
+          {
+            "Id": "cs:precise/ganglia-4"
+          },
+          {
+            "Id": "cs:precise/ganglia-5"
+          },
+          {
+            "Id": "cs:precise/ganglia-6"
+          },
+          {
+            "Id": "cs:precise/ganglia-7"
+          },
+          {
+            "Id": "cs:precise/ganglia-8"
+          },
+          {
+            "Id": "cs:precise/ganglia-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/ganglia-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/ganglia-1"
+          },
+          {
+            "Id": "cs:trusty/ganglia-2"
+          },
+          {
+            "Id": "cs:~mbruzek/trusty/ganglia-0"
+          },
+          {
+            "Id": "cs:~mbruzek/trusty/ganglia-1"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/spark-twitter-0"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/spark-twitter-1"
+          }
+        ]
+      },
+      "Provides": {
+        "dfs": [
+          {
+            "Id": "cs:~a.rosales/trusty/flume-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/kafka-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-18"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-19"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-20"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-9"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-zookeeper-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-checkpoint-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-16"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-17"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-18"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-19"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-20"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-21"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-22"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-23"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-24"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-25"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-26"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-27"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-28"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-29"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-30"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-31"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-32"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-33"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-34"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-35"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-36"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-37"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-38"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-hdfs-master-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:precise/hadoop-1"
+          },
+          {
+            "Id": "cs:precise/hadoop-10"
+          },
+          {
+            "Id": "cs:precise/hadoop-11"
+          },
+          {
+            "Id": "cs:precise/hadoop-12"
+          },
+          {
+            "Id": "cs:precise/hadoop-13"
+          },
+          {
+            "Id": "cs:precise/hadoop-14"
+          },
+          {
+            "Id": "cs:precise/hadoop-15"
+          },
+          {
+            "Id": "cs:precise/hadoop-16"
+          },
+          {
+            "Id": "cs:precise/hadoop-2"
+          },
+          {
+            "Id": "cs:precise/hadoop-3"
+          },
+          {
+            "Id": "cs:precise/hadoop-4"
+          },
+          {
+            "Id": "cs:precise/hadoop-5"
+          },
+          {
+            "Id": "cs:precise/hadoop-6"
+          },
+          {
+            "Id": "cs:precise/hadoop-7"
+          },
+          {
+            "Id": "cs:precise/hadoop-8"
+          },
+          {
+            "Id": "cs:precise/hadoop-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-12"
+          },
+          {
+            "Id": "cs:trusty/hadoop-13"
+          },
+          {
+            "Id": "cs:trusty/hadoop-14"
+          },
+          {
+            "Id": "cs:trusty/hadoop-15"
+          },
+          {
+            "Id": "cs:trusty/hadoop-16"
+          },
+          {
+            "Id": "cs:~craig.magina/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~daisy-pluckers/precise/hadoop-cassandra-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-3"
+          }
+        ],
+        "elasticsearch": [
+          {
+            "Id": "cs:~bigdata-dev/trusty/elasticsearch-0"
+          },
+          {
+            "Id": "cs:precise/elasticsearch-0"
+          },
+          {
+            "Id": "cs:precise/elasticsearch-1"
+          },
+          {
+            "Id": "cs:precise/elasticsearch-2"
+          },
+          {
+            "Id": "cs:precise/elasticsearch-3"
+          },
+          {
+            "Id": "cs:precise/elasticsearch-4"
+          },
+          {
+            "Id": "cs:precise/elasticsearch-5"
+          },
+          {
+            "Id": "cs:precise/logstash-indexer-0"
+          },
+          {
+            "Id": "cs:precise/logstash-indexer-1"
+          },
+          {
+            "Id": "cs:precise/logstash-indexer-2"
+          },
+          {
+            "Id": "cs:precise/logstash-indexer-3"
+          },
+          {
+            "Id": "cs:precise/logstash-indexer-4"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-0"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-1"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-2"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-3"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-4"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-5"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-6"
+          },
+          {
+            "Id": "cs:~charming-devs/precise/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~charming-devs/precise/elasticsearch-1"
+          },
+          {
+            "Id": "cs:~charming-devs/precise/elasticsearch-2"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/elasticsearch-1"
+          },
+          {
+            "Id": "cs:~juju-gui-charmers/trusty/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/precise/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-2"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-proxy-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-proxy-2"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-proxy-3"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-proxy-4"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-proxy-5"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-1"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-10"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-11"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-12"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-13"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-14"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-15"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-16"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-2"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-3"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-4"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-5"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-6"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-7"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-8"
+          },
+          {
+            "Id": "cs:~kaaloo/precise/elasticsearch-9"
+          },
+          {
+            "Id": "cs:~kaaloo/raring/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-10"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-11"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-12"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-13"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-14"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-15"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-16"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-17"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-2"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-3"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-4"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-5"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-6"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-7"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-8"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/logstash-9"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-28"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-29"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-30"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-31"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-32"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-33"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-34"
+          },
+          {
+            "Id": "cs:~michael.nelson/precise/elasticsearch-35"
+          },
+          {
+            "Id": "cs:~onlineservices-charmers/precise/elasticsearch-0"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-7"
+          },
+          {
+            "Id": "cs:trusty/elasticsearch-8"
+          },
+          {
+            "Id": "cs:~paulcz/precise/elasticsearch-0"
+          },
+          {
+            "Id": "cs:~paulcz/precise/elasticsearch-1"
+          },
+          {
+            "Id": "cs:~paulcz/precise/elasticsearch-2"
+          },
+          {
+            "Id": "cs:~paulcz/precise/elasticsearch-3"
+          },
+          {
+            "Id": "cs:~paulcz/precise/elasticsearch-4"
+          },
+          {
+            "Id": "cs:~paulcz/precise/logstash-indexer-5"
+          },
+          {
+            "Id": "cs:~paulcz/precise/logstash-indexer-6"
+          },
+          {
+            "Id": "cs:~paulcz/precise/logstash-indexer-7"
+          },
+          {
+            "Id": "cs:~paulcz/precise/logstash-indexer-8"
+          },
+          {
+            "Id": "cs:~paulcz/precise/logstash-indexer-9"
+          }
+        ],
+        "mapred": [
+          {
+            "Id": "cs:~a.rosales/trusty/flume-0"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/kafka-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-0"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-1"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hadoop2-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-10"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-11"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-12"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-13"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-14"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-15"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-16"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-17"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-18"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-19"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-20"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~asanjar/trusty/hdp-hadoop-9"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-5"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-6"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-7"
+          },
+          {
+            "Id": "cs:trusty/hdp-hadoop-8"
+          },
+          {
+            "Id": "cs:~bigdata-charmers/trusty/hdp-zookeeper-0"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-2"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-4"
+          },
+          {
+            "Id": "cs:trusty/hdp-zookeeper-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-10"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-11"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-12"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-13"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-14"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-15"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-16"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-17"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-18"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-19"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-20"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-21"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-22"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-23"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-24"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-25"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-26"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-27"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-28"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-29"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-30"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-31"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-32"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-33"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-34"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-35"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-36"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-37"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-38"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-39"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-40"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-8"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/apache-hadoop-yarn-master-9"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-4"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-5"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-6"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hadoop-7"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-3"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/hdp-hadoop-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:precise/hadoop-1"
+          },
+          {
+            "Id": "cs:precise/hadoop-10"
+          },
+          {
+            "Id": "cs:precise/hadoop-11"
+          },
+          {
+            "Id": "cs:precise/hadoop-12"
+          },
+          {
+            "Id": "cs:precise/hadoop-13"
+          },
+          {
+            "Id": "cs:precise/hadoop-14"
+          },
+          {
+            "Id": "cs:precise/hadoop-15"
+          },
+          {
+            "Id": "cs:precise/hadoop-16"
+          },
+          {
+            "Id": "cs:precise/hadoop-2"
+          },
+          {
+            "Id": "cs:precise/hadoop-3"
+          },
+          {
+            "Id": "cs:precise/hadoop-4"
+          },
+          {
+            "Id": "cs:precise/hadoop-5"
+          },
+          {
+            "Id": "cs:precise/hadoop-6"
+          },
+          {
+            "Id": "cs:precise/hadoop-7"
+          },
+          {
+            "Id": "cs:precise/hadoop-8"
+          },
+          {
+            "Id": "cs:precise/hadoop-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/hadoop-12"
+          },
+          {
+            "Id": "cs:trusty/hadoop-13"
+          },
+          {
+            "Id": "cs:trusty/hadoop-14"
+          },
+          {
+            "Id": "cs:trusty/hadoop-15"
+          },
+          {
+            "Id": "cs:trusty/hadoop-16"
+          },
+          {
+            "Id": "cs:~craig.magina/trusty/apache-hadoop-0"
+          },
+          {
+            "Id": "cs:~daisy-pluckers/precise/hadoop-cassandra-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-2"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/hdp-hadoop-3"
+          }
+        ]
+      }
+    },
+    "extra-info": {
+      "bzr-digest": "chuck@dasroot.net-20140714201136-l8ekmg0yv90vgiue",
+      "bzr-owner": "charmers",
+      "bzr-revisions": [
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-07-14T20:11:37Z",
+          "message": "Fixes a depreciated hadoop fs command, and sources the proper hadoopenv script for use in juju-run\n",
+          "revno": 6
+        },
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-07-11T18:45:48Z",
+          "message": "Hotfix for terrasort script being improperly linked\n",
+          "revno": 5
+        },
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-07-08T17:44:35Z",
+          "message": "amir sanjar 2014-07-07 shutdown & elasticsearch changes\namir sanjar 2014-06-23 update readme\namir sanjar 2014-06-20 hadoop update \n",
+          "revno": 4
+        },
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-06-16T17:12:24Z",
+          "message": "Markdown updates",
+          "revno": 3
+        },
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-06-13T22:40:34Z",
+          "message": "Rebranding from Hadoop2 to Hadoop\n",
+          "revno": 2
+        },
+        {
+          "authors": [
+            {
+              "email": "amir.sanjar@canonical.com",
+              "name": "amir sanjar"
+            }
+          ],
+          "date": "2014-05-13T19:22:13Z",
+          "message": "Hadoop 2.2.0 initsial charm - YARN & HDFS enablement \n",
+          "revno": 1
+        }
+      ],
+      "bzr-url": "lp:~charmers/charms/trusty/hadoop/trunk",
+      "legacy-download-stats": 1746
+    },
+    "manifest": [
+      {
+        "Name": "revision",
+        "Size": 2
+      },
+      {
+        "Name": "README.md",
+        "Size": 8635
+      },
+      {
+        "Name": "config.yaml",
+        "Size": 7239
+      },
+      {
+        "Name": "copyright",
+        "Size": 756
+      },
+      {
+        "Name": "files/archives/hadoop-2.2.0.tar.gz",
+        "Size": 98866169
+      },
+      {
+        "Name": "files/upstart/defaults",
+        "Size": 753
+      },
+      {
+        "Name": "hooks/config-changed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/datanode-relation-changed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/ganglia-common",
+        "Size": 6958
+      },
+      {
+        "Name": "hooks/ganglia-relation-broken",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/ganglia-relation-changed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/ganglia-relation-departed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/hadoop-common",
+        "Size": 28009
+      },
+      {
+        "Name": "hooks/install",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/mapred-namenode-relation-changed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/namenode-relation-joined",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/nodemanager-relation-changed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/resourcemanager-relation-joined",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/secondarynamenode-relation-changed",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/start",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/stop",
+        "Size": 13
+      },
+      {
+        "Name": "hooks/upgrade-charm",
+        "Size": 13
+      },
+      {
+        "Name": "icon.svg",
+        "Size": 62287
+      },
+      {
+        "Name": "metadata.yaml",
+        "Size": 607
+      },
+      {
+        "Name": "scripts/terasort.sh",
+        "Size": 501
+      },
+      {
+        "Name": "templates/hadoop-metrics2.properties",
+        "Size": 683
+      }
+    ]
+  }
+}

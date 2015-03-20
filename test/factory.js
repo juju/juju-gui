@@ -62,7 +62,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
     _fetchCharmData: function() {
       var names = [
         'wordpress', 'mongodb', 'mysql', 'mediawiki', 'puppet', 'haproxy',
-        'puppetmaster'];
+        'puppetmaster', 'hadoop'];
       var charms = {};
       names.forEach(function(charmName) {
         var url = 'data/' + charmName + '-apiv4-response.json';
@@ -82,8 +82,11 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
         // Remove the includes and the charmstore path.
         path = path.split('/meta/any')[0].replace('local/v4/', '');
         // Get just the charm name
-        path = path.split('/')[1].split('-').slice(0, -1).join('-');
-        console.log(path);
+        path = path.split('/')[1].split('-');
+        if (path.length > 1) {
+          path = path.slice(0, -1);
+        }
+        path = path.join('-');
         if (charms[path]) {
           success({ target: { responseText: charms[path]}});
         } else {
