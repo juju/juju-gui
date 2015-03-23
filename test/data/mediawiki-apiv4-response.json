@@ -1,0 +1,3537 @@
+{
+  "Id": "cs:precise/mediawiki-18",
+  "Meta": {
+    "charm-config": {
+      "Options": {
+        "admins": {
+          "Type": "string",
+          "Description": "Admin users to create, user:pass",
+          "Default": ""
+        },
+        "debug": {
+          "Type": "boolean",
+          "Description": "turn on debugging features of mediawiki",
+          "Default": false
+        },
+        "logo": {
+          "Type": "string",
+          "Description": "URL to fetch logo from",
+          "Default": ""
+        },
+        "name": {
+          "Type": "string",
+          "Description": "The name, or Title of the Wiki",
+          "Default": "Please set name of wiki"
+        },
+        "server_address": {
+          "Type": "string",
+          "Description": "The server url to set \"$wgServer\". Useful for reverse proxies",
+          "Default": ""
+        },
+        "skin": {
+          "Type": "string",
+          "Description": "skin for the Wiki",
+          "Default": "vector"
+        },
+        "use_suffix": {
+          "Type": "boolean",
+          "Description": "If we should put '/mediawiki' suffix on the url",
+          "Default": true
+        }
+      }
+    },
+    "charm-metadata": {
+      "Name": "mediawiki",
+      "Summary": "Website engine for collaborative work",
+      "Description": "MediaWiki is a wiki engine (a program for creating a collaboratively\nedited website). It is designed to handle heavy websites containing\nlibrary-like document collections, and supports user uploads of\nimages/sounds, multilingual content, TOC autogeneration, ISBN links,\netc.\n",
+      "Subordinate": false,
+      "Provides": {
+        "website": {
+          "Name": "website",
+          "Role": "provider",
+          "Interface": "http",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        }
+      },
+      "Requires": {
+        "cache": {
+          "Name": "cache",
+          "Role": "requirer",
+          "Interface": "memcache",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "db": {
+          "Name": "db",
+          "Role": "requirer",
+          "Interface": "mysql",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "slave": {
+          "Name": "slave",
+          "Role": "requirer",
+          "Interface": "mysql",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        }
+      },
+      "Peers": null,
+      "Format": 1,
+      "OldRevision": 0,
+      "Categories": [
+        "applications"
+      ],
+      "Tags": null,
+      "Series": ""
+    },
+    "charm-related": {
+      "Requires": {
+        "http": [
+          {
+            "Id": "cs:oneiric/haproxy-0"
+          },
+          {
+            "Id": "cs:precise/apache2-1"
+          },
+          {
+            "Id": "cs:precise/apache2-10"
+          },
+          {
+            "Id": "cs:precise/apache2-11"
+          },
+          {
+            "Id": "cs:precise/apache2-12"
+          },
+          {
+            "Id": "cs:precise/apache2-13"
+          },
+          {
+            "Id": "cs:precise/apache2-14"
+          },
+          {
+            "Id": "cs:precise/apache2-15"
+          },
+          {
+            "Id": "cs:precise/apache2-16"
+          },
+          {
+            "Id": "cs:precise/apache2-17"
+          },
+          {
+            "Id": "cs:precise/apache2-18"
+          },
+          {
+            "Id": "cs:precise/apache2-19"
+          },
+          {
+            "Id": "cs:precise/apache2-2"
+          },
+          {
+            "Id": "cs:precise/apache2-20"
+          },
+          {
+            "Id": "cs:precise/apache2-21"
+          },
+          {
+            "Id": "cs:precise/apache2-22"
+          },
+          {
+            "Id": "cs:precise/apache2-23"
+          },
+          {
+            "Id": "cs:precise/apache2-24"
+          },
+          {
+            "Id": "cs:precise/apache2-25"
+          },
+          {
+            "Id": "cs:precise/apache2-26"
+          },
+          {
+            "Id": "cs:precise/apache2-27"
+          },
+          {
+            "Id": "cs:precise/apache2-3"
+          },
+          {
+            "Id": "cs:precise/apache2-4"
+          },
+          {
+            "Id": "cs:precise/apache2-5"
+          },
+          {
+            "Id": "cs:precise/apache2-6"
+          },
+          {
+            "Id": "cs:precise/apache2-7"
+          },
+          {
+            "Id": "cs:precise/apache2-8"
+          },
+          {
+            "Id": "cs:precise/apache2-9"
+          },
+          {
+            "Id": "cs:precise/haproxy-0"
+          },
+          {
+            "Id": "cs:precise/haproxy-1"
+          },
+          {
+            "Id": "cs:precise/haproxy-10"
+          },
+          {
+            "Id": "cs:precise/haproxy-11"
+          },
+          {
+            "Id": "cs:precise/haproxy-12"
+          },
+          {
+            "Id": "cs:precise/haproxy-13"
+          },
+          {
+            "Id": "cs:precise/haproxy-14"
+          },
+          {
+            "Id": "cs:precise/haproxy-15"
+          },
+          {
+            "Id": "cs:precise/haproxy-16"
+          },
+          {
+            "Id": "cs:precise/haproxy-17"
+          },
+          {
+            "Id": "cs:precise/haproxy-18"
+          },
+          {
+            "Id": "cs:precise/haproxy-19"
+          },
+          {
+            "Id": "cs:precise/haproxy-2"
+          },
+          {
+            "Id": "cs:precise/haproxy-20"
+          },
+          {
+            "Id": "cs:precise/haproxy-21"
+          },
+          {
+            "Id": "cs:precise/haproxy-22"
+          },
+          {
+            "Id": "cs:precise/haproxy-23"
+          },
+          {
+            "Id": "cs:precise/haproxy-24"
+          },
+          {
+            "Id": "cs:precise/haproxy-25"
+          },
+          {
+            "Id": "cs:precise/haproxy-26"
+          },
+          {
+            "Id": "cs:precise/haproxy-27"
+          },
+          {
+            "Id": "cs:precise/haproxy-28"
+          },
+          {
+            "Id": "cs:precise/haproxy-29"
+          },
+          {
+            "Id": "cs:precise/haproxy-3"
+          },
+          {
+            "Id": "cs:precise/haproxy-30"
+          },
+          {
+            "Id": "cs:precise/haproxy-31"
+          },
+          {
+            "Id": "cs:precise/haproxy-32"
+          },
+          {
+            "Id": "cs:precise/haproxy-33"
+          },
+          {
+            "Id": "cs:precise/haproxy-34"
+          },
+          {
+            "Id": "cs:precise/haproxy-35"
+          },
+          {
+            "Id": "cs:precise/haproxy-4"
+          },
+          {
+            "Id": "cs:precise/haproxy-5"
+          },
+          {
+            "Id": "cs:precise/haproxy-6"
+          },
+          {
+            "Id": "cs:precise/haproxy-7"
+          },
+          {
+            "Id": "cs:precise/haproxy-8"
+          },
+          {
+            "Id": "cs:precise/haproxy-9"
+          },
+          {
+            "Id": "cs:precise/landscape-client-10"
+          },
+          {
+            "Id": "cs:precise/landscape-client-11"
+          },
+          {
+            "Id": "cs:precise/landscape-client-12"
+          },
+          {
+            "Id": "cs:precise/landscape-client-13"
+          },
+          {
+            "Id": "cs:precise/landscape-client-14"
+          },
+          {
+            "Id": "cs:precise/landscape-client-15"
+          },
+          {
+            "Id": "cs:precise/landscape-client-16"
+          },
+          {
+            "Id": "cs:precise/landscape-client-17"
+          },
+          {
+            "Id": "cs:precise/landscape-client-18"
+          },
+          {
+            "Id": "cs:precise/landscape-client-19"
+          },
+          {
+            "Id": "cs:precise/landscape-client-6"
+          },
+          {
+            "Id": "cs:precise/landscape-client-7"
+          },
+          {
+            "Id": "cs:precise/landscape-client-8"
+          },
+          {
+            "Id": "cs:precise/landscape-client-9"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-1"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-2"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-3"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-4"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-5"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-6"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-7"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-8"
+          },
+          {
+            "Id": "cs:precise/squid-reverseproxy-9"
+          },
+          {
+            "Id": "cs:precise/varnish-0"
+          },
+          {
+            "Id": "cs:precise/varnish-1"
+          },
+          {
+            "Id": "cs:precise/varnish-2"
+          },
+          {
+            "Id": "cs:precise/varnish-3"
+          },
+          {
+            "Id": "cs:precise/varnish-4"
+          },
+          {
+            "Id": "cs:precise/varnish-5"
+          },
+          {
+            "Id": "cs:precise/varnish-6"
+          },
+          {
+            "Id": "cs:trusty/apache2-1"
+          },
+          {
+            "Id": "cs:trusty/apache2-10"
+          },
+          {
+            "Id": "cs:trusty/apache2-11"
+          },
+          {
+            "Id": "cs:trusty/apache2-12"
+          },
+          {
+            "Id": "cs:trusty/apache2-13"
+          },
+          {
+            "Id": "cs:trusty/apache2-2"
+          },
+          {
+            "Id": "cs:trusty/apache2-3"
+          },
+          {
+            "Id": "cs:trusty/apache2-4"
+          },
+          {
+            "Id": "cs:trusty/apache2-5"
+          },
+          {
+            "Id": "cs:trusty/apache2-6"
+          },
+          {
+            "Id": "cs:trusty/apache2-7"
+          },
+          {
+            "Id": "cs:trusty/apache2-8"
+          },
+          {
+            "Id": "cs:trusty/apache2-9"
+          },
+          {
+            "Id": "cs:trusty/haproxy-1"
+          },
+          {
+            "Id": "cs:trusty/haproxy-2"
+          },
+          {
+            "Id": "cs:trusty/haproxy-3"
+          },
+          {
+            "Id": "cs:trusty/haproxy-4"
+          },
+          {
+            "Id": "cs:trusty/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:trusty/squid-reverseproxy-1"
+          },
+          {
+            "Id": "cs:trusty/varnish-1"
+          },
+          {
+            "Id": "cs:trusty/wildfly-ha-master-0"
+          },
+          {
+            "Id": "cs:~0atman/trusty/wsgi-app-0"
+          },
+          {
+            "Id": "cs:~0atman/trusty/wsgi-app-1"
+          },
+          {
+            "Id": "cs:~0atman/trusty/wsgi-app-2"
+          },
+          {
+            "Id": "cs:~abentley/precise/apache2-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~abentley/precise/apache2-reverseproxy-1"
+          },
+          {
+            "Id": "cs:~abentley/precise/apache2-reverseproxy-2"
+          },
+          {
+            "Id": "cs:~abentley/precise/apache2-reverseproxy-3"
+          },
+          {
+            "Id": "cs:~abentley/precise/apache2-reverseproxy-4"
+          },
+          {
+            "Id": "cs:~abentley/trusty/apache2-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~abentley/trusty/apache2-reverseproxy-1"
+          },
+          {
+            "Id": "cs:~abentley/trusty/apache2-reverseproxy-2"
+          },
+          {
+            "Id": "cs:~abentley/trusty/apache2-reverseproxy-3"
+          },
+          {
+            "Id": "cs:~abentley/trusty/apache2-reverseproxy-4"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-1"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-2"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-3"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-4"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-5"
+          },
+          {
+            "Id": "cs:~alexlist/precise/squid-reverseproxy-6"
+          },
+          {
+            "Id": "cs:~bac/precise/charmworld-0"
+          },
+          {
+            "Id": "cs:~bac/precise/charmworld-1"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/restcomm-0"
+          },
+          {
+            "Id": "cs:~bigdata-dev/trusty/vstorm-vse-0"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~brian-albrecht/trusty/haproxy-0"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-0"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-1"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-10"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-11"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-12"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-13"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-14"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-15"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-2"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-3"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-4"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-5"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-6"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-7"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-8"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-9"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-0"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-1"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-10"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-11"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-12"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-13"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-14"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-15"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-16"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-17"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-18"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-19"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-2"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-20"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-21"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-22"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-23"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-24"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-25"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-26"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-27"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-3"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-4"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-5"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-6"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-7"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-8"
+          },
+          {
+            "Id": "cs:~caio1982/trusty/system-image-server-9"
+          },
+          {
+            "Id": "cs:~canonical-ci-engineering/precise/uci-engine-lander-0"
+          },
+          {
+            "Id": "cs:~canonical-ci-engineering/precise/uci-engine-lander-1"
+          },
+          {
+            "Id": "cs:~canonical-ci-engineering/precise/uci-engine-system-image-server-0"
+          },
+          {
+            "Id": "cs:~canonical-ci-engineering/precise/uci-engine-wsgi-app-0"
+          },
+          {
+            "Id": "cs:~canonical-ci-engineering/precise/uci-engine-wsgi-app-1"
+          },
+          {
+            "Id": "cs:~canonical-ci/precise/oil-qmaster-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cf-hm9000-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-clock-v1-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-clock-v1-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-clock-v1-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-clock-v2-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-clock-v2-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-clock-v2-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-worker-v1-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-worker-v1-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-worker-v1-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-worker-v2-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-worker-v2-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-worker-v2-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-2"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-3"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-4"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-5"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/haproxy-v1-6"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/login-v1-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/login-v1-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/login-v1-2"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/haproxy-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/apache2-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-28"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-29"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-30"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-31"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-32"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-33"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-34"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-35"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/haproxy-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/landscape-client-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/squid-reverseproxy-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/varnish-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/apache2-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/haproxy-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/haproxy-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/haproxy-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/haproxy-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/haproxy-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/squid-reverseproxy-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/varnish-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/varnish-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/wildfly-ha-master-0"
+          },
+          {
+            "Id": "cs:~chrisdonati/precise/appinventor-0"
+          },
+          {
+            "Id": "cs:~chrisdonati/precise/appinventor-1"
+          },
+          {
+            "Id": "cs:~chrisdonati/precise/guestbook-0"
+          },
+          {
+            "Id": "cs:~chrisdonati/precise/guestbook-1"
+          },
+          {
+            "Id": "cs:~chrisdonati/precise/guestbook-2"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~cmars/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~cmars/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~cmars/precise/haproxy-2"
+          },
+          {
+            "Id": "cs:~cmars/precise/haproxy-3"
+          },
+          {
+            "Id": "cs:~cmars/precise/haproxy-4"
+          },
+          {
+            "Id": "cs:~cmars/precise/haproxy-5"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-0"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-1"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-10"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-2"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-3"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-4"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-5"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-6"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-7"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-8"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-doc-9"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-sampleapp-0"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-sampleapp-1"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-sampleapp-2"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-sampleapp-3"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-sampleapp-4"
+          },
+          {
+            "Id": "cs:~ctap/trusty/hsenidmobile-ctap-sampleapp-5"
+          },
+          {
+            "Id": "cs:~dannf/precise/siege-0"
+          },
+          {
+            "Id": "cs:~dannf/precise/siege-1"
+          },
+          {
+            "Id": "cs:~dannf/precise/siege-2"
+          },
+          {
+            "Id": "cs:~dannf/precise/siege-3"
+          },
+          {
+            "Id": "cs:~dannf/precise/siege-4"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/apache2-2"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/apache2-3"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/apache2-4"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/haproxy-2"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/haproxy-3"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/haproxy-4"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/haproxy-5"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/landscape-client-1"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/precise/reviewboard-oauth-0"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/precise/reviewboard-oauth-1"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/precise/reviewboard-oauth-2"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/precise/reviewboard-oauth-3"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/precise/reviewboard-oauth-4"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/precise/reviewboard-oauth-5"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/trusty/reviewboard-oauth-0"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/trusty/reviewboard-oauth-1"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/trusty/reviewboard-oauth-2"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/trusty/reviewboard-oauth-3"
+          },
+          {
+            "Id": "cs:~ericsnowcurrently/trusty/reviewboard-oauth-4"
+          },
+          {
+            "Id": "cs:~flepied/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~flepied/precise/naxsi-0"
+          },
+          {
+            "Id": "cs:~gnuoy/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~gnuoy/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~hazmat/precise/aws-elb-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/aws-elb-1"
+          },
+          {
+            "Id": "cs:~hazmat/precise/aws-elb-2"
+          },
+          {
+            "Id": "cs:~hazmat/precise/aws-elb-3"
+          },
+          {
+            "Id": "cs:~hazmat/precise/aws-elb-4"
+          },
+          {
+            "Id": "cs:~hazmat/precise/aws-elb-5"
+          },
+          {
+            "Id": "cs:~hloeung/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~hloeung/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~hloeung/precise/apache2-2"
+          },
+          {
+            "Id": "cs:~hloeung/precise/varnish-0"
+          },
+          {
+            "Id": "cs:~hloeung/precise/varnish-1"
+          },
+          {
+            "Id": "cs:~hloeung/precise/varnish-2"
+          },
+          {
+            "Id": "cs:~hloeung/precise/varnish-3"
+          },
+          {
+            "Id": "cs:~hloeung/precise/varnish-4"
+          },
+          {
+            "Id": "cs:~hp-discover/trusty/nginx-proxy-0"
+          },
+          {
+            "Id": "cs:~hp-discover/trusty/nginx-proxy-1"
+          },
+          {
+            "Id": "cs:~hp-discover/trusty/nginx-proxy-2"
+          },
+          {
+            "Id": "cs:~hp-discover/trusty/nginx-proxy-3"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/apache2-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/apache2-1"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/haproxy-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/haproxy-1"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/haproxy-2"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/varnish-0"
+          },
+          {
+            "Id": "cs:~imbrandon/precise/newrelic-php-0"
+          },
+          {
+            "Id": "cs:~imbrandon/precise/nginx-proxy-0"
+          },
+          {
+            "Id": "cs:~imbrandon/precise/nginx-proxy-1"
+          },
+          {
+            "Id": "cs:~imbrandon/precise/nginx-proxy-2"
+          },
+          {
+            "Id": "cs:~imbrandon/precise/nginx-proxy-3"
+          },
+          {
+            "Id": "cs:~imbrandon/precise/nginx-proxy-4"
+          },
+          {
+            "Id": "cs:~james-sapara/precise/aws-ec2-elb-0"
+          },
+          {
+            "Id": "cs:~james-sapara/precise/aws-ec2-elb-1"
+          },
+          {
+            "Id": "cs:~jhasaurabh/trusty/wildfly-ha-master-1"
+          },
+          {
+            "Id": "cs:~jhasaurabh/trusty/wildfly-ha-master-2"
+          },
+          {
+            "Id": "cs:~jhasaurabh/trusty/wildfly-ha-master-3"
+          },
+          {
+            "Id": "cs:~jhasaurabh/trusty/wildfly-ha-master-4"
+          },
+          {
+            "Id": "cs:~jjo/precise/httpload-0"
+          },
+          {
+            "Id": "cs:~jjo/precise/httpload-1"
+          },
+          {
+            "Id": "cs:~jjo/precise/httpload-2"
+          },
+          {
+            "Id": "cs:~jjo/precise/httpload-3"
+          },
+          {
+            "Id": "cs:~jjo/precise/httpload-4"
+          },
+          {
+            "Id": "cs:~jjo/precise/httpload-5"
+          },
+          {
+            "Id": "cs:~jmit/oneiric/proxy-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/cloud-controller-clock-v1-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/cloud-controller-clock-v2-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/cloud-controller-v1-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/cloud-controller-v2-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/cloud-controller-worker-v1-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/cloud-controller-worker-v2-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/haproxy-v1-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/login-v1-0"
+          },
+          {
+            "Id": "cs:~johnsca/trusty/wildfly-ha-master-0"
+          },
+          {
+            "Id": "cs:~jseutter/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~jseutter/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~jseutter/precise/haproxy-2"
+          },
+          {
+            "Id": "cs:~jseutter/precise/haproxy-3"
+          },
+          {
+            "Id": "cs:~jseutter/precise/haproxy-4"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-14"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-15"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-16"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-17"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-18"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-19"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-20"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-21"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-22"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-23"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-24"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-25"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-26"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-27"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-28"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-29"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-30"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-31"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-32"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-33"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-34"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-35"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-36"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-37"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-38"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-39"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-40"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-41"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-42"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-43"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-44"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-45"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-46"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-47"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-48"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-49"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-50"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-51"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-52"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-53"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-54"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-55"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-56"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-57"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-58"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-2"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-3"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-4"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-5"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/haproxy-6"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-0"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-10"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-11"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-12"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-13"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-14"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-15"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-16"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-17"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-18"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-19"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-7"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-8"
+          },
+          {
+            "Id": "cs:~landscape-charmers/precise/landscape-client-9"
+          },
+          {
+            "Id": "cs:~landscape/trusty/landscape-client-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/haproxy-0"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/stingray-0"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/stingray-1"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/stingray-2"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/stingray-3"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/stingray-4"
+          },
+          {
+            "Id": "cs:~mark-mims/oneiric/varnish-0"
+          },
+          {
+            "Id": "cs:~mark-mims/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~mark-mims/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~mbruzek/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~mbruzek/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-1"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-2"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-3"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-4"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-5"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-6"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-7"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-8"
+          },
+          {
+            "Id": "cs:~mew/precise/squid-9"
+          },
+          {
+            "Id": "cs:~mreed8855/precise/apachebench-0"
+          },
+          {
+            "Id": "cs:~mreed8855/precise/apachebench-1"
+          },
+          {
+            "Id": "cs:~mreed8855/precise/apachebench-2"
+          },
+          {
+            "Id": "cs:~mreed8855/precise/apachebench-3"
+          },
+          {
+            "Id": "cs:~mreed8855/precise/apachebench-4"
+          },
+          {
+            "Id": "cs:~mreed8855/precise/apachebench-5"
+          },
+          {
+            "Id": "cs:~narindergupta/trusty/haproxy-0"
+          },
+          {
+            "Id": "cs:~nathwill-deactivatedaccount/precise/varnish-0"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-0"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-1"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-10"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-11"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-12"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-13"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-14"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-15"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-16"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-2"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-3"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-4"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-5"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-6"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-7"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-8"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-9"
+          },
+          {
+            "Id": "cs:~pmcgarry/quantal/haproxy-0"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-0"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-1"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-2"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-3"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-4"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-5"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-6"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-7"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/flight-delay-demo-8"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/sentiment-analysis-frontend-0"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/sentiment-analysis-frontend-1"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/sentiment-analysis-frontend-2"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/sentiment-analysis-frontend-3"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/sentiment-analysis-frontend-4"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-0"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-1"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-2"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-3"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-4"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-5"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-6"
+          },
+          {
+            "Id": "cs:~samuel-cozannet/trusty/storm-twitter-7"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-10"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-11"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-12"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-13"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-14"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-15"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-16"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-17"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-18"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-19"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-2"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-20"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-21"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-22"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-23"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-24"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-25"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-26"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-27"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-28"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-29"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-3"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-30"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-31"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-4"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-5"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-6"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-7"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-8"
+          },
+          {
+            "Id": "cs:~sidnei/precise/apache2-9"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-0"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-1"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-10"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-11"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-12"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-13"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-14"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-15"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-16"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-17"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-18"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-19"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-2"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-20"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-21"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-22"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-23"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-24"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-25"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-26"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-27"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-28"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-29"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-3"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-30"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-31"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-32"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-33"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-34"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-35"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-36"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-37"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-38"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-39"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-4"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-40"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-5"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-6"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-7"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-8"
+          },
+          {
+            "Id": "cs:~sidnei/precise/haproxy-9"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-0"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-1"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-10"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-11"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-12"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-13"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-14"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-15"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-16"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-17"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-18"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-19"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-2"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-20"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-21"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-22"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-23"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-24"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-25"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-26"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-27"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-28"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-29"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-3"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-30"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-31"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-32"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-4"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-5"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-6"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-7"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-8"
+          },
+          {
+            "Id": "cs:~sidnei/precise/squid-reverseproxy-9"
+          },
+          {
+            "Id": "cs:~thedac/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~thedac/precise/apache2-1"
+          },
+          {
+            "Id": "cs:~thedac/precise/apache2-2"
+          },
+          {
+            "Id": "cs:~thedac/precise/apache2-3"
+          },
+          {
+            "Id": "cs:~thedac/precise/apache2-4"
+          },
+          {
+            "Id": "cs:~webteam-backend/precise/apache2-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-2"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-3"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-4"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-5"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-6"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-43"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-44"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-45"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-51"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-52"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-53"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-54"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-55"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-56"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-57"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-58"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-59"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-60"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-61"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-62"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-63"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-64"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-65"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-66"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-67"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-68"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-69"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-70"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-71"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-72"
+          },
+          {
+            "Id": "cs:~x3v947pl/trusty/devicehive-lb-0"
+          },
+          {
+            "Id": "cs:~x3v947pl/trusty/devicehive-lb-1"
+          },
+          {
+            "Id": "cs:~x3v947pl/trusty/devicehive-lb-2"
+          },
+          {
+            "Id": "cs:~x3v947pl/trusty/devicehive-lb-3"
+          },
+          {
+            "Id": "cs:~x3v947pl/trusty/devicehive-lb-4"
+          }
+        ]
+      },
+      "Provides": {
+        "memcache": [
+          {
+            "Id": "cs:oneiric/memcached-0"
+          },
+          {
+            "Id": "cs:precise/memcached-0"
+          },
+          {
+            "Id": "cs:precise/memcached-1"
+          },
+          {
+            "Id": "cs:precise/memcached-10"
+          },
+          {
+            "Id": "cs:precise/memcached-11"
+          },
+          {
+            "Id": "cs:precise/memcached-12"
+          },
+          {
+            "Id": "cs:precise/memcached-13"
+          },
+          {
+            "Id": "cs:precise/memcached-2"
+          },
+          {
+            "Id": "cs:precise/memcached-3"
+          },
+          {
+            "Id": "cs:precise/memcached-4"
+          },
+          {
+            "Id": "cs:precise/memcached-5"
+          },
+          {
+            "Id": "cs:precise/memcached-6"
+          },
+          {
+            "Id": "cs:precise/memcached-7"
+          },
+          {
+            "Id": "cs:precise/memcached-8"
+          },
+          {
+            "Id": "cs:precise/memcached-9"
+          },
+          {
+            "Id": "cs:trusty/memcached-1"
+          },
+          {
+            "Id": "cs:trusty/memcached-2"
+          },
+          {
+            "Id": "cs:trusty/memcached-3"
+          },
+          {
+            "Id": "cs:trusty/memcached-4"
+          },
+          {
+            "Id": "cs:trusty/memcached-5"
+          },
+          {
+            "Id": "cs:trusty/memcached-6"
+          },
+          {
+            "Id": "cs:trusty/memcached-7"
+          },
+          {
+            "Id": "cs:trusty/memcached-8"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/memcached-0"
+          },
+          {
+            "Id": "cs:~charm-demo/trusty/memcached-0"
+          },
+          {
+            "Id": "cs:~charm-demo/trusty/memcached-1"
+          },
+          {
+            "Id": "cs:~charm-demo/trusty/memcached-2"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/memcached-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/memcached-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/memcached-8"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/memcached-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/memcached-0"
+          },
+          {
+            "Id": "cs:~mbruzek/precise/memcached-0"
+          },
+          {
+            "Id": "cs:~mbruzek/precise/memcached-1"
+          },
+          {
+            "Id": "cs:~mbruzek/precise/memcached-2"
+          },
+          {
+            "Id": "cs:~mbruzek/precise/memcached-3"
+          },
+          {
+            "Id": "cs:~narindergupta/trusty/memcached-0"
+          },
+          {
+            "Id": "cs:~negronjl/oneiric/memcached-0"
+          }
+        ],
+        "mysql": [
+          {
+            "Id": "cs:oneiric/mysql-0"
+          },
+          {
+            "Id": "cs:oneiric/mysql-1"
+          },
+          {
+            "Id": "cs:precise/mysql-0"
+          },
+          {
+            "Id": "cs:precise/mysql-1"
+          },
+          {
+            "Id": "cs:precise/mysql-10"
+          },
+          {
+            "Id": "cs:precise/mysql-11"
+          },
+          {
+            "Id": "cs:precise/mysql-12"
+          },
+          {
+            "Id": "cs:precise/mysql-13"
+          },
+          {
+            "Id": "cs:precise/mysql-14"
+          },
+          {
+            "Id": "cs:precise/mysql-15"
+          },
+          {
+            "Id": "cs:precise/mysql-16"
+          },
+          {
+            "Id": "cs:precise/mysql-17"
+          },
+          {
+            "Id": "cs:precise/mysql-18"
+          },
+          {
+            "Id": "cs:precise/mysql-19"
+          },
+          {
+            "Id": "cs:precise/mysql-2"
+          },
+          {
+            "Id": "cs:precise/mysql-20"
+          },
+          {
+            "Id": "cs:precise/mysql-21"
+          },
+          {
+            "Id": "cs:precise/mysql-22"
+          },
+          {
+            "Id": "cs:precise/mysql-23"
+          },
+          {
+            "Id": "cs:precise/mysql-24"
+          },
+          {
+            "Id": "cs:precise/mysql-25"
+          },
+          {
+            "Id": "cs:precise/mysql-26"
+          },
+          {
+            "Id": "cs:precise/mysql-27"
+          },
+          {
+            "Id": "cs:precise/mysql-28"
+          },
+          {
+            "Id": "cs:precise/mysql-29"
+          },
+          {
+            "Id": "cs:precise/mysql-3"
+          },
+          {
+            "Id": "cs:precise/mysql-30"
+          },
+          {
+            "Id": "cs:precise/mysql-31"
+          },
+          {
+            "Id": "cs:precise/mysql-32"
+          },
+          {
+            "Id": "cs:precise/mysql-33"
+          },
+          {
+            "Id": "cs:precise/mysql-34"
+          },
+          {
+            "Id": "cs:precise/mysql-35"
+          },
+          {
+            "Id": "cs:precise/mysql-36"
+          },
+          {
+            "Id": "cs:precise/mysql-37"
+          },
+          {
+            "Id": "cs:precise/mysql-38"
+          },
+          {
+            "Id": "cs:precise/mysql-39"
+          },
+          {
+            "Id": "cs:precise/mysql-4"
+          },
+          {
+            "Id": "cs:precise/mysql-40"
+          },
+          {
+            "Id": "cs:precise/mysql-41"
+          },
+          {
+            "Id": "cs:precise/mysql-42"
+          },
+          {
+            "Id": "cs:precise/mysql-43"
+          },
+          {
+            "Id": "cs:precise/mysql-44"
+          },
+          {
+            "Id": "cs:precise/mysql-45"
+          },
+          {
+            "Id": "cs:precise/mysql-46"
+          },
+          {
+            "Id": "cs:precise/mysql-47"
+          },
+          {
+            "Id": "cs:precise/mysql-48"
+          },
+          {
+            "Id": "cs:precise/mysql-49"
+          },
+          {
+            "Id": "cs:precise/mysql-5"
+          },
+          {
+            "Id": "cs:precise/mysql-50"
+          },
+          {
+            "Id": "cs:precise/mysql-51"
+          },
+          {
+            "Id": "cs:precise/mysql-6"
+          },
+          {
+            "Id": "cs:precise/mysql-7"
+          },
+          {
+            "Id": "cs:precise/mysql-8"
+          },
+          {
+            "Id": "cs:precise/mysql-9"
+          },
+          {
+            "Id": "cs:trusty/mariadb-0"
+          },
+          {
+            "Id": "cs:trusty/mariadb-1"
+          },
+          {
+            "Id": "cs:trusty/mariadb-2"
+          },
+          {
+            "Id": "cs:trusty/mysql-0"
+          },
+          {
+            "Id": "cs:trusty/mysql-1"
+          },
+          {
+            "Id": "cs:trusty/mysql-10"
+          },
+          {
+            "Id": "cs:trusty/mysql-11"
+          },
+          {
+            "Id": "cs:trusty/mysql-12"
+          },
+          {
+            "Id": "cs:trusty/mysql-13"
+          },
+          {
+            "Id": "cs:trusty/mysql-14"
+          },
+          {
+            "Id": "cs:trusty/mysql-15"
+          },
+          {
+            "Id": "cs:trusty/mysql-16"
+          },
+          {
+            "Id": "cs:trusty/mysql-17"
+          },
+          {
+            "Id": "cs:trusty/mysql-18"
+          },
+          {
+            "Id": "cs:trusty/mysql-19"
+          },
+          {
+            "Id": "cs:trusty/mysql-2"
+          },
+          {
+            "Id": "cs:trusty/mysql-20"
+          },
+          {
+            "Id": "cs:trusty/mysql-21"
+          },
+          {
+            "Id": "cs:trusty/mysql-22"
+          },
+          {
+            "Id": "cs:trusty/mysql-23"
+          },
+          {
+            "Id": "cs:trusty/mysql-24"
+          },
+          {
+            "Id": "cs:trusty/mysql-3"
+          },
+          {
+            "Id": "cs:trusty/mysql-4"
+          },
+          {
+            "Id": "cs:trusty/mysql-5"
+          },
+          {
+            "Id": "cs:trusty/mysql-6"
+          },
+          {
+            "Id": "cs:trusty/mysql-7"
+          },
+          {
+            "Id": "cs:trusty/mysql-8"
+          },
+          {
+            "Id": "cs:trusty/mysql-9"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-12"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-13"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-14"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-15"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-16"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-17"
+          },
+          {
+            "Id": "cs:trusty/percona-cluster-18"
+          },
+          {
+            "Id": "cs:~a.rosales/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~bjornt/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~brian-albrecht/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~brian-albrecht/trusty/mysql-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cf-mysql-broker-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cf-mysql-broker-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-3"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-4"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-5"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-6"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v1-7"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-3"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-4"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-5"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-6"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v2-7"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v3-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/cloud-controller-v3-1"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/uaa-v1-3"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/uaa-v1-4"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/uaa-v1-5"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/uaa-v1-6"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/uaa-v1-7"
+          },
+          {
+            "Id": "cs:~cf-charmers/trusty/uaa-v1-8"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/mysql-0"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/mysql-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-28"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-29"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-30"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-31"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-32"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-33"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-34"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-35"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-36"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-37"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-38"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-39"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-40"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-41"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-42"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-43"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-44"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-45"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-46"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-47"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-48"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-49"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-50"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-51"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/mysql-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mariadb-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mariadb-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mariadb-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-14"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-15"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-17"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-18"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-19"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-20"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-21"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-22"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-23"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-24"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mysql-9"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/galera-0"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/mysql-1"
+          },
+          {
+            "Id": "cs:~codership/trusty/galera-cluster-0"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-10"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-11"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-12"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-13"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-14"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-15"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-16"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-6"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-7"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-8"
+          },
+          {
+            "Id": "cs:~dbart/trusty/mariadb-9"
+          },
+          {
+            "Id": "cs:~gandelman-a/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~gandelman-a/quantal/mysql-0"
+          },
+          {
+            "Id": "cs:~hazmat/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/maria-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/maria-1"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/maria-2"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/mariadb-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/mariadb-1"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/mariadb-2"
+          },
+          {
+            "Id": "cs:~jmit/oneiric/mysql-0"
+          },
+          {
+            "Id": "cs:~jorge/trusty/mariadb-0"
+          },
+          {
+            "Id": "cs:~jorge/trusty/mariadb-1"
+          },
+          {
+            "Id": "cs:~jorge/trusty/mariadb-2"
+          },
+          {
+            "Id": "cs:~jorge/trusty/mariadb-3"
+          },
+          {
+            "Id": "cs:~jorge/trusty/mariadb-4"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/precise/mysql-proxy-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/elasticsearch-proxy-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-2"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-3"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-4"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-5"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-6"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mysql-proxy-7"
+          },
+          {
+            "Id": "cs:~le-charmers/trusty/percona-cluster-0"
+          },
+          {
+            "Id": "cs:~narindergupta/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mysql-file-permissions-0"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mysql-file-permissions-1"
+          },
+          {
+            "Id": "cs:~niedbalski/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-0"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-1"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-10"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-11"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-2"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-3"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-4"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-5"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-6"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-7"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-8"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/percona-cluster-9"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-0"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-1"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-10"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-11"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-12"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-13"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-14"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-15"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-16"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-2"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-3"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-4"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-5"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-6"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-7"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-8"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/percona-cluster-9"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/oneiric/mysql-0"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/precise/mysql-0"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/precise/mysql-1"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/precise/mysql-2"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/precise/mysql-3"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/precise/mysql-4"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/precise/mysql-5"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/quantal/mysql-0"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/quantal/mysql-1"
+          },
+          {
+            "Id": "cs:~openstack-ubuntu-testing/quantal/mysql-2"
+          },
+          {
+            "Id": "cs:~philip-stoev-f/trusty/galera-cluster-0"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/mysql-0"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/mysql-1"
+          }
+        ]
+      }
+    },
+    "extra-info": {
+      "bzr-digest": "marco@ceppi.net-20140907212529-g8802et9im1issn6",
+      "bzr-owner": "charmers",
+      "bzr-revisions": [
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-09-07T21:25:30Z",
+          "message": "[dannf] Restrict personal namespace PPA to precise\n",
+          "revno": 80
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-07-17T18:39:58Z",
+          "message": "[lazypower] Refactors out phantomjs/selenium - uses requests and title validation.\n",
+          "revno": 79
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-05-16T12:12:39Z",
+          "message": "[hackedbellini] Allow to remove the \"/mediawiki\" suffix and to change the wgServer config\n",
+          "revno": 78
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-03-04T15:46:00Z",
+          "message": "[lazypower] Renamed setup to conform to charm add tests command, validated required dependencies via vagrant issued juju test on clean env\n",
+          "revno": 77
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-02-20T00:58:29Z",
+          "message": "Fixed formatting for Python tests",
+          "revno": 76
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-02-19T22:04:59Z",
+          "message": "Use sudo for installation scripts",
+          "revno": 75
+        },
+        {
+          "authors": [
+            {
+              "email": "charles.butler@canonical.com",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-02-14T21:56:32Z",
+          "message": "Testing\n\nAdds integration tests for unit deploy, db relationship with mysql, and cache relationship with memcached\n\nR=\nCC=\nhttps://codereview.appspot.com/54600043\n",
+          "revno": 74
+        },
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com",
+              "name": "Jorge O. Castro"
+            }
+          ],
+          "date": "2013-12-13T19:39:03Z",
+          "message": "Readme fixes, set default configs.\n",
+          "revno": 73
+        },
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com",
+              "name": "Mark Mims"
+            }
+          ],
+          "date": "2013-09-20T19:13:28Z",
+          "message": "merging lp:~dave-cheney/charms/precise/mediawiki/trunk as per https://code.launchpad.net/~dave-cheney/charms/precise/mediawiki/trunk/+merge/182803",
+          "revno": 72
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2013-08-14T05:16:21Z",
+          "message": "Santize input from realtion-list",
+          "revno": 71
+        }
+      ],
+      "bzr-url": "lp:~charmers/charms/precise/mediawiki/trunk",
+      "legacy-download-stats": 6561
+    },
+    "manifest": [
+      {
+        "Name": "revision",
+        "Size": 2
+      },
+      {
+        "Name": "README.md",
+        "Size": 5888
+      },
+      {
+        "Name": "config.yaml",
+        "Size": 721
+      },
+      {
+        "Name": "copyright",
+        "Size": 907
+      },
+      {
+        "Name": "hooks/cache-relation-changed",
+        "Size": 1502
+      },
+      {
+        "Name": "hooks/combine-dbservers",
+        "Size": 952
+      },
+      {
+        "Name": "hooks/config-changed",
+        "Size": 2433
+      },
+      {
+        "Name": "hooks/db-relation-changed",
+        "Size": 11453
+      },
+      {
+        "Name": "hooks/db-relation-departed",
+        "Size": 90
+      },
+      {
+        "Name": "hooks/install",
+        "Size": 531
+      },
+      {
+        "Name": "hooks/slave-relation-broken",
+        "Size": 81
+      },
+      {
+        "Name": "hooks/slave-relation-changed",
+        "Size": 1268
+      },
+      {
+        "Name": "hooks/slave-relation-departed",
+        "Size": 22
+      },
+      {
+        "Name": "hooks/stop",
+        "Size": 36
+      },
+      {
+        "Name": "hooks/upgrade-charm",
+        "Size": 47
+      },
+      {
+        "Name": "hooks/website-relation-joined",
+        "Size": 67
+      },
+      {
+        "Name": "icon.svg",
+        "Size": 522742
+      },
+      {
+        "Name": "metadata.yaml",
+        "Size": 573
+      },
+      {
+        "Name": "tests/00-setup",
+        "Size": 267
+      },
+      {
+        "Name": "tests/100-deploy",
+        "Size": 2946
+      }
+    ]
+  }
+}

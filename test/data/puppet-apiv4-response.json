@@ -1,0 +1,291 @@
+{
+  "Id": "cs:precise/puppet-5",
+  "Meta": {
+    "charm-config": {
+      "Options": {
+        "external-puppetmaster": {
+          "Type": "string",
+          "Description": "This will be the external puppet master server string. If a\npuppet master is related, this will be ignored.\n",
+          "Default": ""
+        }
+      }
+    },
+    "charm-metadata": {
+      "Name": "puppet",
+      "Summary": "puppet agent for system policy",
+      "Description": "This charm deploys the startup script and compatbility scripts for\nthe puppet agent, which is the process responsible for configuring the\nlocal node.  Puppet lets you centrally manage every important aspect\nof your system using a cross-platform specification language that\nmanages all the separate elements normally aggregated in different\nfiles, like users, cron jobs, and hosts, along with obviously discrete\nelements like packages, services, and files.  Puppet's simple\ndeclarative specification language provides powerful classing\nabilities for drawing out the similarities between hosts while\nallowing them to be as specific as necessary, and it handles\ndependency and prerequisite relationships between objects clearly and\nexplicitly.\n",
+      "Subordinate": true,
+      "Provides": null,
+      "Requires": {
+        "juju-info": {
+          "Name": "juju-info",
+          "Role": "requirer",
+          "Interface": "juju-info",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "container"
+        },
+        "puppetmaster": {
+          "Name": "puppetmaster",
+          "Role": "requirer",
+          "Interface": "puppet",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        }
+      },
+      "Peers": null,
+      "Format": 1,
+      "OldRevision": 0,
+      "Categories": [
+        "misc"
+      ],
+      "Tags": null,
+      "Series": ""
+    },
+    "charm-related": {
+      "Provides": {
+        "puppet": [
+          {
+            "Id": "cs:precise/puppetmaster-1"
+          },
+          {
+            "Id": "cs:precise/puppetmaster-2"
+          },
+          {
+            "Id": "cs:precise/puppetmaster-3"
+          },
+          {
+            "Id": "cs:precise/puppetmaster-4"
+          },
+          {
+            "Id": "cs:precise/puppetmaster-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppetmaster-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppetmaster-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppetmaster-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppetmaster-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppetmaster-5"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppetmaster-0"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppetmaster-1"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppetmaster-2"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppetmaster-3"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/puppetmaster-0"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/puppetmaster-1"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/puppetmaster-2"
+          },
+          {
+            "Id": "cs:~flepied/precise/puppetmaster-0"
+          }
+        ]
+      }
+    },
+    "extra-info": {
+      "bzr-digest": "chuck@dasroot.net-20140919170520-etcqdyish2ul7xjr",
+      "bzr-owner": "charmers",
+      "bzr-revisions": [
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-09-19T17:05:20Z",
+          "message": "  Antonio Rosales 2014-09-11 Add charm icon, and misc category.\n",
+          "revno": 15
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2013-05-23T01:50:06Z",
+          "message": "John Patterson 2013-05-22 Moved README to Markdown and added a bit more description\n",
+          "revno": 14
+        },
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com",
+              "name": "Mark Mims"
+            }
+          ],
+          "date": "2013-03-29T15:20:52Z",
+          "message": "maintainer change",
+          "revno": 13
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-05-22T22:19:12Z",
+          "message": "setting maintainer",
+          "revno": 12
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-05-12T14:53:40Z",
+          "message": "bumping revision to enable upgrades",
+          "revno": 11
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-05-12T14:53:21Z",
+          "message": "fixing start/stop hooks",
+          "revno": 10
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-05-12T14:50:37Z",
+          "message": "make config-changed executable",
+          "revno": 9
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T17:17:46Z",
+          "message": "adding a copyright file",
+          "revno": 8
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T17:13:08Z",
+          "message": "make it ok for puppet --test to fail since classes may come later",
+          "revno": 7
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T17:10:00Z",
+          "message": "adding a README",
+          "revno": 6
+        }
+      ],
+      "bzr-url": "lp:~charmers/charms/precise/puppet/trunk",
+      "legacy-download-stats": 151
+    },
+    "manifest": [
+      {
+        "Name": "revision",
+        "Size": 1
+      },
+      {
+        "Name": "README.md",
+        "Size": 1911
+      },
+      {
+        "Name": "config.yaml",
+        "Size": 230
+      },
+      {
+        "Name": "copyright",
+        "Size": 789
+      },
+      {
+        "Name": "hooks/config-changed",
+        "Size": 196
+      },
+      {
+        "Name": "hooks/install",
+        "Size": 39
+      },
+      {
+        "Name": "hooks/juju-info-relation-joined",
+        "Size": 349
+      },
+      {
+        "Name": "hooks/puppetmaster-relation-broken",
+        "Size": 30
+      },
+      {
+        "Name": "hooks/puppetmaster-relation-changed",
+        "Size": 358
+      },
+      {
+        "Name": "hooks/puppetmaster-relation-departed",
+        "Size": 346
+      },
+      {
+        "Name": "hooks/puppetmaster-relation-joined",
+        "Size": 666
+      },
+      {
+        "Name": "hooks/start",
+        "Size": 38
+      },
+      {
+        "Name": "hooks/stop",
+        "Size": 37
+      },
+      {
+        "Name": "icon.svg",
+        "Size": 88974
+      },
+      {
+        "Name": "metadata.yaml",
+        "Size": 1024
+      },
+      {
+        "Name": "scripts/set-puppet-server",
+        "Size": 70
+      }
+    ]
+  }
+}

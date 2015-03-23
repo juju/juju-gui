@@ -133,7 +133,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         @property db
       */
       this.fakebackend = new Y.juju.environments.FakeBackend({
-        store: this.get('store'),
+        charmstore: this.get('charmstore'),
         authenticated: true
       });
     },
@@ -226,7 +226,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         self.environment = new views.BundleTopology(Y.mix({
           db: self.fakebackend.db,
           container: node.one('#bundle'), // Id because of Y.TabView
-          store: self.get('store'),
           charmstore: self.get('charmstore')
         }, options));
         self.environment.render();

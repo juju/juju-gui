@@ -81,7 +81,6 @@ describe('Browser bundle detail view', function() {
     container = utils.makeContainer(context);
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
-      store: factory.makeFakeStore(),
       db: {},
       entityId: data.id,
       renderTo: container,

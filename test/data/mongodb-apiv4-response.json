@@ -1,0 +1,3602 @@
+{
+  "Id": "cs:precise/mongodb-40",
+  "Meta": {
+    "charm-config": {
+      "Options": {
+        "arbiter": {
+          "Type": "string",
+          "Description": "Enable arbiter mode. Possible values are 'disabled' for no arbiter, 'enable' to become an arbiter or 'host:port' to declare another host as an arbiter.  replicaset_master must be set for this option to work.",
+          "Default": "disabled"
+        },
+        "auth": {
+          "Type": "boolean",
+          "Description": "Turn on/off security",
+          "Default": false
+        },
+        "autoresync": {
+          "Type": "boolean",
+          "Description": "Automatically resync if slave data is stale",
+          "Default": false
+        },
+        "backup_copies_kept": {
+          "Type": "int",
+          "Description": "Number of backups to keep. Keeps one week's worth by default.",
+          "Default": 7
+        },
+        "backup_directory": {
+          "Type": "string",
+          "Description": "Where can the backups be found.",
+          "Default": "/home/ubuntu/backups"
+        },
+        "backups_enabled": {
+          "Type": "boolean",
+          "Description": "Enable daily backups to disk.",
+          "Default": false
+        },
+        "bind_ip": {
+          "Type": "string",
+          "Description": "IP address that mongodb should listen for connections.",
+          "Default": "all"
+        },
+        "config_server_dbpath": {
+          "Type": "string",
+          "Description": "The path where the config server data files will be kept.",
+          "Default": "/mnt/var/lib/mongodb/configsvr"
+        },
+        "config_server_logpath": {
+          "Type": "string",
+          "Description": "The path where to send config server log data.",
+          "Default": "/mnt/var/log/mongodb/configsvr.log"
+        },
+        "config_server_port": {
+          "Type": "int",
+          "Description": "Port number to use for the config-server",
+          "Default": 27019
+        },
+        "cpu": {
+          "Type": "boolean",
+          "Description": "Enables periodic logging of CPU utilization and I/O wait",
+          "Default": false
+        },
+        "dbpath": {
+          "Type": "string",
+          "Description": "The path where the data files will be kept.",
+          "Default": "/var/lib/mongodb"
+        },
+        "diaglog": {
+          "Type": "int",
+          "Description": "Set oplogging level where n is 0=off (default), 1=W, 2=R, 3=both, 7=W+some reads",
+          "Default": 0
+        },
+        "extra_config_options": {
+          "Type": "string",
+          "Description": "Extra options ( comma separated ) to be included ( at the end ) in the mongodb.conf file.",
+          "Default": "none"
+        },
+        "extra_daemon_options": {
+          "Type": "string",
+          "Description": "Extra options ( exactly as you would type them in the command line ) to be added via the command line to the mongodb daemon",
+          "Default": "none"
+        },
+        "journal": {
+          "Type": "boolean",
+          "Description": "Enable journaling, http://www.mongodb.org/display/DOCS/Journaling",
+          "Default": true
+        },
+        "key": {
+          "Type": "string",
+          "Description": "Key ID to import to the apt keyring to support use with arbitary source configuration from outside of Launchpad archives or PPA's.\n",
+          "Default": null
+        },
+        "logappend": {
+          "Type": "boolean",
+          "Description": "Append log entries to existing log file",
+          "Default": true
+        },
+        "logpath": {
+          "Type": "string",
+          "Description": "The path where to send log data.",
+          "Default": "/var/log/mongodb/mongodb.log"
+        },
+        "logrotate-frequency": {
+          "Type": "string",
+          "Description": "How often should the logs be rotated. Use values from logrotate.",
+          "Default": "daily"
+        },
+        "logrotate-maxsize": {
+          "Type": "string",
+          "Description": "Maximum log size before rotating.",
+          "Default": "500M"
+        },
+        "logrotate-rotate": {
+          "Type": "int",
+          "Description": "Number of log files to keep.",
+          "Default": 5
+        },
+        "master": {
+          "Type": "string",
+          "Description": "Who is the master DB. If not \"self\", put the Master DB here as \"host:port\"",
+          "Default": "self"
+        },
+        "mms-interval": {
+          "Type": "string",
+          "Description": "Ping interval for Mongo monitoring server ( in number of seconds )",
+          "Default": "disabled"
+        },
+        "mms-name": {
+          "Type": "string",
+          "Description": "Server name for Mongo monitoring server",
+          "Default": "disabled"
+        },
+        "mms-token": {
+          "Type": "string",
+          "Description": "Accout token for Mongo monitoring server",
+          "Default": "disabled"
+        },
+        "mongos_logpath": {
+          "Type": "string",
+          "Description": "The path where to send log data from the mongo router.",
+          "Default": "/mnt/var/log/mongodb/mongos.log"
+        },
+        "mongos_port": {
+          "Type": "int",
+          "Description": "Port number to use for the mongo router",
+          "Default": 27021
+        },
+        "nocursors": {
+          "Type": "boolean",
+          "Description": "Diagnostic/debugging option",
+          "Default": false
+        },
+        "nohints": {
+          "Type": "boolean",
+          "Description": "Ignore query hints",
+          "Default": false
+        },
+        "noprealloc": {
+          "Type": "boolean",
+          "Description": "Disable data file preallocation",
+          "Default": false
+        },
+        "noscripting": {
+          "Type": "boolean",
+          "Description": "Turns off server-side scripting.  This will result in greatly limited functionality",
+          "Default": false
+        },
+        "notablescan": {
+          "Type": "boolean",
+          "Description": "Turns off table scans.  Any query that would do a table scan fails",
+          "Default": false
+        },
+        "nssize": {
+          "Type": "string",
+          "Description": "Specify .ns file size for new databases",
+          "Default": "default"
+        },
+        "objcheck": {
+          "Type": "boolean",
+          "Description": "Inspect all client data for validity on receipt (useful for developing drivers)",
+          "Default": false
+        },
+        "opIdMem": {
+          "Type": "string",
+          "Description": "Size limit for in-memory storage of op ids",
+          "Default": "default"
+        },
+        "oplogSize": {
+          "Type": "string",
+          "Description": "Custom size for replication operation log",
+          "Default": "default"
+        },
+        "port": {
+          "Type": "int",
+          "Description": "Default MongoDB port",
+          "Default": 27017
+        },
+        "quota": {
+          "Type": "boolean",
+          "Description": "Enable db quota management",
+          "Default": false
+        },
+        "replicaset": {
+          "Type": "string",
+          "Description": "Name of the replica set",
+          "Default": "myset"
+        },
+        "replicaset_master": {
+          "Type": "string",
+          "Description": "Replica Set master (optional). Possible values are 'auto' for automatic detection based on install time or 'host:port' to connect to 'host' on 'port' and register as a member.",
+          "Default": "auto"
+        },
+        "source": {
+          "Type": "string",
+          "Description": "Optional configuration to support use of additional sources such as:\n  - ppa:myteam/ppa\n  - cloud:precise-proposed/icehouse\n  - http://my.archive.com/ubuntu main\nThe last option should be used in conjunction with the key configuration option.\n",
+          "Default": "None"
+        },
+        "verbose": {
+          "Type": "boolean",
+          "Description": "Verbose logging output",
+          "Default": false
+        },
+        "volume-dev-regexp": {
+          "Type": "string",
+          "Description": "Deprecated, use the storage subordinate. Block device for attached volumes as seen by the VM, will be \"scanned\" for an unused device when \"volume-map\" is valid for the unit.\n",
+          "Default": "/dev/vd[b-z]"
+        },
+        "volume-ephemeral-storage": {
+          "Type": "boolean",
+          "Description": "Deprecated, use the storage subordinate. If false, a configure-error state will be raised if\n   volume-map[$JUJU_UNIT_NAME] is not set (see \"volume-map\"\n   below) - see \"volume-map\" below.\nIf true, service units won't try to use \"volume-map\" (and\n   related variables) to mount and use external (EBS) volumes,\n   thus storage lifetime will equal VM, thus ephemeral.\n   YOU'VE BEEN WARNED.\n",
+          "Default": true
+        },
+        "volume-map": {
+          "Type": "string",
+          "Description": "Deprecated, use the storage subordinate. YAML map as e.g. \"{ mongodb/0: vol-0000010, mongodb/1: vol-0000016 }\". Service units will raise a \"configure-error\" condition if no volume-map value is set for it - it expects a human to set it properly to resolve it.\n",
+          "Default": ""
+        },
+        "web_admin_ui": {
+          "Type": "boolean",
+          "Description": "Replica Set Admin UI (accessible via default_port + 1000)",
+          "Default": true
+        }
+      }
+    },
+    "charm-metadata": {
+      "Name": "mongodb",
+      "Summary": "An open-source document database, and the leading NoSQL database",
+      "Description": "MongoDB is a high-performance, open source, schema-free document-\noriented  data store that's easy to deploy, manage and use. It's\nnetwork accessible, written in C++ and offers the following features:\n\n- Collection oriented storage - easy storage of object-style data\n- Full index support, including on inner objects\n- Query profiling\n- Replication and fail-over support\n- Efficient storage of binary data including large\n  objects (e.g. videos)\n- Auto-sharding for cloud-level scalability (Q209)\n  High performance, scalability, and reasonable depth of functionality\n  are the goals for the project.\n",
+      "Subordinate": false,
+      "Provides": {
+        "configsvr": {
+          "Name": "configsvr",
+          "Role": "provider",
+          "Interface": "shard",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        },
+        "data": {
+          "Name": "data",
+          "Role": "provider",
+          "Interface": "block-storage",
+          "Optional": true,
+          "Limit": 0,
+          "Scope": "container"
+        },
+        "database": {
+          "Name": "database",
+          "Role": "provider",
+          "Interface": "mongodb",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        }
+      },
+      "Requires": {
+        "mongos": {
+          "Name": "mongos",
+          "Role": "requirer",
+          "Interface": "mongodb",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        },
+        "mongos-cfg": {
+          "Name": "mongos-cfg",
+          "Role": "requirer",
+          "Interface": "shard",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        }
+      },
+      "Peers": {
+        "replica-set": {
+          "Name": "replica-set",
+          "Role": "peer",
+          "Interface": "mongodb-replica-set",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        }
+      },
+      "Format": 1,
+      "OldRevision": 0,
+      "Categories": [
+        "databases"
+      ],
+      "Tags": null,
+      "Series": ""
+    },
+    "charm-related": {
+      "Requires": {
+        "block-storage": [
+          {
+            "Id": "cs:precise/storage-0"
+          },
+          {
+            "Id": "cs:precise/storage-1"
+          },
+          {
+            "Id": "cs:precise/storage-2"
+          },
+          {
+            "Id": "cs:precise/storage-3"
+          },
+          {
+            "Id": "cs:precise/storage-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/storage-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/storage-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/storage-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/storage-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/storage-4"
+          },
+          {
+            "Id": "cs:~chris-gondolin/trusty/storage-0"
+          },
+          {
+            "Id": "cs:~chris-gondolin/trusty/storage-1"
+          },
+          {
+            "Id": "cs:~chris-gondolin/trusty/storage-2"
+          },
+          {
+            "Id": "cs:~chris-gondolin/trusty/storage-3"
+          },
+          {
+            "Id": "cs:~chris-gondolin/trusty/storage-4"
+          },
+          {
+            "Id": "cs:~chris-gondolin/trusty/storage-5"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-22"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-23"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-24"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-25"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-26"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-27"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-28"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-29"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-30"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-31"
+          },
+          {
+            "Id": "cs:~davidpbritton/precise/storage-32"
+          },
+          {
+            "Id": "cs:~hazmat/trusty/container-runtime-0"
+          },
+          {
+            "Id": "cs:~jseutter/precise/storage-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/storage-0"
+          },
+          {
+            "Id": "cs:~stub/trusty/storage-0"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/sane-storage-0"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/sane-storage-1"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/sane-storage-2"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/sane-storage-3"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/sane-storage-4"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-0"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-1"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-2"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-3"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-4"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-5"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ceph-6"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ng-0"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ng-1"
+          },
+          {
+            "Id": "cs:~tribaal/trusty/storage-ng-2"
+          },
+          {
+            "Id": "cs:~webteam-backend/precise/storage-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/precise/storage-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/storage-0"
+          }
+        ],
+        "mongodb": [
+          {
+            "Id": "cs:oneiric/node-app-0"
+          },
+          {
+            "Id": "cs:precise/ceilometer-0"
+          },
+          {
+            "Id": "cs:precise/ceilometer-1"
+          },
+          {
+            "Id": "cs:precise/ceilometer-19"
+          },
+          {
+            "Id": "cs:precise/ceilometer-20"
+          },
+          {
+            "Id": "cs:precise/ceilometer-21"
+          },
+          {
+            "Id": "cs:precise/ceilometer-22"
+          },
+          {
+            "Id": "cs:precise/ceilometer-23"
+          },
+          {
+            "Id": "cs:precise/ceilometer-24"
+          },
+          {
+            "Id": "cs:precise/meteor-0"
+          },
+          {
+            "Id": "cs:precise/meteor-1"
+          },
+          {
+            "Id": "cs:precise/meteor-2"
+          },
+          {
+            "Id": "cs:precise/mongodb-10"
+          },
+          {
+            "Id": "cs:precise/mongodb-11"
+          },
+          {
+            "Id": "cs:precise/mongodb-12"
+          },
+          {
+            "Id": "cs:precise/mongodb-13"
+          },
+          {
+            "Id": "cs:precise/mongodb-14"
+          },
+          {
+            "Id": "cs:precise/mongodb-15"
+          },
+          {
+            "Id": "cs:precise/mongodb-16"
+          },
+          {
+            "Id": "cs:precise/mongodb-17"
+          },
+          {
+            "Id": "cs:precise/mongodb-18"
+          },
+          {
+            "Id": "cs:precise/mongodb-19"
+          },
+          {
+            "Id": "cs:precise/mongodb-20"
+          },
+          {
+            "Id": "cs:precise/mongodb-21"
+          },
+          {
+            "Id": "cs:precise/mongodb-22"
+          },
+          {
+            "Id": "cs:precise/mongodb-23"
+          },
+          {
+            "Id": "cs:precise/mongodb-24"
+          },
+          {
+            "Id": "cs:precise/mongodb-25"
+          },
+          {
+            "Id": "cs:precise/mongodb-26"
+          },
+          {
+            "Id": "cs:precise/mongodb-27"
+          },
+          {
+            "Id": "cs:precise/mongodb-28"
+          },
+          {
+            "Id": "cs:precise/mongodb-29"
+          },
+          {
+            "Id": "cs:precise/mongodb-30"
+          },
+          {
+            "Id": "cs:precise/mongodb-31"
+          },
+          {
+            "Id": "cs:precise/mongodb-32"
+          },
+          {
+            "Id": "cs:precise/mongodb-33"
+          },
+          {
+            "Id": "cs:precise/mongodb-34"
+          },
+          {
+            "Id": "cs:precise/mongodb-35"
+          },
+          {
+            "Id": "cs:precise/mongodb-36"
+          },
+          {
+            "Id": "cs:precise/mongodb-37"
+          },
+          {
+            "Id": "cs:precise/mongodb-38"
+          },
+          {
+            "Id": "cs:precise/mongodb-39"
+          },
+          {
+            "Id": "cs:precise/mongodb-4"
+          },
+          {
+            "Id": "cs:precise/mongodb-40"
+          },
+          {
+            "Id": "cs:precise/mongodb-5"
+          },
+          {
+            "Id": "cs:precise/mongodb-6"
+          },
+          {
+            "Id": "cs:precise/mongodb-7"
+          },
+          {
+            "Id": "cs:precise/mongodb-8"
+          },
+          {
+            "Id": "cs:precise/mongodb-9"
+          },
+          {
+            "Id": "cs:precise/node-app-0"
+          },
+          {
+            "Id": "cs:precise/node-app-1"
+          },
+          {
+            "Id": "cs:precise/node-app-10"
+          },
+          {
+            "Id": "cs:precise/node-app-2"
+          },
+          {
+            "Id": "cs:precise/node-app-3"
+          },
+          {
+            "Id": "cs:precise/node-app-4"
+          },
+          {
+            "Id": "cs:precise/node-app-5"
+          },
+          {
+            "Id": "cs:precise/node-app-6"
+          },
+          {
+            "Id": "cs:precise/node-app-7"
+          },
+          {
+            "Id": "cs:precise/node-app-8"
+          },
+          {
+            "Id": "cs:precise/node-app-9"
+          },
+          {
+            "Id": "cs:precise/python-django-10"
+          },
+          {
+            "Id": "cs:precise/python-django-11"
+          },
+          {
+            "Id": "cs:precise/python-django-12"
+          },
+          {
+            "Id": "cs:precise/python-django-13"
+          },
+          {
+            "Id": "cs:precise/python-django-14"
+          },
+          {
+            "Id": "cs:precise/python-django-4"
+          },
+          {
+            "Id": "cs:precise/python-django-5"
+          },
+          {
+            "Id": "cs:precise/python-django-6"
+          },
+          {
+            "Id": "cs:precise/python-django-7"
+          },
+          {
+            "Id": "cs:precise/python-django-8"
+          },
+          {
+            "Id": "cs:precise/python-django-9"
+          },
+          {
+            "Id": "cs:precise/rails-1"
+          },
+          {
+            "Id": "cs:precise/rails-2"
+          },
+          {
+            "Id": "cs:precise/rails-3"
+          },
+          {
+            "Id": "cs:precise/shelrtv-0"
+          },
+          {
+            "Id": "cs:precise/shelrtv-1"
+          },
+          {
+            "Id": "cs:precise/shelrtv-2"
+          },
+          {
+            "Id": "cs:trusty/ceilometer-0"
+          },
+          {
+            "Id": "cs:trusty/ceilometer-1"
+          },
+          {
+            "Id": "cs:trusty/ceilometer-2"
+          },
+          {
+            "Id": "cs:trusty/ceilometer-3"
+          },
+          {
+            "Id": "cs:trusty/meteor-1"
+          },
+          {
+            "Id": "cs:trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:trusty/python-django-12"
+          },
+          {
+            "Id": "cs:trusty/python-django-13"
+          },
+          {
+            "Id": "cs:trusty/python-django-14"
+          },
+          {
+            "Id": "cs:~0atman/trusty/wsgi-app-0"
+          },
+          {
+            "Id": "cs:~0atman/trusty/wsgi-app-1"
+          },
+          {
+            "Id": "cs:~0atman/trusty/wsgi-app-2"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-0"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-1"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-2"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-3"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-4"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-5"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-6"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-7"
+          },
+          {
+            "Id": "cs:~abentley/precise/charmworld-8"
+          },
+          {
+            "Id": "cs:~bac/precise/charmworld-0"
+          },
+          {
+            "Id": "cs:~bac/precise/charmworld-1"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/node-app-0"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/node-app-1"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/node-app-2"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/node-app-3"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/node-app-4"
+          },
+          {
+            "Id": "cs:~bcsaller/precise/node-app-5"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/python-django-0"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/python-django-1"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/python-django-2"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/python-django-3"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/python-django-4"
+          },
+          {
+            "Id": "cs:~bloodearnest/precise/python-django-5"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-0"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-1"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-10"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-11"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-12"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-13"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-14"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-15"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-2"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-3"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-4"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-5"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-6"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-7"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-8"
+          },
+          {
+            "Id": "cs:~bzr-sync/trusty/wsgi-app-9"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/node-app-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/ceilometer-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/ceilometer-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/meteor-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/meteor-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/meteor-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-28"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-29"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-30"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-31"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-32"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-33"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-34"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-35"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-36"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-37"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-38"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-39"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-40"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/node-app-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/python-django-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/python-django-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/python-django-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/python-django-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/rails-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/rails-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/rails-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/shelrtv-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/shelrtv-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/shelrtv-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/meteor-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/meteor-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-14"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/python-django-9"
+          },
+          {
+            "Id": "cs:~cmars/precise/charmstore-0"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-3"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-4"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-5"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-6"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~hp-discover/trusty/node-app-0"
+          },
+          {
+            "Id": "cs:~hp-discover/trusty/node-app-1"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/python-django-0"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/python-django-1"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/python-django-2"
+          },
+          {
+            "Id": "cs:~ibm-demo/trusty/python-django-3"
+          },
+          {
+            "Id": "cs:~ju-jistics-hackers/precise/collectd-server-0"
+          },
+          {
+            "Id": "cs:~ju-jistics-hackers/precise/logall-subordinate-0"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-0"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-1"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-10"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-11"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-12"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-13"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-14"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-15"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-16"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-17"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-18"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-19"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-2"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-20"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-21"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-22"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-23"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-24"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-25"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-26"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-27"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-28"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-29"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-3"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-30"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-31"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-32"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-33"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-34"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-35"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-36"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-37"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-38"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-39"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-4"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-40"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-41"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-42"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-43"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-44"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-45"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-46"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-47"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-48"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-49"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-5"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-50"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-51"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-52"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-53"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-54"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-55"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-56"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-57"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-58"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-6"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-7"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-8"
+          },
+          {
+            "Id": "cs:~juju-jitsu/precise/charmworld-9"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-0"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-1"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-10"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-11"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-12"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-13"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-14"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-15"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-16"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-17"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-18"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-19"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-2"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-20"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-21"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-22"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-23"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-24"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-25"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-26"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-27"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-28"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-29"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-3"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-30"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-31"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-32"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-33"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-34"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-35"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-36"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-37"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-4"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-5"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-6"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-7"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-8"
+          },
+          {
+            "Id": "cs:~juju-qa/precise/juju-reports-9"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-0"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-1"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-10"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-11"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-2"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-3"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-4"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-5"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-6"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-7"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-8"
+          },
+          {
+            "Id": "cs:~juju-qa/trusty/juju-reports-9"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/node-app-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/python-django-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/python-django-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-10"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-11"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-12"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-13"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-14"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-15"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-5"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-6"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-7"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-8"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/stub-client-9"
+          },
+          {
+            "Id": "cs:~landscape/trusty/ceilometer-leadership-election-0"
+          },
+          {
+            "Id": "cs:~landscape/trusty/ceilometer-next-0"
+          },
+          {
+            "Id": "cs:~landscape/trusty/ceilometer-next-1"
+          },
+          {
+            "Id": "cs:~landscape/trusty/ceilometer-next-2"
+          },
+          {
+            "Id": "cs:~landscape/trusty/ceilometer-next-3"
+          },
+          {
+            "Id": "cs:~lazypower/precise/errbit-0"
+          },
+          {
+            "Id": "cs:~lazypower/precise/errbit-1"
+          },
+          {
+            "Id": "cs:~lazypower/precise/errbit-2"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-abuth-tester-0"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-abuth-tester-1"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-auth-tester-0"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-auth-tester-1"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-auth-tester-2"
+          },
+          {
+            "Id": "cs:~lazypower/precise/rails-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/rails-0"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-0"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-1"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-2"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-3"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-4"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-5"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-6"
+          },
+          {
+            "Id": "cs:~marcoceppi/precise/charmworld-7"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-0"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-1"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-10"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-11"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-2"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-3"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-4"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-5"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-6"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-7"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-8"
+          },
+          {
+            "Id": "cs:~mariusko/precise/node-app-9"
+          },
+          {
+            "Id": "cs:~mark-mims/oneiric/node-0"
+          },
+          {
+            "Id": "cs:~mark-mims/precise/collectd-server-1"
+          },
+          {
+            "Id": "cs:~mark-mims/precise/rack-0"
+          },
+          {
+            "Id": "cs:~mark-mims/precise/rack-1"
+          },
+          {
+            "Id": "cs:~mattyw/precise/mongodb-auth-tester-0"
+          },
+          {
+            "Id": "cs:~mattyw/precise/mongodb-auth-tester-1"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-new-interfaces-new-shard-0"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-0"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-1"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-10"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-11"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-12"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-13"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-14"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-15"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-16"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-2"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-3"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-4"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-5"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-6"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-7"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-8"
+          },
+          {
+            "Id": "cs:~nottrobin/trusty/apache2-wsgi-9"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-0"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-1"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-10"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-11"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-12"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-13"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-14"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-15"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-16"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-17"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-18"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-19"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-2"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-20"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-21"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-22"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-23"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-24"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-3"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-4"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-5"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-6"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-7"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-8"
+          },
+          {
+            "Id": "cs:~openstack-charmers/precise/ceilometer-9"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/ceilometer-0"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/ceilometer-1"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/ceilometer-2"
+          },
+          {
+            "Id": "cs:~openstack-charmers/trusty/ceilometer-3"
+          },
+          {
+            "Id": "cs:~patrick-hetu/precise/python-django-4"
+          },
+          {
+            "Id": "cs:~patrick-hetu/precise/python-django-5"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-0"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-1"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-2"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-3"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-4"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-5"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-6"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-7"
+          },
+          {
+            "Id": "cs:~pavel-pachkovskij/precise/rack-8"
+          },
+          {
+            "Id": "cs:~tvansteenburgh/precise/meteor-0"
+          },
+          {
+            "Id": "cs:~tvansteenburgh/precise/meteor-1"
+          },
+          {
+            "Id": "cs:~tvansteenburgh/precise/meteor-2"
+          },
+          {
+            "Id": "cs:~tvansteenburgh/precise/meteor-3"
+          },
+          {
+            "Id": "cs:~tvansteenburgh/trusty/meteor-0"
+          },
+          {
+            "Id": "cs:~tvansteenburgh/trusty/meteor-1"
+          },
+          {
+            "Id": "cs:~web-brandon/precise/my-site-0"
+          },
+          {
+            "Id": "cs:~web-brandon/precise/my-site-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-2"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-3"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-4"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-5"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/apache2-wsgi-6"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-43"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-44"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-45"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-47"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-48"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-49"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-50"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-51"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-52"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-53"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-54"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-55"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-56"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-57"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-58"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-59"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-60"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-61"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-62"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-63"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-64"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-65"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-66"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-67"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-68"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-69"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-70"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-71"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/wsgi-app-72"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-0"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-1"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-10"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-11"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-12"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-13"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-14"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-15"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-16"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-2"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-3"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-4"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-5"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-6"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-7"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-8"
+          },
+          {
+            "Id": "cs:~yolanda.robla/precise/ceilometer-9"
+          }
+        ],
+        "shard": [
+          {
+            "Id": "cs:precise/mongodb-10"
+          },
+          {
+            "Id": "cs:precise/mongodb-11"
+          },
+          {
+            "Id": "cs:precise/mongodb-12"
+          },
+          {
+            "Id": "cs:precise/mongodb-13"
+          },
+          {
+            "Id": "cs:precise/mongodb-14"
+          },
+          {
+            "Id": "cs:precise/mongodb-15"
+          },
+          {
+            "Id": "cs:precise/mongodb-16"
+          },
+          {
+            "Id": "cs:precise/mongodb-17"
+          },
+          {
+            "Id": "cs:precise/mongodb-18"
+          },
+          {
+            "Id": "cs:precise/mongodb-19"
+          },
+          {
+            "Id": "cs:precise/mongodb-20"
+          },
+          {
+            "Id": "cs:precise/mongodb-21"
+          },
+          {
+            "Id": "cs:precise/mongodb-22"
+          },
+          {
+            "Id": "cs:precise/mongodb-23"
+          },
+          {
+            "Id": "cs:precise/mongodb-24"
+          },
+          {
+            "Id": "cs:precise/mongodb-25"
+          },
+          {
+            "Id": "cs:precise/mongodb-26"
+          },
+          {
+            "Id": "cs:precise/mongodb-27"
+          },
+          {
+            "Id": "cs:precise/mongodb-28"
+          },
+          {
+            "Id": "cs:precise/mongodb-29"
+          },
+          {
+            "Id": "cs:precise/mongodb-30"
+          },
+          {
+            "Id": "cs:precise/mongodb-31"
+          },
+          {
+            "Id": "cs:precise/mongodb-32"
+          },
+          {
+            "Id": "cs:precise/mongodb-33"
+          },
+          {
+            "Id": "cs:precise/mongodb-34"
+          },
+          {
+            "Id": "cs:precise/mongodb-35"
+          },
+          {
+            "Id": "cs:precise/mongodb-36"
+          },
+          {
+            "Id": "cs:precise/mongodb-37"
+          },
+          {
+            "Id": "cs:precise/mongodb-38"
+          },
+          {
+            "Id": "cs:precise/mongodb-39"
+          },
+          {
+            "Id": "cs:precise/mongodb-40"
+          },
+          {
+            "Id": "cs:precise/mongodb-7"
+          },
+          {
+            "Id": "cs:precise/mongodb-8"
+          },
+          {
+            "Id": "cs:precise/mongodb-9"
+          },
+          {
+            "Id": "cs:trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-28"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-29"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-30"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-31"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-32"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-33"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-34"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-35"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-36"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-37"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-38"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-39"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-40"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-3"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-4"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-5"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-6"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-new-interfaces-new-shard-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-2"
+          }
+        ]
+      },
+      "Provides": {
+        "mongodb": [
+          {
+            "Id": "cs:oneiric/mongodb-0"
+          },
+          {
+            "Id": "cs:oneiric/mongodb-1"
+          },
+          {
+            "Id": "cs:precise/mongodb-0"
+          },
+          {
+            "Id": "cs:precise/mongodb-1"
+          },
+          {
+            "Id": "cs:precise/mongodb-10"
+          },
+          {
+            "Id": "cs:precise/mongodb-11"
+          },
+          {
+            "Id": "cs:precise/mongodb-12"
+          },
+          {
+            "Id": "cs:precise/mongodb-13"
+          },
+          {
+            "Id": "cs:precise/mongodb-14"
+          },
+          {
+            "Id": "cs:precise/mongodb-15"
+          },
+          {
+            "Id": "cs:precise/mongodb-16"
+          },
+          {
+            "Id": "cs:precise/mongodb-17"
+          },
+          {
+            "Id": "cs:precise/mongodb-18"
+          },
+          {
+            "Id": "cs:precise/mongodb-19"
+          },
+          {
+            "Id": "cs:precise/mongodb-2"
+          },
+          {
+            "Id": "cs:precise/mongodb-20"
+          },
+          {
+            "Id": "cs:precise/mongodb-21"
+          },
+          {
+            "Id": "cs:precise/mongodb-22"
+          },
+          {
+            "Id": "cs:precise/mongodb-23"
+          },
+          {
+            "Id": "cs:precise/mongodb-24"
+          },
+          {
+            "Id": "cs:precise/mongodb-25"
+          },
+          {
+            "Id": "cs:precise/mongodb-26"
+          },
+          {
+            "Id": "cs:precise/mongodb-27"
+          },
+          {
+            "Id": "cs:precise/mongodb-28"
+          },
+          {
+            "Id": "cs:precise/mongodb-29"
+          },
+          {
+            "Id": "cs:precise/mongodb-3"
+          },
+          {
+            "Id": "cs:precise/mongodb-30"
+          },
+          {
+            "Id": "cs:precise/mongodb-31"
+          },
+          {
+            "Id": "cs:precise/mongodb-32"
+          },
+          {
+            "Id": "cs:precise/mongodb-33"
+          },
+          {
+            "Id": "cs:precise/mongodb-34"
+          },
+          {
+            "Id": "cs:precise/mongodb-35"
+          },
+          {
+            "Id": "cs:precise/mongodb-36"
+          },
+          {
+            "Id": "cs:precise/mongodb-37"
+          },
+          {
+            "Id": "cs:precise/mongodb-38"
+          },
+          {
+            "Id": "cs:precise/mongodb-39"
+          },
+          {
+            "Id": "cs:precise/mongodb-4"
+          },
+          {
+            "Id": "cs:precise/mongodb-40"
+          },
+          {
+            "Id": "cs:precise/mongodb-5"
+          },
+          {
+            "Id": "cs:precise/mongodb-6"
+          },
+          {
+            "Id": "cs:precise/mongodb-7"
+          },
+          {
+            "Id": "cs:precise/mongodb-8"
+          },
+          {
+            "Id": "cs:precise/mongodb-9"
+          },
+          {
+            "Id": "cs:trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/mongodb-0"
+          },
+          {
+            "Id": "cs:~charmers/oneiric/mongodb-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-28"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-29"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-30"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-31"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-32"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-33"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-34"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-35"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-36"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-37"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-38"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-39"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-40"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-6"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-3"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-4"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-5"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-6"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~flepied/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-proxy-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-proxy-1"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-proxy-2"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-new-interfaces-new-shard-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-2"
+          }
+        ],
+        "shard": [
+          {
+            "Id": "cs:precise/mongodb-10"
+          },
+          {
+            "Id": "cs:precise/mongodb-11"
+          },
+          {
+            "Id": "cs:precise/mongodb-12"
+          },
+          {
+            "Id": "cs:precise/mongodb-13"
+          },
+          {
+            "Id": "cs:precise/mongodb-14"
+          },
+          {
+            "Id": "cs:precise/mongodb-15"
+          },
+          {
+            "Id": "cs:precise/mongodb-16"
+          },
+          {
+            "Id": "cs:precise/mongodb-17"
+          },
+          {
+            "Id": "cs:precise/mongodb-18"
+          },
+          {
+            "Id": "cs:precise/mongodb-19"
+          },
+          {
+            "Id": "cs:precise/mongodb-20"
+          },
+          {
+            "Id": "cs:precise/mongodb-21"
+          },
+          {
+            "Id": "cs:precise/mongodb-22"
+          },
+          {
+            "Id": "cs:precise/mongodb-23"
+          },
+          {
+            "Id": "cs:precise/mongodb-24"
+          },
+          {
+            "Id": "cs:precise/mongodb-25"
+          },
+          {
+            "Id": "cs:precise/mongodb-26"
+          },
+          {
+            "Id": "cs:precise/mongodb-27"
+          },
+          {
+            "Id": "cs:precise/mongodb-28"
+          },
+          {
+            "Id": "cs:precise/mongodb-29"
+          },
+          {
+            "Id": "cs:precise/mongodb-30"
+          },
+          {
+            "Id": "cs:precise/mongodb-31"
+          },
+          {
+            "Id": "cs:precise/mongodb-32"
+          },
+          {
+            "Id": "cs:precise/mongodb-33"
+          },
+          {
+            "Id": "cs:precise/mongodb-34"
+          },
+          {
+            "Id": "cs:precise/mongodb-35"
+          },
+          {
+            "Id": "cs:precise/mongodb-36"
+          },
+          {
+            "Id": "cs:precise/mongodb-37"
+          },
+          {
+            "Id": "cs:precise/mongodb-38"
+          },
+          {
+            "Id": "cs:precise/mongodb-39"
+          },
+          {
+            "Id": "cs:precise/mongodb-40"
+          },
+          {
+            "Id": "cs:precise/mongodb-7"
+          },
+          {
+            "Id": "cs:precise/mongodb-8"
+          },
+          {
+            "Id": "cs:precise/mongodb-9"
+          },
+          {
+            "Id": "cs:trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-17"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-18"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-19"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-20"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-21"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-22"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-23"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-24"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-25"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-26"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-27"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-28"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-29"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-30"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-31"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-32"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-33"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-34"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-35"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-36"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-37"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-38"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-39"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-40"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/precise/mongodb-9"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-10"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-11"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-12"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-13"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-14"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-15"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-16"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-3"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-4"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-5"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-6"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-7"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-8"
+          },
+          {
+            "Id": "cs:~charmers/trusty/mongodb-9"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-1"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-2"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-3"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-4"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-5"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-6"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-7"
+          },
+          {
+            "Id": "cs:~dekervit/precise/mongodb-8"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~evarlast/trusty/mongodb-2"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~justin-fathomdb/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~lazypower/precise/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~lazypower/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~negronjl/precise/mongodb-new-interfaces-new-shard-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-0"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-1"
+          },
+          {
+            "Id": "cs:~webteam-backend/trusty/mongodb-2"
+          }
+        ]
+      }
+    },
+    "extra-info": {
+      "bzr-digest": "chuck@dasroot.net-20141119010733-yqazyhtlo92mkp2b",
+      "bzr-owner": "charmers",
+      "bzr-revisions": [
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-11-19T01:07:34Z",
+          "message": "[r=lazypower] Backports from trusty charm\n    jrwren@xmtp.net 2014-11-18 prevent unneeded package install\n    Jos\u00c3\u00a9 Antonio Rey 2014-11-12 [merge] Matt Bruzek 2014-09-23 Making the 00-setup file executabl...\n    Matt Bruzek 2014-09-23 Making the 00-setup file executable so it is run by juju test\n    Jorge Niedbalski 2014-11-05 [merge] [evarlast, r=niedbalski,tvansteenburgh] Mongodb charm is ...\n    Tim Van Steenburgh 2014-11-05 [merge] [dannf] Make amulet test target trusty\n    Tim Van Steenburgh 2014-11-05 [merge] [dannf] Fix readme typo\n    dann frazier 2014-10-31 Fix typo: s/Specificlly/Specifically/\n",
+          "revno": 56
+        },
+        {
+          "authors": [
+            {
+              "email": "matthew.bruzek@canonical.com",
+              "name": "Matt Bruzek"
+            }
+          ],
+          "date": "2014-11-17T21:40:00Z",
+          "message": "[tvansteenburgh] Refactor tests. No tests have been removed, only restructured.\n",
+          "revno": 55
+        },
+        {
+          "authors": [
+            {
+              "email": "jose@ubuntu.com",
+              "name": "Jos\u00c3\u00a9 Antonio Rey"
+            }
+          ],
+          "date": "2014-11-12T20:31:41Z",
+          "message": "Matt Bruzek 2014-09-23 Changing permissions of 00-setup so it is run by juju test\n",
+          "revno": 54
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-10-29T18:50:35Z",
+          "message": "[dannf] Fix typo: s/Specificlly/Specifically/\n",
+          "revno": 53
+        },
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-09-19T20:32:12Z",
+          "message": "  Wes Mason 2014-09-15 Ensure relation_id() is used to set mountpoint\n",
+          "revno": 52
+        },
+        {
+          "authors": [
+            {
+              "email": "tom.haddon@canonical.com",
+              "name": "Tom Haddon"
+            }
+          ],
+          "date": "2014-08-26T13:00:04Z",
+          "message": "[moon127,r=mthaddon] Add exec.d charm preinstall support from charmhelpers to allow for pre-install hooks to be executed",
+          "revno": 51
+        },
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net",
+              "name": "Marco Ceppi"
+            }
+          ],
+          "date": "2014-07-30T17:49:09Z",
+          "message": "[lazypower] Adds charmhelpers, and refactors to green light deployments\n",
+          "revno": 50
+        },
+        {
+          "authors": [
+            {
+              "email": "stuart@stuartbishop.net",
+              "name": "Stuart Bishop"
+            }
+          ],
+          "date": "2014-07-29T10:22:56Z",
+          "message": "[wesmason] Storage subordinate support for persistent storage, per https://code.launchpad.net/~wesmason/charms/precise/mongodb/add-storage-subordinate-support/+merge/223539",
+          "revno": 49
+        },
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com",
+              "name": "Juan L. Negron"
+            }
+          ],
+          "date": "2014-07-21T19:41:20Z",
+          "message": "Fix race condition where mongos tries to start without enough config servers available.",
+          "revno": 48
+        },
+        {
+          "authors": [
+            {
+              "email": "juan@ubuntu.com",
+              "name": "Juan L. Negron"
+            }
+          ],
+          "date": "2014-04-14T16:18:45Z",
+          "message": "Adding source option. MP:215514",
+          "revno": 47
+        }
+      ],
+      "bzr-url": "lp:~charmers/charms/precise/mongodb/trunk",
+      "legacy-download-stats": 3846
+    },
+    "manifest": [
+      {
+        "Name": "revision",
+        "Size": 2
+      },
+      {
+        "Name": "Makefile",
+        "Size": 1041
+      },
+      {
+        "Name": "README.md",
+        "Size": 8267
+      },
+      {
+        "Name": "__init__.py",
+        "Size": 0
+      },
+      {
+        "Name": "charm-helpers-sync.yaml",
+        "Size": 109
+      },
+      {
+        "Name": "config.yaml",
+        "Size": 7340
+      },
+      {
+        "Name": "copyright",
+        "Size": 757
+      },
+      {
+        "Name": "hooks/charmhelpers/__init__.py",
+        "Size": 0
+      },
+      {
+        "Name": "hooks/charmhelpers/core/__init__.py",
+        "Size": 0
+      },
+      {
+        "Name": "hooks/charmhelpers/core/fstab.py",
+        "Size": 3405
+      },
+      {
+        "Name": "hooks/charmhelpers/core/hookenv.py",
+        "Size": 13812
+      },
+      {
+        "Name": "hooks/charmhelpers/core/host.py",
+        "Size": 9682
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/__init__.py",
+        "Size": 11517
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/archiveurl.py",
+        "Size": 2373
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/bzrurl.py",
+        "Size": 1641
+      },
+      {
+        "Name": "hooks/charmhelpers/payload/__init__.py",
+        "Size": 77
+      },
+      {
+        "Name": "hooks/charmhelpers/payload/execd.py",
+        "Size": 1600
+      },
+      {
+        "Name": "hooks/config-changed",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/configsvr-relation-changed",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/configsvr-relation-joined",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/data-relation-changed",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/data-relation-departed",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/data-relation-joined",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/database-relation-joined",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/hooks.py",
+        "Size": 45704
+      },
+      {
+        "Name": "hooks/install",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/mongos-cfg-relation-broken",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/mongos-cfg-relation-changed",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/mongos-cfg-relation-joined",
+        "Size": 8
+      },
+      {
+        "Name": "hooks/mongos-relation-broken",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/mongos-relation-changed",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/mongos-relation-joined",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/replica-set-relation-changed",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/replica-set-relation-joined",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/start",
+        "Size": 10
+      },
+      {
+        "Name": "hooks/stop",
+        "Size": 10
+      },
+      {
+        "Name": "icon.svg",
+        "Size": 21005
+      },
+      {
+        "Name": "metadata.yaml",
+        "Size": 1174
+      },
+      {
+        "Name": "scripts/volume-common.sh",
+        "Size": 7694
+      },
+      {
+        "Name": "templates/backup.py.tpl",
+        "Size": 1284
+      },
+      {
+        "Name": "tests/00-setup",
+        "Size": 235
+      },
+      {
+        "Name": "tests/01_test_write_log_rotate_config.py",
+        "Size": 1295
+      },
+      {
+        "Name": "tests/200_deploy.test",
+        "Size": 4386
+      },
+      {
+        "Name": "tests/200_relate_ceilometer.test",
+        "Size": 1602
+      }
+    ]
+  }
+}

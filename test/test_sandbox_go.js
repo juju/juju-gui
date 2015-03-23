@@ -295,7 +295,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {},
         RequestId: 1067
       };
-      state.deploy('cs:precise/wordpress-15', function() {});
+      state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         assert.equal(receivedData.RequestId, 1067);
@@ -319,7 +319,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {},
         RequestId: 1067
       };
-      state.deploy('cs:precise/wordpress-15', function() {});
+      state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         var deltas = receivedData.Response.Deltas;
@@ -331,7 +331,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'service', 'change', {
             'Name': 'wordpress',
             'Exposed': false,
-            'CharmURL': 'cs:precise/wordpress-15',
+            'CharmURL': 'cs:precise/wordpress-27',
             'Life': 'alive',
             'Config': {
               debug: 'no',
@@ -368,7 +368,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'Name': 'wordpress/0',
             'Service': 'wordpress',
             'Series': 'precise',
-            'CharmURL': 'cs:precise/wordpress-15',
+            'CharmURL': 'cs:precise/wordpress-27',
             'MachineId': '0',
             'Status': 'started',
             'Subordinate': false
@@ -386,7 +386,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
-          CharmUrl: 'cs:precise/wordpress-15',
+          CharmUrl: 'cs:precise/wordpress-27',
           ServiceName: 'kumquat',
           ConfigYAML: 'engine: apache',
           NumUnits: 2
@@ -398,10 +398,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(receivedData.RequestId, data.RequestId);
         assert.isUndefined(receivedData.Error);
         assert.isObject(
-            state.db.charms.getById('cs:precise/wordpress-15'));
+            state.db.charms.getById('cs:precise/wordpress-27'));
         var service = state.db.services.getById('kumquat');
         assert.isObject(service);
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-27');
         assert.deepEqual(service.get('config'), {
           debug: 'no',
           engine: 'apache',
@@ -421,22 +421,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         assert.isUndefined(result.err);
-        assert.equal(result.charm_url, 'cs:precise/mediawiki-8');
+        assert.equal(result.charm_url, 'cs:precise/mediawiki-18');
         var service = state.db.services.getById('kumquat');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
         assert.deepEqual(
             service.get('config'), {
-              admins: undefined,
+              admins: '',
               debug: false,
               logo: 'test logo',
               name: 'Please set name of wiki',
+              server_address: '',
+              use_suffix: true,
               skin: 'vector'
             }
         );
         done();
       };
       env.deploy(
-          'cs:precise/mediawiki-8',
+          'cs:precise/mediawiki-18',
           'kumquat',
           {logo: 'test logo'},
           null,
@@ -468,7 +470,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.deploy(
-          'cs:precise/wordpress-15',
+          'cs:precise/wordpress-27',
           'kumquat',
           {llama: 'pajama'},
           null,
@@ -481,13 +483,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can communicate errors after attempting to deploy', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {});
+      state.deploy('cs:precise/wordpress-27', function() {});
       var callback = function(result) {
         assert.equal(
             result.err, 'A service with this name already exists (wordpress).');
         done();
       };
-      env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined,
+      env.deploy('cs:precise/wordpress-27', undefined, undefined, undefined,
           1, null, null, callback, {immediate: true});
     });
 
@@ -595,7 +597,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can destroy a service', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           Type: 'Client',
           Request: 'ServiceDestroy',
@@ -619,7 +621,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can destroy a service (environment integration)', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
           assert.equal(state.db.services.size(), 0);
@@ -631,7 +633,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can remove a unit', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           Type: 'Client',
           Request: 'DestroyServiceUnits',
@@ -656,7 +658,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a unit (environment integration)', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           // fakebackend defaults error and warning to [] which carries
           // through.
@@ -673,7 +675,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'CharmInfo',
         Params: {
-          CharmURL: 'cs:precise/wordpress-15'
+          CharmURL: 'cs:precise/wordpress-27'
         },
         RequestId: 42
       };
@@ -681,7 +683,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var receivedData = Y.JSON.parse(received.data);
         assert.isUndefined(receivedData.Error);
         assert.isObject(receivedData.Response);
-        assert.equal(receivedData.Response.URL, 'cs:precise/wordpress-15');
         done();
       };
       client.open();
@@ -693,17 +694,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var callback = function(result) {
         assert.isUndefined(result.err);
         assert.isObject(result.result);
-        assert.equal(result.result.url, 'cs:precise/wordpress-15');
         done();
       };
-      env.get_charm('cs:precise/wordpress-15', callback);
+      env.get_charm('cs:precise/wordpress-27', callback);
     });
 
     it('can communicate errors in getting a charm', function(done) {
       env.connect();
       var callback = function(result) {
         assert.isUndefined(result.result);
-        assert.equal(result.err, 'Error interacting with the charmworld API.');
+        assert.equal(result.err, 'Error interacting with the charmstore API.');
         done();
       };
       env.get_charm('cs:precise/notarealcharm-15', callback);
@@ -715,11 +715,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var callback = function(result) {
         assert.deepEqual(
             result.result.config, {
-              admins: undefined,
+              admins: '',
               debug: false,
-              logo: undefined,
+              logo: '',
               name: 'Please set name of wiki',
-              skin: 'vector'
+              server_address: '',
+              skin: 'vector',
+              use_suffix: true
             }
         );
         // We also make sure that we get some object of data for constraints.
@@ -730,7 +732,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set constraints', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           Type: 'Client',
           Request: 'SetServiceConstraints',
@@ -755,7 +757,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can set constraints (environment integration)', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
@@ -768,7 +770,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set config', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           Type: 'Client',
           Request: 'ServiceSet',
@@ -797,7 +799,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can set config (environment integration)', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
@@ -815,7 +817,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set YAML config', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           Type: 'Client',
           Request: 'ServiceSetYAML',
@@ -844,7 +846,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can set YAML config (environment integration)', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
@@ -862,7 +864,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can resolve a unit', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         state.db.services.getById('wordpress')
           .get('units').getById('wordpress/0')
           .agent_state = 'error';
@@ -891,7 +893,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can resolve a unit (environment integration)', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         state.db.services.getById('wordpress')
           .get('units').getById('wordpress/0')
           .agent_state = 'error';
@@ -905,13 +907,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set a charm.', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {});
+      state.deploy('cs:precise/wordpress-27', function() {});
       var data = {
         Type: 'Client',
         Request: 'ServiceSetCharm',
         Params: {
           ServiceName: 'wordpress',
-          CharmUrl: 'cs:precise/mediawiki-8',
+          CharmUrl: 'cs:precise/mediawiki-18',
           Force: false
         },
         RequestId: 42
@@ -920,7 +922,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var receivedData = Y.JSON.parse(received.data);
         assert.isUndefined(receivedData.err);
         var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
         done();
       };
       client.open();
@@ -929,14 +931,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can set a charm (environment integration).', function(done) {
       env.connect();
-      state.deploy('cs:precise/wordpress-15', function() {});
+      state.deploy('cs:precise/wordpress-27', function() {});
       var callback = function(result) {
         assert.isUndefined(result.err);
         var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
         done();
       };
-      env.setCharm('wordpress', 'cs:precise/mediawiki-8', false, callback);
+      env.setCharm('wordpress', 'cs:precise/mediawiki-18', false, callback);
     });
 
     /**
@@ -952,7 +954,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         been generated.
     */
     function generateServices(callback) {
-      state.deploy('cs:precise/wordpress-15', function(service) {
+      state.deploy('cs:precise/wordpress-27', function(service) {
         var data = {
           Type: 'Client',
           Request: 'AddServiceUnits',
@@ -989,7 +991,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15',
+          'cs:precise/wordpress-27',
           'kumquat',
           {llama: 'pajama'},
           null,
@@ -1012,7 +1014,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         been generated.
     */
     function generateAndExposeService(callback) {
-      state.deploy('cs:precise/wordpress-15', function(data) {
+      state.deploy('cs:precise/wordpress-27', function(data) {
         var command = {
           Type: 'Client',
           Request: 'ServiceExpose',
@@ -1044,7 +1046,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15',
+          'cs:precise/wordpress-27',
           'kumquat',
           {llama: 'pajama'},
           null,
@@ -1079,7 +1081,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error when adding units to an invalid service',
         function(done) {
-          state.deploy('cs:precise/wordpress-15', function(service) {
+          state.deploy('cs:precise/wordpress-27', function(service) {
             var data = {
               Type: 'Client',
               Request: 'AddServiceUnits',
@@ -1163,7 +1165,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('fails with error when exposing an invalid service name',
         function(done) {
-          state.deploy('cs:precise/wordpress-15', function(data) {
+          state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
               Type: 'Client',
               Request: 'ServiceExpose',
@@ -1223,7 +1225,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fails silently when unexposing a not exposed service',
         function(done) {
           var service_name = 'wordpress';
-          state.deploy('cs:precise/wordpress-15', function(data) {
+          state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
               Type: 'Client',
               Request: 'ServiceUnexpose',
@@ -1265,7 +1267,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         state.deploy('cs:precise/mysql-26', function() {
           var data = {
             RequestId: 42,
@@ -1297,7 +1299,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add a relation (integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15', null, null, null, 1, null, null,
+          'cs:precise/wordpress-27', null, null, null, 1, null, null,
           function() {
             env.deploy(
                 'cs:precise/mysql-26', null, null, null, 1, null, null,
@@ -1318,7 +1320,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('is able to add a relation with a subordinate service', function(done) {
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         state.deploy('cs:precise/puppet-5', function(service) {
           var data = {
             RequestId: 42,
@@ -1347,7 +1349,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error if only one endpoint is supplied', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           RequestId: 42,
           Type: 'Client',
@@ -1370,7 +1372,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error if endpoints are not relatable', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           RequestId: 42,
           Type: 'Client',
@@ -1393,7 +1395,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a relation', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
       var relation = ['wordpress:db', 'mysql:db'];
-      state.deploy('cs:precise/wordpress-15', function() {
+      state.deploy('cs:precise/wordpress-27', function() {
         state.deploy('cs:precise/mysql-26', function() {
           state.addRelation(relation[0], relation[1]);
           var data = {
@@ -1419,7 +1421,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a relation(integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15', null, null, null, 1, null, null,
+          'cs:precise/wordpress-27', null, null, null, 1, null, null,
           function() {
             env.deploy(
                 'cs:precise/mysql-26', null, null, null, 1, null, null,
@@ -1453,7 +1455,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var receivedData = Y.JSON.parse(received.data);
         assert.isUndefined(receivedData.err);
         var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-27');
         done();
       };
       client.open();
@@ -1465,7 +1467,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var callback = function(result) {
         assert.isUndefined(result.err);
         var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-27');
         done();
       };
 

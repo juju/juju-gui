@@ -1,0 +1,249 @@
+{
+  "Id": "cs:precise/puppetmaster-5",
+  "Meta": {
+    "charm-config": {
+      "Options": {
+
+      }
+    },
+    "charm-metadata": {
+      "Name": "puppetmaster",
+      "Summary": "puppet master",
+      "Description": "This charm deploys a puppet master, which is the server hosting\nmanifests and files for the puppet nodes.  Puppet lets you centrally\nmanage every important aspect of your system using a cross-platform\nspecification language that manages all the separate elements normally\naggregated in different files, like users, cron jobs, and hosts, along\nwith obviously discrete elements like packages, services, and files.\nPuppet's simple declarative specification language provides powerful\nclassing abilities for drawing out the similarities between hosts while\nallowing them to be as specific as necessary, and it handles dependency\nand prerequisite relationships between objects clearly and explicitly.\n",
+      "Subordinate": false,
+      "Provides": {
+        "puppetmaster": {
+          "Name": "puppetmaster",
+          "Role": "provider",
+          "Interface": "puppet",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        }
+      },
+      "Requires": null,
+      "Peers": null,
+      "Format": 1,
+      "OldRevision": 0,
+      "Categories": [
+        "misc"
+      ],
+      "Tags": null,
+      "Series": ""
+    },
+    "charm-related": {
+      "Requires": {
+        "puppet": [
+          {
+            "Id": "cs:precise/puppet-0"
+          },
+          {
+            "Id": "cs:precise/puppet-1"
+          },
+          {
+            "Id": "cs:precise/puppet-2"
+          },
+          {
+            "Id": "cs:precise/puppet-3"
+          },
+          {
+            "Id": "cs:precise/puppet-4"
+          },
+          {
+            "Id": "cs:precise/puppet-5"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppet-0"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppet-1"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppet-2"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppet-3"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppet-4"
+          },
+          {
+            "Id": "cs:~charmers/precise/puppet-5"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppet-0"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppet-1"
+          },
+          {
+            "Id": "cs:~clint-fewbar/oneiric/puppet-2"
+          },
+          {
+            "Id": "cs:~clint-fewbar/precise/puppet-0"
+          },
+          {
+            "Id": "cs:~flepied/precise/puppet-0"
+          }
+        ]
+      }
+    },
+    "extra-info": {
+      "bzr-digest": "chuck@dasroot.net-20140919170804-yuipt3l2pv7tjcy6",
+      "bzr-owner": "charmers",
+      "bzr-revisions": [
+        {
+          "authors": [
+            {
+              "email": "chuck@dasroot.net",
+              "name": "Charles Butler"
+            }
+          ],
+          "date": "2014-09-19T17:08:04Z",
+          "message": "  Antonio Rosales 2014-09-11 Add charm icon and category.\n",
+          "revno": 9
+        },
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com",
+              "name": "Mark Mims"
+            }
+          ],
+          "date": "2013-03-29T15:32:13Z",
+          "message": "maintainer change",
+          "revno": 8
+        },
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com",
+              "name": "Mark Mims"
+            }
+          ],
+          "date": "2013-03-29T15:30:13Z",
+          "message": "merging lp:~clint-fewbar/charms/precise/puppetmaster/trunk before fixing promulgation error",
+          "revno": 7
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T17:36:09Z",
+          "message": "reformatting text for summary an description",
+          "revno": 6
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T17:18:13Z",
+          "message": "adding a copyright file",
+          "revno": 5
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T16:43:35Z",
+          "message": "Writing README",
+          "revno": 4
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-16T16:39:42Z",
+          "message": "adding juju external node classifier",
+          "revno": 3
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-14T15:48:01Z",
+          "message": "fixes for fingerprint code",
+          "revno": 2
+        },
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com",
+              "name": "Clint Byrum"
+            }
+          ],
+          "date": "2012-04-14T08:02:20Z",
+          "message": "puppetmaster charm",
+          "revno": 1
+        }
+      ],
+      "bzr-url": "lp:~charmers/charms/precise/puppetmaster/trunk",
+      "legacy-download-stats": 138
+    },
+    "manifest": [
+      {
+        "Name": "revision",
+        "Size": 1
+      },
+      {
+        "Name": "README",
+        "Size": 387
+      },
+      {
+        "Name": "copyright",
+        "Size": 789
+      },
+      {
+        "Name": "files/juju-subordinate-enc",
+        "Size": 172
+      },
+      {
+        "Name": "hooks/install",
+        "Size": 799
+      },
+      {
+        "Name": "hooks/puppetmaster-relation-changed",
+        "Size": 516
+      },
+      {
+        "Name": "hooks/puppetmaster-relation-departed",
+        "Size": 71
+      },
+      {
+        "Name": "hooks/start",
+        "Size": 44
+      },
+      {
+        "Name": "hooks/stop",
+        "Size": 43
+      },
+      {
+        "Name": "hooks/upgrade-charm",
+        "Size": 36
+      },
+      {
+        "Name": "icon.svg",
+        "Size": 88974
+      },
+      {
+        "Name": "metadata.yaml",
+        "Size": 887
+      }
+    ]
+  }
+}

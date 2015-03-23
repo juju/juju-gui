@@ -31,7 +31,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
   var ziputils = Y.namespace('juju.ziputils');
   var viewUtils = Y.namespace('juju.views.utils');
 
-  var DEFAULT_CHARM_ICON_PATH = 'static/img/charm_160.svg';
   var VALUE_ERROR = {error: 'Unparsable environment data.'};
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
@@ -59,6 +58,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     maasServer: {value: null},
     providerType: {value: 'demonstration'},
     store: {required: true},
+    charmstore: {},
     token: {value: 'demoToken'}
   };
 
@@ -341,48 +341,40 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (charm) {
         callbacks.success(charm);
       } else {
-        // Get the charm data.
-        var self = this;
-        this.get('store').charm(charmIdParts.storeId, {
-          // Convert the charm data to a charm and use the success
-          // callback.
-          success: function(data) {
-            var charm = self._getCharmFromData(data.charm || data);
-            if (callbacks.success) {
-              callbacks.success(charm);
-            }
-          },
-          // Inform the caller of an error using the charm store.
-          failure: function(e) {
-            // This is most likely an IOError stemming from an
-            // invalid charm pointing to a bad URL and a read of a
-            // 404 giving an error at this level. IOError isn't user
-            // facing so we log the warning.
-            console.warn('error loading charm: ', e);
-            if (callbacks.failure) {
-              callbacks.failure(
-                  {error: 'Error interacting with the charmworld API.'});
-            }
-          }
-        });
+        this.get('charmstore').getEntity(
+            charmIdParts.storeId,
+            function(charm) {
+              this._saveCharmModel(charm[0]);
+              if (callbacks.success) {
+                callbacks.success(charm[0]);
+              }
+            }.bind(this),
+            // Inform the caller of an error using the charm store.
+            function(e) {
+              // This is most likely an IOError stemming from an
+              // invalid charm pointing to a bad URL and a read of a
+              // 404 giving an error at this level. IOError isn't user
+              // facing so we log the warning.
+              console.warn('error loading charm: ', e);
+              if (callbacks.failure) {
+                callbacks.failure(
+                    {error: 'Error interacting with the charmstore API.'});
+              }
+            });
       }
     },
 
     /**
-    Convert charm data as returned by the charmworld API into a charm.
-    The charm might be pre-existing or might need to be created, but
-    after this method it will be within the db.
+    If the charm doesn't exist in the database already then add it.
 
-    @method _getCharmFromData
-    @param {Object} charmData The raw charm information as delivered by the
-      charmworld API.
-    @return {Object} A matching charm from the db.
+    @method _saveCharmModel
+    @param {Object} charm The charm model as delivered by the apiv4 charmstore.
+    @return {Object} The passed in charm model.
     */
-    _getCharmFromData: function(charmData) {
-      var charm = this.db.charms.getById(charmData.store_url || charmData.url);
-      if (!charm) {
-        charmData.id = charmData.store_url || charmData.url;
-        charm = this.db.charms.add(charmData);
+    _saveCharmModel: function(charm) {
+      var storedCharm = this.db.charms.getById(charm.id);
+      if (!storedCharm) {
+        this.db.charms.add(charm);
       }
       return charm;
     },
@@ -2142,9 +2134,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     getLocalCharmFileUrl: function(charmUrl, filename) {
       if (filename === 'icon.svg') {
         // This is a request for a local charm icon URL. Just return the
-        // fallback icon hosted by charmworld.
-        var store = this.get('store');
-        return store.get('apiHost') + DEFAULT_CHARM_ICON_PATH;
+        // fallback icon.
+        return '/juju-ui/assets/images/non-sprites/charm_160.svg';
       }
       // This is in theory unreachable: with the exception of the icon, other
       // file URLs are not currently requested.
