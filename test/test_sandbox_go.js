@@ -703,7 +703,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       var callback = function(result) {
         assert.isUndefined(result.result);
-        assert.equal(result.err, 'Error interacting with the charmworld API.');
+        assert.equal(result.err, 'Error interacting with the charmstore API.');
         done();
       };
       env.get_charm('cs:precise/notarealcharm-15', callback);

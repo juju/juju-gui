@@ -59,6 +59,15 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       return fakeStore;
     },
 
+    /**
+      Fetches the apiv4 response data for the available charms to be used in
+      the tests. Many different tests use different charms and charm data
+      for testing. This fetches the api response json flat file contents and
+      then stores it in a key'd object.
+
+      @method _fetchCharmData
+      @return {Object} An object containing all of the available charm data.
+    */
     _fetchCharmData: function() {
       var names = [
         'wordpress', 'mongodb', 'mysql', 'mediawiki', 'puppet', 'haproxy',
@@ -110,7 +119,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'juju-tests-utils',
-    'charmstore-api'
+    'charmstore-api',
+    'juju-tests-utils'
   ]
 });

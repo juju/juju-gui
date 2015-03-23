@@ -358,7 +358,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               console.warn('error loading charm: ', e);
               if (callbacks.failure) {
                 callbacks.failure(
-                    {error: 'Error interacting with the charmworld API.'});
+                    {error: 'Error interacting with the charmstore API.'});
               }
             });
       }
@@ -2134,7 +2134,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     getLocalCharmFileUrl: function(charmUrl, filename) {
       if (filename === 'icon.svg') {
         // This is a request for a local charm icon URL. Just return the
-        // fallback icon hosted by charmworld.
+        // fallback icon.
         return '/juju-ui/assets/images/non-sprites/charm_160.svg';
       }
       // This is in theory unreachable: with the exception of the icon, other
