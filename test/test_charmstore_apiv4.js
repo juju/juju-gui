@@ -142,9 +142,7 @@ describe('Charmstore API v4', function() {
           charmstore, '_processEntityQueryData', {});
       this._cleanups.push(process.reset);
       charmstore._transformQueryResults(success, response);
-      // If this is only called twice that means it has correctly skipped the
-      // ~charmers records.
-      assert.equal(process.callCount(), 2);
+      assert.equal(process.callCount(), 4);
     });
 
     it('can generate a charm and bundle model', function() {
@@ -154,7 +152,9 @@ describe('Charmstore API v4', function() {
       charmstore._transformQueryResults(success, response);
       var models = success.lastArguments()[0];
       assert.equal(models[0] instanceof Y.juju.models.Charm, true);
-      assert.equal(models[1] instanceof Y.juju.models.Bundle, true);
+      assert.equal(models[1] instanceof Y.juju.models.Charm, true);
+      assert.equal(models[2] instanceof Y.juju.models.Charm, true);
+      assert.equal(models[3] instanceof Y.juju.models.Bundle, true);
     });
   });
 

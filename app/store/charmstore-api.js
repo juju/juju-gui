@@ -118,14 +118,6 @@ YUI.add('charmstore-api', function(Y) {
       data = data.Results ? data.Results : [data];
       var models = [];
       data.forEach(function(entity) {
-        // XXX The current charmstore api returns duplicate results for
-        // promulgated charms and bundles. This filters those out so we only
-        // get the promulgated version in the results list. This conditional
-        // can be removed once that bug is fixed in the charmstore. Est around
-        // the end of Jan 2015
-        if (entity.Id.match(/~(.)*charmers/g)) {
-          return;
-        }
         var entityData = this._processEntityQueryData(entity);
         if (entityData.entityType === 'charm') {
           models.push(new jujuModels.Charm(entityData));
