@@ -194,8 +194,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         units: [],
         relations: [],
         unit_count: undefined,
-        upgrade_available: false,
-        upgrade_to: undefined,
         packageName: 'wordpress'
       };
 

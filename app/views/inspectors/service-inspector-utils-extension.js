@@ -82,7 +82,7 @@ YUI.add('service-inspector-utils-extension', function(Y) {
             this.showViewlet('changeVersion', model);
           }.bind(this),
           function() {
-            db.notifications.add({
+            this.get('db').notifications.add({
               title: 'Error fetching charm versions',
               message: 'Unable fetch charm versions for: ' + charmId,
               level: 'error'

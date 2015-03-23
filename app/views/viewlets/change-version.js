@@ -47,7 +47,6 @@ YUI.add('change-version-view', function(Y) {
     */
     show: function() {
       var container = this.get('container');
-      var model = this.model;
       container.setHTML(
           this.template({versions: this.model.get('available_versions')}));
       container.show();
@@ -100,10 +99,6 @@ YUI.add('change-version-view', function(Y) {
           }
           // Set the charm on the service.
           service.set('charm', upgradeTo);
-
-          // Force a check for any upgrades that may have happened in the
-          // mean time next time the change version button is clicked.
-          service.set('upgrade_loaded', false);
         });
       });
     }

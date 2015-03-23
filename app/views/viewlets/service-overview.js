@@ -405,7 +405,7 @@ YUI.add('inspector-overview-view', function(Y) {
         }
       },
       units: {
-        depends: ['aggregated_status', 'upgrade_to'],
+        depends: ['aggregated_status'],
         'update': function(node, value) {
           // Called under the databinding context.
           // Subordinates may not have a value.

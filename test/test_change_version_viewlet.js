@@ -44,9 +44,7 @@ describe('Change version viewlet', function() {
     serviceAttrs = Y.mix({
       id: 'mediawiki',
       charm: charmId,
-      exposed: false,
-      upgrade_available: true,
-      upgrade_to: 'cs:precise/mediawiki-15'
+      exposed: false
     }, serviceAttrs, true);
     service = new models.Service(serviceAttrs);
     downgrades = (function() {
@@ -128,13 +126,15 @@ describe('Change version viewlet', function() {
   });
 
   it('loads versions on click', function() {
+    var charmstore = inspector.get('charmstore');
+    var versions = utils.makeStubMethod(charmstore, 'getAvailableVersions');
+    this._cleanups.push(versions.reset);
     container.one('.change-version-trigger span').simulate('click');
-    assert.equal(container.all('.upgrade-link').size(), 14);
+    assert.equal(versions.callCount(), 1);
   });
 
   it('closes when clicking the x leaving the inspector open', function() {
     container.one('.change-version-trigger span').simulate('click');
-    assert.equal(container.all('.upgrade-link').size(), 14);
     var showViewlet = utils.makeStubMethod(inspector, 'showViewlet');
     this._cleanups.push(showViewlet.reset);
     container.one('.change-version-close').simulate('click');
@@ -143,6 +143,13 @@ describe('Change version viewlet', function() {
   });
 
   it('attempts to upgrade on click', function(done) {
+    var charmstore = inspector.get('charmstore');
+    charmstore.getAvailableVersions = function(charmId, success, failure) {
+      success([
+        'cs:precise/mediawiki-14',
+        'cs:precise/mediawiki-15'
+      ]);
+    };
     // Ensure that get_charm is called to get the new charm.
     env.setCharm = function(serviceName, upgradeTo, force, callback) {
       callback({});
