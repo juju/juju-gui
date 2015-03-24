@@ -83,7 +83,6 @@ YUI.add('subapp-browser', function(Y) {
         envSeries: this.get('envSeries'),
         db: this.get('db'),
         filters: this.state.filter.getFilterData(),
-        store: this.get('store'),
         charmstore: this.get('charmstore')
       });
     },
@@ -218,8 +217,28 @@ YUI.add('subapp-browser', function(Y) {
       @param {String} entityId The id of the charm or bundle to deploy.
     */
     _deployTargetDispatcher: function(entityId) {
-      var store = this.get('store');
       var charmstore = this.get('charmstore');
+      /**
+        Handles parsing and displaying the failure notification returned from
+        the charmstore api.
+
+        @method failureNotification
+        @param {Object} error The XHR request object from the charmstore req.
+      */
+      var failureNotification = function(error) {
+        var message = 'Unable to deploy target: ' + entityId;
+        try {
+          message = JSON.parse(error.currentTarget.responseText).Message;
+        } catch (e) {
+          console.error(e);
+        }
+        this.get('db').notifications.add({
+          title: 'Error deploying target.',
+          message: message,
+          level: 'error'
+        });
+      };
+
       // The charmstore apiv4 format can have the bundle keyword either at the
       // start, for charmers bundles, or after the username, for namespaced
       // bundles. ex) bundle/swift & ~jorge/bundle/swift
@@ -229,29 +248,32 @@ YUI.add('subapp-browser', function(Y) {
             function(yaml) {
               var bundleYAML = charmstore.downConvertBundleYAML(yaml);
               this.get('deployBundle')(bundleYAML, entityId);
-            }.bind(this));
+            }.bind(this),
+            failureNotification.bind(this));
       } else {
         // If it's not a bundle then it's a charm.
-        store.charm(entityId.replace('cs:', ''), {
-          'success': function(data) {
-            var charm = data.charm,
-                config = {};
-            Object.keys(charm.options).forEach(function(key) {
-              config[key] = charm.options[key]['default'];
-            });
-            // We call the env deploy method directly because we don't want the
-            // ghost inspector to open.
-            this.get('env').deploy(
-                charm.id,
-                charm.name,
-                config,
-                undefined, //config file content
-                1, // number of units
-                {}, //constraints
-                null); // toMachine
-            this.fire('autoplaceAndCommitAll');
-          }.bind(this)
-        });
+        charmstore.getEntity(
+            entityId.replace('cs:', ''),
+            function(charm) {
+              charm = charm[0];
+              var config = {},
+                  options = charm.get('options');
+              Object.keys(options).forEach(function(key) {
+                config[key] = options[key]['default'];
+              });
+              // We call the env deploy method directly because we don't want
+              // the ghost inspector to open.
+              this.get('env').deploy(
+                  charm.get('id'),
+                  charm.get('name'),
+                  config,
+                  undefined, //config file content
+                  1, // number of units
+                  {}, //constraints
+                  null); // toMachine
+              this.fire('autoplaceAndCommitAll');
+            }.bind(this),
+            failureNotification.bind(this));
       }
     },
 
@@ -658,7 +680,6 @@ YUI.add('subapp-browser', function(Y) {
         env: this.get('env'),
         ecs: this.get('ecs'),
         topo: topo,
-        store: topo.get('store'),
         charmstore: this.get('charmstore'),
         activeTab: metadata.hash,
         hideHelp: hideHelp
@@ -748,13 +769,6 @@ YUI.add('subapp-browser', function(Y) {
          @type {Function}
        */
       envSeries: {},
-
-      /**
-         @attribute store
-         @default juju.charmworld.APIv3
-         @type {Object}
-       */
-      store: {},
 
       /**
         @attribute charmstore
@@ -847,11 +861,11 @@ YUI.add('subapp-browser', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-cache',
+    'charmstore-api',
     'handlebars',
     'juju-added-services',
     'juju-app-state',
     'juju-browser-models',
-    'juju-charm-store',
     'juju-charmbrowser',
     'juju-models',
     'juju-view-onboarding',
