@@ -218,6 +218,27 @@ YUI.add('subapp-browser', function(Y) {
     */
     _deployTargetDispatcher: function(entityId) {
       var charmstore = this.get('charmstore');
+      /**
+        Handles parsing and displaying the failure notification returned from
+        the charmstore api.
+
+        @method failureNotification
+        @param {Object} error The XHR request object from the charmstore req.
+      */
+      var failureNotification = function(error) {
+        var message = 'Unable to deploy target: ' + entityId;
+        try {
+          message = JSON.parse(error.currentTarget.responseText).Message;
+        } catch (e) {
+          console.error(e);
+        }
+        this.get('db').notifications.add({
+          title: 'Error deploying target.',
+          message: message,
+          level: 'error'
+        });
+      };
+
       // The charmstore apiv4 format can have the bundle keyword either at the
       // start, for charmers bundles, or after the username, for namespaced
       // bundles. ex) bundle/swift & ~jorge/bundle/swift
@@ -227,7 +248,8 @@ YUI.add('subapp-browser', function(Y) {
             function(yaml) {
               var bundleYAML = charmstore.downConvertBundleYAML(yaml);
               this.get('deployBundle')(bundleYAML, entityId);
-            }.bind(this));
+            }.bind(this),
+            failureNotification.bind(this));
       } else {
         // If it's not a bundle then it's a charm.
         charmstore.getEntity(
@@ -251,19 +273,7 @@ YUI.add('subapp-browser', function(Y) {
                   null); // toMachine
               this.fire('autoplaceAndCommitAll');
             }.bind(this),
-            function(error) {
-              var message = 'Unable to deploy target: ' + entityId;
-              try {
-                message = JSON.parse(error.currentTarget.responseText).Message;
-              } catch (e) {
-                console.error(e);
-              }
-              this.get('db').notifications.add({
-                title: 'Error deploying target.',
-                message: message,
-                level: 'error'
-              });
-            }.bind(this));
+            failureNotification.bind(this));
       }
     },
 
