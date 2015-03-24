@@ -47,35 +47,8 @@ YUI.add('change-version-view', function(Y) {
     */
     show: function() {
       var container = this.get('container');
-      var model = this.model;
-      var charm = model.get('charm');
-      var upgrades = [];
-      // Find the latest version number - if we have an upgrade, it will be
-      // that charm's version; otherwise it will be the current charm's
-      // version.
-      var currVersion = parseInt(charm.split('-').pop(), 10),
-          maxVersion = model.get('upgrade_available') ?
-              parseInt(model.get('upgrade_to').split('-').pop(), 10) :
-              currVersion;
-      // Remove the version number from the charm so that we can build a
-      // list of downgrades.
-      charm = charm.replace(/-\d+$/, '');
-      // Build a list of available downgrades
-      if (maxVersion > 1) {
-        // XXX Use the list of available versions from Charmworld
-        // Makyo - #1246928 - 2014-06-24
-        for (var version = maxVersion; version > 0; version -= 1) {
-          if (version === currVersion) {
-            continue;
-          }
-          var id = charm + '-' + version;
-          upgrades.push({
-            id: id,
-            link: id.replace('cs:', '/')
-          });
-        }
-      }
-      container.setHTML(this.template({upgrades: upgrades}));
+      container.setHTML(
+          this.template({versions: this.model.get('available_versions')}));
       container.show();
     },
 
@@ -126,10 +99,6 @@ YUI.add('change-version-view', function(Y) {
           }
           // Set the charm on the service.
           service.set('charm', upgradeTo);
-
-          // Force a check for any upgrades that may have happened in the
-          // mean time next time the change version button is clicked.
-          service.set('upgrade_loaded', false);
         });
       });
     }

@@ -91,9 +91,7 @@ describe('Inspector Overview', function() {
     serviceAttrs = Y.mix({
       id: 'mediawiki',
       charm: charmId,
-      exposed: false,
-      upgrade_available: true,
-      upgrade_to: 'cs:precise/mediawiki-15'
+      exposed: false
     }, serviceAttrs, true, null, 0, true);
     service = new models.Service(serviceAttrs);
     downgrades = (function() {

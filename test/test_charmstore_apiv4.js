@@ -421,4 +421,50 @@ describe('Charmstore API v4', function() {
       assert.equal(wrapped, '"bundle-deploy": \n  bundle: test\n');
     });
   });
+
+  describe('getAvailableVersions', function() {
+    var request;
+
+    beforeEach(function() {
+      request = utils.makeStubMethod(charmstore, '_makeRequest');
+      this._cleanups.push(request.reset);
+    });
+
+    it('makes a request to fetch the ids', function() {
+      charmstore.getAvailableVersions('cs:precise/ghost-5');
+      assert.equal(request.callCount(), 1);
+    });
+
+    it('calls the success handler with a list of charm ids', function(done) {
+      var success = function(list) {
+        // If it gets here then it has successfully called.
+        assert.deepEqual(list, ['cs:precise/ghost-4']);
+        done();
+      };
+      var failure = function() {
+        assert.fail('Failure callback should not be called');
+      };
+      charmstore.getAvailableVersions('cs:precise/ghost-5', success, failure);
+      var requestArgs = request.lastArguments();
+      // The path should not have cs: in it.
+      assert.equal(requestArgs[0], 'local/v4/precise/ghost-5/expand-id');
+      // Call the makeRequest success handler simulating a response object;
+      requestArgs[1](
+          {currentTarget: { responseText: '[{"Id": "cs:precise/ghost-4"}]'}});
+    });
+
+    it('calls the failure handler for json parse failures', function(done) {
+      var success = function(list) {
+        assert.fail('Success callback should not be called');
+      };
+      var failure = function() {
+        // If it gets here then it has successfully called.
+        done();
+      };
+      charmstore.getAvailableVersions('cs:precise/ghost-5', success, failure);
+      // Call the makeRequest success handler simulating a response object;
+      request.lastArguments()[1](
+          {currentTarget: { responseText: '[notvalidjson]'}});
+    });
+  });
 });

@@ -203,9 +203,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var serviceAttrs = {
         id: 'mediawiki',
         charm: charmId,
-        exposed: false,
-        upgrade_available: true,
-        upgrade_to: 'cs:precise/mediawiki-15'
+        exposed: false
       };
       service = new models.Service(serviceAttrs);
       view.createTopology();

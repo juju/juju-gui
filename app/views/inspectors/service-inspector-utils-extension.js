@@ -70,31 +70,25 @@ YUI.add('service-inspector-utils-extension', function(Y) {
     */
     _onChangeVersionClick: function(evt) {
       evt.halt();
-      var model = this.get('model');
-      // Check if a newer charm is available for this service so that
-      // we can offer it as an upgrade.
-      if (model.get('charm').substring(0, 2) === 'cs' &&
-          !model.get('upgrade_loaded')) {
-        // XXX show spinner
-        var store = this.get('store');
-        var db = this.get('db');
-        var charm = db.charms.getById(model.get('charm'));
-        store.promiseUpgradeAvailability(charm, db.charms)
-          .then(function(latestId) {
-              model.set('upgrade_loaded', true);
-              model.set('upgrade_available', !!latestId);
-              if (latestId) {
-                model.set('upgrade_to',
-                    charm.get('scheme') + ':' + latestId);
-              }
-              // XXX hide spinner
-              this.showViewlet('changeVersion', this.get('model'));
-            }.bind(this),
-            function() { console.warn('unable to check for upgrades'); }
-            );
-      } else {
-        this.showViewlet('changeVersion', this.get('model'));
-      }
+      var model = this.get('model'),
+          // We use the charm attribute here instead of the id because the id
+          // is a randomly generated number when it's a ghost service.
+          charmId = model.get('charm');
+
+      this.get('charmstore').getAvailableVersions(
+          charmId,
+          function(idList) {
+            model.set('available_versions', idList);
+            this.showViewlet('changeVersion', model);
+          }.bind(this),
+          function() {
+            this.get('db').notifications.add({
+              title: 'Error fetching charm versions',
+              message: 'Unable fetch charm versions for: ' + charmId,
+              level: 'error'
+            });
+            this.showViewlet('changeVersion', model);
+          }.bind(this));
     },
 
     /**

@@ -508,34 +508,15 @@ YUI.add('juju-models', function(Y) {
       aggregateRelationError: {},
 
       /**
-        Whether or not an upgrade is available.
+        A collection of available versions for the charm. This is populated
+        when the user clicks to change their charm version in the inspector.
 
-        @attribute upgrade_available
-        @type {boolean}
-        @default false
+        @attribute available_versions
+        @default undefined
+        @type {Array}
       */
-      upgrade_available: {
-        value: false
-      },
+      available_versions: {},
 
-      /**
-        Whether or not the upgrade availablility has been loaded.
-
-        @attribute upgrade_loaded
-        @type {boolean}
-        @default false
-      */
-      upgrade_loaded: {
-        value: false
-      },
-
-      /**
-        The latest charm URL that the service can be upgraded to.
-
-        @attribute upgrade_to
-        @type {string}
-      */
-      upgrade_to: {},
       aggregated_status: {},
       /**
         The original name from the Charm

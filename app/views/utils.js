@@ -2064,6 +2064,10 @@ YUI.add('juju-view-utils', function(Y) {
                    .replace(/\)$/, '') + ':' + type;
   });
 
+  Y.Handlebars.registerHelper('strip_cs', function(id) {
+    return id.replace('cs:', '/');
+  });
+
   /*
    * Dev tool: dump to debugger in template.
    * Allows you to inspect a variable by passing it to

@@ -399,6 +399,53 @@ YUI.add('charmstore-api', function(Y) {
       var bundle = jsyaml.safeLoad(bundleYAML);
       var wrapped = { 'bundle-deploy': bundle };
       return jsyaml.safeDump(wrapped);
+    },
+
+    /**
+      Gets the list of available versions of the supplied charm id.
+
+      @method getAvailableVersions
+      @param {String} charmId The charm id to fetch all of the versions for.
+      @param {Function} successCallback The success callback.
+      @param {Function} failureCallback The failure callback.
+    */
+    getAvailableVersions: function(charmId, successCallback, failureCallback) {
+      charmId = charmId.replace('cs:', '');
+      var series = charmId.split('/')[0];
+      this._makeRequest(
+          this._generatePath(charmId, null, '/expand-id'),
+          this._processAvailableVersions.bind(
+              this, series, successCallback, failureCallback),
+          failureCallback);
+    },
+
+    /**
+      The structure returned by the api is an array of objects with a single
+      id value. This reduces it to an array of those ids reducing out the
+      ids which are not for the existing series.
+
+      @method _processAvailableVersions
+      @param {String} series The series of the charm requested.
+      @param {Function} success Reference to the success handler.
+      @param {Function} failure Reference to the failure handler.
+      @param {Object} response The response object from the request.
+    */
+    _processAvailableVersions: function(series, success, failure, response) {
+      var list = response.currentTarget.responseText;
+      try {
+        list = JSON.parse(list);
+      } catch (e) {
+        failure(e);
+        return;
+      }
+      var truncatedList = [];
+      list.forEach(function(item) {
+        var id = item.Id;
+        if (id.indexOf(series) > -1) {
+          truncatedList.push(id);
+        }
+      });
+      success(truncatedList);
     }
   };
 
