@@ -222,7 +222,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y = YUI(GlobalConfig).use(
             'app-subapp-extension',
             'juju-browser',
-            'juju-charm-store',
+            'juju-charm-models',
             'juju-tests-utils',
             'juju-views',
             'subapp-browser', function(Y) {
@@ -661,32 +661,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('requests charm id from store then deploys', function() {
             app.setAttrs({
-              store: { charm: utils.makeStubFunction() },
+              charmstore: { getEntity: utils.makeStubFunction() },
               env: { deploy: utils.makeStubFunction() }
             });
             app._deployTargetDispatcher('cs:precise/apache2-25');
-            var store = app.get('store');
-            assert.equal(store.charm.callCount(), 1);
-            var charmArgs = store.charm.lastArguments();
+            var charmstore = app.get('charmstore');
+            assert.equal(charmstore.getEntity.callCount(), 1);
+            var charmArgs = charmstore.getEntity.lastArguments();
             assert.equal(charmArgs[0], 'precise/apache2-25',
                 'api requires removal of cs:');
             // The second param is the callback for the store response. So we
             // need to manually trigger it to test it.
-            var charmData = {
-              charm: {
-                id: 'foo',
-                name: 'bar',
-                options: {
-                  opt1: { 'default': 'opt1default' }
-                }
+            var charmData = new Y.juju.models.Charm({
+              id: 'cs:precise/foo',
+              name: 'bar',
+              options: {
+                opt1: { 'default': 'opt1default' }
               }
-            };
-            charmArgs[1].success(charmData);
+            });
+            charmArgs[1]([charmData]);
             var deploy = app.get('env').deploy;
             assert.equal(deploy.callCount(), 1);
             var deployArgs = deploy.lastArguments();
-            assert.equal(deployArgs[0], charmData.charm.id);
-            assert.equal(deployArgs[1], charmData.charm.name);
+            assert.equal(deployArgs[0], charmData.get('id'));
+            assert.equal(deployArgs[1], charmData.get('name'));
             assert.deepEqual(deployArgs[2], { opt1: 'opt1default' });
             assert.strictEqual(deployArgs[3], undefined);
             assert.equal(deployArgs[4], 1);
