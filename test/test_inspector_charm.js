@@ -19,21 +19,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Inspector Charm', function() {
-  var charmID, container, content, fakeCharm, fakeStore, testContainer,
+  var charmID, container, content, fakeCharm, factory, fakeStore, testContainer,
       utils, viewlets, view, views, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'charm-details-view',
-      'juju-charm-store',
       'charmstore-api',
       'juju-tests-utils',
+      'juju-tests-factory',
       'subapp-browser-views'
     ], function(Y) {
       utils = Y.namespace('juju-tests.utils');
       viewlets = Y.namespace('juju.viewlets');
       views = Y.namespace('juju.browser.views');
-
+      factory = Y.namespace('juju-tests.factory');
       charmID = 'cs:precise/apache2-10';
       fakeCharm = {
         get: function() {
@@ -65,7 +65,6 @@ describe('Inspector Charm', function() {
   });
 
   it('renders the view with a charm', function() {
-    var data = utils.loadFixture('data/browsercharm.json', false);
     testContainer = utils.makeContainer(this);
     testContainer.setHTML([
       '<div class="charmbrowser">',
@@ -73,20 +72,6 @@ describe('Inspector Charm', function() {
       '</div>',
       '</div>'
     ].join(''));
-
-    fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.set('datasource', {
-      sendRequest: function(params) {
-        // Stubbing the server callback value
-        params.callback.success({
-          response: {
-            results: [{
-              responseText: data
-            }]
-          }
-        });
-      }
-    });
 
     fakeStore = new Y.juju.charmstore.APIv4({});
     fakeStore.getEntity = function(entityId, callback) {
@@ -154,7 +139,6 @@ describe('Inspector Charm', function() {
   });
 
   it('closes itself safely', function() {
-    var data = utils.loadFixture('data/browsercharm.json', false);
     testContainer = utils.makeContainer(this);
     testContainer.setHTML([
       '<div class="charmbrowser">',
@@ -163,19 +147,7 @@ describe('Inspector Charm', function() {
       '</div>'
     ].join(''));
 
-    fakeStore = new Y.juju.charmworld.APIv3({});
-    fakeStore.set('datasource', {
-      sendRequest: function(params) {
-        // Stubbing the server callback value
-        params.callback.success({
-          response: {
-            results: [{
-              responseText: data
-            }]
-          }
-        });
-      }
-    });
+    fakeStore = factory.makeFakeCharmstore();
 
     var viewletAttrs = {
       db: new Y.juju.models.Database(),

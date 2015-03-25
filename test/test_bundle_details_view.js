@@ -46,7 +46,7 @@ describe('Browser bundle detail view', function() {
           factory = Y.namespace('juju-tests.factory');
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
-            store: factory.makeFakeStore()
+            charmstore: factory.makeFakeCharmstore()
           });
 
           done();

@@ -413,7 +413,6 @@ YUI.add('juju-gui', function(Y) {
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db,
-        store: this.get('store'),
         charmstore: this.get('charmstore')
       });
 
@@ -451,7 +450,6 @@ YUI.add('juju-gui', function(Y) {
           var sandboxModule = environments.sandbox;
           var State = environments.FakeBackend;
           var state = new State({
-            store: this.get('store'),
             charmstore: this.get('charmstore')
           });
           if (envOptions.user && envOptions.password) {
@@ -655,7 +653,6 @@ YUI.add('juju-gui', function(Y) {
           this.on_database_changed, this);
 
       // Share the store instance with subapps.
-      cfg.store = this.get('store');
       cfg.charmstore = this.get('charmstore');
       cfg.envSeries = this.getEnvDefaultSeries.bind(this);
       cfg.env = this.env;
@@ -1436,7 +1433,6 @@ YUI.add('juju-gui', function(Y) {
         db: this.db,
         env: this.env,
         ecs: this.env.ecs,
-        store: this.get('store'),
         charmstore: this.get('charmstore')
       };
 
@@ -1595,35 +1591,6 @@ YUI.add('juju-gui', function(Y) {
         }
       },
       /**
-         @attribute store
-         @default Y.juju.charmworld.APIv3
-         @type {Y.juju.charmworld.APIv3}
-       */
-      store: {
-        /**
-           We keep one instance of the store and will work on caching results
-           at the app level so that routes can share api calls. However, in
-           tests there's no config for talking to the api so we have to watch
-           out in test runs and allow the store to be broken.
-
-           @method store.valueFn
-        */
-        valueFn: function() {
-          var cfg = {
-            noop: false,
-            apiHost: ''
-          };
-          if (!window.juju_config || !window.juju_config.charmworldURL) {
-            console.error('No juju config to fetch charmworld store url');
-            cfg.noop = true;
-          } else {
-            cfg.apiHost = window.juju_config.charmworldURL;
-          }
-          return new Y.juju.charmworld.APIv3(cfg);
-        }
-      },
-
-      /**
         Store the instance of the charmstore api that we will be using
         throughout the application.
 
@@ -1680,7 +1647,6 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'juju-charm-models',
-    'juju-charm-store',
     'juju-models',
     'juju-notifications',
     'ns-routing-app-extension',

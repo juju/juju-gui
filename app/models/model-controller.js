@@ -179,11 +179,11 @@ YUI.add('model-controller', function(Y) {
       /**
         Reference to the client charm store.
 
-        @attribute store
+        @attribute charmstore
         @type {Object}
         @default undefined
       */
-      store: {}
+      charmstore: {}
     }
   });
 

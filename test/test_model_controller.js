@@ -46,7 +46,7 @@ describe('Model Controller Promises', function() {
     modelController = new yui.juju.ModelController({
       db: db,
       env: env,
-      store: factory.makeFakeStore()
+      charmstore: factory.makeFakeCharmstore()
     });
     cleanups = [];
   });

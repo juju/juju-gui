@@ -301,7 +301,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     'promise',
     'json-parse',
     'datasource-local',
-    'juju-charm-store',
     'juju-env-fakebackend'
   ]
 });

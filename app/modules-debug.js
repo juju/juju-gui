@@ -494,10 +494,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/endpoints.js'
         },
 
-        'juju-charm-store': {
-          fullpath: '/juju-ui/store/charmworld.js'
-        },
-
         'charmstore-api': {
           fullpath: '/juju-ui/store/charmstore-api.js'
         },
@@ -530,7 +526,6 @@ var GlobalConfig = {
           use: [
             'juju-env-base',
             'juju-env-go',
-            'juju-charm-store',
             'juju-notification-controller']
         },
 

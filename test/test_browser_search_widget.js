@@ -24,7 +24,6 @@ describe('browser search widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
-                               'juju-charm-store',
                                'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',

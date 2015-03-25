@@ -70,7 +70,7 @@ describe('Inspector Constraints', function() {
 
   before(function(done) {
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
-      'node-event-simulate', 'juju-charm-store', 'juju-charm-models',
+      'node-event-simulate', 'juju-charm-models',
       'charmstore-api'];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       juju = Y.namespace('juju');

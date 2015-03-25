@@ -24,7 +24,7 @@ describe('Inspector Settings', function() {
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'juju-charm-store', 'juju-charm-models', 'node-event-simulate',
+      'juju-charm-models', 'node-event-simulate',
       'environment-change-set', 'charmstore-api'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');

@@ -26,7 +26,6 @@ describe('topology bundle module', function() {
     Y = YUI(GlobalConfig).use([
       'juju-topology',
       'juju-view-bundle',
-      'juju-charm-store',
       'charmstore-api',
       'juju-models',
       'juju-tests-utils',
