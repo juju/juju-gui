@@ -434,16 +434,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
-     * The store is the api endpoint for fetching data.
-     *
-     * @attribute store
-     * @default undefined
-     * @type {Object}
-     *
-     */
-    store: {},
-
-    /**
      * The "deploy" function prompts the user for service configuration and
      * deploys a service.
      *

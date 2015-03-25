@@ -369,7 +369,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'event-tracker',
     'event-simulate',
     'gallery-markdown',
-    'juju-charm-store',
     'juju-browser-models',
     'juju-models',
     'juju-templates',

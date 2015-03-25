@@ -57,7 +57,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     name: {value: 'Environment'},
     maasServer: {value: null},
     providerType: {value: 'demonstration'},
-    store: {required: true},
     charmstore: {},
     token: {value: 'demoToken'}
   };
