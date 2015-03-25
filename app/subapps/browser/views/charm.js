@@ -344,7 +344,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this.hideIndicator(this.get('renderTo'));
       } else {
         this.get('charmstore').getEntity(
-            this.get('entityId'),
+            this.get('entityId').replace('cs:', ''),
             function(charms) {
               var charm = charms[0];
               this.set('charm', charm);
