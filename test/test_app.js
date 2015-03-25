@@ -1269,7 +1269,7 @@ describe('File drag over notification system', function() {
             user: 'admin',
             password: 'admin',
             jujuCoreVersion: '1.21.1.1-trusty-amd64',
-            store: new Y.juju.charmworld.APIv3({})
+            charmstorestore: new Y.juju.charmstore.APIv4({})
           });
       app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the
@@ -1283,7 +1283,7 @@ describe('File drag over notification system', function() {
         viewContainer: container,
         sandbox: true,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
-        store: new Y.juju.charmworld.APIv3({})
+        charmstore: new Y.juju.charmstore.APIv4({})
       });
       app.showView(new Y.View());
       var webHandler = app.env.get('webHandler');

@@ -321,7 +321,6 @@ describe('Endpoints map handlers', function() {
                                'juju-tests-factory',
                                'juju-endpoints-controller',
                                'juju-controllers',
-                               'juju-charm-store',
                                'datasource-local'],
     function(Y) {
       juju = Y.namespace('juju');
@@ -345,7 +344,7 @@ describe('Endpoints map handlers', function() {
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
-      store: factory.makeFakeStore()
+      charmstore: factory.makeFakeCharmstore()
     });
     app.showView(new Y.View());
     destroyMe.push(app);
@@ -362,7 +361,6 @@ describe('Endpoints map handlers', function() {
 
   it('should update endpoints map when pending services are added',
      function(done) {
-       var store = factory.makeFakeStore();
        var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
        app.db.charms.add({id: charm_id});
@@ -381,14 +379,13 @@ describe('Endpoints map handlers', function() {
          id: service_name,
          pending: true,
          loaded: true,
-         store: store,
+         charmstore: factory.makeFakeCharmstore(),
          charm: charm_id
        });
      });
 
   it('should update endpoints map when non-pending services are added',
      function(done) {
-       var store = factory.makeFakeStore();
        var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
        app.db.charms.add({id: charm_id});
@@ -407,7 +404,7 @@ describe('Endpoints map handlers', function() {
          id: service_name,
          pending: false,
          loaded: true,
-         store: store,
+         charmstore: factory.makeFakeCharmstore(),
          charm: charm_id
        });
      });
@@ -518,7 +515,6 @@ describe('Service config handlers', function() {
                                'juju-tests-utils',
                                'juju-endpoints-controller',
                                'juju-controllers',
-                               'juju-charm-store',
                                'datasource-local',
                                'environment-change-set'],
     function(Y) {

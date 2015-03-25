@@ -216,7 +216,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, CharmworldAPI, container, next, utils;
+      var Y, app, browser, container, next, utils;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -227,7 +227,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
-              CharmworldAPI = Y.namespace('juju').charmworld.APIv3;
               utils = Y.namespace('juju-tests.utils');
               next = function() {};
               done();

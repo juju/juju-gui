@@ -32,7 +32,6 @@ describe('Inspector Conflict UX', function() {
                     'juju-views',
                     'node-event-simulate',
                     'subapp-browser-sidebar',
-                    'juju-charm-store',
                     'juju-charm-models',
                     'base',
                     'charmstore-api',

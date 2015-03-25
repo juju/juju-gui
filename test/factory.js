@@ -21,43 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
   var tests = Y.namespace('juju-tests');
 
-  var _cached_charms = (function() {
-    var url,
-        charms = {},
-        names = [
-          'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
-          'memcached', 'puppetmaster', 'mongodb'
-        ];
-    Y.Array.each(names, function(name) {
-      url = 'data/' + name + '-api-response.json';
-      charms[name] = tests.utils.loadFixture(url, true);
-    });
-    return charms;
-  })();
-
   tests.factory = {
-
-    makeFakeStore: function() {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
-        store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
-        var charmName = store_id.split('/')[1];
-        charmName = charmName.split('-', 1);
-        if (Y.Lang.isArray(charmName)) {
-          charmName = charmName[0];
-        }
-        if (charmName in _cached_charms) {
-          var response = _cached_charms[charmName];
-          if (cache) {
-            cache.add(response.charm);
-          }
-          callbacks.success(response);
-        } else {
-          callbacks.failure(new Error('Unable to load charm ' + charmName));
-        }
-      };
-      return fakeStore;
-    },
 
     /**
       Fetches the apiv4 response data for the available charms to be used in
@@ -106,9 +70,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
     },
 
     makeFakeBackend: function() {
-      var fakeStore = this.makeFakeStore();
       var fakebackend = new Y.juju.environments.FakeBackend({
-        store: fakeStore,
         charmstore: this.makeFakeCharmstore()
       });
       fakebackend.login('user-admin', 'password');

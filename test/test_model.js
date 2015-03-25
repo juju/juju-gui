@@ -1260,12 +1260,11 @@ describe('test_model.js', function() {
   });
 
   describe('Charm load', function() {
-    var Y, models, conn, env, app, container, fakeStore, data, juju;
+    var Y, models, conn, env, app, container, data, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
-        'juju-tests-utils', 'json-stringify',
-        'juju-charm-store'], function(Y) {
+        'juju-tests-utils', 'json-stringify'], function(Y) {
         models = Y.namespace('juju.models');
         juju = Y.namespace('juju');
         done();
@@ -1278,19 +1277,6 @@ describe('test_model.js', function() {
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
-      data = [];
-      fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: data
-              }]
-            }
-          });
-        }
-      });
     });
 
     afterEach(function() {
@@ -1540,7 +1526,6 @@ describe('test_model.js', function() {
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models',
         'juju-tests-utils',
-        'juju-charm-store',
         'juju-charm-models'],
       function(Y) {
         utils = Y.namespace('juju-tests.utils');

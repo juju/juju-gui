@@ -25,7 +25,7 @@ describe('Inspector Overview', function() {
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'event-key', 'juju-charm-store', 'juju-charm-models',
+      'event-key', 'juju-charm-models',
       'node-event-simulate', 'environment-change-set', 'charmstore-api',
       'service-inspector'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {

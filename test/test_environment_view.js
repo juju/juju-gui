@@ -126,7 +126,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
         'node-event-simulate', 'juju-gui', 'slider',
-        'landscape', 'dump', 'juju-view-utils', 'juju-charm-store',
+        'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');

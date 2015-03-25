@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Browser charm view', function() {
-    var container, CharmView, cleanIconHelper, models, node, utils, view,
-        views, Y, testContainer;
+    var container, CharmView, cleanIconHelper, factory, models, node, utils,
+        view, views, Y, testContainer;
 
 
     before(function(done) {
@@ -32,8 +32,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'charmstore-api',
           'json-stringify',
           'juju-charm-models',
-          'juju-charm-store',
           'juju-tests-utils',
+          'juju-tests-factory',
           'node',
           'node-event-simulate',
           'subapp-browser-charmview',
@@ -41,6 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             views = Y.namespace('juju.browser.views');
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests.utils');
+            factory = Y.namespace('juju-tests.factory');
             CharmView = views.BrowserCharmView;
             cleanIconHelper = utils.stubCharmIconPath();
             done();
@@ -148,31 +149,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('has sharing links', function() {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: 'README content.'
-              }]
-            }
-          });
-        }
-      });
-
       view = new CharmView({
         entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9',
+          id: 'precise/wordpress',
           code_source: { location: 'lp:~foo'}
         }),
         container: utils.makeContainer(this),
-        store: fakeStore
+        charmstore: factory.makeFakeCharmstore()
       });
       view.render();
       var links = container.all('#sharing a');
@@ -416,30 +403,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: [
-                  'README Header',
-                  '============='
-                ].join('\n')
-              }]
-            }
-          });
-        }
-      });
-
       view = new CharmView({
         activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9',
+          id: 'precise/wordpress-9',
           code_source: { location: 'lp:~foo' }
         }),
         container: utils.makeContainer(this),
@@ -807,25 +777,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value.
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: utils.loadFixture('data/related.json')
-              }]
-            }
-          });
-        }
-      });
+      var fakeStore = factory.makeFakeCharmstore();
 
       view = new CharmView({
         activeTab: '#bws-does-not-exist',
         entity: new models.Charm(data),
         renderTo: testContainer,
-        store: fakeStore
+        charmstore: fakeStore
       });
       view.render();
 
