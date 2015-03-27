@@ -353,7 +353,10 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // In order to destroy this component when we change viewlets we need
         // to store it somewhere we'll have access to it at that stage.
         view.renderedComponent = React.render(
-            React.createElement(view, model.getAttrs()),
+            React.createElement(view, {
+              model: model.getAttrs(),
+              viewletManager: view.viewletManager.getAttrs()
+            }),
             view.wrapperElement);
       }
     },

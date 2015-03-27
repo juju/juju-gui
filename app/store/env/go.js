@@ -1166,6 +1166,29 @@ YUI.add('juju-env-go', function(Y) {
       userCallback(transformedData);
     },
 
+    setCharm: function(serviceName, charmUrl, force, callback) {
+      this._setCharm(serviceName, charmUrl, force, function(result) {
+        var db = this.get('db');
+        if (result.err) {
+          db.notifications.add({
+            title: 'Error setting charm.',
+            message: result.err,
+            level: 'error'
+          });
+          return;
+        }
+        this.get_charm(charmUrl, function(data) {
+          if (data.err) {
+            db.notifications.add({
+              title: 'Error retrieving charm.',
+              message: data.err,
+              level: 'error'
+            });
+          }
+        });
+      }.bind(this));
+    },
+
     /**
        Set a service's charm.
 
@@ -1177,7 +1200,7 @@ YUI.add('juju-env-go', function(Y) {
          operation is performed.
        @return {undefined} Sends a message to the server only.
      */
-    setCharm: function(service_name, charm_url, force, callback) {
+    _setCharm: function(service_name, charm_url, force, callback) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(this.handleSetCharm, this,

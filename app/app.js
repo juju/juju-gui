@@ -441,7 +441,8 @@ YUI.add('juju-gui', function(Y) {
           user: this.get('user'),
           password: this.get('password'),
           readOnly: this.get('readOnly'),
-          conn: this.get('conn')
+          conn: this.get('conn'),
+          db: this.db
         };
         var environments = Y.namespace('juju.environments');
         var webModule = environments.web;

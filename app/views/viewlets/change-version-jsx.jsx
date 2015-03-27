@@ -24,17 +24,27 @@ YUI.add('change-version-view-jsx', function(Y) {
   var ns = Y.namespace('juju.viewlets');
 
   ns.ChangeVersionList = React.createClass({
+    // React is not MVC use utility classes and pass them into views.
+    // If it doesn't involve the UI do not put it in the component.
+    _upgradeService: function(upgradeTo) {
+      var props = this.props,
+          env = props.viewletManager.env,
+          setCharm = env.setCharm;
+      setCharm.call(env, props.model.id, upgradeTo, false);
+    },
+
     render: function() {
-      var items = [];
-      if (this.props.available_versions) {
-        this.props.available_versions.forEach(function(version) {
-          items.push(<ns.ChangeVersionItem version={version} />)
-        });
+      var items = [],
+          availableVersions = this.props.model.available_versions;
+      if (availableVersions) {
+        availableVersions.forEach(function(version) {
+          items.push(<ns.ChangeVersionItem version={version} upgradeService={this._upgradeService} />)
+        }, this);
       }
+      // Note JSX is not HTML, to set classes you use the jsdom api key
+      // className.
       return (
         <div>
-          // Note JSX is not HTML, to set classes you use the jsdom api key
-          // className.
           <div className="unit-list-header">
             <div className="change-version-close link">
               <i className="sprite close-inspector-click"></i>
@@ -50,13 +60,22 @@ YUI.add('change-version-view-jsx', function(Y) {
   });
 
   ns.ChangeVersionItem = React.createClass({
+    _handleUpgradeService: function() {
+      var props = this.props;
+      props.upgradeService(props.version);
+    },
+
     render: function() {
       var id = this.props.version,
-          strippedId = id.replace('cs:', '');
+          href = '/' + id.replace('cs:', '');
+      // Note JSX is not HTML, to attach event handlers you use the jsdom api
+      // key on the element. React then creates a single delegate on the
+      // container and listens for the click events to bubble up. This does
+      // not create an 'onClick' string on the element in the DOM.
       return (
         <li>
-          <a href={strippedId}>{id}</a>
-          <a className="upgrade-link right-link" data-upgradeto={id}>Upgrade</a>
+          <a href={href}>{id}</a>
+          <a className="upgrade-link right-link" onClick={this._handleUpgradeService} data-upgradeto={id}>Upgrade</a>
         </li>
       );
     }
