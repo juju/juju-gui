@@ -25,3 +25,4 @@ libpeerconnection.log
 .vagrant
 .floo*
 *.pyc
+.module-cache
