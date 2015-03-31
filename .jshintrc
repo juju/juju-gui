@@ -35,7 +35,8 @@
         "consoleManager",
         "it",
         "saveAs",
-        "zip"
+        "zip",
+        "React"
     ],
 
 
