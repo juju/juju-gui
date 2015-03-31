@@ -632,7 +632,7 @@ build-prod: build-shared | $(LINK_PROD_FILES)
 
 .PHONY: run-jsx-watcher
 run-jsx-watcher:
-	jsx --no-cache-dir -wx jsx . . &
+	jsx --no-cache-dir -wx jsx app app &
 
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
