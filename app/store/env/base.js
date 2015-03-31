@@ -108,6 +108,13 @@ YUI.add('juju-env-base', function(Y) {
     */
     'conn': {},
     /**
+      The environment database.
+
+      @attribute db
+      @type {Object}
+    */
+    'db': {},
+    /**
       Environment change set object.
 
       @attribute ecs

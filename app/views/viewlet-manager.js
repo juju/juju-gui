@@ -257,7 +257,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
         should be rendered.
     */
     renderViewlet: function(view, name, model, viewContainer) {
-      if (!view.name) { view.name = name; }
+      // A React component is just a function so you cannot set the read-only
+      // name property.
+      if (!view.name && view instanceof Y.View) { view.name = name; }
       if (view.slot) { return; }
       if (view instanceof Y.View) {
         if (!view.model) {
@@ -266,13 +268,21 @@ YUI.add('juju-viewlet-manager', function(Y) {
         view.render(this.getAttrs());
         viewContainer.append(view.get('container'));
         this.databindingBind(model, view);
-      } else {
+      } else if (typeof view.render === 'function') {
+        // We only pre-render if it's a YUI view.
         var result = view.render(model, this.getAttrs());
         if (result && typeof result === 'string') {
           view.container = Y.Node.create(result);
         }
         viewContainer.append(view.container);
         this.databindingBind(model, view);
+      } else {
+        // If this is a React component we need to create a container so that it
+        // will play nice with the Y.View's and then we need to store that
+        // container with the React component constructor.
+        var wrapperNode = Y.Node.create('<div/>');
+        viewContainer.append(wrapperNode);
+        view.wrapperElement = wrapperNode.getDOMNode();
       }
 
     },
@@ -316,12 +326,39 @@ YUI.add('juju-viewlet-manager', function(Y) {
             // parameter needed to be added so that multiple views could
             // be rendered into a single container
             if (!viewToCheck.slot) {
-              viewToCheck.hide();
+              // If this is a React component then it doesn't have a hide
+              if (typeof viewToCheck.hide === 'function') {
+                viewToCheck.hide();
+              } else if (viewToCheck.renderedComponent) {
+                // It's a React component but it may not be rendered so we need
+                // to check if it has a DOM node.
+                var domNode;
+                try {
+                  domNode = React.findDOMNode(viewToCheck.renderedComponent);
+                } catch (e) {
+                  // do nothing if it's not in the DOM.
+                }
+                if (domNode) {
+                  React.unmountComponentAtNode(domNode.parentNode);
+                }
+              }
             }
           }
         });
       }
-      view.show();
+      if (typeof view.show === 'function') {
+        // React components don't hae a show method.
+        view.show();
+      } else {
+        // In order to destroy this component when we change viewlets we need
+        // to store it somewhere we'll have access to it at that stage.
+        view.renderedComponent = React.render(
+            React.createElement(view, {
+              model: model.getAttrs(),
+              viewletManager: view.viewletManager.getAttrs()
+            }),
+            view.wrapperElement);
+      }
     },
 
     /**
@@ -407,9 +444,14 @@ YUI.add('juju-viewlet-manager', function(Y) {
         var singleView = views[key];
 
         if (singleView instanceof Y.View === false) {
-          /* jshint -W055 */
-          singleView = new singleView();
-          singleView.addTarget(this);
+          // YUI Y.View constructors do not have a displayName property in
+          // their prototype but React components do so this is an easy way
+          // to check if this is a React component or not.
+          if (!singleView.displayName) {
+            /* jshint -W055 */
+            singleView = new singleView();
+            singleView.addTarget(this);
+          }
         }
 
         singleView.viewletManager = this;
@@ -428,7 +470,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
     */
     destructor: function() {
       Y.Object.each(this.views, function(view, name) {
-        if (!view.slot) {
+        if (!view.slot && view.destroy) {
           view.destroy();
         }
       });

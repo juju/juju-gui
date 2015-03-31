@@ -418,6 +418,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/change-version.js'
         },
 
+        'change-version-view-jsx': {
+          fullpath: '/juju-ui/views/viewlets/change-version-jsx.js'
+        },
+
         'scale-up-view': {
           fullpath: '/juju-ui/views/viewlets/scale-up.js'
         },

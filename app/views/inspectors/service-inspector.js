@@ -50,7 +50,8 @@ YUI.add('service-inspector', function(Y) {
       unitDetails: viewlets.UnitDetails,
       inspectorHeader: viewlets.InspectorHeader,
       relations: viewlets.Relations,
-      changeVersion: viewlets.ChangeVersion
+      changeVersion: viewlets.ChangeVersionList
+      //changeVersion: viewlets.ChangeVersion
     },
 
     events: {
@@ -365,6 +366,7 @@ YUI.add('service-inspector', function(Y) {
     'unit-details-view',
     'inspector-header-view',
     'service-relations-view',
-    'change-version-view'
+    'change-version-view',
+    'change-version-view-jsx'
   ]
 });
