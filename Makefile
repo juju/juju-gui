@@ -25,6 +25,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev \
 		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/react-[0-9]+\.[0-9]+\.[0-9]+(\.min)*\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
