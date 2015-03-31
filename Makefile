@@ -25,6 +25,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev \
 		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/react-[0-9]+\.[0-9]+\.[0-9]+(\.min)*\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
@@ -62,6 +63,8 @@ ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
     | sed 's/[ :-]//g')
 RELEASE_TARGETS=dist
+JSX_FILES=$(shell find . -name '*.jsx')
+COMPILED_JSX_FILES=$(patsubst %.jsx, %.js, $(JSX_FILES))
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
@@ -337,7 +340,11 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(BUILD_FILES): $(JSFILES) $(CSS_TARGETS) $(THIRD_PARTY_JS) \
+$(COMPILED_JSX_FILES): $(JSX_FILES)
+	jsx --no-cache-dir -x jsx . .
+
+$(BUILD_FILES): $(COMPILED_JSX_FILES) $(JSFILES) $(CSS_TARGETS) \
+	  $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
 		build-shared/juju-ui/templates.js \
 		bin/merge-files lib/merge-files.js \
 		app/assets/javascripts/js-yaml.min.js \
@@ -615,7 +622,8 @@ clean-all: clean clean-deps clean-docs
 build: build-prod build-debug build-devel
 
 build-shared: build-shared/juju-ui/assets $(NODE_TARGETS) spritegen \
-	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
+	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js \
+	  run-jsx-watcher
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
 build-devel: build-shared
@@ -623,6 +631,10 @@ build-devel: build-shared
 build-debug: build-shared | $(LINK_DEBUG_FILES)
 
 build-prod: build-shared | $(LINK_PROD_FILES)
+
+.PHONY: run-jsx-watcher
+run-jsx-watcher:
+	jsx --no-cache-dir -wx jsx app app &
 
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
