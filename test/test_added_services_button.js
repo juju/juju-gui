@@ -27,6 +27,7 @@ describe('added services button', function() {
         'base-build',
         'juju-tests-utils',
         'added-services-button',
+        'added-services-button-extension',
         'node-event-simulate',
         function(Y) {
           utils = Y.namespace('juju-tests.utils');
@@ -55,25 +56,30 @@ describe('added services button', function() {
       testView.destroy();
     });
 
-    it('creates a new instance of the added services button', function() {
-      assert.strictEqual(testView._addedServicesButton, undefined);
-      testView._renderAddedServicesButton();
-      assert.equal(
-          testView._addedServicesButton instanceof views.AddedServicesButton,
-          true);
+    it('fires changeState from the __changeState method', function() {
+      var testData = { foo: 'bar' };
+      var fire = utils.makeStubMethod(testView, 'fire');
+      testView.__changeState(testData);
+      assert.equal(fire.callCount(), 1);
+      var fireArgs = fire.lastArguments();
+      assert.equal(fireArgs[0], 'changeState');
+      assert.deepEqual(fireArgs[1], testData);
     });
 
-    it('renders the button to the DOM', function() {
-      assert.strictEqual(container.one('.action-indicator'), null);
-      testView._renderAddedServicesButton();
-      assert.equal(container.one('.action-indicator') instanceof Y.Node, true);
-    });
+    it('calls to render the AddedServicesButton', function() {
+      var serviceCount = 7,
+          closed = true;
 
-    it('updates existing added services button', function() {
-      testView._renderAddedServicesButton();
-      assert.equal(testView._addedServicesButton.get('serviceCount'), 0);
-      testView._renderAddedServicesButton(99);
-      assert.equal(testView._addedServicesButton.get('serviceCount'), 99);
+      var struct = utils.makeStubReactComponent(views, 'AddedServicesButton', {
+        render: function() {
+          assert.equal(this.props.serviceCount, serviceCount);
+          assert.equal(this.props.closed, closed);
+        }
+      });
+      this._cleanups.push(struct.reset);
+
+      testView._renderAddedServicesButton(serviceCount, closed);
+      assert.equal(struct.assertions.render.callCount(), 1)
     });
   });
 
