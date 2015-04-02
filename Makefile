@@ -14,7 +14,7 @@
 # of network access being unpredictable. Additionally, working with the
 # release or an export, a developer may not be working in a checkout.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
-	-o -wholename './build*' -prune \
+	-o -wholename './build-*' -prune \
 	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o -wholename './yuidoc*' -prune \
@@ -64,7 +64,8 @@ PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
     | sed 's/[ :-]//g')
 RELEASE_TARGETS=dist
 JSX_FILES=$(shell find . -name '*.jsx')
-COMPILED_JSX_FILES=$(patsubst %.jsx, %.js, $(JSX_FILES))
+JSX_TO_JS=$(patsubst %.jsx, %.js, $(JSX_FILES))
+COMPILED_JSX_FILES=$(patsubst ./app/%, ./build/%, $(JSX_TO_JS))
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
@@ -341,7 +342,7 @@ beautify: virtualenv/bin/fixjsstyle
 spritegen: $(SPRITE_GENERATED_FILES)
 
 $(COMPILED_JSX_FILES): $(JSX_FILES)
-	jsx --no-cache-dir -x jsx . .
+	jsx --no-cache-dir -x jsx app build
 
 $(BUILD_FILES): $(COMPILED_JSX_FILES) $(JSFILES) $(CSS_TARGETS) \
 	  $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
@@ -380,6 +381,7 @@ LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
 	build-debug/juju-ui/store \
 	build-debug/juju-ui/subapps \
 	build-debug/juju-ui/views \
+	build-debug/juju-ui/build \
 	build-debug/juju-ui/widgets \
 	build-debug/juju-ui/assets/javascripts \
 	build-debug/juju-ui/templates.js
@@ -427,6 +429,8 @@ $(LINK_DEBUG_FILES):
 	$(call link-files,debug)
 	ln -sf "$(PWD)/app/app.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/websocket-logging.js" build-debug/juju-ui/
+	echo $(PWD)
+	ln -sf "$(PWD)/build" build-debug/juju-ui/build
 	ln -sf "$(PWD)/app/models" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/store" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/subapps" build-debug/juju-ui/
@@ -634,7 +638,7 @@ build-prod: build-shared | $(LINK_PROD_FILES)
 
 .PHONY: run-jsx-watcher
 run-jsx-watcher:
-	jsx --no-cache-dir -wx jsx app app &
+	jsx --no-cache-dir -wx jsx app build &
 
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
