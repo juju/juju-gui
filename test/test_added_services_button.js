@@ -84,44 +84,41 @@ describe('added services button', function() {
   });
 
   describe('AddedServicesButton', function() {
-    var container, button;
+    var button, changeState, element;
+    var ReactTestUtils = React.addons.TestUtils;
 
     beforeEach(function() {
-      container = utils.makeContainer(this);
-      container.setHTML('<div class="added-services-button"></div>');
-      button = new views.AddedServicesButton({
+      changeState = utils.makeStubFunction();
+      element = React.createElement(views.AddedServicesButton, {
         serviceCount: 1,
         closed: true,
-        container: container
+        changeState: changeState
       });
+      button = ReactTestUtils.renderIntoDocument(element);
     });
 
     afterEach(function() {
-      button.destroy();
+      React.unmountComponentAtNode(button.getDOMNode().parentNode);
     });
 
-    it('binds a click handler which fires a changestate event', function(done) {
-      button.on('changeState', function() {
-        done();
-      });
-      button.get('container').simulate('click');
+    it('binds a click handler which calls changeState', function() {
+      var node = button.getDOMNode();
+      ReactTestUtils.Simulate.click(node);
+      assert.equal(changeState.callCount(), 1);
     });
 
     it('shows the supplied service count', function() {
-      button.render();
-      assert.equal(
-          button.get('container').get('text').indexOf('(1)') > 0, true);
+      var stringEle = React.renderToStaticMarkup(element);
+      assert.equal(stringEle.indexOf('(1)') > 0, true);
     });
 
     it('shows the proper indicator to open or close the view', function() {
-      button.render();
-      var btnContainer = button.get('container');
-      assert.isNotNull(btnContainer.one('.added-services-open'));
-      assert.isNull(btnContainer.one('.added-services-close'));
-      button.set('closed', false);
-      button.render();
-      assert.isNull(btnContainer.one('.added-services-open'));
-      assert.isNotNull(btnContainer.one('.added-services-close'));
+      var btnContainer = button.getDOMNode();
+      assert.isNotNull(btnContainer.querySelector('.added-services-open'));
+      assert.isNull(btnContainer.querySelector('.added-services-close'));
+      button.setProps({closed: false});
+      assert.isNull(btnContainer.querySelector('.added-services-open'));
+      assert.isNotNull(btnContainer.querySelector('.added-services-close'));
     });
   });
 
