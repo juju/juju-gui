@@ -25,6 +25,62 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   jujuTests.utils = {
 
     /**
+      Make a stubbed React component handling storing the original component
+      and restoring it after the test.
+
+      @method makeStubReactComponent
+      @param {Object} context The context that the existing constructor lives.
+      @param {String} constructor The name of the React component on the
+        context.
+      @param {Object} assertions An object whos keys are the components native
+        functions you want to overwrite to make assertions.
+      @return {Object} It returns the wrapped assertions and a reset method to
+        return the stubbed method back to the original version.
+    */
+    makeStubReactComponent: function(context, constructor, assertions) {
+      var original = context[constructor];
+
+      function stubGenerator(key, assertions) {
+        var stub = function() {
+          var args = Array.prototype.slice.call(arguments, 0);
+          stub._allArguments.push(args);
+          assertions.apply(this, args);
+          if (key === 'render') {
+            // Wrap render so that we can track if it was called and to make
+            // sure it returns an element so that React doesn't complain.
+            return React.createElement('div');
+          }
+        };
+        stub._allArguments = [];
+        stub.called = function() {
+          return !!stub._allArguments.length;
+        };
+        stub.callCount = function() {
+          return stub._allArguments.length;
+        };
+        stub.lastArguments = function() {
+          return stub._allArguments[stub._allArguments.length - 1];
+        };
+        stub.allArguments = function() {
+          return stub._allArguments.slice(0);
+        };
+        return stub;
+      }
+      // Loop through each supplied assertion function and add the utility
+      // methods.
+      Object.keys(assertions).forEach(function(key) {
+        assertions[key] = stubGenerator(key, assertions[key]);
+      });
+      context[constructor] = React.createClass(assertions);
+      return {
+        assertions: assertions,
+        reset: function() {
+          context[constructor] = original;
+        }
+      };
+    },
+
+    /**
      * Make a stub function.  Pass in 0 or more arguments to become responses
      * that the function cycles through.
      *

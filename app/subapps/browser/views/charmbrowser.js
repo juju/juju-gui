@@ -479,6 +479,7 @@ YUI.add('juju-charmbrowser', function(Y) {
 }, '', {
   requires: [
     'added-services-button',
+    'added-services-button-extension',
     'browser-token-container',
     'browser-overlay-indicator',
     'event-tracker',

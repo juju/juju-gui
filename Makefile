@@ -14,6 +14,34 @@
 # of network access being unpredictable. Additionally, working with the
 # release or an export, a developer may not be working in a checkout.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
+	-o -wholename './build-*' -prune \
+	-o -wholename './docs*' -prune \
+	-o -wholename './test/assets*' -prune \
+	-o -wholename './yuidoc*' -prune \
+	-o \( \
+		-name '*.js' \
+		-o -name 'generateTemplates' \
+	\) -print \
+	| sort | sed -e 's/^\.\///' \
+	| grep -Ev \
+		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/react-(with-addons-)*((\.)*[0-9]+){3}(\.min)*\.js$$' \
+		-e '^app/assets/javascripts/spin\.min\.js$$' \
+		-e '^app/assets/javascripts/spinner\.js$$' \
+		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
+		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
+		-e '^app/assets/javascripts/prettify.js$$' \
+		-e '^app/assets/javascripts/FileSaver.js$$' \
+		-e '^app/assets/javascripts/gallery-.*\.js$$' \
+		-e '^app/assets/javascripts/zip.js$$' \
+		-e '^app/assets/javascripts/inflate.js$$' \
+		-e '^app/assets/javascripts/deflate.js$$' \
+		-e '^app/assets/javascripts/unscaled-pack.js$$' \
+		-e '^server.js$$')
+# In order to lint only the non-built files we need to exclude all the build
+# directories here. Whereas with JSFILES we want to include the build/
+# directory. Note the extra - on the first line of the find.
+LINT_JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
 	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
@@ -25,7 +53,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev \
 		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
-		-e '^app/assets/javascripts/react-[0-9]+\.[0-9]+\.[0-9]+(\.min)*\.js$$' \
+		-e '^app/assets/javascripts/react-(with-addons-)*((\.)*[0-9]+){3}(\.min)*\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
@@ -64,7 +92,9 @@ PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
     | sed 's/[ :-]//g')
 RELEASE_TARGETS=dist
 JSX_FILES=$(shell find . -name '*.jsx')
-COMPILED_JSX_FILES=$(patsubst %.jsx, %.js, $(JSX_FILES))
+JSX_TO_JS=$(patsubst %.jsx, %.js, $(JSX_FILES))
+COMPILED_JSX_FILES=$(patsubst ./app/%, ./build/%, $(JSX_TO_JS))
+SYMLINKED_APP_FILES=$(shell find app/ -type l -not -path 'app/assets/*')
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
@@ -294,11 +324,11 @@ custom-d3: node_modules/smash node_modules/d3
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
-		-x $(LINT_IGNORE) $(JSFILES) \
+		-x $(LINT_IGNORE) $(LINT_JSFILES) \
 	    | sed -n '0,/^Found /p'| sed '/^Found /q1' # less garbage output
 
 jshint: node_modules/jshint
-	node_modules/jshint/bin/jshint --verbose $(JSFILES)
+	node_modules/jshint/bin/jshint --verbose $(LINT_JSFILES)
 
 undocumented:
 	bin/lint-yuidoc --generate-undocumented > undocumented
@@ -341,7 +371,7 @@ beautify: virtualenv/bin/fixjsstyle
 spritegen: $(SPRITE_GENERATED_FILES)
 
 $(COMPILED_JSX_FILES): $(JSX_FILES)
-	jsx --no-cache-dir -x jsx . .
+	jsx --no-cache-dir -x jsx app build
 
 $(BUILD_FILES): $(COMPILED_JSX_FILES) $(JSFILES) $(CSS_TARGETS) \
 	  $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
@@ -437,6 +467,9 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/utils" build-debug/juju-ui/
 	ln -sf "$(PWD)/build-shared/juju-ui/templates.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/modules-debug.js" build-debug/juju-ui/assets/modules.js
+	# Symlink the build files back into the app tree so that the python server
+	# can find them.
+	cp -ansR $(PWD)/build/* app/
 
 $(LINK_PROD_FILES):
 	$(call link-files,prod)
@@ -495,7 +528,7 @@ test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
 	cat test/extracted_startup_code >> $@
 	cat test/test_startup.js.bottom >> $@
 
-test-prep: test/test_startup.js
+test-prep: remove-app-symlinks test/test_startup.js
 
 test-filtering:
 	# Ensure no tests are disabled.
@@ -605,7 +638,7 @@ prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	(cd build-prod && python ../bin/http_server.py 8888)
 
-clean:
+clean: remove-app-symlinks
 	rm -rf build-shared build-debug build-prod
 	find app/assets/javascripts/ -type l | xargs rm -rf
 	rm -f test/test_startup.js
@@ -622,11 +655,10 @@ clean-all: clean clean-deps clean-docs
 build: build-prod build-debug build-devel
 
 build-shared: build-shared/juju-ui/assets $(NODE_TARGETS) spritegen \
-	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js \
-	  run-jsx-watcher
+	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
-build-devel: build-shared
+build-devel: build-shared remove-app-symlinks run-jsx-watcher
 
 build-debug: build-shared | $(LINK_DEBUG_FILES)
 
@@ -634,7 +666,11 @@ build-prod: build-shared | $(LINK_PROD_FILES)
 
 .PHONY: run-jsx-watcher
 run-jsx-watcher:
-	jsx --no-cache-dir -wx jsx app app &
+	jsx --no-cache-dir -wx jsx app build &
+
+.PHONY: remove-app-symlinks
+remove-app-symlinks:
+	-rm $(SYMLINKED_APP_FILES)
 
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets

@@ -327,6 +327,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/added-services-button.js'
         },
 
+        'added-services-button-extension': {
+          fullpath: '/juju-ui/subapps/browser/views/' +
+              'added-services-button-extension.js'
+        },
+
         'juju-views': {
           use: [
             'handlebars',

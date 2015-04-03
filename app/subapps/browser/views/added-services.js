@@ -393,6 +393,7 @@ YUI.add('juju-added-services', function(Y) {
 }, '', {
   requires: [
     'added-services-button',
+    'added-services-button-extension',
     'event-tracker',
     'juju-added-service-token',
     'juju-environment-counts',
