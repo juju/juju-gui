@@ -38,6 +38,34 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/deflate.js$$' \
 		-e '^app/assets/javascripts/unscaled-pack.js$$' \
 		-e '^server.js$$')
+# In order to lint only the non-built files we need to exclude all the build
+# directories here. Whereas with JSFILES we want to include the build/
+# directory. Note the extra - on the first line of the find.
+LINT_JSFILES=$(shell find . -wholename './node_modules*' -prune \
+	-o -wholename './build*' -prune \
+	-o -wholename './docs*' -prune \
+	-o -wholename './test/assets*' -prune \
+	-o -wholename './yuidoc*' -prune \
+	-o \( \
+		-name '*.js' \
+		-o -name 'generateTemplates' \
+	\) -print \
+	| sort | sed -e 's/^\.\///' \
+	| grep -Ev \
+		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/react-(with-addons-)*((\.)*[0-9]+){3}(\.min)*\.js$$' \
+		-e '^app/assets/javascripts/spin\.min\.js$$' \
+		-e '^app/assets/javascripts/spinner\.js$$' \
+		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
+		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
+		-e '^app/assets/javascripts/prettify.js$$' \
+		-e '^app/assets/javascripts/FileSaver.js$$' \
+		-e '^app/assets/javascripts/gallery-.*\.js$$' \
+		-e '^app/assets/javascripts/zip.js$$' \
+		-e '^app/assets/javascripts/inflate.js$$' \
+		-e '^app/assets/javascripts/deflate.js$$' \
+		-e '^app/assets/javascripts/unscaled-pack.js$$' \
+		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js, app/assets/javascripts/spinner.js, app/assets/javascripts/Object.observe.poly.js'
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
@@ -66,6 +94,7 @@ RELEASE_TARGETS=dist
 JSX_FILES=$(shell find . -name '*.jsx')
 JSX_TO_JS=$(patsubst %.jsx, %.js, $(JSX_FILES))
 COMPILED_JSX_FILES=$(patsubst ./app/%, ./build/%, $(JSX_TO_JS))
+SYMLINKED_APP_FILES=$(shell find app/ -type l -not -path 'app/assets/*')
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
@@ -295,11 +324,11 @@ custom-d3: node_modules/smash node_modules/d3
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
-		-x $(LINT_IGNORE) $(JSFILES) \
+		-x $(LINT_IGNORE) $(LINT_JSFILES) \
 	    | sed -n '0,/^Found /p'| sed '/^Found /q1' # less garbage output
 
 jshint: node_modules/jshint
-	node_modules/jshint/bin/jshint --verbose $(JSFILES)
+	node_modules/jshint/bin/jshint --verbose $(LINT_JSFILES)
 
 undocumented:
 	bin/lint-yuidoc --generate-undocumented > undocumented
@@ -499,7 +528,7 @@ test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
 	cat test/extracted_startup_code >> $@
 	cat test/test_startup.js.bottom >> $@
 
-test-prep: test/test_startup.js
+test-prep: remove-app-symlinks test/test_startup.js
 
 test-filtering:
 	# Ensure no tests are disabled.
@@ -609,7 +638,7 @@ prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	(cd build-prod && python ../bin/http_server.py 8888)
 
-clean:
+clean: remove-app-symlinks
 	rm -rf build-shared build-debug build-prod
 	find app/assets/javascripts/ -type l | xargs rm -rf
 	rm -f test/test_startup.js
@@ -629,7 +658,7 @@ build-shared: build-shared/juju-ui/assets $(NODE_TARGETS) spritegen \
 	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
-build-devel: build-shared run-jsx-watcher
+build-devel: build-shared remove-app-symlinks run-jsx-watcher
 
 build-debug: build-shared | $(LINK_DEBUG_FILES)
 
@@ -638,6 +667,10 @@ build-prod: build-shared | $(LINK_PROD_FILES)
 .PHONY: run-jsx-watcher
 run-jsx-watcher:
 	jsx --no-cache-dir -wx jsx app build &
+
+.PHONY: remove-app-symlinks
+remove-app-symlinks:
+	-rm $(SYMLINKED_APP_FILES)
 
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets

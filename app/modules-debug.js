@@ -328,7 +328,8 @@ var GlobalConfig = {
         },
 
         'added-services-button-extension': {
-          fullpath: '/juju-ui/subapps/browser/views/added-services-button-extension.js'
+          fullpath: '/juju-ui/subapps/browser/views/' +
+              'added-services-button-extension.js'
         },
 
         'juju-views': {
