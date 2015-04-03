@@ -50,19 +50,19 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             // sure it returns an element so that React doesn't complain.
             return React.createElement('div');
           }
-        }
+        };
         stub._allArguments = [];
         stub.called = function() {
           return !!stub._allArguments.length;
-        }
+        };
         stub.callCount = function() {
           return stub._allArguments.length;
-        }
+        };
         stub.lastArguments = function() {
-          return f._allArguments[f._allArguments.length - 1];
+          return stub._allArguments[stub._allArguments.length - 1];
         };
         stub.allArguments = function() {
-          return f._allArguments.slice(0);
+          return stub._allArguments.slice(0);
         };
         return stub;
       }

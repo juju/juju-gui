@@ -381,7 +381,6 @@ LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
 	build-debug/juju-ui/store \
 	build-debug/juju-ui/subapps \
 	build-debug/juju-ui/views \
-	build-debug/juju-ui/build \
 	build-debug/juju-ui/widgets \
 	build-debug/juju-ui/assets/javascripts \
 	build-debug/juju-ui/templates.js
@@ -429,8 +428,6 @@ $(LINK_DEBUG_FILES):
 	$(call link-files,debug)
 	ln -sf "$(PWD)/app/app.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/websocket-logging.js" build-debug/juju-ui/
-	echo $(PWD)
-	ln -sf "$(PWD)/build" build-debug/juju-ui/build
 	ln -sf "$(PWD)/app/models" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/store" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/subapps" build-debug/juju-ui/
@@ -441,6 +438,9 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/utils" build-debug/juju-ui/
 	ln -sf "$(PWD)/build-shared/juju-ui/templates.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/modules-debug.js" build-debug/juju-ui/assets/modules.js
+	# Symlink the build files back into the app tree so that the python server
+	# can find them.
+	cp -ansR $(PWD)/build/* app/
 
 $(LINK_PROD_FILES):
 	$(call link-files,prod)
@@ -626,11 +626,10 @@ clean-all: clean clean-deps clean-docs
 build: build-prod build-debug build-devel
 
 build-shared: build-shared/juju-ui/assets $(NODE_TARGETS) spritegen \
-	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js \
-	  run-jsx-watcher
+	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
-build-devel: build-shared
+build-devel: build-shared run-jsx-watcher
 
 build-debug: build-shared | $(LINK_DEBUG_FILES)
 

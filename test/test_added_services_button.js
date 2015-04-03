@@ -79,7 +79,7 @@ describe('added services button', function() {
       this._cleanups.push(struct.reset);
 
       testView._renderAddedServicesButton(serviceCount, closed);
-      assert.equal(struct.assertions.render.callCount(), 1)
+      assert.equal(struct.assertions.render.callCount(), 1);
     });
   });
 
