@@ -185,6 +185,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/local-charm-import-helpers.js'
         },
 
+        'bundle-importer': {
+          fullpath: '/juju-ui/utils/bundle-importer.js'
+        },
+
         'bundle-import-helpers': {
           fullpath: '/juju-ui/assets/javascripts/bundle-import-helpers.js'
         },

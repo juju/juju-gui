@@ -482,6 +482,11 @@ YUI.add('juju-gui', function(Y) {
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
 
+      // Create a Bundle Importer instance.
+      this.bundleImporter = new Y.juju.BundleImporter({
+        env: this.env
+      });
+
       // Create notifications controller
       this.notifications = new juju.NotificationController({
         app: this,
@@ -1670,6 +1675,7 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
+    'bundle-importer',
     'bundle-import-helpers',
     'charmstore-api',
     'event-tracker',
