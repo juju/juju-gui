@@ -484,7 +484,9 @@ YUI.add('juju-gui', function(Y) {
 
       // Create a Bundle Importer instance.
       this.bundleImporter = new Y.juju.BundleImporter({
-        env: this.env
+        db: this.db,
+        env: this.env,
+        fakebackend: state
       });
 
       // Create notifications controller
