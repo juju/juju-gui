@@ -26,7 +26,7 @@ YUI.add('bundle-importer', function(Y) {
   var data = [{
     id: 'addUnit-976',
     method: 'addUnit',
-    args: [ '$service-123', 1, '$addMachines-100', null ],
+    args: ['$service-123', 1, '$addMachines-100', null],
     requires: [
       'service-123', 'addMachines-100'
     ],
@@ -43,13 +43,13 @@ YUI.add('bundle-importer', function(Y) {
     id: 'service-123',
     method: 'deploy',
     args: [
-        "cs:precise/wordpress-27", "wordpress",
-        {
-          "debug": "no", "engine": "nginx",
-          "tuning": "single", "wp-content": ""
-        },
-        null, 0, { }, null, null
-      ],
+      'cs:precise/wordpress-27', 'wordpress',
+      {
+        'debug': 'no', 'engine': 'nginx',
+        'tuning': 'single', 'wp-content': ''
+      },
+      null, 0, { }, null, null
+    ],
     requires: [
       'addCharm-321'
     ]
@@ -57,7 +57,7 @@ YUI.add('bundle-importer', function(Y) {
     id: 'addMachines-100',
     method: 'addMachines',
     args: [
-      [{ "constraints": { } }],
+      [{ 'constraints': { } }],
       null
     ],
     requires: []
@@ -77,7 +77,7 @@ YUI.add('bundle-importer', function(Y) {
     this._dryRunIndex = -1;
     // XXX Remove me - hack to use local data.
     this.recordSet = data;
-  };
+  }
 
   BundleImporter.prototype = {
 
@@ -160,6 +160,7 @@ YUI.add('bundle-importer', function(Y) {
       require the parent records data set.
 
       @method _executeDryRun
+      @param {Array} records The list of records in the recordSet.
     */
     _executeDryRun: function(records) {
       if (this._dryRunIndex === records.length - 1) {
@@ -174,11 +175,14 @@ YUI.add('bundle-importer', function(Y) {
       Executes the supplied record
 
       @method _executeRecord
+      @param {Object} record The record object to execute.
+      @param {Array} records The list of records in the recordSet.
     */
     _executeRecord: function(record, records) {
       var method = this['_execute_' + record.method];
       if (typeof method === 'function') {
-        this['_execute_' + record.method](record, this._executeDryRun.bind(this, records));
+        this['_execute_' + record.method](
+            record, this._executeDryRun.bind(this, records));
       } else {
         console.error('Unknown method type: ', record.method);
       }
@@ -189,6 +193,8 @@ YUI.add('bundle-importer', function(Y) {
 
       @method _execute_addMachines
       @param {Object} record The addMachines record to execute.
+      @param {Function} next The method to call to trigger the executor to
+        move on to the next record.
     */
     _execute_addMachines: function(record, next) {
       // XXX This code is duplicated from scale-up.js:191. We need to create a
@@ -197,7 +203,7 @@ YUI.add('bundle-importer', function(Y) {
       this.env.addMachines([{
         constraints: {}
       }], function(machine) {
-        db.machines.remove(machine);
+        this.db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});
       // Loop through recordSet and add the machine model to every record which
       // requires it.
@@ -210,15 +216,17 @@ YUI.add('bundle-importer', function(Y) {
 
       @method _execute_deploy
       @param {Object} record The deploy record to execute.
+      @param {Function} next The method to call to trigger the executor to
+        move on to the next record.
     */
     _execute_deploy: function(record, next) {
       this.fakebackend._loadCharm(record.args[0], {
-        success: function(charm) {
+        'success': function(charm) {
           var ghostService = this.db.services.ghostService(charm);
 
           if (record.annotations) {
-            annotations['gui-x'] = record.annotations['gui-x'];
-            annotations['gui-y'] = record.annotations['gui-y'];
+            ghostService.annotations['gui-x'] = record.annotations['gui-x'];
+            ghostService.annotations['gui-y'] = record.annotations['gui-y'];
           }
 
           var config = {};
@@ -235,13 +243,22 @@ YUI.add('bundle-importer', function(Y) {
               0, // Number of units.
               {}, // Constraints.
               null, // toMachine.
-              function() {},
+              function(ghostService) {
+                ghostService.setAttrs({
+                  id: ghostService.get('name'),
+                  displayName: undefined,
+                  pending: false,
+                  loading: false,
+                  config: ghostService.get('config'),
+                  constraints: {}
+                });
+              }.bind(this, ghostService),
               // Options used by ECS, ignored by environment.
               {modelId: ghostService.get('id')});
           this._saveModelToRequires(record.id, ghostService);
           next();
         }.bind(this),
-        failure: function() {
+        'failure': function() {
           // Create a notification.
         }
       });
@@ -255,18 +272,31 @@ YUI.add('bundle-importer', function(Y) {
 
       @method _execute_addCharm
       @param {Object} record The addCharm record.
+      @param {Function} next The method to call to trigger the executor to
+        move on to the next record.
     */
     _execute_addCharm: function(record, next) {
       this.fakebackend._loadCharm(record.args[0], {
-        success: function() {
+        'success': function(charm) {
+          if (this.db.charms.getById(charm.get('id')) === null) {
+            this.db.charms.add(charm);
+          }
           next();
-        },
-        failure: function() {
+        }.bind(this),
+        'failure': function() {
           // Create a notification.
         }
       });
     },
 
+    /**
+      Executes the addUnit method call.
+
+      @method _execute_addUnit
+      @param {Object} record the addUnit record.
+      @param {Function} next The method to call to trigger the executor to
+        move on to the next record.
+    */
     _execute_addUnit: function(record, next) {
       // Loop through the args and update the fields which required a previous
       // record to complete.
@@ -284,10 +314,10 @@ YUI.add('bundle-importer', function(Y) {
               serviceId = requiredModel.get('id');
               charmUrl = requiredModel.get('charm');
               size = requiredModel.get('units').size();
-            break;
+              break;
             case 2:
               record.args[2] = requiredModel.id;
-            break;
+              break;
           }
         }
       }, this);
@@ -296,8 +326,21 @@ YUI.add('bundle-importer', function(Y) {
         id: unitId,
         displayName: record.args[0] + '/' + size,
         charmUrl: charmUrl,
-        //subordinate: charm.get('is_subordinate')
+        subordinate: this.db.charms.getById(charmUrl).get('is_subordinate')
       });
+      /**
+        Removes the ghost Unit after commit.
+
+        @method removeGhostCallback
+        @param {Object} ghostUnit The ghost unit model.
+        @param {Object} db The application db.
+        @param {Object} e The commit object.
+      */
+      function removeGhostCallback(ghostUnit, db, e) {
+        ghostUnit.service = e.service_name;
+        db.removeUnits(ghostUnit);
+      }
+      record.args[3] = removeGhostCallback.bind(this, ghostUnit, this.db);
       // Add the ghost model Id to the arguments list for the ECS.
       record.args.push({modelId: unitId});
       this.env.add_unit.apply(this.env, record.args);

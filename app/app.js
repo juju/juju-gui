@@ -425,6 +425,7 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
+      var state;
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -449,7 +450,7 @@ YUI.add('juju-gui', function(Y) {
           // The GUI is running in sandbox mode.
           var sandboxModule = environments.sandbox;
           var State = environments.FakeBackend;
-          var state = new State({
+          state = new State({
             charmstore: this.get('charmstore')
           });
           if (envOptions.user && envOptions.password) {
