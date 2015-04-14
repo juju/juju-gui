@@ -35,10 +35,53 @@ YUI.add('bundle-importer', function(Y) {
       'gui-y': '66'
     }
   }, {
+    id: 'addUnit-374',
+    method: 'addUnit',
+    args: ['$service-999', 1, '$addMachines-100', null],
+    requires: [
+      'service-999', 'addMachines-100'
+    ]
+  }, {
+    id: 'addRelation-543',
+    method: 'addRelation',
+    args: [
+      ['$service-123', { name: 'db', role: 'server' }],
+      ['$service-999', { name: 'db', role: 'client' }],
+      null
+    ],
+    requires: [
+      'service-999', 'service-123'
+    ]
+  }, {
     id: 'addCharm-321',
     method: 'addCharm',
     args: ['cs:precise/wordpress-27'],
     requires: []
+  }, {
+    id: 'addCharm-125',
+    method: 'addCharm',
+    args: ['cs:precise/mysql-51'],
+    requires: []
+  }, {
+    id: 'service-999',
+    method: 'deploy',
+    args: [
+    'cs:precise/mysql-51', 'mysql',
+    {
+      'bind-address': '0.0.0.0', 'binlog-format': 'MIXED', 'block-size': 5,
+      'ceph-osd-replication-count': 3, 'dataset-size': '80%',
+      'flavor': 'distro', 'ha-bindiface': 'eth0', 'ha-mcastport': 5411,
+      'key': null, 'max-connections': -1, 'nagios_context': 'juju',
+      'prefer-ipv6': false, 'preferred-storage-engine': 'InnoDB',
+      'query-cache-size': 0, 'query-cache-type': 'OFF',
+      'rbd-name': 'mysql1', 'source': null,
+      'tuning-level': 'safest', 'vip': '', 'vip_cidr': 24,  'vip_iface': 'eth0'
+    },
+    null, 0, { }, null, null
+    ],
+    requires: [
+      'addCharm-125'
+    ]
   }, {
     id: 'service-123',
     method: 'deploy',
@@ -76,7 +119,7 @@ YUI.add('bundle-importer', function(Y) {
     this.fakebackend = cfg.fakebackend;
     this._dryRunIndex = -1;
     // XXX Remove me - hack to use local data.
-    this.recordSet = data;
+    this.recordSet = window.recordSet;
   }
 
   BundleImporter.prototype = {
@@ -341,6 +384,11 @@ YUI.add('bundle-importer', function(Y) {
         db.removeUnits(ghostUnit);
       }
       record.args[3] = removeGhostCallback.bind(this, ghostUnit, this.db);
+      // If the callback is missing from the recordSet exports we need to add
+      // it back in so that we can push the options into the correct argument.
+      if (record.args.length === 3) {
+        record.args.push(null);
+      }
       // Add the ghost model Id to the arguments list for the ECS.
       record.args.push({modelId: unitId});
       this.env.add_unit.apply(this.env, record.args);
@@ -349,6 +397,46 @@ YUI.add('bundle-importer', function(Y) {
         // debate. We may want to automatically place unplaced units in bundles.
         this.env.placeUnit(ghostUnit, record.args[2]);
       }
+      next();
+    },
+
+    /**
+      Executes the addRelation method call.
+
+      @method _execute_addRelation
+      @param {Object} record the addRelation record.
+      @param {Function} next The method to call to trigger the executor to
+        move on to the next record.
+    */
+    _execute_addRelation: function(record, next) {
+      var endpoints = [record.args[0], record.args[1]];
+
+      // Resolve the record indexes to the service names.
+      endpoints.forEach(function(ep, index) {
+        endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
+      }, this);
+      var relationId = 'pending-' + endpoints[0][0] + endpoints[1][0];
+      var relation = this.db.relations.add({
+        relation_id: relationId,
+        'interface': endpoints[0][1].name,
+        endpoints: endpoints,
+        pending: true,
+        scope: 'global', // XXX check the charms to see if this is a subordinate
+        display_name: 'pending'
+      });
+      this.env.add_relation(
+          endpoints[0], endpoints[1],
+          function(e) {
+            this.db.relations.create({
+              relation_id: e.result.id,
+              type: e.result['interface'],
+              endpoints: endpoints,
+              pending: false,
+              scope: e.result.scope
+            });
+          }.bind(this),
+          {modelId: relation.get('id')});
+      next();
     }
 
   };
