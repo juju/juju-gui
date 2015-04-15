@@ -29,11 +29,7 @@ YUI.add('bundle-importer', function(Y) {
     args: ['$service-123', 1, '$addMachines-100', null],
     requires: [
       'service-123', 'addMachines-100'
-    ],
-    annotations: {
-      'gui-x': '-360',
-      'gui-y': '66'
-    }
+    ]
   }, {
     id: 'addUnit-374',
     method: 'addUnit',
@@ -118,8 +114,6 @@ YUI.add('bundle-importer', function(Y) {
     this.db = cfg.db;
     this.fakebackend = cfg.fakebackend;
     this._dryRunIndex = -1;
-    // XXX Remove me - hack to use local data.
-    this.recordSet = window.recordSet;
   }
 
   BundleImporter.prototype = {
@@ -144,8 +138,8 @@ YUI.add('bundle-importer', function(Y) {
       @method importBundleDryRun
     */
     importBundleDryRun: function(records) {
-      // XXX uncomment me when not using local data.
-      // this.recordSet = records;
+      this.recordSet = records;
+      //this.recordSet = Y.clone(data);
       // Sort dry-run records into the correct order.
       records = this._sortDryRunRecords(this.recordSet);
       this._executeDryRun(records);
@@ -324,6 +318,7 @@ YUI.add('bundle-importer', function(Y) {
           if (this.db.charms.getById(charm.get('id')) === null) {
             this.db.charms.add(charm);
           }
+          this._saveModelToRequires(record.id, charm);
           next();
         }.bind(this),
         'failure': function() {

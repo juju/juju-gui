@@ -131,6 +131,23 @@ YUI.add('bundle-import-helpers', function(Y) {
 
         // Once the file has been loaded, deploy it.
         reader.onload = function(e) {
+          // If the extension is json then it's the recordSet format.
+          if (file.name.split('.').pop() === 'json') {
+            // XXX This referendes the global here but this will
+            // eventually be moved out of this function.
+            var data;
+            try {
+              data = JSON.parse(e.target.result);
+            } catch (e) {
+              // Create notification about error
+            }
+            if (data) {
+              app.bundleImporter.importBundleDryRun(data);
+            }
+            return;
+          }
+          // If the extension is not json then it's yaml and it will be the
+          // old yaml bundle format.
           ns.BundleHelpers.deployBundle(
               e.target.result,
               undefined,
