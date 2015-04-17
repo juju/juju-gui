@@ -234,12 +234,14 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addMachines: function(record, next) {
+      var parentKey = record.args[0].parentId;
+      if (parentKey) {
+        record.args[0].parentId = record[parentKey.replace(/^\$/, '')].id;
+      }
       // XXX This code is duplicated from scale-up.js:191. We need to create a
       // layer where we create ghosts and handle cleaning them up.
-      var machine = this.db.machines.addGhost();
-      this.env.addMachines([{
-        constraints: {}
-      }], function(machine) {
+      var machine = this.db.machines.addGhost(record.args[0].parentId, record.args[0].containerType);
+      this.env.addMachines(record.args, function(machine) {
         this.db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});
       // Loop through recordSet and add the machine model to every record which
