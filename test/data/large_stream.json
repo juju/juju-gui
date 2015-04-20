@@ -1,352 +1,329 @@
 [
   [
-    "service", 
-    "add", 
+    "serviceInfo",
+    "add",
     {
-      "subordinate": true, 
-      "charm": "cs:precise/rsyslog-forwarder-0", 
-      "id": "rsyslog-forwarder"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/haproxy-11", 
-      "id": "wiki-lb"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/mediawiki-3", 
-      "id": "mediawiki"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/wordpress-7", 
-      "id": "wordpress"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/rsyslog-1", 
-      "id": "rsyslog"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/mysql-6", 
-      "id": "mysql"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/haproxy-11", 
-      "id": "blog-lb"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "subordinate": true, 
-      "charm": "cs:precise/puppet-2", 
-      "id": "puppet"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/memcached-1", 
-      "id": "memcached"
-    }
-  ], 
-  [
-    "service", 
-    "add", 
-    {
-      "charm": "cs:precise/puppetmaster-2", 
-      "id": "puppetmaster"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "reversenginx", 
-      "scope": "global", 
-      "endpoints": [
-        [
-          "wordpress", 
-          {
-            "role": "peer", 
-            "name": "loadbalancer"
-          }
-        ]
-      ], 
-      "id": "relation-0000000011"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "juju-info", 
-      "scope": "container", 
-      "endpoints": [
-        [
-          "mediawiki", 
-          {
-            "role": "server", 
-            "name": "juju-info"
-          }
-        ], 
-        [
-          "puppet", 
-          {
-            "role": "client", 
-            "name": "juju-info"
-          }
-        ]
-      ], 
-      "id": "relation-0000000010"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "puppet", 
-      "scope": "global", 
-      "endpoints": [
-        [
-          "puppet", 
-          {
-            "role": "client", 
-            "name": "puppetmaster"
-          }
-        ], 
-        [
-          "puppetmaster", 
-          {
-            "role": "server", 
-            "name": "puppetmaster"
-          }
-        ]
-      ], 
-      "id": "relation-0000000002"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "juju-info", 
-      "scope": "container", 
-      "endpoints": [
-        [
-          "mysql", 
-          {
-            "role": "server", 
-            "name": "juju-info"
-          }
-        ], 
-        [
-          "rsyslog-forwarder", 
-          {
-            "role": "client", 
-            "name": "juju-info"
-          }
-        ]
-      ], 
-      "id": "relation-0000000003"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "juju-info", 
-      "scope": "container", 
-      "endpoints": [
-        [
-          "wordpress", 
-          {
-            "role": "server", 
-            "name": "juju-info"
-          }
-        ], 
-        [
-          "puppet", 
-          {
-            "role": "client", 
-            "name": "juju-info"
-          }
-        ]
-      ], 
-      "id": "relation-0000000000"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "syslog", 
-      "scope": "global", 
-      "endpoints": [
-        [
-          "rsyslog-forwarder", 
-          {
-            "role": "client", 
-            "name": "syslog"
-          }
-        ], 
-        [
-          "rsyslog", 
-          {
-            "role": "server", 
-            "name": "aggregator"
-          }
-        ]
-      ], 
-      "id": "relation-0000000001"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "juju-info", 
-      "scope": "container", 
-      "endpoints": [
-        [
-          "mediawiki", 
-          {
-            "role": "server", 
-            "name": "juju-info"
-          }
-        ], 
-        [
-          "rsyslog-forwarder", 
-          {
-            "role": "client", 
-            "name": "juju-info"
-          }
-        ]
-      ], 
-      "id": "relation-0000000006"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "http", 
-      "scope": "global", 
-      "endpoints": [
-        [
-          "mediawiki", 
-          {
-            "role": "server", 
-            "name": "website"
-          }
-        ], 
-        [
-          "wiki-lb", 
-          {
-            "role": "client", 
-            "name": "reverseproxy"
-          }
-        ]
-      ], 
-      "id": "relation-0000000007"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "memcache", 
-      "scope": "global", 
-      "endpoints": [
-        [
-          "memcached", 
-          {
-            "role": "server", 
-            "name": "cache"
-          }
-        ], 
-        [
-          "mediawiki", 
-          {
-            "role": "client", 
-            "name": "cache"
-          }
-        ]
-      ], 
-      "id": "relation-0000000005"
-    }
-  ], 
-  [
-    "relation", 
-    "add", 
-    {
-      "interface": "mysql", 
-      "scope": "global", 
-      "endpoints": [
-        [
-          "mysql", 
-          {
-            "role": "server", 
-            "name": "db"
-          }
-        ], 
-        [
-          "wordpress", 
-          {
-            "role": "client", 
-            "name": "db"
-          }
-        ]
-      ], 
-      "id": "relation-0000000009"
+      "subordinate": true,
+      "CharmURL": "cs:precise/rsyslog-forwarder-ha-2",
+      "Name": "rsyslog-forwarder-ha"
     }
   ],
   [
-    "relation", 
-    "add", 
+    "serviceInfo",
+    "add",
     {
-      "interface": "juju-info", 
-      "scope": "container", 
-      "endpoints": [
-        [
-          "mysql", 
-          {
-            "role": "server", 
-            "name": "juju-info"
-          }
-        ], 
-        [
-          "puppet", 
-          {
-            "role": "client", 
-            "name": "juju-info"
-          }
-        ]
-      ], 
-      "id": "relation-0000000012"
+      "CharmURL": "cs:precise/mediawiki-3",
+      "Name": "mediawiki"
     }
-  ]
+  ],
+  [
+    "serviceInfo",
+    "add",
+    {
+      "CharmURL": "cs:precise/wordpress-7",
+      "Name": "wordpress"
+    }
+  ],
+  [
+    "serviceInfo",
+    "add",
+    {
+      "CharmURL": "cs:precise/rsyslog-6",
+      "Name": "rsyslog"
+    }
+  ],
+  [
+    "serviceInfo",
+    "add",
+    {
+      "CharmURL": "cs:precise/mysql-6",
+      "Name": "mysql"
+    }
+  ],
+  [
+    "serviceInfo",
+    "add",
+    {
+      "subordinate": true,
+      "CharmURL": "cs:precise/puppet-2",
+      "Name": "puppet"
+    }
+  ],
+  [
+    "serviceInfo",
+    "add",
+    {
+      "CharmURL": "cs:precise/memcached-1",
+      "Name": "memcached"
+    }
+  ],
+  [
+    "serviceInfo",
+    "add",
+    {
+      "CharmURL": "cs:precise/puppetmaster-2",
+      "Name": "puppetmaster"
+    }
+  ],
+    [
+        "relationInfo",
+        "add",
+        {
+            "Key": "wordpress:loadbalancer wordpress:loadbalancer",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "loadbalancer",
+                        "Role": "peer",
+                        "Interface": "reversenginx",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "wordpress"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "puppet:juju-info mediawiki:juju-info",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "client",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "puppet"
+                },
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "server",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "mediawiki"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "puppet:puppetmaster puppetmaster:puppetmaster",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "puppetmaster",
+                        "Role": "client",
+                        "Interface": "puppet",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "puppet"
+                },
+                {
+                    "Relation": {
+                        "Name": "puppetmaster",
+                        "Role": "server",
+                        "Interface": "puppet",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "puppetmaster"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "rsyslog-forwarder-ha:juju-info mysql:juju-info",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "client",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "rsyslog-forwarder-ha"
+                },
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "server",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "mysql"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "puppet:juju-info wordpress:juju-info",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "client",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "puppet"
+                },
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "server",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "wordpress"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "rsyslog-forwarder-ha:syslog rsyslog:aggregator",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "syslog",
+                        "Role": "client",
+                        "Interface": "syslog",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "rsyslog-forwarder-ha"
+                },
+                {
+                    "Relation": {
+                        "Name": "aggregator",
+                        "Role": "server",
+                        "Interface": "syslog",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "rsyslog"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "rsyslog-forwarder-ha:juju-info mediawiki:juju-info",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "client",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "rsyslog-forwarder-ha"
+                },
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "server",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "mediawiki"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "mediawiki:cache memcached:cache",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "cache",
+                        "Role": "client",
+                        "Interface": "memcache",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "mediawiki"
+                },
+                {
+                    "Relation": {
+                        "Name": "cache",
+                        "Role": "server",
+                        "Interface": "memcache",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "memcached"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "wordpress:db mysql:db",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "db",
+                        "Role": "client",
+                        "Interface": "mysql",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "wordpress"
+                },
+                {
+                    "Relation": {
+                        "Name": "db",
+                        "Role": "server",
+                        "Interface": "mysql",
+                        "Scope": "global"
+                    },
+                    "ServiceName": "mysql"
+                }
+            ]
+        }
+    ],
+    [
+        "relationInfo",
+        "change",
+        {
+            "Key": "puppet:juju-info mysql:juju-info",
+            "Endpoints": [
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "client",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "puppet"
+                },
+                {
+                    "Relation": {
+                        "Name": "juju-info",
+                        "Role": "server",
+                        "Interface": "juju-info",
+                        "Scope": "container"
+                    },
+                    "ServiceName": "mysql"
+                }
+            ]
+        }
+    ]
 ]

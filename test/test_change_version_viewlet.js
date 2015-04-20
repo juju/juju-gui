@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Change version viewlet', function() {
+describe('Change version viewlet', function() {
   var Y, utils, models, jujuViews, juju, charmConfig, container, conn, db, ecs,
       env, view, inspector, client, backendJuju, state, service, downgrades;
 
@@ -173,7 +173,7 @@ describe.only('Change version viewlet', function() {
 
     db.onDelta({data: {result: [
       ['unitInfo', 'change',
-      {Name: unitId, CharmURL: 'cs:precise/mediawiki-15'}]
+       {Name: unitId, CharmURL: 'cs:precise/mediawiki-15'}]
     ]}});
 
     assert.equal(service.get('charmChanged'), true, 'charmChanged not true');
