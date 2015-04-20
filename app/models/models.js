@@ -2042,20 +2042,6 @@ YUI.add('juju-models', function(Y) {
       return this.services.getById(entityName);
     },
 
-    /**
-      Returns a modelList given the model name.
-
-      @method getModelListByModelName
-      @param {String} modelName The model's name.
-      @return {Object} The model list.
-    */
-    getModelListByModelName: function(modelName) {
-      if (modelName === 'annotations' || modelName === 'environment') {
-        return this.environment;
-      }
-      return this[modelName + 's'];
-    },
-
     getModelFromChange: function(change) {
       var change_kind = change[1],
           data = change[2],
