@@ -80,6 +80,11 @@ YUI.add('juju-models', function(Y) {
           // This must be from a LazyModelList.
           var changed = {};
           Y.each(data, function(value, key) {
+            if (value === undefined) {
+              // A delta in the real environment doesn't send undefined
+              // values so this makes the simulated environment work properly.
+              return;
+            }
             changed[key] = {prevVal: instance[key], newVal: value};
             instance[key] = value;
           });
