@@ -169,6 +169,22 @@ YUI.add('juju-delta-handlers', function(Y) {
     },
 
     /**
+      Called by the delta parser if a delta is passed to the GUI which it does
+      not understand. Throws a console error and then allows delta parsing to
+      continue.
+
+      @method defaultHandler
+      @param {Object} db The application db (unused)
+      @param {String} action The action which the delta is trying to complete.
+      @param {Object} change The data for the delta change.
+      @param {String} kind The type of delta.
+    */
+    defaultHanlder: function(db, action, change, kind) {
+      console.error('Unknown delta type: ' + kind);
+      console.log(action, change);
+    },
+
+    /**
       Handle unit info coming from the juju-core delta, updating the
       relevant database models.
 
