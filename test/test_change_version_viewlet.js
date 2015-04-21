@@ -57,15 +57,15 @@ describe('Change version viewlet', function() {
     db.services.add(service);
     if (!skipPrepopulate) {
       db.onDelta({data: {result: [
-        ['unit', 'add',
-          {id: 'mediawiki/0', agent_state: 'pending',
-            charmUrl: 'cs:precise/mediaWiki-14'}],
-        ['unit', 'add',
-          {id: 'mediawiki/1', agent_state: 'pending',
-            charmUrl: 'cs:precise/mediaWiki-14'}],
-        ['unit', 'add',
-          {id: 'mediawiki/2', agent_state: 'pending',
-            charmUrl: 'cs:precise/mediaWiki-14'}]
+        ['unitInfo', 'add',
+          {Name: 'mediawiki/0', Status: 'pending',
+            CharmURL: 'cs:precise/mediawiki-14'}],
+        ['unitInfo', 'add',
+          {Name: 'mediawiki/1', Status: 'pending',
+            CharmURL: 'cs:precise/mediawiki-14'}],
+        ['unitInfo', 'add',
+          {Name: 'mediawiki/2', Status: 'pending',
+            CharmURL: 'cs:precise/mediawiki-14'}]
       ]}});
     }
     var fakeStore = new Y.juju.charmstore.APIv4({});
@@ -172,16 +172,19 @@ describe('Change version viewlet', function() {
         container.one('[data-bind=charmChanged]').hasClass('hidden'), true);
 
     db.onDelta({data: {result: [
-      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-15'}]
+      ['unitInfo', 'change',
+       {Name: unitId, CharmURL: 'cs:precise/mediawiki-15'}]
     ]}});
 
-    assert.equal(service.get('charmChanged'), true);
+    assert.equal(service.get('charmChanged'), true, 'charmChanged not true');
     assert.equal(
-        container.one('[data-bind=charmChanged]').hasClass('hidden'), false);
+        container.one('[data-bind=charmChanged]').hasClass('hidden'),
+        false,
+        'element does not have class hidden');
     var eventFired = utils.makeStubFunction();
     inspector.on('changeState', eventFired);
     container.one('.rerender-config').simulate('click');
-    assert.equal(eventFired.called(), true);
+    assert.equal(eventFired.called(), true, 'event not fired');
     // Ensure that the state was changed as a result.
     assert.deepEqual(eventFired.allArguments()[0][0].sectionA, {
       component: null,

@@ -1,265 +1,211 @@
 {
-  "rsyslog-forwarder": {
+  "rsyslog-forwarder-ha": {
     "requires": [
       {
-        "interface": "syslog", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "syslog", 
+        "interface": "syslog",
+        "optional": false,
+        "limit": 1,
+        "name": "syslog",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "juju-info", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "juju-info", 
+        "interface": "juju-info",
+        "optional": false,
+        "limit": 1,
+        "name": "juju-info",
         "scope": "container"
       }
-    ], 
+    ],
     "provides": []
-  }, 
-  "wiki-lb": {
-    "requires": [
-      {
-        "interface": "http", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "reverseproxy", 
-        "scope": "global"
-      }
-    ], 
-    "provides": [
-      {
-        "interface": "munin-node", 
-        "optional": false, 
-        "limit": null, 
-        "name": "munin", 
-        "scope": "global"
-      }, 
-      {
-        "interface": "http", 
-        "optional": false, 
-        "limit": null, 
-        "name": "website", 
-        "scope": "global"
-      }
-    ]
-  }, 
+  },
   "mediawiki": {
     "requires": [
       {
-        "interface": "mysql", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "slave", 
+        "interface": "mysql",
+        "optional": false,
+        "limit": 1,
+        "name": "slave",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "memcache", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "cache", 
+        "interface": "memcache",
+        "optional": false,
+        "limit": 1,
+        "name": "cache",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "mysql", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "db", 
+        "interface": "mysql",
+        "optional": false,
+        "limit": 1,
+        "name": "db",
         "scope": "global"
       }
-    ], 
+    ],
     "provides": [
       {
-        "interface": "http", 
-        "optional": false, 
-        "limit": null, 
-        "name": "website", 
+        "interface": "http",
+        "optional": false,
+        "limit": null,
+        "name": "website",
         "scope": "global"
       }
     ]
-  }, 
+  },
   "wordpress": {
     "requires": [
       {
-        "interface": "mount", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "nfs", 
+        "interface": "mount",
+        "optional": false,
+        "limit": 1,
+        "name": "nfs",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "memcache", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "cache", 
+        "interface": "memcache",
+        "optional": false,
+        "limit": 1,
+        "name": "cache",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "mysql", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "db", 
+        "interface": "mysql",
+        "optional": false,
+        "limit": 1,
+        "name": "db",
         "scope": "global"
       }
-    ], 
+    ],
     "provides": [
       {
-        "interface": "http", 
-        "optional": false, 
-        "limit": null, 
-        "name": "website", 
+        "interface": "http",
+        "optional": false,
+        "limit": null,
+        "name": "website",
         "scope": "global"
       }
     ]
-  }, 
+  },
   "rsyslog": {
-    "requires": [], 
+    "requires": [],
     "provides": [
       {
-        "interface": "syslog", 
-        "optional": false, 
-        "limit": null, 
-        "name": "aggregator", 
+        "interface": "syslog",
+        "optional": false,
+        "limit": null,
+        "name": "aggregator",
         "scope": "global"
       }
     ]
-  }, 
+  },
   "mysql": {
     "requires": [
       {
-        "interface": "mysql-oneway-replication", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "slave", 
+        "interface": "mysql-oneway-replication",
+        "optional": false,
+        "limit": 1,
+        "name": "slave",
         "scope": "global"
       }
-    ], 
+    ],
     "provides": [
       {
-        "interface": "munin-node", 
-        "optional": false, 
-        "limit": null, 
-        "name": "munin", 
+        "interface": "munin-node",
+        "optional": false,
+        "limit": null,
+        "name": "munin",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "mysql", 
-        "optional": false, 
-        "limit": null, 
-        "name": "db", 
+        "interface": "mysql",
+        "optional": false,
+        "limit": null,
+        "name": "db",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "mysql-oneway-replication", 
-        "optional": false, 
-        "limit": null, 
-        "name": "master", 
+        "interface": "mysql-oneway-replication",
+        "optional": false,
+        "limit": null,
+        "name": "master",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "mysql-shared", 
-        "optional": false, 
-        "limit": null, 
-        "name": "shared-db", 
+        "interface": "mysql-shared",
+        "optional": false,
+        "limit": null,
+        "name": "shared-db",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "local-monitors", 
-        "optional": false, 
-        "limit": null, 
-        "name": "local-monitors", 
+        "interface": "local-monitors",
+        "optional": false,
+        "limit": null,
+        "name": "local-monitors",
         "scope": "container"
-      }, 
+      },
       {
-        "interface": "mysql-root", 
-        "optional": false, 
-        "limit": null, 
-        "name": "db-admin", 
+        "interface": "mysql-root",
+        "optional": false,
+        "limit": null,
+        "name": "db-admin",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "monitors", 
-        "optional": false, 
-        "limit": null, 
-        "name": "monitors", 
-        "scope": "global"
-      }
-    ]
-  }, 
-  "blog-lb": {
-    "requires": [
-      {
-        "interface": "http", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "reverseproxy", 
-        "scope": "global"
-      }
-    ], 
-    "provides": [
-      {
-        "interface": "munin-node", 
-        "optional": false, 
-        "limit": null, 
-        "name": "munin", 
-        "scope": "global"
-      }, 
-      {
-        "interface": "http", 
-        "optional": false, 
-        "limit": null, 
-        "name": "website", 
+        "interface": "monitors",
+        "optional": false,
+        "limit": null,
+        "name": "monitors",
         "scope": "global"
       }
     ]
-  }, 
+  },
   "puppet": {
     "requires": [
       {
-        "interface": "puppet", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "puppetmaster", 
+        "interface": "puppet",
+        "optional": false,
+        "limit": 1,
+        "name": "puppetmaster",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "juju-info", 
-        "optional": false, 
-        "limit": 1, 
-        "name": "juju-info", 
+        "interface": "juju-info",
+        "optional": false,
+        "limit": 1,
+        "name": "juju-info",
         "scope": "container"
       }
-    ], 
+    ],
     "provides": []
-  }, 
+  },
   "memcached": {
-    "requires": [], 
+    "requires": [],
     "provides": [
       {
-        "interface": "munin-node", 
-        "optional": false, 
-        "limit": null, 
-        "name": "munin", 
+        "interface": "munin-node",
+        "optional": false,
+        "limit": null,
+        "name": "munin",
         "scope": "global"
-      }, 
+      },
       {
-        "interface": "memcache", 
-        "optional": false, 
-        "limit": null, 
-        "name": "cache", 
+        "interface": "memcache",
+        "optional": false,
+        "limit": null,
+        "name": "cache",
         "scope": "global"
       }
     ]
-  }, 
+  },
   "puppetmaster": {
-    "requires": [], 
+    "requires": [],
     "provides": [
       {
-        "interface": "puppet", 
-        "optional": false, 
-        "limit": null, 
-        "name": "puppetmaster", 
+        "interface": "puppet",
+        "optional": false,
+        "limit": null,
+        "name": "puppetmaster",
         "scope": "global"
       }
     ]

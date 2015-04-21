@@ -49,11 +49,10 @@ describe('Relation endpoints logic', function() {
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
       env.connect();
-      app = new Y.juju.App({env: env});
+      app = new Y.juju.App({env: env, consoleEnabled: true});
       app.navigate = function() { return true; };
       app.showView(new Y.View());
       db = app.db;
-      db.onDelta({data: {'op': 'delta', result: sample_env}});
       done();
     });
   });
@@ -65,17 +64,35 @@ describe('Relation endpoints logic', function() {
     done();
   });
 
+  function loadDelta(relations) {
+    var delta = [];
+    if (relations === false) {
+      // Remove the relations from the delta.
+      sample_env.forEach(function(change, index) {
+        if (change[0] !== 'relationInfo') {
+          delta.push(change);
+        }
+      });
+    } else {
+      delta = sample_env;
+    }
+    console.log(delta);
+    db.onDelta({data: {result: delta}});
+  }
+
   it('should be able to find relatable services', function() {
+    loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
-    var service = db.services.getById('blog-lb'),
+    var service = db.services.getById('mediawiki'),
         available_svcs = Y.Object.keys(models.getEndpoints(
             service, app.endpointsController));
     available_svcs.sort();
     available_svcs.should.eql(
-        ['mediawiki', 'puppet', 'rsyslog-forwarder', 'wiki-lb', 'wordpress']);
+        ['memcached', 'mysql', 'puppet', 'rsyslog-forwarder-ha']);
   });
 
   it('should find valid targets including subordinates', function() {
+    loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('memcached'),
         available = models.getEndpoints(service, app.endpointsController),
@@ -83,10 +100,11 @@ describe('Relation endpoints logic', function() {
     available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
-        ['puppet', 'rsyslog-forwarder', 'wordpress']);
+        ['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
   });
 
   it('should find ambigious targets', function() {
+    loadDelta();
     // Mysql already has both subordinates related.
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mysql'),
@@ -115,6 +133,7 @@ describe('Relation endpoints logic', function() {
   });
 
   it('should find valid targets for a requires', function() {
+    loadDelta();
     // Wordpress already has one subordinates related (puppet)
     // ..the picture is wrong.. wordpress only has one subordinate
     app.endpointsController.endpointsMap = sample_endpoints;
@@ -123,27 +142,28 @@ describe('Relation endpoints logic', function() {
         available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
-        ['blog-lb', 'memcached', 'rsyslog-forwarder']);
+        ['memcached']);
   });
 
   it('should find valid targets for subordinates', function() {
+    loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('puppet');
     var available = models.getEndpoints(service, app.endpointsController);
     var available_svcs = Y.Object.keys(available);
-
     available_svcs.sort();
     available_svcs.should.eql(
-        ['blog-lb', 'memcached', 'puppetmaster', 'rsyslog', 'wiki-lb']);
+        ['mediawiki', 'memcached', 'mysql', 'puppetmaster', 'rsyslog',
+         'rsyslog-forwarder-ha', 'wordpress']);
 
-    service = db.services.getById('rsyslog-forwarder');
+    service = db.services.getById('rsyslog-forwarder-ha');
     available = models.getEndpoints(service, app.endpointsController);
     available_svcs = Y.Object.keys(available);
 
     available_svcs.sort();
     available_svcs.should.eql(
-        ['blog-lb', 'memcached',
-         'puppetmaster', 'rsyslog', 'wiki-lb', 'wordpress']);
+        ['mediawiki', 'memcached', 'mysql', 'puppet',
+         'puppetmaster', 'rsyslog', 'wordpress']);
   });
 
 });

@@ -135,37 +135,19 @@ YUI.add('juju-delta-handlers', function(Y) {
   models.handlers = {
 
     /**
-      Convert the delta stream coming from pyJuju into that suitable
-      for being used by the database models.
+      Called by the delta parser if a delta is passed to the GUI which it does
+      not understand. Throws a console error and then allows delta parsing to
+      continue.
 
-      @method pyDelta
-      @param {Object} db The app.models.models.Database instance.
-      @param {String} action The operation to be performed
-       ("add", "change" or "remove").
-      @param {Object} change The JSON entity information.
-      @param {String} kind The delta event type.
-      @return {undefined} Nothing.
-     */
-    pyDelta: function(db, action, change, kind) {
-      var data;
-      var modelList = db.getModelListByModelName(kind);
-      // If this is a unit change, then set its service so that both the
-      // global units model lest and the service nested one can be updated.
-      if (kind === 'unit' && typeof change !== 'string') {
-        change.service = change.id.split('/')[0];
-      }
-      // If kind === 'annotations' then this is an environment
-      // annotation, and we don't need to change the values.
-      if (kind !== 'annotations' &&
-          (action === 'add' || action === 'change')) {
-        data = Object.create(null);
-        Y.each(change, function(value, key) {
-          data[key.replace(/-/g, '_')] = value;
-        });
-      } else {
-        data = change;
-      }
-      modelList.process_delta(action, data, db);
+      @method defaultHandler
+      @param {Object} db The application db (unused)
+      @param {String} action The action which the delta is trying to complete.
+      @param {Object} change The data for the delta change.
+      @param {String} kind The type of delta.
+    */
+    defaultHandler: function(db, action, change, kind) {
+      console.error('Unknown delta type: ' + kind);
+      console.log(action, change);
     },
 
     /**

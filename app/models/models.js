@@ -80,6 +80,11 @@ YUI.add('juju-models', function(Y) {
           // This must be from a LazyModelList.
           var changed = {};
           Y.each(data, function(value, key) {
+            if (value === undefined) {
+              // A delta in the real environment doesn't send undefined
+              // values so this makes the simulated environment work properly.
+              return;
+            }
             changed[key] = {prevVal: instance[key], newVal: value};
             instance[key] = value;
           });
@@ -2042,20 +2047,6 @@ YUI.add('juju-models', function(Y) {
       return this.services.getById(entityName);
     },
 
-    /**
-      Returns a modelList given the model name.
-
-      @method getModelListByModelName
-      @param {String} modelName The model's name.
-      @return {Object} The model list.
-    */
-    getModelListByModelName: function(modelName) {
-      if (modelName === 'annotations' || modelName === 'environment') {
-        return this.environment;
-      }
-      return this[modelName + 's'];
-    },
-
     getModelFromChange: function(change) {
       var change_kind = change[1],
           data = change[2],
@@ -2084,7 +2075,7 @@ YUI.add('juju-models', function(Y) {
     onDelta: function(deltaEvent) {
       var self = this,
           changes = deltaEvent.data.result,
-          defaultHandler = handlers.pyDelta;
+          defaultHandler = handlers.defaultHandler;
 
       // Process delta changes invoking handlers for each change in changeset.
       changes.forEach(function(change) {

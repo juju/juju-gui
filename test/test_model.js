@@ -448,12 +448,15 @@ describe('test_model.js', function() {
         assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
                      true);
         db.onDelta({data: {result: [
-          ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
-          ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
+          ['unitInfo', 'add', {Name: 'mysql/0', Status: 'pending'}],
+          ['unitInfo', 'add', {Name: 'mysql/1', Status: 'pending'}]
         ]}});
         assert.equal(mysql.get('units').size(), 2);
         db.onDelta({data: {result: [
-          ['unit', 'remove', 'mysql/1']
+          ['unitInfo', 'remove', {
+            Name: 'mysql/0',
+            Service: 'mysql'
+          }]
         ]}});
         assert.equal(mysql.get('units').size(), 1);
       });
@@ -469,7 +472,7 @@ describe('test_model.js', function() {
         assert.equal(db.machines.size(), 0,
                      'the machine list is not be empty');
         db.onDelta({data: {result: [
-          ['machine', 'change', {id: id}]
+          ['machineInfo', 'change', {Id: id}]
         ]}});
         assert.equal(db.machines.size(), 1,
                      'the machines list did not have the expected size');
@@ -487,7 +490,7 @@ describe('test_model.js', function() {
         ]);
         var service = db.services.item(0);
         db.onDelta({data: {result: [
-          ['unit', 'change', {id: id, service: service.get('id')}]
+          ['unitInfo', 'change', {Name: id, Service: service.get('id')}]
         ]}});
         var unit = db.units.getById(id);
         assert.notEqual(unit, null, 'Unit was not created');
@@ -523,7 +526,10 @@ describe('test_model.js', function() {
            var my1 = {id: 'mysql/1', agent_state: 'pending'};
            db.addUnits([my0, my1]);
            db.onDelta({data: {result: [
-             ['unit', 'remove', 'mysql/1']
+             ['unitInfo', 'remove', {
+               Name: 'mysql/1',
+               Service: 'mysql'
+             }]
            ]}});
            var names = mysql.get('units').get('id');
            names.length.should.equal(1);
@@ -535,9 +541,12 @@ describe('test_model.js', function() {
            var db = new models.Database();
            var my0 = new models.Service({id: 'mysql', exposed: true});
            db.services.add([my0]);
-           // Note that exposed is not set explicitly to false.
            db.onDelta({data: {result: [
-             ['service', 'add', {id: 'mysql'}]
+             ['serviceInfo', 'add', {
+               Name: 'mysql',
+               CharmURL: 'cs:precise/mysql',
+               Exposed: false
+             }]
            ]}});
            my0.get('exposed').should.equal(false);
          });
@@ -550,10 +559,20 @@ describe('test_model.js', function() {
            var my0 = {id: 'mysql/0', agent_state: 'pending'};
            db.addUnits([my0]);
            db.onDelta({data: {result: [
-             ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
+             ['unitInfo', 'add', {Name: 'mysql/0', Status: 'another'}]
            ]}});
            my0.agent_state.should.equal('another');
          });
+
+      it('uses default handler for unknown deltas', function() {
+        var handler = utils.makeStubMethod(
+            Y.juju.models.handlers, 'defaultHandler');
+        var db = new models.Database();
+        db.onDelta({data: {result: [
+          ['fakeDelta', 'add', {}]
+        ]}});
+        assert.equal(handler.callCount(), 1);
+      });
 
       // XXX - We no longer use relation_errors but this test should remain
       // until it's completely removed from the codebase.

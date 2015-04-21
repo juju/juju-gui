@@ -26,101 +26,195 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     var environment_delta = {
       'result': [
-        ['service', 'add', {
-          'charm': 'cs:precise/wordpress-6',
-          'id': 'wordpress',
+        ['serviceInfo', 'add', {
+          'CharmURL': 'cs:precise/wordpress-6',
+          'Name': 'wordpress',
           'exposed': false,
-          'annotations': {'gui-x': 100, 'gui-y': 200}
+          'Annotations': {'gui-x': 100, 'gui-y': 200}
         }],
-        ['service', 'add', {
-          'charm': 'cs:precise/mediawiki-3',
-          'id': 'mediawiki',
+        ['serviceInfo', 'add', {
+          'CharmURL': 'cs:precise/mediawiki-3',
+          'Name': 'mediawiki',
           'exposed': false
         }],
-        ['service', 'add', {
-          'charm': 'cs:precise/mysql-26',
-          'id': 'mysql'
+        ['serviceInfo', 'add', {
+          'CharmURL': 'cs:precise/mysql-26',
+          'Name': 'mysql'
         }],
-        ['service', 'add', {
-          'subordinate': true,
-          'charm': 'cs:precise/puppet-2',
-          'id': 'puppet'
-        }],
-        ['relation', 'add', {
-          'interface': 'reversenginx',
-          'scope': 'global',
-          'endpoints':
-           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
-          'id': 'relation-0000000000'
-        }],
-        ['relation', 'add', {
-          'interface': 'juju-info',
-          'scope': 'container',
-          'endpoints':
-           [['wordpress', {'role': 'server', 'name': 'juju-info'}],
-            ['puppet', {'role': 'client', 'name': 'juju-info'}]],
-          'id': 'relation-0000000007'
-        }],
-        ['relation', 'add', {
-          'interface': 'mysql',
-          'scope': 'global',
-          'endpoints':
-           [['mysql', {'role': 'server', 'name': 'db'}],
-            ['wordpress', {'role': 'client', 'name': 'db'}]],
-           'id': 'relation-0000000001'
-        }],
-        ['machine', 'add', {
+        ['serviceInfo', 'add', {
+          'Subordinate': true,
+          'CharmURL': 'cs:precise/puppet-2',
+          'Name': 'puppet'
+        }], [
+          'relationInfo',
+          'add',
+          {
+            Key: 'wordpress:loadbalancer',
+            Id: 0,
+            Endpoints: [
+              {
+                ServiceName: 'wordpress',
+                Relation: {
+                  Name: 'loadbalancer',
+                  Role: 'peer',
+                  Interface: 'reversenginx',
+                  Scope: 'global'
+                }
+              }
+            ]
+          }
+        ], [
+          'relationInfo',
+          'add',
+          {
+            Key: 'puppet:juju-info wordpress:juju-info',
+            Id: 1,
+            Endpoints: [
+              {
+                ServiceName: 'puppet',
+                Relation: {
+                  Name: 'juju-info',
+                  Role: 'requirer',
+                  Interface: 'juju-info',
+                  Scope: 'container'
+                }
+              },
+              {
+                ServiceName: 'wordpress',
+                Relation: {
+                  Name: 'juju-info',
+                  Role: 'provider',
+                  Interface: 'juju-info',
+                  Scope: 'container'
+                }
+              }
+            ]
+          }
+        ], [
+          'relationInfo',
+          'add',
+          {
+            Key: 'mysql:db wordpress:db',
+            Id: 2,
+            Endpoints: [
+              {
+                ServiceName: 'mysql',
+                Relation: {
+                  Name: 'db',
+                  Role: 'server',
+                  Interface: 'mysql',
+                  Scope: 'global'
+                }
+              }, {
+                ServiceName: 'wordpress',
+                Relation: {
+                  Name: 'db',
+                  Role: 'client',
+                  Interface: 'mysql',
+                  Scope: 'global'
+                }
+              }
+            ]
+          }
+        ],
+
+
+        ['machineInfo', 'add', {
           'agent-state': 'running',
           'instance-state': 'running',
           'id': 0,
           'instance-id': 'local',
           'dns-name': 'localhost'
         }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'started',
-          'public-address': '192.168.122.113',
-          'id': 'wordpress/0'
+        ['unitInfo', 'add', {
+          'MachineId': 0,
+          'Status': 'started',
+          'PublicAddress': '192.168.122.113',
+          'Name': 'wordpress/0'
         }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'started',
-          'public-address': '192.168.122.113',
-          'id': 'mediawiki/0'
+        ['unitInfo', 'add', {
+          'MachineId': 0,
+          'Status': 'started',
+          'PublicAddress': '192.168.122.113',
+          'Name': 'mediawiki/0'
         }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'started',
-          'public-address': '192.168.122.222',
-          'id': 'mysql/0'
-        }]
-      ],
-      'op': 'delta'
+        ['unitInfo', 'add', {
+          'MachineId': 0,
+          'Status': 'started',
+          'PublicAddress': '192.168.122.222',
+          'Name': 'mysql/0'
+        }], [
+          'annotationInfo',
+          'change',
+          {
+            Tag: 'service-wordpress',
+            Annotations: {
+              'gui-x': 100,
+              'gui-y': 200
+            }
+          }
+        ]
+      ]
     };
 
     // Additional relations between the same two services for collection
     // testing. Note that this uses the gojuju style relation ideas for
     // additional compatibility.
     var additionalRelations = { 'result': [
-      ['relation', 'add', {
-        'interface': 'mysql',
-        'scope': 'global',
-        'endpoints':
-         [['mysql', {'role': 'server', 'name': 'db'}],
-          ['mediawiki', {'role': 'client', 'name': 'db'}]],
-        'id': 'mysql:db mediawiki:db'
-      }],
-      ['relation', 'add', {
-        'interface': 'mysql-slave',
-        'scope': 'global',
-        'endpoints':
-         [['mysql', {'role': 'server', 'name': 'db-slave'}],
-          ['mediawiki', {'role': 'client', 'name': 'db-slave'}]],
-        'id': 'mysql:db-slave mediawiki:db-slave'
-      }]
-    ],
-    'op': 'delta'
-    };
+      [
+        'relationInfo',
+        'add',
+        {
+          Key: 'mysql:db mediawiki:db',
+          Id: 5,
+          Endpoints: [
+            {
+              ServiceName: 'mysql',
+              Relation: {
+                Name: 'db',
+                Role: 'server',
+                Interface: 'mysql',
+                Scope: 'global'
+              }
+            }, {
+              ServiceName: 'mediawiki',
+              Relation: {
+                Name: 'db',
+                Role: 'client',
+                Interface: 'mysql',
+                Scope: 'global'
+              }
+            }
+          ]
+        }
+      ], [
+        'relationInfo',
+        'add',
+        {
+          Key: 'mysql:db-slave mediawiki:db-slave',
+          Id: 6,
+          Endpoints: [
+            {
+              ServiceName: 'mysql',
+              Relation: {
+                Name: 'db-slave',
+                Role: 'server',
+                Interface: 'mysql',
+                Scope: 'global'
+              }
+            }, {
+              ServiceName: 'mediawiki',
+              Relation: {
+                Name: 'db-slave',
+                Role: 'client',
+                Interface: 'mysql',
+                Scope: 'global'
+              }
+            }
+          ]
+        }
+      ]
+    ]};
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -282,9 +376,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           // Verify that the node id has been munged as expected from the
           // relation id. This is particularly important for Juju Core.
-          var node = container.one('#' +
-              views.utils.generateSafeDOMId('relation-0000000007',
-         getParentId(view)));
+          var node = container.one(
+              '#' + views.utils.generateSafeDOMId(
+                  'puppet:juju-info wordpress:juju-info', getParentId(view)));
           assert.isNotNull(node);
           assert.isDefined(node);
         });
@@ -347,34 +441,62 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       var addSubordinate = {
         result: [
-          ['service', 'add', {
-            'subordinate': true,
-            'charm': 'cs:precise/puppet-2',
-            'id': 'puppet2'
+          ['serviceInfo', 'add', {
+            'Subordinate': true,
+            'CharmURL': 'cs:precise/puppet-2',
+            'Name': 'puppet2'
           }],
-          ['relation', 'add', {
-            'interface': 'juju-info',
-            'scope': 'container',
-            'endpoints':
-             [['wordpress', {'role': 'server', 'name': 'juju-info'}],
-              ['puppet2', {'role': 'client', 'name': 'juju-info'}]],
-            'id': 'new-relation-0000000008'
-          }]
-        ],
-        op: 'delta'
+          [
+            'relationInfo',
+            'add',
+            {
+              Key: 'wordpress:juju-info puppet2:juju-info',
+              Id: 7,
+              Endpoints: [
+                {
+                  ServiceName: 'puppet2',
+                  Relation: {
+                    Name: 'juju-info', Role: 'requirer',
+                    Interface: 'juju-info', Scope: 'container'
+                  }
+                }, {
+                  ServiceName: 'wordpress',
+                  Relation: {
+                    Name: 'juju-info', Role: 'provider',
+                    Interface: 'juju-info', Scope: 'container'
+                  }
+                }
+              ]
+            }
+          ]
+        ]
       };
       var addRelation = {
         result: [
-          ['relation', 'add', {
-            'interface': 'juju-info',
-            'scope': 'container',
-            'endpoints':
-             [['mediawiki', {'role': 'server', 'name': 'juju-info'}],
-              ['puppet', {'role': 'client', 'name': 'juju-info'}]],
-            'id': 'new-relation-0000000009'
-          }]
-        ],
-        op: 'delta'
+          [
+            'relationInfo',
+            'add',
+            {
+              Key: '',
+              Id: 8,
+              Endpoints: [
+                {
+                  ServiceName: 'mediawiki',
+                  Relation: {
+                    Name: 'juju-info', Role: 'provider',
+                    Interface: 'juju-info', Scope: 'container'
+                  }
+                }, {
+                  ServiceName: 'puppet',
+                  Relation: {
+                    Name: 'juju-info', Role: 'requirer',
+                    Interface: 'juju-info', Scope: 'container'
+                  }
+                }
+              ]
+            }
+          ]
+        ]
       };
 
       view.render();
@@ -582,23 +704,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }),
           tmp_data = {
             result: [
-              ['service', 'add', {
-                'subordinate': true,
-                'charm': 'cs:precise/puppet-2',
-                'id': 'puppet2'
-              }],
-              ['service', 'add', {
-                'charm': 'cs:precise/mysql-26',
-                'id': 'mysql2'
-              }],
-              ['unit', 'add', {
-                'machine': 0,
-                'agent-state': 'started',
-                'public-address': '192.168.122.222',
-                'id': 'mysql2/0'
-              }]
-            ],
-            op: 'delta'
+              [
+                'serviceInfo',
+                'add',
+                {
+                  Subordinate: true,
+                  CharmURL: 'cs:precise/puppet-2',
+                  Name: 'puppet2'
+                }
+              ], [
+                'serviceInfo',
+                'add',
+                {
+                  CharmURL: 'cs:precise/mysql-26',
+                  Name: 'mysql2'
+                }
+              ], [
+                'unitInfo',
+                'add',
+                {
+                  MachineId: 0,
+                  Status: 'started',
+                  PublicAddress: '192.168.122.222',
+                  Name: 'mysql2/0'
+                }
+              ]
+            ]
           },
           properTransform = /translate\(\d+\.?\d*[, ]\d+\.?\d*\)/;
       view.render();
@@ -628,15 +759,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must not stack new services from delta', function() {
       var tmp_data = {
-        op: 'delta',
         result: [
-          ['service', 'add',
+          [
+            'serviceInfo',
+            'add',
             {
-              'subordinate': false,
-              'charm': 'cs:precise/wordpress-6',
-              'id': 'wordpressa'
+              Subordinate: false,
+              CharmURL: 'cs:precise/wordpress-6',
+              Name: 'wordpressa'
             }
-          ]]
+          ]
+        ]
       };
       db.reset();
       view.createTopology();
@@ -646,7 +779,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       db.onDelta({ data: tmp_data });
       view.update();
-      tmp_data.result[0][2].id = 'wordpressb';
+      tmp_data.result[0][2].Name = 'wordpressb';
       db.onDelta({ data: tmp_data });
       view.update();
 
@@ -657,16 +790,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must be able to use position annotations', function(done) {
       var tmp_data = {
-        op: 'delta',
         result: [
-          ['service', 'add',
+          [
+            'annotationInfo',
+            'change',
             {
-              'subordinate': true,
-              'charm': 'cs:precise/wordpress-6',
-              'id': 'wordpress',
-              'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
+              'Tag': 'service-wordpress',
+              'Annotations': {
+                'gui-x': 374.1,
+                'gui-y': 211.2
+              }
             }
-          ]]
+          ]
+        ]
       };
       // IE uses a space delimiter, not a comma.
       var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;
@@ -703,16 +839,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
       tmp_data = {
-        op: 'delta',
         result: [
-          ['service', 'add',
+          [
+            'serviceInfo',
+            'add',
             {
-              'subordinate': false,
-              'charm': 'cs:precise/wordpress-6',
-              'id': 'wordpressa',
-              'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
+              Subordinate: true,
+              CharmURL: 'cs:precise/wordpress-6',
+              Name: 'wordpressa'
             }
-          ]]
+          ]
+        ]
       };
       db.onDelta({ data: tmp_data });
       view.update();
@@ -830,7 +967,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var vis = view.topo.vis;
       var relations = vis.selectAll('.rel-group');
       var relation = relations.filter(function(d) {
-        return d.id === 'relation-0000000001';
+        return d.id === 'mysql:db wordpress:db';
       });
       assert.equal(relation.classed(cssClass), true,
                    'relation does not have the ' + cssClass + ' class');
@@ -1041,12 +1178,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 .size()
                 .should.equal(1);
            view.topo.modules.RelationModule.
-           _removeRelationCallback(view, relation, 'relation-0000000001',
+           _removeRelationCallback(view, relation, 'mysql:db wordpress:db',
                null, {});
-           assert.equal(db.relations.getById('relation-0000000001'), null,
+           assert.equal(db.relations.getById('mysql:db wordpress:db'), null,
                'Relation not removed from db');
            assert.deepEqual(db.services.getById('wordpress').get('relations')
-               .getById('relation-0000000001'), null,
+               .getById('mysql:db wordpress:db'), null,
                'Relation not removed from services');
            view.destroy();
            env.remove_relation = oldRemove;
@@ -1060,7 +1197,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          }).render();
 
          var relation = container.one(
-              '#' + views.utils.generateSafeDOMId('relation-0000000001',
+              '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
          getParentId(view)) +
               ' .rel-indicator'),
          menu;
@@ -1082,7 +1219,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('relation-0000000001',
+          '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
@@ -1091,17 +1228,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(menu.all('.relation-container').size(), 1);
       assert.equal(menu.one('.relation-container').getData('relationid'),
-          'relation-0000000001');
+          'mysql:db wordpress:db');
 
       // Assert that relation module is storing the menu state for rerendering.
       assert.equal(module.get('relationMenuActive'), true);
       assert.equal(module.get('relationMenuRelation').id,
-          'relation-0000000001');
+          'mysql:db wordpress:db');
 
       // Multiple relations
       relation = container.one(
           '#' +
-          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id,
+          views.utils.generateSafeDOMId('mysql:db mediawiki:db',
           getParentId(view)) +
           ' .rel-indicator');
       relation.simulate('click');
@@ -1110,9 +1247,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var relContainers = menu.all('.relation-container');
       assert.equal(relContainers.size(), 2);
       assert.equal(relContainers.item(0).getData('relationid'),
-          additionalRelations.result[0][2].id);
+          'mysql:db mediawiki:db');
       assert.equal(relContainers.item(1).getData('relationid'),
-          additionalRelations.result[1][2].id);
+          'mysql:db-slave mediawiki:db-slave');
 
       // Errors are shown.
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1173,7 +1310,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       // Single relation.
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('relation-0000000001',
+          '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
@@ -1229,7 +1366,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Multiple relations.
         relation = container.one(
             '#' +
-            views.utils.generateSafeDOMId(additionalRelations.result[0][2].id,
+            views.utils.generateSafeDOMId('mysql:db mediawiki:db',
             getParentId(view)) +
             ' .rel-indicator');
         relation.simulate('click');
@@ -1259,7 +1396,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation.
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('relation-0000000001',
+          '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
@@ -1282,7 +1419,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
          // Get a subordinate relation.
          var relation = container.one(
-              '#' + views.utils.generateSafeDOMId('relation-0000000007',
+              '#' + views.utils.generateSafeDOMId(
+                  'puppet:juju-info wordpress:juju-info',
          getParentId(view)) +
               ' .rel-indicator'),
          menu,
