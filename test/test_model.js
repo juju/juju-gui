@@ -564,6 +564,16 @@ describe('test_model.js', function() {
            my0.agent_state.should.equal('another');
          });
 
+      it('uses default handler for unknown deltas', function() {
+        var handler = utils.makeStubMethod(
+            Y.juju.models.handlers, 'defaultHandler');
+        var db = new models.Database();
+        db.onDelta({data: {result: [
+          ['fakeDelta', 'add', {}]
+        ]}});
+        assert.equal(handler.callCount(), 1);
+      });
+
       // XXX - We no longer use relation_errors but this test should remain
       // until it's completely removed from the codebase.
       it.skip('should reset relation_errors',
