@@ -967,7 +967,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var vis = view.topo.vis;
       var relations = vis.selectAll('.rel-group');
       var relation = relations.filter(function(d) {
-        console.log(d);
         return d.id === 'mysql:db wordpress:db';
       });
       assert.equal(relation.classed(cssClass), true,
