@@ -35,7 +35,7 @@ describe('Inspector Overview', function() {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
           charmConfig = utils.loadFixture(
-              'data/mediawiki-api-response.json', true);
+              'data/mediawiki-apiv4-response.json', true);
           done();
         });
 
@@ -84,7 +84,7 @@ describe('Inspector Overview', function() {
   });
 
   var setUpInspector = function(serviceAttrs, skipPrepopulate, allowIcon) {
-    var charmId = 'precise/mediawiki-14';
+    var charmId = 'precise/mediawiki-18';
     charmConfig.id = charmId;
     var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
@@ -104,15 +104,18 @@ describe('Inspector Overview', function() {
     db.services.add(service);
     if (!skipPrepopulate) {
       db.onDelta({data: {result: [
-        ['unit', 'add',
-          {id: 'mediawiki/0', agent_state: 'pending',
-            charmUrl: 'cs:precise/mediaWiki-14'}],
-        ['unit', 'add',
-          {id: 'mediawiki/1', agent_state: 'pending',
-            charmUrl: 'cs:precise/mediaWiki-14'}],
-        ['unit', 'add',
-          {id: 'mediawiki/2', agent_state: 'pending',
-            charmUrl: 'cs:precise/mediaWiki-14'}]
+        ['unitInfo', 'add', {
+          Name: 'mediawiki/0', Status: 'pending',
+          CharmURL: 'cs:precise/mediawiki-18'
+        }],
+        ['unitInfo', 'add', {
+          Name: 'mediawiki/1', Status: 'pending',
+          CharmURL: 'cs:precise/mediawiki-18'
+        }],
+        ['unitInfo', 'add', {
+          Name: 'mediawiki/2', Status: 'pending',
+          CharmURL: 'cs:precise/mediawiki-18'
+        }]
       ]}});
     }
     var fakeStore = new Y.juju.charmstore.APIv4({});
@@ -172,7 +175,7 @@ describe('Inspector Overview', function() {
     var icon = container.one('.icon img');
 
     // The icon url comes from the fake store and the service charm attribute.
-    assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-14');
+    assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-18');
   });
 
   it('renders the scale up view', function() {
@@ -787,10 +790,10 @@ describe('Inspector Overview', function() {
       var unitId = 'mediawiki/7';
 
       db.onDelta({data: {result: [
-        ['unit', 'add', {
-          id: unitId,
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
+        ['unitInfo', 'add', {
+          Name: unitId,
+          Status: 'error',
+          StatusInfo: 'hook failed: "install"'
         }]
       ]}});
 
@@ -821,10 +824,10 @@ describe('Inspector Overview', function() {
       var unitId = 'mediawiki/7';
 
       db.onDelta({data: {result: [
-        ['unit', 'add', {
-          id: unitId,
-          agent_state: 'error',
-          agent_state_info: 'hook failed: "install"'
+        ['unitInfo', 'add', {
+          Name: unitId,
+          Status: 'error',
+          StatusInfo: 'hook failed: "install"'
         }]
       ]}});
 
@@ -855,7 +858,7 @@ describe('Inspector Overview', function() {
       var unitId = 'mediawiki/7';
 
       db.onDelta({data: {result: [
-        ['unit', 'add', {id: unitId, agent_state: 'error'}]
+        ['unitInfo', 'add', {Name: unitId, Status: 'error'}]
       ]}});
 
 
