@@ -20,11 +20,18 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.3.6:
+    - >
+      Allow deployment of basketless bundles (new bundle syntax) in sandbox
+      mode.
+    - Clean up Juju mega-watcher stream handling and improve watcher tests.
+    - >
+      (FIX) Safely handle new mega-watcher types as they are introduced by new
+      Juju releases, even in the case of types not yet supported in the GUI.
 - 1.3.5:
     - >
-      Completed converting all api calls to the new v4 api which is considerably
-      faster than v3.
+      Completed converting all api calls to the new v4 api which is
+      considerably faster than v3.
     - (FIX) Charms which were duplicates of promulgated charms weren't shown.
     - Add React JSX compilation support to the Makefile.
 - 1.3.4:
