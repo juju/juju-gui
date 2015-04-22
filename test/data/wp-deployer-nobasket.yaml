@@ -1,0 +1,39 @@
+series: precise
+services:
+  mysql:
+    charm: "cs:precise/mysql-27"
+    num_units: 1
+    options:
+      "binlog-format": MIXED
+      "block-size": "5"
+      "dataset-size": "80%"
+      flavor: distro
+      "ha-bindiface": eth0
+      "ha-mcastport": "5411"
+      "max-connections": "-1"
+      "preferred-storage-engine": InnoDB
+      "query-cache-size": "-1"
+      "query-cache-type": "OFF"
+      "rbd-name": mysql1
+      "tuning-level": safest
+      vip: ""
+      vip_cidr: "24"
+      vip_iface: eth0
+    annotations:
+      "gui-x": 115
+      "gui-y": 89
+    constraints: 'cpu-power=2 cpu-cores=4'
+  wordpress:
+    charm: "cs:precise/wordpress-19"
+    num_units: 2
+    options:
+      debug: "no"
+      engine: apache
+      "wp-content": ""
+    annotations:
+      "gui-x": 510
+      "gui-y": 184
+    expose: true
+relations:
+  - - "wordpress:db"
+    - "mysql:db"

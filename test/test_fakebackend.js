@@ -1291,6 +1291,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('should support basketless YAML imports', function(done) {
+      var fakebackend = factory.makeFakeBackend();
+      var db = fakebackend.db;
+      db.environment.set('defaultSeries', 'precise');
+      var YAMLData = utils.loadFixture('data/wp-deployer-nobasket.yaml');
+
+      fakebackend.importDeployer(YAMLData, undefined, function(result) {
+        assert.equal(result.Error, undefined);
+        done();
+      });
+    });
+
     it('should keep both config and options properties', function() {
       var fakebackend = factory.makeFakeBackend();
       var db = fakebackend.db;
@@ -1384,7 +1396,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend = factory.makeFakeBackend();
       assert.throws(function() {
         fakebackend.importDeployer({a: {}, b: {}});
-      }, 'Import target ambigious, aborting.');
+      }, 'Import target ambiguous, aborting.');
     });
 
     it('detects service id collisions', function(done) {

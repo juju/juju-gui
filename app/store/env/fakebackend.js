@@ -1697,13 +1697,20 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (useGhost === undefined) {
         useGhost = true;
       }
-      if (!targetBundle && Object.keys(data).length > 1) {
-        throw new Error('Import target ambigious, aborting.');
-      }
 
-      // Builds out a object with inherited properties.
-      var source = targetBundle && data[targetBundle] ||
-          data[Object.keys(data)[0]];
+      var source;
+      // Check whether this is a raw bundle or a basket of bundles.
+      if (data.services && !data.services.services) {
+        source = data;
+      } else {
+        if (!targetBundle && Object.keys(data).length > 1) {
+          throw new Error('Import target ambiguous, aborting.');
+        }
+
+        // Builds out a object with inherited properties.
+        source = targetBundle && data[targetBundle] ||
+            data[Object.keys(data)[0]];
+      }
       var ancestors = [];
       var seen = [];
 
