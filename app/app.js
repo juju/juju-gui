@@ -1441,7 +1441,8 @@ YUI.add('juju-gui', function(Y) {
         db: this.db,
         env: this.env,
         ecs: this.env.ecs,
-        charmstore: this.get('charmstore')
+        charmstore: this.get('charmstore'),
+        bundleImporter: this.bundleImporter
       };
 
       this.showView('environment', options, {

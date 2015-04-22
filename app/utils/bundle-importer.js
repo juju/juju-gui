@@ -22,86 +22,6 @@ YUI.add('bundle-importer', function(Y) {
 
   var ns = Y.namespace('juju');
 
-  // XXX Temp bundle dry run export
-  var data = [{
-    id: 'addUnit-976',
-    method: 'addUnit',
-    args: ['$service-123', 1, '$addMachines-100', null],
-    requires: [
-      'service-123', 'addMachines-100'
-    ]
-  }, {
-    id: 'addUnit-374',
-    method: 'addUnit',
-    args: ['$service-999', 1, '$addMachines-100', null],
-    requires: [
-      'service-999', 'addMachines-100'
-    ]
-  }, {
-    id: 'addRelation-543',
-    method: 'addRelation',
-    args: [
-      ['$service-123', { name: 'db', role: 'server' }],
-      ['$service-999', { name: 'db', role: 'client' }],
-      null
-    ],
-    requires: [
-      'service-999', 'service-123'
-    ]
-  }, {
-    id: 'addCharm-321',
-    method: 'addCharm',
-    args: ['cs:precise/wordpress-27'],
-    requires: []
-  }, {
-    id: 'addCharm-125',
-    method: 'addCharm',
-    args: ['cs:precise/mysql-51'],
-    requires: []
-  }, {
-    id: 'service-999',
-    method: 'deploy',
-    args: [
-    'cs:precise/mysql-51', 'mysql',
-    {
-      'bind-address': '0.0.0.0', 'binlog-format': 'MIXED', 'block-size': 5,
-      'ceph-osd-replication-count': 3, 'dataset-size': '80%',
-      'flavor': 'distro', 'ha-bindiface': 'eth0', 'ha-mcastport': 5411,
-      'key': null, 'max-connections': -1, 'nagios_context': 'juju',
-      'prefer-ipv6': false, 'preferred-storage-engine': 'InnoDB',
-      'query-cache-size': 0, 'query-cache-type': 'OFF',
-      'rbd-name': 'mysql1', 'source': null,
-      'tuning-level': 'safest', 'vip': '', 'vip_cidr': 24,  'vip_iface': 'eth0'
-    },
-    null, 0, { }, null, null
-    ],
-    requires: [
-      'addCharm-125'
-    ]
-  }, {
-    id: 'service-123',
-    method: 'deploy',
-    args: [
-      'cs:precise/wordpress-27', 'wordpress',
-      {
-        'debug': 'no', 'engine': 'nginx',
-        'tuning': 'single', 'wp-content': ''
-      },
-      null, 0, { }, null, null
-    ],
-    requires: [
-      'addCharm-321'
-    ]
-  }, {
-    id: 'addMachines-100',
-    method: 'addMachines',
-    args: [
-      [{ 'constraints': { } }],
-      null
-    ],
-    requires: []
-  }];
-
   /**
     Bundle importer class handles importing bundles in YAML and dry-run
     formats from files or over the wire.
@@ -126,11 +46,40 @@ YUI.add('bundle-importer', function(Y) {
     importBundleYAML: function() {},
 
     /**
-      Import bundle YAML or dry-run files.
+      Import bundle YAML or dry-run file.
 
-      @method importBundleFiles
+      @method importBundleFile
     */
-    importBundleFiles: function() {},
+    importBundleFile: function(file) {
+      var reader = new FileReader();
+      var notifications = this.db.notifications;
+      var self = this; // Unfortunately necessary as using bind() is causing the
+      // linter to go loco!
+      reader.onload = function(e) {
+        var data;
+        // If the file passed in was a json file. This should only ever be used
+        // for when there is no guiserver is available like in sandbox mode.
+        if (file.name.split('.').pop() === 'json') {
+          try {
+            data = JSON.parse(e.target.result);
+          } catch (e) {
+            notifications.add({
+              title: 'Invalid changeset format',
+              message: 'The supplied file could not be parsed as JSON.',
+              level: 'error'
+            });
+            return;
+          }
+          notifications.add({
+            title: 'Processing File',
+            message: 'Changeset processing started.',
+            level: 'important'
+          });
+          self.importBundleDryRun(data);
+        }
+      };
+      reader.readAsText(file);
+    },
 
     /**
       Loops through the dry-run structure.
@@ -240,7 +189,8 @@ YUI.add('bundle-importer', function(Y) {
       }
       // XXX This code is duplicated from scale-up.js:191. We need to create a
       // layer where we create ghosts and handle cleaning them up.
-      var machine = this.db.machines.addGhost(record.args[0].parentId, record.args[0].containerType);
+      var machine = this.db.machines.addGhost(
+          record.args[0].parentId, record.args[0].containerType);
       this.env.addMachines(record.args, function(machine) {
         this.db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});
