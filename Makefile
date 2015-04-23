@@ -341,7 +341,7 @@ beautify: virtualenv/bin/fixjsstyle
 spritegen: $(SPRITE_GENERATED_FILES)
 
 $(COMPILED_JSX_FILES): $(JSX_FILES)
-	jsx --no-cache-dir -x jsx . .
+	# jsx --no-cache-dir -x jsx . .
 
 $(BUILD_FILES): $(COMPILED_JSX_FILES) $(JSFILES) $(CSS_TARGETS) \
 	  $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
@@ -634,7 +634,7 @@ build-prod: build-shared | $(LINK_PROD_FILES)
 
 .PHONY: run-jsx-watcher
 run-jsx-watcher:
-	jsx --no-cache-dir -wx jsx app app &
+	# jsx --no-cache-dir -wx jsx app app &
 
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets

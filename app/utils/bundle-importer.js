@@ -51,34 +51,10 @@ YUI.add('bundle-importer', function(Y) {
       @method importBundleFile
     */
     importBundleFile: function(file) {
-      var reader = new FileReader();
-      var notifications = this.db.notifications;
-      var self = this; // Unfortunately necessary as using bind() is causing the
-      // linter to go loco!
-      reader.onload = function(e) {
-        var data;
-        // If the file passed in was a json file. This should only ever be used
-        // for when there is no guiserver is available like in sandbox mode.
-        if (file.name.split('.').pop() === 'json') {
-          try {
-            data = JSON.parse(e.target.result);
-          } catch (e) {
-            notifications.add({
-              title: 'Invalid changeset format',
-              message: 'The supplied file could not be parsed as JSON.',
-              level: 'error'
-            });
-            return;
-          }
-          notifications.add({
-            title: 'Processing File',
-            message: 'Changeset processing started.',
-            level: 'important'
-          });
-          self.importBundleDryRun(data);
-        }
-      };
+      var reader = this._generateFileReader();
+      reader.onload = this._fileReaderOnload.bind(this, file);
       reader.readAsText(file);
+      return reader; // Not intended for use. Returned for testing.
     },
 
     /**
@@ -88,10 +64,9 @@ YUI.add('bundle-importer', function(Y) {
     */
     importBundleDryRun: function(records) {
       this.recordSet = records;
-      //this.recordSet = Y.clone(data);
       // Sort dry-run records into the correct order.
-      records = this._sortDryRunRecords(this.recordSet);
-      this._executeDryRun(records);
+      this.recordSet = this._sortDryRunRecords(this.recordSet);
+      this._executeDryRun(this.recordSet);
     },
 
     /**
@@ -100,6 +75,49 @@ YUI.add('bundle-importer', function(Y) {
       @method fetchDryRun
     */
     fetchDryRun: function() {},
+
+    /**
+      Returns a new instance of FileReader.
+
+      @method _generateFileReader
+      @return {Object} An instance of FileReader
+    */
+    _generateFileReader: function() {
+      return new FileReader();
+    },
+
+    /**
+      On load handler for the FileReader method which handles the importation
+      of the bundle files.
+
+      @method _fileReaderOnload
+      @param {String} file The filename of the dropped file.
+      @param {Object} e The load event from the file load.
+    */
+    _fileReaderOnload: function(file, e) {
+      var data;
+      var notifications = this.db.notifications;
+      // If the file passed in was a json file. This should only ever be used
+      // for when there is no guiserver is available like in sandbox mode.
+      if (file.name.split('.').pop() === 'json') {
+        try {
+          data = JSON.parse(e.target.result);
+        } catch (e) {
+          notifications.add({
+            title: 'Invalid changeset format',
+            message: 'The supplied file could not be parsed as JSON.',
+            level: 'error'
+          });
+          return;
+        }
+        notifications.add({
+          title: 'Processing File',
+          message: 'Changeset processing started.',
+          level: 'important'
+        });
+        this.importBundleDryRun(data);
+      }
+    },
 
     /**
       Sorts the dry-run records into the correct order so that we can process
@@ -219,9 +237,13 @@ YUI.add('bundle-importer', function(Y) {
           }
 
           var config = {};
-          Y.Object.each(charm.get('options'), function(v, k) {
-            config[k] = v['default'];
-          });
+          var charmOptions = charm.get('options');
+          if (charmOptions) {
+            Object.keys(charmOptions).forEach(function(key) {
+              var value = charmOptions[key];
+              config[key] = value['default'];
+            });
+          }
           ghostService.set('config', config);
 
           this.env.deploy(
@@ -265,16 +287,22 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addCharm: function(record, next) {
-      this.fakebackend._loadCharm(record.args[0], {
+      var db = this.db;
+      var charmId = record.args[0];
+      this.fakebackend._loadCharm(charmId, {
         'success': function(charm) {
-          if (this.db.charms.getById(charm.get('id')) === null) {
-            this.db.charms.add(charm);
+          if (db.charms.getById(charm.get('id')) === null) {
+            db.charms.add(charm);
           }
           this._saveModelToRequires(record.id, charm);
           next();
         }.bind(this),
         'failure': function() {
-          // Create a notification.
+          db.notifications.add({
+            title: 'Unable to load charm',
+            message: 'Charm ' + charmId + ' was not able to be loaded.',
+            level: 'error'
+          });
         }
       });
     },

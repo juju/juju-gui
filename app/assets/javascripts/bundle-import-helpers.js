@@ -131,8 +131,6 @@ YUI.add('bundle-import-helpers', function(Y) {
 
         // Once the file has been loaded, deploy it.
         reader.onload = function(e) {
-          // If the extension is not json then it's yaml and it will be the
-          // old yaml bundle format.
           ns.BundleHelpers.deployBundle(
               e.target.result,
               undefined,
