@@ -272,7 +272,7 @@ YUI.add('bundle-importer', function(Y) {
         'failure': function() {
           this.db.notifications.add({
             title: 'Unable to load charm',
-            message: 'Charm ' + charmId + ' was not able to be loaded.',
+            message: 'Charm ' + record.args[0] + ' was not able to be loaded.',
             level: 'error'
           });
         }
