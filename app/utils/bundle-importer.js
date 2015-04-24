@@ -270,7 +270,11 @@ YUI.add('bundle-importer', function(Y) {
           next();
         }.bind(this),
         'failure': function() {
-          // Create a notification.
+          this.db.notifications.add({
+            title: 'Unable to load charm',
+            message: 'Charm ' + charmId + ' was not able to be loaded.',
+            level: 'error'
+          });
         }
       });
     },
