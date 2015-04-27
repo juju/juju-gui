@@ -73,8 +73,11 @@ YUI.add('bundle-importer', function(Y) {
       Fetch the dry-run output from the Deployer.
 
       @method fetchDryRun
+      @param {String} bundleYAML The bundle file contents.
     */
-    fetchDryRun: function() {},
+    fetchDryRun: function(bundleYAML) {
+      this.env.getChangeSet(bundleYAML, this.importBundleDryRun);
+    },
 
     /**
       Returns a new instance of FileReader.
@@ -99,9 +102,11 @@ YUI.add('bundle-importer', function(Y) {
       var notifications = this.db.notifications;
       // If the file passed in was a json file. This should only ever be used
       // for when there is no guiserver is available like in sandbox mode.
-      if (file.name.split('.').pop() === 'json') {
+      var extension = file.name.split('.').pop();
+      var result = e.target.result;
+      if (extension === 'json') {
         try {
-          data = JSON.parse(e.target.result);
+          data = JSON.parse(result);
         } catch (e) {
           notifications.add({
             title: 'Invalid changeset format',
@@ -116,6 +121,10 @@ YUI.add('bundle-importer', function(Y) {
           level: 'important'
         });
         this.importBundleDryRun(data);
+      } else if (extension === 'yaml') {
+        // result is YAML so we need to fetch the dry run changeset data from
+        // the guiserver.
+        this.fetchDryRun(result);
       }
     },
 
