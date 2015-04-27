@@ -2228,6 +2228,43 @@ YUI.add('juju-env-go', function(Y) {
       };
       // Call the original user callback.
       userCallback(transformedData);
+    },
+
+    /**
+      Makes a request of the websocket for the changeSet list of commands from
+      the supplied bundle YAML contents.
+
+      @method getChangeSet
+      @param {String} bundleYAML The bundle YAML file contents.
+      @param {Function} callback The user supplied callback to send the
+        changeset response to after post processing in handleGetChangeSet.
+    */
+    getChangeSet: function(bundleYAML, callback) {
+      // Since the callback argument of this._send_rpc is optional, if a
+      // callback is not provided, we can leave intermediateCallback undefined.
+      var intermediateCallback;
+      if (callback) {
+        // Capture the callback and service.  No context is passed.
+        intermediateCallback = this.handleGetChangeSet.bind(this, callback);
+      }
+      this._send_rpc({
+        Type: 'ChangeSet',
+        Request: 'GetChanges',
+        Params: {YAML: bundleYAML}
+      }, intermediateCallback);
+    },
+
+    /**
+      Post process the bundle changeset content before sending it to the user
+      supplied callback
+
+      @method _handleGetChangeSet
+      @param {Function} userCallback The supplied user callback to call with
+        the processed response data.
+      @param {Object} data The response from the websocket with the changeset.
+    */
+    _handleGetChangeSet: function(userCallback, data) {
+      userCallback(data);
     }
 
   });
