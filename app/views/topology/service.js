@@ -719,7 +719,16 @@ YUI.add('juju-topology-service', function(Y) {
                file.type === 'application/x-zip-compressed') &&
               ext === 'zip') {
             self._extractCharmMetadata.call(self, file, topo, env, db);
+          } else if (ext === 'json') {
+            // To support easier development of the GUI without having
+            // to have it deployed to the charm for changeset bundle
+            // deployments we support dropping a changeset export onto
+            // the canvas.
+            self.get('component').get('bundleImporter').importBundleFile(file);
           } else {
+            // XXX This branch will go away in favour of the bunelImporter
+            // once the guicharm is updated to support generating changesets.
+
             // We are going to assume it's a bundle if it's not a zip
             bundleImportHelpers.deployBundleFiles(file, env, db);
           }

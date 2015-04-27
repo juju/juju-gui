@@ -178,6 +178,7 @@ YUI.add('juju-view-environment', function(Y) {
           db: this.get('db'),
           charmstore: this.get('charmstore'),
           createServiceInspector: Y.bind(this.createServiceInspector, this),
+          bundleImporter: this.get('bundleImporter'),
           getModelURL: this.get('getModelURL'),
           container: container,
           endpointsController: this.get('endpointsController'),

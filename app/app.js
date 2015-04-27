@@ -425,6 +425,7 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
+      var state;
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -449,7 +450,7 @@ YUI.add('juju-gui', function(Y) {
           // The GUI is running in sandbox mode.
           var sandboxModule = environments.sandbox;
           var State = environments.FakeBackend;
-          var state = new State({
+          state = new State({
             charmstore: this.get('charmstore')
           });
           if (envOptions.user && envOptions.password) {
@@ -481,6 +482,13 @@ YUI.add('juju-gui', function(Y) {
       // Set the env in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
+
+      // Create a Bundle Importer instance.
+      this.bundleImporter = new Y.juju.BundleImporter({
+        db: this.db,
+        env: this.env,
+        fakebackend: state
+      });
 
       // Create notifications controller
       this.notifications = new juju.NotificationController({
@@ -1433,7 +1441,8 @@ YUI.add('juju-gui', function(Y) {
         db: this.db,
         env: this.env,
         ecs: this.env.ecs,
-        charmstore: this.get('charmstore')
+        charmstore: this.get('charmstore'),
+        bundleImporter: this.bundleImporter
       };
 
       this.showView('environment', options, {
@@ -1670,6 +1679,7 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
+    'bundle-importer',
     'bundle-import-helpers',
     'charmstore-api',
     'event-tracker',
