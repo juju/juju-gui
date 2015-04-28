@@ -76,7 +76,7 @@ YUI.add('bundle-importer', function(Y) {
       @param {String} bundleYAML The bundle file contents.
     */
     fetchDryRun: function(bundleYAML) {
-      this.env.getChangeSet(bundleYAML, this.importBundleDryRun);
+      this.env.getChangeSet(bundleYAML, this.importBundleDryRun.bind(this));
     },
 
     /**
@@ -258,7 +258,7 @@ YUI.add('bundle-importer', function(Y) {
           this.env.deploy(
               record.args[0],
               record.args[1],
-              config,
+              record.args[2],
               undefined, // Config file content.
               0, // Number of units.
               {}, // Constraints.
@@ -397,8 +397,12 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addRelation: function(record, next) {
-      var endpoints = [record.args[0], record.args[1]];
-
+      var ep1 = record.args[0].split(':');
+      var ep2 = record.args[1].split(':');
+      var endpoints = [
+        [ep1[0], { name: ep1[1] }],
+        [ep2[0], { name: ep2[1] }]
+      ];
       // Resolve the record indexes to the service names.
       endpoints.forEach(function(ep, index) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');

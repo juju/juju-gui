@@ -2245,7 +2245,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and service.  No context is passed.
-        intermediateCallback = this.handleGetChangeSet.bind(this, callback);
+        intermediateCallback = this._handleGetChangeSet.bind(this, callback);
       }
       this._send_rpc({
         Type: 'ChangeSet',
@@ -2264,7 +2264,7 @@ YUI.add('juju-env-go', function(Y) {
       @param {Object} data The response from the websocket with the changeset.
     */
     _handleGetChangeSet: function(userCallback, data) {
-      userCallback(data);
+      userCallback(data.Response.Changes);
     }
 
   });
