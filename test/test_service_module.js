@@ -432,7 +432,7 @@ describe('service module events', function() {
         assert.deepEqual(files, file);
         done();
       }
-    })
+    });
     serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
