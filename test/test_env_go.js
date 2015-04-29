@@ -2147,6 +2147,55 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('requests the changeset from the guiserver', function() {
+      var yaml = 'foo:\n  bar: baz';
+      var callback = utils.makeStubFunction();
+      env.getChangeSet(yaml, callback);
+      msg = conn.last_message();
+      assert.deepEqual(msg, {
+        Params: {
+          YAML: yaml
+        },
+        Request: 'GetChanges',
+        RequestId: 1,
+        Type: 'ChangeSet'
+      });
+    });
+
+    it('handles processing the changeset response', function() {
+      var yaml = 'foo:\n  bar: baz';
+      var callback = utils.makeStubFunction();
+      env.getChangeSet(yaml, callback);
+      msg = conn.last_message();
+      env.dispatch_result({
+        RequestId: msg.RequestId,
+        Response: {
+          Changes: ['foo']
+        }
+      });
+      assert.equal(callback.callCount(), 1);
+      assert.deepEqual(callback.lastArguments()[0], {
+        changeSet: ['foo']
+      });
+    });
+
+    it('handles process a changeset error response', function() {
+      var yaml = 'foo:\n  bar: baz';
+      var callback = utils.makeStubFunction();
+      env.getChangeSet(yaml, callback);
+      msg = conn.last_message();
+      env.dispatch_result({
+        RequestId: msg.RequestId,
+        Response: {
+          Errors: ['foo']
+        }
+      });
+      assert.equal(callback.callCount(), 1);
+      assert.deepEqual(callback.lastArguments()[0], {
+        err: ['foo']
+      });
+    });
+
   });
 
 })();

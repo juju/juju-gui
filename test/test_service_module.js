@@ -427,16 +427,12 @@ describe('service module events', function() {
         }
       }
     };
-
-    // mock out the Y.BundleHelpers call.
-    var _deployBundleFiles = juju.BundleHelpers.deployBundleFiles;
-    juju.BundleHelpers.deployBundleFiles = function(files, env, db) {
-      assert.deepEqual(files, file);
-      // Restore the deployBundleFiles call for future tests.
-      juju.BundleHelpers.deployBundleFiles = _deployBundleFiles;
-      done();
-    };
-
+    view.topo.set('bundleImporter', {
+      importBundleFile: function(files) {
+        assert.deepEqual(files, file);
+        done();
+      }
+    })
     serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
