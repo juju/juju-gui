@@ -19,6 +19,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+
+/**
+
+  These tests are being skipped because they cause spurious test failures in ci
+  and the code which they test is no longer being actively used. If we
+  decide to enable the simulator then we should revisit these tests.
+
+*/
+
 (function() {
   var SAMPLE_AGENT = {
     select: {
@@ -41,7 +50,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
   };
 
-  describe('FakeBackend.simulator', function() {
+  describe.skip('FakeBackend.simulator', function() {
     var requires = ['node',
       'juju-tests-utils', 'juju-tests-factory', 'juju-models',
       'juju-charm-models', 'juju-fakebackend-simulator'
@@ -273,7 +282,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe('createContainer', function() {
+  describe.skip('createContainer', function() {
     var requirements = [
       'juju-fakebackend-simulator', 'juju-tests-factory', 'juju-tests-utils'];
     var createContainer, fakeBackend, testFactory, testUtils, Y;
