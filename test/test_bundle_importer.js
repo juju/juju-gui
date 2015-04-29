@@ -154,7 +154,7 @@ describe('Bundle Importer', function() {
         var dryRun = utils.makeStubMethod(bundleImporter, 'importBundleDryRun');
         var changeSet = { foo: 'bar' };
         bundleImporter.fetchDryRun(yaml);
-        getChangeSet.lastArguments()[1]({changeSet:changeSet});
+        getChangeSet.lastArguments()[1]({changeSet: changeSet});
         assert.equal(dryRun.callCount(), 1);
         assert.deepEqual(dryRun.lastArguments()[0], changeSet);
       });
