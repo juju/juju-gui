@@ -93,5 +93,3 @@ like in the example below::
 
 .. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
 .. _on Github: https://github.com/juju/juju-gui
-
-
