@@ -2237,7 +2237,10 @@ YUI.add('juju-env-go', function(Y) {
       @method getChangeSet
       @param {String} bundleYAML The bundle YAML file contents.
       @param {Function} callback The user supplied callback to send the
-        changeset response to after post processing in handleGetChangeSet.
+        changeset response to after post processing in _handleGetChangeSet.
+        Detailed responses can be found:
+        http://bazaar.launchpad.net/~juju-gui/charms/trusty/juju-gui/trunk/
+                      view/head:/server/guiserver/bundles/__init__.py#L322
     */
     getChangeSet: function(bundleYAML, callback) {
       // Since the callback argument of this._send_rpc is optional, if a
@@ -2264,7 +2267,13 @@ YUI.add('juju-env-go', function(Y) {
       @param {Object} data The response from the websocket with the changeset.
     */
     _handleGetChangeSet: function(userCallback, data) {
-      userCallback(data.Response.Changes);
+      var response = {};
+      if (data.Response.Errors) {
+        response.err = data.Response.Errors;
+      } else {
+        response.changeSet = data.Response.Changes;
+      }
+      userCallback(response);
     }
 
   });

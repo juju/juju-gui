@@ -70,13 +70,33 @@ YUI.add('bundle-importer', function(Y) {
     },
 
     /**
-      Fetch the dry-run output from the Deployer.
+      Fetch the dry-run output from the Guiserver.
 
       @method fetchDryRun
       @param {String} bundleYAML The bundle file contents.
     */
     fetchDryRun: function(bundleYAML) {
-      this.env.getChangeSet(bundleYAML, this.importBundleDryRun.bind(this));
+      this.env.getChangeSet(bundleYAML, this._handleFetchDryRun.bind(this));
+    },
+
+    /**
+      Handles the dry run response.
+
+      @method _handleFetchDryRun
+      @param {Object} response The processed response data.
+    */
+    _handleFetchDryRun: function(response) {
+      if (response.err) {
+        this.db.notifications.add({
+          title: 'Error generating changeSet',
+          message: 'There was an error generating the changeSet. See browser' +
+              ' console for additional information',
+          level: 'error'
+        });
+        console.error('Response', response);
+        return;
+      }
+      this.importBundleDryRun(response.changeSet);
     },
 
     /**
@@ -100,7 +120,8 @@ YUI.add('bundle-importer', function(Y) {
     _fileReaderOnload: function(file, e) {
       var data;
       var notifications = this.db.notifications;
-      // If the file passed in was a json file. This should only ever be used
+      // We support droping a bundle YAML file and a changeSet JSON file onto
+      // the canvas. The JSON file support should only ever be used
       // for when there is no guiserver is available like in sandbox mode.
       var extension = file.name.split('.').pop();
       var result = e.target.result;
