@@ -120,7 +120,7 @@ YUI.add('bundle-importer', function(Y) {
     _fileReaderOnload: function(file, e) {
       var data;
       var notifications = this.db.notifications;
-      // We support droping a bundle YAML file and a changeSet JSON file onto
+      // We support dropping a bundle YAML file and a changeSet JSON file onto
       // the canvas. The JSON file support should only ever be used
       // for when there is no guiserver is available like in sandbox mode.
       var extension = file.name.split('.').pop();

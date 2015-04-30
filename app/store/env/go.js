@@ -2231,7 +2231,7 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Makes a request of the websocket for the changeSet list of commands from
+      Makes a request of the WebSocket for the changeSet list of commands from
       the supplied bundle YAML contents.
 
       @method getChangeSet
@@ -2270,6 +2270,8 @@ YUI.add('juju-env-go', function(Y) {
       var response = {};
       if (data.Response.Errors) {
         response.err = data.Response.Errors;
+      } else if (data.Error) {
+        response.err = data.Error;
       } else {
         response.changeSet = data.Response.Changes;
       }
