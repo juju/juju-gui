@@ -428,7 +428,8 @@ YUI.add('bundle-importer', function(Y) {
       endpoints.forEach(function(ep, index) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
       }, this);
-      var relationId = 'pending-' + endpoints[0][0] + endpoints[1][0];
+
+      var relationId = 'pending-' + record.args[0] + record.args[1];
       var relation = this.db.relations.add({
         relation_id: relationId,
         'interface': endpoints[0][1].name,
