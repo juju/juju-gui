@@ -425,7 +425,11 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
-      var state;
+      var environments = Y.namespace('juju.environments');
+      var State = environments.FakeBackend;
+      var state = new State({
+        charmstore: this.get('charmstore')
+      });
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -444,15 +448,10 @@ YUI.add('juju-gui', function(Y) {
           readOnly: this.get('readOnly'),
           conn: this.get('conn')
         };
-        var environments = Y.namespace('juju.environments');
         var webModule = environments.web;
         if (this.get('sandbox')) {
           // The GUI is running in sandbox mode.
           var sandboxModule = environments.sandbox;
-          var State = environments.FakeBackend;
-          state = new State({
-            charmstore: this.get('charmstore')
-          });
           if (envOptions.user && envOptions.password) {
             var credentials = state.get('authorizedUsers');
             credentials['user-' + envOptions.user] = envOptions.password;

@@ -19,8 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bundle Importer', function() {
-  var addCharms, bundleImporter, BundleImporter, getById, loadCharm,
-      notifications, utils;
+  var addCharms, bundleImporter, BundleImporter, getById, getChangeSet,
+      loadCharm, notifications, utils;
 
   before(function(done) {
     YUI().use('bundle-importer', 'juju-tests-utils', function(Y) {
@@ -37,8 +37,11 @@ describe('Bundle Importer', function() {
     loadCharm = utils.makeStubFunction();
     addCharms = utils.makeStubFunction();
     getById = utils.makeStubFunction();
+    getChangeSet = utils.makeStubFunction();
     bundleImporter = new BundleImporter({
-      env: {},
+      env: {
+        getChangeSet: getChangeSet
+      },
       db: {
         notifications: notifications,
         charms: {
@@ -102,23 +105,29 @@ describe('Bundle Importer', function() {
           assert.equal(notifications.add.lastArguments()[0].level, 'important');
           assert.equal(importStub.callCount(), 1);
         });
+
+        it('calls fetchDryRun if yaml file', function() {
+          var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
+          var yamlFile = { name: 'path/to/file.yaml' };
+          bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
+          assert.equal(fetch.callCount(), 1);
+          assert.equal(fetch.lastArguments()[0], 'foo');
+        });
       });
     });
     describe('importBundleDryRun', function() {
       var unsortedRecords = [
-        { method: 'addRelation' },
-        { method: 'addUnit' },
-        { method: 'addMachines' },
-        { method: 'deploy' },
-        { method: 'addCharm' }
+        { id: '2', requires: []},
+        { id: '5', requires: ['3']},
+        { id: '4', requires: ['2']},
+        { id: '3', requires: []}
       ];
 
       var sortedRecords = [
-        { method: 'addCharm' },
-        { method: 'addMachines' },
-        { method: 'deploy' },
-        { method: 'addUnit' },
-        { method: 'addRelation' }
+        { id: '2', requires: []},
+        { id: '4', requires: ['2']},
+        { id: '3', requires: []},
+        { id: '5', requires: ['3']}
       ];
 
       it('sorts the records then calls to execute', function() {
@@ -128,6 +137,24 @@ describe('Bundle Importer', function() {
         assert.deepEqual(bundleImporter.recordSet, sortedRecords);
         assert.equal(execute.callCount(), 1);
         assert.deepEqual(execute.lastArguments()[0], sortedRecords);
+      });
+    });
+    describe('fetchDryRun', function() {
+      it('calls to the env to get a changeset', function() {
+        var yaml = 'foo';
+        bundleImporter.fetchDryRun(yaml);
+        assert.equal(getChangeSet.callCount(), 1);
+        assert.equal(getChangeSet.lastArguments()[0], yaml);
+      });
+
+      it('has a callback which calls to import the dryrun', function() {
+        var yaml = 'foo';
+        var dryRun = utils.makeStubMethod(bundleImporter, 'importBundleDryRun');
+        var changeSet = { foo: 'bar' };
+        bundleImporter.fetchDryRun(yaml);
+        getChangeSet.lastArguments()[1]({changeSet: changeSet});
+        assert.equal(dryRun.callCount(), 1);
+        assert.deepEqual(dryRun.lastArguments()[0], changeSet);
       });
     });
   });

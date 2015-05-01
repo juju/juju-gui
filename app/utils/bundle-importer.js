@@ -63,18 +63,40 @@ YUI.add('bundle-importer', function(Y) {
       @method importBundleDryRun
     */
     importBundleDryRun: function(records) {
-      this.recordSet = records;
       // Sort dry-run records into the correct order.
-      this.recordSet = this._sortDryRunRecords(this.recordSet);
+      this.recordSet = this._sortDryRunRecords(records);
       this._executeDryRun(this.recordSet);
     },
 
     /**
-      Fetch the dry-run output from the Deployer.
+      Fetch the dry-run output from the Guiserver.
 
       @method fetchDryRun
+      @param {String} bundleYAML The bundle file contents.
     */
-    fetchDryRun: function() {},
+    fetchDryRun: function(bundleYAML) {
+      this.env.getChangeSet(bundleYAML, this._handleFetchDryRun.bind(this));
+    },
+
+    /**
+      Handles the dry run response.
+
+      @method _handleFetchDryRun
+      @param {Object} response The processed response data.
+    */
+    _handleFetchDryRun: function(response) {
+      if (response.err) {
+        this.db.notifications.add({
+          title: 'Error generating changeSet',
+          message: 'There was an error generating the changeSet. See browser' +
+              ' console for additional information',
+          level: 'error'
+        });
+        console.error('Response', response);
+        return;
+      }
+      this.importBundleDryRun(response.changeSet);
+    },
 
     /**
       Returns a new instance of FileReader.
@@ -97,11 +119,14 @@ YUI.add('bundle-importer', function(Y) {
     _fileReaderOnload: function(file, e) {
       var data;
       var notifications = this.db.notifications;
-      // If the file passed in was a json file. This should only ever be used
+      // We support dropping a bundle YAML file and a changeSet JSON file onto
+      // the canvas. The JSON file support should only ever be used
       // for when there is no guiserver is available like in sandbox mode.
-      if (file.name.split('.').pop() === 'json') {
+      var extension = file.name.split('.').pop();
+      var result = e.target.result;
+      if (extension === 'json') {
         try {
-          data = JSON.parse(e.target.result);
+          data = JSON.parse(result);
         } catch (e) {
           notifications.add({
             title: 'Invalid changeset format',
@@ -116,29 +141,50 @@ YUI.add('bundle-importer', function(Y) {
           level: 'important'
         });
         this.importBundleDryRun(data);
+      } else if (extension === 'yaml') {
+        notifications.add({
+          title: 'Processing File',
+          message: 'Changeset processing started.',
+          level: 'important'
+        });
+        // result is YAML so we need to fetch the dry run changeset data from
+        // the guiserver.
+        this.fetchDryRun(result);
       }
     },
 
     /**
       Sorts the dry-run records into the correct order so that we can process
-      it top to bottom. Machines, Services, Units, Relations.
+      it top to bottom. Charms, Machines, Services, Units, Relations.
 
       @method _sortDryRunRecords
       @param {Array} records The dry-run data array.
       @return {Array} A sorted list of records.
     */
     _sortDryRunRecords: function(records) {
-      var order = {
-        addCharm: 1,
-        addMachines: 2,
-        deploy: 3,
-        addUnit: 4,
-        addRelation: 5
-      };
-      records.sort(function(a, b) {
-        return order[a.method] - order[b.method];
-      });
-      return records;
+      var changeSet = [];
+      var count = records.length;
+      var record;
+      for (var i = 0; i < count; i += 1) {
+        record = records[i];
+        if (record.requires.length === 0) {
+          changeSet.push(record);
+          continue;
+        }
+        /*jshint -W083*/
+        record.requires.forEach(function(recordId) {
+          var matched = changeSet.some(function(record) {
+            return record.id === recordId ? true : false;
+          });
+          if (!matched) {
+            records.push(record);
+            count += 1;
+          } else {
+            changeSet.push(record);
+          }
+        });
+      }
+      return changeSet;
     },
 
     /**
@@ -249,7 +295,7 @@ YUI.add('bundle-importer', function(Y) {
           this.env.deploy(
               record.args[0],
               record.args[1],
-              config,
+              record.args[2],
               undefined, // Config file content.
               0, // Number of units.
               {}, // Constraints.
@@ -388,13 +434,18 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addRelation: function(record, next) {
-      var endpoints = [record.args[0], record.args[1]];
-
+      var ep1 = record.args[0].split(':');
+      var ep2 = record.args[1].split(':');
+      var endpoints = [
+        [ep1[0], { name: ep1[1] }],
+        [ep2[0], { name: ep2[1] }]
+      ];
       // Resolve the record indexes to the service names.
       endpoints.forEach(function(ep, index) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
       }, this);
-      var relationId = 'pending-' + endpoints[0][0] + endpoints[1][0];
+
+      var relationId = 'pending-' + record.args[0] + record.args[1];
       var relation = this.db.relations.add({
         relation_id: relationId,
         'interface': endpoints[0][1].name,
