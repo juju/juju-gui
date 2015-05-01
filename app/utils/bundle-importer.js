@@ -143,6 +143,11 @@ YUI.add('bundle-importer', function(Y) {
         });
         this.importBundleDryRun(data);
       } else if (extension === 'yaml') {
+        notifications.add({
+          title: 'Processing File',
+          message: 'Changeset processing started.',
+          level: 'important'
+        });
         // result is YAML so we need to fetch the dry run changeset data from
         // the guiserver.
         this.fetchDryRun(result);
@@ -151,22 +156,32 @@ YUI.add('bundle-importer', function(Y) {
 
     /**
       Sorts the dry-run records into the correct order so that we can process
-      it top to bottom. Machines, Services, Units, Relations.
+      it top to bottom. Charms, Machines, Services, Units, Relations.
 
       @method _sortDryRunRecords
       @param {Array} records The dry-run data array.
       @return {Array} A sorted list of records.
     */
     _sortDryRunRecords: function(records) {
-      var order = {
-        addCharm: 1,
-        addMachines: 2,
-        deploy: 3,
-        addUnit: 4,
-        addRelation: 5
-      };
-      records.sort(function(a, b) {
-        return order[a.method] - order[b.method];
+      var changeSet = [];
+      records.forEach(function(record) {
+        if (record.requires.length === 0) {
+          changeSet.push(record);
+          return;
+        }
+        record.requires.forEach(function(recordId) {
+          var matched = changeSet.some(function(record) {
+            if (record.id === recordId) {
+              return true;
+            }
+            return false;
+          });
+          if (!matched) {
+            records.push(record);
+          } else {
+            changeSet.push(record);
+          }
+        });
       });
       return records;
     },
