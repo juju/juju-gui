@@ -33,7 +33,6 @@ describe('textarea autosize plugin', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'resizing-textarea',
-      'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
 
@@ -48,7 +47,7 @@ describe('textarea autosize plugin', function() {
         'tristique nisl eget risus blandit iaculis. Lorem ipsum dolor sit ,',
         'consectetur adipiscing elit.'].join('');
 
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

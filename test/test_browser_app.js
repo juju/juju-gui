@@ -41,11 +41,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'subapp-browser',
           'juju-models',
           'juju-views',
-          'juju-tests-utils',
           'subapp-browser-sidebar',
           function(Y) {
             views = Y.namespace('juju.browser.views');
-            utils = Y.namespace('juju-tests.utils');
+            utils = window.jujuTestUtils.utils;
             models = Y.namespace('juju.models');
             done();
           });
@@ -223,11 +222,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'app-subapp-extension',
             'juju-browser',
             'juju-charm-models',
-            'juju-tests-utils',
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
-              utils = Y.namespace('juju-tests.utils');
+              utils = window.jujuTestUtils.utils;
               next = function() {};
               done();
             });
@@ -855,10 +853,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'app-subapp-extension',
             'juju-views',
             'juju-browser',
-            'juju-tests-utils',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
-              utils = Y.namespace('juju-tests.utils');
+              utils = window.jujuTestUtils.utils;
               done();
             });
       });
@@ -867,7 +864,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y = YUI(GlobalConfig).use(
             'juju-views',
             'juju-browser',
-            'juju-tests-utils',
             'subapp-browser', function(Y) {
               ns = Y.namespace('juju.subapps');
               done();

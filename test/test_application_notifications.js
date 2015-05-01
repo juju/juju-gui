@@ -32,7 +32,6 @@ describe.skip('juju application notifications', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
@@ -64,11 +63,10 @@ describe.skip('juju application notifications', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-tests-utils',
       'node-event-simulate',
       'ns-routing-app-extension'],
     function(Y) {
-      viewContainer = Y.namespace('juju-tests.utils')
+      viewContainer = window.jujuTestUtils.utils
         .makeContainer(this, 'container');
       db = new models.Database();
       nsRouter = Y.namespace('juju').Router('charmbrowser');

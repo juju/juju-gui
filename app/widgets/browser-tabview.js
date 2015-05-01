@@ -172,6 +172,7 @@ YUI.add('browser-tabview', function(Y) {
 }, '0.1.0', {
   requires: [
     'array-extras',
-    'base'
+    'base',
+    'view'
   ]
 });

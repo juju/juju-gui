@@ -30,14 +30,13 @@ describe('charmbrowser view', function() {
         'view', // Why this is necessary?? Nobody knows!
         'browser-tabview', // Why this is necessary?? Nobody knows!
         'juju-models',
-        'juju-tests-utils',
         'juju-charmbrowser',
         'event-tracker',
         function(Y) {
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           views = Y.namespace('juju.browser.views');
           CharmBrowser = views.CharmBrowser;
-          cleanIconHelper = utils.stubCharmIconPath();
+          cleanIconHelper = utils.stubCharmIconPath(Y);
           done();
         });
   });

@@ -25,14 +25,14 @@ describe('Model Controller Promises', function() {
   before(function(done) {
     YUI(GlobalConfig).use(
         'juju-charm-models', 'juju-models', 'juju-tests-factory',
-        'juju-tests-utils', 'juju-view-environment', 'model-controller',
+        'juju-view-environment', 'model-controller',
         function(Y) {
           var environments = Y.juju.environments;
           yui = Y;
           load = Y.juju.models.Charm.prototype.load;
           getService = environments.GoEnvironment.prototype.get_service;
           aEach = Y.Array.each;
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           factory = Y.namespace('juju-tests.factory');
           done();
         });

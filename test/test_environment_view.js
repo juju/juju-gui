@@ -218,12 +218,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-views', 'juju-tests-utils', 'charmstore-api',
+        'juju-views', 'charmstore-api',
         'node-event-simulate', 'juju-gui', 'slider',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set'
       ], function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         conn = new testUtils.SocketStub();
@@ -249,7 +249,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = testUtils.makeContainer(this, 'content');
+      // This is not being done in the utils.makeContainer because the simulate
+      // function in YUI has a bug which causes it to fail/
+      container = Y.Node.create('<div>');
+      container.set('id', 'container');
+      container.appendTo(document.body);
+      container.setStyle('position', 'absolute');
+      container.setStyle('top', '-10000px');
+      container.setStyle('left', '-10000px');
+      // Add the destroy ability to the test hook context to be run on
+      // afterEach automatically.
+      this._cleanups.push(function() {
+        container.remove(true);
+        container.destroy();
+      });
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
       // annotations, its a direct reference).
@@ -1534,11 +1547,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-views', 'juju-models', 'charmstore-api', 'juju-tests-utils'],
+          ['juju-views', 'juju-models', 'charmstore-api'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
-            testUtils = Y.namespace('juju-tests').utils;
+            testUtils = window.jujuTestUtils.utils;
             done();
           });
     });

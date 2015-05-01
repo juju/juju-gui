@@ -22,10 +22,10 @@ describe('local-new-upgrade-inspector', function() {
   var Y, views, testUtils, container, lnui, services, fileObj, envObj, dbObj;
 
   before(function(done) {
-    var modules = ['juju-tests-utils', 'local-new-upgrade-inspector'];
+    var modules = ['local-new-upgrade-inspector'];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       views = Y.namespace('juju.views');
-      testUtils = Y['juju-tests'].utils;
+      testUtils = window.jujuTestUtils.utils;
       done();
     });
     services = [{ getAttrs: function() {} }];

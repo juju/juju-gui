@@ -30,14 +30,13 @@ describe('deployer bar view', function() {
       'environment-change-set',
       'event-simulate',
       'juju-models',
-      'juju-tests-utils',
       'juju-views',
       'node',
       'node-event-simulate'
     ];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       View = views.DeployerBarView;

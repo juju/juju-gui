@@ -28,11 +28,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'base-build',
         'subapp-browser-events',
         'juju-browser',
-        'subapp-browser',
-        'juju-tests-utils'
+        'subapp-browser'
       ];
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         done();
       });
     });

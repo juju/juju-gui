@@ -26,8 +26,8 @@ describe('Relation endpoints logic', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'array-extras', 'io', 'json-parse', 'juju-tests-utils'], function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      'array-extras', 'io', 'json-parse'], function(Y) {
+      utils = window.jujuTestUtils.utils;
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
       done();
@@ -39,7 +39,6 @@ describe('Relation endpoints logic', function() {
     Y = YUI(GlobalConfig).use(['juju-views',
                                'juju-models',
                                'juju-gui',
-                               'juju-tests-utils',
                                'juju-controllers',
                                'environment-change-set'],
     function(Y) {
@@ -174,7 +173,6 @@ describe('Endpoints map', function() {
 
   beforeEach(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
-                               'juju-tests-utils',
                                'juju-endpoints-controller',
                                'juju-controllers'],
     function(Y) {
@@ -337,14 +335,13 @@ describe('Endpoints map handlers', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
                                'juju-models',
-                               'juju-tests-utils',
                                'juju-tests-factory',
                                'juju-endpoints-controller',
                                'juju-controllers',
                                'datasource-local'],
     function(Y) {
       juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       factory = Y.namespace('juju-tests.factory');
       models = Y.namespace('juju.models');
       done();
@@ -532,14 +529,13 @@ describe('Service config handlers', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
                                'juju-models',
-                               'juju-tests-utils',
                                'juju-endpoints-controller',
                                'juju-controllers',
                                'datasource-local',
                                'environment-change-set'],
     function(Y) {
       juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       models = Y.namespace('juju.models');
       done();
     });

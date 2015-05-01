@@ -23,9 +23,8 @@ describe('prettify', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
-      'juju-tests-utils',
       'prettify'], function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

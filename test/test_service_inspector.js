@@ -24,13 +24,12 @@ describe('Service Inspector', function() {
     Y = YUI(GlobalConfig).use([
       'environment-change-set',
       'charmstore-api',
-      'juju-tests-utils',
       'juju-views',
       'node-event-simulate',
       'service-inspector'
     ], function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       charmData = utils.loadFixture(
           'data/mediawiki-api-response.json', true);
       done();

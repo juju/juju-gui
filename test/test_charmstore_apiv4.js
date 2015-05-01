@@ -22,10 +22,10 @@ describe('Charmstore API v4', function() {
   var APIv4, charmstore, utils, Y;
 
   before(function(done) {
-    var modules = ['charmstore-api', 'juju-tests-utils'];
+    var modules = ['charmstore-api'];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       APIv4 = Y.juju.charmstore.APIv4;
-      utils = Y['juju-tests'].utils;
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

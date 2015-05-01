@@ -98,14 +98,13 @@ describe('test_model.js', function() {
     var requirements = [
       'juju-models',
       'juju-charm-models',
-      'juju-tests-utils',
       'juju-view-utils'
     ];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         viewUtils = Y.namespace('juju.views.utils');
         done();
       });
@@ -1283,7 +1282,7 @@ describe('test_model.js', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
-        'juju-tests-utils', 'json-stringify'], function(Y) {
+        'json-stringify'], function(Y) {
         models = Y.namespace('juju.models');
         juju = Y.namespace('juju');
         done();
@@ -1291,7 +1290,7 @@ describe('test_model.js', function() {
     });
 
     beforeEach(function() {
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub();
+      conn = new window.jujuTestUtils.utils.SocketStub();
       env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
       conn.open();
@@ -1421,11 +1420,10 @@ describe('test_model.js', function() {
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'io',
-        'juju-charm-models',
-        'juju-tests-utils'
+        'juju-charm-models'
       ], function(Y) {
         models = Y.namespace('juju.models');
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
 
         origData = utils.loadFixture('data/browsercharm.json', true);
         // relatedData is never mutated so it can be used directly.
@@ -1544,10 +1542,9 @@ describe('test_model.js', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models',
-        'juju-tests-utils',
         'juju-charm-models'],
       function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         models = Y.namespace('juju.models');
         done();
       });

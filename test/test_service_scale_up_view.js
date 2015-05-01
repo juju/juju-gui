@@ -26,13 +26,12 @@ describe('service scale up view', function() {
     Y = YUI(GlobalConfig).use(['service-scale-up-view',
                                'juju-models',
                                'juju-views',
-                               'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
 
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       View = views.ServiceScaleUpView;
       done();

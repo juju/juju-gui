@@ -20,12 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Inspector Base', function() {
   var fakeView, Y, Inspector, testUtils;
-  var requirements = ['inspector-base', 'juju-tests-utils'];
+  var requirements = ['inspector-base'];
 
   before(function(done) {
     // Set up the YUI instance, the test utils and the web namespace.
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
-      testUtils = Y.namespace('juju-tests.utils');
+      testUtils = window.jujuTestUtils.utils;
       Inspector = Y.juju.views.Inspector;
       fakeView = Y.Base.create('fake-view', Y.View, [], {});
       done();

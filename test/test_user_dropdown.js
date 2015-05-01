@@ -26,13 +26,12 @@ describe('user dropdown view', function() {
     Y = YUI(GlobalConfig).use(['node',
       'juju-models',
       'juju-views',
-      'juju-tests-utils',
       'node-event-simulate',
       'user-dropdown'], function(Y) {
 
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
 
       done();
     });

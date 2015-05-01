@@ -37,10 +37,9 @@ describe('notifier widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['notifier',
-      'juju-tests-utils',
       'node-event-simulate'], function(Y) {
       Notifier = Y.namespace('juju.widgets').Notifier;
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });
@@ -110,7 +109,7 @@ describe('notifier widget', function() {
     setTimeout(function() {
       assertNumNotifiers(0);
       done();
-    }, 500);
+    }, 1000);
   });
 
   it('should destroy notifications on click', function(done) {

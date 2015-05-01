@@ -25,10 +25,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       var modules = ['juju-charm-models', 'local-charm-import-helpers',
-        'juju-tests-utils', 'node-event-simulate', 'request-series-view'];
+        'node-event-simulate', 'request-series-view'];
       Y = YUI(GlobalConfig).use(modules, function(Y) {
         helper = Y.juju.localCharmHelpers;
-        testUtils = Y['juju-tests'].utils;
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });

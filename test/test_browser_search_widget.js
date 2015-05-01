@@ -24,12 +24,11 @@ describe('browser search widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
-                               'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
       Search = Y.juju.widgets.browser.Search;
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       // Need the handlebars helper for the token to render.
       Y.Handlebars.registerHelper(
           'charmFilePath',
@@ -44,7 +43,7 @@ describe('browser search widget', function() {
     container = utils.makeContainer(this, 'container');
     search = new Search();
     search.render(container);
-    cleanIconHelper = utils.stubCharmIconPath();
+    cleanIconHelper = utils.stubCharmIconPath(Y);
   });
 
   afterEach(function() {

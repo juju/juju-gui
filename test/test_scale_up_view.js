@@ -25,12 +25,11 @@ describe('scale-up view', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'scale-up-view',
-        'juju-tests-utils',
         'juju-view-utils',
         'node-event-simulate',
         function() {
           jujuUtils = Y.namespace('juju.views.utils');
-          utils = Y.namespace('juju-tests').utils;
+          utils = window.jujuTestUtils.utils;
           View = Y.namespace('juju.viewlets').ScaleUp;
           done();
         });

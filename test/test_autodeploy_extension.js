@@ -23,11 +23,10 @@ describe('Autodeploy Extension', function() {
   var Y, juju, reviveStub, setAttrsStub, utils, widget, Widget;
 
   before(function(done) {
-    var requires = ['base', 'base-build', 'autodeploy-extension',
-      'juju-tests-utils'];
+    var requires = ['base', 'base-build', 'autodeploy-extension'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           juju = Y.namespace('juju');
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           done();
         });
   });

@@ -24,14 +24,13 @@ describe('environment header extension', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['environment-header-extension',
-                               'juju-tests-utils',
                                'event-simulate',
                                'event-tracker',
                                'node-event-simulate',
                                'juju-views',
                                'node'], function(Y) {
 
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       View = Y.Base.create('environment-header', Y.View, [
         // Because we are testing an extension which relies on mixins in the app
         // we create a view with this extension and mix in the other

@@ -23,14 +23,14 @@ describe('Inspector Widget', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['juju-inspector-widget',
-          'view', 'juju-tests-utils'], function(Y) {
+          'view'], function(Y) {
           jujuViews = Y.namespace('juju.views');
           done();
         });
   });
 
   beforeEach(function() {
-    container = Y['juju-tests'].utils.makeContainer(this, 'container');
+    container = window.jujuTestUtils.utils.makeContainer(this, 'container');
   });
 
   afterEach(function() {

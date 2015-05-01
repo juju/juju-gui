@@ -97,14 +97,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.deploy', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils, result, callback, models;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         models = Y.namespace('juju.models');
         done();
@@ -1037,7 +1037,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.setCharm', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
 
@@ -1045,7 +1045,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1103,14 +1103,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.expose', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils, result, callback, service;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1164,14 +1164,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.unexpose', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils, result, callback, service;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1226,14 +1226,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend deployer support', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1526,14 +1526,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.uniformOperations', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1862,14 +1862,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.addUnit', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1978,14 +1978,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.removeUnit', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -2082,14 +2082,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.next*', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -2208,14 +2208,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.addRelation', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -2485,14 +2485,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.addRelations', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -2553,14 +2553,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.removeRelation', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
     var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -2715,12 +2715,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var completedCallback, environmentsModule, fakebackend, mockGetEntries,
         testUtils, Y, ziputils;
     var requirements = [
-      'node', 'juju-env-fakebackend', 'juju-tests-utils', 'zip-utils'];
+      'node', 'juju-env-fakebackend', 'zip-utils'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         ziputils = Y.namespace('juju.ziputils');
         done();
       });
@@ -2863,12 +2863,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend._handleLocalCharmEntries', function() {
     var callback, environmentsModule, errback, fakebackend, testUtils, Y;
-    var requirements = ['js-yaml', 'juju-env-fakebackend', 'juju-tests-utils'];
+    var requirements = ['js-yaml', 'juju-env-fakebackend'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });
@@ -2969,12 +2969,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.handleLocalCharmFileRequest', function() {
     var callback, environmentsModule, fakebackend, testUtils, Y;
-    var requirements = ['juju-env-fakebackend', 'juju-tests-utils'];
+    var requirements = ['juju-env-fakebackend'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });
@@ -3052,12 +3052,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.getLocalCharmFileUrl', function() {
     var environmentsModule, fakebackend, testUtils, Y;
-    var requirements = ['juju-env-fakebackend', 'juju-tests-utils'];
+    var requirements = ['juju-env-fakebackend'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });
@@ -3105,7 +3105,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('FakeBackend\'s ServiceDeploy', function() {
-    var requires = ['node', 'juju-env-fakebackend', 'juju-tests-utils',
+    var requires = ['node', 'juju-env-fakebackend',
       'juju-gui', 'juju-tests-factory'];
     var Y, utils, juju, environments, factory, sandbox, state, conn, env;
 
@@ -3113,7 +3113,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandbox = Y.namespace('juju.environments.sandbox');
         environments = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });

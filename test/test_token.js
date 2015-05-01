@@ -24,11 +24,10 @@ describe('charm/bundle token', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-token', 'node-event-simulate',
-         'juju-tests-utils'], function(Y) {
+        ['browser-token', 'node-event-simulate'], function(Y) {
           Token = Y.juju.widgets.browser.Token;
-          utils = Y.namespace('juju-tests.utils');
-          cleanIconHelper = utils.stubCharmIconPath();
+          utils = window.jujuTestUtils.utils;
+          cleanIconHelper = utils.stubCharmIconPath(Y);
           done();
         });
   });

@@ -25,7 +25,6 @@ describe('topology', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology',
                                'd3-components',
-                               'juju-tests-utils',
                                'juju-tests-factory',
                                'juju-view-bundle',
                                'node',
@@ -34,7 +33,7 @@ describe('topology', function() {
       NS = Y.namespace('d3');
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       factory = Y.namespace('juju-tests.factory');
 
       TestModule = Y.Base.create('TestModule', NS.Module, [], {

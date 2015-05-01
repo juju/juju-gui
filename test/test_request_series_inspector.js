@@ -22,10 +22,10 @@ describe('request-series-inspector', function() {
   var Y, views, testUtils, container, rsi, fileObj, envObj, dbObj;
 
   before(function(done) {
-    var modules = ['juju-tests-utils', 'request-series-inspector'];
+    var modules = ['request-series-inspector'];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       views = Y.namespace('juju.views');
-      testUtils = Y['juju-tests'].utils;
+      testUtils = window.jujuTestUtils.utils;
       done();
     });
     fileObj = { file: 'file' };

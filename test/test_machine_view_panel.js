@@ -23,7 +23,7 @@ describe('machine view panel view', function() {
       views, Y;
   var requirements = [
     'drop-target-view-extension', 'event-simulate', 'juju-env-go',
-    'juju-models', 'juju-views', 'juju-tests-utils', 'machine-view-panel',
+    'juju-models', 'juju-views', 'machine-view-panel',
     'node', 'node-event-simulate'];
 
   function createViewNoUnits() {
@@ -42,7 +42,7 @@ describe('machine view panel view', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       View = views.MachineViewPanelView;
       done();
@@ -928,8 +928,10 @@ describe('machine view panel view', function() {
       view._selectMachineToken(machineToken, containerId);
       assert.equal(selectRootStub.callCount(), 1);
       assert.equal(selectContainerStub.callCount(), 1);
-      assert.deepEqual(selectContainerStub.lastArguments()[0], container.one(
-          '.container-token .token[data-id="' + containerId + '"]'));
+      assert.deepEqual(
+          selectContainerStub.lastArguments()[0]._yuid,
+          container.one(
+              '.container-token .token[data-id="' + containerId + '"]')._yuid);
     });
 
     it('does not allow placement on machines being deleted', function() {

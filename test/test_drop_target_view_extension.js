@@ -23,11 +23,11 @@ describe('MV drop target view extension', function() {
   var Y, juju, utils, view, View;
 
   before(function(done) {
-    var requires = ['base', 'base-build', 'event', 'juju-tests-utils',
+    var requires = ['base', 'base-build', 'event',
       'node-event-simulate', 'mv-drop-target-view-extension'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           juju = Y.namespace('juju');
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           done();
         });
   });

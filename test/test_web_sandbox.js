@@ -22,12 +22,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Web sandbox', function() {
     var mockState, utils, webSandbox, webModule, Y;
-    var requirements = ['juju-env-web-sandbox', 'juju-tests-utils'];
+    var requirements = ['juju-env-web-sandbox'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the web namespace.
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         webModule = Y.namespace('juju.environments.web');
         done();
       });

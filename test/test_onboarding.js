@@ -27,10 +27,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'node-event-simulate',
-          'juju-tests-utils',
           'juju-view-onboarding',
           function(Y) {
-            utils = Y.namespace('juju-tests.utils');
+            utils = window.jujuTestUtils.utils;
             views = Y.namespace('juju.views');
             OnboardingView = views.OnboardingView;
             done();
@@ -38,7 +37,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = utils.makeContainer(this, 'onboarding');
+      container = Y.Node.create('<div>');
+      container.set('id', 'onboarding');
+      container.appendTo(document.body);
+      container.setStyle('position', 'absolute');
+      container.setStyle('top', '-10000px');
+      container.setStyle('left', '-10000px');
+      // Add the destroy ability to the test hook context to be run on
+      // afterEach automatically.
+      this._cleanups.push(function() {
+        container.remove(true);
+        container.destroy();
+      });
       env_help = utils.makeContainer(this, 'environment-help');
     });
 

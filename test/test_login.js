@@ -21,13 +21,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('environment login support', function() {
-    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    var requires = ['node', 'juju-gui', 'juju-views'];
     var Y, conn, env, utils, juju;
     var test = it; // We aren't really doing BDD so let's be more direct.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests').utils;
+        utils = window.jujuTestUtils.utils;
         juju = Y.namespace('juju');
         done();
       });
@@ -110,13 +110,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
   describe('login view', function() {
-    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    var requires = ['node', 'juju-gui', 'juju-views'];
     var Y, conn, env, utils, juju, views, loginView, container, mask;
     var test = it; // We aren't really doing BDD so let's be more direct.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests').utils;
+        utils = window.jujuTestUtils.utils;
         juju = Y.namespace('juju');
         views = Y.namespace('juju.views');
         done();

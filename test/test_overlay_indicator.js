@@ -23,10 +23,10 @@ describe('overlay indicator', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-overlay-indicator',
-      'juju-tests-utils', 'node'],
+      'node'],
     function(Y) {
       widget = Y.juju.widgets.browser;
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });
@@ -59,7 +59,9 @@ describe('overlay indicator', function() {
     indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: child});
     indicator.render();
-    assert.equal(container, indicator.get('boundingBox').get('parentNode'));
+    assert.equal(
+        container._yuid,
+        indicator.get('boundingBox').get('parentNode')._yuid);
   });
 
   it('has a spinner', function() {

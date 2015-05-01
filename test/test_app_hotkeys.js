@@ -23,7 +23,7 @@ describe('application hotkeys', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-gui', 'juju-tests-utils', 'node-event-simulate'], function(Y) {
+        ['juju-gui', 'node-event-simulate'], function(Y) {
           env = {
             after: function() {},
             get: function() {},
@@ -38,8 +38,8 @@ describe('application hotkeys', function() {
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer(this);
-    var _renderDeployerBarView = Y.namespace('juju-tests.utils').makeStubMethod(
+    container = window.jujuTestUtils.utils.makeContainer(this);
+    var _renderDeployerBarView = window.jujuTestUtils.utils.makeStubMethod(
         Y.juju.App.prototype, '_renderDeployerBarView');
     this._cleanups.push(_renderDeployerBarView.reset);
     app = new Y.juju.App({

@@ -24,7 +24,6 @@ describe('d3-components', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3-components',
-      'juju-tests-utils',
       'node',
       'node-event-simulate'],
     function(Y) {
@@ -51,13 +50,27 @@ describe('d3-components', function() {
           state.cancelled = true;
         }
       });
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });
 
   beforeEach(function() {
-    container = utils.makeContainer(this, 'container');
+    // This is not being done in the utils.makeContainer because the simulate
+    // function in YUI has a bug which causes it to fail/
+    container = Y.Node.create('<div>');
+    container.set('id', 'container');
+    container.appendTo(document.body);
+    container.setStyle('position', 'absolute');
+    container.setStyle('top', '-10000px');
+    container.setStyle('left', '-10000px');
+    // Add the destroy ability to the test hook context to be run on
+    // afterEach automatically.
+    this._cleanups.push(function() {
+      container.remove(true);
+      container.destroy();
+    });
+
     container.append(Y.Node.create('<button/>')
              .addClass('thing'))
              .append(Y.Node.create('<button/>')
@@ -114,7 +127,7 @@ describe('d3-components', function() {
     // These require a bound DOM element however
     comp.render();
     Y.one('.thing').simulate('click');
-    state.thing.should.equal('decorated');
+    assert.equal(state.thing, 'decorated');
   });
 
   it('should allow event bindings through the use of a declarative object',
@@ -140,11 +153,10 @@ describe('d3-components', function() {
        comp.render();
 
        Y.one('.thing').simulate('click');
-       state.clicked.should.equal(true);
+       assert.equal(state.clicked, true);
 
        Y.one('.thing').simulate('dblclick');
-       state.dbldbl.should.equal(true);
-
+       assert.equal(state.dbldbl, true);
      });
 
   it('should correctly handle synthetic event bindings', function(done) {
