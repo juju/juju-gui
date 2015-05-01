@@ -117,19 +117,17 @@ describe('Bundle Importer', function() {
     });
     describe('importBundleDryRun', function() {
       var unsortedRecords = [
-        { method: 'addRelation' },
-        { method: 'addUnit' },
-        { method: 'addMachines' },
-        { method: 'deploy' },
-        { method: 'addCharm' }
+        { id: '2', requires: []},
+        { id: '5', requires: ['3']},
+        { id: '4', requires: ['2']},
+        { id: '3', requires: []}
       ];
 
       var sortedRecords = [
-        { method: 'addCharm' },
-        { method: 'addMachines' },
-        { method: 'deploy' },
-        { method: 'addUnit' },
-        { method: 'addRelation' }
+        { id: '2', requires: []},
+        { id: '4', requires: ['2']},
+        { id: '3', requires: []},
+        { id: '5', requires: ['3']}
       ];
 
       it('sorts the records then calls to execute', function() {

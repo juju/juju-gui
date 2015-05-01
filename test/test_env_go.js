@@ -2196,6 +2196,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('handles yaml parsing errors from the guiserver', function() {
+      var yaml = 'foo:\n  bar: baz';
+      var callback = utils.makeStubFunction();
+      env.getChangeSet(yaml, callback);
+      msg = conn.last_message();
+      env.dispatch_result({
+        RequestId: msg.RequestId,
+        Error: ['food']
+      });
+      assert.equal(callback.callCount(), 1);
+      assert.deepEqual(callback.lastArguments()[0], {
+        err: ['food']
+      });
+    });
+
   });
 
 })();

@@ -63,9 +63,8 @@ YUI.add('bundle-importer', function(Y) {
       @method importBundleDryRun
     */
     importBundleDryRun: function(records) {
-      this.recordSet = records;
       // Sort dry-run records into the correct order.
-      this.recordSet = this._sortDryRunRecords(this.recordSet);
+      this.recordSet = this._sortDryRunRecords(records);
       this._executeDryRun(this.recordSet);
     },
 
@@ -164,26 +163,28 @@ YUI.add('bundle-importer', function(Y) {
     */
     _sortDryRunRecords: function(records) {
       var changeSet = [];
-      records.forEach(function(record) {
+      var count = records.length;
+      var record;
+      for (var i = 0; i < count; i += 1) {
+        record = records[i];
         if (record.requires.length === 0) {
           changeSet.push(record);
-          return;
+          continue;
         }
+        /*jshint -W083*/
         record.requires.forEach(function(recordId) {
           var matched = changeSet.some(function(record) {
-            if (record.id === recordId) {
-              return true;
-            }
-            return false;
+            return record.id === recordId ? true : false;
           });
           if (!matched) {
             records.push(record);
+            count += 1;
           } else {
             changeSet.push(record);
           }
         });
-      });
-      return records;
+      }
+      return changeSet;
     },
 
     /**

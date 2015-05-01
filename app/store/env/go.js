@@ -2268,7 +2268,7 @@ YUI.add('juju-env-go', function(Y) {
     */
     _handleGetChangeSet: function(userCallback, data) {
       var response = {};
-      if (data.Response.Errors) {
+      if (data.Response && data.Response.Errors) {
         response.err = data.Response.Errors;
       } else if (data.Error) {
         response.err = data.Error;
