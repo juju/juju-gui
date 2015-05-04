@@ -175,13 +175,14 @@ YUI.add('bundle-importer', function(Y) {
           continue;
         }
         /*jshint -W083*/
-        record.requires.forEach(function(recordId) {
+        record.requires.some(function(recordId) {
           var matched = changeSet.some(function(record) {
             return record.id === recordId ? true : false;
           });
           if (!matched) {
             records.push(record);
             count += 1;
+            return false;
           } else {
             changeSet.push(record);
           }
