@@ -133,8 +133,8 @@ describe('service module events', function() {
     viewContainer.setStyle('top', '-10000px');
     viewContainer.setStyle('left', '-10000px');
     this._cleanups.push(function() {
-      container.remove(true);
-      container.destroy();
+      viewContainer.remove(true);
+      viewContainer.destroy();
     });
     var charmData = utils.loadFixture('data/haproxy-api-response.json', true);
     charm = new models.Charm(charmData.charm);
