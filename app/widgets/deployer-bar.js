@@ -882,11 +882,8 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} e The event object.
     */
     _deployFile: function(e) {
-      bundleHelpers.deployBundleFiles(
-          e.currentTarget.get('files')._nodes,
-          this.get('env'),
-          this.get('db')
-      );
+      this.get('bundleImporter').importBundleFile(
+          e.currentTarget.get('files')._nodes[0]);
     },
 
     /**

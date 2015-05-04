@@ -96,9 +96,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var bundleId = bundle.get('id').replace('cs:', '');
       charmstore.getBundleYAML(
           bundleId,
-          function(yaml) {
-            var bundleYAML = charmstore.downConvertBundleYAML(yaml);
-            this.get('deployBundle')(bundleYAML, bundleId);
+          function(bundleYAML) {
+            this.get('bundleImporter').importBundleYAML(bundleYAML);
           }.bind(this));
     },
 

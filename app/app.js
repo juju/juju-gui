@@ -488,6 +488,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         fakebackend: state
       });
+      cfg.bundleImporter = this.bundleImporter;
 
       // Create notifications controller
       this.notifications = new juju.NotificationController({
@@ -919,7 +920,8 @@ YUI.add('juju-gui', function(Y) {
         container: Y.one('#deployer-bar'),
         ecs: this.env.get('ecs'),
         env: this.env,
-        db: this.db
+        db: this.db,
+        bundleImporter: this.bundleImporter
       }).render();
       this.deployerBar.addTarget(this);
     },

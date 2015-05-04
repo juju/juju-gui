@@ -42,8 +42,11 @@ YUI.add('bundle-importer', function(Y) {
       Import a bundle YAML into the current environment.
 
       @method importBundleYAML
+      @param {String} bundleYAML The bundle YAML to deploy.
     */
-    importBundleYAML: function() {},
+    importBundleYAML: function(bundleYAML) {
+      this.fetchDryRun(bundleYAML);
+    },
 
     /**
       Import bundle YAML or dry-run file.

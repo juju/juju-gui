@@ -487,7 +487,8 @@ YUI.add('subapp-browser', function(Y) {
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
         deployBundle: this.get('deployBundle'),
-        deployService: this.get('deployService')
+        deployService: this.get('deployService'),
+        bundleImporter: this.get('bundleImporter')
       };
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
