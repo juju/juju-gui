@@ -185,10 +185,12 @@ describe('Browser bundle detail view', function() {
         this._cleanups.push(function() { handler.detach(); });
         // app.js sets this to its deploy bundle method so
         // as long as it's called it's successful.
-        view.set('deployBundle', function(data) {
-          assert.equal(data, 'bundle: data');
-          assert.equal(changeStateFired, true);
-          done();
+        view.set('bundleImporter', {
+          importBundleYAML: function(data) {
+            assert.equal(data.target.responseText, 'bundle: data');
+            assert.equal(changeStateFired, true);
+            done();
+          }
         });
         view.set('charmstore', {
           getBundleYAML: function(id, callback) {
@@ -196,6 +198,9 @@ describe('Browser bundle detail view', function() {
           },
           downConvertBundleYAML: function() {
             return 'bundle: data';
+          },
+          getIconPath: function() {
+            return 'icon.svg';
           }
         });
         view.set('entity', new models.Bundle(data));

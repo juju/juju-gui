@@ -392,26 +392,17 @@ describe('service module events', function() {
           }
         };
 
-    var _charmstore = view.topo.get('charmstore');
     view.topo.set('charmstore', {
       getBundleYAML: function(id, callback) {
         callback({target: {responseText: 'bundle: BUNDLE DATA'}});
-      },
-      downConvertBundleYAML: function() {
-        return 'bundle: BUNDLE DATA';
       }
     });
-    // mock out the Y.BundleHelpers call.
-    var _deployBundle = juju.BundleHelpers.deployBundle;
-    juju.BundleHelpers.deployBundle = function(deployerData, id, env, db) {
-      assert.include(deployerData, 'BUNDLE DATA');
-      assert.equal(id, '~jorge/bundle/thing');
-      // Restore the deployBundle call for future tests.
-      juju.BundleHelpers.deployBundle = _deployBundle;
-      view.topo.set('charmstore', _charmstore);
-      done();
-    };
-
+    view.topo.set('bundleImporter', {
+      importBundleYAML: function(e) {
+        assert.equal(e.target.responseText, 'bundle: BUNDLE DATA');
+        done();
+      }
+    });
     serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
