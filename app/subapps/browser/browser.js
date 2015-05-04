@@ -485,7 +485,6 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
-        deployBundle: this.get('deployBundle'),
         deployService: this.get('deployService'),
         bundleImporter: this.get('bundleImporter')
       };
@@ -532,7 +531,6 @@ YUI.add('subapp-browser', function(Y) {
 
       var extraCfg = {
         deployService: this.get('deployService'),
-        deployBundle: this.get('deployBundle'),
         cache: this._cache
       };
       // Charmbrowser needs the DB in order to update the service count in the
@@ -806,14 +804,6 @@ YUI.add('subapp-browser', function(Y) {
          @type {Function}
        */
       deployService: {},
-
-      /**
-       * @attribute deployBundle
-       * @default undefined
-       * @type {Function}
-       *
-       */
-      deployBundle: {},
 
       /**
        * @attribute environmentHeader

@@ -196,9 +196,6 @@ describe('Browser bundle detail view', function() {
           getBundleYAML: function(id, callback) {
             callback({target: {responseText: 'bundle: data'}});
           },
-          downConvertBundleYAML: function() {
-            return 'bundle: data';
-          },
           getIconPath: function() {
             return 'icon.svg';
           }

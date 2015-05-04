@@ -633,22 +633,6 @@ YUI.add('juju-gui', function(Y) {
       // from the Y.juju.GhostDeployer extension
       cfg.deployService = Y.bind(this.deployService, this);
 
-      // Provide the bundle deployment helper to the subapps and views to
-      // access in case of an UX interaction that triggers a bundle deploy.
-      // Grab a reference of these for the nested event calls below.
-      var env = this.env;
-      var db = this.db;
-      cfg.deployBundle = function(bundle, bundleId) {
-        // The other views will hand us an Object vs a YAML string. The import
-        // helpers want the yaml string instead.
-        importHelpers.deployBundle(
-            bundle,
-            bundleId,
-            env,
-            db
-        );
-      };
-
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction

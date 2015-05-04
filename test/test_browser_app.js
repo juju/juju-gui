@@ -99,12 +99,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('passes in the deploy methods on instantiation', function() {
         var deployService = 'deployServiceFn';
-        var deployBundle = 'deployBundleFn';
         app.set('deployService', deployService);
-        app.set('deployBundle', deployBundle);
         app.renderCharmBrowser();
         assert.equal(app._charmbrowser.get('deployService'), deployService);
-        assert.equal(app._charmbrowser.get('deployBundle'), deployBundle);
       });
 
       it('adds the browser as a bubble target', function(done) {
