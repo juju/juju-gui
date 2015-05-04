@@ -245,9 +245,8 @@ YUI.add('subapp-browser', function(Y) {
       if (entityId.indexOf('bundle/') > -1) {
         charmstore.getBundleYAML(
             entityId,
-            function(yaml) {
-              var bundleYAML = charmstore.downConvertBundleYAML(yaml);
-              this.get('deployBundle')(bundleYAML, entityId);
+            function(bundleYAML) {
+              this.get('bundleImporter').importBundleYAML(bundleYAML);
             }.bind(this),
             failureNotification.bind(this));
       } else {
