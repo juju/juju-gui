@@ -388,20 +388,6 @@ YUI.add('charmstore-api', function(Y) {
     },
 
     /**
-      Takes the supplied YAML and wraps it in another layer to simulate the
-      apiv3 format.
-
-      @method downConvertBundleYAML
-      @param {String} bundleYAML The bundle YAML file contents.
-      @return {String} The wrapped bundle YAML.
-    */
-    downConvertBundleYAML: function(bundleYAML) {
-      var bundle = jsyaml.safeLoad(bundleYAML);
-      var wrapped = { 'bundle-deploy': bundle };
-      return jsyaml.safeDump(wrapped);
-    },
-
-    /**
       Gets the list of available versions of the supplied charm id.
 
       @method getAvailableVersions

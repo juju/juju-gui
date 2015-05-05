@@ -20,8 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('deployer bar view', function() {
-  var bundleHelpers, container, db, ECS, ecs, mockEvent, models, testUtils,
-      utils, view, View, views, Y;
+  var bundleHelpers, container, db, ECS, ecs, importBundleFile, mockEvent,
+      models, testUtils, utils, view, View, views, Y;
 
   before(function(done) {
     var requirements = [
@@ -51,7 +51,15 @@ describe('deployer bar view', function() {
     db = new models.Database();
     ecs = new ECS({db: db});
     container = utils.makeContainer(this, 'deployer-bar');
-    view = new View({container: container, db: db, ecs: ecs}).render();
+    importBundleFile = utils.makeStubFunction();
+    view = new View({
+      container: container,
+      db: db,
+      ecs: ecs,
+      bundleImporter: {
+        importBundleFile: importBundleFile
+      }
+    }).render();
   });
 
   afterEach(function() {
@@ -568,11 +576,8 @@ describe('deployer bar view', function() {
   });
 
   it('can import a bundle file', function() {
-    var importStub = utils.makeStubMethod(bundleHelpers, 'deployBundleFiles');
-    this._cleanups.push(importStub.reset);
     container.one('.import-file').simulate('change');
-    assert.equal(importStub.calledOnce(), true,
-        'deployBundleFiles should have been called');
+    assert.equal(importBundleFile.callCount(), 1);
   });
 
   it('can set the height mode to small', function() {

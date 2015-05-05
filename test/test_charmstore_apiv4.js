@@ -415,13 +415,6 @@ describe('Charmstore API v4', function() {
     });
   });
 
-  describe('downConvertBundleYAML', function() {
-    it('wraps a supplied bundle yaml', function() {
-      var wrapped = charmstore.downConvertBundleYAML('bundle:\n  test');
-      assert.equal(wrapped, '"bundle-deploy": \n  bundle: test\n');
-    });
-  });
-
   describe('getAvailableVersions', function() {
     var request;
 

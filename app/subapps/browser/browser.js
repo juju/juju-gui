@@ -245,9 +245,8 @@ YUI.add('subapp-browser', function(Y) {
       if (entityId.indexOf('bundle/') > -1) {
         charmstore.getBundleYAML(
             entityId,
-            function(yaml) {
-              var bundleYAML = charmstore.downConvertBundleYAML(yaml);
-              this.get('deployBundle')(bundleYAML, entityId);
+            function(bundleYAML) {
+              this.get('bundleImporter').importBundleYAML(bundleYAML);
             }.bind(this),
             failureNotification.bind(this));
       } else {
@@ -486,8 +485,8 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
-        deployBundle: this.get('deployBundle'),
-        deployService: this.get('deployService')
+        deployService: this.get('deployService'),
+        bundleImporter: this.get('bundleImporter')
       };
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
@@ -532,7 +531,6 @@ YUI.add('subapp-browser', function(Y) {
 
       var extraCfg = {
         deployService: this.get('deployService'),
-        deployBundle: this.get('deployBundle'),
         cache: this._cache
       };
       // Charmbrowser needs the DB in order to update the service count in the
@@ -806,14 +804,6 @@ YUI.add('subapp-browser', function(Y) {
          @type {Function}
        */
       deployService: {},
-
-      /**
-       * @attribute deployBundle
-       * @default undefined
-       * @type {Function}
-       *
-       */
-      deployBundle: {},
 
       /**
        * @attribute environmentHeader

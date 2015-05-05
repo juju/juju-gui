@@ -42,8 +42,11 @@ YUI.add('bundle-importer', function(Y) {
       Import a bundle YAML into the current environment.
 
       @method importBundleYAML
+      @param {String} bundleYAML The bundle YAML to deploy.
     */
-    importBundleYAML: function() {},
+    importBundleYAML: function(bundleYAML) {
+      this.fetchDryRun(bundleYAML);
+    },
 
     /**
       Import bundle YAML or dry-run file.
@@ -172,13 +175,14 @@ YUI.add('bundle-importer', function(Y) {
           continue;
         }
         /*jshint -W083*/
-        record.requires.forEach(function(recordId) {
+        record.requires.some(function(recordId) {
           var matched = changeSet.some(function(record) {
             return record.id === recordId ? true : false;
           });
           if (!matched) {
             records.push(record);
             count += 1;
+            return false;
           } else {
             changeSet.push(record);
           }
