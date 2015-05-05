@@ -2196,20 +2196,31 @@ YUI.add('juju-models', function(Y) {
      * @return {Object} export object suitable for serialization.
      */
     exportDeployer: function() {
-      var serviceList = this.services,
-          relationList = this.relations,
-          defaultSeries = this.environment.get('defaultSeries'),
-          result = {
-            envExport: {
-              services: {},
-              relations: []
-            }
-          };
+      var defaultSeries = this.environment.get('defaultSeries'),
+          result = {};
 
       if (defaultSeries) {
-        result.envExport.series = defaultSeries;
+        result.series = defaultSeries;
       }
 
+      result.services = this.generateServiceList(this.services);
+      result.services = this.addMachinesToServices(
+          this.machines, result.services);
+      result.relations = this.generateRelationList(this.relations);
+
+      return result;
+    },
+
+    /**
+      Generate a service list for the exported yaml file based on the list of
+      services passed in.
+
+      @method generateServiceList
+      @param {Object} serviceList The service list.
+      @return {Object} The services list for the export.
+    */
+    generateServiceList: function(serviceList) {
+      var services = {};
       serviceList.each(function(service) {
         var units = service.get('units');
         var charm = this.charms.getById(service.get('charm'));
@@ -2286,15 +2297,39 @@ YUI.add('juju-models', function(Y) {
           serviceData.annotations = {'gui-x': anno['gui-x'],
             'gui-y': anno['gui-y']};
         }
-        result.envExport.services[serviceName] = serviceData;
+        services[serviceName] = serviceData;
       }, this);
+      return services;
+    },
 
-      var machinePlacement = this._mapServicesToMachines(this.machines);
+    /**
+      Adds the machine placement information to the services based on the
+      passed in machine list.
+
+      @method addMachinesToServices
+      @param {Object} machineList The machines list.
+      @param {Object} serviceList The service list.
+      @return {Object} The services list with machine placement for the export.
+    */
+    addMachinesToServices: function(machineList, serviceList) {
+      var machinePlacement = this._mapServicesToMachines(machineList);
       Object.keys(machinePlacement).forEach(function(serviceName) {
         var placement = machinePlacement[serviceName];
-        result.envExport.services[serviceName].to = placement;
+        serviceList[serviceName].to = placement;
       });
+      return serviceList;
+    },
 
+    /**
+      Generate a relation list for the exported yaml file based on the list of
+      relations passed in.
+
+      @method generateRelationList
+      @param {Object} relationList The relation list.
+      @return {Object} The relations list for the export.
+    */
+    generateRelationList: function(relationList) {
+      var relations = [];
       relationList.each(function(relation) {
         var endpoints = relation.get('endpoints');
         // Skip peer relations: they should be added automatically.
@@ -2315,10 +2350,9 @@ YUI.add('juju-models', function(Y) {
         var relationData = endpoints.map(function(endpoint) {
           return endpoint[0] + ':' + endpoint[1].name;
         });
-        result.envExport.relations.push(relationData);
+        relations.push(relationData);
       }, this);
-
-      return result;
+      return relations;
     },
 
     /**
