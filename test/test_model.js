@@ -1590,7 +1590,7 @@ describe('test_model.js', function() {
               }
             }
           ]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
 
       assert.strictEqual(result.relations.length, 1);
       var relation = result.relations[0];
@@ -1632,7 +1632,7 @@ describe('test_model.js', function() {
         endpoints: [['wordpress', {name: 'loadbalancer', role: 'peer'}]],
         'interface': 'reversenginx'
       });
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       // The service has been exported.
       assert.isDefined(result.services.wordpress);
       // But not its peer relation.
@@ -1645,7 +1645,7 @@ describe('test_model.js', function() {
         {id: 'django', charm: 'trusty/django-47'}
       ]);
       db.charms.add([{id: 'precise/juju-gui-42'}, {id: 'trusty/django-47'}]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       assert.strictEqual(Y.Object.size(result.services), 1);
       assert.isDefined(result.services.django);
     });
@@ -1677,7 +1677,7 @@ describe('test_model.js', function() {
           'interface': 'mysql'
         }
       ]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       // The juju-gui service has not been exported.
       assert.isUndefined(result.services['juju-gui']);
       // The only exported relation is between wordpress and mysql.
@@ -1689,7 +1689,7 @@ describe('test_model.js', function() {
       // Add a subordinate.
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       assert.equal(result.services.puppet.num_units, 0);
     });
 
@@ -1715,7 +1715,7 @@ describe('test_model.js', function() {
           five: {'default': true, type: 'boolean'}
         }
       }]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       assert.strictEqual(result.services.wordpress.options.one, 'foo');
       assert.strictEqual(result.services.wordpress.options.two, 2);
       assert.strictEqual(result.services.wordpress.options.three, 3.14);
@@ -1745,7 +1745,7 @@ describe('test_model.js', function() {
           five: {'default': true, type: 'boolean'}
         }
       }]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       assert.isUndefined(result.services.wordpress.options.one);
       assert.strictEqual(result.services.wordpress.options.two, 2);
       assert.isUndefined(result.services.wordpress.options.three);
@@ -1781,7 +1781,7 @@ describe('test_model.js', function() {
               }
             }
           ]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       assert.equal(result.services.wordpress.options.one, '1');
       assert.equal(result.services.wordpress.options.two, '2');
       assert.equal(result.services.wordpress.options.three, '3');
@@ -1792,10 +1792,10 @@ describe('test_model.js', function() {
     it('exports exposed flag', function() {
       db.services.add({id: 'wordpress', charm: 'precise/wordpress-4'});
       db.charms.add([{id: 'precise/wordpress-4'}]);
-      var result = db.exportDeployer().envExport;
+      var result = db.exportDeployer();
       assert.isUndefined(result.services.wordpress.expose);
       db.services.getById('wordpress').set('exposed', true);
-      result = db.exportDeployer().envExport;
+      result = db.exportDeployer();
       assert.isTrue(result.services.wordpress.expose);
     });
 
@@ -1816,7 +1816,8 @@ describe('test_model.js', function() {
       db.units.add(units, true);
       var placement = db._mapServicesToMachines(db.machines);
       var expected = {
-        'mysql': ['wordpress=0']
+        mysql: ['0'],
+        wordpress: ['0']
       };
       assert.deepEqual(placement, expected);
     });
@@ -1863,8 +1864,9 @@ describe('test_model.js', function() {
       db.units.add(units, true);
       var placement = db._mapServicesToMachines(db.machines);
       var expected = {
-        'mysql': ['wordpress=0', 'wordpress=1'],
-        'apache2': ['mysql=0', 'wordpress=1']
+        wordpress: ['0', '2'],
+        mysql: ['0', '1', '2'],
+        apache2: ['1', '2']
       };
       assert.deepEqual(placement, expected);
     });
@@ -1897,8 +1899,9 @@ describe('test_model.js', function() {
       db.units.add(units, true);
       var placement = db._mapServicesToMachines(db.machines);
       var expected = {
-        'mysql': ['wordpress=0'],
-        'apache2': ['lxc:wordpress=0']
+        wordpress: ['0'],
+        mysql: ['0'],
+        apache2: ['lxc:wordpress/0']
       };
       assert.deepEqual(placement, expected);
     });
@@ -1924,7 +1927,8 @@ describe('test_model.js', function() {
       db.units.add(units, true);
       var placement = db._mapServicesToMachines(db.machines);
       var expected = {
-        'apache2': ['mysql=0']
+        mysql: ['0'],
+        apache2: ['0']
       };
       assert.deepEqual(placement, expected);
     });
@@ -2009,8 +2013,8 @@ describe('test_model.js', function() {
           }
         }
       }]);
-      var result = db.exportDeployer().envExport;
-      assert.deepEqual(result.services.mysql.to, ['wordpress=0']);
+      var result = db.exportDeployer();
+      assert.deepEqual(result.services.mysql.to, ['0']);
     });
   });
 
