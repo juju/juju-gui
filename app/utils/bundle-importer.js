@@ -184,7 +184,15 @@ YUI.add('bundle-importer', function(Y) {
             count += 1;
             return false;
           } else {
-            changeSet.push(record);
+            // Make sure that we don't have any duplicate records
+            var exists = changeSet.some(function(set) {
+              if (set.id === record.id) {
+                return true;
+              }
+            });
+            if (!exists) {
+              changeSet.push(record);
+            }
           }
         });
       }
@@ -252,8 +260,17 @@ YUI.add('bundle-importer', function(Y) {
     */
     _execute_addMachines: function(record, next) {
       var parentKey = record.args[0].parentId;
+      parentKey = parentKey && parentKey.replace(/^\$/, '');
+      var parentId = '';
       if (parentKey) {
-        record.args[0].parentId = record[parentKey.replace(/^\$/, '')].id;
+        if (parentKey.indexOf('addMachine') > -1) {
+          parentId = record[parentKey].id;
+        } else if (parentKey.indexOf('addUnit') > -1) {
+          // The parentKey can be a specific unit if the lxc was placed on named
+          // machine so we need to get the units machine Id to set the parentId.
+          parentId = record[parentKey].machine;
+        }
+        record.args[0].parentId = parentId;
       }
       // XXX This code is duplicated from scale-up.js:191. We need to create a
       // layer where we create ghosts and handle cleaning them up.
@@ -400,6 +417,7 @@ YUI.add('bundle-importer', function(Y) {
         charmUrl: charmUrl,
         subordinate: this.db.charms.getById(charmUrl).get('is_subordinate')
       });
+      this._saveModelToRequires(record.id, ghostUnit);
       /**
         Removes the ghost Unit after commit.
 
