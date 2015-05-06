@@ -2144,7 +2144,12 @@ YUI.add('juju-models', function(Y) {
         if (machine.containerType === 'lxc') {
           // If the machine is an LXC, we just base the name off of the
           // machine's parent, which we've already created a name for.
-          machineName = 'lxc:' + machineNames[machine.parentId];
+          var machineId = machine.parentId;
+          if (machineNames[machineId]) {
+            machineName = 'lxc:' + machineNames[machineId];
+          } else {
+            machineName = 'lxc:' + machine.parentId;
+          }
         } else {
           // The "owner" is the service that deployer will use to allocate other
           // service units, e.g. "put this unit of mysql on the machine with
@@ -2156,22 +2161,22 @@ YUI.add('juju-models', function(Y) {
           var owner = units[0].service;
           var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
           owners[owner] = ownerIndex;
-          machineName = owner + '=' + ownerIndex;
+          machineName = owner + '/' + ownerIndex;
           machineNames[machine.id] = machineName;
         }
 
         units.forEach(function(unit) {
           var serviceName = unit.service;
+
+          if (!machinePlacement[serviceName]) {
+            machinePlacement[serviceName] = [];
+          }
+
           if (serviceName === owner) {
-            // Deployer doesn't allow placing units on a machine owned by a unit
-            // of the same service.
-            return;
+            machineName = unit.machine;
           }
-          if (machinePlacement[serviceName]) {
-            machinePlacement[serviceName].push(machineName);
-          } else {
-            machinePlacement[serviceName] = [machineName];
-          }
+
+          machinePlacement[serviceName].push(machineName);
         });
       }, this);
       return machinePlacement;
@@ -2194,8 +2199,8 @@ YUI.add('juju-models', function(Y) {
       }
 
       result.services = this._generateServiceList(this.services);
-      //result.services = this._addMachinesToServices(
-      //    this.machines, result.services);
+      result.services = this._addMachinesToServices(
+          this.machines, result.services);
       result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(this.machines);
 
@@ -2355,24 +2360,42 @@ YUI.add('juju-models', function(Y) {
       @return {Object} The machine list for the export.
     */
     _generateMachineSpec: function(machineList) {
-      var machines = [];
+      var machines = {};
+      var counter = 0;
       machineList.each(function(machine) {
         if (machine.parentId !== undefined) {
           // We don't add containers to the machine spec.
           return;
         }
-        machines.push({
+        machines[counter] = {
           series: machine.series,
           constraints: this._collapseMachineConstraints(machine.hardware)
-        });
+        };
+        counter += 1;
       }, this);
       return machines;
     },
 
+    /**
+      Collapses the machine hardware object details into the constraints string
+      expected by Juju.
+
+      @method _collapseMachineConstraints
+      @param {Object} constraints The harware constraints object from the
+        machine model.
+      @return {String} The constraints in a string format.
+    */
     _collapseMachineConstraints: function(constraints) {
       var constraint = '';
+      var constraintMap = {
+        arch: 'arch',
+        cpuCores: 'cpu-cores',
+        cpuPower: 'cpu-power',
+        mem: 'mem',
+        disk: 'root-disk'
+      };
       Object.keys(constraints).forEach(function(key) {
-        constraint += key + '=' + constraints[key] + ' ';
+        constraint += constraintMap[key] + '=' + constraints[key] + ' ';
       });
       return constraint.trim();
     },
