@@ -2101,16 +2101,6 @@ YUI.add('juju-models', function(Y) {
     /**
        Maps machine placement for services.
 
-       The machine mapping is bound by current limitations of the juju-deployer
-       tool.  For example, we cannot place multiple units onto the same lxc,
-       merely designate that they go on an lxc on a given machine. Similiary,
-       we can't place multiple units on the same machine, b/c juju-deployer
-       doesn't understand such a placement and simply places those units into
-       new machines.
-
-       These limitations will be addressed when juju-deployer is updated to
-       understand new charmstore bundle placement rules.
-
        @method _mapServicesToMachines
        @param {Object} machineList The list of machines.
      */
@@ -2154,7 +2144,12 @@ YUI.add('juju-models', function(Y) {
         if (machine.containerType === 'lxc') {
           // If the machine is an LXC, we just base the name off of the
           // machine's parent, which we've already created a name for.
-          machineName = 'lxc:' + machineNames[machine.parentId];
+          var machineId = machine.parentId;
+          if (machineNames[machineId]) {
+            machineName = 'lxc:' + machineNames[machineId];
+          } else {
+            machineName = 'lxc:' + machine.parentId;
+          }
         } else {
           // The "owner" is the service that deployer will use to allocate other
           // service units, e.g. "put this unit of mysql on the machine with
@@ -2166,22 +2161,22 @@ YUI.add('juju-models', function(Y) {
           var owner = units[0].service;
           var ownerIndex = owners[owner] >= 0 ? owners[owner] + 1 : 0;
           owners[owner] = ownerIndex;
-          machineName = owner + '=' + ownerIndex;
+          machineName = owner + '/' + ownerIndex;
           machineNames[machine.id] = machineName;
         }
 
         units.forEach(function(unit) {
           var serviceName = unit.service;
+
+          if (!machinePlacement[serviceName]) {
+            machinePlacement[serviceName] = [];
+          }
+
           if (serviceName === owner) {
-            // Deployer doesn't allow placing units on a machine owned by a unit
-            // of the same service.
-            return;
+            machineName = unit.machine;
           }
-          if (machinePlacement[serviceName]) {
-            machinePlacement[serviceName].push(machineName);
-          } else {
-            machinePlacement[serviceName] = [machineName];
-          }
+
+          machinePlacement[serviceName].push(machineName);
         });
       }, this);
       return machinePlacement;
@@ -2196,20 +2191,32 @@ YUI.add('juju-models', function(Y) {
      * @return {Object} export object suitable for serialization.
      */
     exportDeployer: function() {
-      var serviceList = this.services,
-          relationList = this.relations,
-          defaultSeries = this.environment.get('defaultSeries'),
-          result = {
-            envExport: {
-              services: {},
-              relations: []
-            }
-          };
+      var defaultSeries = this.environment.get('defaultSeries'),
+          result = {};
 
       if (defaultSeries) {
-        result.envExport.series = defaultSeries;
+        result.series = defaultSeries;
       }
 
+      result.services = this._generateServiceList(this.services);
+      result.services = this._addMachinesToServices(
+          this.machines, result.services);
+      result.relations = this._generateRelationSpec(this.relations);
+      result.machines = this._generateMachineSpec(this.machines);
+
+      return result;
+    },
+
+    /**
+      Generate a service list for the exported yaml file based on the list of
+      services passed in.
+
+      @method _generateServiceList
+      @param {Object} serviceList The service list.
+      @return {Object} The services list for the export.
+    */
+    _generateServiceList: function(serviceList) {
+      var services = {};
       serviceList.each(function(service) {
         var units = service.get('units');
         var charm = this.charms.getById(service.get('charm'));
@@ -2286,15 +2293,39 @@ YUI.add('juju-models', function(Y) {
           serviceData.annotations = {'gui-x': anno['gui-x'],
             'gui-y': anno['gui-y']};
         }
-        result.envExport.services[serviceName] = serviceData;
+        services[serviceName] = serviceData;
       }, this);
+      return services;
+    },
 
-      var machinePlacement = this._mapServicesToMachines(this.machines);
+    /**
+      Adds the machine placement information to the services based on the
+      passed in machine list.
+
+      @method _addMachinesToServices
+      @param {Object} machineList The machines list.
+      @param {Object} serviceList The service list.
+      @return {Object} The services list with machine placement for the export.
+    */
+    _addMachinesToServices: function(machineList, serviceList) {
+      var machinePlacement = this._mapServicesToMachines(machineList);
       Object.keys(machinePlacement).forEach(function(serviceName) {
         var placement = machinePlacement[serviceName];
-        result.envExport.services[serviceName].to = placement;
+        serviceList[serviceName].to = placement;
       });
+      return serviceList;
+    },
 
+    /**
+      Generate a relation list for the exported yaml file based on the list of
+      relations passed in.
+
+      @method _generateRelationSpec
+      @param {Object} relationList The relation list.
+      @return {Object} The relations list for the export.
+    */
+    _generateRelationSpec: function(relationList) {
+      var relations = [];
       relationList.each(function(relation) {
         var endpoints = relation.get('endpoints');
         // Skip peer relations: they should be added automatically.
@@ -2315,10 +2346,58 @@ YUI.add('juju-models', function(Y) {
         var relationData = endpoints.map(function(endpoint) {
           return endpoint[0] + ':' + endpoint[1].name;
         });
-        result.envExport.relations.push(relationData);
+        relations.push(relationData);
       }, this);
+      return relations;
+    },
 
-      return result;
+    /**
+      Generate a machine list for the exported yaml file based on the list of
+      machines passed in.
+
+      @method _generateMachineSpec
+      @param {Object} machineList The machines list.
+      @return {Object} The machine list for the export.
+    */
+    _generateMachineSpec: function(machineList) {
+      var machines = {};
+      var counter = 0;
+      machineList.each(function(machine) {
+        if (machine.parentId !== undefined) {
+          // We don't add containers to the machine spec.
+          return;
+        }
+        machines[counter] = {
+          series: machine.series,
+          constraints: this._collapseMachineConstraints(machine.hardware)
+        };
+        counter += 1;
+      }, this);
+      return machines;
+    },
+
+    /**
+      Collapses the machine hardware object details into the constraints string
+      expected by Juju.
+
+      @method _collapseMachineConstraints
+      @param {Object} constraints The harware constraints object from the
+        machine model.
+      @return {String} The constraints in a string format.
+    */
+    _collapseMachineConstraints: function(constraints) {
+      var constraint = '';
+      var constraintMap = {
+        arch: 'arch',
+        cpuCores: 'cpu-cores',
+        cpuPower: 'cpu-power',
+        mem: 'mem',
+        disk: 'root-disk'
+      };
+      Object.keys(constraints).forEach(function(key) {
+        constraint += constraintMap[key] + '=' + constraints[key] + ' ';
+      });
+      return constraint.trim();
     },
 
     /**
