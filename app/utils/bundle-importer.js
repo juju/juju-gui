@@ -504,9 +504,12 @@ YUI.add('bundle-importer', function(Y) {
         on to the next record.
     */
     _execute_setAnnotations: function(record, next) {
-      var entityName = record[record.args[0].replace(/^\$/, '')].get('id');
-      var service = this.db.services.getById(entityName);
-      service.set('annotations', record.args[2]);
+      if (record.args[1] === 'service') {
+        // We currently only support the setting of service annotations.
+        var entityName = record[record.args[0].replace(/^\$/, '')].get('id');
+        var service = this.db.services.getById(entityName);
+        service.set('annotations', record.args[2]);
+      }
       next();
     }
 
