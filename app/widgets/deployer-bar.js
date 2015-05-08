@@ -735,7 +735,7 @@ YUI.add('deployer-bar', function(Y) {
             changes.addRelations.push({
               type: args[0][1].name,
               from: services[0],
-              to: services[0]
+              to: services[1]
             });
             break;
           case '_remove_relation':

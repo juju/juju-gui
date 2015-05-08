@@ -53,7 +53,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         'user-test': 'test'
       }
     },
-    defaultSeries: {value: 'precise'},
+    defaultSeries: {value: 'trusty'},
     name: {value: 'Environment'},
     maasServer: {value: null},
     providerType: {value: 'demonstration'},
