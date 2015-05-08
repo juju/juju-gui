@@ -114,6 +114,21 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
+      Creates a link to the charm's bugs on Launchpad.
+
+      Note that this method is a temporary solution until bug information
+      is stored in the charmstore.
+
+      @method _getBugLink
+      @private
+      @param {String} charmName The name portion of the charm's ID.
+      @return {String} Launchpad bug url.
+    */
+    _getBugLink: function(charmName) {
+      return 'https://bugs.launchpad.net/charms/+source/' + charmName;
+    },
+
+    /**
        Creates the url for a given revision of the entity.
 
        @method _getRevnoLink

@@ -187,7 +187,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._locateReadme().should.eql('README.md');
     });
 
-    it('can generate source and revno links from its charm', function() {
+    it('can generate source, bug, and revno links from its charm', function() {
       view = new CharmView({
         entity: new models.Charm({
           files: [
@@ -195,6 +195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'readme.rst'
           ],
           id: 'precise/ceph-9',
+          name: 'ceph',
           code_source: { location: 'lp:~foo'}
         })
       });
@@ -204,6 +205,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           'http://bazaar.launchpad.net/~foo/revision/1',
           view._getRevnoLink(url, 1));
+      assert.equal(
+          'https://bugs.launchpad.net/charms/+source/ceph',
+          view._getBugLink(view.get('entity').get('name')));
     });
 
     it('excludes source svg files from the source tab', function() {
