@@ -9,6 +9,7 @@ app/assets/javascripts/yui
 docs/_build/doctrees
 docs/_build/html
 *~
+.*.swp
 tags
 Session.vim
 virtualenv

@@ -294,6 +294,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (!templateData.forInspector) {
         templateData.sourceLink = this._getSourceLink(
             this.get('entity').get('code_source').location);
+        templateData.bugsLink = this._getBugLink(
+            this.get('entity').get('name'));
         templateData.prettyCommits = this._formatCommitsForHtml(
             templateData.revisions, templateData.sourceLink);
       }
