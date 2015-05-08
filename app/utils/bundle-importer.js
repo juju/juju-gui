@@ -246,7 +246,11 @@ YUI.add('bundle-importer', function(Y) {
         this['_execute_' + record.method](
             record, this._executeDryRun.bind(this, records));
       } else {
-        console.error('Unknown method type: ', record.method);
+        this.db.notifications.add({
+          title: 'Unknown method type',
+          message: record.method + 'is not supported. Stopping bundle import.',
+          level: 'error'
+        });
       }
     },
 
