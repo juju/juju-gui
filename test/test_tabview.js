@@ -26,10 +26,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-tests-utils',
         'browser-tabview', 'node', 'node-event-simulate'
       ], function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         done();
       });
     });

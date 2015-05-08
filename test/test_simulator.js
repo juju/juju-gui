@@ -43,7 +43,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.simulator', function() {
     var requires = ['node',
-      'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-tests-factory', 'juju-models',
       'juju-charm-models', 'juju-fakebackend-simulator'
     ];
     var Agent, DEFAULT_AGENTS, factory, simulator, Simulator, state, utils, Y;
@@ -54,7 +54,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Simulator = ns.Simulator;
         Agent = ns.Agent;
         DEFAULT_AGENTS = ns.DEFAULT_AGENTS;
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -275,14 +275,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('createContainer', function() {
     var requirements = [
-      'juju-fakebackend-simulator', 'juju-tests-factory', 'juju-tests-utils'];
+      'juju-fakebackend-simulator', 'juju-tests-factory'];
     var createContainer, fakeBackend, testFactory, testUtils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         createContainer = Y.namespace('juju.environments').createContainer;
         testFactory = Y.namespace('juju-tests.factory');
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });

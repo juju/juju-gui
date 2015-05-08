@@ -28,12 +28,11 @@ describe('topology bundle module', function() {
       'juju-view-bundle',
       'charmstore-api',
       'juju-models',
-      'juju-tests-utils',
       'juju-tests-factory',
       'node-event-simulate'
     ],
     function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       factory = Y.namespace('juju-tests.factory');
       views = Y.namespace('juju.views');
       done();

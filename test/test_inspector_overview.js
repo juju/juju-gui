@@ -24,13 +24,13 @@ describe('Inspector Overview', function() {
       exposeCalled, unexposeCalled, ecs;
 
   before(function(done) {
-    var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
+    var requires = ['juju-gui', 'juju-views',
       'event-key', 'juju-charm-models',
       'node-event-simulate', 'environment-change-set', 'charmstore-api',
       'service-inspector'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');

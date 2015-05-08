@@ -26,14 +26,13 @@ describe('service module annotations', function() {
     Y = YUI(GlobalConfig).use([
       'juju-gui',
       'juju-models',
-      'juju-tests-utils',
       'juju-views',
       'node',
       'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       done();
     });
@@ -106,7 +105,6 @@ describe('service module events', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
-      'juju-tests-utils',
       'juju-landscape',
       'charmstore-api',
       'juju-models',
@@ -118,7 +116,7 @@ describe('service module events', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });
@@ -128,7 +126,16 @@ describe('service module events', function() {
     fakeStore.getIconPath = function() {
       return 'charm icon url';
     };
-    viewContainer = utils.makeContainer(this, 'content');
+    viewContainer = Y.Node.create('<div>');
+    viewContainer.set('id', 'container');
+    viewContainer.appendTo(document.body);
+    viewContainer.setStyle('position', 'absolute');
+    viewContainer.setStyle('top', '-10000px');
+    viewContainer.setStyle('left', '-10000px');
+    this._cleanups.push(function() {
+      viewContainer.remove(true);
+      viewContainer.destroy();
+    });
     var charmData = utils.loadFixture('data/haproxy-api-response.json', true);
     charm = new models.Charm(charmData.charm);
     db = new models.Database();
@@ -227,7 +234,7 @@ describe('service module events', function() {
     // Touch events should also fire click events, which will be ignored.
     // Fire one manually here.
     clickService(service);
-    assert(menu.hasClass('active'));
+    assert.equal(menu.hasClass('active'), true);
   });
 
   it('must not process service clicks after a dragend', function() {
@@ -769,11 +776,10 @@ describe('canvasDropHandler', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
-      'juju-tests-utils',
       'juju-views'],
     function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       done();
     });
@@ -827,11 +833,10 @@ describe('_canvasDropHandler', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
-      'juju-tests-utils',
       'juju-views'],
     function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       done();
     });
@@ -892,11 +897,10 @@ describe('updateElementVisibility', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
-      'juju-tests-utils',
       'juju-views'],
     function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       done();
     });

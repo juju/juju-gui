@@ -24,9 +24,8 @@ describe('filter widget', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-filter-widget',
-          'juju-tests-utils',
           'node-event-simulate'], function(Y) {
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           done();
         });
   });

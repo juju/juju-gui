@@ -24,12 +24,10 @@ describe('dropdown view extension', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['view-dropdown-extension',
-                               'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
-
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       View = Y.Base.create('dropdown', Y.View, [
         Y.juju.Dropdown,
         Y.Event.EventTracker

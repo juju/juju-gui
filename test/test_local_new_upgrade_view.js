@@ -24,12 +24,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var juju, testUtils, view, yui;
 
     before(function(done) {
-      var modules = ['juju-tests-utils', 'local-new-upgrade-view',
-        'node-event-simulate'];
+      var modules = ['local-new-upgrade-view', 'node-event-simulate'];
       YUI(GlobalConfig).use(modules, function(Y) {
         yui = Y;
         juju = Y.namespace('juju');
-        testUtils = Y['juju-tests'].utils;
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });

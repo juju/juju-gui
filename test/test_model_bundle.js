@@ -45,11 +45,10 @@ describe('The bundle model', function() {
     Y = YUI(GlobalConfig).use([
       'io',
       'juju-bundle-models',
-      'juju-tests-utils',
       'charmstore-api'
     ], function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       charmstore = new Y.juju.charmstore.APIv4({
         charmstoreURL: 'local/'
       });

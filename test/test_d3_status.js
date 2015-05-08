@@ -24,10 +24,10 @@ describe('D3 StatusBar', function() {
   var Y, container, views, utils;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['d3', 'd3-statusbar', 'juju-tests-utils'],
+    Y = YUI(GlobalConfig).use(['d3', 'd3-statusbar'],
         function(Y) {
           views = Y.namespace('juju.views');
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           done();
         });
   });

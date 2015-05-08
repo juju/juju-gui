@@ -22,13 +22,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('machine view panel header view', function() {
   var container, utils, views, view, Y;
   var requirements = [
-    'event-simulate', 'juju-tests-utils', 'juju-views',
+    'event-simulate', 'juju-views',
     'machine-view-panel-header', 'node', 'node-event-simulate'
   ];
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       done();
     });

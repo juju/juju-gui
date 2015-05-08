@@ -23,11 +23,11 @@ describe('topology relation module', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-tests-utils', 'juju-topology', 'node',
+        ['juju-topology', 'node',
           'node-event-simulate', 'juju-view-utils', 'juju-models'],
         function(Y) {
           views = Y.namespace('juju.views');
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           models = Y.namespace('juju.models');
           done();
         });

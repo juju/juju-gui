@@ -23,11 +23,11 @@ describe('Ghost Deployer Extension', function() {
   var Y, juju, utils, ghostDeployer, GhostDeployer;
 
   before(function(done) {
-    var requires = ['base', 'base-build', 'model', 'ghost-deployer-extension',
-      'juju-tests-utils'];
+    var requires = ['base', 'base-build', 'model',
+      'juju-models', 'ghost-deployer-extension'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           juju = Y.namespace('juju');
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           done();
         });
   });

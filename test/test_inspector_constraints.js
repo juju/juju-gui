@@ -69,13 +69,13 @@ describe('Inspector Constraints', function() {
   };
 
   before(function(done) {
-    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
+    var requirements = ['juju-gui', 'juju-views',
       'node-event-simulate', 'juju-charm-models',
       'charmstore-api'];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       viewUtils = Y.namespace('juju.views.utils');
       done();

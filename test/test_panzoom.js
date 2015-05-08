@@ -26,13 +26,12 @@ describe('pan zoom module', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

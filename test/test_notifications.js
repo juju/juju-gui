@@ -27,7 +27,6 @@ describe('notifications', function() {
       'juju-views',
       'juju-gui',
       'node-event-simulate',
-      'juju-tests-utils',
       'ns-routing-app-extension',
       'environment-change-set'],
 
@@ -177,7 +176,7 @@ describe('notifications', function() {
   it('must be able to evict irrelevant notices', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
-        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+        conn = new window.jujuTestUtils.utils.SocketStub(),
         ecs = new juju.EnvironmentChangeSet(),
         env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     app = new Y.juju.App({

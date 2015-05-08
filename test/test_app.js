@@ -57,13 +57,12 @@ function injectData(app, data) {
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-gui',
-        'juju-tests-utils',
         'juju-view-utils',
         'juju-views',
         'environment-change-set'
       ],
       function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         juju = Y.namespace('juju');
         done();
       });
@@ -531,9 +530,9 @@ describe('File drag over notification system', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
+        ['juju-gui', 'juju-view-utils', 'juju-views'],
         function(Y) {
-          testUtils = Y.namespace('juju-tests.utils');
+          testUtils = window.jujuTestUtils.utils;
           juju = Y.namespace('juju');
           done();
         });
@@ -774,11 +773,11 @@ describe('File drag over notification system', function() {
     var FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
     var conn, container, destroyMe, ecs, env, juju, utils, Y;
     var requirements = [
-      'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
+      'juju-gui', 'juju-views', 'environment-change-set'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         juju = Y.namespace('juju');
         FAKE_VIEW_NAME = 'FakeView';
         LOGIN_VIEW_NAME = 'LoginView';
@@ -1170,7 +1169,7 @@ describe('File drag over notification system', function() {
     var container, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
+      Y = YUI(GlobalConfig).use(['juju-gui'],
           function(Y) {
             container = Y.Node.create(
                 '<div id="test" class="container"></div>');
@@ -1180,7 +1179,7 @@ describe('File drag over notification system', function() {
 
     it('should be able to handle env connection status changes', function() {
       var juju = Y.namespace('juju'),
-          conn = new Y['juju-tests'].utils.SocketStub(),
+          conn = new window.jujuTestUtils.utils.SocketStub(),
           env = new juju.environments.GoEnvironment({
             conn: conn,
             user: 'user',
@@ -1244,8 +1243,8 @@ describe('File drag over notification system', function() {
     var Y, app, container, utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        utils = window.jujuTestUtils.utils;
         done();
       });
     });

@@ -25,11 +25,10 @@ describe('added services button', function() {
     Y = YUI(GlobalConfig).use(
         'view',
         'base-build',
-        'juju-tests-utils',
         'added-services-button',
         'node-event-simulate',
         function(Y) {
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           views = Y.namespace('juju.views');
           done();
         });
@@ -66,7 +65,7 @@ describe('added services button', function() {
     it('renders the button to the DOM', function() {
       assert.strictEqual(container.one('.action-indicator'), null);
       testView._renderAddedServicesButton();
-      assert.equal(container.one('.action-indicator') instanceof Y.Node, true);
+      assert.isNotNull(container.one('.action-indicator'));
     });
 
     it('updates existing added services button', function() {

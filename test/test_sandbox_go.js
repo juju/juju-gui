@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('sandbox.GoJujuAPI', function() {
     var requires = [
-      'jsyaml', 'juju-env-sandbox', 'juju-tests-utils',
+      'jsyaml', 'juju-env-sandbox',
       'environment-change-set', 'juju-tests-factory', 'juju-env-go',
       'juju-models', 'promise'
     ];
@@ -33,7 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         factory = Y.namespace('juju-tests.factory');
         ns = Y.namespace('juju');
         done();

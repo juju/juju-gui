@@ -24,11 +24,10 @@ describe('Service unit token', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-serviceunit-token',
                                'juju-models',
-                               'juju-tests-utils',
                                'node-event-simulate'], function(Y) {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

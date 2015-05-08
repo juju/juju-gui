@@ -22,6 +22,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
+  // Simple key value store of data for running tests to avoid
+  // performing multiple requests over the wire.
+  jujuTests.dataStore = {};
+
   jujuTests.utils = {
 
     /**
@@ -196,11 +200,21 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       var tries = 3;
       var response;
       url = GlobalConfig.test_url + url;
+      // If we have already requested this data.
+      if (jujuTests.dataStore[url] && parseJson) {
+        return Y.clone(jujuTests.dataStore[url]);
+      }
+      if (jujuTests.dataStore[url + '-raw'] && !parseJson) {
+        return jujuTests.dataStore[url + '-raw'];
+      }
       while (true) {
         try {
           response = Y.io(url, {sync: true}).responseText;
           if (parseJson) {
             response = Y.JSON.parse(response);
+            jujuTests.dataStore[url] = Y.clone(response);
+          } else {
+            jujuTests.dataStore[url + '-raw'] = response;
           }
           break;
         } catch (e) {
@@ -213,9 +227,9 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return response;
     },
 
-    stubCharmIconPath: function() {
-      var helperNS = Y.namespace('Handlebars.helpers');
-      Y.Handlebars.registerHelper(
+    stubCharmIconPath: function(yui) {
+      var helperNS = yui.namespace('Handlebars.helpers');
+      yui.Handlebars.registerHelper(
           'charmIconPath',
           function(charmID, file) {
             return '/path/to/charm/' + file;
@@ -275,11 +289,12 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       @param {Object} container The container to render the viewlet into.
       @param {Object} options Any additional options you want to pass into the
         viewler manager instance.
+      @param {Object} yui The YUI instance in the test suite.
       @return {Object} The new viewlet manager instance.
     */
-    renderViewlet: function(View, model, container, options) {
+    renderViewlet: function(View, model, container, options, yui) {
       container.append('<div class="juju-inspector"></div>');
-      var viewletManager = new Y.juju.viewlets.ViewletManager(Y.mix({
+      var viewletManager = new yui.juju.viewlets.ViewletManager(yui.mix({
         enableDatabinding: true,
         views: [new View()],
         container: container,

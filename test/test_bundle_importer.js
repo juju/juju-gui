@@ -23,9 +23,9 @@ describe('Bundle Importer', function() {
       loadCharm, notifications, utils;
 
   before(function(done) {
-    YUI().use('bundle-importer', 'juju-tests-utils', function(Y) {
+    YUI().use('bundle-importer', function(Y) {
       BundleImporter = Y.juju.BundleImporter;
-      utils = Y['juju-tests'].utils;
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

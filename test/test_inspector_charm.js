@@ -26,11 +26,10 @@ describe('Inspector Charm', function() {
     Y = YUI(GlobalConfig).use([
       'charm-details-view',
       'charmstore-api',
-      'juju-tests-utils',
       'juju-tests-factory',
       'subapp-browser-views'
     ], function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       viewlets = Y.namespace('juju.viewlets');
       views = Y.namespace('juju.browser.views');
       factory = Y.namespace('juju-tests.factory');

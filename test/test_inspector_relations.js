@@ -25,7 +25,6 @@ describe('Inspector Relations Tab', function() {
     'node-event-simulate',
     'juju-templates',
     'service-relations-view',
-    'juju-tests-utils',
     'juju-view-utils',
     'juju-viewlet-manager', // Required for utils.renderViewlet
     'lazy-model-list'
@@ -33,7 +32,7 @@ describe('Inspector Relations Tab', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(modules, function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
       viewUtils = views.utils;
@@ -65,7 +64,7 @@ describe('Inspector Relations Tab', function() {
       this.container = utils.makeContainer(context);
       this.model = new Y.Model({});
       this.viewletManager = utils.renderViewlet(
-          this.viewlet, this.model, this.container, options);
+          this.viewlet, this.model, this.container, options, Y);
       return {
         viewletManager: this.viewletManager
       };

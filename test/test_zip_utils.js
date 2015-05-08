@@ -22,12 +22,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Zip utils', function() {
     var testUtils, Y, ziputils;
-    var requirements = ['juju-tests-utils', 'zip-utils'];
+    var requirements = ['zip-utils'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the zip namespace.
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         ziputils = Y.namespace('juju.ziputils');
         done();
       });

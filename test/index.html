@@ -120,6 +120,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_environment_header_extension.js"></script>
   <script src="test_environment_view.js"></script>
   <script src="test_event_tracker.js"></script>
+
   <script src="test_fakebackend.js"></script>
   <script src="test_filter_widget.js"></script>
   <script src="test_service_inspector.js"></script>
@@ -218,8 +219,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   GlobalConfig.test_url = window.location.protocol + '//' + window.location.host + "/test/";
 
   // tabview needs to be here since it doesn't auto load it for some reason.
-  YUI().use(['node', 'event', 'tabview'], function(Y) {
+  YUI().use(['node', 'event', 'tabview', 'juju-tests-utils'], function(Y) {
       // Run the tests.
+      window.jujuTestUtils = Y['juju-tests'];
       if (window.mochaPhantomJS) {
           mochaPhantomJS.run();
       } else {

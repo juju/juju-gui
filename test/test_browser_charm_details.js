@@ -32,7 +32,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'charmstore-api',
           'json-stringify',
           'juju-charm-models',
-          'juju-tests-utils',
           'juju-tests-factory',
           'node',
           'node-event-simulate',
@@ -40,10 +39,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           function(Y) {
             views = Y.namespace('juju.browser.views');
             models = Y.namespace('juju.models');
-            utils = Y.namespace('juju-tests.utils');
+            utils = window.jujuTestUtils.utils;
             factory = Y.namespace('juju-tests.factory');
             CharmView = views.BrowserCharmView;
-            cleanIconHelper = utils.stubCharmIconPath();
+            cleanIconHelper = utils.stubCharmIconPath(Y);
             done();
           });
     });

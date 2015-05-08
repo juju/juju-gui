@@ -61,11 +61,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'environment-change-set',
-        'juju-tests-utils'
+        'environment-change-set', 'juju-env-go'
       ], function(Y) {
         juju = Y.namespace('juju');
-        utils = Y.namespace('juju-tests.utils');
+        utils = window.jujuTestUtils.utils;
         machineJobs = Y.namespace('juju.environments').machineJobs;
         done();
       });

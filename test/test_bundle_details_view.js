@@ -35,14 +35,13 @@ describe('Browser bundle detail view', function() {
         'event-tracker',
         'subapp-browser-bundleview',
         'juju-view-utils',
-        'juju-tests-utils',
         'juju-tests-factory',
         'event-simulate',
         'node-event-simulate',
         'charmstore-api',
         function(Y) {
           models = Y.namespace('juju.models');
-          utils = Y.namespace('juju-tests.utils');
+          utils = window.jujuTestUtils.utils;
           factory = Y.namespace('juju-tests.factory');
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
@@ -64,7 +63,7 @@ describe('Browser bundle detail view', function() {
       this.fakebackend = factory.makeFakeBackend();
     };
     window.flags = {};
-    cleanUp = utils.stubCharmIconPath();
+    cleanUp = utils.stubCharmIconPath(Y);
   });
 
   afterEach(function() {
@@ -78,8 +77,17 @@ describe('Browser bundle detail view', function() {
   });
 
   function generateBundleView(context, options) {
-    container = utils.makeContainer(context);
+    container = Y.Node.create('<div>');
+    container.set('id', 'container');
+    container.appendTo(document.body);
+    container.setStyle('position', 'absolute');
+    container.setStyle('top', '-10000px');
+    container.setStyle('left', '-10000px');
     container.append('<div class="bws-view-data"></div>');
+    context._cleanups.push(function() {
+      container.remove(true);
+      container.destroy();
+    });
     var defaults = {
       db: {},
       entityId: data.id,

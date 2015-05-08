@@ -23,13 +23,12 @@ describe('token drag and drop', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'browser-token',
-      'juju-tests-utils'
+      'browser-token'
     ],
     function(Y) {
       Token = Y.juju.widgets.browser.Token;
-      utils = Y.namespace('juju-tests.utils');
-      cleanIconHelper = utils.stubCharmIconPath();
+      utils = window.jujuTestUtils.utils;
+      cleanIconHelper = utils.stubCharmIconPath(Y);
       done();
     });
 

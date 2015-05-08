@@ -21,10 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('views.ViewportModule (Topology module)', function() {
   var views, Y, testUtils;
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
+    Y = YUI(GlobalConfig).use(['node', 'juju-views'],
         function(Y) {
           views = Y.namespace('juju.views');
-          testUtils = Y.namespace('juju-tests').utils;
+          testUtils = window.jujuTestUtils.utils;
           done();
         });
   });

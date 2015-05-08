@@ -23,13 +23,12 @@ describe('environment counts view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'juju-tests-utils',
       'juju-models',
       'juju-environment-counts',
       'node-event-simulate'
     ], function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       View = Y.juju.browser.views.EnvironmentCounts;
       done();
     });

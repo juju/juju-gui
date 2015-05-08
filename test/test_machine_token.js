@@ -24,7 +24,6 @@ describe('machine token view', function() {
   var requirements = [
     'event-simulate',
     'juju-models',
-    'juju-tests-utils',
     'juju-views',
     'machine-token',
     'node-event-simulate',
@@ -33,7 +32,7 @@ describe('machine token view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       done();
     });

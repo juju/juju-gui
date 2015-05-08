@@ -45,11 +45,11 @@ describe('data binding library', function() {
   };
 
   before(function(done) {
-    var requires = ['juju-databinding', 'juju-tests-utils',
+    var requires = ['juju-databinding',
                     'base', 'handlebars',
                     'model', 'model-list', 'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       BindingEngine = Y.namespace('juju.views').BindingEngine;
       done();
     });

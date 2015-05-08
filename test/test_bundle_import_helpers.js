@@ -24,10 +24,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var db, env, ns, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('bundle-import-helpers', 'juju-tests-utils',
+      Y = YUI(GlobalConfig).use('bundle-import-helpers',
           function(Y) {
             ns = Y.namespace('juju');
-            utils = Y.namespace('juju-tests').utils;
+            utils = window.jujuTestUtils.utils;
             done();
           });
     });
@@ -126,14 +126,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('bundle helpers watchAll', function() {
     var bundleHelpers, conn, db, env, juju, testUtils, Y;
-    var requirements = [
-      'bundle-import-helpers', 'juju-tests-utils'];
+    var requirements = ['bundle-import-helpers', 'juju-env-go'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         juju = Y.namespace('juju');
         bundleHelpers = juju.BundleHelpers;
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });
@@ -284,12 +283,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('bundle helpers _notifyDeploymentChange', function() {
     var bundleHelpers, db, testUtils, Y;
-    var requirements = ['bundle-import-helpers', 'juju-tests-utils'];
+    var requirements = ['bundle-import-helpers'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         bundleHelpers = Y.namespace('juju').BundleHelpers;
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });

@@ -23,13 +23,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('Juju delta handlers', function() {
     var db, models, handlers, testUtils, Y;
     var requirements = [
-      'juju-models', 'juju-delta-handlers', 'juju-tests-utils'];
+      'juju-models', 'juju-delta-handlers'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         handlers = models.handlers;
-        testUtils = Y.namespace('juju-tests.utils');
+        testUtils = window.jujuTestUtils.utils;
         done();
       });
     });

@@ -23,9 +23,9 @@ describe('Browser Cache', function() {
   var cache, utils, Y;
 
   before(function(done) {
-    var modules = ['browser-cache', 'juju-bundle-models', 'juju-tests-utils'];
+    var modules = ['browser-cache', 'juju-bundle-models'];
     Y = YUI(GlobalConfig).use(modules, function(Y) {
-      utils = Y['juju-tests'].utils;
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

@@ -21,14 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('application console', function() {
   var Y, consoleManager;
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-views',
-                               'juju-view-utils',
-                               'juju-tests-utils'],
-    function(Y) {
-      consoleManager = Y.namespace('juju.views.utils')
-                          .consoleManager();
-      done();
-    });
+    Y = YUI(GlobalConfig).use('juju-views', 'juju-view-utils',
+        function(Y) {
+          consoleManager = Y.namespace('juju.views.utils')
+                              .consoleManager();
+          done();
+        });
   });
 
   afterEach(function() {

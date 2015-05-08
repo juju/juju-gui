@@ -84,7 +84,6 @@ describe('Viewlet Manager', function() {
   before(function(done) {
     YUI(GlobalConfig).use([
       'juju-templates',
-      'juju-tests-utils',
       'juju-viewlet-manager',
       'viewlet-view-base',
       'unit-details-view',
@@ -95,7 +94,7 @@ describe('Viewlet Manager', function() {
     function(y) {
       Y = y;
       juju = y.namespace('juju');
-      utils = Y['juju-tests'].utils;
+      utils = window.jujuTestUtils.utils;
       done();
     });
   });

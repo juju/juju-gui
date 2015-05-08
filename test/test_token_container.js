@@ -24,13 +24,12 @@ describe('charm container widget', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'array',
-      'juju-tests-utils',
       'browser-token-container',
       'browser-token',
       'node-event-simulate'],
     function(Y) {
-      utils = Y.namespace('juju-tests.utils');
-      cleanIconHelper = utils.stubCharmIconPath();
+      utils = window.jujuTestUtils.utils;
+      cleanIconHelper = utils.stubCharmIconPath(Y);
       TokenContainer = Y.juju.widgets.browser.TokenContainer;
       done();
     });

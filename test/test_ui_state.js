@@ -23,12 +23,11 @@ describe('UI State object', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        'juju-tests-utils',
         'juju-app-state',
         'querystring',
         function(Y) {
           ns = Y.namespace('juju.models');
-          testUtils = Y['juju-tests'].utils;
+          testUtils = window.jujuTestUtils.utils;
           done();
         });
   });

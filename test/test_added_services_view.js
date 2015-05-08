@@ -23,13 +23,12 @@ describe('added services view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'juju-tests-utils',
       'juju-models',
       'juju-added-services',
       'node-event-simulate'
     ], function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       View = Y.juju.browser.views.AddedServices;
       done();
     });

@@ -25,7 +25,6 @@ describe('Inspector Conflict UX', function() {
 
   before(function(done) {
     var requires = ['juju-databinding',
-                    'juju-tests-utils',
                     'juju-view-inspector',
                     'juju-templates',
                     'juju-gui',
@@ -39,7 +38,7 @@ describe('Inspector Conflict UX', function() {
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       templates = views.Templates;
       charmData = utils.loadFixture(
@@ -50,7 +49,20 @@ describe('Inspector Conflict UX', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer(this);
+    // This is not being done in the utils.makeContainer because the simulate
+    // function in YUI has a bug which causes it to fail/
+    container = Y.Node.create('<div>');
+    container.set('id', 'container');
+    container.appendTo(document.body);
+    container.setStyle('position', 'absolute');
+    container.setStyle('top', '-10000px');
+    container.setStyle('left', '-10000px');
+    // Add the destroy ability to the test hook context to be run on
+    // afterEach automatically.
+    this._cleanups.push(function() {
+      container.remove(true);
+      container.destroy();
+    });
     db = new models.Database();
     conn = new utils.SocketStub();
     env = new juju.environments.GoEnvironment({conn: conn});

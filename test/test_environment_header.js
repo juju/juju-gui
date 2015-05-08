@@ -25,12 +25,11 @@ describe('environment header view', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['environment-header',
                                'juju-views',
-                               'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
 
-      utils = Y.namespace('juju-tests.utils');
+      utils = window.jujuTestUtils.utils;
       views = Y.namespace('juju.views');
       View = views.EnvironmentHeaderView;
       done();

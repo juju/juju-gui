@@ -1516,7 +1516,7 @@ describe('utilities', function() {
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
             done();
-            cleanIconHelper = testUtils.stubCharmIconPath();
+            cleanIconHelper = testUtils.stubCharmIconPath(Y);
           });
     });
 
