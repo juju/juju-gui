@@ -246,7 +246,11 @@ YUI.add('bundle-importer', function(Y) {
         this['_execute_' + record.method](
             record, this._executeDryRun.bind(this, records));
       } else {
-        console.error('Unknown method type: ', record.method);
+        this.db.notifications.add({
+          title: 'Unknown method type',
+          message: record.method + 'is not supported. Stopping bundle import.',
+          level: 'error'
+        });
       }
     },
 
@@ -488,6 +492,24 @@ YUI.add('bundle-importer', function(Y) {
             });
           }.bind(this),
           {modelId: relation.get('id')});
+      next();
+    },
+
+    /**
+      Executes the setAnnotations method call
+
+      @method _execute_setAnnotations
+      @param {Object} record The setAnnotations record.
+      @param {Function} next The method to trigger the executor to move
+        on to the next record.
+    */
+    _execute_setAnnotations: function(record, next) {
+      if (record.args[1] === 'service') {
+        // We currently only support the setting of service annotations.
+        var entityName = record[record.args[0].replace(/^\$/, '')].get('id');
+        var service = this.db.services.getById(entityName);
+        service.set('annotations', record.args[2]);
+      }
       next();
     }
 
