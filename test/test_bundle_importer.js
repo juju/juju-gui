@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Bundle Importer', function() {
   var addCharms, bundleImporter, BundleImporter, getById, getChangeSet,
-      loadCharm, notifications, utils;
+      loadCharm, notifications, notificationsAdd, utils;
 
   before(function(done) {
     YUI().use('bundle-importer', 'juju-tests-utils', function(Y) {
@@ -31,8 +31,9 @@ describe('Bundle Importer', function() {
   });
 
   beforeEach(function() {
+    notificationsAdd = utils.makeStubFunction();
     notifications = {
-      add: utils.makeStubFunction()
+      add: notificationsAdd
     };
     loadCharm = utils.makeStubFunction();
     addCharms = utils.makeStubFunction();
@@ -67,6 +68,15 @@ describe('Bundle Importer', function() {
   });
 
   describe('Public methods', function() {
+    describe('importBundleYAML', function() {
+      it('calls fetchDryRun with yaml', function() {
+        var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
+        this._cleanups.push(fetch.reset);
+        bundleImporter.importBundleYAML('foo: bar');
+        assert.equal(fetch.callCount(), 1);
+        assert.equal(fetch.lastArguments()[0], 'foo: bar');
+      });
+    });
     describe('importBundleFile', function() {
       it('sets up and loads the FileReader', function() {
         var asText = utils.makeStubFunction();
@@ -166,7 +176,8 @@ describe('Bundle Importer', function() {
         addMachines: false,
         deploy: false,
         addUnit: false,
-        addRelation: false
+        addRelation: false,
+        setAnnotations: false
       };
       function executor(record, next) {
         called[record.method] = true;
@@ -177,13 +188,15 @@ describe('Bundle Importer', function() {
       bundleImporter._execute_deploy = executor;
       bundleImporter._execute_addUnit = executor;
       bundleImporter._execute_addRelation = executor;
+      bundleImporter._execute_setAnnotations = executor;
 
       var sortedRecords = [
         { method: 'addCharm' },
         { method: 'addMachines' },
         { method: 'deploy' },
         { method: 'addUnit' },
-        { method: 'addRelation' }
+        { method: 'addRelation' },
+        { method: 'setAnnotations' }
       ];
       bundleImporter._executeDryRun(sortedRecords);
       assert.deepEqual(called, {
@@ -191,26 +204,27 @@ describe('Bundle Importer', function() {
         addMachines: true,
         deploy: true,
         addUnit: true,
-        addRelation: true
+        addRelation: true,
+        setAnnotations: true
       });
     });
-
-    it('does not fail if unknown record type', function() {
+    it('properly sorts a recordSet');
+    it('stops but does not fail if unknown record type', function() {
       var sortedRecords = [
         { method: 'badMethod' }
       ];
+      var execute = utils.makeStubMethod(bundleImporter, '_executeDryRun');
+      this._cleanups.push(execute.reset);
       bundleImporter._executeDryRun(sortedRecords);
+      // the executor should only be called once at which time it'll throw a
+      // notification instead of continuing on.
+      assert.equal(execute.callCount(), 1);
+      assert.equal(notificationsAdd.callCount(), 1);
     });
+  });
 
-    describe('_execute_addCharm', function() {
-      it('loads a charm');
-      it('shows notification on failure');
-    });
+  describe('Changeset execution', function() {
 
-    it('_execute_addMachines');
-    it('_execute_deploy');
-    it('_execute_addUnit');
-    it('_execute_addRelation');
   });
 });
 
