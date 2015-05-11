@@ -2311,7 +2311,9 @@ YUI.add('juju-models', function(Y) {
       var machinePlacement = this._mapServicesToMachines(machineList);
       Object.keys(machinePlacement).forEach(function(serviceName) {
         var placement = machinePlacement[serviceName];
-        serviceList[serviceName].to = placement;
+        if (serviceName !== JUJU_GUI_SERVICE_NAME) {
+          serviceList[serviceName].to = placement;
+        }
       });
       return serviceList;
     },
