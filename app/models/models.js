@@ -2327,6 +2327,10 @@ YUI.add('juju-models', function(Y) {
     _generateRelationSpec: function(relationList) {
       var relations = [];
       relationList.each(function(relation) {
+        if (relation.get('id').indexOf('pending-') === 0) {
+          // Skip pending relations
+          return;
+        }
         var endpoints = relation.get('endpoints');
         // Skip peer relations: they should be added automatically.
         if (endpoints.length === 1) {
