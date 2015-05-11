@@ -79,7 +79,7 @@ YUI.add('deployer-bar', function(Y) {
         click: '_toggleSummaryChanges'
       },
       '.export': {
-        click: '_exportFile'
+        click: 'exportFile'
       },
       '.import': {
         click: '_importFile'
@@ -858,11 +858,25 @@ YUI.add('deployer-bar', function(Y) {
     /**
       Export the YAML for this environment.
 
-      @method _exportFile
-      @param {Object} e The event object.
+      @method exportFile
     */
-    _exportFile: function(e) {
-      bundleHelpers.exportYAML(this.get('db'));
+    exportFile: function() {
+      this._exportFile();
+    },
+
+    /**
+      Export the YAML for this environment.
+
+      @method _exportFile
+    */
+    _exportFile: function() {
+      var result = this.get('db').exportDeployer();
+      var exportData = jsyaml.dump(result);
+      // In order to support Safari 7 the type of this blob needs
+      // to be text/plain instead of it's actual type of application/yaml.
+      var exportBlob = new Blob([exportData],
+          {type: 'text/plain;charset=utf-8'});
+      saveAs(exportBlob, 'bundle.yaml');
     },
 
     /**
@@ -954,7 +968,6 @@ YUI.add('deployer-bar', function(Y) {
 }, '0.1.0', {
   requires: [
     'autodeploy-extension',
-    'bundle-import-helpers',
     'event-tracker',
     'handlebars',
     'juju-templates',

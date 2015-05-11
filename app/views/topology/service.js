@@ -1724,7 +1724,6 @@ YUI.add('juju-topology-service', function(Y) {
     'd3-statusbar',
     'juju-templates',
     'juju-models',
-    'bundle-import-helpers',
     'local-charm-import-helpers',
     'juju-viewlet-manager',
     'local-new-upgrade-inspector',

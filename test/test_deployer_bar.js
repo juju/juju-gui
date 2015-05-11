@@ -20,12 +20,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('deployer bar view', function() {
-  var bundleHelpers, container, db, ECS, ecs, importBundleFile, mockEvent,
+  var container, db, ECS, ecs, importBundleFile, mockEvent,
       models, testUtils, utils, view, View, views, Y;
 
   before(function(done) {
     var requirements = [
-      'bundle-import-helpers',
       'deployer-bar',
       'environment-change-set',
       'event-simulate',
@@ -41,7 +40,6 @@ describe('deployer bar view', function() {
       views = Y.namespace('juju.views');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       View = views.DeployerBarView;
-      bundleHelpers = Y.namespace('juju.BundleHelpers');
       mockEvent = { halt: function() {} };
       done();
     });
@@ -556,11 +554,11 @@ describe('deployer bar view', function() {
   });
 
   it('can export the environment', function() {
-    var exportStub = utils.makeStubMethod(bundleHelpers, 'exportYAML');
+    var exportStub = utils.makeStubMethod(view, '_exportFile');
     this._cleanups.push(exportStub.reset);
     container.one('.export').simulate('click');
     assert.equal(exportStub.calledOnce(), true,
-        'exportYAML should have been called');
+        'exportFile should have been called');
   });
 
   it('can open the import file dialogue', function() {
