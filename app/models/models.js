@@ -2349,10 +2349,12 @@ YUI.add('juju-models', function(Y) {
     */
     _generateMachineSpec: function(machinePlacement, machineList, serviceList) {
       var machines = {};
+      var counter = 0;
       // We want to exlcude any machines which do not have units placed on
       // them as well as the machine which contains the GUI if it is the
       // only unit on that machine.
       var machineIdList = [];
+      var machineIdMap = {};
       Object.keys(machinePlacement).forEach(function(serviceName) {
         machinePlacement[serviceName].forEach(function(machineId) {
           // Check to make sure the charm name for this service is juju-gui
@@ -2370,11 +2372,50 @@ YUI.add('juju-models', function(Y) {
           });
           if (!idExists) {
             machineIdList.push(machineId);
+            // Store a mapping of the machines so we can start them at a
+            // 0 index to make the bundle output more pleasing to read.
+            var parts = machineId.split(':');
+            var parentId;
+            if (parts.length === 2) {
+              // It's a container
+              // Does it provide us a machine id to create this container on
+              // by converting it to an integer and comparing it to it's
+              // coerced value. It could be a machine number, 'new', or
+              // a unit name.
+              var partInt = parseInt(parts[1], 10);
+              if (!isNaN(partInt)) {
+                parentId = partInt;
+              }
+            } else {
+              parentId = machineId;
+            }
+            // parentId will be undefined if it's a unit name at which point
+            // we do not want to create a machine record for it because it will
+            // be handled in that units parent machine creation.
+            if (parentId && machineIdMap[parentId] === undefined) {
+              // Create a mapping of the parentId to a 0 indexed counter which
+              // we will use to construct the ids later.
+              machineIdMap[parentId] = counter;
+              counter += 1;
+            }
           }
         }, this);
         // Add the machine placement information to the services 'to' directive.
         if (serviceName !== JUJU_GUI_SERVICE_NAME) {
-          serviceList[serviceName].to = machinePlacement[serviceName];
+          serviceList[serviceName].to = machinePlacement[serviceName].map(
+              function(machineId) {
+                var parts = machineId.split(':');
+                if (parts.length === 2) {
+                  // It's a container
+                  var partInt = parseInt(parts[1], 10);
+                  if (!isNaN(partInt)) {
+                    parts[1] = machineIdMap[partInt];
+                  }
+                  return parts.join(':');
+                } else {
+                  return machineIdMap[machineId];
+                }
+              });
         }
       }, this);
 
@@ -2386,8 +2427,25 @@ YUI.add('juju-models', function(Y) {
           return;
         }
         // We only want to save machines which have units assigned to them.
-        if (machineIdList.indexOf(machine.id) > -1) {
-          machines[machine.id] = {
+        var machineId = machine.id;
+        machineIdList.some(function(listMachineId) {
+          var parts = listMachineId.split(':');
+          if (parts.length === 2) {
+            var partInt = parseInt(parts[1], 10);
+            if (!isNaN(partInt) && machineId === partInt + '') {
+              // If the container has a machine number then assign it to be
+              // the machine name so that the machineidList will match.
+              machineId = listMachineId;
+              return true;
+            }
+          }
+        });
+        if (machineIdList.indexOf(machineId) > -1) {
+          var parts = machineId.split(':');
+          if (parts.length === 2) {
+            machineId = parts[1];
+          }
+          machines[machineIdMap[machineId]] = {
             series: machine.series,
             constraints: this._collapseMachineConstraints(machine.hardware)
           };
