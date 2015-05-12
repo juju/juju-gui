@@ -227,6 +227,11 @@ YUI.add('bundle-importer', function(Y) {
     _executeDryRun: function(records) {
       if (this._dryRunIndex === records.length - 1) {
         // Done executing the recordSet.
+        this.db.notifications.add({
+          title: 'Import Complete',
+          message: 'ChangeSet import complete.',
+          level: 'important'
+        });
         return;
       }
       this._dryRunIndex += 1;
