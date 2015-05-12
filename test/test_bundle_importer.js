@@ -19,45 +19,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bundle Importer', function() {
-  var addCharms, bundleImporter, BundleImporter, getById, getChangeSet,
-      loadCharm, notifications, notificationsAdd, utils;
+  var bundleImporter, BundleImporter, deploy, db, env, fakebackend,
+      utils, yui;
 
   before(function(done) {
-    YUI().use('bundle-importer', 'juju-tests-utils', function(Y) {
+    var requires = ['bundle-importer', 'juju-tests-utils', 'juju-models',
+                    'juju-env-go', 'juju-tests-factory',
+                    'environment-change-set'];
+    YUI().use(requires, function(Y) {
       BundleImporter = Y.juju.BundleImporter;
       utils = Y['juju-tests'].utils;
+      yui = Y;
       done();
     });
   });
 
   beforeEach(function() {
-    notificationsAdd = utils.makeStubFunction();
-    notifications = {
-      add: notificationsAdd
-    };
-    loadCharm = utils.makeStubFunction();
-    addCharms = utils.makeStubFunction();
-    getById = utils.makeStubFunction();
-    getChangeSet = utils.makeStubFunction();
+    db = new yui.juju.models.Database();
+    env = new yui.juju.environments.GoEnvironment({
+      ecs: new yui.juju.EnvironmentChangeSet({
+        db: db
+      })
+    });
+    fakebackend = yui['juju-tests'].factory.makeFakeBackend();
     bundleImporter = new BundleImporter({
-      env: {
-        getChangeSet: getChangeSet
-      },
-      db: {
-        notifications: notifications,
-        charms: {
-          add: addCharms,
-          getById: getById
-        }
-      },
-      fakebackend: {
-        _loadCharm: loadCharm
-      }
+      env: env,
+      db: db,
+      fakebackend: fakebackend
+
+      // {
+      //   _loadCharm: loadCharm
+      // }
     });
   });
 
   afterEach(function() {
-
+    db.destroy();
+    env.destroy();
   });
 
   it('can be instantiated', function() {
@@ -97,22 +95,27 @@ describe('Bundle Importer', function() {
       describe('FileReader onload callback', function() {
         var file = { name: 'path/to/file.json' };
         it('shows notification if file contains invalid json', function() {
+          var notification = utils.makeStubMethod(
+              bundleImporter.db.notifications, 'add');
+          this._cleanups.push(notification.reset);
           bundleImporter._fileReaderOnload(file, {
             target: { result: '[invalid json]' }
           });
-          assert.equal(notifications.add.callCount(), 1);
-          assert.equal(notifications.add.lastArguments()[0].level, 'error');
+          assert.equal(notification.callCount(), 1);
+          assert.equal(notification.lastArguments()[0].level, 'error');
         });
 
         it('shows notification before kicking off import', function() {
           var importStub = utils.makeStubMethod(
               bundleImporter, 'importBundleDryRun');
-          this._cleanups.push(importStub.reset);
+          var notification = utils.makeStubMethod(
+              bundleImporter.db.notifications, 'add');
+          this._cleanups.concat([importStub.reset, notification.reset]);
           bundleImporter._fileReaderOnload(file, {
             target: { result: '["valid", "json"]' }
           });
-          assert.equal(notifications.add.callCount(), 1);
-          assert.equal(notifications.add.lastArguments()[0].level, 'important');
+          assert.equal(notification.callCount(), 1);
+          assert.equal(notification.lastArguments()[0].level, 'important');
           assert.equal(importStub.callCount(), 1);
         });
 
@@ -152,6 +155,9 @@ describe('Bundle Importer', function() {
     describe('fetchDryRun', function() {
       it('calls to the env to get a changeset', function() {
         var yaml = 'foo';
+        var getChangeSet = utils.makeStubMethod(
+            bundleImporter.env, 'getChangeSet');
+        this._cleanups.push(getChangeSet.reset);
         bundleImporter.fetchDryRun(yaml);
         assert.equal(getChangeSet.callCount(), 1);
         assert.equal(getChangeSet.lastArguments()[0], yaml);
@@ -160,6 +166,9 @@ describe('Bundle Importer', function() {
       it('has a callback which calls to import the dryrun', function() {
         var yaml = 'foo';
         var dryRun = utils.makeStubMethod(bundleImporter, 'importBundleDryRun');
+        var getChangeSet = utils.makeStubMethod(
+            bundleImporter.env, 'getChangeSet');
+        this._cleanups.concat([dryRun.reset, getChangeSet.reset]);
         var changeSet = { foo: 'bar' };
         bundleImporter.fetchDryRun(yaml);
         getChangeSet.lastArguments()[1]({changeSet: changeSet});
@@ -208,23 +217,66 @@ describe('Bundle Importer', function() {
         setAnnotations: true
       });
     });
-    it('properly sorts a recordSet');
+    it('properly sorts a recordSet', function() {
+      var data = utils.loadFixture(
+          'data/wordpress-bundle-recordset.json', true);
+      var sorted = bundleImporter._sortDryRunRecords(data);
+      var order = [
+        'addCharm-0', 'addService-1', 'setAnnotations-2',
+        'addCharm-3', 'addService-4', 'setAnnotations-5',
+        'addCharm-6', 'addService-7', 'setAnnotations-8',
+        'addMachines-9', 'addMachines-10',
+        'addRelation-11', 'addRelation-12',
+        'addUnit-13', 'addMachines-16',
+        'addUnit-14', 'addMachines-17',
+        'addUnit-15'
+      ];
+      sorted.forEach(function(record, index) {
+        assert.equal(record.id, order[index]);
+      });
+    });
     it('stops but does not fail if unknown record type', function() {
       var sortedRecords = [
         { method: 'badMethod' }
       ];
-      var execute = utils.makeStubMethod(bundleImporter, '_executeDryRun');
-      this._cleanups.push(execute.reset);
+      var execute = utils.makeStubMethod(bundleImporter, '_executeRecord');
+      var notification = utils.makeStubMethod(
+          bundleImporter.db.notifications, 'add');
+      this._cleanups.concat([execute.reset, notification.reset]);
       bundleImporter._executeDryRun(sortedRecords);
+      execute.passThroughToOriginalMethod();
       // the executor should only be called once at which time it'll throw a
       // notification instead of continuing on.
-      assert.equal(execute.callCount(), 1);
-      assert.equal(notificationsAdd.callCount(), 1);
+      assert.equal(execute.callCount(), 1, 'execute not called');
+      assert.equal(notification.callCount(), 1, 'notification not added');
     });
   });
 
   describe('Changeset execution', function() {
-
+    it('Sets up the correct environment (Integration)', function() {
+      var data = utils.loadFixture(
+          'data/wordpress-bundle-recordset.json', true);
+      bundleImporter.importBundleDryRun(data);
+      assert.equal(db.services.size(), 3);
+      assert.equal(db.machines.size(), 4);
+      assert.equal(db.relations.size(), 2);
+      // Services
+      assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
+      assert.equal(db.services.item(1).get('charm'), 'cs:precise/wordpress-27');
+      assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
+      // Machines
+      assert.equal(db.machines.item(0).id, 'new0');
+      assert.equal(db.machines.item(1).id, 'new1');
+      assert.equal(db.machines.item(2).id, 'new0/lxc/new3');
+      assert.equal(db.machines.item(3).id, 'new1/lxc/new2');
+      // Relations
+      assert.equal(
+          db.relations.item(0).get('id'),
+          'pending-$addService-1:reverseproxy$addService-4:website');
+      assert.equal(
+          db.relations.item(1).get('id'),
+          'pending-$addService-4:db$addService-7:db');
+    });
   });
 });
 
