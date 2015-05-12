@@ -1,0 +1,218 @@
+[
+    {
+        "args": [
+            "cs:precise/haproxy-35"
+        ],
+        "requires": [],
+        "id": "addCharm-0",
+        "method": "addCharm"
+    },
+    {
+        "args": [
+            "cs:precise/haproxy-35",
+            "haproxy",
+            {}
+        ],
+        "requires": [
+            "addCharm-0"
+        ],
+        "id": "addService-1",
+        "method": "deploy"
+    },
+    {
+        "args": [
+            "$addService-1",
+            "service",
+            {
+                "gui-y": "-209",
+                "gui-x": "-326.5"
+            }
+        ],
+        "requires": [
+            "addService-1"
+        ],
+        "id": "setAnnotations-2",
+        "method": "setAnnotations"
+    },
+    {
+        "args": [
+            "cs:precise/wordpress-27"
+        ],
+        "requires": [],
+        "id": "addCharm-3",
+        "method": "addCharm"
+    },
+    {
+        "args": [
+            "cs:precise/wordpress-27",
+            "wordpress",
+            {}
+        ],
+        "requires": [
+            "addCharm-3"
+        ],
+        "id": "addService-4",
+        "method": "deploy"
+    },
+    {
+        "args": [
+            "$addService-4",
+            "service",
+            {
+                "gui-y": "-327",
+                "gui-x": "-47.5"
+            }
+        ],
+        "requires": [
+            "addService-4"
+        ],
+        "id": "setAnnotations-5",
+        "method": "setAnnotations"
+    },
+    {
+        "args": [
+            "cs:precise/mysql-51"
+        ],
+        "requires": [],
+        "id": "addCharm-6",
+        "method": "addCharm"
+    },
+    {
+        "args": [
+            "cs:precise/mysql-51",
+            "mysql",
+            {}
+        ],
+        "requires": [
+            "addCharm-6"
+        ],
+        "id": "addService-7",
+        "method": "deploy"
+    },
+    {
+        "args": [
+            "$addService-7",
+            "service",
+            {
+                "gui-y": "-85",
+                "gui-x": "-43.5"
+            }
+        ],
+        "requires": [
+            "addService-7"
+        ],
+        "id": "setAnnotations-8",
+        "method": "setAnnotations"
+    },
+    {
+        "args": [
+            {
+                "series": "precise",
+                "constraints": "arch=amd64 cpu-cores=1 cpu-power=100 mem=1740 root-disk=8192"
+            }
+        ],
+        "requires": [],
+        "id": "addMachines-9",
+        "method": "addMachines"
+    },
+    {
+        "args": [
+            {
+                "series": "precise",
+                "constraints": "arch=amd64 cpu-cores=1 cpu-power=100 mem=1740 root-disk=8192"
+            }
+        ],
+        "requires": [],
+        "id": "addMachines-10",
+        "method": "addMachines"
+    },
+    {
+        "args": [
+            "$addService-1:reverseproxy",
+            "$addService-4:website"
+        ],
+        "requires": [
+            "addService-1",
+            "addService-4"
+        ],
+        "id": "addRelation-11",
+        "method": "addRelation"
+    },
+    {
+        "args": [
+            "$addService-4:db",
+            "$addService-7:db"
+        ],
+        "requires": [
+            "addService-4",
+            "addService-7"
+        ],
+        "id": "addRelation-12",
+        "method": "addRelation"
+    },
+    {
+        "args": [
+            "$addService-1",
+            1,
+            "$addMachines-10"
+        ],
+        "requires": [
+            "addService-1",
+            "addMachines-10"
+        ],
+        "id": "addUnit-13",
+        "method": "addUnit"
+    },
+    {
+        "args": [
+            {
+                "containerType": "lxc",
+                "parentId": "$addUnit-13"
+            }
+        ],
+        "requires": [
+            "addUnit-13"
+        ],
+        "id": "addMachines-16",
+        "method": "addMachines"
+    },
+    {
+        "args": [
+            "$addService-4",
+            1,
+            "$addMachines-16"
+        ],
+        "requires": [
+            "addService-4",
+            "addMachines-16"
+        ],
+        "id": "addUnit-14",
+        "method": "addUnit"
+    },
+    {
+        "args": [
+            {
+                "containerType": "lxc",
+                "parentId": "$addMachines-9"
+            }
+        ],
+        "requires": [
+            "addMachines-9"
+        ],
+        "id": "addMachines-17",
+        "method": "addMachines"
+    },
+    {
+        "args": [
+            "$addService-7",
+            1,
+            "$addMachines-17"
+        ],
+        "requires": [
+            "addService-7",
+            "addMachines-17"
+        ],
+        "id": "addUnit-15",
+        "method": "addUnit"
+    }
+]
