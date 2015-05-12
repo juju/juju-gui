@@ -2199,10 +2199,12 @@ YUI.add('juju-models', function(Y) {
       }
 
       result.services = this._generateServiceList(this.services);
+      var machinePlacement = this._mapServicesToMachines(this.machines);
       result.services = this._addMachinesToServices(
-          this.machines, result.services);
+          machinePlacement, result.services);
       result.relations = this._generateRelationSpec(this.relations);
-      result.machines = this._generateMachineSpec(this.machines);
+      result.machines = this._generateMachineSpec(
+          machinePlacement, this.machines);
 
       return result;
     },
@@ -2303,12 +2305,11 @@ YUI.add('juju-models', function(Y) {
       passed in machine list.
 
       @method _addMachinesToServices
-      @param {Object} machineList The machines list.
+      @param {Object} machinePlacement The machines list.
       @param {Object} serviceList The service list.
       @return {Object} The services list with machine placement for the export.
     */
-    _addMachinesToServices: function(machineList, serviceList) {
-      var machinePlacement = this._mapServicesToMachines(machineList);
+    _addMachinesToServices: function(machinePlacement, serviceList) {
       Object.keys(machinePlacement).forEach(function(serviceName) {
         var placement = machinePlacement[serviceName];
         if (serviceName !== JUJU_GUI_SERVICE_NAME) {
@@ -2362,22 +2363,46 @@ YUI.add('juju-models', function(Y) {
       machines passed in.
 
       @method _generateMachineSpec
+      @param {Object} machinePlacement The machines list.
       @param {Object} machineList The machines list.
       @return {Object} The machine list for the export.
     */
-    _generateMachineSpec: function(machineList) {
+    _generateMachineSpec: function(machinePlacement, machineList) {
       var machines = {};
-      var counter = 0;
+      // We want to exlcude any machines which do not have units placed on
+      // them as well as the machine which contains the GUI if it is the
+      // only unit on that machine.
+      var machineIdList = [];
+      Object.keys(machinePlacement).forEach(function(key) {
+        machinePlacement[key].forEach(function(machineId) {
+          if (key === 'juju-gui') {
+            // Don't add the GUI machine into the machine list;
+            return;
+          }
+          var idExists = machineIdList.some(function(id) {
+            if (id === machineId) {
+              return true;
+            }
+          });
+          if (!idExists) {
+            machineIdList.push(machineId);
+          }
+        });
+      });
+
       machineList.each(function(machine) {
-        if (machine.parentId !== undefined) {
+        var parentId = machine.parentId;
+        // parentId is undefined in sandboxed env and null in a real one.
+        if (parentId !== undefined && parentId !== null) {
           // We don't add containers to the machine spec.
           return;
         }
-        machines[counter] = {
-          series: machine.series,
-          constraints: this._collapseMachineConstraints(machine.hardware)
-        };
-        counter += 1;
+        if (machineIdList.indexOf(machine.id) > -1) {
+          machines[machine.id] = {
+            series: machine.series,
+            constraints: this._collapseMachineConstraints(machine.hardware)
+          };
+        }
       }, this);
       return machines;
     },
