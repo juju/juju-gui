@@ -2200,11 +2200,9 @@ YUI.add('juju-models', function(Y) {
 
       result.services = this._generateServiceList(this.services);
       var machinePlacement = this._mapServicesToMachines(this.machines);
-      result.services = this._addMachinesToServices(
-          machinePlacement, result.services);
       result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(
-          machinePlacement, this.machines);
+          machinePlacement, this.machines, result.services);
 
       return result;
     },
@@ -2301,25 +2299,6 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Adds the machine placement information to the services based on the
-      passed in machine list.
-
-      @method _addMachinesToServices
-      @param {Object} machinePlacement The machines list.
-      @param {Object} serviceList The service list.
-      @return {Object} The services list with machine placement for the export.
-    */
-    _addMachinesToServices: function(machinePlacement, serviceList) {
-      Object.keys(machinePlacement).forEach(function(serviceName) {
-        var placement = machinePlacement[serviceName];
-        if (serviceName !== JUJU_GUI_SERVICE_NAME) {
-          serviceList[serviceName].to = placement;
-        }
-      });
-      return serviceList;
-    },
-
-    /**
       Generate a relation list for the exported yaml file based on the list of
       relations passed in.
 
@@ -2365,20 +2344,25 @@ YUI.add('juju-models', function(Y) {
       @method _generateMachineSpec
       @param {Object} machinePlacement The machines list.
       @param {Object} machineList The machines list.
+      @param {Object} serviceList The services list.
       @return {Object} The machine list for the export.
     */
-    _generateMachineSpec: function(machinePlacement, machineList) {
+    _generateMachineSpec: function(machinePlacement, machineList, serviceList) {
       var machines = {};
       // We want to exlcude any machines which do not have units placed on
       // them as well as the machine which contains the GUI if it is the
       // only unit on that machine.
       var machineIdList = [];
-      Object.keys(machinePlacement).forEach(function(key) {
-        machinePlacement[key].forEach(function(machineId) {
-          if (key === 'juju-gui') {
+      Object.keys(machinePlacement).forEach(function(serviceName) {
+        machinePlacement[serviceName].forEach(function(machineId) {
+          // Check to make sure the charm name for this service is juju-gui
+          // This is in case the user has renamed the gui instance on deploy.
+          var charmName = this.services.getById(serviceName).get('name');
+          if (charmName === JUJU_GUI_SERVICE_NAME) {
             // Don't add the GUI machine into the machine list;
             return;
           }
+          // Checking for dupes before adding to the list
           var idExists = machineIdList.some(function(id) {
             if (id === machineId) {
               return true;
@@ -2387,8 +2371,12 @@ YUI.add('juju-models', function(Y) {
           if (!idExists) {
             machineIdList.push(machineId);
           }
-        });
-      });
+        }, this);
+        // Add the machine placement information to the services 'to' directive.
+        if (serviceName !== JUJU_GUI_SERVICE_NAME) {
+          serviceList[serviceName].to = machinePlacement[serviceName];
+        }
+      }, this);
 
       machineList.each(function(machine) {
         var parentId = machine.parentId;
@@ -2397,6 +2385,7 @@ YUI.add('juju-models', function(Y) {
           // We don't add containers to the machine spec.
           return;
         }
+        // We only want to save machines which have units assigned to them.
         if (machineIdList.indexOf(machine.id) > -1) {
           machines[machine.id] = {
             series: machine.series,
