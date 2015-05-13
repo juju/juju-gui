@@ -2445,10 +2445,12 @@ YUI.add('juju-models', function(Y) {
           if (parts.length === 2) {
             machineId = parts[1];
           }
-          machines[machineIdMap[machineId]] = {
-            series: machine.series,
-            constraints: this._collapseMachineConstraints(machine.hardware)
-          };
+          machines[machineIdMap[machineId]] = {};
+          machines[machineIdMap[machineId]].series = machine.series;
+          var constraints = this._collapseMachineConstraints(machine.hardware);
+          if (constraints.length > 0) {
+            machines[machineIdMap[machineId]].constraints = constraints;
+          }
         }
       }, this);
       return machines;
@@ -2473,7 +2475,10 @@ YUI.add('juju-models', function(Y) {
         disk: 'root-disk'
       };
       Object.keys(constraints).forEach(function(key) {
-        constraint += constraintMap[key] + '=' + constraints[key] + ' ';
+        var value = constraints[key];
+        if (value) {
+          constraint += constraintMap[key] + '=' + value + ' ';
+        }
       });
       return constraint.trim();
     },
