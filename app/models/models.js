@@ -2199,10 +2199,10 @@ YUI.add('juju-models', function(Y) {
       }
 
       result.services = this._generateServiceList(this.services);
-      result.services = this._addMachinesToServices(
-          this.machines, result.services);
+      var machinePlacement = this._mapServicesToMachines(this.machines);
       result.relations = this._generateRelationSpec(this.relations);
-      result.machines = this._generateMachineSpec(this.machines);
+      result.machines = this._generateMachineSpec(
+          machinePlacement, this.machines, result.services);
 
       return result;
     },
@@ -2270,7 +2270,7 @@ YUI.add('juju-models', function(Y) {
           serviceData.num_units = 0;
         } else {
           // Test models or ghosts might not have a units LazyModelList.
-          serviceData.num_units = units && units.size() || 1;
+          serviceData.num_units = units && units.size() || 0;
         }
         if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
           serviceData.options = serviceOptions;
@@ -2296,26 +2296,6 @@ YUI.add('juju-models', function(Y) {
         services[serviceName] = serviceData;
       }, this);
       return services;
-    },
-
-    /**
-      Adds the machine placement information to the services based on the
-      passed in machine list.
-
-      @method _addMachinesToServices
-      @param {Object} machineList The machines list.
-      @param {Object} serviceList The service list.
-      @return {Object} The services list with machine placement for the export.
-    */
-    _addMachinesToServices: function(machineList, serviceList) {
-      var machinePlacement = this._mapServicesToMachines(machineList);
-      Object.keys(machinePlacement).forEach(function(serviceName) {
-        var placement = machinePlacement[serviceName];
-        if (serviceName !== JUJU_GUI_SERVICE_NAME) {
-          serviceList[serviceName].to = placement;
-        }
-      });
-      return serviceList;
     },
 
     /**
@@ -2362,22 +2342,116 @@ YUI.add('juju-models', function(Y) {
       machines passed in.
 
       @method _generateMachineSpec
+      @param {Object} machinePlacement The machines list.
       @param {Object} machineList The machines list.
+      @param {Object} serviceList The services list.
       @return {Object} The machine list for the export.
     */
-    _generateMachineSpec: function(machineList) {
+    _generateMachineSpec: function(machinePlacement, machineList, serviceList) {
       var machines = {};
       var counter = 0;
+      // We want to exlcude any machines which do not have units placed on
+      // them as well as the machine which contains the GUI if it is the
+      // only unit on that machine.
+      var machineIdList = [];
+      var machineIdMap = {};
+      Object.keys(machinePlacement).forEach(function(serviceName) {
+        machinePlacement[serviceName].forEach(function(machineId) {
+          // Check to make sure the charm name for this service is juju-gui
+          // This is in case the user has renamed the gui instance on deploy.
+          var charmName = this.services.getById(serviceName).get('name');
+          if (charmName === JUJU_GUI_SERVICE_NAME) {
+            // Don't add the GUI machine into the machine list;
+            return;
+          }
+          // Checking for dupes before adding to the list
+          var idExists = machineIdList.some(function(id) {
+            if (id === machineId) {
+              return true;
+            }
+          });
+          if (!idExists) {
+            machineIdList.push(machineId);
+            // Store a mapping of the machines so we can start them at a
+            // 0 index to make the bundle output more pleasing to read.
+            var parts = machineId.split(':');
+            var parentId;
+            if (parts.length === 2) {
+              // It's a container
+              // Does it provide us a machine id to create this container on
+              // by converting it to an integer and comparing it to it's
+              // coerced value. It could be a machine number, 'new', or
+              // a unit name.
+              var partInt = parseInt(parts[1], 10);
+              if (!isNaN(partInt)) {
+                parentId = partInt;
+              }
+            } else {
+              parentId = machineId;
+            }
+            // parentId will be undefined if it's a unit name at which point
+            // we do not want to create a machine record for it because it will
+            // be handled in that units parent machine creation.
+            if (parentId && machineIdMap[parentId] === undefined) {
+              // Create a mapping of the parentId to a 0 indexed counter which
+              // we will use to construct the ids later.
+              machineIdMap[parentId] = counter;
+              counter += 1;
+            }
+          }
+        }, this);
+        // Add the machine placement information to the services 'to' directive.
+        if (serviceName !== JUJU_GUI_SERVICE_NAME) {
+          serviceList[serviceName].to = machinePlacement[serviceName].map(
+              function(machineId) {
+                var parts = machineId.split(':');
+                if (parts.length === 2) {
+                  // It's a container
+                  var partInt = parseInt(parts[1], 10);
+                  if (!isNaN(partInt)) {
+                    parts[1] = machineIdMap[partInt];
+                  }
+                  return parts.join(':');
+                } else {
+                  return machineIdMap[machineId];
+                }
+              });
+        }
+      }, this);
+
       machineList.each(function(machine) {
-        if (machine.parentId !== undefined) {
+        var parentId = machine.parentId;
+        // parentId is undefined in sandboxed env and null in a real one.
+        if (parentId !== undefined && parentId !== null) {
           // We don't add containers to the machine spec.
           return;
         }
-        machines[counter] = {
-          series: machine.series,
-          constraints: this._collapseMachineConstraints(machine.hardware)
-        };
-        counter += 1;
+        // We only want to save machines which have units assigned to them.
+        var machineId = machine.id;
+        machineIdList.some(function(listMachineId) {
+          var parts = listMachineId.split(':');
+          if (parts.length === 2) {
+            var partInt = parseInt(parts[1], 10);
+            if (!isNaN(partInt) && machineId === partInt + '') {
+              // If the container has a machine number then assign it to be
+              // the machine name so that the machineidList will match.
+              machineId = listMachineId;
+              return true;
+            }
+          }
+        });
+        if (machineIdList.indexOf(machineId) > -1) {
+          var parts = machineId.split(':');
+          if (parts.length === 2) {
+            machineId = parts[1];
+          }
+          machines[machineIdMap[machineId]] = {};
+          machines[machineIdMap[machineId]].series = machine.series;
+          var constraints = this._collapseMachineConstraints(machine.hardware);
+          if (constraints.length > 0) {
+            machines[machineIdMap[machineId]].constraints = constraints;
+          }
+        }
       }, this);
       return machines;
     },
@@ -2401,7 +2475,10 @@ YUI.add('juju-models', function(Y) {
         disk: 'root-disk'
       };
       Object.keys(constraints).forEach(function(key) {
-        constraint += constraintMap[key] + '=' + constraints[key] + ' ';
+        var value = constraints[key];
+        if (value) {
+          constraint += constraintMap[key] + '=' + value + ' ';
+        }
       });
       return constraint.trim();
     },

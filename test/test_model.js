@@ -1567,6 +1567,9 @@ describe('test_model.js', function() {
         constraints: 'cpu-power=2 cpu-cores=4',
         annotations: {'gui-x': 100, 'gui-y': 200}
       });
+      db.addUnits({
+        id: 'wordpress/0'
+      });
       db.relations.add({
         id: 'relation-0',
         endpoints: [
@@ -1598,8 +1601,8 @@ describe('test_model.js', function() {
       assert.equal(result.series, 'precise');
       assert.equal(result.services.mysql.charm, 'precise/mysql-1');
       assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
-
-      assert.equal(result.services.mysql.num_units, 1);
+      // Services with no units are allowed.
+      assert.equal(result.services.mysql.num_units, 0);
       assert.equal(result.services.wordpress.num_units, 1);
 
       // A default config value is skipped
@@ -1906,6 +1909,73 @@ describe('test_model.js', function() {
       assert.deepEqual(placement, expected);
     });
 
+    it('starts bundle export machine index at 0', function() {
+      // Because we ignore any machines which do not have units placed or only
+      // host the GUI service we remap all machine ids to start at 0.
+      var machines = [
+        { id: '3', hardware: {}, series: 'trusty' },
+        { id: '4', hardware: {}, series: 'trusty' },
+        { id: '5', hardware: {}, series: 'trusty' }
+      ];
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '3'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '3'
+      }, {
+        service: 'mysql',
+        id: 'mysql/1',
+        agent_state: 'started',
+        machine: '4'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '4'
+      }, {
+        service: 'wordpress',
+        id: 'wordpress/1',
+        agent_state: 'started',
+        machine: '5'
+      }, {
+        service: 'apache2',
+        id: 'apache2/1',
+        agent_state: 'started',
+        machine: '5'
+      }, {
+        service: 'mysql',
+        id: 'mysql/2',
+        agent_state: 'started',
+        machine: '5'
+      }];
+      var services = [
+        { id: 'wordpress', charm: 'cs:trusty/wordpress-27' },
+        { id: 'apache2', charm: 'cs:trusty/apache2-27' },
+        { id: 'mysql', charm: 'cs:trusty/mysql-27' }
+      ];
+      var charms = [
+        { id: 'cs:trusty/wordpress-27' },
+        { id: 'cs:trusty/apache2-27' },
+        { id: 'cs:trusty/mysql-27' }
+      ];
+      db.machines.add(machines);
+      db.services.add(services);
+      db.charms.add(charms);
+      db.units.add(units, true);
+      var output = db.exportDeployer();
+      var expected = {
+        0: { series: 'trusty' },
+        1: { series: 'trusty' },
+        2: { series: 'trusty' }
+      };
+      assert.deepEqual(output.machines, expected);
+    });
+
     it('ignores uncommmitted units when determining placement', function() {
       var machine = { id: '0' };
       var units = [{
@@ -1968,7 +2038,7 @@ describe('test_model.js', function() {
     it('annotates services with placement info', function() {
       db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
       db.services.add({id: 'wordpress', charm: 'precise/wordpress-1'});
-      db.machines.add({ id: '0'});
+      db.machines.add({ id: '0', hardware: {}});
       db.units.add([{
         service: 'wordpress',
         id: 'wordpress/0',
@@ -2014,7 +2084,7 @@ describe('test_model.js', function() {
         }
       }]);
       var result = db.exportDeployer();
-      assert.deepEqual(result.services.mysql.to, ['0']);
+      assert.deepEqual(result.services.mysql.to, [0]);
     });
   });
 
