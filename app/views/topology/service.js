@@ -1220,6 +1220,7 @@ YUI.add('juju-topology-service', function(Y) {
                    .size([width, height])
                    .value(function(d) { return Math.max(d.unit_count, 1); })
                    .padding(300)
+                   .radius(50)
                    .nodes({children: new_service_boxes});
           if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
             // If we have new services that do not have x/y coords and are
