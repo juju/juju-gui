@@ -46,16 +46,13 @@ describe('Bundle Importer', function() {
       env: env,
       db: db,
       fakebackend: fakebackend
-
-      // {
-      //   _loadCharm: loadCharm
-      // }
     });
   });
 
   afterEach(function() {
     db.destroy();
     env.destroy();
+    fakebackend.destroy();
   });
 
   it('can be instantiated', function() {
@@ -217,6 +214,7 @@ describe('Bundle Importer', function() {
         setAnnotations: true
       });
     });
+
     it('properly sorts a recordSet', function() {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
@@ -235,6 +233,7 @@ describe('Bundle Importer', function() {
         assert.equal(record.id, order[index]);
       });
     });
+
     it('stops but does not fail if unknown record type', function() {
       var sortedRecords = [
         { method: 'badMethod' }
