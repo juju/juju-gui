@@ -1567,6 +1567,9 @@ describe('test_model.js', function() {
         constraints: 'cpu-power=2 cpu-cores=4',
         annotations: {'gui-x': 100, 'gui-y': 200}
       });
+      db.addUnits({
+        id: 'wordpress/0'
+      });
       db.relations.add({
         id: 'relation-0',
         endpoints: [
@@ -1598,8 +1601,8 @@ describe('test_model.js', function() {
       assert.equal(result.series, 'precise');
       assert.equal(result.services.mysql.charm, 'precise/mysql-1');
       assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
-
-      assert.equal(result.services.mysql.num_units, 1);
+      // Services with no units are allowed.
+      assert.equal(result.services.mysql.num_units, 0);
       assert.equal(result.services.wordpress.num_units, 1);
 
       // A default config value is skipped
@@ -1968,7 +1971,7 @@ describe('test_model.js', function() {
     it('annotates services with placement info', function() {
       db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
       db.services.add({id: 'wordpress', charm: 'precise/wordpress-1'});
-      db.machines.add({ id: '0'});
+      db.machines.add({ id: '0', hardware: {}});
       db.units.add([{
         service: 'wordpress',
         id: 'wordpress/0',
@@ -2014,7 +2017,7 @@ describe('test_model.js', function() {
         }
       }]);
       var result = db.exportDeployer();
-      assert.deepEqual(result.services.mysql.to, ['0']);
+      assert.deepEqual(result.services.mysql.to, [0]);
     });
   });
 
