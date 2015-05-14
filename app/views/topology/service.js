@@ -1217,9 +1217,18 @@ YUI.add('juju-topology-service', function(Y) {
           topo.fire('panToPoint', {point: coords});
         } else {
           d3.layout.unscaledPack()
+          // Set the size of the visualization to the size of the
+          // viewport (unscaledPack discards this, but it is
+          // convention).
                    .size([width, height])
+              // Set the value function for the size of each child node
+              // to the number of units within that node.
                    .value(function(d) { return Math.max(d.unit_count, 1); })
+              // Set the padding space around each node.
                    .padding(300)
+              // Set a sensible radius to prevent nodes from overlapping.
+                   .radius(50)
+              // Run the pack layout on the new service boxes.
                    .nodes({children: new_service_boxes});
           if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
             // If we have new services that do not have x/y coords and are
