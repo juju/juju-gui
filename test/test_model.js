@@ -1969,9 +1969,9 @@ describe('test_model.js', function() {
       db.units.add(units, true);
       var output = db.exportDeployer();
       var expected = {
-        0: { series: 'trusty' },
-        1: { series: 'trusty' },
-        2: { series: 'trusty' }
+        '0': { series: 'trusty' },
+        '1': { series: 'trusty' },
+        '2': { series: 'trusty' }
       };
       assert.deepEqual(output.machines, expected);
     });
@@ -2084,7 +2084,7 @@ describe('test_model.js', function() {
         }
       }]);
       var result = db.exportDeployer();
-      assert.deepEqual(result.services.mysql.to, [0]);
+      assert.deepEqual(result.services.mysql.to, ['0']);
     });
   });
 
