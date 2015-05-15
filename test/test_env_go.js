@@ -2147,10 +2147,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('requests the changeset from the guiserver', function() {
+    it('requests the changeset from the GUI server using a YAML', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, callback);
+      env.getChangeSet(yaml, null, callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
         Params: {
@@ -2162,10 +2162,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('requests the changeset from the GUI server using a token', function() {
+      var callback = utils.makeStubFunction();
+      env.getChangeSet(null, 'TOKEN', callback);
+      msg = conn.last_message();
+      assert.deepEqual(msg, {
+        Params: {Token: 'TOKEN'},
+        Request: 'GetChanges',
+        RequestId: 1,
+        Type: 'ChangeSet'
+      });
+    });
+
     it('handles processing the changeset response', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, callback);
+      env.getChangeSet(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
@@ -2182,7 +2194,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles process a changeset error response', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, callback);
+      env.getChangeSet(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
@@ -2199,7 +2211,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles yaml parsing errors from the guiserver', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, callback);
+      env.getChangeSet(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,

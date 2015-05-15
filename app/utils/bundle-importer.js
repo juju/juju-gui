@@ -45,7 +45,18 @@ YUI.add('bundle-importer', function(Y) {
       @param {String} bundleYAML The bundle YAML to deploy.
     */
     importBundleYAML: function(bundleYAML) {
-      this.fetchDryRun(bundleYAML);
+      this.fetchDryRun(bundleYAML, null);
+    },
+
+    /**
+      Import a the collection of changes identified by the given token into the
+      current environment.
+
+      @method importChangesToken
+      @param {String} changesToken The token identifying a bundle change set.
+    */
+    importChangesToken: function(changesToken) {
+      this.fetchDryRun(null, changesToken);
     },
 
     /**
@@ -76,9 +87,11 @@ YUI.add('bundle-importer', function(Y) {
 
       @method fetchDryRun
       @param {String} bundleYAML The bundle file contents.
+      @param {String} changesToken The token identifying a bundle change set.
     */
-    fetchDryRun: function(bundleYAML) {
-      this.env.getChangeSet(bundleYAML, this._handleFetchDryRun.bind(this));
+    fetchDryRun: function(bundleYAML, changesToken) {
+      this.env.getChangeSet(
+          bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
     },
 
     /**
@@ -152,7 +165,7 @@ YUI.add('bundle-importer', function(Y) {
         });
         // result is YAML so we need to fetch the dry run changeset data from
         // the guiserver.
-        this.fetchDryRun(result);
+        this.fetchDryRun(result, null);
       }
     },
 

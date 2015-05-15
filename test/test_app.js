@@ -1117,10 +1117,8 @@ describe('File drag over notification system', function() {
         assert.equal(expected, app.get('currentUrl'));
       });
 
-      it('ignores authtokens', function() {
-        // This is intended to be the canonical current path.  This should
-        // never include authtokens, which are transient and can never be
-        // re-used.
+      // Ensure the given token is removed from the query string.
+      var checkTokenIgnored = function(token) {
         var app = makeApp(false);
         var expected_path = '/foo/bar/';
         var expected_querystring = '';
@@ -1129,7 +1127,7 @@ describe('File drag over notification system', function() {
           var result = expected_path;
           var querystring = expected_querystring;
           if (add_authtoken) {
-            querystring += '&authtoken=demoToken';
+            querystring += '&' + token + '=demoToken';
           }
           if (querystring) {
             result += '?' + querystring;
@@ -1146,7 +1144,22 @@ describe('File drag over notification system', function() {
         expected_querystring = 'bar=bing';
         expected_hash = '#shazam';
         assert.equal(expected(), app.get('currentUrl'));
+      };
+
+      it('ignores authtokens', function() {
+        // This is intended to be the canonical current path.  This should
+        // never include authtokens, which are transient and can never be
+        // re-used.
+        checkTokenIgnored('authtoken');
       });
+
+      it('ignores changestokens', function() {
+        // This is intended to be the canonical current path.  This should
+        // never include changestokens, which are transient and can never be
+        // re-used.
+        checkTokenIgnored('changestoken');
+      });
+
     });
 
   });
