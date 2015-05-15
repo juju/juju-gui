@@ -331,14 +331,17 @@ YUI.add('bundle-importer', function(Y) {
               {}, // Constraints.
               null, // toMachine.
               function(ghostService) {
+                var name = ghostService.get('name');
                 ghostService.setAttrs({
-                  id: ghostService.get('name'),
+                  id: name,
                   displayName: undefined,
                   pending: false,
                   loading: false,
                   config: ghostService.get('config'),
                   constraints: {}
                 });
+                this.env.update_annotations(
+                    name, 'service', ghostService.get('annotations'));
               }.bind(this, ghostService),
               // Options used by ECS, ignored by environment.
               {modelId: ghostService.get('id')});

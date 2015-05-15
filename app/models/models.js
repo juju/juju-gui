@@ -2413,7 +2413,7 @@ YUI.add('juju-models', function(Y) {
                   }
                   return parts.join(':');
                 } else {
-                  return machineIdMap[machineId];
+                  return machineIdMap[machineId] + '';
                 }
               });
         }
