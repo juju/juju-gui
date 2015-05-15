@@ -1603,8 +1603,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       // The getChangeSet functionality still needs to be possible when
       // deployed via charm and in sandbox mode.
       var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
-      ws.onopen = this._changeSetWsOnOpen.bind(this, data);
-      ws.onmessage = this._changeSetWsOnMessage.bind(this);
+      ws.onopen = this._changeSetWsOnOpen.bind(this, ws, data);
+      ws.onmessage = this._changeSetWsOnMessage.bind(this, data, client);
       // Because it's possible (and likely) that a user will drop a charm while
       // the GUI is not deployed with a reference to the bundle lib we need to
       // bail and throw an error after trying a few times. We try a few times
@@ -1616,8 +1616,12 @@ YUI.add('juju-env-sandbox', function(Y) {
       Websocket on open handler.
 
       @method _changeSetWsOnOpen
+      @param {Object} ws Reference to the websocket instance.
+      @param {Object} data The contents of the API arguments.
     */
-    _changeSetWsOnOpen: function() {},
+    _changeSetWsOnOpen: function(ws, data) {
+      ws.send(JSON.stringify(data));
+    },
 
     /**
       Track the failure times so that we can notify to the user that we cannot
@@ -1626,17 +1630,15 @@ YUI.add('juju-env-sandbox', function(Y) {
       @method _changeSetWsOnError
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
-      @param {Object} e The error event object.
+      @param {Object} response The websocket response.
     */
-    _changeSetWsOnError: function(data, client, e) {
-      console.log('failure', this.wsFailureCount);
+    _changeSetWsOnError: function(data, client, response) {
       this.wsFailureCount += 1;
       if (this.wsFailureCount === 3) {
         // Disconnect and bail if we have had three failures.
-        e.currentTarget.close();
-        console.log('I should have closed');
+        response.currentTarget.close();
         this._basicReceive(data, client, {
-          Error: 'Unable to connect to bundle processor.'
+          error: 'Unable to connect to bundle processor.'
         });
       }
     },
@@ -1645,8 +1647,17 @@ YUI.add('juju-env-sandbox', function(Y) {
       Websocket on message handler.
 
       @method _changeSetWsOnMessage
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} response The websocket response.
     */
-    _changeSetWsOnMessage: function() {}
+    _changeSetWsOnMessage: function(data, client, response) {
+      client.receive({
+        RequestId: data.RequestId,
+        Response: JSON.parse(response.data).Response
+      });
+      response.currentTarget.close();
+    }
 
   });
 
