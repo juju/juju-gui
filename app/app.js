@@ -456,8 +456,12 @@ YUI.add('juju-gui', function(Y) {
             credentials['user-' + envOptions.user] = envOptions.password;
             state.set('authorizedUsers', credentials);
           }
-          envOptions.conn = new sandboxModule.ClientConnection(
-              {juju: new sandboxModule.GoJujuAPI({state: state})});
+          envOptions.conn = new sandboxModule.ClientConnection({
+            juju: new sandboxModule.GoJujuAPI({
+              state: state,
+              socket_url: envOptions.socket_url
+            })
+          });
           // Instantiate a fake Web handler, which simulates the
           // request/response communication between the GUI and the juju-core
           // HTTPS API.

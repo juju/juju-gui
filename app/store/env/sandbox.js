@@ -41,7 +41,8 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   ClientConnection.NAME = 'sandbox-client-connection';
   ClientConnection.ATTRS = {
-    juju: {} // Required.
+    juju: {}, // Required.
+    socket_url: {}
   };
 
   Y.extend(ClientConnection, Y.Base, {
@@ -719,6 +720,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   GoJujuAPI.NAME = 'sandbox-go-juju-api';
   GoJujuAPI.ATTRS = {
     state: {},
+    socket_url: {},
     client: {},
     nextRequestId: {}, // The current outstanding "Next" RPC call ID.
     deltaInterval: {value: 1000} // In milliseconds.
@@ -734,6 +736,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     initializer: function() {
       this.connected = false;
+      this.wsFailureCount = 0;
     },
 
     /**
@@ -1586,7 +1589,64 @@ YUI.add('juju-env-sandbox', function(Y) {
       var result = state.removeRelation(data.Params.Endpoints[0],
           data.Params.Endpoints[1]);
       this._basicReceive(data, client, result);
-    }
+    },
+
+    /**
+      Makes a request using a real websocket to get the bundle changeSet data.
+
+      @method handleChangeSetGetChanges
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleChangeSetGetChanges: function(data, client, state) {
+      // The getChangeSet functionality still needs to be possible when
+      // deployed via charm and in sandbox mode.
+      var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
+      ws.onopen = this._changeSetWsOnOpen.bind(this, data);
+      ws.onmessage = this._changeSetWsOnMessage.bind(this);
+      // Because it's possible (and likely) that a user will drop a charm while
+      // the GUI is not deployed with a reference to the bundle lib we need to
+      // bail and throw an error after trying a few times. We try a few times
+      // in the event of a poor connection.
+      ws.onerror = this._changeSetWsOnError.bind(this, data, client);
+    },
+
+    /**
+      Websocket on open handler.
+
+      @method _changeSetWsOnOpen
+    */
+    _changeSetWsOnOpen: function() {},
+
+    /**
+      Track the failure times so that we can notify to the user that we cannot
+      connect to the charm or bundle lib.
+
+      @method _changeSetWsOnError
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} e The error event object.
+    */
+    _changeSetWsOnError: function(data, client, e) {
+      console.log('failure', this.wsFailureCount);
+      this.wsFailureCount += 1;
+      if (this.wsFailureCount === 3) {
+        // Disconnect and bail if we have had three failures.
+        e.currentTarget.close();
+        console.log('I should have closed');
+        this._basicReceive(data, client, {
+          Error: 'Unable to connect to bundle processor.'
+        });
+      }
+    },
+
+    /**
+      Websocket on message handler.
+
+      @method _changeSetWsOnMessage
+    */
+    _changeSetWsOnMessage: function() {}
 
   });
 
@@ -1597,6 +1657,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     'js-yaml',
     'json-parse',
     'juju-env-go',
+    'reconnecting-websocket',
     'timers'
   ]
 });
