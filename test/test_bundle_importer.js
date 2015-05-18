@@ -71,9 +71,9 @@ describe('Bundle Importer', function() {
         bundleImporter.importBundleYAML('foo: bar');
         assert.equal(fetch.callCount(), 1);
         var args = fetch.lastArguments();
-        assert.lengthOf(args, 2);
+        assert.equal(args.length, 2);
         assert.equal(args[0], 'foo: bar');
-        assert.isNull(args[1]);
+        assert.strictEqual(args[1], null);
       });
     });
 
@@ -84,8 +84,8 @@ describe('Bundle Importer', function() {
         bundleImporter.importChangesToken('TOKEN');
         assert.equal(fetch.callCount(), 1);
         var args = fetch.lastArguments();
-        assert.lengthOf(args, 2);
-        assert.isNull(args[0]);
+        assert.equal(args.length, 2);
+        assert.strictEqual(args[0], null);
         assert.equal(args[1], 'TOKEN');
       });
     });
@@ -141,9 +141,9 @@ describe('Bundle Importer', function() {
           bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
           assert.equal(fetch.callCount(), 1);
           var args = fetch.lastArguments();
-          assert.lengthOf(args, 2);
+          assert.equal(args.length, 2);
           assert.equal(args[0], 'foo');
-          assert.isNull(args[1]);
+          assert.strictEqual(args[1], null);
         });
       });
     });
@@ -183,9 +183,9 @@ describe('Bundle Importer', function() {
         bundleImporter.fetchDryRun(yaml, null);
         assert.equal(getChangeSet.callCount(), 1);
         var args = getChangeSet.lastArguments();
-        assert.lengthOf(args, 3);
+        assert.equal(args.length, 3);
         assert.equal(args[0], yaml);
-        assert.isNull(args[1]);
+        assert.strictEqual(args[1], null);
       });
 
       it('calls to the env to get a changeset from a token', function() {
@@ -196,8 +196,8 @@ describe('Bundle Importer', function() {
         bundleImporter.fetchDryRun(null, token);
         assert.equal(getChangeSet.callCount(), 1);
         var args = getChangeSet.lastArguments();
-        assert.lengthOf(args, 3);
-        assert.isNull(args[0]);
+        assert.equal(args.length, 3);
+        assert.strictEqual(args[0], null);
         assert.equal(args[1], token);
       });
 
