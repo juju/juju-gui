@@ -252,7 +252,7 @@ describe('Bundle Importer', function() {
   });
 
   describe('Changeset execution', function() {
-    it.only('Sets up the correct environment (Integration)', function() {
+    it('Sets up the correct environment (Integration)', function() {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.importBundleDryRun(data);
