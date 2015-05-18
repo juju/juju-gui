@@ -1191,9 +1191,12 @@ YUI.add('juju-topology-service', function(Y) {
       // annotations.
       var new_service_boxes = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
-            var annotations = boundingBox.model.get('annotations');
-            return ((!Y.Lang.isNumber(boundingBox.x) &&
-                !(annotations && annotations['gui-x'])));
+            if (boundingBox.model) {
+              var annotations = boundingBox.model.get('annotations');
+              return ((!Y.Lang.isNumber(boundingBox.x) &&
+                  !(annotations && annotations['gui-x'])));
+            }
+            return false;
           });
 
       if (new_service_boxes.length > 0) {

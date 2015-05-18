@@ -252,10 +252,15 @@ describe('Bundle Importer', function() {
   });
 
   describe('Changeset execution', function() {
-    it('Sets up the correct environment (Integration)', function() {
+    it.only('Sets up the correct environment (Integration)', function() {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.importBundleDryRun(data);
+      // Cleans up internals.
+      // Note - although we strive to test public methods only, we do need
+      // to check on some aspects of the bundle importer's state to ensure
+      // that subsequent runs will not encounter problems. Makyo 2015-05-18
+      assert.equal(bundleImporter._dryRunIndex, -1);
       assert.equal(db.services.size(), 3);
       assert.equal(db.machines.size(), 4);
       assert.equal(db.relations.size(), 2);
