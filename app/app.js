@@ -1270,6 +1270,23 @@ YUI.add('juju-gui', function(Y) {
             );
           }, this);
         }
+        // Handle the change set token if provided in the query.
+        // The change set token identifies a collections of changes required
+        // to deploy a bundle. Those changes are assumed to be already
+        // registered in the GUI server (via a ChangeSet:SetChanges request).
+        // Doing that is usually responsibility of a separate system
+        // (most of the times, it is Juju Quickstart).
+        var querystring = this.location.search.substring(1);
+        var qs = Y.QueryString.parse(querystring);
+        var changesToken = qs.changestoken;
+        if (Y.Lang.isValue(changesToken)) {
+          // De-dupe if necessary.
+          if (Y.Lang.isArray(changesToken)) {
+            changesToken = changesToken[0];
+          }
+          // Try to create a bundle uncommitted state using the token.
+          this.bundleImporter.importChangesToken(changesToken);
+        }
         this.navigate(redirectPath, {overrideAllNamespaces: true});
         // If the redirectPath has a hash then it will not dispatch after log in
         // because navigateOnHash is set to false so that we can use hash's to
@@ -1562,21 +1579,23 @@ YUI.add('juju-gui', function(Y) {
          */
         getter: function() {
           // The result is a normalized version of the currentURL.
-          // Specifically, it omits any authtokens and uses our standard path
+          // Specifically, it omits any tokens used for authentication or
+          // change set retrieval, and uses our standard path
           // normalizing tool (currently the nsRouter).
           var nsRouter = this.nsRouter;
           // `this.location` is a test-friendly access of window.location.
           var routes = nsRouter.parse(this.location.toString());
           if (routes.search) {
             var qs = Y.QueryString.parse(routes.search);
-            var authtoken = qs.authtoken;
-            if (Y.Lang.isValue(authtoken)) {
-              // Remove the token from the URL.  It is a one-shot, designed to
-              // be consumed.  We don't want it to be in the URL after it has
-              // been used.
-              delete qs.authtoken;
-              routes.search = Y.QueryString.stringify(qs);
-            }
+            ['authtoken', 'changestoken'].forEach(function(token) {
+              if (Y.Lang.isValue(qs[token])) {
+                // Remove the token from the URL. It is a one-shot, designed to
+                // be consumed.  We don't want it to be in the URL after it has
+                // been used.
+                delete qs[token];
+              }
+            });
+            routes.search = Y.QueryString.stringify(qs);
           }
           // Use the nsRouter to normalize.
           return nsRouter.url(routes);

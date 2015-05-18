@@ -2236,13 +2236,15 @@ YUI.add('juju-env-go', function(Y) {
 
       @method getChangeSet
       @param {String} bundleYAML The bundle YAML file contents.
+      @param {String} changesToken The token identifying a bundle change set
+        (ignored if bundleYAML is provided).
       @param {Function} callback The user supplied callback to send the
         changeset response to after post processing in _handleGetChangeSet.
         Detailed responses can be found:
         http://bazaar.launchpad.net/~juju-gui/charms/trusty/juju-gui/trunk/
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
-    getChangeSet: function(bundleYAML, callback) {
+    getChangeSet: function(bundleYAML, changesToken, callback) {
       // Since the callback argument of this._send_rpc is optional, if a
       // callback is not provided, we can leave intermediateCallback undefined.
       var intermediateCallback;
@@ -2250,10 +2252,16 @@ YUI.add('juju-env-go', function(Y) {
         // Capture the callback and service.  No context is passed.
         intermediateCallback = this._handleGetChangeSet.bind(this, callback);
       }
+      var params = Object.create(null);
+      if (bundleYAML !== null) {
+        params.YAML = bundleYAML;
+      } else {
+        params.Token = changesToken;
+      }
       this._send_rpc({
         Type: 'ChangeSet',
         Request: 'GetChanges',
-        Params: {YAML: bundleYAML}
+        Params: params
       }, intermediateCallback);
     },
 

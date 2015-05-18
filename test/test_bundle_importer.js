@@ -63,16 +63,35 @@ describe('Bundle Importer', function() {
   });
 
   describe('Public methods', function() {
+
     describe('importBundleYAML', function() {
       it('calls fetchDryRun with yaml', function() {
         var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
         this._cleanups.push(fetch.reset);
         bundleImporter.importBundleYAML('foo: bar');
         assert.equal(fetch.callCount(), 1);
-        assert.equal(fetch.lastArguments()[0], 'foo: bar');
+        var args = fetch.lastArguments();
+        assert.equal(args.length, 2);
+        assert.equal(args[0], 'foo: bar');
+        assert.strictEqual(args[1], null);
       });
     });
+
+    describe('importChangesToken', function() {
+      it('calls fetchDryRun with token', function() {
+        var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
+        this._cleanups.push(fetch.reset);
+        bundleImporter.importChangesToken('TOKEN');
+        assert.equal(fetch.callCount(), 1);
+        var args = fetch.lastArguments();
+        assert.equal(args.length, 2);
+        assert.strictEqual(args[0], null);
+        assert.equal(args[1], 'TOKEN');
+      });
+    });
+
     describe('importBundleFile', function() {
+
       it('sets up and loads the FileReader', function() {
         var asText = utils.makeStubFunction();
         var generate = utils.makeStubMethod(
@@ -121,10 +140,14 @@ describe('Bundle Importer', function() {
           var yamlFile = { name: 'path/to/file.yaml' };
           bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
           assert.equal(fetch.callCount(), 1);
-          assert.equal(fetch.lastArguments()[0], 'foo');
+          var args = fetch.lastArguments();
+          assert.equal(args.length, 2);
+          assert.equal(args[0], 'foo');
+          assert.strictEqual(args[1], null);
         });
       });
     });
+
     describe('importBundleDryRun', function() {
       var unsortedRecords = [
         { id: '2', requires: []},
@@ -149,15 +172,33 @@ describe('Bundle Importer', function() {
         assert.deepEqual(execute.lastArguments()[0], sortedRecords);
       });
     });
+
     describe('fetchDryRun', function() {
-      it('calls to the env to get a changeset', function() {
+
+      it('calls to the env to get a changeset from a YAML', function() {
         var yaml = 'foo';
         var getChangeSet = utils.makeStubMethod(
             bundleImporter.env, 'getChangeSet');
         this._cleanups.push(getChangeSet.reset);
-        bundleImporter.fetchDryRun(yaml);
+        bundleImporter.fetchDryRun(yaml, null);
         assert.equal(getChangeSet.callCount(), 1);
-        assert.equal(getChangeSet.lastArguments()[0], yaml);
+        var args = getChangeSet.lastArguments();
+        assert.equal(args.length, 3);
+        assert.equal(args[0], yaml);
+        assert.strictEqual(args[1], null);
+      });
+
+      it('calls to the env to get a changeset from a token', function() {
+        var token = 'foo';
+        var getChangeSet = utils.makeStubMethod(
+            bundleImporter.env, 'getChangeSet');
+        this._cleanups.push(getChangeSet.reset);
+        bundleImporter.fetchDryRun(null, token);
+        assert.equal(getChangeSet.callCount(), 1);
+        var args = getChangeSet.lastArguments();
+        assert.equal(args.length, 3);
+        assert.strictEqual(args[0], null);
+        assert.equal(args[1], token);
       });
 
       it('has a callback which calls to import the dryrun', function() {
@@ -168,7 +209,8 @@ describe('Bundle Importer', function() {
         this._cleanups.concat([dryRun.reset, getChangeSet.reset]);
         var changeSet = { foo: 'bar' };
         bundleImporter.fetchDryRun(yaml);
-        getChangeSet.lastArguments()[1]({changeSet: changeSet});
+        var callback = getChangeSet.lastArguments()[2];
+        callback({changeSet: changeSet});
         assert.equal(dryRun.callCount(), 1);
         assert.deepEqual(dryRun.lastArguments()[0], changeSet);
       });
