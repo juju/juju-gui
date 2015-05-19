@@ -384,7 +384,7 @@ describe('test_model.js', function() {
           shortId = '12345678901234567';
       db.services.add([{id: longId}, {id: shortId}]);
       var longName = db.services.getById(longId).get('displayName');
-      assert.equal(longName.length, 18, 'name is not trucated');
+      assert.equal(longName.length, 19, 'name is not trucated');
       var shortName = db.services.getById(shortId).get('displayName');
       assert.equal(shortName.length, shortId.length,
                    'name does not match');
@@ -410,7 +410,7 @@ describe('test_model.js', function() {
                    'close paren not found');
       // add 2 to the expected length to account for the parenthesis
       // that surround ghosted names
-      assert.equal(longName.length, 10 + 2,
+      assert.equal(longName.length, 11 + 2,
                    'name is not trucated');
       assert.equal(shortName.length, shortId.length + 2,
                    'name does not match');

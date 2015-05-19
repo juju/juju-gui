@@ -343,30 +343,11 @@ YUI.add('juju-models', function(Y) {
         value: []
       },
       displayName: {
-        'getter': function(value) {
-          var name;
-          if (value) {
-            name = value;
-          } else {
-            name = this.get('id').replace('service-', '');
-          }
-
-          // truncate if required
-          function truncate(str, max) {
-            var fill = '…';
-            if (str.length > max) {
-              str = str.substr(0, max - fill.length) + fill;
-            }
-            return str;
-          }
-
-          // add indicators for uncommitted state
+        'getter': function(val) {
+          var name = val || this.get('id').replace('service-', '');
           if (this.get('pending')) {
-            name = '(' + truncate(name, 10) + ')';
-          } else {
-            name = truncate(name, 18);
+            name = '(' + name + ')';
           }
-
           return name;
         }
       },

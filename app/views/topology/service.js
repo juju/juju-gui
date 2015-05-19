@@ -210,7 +210,10 @@ YUI.add('juju-topology-service', function(Y) {
         }
         });
 
-    node.select('.name').text(function(d) { return d.displayName; });
+    node.select('.name').text(
+        function(d) {
+          return self.truncateServiceName(d);
+        });
 
     node.select('.charm-label')
                     .attr({'style': function(d) {
@@ -1346,6 +1349,29 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Returns a service name which is a maximum of 10 characters wide.
+
+      @method truncateServiceName
+      @param {Object} service The service model
+      @return {String} The truncated service display name.
+    */
+    truncateServiceName: function(service) {
+      var name = service.displayName;
+      if (service.pending) {
+        // It will have parens added in the model.
+        name = name.replace(/^\(/, '').replace(/$\)/, '');
+      }
+      if (name.length > 10) {
+        name = name.substr(0, 9) + '…';
+      }
+      if (service.pending) {
+        // Add the parens back.
+        name = '(' + name + ')';
+      }
+      return name;
+    },
+
+    /**
      * Fill a service node with empty structures that will be filled out
      * in the update stage.
      *
@@ -1372,7 +1398,7 @@ YUI.add('juju-topology-service', function(Y) {
         .text(function(d) { return d.name; });
       node.select('text').append('tspan')
         .attr('class', 'name')
-        .text(function(d) { return d.displayName; });
+        .text(function(d) { return self.truncateServiceName(d); });
 
       // Append status charts to service nodes.
       var status_graph = node.append('g')

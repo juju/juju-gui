@@ -78,13 +78,13 @@ YUI.add('inspector-header-view', function(Y) {
       pojoModel.icon = utils.getIconPath(
           pojoModel.charmUrl, false,
           viewContainerAttrs.charmstore, viewContainerAttrs.env);
+      var name = pojoModel.displayName;
       if (pojoModel.pending) {
         // Check if there is already a service using the default name to
         // trigger the name ux.
         // This regex simply removes the outer parentheses from the
-        // displayName that is set in the ghost-inspector.js updateGhostName
-        // method.  If the regex doesn't match, blow up.  It should match.
-        var name = pojoModel.displayName.match(/^\(([^)]*)\)$/)[1];
+        // displayName that might be set in the model getter.
+        name = name.replace(/^\(/, '').replace(/$\)/, '');
         if (utils.checkForExistingService(name, viewContainerAttrs.db)) {
           pojoModel.invalidName = 'invalid';
         } else {
@@ -92,6 +92,11 @@ YUI.add('inspector-header-view', function(Y) {
         }
       }
       var container = this.get('container');
+      // This is only for the deployed service name.
+      if (name.length > 18 && !pojoModel.pending) {
+        name = name.substr(0, 17) + '…';
+        pojoModel.displayName = name;
+      }
       container.setHTML(this.template(pojoModel));
     },
 
