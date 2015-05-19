@@ -1276,6 +1276,11 @@ describe('File drag over notification system', function() {
       // This simply walks through the hierarchy to show that all the
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
+      var host = window.location.hostname;
+      var port = window.location.port;
+      assert.equal(
+          app.env.get('conn').get('juju').get('socket_url'),
+          'wss://' + host + ':' + port + '/ws/environment/undefined/api');
     });
 
     it('passes a fake web handler to the environment', function() {

@@ -120,7 +120,9 @@ describe('application hotkeys', function() {
       ctrlKey: true,
       altKey: true
     });
-    assert.equal(body.hasClass('state-sidebar-hidden'), true);
+    setTimeout(function() {
+      assert.equal(body.hasClass('state-sidebar-hidden'), true);
+    }, 1000);
   });
 });
 
