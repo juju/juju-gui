@@ -1191,6 +1191,9 @@ YUI.add('juju-topology-service', function(Y) {
       // annotations.
       var new_service_boxes = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
+            // In the case where a model has been removed from the database
+            // and update runs before exit, boundingBox.model will be empty;
+            // these can automatically be ignored.
             if (boundingBox.model) {
               var annotations = boundingBox.model.get('annotations');
               return ((!Y.Lang.isNumber(boundingBox.x) &&
