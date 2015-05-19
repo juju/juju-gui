@@ -245,6 +245,7 @@ YUI.add('bundle-importer', function(Y) {
           message: 'ChangeSet import complete.',
           level: 'important'
         });
+        this._dryRunIndex = -1;
         return;
       }
       this._dryRunIndex += 1;
