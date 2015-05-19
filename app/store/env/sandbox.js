@@ -593,16 +593,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       ASYNC_OP(this, 'importEnvironment', ['envData'])(data);
     },
 
-    /**
-     * Perform 'importDeployer' operation.
-     * @method performOp_importDeployer
-     */
-    performOp_importDeployer: function(data) {
-      ASYNC_OP(this, 'importDeployer', ['YAMLData', 'name'])(data);
-      // Explicitly trigger a delta after an import.
-      this.sendDelta();
-    },
-
 
     /**
       Handles the remove unit operations from the client
@@ -1419,87 +1409,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       }, this);
       state.setCharm(data.Params.ServiceName, data.Params.CharmUrl,
           data.Params.Force, callback);
-    },
-
-    /**
-    Handle DeployerImport messages
-
-    @method handleDeployerImport
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleDeployerImport: function(data, client, state) {
-      var request = data;
-      var callback = function(reply) {
-        var response = {
-          RequestId: request.RequestId,
-          Response: {
-            DeployerId: reply.DeploymentId
-          }
-        };
-        // Because the error can come in two different formats
-        // depending on the backend we need to check both.
-        response.Error = reply.Error || reply.error;
-
-        client.receive(response);
-      };
-      state.importDeployer(data.Params.YAML, data.Params.Name,
-                           Y.bind(callback, this));
-    },
-
-    /**
-    Handle DeployerStatus messages.
-
-    @method handleDeployerStatus
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleDeployerStatus: function(data, client, state) {
-      var request = data;
-      var callback = function(reply) {
-        var response = {
-          RequestId: request.RequestId,
-          Error: reply.Error,
-          Response: {
-            LastChanges: reply.LastChanges
-          }
-        };
-        client.receive(response);
-      };
-      state.statusDeployer(Y.bind(callback, this));
-    },
-
-    /**
-     * *no op* Handle the response from a deployerWatch call from the backend.
-     *
-     * @method handleDeployerWatch
-     * @param {Object} data The contents of the API arguments.
-     * @param {Object} client The active ClientConnection.
-     * @param {Object} state An instance of FakeBackend.
-     * @return {undefined} Side effects only.
-     *
-     */
-    handleDeployerWatch: function(data, client, state) {
-      return;
-    },
-
-    /**
-     * *no op* Handle the response from a deployerNext call from the
-     * backend.
-     *
-     * @method handleDeployerNext
-     * @param {Object} data The contents of the API arguments.
-     * @param {Object} client The active ClientConnection.
-     * @param {Object} state An instance of FakeBackend.
-     * @return {undefined} Side effects only.
-     *
-     */
-    handleDeployerNext: function(data, client, state) {
-      return;
     },
 
     /**
