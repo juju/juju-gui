@@ -42,7 +42,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       state = factory.makeFakeBackend();
-      juju = new sandboxModule.GoJujuAPI({state: state});
+      juju = new sandboxModule.GoJujuAPI({
+        state: state,
+        socket_url: 'socket url'});
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
@@ -1441,6 +1443,90 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }, {immediate: true});
     });
 
+    describe('handleChangeSetGetChanges', function() {
+      var count, data, sendStub, ReconnectingWebSocket, websockets;
+
+      beforeEach(function() {
+        websockets = [];
+        count = 0;
+        ReconnectingWebSocket = Y.ReconnectingWebSocket;
+        sendStub = utils.makeStubFunction();
+        Y.ReconnectingWebSocket = function(socketUrl) {
+          this.id = count;
+          count += 1;
+          assert.equal(socketUrl, 'socket url');
+          // Store the generated instances of this object.
+          websockets.push(this);
+          this.send = sendStub;
+        };
+        data = {
+          Type: 'ChangeSet',
+          Request: 'GetChanges'
+        };
+        client.open();
+        client.send(JSON.stringify(data));
+      });
+
+      afterEach(function() {
+        Y.ReconnectingWebSocket = ReconnectingWebSocket;
+      });
+
+      it('creates a new websocket on each request', function() {
+        // send the data twice to simulate two requests.
+        client.send(JSON.stringify(data));
+        // Make sure that they aren't the same ws instance.
+        assert.equal(websockets[0] instanceof Y.ReconnectingWebSocket, true);
+        assert.equal(websockets[1] instanceof Y.ReconnectingWebSocket, true);
+        assert.equal(websockets[0] === websockets[1], false);
+      });
+
+      it('sends the data when the connection opens', function() {
+        websockets[0].onopen();
+        assert.equal(sendStub.callCount(), 1, 'send not called');
+        assert.equal(
+            sendStub.lastArguments()[0],
+            '{"Type":"ChangeSet","Request":"GetChanges"}');
+      });
+
+      it('returns with error if websocket cannot connect', function(done) {
+        var close = utils.makeStubFunction();
+        // We allow it to try to connect three times before closing the
+        // connection and returning with an error.
+        websockets[0].onerror();
+        websockets[0].onerror();
+        websockets[0].onerror({
+          currentTarget: {
+            close: close
+          }
+        });
+        assert.equal(juju.wsFailureCount, 3, 'failure count not 3');
+        assert.equal(close.callCount(), 1, 'close not called');
+        client.onmessage = function(response) {
+          assert.equal(
+              response.data,
+              '{"Response":{},"Error":"Unable to connect to bundle processor."}'
+          );
+          done();
+        };
+      });
+
+      it('returns with data if websocket is successful', function(done) {
+        var close = utils.makeStubFunction();
+        websockets[0].onmessage({
+          data: '{"Response":"record set data"}',
+          currentTarget: {
+            close: close
+          }
+        });
+        client.onmessage = function(response) {
+          assert.deepEqual(
+              response,
+              { data: '{"Response":"record set data"}'});
+          assert.equal(close.callCount(), 1, 'close not called');
+          done();
+        };
+      });
+    });
   });
 
 })();
