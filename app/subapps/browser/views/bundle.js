@@ -33,15 +33,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     views.utils.apiFailingView
   ], {
 
-    // XXX Commented out events are not yet handled for this view
     events: {
-      // '.token': {
-      //   click: '_handleCharmSelection'
-      // },
       '.bundle .add.deploy': {
-        click: '_confirmDeploy'
-      },
-      '.bundle .add.confirm': {
         click: '_deployBundle'
       },
       // Following handlers are provided by entity-base.js
@@ -55,29 +48,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       '.bundle .back': {
         click: '_handleBack'
       }
-      // '#sharing a': {
-      //   click: '_openShareLink'
-      // }
     },
 
     template: views.Templates.bundle,
-
-    /**
-      Changes the deploy button to be a confirmation
-
-      @method _confirmDeploy
-      @param {Object} e Click event object.
-    */
-    _confirmDeploy: function(e) {
-      // This is required to stop the following event handlers from triggering.
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      var button = e.currentTarget;
-      button.setHTML('Yes, I\'m sure');
-      button.removeClass('deploy');
-      button.addClass('confirm');
-      this.get('container').one('.notifier-box').removeClass('hidden');
-    },
 
     /**
       Deploys the bundle to the environment via the provided deploy method.
