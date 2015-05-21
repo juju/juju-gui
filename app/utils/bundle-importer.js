@@ -425,8 +425,8 @@ YUI.add('bundle-importer', function(Y) {
           var requiredModel = record[recordId];
           switch (index) {
             case 0:
-              record.args[0] = requiredModel.get('name');
               serviceId = requiredModel.get('id');
+              record.args[0] = serviceId;
               charmUrl = requiredModel.get('charm');
               size = requiredModel.get('units').size();
               break;

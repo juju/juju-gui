@@ -304,12 +304,16 @@ describe('Bundle Importer', function() {
       // that subsequent runs will not encounter problems. Makyo 2015-05-18
       assert.equal(bundleImporter._dryRunIndex, -1);
       assert.equal(db.services.size(), 3);
+      assert.equal(db.units.size(), 3);
       assert.equal(db.machines.size(), 4);
       assert.equal(db.relations.size(), 2);
-      // Services
+      // Services and units
       assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
+      assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
       assert.equal(db.services.item(1).get('charm'), 'cs:precise/wordpress-27');
+      assert.equal(db.units.item(1).service, db.services.item(1).get('id'));
       assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
+      assert.equal(db.units.item(2).service, db.services.item(2).get('id'));
       // Machines
       assert.equal(db.machines.item(0).id, 'new0');
       assert.equal(db.machines.item(1).id, 'new1');
