@@ -364,11 +364,11 @@ describe('deployer bar view', function() {
       }
     }, {
       icon: 'changes-config-changed',
-      msg: 'Configuration values changed for foo.',
+      msg: 'Configuration values changed for django.',
       change: {
         command: {
           method: '_set_config',
-          args: ['foo']
+          args: ['django']
         }
       }
     }, {
@@ -493,9 +493,9 @@ describe('deployer bar view', function() {
 
   it('retrieves all of the _set_config changes', function() {
     db.services.add([
-      { id: 'foo-1', displayName: 'foo', icon: 'foo-icon' },
+      { id: 'foo', displayName: 'foo', icon: 'foo-icon' },
       // To test the ghost config set.
-      { id: '$12345', displayName: '(bar)', icon: 'bar-icon' }
+      { id: '12345$', displayName: '(bar)', icon: 'bar-icon' }
     ]);
     var command1 = {
       method: '_set_config',
@@ -503,7 +503,7 @@ describe('deployer bar view', function() {
     };
     var command2 = {
       method: '_set_config',
-      args: ['bar']
+      args: ['12345$']
     };
     ecs._createNewRecord('setConfig', command1, []);
     ecs._createNewRecord('setConfig', command2, []);
@@ -517,7 +517,7 @@ describe('deployer bar view', function() {
       },
       {
         icon: 'bar-icon',
-        serviceName: 'bar'
+        serviceName: '12345$'
       }
     ]);
   });
