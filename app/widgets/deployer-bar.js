@@ -31,6 +31,8 @@ YUI.add('deployer-bar', function(Y) {
       Templates = views.Templates,
       bundleHelpers = Y.namespace('juju.BundleHelpers');
 
+  var removeBrackets = /^\(?(.{0,}?)\)?$/;
+
   /**
    * The view associated with the deployer bar.
    *
@@ -599,7 +601,7 @@ YUI.add('deployer-bar', function(Y) {
             var cfgServ = db.services.getById(change.command.args[0]);
             changeItem.icon = 'changes-config-changed';
             changeItem.description = 'Configuration values changed for ' +
-                cfgServ.get('displayName').match(/^\(?(.{0,}?)\)?$/)[1] + '.';
+                cfgServ.get('displayName').match(removeBrackets)[1] + '.';
             break;
           default:
             changeItem.icon = 'changes-service-exposed';
@@ -829,7 +831,7 @@ YUI.add('deployer-bar', function(Y) {
             }
             // If the service is pending then the name will be the temp id.
             if (service.get('pending')) {
-              name = service.get('displayName').match(/^\(?(.{0,}?)\)?$/)[1];
+              name = service.get('displayName').match(removeBrackets)[1];
             }
             changes.setConfigs.push({
               icon: service.get('icon'),
