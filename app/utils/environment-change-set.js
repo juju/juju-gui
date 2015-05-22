@@ -782,7 +782,6 @@ YUI.add('environment-change-set', function(Y) {
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
-            args[0] = value.command.args[1];
           }
         }
       });
@@ -800,12 +799,12 @@ YUI.add('environment-change-set', function(Y) {
         */
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
-            this.args.forEach(function(arg, index) {
-              if (Y.Lang.isArray(arg) &&
-                  record.command.options.modelId === arg[0]) {
-                this.args[index][0] = results[0].service_name;
-              }
-            }, this);
+            // After deploy change the temp id to the real name.
+            var tempId = this.args[0];
+            if (tempId.indexOf('$') > -1 &&
+                record.command.options.modelId === tempId) {
+              this.args[0] = results[0].service_name;
+            }
           }
         }
       };

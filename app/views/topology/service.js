@@ -1359,7 +1359,7 @@ YUI.add('juju-topology-service', function(Y) {
       var name = service.displayName;
       if (service.pending) {
         // It will have parens added in the model.
-        name = name.replace(/^\(/, '').replace(/$\)/, '');
+        name = name.match(/^\(?(.{0,}?)\)?$/)[1];
       }
       if (name.length > 10) {
         name = name.substr(0, 9) + '…';
