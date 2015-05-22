@@ -2122,14 +2122,15 @@ YUI.add('juju-models', function(Y) {
             });
 
         var machineName;
-        if (machine.containerType === 'lxc') {
+        var containerType = machine.containerType
+        if (containerType !== null && containerType !== undefined) {
           // If the machine is an LXC, we just base the name off of the
           // machine's parent, which we've already created a name for.
           var machineId = machine.parentId;
           if (machineNames[machineId]) {
-            machineName = 'lxc:' + machineNames[machineId];
+            machineName = containerType + ':' + machineNames[machineId];
           } else {
-            machineName = 'lxc:' + machine.parentId;
+            machineName = containerType + ':' + machine.parentId;
           }
         } else {
           // The "owner" is the service that deployer will use to allocate other
