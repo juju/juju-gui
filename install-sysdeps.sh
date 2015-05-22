@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Take care to only use 'sudo' when required.
-sudo add-apt-repository -y ppa:chris-lea/node.js
+sudo add-apt-repository -y ppa:yellow/ppa
 sudo apt-get update
 sudo apt-get install -y nodejs imagemagick python-sphinx python-yaml \
   python-tz python-virtualenv python-shelltoolbox python-tornado \
