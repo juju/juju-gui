@@ -2122,7 +2122,7 @@ YUI.add('juju-models', function(Y) {
             });
 
         var machineName;
-        var containerType = machine.containerType
+        var containerType = machine.containerType;
         if (containerType !== null && containerType !== undefined) {
           // If the machine is an LXC, we just base the name off of the
           // machine's parent, which we've already created a name for.
