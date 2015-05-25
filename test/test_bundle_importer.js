@@ -310,10 +310,13 @@ describe('Bundle Importer', function() {
       // Services and units
       assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
       assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
+      assert.equal(db.units.item(0).displayName, 'haproxy/0');
       assert.equal(db.services.item(1).get('charm'), 'cs:precise/wordpress-27');
       assert.equal(db.units.item(1).service, db.services.item(1).get('id'));
+      assert.equal(db.units.item(1).displayName, 'wordpress/0');
       assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
       assert.equal(db.units.item(2).service, db.services.item(2).get('id'));
+      assert.equal(db.units.item(2).displayName, 'mysql/0');
       // Machines
       assert.equal(db.machines.item(0).id, 'new0');
       assert.equal(db.machines.item(1).id, 'new1');
