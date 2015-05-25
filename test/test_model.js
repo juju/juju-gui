@@ -1874,12 +1874,16 @@ describe('test_model.js', function() {
       assert.deepEqual(placement, expected);
     });
 
-    it('can determinte lxc placement for units', function() {
+    it('can determinte container placement for units', function() {
       var machines = [{
         id: '0'
       }, {
         id: '0/lxc/0',
         containerType: 'lxc',
+        parentId: '0'
+      }, {
+        id: '0/kvm/0',
+        containerType: 'kvm',
         parentId: '0'
       }];
       var units = [{
@@ -1896,7 +1900,7 @@ describe('test_model.js', function() {
         service: 'apache2',
         id: 'apache2/0',
         agent_state: 'started',
-        machine: '0/lxc/0'
+        machine: '0/kvm/0'
       }];
       db.machines.add(machines);
       db.units.add(units, true);
@@ -1904,7 +1908,7 @@ describe('test_model.js', function() {
       var expected = {
         wordpress: ['0'],
         mysql: ['0'],
-        apache2: ['lxc:wordpress/0']
+        apache2: ['kvm:wordpress/0']
       };
       assert.deepEqual(placement, expected);
     });
