@@ -415,7 +415,7 @@ YUI.add('bundle-importer', function(Y) {
     _execute_addUnit: function(record, next) {
       // Loop through the args and update the fields which required a previous
       // record to complete.
-      var serviceId, charmUrl, size;
+      var serviceId, charmUrl, size, name;
       record.args.forEach(function(arg, index) {
         // If the record value is a recod key in the format $addMachines-123
         if (typeof arg === 'string' &&
@@ -425,10 +425,11 @@ YUI.add('bundle-importer', function(Y) {
           var requiredModel = record[recordId];
           switch (index) {
             case 0:
-              record.args[0] = requiredModel.get('name');
               serviceId = requiredModel.get('id');
+              record.args[0] = serviceId;
               charmUrl = requiredModel.get('charm');
               size = requiredModel.get('units').size();
+              name = requiredModel.get('name') + '/' + size;
               break;
             case 2:
               record.args[2] = requiredModel.id;
@@ -439,7 +440,7 @@ YUI.add('bundle-importer', function(Y) {
       var unitId = serviceId + '/' + size;
       var ghostUnit = this.db.addUnits({
         id: unitId,
-        displayName: record.args[0] + '/' + size,
+        displayName: name,
         charmUrl: charmUrl,
         subordinate: this.db.charms.getById(charmUrl).get('is_subordinate')
       });
