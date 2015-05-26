@@ -620,61 +620,10 @@ YUI.add('juju-env-go', function(Y) {
 
     The deployer integration introduces a number of calls,
 
-    Deployer:Import takes a YAML blob and returns a import request Id.
     Deployer:Watch can watch a request Id returning status information
     Deployer:Status asks for status information across all running and queued
     imports.
     */
-    /**
-     * Send a request for details about the current Juju environment: default
-     * series and provider type.
-     *
-     * @method deployerImport
-     * @param {String} yamlData to import.
-     * @param {Object} bundleData Object describing the bundle.  Has name and
-     *     id.  May be null.
-     * @param {Function} callback to trigger.
-     * @return {Number} Request Id.
-     */
-    deployerImport: function(yamlData, bundleData, callback) {
-      var intermediateCallback;
-      var name, id;
-
-      if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerImport,
-                                      this, callback);
-      }
-      if (Y.Lang.isValue(bundleData)) {
-        name = bundleData.name;
-        id = bundleData.id;
-      }
-
-      this._send_rpc({
-        Type: 'Deployer',
-        Request: 'Import',
-        Params: {
-          YAML: yamlData,
-          Name: name,
-          BundleID: id
-        }
-      }, intermediateCallback);
-    },
-
-    /**
-     Callback to map data from deployerImport back to caller.
-
-     @method handleDeployerImport
-     @param {Function} userCallback to trigger.
-     @param {Object} data from backend to transform.
-    */
-    handleDeployerImport: function(userCallback, data) {
-      var transformedData = {
-        err: data.Error,
-        DeploymentId: data.Response.DeploymentId
-      };
-      userCallback(transformedData);
-    },
-
     /**
       Retrieve the current status of all the bundle deployments.
 

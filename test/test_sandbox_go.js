@@ -1528,65 +1528,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('should support deployer import', function(done) {
-      var fixture = utils.loadFixture('data/wp-deployer.yaml');
-      var data = {
-        Type: 'Deployer',
-        Request: 'Import',
-        Params: {
-          YAML: fixture
-        },
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
-        assert.isUndefined(receivedData.err);
-        var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-27');
-        done();
-      };
-      client.open();
-      client.send(Y.JSON.stringify(data));
-    });
-
-    it('can import deployer files (integration).', function(done) {
-      var fixture = utils.loadFixture('data/wp-deployer.yaml');
-      var callback = function(result) {
-        assert.isUndefined(result.err);
-        var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-27');
-        done();
-      };
-
-      env.connect();
-      env.deployerImport(fixture, null, callback);
-    });
-
-    it('should support deployer status with imports', function(done) {
-      var fixture = utils.loadFixture('data/wp-deployer.yaml');
-      var callback = function(ignored) {
-        var data = {
-          Type: 'Deployer',
-          Request: 'Status',
-          Params: {},
-          RequestId: 42
-        };
-        client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
-          assert.equal(receivedData.RequestId, 42);
-          var lastChanges = receivedData.Response.LastChanges;
-          assert.equal(lastChanges.length, 1);
-          assert.equal(lastChanges[0].Status, 'completed');
-          assert.isNumber(lastChanges[0].Timestamp);
-          done();
-        };
-        client.open();
-        client.send(Y.JSON.stringify(data));
-      };
-      env.connect();
-      env.deployerImport(fixture, null, callback);
-    });
-
     it('should support deployer status without imports', function(done) {
       var data = {
         Type: 'Deployer',

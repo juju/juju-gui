@@ -590,20 +590,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     describe('Deployer support', function() {
-      it('sends the correct messages on deployer imports', function() {
-        env.deployerImport('YAML BLOB');
-        var last_message = conn.last_message();
-        var expected = {
-          Type: 'Deployer',
-          Request: 'Import',
-          RequestId: 1,
-          Params: {
-            YAML: 'YAML BLOB'
-          }
-        };
-        assert.deepEqual(expected, last_message);
-      });
-
       it('sends proper messages on deployer status', function() {
         env.deployerStatus();
         var expectedMessage = {
