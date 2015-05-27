@@ -182,6 +182,9 @@ YUI.add('service-inspector-utils-extension', function(Y) {
             })
         );
       } else {
+        // Remove the relations from the database (they will be removed from
+        // the state server by Juju, so we don't need to interact with env).
+        db.relations.remove(service.get('relations'));
         db.notifications.add({
           title: 'Destroying service',
           message: 'Service: ' + evt.service_name + ' is being destroyed.',

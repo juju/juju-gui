@@ -315,6 +315,9 @@ describe('Inspector Settings', function() {
           assert.equal(attrs.level, 'important');
           notificationAdded = true;
         }
+      },
+      relations: {
+        remove: utils.makeStubFunction()
       }
     };
 
@@ -322,6 +325,9 @@ describe('Inspector Settings', function() {
     assert.isTrue(notificationAdded);
     // Check that changeState was fired.
     assert.equal(stubFire.calledOnce(), true, 'Fire not called');
+    // Check that relations were removed.
+    assert.equal(db.relations.remove.calledOnce(), true,
+        'Remove relations not called');
   });
 
   /**** End service destroy UI tests. ****/
