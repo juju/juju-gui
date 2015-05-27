@@ -856,6 +856,9 @@ describe('Environment Change Set', function() {
             };
           }
         };
+        db.relations = {
+          remove: testUtils.makeStubFunction()
+        };
         var stubRemoveUnits = testUtils.makeStubMethod(db, 'removeUnits');
         this._cleanups.push(stubRemoveUnits.reset);
 
@@ -865,6 +868,8 @@ describe('Environment Change Set', function() {
         assert.equal(stubDestroy.calledOnce(), true, 'destroy not called');
         assert.equal(
             stubRemoveUnits.calledOnce(), true, 'remove units not called');
+        assert.equal(db.relations.remove.calledOnce(), true,
+            'remove relations not called');
         assert.deepEqual(ecs.changeSet, {});
       });
 

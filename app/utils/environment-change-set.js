@@ -665,10 +665,13 @@ YUI.add('environment-change-set', function(Y) {
       var modelId = this.changeSet[service].command.options.modelId;
       var model = db.services.getById(modelId);
       var units = model.get('units');
+      var relations = model.get('relations');
       // Remove the unplaced service units
       units.each(function(unit) {
         db.removeUnits(unit);
       });
+      // Remove the associated relations
+      db.relations.remove(relations);
       db.services.remove(model);
       model.destroy();
       this._removeExistingRecord(service);
