@@ -171,7 +171,8 @@ YUI.add('bundle-importer', function(Y) {
 
     /**
       Sorts the dry-run records into the correct order so that we can process
-      it top to bottom. Charms, Machines, Services, Units, Relations.
+      it top to bottom. Charms, Machines, Services, Units, Relations. It's not
+      very efficient but it's easy to grok for future you.
 
       @method _sortDryRunRecords
       @param {Array} records The dry-run data array.
@@ -188,26 +189,29 @@ YUI.add('bundle-importer', function(Y) {
           continue;
         }
         /*jshint -W083*/
-        record.requires.some(function(recordId) {
-          var matched = changeSet.some(function(record) {
+        var prereq = record.requires.every(function(recordId) {
+          // Loop through the changeSet to see if the required record is
+          // in the changeSet already.
+          return changeSet.some(function(record) {
             return record.id === recordId ? true : false;
           });
-          if (!matched) {
-            records.push(record);
-            count += 1;
-            return false;
-          } else {
-            // Make sure that we don't have any duplicate records
-            var exists = changeSet.some(function(set) {
-              if (set.id === record.id) {
-                return true;
-              }
-            });
-            if (!exists) {
-              changeSet.push(record);
-            }
-          }
         });
+        // If all prerequisites have been added to the list.
+        if (prereq) {
+          // Make sure we don't have any duplicate records.
+          var exists = changeSet.some(function(set) {
+            return set.id === record.id;
+          });
+          if (!exists) {
+            changeSet.push(record);
+          }
+        } else {
+          // Push this record to the end of the list and increase the
+          // loop count.
+          records.push(record);
+          count += 1;
+          continue;
+        }
       }
       return changeSet;
     },
