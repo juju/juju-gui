@@ -152,6 +152,10 @@ describe('Bundle Importer', function() {
       var unsortedRecords = [
         { id: '2', requires: []},
         { id: '5', requires: ['3']},
+        // The order of the following records (id:6) requires is important.
+        // The sorter must check that all requires are resolved before
+        // adding it to the changeSet.
+        { id: '6', requires: ['2', '5']},
         { id: '4', requires: ['2']},
         { id: '3', requires: []}
       ];
@@ -160,7 +164,8 @@ describe('Bundle Importer', function() {
         { id: '2', requires: []},
         { id: '4', requires: ['2']},
         { id: '3', requires: []},
-        { id: '5', requires: ['3']}
+        { id: '5', requires: ['3']},
+        { id: '6', requires: ['2', '5']}
       ];
 
       it('sorts the records then calls to execute', function() {
