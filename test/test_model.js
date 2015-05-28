@@ -1688,12 +1688,12 @@ describe('test_model.js', function() {
       assert.deepEqual(result.relations[0], ['mysql:db', 'wordpress:db']);
     });
 
-    it('exports subordinate services with num_units set to 0', function() {
+    it('exports subordinate services with no num_units', function() {
       // Add a subordinate.
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
       var result = db.exportDeployer();
-      assert.equal(result.services.puppet.num_units, 0);
+      assert.equal(result.services.puppet.num_units, undefined);
     });
 
     it('exports options preserving their types', function() {
