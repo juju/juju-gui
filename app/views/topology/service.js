@@ -933,6 +933,11 @@ YUI.add('juju-topology-service', function(Y) {
           var charm = new models.Charm(entityData);
           Y.fire('initiateDeploy', charm, ghostAttributes);
         } else {
+          this.get('component').get('db').notifications.add({
+            title: 'Processing File',
+            message: 'Changeset processing started.',
+            level: 'important'
+          });
           var charmstore = topo.get('charmstore');
           charmstore.getBundleYAML(
               entityData.id.replace('cs:', ''),
