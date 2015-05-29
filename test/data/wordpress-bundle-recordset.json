@@ -91,6 +91,18 @@
     },
     {
         "args": [
+            "cs:precise/mysql-51",
+            "mysql-slave",
+            {}
+        ],
+        "requires": [
+            "addCharm-6"
+        ],
+        "id": "addService-99",
+        "method": "deploy"
+    },
+    {
+        "args": [
             "$addService-7",
             "service",
             {

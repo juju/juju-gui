@@ -338,6 +338,13 @@ YUI.add('bundle-importer', function(Y) {
               config[key] = value['default'];
             });
           }
+          // We have to set the display name and charm name for the services
+          // because some bundles specify multiples of the same charms as
+          // different names.
+          var displayName = record.args[1];
+          ghostService.set('name', displayName);
+          ghostService.set('displayName', displayName);
+
           ghostService.set('config', config);
 
           this.env.deploy(

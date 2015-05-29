@@ -269,7 +269,7 @@ describe('Bundle Importer', function() {
       var order = [
         'addCharm-0', 'addService-1', 'setAnnotations-2',
         'addCharm-3', 'addService-4', 'setAnnotations-5',
-        'addCharm-6', 'addService-7', 'setAnnotations-8',
+        'addCharm-6', 'addService-7', 'addService-99', 'setAnnotations-8',
         'addMachines-9', 'addMachines-10',
         'addRelation-11', 'addRelation-12',
         'addUnit-13', 'addMachines-16',
@@ -308,7 +308,7 @@ describe('Bundle Importer', function() {
       // to check on some aspects of the bundle importer's state to ensure
       // that subsequent runs will not encounter problems. Makyo 2015-05-18
       assert.equal(bundleImporter._dryRunIndex, -1);
-      assert.equal(db.services.size(), 3);
+      assert.equal(db.services.size(), 4);
       assert.equal(db.units.size(), 3);
       assert.equal(db.machines.size(), 4);
       assert.equal(db.relations.size(), 2);
@@ -322,6 +322,12 @@ describe('Bundle Importer', function() {
       assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
       assert.equal(db.units.item(2).service, db.services.item(2).get('id'));
       assert.equal(db.units.item(2).displayName, 'mysql/0');
+      // This is an extra service with the same charm as a previous charm.
+      // There was a bug where their names would clash and they would get
+      // combined into a single service on deploy.
+      assert.equal(db.services.item(3).get('charm'), 'cs:precise/mysql-51');
+      assert.equal(db.services.item(3).get('name'), 'mysql-slave');
+      assert.equal(db.services.item(3).get('displayName'), '(mysql-slave)');
       // Machines
       assert.equal(db.machines.item(0).id, 'new0');
       assert.equal(db.machines.item(1).id, 'new1');
