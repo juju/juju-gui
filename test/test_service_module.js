@@ -329,6 +329,25 @@ describe('service module events', function() {
     assert.equal(topo.vis.selectAll('.pending-indicator')[0].length, 1);
   });
 
+  it('should pan to a deployed bundle', function() {
+    var stubFindCentroid = utils.makeStubMethod(serviceModule, 'findCentroid');
+    this._cleanups.push(stubFindCentroid.reset);
+    db.services.add([
+      {
+        id: 'apache2',
+        pending: true,
+        annotations: {
+          'gui-x': 100,
+          'gui-y': 100
+        }
+      }
+    ]);
+    serviceModule.update();
+    db.fire('bundleImportComplete', {services: [db.services.item(0)]})
+    assert.equal(stubFindCentroid.calledOnce(), true,
+      'findCentroid not called');
+  });
+
   it('should deploy a service on charm token drop events', function(done) {
     var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
