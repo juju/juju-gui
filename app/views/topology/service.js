@@ -499,14 +499,14 @@ YUI.add('juju-topology-service', function(Y) {
     */
     _attachAdditionalEvents: function() {
       var db = this.get('component').get('db');
-      db.after('bundleImportComplete', this.panToBundle.bind(this))
+      db.after('bundleImportComplete', this.panToBundle.bind(this));
     },
 
     /**
       Center a newly deployed bundle in the viewport when processing of the
       changeset has completed and entities have been added to the ECS.
 
-      @param evt Event facade containing a list of the services deployed.
+      @param {Object} Event facade containing a list of the services deployed.
       @method panToBundle
     */
     panToBundle: function(evt) {

@@ -343,9 +343,9 @@ describe('service module events', function() {
       }
     ]);
     serviceModule.update();
-    db.fire('bundleImportComplete', {services: [db.services.item(0)]})
+    db.fire('bundleImportComplete', {services: [db.services.item(0)]});
     assert.equal(stubFindCentroid.calledOnce(), true,
-      'findCentroid not called');
+        'findCentroid not called');
   });
 
   it('should deploy a service on charm token drop events', function(done) {

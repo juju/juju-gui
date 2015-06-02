@@ -250,7 +250,9 @@ YUI.add('bundle-importer', function(Y) {
           message: 'ChangeSet import complete.',
           level: 'important'
         });
-        this.db.fire('bundleImportComplete', {services: this._collectedServices});
+        this.db.fire('bundleImportComplete', {
+          services: this._collectedServices
+        });
         this._dryRunIndex = -1;
         this._collectedServices = [];
         return;
