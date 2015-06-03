@@ -299,9 +299,14 @@ describe('Bundle Importer', function() {
   });
 
   describe('Changeset execution', function() {
-    it('Sets up the correct environment (Integration)', function() {
+    it('Sets up the correct environment (Integration)', function(done) {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
+      bundleImporter.db.after('bundleImportComplete', function() {
+        // All that's required is that this complete; timing out indicates
+        // failure.
+        done();
+      });
       bundleImporter.importBundleDryRun(data);
       // Cleans up internals.
       // Note - although we strive to test public methods only, we do need

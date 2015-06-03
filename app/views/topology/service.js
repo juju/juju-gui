@@ -492,6 +492,40 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Attach additional event handlers that rely on events handling outside of
+      the topology, such as the database.
+
+      @method _attachAdditionalEvents
+    */
+    _attachAdditionalEvents: function() {
+      var db = this.get('component').get('db');
+      db.after('bundleImportComplete', this.panToBundle.bind(this));
+    },
+
+    /**
+      Center a newly deployed bundle in the viewport when processing of the
+      changeset has completed and entities have been added to the ECS.
+
+      @param {Object} Event facade containing a list of the services deployed.
+      @method panToBundle
+    */
+    panToBundle: function(evt) {
+      var topo = this.get('component');
+      var services = evt.services;
+      var vertices = [];
+      services.forEach(function(service) {
+        var box = topo.service_boxes[service.get('id')];
+        if (box) {
+          vertices.push([
+            box.x,
+            box.y
+          ]);
+        }
+      });
+      this.findCentroid(vertices);
+    },
+
+    /**
       * Ignore a drag event.
       * @method _ignore
       */
@@ -1149,6 +1183,7 @@ YUI.add('juju-topology-service', function(Y) {
       // times this module is rendered.
       if (!this.rendered) {
         this._attachDragEvents();
+        this._attachAdditionalEvents();
         this.rendered = true;
       }
 

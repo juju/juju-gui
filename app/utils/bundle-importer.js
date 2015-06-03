@@ -34,6 +34,7 @@ YUI.add('bundle-importer', function(Y) {
     this.db = cfg.db;
     this.fakebackend = cfg.fakebackend;
     this._dryRunIndex = -1;
+    this._collectedServices = [];
   }
 
   BundleImporter.prototype = {
@@ -249,7 +250,11 @@ YUI.add('bundle-importer', function(Y) {
           message: 'ChangeSet import complete.',
           level: 'important'
         });
+        this.db.fire('bundleImportComplete', {
+          services: this._collectedServices
+        });
         this._dryRunIndex = -1;
+        this._collectedServices = [];
         return;
       }
       this._dryRunIndex += 1;
@@ -371,6 +376,7 @@ YUI.add('bundle-importer', function(Y) {
               // Options used by ECS, ignored by environment.
               {modelId: ghostService.get('id')});
           this._saveModelToRequires(record.id, ghostService);
+          this._collectedServices.push(ghostService);
           next();
         }.bind(this),
         'failure': function() {
