@@ -20,7 +20,33 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.4.0:
+    - >
+      Add the ability to represent the uncommitted state of a bundle: when
+      deploying or dragging and dropping a bundle, the deployment is no longer
+      immediately started, but the services, units and relations as described
+      on the bundle are added to the canvas as uncommitted entities. This way
+      it is possible to tweak and fine-tune bundle deployments before actually
+      committing the environment changes.
+    - Add support for bundle changeset handling also when in sandbox mode.
+    - >
+      Improve bundle exporting and importing to support the new v4 bundle
+      syntax. This includes unit placement handling and machines declarations.
+    - Improve reliability of the test and CI infrastructure.
+    - In sandbox mode the environment default-series is now trusty.
+    - >
+      Add the ability to Import a collection of bundle changes from a
+      querystring token reference identifying those changes.
+    - >
+      Support real WebSocket connections when required even if sandbox mode is
+      enabled.
+    - Remove legacy and unused code around bundle management.
+    - Update Vagrant image and dependencies.
+    - (FIX) Do not truncate service names in the service internal models.
+    - >
+      (FIX) Remove relations in the internal database when destroying both
+      pending and committed services.
+    - (FIX) Center the canvas on a newly placed bundle.
 - 1.3.6:
     - >
       Allow deployment of basketless bundles (new bundle syntax) in sandbox
