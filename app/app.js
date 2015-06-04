@@ -1665,12 +1665,12 @@ YUI.add('juju-gui', function(Y) {
     'juju-models',
     'juju-notifications',
     'ns-routing-app-extension',
-    // This alias does not seem to work, including references by hand.
-    'juju-controllers',
     'juju-notification-controller',
     'juju-endpoints-controller',
     'juju-env-fakebackend',
     'juju-fakebackend-simulator',
+    'juju-env-base',
+    'juju-env-go',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
@@ -1685,7 +1685,9 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
-    'bundle-importer',
+    // This is actually needed in the next release so only commenting it out
+    // to track the changes for this release.
+    // 'bundle-importer',
     'charmstore-api',
     'event-tracker',
     'node',

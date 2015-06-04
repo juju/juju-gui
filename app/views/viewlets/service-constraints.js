@@ -145,8 +145,8 @@ YUI.add('service-constraints-view', function(Y) {
     'node',
     'resizing-textarea',
     'juju-charm-models',
-    'viewlet-base-view',
+    'viewlet-view-base',
     'conflict-view-extension',
-    'juju-view'
+    'juju-views'
   ]
 });

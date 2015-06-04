@@ -959,6 +959,6 @@ YUI.add('inspector-overview-view', function(Y) {
     'juju-charm-models',
     'viewlet-view-base',
     'scale-up-view',
-    'juju-view'
+    'juju-views'
   ]
 });

@@ -171,6 +171,6 @@ YUI.add('inspector-header-view', function(Y) {
     'juju-charm-models',
     'juju-templates',
     'viewlet-view-base',
-    'juju-view'
+    'juju-views'
   ]
 });

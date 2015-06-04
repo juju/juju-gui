@@ -465,4 +465,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
 
   ns.EntityBaseView = EntityBaseView;
 
+}, '', {
+  requires: []
 });

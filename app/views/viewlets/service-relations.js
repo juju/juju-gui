@@ -232,7 +232,7 @@ YUI.add('service-relations-view', function(Y) {
 }, '0.0.1', {
   requires: [
     'node',
-    'juju-view',
+    'juju-views',
     'd3',
     'juju-view-utils',
     'viewlet-view-base'

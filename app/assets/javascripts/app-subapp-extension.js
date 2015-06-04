@@ -188,4 +188,6 @@ YUI.add('app-subapp-extension', function(Y) {
 
   Y.namespace('juju').SubAppRegistration = SubAppRegistration;
 
-}, '0.1.0');
+}, '0.1.0', {
+  requires: []
+});

@@ -86,4 +86,6 @@ YUI.add('subapp-browser-events', function(Y) {
 
   browser.BrowserEventsExtension = BrowserEventsExtension;
 
+}, '', {
+  requires: []
 });

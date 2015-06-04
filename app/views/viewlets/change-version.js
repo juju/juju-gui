@@ -107,8 +107,8 @@ YUI.add('change-version-view', function(Y) {
 }, '0.0.1', {
   requires: [
     'juju-charm-models',
-    'viewlet-base-view',
-    'juju-view',
+    'viewlet-view-base',
+    'juju-views',
     'node'
   ]
 });

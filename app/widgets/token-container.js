@@ -235,7 +235,6 @@ YUI.add('browser-token-container', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'array',
     'base-build',
     'browser-token',
     'event-tracker',

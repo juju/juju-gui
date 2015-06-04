@@ -190,6 +190,6 @@ YUI.add('unit-details-view', function(Y) {
     'viewlet-view-base',
     'juju-charm-models',
     'juju-templates',
-    'juju-view'
+    'juju-views'
   ]
 });

@@ -133,7 +133,7 @@ YUI.add('charm-details-view', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-bundleview',
     'juju-charm-models',
-    'juju-view',
+    'juju-views',
     'viewlet-view-base'
   ]
 });
