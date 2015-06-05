@@ -1675,7 +1675,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-charm-models',
     // juju-views group
-    'handlebars',
     'd3-components',
     'container-token',
     'juju-templates',
@@ -1722,6 +1721,9 @@ YUI.add('juju-gui', function(Y) {
     'deployer-bar',
     'environment-header-extension',
     'local-charm-import-helpers',
-    'environment-change-set'
+    'environment-change-set',
+    // This must stay down here else it breaks the merge-files by being put
+    // first in the dependency list, before even YUI.
+    'handlebars'
   ]
 });
