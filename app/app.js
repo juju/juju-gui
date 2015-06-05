@@ -1663,7 +1663,6 @@ YUI.add('juju-gui', function(Y) {
   requires: [
     'juju-charm-models',
     'juju-models',
-    'juju-notifications',
     'ns-routing-app-extension',
     'juju-notification-controller',
     'juju-endpoints-controller',
@@ -1675,19 +1674,34 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
-    'juju-views',
+    // juju-views group
+    'handlebars',
+    'd3-components',
+    'container-token',
+    'juju-templates',
+    'juju-notifications',
+    'help-dropdown',
+    'user-dropdown',
+    'create-machine-view',
+    'environment-header',
+    'machine-token',
+    'juju-serviceunit-token',
+    'machine-view-panel',
+    'machine-view-panel-header',
+    'juju-view-utils',
+    'service-scale-up-view',
+    'juju-topology',
     'juju-view-environment',
     'juju-view-login',
     'juju-landscape',
+    // end juju-views group
     'juju-websocket-logging',
     'io',
     'json-parse',
     'app-base',
     'app-transitions',
     'base',
-    // This is actually needed in the next release so only commenting it out
-    // to track the changes for this release.
-    // 'bundle-importer',
+    'bundle-importer',
     'charmstore-api',
     'event-tracker',
     'node',
@@ -1705,11 +1719,9 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'ghost-deployer-extension',
     'juju-view-bundle',
-    'help-dropdown',
     'deployer-bar',
     'environment-header-extension',
     'local-charm-import-helpers',
-    'environment-change-set',
-    'user-dropdown'
+    'environment-change-set'
   ]
 });

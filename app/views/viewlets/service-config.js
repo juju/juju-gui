@@ -378,7 +378,10 @@ YUI.add('service-config-view', function(Y) {
     'viewlet-view-base',
     'conflict-view-extension',
     'configfile-view-extension',
-    'juju-views',
+    'd3-components',
+    'container-token',
+    'juju-templates',
+    'juju-view-utils',
     'node',
     'resizing-textarea'
   ]

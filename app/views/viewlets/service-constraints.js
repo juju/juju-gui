@@ -147,6 +147,7 @@ YUI.add('service-constraints-view', function(Y) {
     'juju-charm-models',
     'viewlet-view-base',
     'conflict-view-extension',
-    'juju-views'
+    'juju-templates',
+    'juju-view-utils'
   ]
 });

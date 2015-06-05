@@ -190,6 +190,8 @@ YUI.add('unit-details-view', function(Y) {
     'viewlet-view-base',
     'juju-charm-models',
     'juju-templates',
-    'juju-views'
+    'juju-templates',
+    'juju-serviceunit-token',
+    'juju-view-utils'
   ]
 });
