@@ -224,4 +224,6 @@ YUI.add('ghost-deployer-extension', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-}, '0.1.0');
+}, '0.1.0', {
+  requires: []
+});

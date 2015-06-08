@@ -294,7 +294,6 @@ YUI.add('machine-token', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
-    'machine-token-header',
     'more-menu',
     'mv-drop-target-view-extension'
   ]

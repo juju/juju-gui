@@ -255,27 +255,27 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/notifications.js'
         },
 
-        'juju-help-dropdown': {
+        'help-dropdown': {
           fullpath: '/juju-ui/views/help-dropdown.js'
         },
 
-        'juju-user-dropdown': {
+        'user-dropdown': {
           fullpath: '/juju-ui/views/user-dropdown.js'
         },
 
-        'juju-container-token': {
+        'container-token': {
           fullpath: '/juju-ui/widgets/container-token.js'
         },
 
-        'juju-create-machine-view': {
+        'create-machine-view': {
           fullpath: '/juju-ui/widgets/create-machine-view.js'
         },
 
-        'juju-deployer-bar': {
+        'deployer-bar': {
           fullpath: '/juju-ui/widgets/deployer-bar.js'
         },
 
-        'juju-environment-header': {
+        'environment-header': {
           fullpath: '/juju-ui/widgets/environment-header.js'
         },
 
@@ -283,15 +283,15 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/serviceunit-token.js'
         },
 
-        'juju-machine-token': {
+        'machine-token': {
           fullpath: '/juju-ui/widgets/machine-token.js'
         },
 
-        'juju-machine-view-panel': {
+        'machine-view-panel': {
           fullpath: '/juju-ui/widgets/machine-view-panel.js'
         },
 
-        'juju-machine-view-panel-header': {
+        'machine-view-panel-header': {
           fullpath: '/juju-ui/widgets/machine-view-panel-header.js'
         },
 
@@ -307,7 +307,7 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/onboarding.js'
         },
 
-        'juju-service-scale-up-view': {
+        'service-scale-up-view': {
           fullpath: '/juju-ui/widgets/service-scale-up-view.js'
         },
 
@@ -331,20 +331,20 @@ var GlobalConfig = {
           use: [
             'handlebars',
             'd3-components',
-            'juju-container-token',
+            'container-token',
             'juju-templates',
             'juju-notifications',
-            'juju-help-dropdown',
-            'juju-user-dropdown',
-            'juju-create-machine-view',
-            'juju-deployer-bar',
+            'help-dropdown',
+            'user-dropdown',
+            'create-machine-view',
+            'deployer-bar',
             'juju-environment-header',
-            'juju-machine-token',
+            'machine-token',
             'juju-serviceunit-token',
-            'juju-machine-view-panel',
-            'juju-machine-view-panel-header',
+            'machine-view-panel',
+            'machine-view-panel-header',
             'juju-view-utils',
-            'juju-service-scale-up-view',
+            'service-scale-up-view',
             'juju-topology',
             'juju-view-environment',
             'juju-view-login',

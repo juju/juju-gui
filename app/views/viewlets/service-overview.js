@@ -959,6 +959,10 @@ YUI.add('inspector-overview-view', function(Y) {
     'juju-charm-models',
     'viewlet-view-base',
     'scale-up-view',
-    'juju-view'
+    'd3-components',
+    'container-token',
+    'juju-templates',
+    'juju-serviceunit-token',
+    'juju-view-utils'
   ]
 });

@@ -1663,22 +1663,37 @@ YUI.add('juju-gui', function(Y) {
   requires: [
     'juju-charm-models',
     'juju-models',
-    'juju-notifications',
     'ns-routing-app-extension',
-    // This alias does not seem to work, including references by hand.
-    'juju-controllers',
     'juju-notification-controller',
     'juju-endpoints-controller',
     'juju-env-fakebackend',
     'juju-fakebackend-simulator',
+    'juju-env-base',
+    'juju-env-go',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
-    'juju-views',
+    // juju-views group
+    'd3-components',
+    'container-token',
+    'juju-templates',
+    'juju-notifications',
+    'help-dropdown',
+    'user-dropdown',
+    'create-machine-view',
+    'environment-header',
+    'machine-token',
+    'juju-serviceunit-token',
+    'machine-view-panel',
+    'machine-view-panel-header',
+    'juju-view-utils',
+    'service-scale-up-view',
+    'juju-topology',
     'juju-view-environment',
     'juju-view-login',
     'juju-landscape',
+    // end juju-views group
     'juju-websocket-logging',
     'io',
     'json-parse',
@@ -1703,11 +1718,12 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'ghost-deployer-extension',
     'juju-view-bundle',
-    'help-dropdown',
     'deployer-bar',
     'environment-header-extension',
     'local-charm-import-helpers',
     'environment-change-set',
-    'user-dropdown'
+    // This must stay down here else it breaks the merge-files by being put
+    // first in the dependency list, before even YUI.
+    'handlebars'
   ]
 });

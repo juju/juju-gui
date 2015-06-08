@@ -283,4 +283,6 @@ YUI.add('conflict-view-extension', function(Y) {
   };
 
   ns.ConflictViewExtension = ConflictViewExtension;
+}, '', {
+  requires: []
 });

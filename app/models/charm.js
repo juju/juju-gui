@@ -841,7 +841,6 @@ YUI.add('juju-charm-models', function(Y) {
 }, '0.1.0', {
   requires: [
     'model',
-    'model-list',
-    'juju-charm-id'
+    'model-list'
   ]
 });

@@ -176,4 +176,6 @@ YUI.add('juju-endpoints', function(Y) {
     return targets;
   };
 
+}, '', {
+  requires: []
 });

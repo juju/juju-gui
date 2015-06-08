@@ -154,4 +154,6 @@ YUI.add('autodeploy-extension', function(Y) {
 
   widgets.AutodeployExtension = AutodeployExtension;
 
+}, '', {
+  requires: []
 });

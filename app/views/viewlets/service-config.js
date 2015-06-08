@@ -375,10 +375,13 @@ YUI.add('service-config-view', function(Y) {
     'event-simulate',
     'event-tracker',
     'juju-charm-models',
-    'viewlet-base-view',
+    'viewlet-view-base',
     'conflict-view-extension',
     'configfile-view-extension',
-    'juju-view',
+    'd3-components',
+    'container-token',
+    'juju-templates',
+    'juju-view-utils',
     'node',
     'resizing-textarea'
   ]

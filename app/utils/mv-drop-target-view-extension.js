@@ -112,4 +112,6 @@ YUI.add('mv-drop-target-view-extension', function(Y) {
 
   views.MVDropTargetViewExtension = MVDropTargetViewExtension;
 
+}, '', {
+  requires: []
 });

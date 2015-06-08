@@ -133,7 +133,10 @@ YUI.add('charm-details-view', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-bundleview',
     'juju-charm-models',
-    'juju-view',
+    'container-token',
+    'juju-templates',
+    'juju-serviceunit-token',
+    'juju-view-utils',
     'viewlet-view-base'
   ]
 });
