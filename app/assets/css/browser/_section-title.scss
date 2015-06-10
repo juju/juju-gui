@@ -1,0 +1,34 @@
+h3.section-title {
+    @include transition(box-shadow 0.1s ease-out);
+    z-index: 610;
+    width: 280px;
+    padding: 13px 0;
+    background-color: #fff;
+    border-width: 1px 0;
+    border-style: solid;
+    border-top-color: $bws-groove-light;
+    border-bottom-color: $bws-groove-dark;
+
+    a {
+        display: block;
+        margin: -13px -20px;
+        padding: 13px 20px;
+        color: $bws-heading;
+
+        .expand {
+            margin-left: 5px;
+
+            .hidden {
+                display: none;
+            }
+        }
+        &:hover {
+            background-color: #eee;
+        }
+    }
+}
+
+h3.section-title,
+h3.section-title a {
+    @extend .type9;
+}

@@ -1,0 +1,73 @@
+.machine-view-panel .token {
+    @extend .border-box;
+    position: relative;
+    display: block;
+    min-height: 40px;
+    // This is so the top border wraps over the header border if there
+    // is nothing about the first token.
+    margin-top: -1px;
+    padding: 10px 20px 5px 20px;
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-color: $machine-view-border-colour;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #f6f6f6;
+    }
+    &:last-child {
+        border-bottom-width: 1px;
+    }
+    &:hover,
+    &.active {
+        & > .more-menu {
+            display: block;
+            top: 10px;
+        }
+    }
+    &.active {
+        background-color: #eee;
+    }
+    &.uncommitted .token-uncommitted {
+        display: inline-block;
+    }
+    &.in-progress .token-uncommitted {
+        display: inline-block;
+        color: #eca918;
+    }
+    &.deleted .title .removed {
+        display: inline;
+    }
+    span {
+        display: block;
+    }
+    .unit-uncommitted,
+    .token-uncommitted {
+        @extend .uncommitted-circle;
+    }
+    .more-menu {
+        position: absolute;
+        right: 20px;
+
+        .yui3-moremenu.open .menu {
+            top: 26px;
+            right: -8px;
+        }
+    }
+    .more-menu,
+    .removed,
+    .token-uncommitted {
+        display: none;
+    }
+    .service-icons, .service-icons-faded {
+        img {
+            width: 20px;
+            height: 20px;
+        }
+    }
+    .drop {
+        span {
+            margin-top: -9px;
+        }
+    }
+}
