@@ -28,6 +28,7 @@ YUI.add('juju-topology', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       d3ns = Y.namespace('d3'),
+      d3 = d3ns.d3,
       utils = Y.namespace('juju.topology.utils');
 
   /**

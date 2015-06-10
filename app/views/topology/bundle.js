@@ -32,6 +32,7 @@ YUI.add('juju-view-bundle', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
       d3ns = Y.namespace('d3'),
+      d3 = d3ns.d3,
       templates = views.Templates,
       topoUtils = Y.namespace('juju.topology.utils');
 

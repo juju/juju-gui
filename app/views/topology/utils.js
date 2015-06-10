@@ -20,7 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-topology-utils', function(Y) {
 
-  var utils = Y.namespace('juju.topology.utils');
+  var utils = Y.namespace('juju.topology.utils'),
+      d3 = Y.namespace('d3').d3;
 
   /**
     Safely find the convex hull of a set of vertices - it is a TypeError to

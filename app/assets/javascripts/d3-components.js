@@ -27,6 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('d3-components', function(Y) {
   var ns = Y.namespace('d3'),
+      d3 = ns.d3,
       L = Y.Lang;
 
   var Module = Y.Base.create('Module', Y.Base, [], {

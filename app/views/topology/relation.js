@@ -31,6 +31,7 @@ YUI.add('juju-topology-relation', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
+      d3 = d3ns.d3,
       Templates = views.Templates;
 
   /**

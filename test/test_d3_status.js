@@ -21,13 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('D3 StatusBar', function() {
 
-  var Y, container, views, utils;
+  var d3, Y, container, views, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3', 'd3-statusbar', 'juju-tests-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
+          d3 = Y.namespace('d3').d3;
           done();
         });
   });

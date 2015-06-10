@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('juju environment view', function() {
-    var view, views, models, Y, container, service, db, conn,
+    var view, views, models, Y, container, service, d3, db, conn,
         juju, charm, ecs, env, testUtils, fakeStore, charmConfig;
 
     var environment_delta = {
@@ -219,13 +219,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
-        'node-event-simulate', 'juju-gui', 'slider',
+        'd3', 'node-event-simulate', 'juju-gui', 'slider',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
+        d3 = Y.namespace('d3').d3;
         conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
         db = new models.Database();
