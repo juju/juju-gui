@@ -124,6 +124,17 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('summary-open'), true);
   });
 
+  it('should not show the summary panel if the deploy button is disabled',
+      function() {
+        addEntities(db);
+        ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
+        container.one('.deploy-button').addClass('disabled');
+        // Must use a full reference to this button after the class has been
+        // added. Don't try and move the reference to a variable.
+        container.one('.deploy-button').simulate('click');
+        assert.equal(container.hasClass('summary-open'), false);
+      });
+
   it('shows a summary of major uncommitted changes for deployment', function() {
     // We must add at least one major change
     var machine = {};
