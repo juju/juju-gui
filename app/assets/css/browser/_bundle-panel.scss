@@ -1,0 +1,66 @@
+#subapp-browser .bundle {
+
+    #bundle {
+        position: relative;
+        padding: 10px;
+        .service {
+            cursor: pointer;
+            &.selected .highlight {
+                display: block;
+            }
+        }
+        .highlight {
+            display: none;
+        }
+    }
+    .topo-info {
+        $box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        @include create-box-shadow($box-shadow);
+        @include create-border-radius($border-radius);
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        padding: 20px 40px 20px 20px;
+        background-color: #fff;
+
+        .close-panel {
+            position: absolute;
+            display: block;
+            top: 20px;
+            right: 20px;
+            width: 10px;
+            height: 9px;
+
+            .sprite {
+                display: block;
+            }
+        }
+        .icon {
+            float: left;
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .content {
+            float: left;
+
+            h4 {
+                @extend .type4;
+                margin: 0;
+                font-size: 14px;
+                line-height: 14px;
+            }
+            .details {
+                margin-top: 4px;
+                font-size: 12px;
+                line-height: 12px;
+            }
+        }
+    }
+    .topology-canvas {
+        @extend .crosshatch-background;
+    }
+    #services {
+        padding-top: 50px;
+    }
+}
