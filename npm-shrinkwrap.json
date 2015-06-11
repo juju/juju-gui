@@ -801,18 +801,6 @@
         }
       }
     },
-    "less": {
-      "version": "1.3.3",
-      "from": "https://registry.npmjs.org/less/-/less-1.3.3.tgz",
-      "resolved": "https://registry.npmjs.org/less/-/less-1.3.3.tgz",
-      "dependencies": {
-        "ycssmin": {
-          "version": "1.0.1",
-          "from": "https://registry.npmjs.org/ycssmin/-/ycssmin-1.0.1.tgz",
-          "resolved": "https://registry.npmjs.org/ycssmin/-/ycssmin-1.0.1.tgz"
-        }
-      }
-    },
     "minimatch": {
       "version": "0.2.14",
       "from": "https://registry.npmjs.org/minimatch/-/minimatch-0.2.14.tgz",
@@ -2299,40 +2287,6 @@
           "version": "1.4.4",
           "from": "https://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz",
           "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz"
-        }
-      }
-    },
-    "recess": {
-      "version": "1.1.9",
-      "from": "https://registry.npmjs.org/recess/-/recess-1.1.9.tgz",
-      "resolved": "https://registry.npmjs.org/recess/-/recess-1.1.9.tgz",
-      "dependencies": {
-        "colors": {
-          "version": "0.6.2",
-          "from": "https://registry.npmjs.org/colors/-/colors-0.6.2.tgz",
-          "resolved": "https://registry.npmjs.org/colors/-/colors-0.6.2.tgz"
-        },
-        "nopt": {
-          "version": "2.2.0",
-          "from": "https://registry.npmjs.org/nopt/-/nopt-2.2.0.tgz",
-          "resolved": "https://registry.npmjs.org/nopt/-/nopt-2.2.0.tgz",
-          "dependencies": {
-            "abbrev": {
-              "version": "1.0.4",
-              "from": "https://registry.npmjs.org/abbrev/-/abbrev-1.0.4.tgz",
-              "resolved": "https://registry.npmjs.org/abbrev/-/abbrev-1.0.4.tgz"
-            }
-          }
-        },
-        "underscore": {
-          "version": "1.6.0",
-          "from": "https://registry.npmjs.org/underscore/-/underscore-1.6.0.tgz",
-          "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.6.0.tgz"
-        },
-        "watch": {
-          "version": "0.9.0",
-          "from": "https://registry.npmjs.org/watch/-/watch-0.9.0.tgz",
-          "resolved": "https://registry.npmjs.org/watch/-/watch-0.9.0.tgz"
         }
       }
     },
