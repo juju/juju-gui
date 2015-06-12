@@ -28,7 +28,7 @@ describe('d3-components', function() {
       'node',
       'node-event-simulate'],
     function(Y) {
-      NS = Y.namespace('d3');
+      NS = Y.namespace('d3-components');
 
       TestModule = Y.Base.create('TestModule', NS.Module, [], {
         events: {

@@ -36,7 +36,7 @@ describe('topology bundle module', function() {
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
       views = Y.namespace('juju.views');
-      d3 = Y.namespace('d3').d3;
+      d3 = Y.namespace('d3');
       done();
     });
   });

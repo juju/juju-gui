@@ -29,7 +29,8 @@ YUI.add('juju-topology-viewport', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
-      d3ns = Y.namespace('d3');
+      components = Y.namespace('d3-components'),
+      d3 = Y.namespace('d3');
 
   /**
    * Manage panning and zooming events on the canvas.
@@ -43,7 +44,7 @@ YUI.add('juju-topology-viewport', function(Y) {
    *
    * @class ViewportModule
    */
-  views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
+  views.ViewportModule = Y.Base.create('ViewportModule', components.Module, [], {
 
     events: {
       yui: {

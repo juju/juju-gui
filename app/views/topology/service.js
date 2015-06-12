@@ -26,8 +26,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 YUI.add('juju-topology-service', function(Y) {
-  var d3ns = Y.namespace('d3'),
-      d3 = d3ns.d3,
+  var d3 = Y.namespace('d3'),
+      components = Y.namespace('d3-components'),
       bundleImportHelpers = Y.namespace('juju').BundleHelpers,
       localCharmHelpers = Y.namespace('juju').localCharmHelpers,
       models = Y.namespace('juju.models'),
@@ -338,7 +338,7 @@ YUI.add('juju-topology-service', function(Y) {
 
     @class ServiceModule
    */
-  var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [
+  var ServiceModule = Y.Base.create('ServiceModule', components.Module, [
     ServiceModuleCommon
   ], {
     events: {

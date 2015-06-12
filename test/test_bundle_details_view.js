@@ -44,7 +44,7 @@ describe('Browser bundle detail view', function() {
           models = Y.namespace('juju.models');
           utils = Y.namespace('juju-tests.utils');
           factory = Y.namespace('juju-tests.factory');
-          d3 = Y.namespace('d3').d3;
+          d3 = Y.namespace('d3');
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
             charmstore: factory.makeFakeCharmstore()

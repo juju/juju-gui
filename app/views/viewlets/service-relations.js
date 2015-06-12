@@ -21,8 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('service-relations-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
-      d3ns = Y.namespace('d3'),
-      d3 = d3ns.d3,
+      d3 = Y.namespace('d3'),
       views = Y.namespace('juju.views'),
       templates = views.Templates,
       utils = views.utils;

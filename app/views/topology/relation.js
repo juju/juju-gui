@@ -30,8 +30,8 @@ YUI.add('juju-topology-relation', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
-      d3ns = Y.namespace('d3'),
-      d3 = d3ns.d3,
+      d3 = Y.namespace('d3'),
+      components = Y.namespace('d3-components'),
       Templates = views.Templates;
 
   /**
@@ -51,7 +51,7 @@ YUI.add('juju-topology-relation', function(Y) {
    *
    * @class RelationModule
    */
-  var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
+  var RelationModule = Y.Base.create('RelationModule', components.Module, [], {
 
     events: {
       scene: {

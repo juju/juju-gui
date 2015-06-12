@@ -27,8 +27,7 @@ YUI.add('d3-statusbar', function(Y) {
 
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
-      ns = Y.namespace('d3'),
-      d3 = ns.d3;
+      d3 = Y.namespace('d3');
 
   views.StatusBar = (function() {
     var key = function(d) {return d.key;};

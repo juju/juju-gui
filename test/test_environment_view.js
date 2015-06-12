@@ -226,7 +226,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
-        d3 = Y.namespace('d3').d3;
+        d3 = Y.namespace('d3');
         conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
         db = new models.Database();

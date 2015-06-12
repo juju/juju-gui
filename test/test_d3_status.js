@@ -28,7 +28,7 @@ describe('D3 StatusBar', function() {
         function(Y) {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
-          d3 = Y.namespace('d3').d3;
+          d3 = Y.namespace('d3');
           done();
         });
   });
