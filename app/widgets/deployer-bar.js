@@ -47,7 +47,7 @@ YUI.add('deployer-bar', function(Y) {
     changesTemplate: Templates['deployer-bar-changes'],
 
     events: {
-      '.deploy-button': {
+      '.deploy-button:not(.disabled)': {
         click: 'showDeployConfirmation'
       },
       '.summary .close': {
