@@ -43,9 +43,9 @@ LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSave
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/expect.js node_modules/express \
     node_modules/graceful-fs node_modules/grunt node_modules/jshint \
-    node_modules/less node_modules/minimatch node_modules/mocha \
+    node_modules/minimatch node_modules/mocha \
     node_modules/node-markdown node_modules/node-minify \
-    node_modules/smash node_modules/node-spritesheet node_modules/recess \
+    node_modules/smash node_modules/node-spritesheet \
     node_modules/rimraf node_modules/should node_modules/uglify-js \
     node_modules/yui node_modules/yuidocjs node_modules/node-sass
 
@@ -127,8 +127,7 @@ endif
 ### End of release-specific variables ###
 TEMPLATE_TARGETS=$(shell find app -type f -regextype posix-extended -regex '.+\.(handlebars|partial)')
 
-CSS_TARGETS=$(shell find lib/views -type f -name '*.less') \
-    $(shell find app/assets/css -type f -name '*.scss')
+CSS_TARGETS=$(shell find app/assets/css -type f -name '*.scss')
 
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprites.css \
@@ -308,14 +307,7 @@ lint-yuidoc: $(JSFILES)
 	node_modules/.bin/yuidoc --lint -x assets app
 	bin/lint-yuidoc
 
-recess: node_modules/recess
-	@# We need to grep for "Perfect" because recess does not set a
-	@# non-zero exit code if it rejects a file.  If this fails, run the
-	@# recess command below without the grep to get recess report.
-	node_modules/recess/bin/recess lib/views/stylesheet.less \
-	    --config recess.json | grep -q Perfect
-
-lint: test-prep jshint gjslint recess lint-license-headers test-filtering \
+lint: test-prep jshint gjslint lint-license-headers test-filtering \
 		lint-yuidoc
 
 lint-license-headers:
@@ -733,7 +725,7 @@ endif
 .PHONY: beautify build build-files build-devel ci-check clean clean-all \
 	clean-deps clean-docs code-doc custom-d3 debug devel docs dist \
 	gjslint help install-npm-packages jshint lint lint-yuidoc main-doc \
-	npm-cache npm-cache-file prep prod recess server spritegen sysdeps \
+	npm-cache npm-cache-file prep prod server spritegen sysdeps \
 	test test-debug test-misc test-prep test-prod undocumented \
 	view-code-doc view-docs view-main-doc
 

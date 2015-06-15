@@ -18,7 +18,7 @@ The rule of thumb for the z-index values to use is setup below
 
 Using fonts
 ------------
-Go forth and see the typography.less file and use those.
+Go forth and see the typography.scss file and use those.
 
 
 Class and property ordering
@@ -38,7 +38,7 @@ This is a general guide on how to structure your classes.
 
 */
 
-/* Processed with LESS from lib/views/stylesheet.less */
+/* Processed with SCSS from app/assets/css/base.scss */
 $font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
