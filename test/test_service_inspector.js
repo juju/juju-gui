@@ -254,4 +254,20 @@ describe('Service Inspector', function() {
     assert.equal(container.one('.viewlet-manager-footer').hasClass('hidden'),
         true);
   });
+
+  it('hides the change version button for pending', function() {
+    // Create a ghost service with a fake charm.
+    var charm = new models.Charm(charmData.charm);
+    db.charms.add(charm);
+    service = db.services.ghostService(charm);
+    var inspector = setUpInspector(service);
+    inspector.render();
+    assert.equal(container.one('.change-version-trigger').hasClass('hidden'),
+        true);
+    // Update the pending status and check that the button shows again.
+    service.set('pending', false);
+    inspector.render();
+    assert.equal(container.one('.change-version-trigger').hasClass('hidden'),
+        false);
+  });
 });
