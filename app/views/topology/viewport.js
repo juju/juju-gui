@@ -29,7 +29,7 @@ YUI.add('juju-topology-viewport', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
-      components = Y.namespace('d3-components'),
+      comp = Y.namespace('d3-components'),
       d3 = Y.namespace('d3');
 
   /**
@@ -44,7 +44,7 @@ YUI.add('juju-topology-viewport', function(Y) {
    *
    * @class ViewportModule
    */
-  views.ViewportModule = Y.Base.create('ViewportModule', components.Module, [], {
+  views.ViewportModule = Y.Base.create('ViewportModule', comp.Module, [], {
 
     events: {
       yui: {
