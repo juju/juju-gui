@@ -31,7 +31,8 @@ describe('topology', function() {
                                'node',
                                'node-event-simulate'],
     function(Y) {
-      NS = d3 = Y.namespace('d3');
+      NS = Y.namespace('d3-components');
+      d3 = Y.namespace('d3');
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
