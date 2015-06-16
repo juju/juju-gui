@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology bundle module', function() {
-  var utils, views, Y, bundleModule;
+  var d3, utils, views, Y, bundleModule;
   var bundle, container, factory, fakebackend;
 
   before(function(done) {
@@ -36,6 +36,7 @@ describe('topology bundle module', function() {
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
       views = Y.namespace('juju.views');
+      d3 = Y.namespace('d3');
       done();
     });
   });

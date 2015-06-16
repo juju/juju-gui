@@ -31,7 +31,8 @@ YUI.add('juju-view-bundle', function(Y) {
       views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
-      d3ns = Y.namespace('d3'),
+      d3 = Y.namespace('d3'),
+      components = Y.namespace('d3-components'),
       templates = views.Templates,
       topoUtils = Y.namespace('juju.topology.utils');
 
@@ -44,7 +45,7 @@ YUI.add('juju-view-bundle', function(Y) {
     @class BundleModule
    */
 
-  var BundleModule = Y.Base.create('BundleModule', d3ns.Module, [
+  var BundleModule = Y.Base.create('BundleModule', components.Module, [
     views.ServiceModuleCommon], {
 
     events: {

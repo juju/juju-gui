@@ -28,7 +28,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-topology-panzoom', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
-      d3ns = Y.namespace('d3');
+      d3 = Y.namespace('d3'),
+      components = Y.namespace('d3-components');
 
   /**
    * Handle PanZoom within a Topology.
@@ -40,7 +41,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
    *
    * @class PanZoomModule
    */
-  var PanZoomModule = Y.Base.create('PanZoomModule', d3ns.Module, [], {
+  var PanZoomModule = Y.Base.create('PanZoomModule', components.Module, [], {
 
     events: {
       scene: {

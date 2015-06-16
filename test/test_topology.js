@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology', function() {
-  var NS, TestModule, container, db, factory, modA, models, state, topo,
+  var NS, TestModule, container, d3, db, factory, modA, models, state, topo,
       utils, views, Y;
 
   before(function(done) {
@@ -31,7 +31,8 @@ describe('topology', function() {
                                'node',
                                'node-event-simulate'],
     function(Y) {
-      NS = Y.namespace('d3');
+      NS = Y.namespace('d3-components');
+      d3 = Y.namespace('d3');
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');

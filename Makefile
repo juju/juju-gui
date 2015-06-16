@@ -24,7 +24,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	\) -print \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev \
-		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/d3(\.min|-wrapper.*)?\.js$$' \
 		-e '^app/assets/javascripts/react-[0-9]+\.[0-9]+\.[0-9]+(\.min)*\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \
@@ -267,7 +267,7 @@ $(JAVASCRIPT_LIBRARIES): | node_modules/yui custom-d3
 # dependency tree will be updated.
 # More info on Smash here: https://github.com/mbostock/smash/wiki
 D3MODULES=$(shell node_modules/.bin/smash --list \
-	  node_modules/d3/src/start.js \
+	  app/assets/javascripts/d3-wrapper-start.js \
 	  node_modules/d3/src/compat/index.js \
 	  node_modules/d3/src/selection/* \
 	  node_modules/d3/src/behavior/* \
@@ -282,7 +282,7 @@ D3MODULES=$(shell node_modules/.bin/smash --list \
 	  node_modules/d3/src/event/mouse.js \
 	  node_modules/d3/src/event/drag.js \
 	  app/assets/javascripts/unscaled-pack.js \
-	  node_modules/d3/src/end.js)
+	  app/assets/javascripts/d3-wrapper-end.js)
 
 # Taken from D3's Makefile. More info on building D3 here:
 # https://github.com/mbostock/d3/blob/master/Makefile

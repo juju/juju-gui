@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('inspector-overview-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
+      d3 = Y.namespace('d3'),
       views = Y.namespace('juju.views'),
       templates = Y.namespace('juju.views').Templates,
       models = Y.namespace('juju.models'),

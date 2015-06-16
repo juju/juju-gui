@@ -20,8 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Browser bundle detail view', function() {
 
-  var browser, charmstore, cleanUp, container, data, factory, fakestore, models,
-      utils, view, Y;
+  var browser, charmstore, cleanUp, container, d3, data, factory, fakestore,
+      models, utils, view, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -44,6 +44,7 @@ describe('Browser bundle detail view', function() {
           models = Y.namespace('juju.models');
           utils = Y.namespace('juju-tests.utils');
           factory = Y.namespace('juju-tests.factory');
+          d3 = Y.namespace('d3');
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
             charmstore: factory.makeFakeCharmstore()
