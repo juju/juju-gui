@@ -99,7 +99,7 @@ YUI.add('service-inspector', function(Y) {
       }
       // Hide the 'Change version' button if the service is pending.
       this.get('container').one('.change-version-trigger').toggleClass(
-        'hidden', model.get('pending'));
+          'hidden', model.get('pending'));
 
       if (this.get('showCharm')) {
         var charmId = model.get('charm');
