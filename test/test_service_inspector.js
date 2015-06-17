@@ -148,7 +148,7 @@ describe('Service Inspector', function() {
   it('handles re-rendering the overview', function() {
     var inspector = setUpInspector();
     inspector.get('container').append(
-      '<div class="change-version-trigger"></div>');
+        '<div class="change-version-trigger"></div>');
     var stubShow = utils.makeStubMethod(inspector, 'showViewlet');
     this._cleanups.push(stubShow.reset);
     var stubOverviewRender = utils.makeStubMethod(
