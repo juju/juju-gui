@@ -1443,7 +1443,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Append status charts to service nodes.
       var status_graph = node.append('g')
-        .attr('transform', 'translate(15, 152)')
+        .attr('transform', 'translate(47, 152)')
         .classed('service-status', true)
         .classed('statusbar', true);
 
@@ -1451,7 +1451,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (!d.subordinate) {
           d3.select(this).property('status_bar',
               new views.StatusBar({
-                width: 160,
+                width: 96,
                 target: this,
                 height: 10,
                 labels: false
