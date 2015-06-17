@@ -7,7 +7,7 @@
 README
 ======
 
-Welcome. Juju-GUI is a web-based GUI for `Juju <https://juju.ubuntu.com/>`_.
+Welcome. Juju-GUI is a web-based GUI for `Juju <https://jujucharms.com/>`_.
 Juju lets you deploy connected services to the cloud in a convenient,
 vendor-neutral, and powerful way. The GUI lets you visualize and manage
 your work more intuitively from a web browser.
@@ -24,7 +24,7 @@ See also:
 - the `juju quickstart plugin
   <http://jujugui.wordpress.com/2013/11/07/juju-quickstart-plugin-alpha-but-useful/>`_,
 - our `blog <http://jujugui.wordpress.com/>`_, and
-- the `user-facing docs <https://juju.ubuntu.com/docs/howto-gui-management.html>`_.
+- the `user-facing docs <https://jujucharms.com/docs/howto-gui-management>`_.
 
 Deploy
 ======

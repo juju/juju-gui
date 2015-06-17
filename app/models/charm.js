@@ -826,7 +826,7 @@ YUI.add('juju-charm-models', function(Y) {
   */
   models.validateCharmMetadata = function(metadata) {
     var errors = [];
-    // According to https://juju.ubuntu.com/docs/authors-charm-metadata.html,
+    // According to https://jujucharms.com/docs/authors-charm-metadata,
     // name, summary and description are the only required fields.
     ['name', 'summary', 'description'].forEach(function(name) {
       var value = metadata[name] || '';
