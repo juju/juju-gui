@@ -982,6 +982,18 @@ describe('File drag over notification system', function() {
       assert.equal(app.dispatch.calledOnce(), true);
     });
 
+    it('retrieves the bundle deployments status on login', function() {
+      var app = makeApp(true);
+      app.onLogin({data: {result: true}});
+      var expectedMessage = {
+        RequestId: 2, // The first request is the login one.
+        Type: 'Deployer',
+        Request: 'Status',
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
     // XXX This test causes intermittent cascading failures when run in CI.
     // When the notification system gets refactored this test can be un-skipped.
     it.skip('creates a notification if logged in with a token', function(done) {
