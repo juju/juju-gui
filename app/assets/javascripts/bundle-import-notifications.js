@@ -15,7 +15,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('bundle-import-helpers', function(Y) {
+YUI.add('bundle-import-notifications', function(Y) {
   var ns = Y.namespace('juju');
 
   // Maps bundle deployment statuses to notification messages.
@@ -26,7 +26,7 @@ YUI.add('bundle-import-helpers', function(Y) {
     cancelled: 'The deployment has been cancelled'
   };
 
-  ns.BundleHelpers = {
+  ns.BundleNotifications = {
     /**
       Start watching scheduled/started bundle deployments.
       Notify recently occurred deployment errors.

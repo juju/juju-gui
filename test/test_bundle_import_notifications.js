@@ -20,11 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('bundle-import-helpers', function() {
+  describe('bundle-import-notifications', function() {
     var db, env, ns, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('bundle-import-helpers', 'juju-tests-utils',
+      Y = YUI(GlobalConfig).use(
+          'bundle-import-notifications', 'juju-tests-utils',
           function(Y) {
             ns = Y.namespace('juju');
             utils = Y.namespace('juju-tests').utils;
@@ -125,14 +126,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('bundle helpers watchAll', function() {
-    var bundleHelpers, conn, db, env, juju, testUtils, Y;
+    var bundleNotifications, conn, db, env, juju, testUtils, Y;
     var requirements = [
-      'bundle-import-helpers', 'juju-tests-utils'];
+      'bundle-import-notifications', 'juju-tests-utils'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         juju = Y.namespace('juju');
-        bundleHelpers = juju.BundleHelpers;
+        bundleNotifications = juju.BundleHelpers;
         testUtils = Y.namespace('juju-tests.utils');
         done();
       });
@@ -145,7 +146,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, 'go');
       env.connect();
       db = {notifications: {add: testUtils.makeStubFunction()}};
-      bundleHelpers._watchDeployment = testUtils.makeStubFunction();
+      bundleNotifications._watchDeployment = testUtils.makeStubFunction();
     });
 
     afterEach(function()  {
@@ -153,7 +154,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends a deployer status message', function() {
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       var expectedMessage = {
         RequestId: 1,
         Type: 'Deployer',
@@ -164,7 +165,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles status errors', function() {
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       // Simulate a response from the server.
       conn.msg({
         RequestId: 1,
@@ -172,7 +173,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Error: 'bad wolf'
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
       // An error notification has been added.
       assert.strictEqual(db.notifications.add.calledOnce(), true);
       var args = db.notifications.add.lastArguments();
@@ -186,7 +187,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('starts watching started/pending deployments', function() {
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       // Simulate a response from the server.
       conn.msg({
         RequestId: 1,
@@ -198,8 +199,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // We started observing the two bundles.
-      assert.strictEqual(bundleHelpers._watchDeployment.callCount(), 2);
-      var allArgs = bundleHelpers._watchDeployment.allArguments();
+      assert.strictEqual(bundleNotifications._watchDeployment.callCount(), 2);
+      var allArgs = bundleNotifications._watchDeployment.allArguments();
       assert.deepEqual([3, env, db], allArgs[0], 'first bundle');
       assert.deepEqual([5, env, db], allArgs[1], 'second bundle');
       // No notifications have been added.
@@ -208,7 +209,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('notifies deployment errors occurred in the last hour', function() {
       var time = Date.now() / 1000; // Surely less than one hour ago.
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       // Simulate a response from the server.
       conn.msg({
         RequestId: 1,
@@ -219,7 +220,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
       // An error notification has been added.
       assert.strictEqual(db.notifications.add.calledOnce(), true);
       var args = db.notifications.add.lastArguments();
@@ -233,7 +234,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('ignores completed deployments', function() {
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       // Simulate a response from the server.
       conn.msg({
         RequestId: 1,
@@ -242,14 +243,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
       // No notifications have been added.
       assert.strictEqual(db.notifications.add.called(), false);
     });
 
     it('ignores old failures', function() {
       var time = (Date.now() / 1000) - (60 * 61); // More than one hour ago.
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       // Simulate a response from the server.
       conn.msg({
         RequestId: 1,
@@ -260,13 +261,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
       // No notifications have been added.
       assert.strictEqual(db.notifications.add.called(), false);
     });
 
     it('ignores cancelled deployments', function() {
-      bundleHelpers.watchAll(env, db);
+      bundleNotifications.watchAll(env, db);
       // Simulate a response from the server.
       conn.msg({
         RequestId: 1,
@@ -275,7 +276,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
       // No notifications have been added.
       assert.strictEqual(db.notifications.add.called(), false);
     });
@@ -283,12 +284,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('bundle helpers _notifyDeploymentChange', function() {
-    var bundleHelpers, db, testUtils, Y;
-    var requirements = ['bundle-import-helpers', 'juju-tests-utils'];
+    var bundleNotifications, db, testUtils, Y;
+    var requirements = ['bundle-import-notifications', 'juju-tests-utils'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        bundleHelpers = Y.namespace('juju').BundleHelpers;
+        bundleNotifications = Y.namespace('juju').BundleHelpers;
         testUtils = Y.namespace('juju-tests.utils');
         done();
       });
@@ -307,7 +308,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     it('notifies an error', function() {
-      bundleHelpers._notifyDeploymentChange(db, 42, 'completed', 'bad wolf');
+      bundleNotifications._notifyDeploymentChange(
+          db, 42, 'completed', 'bad wolf');
       assertNotification({
         title: 'Updated status for deployment id: 42',
         message: 'An error occurred while deploying the bundle: bad wolf',
@@ -316,7 +318,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('notifies that a bundle deployment is pending', function() {
-      bundleHelpers._notifyDeploymentChange(db, 1, 'scheduled');
+      bundleNotifications._notifyDeploymentChange(db, 1, 'scheduled');
       assertNotification({
         title: 'Updated status for deployment id: 1',
         message: 'The deployment has been scheduled and is now pending',
@@ -325,7 +327,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('notifies that a bundle deployment is started', function() {
-      bundleHelpers._notifyDeploymentChange(db, 2, 'started');
+      bundleNotifications._notifyDeploymentChange(db, 2, 'started');
       assertNotification({
         title: 'Updated status for deployment id: 2',
         message: 'The deployment is currently in progress',
@@ -334,7 +336,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('notifies that a bundle deployment is completed', function() {
-      bundleHelpers._notifyDeploymentChange(db, 3, 'completed');
+      bundleNotifications._notifyDeploymentChange(db, 3, 'completed');
       assertNotification({
         title: 'Updated status for deployment id: 3',
         message: 'The deployment has been successfully completed',
@@ -343,7 +345,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('notifies that a bundle deployment has been cancelled', function() {
-      bundleHelpers._notifyDeploymentChange(db, 4, 'cancelled');
+      bundleNotifications._notifyDeploymentChange(db, 4, 'cancelled');
       assertNotification({
         title: 'Updated status for deployment id: 4',
         message: 'The deployment has been cancelled',

@@ -40,7 +40,7 @@ YUI.add('juju-gui', function(Y) {
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      importHelpers = juju.BundleHelpers;
+      bundleNotifications = juju.BundleNotifications;
 
   /**
    * The main app class.
@@ -1304,7 +1304,7 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         // Start observing bundle deployments.
-        importHelpers.watchAll(this.env, this.db);
+        bundleNotifications.watchAll(this.env, this.db);
       } else {
         this.showLogin();
       }
@@ -1703,7 +1703,7 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'bundle-importer',
-    'bundle-import-helpers',
+    'bundle-import-notifications',
     'charmstore-api',
     'event-tracker',
     'node',
