@@ -189,6 +189,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/utils/bundle-importer.js'
         },
 
+        'bundle-import-notifications': {
+          fullpath: '/juju-ui/assets/javascripts/bundle-import-notifications.js'
+        },
+
         'view-dropdown-extension': {
           fullpath: '/juju-ui/assets/javascripts/view-dropdown-extension.js'
         },

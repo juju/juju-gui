@@ -87,6 +87,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   filesToLoad.js.push.apply(filesToLoad.js, [
     'app/assets/javascripts/app-subapp-extension.js',
     'app/assets/javascripts/app-cookies-extension.js',
+    'app/assets/javascripts/bundle-import-notifications.js',
     'app/assets/javascripts/local-charm-import-helpers.js',
     'app/assets/javascripts/view-dropdown-extension.js',
     'app/assets/javascripts/environment-header-extension.js',

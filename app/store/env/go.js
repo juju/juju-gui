@@ -615,6 +615,160 @@ YUI.add('juju-env-go', function(Y) {
       this._jujuHttpGet(path, progress, callback);
     },
 
+    /*
+    Deployer support
+
+    The deployer integration introduces a number of calls,
+
+    Deployer:Watch can watch a request Id returning status information
+    Deployer:Status asks for status information across all running and queued
+    imports.
+    */
+    /**
+      Retrieve the current status of all the bundle deployments.
+
+      @method deployerStatus
+      @param {Function} callback A callable that must be called once the
+        operation is performed. The callback is called passing an object
+        including either an "err" property if an error occurred, or a "changes"
+        list of bundle deployment statuses.
+        A deployment status object looks like the following:
+          {
+            deploymentId: <the deployment id as a positive integer>,
+            status: 'scheduled' || 'started' || 'completed' || 'cancelled',
+            time: <the number of seconds since the epoch as an integer>,
+            queue: <the position of the bundle deployment in the queue>,
+            err: 'only defined if an error occurred'
+          }
+    */
+    deployerStatus: function(callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(
+            this._handleDeployerStatus, this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Status'
+      }, intermediateCallback);
+    },
+
+    /**
+     Callback to map data from deployerStatus back to caller.
+
+     @method _handleDeployerStatus
+     @param {Function} userCallback to trigger.
+     @param {Object} data from backend to transform.
+    */
+    _handleDeployerStatus: function(userCallback, data) {
+      var lastChanges = data.Response.LastChanges || [];
+      var transformedData = {
+        err: data.Error,
+        changes: lastChanges.map(function(change) {
+          return {
+            deploymentId: change.DeploymentId,
+            status: change.Status,
+            time: change.Time,
+            queue: change.Queue,
+            err: change.Error
+          };
+        })
+      };
+      userCallback(transformedData);
+    },
+
+    /**
+      Register a Watch with the deployment specified.
+
+      The callback will receive an {Object} An object with err, and the
+      generated WatchId.  .
+
+      @method deployerWatch
+      @param {Integer} deploymentId The ID of the deployment from the
+      original deployment call.
+      @param {Function} callback A user callback to return the response data
+      to.
+     */
+    deployerWatch: function(deploymentId, callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeployerWatch,
+                                      this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Watch',
+        Params: {
+          DeploymentId: deploymentId
+        }
+      }, intermediateCallback);
+
+    },
+
+    /**
+      Callback to process the environments response to requested a watcher for
+      the deployment specified above.
+
+      @method handleDeployerWatch
+      @param {Function} userCallback The original callback to the
+      deployerWatch function.
+      @param {Object} data The servers response to the deployerWatch call.
+     */
+    handleDeployerWatch: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        WatchId: data.Response.WatcherId
+      };
+      userCallback(transformedData);
+    },
+
+    /**
+      Wait for an update to a deployer watch created earlier.
+
+      Note: This returns once the server has something to update on. It might
+      wait a while.
+
+      The callback will receive an {Object} An object with err, and the
+      list of Changes.
+
+      @method deployerNext
+      @param {Integer} watchId The ID of the watcher created in depployWatch.
+      @param {Function} callback The caller's callback function to process
+      the response.
+     */
+    deployerNext: function(watchId, callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeployerNext,
+                                      this, callback);
+      }
+
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Next',
+        Params: {
+          WatcherId: watchId
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+      Wrapper for the deployerNext call.
+
+      @method handleDeployerNext
+      @param {Function} userCallback The original callback to the
+      deployerNext function.
+      @param {Object} data The servers response to the deployerNext
+      call.
+     */
+    handleDeployerNext: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        Changes: data.Response.Changes
+      };
+      userCallback(transformedData);
+    },
+
     /**
       Calls the environment's _deploy method or creates a new deploy record in
       the ECS queue.

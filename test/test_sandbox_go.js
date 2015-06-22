@@ -1527,6 +1527,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
       });
     });
+
+    it('should support deployer status without imports', function(done) {
+      var data = {
+        Type: 'Deployer',
+        Request: 'Status',
+        Params: {},
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.equal(receivedData.RequestId, 42);
+        var lastChanges = receivedData.Response.LastChanges;
+        assert.equal(lastChanges.length, 0);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('should not deal with deployer watches', function(done) {
+      var data = {
+        Type: 'Deployer',
+        Request: 'Watch',
+        Params: {
+          DeploymentId: 10
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        assert.fail('Should never get a response.');
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+
+      done();
+    });
+
+    it('should not deal with watch updates', function(done) {
+      var data = {
+        Type: 'Deployer',
+        Request: 'Next',
+        Params: {
+          WatcherId: 11
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        assert.fail('Should never get a response.');
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+
+      done();
+    });
+
   });
 
 })();

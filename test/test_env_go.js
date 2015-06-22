@@ -588,6 +588,97 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+
+    describe('Deployer support', function() {
+      it('sends proper messages on deployer status', function() {
+        env.deployerStatus();
+        var expectedMessage = {
+          Type: 'Deployer',
+          Request: 'Status',
+          Params: {},
+          RequestId: 1
+        };
+        assert.deepEqual(conn.last_message(), expectedMessage);
+      });
+
+      it('handles successful status responses', function() {
+        var response;
+        env.deployerStatus(function(data) {
+          response = data;
+        });
+        // Mimic the server Status response.
+        conn.msg({
+          RequestId: 1,
+          Response: {
+            LastChanges: [
+              {DeploymentId: 1, Status: 'completed', Time: 42, Error: 'fail'},
+              {DeploymentId: 2, Status: 'completed', Time: 43},
+              {DeploymentId: 3, Status: 'started', Time: 44, Queue: 0},
+              {DeploymentId: 4, Status: 'cancelled', Time: 45},
+              {DeploymentId: 5, Status: 'scheduled', Time: 46, Queue: 1}
+            ]
+          }
+        });
+        assert.isUndefined(response.err);
+        var expectedChanges = [
+          {deploymentId: 1, status: 'completed', time: 42,
+            queue: undefined, err: 'fail'},
+          {deploymentId: 2, status: 'completed', time: 43,
+            queue: undefined, err: undefined},
+          {deploymentId: 3, status: 'started', time: 44,
+            queue: 0, err: undefined},
+          {deploymentId: 4, status: 'cancelled', time: 45,
+            queue: undefined, err: undefined},
+          {deploymentId: 5, status: 'scheduled', time: 46,
+            queue: 1, err: undefined}
+        ];
+        assert.deepEqual(response.changes, expectedChanges);
+      });
+
+      it('handles status server failures', function() {
+        var response;
+        env.deployerStatus(function(data) {
+          response = data;
+        });
+        // Mimic the server Status response.
+        conn.msg({
+          RequestId: 1,
+          Error: 'bad wolf',
+          Response: {}
+        });
+        assert.strictEqual(response.err, 'bad wolf');
+      });
+
+      it('builds a proper watch request', function() {
+        env.deployerWatch(2);
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'Deployer',
+          Request: 'Watch',
+          RequestId: 1,
+          Params: {
+            DeploymentId: 2
+          }
+        };
+        assert.deepEqual(expected, last_message);
+      });
+
+      it('builds a proper watch next request', function() {
+        env.deployerNext(5);
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'Deployer',
+          Request: 'Next',
+          RequestId: 1,
+          Params: {
+            WatcherId: 5
+          }
+        };
+        assert.deepEqual(expected, last_message);
+      });
+
+    });
+
     describe('Local charm upload support', function() {
 
       it('prevents non authorized users from sending files', function(done) {
