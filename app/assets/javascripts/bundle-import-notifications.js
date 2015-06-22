@@ -50,12 +50,13 @@ YUI.add('bundle-import-notifications', function(Y) {
           var status = change.status;
           // Start watching scheduled/in progress bundle deployments.
           if (status === 'scheduled' || status === 'started') {
-            ns.BundleHelpers._watchDeployment(change.deploymentId, env, db);
+            ns.BundleNotifications._watchDeployment(
+                change.deploymentId, env, db);
             return;
           }
           // Notify bundle deployment errors occurred in the last hour.
           if (change.err && change.time >= timestamp) {
-            ns.BundleHelpers._notifyDeploymentChange(
+            ns.BundleNotifications._notifyDeploymentChange(
                 db, change.deploymentId, status, change.err);
           }
           // If none of the previous blocks detect any changes then ignore
@@ -111,7 +112,7 @@ YUI.add('bundle-import-notifications', function(Y) {
             level: 'error'
           });
         } else {
-          ns.BundleHelpers._watchDeploymentUpdates(data.WatchId, env, db);
+          ns.BundleNotifications._watchDeploymentUpdates(data.WatchId, env, db);
         }
       });
     },
@@ -147,7 +148,7 @@ YUI.add('bundle-import-notifications', function(Y) {
           // Just grab the latest change and notify the user of the status.
           var newChange = data.Changes[data.Changes.length - 1];
           // Notify the new deployment change.
-          ns.BundleHelpers._notifyDeploymentChange(
+          ns.BundleNotifications._notifyDeploymentChange(
               db, newChange.DeploymentId, newChange.Status, newChange.Error);
           // If the status is 'completed' then we're done watching this.
           if (newChange.Status === 'completed') {

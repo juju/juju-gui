@@ -94,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Testing private method is evil, but it does a decent amount of
       // work and we want the aid in debugging issues.
-      ns.BundleHelpers._watchDeploymentUpdates(watchId, env, db);
+      ns.BundleNotifications._watchDeploymentUpdates(watchId, env, db);
     });
 
     it('provides a error when the deploy watch says so', function(done) {
@@ -121,7 +121,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Testing private method is evil, but it does a decent amount of
       // work and we want the aid in debugging issues.
-      ns.BundleHelpers._watchDeploymentUpdates(watchId, env, db);
+      ns.BundleNotifications._watchDeploymentUpdates(watchId, env, db);
     });
   });
 
@@ -133,7 +133,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         juju = Y.namespace('juju');
-        bundleNotifications = juju.BundleHelpers;
+        bundleNotifications = juju.BundleNotifications;
         testUtils = Y.namespace('juju-tests.utils');
         done();
       });
@@ -289,7 +289,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        bundleNotifications = Y.namespace('juju').BundleHelpers;
+        bundleNotifications = Y.namespace('juju').BundleNotifications;
         testUtils = Y.namespace('juju-tests.utils');
         done();
       });
