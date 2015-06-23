@@ -1270,17 +1270,17 @@ describe('File drag over notification system', function() {
             user: 'admin',
             password: 'admin',
             jujuCoreVersion: '1.21.1.1-trusty-amd64',
-            charmstorestore: new Y.juju.charmstore.APIv4({})
+            charmstorestore: new Y.juju.charmstore.APIv4({}),
+            sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api'
           });
       app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
-      var host = window.location.hostname;
-      var port = window.location.port;
+      // Assert we have a default websocket url.
       assert.equal(
           app.env.get('conn').get('juju').get('socket_url'),
-          'wss://' + host + ':' + port + '/ws/environment/undefined/api');
+          'ws://host:port/ws/environment/undefined/api');
     });
 
     it('passes a fake web handler to the environment', function() {

@@ -353,7 +353,7 @@ YUI.add('bundle-importer', function(Y) {
           ghostService.set('config', config);
 
           this.env.deploy(
-              record.args[0],
+              charm.get('id'),
               record.args[1],
               record.args[2],
               undefined, // Config file content.

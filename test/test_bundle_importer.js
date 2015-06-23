@@ -318,6 +318,9 @@ describe('Bundle Importer', function() {
       assert.equal(db.machines.size(), 4);
       assert.equal(db.relations.size(), 2);
       // Services and units
+      // Note that this service, as specified in the fixture, does not include
+      // a revision number, but a revision number is included here due to
+      // fetching the charm.
       assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
       assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
       assert.equal(db.units.item(0).displayName, 'haproxy/0');
