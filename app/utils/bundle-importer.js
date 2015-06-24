@@ -353,6 +353,10 @@ YUI.add('bundle-importer', function(Y) {
           ghostService.set('config', config);
 
           this.env.deploy(
+              // Utilize the charm's id, as bundles may specify charms without
+              // fully qualified charm IDs in the service specification. This
+              // allows bundles to use charms without revisions, effectively
+              // requesting the most recent charm.
               charm.get('id'),
               record.args[1],
               record.args[2],
