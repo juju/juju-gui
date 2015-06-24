@@ -11,7 +11,9 @@
         "args": [
             "cs:precise/haproxy",
             "haproxy",
-            {}
+            {
+              "default_retries": 42
+            }
         ],
         "requires": [
             "addCharm-0"

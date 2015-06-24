@@ -335,12 +335,19 @@ YUI.add('bundle-importer', function(Y) {
             ghostService.annotations['gui-y'] = record.annotations['gui-y'];
           }
 
+          // Build a config object for use in creating the ghost service.
+          // If config options are provided in the args, use those, fall
+          // back to the default if needed.
           var config = {};
           var charmOptions = charm.get('options');
           if (charmOptions) {
             Object.keys(charmOptions).forEach(function(key) {
-              var value = charmOptions[key];
-              config[key] = value['default'];
+              if (record.args[2][key]) {
+                config[key] = record.args[2][key];
+              } else {
+                var value = charmOptions[key];
+                config[key] = value['default'];
+              }
             });
           }
           // We have to set the display name and charm name for the services
