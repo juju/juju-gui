@@ -9,7 +9,7 @@
     },
     {
         "args": [
-            "cs:precise/haproxy-35",
+            "cs:precise/haproxy",
             "haproxy",
             {}
         ],

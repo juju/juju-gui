@@ -38,6 +38,7 @@ var juju_config = {
   // property above.
   charmstoreURL: 'https://api.jujucharms.com/charmstore/',
   socket_protocol: 'ws',
+  sandboxSocketURL: 'wss://demo.jujucharms.com/ws',
   user: 'admin',
   password: 'admin',
   sandbox: true,

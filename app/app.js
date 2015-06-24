@@ -450,6 +450,7 @@ YUI.add('juju-gui', function(Y) {
         };
         var webModule = environments.web;
         if (this.get('sandbox')) {
+          envOptions.socket_url = this.get('sandboxSocketURL');
           // The GUI is running in sandbox mode.
           var sandboxModule = environments.sandbox;
           if (envOptions.user && envOptions.password) {
