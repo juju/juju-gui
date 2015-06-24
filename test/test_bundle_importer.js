@@ -322,6 +322,7 @@ describe('Bundle Importer', function() {
       // a revision number, but a revision number is included here due to
       // fetching the charm.
       assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
+      assert.equal(db.services.item(0).get('config').default_retries, 42);
       assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
       assert.equal(db.units.item(0).displayName, 'haproxy/0');
       assert.equal(db.services.item(1).get('charm'), 'cs:precise/wordpress-27');
