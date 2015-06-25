@@ -596,10 +596,10 @@
             .header-slot,
             .viewlet-manager-navigation,
             .viewlet-manager-footer {
-                @include flex-basis(auto);
+                flex: 0 0 auto;
             }
             .viewlet-container {
-                @include flex(1);
+                flex: 1 1 auto;
                 max-height: none;
             }
         }
