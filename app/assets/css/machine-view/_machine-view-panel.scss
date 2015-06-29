@@ -97,7 +97,7 @@
             }
         }
         .head {
-            @include flex-basis(auto);
+            flex: 0 0 auto;
             position: relative;
             height: 49px;
             padding: 0 20px;
@@ -137,7 +137,7 @@
             }
         }
         .content {
-            @include flex(1);
+            flex: 1 1 auto;
             overflow-x: hidden;
             overflow-y: auto;
             border-top: 1px solid $machine-view-border-colour;
