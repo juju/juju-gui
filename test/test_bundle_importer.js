@@ -181,7 +181,7 @@ describe('Bundle Importer', function() {
     describe('fetchDryRun', function() {
 
       it('calls to the env to get a changeset from a YAML', function() {
-        var yaml = 'foo';
+        var yaml = '{"services":{}}';
         var getChangeSet = utils.makeStubMethod(
             bundleImporter.env, 'getChangeSet');
         this._cleanups.push(getChangeSet.reset);
@@ -190,6 +190,19 @@ describe('Bundle Importer', function() {
         var args = getChangeSet.lastArguments();
         assert.equal(args.length, 3);
         assert.equal(args[0], yaml);
+        assert.strictEqual(args[1], null);
+      });
+
+      it('ensures v4 format on import', function() {
+        var yaml = '{"foo":{"services":{}}}';
+        var getChangeSet = utils.makeStubMethod(
+            bundleImporter.env, 'getChangeSet');
+        this._cleanups.push(getChangeSet.reset);
+        bundleImporter.fetchDryRun(yaml, null);
+        assert.equal(getChangeSet.callCount(), 1);
+        var args = getChangeSet.lastArguments();
+        assert.equal(args.length, 3);
+        assert.equal(args[0], '{"services":{}}');
         assert.strictEqual(args[1], null);
       });
 

@@ -83,6 +83,23 @@ YUI.add('bundle-importer', function(Y) {
       this._executeDryRun(this.recordSet);
     },
 
+    _ensureV4Format: function(bundleYAML) {
+      try {
+        var bundle = jsyaml.safeLoad(bundleYAML);
+        // Return JSON.  JSON is a valid subset of YAML, and the internal
+        // JSON methods will be faster than relying on jsyaml.
+        if (bundle.services) {
+          return JSON.stringify(bundle);
+        } else {
+          return JSON.stringify(bundle[Object.keys(bundle)[0]]);
+        }
+      } catch (e) {
+        // The bundle is malformed; errors will fall through in
+        // _handleFetchDryRun.
+        return bundleYAML;
+      }
+    },
+
     /**
       Fetch the dry-run output from the Guiserver.
 
@@ -91,6 +108,9 @@ YUI.add('bundle-importer', function(Y) {
       @param {String} changesToken The token identifying a bundle change set.
     */
     fetchDryRun: function(bundleYAML, changesToken) {
+      if (bundleYAML) {
+        bundleYAML = this._ensureV4Format(bundleYAML);
+      }
       this.env.getChangeSet(
           bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
     },
@@ -315,6 +335,7 @@ YUI.add('bundle-importer', function(Y) {
       // requires it.
       this._saveModelToRequires(record.id, machine);
       next();
+      return machine;
     },
 
     /**
@@ -445,7 +466,7 @@ YUI.add('bundle-importer', function(Y) {
       // record to complete.
       var serviceId, charmUrl, size, name;
       record.args.forEach(function(arg, index) {
-        // If the record value is a recod key in the format $addMachines-123
+        // If the record value is a record key in the format $addMachines-123
         if (typeof arg === 'string' &&
             arg.indexOf('$') === 0 &&
             arg.split('-').length === 2) {
@@ -460,7 +481,20 @@ YUI.add('bundle-importer', function(Y) {
               name = requiredModel.get('name') + '/' + size;
               break;
             case 2:
-              record.args[2] = requiredModel.id;
+              // Check whether this placement refers to a machine or a unit.
+              if (arg.indexOf('$addUnit') === 0) {
+                // We need to add a machine to specify colocation, and we also
+                // rely on _saveModelToRequires; _execute_addMachines is a
+                // helpful shortcut.
+                var machine = this._execute_addMachines({
+                  args: [{}],
+                  id: arg
+                }, function() {});
+                this.env.placeUnit(requiredModel, machine.id)
+                record.args[2] = machine.id;
+              } else {
+                record.args[2] = requiredModel.id;
+              }
               break;
           }
         }
