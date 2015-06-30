@@ -16,7 +16,7 @@
         li {
             $spacer: 20px;
 
-            @include flex-basis(auto);
+            flex: 0 0 auto;
             padding: 0 $spacer;
             background-color: #fff;
             border-width: 0 1px 1px 0;
@@ -44,7 +44,7 @@
                 }
             }
             &.spacer {
-                @include flex(1);
+                flex: 1 1 auto;
             }
             a {
                 display: block;
