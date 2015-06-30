@@ -24,8 +24,8 @@
     .column {
         @extend .customize-scrollbar;
         @extend .display-flex;
-        @include flex(1);
         @include flex-direction(column);
+        flex: 1 1 auto;
         border-right: 1px solid $machine-view-border-colour;
 
         &.unplaced {
