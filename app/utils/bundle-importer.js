@@ -84,6 +84,36 @@ YUI.add('bundle-importer', function(Y) {
     },
 
     /**
+      Ensure that the bundle YAML destined for parsing by juju bundlelib
+      uses the basketless v4 format, rather than the basket format used by
+      v3 bundles
+
+      @method _ensureV4Format
+      @param {String} bundleYAML the bundle file contents
+      @return {String} the modified v3 bundle, or the v4 bundle as it was
+      provided.
+    */
+    _ensureV4Format: function(bundleYAML) {
+      try {
+        var bundle = jsyaml.safeLoad(bundleYAML);
+        if (bundle.services && !bundle.services.services) {
+          return bundleYAML;
+        } else {
+          // Fetch the first bundle in the v3 bundle basket.
+          var firstBundleName = Object.keys(bundle)[0];
+          var firstBundle = bundle[firstBundleName];
+          // Return JSON.  JSON is a valid subset of YAML, and the internal
+          // JSON methods will be faster than relying on jsyaml.
+          return JSON.stringify(firstBundle);
+        }
+      } catch (e) {
+        // The bundle is malformed; errors will fall through in
+        // _handleFetchDryRun.
+        return bundleYAML;
+      }
+    },
+
+    /**
       Fetch the dry-run output from the Guiserver.
 
       @method fetchDryRun
@@ -91,6 +121,9 @@ YUI.add('bundle-importer', function(Y) {
       @param {String} changesToken The token identifying a bundle change set.
     */
     fetchDryRun: function(bundleYAML, changesToken) {
+      if (bundleYAML) {
+        bundleYAML = this._ensureV4Format(bundleYAML);
+      }
       this.env.getChangeSet(
           bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
     },
@@ -314,7 +347,7 @@ YUI.add('bundle-importer', function(Y) {
       // Loop through recordSet and add the machine model to every record which
       // requires it.
       this._saveModelToRequires(record.id, machine);
-      next();
+      next(machine);
     },
 
     /**
@@ -445,7 +478,7 @@ YUI.add('bundle-importer', function(Y) {
       // record to complete.
       var serviceId, charmUrl, size, name;
       record.args.forEach(function(arg, index) {
-        // If the record value is a recod key in the format $addMachines-123
+        // If the record value is a record key in the format $addMachines-123
         if (typeof arg === 'string' &&
             arg.indexOf('$') === 0 &&
             arg.split('-').length === 2) {
@@ -460,7 +493,27 @@ YUI.add('bundle-importer', function(Y) {
               name = requiredModel.get('name') + '/' + size;
               break;
             case 2:
-              record.args[2] = requiredModel.id;
+              // Check whether this placement refers to a machine or a unit. if
+              // a unit was specified, we will need to create a machine for the
+              // two units to be colocated on.  Otherwise, placeUnit will not
+              // work for placing this unit below.  If the unit is simply
+              // placed on a machine, we can continue to place the unit simply.
+              if (arg.indexOf('$addUnit') === 0) {
+                // We rely on _saveModelToRequires; _execute_addMachines is a
+                // helpful shortcut.
+                var machine = this._execute_addMachines({
+                  args: [{}],
+                  id: arg
+                }, function(machine) {
+                  // Place the first unit on the new machine.
+                  this.env.placeUnit(requiredModel, machine.id);
+                  // Set the this unit's placement directive to the machine ID
+                  // rather than the unit name so that placeUnit will work.
+                  record.args[2] = machine.id;
+                }.bind(this));
+              } else {
+                record.args[2] = requiredModel.id;
+              }
               break;
           }
         }

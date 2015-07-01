@@ -181,7 +181,7 @@ describe('Bundle Importer', function() {
     describe('fetchDryRun', function() {
 
       it('calls to the env to get a changeset from a YAML', function() {
-        var yaml = 'foo';
+        var yaml = '{"services":{}}';
         var getChangeSet = utils.makeStubMethod(
             bundleImporter.env, 'getChangeSet');
         this._cleanups.push(getChangeSet.reset);
@@ -190,6 +190,19 @@ describe('Bundle Importer', function() {
         var args = getChangeSet.lastArguments();
         assert.equal(args.length, 3);
         assert.equal(args[0], yaml);
+        assert.strictEqual(args[1], null);
+      });
+
+      it('ensures v4 format on import', function() {
+        var yaml = '{"foo":{"services":{}}}';
+        var getChangeSet = utils.makeStubMethod(
+            bundleImporter.env, 'getChangeSet');
+        this._cleanups.push(getChangeSet.reset);
+        bundleImporter.fetchDryRun(yaml, null);
+        assert.equal(getChangeSet.callCount(), 1);
+        var args = getChangeSet.lastArguments();
+        assert.equal(args.length, 3);
+        assert.equal(args[0], '{"services":{}}');
         assert.strictEqual(args[1], null);
       });
 
@@ -299,7 +312,8 @@ describe('Bundle Importer', function() {
   });
 
   describe('Changeset execution', function() {
-    it('Sets up the correct environment (Integration)', function(done) {
+
+    it('Sets up the correct environment (v4 Integration)', function(done) {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
@@ -349,6 +363,16 @@ describe('Bundle Importer', function() {
       assert.equal(
           db.relations.item(1).get('id'),
           'pending-$addService-4:db$addService-7:db');
+    });
+
+    it('Sets up the correct environment (v3 colocation)', function() {
+      var data = utils.loadFixture(
+          'data/wordpress-bundle-v3-recordset.json', true);
+      bundleImporter.importBundleDryRun(data);
+      assert.equal(db.services.size(), 2);
+      assert.equal(db.units.size(), 2);
+      assert.equal(db.machines.size(), 1);
+      assert.equal(db.units.item(0).machine, db.units.item(1).machine);
     });
   });
 });
