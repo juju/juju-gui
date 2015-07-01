@@ -312,7 +312,8 @@ describe('Bundle Importer', function() {
   });
 
   describe('Changeset execution', function() {
-    it('Sets up the correct environment (Integration)', function(done) {
+
+    it('Sets up the correct environment (v4 Integration)', function(done) {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
@@ -362,6 +363,16 @@ describe('Bundle Importer', function() {
       assert.equal(
           db.relations.item(1).get('id'),
           'pending-$addService-4:db$addService-7:db');
+    });
+
+    it('Sets up the correct environment (v3 colocation)', function() {
+      var data = utils.loadFixture(
+          'data/wordpress-bundle-v3-recordset.json', true);
+      bundleImporter.importBundleDryRun(data);
+      assert.equal(db.services.size(), 2);
+      assert.equal(db.units.size(), 2);
+      assert.equal(db.machines.size(), 1);
+      assert.equal(db.units.item(0).machine, db.units.item(1).machine);
     });
   });
 });
