@@ -20,7 +20,28 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.4.1:
+    - Uncommitted bundles now work in devel mode by using jujucharms.com.
+    - >
+      Wrap Javascript assets in YUI modules, allowing them to be combo-loaded
+      through Convoy.
+    - Switch from using LESS to SCSS.
+    - >
+      Notifications for bundles deployed using the deployer have been
+      restored.
+    - >
+      Code-removal - old DeployerImport methods and tests, along with
+      deprecated py-juju support.
+    - >
+      Inspector cleanup - fixed-width health bar, and change version button
+      hidden for uncommitted services.
+    - Reference jujucharms.com instead of juju.ubuntu.com throughout.
+    - (FIX) Restore v3 bundle functionality for drag-and-drop. 
+    - (FIX) Config options were being discarded in uncommitted bundles.
+    - >
+      (FIX) Fall back to most recent charm when no revno is specified in a
+      bundle.
+    - (FIX) Remove some usages of flex box for better display in Chrome.
 - 1.4.0:
     - >
       Add the ability to represent the uncommitted state of a bundle: when
