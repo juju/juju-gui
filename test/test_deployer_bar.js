@@ -628,6 +628,18 @@ describe('deployer bar view', function() {
     assert.equal(deployButton.get('text').trim(), 'Commit');
   });
 
+  it('changes the confirm message and button after first deploy', function() {
+    assert.equal(container.one('.confirm-button').get('text').trim(),
+        'Confirm');
+    assert.equal(container.one('.post-summary p').get(
+        'text').trim().replace(/\s+/g, ' '), 'Deploy changes?');
+    view.deploy({halt: utils.makeStubFunction()});
+    view.render();
+    assert.equal(container.one('.confirm-button').get('text').trim(), 'Commit');
+    assert.equal(container.one('.post-summary p').get(
+        'text').trim().replace(/\s+/g, ' '), 'Commit changes?');
+  });
+
   it('should display if there are unplaced units', function() {
     addEntities(db);
     ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});

@@ -114,6 +114,7 @@ YUI.add('deployer-bar', function(Y) {
       this.addEvent(
           this.on('hideChangeDescription', this._hideChangeDescription)
       );
+      this._deployed = false;
     },
 
     /**
@@ -137,7 +138,10 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
-      container.setHTML(this.template({ changeCount: changes }));
+      container.setHTML(this.template({
+        changeCount: changes,
+        deployed: this._deployed
+      }));
       container.addClass('deployer-bar');
       this._toggleDeployButtonStatus(changes > 0);
       ecs.on('changeSetModified', Y.bind(this.update, this));
@@ -164,6 +168,9 @@ YUI.add('deployer-bar', function(Y) {
       container.removeClass('summary-open');
       ecs.commit(this.get('env'));
       this._toggleDeployButtonStatus(false);
+      if (this._deployed === false) {
+        this._deployed = true;
+      }
     },
 
     /**
@@ -370,7 +377,8 @@ YUI.add('deployer-bar', function(Y) {
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: changes,
-          changeNotification: changeNotification
+          changeNotification: changeNotification,
+          deployed: this._deployed
         }));
         this._toggleDeployButtonStatus(changes > 0);
         // XXX frankban 2014-05-12: the code below makes the changeset

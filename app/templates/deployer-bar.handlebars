@@ -11,9 +11,22 @@
             </span>
         </div>
         <div class="post-summary">
-            <p>Confirm will deploy all changes</p>
+            <p>
+                {{# if deployed }}
+                    Commit
+                {{else}}
+                    Deploy
+                {{/if}}
+                changes?
+            </p>
             <span class="button cancel-button">Cancel</span>
-            <span class="button confirm-button">Confirm</span>
+            <span class="button confirm-button">
+                {{# if deployed }}
+                    Commit
+                {{else}}
+                    Confirm
+                {{/if}}
+            </span>
         </div>
     </div>
     <ul class="action-list">
