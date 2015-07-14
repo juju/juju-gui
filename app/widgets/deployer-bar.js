@@ -441,6 +441,17 @@ YUI.add('deployer-bar', function(Y) {
     },
 
     /**
+      Close the panel.
+
+      @method close
+    */
+    close: function() {
+      var container = this.get('container');
+      container.removeClass('changes-open');
+      container.removeClass('summary-open');
+    },
+
+    /**
       Hide the changeset description.
 
       @method _hideChangeDescription

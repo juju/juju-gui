@@ -208,6 +208,13 @@ describe('deployer bar view', function() {
         'The changes node should have had the open class removed');
   });
 
+  it('can close all panels', function() {
+    container.addClass('changes-open summary-open');
+    view.close();
+    assert.equal(container.hasClass('changes-open'), false);
+    assert.equal(container.hasClass('summary-open'), false);
+  });
+
   it('can show a list of recent changes', function() {
     var changesStub = utils.makeStubMethod(view,
         '_generateAllChangeDescriptions', []);
