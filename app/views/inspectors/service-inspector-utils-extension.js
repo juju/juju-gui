@@ -122,9 +122,7 @@ YUI.add('service-inspector-utils-extension', function(Y) {
     */
     showDestroyPrompt: function(container) {
       var prompt = container.one('.destroy-service-prompt');
-      // Use the inspectorHeader as our canary to get the model as it should
-      // always exist.
-      var model = this.views.inspectorHeader.model;
+      var model = this.get('model');
       var name = '';
       var pending = false;
       if (model) {
