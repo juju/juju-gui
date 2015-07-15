@@ -297,6 +297,7 @@
             $transition: .25s, max-height .3s;
             @include transition($transition);
             overflow: hidden;
+            width: $left-panel-width - 40px;
             max-height: $inspector-controls-height;
             padding: 0 20px;
             background-color: $inspector-background-color;
