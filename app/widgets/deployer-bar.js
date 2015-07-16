@@ -114,7 +114,7 @@ YUI.add('deployer-bar', function(Y) {
       this.addEvent(
           this.on('hideChangeDescription', this._hideChangeDescription)
       );
-      // Track if the user has deployed at least once.
+      // Used to track if the user has deployed at least once.
       this._deployed = false;
     },
 
