@@ -121,7 +121,17 @@ YUI.add('service-inspector-utils-extension', function(Y) {
       @param {Y.Node} container The container of the prompt.
     */
     showDestroyPrompt: function(container) {
-      container.one('.destroy-service-prompt').removeClass('closed');
+      var prompt = container.one('.destroy-service-prompt');
+      var model = this.get('model');
+      var name = '';
+      var pending = false;
+      if (model) {
+        name = model.get('displayName');
+        pending = model.get('pending');
+        prompt.one('.name').set('text', name);
+        prompt.one('.pending').toggleClass('hidden', !pending);
+      }
+      prompt.removeClass('closed');
     },
 
     /**

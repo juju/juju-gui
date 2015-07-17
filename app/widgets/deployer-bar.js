@@ -114,6 +114,8 @@ YUI.add('deployer-bar', function(Y) {
       this.addEvent(
           this.on('hideChangeDescription', this._hideChangeDescription)
       );
+      // Used to track if the user has deployed at least once.
+      this._deployed = false;
     },
 
     /**
@@ -137,7 +139,10 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       var changes = this._getChangeCount(ecs);
-      container.setHTML(this.template({ changeCount: changes }));
+      container.setHTML(this.template({
+        changeCount: changes,
+        deployed: this._deployed
+      }));
       container.addClass('deployer-bar');
       this._toggleDeployButtonStatus(changes > 0);
       ecs.on('changeSetModified', Y.bind(this.update, this));
@@ -164,6 +169,9 @@ YUI.add('deployer-bar', function(Y) {
       container.removeClass('summary-open');
       ecs.commit(this.get('env'));
       this._toggleDeployButtonStatus(false);
+      if (this._deployed === false) {
+        this._deployed = true;
+      }
     },
 
     /**
@@ -174,7 +182,6 @@ YUI.add('deployer-bar', function(Y) {
     */
     confirmClear: function(evt) {
       evt.halt();
-      this.get('container').one('.deployed-message').addClass('hidden');
       var container = evt.currentTarget.ancestor();
       container.one('.clear-button').addClass('hidden');
       container.one('.clear-confirm').removeClass('hidden');
@@ -188,7 +195,6 @@ YUI.add('deployer-bar', function(Y) {
     */
     cancelClear: function(evt) {
       evt.halt();
-      this.get('container').one('.deployed-message').removeClass('hidden');
       var container = evt.currentTarget.ancestor().ancestor();
       container.one('.clear-button').removeClass('hidden');
       container.one('.clear-confirm').addClass('hidden');
@@ -205,7 +211,6 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs');
       container.removeClass('summary-open');
-      container.one('.deployed-message').removeClass('hidden');
       this.fire('changeState', {
         sectionA: {
           component: null,
@@ -373,7 +378,8 @@ YUI.add('deployer-bar', function(Y) {
       if (container && container.get('parentNode')) {
         container.setHTML(this.template({
           changeCount: changes,
-          changeNotification: changeNotification
+          changeNotification: changeNotification,
+          deployed: this._deployed
         }));
         this._toggleDeployButtonStatus(changes > 0);
         // XXX frankban 2014-05-12: the code below makes the changeset
@@ -433,6 +439,17 @@ YUI.add('deployer-bar', function(Y) {
     */
     hideChanges: function() {
       this.get('container').removeClass('changes-open');
+    },
+
+    /**
+      Close the panel.
+
+      @method close
+    */
+    close: function() {
+      var container = this.get('container');
+      container.removeClass('changes-open');
+      container.removeClass('summary-open');
     },
 
     /**

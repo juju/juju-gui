@@ -208,6 +208,13 @@ describe('deployer bar view', function() {
         'The changes node should have had the open class removed');
   });
 
+  it('can close all panels', function() {
+    container.addClass('changes-open summary-open');
+    view.close();
+    assert.equal(container.hasClass('changes-open'), false);
+    assert.equal(container.hasClass('summary-open'), false);
+  });
+
   it('can show a list of recent changes', function() {
     var changesStub = utils.makeStubMethod(view,
         '_generateAllChangeDescriptions', []);
@@ -626,6 +633,18 @@ describe('deployer bar view', function() {
     assert.equal(deployButton.get('text').trim(), 'Commit');
     view.render();
     assert.equal(deployButton.get('text').trim(), 'Commit');
+  });
+
+  it('changes the confirm message and button after first deploy', function() {
+    assert.equal(container.one('.confirm-button').get('text').trim(),
+        'Confirm');
+    assert.equal(container.one('.post-summary p').get(
+        'text').trim().replace(/\s+/g, ' '), 'Deploy changes?');
+    view.deploy({halt: utils.makeStubFunction()});
+    view.render();
+    assert.equal(container.one('.confirm-button').get('text').trim(), 'Commit');
+    assert.equal(container.one('.post-summary p').get(
+        'text').trim().replace(/\s+/g, ' '), 'Commit changes?');
   });
 
   it('should display if there are unplaced units', function() {
