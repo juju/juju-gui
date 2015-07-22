@@ -1,6 +1,6 @@
 <div class="bws-searchbox">
     <form>
-        <i class="search sprite browser_searchbox_search_icon"></i>
+        <i class="search sprite search_orange_24"></i>
         {{! The bws-search name is used by the deploy method in
             test/test_charm_running.py.  If you change this name, change
             the other one too! }}

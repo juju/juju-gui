@@ -738,8 +738,9 @@
                 }
                 .modified {
                   background-color: $inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/non-sprites/field-changed.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/textfield_unsaved_16.png);
                   background-repeat: no-repeat;
+                  background-position: 97% center;
 
                   &.boolean {
                     margin: 2px 0 0 10px;
@@ -758,11 +759,11 @@
                 }
                 .conflict-pending {
                   background-color: $inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/non-sprites/field-conflict.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/conflict_24.png);
 
                   &.boolean {
                     background-color: inherit;
-                    background-image: url(/juju-ui/assets/images/non-sprites/field-conflict-14.png);
+                    background-image: url(/juju-ui/assets/images/non-sprites/conflict_16.png);
                     display: inline-block;
                     width: 14px;
                     height: 14px;
@@ -773,7 +774,7 @@
 
                 .conflict {
                   background-color: $inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/non-sprites/field-resolved.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/conflict_resolution_24.png);
                 }
 
                 /* Inputs does not need to have the background-image */
@@ -798,8 +799,8 @@
                 }
 
                 .change-saved {
-                    background-image: url(/juju-ui/assets/images/non-sprites/field-saved.png);
-                    background-position: center right;
+                    background-image: url(/juju-ui/assets/images/non-sprites/textfield_saved_16.png);
+                    background-position: 96% center;
                     background-repeat: no-repeat;
                     @include animation(pulse-green 1s);
                     @include animation-fill-mode(forwards);
@@ -811,10 +812,10 @@
                 padding-left: 10px;
                 background-repeat: no-repeat;
                 background-position: 10px 17px;
-                background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+                background-image: url("/juju-ui/assets/images/unit_running_16.png");
 
                 &.error {
-                    background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+                    background-image: url("/juju-ui/assets/images/error_16.png");
                 }
             }
         }
@@ -940,44 +941,41 @@
                 white-space: nowrap;
             }
             .closed-unit-list .chevron {
-                background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
+                background-image: url("/juju-ui/assets/images/chevron_down_light_16.png");
             }
             .status-unit-header {
                 background-position: 15px 19px;
             }
             .status-unit-header.error {
-                background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
-            }
-            .status-unit-header.upgrade-service {
-                background-image: url("/juju-ui/assets/images/inspector-charm-upgrade.png");
+                background-image: url("/juju-ui/assets/images/error_16.png");
             }
             .status-unit-header.running {
-                background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+                background-image: url("/juju-ui/assets/images/unit_running_16.png");
             }
             .status-unit-header.pending {
-                background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
+                background-image: url("/juju-ui/assets/images/unit_pending_16.png");
             }
             .status-unit-header.landscape {
-                background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
+                background-image: url("/juju-ui/assets/images/landscape_action_16.png");
             }
             .status-unit-header.uncommitted {
-                background-image: url("/juju-ui/assets/images/inspector-unit-uncommitted.png");
+                background-image: url("/juju-ui/assets/images/uncommitted_16.png");
             }
             .status-unit-content.uncommitted ul li {
-                background: url("/juju-ui/assets/images/inspector-unit-uncommitted.png") no-repeat scroll 35px center;
+                background: url("/juju-ui/assets/images/uncommitted_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.pending ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
+                background: url("/juju-ui/assets/images/unit_pending_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.running ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
+                background: url("/juju-ui/assets/images/unit_running_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.error ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
+                background: url("/juju-ui/assets/images/error_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.landscape-security-upgrades ul li,
             .status-unit-content.landscape-needs-reboot ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-landscape.png") no-repeat scroll 35px center;
+                background: url("/juju-ui/assets/images/landscape_action_16.png") no-repeat scroll 35px center;
             }
         }
         .unit-list-header,
@@ -1017,13 +1015,13 @@
                 /* The above rule is required because IE10 does not support
                 the flexbox rules that we need. It has no effect in the
                 other supported browsers. */
-                width: 10px;
-                height: 5px; // magic number warning see below.
+                width: 16px;
+                height: 10px; // magic number warning see below.
                 /* For whatever reason this combination of flexbox and inline-block
                 Does not allow padding-bottom to work in IE10, changing the height
                 of the element puts the chevron in the appropriate place in all browsers */
                 margin-left: 5px;
-                background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
+                background: url("/juju-ui/assets/images/chevron_up_light_16.png") no-repeat center center;
             }
         }
         .unit-list-header {

@@ -529,7 +529,10 @@ th {
               color: $text-colour;
             }
             &.add-relation {
-                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                .sprite {
+                    margin-left: -25px;
+                    margin-right: 5px;
+                }
                 .disabled {
                     color: red;
                 }
@@ -581,9 +584,9 @@ th {
         line-height: 30px;
         background-repeat: no-repeat;
         background-position: 10px 11px;
-        background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+        background-image: url("/juju-ui/assets/images/unit_running_16.png");
         &.error {
-            background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+            background-image: url("/juju-ui/assets/images/error_16.png");
         }
         .endpoint.error {
             color: red;
@@ -597,14 +600,7 @@ th {
         border-width: 3px 5px 0 5px;
     }
     .relation-remove {
-        cursor: pointer;
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        background-repeat: no-repeat;
-        background-position: 10px 10px;
-        background-image: url("/juju-ui/assets/images/trash.png");
-        margin-bottom: -10px;
+        margin: 0 10px;
     }
     .inspect-relation {
         cursor: pointer;

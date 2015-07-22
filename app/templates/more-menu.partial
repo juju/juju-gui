@@ -1,5 +1,6 @@
 <span class="more-menu">
-  <span class="open-menu link" tabindex="0" role="button">
-    <i class="sprite more-menu-icon"></i>
+  <span class="open-menu link sprite-hover" tabindex="0" role="button">
+    <i class="sprite contextual_menu_16 normal"></i>
+    <i class="sprite contextual_menu_hover_16 hover"></i>
   </span>
 </span>

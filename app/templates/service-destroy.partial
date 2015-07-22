@@ -1,6 +1,6 @@
 <div class="destroy-service-trigger">
   <span>
-    <i class="sprite inspector-destroy-service"></i>
+    <i class="sprite delete_light_16"></i>
     Destroy service
   </span>
 </div>
