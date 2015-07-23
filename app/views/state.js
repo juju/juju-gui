@@ -303,7 +303,8 @@ YUI.add('juju-app-state', function(Y) {
         hash = (hash.indexOf('#') === 0) ? hash : '#' + hash;
         url += hash;
       }
-      return url;
+      // Prepend the baseUrl to the returned url so we don't lose it.
+      return this.get('baseUrl') + url;
     },
 
     /**
@@ -320,6 +321,8 @@ YUI.add('juju-app-state', function(Y) {
       var url = req.path,
           query = req.query,
           state = {};
+      // Strip the baseUrl before attempting to read the url's other parts.
+      url = url.replace(this.get('baseUrl'), '');
       // Strip the leading and trailing slashes off the url if it has them.
       url = url.replace(/^\//, '').replace(/\/$/, '');
       // Strip any viewmodes which may be in the url from previous bookmarks.
@@ -617,6 +620,16 @@ YUI.add('juju-app-state', function(Y) {
        */
       allowInspector: {
         value: true
+      },
+      /**
+       * The baseurl for dispatching.
+       *
+       * @attribute baseUrl
+       * @default ''
+       * @type {String}
+       */
+      baseUrl: {
+        value: ''
       },
       /**
         The current state value

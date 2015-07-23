@@ -841,6 +841,22 @@ describe('UI State object', function() {
       });
     });
 
+    it('parses urls with a baseUrl', function() {
+      var saveStub = testUtils.makeStubMethod(state, 'saveState');
+      this._cleanups.push(saveStub.reset);
+      state.set('baseUrl', '/foo');
+      var req = buildRequest('/foo/precise/mysql-38/');
+      var expected = {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: 'precise/mysql-38' }
+        },
+        sectionB: {}
+      };
+      var result = state.loadRequest(req);
+      assert.deepEqual(result, expected);
+    });
+
     it('sanitizes the hash', function() {
       var hash = 'bws_foo';
       assert.equal(state._sanitizeHash(hash), 'foo');
@@ -1102,6 +1118,28 @@ describe('UI State object', function() {
                   ' did not generate the proper url');
         });
       });
+    });
+
+    it('can generate proper urls with a baseUrl', function() {
+      state.set('baseUrl', '/foo');
+      var defaultState = {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {
+            id: 'precise/apache2',
+            search: { text: 'apache2'}
+          }
+        }, sectionB: {}};
+      var changeState = {
+        sectionA: {
+          metadata: {
+            id: 'precise/juju-gui' }}};
+      state.set('current', Y.clone(defaultState));
+      assert.equal(
+          state.generateUrl(changeState),
+          '/foo/precise/juju-gui?text=apache2',
+          'The object ' + JSON.stringify(changeState) +
+              ' did not generate the proper url with base url.');
     });
 
     it('can generate proper urls from non default state objects', function() {

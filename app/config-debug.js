@@ -23,6 +23,9 @@ var juju_config = {
   html5: true,
   container: '#main',
   viewContainer: '#main',
+  // BaseUrl is used if the gui is not living at root. Must include leading
+  // slash and must not include following slash.
+  baseUrl: '',
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
   // If cachedFonts is false, we get the fonts from the Google CDN (faster).
