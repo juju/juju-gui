@@ -50,10 +50,7 @@ YUI.add('juju-view-onboarding', function(Y) {
         click: 'prevHandler'
       },
       '.onboarding-cross': {
-        mousedown: 'crossHandler',
-        mouseout: 'crossHandler',
-        mouseover: 'crossHandler',
-        mouseup: 'closeHandler'
+        click: 'closeHandler'
       }
     },
     onboardingIndex: 0,
@@ -114,32 +111,6 @@ YUI.add('juju-view-onboarding', function(Y) {
       ev.halt();
       this.decrementIndex();
       this.drawContent();
-    },
-
-    /**
-     * Onboarding event handler. When hover and click the close cross.
-     *
-     * @method crossHandler
-     * @param {Object} ev An event object (with a "currentTarget" attribute).
-     * @return {undefined} Mutates only.
-     */
-    crossHandler: function(ev) {
-      var container = this.get('container');
-      var close_button = container.one('.onboarding-cross');
-      switch (ev._event.type) {
-        case 'mouseover':
-          close_button.replaceClass('close-inspector-normal',
-              'close-inspector-hover');
-          break;
-        case 'mouseout':
-          close_button.replaceClass('close-inspector-hover',
-              'close-inspector-normal');
-          break;
-        case 'mousedown':
-          close_button.replaceClass('close-inspector-hover',
-              'close-inspector-click');
-          break;
-      }
     },
 
     /**

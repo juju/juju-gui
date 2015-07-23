@@ -31,7 +31,7 @@ $light-button: #cbcbcb;
             height: 30px;
             width: 30px;
             margin: -10px 0;
-            padding: 10px;
+            padding: 7px;
             background-color: #f8dad0;
             box-shadow: none;
             cursor: default;
@@ -42,9 +42,6 @@ $light-button: #cbcbcb;
                 @include create-box-shadow($box-shadow);
                 background-color: $light-button;
                 display: none;
-            }
-            .sprite {
-                display: block;
             }
         }
     }

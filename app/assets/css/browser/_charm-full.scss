@@ -240,11 +240,12 @@
         }
     }
     #sharing {
+        position: relative;
+        z-index: 501;
         float: right;
         padding: 17px 70px 16px 16px;
 
         a {
-            @extend .sprite-hover;
             padding-right: 5px;
         }
     }

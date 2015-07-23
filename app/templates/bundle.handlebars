@@ -7,8 +7,9 @@
                         <i class="sprite recommended-triangle-large"></i>
                     </div>
                 {{/if}}
-                <a href="" class="back icon">
-                    <i class="sprite panel_close"></i>
+                <a href="" class="back icon sprite-hover">
+                    <i class="sprite close_24 normal"></i>
+                    <i class="sprite close_hover_24 hover"></i>
                 </a>
                 <div class="block-icon">
                     <img src="{{charmIconPath id true}}" alt="{{ name }} icon" class="icon">
@@ -109,8 +110,8 @@
                                 Change log
                                 {{#if prettyCommits}}
                                         <span class="expand">
-                                            <i class="sprite expand_icon more"></i>
-                                            <i class="sprite contract_icon less hidden"></i>
+                                            <i class="sprite chevron_down_16 more"></i>
+                                            <i class="sprite chevron_up_16 less hidden"></i>
                                         </span>
                                     </a>
                                 {{/if}}

@@ -574,9 +574,11 @@ YUI.add('deployer-bar', function(Y) {
                 ' been removed from ' + units[0].split('/')[0];
             break;
           case '_expose':
+            changeItem.icon = 'changes-service-exposed';
             changeItem.description = change.command.args[0] + ' exposed';
             break;
           case '_unexpose':
+            changeItem.icon = 'changes-service-unexposed';
             changeItem.description = change.command.args[0] + ' unexposed';
             break;
           case '_add_relation':
