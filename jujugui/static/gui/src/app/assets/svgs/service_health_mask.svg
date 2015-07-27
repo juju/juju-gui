@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="101px"
+	 height="100.999px" viewBox="138.915 48.294 101 100.999" enable-background="new 138.915 48.294 101 100.999"
+	 xml:space="preserve">
+<g id="Layer_1" inkscape:version="0.48.3.1 r9886" sodipodi:docname="service_module.svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+	<g id="g126_1_" transform="translate(-460.05,-316)">
+		<g id="g128_1_">
+			<g>
+				<circle fill="none" cx="649.465" cy="414.793" r="50.5"/>
+			</g>
+		</g>
+	</g>
+
+		<g id="circle115_10_" sodipodi:ry="25" sodipodi:rx="25" sodipodi:cy="366.49799" sodipodi:cx="511.54999" opacity="0.4" enable-background="new    ">
+		<circle fill="#666666" cx="189.415" cy="99.793" r="25"/>
+	</g>
+
+		<g id="circle115_3_" sodipodi:ry="25" sodipodi:rx="25" sodipodi:cy="366.49799" sodipodi:cx="511.54999" opacity="0.4" enable-background="new    ">
+		<circle fill="#666666" cx="189.415" cy="101.793" r="25"/>
+	</g>
+
+		<g id="circle115_1_" sodipodi:ry="25" sodipodi:rx="25" sodipodi:cy="366.49799" sodipodi:cx="511.54999" enable-background="new    ">
+		<circle fill="#FFFFFF" cx="189.415" cy="98.793" r="25"/>
+	</g>
+	<g>
+		<defs>
+			<circle id="SVGID_1_" cx="189.416" cy="98.793" r="50.343"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_1_"  overflow="visible"/>
+		</clipPath>
+		<path opacity="0.5" clip-path="url(#SVGID_2_)" fill="#666666" d="M189.415,48.294c-16.27,0-30.732,7.702-39.968,19.649
+			c9.539-11.311,24.046-18.687,39.969-18.687c15.92,0,30.423,7.374,39.962,18.68C220.143,55.993,205.683,48.294,189.415,48.294z"/>
+		<path opacity="0.4" clip-path="url(#SVGID_2_)" fill="#666666" d="M189.415,48.294c-27.891,0-50.5,22.609-50.5,50.5
+			c0,9.707,2.745,18.771,7.492,26.468c-4.15-8.86-6.529-18.209-6.529-26.467c0-25.768,22.686-47.538,49.538-47.538
+			s49.537,21.77,49.537,47.538c0,8.259-2.38,17.61-6.532,26.471c4.749-7.698,7.494-16.763,7.494-26.472
+			C239.915,70.903,217.306,48.294,189.415,48.294z"/>
+	</g>
+</g>
+<g id="Layer_2">
+</g>
+</svg>

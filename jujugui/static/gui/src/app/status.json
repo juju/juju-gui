@@ -1,0 +1,72 @@
+{
+  "services": {
+    "munin": {
+      "units": {
+        "munin/0": {
+          "agent-state": "pending",
+          "machine": 0,
+          "public-address": "192.168.122.203"
+        }
+      },
+      "charm": "cs:precise/munin-2",
+      "relations": {
+        "munin": [
+          "munin-node"
+        ]
+      }
+    },
+    "munin-node": {
+      "subordinate": true,
+      "charm": "cs:~clint-fewbar/oneiric/munin-node-0",
+      "subordinate-to": [
+        "mysql"
+      ],
+      "relations": {
+        "munin-node": [
+          "munin"
+        ],
+        "local-info": [
+          "mysql"
+        ]
+      }
+    },
+    "mysql": {
+      "units": {
+        "mysql/0": {
+          "agent-state": "started",
+          "machine": 0,
+          "public-address": "192.168.122.216",
+          "subordinates": {
+            "munin-node/0": {
+              "agent-state": "started"
+            }
+          }
+        },
+        "mysql/1": {
+          "agent-state": "started",
+          "machine": 0,
+          "public-address": "192.168.122.220",
+          "subordinates": {
+            "munin-node/1": {
+              "agent-state": "started"
+            }
+          }
+        }
+      },
+      "charm": "cs:precise/mysql-0",
+      "relations": {
+        "juju-info": [
+          "munin-node"
+        ]
+      }
+    }
+  },
+  "machines": {
+    "0": {
+      "agent-state": "running",
+      "instance-state": "running",
+      "instance-id": "local",
+      "dns-name": "localhost"
+    }
+  }
+}
