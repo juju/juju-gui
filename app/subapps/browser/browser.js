@@ -175,11 +175,11 @@ YUI.add('subapp-browser', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cache = new Y.juju.BrowserCache();
-
       this.state = new models.UIState({
         // Disallow routing to inspectors if we are in sandbox mode; the
         // model to be inspected will not be available.
         allowInspector: !cfg.sandbox,
+        baseUrl: cfg.baseUrl || '',
         dispatchers: {
           app: {
             deployTarget: this._deployTargetDispatcher.bind(this)

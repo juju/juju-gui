@@ -650,6 +650,9 @@ YUI.add('juju-gui', function(Y) {
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
 
+      if (window.juju_config && window.juju_config.baseUrl) {
+        cfg.baseUrl = window.juju_config.baseUrl;
+      }
       // Share the store instance with subapps.
       cfg.charmstore = this.get('charmstore');
       cfg.envSeries = this.getEnvDefaultSeries.bind(this);

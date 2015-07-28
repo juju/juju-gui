@@ -23,6 +23,7 @@ var juju_config = {
   html5: true,
   container: '#main',
   viewContainer: '#main',
+  baseUrl: '',
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
   // If cachedFonts is false, we get the fonts from the Google CDN (faster).
