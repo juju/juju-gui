@@ -220,18 +220,10 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
-.PHONY: clean-gui-build
+.PHONY: clean-gui
 clean-gui-build:
 	- rm -rf jujugui/static/gui/build
 
-.PHONY: clean-gui-src
-clean-gui-src:
-	- rm -rf jujugui/static/gui/src
-
-.PHONY: clean-gui-all
-clean-gui-all:
-	- rm -rf jujugui/static/gui
-
 .PHONY: clean-all
-clean-all: clean-venv clean-pyc clean-gui-build
+clean-all: clean-venv clean-pyc clean-gui
 	- rm -rf *.egg-info
