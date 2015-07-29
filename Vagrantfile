@@ -21,6 +21,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider :virtualbox do |vb|
     vb.memory = 1024
-    vb.name = "Juju GUI Vagrant"
+    vb.name = "Juju GUI Vagrant (Release)"
   end
 end

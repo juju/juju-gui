@@ -21,6 +21,11 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 - unreleased:
+- 1.4.2:
+    - Updated icon set. Removed unused icons.
+    - Support running the UI in a sub URL.
+    - (FIX) Fix multiple bugs in the deployer bar flow.
+    - (FIX) Don't allow machine view columns to expand.
 - 1.4.1:
     - Uncommitted bundles now work in devel mode by using jujucharms.com.
     - >
