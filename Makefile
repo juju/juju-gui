@@ -59,13 +59,6 @@ sysdeps:
 	sudo apt-get update
 	sudo apt-get install -y imagemagick nodejs
 
-$(GUISRC):
-ifeq ($(SRC),)
-	$(error "No tarball src")
-else
-	python scripts/source.py $(SRC)
-endif
-
 .PHONY: src
 src: $(GUISRC)
 
