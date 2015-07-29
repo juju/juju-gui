@@ -190,7 +190,7 @@ function watchTemplates(cb) {
 exports.watchTemplates = watchTemplates;
 
 // When server views change regen
-function watchViews(cb) {
+function watchSCSS(cb) {
   Y.Array.each(config.server.view_dirs, function(dir) {
     fs.watch(dir, function(event, filename) {
       //on dir change regen the cache
@@ -218,7 +218,7 @@ function watchViews(cb) {
     });
   });
 }
-exports.watchViews = watchViews;
+exports.watchSCSS = watchSCSS;
 
 function renderTemplates() {
   Y.Object.each(templateSpecs, function(spec, name) {
