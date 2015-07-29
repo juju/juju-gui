@@ -46,4 +46,3 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None, format_err
         return f_retry  # true decorator
 
     return deco_retry
-
