@@ -28,11 +28,6 @@ PYTHON_CACHE := file:///$(CACHE)/python
 
 PIP = bin/pip install --no-index --no-dependencies --find-links $(1) -r $(2)
 
-# XXX j.c.sackett 2015-06-08 SRC_SET_UP can be removed when the gui src becomes
-# a permanent part of the repo.
-SRC_SET_UP := $(shell if [ -d "$(GUISRC)" ]; then echo "true"; fi)
-
-ifeq ($(SRC_SET_UP), true)
 RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/assets/javascripts/*")
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
@@ -41,13 +36,6 @@ STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
 	$(GUIBUILD)/app/assets/stylesheets/prettify.css \
 	$(GUIBUILD)/app/assets/stylesheets/cssgrids-responsive-min.css
-endif
-
-.PHONY: checksrc
-checksrc:
-ifeq ($(SRC_SET_UP),)
-	$(error GUI source not linked; follow the directions in HACKING.rst)
-endif
 
 .PHONY: help
 help:
@@ -106,7 +94,6 @@ $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
 $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(MIN_JS_FILES) $(TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
-	$(MAKE) checksrc
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x -min.js -x \/yui\/
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
 
@@ -114,13 +101,11 @@ $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(MIN_JS_FILES) $(TEMPLATES_FILE) $(BU
 modules-js: $(MODULESMIN)
 
 $(GUIBUILD)/app/%-min.js: $(NODE_MODULES)
-	$(MAKE) checksrc
 	mkdir -p $(@D)
 	cp -r $(GUISRC)/app/$*.js $(GUIBUILD)/app/$*.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUISRC)/app/$*.js -o $@
 
 $(BUILT_JS_ASSETS):
-	$(MAKE) checksrc
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 
@@ -156,7 +141,6 @@ $(BUILT_D3): $(D3_DEPS)
 	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3.min.js
 
 $(TEMPLATES_FILE): $(NODE_MODULES) $(TEMPLATE_FILES)
-	$(MAKE) checksrc
 	mkdir -p $(GUIBUILD)/app/assets
 	scripts/generateTemplates
 
@@ -164,12 +148,10 @@ $(TEMPLATES_FILE): $(NODE_MODULES) $(TEMPLATE_FILES)
 template: $(TEMPLATES_FILE)
 
 $(STATIC_CSS_FILES):
-	$(MAKE) checksrc
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
 	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
 
 $(CSS_FILE): $(PYRAMID)
-	$(MAKE) checksrc
 	mkdir -p $(GUIBUILD)/app/assets/css
 	bin/sassc -s compressed $(SCSS_FILE) $@
 
@@ -180,7 +162,6 @@ $(SPRITE_FILE): $(NODE_MODULES)
 	$(NODE_MODULES)/grunt/bin/grunt spritegen
 
 $(STATIC_IMAGES):
-	$(MAKE) checksrc
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
 	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
