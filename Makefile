@@ -23,8 +23,8 @@ BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3.min.js
 
-CACHE := $(shell pwd)/../download-cache
-PYTHON_CACHE := file:///$(CACHE)/python
+CACHE := $(shell pwd)/downloadcache
+PYTHON_CACHE := file:///$(CACHE)/$(shell lsb_release -c -s)
 
 PIP = bin/pip install --no-index --no-dependencies --find-links $(1) -r $(2)
 
@@ -165,19 +165,35 @@ images: $(SPRITE_FILE) $(STATIC_IMAGES)
 .PHONY: gui
 gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES)
 
+################
+# Download cache
+################
+$(CACHE):
+	git clone --depth=1 "git@github.com:juju/juju-gui-downloadcache.git" $(CACHE)
+
+downloadcache: $(CACHE)
+
+.PHONY: clean-downloadcache
+clean-downloadcache:
+	rm -rf $(CACHE)
+
+.PHONY: update-downloadcache
+update-downloadcache: $(CACHE)
+	cd $(CACHE) && git pull origin master || true
+
 ######
 # DEPS
 ######
 # Use the pyramid install dir as our indicator that dependencies are installed.
-$(PYRAMID): $(PY)
+$(PYRAMID): $(PY) $(CACHE)
 	$(call PIP,$(PYTHON_CACHE),requirements.txt)
 
 .PHONY: deps
-deps: $(PY)
+deps: $(PY) $(CACHE)
 	$(call PIP,$(PYTHON_CACHE),requirements.txt)
 
 # Use the pytest binary as our indicator that the test dependencies are installed.
-$(PYTEST): $(PY)
+$(PYTEST): $(PY) $(CACHE)
 	$(call PIP,$(PYTHON_CACHE),test-requirements.txt)
 
 $(FLAKE8): $(PYTEST)
@@ -220,3 +236,4 @@ clean-gui-build:
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui
 	- rm -rf *.egg-info
+
