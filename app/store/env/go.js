@@ -31,6 +31,9 @@ YUI.add('juju-env-go', function(Y) {
   var utils = Y.namespace('juju.views.utils');
 
   var endpointToName = function(endpoint) {
+    if (!endpoint[1].name) {
+      return endpoint[0];
+    }
     return endpoint[0] + ':' + endpoint[1].name;
   };
 
@@ -2238,7 +2241,7 @@ YUI.add('juju-env-go', function(Y) {
   });
 
 
-
+  environments.endpointToName = endpointToName;
   environments.createRelationKey = createRelationKey;
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
