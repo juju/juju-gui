@@ -69,6 +69,7 @@ def config(request):
         'jujuEnvUUID': request.matchdict.get('uuid', 'sandbox'),
         # Enable/disable sandbox (demonstration) mode.
         'sandbox': sandbox_enabled,
+        'sandboxSocketURL': 'wss://demo.jujucharms.com/ws',
         # XXX frankban: do we still support read-only mode?
         'readOnly': False,
         # Set the GA_key to enable Google Analytics usage and calls.
