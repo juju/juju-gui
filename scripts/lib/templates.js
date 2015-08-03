@@ -25,8 +25,8 @@ var fs = require('fs'),
     YUI = require('yui').YUI,
     /* jshint +W079 */
     view = require('./view.js'),
-    sass = require('node-sass'),
-    config = require('../config.js').config,
+    // sass = require('node-sass'),
+    config = require('../../config.js').config,
     cache = {};
 /* jshint -W079 */
 var Y = YUI({useSync: true}).use(['handlebars', 'oop']);
@@ -131,7 +131,7 @@ function prepareTemplate() {
 }
 
 function renderTemplate(view_name, data, output_filename) {
-  view.handlebars(__dirname + '/views/' + view_name + '.handlebars',
+  view.handlebars(__dirname + '/' + view_name + '.handlebars',
       data,
       function(err, str) {
         if (err) {
@@ -165,31 +165,11 @@ function ifValidFile(fullpath, cb) {
 
 var templateSpecs = {
   templates: {
-    output: __dirname + '/../build-shared/juju-ui/templates.js',
+    output: __dirname + '/../../jujugui/static/gui/build/app/templates.js',
     callback: function(strategy, name) {
       cache = {};
       getPrecompiled();
       renderTemplate(name, prepareTemplate(), strategy.output);
-    }
-  },
-
-  scss: {
-    output: __dirname + '/../build-shared/juju-ui/assets/juju-gui.css',
-    callback: function(strategy, name) {
-      sass.render({
-        file: config.server.scss_dirs[0] + 'base.scss',
-        includePaths: config.server.scss_dirs,
-        outputStyle: 'compressed'
-      }, function(error, result) {
-        if (error) {
-          console.log('SCSS compilation error (status: ' + error.status + ')');
-          console.log('File: ' + error.file);
-          console.log('Line: ' + error.line + ', column: ' + error.column);
-          console.log(error.message);
-        } else {
-          fs.writeFileSync(strategy.output, result.css.toString());
-        }
-      });
     }
   }
 };
@@ -211,7 +191,7 @@ exports.watchTemplates = watchTemplates;
 
 // When server views change regen
 function watchViews(cb) {
-  Y.Array.each(config.server.scss_dirs, function(dir) {
+  Y.Array.each(config.server.view_dirs, function(dir) {
     fs.watch(dir, function(event, filename) {
       //on dir change regen the cache
       ifValidFile(path.join(dir, filename), function() {
@@ -219,9 +199,12 @@ function watchViews(cb) {
             basename = path.basename(filename, ext),
             strategy = templateSpecs[basename];
 
-        // Hack to check if the file is a .scss file and if so invoke the
-        // base.scss strategy.
-        if (ext === '.scss') {
+        // Hack to check if the file is a .less file and if so invoke the
+        // stylesheet.less strategy.
+        if (ext === '.less') {
+          strategy = templateSpecs.less;
+        }
+        else if (ext === '.scss') {
           strategy = templateSpecs.scss;
         }
 
