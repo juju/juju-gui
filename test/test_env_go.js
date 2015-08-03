@@ -30,6 +30,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('provides a way to retrieve a name from an endpoint', function() {
+      // Test both an endpoint with a name and one without, as may occur in
+      // hand-crafted bundles.
+      var endpointA = [
+        'foo',
+        { name: 'bar' }
+      ];
+      var endpointB = [
+        'bar',
+        {}
+      ];
+      assert.equal('foo:bar', environments.endpointToName(endpointA));
+      assert.equal('bar', environments.endpointToName(endpointB));
+    });
+
     it('provides a way to retrieve a relation key from endpoints', function() {
       var endpoints = {
         wordpress: {Name: 'website', Role: 'provider'},
