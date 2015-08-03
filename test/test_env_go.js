@@ -31,6 +31,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('provides a way to retrieve a name from an endpoint', function() {
+      // Test both an endpoint with a name and one without, as may occur in
+      // hand-crafted bundles.
       var endpointA = [
         'foo',
         { name: 'bar' }
