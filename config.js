@@ -7,7 +7,11 @@ var config = {
       __dirname + '/app/subapps/browser/templates/'
     ],
     'scss_dirs': [
-      __dirname + '/app/assets/css/'
+      // Must have the top level path first.
+      __dirname + '/app/assets/css/',
+      __dirname + '/app/assets/css/browser',
+      __dirname + '/app/assets/css/inspector',
+      __dirname + '/app/assets/css/machine-view'
     ],
     'public_dir': __dirname + '/app'
   }
