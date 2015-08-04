@@ -54,6 +54,16 @@
         </tr>
         <tr>
             <td class="binding">
+                <input type="checkbox" name="auto-place-default" id="auto-place-default"
+                  {{#if auto-place-default }}
+                      checked="checked"
+                  {{/if}}
+                />
+            </td>
+            <td><label for="auto-place-default">Default to automatically place units on commit.</label></td>
+        </tr>
+        <tr>
+            <td class="binding">
               <input type="button" class="button" name="save-settings" id="save-settings" value="Save"/>
             </td>
             <td>NOTE: saving will reload the GUI so the settings take effect.</td>

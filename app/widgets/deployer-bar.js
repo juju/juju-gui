@@ -307,6 +307,7 @@ YUI.add('deployer-bar', function(Y) {
 
       if (container && container.get('parentNode')) {
         container.one('.panel.summary section').setHTML(this.summaryTemplate({
+          autoPlaceDefault: localStorage.getItem('auto-place-default'),
           changeCount: this._getChangeCount(ecs),
           changeNotification: '',
           deployServices: changes.deployedServices,
