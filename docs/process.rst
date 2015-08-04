@@ -147,6 +147,9 @@ Making Releases
 Checklist for Making a Stable Release
 -------------------------------------
 
+The release should be built in Vivid or later. Earlier versions (Trusty,
+Utopic) will run into problems with running the functional tests.
+
 - Get a clean branch of the juju repository.
   ``git clone git@github.com:juju/juju-gui.git``
 - Visually QA the GUI against the sandbox. Load the app, open the charm panel,
@@ -289,6 +292,10 @@ Checklist for Making a Stable Release
   - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
   - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
   - Commit the changes: ``bzr ci -m "New charm release."``
+  - Switch to the precise release charm directory: ``cd ../precise-release``.
+  - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
+  - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
+  - Commit the changes: ``bzr ci -m "New charm release."``
   - If the merge step above shows more changes than just the new GUI release,
     it is worth live testing the "upgrade charm" steps. This way we ensure any
     production deployment (e.g. demo.jujucharms.com) can upgrade to the new
@@ -300,6 +307,26 @@ Checklist for Making a Stable Release
     GUI developers on the Freenode's #juju-gui channel for further explanation
     of the process.
   - Run the charm linter: ``make lint``.
+
+A reminder: you must be in a Vivid env, with ``charm-tools`` installed, to run
+these next few steps. The functional tests use Python's ``ssl.SSLContext`` and
+that class is only present in Python 2.7.9 and above (see the note here:
+https://docs.python.org/2/library/ssl.html#ssl-contexts). Python 2.7.9 is the
+system version in Vivid. Additionally Vivid also has all the underlying C
+libraries (OpenSSL, etc.) necessary to support ``ssl.SSLContext``. This
+comment explores all the gory details:
+https://github.com/juju/juju-gui/pull/774#issuecomment-127576502
+
+``charm-tools`` is needed for the ``juju test`` tool. To install:
+
+::
+
+  sudo add-apt-repository ppa:juju/stable
+  sudo apt-get update
+  sudo apt-get install charm-tools
+
+Functional test the GUI in two EC2 environments:
+
   - Prepare two ec2 environments, one with ``default-series: precise``, the
     other with ``default-series: trusty``. Let's call them ``ec2-precise`` and
     ``ec2-trusty``. These environments will be used to run the charm functional
