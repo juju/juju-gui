@@ -307,6 +307,7 @@ YUI.add('deployer-bar', function(Y) {
 
       if (container && container.get('parentNode')) {
         container.one('.panel.summary section').setHTML(this.summaryTemplate({
+          // Set the auto place option based on the user's in-browser settings.
           autoPlaceDefault: localStorage.getItem('auto-place-default'),
           changeCount: this._getChangeCount(ecs),
           changeNotification: '',
