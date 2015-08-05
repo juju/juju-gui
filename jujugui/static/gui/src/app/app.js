@@ -1059,7 +1059,6 @@ YUI.add('juju-gui', function(Y) {
      * @method on_database_changed
      */
     on_database_changed: function(evt) {
-      Y.log(evt, 'debug', 'App: Database changed');
       // Database changed event is fired when the user logs-in but we deal with
       // that case manually so we don't need to dispatch the whole application.
       // This whole handler can be removed once we go to model bound views.
