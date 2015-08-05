@@ -675,6 +675,24 @@ describe('deployer bar view', function() {
     assert.equal(container.one('.unplaced-panel'), null);
   });
 
+  it('should default to leave unplaced', function() {
+    addEntities(db);
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
+    container.one('.deploy-button').simulate('click');
+    assert.equal(container.one('#leave-unplaced').get('checked'), true);
+    assert.equal(container.one('#autodeploy').get('checked'), false);
+  });
+
+  it('should default to automatically place when set', function() {
+    localStorage.setItem('auto-place-default', 'true');
+    addEntities(db);
+    ecs.lazyAddUnits(['django', 1], {modelId: 'django/0'});
+    container.one('.deploy-button').simulate('click');
+    assert.equal(container.one('#leave-unplaced').get('checked'), false);
+    assert.equal(container.one('#autodeploy').get('checked'), true);
+    localStorage.removeItem('auto-place-default');
+  });
+
   it('should autodeploy unplaced units if instructed', function() {
     addEntities(db);
     var autoplaceStub = utils.makeStubMethod(view, '_autoPlaceUnits');
