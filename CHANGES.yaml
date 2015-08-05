@@ -20,7 +20,10 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.4.3:
+    - Added option to automatically place units by default.
+    - (FIX) bundle.yaml relations defined as arrays are displayed correctly.
+    - (FIX) SCSS files in sub directories are built by the watcher.
 - 1.4.2:
     - Updated icon set. Removed unused icons.
     - Support running the UI in a sub URL.
