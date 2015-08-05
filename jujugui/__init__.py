@@ -15,6 +15,9 @@ def make_application(config):
     # We use two separate included app/routes so that we can
     # have the gui parts behind a separate route from the
     # assets when we embed it in e.g. the storefront.
-    config.include('jujugui.gui')
+    # NOTE: kadams54, 2015-08-04: It's very important that assets be listed
+    # first; if it isn't, then the jujugui.gui routes override those specified
+    # in assets and any asset requests will go to the main app.
     config.include('jujugui.assets')
+    config.include('jujugui.gui')
     return config.make_wsgi_app()
