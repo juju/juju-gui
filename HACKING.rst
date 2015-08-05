@@ -8,7 +8,7 @@ Building
 Get the GUI source
 ~~~~~~~~~~~~~~~~~~
 
-In order to run pyramid GUI, you need to import the juju-gui source. You can use 
+In order to run pyramid GUI, you need to import the juju-gui source. You can use
 either a gui tarball (e.g. a release tarball) from Launchpad_ or use the jujugui source on
 disk (e.g. the checked out source).
 
