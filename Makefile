@@ -216,6 +216,9 @@ test: $(PYTEST)
 .PHONY: check
 check: clean lint test
 
+.PHONE: ci-check
+ci-check: check
+
 #######
 # CLEAN
 #######
