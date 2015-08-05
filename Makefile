@@ -221,7 +221,7 @@ check: clean-pyc lint test
 .PHONY: ci-check
 ci-check: deps check
 
-.PHONE: ci-check
+.PHONY: ci-check
 ci-check: check
 
 #######
