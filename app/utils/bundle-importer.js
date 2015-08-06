@@ -203,14 +203,24 @@ YUI.add('bundle-importer', function(Y) {
       }
     },
 
+    /**
+      Collects all requires for a given record and all of its parent records.
+
+      @method _collectRequires
+      @param {Array} records All changeset records.
+      @param {Object} record The current record to collect requires.
+      @param {Array} requires The aggregated list of requires.
+    */
     _collectRequires: function(records, record, requires) {
       if (record.requires) {
-        record.requires.forEach(function (requiredRecordId) {
+        record.requires.forEach(function(requiredRecordId) {
           requires.push(requiredRecordId);
           this._collectRequires(
-            records,
-            records.filter(function (r) { return r.id === requiredRecordId; })[0],
-            requires)
+              records,
+              records.filter(function(r) {
+                return r.id === requiredRecordId;
+              })[0],
+              requires);
         }, this);
       }
       return requires;
@@ -236,13 +246,14 @@ YUI.add('bundle-importer', function(Y) {
           continue;
         }
         /*jshint -W083*/
-        var prereq = this._collectRequires(records, record, []).every(function(recordId) {
-          // Loop through the changeSet to see if the required record is
-          // in the changeSet already.
-          return changeSet.some(function(record) {
-            return record.id === recordId ? true : false;
-          });
-        });
+        var prereq = this._collectRequires(records, record, [])
+          .every(function(recordId) {
+              // Loop through the changeSet to see if the required record is
+              // in the changeSet already.
+              return changeSet.some(function(record) {
+                return record.id === recordId ? true : false;
+              });
+            });
         // If all prerequisites have been added to the list.
         if (prereq) {
           // Make sure we don't have any duplicate records.
