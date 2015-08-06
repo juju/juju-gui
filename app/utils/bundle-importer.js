@@ -203,6 +203,19 @@ YUI.add('bundle-importer', function(Y) {
       }
     },
 
+    _collectRequires: function(records, record, requires) {
+      if (record.requires) {
+        record.requires.forEach(function (requiredRecordId) {
+          requires.push(requiredRecordId);
+          this._collectRequires(
+            records,
+            records.filter(function (r) { return r.id === requiredRecordId; })[0],
+            requires)
+        }, this);
+      }
+      return requires;
+    },
+
     /**
       Sorts the dry-run records into the correct order so that we can process
       it top to bottom. Charms, Machines, Services, Units, Relations. It's not
@@ -223,7 +236,7 @@ YUI.add('bundle-importer', function(Y) {
           continue;
         }
         /*jshint -W083*/
-        var prereq = record.requires.every(function(recordId) {
+        var prereq = this._collectRequires(records, record, []).every(function(recordId) {
           // Loop through the changeSet to see if the required record is
           // in the changeSet already.
           return changeSet.some(function(record) {
@@ -283,11 +296,11 @@ YUI.add('bundle-importer', function(Y) {
           message: 'ChangeSet import complete.',
           level: 'important'
         });
+        this._dryRunIndex = -1;
+        this._collectedServices = [];
         this.db.fire('bundleImportComplete', {
           services: this._collectedServices
         });
-        this._dryRunIndex = -1;
-        this._collectedServices = [];
         return;
       }
       this._dryRunIndex += 1;
@@ -333,7 +346,14 @@ YUI.add('bundle-importer', function(Y) {
         } else if (parentKey.indexOf('addUnit') > -1) {
           // The parentKey can be a specific unit if the lxc was placed on named
           // machine so we need to get the units machine Id to set the parentId.
-          parentId = record[parentKey].machine;
+          // If _saveModelToRequires has already been run, this may refer to a
+          // machine; otherwise it can refer to a unit with a 'machine'
+          // attribute.
+          if (record[parentKey].machine) {
+            parentId = record[parentKey].machine;
+          } else {
+            parentId = record[parentKey].id;
+          }
         }
         record.args[0].parentId = parentId;
       }
@@ -493,27 +513,7 @@ YUI.add('bundle-importer', function(Y) {
               name = requiredModel.get('name') + '/' + size;
               break;
             case 2:
-              // Check whether this placement refers to a machine or a unit. if
-              // a unit was specified, we will need to create a machine for the
-              // two units to be colocated on.  Otherwise, placeUnit will not
-              // work for placing this unit below.  If the unit is simply
-              // placed on a machine, we can continue to place the unit simply.
-              if (arg.indexOf('$addUnit') === 0) {
-                // We rely on _saveModelToRequires; _execute_addMachines is a
-                // helpful shortcut.
-                var machine = this._execute_addMachines({
-                  args: [{}],
-                  id: arg
-                }, function(machine) {
-                  // Place the first unit on the new machine.
-                  this.env.placeUnit(requiredModel, machine.id);
-                  // Set the this unit's placement directive to the machine ID
-                  // rather than the unit name so that placeUnit will work.
-                  record.args[2] = machine.id;
-                }.bind(this));
-              } else {
-                record.args[2] = requiredModel.id;
-              }
+              record.args[2] = requiredModel.id;
               break;
           }
         }
@@ -547,11 +547,17 @@ YUI.add('bundle-importer', function(Y) {
       // Add the ghost model Id to the arguments list for the ECS.
       record.args.push({modelId: unitId});
       this.env.add_unit.apply(this.env, record.args);
-      if (record.args[2] !== null) {
-        // We only place unit if one is defined. This functionality is up for
-        // debate. We may want to automatically place unplaced units in bundles.
-        this.env.placeUnit(ghostUnit, record.args[2]);
+      // If the unit does not specify a machine, create a new machine.
+      if (record.args[2] === null) {
+        var machine = this._execute_addMachines({
+          args: [{}],
+          id: record.id
+        }, function(machine) {
+          record.args[2] = machine.id;
+        }.bind(this));
       }
+      // Place all units.
+      this.env.placeUnit(ghostUnit, record.args[2]);
       next();
     },
 
