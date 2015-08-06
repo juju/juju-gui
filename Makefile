@@ -216,6 +216,7 @@ test: $(PYTEST)
 
 .PHONY: check
 check: clean-pyc lint test
+
 # ci-check is the target run by CI.
 .PHONY: ci-check
 ci-check: deps check
