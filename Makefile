@@ -215,10 +215,10 @@ test: $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: check
-check: clean lint test
+check: clean-pyc lint test
 
 .PHONY: ci-check
-ci-check: check
+ci-check: deps check
 
 #######
 # CLEAN
@@ -227,7 +227,7 @@ ci-check: check
 clean-venv:
 	- rm -rf bin include lib local man share build node_modules
 
-.PHONY: clean
+.PHONY: clean-pyc
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
