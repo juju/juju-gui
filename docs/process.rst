@@ -321,7 +321,7 @@ https://github.com/juju/juju-gui/pull/774#issuecomment-127576502
   sudo apt-get update
   sudo apt-get install charm-tools
 
-Functional test the GUI in two EC2 environments:
+- Functional test the GUI in two EC2 environments:
 
   - Prepare two ec2 environments, one with ``default-series: precise``, the
     other with ``default-series: trusty``. Let's call them ``ec2-precise`` and
