@@ -339,7 +339,7 @@ Functional test the GUI in two EC2 environments:
     suite, fix the errors before proceeding. If it ends up not being a trivial
     fix, stop this process and create a critical bug/card.
   - If everything went well, publish the new precise and trusty releases by
-    pushing the branch to the respective locations:
+    pushing the ``trusty-release`` branch to the respective locations:
     ``bzr push lp:charms/juju-gui`` and ``bzr push lp:charms/trusty/juju-gui``.
   - Align the development branch to the ~charmers ones:
     ``cd ../develop-trunk && bzr merge ../trusty-release/``.
