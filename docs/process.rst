@@ -281,8 +281,8 @@ Utopic) will run into problems with running the functional tests.
     ``bzr merge ../trusty-release``.
   - If required, commit the changes by running the following:
     ``bzr ci -m "Merged changes from the released charm."``.
-  - Copy the new GUI release to the releases directory of the charm
-    (i.e. ``develop-trunk/releases``).
+  - If a new GUI tarball is actually available, copy the new GUI release to the
+    releases directory of the charm (i.e. ``develop-trunk/releases``).
   - Remove the old release present in the same directory, and add the new one
     to the repository, e.g.:
     ``bzr rm releases/juju-gui-0.10.1.tgz && bzr add``.
@@ -290,11 +290,7 @@ Utopic) will run into problems with running the functional tests.
     ``bzr ci -m "Updated to the newest juju-gui release."``.
   - Switch to the trusty release charm directory: ``cd ../trusty-release``.
   - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
-  - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
-  - Commit the changes: ``bzr ci -m "New charm release."``
-  - Switch to the precise release charm directory: ``cd ../precise-release``.
-  - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
-  - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
+  - If required, set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
   - Commit the changes: ``bzr ci -m "New charm release."``
   - If the merge step above shows more changes than just the new GUI release,
     it is worth live testing the "upgrade charm" steps. This way we ensure any
@@ -325,7 +321,7 @@ https://github.com/juju/juju-gui/pull/774#issuecomment-127576502
   sudo apt-get update
   sudo apt-get install charm-tools
 
-Functional test the GUI in two EC2 environments:
+- Functional test the GUI in two EC2 environments:
 
   - Prepare two ec2 environments, one with ``default-series: precise``, the
     other with ``default-series: trusty``. Let's call them ``ec2-precise`` and
@@ -343,7 +339,7 @@ Functional test the GUI in two EC2 environments:
     suite, fix the errors before proceeding. If it ends up not being a trivial
     fix, stop this process and create a critical bug/card.
   - If everything went well, publish the new precise and trusty releases by
-    pushing the branch to the respective locations:
+    pushing the ``trusty-release`` branch to the respective locations:
     ``bzr push lp:charms/juju-gui`` and ``bzr push lp:charms/trusty/juju-gui``.
   - Align the development branch to the ~charmers ones:
     ``cd ../develop-trunk && bzr merge ../trusty-release/``.
