@@ -281,8 +281,8 @@ Utopic) will run into problems with running the functional tests.
     ``bzr merge ../trusty-release``.
   - If required, commit the changes by running the following:
     ``bzr ci -m "Merged changes from the released charm."``.
-  - Copy the new GUI release to the releases directory of the charm
-    (i.e. ``develop-trunk/releases``).
+  - If a new GUI tarball is actually available, copy the new GUI release to the
+    releases directory of the charm (i.e. ``develop-trunk/releases``).
   - Remove the old release present in the same directory, and add the new one
     to the repository, e.g.:
     ``bzr rm releases/juju-gui-0.10.1.tgz && bzr add``.
@@ -290,11 +290,7 @@ Utopic) will run into problems with running the functional tests.
     ``bzr ci -m "Updated to the newest juju-gui release."``.
   - Switch to the trusty release charm directory: ``cd ../trusty-release``.
   - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
-  - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
-  - Commit the changes: ``bzr ci -m "New charm release."``
-  - Switch to the precise release charm directory: ``cd ../precise-release``.
-  - Merge the new changes from trunk: ``bzr merge ../develop-trunk/``.
-  - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
+  - If required, set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
   - Commit the changes: ``bzr ci -m "New charm release."``
   - If the merge step above shows more changes than just the new GUI release,
     it is worth live testing the "upgrade charm" steps. This way we ensure any
