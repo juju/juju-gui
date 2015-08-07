@@ -26,18 +26,16 @@ var express = require('express'),
     path = require('path');
 
 var app = express();
-app.configure(function() {
 
-  app.use(express.logger('dev'));
-  // 'static' is a reserved word so dot notation is not used to
-  // avoid annoying the linter.
-  app.use(express['static'](__dirname));
-  // fallback to looking in assets
-  app.use('/juju-ui', express['static'](
-      __dirname + '/build-' + process.argv[2] + '/juju-ui'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-});
+app.use(express.logger('dev'));
+// 'static' is a reserved word so dot notation is not used to
+// avoid annoying the linter.
+app.use(express['static'](__dirname));
+// fallback to looking in assets
+app.use('/juju-ui', express['static'](
+    __dirname + '/build-' + process.argv[2] + '/juju-ui'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
 
 app.get('/juju-ui/:file', function(req, res) {
   var fileName = req.params.file;

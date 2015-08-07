@@ -41,13 +41,14 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js, app/assets/javascripts/spinner.js, app/assets/javascripts/Object.observe.poly.js'
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
-    node_modules/expect.js node_modules/express \
-    node_modules/graceful-fs node_modules/grunt node_modules/jshint \
-    node_modules/minimatch node_modules/mocha \
-    node_modules/node-markdown node_modules/node-minify \
-    node_modules/smash node_modules/node-spritesheet \
-    node_modules/rimraf node_modules/should node_modules/uglify-js \
-    node_modules/yui node_modules/yuidocjs node_modules/node-sass
+	     node_modules/expect.js node_modules/express \
+	     node_modules/graceful-fs node_modules/grunt node_modules/jshint \
+	     node_modules/minimatch node_modules/mocha \
+	     node_modules/mocha-phantomjs node_modules/node-markdown \
+	     node_modules/node-minify node_modules/node-sass \
+	     node_modules/node-spritesheet node_modules/phantomjs \
+	     node_modules/rimraf node_modules/should node_modules/smash \
+	     node_modules/uglify-js node_modules/yui node_modules/yuidocjs
 
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
