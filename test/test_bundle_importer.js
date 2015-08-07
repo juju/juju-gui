@@ -287,7 +287,7 @@ describe('Bundle Importer', function() {
         'addRelation-11', 'addRelation-12',
         'addUnit-13', 'addMachines-16',
         'addUnit-14', 'addMachines-17',
-        'addUnit-15'
+        'addUnit-15', 'addUnit-16', 'addUnit-17'
       ];
       sorted.forEach(function(record, index) {
         assert.equal(record.id, order[index]);
@@ -317,52 +317,52 @@ describe('Bundle Importer', function() {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
-        // All that's required is that this complete; timing out indicates
-        // failure.
+        // Cleans up internals.
+        // Note - although we strive to test public methods only, we do need
+        // to check on some aspects of the bundle importer's state to ensure
+        // that subsequent runs will not encounter problems. Makyo 2015-05-18
+        assert.equal(bundleImporter._dryRunIndex, -1);
+        assert.equal(db.services.size(), 4);
+        assert.equal(db.units.size(), 5);
+        assert.equal(db.machines.size(), 5);
+        assert.equal(db.relations.size(), 2);
+        // Services and units
+        // Note that this service, as specified in the fixture, does not include
+        // a revision number, but a revision number is included here due to
+        // fetching the charm.
+        assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
+        assert.equal(db.services.item(0).get('config').default_retries, 42);
+        assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
+        assert.equal(db.units.item(0).displayName, 'haproxy/0');
+        assert.equal(db.services.item(1).get('charm'),
+            'cs:precise/wordpress-27');
+        assert.equal(db.units.item(1).service, db.services.item(1).get('id'));
+        assert.equal(db.units.item(1).displayName, 'wordpress/0');
+        assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
+        assert.equal(db.units.item(2).service, db.services.item(2).get('id'));
+        assert.equal(db.units.item(2).displayName, 'mysql/0');
+        // This is an extra service with the same charm as a previous charm.
+        // There was a bug where their names would clash and they would get
+        // combined into a single service on deploy.
+        assert.equal(db.services.item(3).get('charm'), 'cs:precise/mysql-51');
+        assert.equal(db.services.item(3).get('name'), 'mysql-slave');
+        assert.equal(db.services.item(3).get('displayName'), '(mysql-slave)');
+        // Machines
+        assert.equal(db.machines.item(0).id, 'new0');
+        assert.equal(db.machines.item(1).id, 'new1');
+        assert.equal(db.machines.item(2).id, 'new4');
+        assert.equal(db.machines.item(3).id, 'new0/lxc/new3');
+        assert.equal(db.machines.item(4).id, 'new1/lxc/new2');
+        // Relations
+        assert.equal(
+            db.relations.item(0).get('id'),
+            'pending-$addService-1:reverseproxy$addService-4:website');
+        assert.equal(
+            db.relations.item(1).get('id'),
+            'pending-$addService-4:db$addService-7:db');
         done();
       });
       bundleImporter.importBundleDryRun(data);
-      // Cleans up internals.
-      // Note - although we strive to test public methods only, we do need
-      // to check on some aspects of the bundle importer's state to ensure
-      // that subsequent runs will not encounter problems. Makyo 2015-05-18
-      assert.equal(bundleImporter._dryRunIndex, -1);
-      assert.equal(db.services.size(), 4);
-      assert.equal(db.units.size(), 3);
-      assert.equal(db.machines.size(), 4);
-      assert.equal(db.relations.size(), 2);
-      // Services and units
-      // Note that this service, as specified in the fixture, does not include
-      // a revision number, but a revision number is included here due to
-      // fetching the charm.
-      assert.equal(db.services.item(0).get('charm'), 'cs:precise/haproxy-35');
-      assert.equal(db.services.item(0).get('config').default_retries, 42);
-      assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
-      assert.equal(db.units.item(0).displayName, 'haproxy/0');
-      assert.equal(db.services.item(1).get('charm'), 'cs:precise/wordpress-27');
-      assert.equal(db.units.item(1).service, db.services.item(1).get('id'));
-      assert.equal(db.units.item(1).displayName, 'wordpress/0');
-      assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
-      assert.equal(db.units.item(2).service, db.services.item(2).get('id'));
-      assert.equal(db.units.item(2).displayName, 'mysql/0');
-      // This is an extra service with the same charm as a previous charm.
-      // There was a bug where their names would clash and they would get
-      // combined into a single service on deploy.
-      assert.equal(db.services.item(3).get('charm'), 'cs:precise/mysql-51');
-      assert.equal(db.services.item(3).get('name'), 'mysql-slave');
-      assert.equal(db.services.item(3).get('displayName'), '(mysql-slave)');
-      // Machines
-      assert.equal(db.machines.item(0).id, 'new0');
-      assert.equal(db.machines.item(1).id, 'new1');
-      assert.equal(db.machines.item(2).id, 'new0/lxc/new3');
-      assert.equal(db.machines.item(3).id, 'new1/lxc/new2');
-      // Relations
-      assert.equal(
-          db.relations.item(0).get('id'),
-          'pending-$addService-1:reverseproxy$addService-4:website');
-      assert.equal(
-          db.relations.item(1).get('id'),
-          'pending-$addService-4:db$addService-7:db');
     });
 
     it('Sets up the correct environment (v3 colocation)', function() {

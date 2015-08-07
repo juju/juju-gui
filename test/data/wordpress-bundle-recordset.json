@@ -228,5 +228,30 @@
         ],
         "id": "addUnit-15",
         "method": "addUnit"
+    },
+    {
+        "args": [
+            "$addService-7",
+            1,
+            null
+        ],
+        "requires": [
+            "addService-7"
+        ],
+        "id": "addUnit-16",
+        "method": "addUnit"
+    },
+    {
+        "args": [
+            "$addService-1",
+            1,
+            "$addUnit-16"
+        ],
+        "requires": [
+            "addService-1",
+            "addUnit-16"
+        ],
+        "id": "addUnit-17",
+        "method": "addUnit"
     }
 ]

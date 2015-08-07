@@ -34,6 +34,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var assert = chai.assert,
         expect = chai.expect,
         should = chai.should();
+    // Since we now no rely on locally installed mocha and phantomjs,
+    // it is possible that mocha.useColors is not defined and should be
+    // stubbed - Makyo 2015-08-07
+    if (!mocha.useColors) {
+        mocha.useColors = function() { return null; }
+    }
     mocha.reporter('html');
     mocha.ui('bdd');
     mocha.setup({ignoreLeaks: false, timeout: TIMEOUT});

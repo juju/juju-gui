@@ -2,9 +2,9 @@
 
 set -m
 if [ $MOCHA_NO_COLOR ] ; then
-    MOCHA="mocha-phantomjs --no-color"
+    MOCHA="node_modules/mocha-phantomjs/bin/mocha-phantomjs --no-color"
 else
-    MOCHA="mocha-phantomjs"
+    MOCHA="node_modules/mocha-phantomjs/bin/mocha-phantomjs"
 fi
 
 if [ $TEST_PORT ] ; then
@@ -20,7 +20,7 @@ if [ -n "$2" ]; then
     xdg-open `cat $fn`
     fg %1
 else
-    $MOCHA -t 40000 `cat $fn`
+    $MOCHA -p node_modules/phantomjs/bin/phantomjs -t 40000 `cat $fn`
     status=$?
     kill %1
     exit $status
