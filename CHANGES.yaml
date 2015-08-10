@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 1.4.4:
     - >
       The series selector used in deploying local charms has been updated to
