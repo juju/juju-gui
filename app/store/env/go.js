@@ -155,7 +155,10 @@ YUI.add('juju-env-go', function(Y) {
         To be updated as necessary.
       @type {Array}
     */
-    series: ['precise', 'quantal', 'raring', 'saucy', 'trusty'],
+    series: [
+      'precise', 'quantal', 'raring', 'saucy', 'trusty', 'utopic', 'vivid',
+      'win2012hvr2', 'win2012hv', 'win2012r2', 'win2012', 'win7', 'win8',
+      'win81'],
 
     /**
      * Go environment constructor.
