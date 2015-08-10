@@ -20,7 +20,16 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.4.4:
+    - >
+      The series selector used in deploying local charms has been updated to
+      align with the series allowed by juju core.
+    - >
+      The release doc (docs/process.rst) has been updated to reflect build
+      steps necessary for releasing the juju-gui charm.
+    - >
+      (FIX) Deploying bundles now properly places units that have null machine
+      placements and yet are used in collocated placements with other services.
 - 1.4.3:
     - Added option to automatically place units by default.
     - (FIX) bundle.yaml relations defined as arrays are displayed correctly.
