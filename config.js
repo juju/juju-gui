@@ -12,9 +12,9 @@ var config = {
     ],
     'scss_dirs': [
       // Must have the top level path first.
-      __dirname + '/jujugui/static/gui/src/app/assets/css/'
-      __dirname + '/jujugui/static/gui/src/app/assets/css/browser'
-      __dirname + '/jujugui/static/gui/src/app/assets/css/inspector'
+      __dirname + '/jujugui/static/gui/src/app/assets/css/',
+      __dirname + '/jujugui/static/gui/src/app/assets/css/browser',
+      __dirname + '/jujugui/static/gui/src/app/assets/css/inspector',
       __dirname + '/jujugui/static/gui/src/app/assets/css/machine-view'
     ],
     'public_dir': __dirname + '/jujugui/static/gui/build/app'
