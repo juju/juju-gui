@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 1.4.5:
     - (FIX) Refer to charm series as "OS series" rather than "Ubuntu series".
 - 1.4.4:
