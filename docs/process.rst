@@ -304,15 +304,7 @@ Utopic) will run into problems with running the functional tests.
     of the process.
   - Run the charm linter: ``make lint``.
 
-A reminder: you must be in a Vivid env, with ``charm-tools`` installed, to run
-these next few steps. The functional tests use Python's ``ssl.SSLContext`` and
-that class is only present in Python 2.7.9 and above (see the note here:
-https://docs.python.org/2/library/ssl.html#ssl-contexts). Python 2.7.9 is the
-system version in Vivid. Additionally Vivid also has all the underlying C
-libraries (OpenSSL, etc.) necessary to support ``ssl.SSLContext``. This
-comment explores all the gory details:
-https://github.com/juju/juju-gui/pull/774#issuecomment-127576502
-
+A reminder: the next few steps require ``charm-tools`` to be installed.
 ``charm-tools`` is needed for the ``juju test`` tool. To install:
 
 ::
