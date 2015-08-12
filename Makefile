@@ -221,9 +221,20 @@ check: clean-pyc lint test
 .PHONY: ci-check
 ci-check: deps check
 
+###########
+# Packaging
+###########
+.PHONY: dist
+dist: gui
+	python setup.py sdist
+
 #######
 # CLEAN
 #######
+.PHONY: clean-dist
+clean-dist:
+	- rm -rf dist
+
 .PHONY: clean-venv
 clean-venv:
 	- rm -rf bin include lib local man share build node_modules
@@ -239,6 +250,6 @@ clean-gui-build:
 	- rm -rf jujugui/static/gui/build
 
 .PHONY: clean-all
-clean-all: clean-venv clean-pyc clean-gui
+clean-all: clean-venv clean-pyc clean-gui clean-dist
 	- rm -rf *.egg-info
 

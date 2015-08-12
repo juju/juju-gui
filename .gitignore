@@ -6,6 +6,7 @@ bin/
 build-debug
 build-prod
 build-shared
+dist
 docs/_build/doctrees
 docs/_build/html
 downloadcache/
