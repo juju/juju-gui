@@ -24,9 +24,10 @@ D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3.min.js
 
 CACHE := $(shell pwd)/downloadcache
-PYTHON_CACHE := file:///$(CACHE)/$(shell lsb_release -c -s)
+PYTHON_CACHE := file:///$(CACHE)/python
+WHEEL_CACHE := file:///$(CACHE)/wheels/$(shell lsb_release -c -s)
 
-PIP = bin/pip install --no-index --no-dependencies --find-links $(1) -r $(2)
+PIP = bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r $(1)
 
 RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/assets/javascripts/*")
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
@@ -58,7 +59,7 @@ sysdeps:
 	sudo apt-get install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
-	sudo apt-get install -y imagemagick nodejs
+	sudo apt-get install -y imagemagick nodejs python-virtualenv
 
 .PHONY: src
 src: $(GUISRC)
@@ -187,21 +188,21 @@ update-downloadcache: $(CACHE)
 ######
 # Use the pyramid install dir as our indicator that dependencies are installed.
 $(PYRAMID): $(PY) $(CACHE)
-	$(call PIP,$(PYTHON_CACHE),requirements.txt)
+	$(call PIP,requirements.txt)
 
 .PHONY: deps
 deps: $(PY) $(CACHE)
-	$(call PIP,$(PYTHON_CACHE),requirements.txt)
+	$(call PIP,requirements.txt)
 
 # Use the pytest binary as our indicator that the test dependencies are installed.
 $(PYTEST): $(PY) $(CACHE)
-	$(call PIP,$(PYTHON_CACHE),test-requirements.txt)
+	$(call PIP,test-requirements.txt)
 
 $(FLAKE8): $(PYTEST)
 
 .PHONY: test-deps
 test-deps: $(PY)
-	$(call PIP,$(PYTHON_CACHE),test-requirements.txt)
+	$(call PIP,test-requirements.txt)
 
 #######
 # Tests
@@ -219,7 +220,7 @@ check: clean-pyc lint test
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
-ci-check: deps check
+ci-check: clean-downloadcache deps check
 
 ###########
 # Packaging
