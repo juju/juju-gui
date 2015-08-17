@@ -141,10 +141,15 @@
 }
 .bws-list {
   overflow-y: auto;
-  border-top: 8px solid #d7d7d7;
+  border-top: 1px solid #d7d7d7;
   position: absolute;
-  top: 81px;
+  top: $bws-header-height;
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.floating-panel {
+    border-radius: $border-radius;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
