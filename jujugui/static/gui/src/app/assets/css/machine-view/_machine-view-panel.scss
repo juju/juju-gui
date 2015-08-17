@@ -1,5 +1,9 @@
 .machine-view-panel {
+<<<<<<< HEAD
     @extend %floating-panel;
+=======
+    @extend .floating-panel;
+>>>>>>> Float panels.
     @extend .display-flex;
     box-sizing: border-box;
     position: absolute;
