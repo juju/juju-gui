@@ -128,7 +128,7 @@
 
     &.state-1 {
         #onboarding-screen-mask {
-            left: 290px;
+            left: $left-panel-width + ($panel-space * 2);
             background-color: rgba(0, 0, 0, 0.75);
         }
         #onboarding-message {
