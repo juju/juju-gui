@@ -1,56 +1,31 @@
 .environment-header {
+    @extend %floating-panel;
     box-sizing: border-box;
     position: absolute;
-    z-index: 600;
-    top: $navbar-height;
-    left: $bws-sidebar-width;
-    right: 0;
+    z-index: 601;
+    top: $navbar-height + $panel-space;
+    left: $panel-space;
+    width: $left-panel-width;
     height: $environment-header-height;
+    padding: 0 20px;
+    background-color: #fff;
+    color: $text-colour;
+    line-height: $environment-header-height;
 
     ul {
-        @extend .display-flex;
-        height: $environment-header-height - 1;
         margin: 0;
         list-style: none;
 
         li {
-            $spacer: 20px;
+            display: inline;
 
-            flex: 0 0 auto;
-            padding: 0 $spacer;
-            background-color: #fff;
-            border-width: 0 1px 1px 0;
-            border-style: solid;
-            border-right-color: #d9d9d9;
-            border-bottom-color: #cdcdcd;
-            line-height: $environment-header-height;
+            &.active a {
+                color: $text-colour;
+            }
+        }
 
-            &:last-child {
-                border-right: none;
-            }
-            &.tab {
-                &.active {
-                    &.services {
-                        background-color: #f2f2f2;
-                        border-bottom: none;
-                    }
-                    &.machines a {
-                        background-color: #fff;
-                    }
-                    a {
-                        height: $environment-header-height;
-                        color: $text-colour;
-                    }
-                }
-            }
-            &.spacer {
-                flex: 1 1 auto;
-            }
-            a {
-                display: block;
-                margin: 0 (-$spacer);
-                padding: 0 $spacer;
-            }
+        .spacer {
+            margin: 0 5px;
         }
     }
 }

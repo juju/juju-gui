@@ -1,12 +1,13 @@
 .machine-view-panel {
+    @extend %floating-panel;
     @extend .display-flex;
     box-sizing: border-box;
     position: absolute;
     z-index: 600;
-    top: $navbar-height + $environment-header-height - 1;
-    bottom: 0;
-    left: $bws-sidebar-width;
-    right: 0;
+    top: $navbar-height + $panel-space;
+    bottom: $deployer-bar-height + $panel-space;
+    left: $bws-sidebar-width + ($panel-space * 2);
+    right: 10px;
     padding: 0;
     background-color: #fff;
 
@@ -198,9 +199,6 @@
             background-color: #f8f8f8;
         }
     }
-}
-.machine-view-panel {
-    bottom: $deployer-bar-height;
 }
 body.state-sidebar-hidden .machine-view-panel {
     left: 0;

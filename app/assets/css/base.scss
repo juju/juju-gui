@@ -48,7 +48,7 @@ $text-entry-color: #6d6e70;
 $charm-panel-orange: #dd4814;
 $charm-panel-background-color: #eeeeee;
 $deployer-bar-height: 50px;
-$environment-header-height: 50px;
+$environment-header-height: 40px;
 $inspector-dark: #1c1817;
 $inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 $inspector-divider-top: rgba(255, 255, 255, 0.05);
@@ -60,6 +60,8 @@ $navbar-border-light: #2d2928;
 $text-colour: #505050;
 $border-radius: 2px;
 $uncommitted-colour: #19b6ee;
+$panel-space: 10px;
+$bws-header-height: 81px;
 
 // Imports need to be after vars.
 @import "typography";
