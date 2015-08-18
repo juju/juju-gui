@@ -44,7 +44,6 @@ help:
 	@echo "clean - remove build and python artifacts"
 	@echo "deps - install the dependencies"
 	@echo "dev - install jujugui in develop mode"
-	@echo "downloadcache - install the download cache"
 	@echo "gui - build the gui files"
 	@echo "lint - check style with flake8"
 	@echo "run - run the development server"
@@ -247,7 +246,7 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 .PHONY: clean-gui
-clean-gui-build:
+clean-gui:
 	- rm -rf jujugui/static/gui/build
 
 .PHONY: clean-all
