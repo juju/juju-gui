@@ -1,5 +1,5 @@
 .machine-view-panel {
-    @extend .floating-panel;
+    @extend %floating-panel;
     @extend .display-flex;
     box-sizing: border-box;
     position: absolute;
