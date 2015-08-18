@@ -1,5 +1,5 @@
 .environment-header {
-    @extend .floating-panel;
+    @extend %floating-panel;
     box-sizing: border-box;
     position: absolute;
     z-index: 601;
