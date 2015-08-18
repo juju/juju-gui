@@ -99,9 +99,10 @@ $(GUIBUILD)/app/%-min.js: $(NODE_MODULES)
 	cp -r $(GUISRC)/app/$*.js $(GUIBUILD)/app/$*.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUISRC)/app/$*.js -o $@
 
-$(BUILT_JS_ASSETS):
+$(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
+	find $(BUILT_JS_ASSETS) -type f -name "*.js" -not -name "*d3-wrapper*" -not -name "*unscaled-pack*" | sed s/\.js$$//g | xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
 $(YUI): $(NODE_MODULES)
 
@@ -132,11 +133,12 @@ $(BUILT_D3): $(D3_DEPS)
 	  node_modules/d3/src/event/drag.js \
 	  $(GUIBUILD)/app/assets/javascripts/unscaled-pack.js \
 	  $(GUIBUILD)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
-	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3.min.js
+	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3.min-min.js
 
 $(TEMPLATES_FILE): $(NODE_MODULES) $(TEMPLATE_FILES)
 	mkdir -p $(GUIBUILD)/app/assets
 	scripts/generateTemplates
+	node_modules/.bin/uglifyjs --screw-ie8 $(TEMPLATES_FILE) -o $(basename $(TEMPLATES_FILE))-min.js
 
 .PHONY: template
 template: $(TEMPLATES_FILE)
