@@ -1,9 +1,13 @@
 .machine-view-panel {
 <<<<<<< HEAD
+<<<<<<< HEAD
     @extend %floating-panel;
 =======
     @extend .floating-panel;
 >>>>>>> Float panels.
+=======
+    @extend %floating-panel;
+>>>>>>> Used placeholder instead of including.
     @extend .display-flex;
     box-sizing: border-box;
     position: absolute;

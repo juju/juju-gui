@@ -48,11 +48,7 @@ $sticky-position: $navbar-height + $panel-space + $environment-header-height +
   }
 
   #bws-sidebar {
-<<<<<<< HEAD
     @extend %floating-panel;
-=======
-    @extend .floating-panel;
->>>>>>> Float panels.
     position: absolute;
     top: $environment-header-height + ($panel-space * 2);
     bottom: $panel-space;
