@@ -9,6 +9,7 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "dependencies": {
+    "babel": "^5.8.21",
     "chai": ">=1.2.0",
     "cryptojs": ">= 2.5.3",
     "d3": "3.2.7",
