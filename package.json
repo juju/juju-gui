@@ -13,6 +13,7 @@
     "chai": ">=1.2.0",
     "cryptojs": ">= 2.5.3",
     "d3": "3.2.7",
+    "eslint": "^1.2.0",
     "expect.js": "0.1.2",
     "express": "3.x",
     "graceful-fs": "1.1.x",
