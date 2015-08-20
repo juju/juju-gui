@@ -99,11 +99,10 @@ modules-js: $(MODULESMIN)
 .PHONY: build-js
 build-js: $(BUILT_RAWJSFILES) $(MIN_JS_FILES)
 
-$(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js
-	@#cp -r $(GUISRC)/app/$*.js $(GUIBUILD)/app/$*.js
+$(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUISRC)/app/$*.js -o $@
 
-$(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js
+$(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
 	mkdir -p $(@D)
 	$(NODE_MODULES)/.bin/babel $(GUISRC)/app/$*.js --out-file=$(GUIBUILD)/app/$*.js
 
