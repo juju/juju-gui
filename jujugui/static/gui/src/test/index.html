@@ -71,11 +71,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- Load up YUI base, app modules, and test utils -->
   <!-- Since only the tests depend on these files and the prod tests disable
        the YUI loader, we have to include them manually here. -->
-  <script src="/juju-ui/assets/all-yui.js"></script>
-  <script src="/juju-ui/assets/modules.js"></script>
-  <script src="/juju-ui/assets/event-simulate.js"></script>
-  <script src="/juju-ui/assets/node-event-simulate.js"></script>
-  <script src="/juju-ui/assets/javascripts/spin.min.js"></script>
+  <script src="/combo?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js"></script>
+  <script src="/combo?modules.js"></script>
+  <script>
+    var GlobalConfig = {
+      combine: true,
+      base: '/combo?/app/assets/javascripts/yui/',
+      comboBase: '/combo?',
+      maxURLLenght: 1300,
+      root: 'app/assets/javascripts/yui/',
+      groups: {
+        app: {
+            combine: true,
+            base: "/combo?app/",
+            comboBase: "/combo?",
+            root: 'app/',
+            filter: 'raw',
+            // From modules.js
+            modules: YUI_MODULES,
+        },
+      }
+    };
+  </script>
+
+  <script src="/combo?app/assets/javascripts/yui/event-simulate/event-simulate.js&app/assets/javascripts/yui/node-event-simulate/node-event-simulate.js"></script>
+  <script src="/combo?app/assets/javascripts/spin.min.js"></script>
   <script src="utils.js"></script>
   <script src="factory.js"></script>
 
@@ -186,7 +206,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_simulator.js"></script>
 
   <!-- FIXME: feature flags depend on code loaded by the startup test. -->
-  <script src="test_startup.js"></script>
+  <!--<script src="test_startup.js"></script>-->
   <script src="test_feature_flags.js"></script>
 
   <script src="test_sub_app.js"></script>
