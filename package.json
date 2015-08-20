@@ -9,6 +9,7 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "dependencies": {
+    "babel": "^5.8.21",
     "chai": ">=1.2.0",
     "cryptojs": ">= 2.5.3",
     "d3": "3.2.7",
@@ -17,7 +18,6 @@
     "graceful-fs": "1.1.x",
     "grunt": "0.3.17",
     "jshint": "2.1.9",
-    "minimatch": "0.2.x",
     "mocha": "1.8.2",
     "mocha-phantomjs": "^3.6.0",
     "node-markdown": "0.1.x",
@@ -25,10 +25,9 @@
     "node-sass": "^3.1.2",
     "node-spritesheet": "0.4.0",
     "phantomjs": "^1.9.7-15",
-    "rimraf": "2.0.x",
     "should": ">=1.0.0",
     "smash": "0.0.12",
-    "uglifyjs": "2.4.x",
+    "uglify-js": "2.4.x",
     "yui": "3.11.0",
     "yuidocjs": "0.3.x"
   }

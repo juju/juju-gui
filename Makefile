@@ -87,17 +87,24 @@ venv: $(PY)
 $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
-$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(MIN_JS_FILES) $(TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
+$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)"
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
 
 .PHONY: modules-js
 modules-js: $(MODULESMIN)
 
-$(GUIBUILD)/app/%-min.js: $(NODE_MODULES)
-	mkdir -p $(@D)
-	cp -r $(GUISRC)/app/$*.js $(GUIBUILD)/app/$*.js
+# The build-js target is used to build and minify only the js files that have
+# changed since the last time they were built.
+.PHONY: build-js
+build-js: $(BUILT_RAWJSFILES) $(MIN_JS_FILES)
+
+$(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUISRC)/app/$*.js -o $@
+
+$(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
+	mkdir -p $(@D)
+	$(NODE_MODULES)/.bin/babel $(GUISRC)/app/$*.js --out-file=$(GUIBUILD)/app/$*.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
@@ -254,4 +261,3 @@ clean-gui:
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui clean-dist
 	- rm -rf *.egg-info
-
