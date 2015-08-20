@@ -219,6 +219,10 @@ test-deps: $(PY)
 lint: $(FLAKE8)
 	$(FLAKE8) jujugui
 
+.PHONY: lint-js
+lint-js:
+	$(NODE_MODULES)/.bin/eslint $(RAWJSFILES)
+
 .PHONY: test
 test: $(PYTEST)
 	$(PYTEST) -s jujugui/tests
