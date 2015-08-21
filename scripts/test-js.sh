@@ -15,6 +15,11 @@ finished () {
   rm $SERVE_PID
 }
 
+# sleep below is required because on slower machines it can take some time for
+# pserve to actually start serving the tests.
+sleep 2
+# trap command needs to be after the sleep command because sleep Sometimes
+# causes the trap command to exit.
 # Capture ctrl-c
 trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
 
