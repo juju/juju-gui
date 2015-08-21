@@ -152,6 +152,7 @@ describe('service module events', function() {
     view.rendered();
     topo = view.topo;
     serviceModule = topo.modules.ServiceModule;
+    done();
   });
 
   afterEach(function() {
