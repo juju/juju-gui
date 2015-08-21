@@ -152,7 +152,6 @@ describe('service module events', function() {
     view.rendered();
     topo = view.topo;
     serviceModule = topo.modules.ServiceModule;
-    done();
   });
 
   afterEach(function() {
@@ -166,12 +165,12 @@ describe('service module events', function() {
     var box = topo.service_boxes.haproxy;
     var menu = viewContainer.one('#service-menu');
 
-    assert.isFalse(menu.hasClass('active'));
+    assert.equal(menu.hasClass('active'), false);
     serviceModule.showServiceMenu(box);
-    assert(menu.hasClass('active'));
+    assert.equal(menu.hasClass('active'), true);
     // Check no-op.
     serviceModule.showServiceMenu(box);
-    assert(menu.hasClass('active'));
+    assert.equal(menu.hasClass('active'), true);
   });
 
   it('should hide the service menu',
@@ -179,12 +178,12 @@ describe('service module events', function() {
        var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
        serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
+       assert.equal(menu.hasClass('active'), true);
        serviceModule.hideServiceMenu();
-       assert.isFalse(menu.hasClass('active'));
+       assert.equal(menu.hasClass('active'), true);
        // Check no-op.
        serviceModule.hideServiceMenu();
-       assert.isFalse(menu.hasClass('active'));
+       assert.equal(menu.hasClass('active'), true);
      });
 
   it('should notify modules when service type is changed', function(done) {
@@ -221,7 +220,7 @@ describe('service module events', function() {
   it('should handle touch/click events properly', function() {
     var service = viewContainer.one('.service');
     var menu = viewContainer.one('#service-menu');
-    assert.isFalse(menu.hasClass('active'));
+    assert.equal(menu.hasClass('active'), true);
     serviceModule._touchstartServiceTap({
       currentTarget: service,
       touches: [{PageX: 0, PageY: 0}]
@@ -229,7 +228,7 @@ describe('service module events', function() {
     // Touch events should also fire click events, which will be ignored.
     // Fire one manually here.
     clickService(service);
-    assert(menu.hasClass('active'));
+    assert.equal(menu.hasClass('active'), true);
   });
 
   it('must not process service clicks after a dragend', function() {
@@ -246,9 +245,9 @@ describe('service module events', function() {
     serviceModule.set('currentServiceClickAction', 'fake');
     topo.ignoreServiceClick = true;
     serviceModule.serviceClick(d, serviceModule);
-    assert.isFalse(called);
+    assert.equal(called, true);
     // The flag is reset when encountered and ignored.
-    assert.isFalse(topo.ignoreServiceClick);
+    assert.equal(topo.ignoreServiceClick, true);
   });
 
   it('should show only visible services', function() {
