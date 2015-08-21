@@ -14,6 +14,11 @@ _APP_DIR = os.path.split(os.path.abspath(__file__))[0]
 
 def gui(config):
     options.update(config.registry.settings)
+    # We use regex separators for the prefix and file sections of the
+    # jujugui.ui route to make sure we capture *everything* before the
+    # juju-ui section and get the file path as one string rather than
+    # several separated by "/".
+    config.add_route('jujugui.ui', '/{prefix:.*}juju-ui/{file:.*}')
     config.add_route('jujugui.config', '/config.js')
     config.add_route('jujugui.sprites', '/app/assets/sprites.png')
     # XXX jcsackett 2015-05-20 As soon as we have a means of getting a version

@@ -2,10 +2,22 @@
 # GNU Affero General Public License version 3 (see the file LICENSE).
 
 import json
+import logging
 import os
 
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import FileResponse
 from pyramid.view import view_config
+
+
+ASSET_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'static',
+    'gui',
+    'build',
+    )
+
+log = logging.getLogger('jujugui')
 
 
 @view_config(
@@ -29,6 +41,18 @@ def sprites(request):
     asset_path = os.path.join(static_path, 'gui', 'build', 'app', 'assets')
     sprite_file = os.path.join(asset_path, 'sprites.png')
     return FileResponse(sprite_file, request=request, content_type='image/png')
+
+
+@view_config(route_name='jujugui.ui')
+def juju_ui(request):
+    requested_file = request.matchdict.get('file')
+    import pdb; pdb.set_trace()
+    file_path = os.path.join(ASSET_PATH, requested_file)
+    try:
+        return FileResponse(file_path, request=request)
+    except OSError:
+        log.info('No such file: %s' % file_path)
+        return HTTPNotFound()
 
 
 @view_config(route_name='jujugui.config', renderer='string')
