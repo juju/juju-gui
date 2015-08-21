@@ -113,6 +113,7 @@ describe('service module events', function() {
       'juju-views',
       'juju-gui',
       'juju-view-environment',
+      'juju-topology-service',
       'node-event-simulate',
       'slider'],
     function(Y) {
