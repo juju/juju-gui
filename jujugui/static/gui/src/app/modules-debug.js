@@ -30,6 +30,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // The "requires" property should not be used here because the javascript
 // minimizer will not parse it.
+
+'use strict';
+
 /* jshint -W079 */
 // Tell jshint to ignore the global redefinition
 var GlobalConfig = {

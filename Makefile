@@ -219,12 +219,16 @@ test-deps: $(PY)
 lint: $(FLAKE8)
 	$(FLAKE8) jujugui
 
+.PHONY: lint-js
+lint-js: $(NODE_MODULES)
+	$(NODE_MODULES)/.bin/eslint $(GUISRC)
+
 .PHONY: test
 test: $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: check
-check: clean-pyc lint test
+check: clean-pyc lint lint-js test
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
