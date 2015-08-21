@@ -227,8 +227,12 @@ lint-js: $(NODE_MODULES)
 test: $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
+.PHONY: test-js-phantom
+test-js-phantom: gui
+	./scripts/test-js.sh
+
 .PHONY: check
-check: clean-pyc lint lint-js test
+check: clean-pyc lint lint-js test test-js-phantom
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
