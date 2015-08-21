@@ -28,6 +28,7 @@ describe('service module annotations', function() {
       'juju-models',
       'juju-tests-utils',
       'juju-views',
+      'juju-view-environment',
       'node',
       'node-event-simulate'],
     function(Y) {
