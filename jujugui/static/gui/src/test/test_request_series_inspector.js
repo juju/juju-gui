@@ -39,7 +39,6 @@ describe('request-series-inspector', function() {
     container = testUtils.makeContainer(this, 'content');
     container.append(
         '<div id="bws-sidebar"><div class="bws-content"></div></div>');
-    debugger;
     rsi = new views.RequestSeriesInspector({
       file: fileObj,
       env: envObj,
