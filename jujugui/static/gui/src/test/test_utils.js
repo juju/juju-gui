@@ -556,7 +556,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views',
+      Y = YUI(GlobalConfig).use('juju-view-utils',
 
           function(Y) {
             utils = Y.namespace('juju.views.utils');
@@ -705,7 +705,7 @@ describe('utilities', function() {
     var simplifyState, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         simplifyState = Y.namespace('juju.views.utils').simplifyState;
         done();
       });
@@ -749,7 +749,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -785,7 +785,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -815,7 +815,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -943,7 +943,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -970,7 +970,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -1007,7 +1007,7 @@ describe('utilities', function() {
     var models, views, unit, utils, Y, inputRelation, source, target;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-models', 'juju-views'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-models', 'juju-views', 'juju-view-utils'], function(Y) {
         models = Y.namespace('juju.models');
         views = Y.namespace('juju.views');
         utils = Y.namespace('juju.views.utils');
@@ -1202,7 +1202,7 @@ describe('utilities', function() {
     var utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });

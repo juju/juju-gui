@@ -789,7 +789,7 @@ describe('canvasDropHandler', function() {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
-      'juju-views'],
+      'juju-view-environment'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -847,7 +847,7 @@ describe('_canvasDropHandler', function() {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
-      'juju-views'],
+      'juju-view-environment'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -912,7 +912,7 @@ describe('updateElementVisibility', function() {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
-      'juju-views'],
+      'juju-view-environment'],
     function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
@@ -999,4 +999,3 @@ describe('updateElementVisibility', function() {
     ]);
   });
 });
-

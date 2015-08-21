@@ -82,7 +82,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       root: 'app/assets/javascripts/yui/',
       groups: {
         app: {
-            combine: true,
+            //combine: true,
             base: "/combo?app/",
             comboBase: "/combo?",
             root: 'app/',
@@ -100,6 +100,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="factory.js"></script>
 
   <!-- Tests (Alphabetical) -->
+
+  <!-- There is a cascading test failure if these tests are run in their
+        appropriate spot -->
+  <script src="test_request_series_inspector.js"></script>
+  <script src="test_request_series_view.js"></script>
 
   <script src="test_added_services_button.js"></script>
   <script src="test_added_services_view.js"></script>
@@ -189,12 +194,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- FIXME: intermittent test failure under "make test-server" and Chromium -
       position matches on setBusy: expected 100 to equal 109.09090423583984 -->
   <script src="test_overlay_indicator.js"></script>
-
   <script src="test_panzoom.js"></script>
   <script src="test_prettify.js"></script>
   <script src="test_resizing_textarea.js"></script>
-  <script src="test_request_series_inspector.js"></script>
-  <script src="test_request_series_view.js"></script>
   <script src="test_routing.js"></script>
   <script src="test_sandbox.js"></script>
   <script src="test_sandbox_go.js"></script>
@@ -206,8 +208,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_simulator.js"></script>
 
   <!-- FIXME: feature flags depend on code loaded by the startup test. -->
-  <!--<script src="test_startup.js"></script>-->
-  <script src="test_feature_flags.js"></script>
+  <!--<script src="test_startup.js"></script>
+  <script src="test_feature_flags.js"></script>-->
 
   <script src="test_sub_app.js"></script>
   <script src="test_subapp_app_extension.js"></script>

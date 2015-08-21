@@ -25,7 +25,7 @@ describe('Service Inspector', function() {
       'environment-change-set',
       'charmstore-api',
       'juju-tests-utils',
-      'juju-views',
+      'juju-view-environment',
       'node-event-simulate',
       'service-inspector'
     ], function(Y) {
