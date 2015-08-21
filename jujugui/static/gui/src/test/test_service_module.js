@@ -112,6 +112,7 @@ describe('service module events', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
+      'juju-view-environment',
       'node-event-simulate',
       'slider'],
     function(Y) {
