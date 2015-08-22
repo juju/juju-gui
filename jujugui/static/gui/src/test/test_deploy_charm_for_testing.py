@@ -86,7 +86,7 @@ class TestParsingStatus(unittest.TestCase):
         # JSON document produced by "juju status --format json".
         def get_status():
             return ('{"services": {"juju-gui": {"units": {"juju-gui/0":'
-                '{"agent-state": "started"}}}}}')
+                    '{"agent-state": "started"}}}}}')
         self.assertEqual(get_state(get_status), 'started')
 
 
@@ -122,7 +122,7 @@ class TestScript(unittest.TestCase):
         # While running, the script tells the user what is happening.
         printed = []
         main(options=_options(), print=printed.append, juju=noop,
-            wait_for_service=noop, wait_for_machine=noop)
+             wait_for_service=noop, wait_for_machine=noop)
         self.assertSequenceEqual(
             printed,
             ['Bootstrapping...',
@@ -139,8 +139,8 @@ class TestScript(unittest.TestCase):
             juju_commands.append(s)
 
         main(options=_options(origin='lp:foo'), print=noop, juju=juju,
-            wait_for_service=noop, make_config_file=MakeConfigFile,
-            wait_for_machine=noop, make_environments_yaml=noop)
+             wait_for_service=noop, make_config_file=MakeConfigFile,
+             wait_for_machine=noop, make_environments_yaml=noop)
         options = MakeConfigFile.options
         deploy_command = juju_commands[1]
         self.assertIn('--config my-config-file.yaml', deploy_command)
@@ -157,7 +157,7 @@ class TestScript(unittest.TestCase):
         printed = []
 
         main(options=_options(origin='lp:foo'), print=printed.append,
-            juju=noop, wait_for_service=noop, make_config_file=MakeConfigFile,
+             juju=noop, wait_for_service=noop, make_config_file=MakeConfigFile,
              wait_for_machine=noop, make_environments_yaml=noop)
         options = MakeConfigFile.options
         self.assertSequenceEqual(

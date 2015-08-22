@@ -31,5 +31,6 @@ setup(name='jujugui',
       entry_points="""\
       [paste.app_factory]
       main = jujugui:main
+      test = jujugui.test:main
       """,
       )

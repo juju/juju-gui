@@ -1809,7 +1809,6 @@ YUI.add('juju-topology-service', function(Y) {
     'local-charm-import-helpers',
     'juju-viewlet-manager',
     'local-new-upgrade-inspector',
-    'request-series-inspector',
     'zip-utils'
   ]
 });

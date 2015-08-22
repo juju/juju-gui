@@ -180,23 +180,22 @@ class FauxLogger(object):
         self.logged.append(('received', args))
 
 
-
 class TestHandlingMessages(unittest.TestCase):
     """When messages come in, we have to figure out a response."""
 
     def test_received_messages_are_logged(self):
         # Each message received is logged.
-        EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
+        EXPECTED = Frame({'op': 'something', 'request_id': 42}, 'to client')
         MESSAGE = json.dumps(EXPECTED.message)
         written = []
         log = FauxLogger()
         handle_message(MESSAGE, iter([]), written.append, expected=EXPECTED,
-            log=log)
+                       log=log)
         self.assertIn(('received', (MESSAGE,)), log.logged)
 
     def test_sent_messages_are_logged(self):
         # Each message received is logged.
-        EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
+        EXPECTED = Frame({'op': 'something', 'request_id': 42}, 'to client')
         MESSAGE = json.dumps(EXPECTED.message)
         TO_CLIENT_1 = 'next 1'
         TO_CLIENT_2 = 'next 2'
@@ -206,20 +205,20 @@ class TestHandlingMessages(unittest.TestCase):
         written = []
         log = FauxLogger()
         handle_message(MESSAGE, frames, written.append, expected=EXPECTED,
-            log=log)
+                       log=log)
         self.assertIn(('sent', (TO_CLIENT_1,)), log.logged)
         self.assertIn(('sent', (TO_CLIENT_2,)), log.logged)
 
     def test_out_of_frames_message_is_logged(self):
         # When the end of the log is reached, a message is displayed saying
         # so.
-        EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
+        EXPECTED = Frame({'op': 'something', 'request_id': 42}, 'to client')
         MESSAGE = json.dumps(EXPECTED.message)
         frames = iter([])
         written = []
         log = FauxLogger()
         handle_message(MESSAGE, frames, written.append, expected=EXPECTED,
-            log=log)
+                       log=log)
         self.assertIn(
             ('message', ('reached end of log, ignoring incoming frames',)),
             log.logged)
@@ -235,7 +234,7 @@ class TestHandlingMessages(unittest.TestCase):
             Frame('next 1', 'to client'),
             Frame('next 2', 'to client')])
         handle_message(json.dumps(MESSAGE), frames, written.append,
-            expected=Frame(MESSAGE, 'to client'), log=log)
+                       expected=Frame(MESSAGE, 'to client'), log=log)
         # The next messages to the client were sent.
         self.assertEqual(written, ['"next 1"', '"next 2"'])
 
@@ -257,7 +256,7 @@ class TestHandlingMessages(unittest.TestCase):
     def test_unexpected_message_comes_in(self):
         # If something other than the expected message comes in, a SystemExit
         # exception is raised and details of the messages are logged.
-        MESSAGE={'op': 'something', 'request_id': 42}
+        MESSAGE = {'op': 'something', 'request_id': 42}
         UNEXPECTED = json.dumps(MESSAGE)
         EXPECTED = {'op': 'something else', 'request_id': 'nope'}
         written = []

@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('views.ViewportModule (Topology module)', function() {
   var views, Y, testUtils;
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
+    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils', 'juju-topology-viewport'],
         function(Y) {
           views = Y.namespace('juju.views');
           testUtils = Y.namespace('juju-tests').utils;
@@ -97,7 +97,7 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
   var views, Y, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
       eventFired, dimentions;
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
+    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils', 'juju-topology-viewport'],
         function(Y) {
           views = Y.namespace('juju.views');
           testUtils = Y.namespace('juju-tests').utils;

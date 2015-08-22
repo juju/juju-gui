@@ -67,6 +67,7 @@ YUI.add('user-dropdown', function(Y) {
     'juju-view-utils',
     'node',
     'handlebars',
-    'view-dropdown-extension'
+    'view-dropdown-extension',
+    'juju-templates'
   ]
 });

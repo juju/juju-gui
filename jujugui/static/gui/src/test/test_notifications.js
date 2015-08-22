@@ -288,7 +288,7 @@ describe('notification visual feedback', function() {
   var env, models, notifications, notificationsView, notifierBox, views, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use('juju-models', 'juju-views',
+    Y = YUI(GlobalConfig).use('juju-models', 'juju-views', 'juju-notifications',
         function(Y) {
           var juju = Y.namespace('juju');
           env = new juju.environments.GoEnvironment();

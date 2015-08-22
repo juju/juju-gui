@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('pan zoom module', function() {
-  var db, juju, models, utils, viewContainer, views, Y, pz, topo, vis;
+  var db, juju, models, utils, view, viewContainer, views, Y, pz, topo, vis;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -40,12 +40,18 @@ describe('pan zoom module', function() {
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
     db = new models.Database();
-    var view = new views.environment({container: viewContainer, db: db});
+    view = new views.environment({container: viewContainer, db: db});
     view.render();
     view.rendered();
     pz = view.topo.modules.PanZoomModule;
     topo = pz.get('component');
     vis = topo.vis;
+  });
+
+  afterEach(function() {
+    db.destroy();
+    view.destroy();
+    viewContainer.destroy();
   });
 
   function fixTranslate(translate) {
