@@ -16,3 +16,5 @@ zope.interface==4.1.2
 zope.deprecation==4.1.2
 libsass==0.8.2
 six==1.9.0
+ez_setup==0.9
+shelltoolbox==0.2.1
