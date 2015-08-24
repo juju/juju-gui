@@ -58,7 +58,7 @@ sysdeps:
 	sudo apt-get install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
-	sudo apt-get install -y imagemagick nodejs python-virtualenv
+	sudo apt-get install -y imagemagick nodejs npm python-virtualenv
 
 .PHONY: src
 src: $(GUISRC)
