@@ -15,6 +15,7 @@ ASSET_PATH = os.path.join(
     'static',
     'gui',
     'build',
+    'app'
     )
 
 log = logging.getLogger('jujugui')
@@ -46,7 +47,6 @@ def sprites(request):
 @view_config(route_name='jujugui.ui')
 def juju_ui(request):
     requested_file = request.matchdict.get('file')
-    import pdb; pdb.set_trace()
     file_path = os.path.join(ASSET_PATH, requested_file)
     try:
         return FileResponse(file_path, request=request)

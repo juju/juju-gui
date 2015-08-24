@@ -53,7 +53,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       link.rel  = 'stylesheet';
       link.type = 'text/css';
       if (juju_config.cachedFonts) {
-        link.href = '/juju-ui/assets/fonts/fontface.css';
+        link.href = 'juju-ui/assets/fonts/fontface.css';
       } else {
         // If you change this, make sure you make a corresponding update to
         // the cached fonts (app/assets/fonts/*).  Read more details here:
@@ -88,7 +88,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- This <img> tag is here just to force early loading of the background
         image so it displays more quickly.  This makes a large improvement to
         the way the app looks while loading on a slow connection. -->
-      <img src="/juju-ui/assets/images/non-sprites/pattern_tile.png" style="display: none;">
+      <img src="juju-ui/assets/images/non-sprites/pattern_tile.png" style="display: none;">
 
       <div id="full-screen-mask" class="crosshatch-background">
         <div id="browser-warning" class="centered-column"

@@ -2287,7 +2287,7 @@ YUI.add('juju-view-utils', function(Y) {
     } else {
       // If no charmstore or env if provided as necessary then return the
       // default icon.
-      path = '/juju-ui/assets/images/non-sprites/charm_160.svg';
+      path = 'juju-ui/assets/images/non-sprites/charm_160.svg';
     }
     return path;
   };

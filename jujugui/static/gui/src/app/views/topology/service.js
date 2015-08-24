@@ -136,7 +136,7 @@ YUI.add('juju-topology-service', function(Y) {
     node.select('.service-block-image').each(function(d) {
       var curr_node = d3.select(this),
           curr_href = curr_node.attr('xlink:href'),
-          new_href = '/juju-ui/assets/svgs/';
+          new_href = 'juju-ui/assets/svgs/';
       if (d.subordinate) {
         new_href += 'sub_module.svg';
       } else if ((d.pending || d.deleted)) {
@@ -177,7 +177,7 @@ YUI.add('juju-topology-service', function(Y) {
         });
 
     subRelationIndicator.append('image')
-        .attr({'xlink:href': '/juju-ui/assets/svgs/sub_relation.svg',
+        .attr({'xlink:href': 'juju-ui/assets/svgs/sub_relation.svg',
           'width': 87,
           'height': 47});
     subRelationIndicator.append('text').append('tspan')
@@ -242,7 +242,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (!existing) {
         existing = d3.select(this).append('image')
                         .attr({'class': 'exposed-indicator on',
-              'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
+              'xlink:href': 'juju-ui/assets/svgs/exposed.svg',
               'width': 32,
               'height': 32
             })
@@ -276,7 +276,7 @@ YUI.add('juju-topology-service', function(Y) {
                     .append('image')
                     .attr({
                       'class': 'pending-indicator',
-                      'xlink:href': '/juju-ui/assets/svgs/pending.svg',
+                      'xlink:href': 'juju-ui/assets/svgs/pending.svg',
                       'width': 16,
                       'height': 16
                     })
@@ -1544,7 +1544,7 @@ YUI.add('juju-topology-service', function(Y) {
       var selection = this.selectionFromServiceNames(serviceNames);
       selection.classed(topoUtils.getVisibilityClasses('highlight'));
       selection.select('.service-block-image')
-        .attr('href', '/juju-ui/assets/svgs/service_module_selected.svg');
+        .attr('href', 'juju-ui/assets/svgs/service_module_selected.svg');
     },
 
     /**
@@ -1578,9 +1578,9 @@ YUI.add('juju-topology-service', function(Y) {
       var image, href;
       selection.each(function(d) {
         image = d3.select(this).select('.service-block-image');
-        href = '/juju-ui/assets/svgs/service_module.svg';
+        href = 'juju-ui/assets/svgs/service_module.svg';
         if (d.pending || d.deleted) {
-          href = '/juju-ui/assets/svgs/service_module_pending.svg';
+          href = 'juju-ui/assets/svgs/service_module_pending.svg';
         }
         image.attr('href', href);
       });

@@ -175,7 +175,7 @@ YUI.add('juju-view-bundle', function(Y) {
             height: SERVICE_SIZE + 10,
             transform: 'translate(-5,-5)',
             'xlink:href':
-                '/juju-ui/assets/images/non-sprites/service-highlight.svg'
+                'juju-ui/assets/images/non-sprites/service-highlight.svg'
           });
       node.append('image')
        .classed('service-icon', true)
@@ -258,7 +258,7 @@ YUI.add('juju-view-bundle', function(Y) {
               });
 
       subRelationIndicator.append('image')
-        .attr({'xlink:href': '/juju-ui/assets/svgs/sub_relation.svg',
+        .attr({'xlink:href': 'juju-ui/assets/svgs/sub_relation.svg',
             'width': 87,
             'height': 47});
       subRelationIndicator.append('text').append('tspan')
@@ -301,7 +301,7 @@ YUI.add('juju-view-bundle', function(Y) {
         if (!existing) {
           existing = d3.select(this).append('image')
         .attr({'class': 'exposed-indicator on',
-                    'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
+                    'xlink:href': 'juju-ui/assets/svgs/exposed.svg',
                     'width': 32,
                     'height': 32
                   })
