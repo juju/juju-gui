@@ -10,9 +10,9 @@
 * not based on circle packing.  For now, this remains a patch.
 */
 
-import "../../../node_modules/d3/src/layout/layout";
-import "../../../node_modules/d3/src/layout/hierarchy";
-import "../../../node_modules/d3/src/layout/tree";
+import "../../../../../../../node_modules/d3/src/layout/layout";
+import "../../../../../../../node_modules/d3/src/layout/hierarchy";
+import "../../../../../../../node_modules/d3/src/layout/tree";
 
 d3.layout.unscaledPack = function() {
   var hierarchy = d3.layout.hierarchy().sort(d3_layout_packSort),
