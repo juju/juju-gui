@@ -126,9 +126,6 @@ def get_capabilities(browser_name):
     choices = {
         'chrome': (
             desired.CHROME,
-            # Juju GUI supports all versions of Chrome, however our browser
-            # tests currently have issues with the default chrome (35) and
-            # chromedriver (2.10). So we pin to the previous default for now.
             {'platform': 'Linux', "version": "44"},
         ),
         'firefox': (
@@ -273,8 +270,8 @@ class TestCase(unittest.TestCase):
     def handle_browser_warning(self):
         """Overstep the browser warning dialog if required."""
         self.wait_for_script(
-            'return window.isBrowserSupported',
-            error='Function isBrowserSupported not found.')
+            'return window.applicationLoaded',
+            error='Application was never fully loaded.')
         script = 'return window.isBrowserSupported(navigator.userAgent)'
         supported = self.driver.execute_script(script)
         if not supported:
