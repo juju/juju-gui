@@ -1281,8 +1281,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       assert.deepEqual(reduceData(), ['subordinate', 'healthy']);
       assert.deepEqual(reduceImages(), [
-        '/juju-ui/assets/svgs/relation-icon-subordinate.svg',
-        '/juju-ui/assets/svgs/relation-icon-healthy.svg'
+        'juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'juju-ui/assets/svgs/relation-icon-healthy.svg'
       ]);
 
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1293,8 +1293,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
       assert.deepEqual(reduceData(), ['subordinate', 'error']);
       assert.deepEqual(reduceImages(), [
-        '/juju-ui/assets/svgs/relation-icon-subordinate.svg',
-        '/juju-ui/assets/svgs/relation-icon-error.svg'
+        'juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'juju-ui/assets/svgs/relation-icon-error.svg'
       ]);
     });
 

@@ -121,11 +121,11 @@
             background-repeat: no-repeat;
 
             &.valid {
-                background-image: url(/juju-ui/assets/images/non-sprites/form-validation-tick.png);
+                background-image: url(juju-ui/assets/images/non-sprites/form-validation-tick.png);
             }
 
             &.invalid {
-                background-image: url(/juju-ui/assets/images/non-sprites/form-validation-cross.png);
+                background-image: url(juju-ui/assets/images/non-sprites/form-validation-cross.png);
             }
         }
         input[type=text] {
@@ -269,13 +269,13 @@
                     &:before {
                         z-index: 502;
                         background-image:
-                            url(/juju-ui/assets/images/toggle-off.png);
+                            url(juju-ui/assets/images/toggle-off.png);
                     }
                     &:after {
                         z-index: 502;
                         left: 29px;
                         background-image:
-                            url(/juju-ui/assets/images/toggle-on-inactive.png);
+                            url(juju-ui/assets/images/toggle-on-inactive.png);
                     }
                 }
                 input.hidden-checkbox:checked ~ label,
@@ -286,11 +286,11 @@
                     }
                     &:before {
                         background-image:
-                            url(/juju-ui/assets/images/toggle-off-inactive.png);
+                            url(juju-ui/assets/images/toggle-off-inactive.png);
                     }
                     &:after {
                         background-image:
-                            url(/juju-ui/assets/images/toggle-on.png);
+                            url(juju-ui/assets/images/toggle-on.png);
                     }
                 }
             }
@@ -449,7 +449,7 @@
                 z-index: 2;
                 padding: 5px;
                 background: transparent
-                    url(/juju-ui/assets/images/import.png)
+                    url(juju-ui/assets/images/import.png)
                     right center no-repeat;
                 border: 1px solid #6B6B6B;
                 color: $inspector-text-color;
@@ -741,7 +741,7 @@
                 }
                 .modified {
                   background-color: $inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/non-sprites/textfield_unsaved_16.png);
+                  background-image: url(juju-ui/assets/images/non-sprites/textfield_unsaved_16.png);
                   background-repeat: no-repeat;
                   background-position: 97% center;
 
@@ -762,11 +762,11 @@
                 }
                 .conflict-pending {
                   background-color: $inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/non-sprites/conflict_24.png);
+                  background-image: url(juju-ui/assets/images/non-sprites/conflict_24.png);
 
                   &.boolean {
                     background-color: inherit;
-                    background-image: url(/juju-ui/assets/images/non-sprites/conflict_16.png);
+                    background-image: url(juju-ui/assets/images/non-sprites/conflict_16.png);
                     display: inline-block;
                     width: 14px;
                     height: 14px;
@@ -777,7 +777,7 @@
 
                 .conflict {
                   background-color: $inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/non-sprites/conflict_resolution_24.png);
+                  background-image: url(juju-ui/assets/images/non-sprites/conflict_resolution_24.png);
                 }
 
                 /* Inputs does not need to have the background-image */
@@ -802,7 +802,7 @@
                 }
 
                 .change-saved {
-                    background-image: url(/juju-ui/assets/images/non-sprites/textfield_saved_16.png);
+                    background-image: url(juju-ui/assets/images/non-sprites/textfield_saved_16.png);
                     background-position: 96% center;
                     background-repeat: no-repeat;
                     @include animation(pulse-green 1s);
@@ -815,10 +815,10 @@
                 padding-left: 10px;
                 background-repeat: no-repeat;
                 background-position: 10px 17px;
-                background-image: url("/juju-ui/assets/images/unit_running_16.png");
+                background-image: url("juju-ui/assets/images/unit_running_16.png");
 
                 &.error {
-                    background-image: url("/juju-ui/assets/images/error_16.png");
+                    background-image: url("juju-ui/assets/images/error_16.png");
                 }
             }
         }
@@ -944,41 +944,41 @@
                 white-space: nowrap;
             }
             .closed-unit-list .chevron {
-                background-image: url("/juju-ui/assets/images/chevron_down_light_16.png");
+                background-image: url("juju-ui/assets/images/chevron_down_light_16.png");
             }
             .status-unit-header {
                 background-position: 15px 19px;
             }
             .status-unit-header.error {
-                background-image: url("/juju-ui/assets/images/error_16.png");
+                background-image: url("juju-ui/assets/images/error_16.png");
             }
             .status-unit-header.running {
-                background-image: url("/juju-ui/assets/images/unit_running_16.png");
+                background-image: url("juju-ui/assets/images/unit_running_16.png");
             }
             .status-unit-header.pending {
-                background-image: url("/juju-ui/assets/images/unit_pending_16.png");
+                background-image: url("juju-ui/assets/images/unit_pending_16.png");
             }
             .status-unit-header.landscape {
-                background-image: url("/juju-ui/assets/images/landscape_action_16.png");
+                background-image: url("juju-ui/assets/images/landscape_action_16.png");
             }
             .status-unit-header.uncommitted {
-                background-image: url("/juju-ui/assets/images/uncommitted_16.png");
+                background-image: url("juju-ui/assets/images/uncommitted_16.png");
             }
             .status-unit-content.uncommitted ul li {
-                background: url("/juju-ui/assets/images/uncommitted_16.png") no-repeat scroll 35px center;
+                background: url("juju-ui/assets/images/uncommitted_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.pending ul li {
-                background: url("/juju-ui/assets/images/unit_pending_16.png") no-repeat scroll 35px center;
+                background: url("juju-ui/assets/images/unit_pending_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.running ul li {
-                background: url("/juju-ui/assets/images/unit_running_16.png") no-repeat scroll 35px center;
+                background: url("juju-ui/assets/images/unit_running_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.error ul li {
-                background: url("/juju-ui/assets/images/error_16.png") no-repeat scroll 35px center;
+                background: url("juju-ui/assets/images/error_16.png") no-repeat scroll 35px center;
             }
             .status-unit-content.landscape-security-upgrades ul li,
             .status-unit-content.landscape-needs-reboot ul li {
-                background: url("/juju-ui/assets/images/landscape_action_16.png") no-repeat scroll 35px center;
+                background: url("juju-ui/assets/images/landscape_action_16.png") no-repeat scroll 35px center;
             }
         }
         .unit-list-header,
@@ -1024,7 +1024,7 @@
                 Does not allow padding-bottom to work in IE10, changing the height
                 of the element puts the chevron in the appropriate place in all browsers */
                 margin-left: 5px;
-                background: url("/juju-ui/assets/images/chevron_up_light_16.png") no-repeat center center;
+                background: url("juju-ui/assets/images/chevron_up_light_16.png") no-repeat center center;
             }
         }
         .unit-list-header {

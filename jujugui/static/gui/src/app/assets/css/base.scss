@@ -372,7 +372,7 @@ th {
     overflow: hidden;
 }
 .crosshatch-background {
-    background: url(/juju-ui/assets/images/non-sprites/pattern_tile.png) repeat;
+    background: url(juju-ui/assets/images/non-sprites/pattern_tile.png) repeat;
 }
 #canvas {
     position: relative;
@@ -540,10 +540,10 @@ th {
                 }
             }
             &.landscape-reboot {
-                background-image: url(/juju-ui/assets/images/non-sprites/landscape_restart_menu.png);
+                background-image: url(juju-ui/assets/images/non-sprites/landscape_restart_menu.png);
             }
             &.landscape-security {
-                background-image: url(/juju-ui/assets/images/non-sprites/landscape_security_menu.png);
+                background-image: url(juju-ui/assets/images/non-sprites/landscape_security_menu.png);
             }
             &:last-child {
                 border-bottom: none;
@@ -586,9 +586,9 @@ th {
         line-height: 30px;
         background-repeat: no-repeat;
         background-position: 10px 11px;
-        background-image: url("/juju-ui/assets/images/unit_running_16.png");
+        background-image: url("juju-ui/assets/images/unit_running_16.png");
         &.error {
-            background-image: url("/juju-ui/assets/images/error_16.png");
+            background-image: url("juju-ui/assets/images/error_16.png");
         }
         .endpoint.error {
             color: red;

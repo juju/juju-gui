@@ -160,11 +160,11 @@ YUI.add('browser-overlay-indicator', function(Y) {
 
       /**
        * @attribute loading_image
-       * @default '/juju-ui/assets/images/loading-spinner.gif'
+       * @default 'juju-ui/assets/images/loading-spinner.gif'
        * @type {string}
        */
       loading_image: {
-        value: '/juju-ui/assets/images/non-sprites/loading-spinner.gif'
+        value: 'juju-ui/assets/images/non-sprites/loading-spinner.gif'
       }
     }
   });

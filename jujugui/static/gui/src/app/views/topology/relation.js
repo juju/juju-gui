@@ -398,7 +398,7 @@ YUI.add('juju-topology-relation', function(Y) {
         .selectAll('image')
         .attr('xlink:href', function(d) {
             return (
-                '/juju-ui/assets/svgs/relation-icon-' +
+                'juju-ui/assets/svgs/relation-icon-' +
                 d.aggregatedStatus + '.svg');
           });
       return g;
