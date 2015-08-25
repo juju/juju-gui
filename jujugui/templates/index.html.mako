@@ -377,8 +377,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       because we want the browser warning to execute before spending the time
       to download an app the user might not be able to use anyway.
     -->
+
+    % if raw:
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js"></script>
     <script src="${convoy_url}?modules.js"></script>
+    % else:
+    <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js"></script>
+    <script src="${convoy_url}?modules-min.js"></script>
+    % endif
+
     <script>
       // Now that all of the above JS is loaded we can define the real start
       // function which will be picked up by the setTimeout, and the app will
@@ -413,11 +420,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           root: 'app/assets/javascripts/yui/',
           groups: {
             app: {
+                % if raw:
+                filter: 'raw',
+                % endif
+                % if combine:
                 combine: true,
+                % else:
+                combine: false,
+                % endif
                 base: "${convoy_url}?app/",
                 comboBase: "${convoy_url}?",
                 root: 'app/',
-                filter: 'raw',
                 // From modules.js
                 modules: YUI_MODULES,
             },

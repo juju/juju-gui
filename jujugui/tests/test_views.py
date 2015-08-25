@@ -38,6 +38,8 @@ class AppTests(ViewTestCase):
         expected_context = {
             'config_url': '/config.js',
             'convoy_url': '/combo',
+            'raw': False,
+            'combine': True,
         }
         context = views.app(self.request)
         self.assertEqual(expected_context, context)
@@ -47,6 +49,8 @@ class AppTests(ViewTestCase):
         expected_context = {
             'config_url': '/config.js',
             'convoy_url': '/combo',
+            'raw': False,
+            'combine': True,
         }
         self.request.matchdict['uuid'] = 'env-uuid'
         context = views.app(self.request)

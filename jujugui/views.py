@@ -18,6 +18,7 @@ ASSET_PATH = os.path.join(
     'app'
     )
 
+
 log = logging.getLogger('jujugui')
 
 
@@ -28,9 +29,12 @@ log = logging.getLogger('jujugui')
 def app(request):
     """The main Juju GUI JavaScript application."""
     env_uuid = request.matchdict.get('uuid')
+    settings = request.registry.settings
     return {
         'config_url': request.route_path('jujugui.config', uuid=env_uuid),
         'convoy_url': request.route_path('jujugui.convoy', uuid=env_uuid),
+        'combine': settings['jujugui.combine'],
+        'raw': settings['jujugui.raw'],
     }
 
 
