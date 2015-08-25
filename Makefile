@@ -214,6 +214,11 @@ test-deps: $(PY)
 	$(call PIP,test-requirements.txt)
 
 $(SELENIUM): $(PY)
+	@# Because shelltoolbox requires ez_setup already installed before being
+	@# installed we need to manually do them this way instead of via the
+	@# requirements.txt.
+	bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) ez_setup==0.9
+	bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) shelltoolbox==0.2.1
 	bin/pip install archives/selenium-2.47.1.tar.gz
 
 #######
