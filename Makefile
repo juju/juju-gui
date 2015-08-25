@@ -241,8 +241,8 @@ test-js-phantom: gui
 	./scripts/test-js.sh
 
 .PHONY: test-selenium
-test-selenium: gui $(SELENIUM)
-	JUJU_GUI_TEST_BROWSER="chrome" $(PY) jujugui/static/gui/src/test/test_browser.py -v
+test-selenium: gui $(PY) $(SELENIUM)
+	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
 check: clean-pyc lint lint-js test test-js-phantom
