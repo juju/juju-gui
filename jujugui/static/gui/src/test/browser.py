@@ -129,7 +129,7 @@ def get_capabilities(browser_name):
             # Juju GUI supports all versions of Chrome, however our browser
             # tests currently have issues with the default chrome (35) and
             # chromedriver (2.10). So we pin to the previous default for now.
-            {'platform': 'Linux', "version": "27"},
+            {'platform': 'Linux', "version": "44"},
         ),
         'firefox': (
             desired.FIREFOX,
