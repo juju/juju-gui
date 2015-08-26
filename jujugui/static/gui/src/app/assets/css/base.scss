@@ -736,6 +736,12 @@ g.service {
             cursor: pointer;
         }
     }
+
+    &.highlight {
+        .service-block {
+            fill: #fff;
+        }
+    }
 }
 g.service-status {
     path {

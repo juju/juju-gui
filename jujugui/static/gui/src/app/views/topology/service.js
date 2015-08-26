@@ -133,31 +133,37 @@ YUI.add('juju-topology-service', function(Y) {
     });
 
     var rerenderRelations = false;
-    node.select('.service-block-image').each(function(d) {
+    node.select('.service-block').each(function(d) {
       var curr_node = d3.select(this),
-          curr_href = curr_node.attr('xlink:href'),
-          new_href = 'juju-ui/assets/svgs/';
+          curr_state = curr_node.attr('data-state'),
+          new_state = 'service_module';
       if (d.subordinate) {
-        new_href += 'sub_module.svg';
+        curr_node.attr({
+          'stroke': '#19b6ee',
+          'stroke-width': 1
+        });
       } else if ((d.pending || d.deleted)) {
-        new_href += 'service_module_pending.svg';
+        curr_node.attr({
+          'stroke': '#19b6ee',
+          'stroke-width': 3
+        });
+        rerenderRelations = true;
       } else if (d.highlighted) {
-        new_href += 'service_module_selected.svg';
+        rerenderRelations = true;
       } else {
-        new_href += 'service_module.svg';
-      }
-
-      // Only set 'xlink:href' if not already set to the new value,
-      // thus avoiding redundant requests to the server. #1182135
-      if (curr_href !== new_href) {
-        curr_node.attr({'xlink:href': new_href});
+        curr_node.attr({
+          'stroke': '#888888',
+          'stroke-width': 1
+        });
         rerenderRelations = true;
       }
+
       curr_node.attr({
         'width': d.w,
         'height': d.h
       });
     });
+
     if (rerenderRelations) {
       topo.fire('rerenderRelations');
     }
@@ -182,6 +188,7 @@ YUI.add('juju-topology-service', function(Y) {
           'height': 47});
     subRelationIndicator.append('text').append('tspan')
               .attr({'class': 'sub-rel-count',
+
           'x': 64,
           'y': 47 * 0.8});
 
@@ -246,10 +253,6 @@ YUI.add('juju-topology-service', function(Y) {
               'width': 32,
               'height': 32
             })
-                        .append('title')
-                        .text(function(d) {
-                          return d.exposed ? 'Exposed' : '';
-                        });
       }
       existing = d3.select(this).select('.exposed-indicator')
                       .attr({
@@ -269,44 +272,12 @@ YUI.add('juju-topology-service', function(Y) {
     var pending = node.filter(function(d) {
       return d.pending;
     });
-    pending.each(function(d) {
-      var pending = Y.one(this).one('.pending-indicator');
-      if (!pending) {
-        pending = d3.select(this)
-                    .append('image')
-                    .attr({
-                      'class': 'pending-indicator',
-                      'xlink:href': 'juju-ui/assets/svgs/pending.svg',
-                      'width': 16,
-                      'height': 16
-                    })
-                    .append('title')
-                    .text(function(d) {
-                      return d.pending ? 'Pending' : '';
-                    });
-      }
-      pending = d3.select(this)
-                  .select('.pending-indicator')
-                  .attr({
-                    'x': 18,
-                    'y': 18
-                  });
-    });
 
     // Remove pending indicator from nodes that are no longer pending.
     node.filter(function(d) {
       return !d.pending &&
           !d3.select(this).select('.pending-indicator').empty();
     }).select('.pending-indicator').remove();
-
-    // Adds the relative health in the form of a percentage bar.
-    node.each(function(d) {
-      var status_graph = d3.select(this).select('.statusbar');
-      var status_bar = status_graph.property('status_bar');
-      if (status_bar && !d.subordinate) {
-        status_bar.update(d.aggregated_status);
-      }
-    });
   };
   views.ServiceModuleCommon = ServiceModuleCommon;
 
@@ -1422,42 +1393,49 @@ YUI.add('juju-topology-service', function(Y) {
      * @method createServiceNode
      */
     createServiceNode: function(node, self) {
-      node.append('image')
-      .classed('service-block-image', true);
+      node.attr({'data-name':  function(d) { return d.name; }});
+
+      node.append('circle')
+        .attr({
+          cx: 95,
+          cy: 90,
+          r: 90,
+          fill: '#f5f5f5',
+          'stroke-width': 1,
+          stroke: '#888888'
+        })
+        .classed('service-block', true);
+
+      node.append('circle')
+        .attr({
+          id: function(d) { return 'service-icon-mask-' + d.name; },
+          cx: 48,
+          cy: 48,
+          r: 45
+        });
+
+      var clip = node.append('clipPath')
+        .attr({
+          id: function(d) { return 'clip-' + d.name; },
+        });
+
+      clip.append('use')
+        .attr({
+          'xlink:href': function(d) { return '#service-icon-mask-' + d.name; }
+        });
 
       node.append('image')
        .classed('service-icon', true)
        .attr({
-                'xlink:href': function(d) {
-                  return d.icon;
-                },
-                width: 96,
-                height: 96,
-                transform: 'translate(47, 50)'
-              });
-      node.append('text').append('title')
-        .text(function(d) { return d.name; });
-      node.select('text').append('tspan')
-        .attr('class', 'name')
-        .text(function(d) { return self.truncateServiceName(d); });
+          'xlink:href': function(d) {
+            return d.icon;
+          },
+          width: 96,
+          height: 96,
+          transform: 'translate(47, 42)',
+          'clip-path': function(d) { return 'url(#clip-' + d.name + ')' }
+        });
 
-      // Append status charts to service nodes.
-      var status_graph = node.append('g')
-        .attr('transform', 'translate(47, 152)')
-        .classed('service-status', true)
-        .classed('statusbar', true);
-
-      status_graph.each(function(d) {
-        if (!d.subordinate) {
-          d3.select(this).property('status_bar',
-              new views.StatusBar({
-                width: 96,
-                target: this,
-                height: 10,
-                labels: false
-              }).render());
-        }
-      });
       // Manually attach the touchstart event (see method for details)
       node.each(function(data) {
         self.attachTouchstartEvents(data, this);
@@ -1543,8 +1521,6 @@ YUI.add('juju-topology-service', function(Y) {
       });
       var selection = this.selectionFromServiceNames(serviceNames);
       selection.classed(topoUtils.getVisibilityClasses('highlight'));
-      selection.select('.service-block-image')
-        .attr('href', 'juju-ui/assets/svgs/service_module_selected.svg');
     },
 
     /**
