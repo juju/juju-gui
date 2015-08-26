@@ -30,7 +30,8 @@ sleep 2
 trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
 
 TEST_PATH="http://0.0.0.0:8888/test/index.html"
-TEST_PATH=${$TEST_PATH/8888/$PORT}
+
+TEST_PATH="${TEST_PATH/8888/$PORT}"
 
 if [ -n "$1" ]; then
   xdg-open $TEST_PATH
