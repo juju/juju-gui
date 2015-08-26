@@ -4,7 +4,13 @@ set -m
 
 SERVE_PID="serve_pid"
 
-bin/pserve test.ini & echo $! > $SERVE_PID
+if [ $TEST_PORT ]; then
+  PORT=$TEST_PORT
+else
+  PORT=8888
+fi
+
+bin/pserve test.ini test_port=$PORT & echo $! > $SERVE_PID
 
 MOCHA_PHANTOMJS="node_modules/.bin/mocha-phantomjs"
 PHANTOMJS="node_modules/.bin/phantomjs"
