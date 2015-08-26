@@ -51,6 +51,7 @@ $font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
 /* Define common colors. */
+$canvas-background: #f5f5f5;
 $label-color: #292929;
 $text-entry-color: #6d6e70;
 $charm-panel-orange: #dd4814;
@@ -88,7 +89,7 @@ body {
     overflow: hidden;
     height: 100%;
     margin-top: $navbar-height;
-    background-color: #302b28;
+    background-color: $canvas-background;
     font-size: 14px;
     line-height: 18px;
     -webkit-font-smoothing: antialiased;
@@ -371,14 +372,10 @@ th {
 
 #content {
     position: relative;
-    background-color: #fff;
     width: 100%;
 }
 #main {
     overflow: hidden;
-}
-.crosshatch-background {
-    background: url(juju-ui/assets/images/non-sprites/pattern_tile.png) repeat;
 }
 #canvas {
     position: relative;
