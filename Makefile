@@ -21,7 +21,7 @@ MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
-BUILT_D3 := $(BUILT_JS_ASSETS)/d3.min.js
+BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.1-py2.7.egg/selenium/selenium.py
 
 CACHE := $(shell pwd)/downloadcache
@@ -117,17 +117,10 @@ $(YUI): $(NODE_MODULES)
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
 
-# XXX j.c.sackett 2015-06-22 This target only has to exist b/c of the juju-gui's
-# expectation that there is a node_modules dir in its tree; when the source is
-# permanantely part of this project, we can remove this target and update the d3
-# wrapper locations.
-$(D3_DEPS): $(NODE_MODULES) $(BUILT_JS_ASSETS)
-	mkdir -p $(GUIBUILD)/node_modules
-	cp -r $(abspath ./$(NODE_MODULES)/d3) $(GUIBUILD)/node_modules/
-
-$(BUILT_D3): $(D3_DEPS)
-	@$(NODE_MODULES)/.bin/smash $(shell $(NODE_MODULES)/.bin/smash --list \
-	  $(GUIBUILD)/app/assets/javascripts/d3-wrapper-start.js \
+$(BUILT_D3):
+	mkdir -p $(GUIBUILD)/app/assets/javascripts
+	$(NODE_MODULES)/.bin/smash $(shell $(NODE_MODULES)/.bin/smash --list \
+	  $(GUISRC)/app/assets/javascripts/d3-wrapper-start.js \
 	  node_modules/d3/src/compat/index.js \
 	  node_modules/d3/src/selection/* \
 	  node_modules/d3/src/behavior/* \
@@ -139,9 +132,9 @@ $(BUILT_D3): $(D3_DEPS)
 	  node_modules/d3/src/svg/line.js \
 	  node_modules/d3/src/svg/arc.js \
 	  node_modules/d3/src/event/drag.js \
-	  $(GUIBUILD)/app/assets/javascripts/unscaled-pack.js \
-	  $(GUIBUILD)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
-	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3.min-min.js
+	  $(GUISRC)/app/assets/javascripts/unscaled-pack.js \
+	  $(GUISRC)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
+	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3-min.js
 
 $(TEMPLATES_FILE): $(NODE_MODULES) $(TEMPLATE_FILES)
 	mkdir -p $(GUIBUILD)/app/assets
