@@ -89,6 +89,8 @@ YUI.add('service-inspector', function(Y) {
       var activeUnit = this.get('activeUnit'),
           db = this.get('db'),
           model = this.get('model');
+      var container = this.get('container');
+      var pending = model.get('pending');
       if (!this.get('rendered')) {
         this.showViewlet('inspectorHeader');
         this.showViewlet('overview');
@@ -98,8 +100,10 @@ YUI.add('service-inspector', function(Y) {
         this.views.overview.render(model, this.getAttrs());
       }
       // Hide the 'Change version' button if the service is pending.
-      this.get('container').one('.change-version-trigger').toggleClass(
-          'hidden', model.get('pending'));
+      container.one('.change-version-trigger').toggleClass('hidden', pending);
+      // Set the 'Destroy service' button to full width if there is no
+      // 'Change version' button.
+      container.one('.destroy-service-trigger').toggleClass('wide', pending);
 
       if (this.get('showCharm')) {
         var charmId = model.get('charm');

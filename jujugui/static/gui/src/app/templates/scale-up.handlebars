@@ -1,7 +1,8 @@
 <div class="view-container scale-up-view state-default">
   <div class="add-units">
-    <div class="add button inverse orange">
-      <i class="sprite add_light_16"></i>
+    <div class="add button sprite-hover">
+      <i class="sprite add_16 normal"></i>
+      <i class="sprite add_hover_16 hover"></i>
     </div>
     <i class="sprite inspector-units units-icon"></i>
     <span class="unit-count"></span>
@@ -13,9 +14,9 @@
         <input class="units-number" type="text" name="units-number" />
       </span>
       <span class="text-in-input">Units</span>
-      <div class="cancel button inverse sprite-hover">
+      <div class="cancel button sprite-hover">
         <i class="sprite close_16 normal"></i>
-        <i class="sprite close_hover_light_16 hover"></i>
+        <i class="sprite close_hover_16 hover"></i>
       </div>
       <div>
         <input type="radio" name="placement" checked="checked" id="unit-per-machine" />
@@ -38,7 +39,7 @@
     {{>constraints-form}}
   </div>
   <div class="inspector-buttons">
-    <button class="cancel">Cancel</button>
-    <button class="confirm">Confirm</button>
+    <button class="cancel button">Cancel</button>
+    <button class="confirm button">Confirm</button>
   </div>
 </div>

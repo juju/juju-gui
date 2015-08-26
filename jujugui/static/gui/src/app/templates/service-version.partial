@@ -1,6 +1,5 @@
-<div class="change-version-trigger">
+<div class="change-version-trigger button">
   <span>
-    <i class="sprite change_version_light_16"></i>
     Change version
   </span>
 </div>

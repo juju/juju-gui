@@ -23,16 +23,24 @@ Go forth and see the typography.scss file and use those.
 
 Class and property ordering
 ---------------
-This is a general guide on how to structure your classes.
+This is a general guide on how to structure your classes. We use four spaces
+for indentation.
 
 .class {
     $vars;
     .mixins;
     properties: values;
 
-    &.additional-parent-classes {
+    &:states {
+        ...
     }
+
+    &.additional-parent-classes {
+        ...
+    }
+
     .sub-classes {
+        ...
     }
 }
 
@@ -50,8 +58,6 @@ $charm-panel-background-color: #eeeeee;
 $deployer-bar-height: 50px;
 $environment-header-height: 40px;
 $inspector-dark: #1c1817;
-$inspector-divider-bottom: rgba(0, 0, 0, 0.3);
-$inspector-divider-top: rgba(255, 255, 255, 0.05);
 $left-panel-width: 290px;
 $machine-view-border-colour: #d9d9d9;
 $navbar-height: 48px;

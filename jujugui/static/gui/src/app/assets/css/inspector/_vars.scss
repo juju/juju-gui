@@ -1,9 +1,10 @@
 $inspector-background-color: #221e1c;
+$inspector-border-color: #cfd3d4;
 $inspector-changed-field: #dedede;
-$inspector-controls-height: 82px;
+$inspector-controls-height: 150px;
 $inspector-status-border-color: #E2E2E2;
 $inspector-subtitle-color: #555555;
-$inspector-text-color: #fff;
+$inspector-text-color: $text-colour;
 $inspector-width: 292px;
 $inspector-main-padding: 20px;
 $confirm-button-color: $charm-panel-orange;

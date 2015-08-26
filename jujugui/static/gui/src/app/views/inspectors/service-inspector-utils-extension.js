@@ -126,9 +126,7 @@ YUI.add('service-inspector-utils-extension', function(Y) {
       var name = '';
       var pending = false;
       if (model) {
-        name = model.get('displayName');
         pending = model.get('pending');
-        prompt.one('.name').set('text', name);
         prompt.one('.pending').toggleClass('hidden', !pending);
       }
       prompt.removeClass('closed');

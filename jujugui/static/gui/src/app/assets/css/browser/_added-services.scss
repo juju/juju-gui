@@ -1,13 +1,27 @@
 #subapp-browser #bws-sidebar .bws-content .services-list {
   @extend .bws-list;
-  top: 207px;
+  top: $bws-header-height + $bws-added-services-button-height;
+
   .token {
-    border: 1px #ccc;
-    border-bottom-style: solid;
     padding: 10px 20px;
     overflow: auto;
+    -webkit-animation-duration: 0.1s;
+    animation-duration: 0.1s;
+
+    &:hover {
+        background-color: #f5f5f5;
+
+        .action .inactive {
+            display: inline-block;
+        }
+
+        .action.action-active .inactive {
+            display: none
+        }
+    }
+
     .icon {
-      height: 20px;
+      height: 24px;
       float: left;
       margin-right: 10px;
     }
@@ -21,9 +35,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
       &:hover {
         cursor: pointer;
-        text-decoration: underline;
       }
     }
     .unit-count {
@@ -32,13 +46,29 @@
       float: left;
       margin-left: 5px;
     }
+
     .action {
-      height: 22px;
-      width: 22px;
-      float: right;
-      border-radius: 3px;
-      margin-left: 10px;
-      display: block;
+        height: 22px;
+        width: 22px;
+        float: right;
+        border-radius: 3px;
+        margin-left: 3px;
+        display: block;
+
+        &.action-active {
+            .active {
+                display: inline-block;
+            }
+
+            .inactive {
+                display: none
+            }
+        }
+
+        .inactive,
+        .active {
+            display: none;
+        }
     }
   }
 }
@@ -47,28 +77,6 @@
     padding: 10px 20px;
     &.hide {
       display: none;
-    }
-  }
-  .environment-counts {
-    position: absolute;
-    top: 137px;
-    width: 250px;
-    height: 50px;
-    margin-left: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    box-sizing: border-box;
-    li:nth-child(1) {
-      margin-left: 10px;
-    }
-    li {
-      list-style-type: none;
-      width: 30%;
-      float: left;
-      text-align: center;
-      font-size: 14px;
-      color: #333;
-      margin-top: 8px;
     }
   }
 }
