@@ -59,7 +59,7 @@ sysdeps:
 	sudo apt-get install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
-	sudo apt-get install -y imagemagick nodejs python-virtualenv g++
+	sudo apt-get install -y imagemagick nodejs python-virtualenv g++ inotify-tools
 
 .PHONY: src
 src: $(GUISRC)
@@ -175,6 +175,13 @@ images: $(SPRITE_FILE) $(STATIC_IMAGES)
 
 .PHONY: gui
 gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES)
+
+.PHONY: watch
+watch:
+	while true; do \
+		inotifywait -qr -e modify -e create -e delete -e move $(GUISRC); \
+		make gui; \
+	done
 
 ################
 # Download cache
