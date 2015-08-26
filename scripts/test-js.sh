@@ -29,11 +29,14 @@ sleep 2
 # Capture ctrl-c
 trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
 
+TEST_PATH="http://0.0.0.0:8888/test/index.html"
+TEST_PATH=${$TEST_PATH/8888/$PORT}
+
 if [ -n "$1" ]; then
-  xdg-open http://0.0.0.0:8888/test/index.html
+  xdg-open $TEST_PATH
   fg %1
 else
-  $MOCHA_PHANTOMJS -p $PHANTOMJS -t 40000 http://0.0.0.0:8888/test/index.html
+  $MOCHA_PHANTOMJS -p $PHANTOMJS -t 40000 $TEST_PATH
   STATUS=$?
   kill %1
   exit $STATUS
