@@ -22,6 +22,7 @@ YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3.min.js
+SELENIUM := lib/python2.7/site-packages/selenium-2.47.1-py2.7.egg/selenium/selenium.py
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
@@ -58,7 +59,7 @@ sysdeps:
 	sudo apt-get install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
-	sudo apt-get install -y imagemagick nodejs python-virtualenv
+	sudo apt-get install -y imagemagick nodejs python-virtualenv g++
 
 .PHONY: src
 src: $(GUISRC)
@@ -212,6 +213,14 @@ $(FLAKE8): $(PYTEST)
 test-deps: $(PY)
 	$(call PIP,test-requirements.txt)
 
+$(SELENIUM): $(PY)
+	@# Because shelltoolbox requires ez_setup already installed before being
+	@# installed we need to manually do them this way instead of via the
+	@# requirements.txt.
+	bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) ez_setup==0.9
+	bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) shelltoolbox==0.2.1
+	bin/pip install archives/selenium-2.47.1.tar.gz
+
 #######
 # Tests
 #######
@@ -231,12 +240,16 @@ test: $(PYTEST)
 test-js-phantom: gui
 	./scripts/test-js.sh
 
+.PHONY: test-selenium
+test-selenium: gui $(PY) $(SELENIUM)
+	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
+
 .PHONY: check
 check: clean-pyc lint lint-js test test-js-phantom
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
-ci-check: clean-downloadcache deps check
+ci-check: clean-downloadcache deps check test-selenium
 
 ###########
 # Packaging

@@ -54,6 +54,7 @@ class TestBasics(browser.TestCase):
         self.wait_for_script(script, 'Environment not connected.')
 
 
+@unittest.skip("New GUI layout doesn't have log in and out buttons for now.")
 class TestAuthentication(browser.TestCase):
 
     def is_authenticated(self):

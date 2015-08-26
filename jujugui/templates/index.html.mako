@@ -360,8 +360,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         return flags;
       };
-
-
+      // The browser driver does not accept anything but `true` as a value
+      // to indicate that it's available so we use this as a flag to indicate
+      // that the scripts are loaded and that the above methods are available.
+      applicationLoaded = true;
     </script>
     <script>
       // This code is here instead of in the "app-startup" script tag above
