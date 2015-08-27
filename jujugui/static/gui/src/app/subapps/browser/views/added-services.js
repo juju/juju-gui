@@ -55,7 +55,6 @@ YUI.add('juju-added-services', function(Y) {
       this.set('serviceTokens', serviceTokens);
       // Widgets are set on render.
       this.searchWidget = null;
-      this.environmentCounts = null;
       this._bindEvents();
     },
 
@@ -296,22 +295,6 @@ YUI.add('juju-added-services', function(Y) {
     },
 
     /**
-      Renders (and instantiates, if needed) the widget that displays the unit,
-      service, and machine counts.
-
-      @method _renderEnvironmentCounts
-    */
-    _renderEnvironmentCounts: function() {
-      if (!this.environmentCounts) {
-        this.environmentCounts = new ns.EnvironmentCounts({
-          container: this.get('container').one('.environment-counts'),
-          db: this.get('db')
-        });
-      }
-      this.environmentCounts.render();
-    },
-
-    /**
       Renders the added services list.
 
       This method should always be idempotent.
@@ -344,8 +327,6 @@ YUI.add('juju-added-services', function(Y) {
       }
       // Provided by 'added-services-button.js'.
       this._renderAddedServicesButton(servicesCount, false);
-      // Render the environment counts widget.
-      this._renderEnvironmentCounts();
       // Render each token in the list
       list = container.one('.services-list');
       Object.keys(serviceTokens).forEach(function(key) {
@@ -368,9 +349,6 @@ YUI.add('juju-added-services', function(Y) {
         delete serviceTokens[key];
       });
       // Destroy the various subviews
-      if (this.environmentCounts) {
-        this.environmentCounts.destroy();
-      }
       if (this.searchWidget) {
         this.searchWidget.destroy();
       }
@@ -395,7 +373,6 @@ YUI.add('juju-added-services', function(Y) {
     'added-services-button',
     'event-tracker',
     'juju-added-service-token',
-    'juju-environment-counts',
     'search-widget-mgmt-extension',
     'view'
   ]

@@ -1,16 +1,15 @@
-<div class="destroy-service-trigger">
+<div class="destroy-service-trigger button">
   <span>
-    <i class="sprite delete_light_16"></i>
     Destroy service
   </span>
 </div>
-<div class="destroy-service-prompt closed">
+<div class="destroy-service-prompt controls closed">
   <div class="message">
-    Destroy <span class="name"></span>?
+    Are you sure you want to destroy the service?
     <span class="pending hidden">This cannot be undone.</span>
   </div>
   <div class="inspector-buttons">
-    <a class="cancel-destroy cancel-button">Cancel</a>
-    <a class="initiate-destroy">Destroy</a>
+    <a class="cancel-destroy cancel-button button">Cancel</a>
+    <a class="initiate-destroy button">Destroy</a>
   </div>
 </div>

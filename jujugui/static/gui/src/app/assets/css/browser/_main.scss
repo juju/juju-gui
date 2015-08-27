@@ -1,5 +1,5 @@
 $sticky-position: $navbar-height + $panel-space + $environment-header-height +
-    $panel-space + $bws-header-height + $bws-added-services-button-height - 2px;
+    $panel-space + $bws-header-height + $bws-added-services-button-height - 1px;
 
 @-webkit-keyframes sidebar-details-slide-in {
   from {

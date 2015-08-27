@@ -1,23 +1,21 @@
 <header>
   <div class="service-charm">
     <div class="icon">
-      <img src="{{icon}}" alt="{{name}} icon" class="icon">
-    </div>
-    <div class="details-wrapper">
-      {{#if pending}}
-        <input type="text" class="service-name config-field {{invalidName}}" name="service-name"
-               value="{{name}}">
-      {{else}}
-        <div data-bind="displayName" class="service-name">{{displayName}}</div>
-      {{/if}}
-      <div {{#unless ghost}}data-bind="charm"{{/unless}}
-           data-charmid="{{charmUrl}}"
-           class="charm-url">{{charmUrl}}</div>
+      <img src="{{icon}}" alt="{{name}} icon">
     </div>
     <div class="close sprite-hover">
       <i class="sprite close_16 normal"></i>
-      <i class="sprite close_hover_light_16 hover"></i>
+      <i class="sprite close_hover_16 hover"></i>
     </div>
+    {{#if pending}}
+      <input type="text" class="service-name config-field {{invalidName}}" name="service-name"
+             value="{{name}}">
+    {{else}}
+      <div data-bind="displayName" class="service-name">{{displayName}}</div>
+    {{/if}}
+    <div {{#unless ghost}}data-bind="charm"{{/unless}}
+         data-charmid="{{charmUrl}}"
+         class="charm-url">{{charmUrl}}</div>
   </div>
 </header>
 {{#unless ghost}}
