@@ -349,6 +349,7 @@
             }
         }
 
+        .inspector-buttons,
         .viewlet-manager-footer,
         .controls {
             button,
@@ -695,10 +696,6 @@
                     padding-top: 10px;
                     border-top: none;
                 }
-                &.status-bar {
-                    padding-top: 0;
-                    border-top: none;
-                }
             }
             .settings-wrapper {
                 &.uncommitted > label::after {
@@ -866,13 +863,6 @@
             padding: 7px 10px;
             font-size: 14px;
         }
-        .statusbar {
-            @include create-border-radius($border-radius);
-            width: 250px;
-            height: 10px;
-            margin: 10px 0 -10px 0;
-        }
-
 
         .overview-footer-item {
             padding: $inspector-main-padding / 2;
@@ -882,14 +872,10 @@
                 padding-bottom: 5px;
             }
         }
-        .unit-list,
+
         .overview-unit-list {
             margin: 0;
 
-            .status-unit-header {
-                padding-left: 40px;
-                cursor: pointer;
-            }
             .action-button-wrapper {
                 text-align: center;
                 padding: 10px 0;
@@ -899,67 +885,72 @@
                     margin: 0 7px 0 0;
                 }
             }
-            .closed-unit-list .category-label {
-                white-space: nowrap;
+
+            .closed-unit-list {
+                .category-label {
+                    white-space: nowrap;
+                }
             }
-            .closed-unit-list .chevron {
-                background-image: url("juju-ui/assets/images/chevron_down_light_16.png");
-            }
+
             .status-unit-header {
-                background-position: 15px 19px;
-            }
-            .status-unit-header.error {
-                background-image: url("juju-ui/assets/images/error_16.png");
-            }
-            .status-unit-header.running {
-                background-image: url("juju-ui/assets/images/unit_running_16.png");
-            }
-            .status-unit-header.pending {
-                background-image: url("juju-ui/assets/images/unit_pending_16.png");
-            }
-            .status-unit-header.landscape {
-                background-image: url("juju-ui/assets/images/landscape_action_16.png");
-            }
-            .status-unit-header.uncommitted {
-                background-image: url("juju-ui/assets/images/uncommitted_16.png");
-            }
-            .status-unit-content.uncommitted ul li {
-                background: url("juju-ui/assets/images/uncommitted_16.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.pending ul li {
-                background: url("juju-ui/assets/images/unit_pending_16.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.running ul li {
-                background: url("juju-ui/assets/images/unit_running_16.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.error ul li {
-                background: url("juju-ui/assets/images/error_16.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.landscape-security-upgrades ul li,
-            .status-unit-content.landscape-needs-reboot ul li {
-                background: url("juju-ui/assets/images/landscape_action_16.png") no-repeat scroll 35px center;
+                color: #fff;
+
+                &.error {
+                    &,
+                    .unit-qty {
+                        background-color: #dc322f;
+                    }
+                }
+
+                &.running {
+                    &,
+                    .unit-qty {
+                        background-color: #38b44a;
+                    }
+                }
+
+                &.pending {
+                    &,
+                    .unit-qty {
+                        background-color: #eca918;
+                    }
+                }
+
+                &.landscape {
+                    &,
+                    .unit-qty {
+                        background-color: #77216f;
+                    }
+                }
+
+                &.uncommitted {
+                    &,
+                    .unit-qty {
+                        background-color: $uncommitted-colour;
+                    }
+                }
+
+                &.closed-unit-list {
+                    &.error,
+                    &.running,
+                    &.pending,
+                    &.landscape,
+                    &.uncommitted {
+                        background-color: transparent;
+                        color: $inspector-text-color;
+                    }
+                }
             }
         }
         .unit-list-header,
         .status-unit-header {
             padding: 15px;
-            font-size: 14px;
-            border-bottom: 1px solid $inspector-border-color;
-            background-position: 20px center;
+        }
+        .status-unit-header {
+            padding-left: $inspector-main-padding;
+            background-position: 15px 19px;
             background-repeat: no-repeat;
-            display: -ms-flexbox;
-            -ms-flex-align: baseline;
-            display: flex;
-            align-content: stretch;
-            align-items: baseline;
-
-            span {
-                margin-right: 5px;
-            }
-
-            ul {
-                background: #fff;
-            }
+            cursor: pointer;
 
             .category-label {
                 text-overflow: ellipsis;
@@ -971,18 +962,16 @@
                 user-select: none;
             }
 
-            .chevron {
-                display: inline-block;
-                /* The above rule is required because IE10 does not support
-                the flexbox rules that we need. It has no effect in the
-                other supported browsers. */
-                width: 16px;
-                height: 10px; // magic number warning see below.
-                /* For whatever reason this combination of flexbox and inline-block
-                Does not allow padding-bottom to work in IE10, changing the height
-                of the element puts the chevron in the appropriate place in all browsers */
-                margin-left: 5px;
-                background: url("juju-ui/assets/images/chevron_up_light_16.png") no-repeat center center;
+            .unit-qty {
+                $size: 24px;
+                display: block;
+                float: right;
+                width: $size;
+                height: $size;
+                border-radius: $size / 2;
+                color: #fff;
+                line-height: $size;
+                text-align: center;
             }
         }
         .unit-list-header {
@@ -998,13 +987,12 @@
             margin: 0 3px 0;
             background: #CBCBCB;
         }
+
         .unit-list,
         .status-unit-content {
             $transition: .25s, max-height .3s;
             @include transition($transition);
             overflow: hidden;
-            background: $charm-panel-background-color;
-            color: $inspector-text-color;
 
             &.close-unit {
                 max-height: 0px !important;
@@ -1012,23 +1000,10 @@
 
             a {
                 color: $inspector-text-color;
-                text-decoration: underline;
-            }
-
-            a.landscape {
-                font-size: 12px;
-            }
-
-            ul {
-                margin-left: 0;
-                border-bottom: 1px solid #BEBEBE;
             }
 
             li {
-                list-style-type: none;
-                padding: 7px 10px 7px 10px;
-                border-top: 1px solid $inspector-status-border-color;
-                clear: both;
+                padding: 10px 20px;
 
                 .right-link {
                     float: right;
@@ -1037,7 +1012,8 @@
             }
 
             input[type="checkbox"] {
-                margin-right: 30px;
+                margin-right: 10px;
+                vertical-align: middle;
             }
         }
         .relation-wrapper {

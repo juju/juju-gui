@@ -1,10 +1,4 @@
 <div class="view-container">
-  <div class="view-content status-bar {{#if pending}}hidden{{/if}}">
-    <!-- without setting the height of the svg element here it defaults
-     to 100% of the available space causing an undesirable flash of
-     incorrectly calculated height -->
-    <svg class="statusbar" data-bind="aggregated_status"></svg>
-  </div>
   <div class="scale-up-container">
   </div>
   {{#unless subordinate}}

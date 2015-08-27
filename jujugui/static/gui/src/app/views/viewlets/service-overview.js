@@ -35,14 +35,14 @@ YUI.add('inspector-overview-view', function(Y) {
       return status.category;
     },
     'pending': function(status) {
-      return status.category + ' units';
+      return status.category;
     },
-    uncommitted: 'uncommitted units',
-    running: 'running units',
+    uncommitted: 'Uncommitted',
+    running: 'Running',
     'landscape': function(status) {
       var nameMap = {
-        'landscape-needs-reboot': 'machines need to be restarted',
-        'landscape-security-upgrades': 'security upgrades available'
+        'landscape-needs-reboot': 'Machines needing restart',
+        'landscape-security-upgrades': 'Security upgrades available'
       };
       return nameMap[status.category];
     }
@@ -232,6 +232,11 @@ YUI.add('inspector-overview-view', function(Y) {
     .attr('type', 'checkbox')
     .classed('toggle-select-all', true);
 
+
+    unitStatusContentForm.select('li')
+    .append('text')
+    .text('Select all units');
+
     unitStatusContentForm.append('ul');
 
     unitStatusContentForm.append('div')
@@ -244,16 +249,13 @@ YUI.add('inspector-overview-view', function(Y) {
           return template;
         });
 
+    categoryStatusHeader.append('span')
+    .classed('category-label', true);
+
     categoryStatusHeader
     .filter(function(d) { return d.type === 'unit'; })
     .append('span')
     .classed('unit-qty', true);
-
-    categoryStatusHeader.append('span')
-    .classed('category-label', true);
-
-    categoryStatusHeader.append('span')
-    .classed('chevron', true);
 
     // D3 header update section
     categoryWrapperNodes.select('.unit-qty')
@@ -387,24 +389,6 @@ YUI.add('inspector-overview-view', function(Y) {
       'button.unit-action-button': { click: '_unitActionButtonClick'}
     },
     bindings: {
-      aggregated_status: {
-        'update': function(node, value) {
-          if (value && value.uncommitted) {
-            // We don't want to update the status bar with uncommitted units.
-            delete value.uncommitted;
-          }
-          var bar = this._statusbar;
-          if (!bar) {
-            bar = this._statusbar = new views.StatusBar({
-              width: 250,
-              target: node.getDOMNode(),
-              labels: false,
-              height: 30
-            }).render();
-          }
-          bar.update(value);
-        }
-      },
       units: {
         depends: ['aggregated_status'],
         'update': function(node, value) {
@@ -446,11 +430,6 @@ YUI.add('inspector-overview-view', function(Y) {
         // If the inspector is open when the service is deployed we need
         // to update the inspector.
         container.one('.expose').removeClass('hidden');
-        var statusBar = container.one('.status-bar');
-        // There is no status bar if it is a subordinate service.
-        if (statusBar) {
-          statusBar.removeClass('hidden');
-        }
       }
       // Do not create the scale up view if the current service's charm is a
       // subordinate charm.
@@ -956,7 +935,6 @@ YUI.add('inspector-overview-view', function(Y) {
   requires: [
     'node',
     'd3',
-    'd3-statusbar',
     'juju-charm-models',
     'viewlet-view-base',
     'scale-up-view',
