@@ -88,9 +88,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- This <img> tag is here just to force early loading of the background
         image so it displays more quickly.  This makes a large improvement to
         the way the app looks while loading on a slow connection. -->
-      <img src="juju-ui/assets/images/non-sprites/pattern_tile.png" style="display: none;">
-
-      <div id="full-screen-mask" class="crosshatch-background">
+      <div id="full-screen-mask">
         <div id="browser-warning" class="centered-column"
             style="display:none;">
           <i class="sprite juju_logo" title="Juju GUI"></i>
