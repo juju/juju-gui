@@ -24,6 +24,7 @@ BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.1-py2.7.egg/selenium/selenium.py
+REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
@@ -46,7 +47,6 @@ help:
 	@echo "check - run tests and check lint."
 	@echo "clean - remove build and python artifacts"
 	@echo "deps - install the dependencies"
-	@echo "dev - install jujugui in develop mode"
 	@echo "gui - build the gui files"
 	@echo "lint - check style with flake8"
 	@echo "run - run the development server"
@@ -87,7 +87,7 @@ run:
 # INSTALL
 #########
 .PHONY: all
-all: venv deps dev
+all: venv deps
 
 venv: $(PY)
 
@@ -107,7 +107,7 @@ modules-js: $(MODULESMIN)
 build-js: $(BUILT_RAWJSFILES) $(MIN_JS_FILES)
 
 $(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUISRC)/app/$*.js -o $@
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/$*.js -o $@
 
 $(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
 	mkdir -p $(@D)
@@ -117,9 +117,18 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
 	cp $(JS_MACAROON) $(JS_ASSETS)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
-	find $(BUILT_JS_ASSETS) -type f -name "*.js" -not -name "*d3-wrapper*" -not -name "*unscaled-pack*" | sed s/\.js$$//g | xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
+	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
+		-not -name "react*" \
+		-not -name "*d3-wrapper*" \
+		-not -name "*unscaled-pack*" | \
+		sed s/\.js$$//g | \
+		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
 $(YUI): $(NODE_MODULES)
+
+$(REACT_ASSETS): $(NODE_MODULES)
+	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
+	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
@@ -174,7 +183,7 @@ $(STATIC_IMAGES):
 images: $(SPRITE_FILE) $(STATIC_IMAGES)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(REACT_ASSETS)
 
 .PHONY: watch
 watch:
