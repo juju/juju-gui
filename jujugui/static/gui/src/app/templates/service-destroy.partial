@@ -10,6 +10,6 @@
   </div>
   <div class="inspector-buttons">
     <a class="cancel-destroy cancel-button button">Cancel</a>
-    <a class="initiate-destroy button">Destroy</a>
+    <a class="initiate-destroy button confirm">Destroy</a>
   </div>
 </div>
