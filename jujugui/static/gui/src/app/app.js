@@ -1129,8 +1129,10 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
-      // Update the react views on database change
-      this._renderEnvSizeDisplay();
+      if (window.flags && window.flags.react) {
+        // Update the react views on database change
+        this._renderEnvSizeDisplay();
+      }
     },
 
     // Route handlers

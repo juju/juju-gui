@@ -26,7 +26,7 @@ YUI.add('env-size-display', function() {
         <div className="env-size-display">
           <ul>
               <li className="tab services">
-                  <a href="" data-view="serviceView">Servicess</a>
+                  <a href="" data-view="serviceView">Services</a>
               </li>
               <li className="spacer">|</li>
               <li className="tab machines">
