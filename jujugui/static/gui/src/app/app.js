@@ -609,7 +609,11 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserDropdownView();
         }
         this._renderDeployerBarView();
-        this._renderEnvironmentHeaderView();
+        if (window.flags && window.flags.react) {
+            this._renderEnvSizeDisplay();
+        } else {
+            this._renderEnvironmentHeaderView();
+        }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -685,6 +689,12 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+    },
+
+    _renderEnvSizeDisplay: function() {
+      React.render(
+          <window.juju.components.EnvSizeDisplay/>,
+          document.getElementById('env-size-display-container'));
     },
 
     /**
@@ -1119,6 +1129,8 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
+      // Update the react views on database change
+      this._renderEnvSizeDisplay();
     },
 
     // Route handlers
@@ -1703,6 +1715,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
+    'env-size-display',
     // juju-views group
     'd3-components',
     'container-token',

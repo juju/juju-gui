@@ -124,6 +124,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="onboarding"></div>
       <div id="deployer-bar"></div>
       <div id="environment-header"></div>
+      <div id="env-size-display-container"></div>
       <div id="machine-view-panel"></div>
 
       <div class="cookie-policy" style="display:none;">
