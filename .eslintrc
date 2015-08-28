@@ -1,6 +1,10 @@
 env:
   browser: true
   node: true
+ecmaFeatures:
+  jsx: true
+  defaultParams: true
+  objectLiteralShorthandProperties: true
 rules:
   no-shadow: 0
   quotes: [2, "single"]

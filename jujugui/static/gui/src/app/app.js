@@ -610,9 +610,12 @@ YUI.add('juju-gui', function(Y) {
         }
         this._renderDeployerBarView();
         if (window.flags && window.flags.react) {
-            this._renderEnvSizeDisplay();
+          this._renderEnvSizeDisplay(
+            this.db.services.size(),
+            this.db.machines.size()
+          );
         } else {
-            this._renderEnvironmentHeaderView();
+          this._renderEnvironmentHeaderView();
         }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -691,10 +694,12 @@ YUI.add('juju-gui', function(Y) {
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
     },
 
-    _renderEnvSizeDisplay: function() {
+    _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
       React.render(
-          <window.juju.components.EnvSizeDisplay/>,
-          document.getElementById('env-size-display-container'));
+        <window.juju.components.EnvSizeDisplay
+          serviceCount={serviceCount}
+          machineCount={machineCount} />,
+        document.getElementById('env-size-display-container'));
     },
 
     /**
@@ -1131,7 +1136,10 @@ YUI.add('juju-gui', function(Y) {
       }
       if (window.flags && window.flags.react) {
         // Update the react views on database change
-        this._renderEnvSizeDisplay();
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
       }
     },
 
