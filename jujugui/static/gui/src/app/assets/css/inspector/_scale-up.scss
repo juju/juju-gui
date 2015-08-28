@@ -96,17 +96,17 @@
             line-height: 30px;
         }
     }
-    .inspector-buttons {
-        padding-top: 20px;
 
-        button {
-            margin: 0;
-        }
+    .inspector-buttons {
+        margin-left: -10px;
+        margin-right: -10px;
     }
+
     .constraints-form {
       margin-top: 10px;
+
       legend {
-        display: none;
+          display: none;
       }
     }
 }

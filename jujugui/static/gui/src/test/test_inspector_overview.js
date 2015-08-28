@@ -461,32 +461,32 @@ describe('Inspector Overview', function() {
         type: 'unit',
         units: []
       },
-      'pending units': {
+      'pending': {
         type: 'unit',
         category: 'pending',
         categoryType: 'pending',
         units: []
       },
       // Needs to be able to handle different pending types
-      'foobar units': {
+      'foobar': {
         type: 'unit',
         category: 'foobar',
         categoryType: 'pending',
         units: []
       },
-      'running units': {
+      'Running': {
         type: 'unit',
         category: 'running',
         categoryType: 'running',
         units: []
       },
-      'machines need to be restarted': {
+      'Machines needing restart': {
         type: 'unit',
         category: 'landscape-needs-reboot',
         categoryType: 'landscape',
         units: []
       },
-      'security upgrades available': {
+      'Security upgrades available': {
         type: 'unit',
         category: 'landscape-security-upgrades',
         categoryType: 'landscape',
@@ -571,7 +571,7 @@ describe('Inspector Overview', function() {
     assert.equal(pendingWrapper.one(SUC).hasClass('close-unit'), true);
     assert.equal(pendingWrapper.one('.unit-qty').getHTML(), 1);
     assert.equal(
-        pendingWrapper.one('.category-label').getHTML(), 'pending units');
+        pendingWrapper.one('.category-label').getHTML(), 'pending');
     assert.notEqual(pendingWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
     var runningWrapper = unitListWrappers.item(3);
@@ -580,7 +580,7 @@ describe('Inspector Overview', function() {
     assert.equal(runningWrapper.one(SUC).hasClass('close-unit'), true);
     assert.equal(runningWrapper.one('.unit-qty').getHTML(), 1);
     assert.equal(
-        runningWrapper.one('.category-label').getHTML(), 'running units');
+        runningWrapper.one('.category-label').getHTML(), 'Running');
     assert.notEqual(runningWrapper.one(SUC).getStyle('maxHeight'), undefined);
     exampleUnit = runningWrapper.all('li').item(1);
     assert.equal(exampleUnit.get('text'), 'mysql/3');
@@ -631,14 +631,14 @@ describe('Inspector Overview', function() {
     assert.equal(pendingWrapper.one(SUH).hasClass('pending'), true);
     assert.equal(pendingWrapper.one('.unit-qty').getHTML(), 5);
     assert.equal(
-        pendingWrapper.one('.category-label').getHTML(), 'pending units');
+        pendingWrapper.one('.category-label').getHTML(), 'pending');
     assert.notEqual(pendingWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
     runningWrapper = unitListWrappers.item(1);
     assert.equal(runningWrapper.one(SUH).hasClass('running'), true);
     assert.equal(runningWrapper.one('.unit-qty').getHTML(), 1);
     assert.equal(
-        runningWrapper.one('.category-label').getHTML(), 'running units');
+        runningWrapper.one('.category-label').getHTML(), 'Running');
     assert.notEqual(runningWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
     newContainer.remove(true);
