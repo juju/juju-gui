@@ -407,7 +407,9 @@ YUI.add('subapp-browser', function(Y) {
     */
     _machine: function(metadata) {
       this._renderMachineViewPanelView(this.get('db'), this.get('env'));
-      this.get('environmentHeader').setSelectedTab('machines');
+      if (!window.flags || !window.flags.react) {
+        this.get('environmentHeader').setSelectedTab('machines');
+      }
     },
 
     /**

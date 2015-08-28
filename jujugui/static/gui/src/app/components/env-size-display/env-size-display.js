@@ -21,16 +21,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('env-size-display', function() {
 
   juju.components.EnvSizeDisplay = React.createClass({
+
+    _changeEnvironmentView: function(e) {
+      var view = e.currentTarget.dataset.view
+      var changeState = {
+        sectionB: {
+          component: (view === 'machine') ? 'machine' : null,
+          metadata: {}
+        }
+      };
+      this.props.changeState(changeState);
+    },
+
     render: function() {
       return (
         <div className="env-size-display">
           <ul>
               <li className="tab services">
-                  <a href="" data-view="serviceView">{this.props.serviceCount} Services</a>
+                  <a data-view="service" onClick={this._changeEnvironmentView}>
+                    {this.props.serviceCount} Services
+                  </a>
               </li>
               <li className="spacer">|</li>
               <li className="tab machines">
-                  <a href="" data-view="machineView">{this.props.machineCount} Machines</a>
+                  <a data-view="machine" onClick={this._changeEnvironmentView}>
+                    {this.props.machineCount} Machines
+                  </a>
               </li>
           </ul>
         </div>

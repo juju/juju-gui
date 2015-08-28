@@ -694,11 +694,23 @@ YUI.add('juju-gui', function(Y) {
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
     },
 
+    /**
+      Passed to the components so that they can interact with the existing
+      changeState system.
+
+      @method changeState
+      @param {Object} state The state to change the view to.
+    */
+    changeState: function(state) {
+      this.fire('changeState', state);
+    },
+
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
       React.render(
         <window.juju.components.EnvSizeDisplay
           serviceCount={serviceCount}
-          machineCount={machineCount} />,
+          machineCount={machineCount}
+          changeState={this.changeState.bind(this)} />,
         document.getElementById('env-size-display-container'));
     },
 
