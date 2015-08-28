@@ -34,6 +34,7 @@ RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/as
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
 TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
+SCSS_FILES := $(shell find $(GUISRC)/app/assets/css -type f -name "*.scss")
 STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
 	$(GUIBUILD)/app/assets/stylesheets/prettify.css \
@@ -148,7 +149,7 @@ $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
 	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
 
-$(CSS_FILE): $(PYRAMID)
+$(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 	mkdir -p $(GUIBUILD)/app/assets/css
 	bin/sassc -s compressed $(SCSS_FILE) $@
 
