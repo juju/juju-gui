@@ -376,11 +376,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       to download an app the user might not be able to use anyway.
     -->
 
+    <!--
+      d3 must be loaded with the initial yui assets. if loaded by the combo loader
+      it will be combined with our app code and be interpreted under global
+      'use strict' and d3 doesn't work under strict.
+    -->
     % if raw:
-    <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     % else:
-    <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     % endif
 
@@ -453,7 +458,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       };
     </script>
-
     <script async type="text/javascript">
       (function() {
       var ga = document.createElement('script');
