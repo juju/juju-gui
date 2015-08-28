@@ -72,8 +72,8 @@ $bws-header-height: 81px;
 
 // Imports need to be after vars.
 @import "typography";
-@import "mixins";
 @import "browser/vars";
+@import "mixins";
 @import "inspector/vars";
 
 /* Common classes and setup */

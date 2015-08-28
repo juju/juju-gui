@@ -1,5 +1,5 @@
 $sticky-position: $navbar-height + $panel-space + $environment-header-height +
-    $panel-space + $bws-header-height + $bws-added-services-button-height - 1px;
+    $panel-space + $bws-header-height + $bws-added-services-button-height + 1px;
 
 @-webkit-keyframes sidebar-details-slide-in {
   from {
@@ -51,7 +51,6 @@ $sticky-position: $navbar-height + $panel-space + $environment-header-height +
     @extend %floating-panel;
     position: absolute;
     top: $environment-header-height + ($panel-space * 2);
-    bottom: $panel-space;
     left: $panel-space;
     right: 0;
     z-index: 601;
@@ -103,20 +102,17 @@ $sticky-position: $navbar-height + $panel-space + $environment-header-height +
       }
       .search-widget {
         padding: 20px;
-        position: absolute;
         border-bottom: 1px solid #b7b7b9;
       }
-      .with-home .charm-list {
-        top: 198px;
-      }
       .charm-list {
-        @extend .bws-list;
-        top: $bws-header-height + 56px;
+        @extend %bws-list;
+        position: relative;
+        min-height: 100px;
       }
     }
     .bws-content .with-home #bws-search {
       .sticky {
-        top: $sticky-position + ($bws-home-height - 4px);
+        top: $sticky-position + $bws-home-height;
       }
     }
   }
@@ -147,7 +143,6 @@ body.state-sidebar-hidden #subapp-browser {
   .bws-view-data {
       top: $panel-space;
   }
-  #bws-sidebar,
   .bws-view-data {
     bottom: $deployer-bar-height + $panel-space;
   }

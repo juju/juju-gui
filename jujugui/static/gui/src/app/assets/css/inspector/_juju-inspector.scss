@@ -57,15 +57,10 @@
 
 .yui3-juju-inspector {
     .juju-inspector {
-        position: static;
-        z-index: 501;
         width: $inspector-width;
         min-height: 100px;
-        border: 0;
         /* Can be removed once the old inspector styles are removed. */
-        margin: 0;
         font-size: 14px;
-        font-weight: 400;
 
         ::-webkit-scrollbar-track {
             background-color: #1c1815;
@@ -616,11 +611,6 @@
             @include transition(max-height 1s);
             @extend .display-flex;
             @include flex-direction(column);
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
 
             .header-slot,
             .viewlet-manager-navigation,
@@ -629,7 +619,7 @@
             }
             .viewlet-container {
                 flex: 1 1 auto;
-                max-height: none;
+                max-height: 250px;
             }
         }
 

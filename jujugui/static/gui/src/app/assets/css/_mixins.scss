@@ -142,14 +142,11 @@
   display: block;
   background-color: $color;
 }
-.bws-list {
+
+%bws-list {
   overflow-y: auto;
-  border-top: 1px solid #d7d7d7;
-  position: absolute;
-  top: $bws-header-height;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  max-height: 350px;
+  border-top: 1px solid $bws-border;
 }
 
 %floating-panel {
