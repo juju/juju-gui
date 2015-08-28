@@ -148,7 +148,7 @@ $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
 	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
 
-$(CSS_FILE): $(PYRAMID)
+$(CSS_FILE): $(PYRAMID) $(SCSS_FILE)
 	mkdir -p $(GUIBUILD)/app/assets/css
 	bin/sassc -s compressed $(SCSS_FILE) $@
 
