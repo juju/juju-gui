@@ -1015,6 +1015,10 @@
                 margin-right: 10px;
                 vertical-align: middle;
             }
+
+            label {
+                display: inline-block;
+            }
         }
         .relation-wrapper {
             .status-unit-content {
