@@ -19,7 +19,7 @@
     "graceful-fs": "1.1.x",
     "grunt": "0.3.17",
     "jshint": "2.1.9",
-    "mocha": "1.8.2",
+    "mocha": "^2.2.5",
     "mocha-phantomjs": "^3.6.0",
     "node-markdown": "0.1.x",
     "node-minify": "0.7.x",
