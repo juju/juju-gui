@@ -43,6 +43,9 @@ describe('Inspector Relations Tab', function() {
     });
   });
 
+  // Required so that the cleanups instance can be attached.
+  beforeEach(function() {});
+
   function ViewletGenerator(config) {
     // Ignore possible strict violation
     /* jshint -W040 */

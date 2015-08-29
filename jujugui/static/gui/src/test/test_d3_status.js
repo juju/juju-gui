@@ -37,6 +37,9 @@ describe('D3 StatusBar', function() {
     container = utils.makeContainer(this);
   });
 
+  // Required so that the cleanups instance can be attached.
+  afterEach(function() {});
+
   it('should properly parse data', function() {
     var bar = new views.StatusBar({width: 300});
     var result = bar.mapData({'running': 4, 'pending': 4, 'error': 2 });

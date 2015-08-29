@@ -100,6 +100,9 @@ describe('Viewlet Manager', function() {
     });
   });
 
+  // Required so that the cleanups instance can be attached.
+  beforeEach(function() {});
+
   afterEach(function(done) {
     // destroy is async
     viewletManager.after('destroy', function() {

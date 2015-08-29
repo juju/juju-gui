@@ -418,6 +418,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       });
 
+      // Required or else the cleanups won't be called.
+      afterEach(function() {});
+
       it('deployLocalCharm: can be stopped when asking for series', function() {
         testUtils.makeContainer(this, 'content');
         var destroyVM = testUtils.makeStubMethod(

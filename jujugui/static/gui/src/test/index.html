@@ -252,7 +252,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           mochaPhantomJS.run();
       } else {
           // The global variable testRunner is required by browser tests.
-          testRunner = mocha.run();
+          testRunner = mocha.run().globals(['testRunner', 'jsyaml',
+            'consoleManager', 'zip', 'spinner', 'yui', '_yuid', 'juju', '_gaq',
+            'PR_SHOULD_USE_CONTINUATION', 'prettyPrintOne', 'prettyPrint', 'PR',
+            'console', 'juju_config', 'lastpass_iter', 'lastpass_f', 'saveAs']);
       }
   });
   </script>
