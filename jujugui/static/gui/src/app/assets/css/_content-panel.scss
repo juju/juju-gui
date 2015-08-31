@@ -1,7 +1,7 @@
 // This is the content panel that slides out from the left that contains
 // charm details etc.
 .bws-view-data {
-    @extend .customize-scrollbar;
+    @extend %customize-scrollbar;
     position: absolute;
     z-index: 600;
     top: 0;

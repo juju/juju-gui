@@ -1,5 +1,5 @@
 .yui3-juju-inspector {
-    @extend .customize-scrollbar;
+    @extend %customize-scrollbar;
 
     .juju-inspector {
         width: $inspector-width;

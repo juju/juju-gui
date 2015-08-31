@@ -19,7 +19,7 @@ $sticky-position: $navbar-height + $panel-space + $environment-header-height +
 }
 
 #subapp-browser {
-  @extend .customize-scrollbar;
+  @extend %customize-scrollbar;
   @extend .type9;
 
   .push-left {
