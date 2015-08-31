@@ -77,12 +77,13 @@
 
             &.confirm {
                 float: right;
+                background-color: $confirm-button-color;
+                border-color: $confirm-button-color;
+                color: #fff;
 
-                &,
                 &:hover {
-                    background-color: $confirm-button-color;
-                    border-color: $confirm-button-color;
-                    color: #fff;
+                    background-color: #ae3910;
+                    border-color: #ae3910;
                 }
 
                 &:disabled {

@@ -14,11 +14,6 @@
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
     .left-breakout {
-        @extend .type9;
-        z-index: 500;
-        left: auto;
-        right: $inspector-width;
-
         .tab-panels {
             top: 97px;
         }

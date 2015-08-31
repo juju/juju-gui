@@ -1,24 +1,11 @@
 .added-services-button {
   line-height: 58px;
   padding-left: 20px;
-  width: 270px;
   cursor: pointer;
 
   .action-indicator {
     position: absolute;
     right: 20px;
-  }
-
-  &:hover .action-indicator {
-    .normal {
-      display: none;
-    }
-    .hover {
-      display: inline-block;
-    }
-  }
-  .action-indicator .hover {
-    display: none;
   }
 }
 
