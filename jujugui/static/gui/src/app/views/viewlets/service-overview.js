@@ -230,11 +230,13 @@ YUI.add('inspector-overview-view', function(Y) {
     unitStatusContentForm.append('li')
     .append('input')
     .attr('type', 'checkbox')
+    .attr('id', 'toggle-select-all')
     .classed('toggle-select-all', true);
 
 
     unitStatusContentForm.select('li')
-    .append('text')
+    .append('label')
+    .attr('for', 'toggle-select-all')
     .text('Select all units');
 
     unitStatusContentForm.append('ul');

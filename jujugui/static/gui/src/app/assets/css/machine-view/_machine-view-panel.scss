@@ -23,7 +23,7 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     .column {
-        @extend .customize-scrollbar;
+        @extend %customize-scrollbar;
         @extend .display-flex;
         @include flex-direction(column);
         flex: 1 1 33.333%;

@@ -1,114 +1,20 @@
-.yui3-juju-inspector,
-.bws-view-data {
-    @extend .customize-scrollbar;
-}
-
-.bws-view-data {
-    right: 70px;
-    position: absolute;
-    top: 0;
-
-    .left-breakout {
-        @extend .type9;
-        z-index: 500;
-        left: auto;
-        right: $inspector-width;
-
-        .tab-panels {
-            top: 97px;
-        }
-        .charm .yui3-juju-browser-tabview {
-            margin-top: 30px;
-        }
-        .unit-overview {
-            .header {
-                height: auto;
-            }
-            .unit-info-tabs {
-                padding: 30px;
-
-                h3 {
-                    @extend .type5;
-                    margin-bottom: 20px;
-                    padding-bottom: 15px;
-                    border-bottom: 1px solid $bws-border;
-                }
-                tr {
-                    border-bottom: 1px solid $bws-border;
-
-                    th,
-                    td {
-                        padding: 10px 20px;
-                    }
-                    th {
-                        @extend .type5;
-                        text-align: left;
-                        padding-top: 0;
-                        padding-bottom: 15px;
-                    }
-                }
-            }
-            li ul {
-                margin-left: 20px;
-            }
-        }
-    }
-}
-
 .yui3-juju-inspector {
+    @extend %customize-scrollbar;
+
     .juju-inspector {
-        position: static;
-        z-index: 501;
         width: $inspector-width;
         min-height: 100px;
-        border: 0;
-        /* Can be removed once the old inspector styles are removed. */
-        margin: 0;
         font-size: 14px;
-        font-weight: 400;
 
-        ::-webkit-scrollbar-track {
-            background-color: #1c1815;
-        }
-        ::-webkit-scrollbar-thumb {
-            background-color: #505050;
-            border-width: 0 1px;
-            border-color: #1c1815;
-        }
-        // XXX: Fix for local charm inspectors, can be removed when the
-        // new designs are implemented. huwshimi, 12 June 2014.
-        & > .viewlet-container {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: $inspector-background-color;
-            border-radius: $border-radius;
-
-            .local-new-upgrade {
-                border-top: 1px solid rgba(0, 0, 0, 0.3);
-
-                h2 {
-                    border-top: 1px solid rgba(255, 255, 255, 0.05);
-                }
-            }
-        }
-        form {
-            margin: 0;
-        }
-        textarea,
-        input[type=text],
-        label {
-            font-size: 14px;
-        }
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
+
         /* Hide IE input clear control */
         input[type=text]::-ms-clear {
             display: none;
         }
+
         textarea,
         input[type=text] {
             @include create-border-radius($border-radius);
@@ -121,6 +27,11 @@
             background-position: right;
             background-repeat: no-repeat;
 
+            &.valid,
+            &.invalid {
+                padding-right: 30px;
+            }
+
             &.valid {
                 background-image: url(juju-ui/assets/images/non-sprites/form-validation-tick.png);
             }
@@ -129,69 +40,16 @@
                 background-image: url(juju-ui/assets/images/non-sprites/form-validation-cross.png);
             }
         }
+
         input[type=text] {
             @extend .border-box;
         }
+
         textarea {
             width: 96%;
         }
+
         /* Buttons */
-        button.unit-action-button,
-        button.remove-relation {
-            @include create-border-radius($border-radius);
-            // Using a variable here because commas aren't allowed in mixin args.
-            $box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
-            @include create-box-shadow($box-shadow);
-            cursor: pointer;
-            height: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        button.unit-action-button,
-        button.remove-relation {
-            display: inline-block;
-            vertical-align: middle;
-            width: 47%;
-            margin: 20px 0;
-            padding: 0;
-            border: none;
-            color: $inspector-text-color;
-            text-align: center;
-            text-decoration: none;
-            line-height: 30px;
-        }
-        .inspector-buttons a,
-        .inspector-buttons button {
-            &.rerender-config {
-                background-color: $confirm-button-color;
-                border: none;
-            }
-            &.initiate-destroy,
-            &.confirm-num-units,
-            &.confirm {
-                float: right;
-            }
-        }
-
-        .inspector-buttons a,
-        .inspector-buttons button,
-        button,
-        .button {
-            &.initiate-destroy,
-            &.confirm-num-units,
-            &.confirm {
-                &,
-                &:hover {
-                    background-color: $confirm-button-color;
-                    border-color: $confirm-button-color;
-                    color: #fff;
-                }
-
-                &:disabled {
-                    background-color: #802E0E;
-                    color: #eee;
-                }
-            }
-        }
 
         button {
             // Include the mixin styles.
@@ -206,6 +64,7 @@
             border: 1px solid #cdcdcd;
             border-radius: $border-radius;
             color: $charm-panel-orange;
+            line-height: 1.6;
             text-align: center;
 
             &:hover {
@@ -214,6 +73,23 @@
 
             &.wide {
                 width: 100%;
+            }
+
+            &.confirm {
+                float: right;
+                background-color: $confirm-button-color;
+                border-color: $confirm-button-color;
+                color: #fff;
+
+                &:hover {
+                    background-color: #ae3910;
+                    border-color: #ae3910;
+                }
+
+                &:disabled {
+                    background-color: #802E0E;
+                    color: #eee;
+                }
             }
         }
 
@@ -340,12 +216,9 @@
             &.closed {
                 max-height: 0;
             }
-        }
 
-        .configuration-buttons {
-            button,
-            .button {
-                line-height: 1.6;
+            &.inline {
+                position: relative;
             }
         }
 
@@ -468,7 +341,6 @@
             .settings-description {
                 clear: both;
                 padding-top: 12px;
-                font-weight: 200;
                 /* below hyphenation code was taken from:
                 http://www.newnet-soft.com/blog/csstypography */
                 -ms-word-break: break-all;
@@ -490,32 +362,6 @@
                 left: 0;
                 visibility: hidden;
                 z-index: 0;
-            }
-        }
-        .ghost {
-            input[type=text] {
-                /* Fixes the bottom of the service name getting cutoff (IE10) */
-                height: auto;
-            }
-            .use-defaults {
-                textarea,
-                input[type=text] {
-                    background-color: $disabled-input-background-color;
-                    border-color: $inspector-background-color;
-                    cursor: not-allowed;
-                    color: $disabled-input-text-color;
-                }
-                .settings-description {
-                    color: #54504d;
-                }
-            }
-            .service-config {
-                padding-top: 20px;
-                border-top: 1px solid $inspector-border-color;
-            }
-            .header-slot header .service-charm .charm-url {
-                cursor: auto;
-                text-decoration: none;
             }
         }
 
@@ -601,7 +447,6 @@
             .inspector-header-message {
                 background-color: $charm-panel-background-color;
                 border-bottom: 1px solid $inspector-border-color;
-                color: $inspector-text-color;
                 padding: 16px $inspector-main-padding;
 
                 span[dismiss] {
@@ -616,11 +461,6 @@
             @include transition(max-height 1s);
             @extend .display-flex;
             @include flex-direction(column);
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
 
             .header-slot,
             .viewlet-manager-navigation,
@@ -629,7 +469,7 @@
             }
             .viewlet-container {
                 flex: 1 1 auto;
-                max-height: none;
+                max-height: 250px;
             }
         }
 
@@ -819,21 +659,7 @@
                 }
             }
         }
-        .status {
-            display: inline-block;
-            width: 33%;
-            text-align: center;
 
-            &.running {
-                background-color: #00b711;
-            }
-            &.pending {
-                background-color: #ede837;
-            }
-            &.error {
-                background-color: #ba0000;
-            }
-        }
         .change-version-trigger {
             float: right
         }
@@ -846,7 +672,6 @@
             padding: 10px $inspector-main-padding;
             border-bottom: 1px solid $inspector-border-color;
             font-size: 16px;
-            font-weight: 200;
             color: $inspector-text-color;
 
             .sprite {
@@ -880,9 +705,9 @@
                 text-align: center;
                 padding: 10px 0;
 
+                .button,
                 button {
-                    width: 70px;
-                    margin: 0 7px 0 0;
+                    margin-right: 7px;
                 }
             }
 
@@ -982,11 +807,6 @@
                 right: 20px;
             }
         }
-        .unit-action-button {
-            width: 70px;
-            margin: 0 3px 0;
-            background: #CBCBCB;
-        }
 
         .unit-list,
         .status-unit-content {
@@ -1015,6 +835,10 @@
                 margin-right: 10px;
                 vertical-align: middle;
             }
+
+            label {
+                display: inline-block;
+            }
         }
         .relation-wrapper {
             .status-unit-content {
@@ -1025,16 +849,12 @@
             }
             .errored-units {
                 text-align: center;
-                border-top: 1px solid #e2e2e2;
+
                 button.remove-relation {
                     margin: 10px 0;
                 }
             }
         }
-    }
-
-    .ghost .viewlet-manager-footer .controls {
-        display: none;
     }
 
     .unit-scaling {

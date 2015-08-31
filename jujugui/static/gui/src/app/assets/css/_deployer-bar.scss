@@ -177,7 +177,7 @@
         }
     }
     .panel.changes {
-        @extend .customize-scrollbar;
+        @extend %customize-scrollbar;
 
         header {
             .action-list .hide {

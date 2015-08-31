@@ -19,7 +19,7 @@
         color: #d7d3d0;
     }
     .dropdown {
-        @extend .customize-scrollbar;
+        @extend %customize-scrollbar;
         display: none;
         position: absolute;
         z-index: 1000;
