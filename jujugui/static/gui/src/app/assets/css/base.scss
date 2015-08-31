@@ -420,8 +420,7 @@ th {
 /*
  * Intro text that appears on the canvas if there are no deployed services.
  */
-#environment-help {
-    color: #757575;
+.environment-help {
     text-align: center;
     /* This is absolute so that it does not push the svg down when it is
        visible.  That's important for animations hiding and showing this help,
@@ -436,34 +435,56 @@ th {
        way to slightly improve the experience during transitions. */
     pointer-events: none;
 
-    div.vertical-center-floater {
-        height: 50%;
-        margin-bottom: -250px;
-        margin-top: 0;
-        min-height: 225px;
-    }
-    div.content {
+    &__content {
         height: 450px;
+        width: 789px;
         padding: $environment-header-height 0 0 $left-panel-width;
+        margin: 0 auto;
     }
-    h1 {
-        line-height: normal;
-        margin-bottom: 1ex;
-        font-size: 26px;
-    }
-    p {
+
+    &__tooltip {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         line-height: normal;
         font-size: 18px;
-        width: 301px;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 2ex;
+        width: 260px;
+        background: #fff;
+        margin: 20px auto;
+        padding: 12px 25px;
+        color: #757575;
+        position: relative;
+        left: -20px;
+        top: 35px;
+        box-sizing: border-box;
+
+        &:after {
+            content: "";
+            background: #fff;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #eee;
+            border-bottom: 2px solid #eee;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            position: absolute;
+            bottom: -8px;
+            left: calc(50% - 8px);
+        }
+    }
+
+    &__image {
+        stroke-width: 1;
+        width: 789px;
+        height: 386px;
+    }
+
+    @at-root {
+        .state-sidebar-hidden .environment-help__content {
+            // When the sidebar is hidden center the onboarding to the full width.
+            padding-left: 0;
+        }
     }
 }
-.state-sidebar-hidden #environment-help .content {
-    // When the sidebar is hidden center the onboarding to the full width.
-    padding-left: 0;
-}
+
 /*
  * The actions menu that appears next to a service block.
  */
@@ -671,6 +692,7 @@ th {
 .rel-indicator {
     cursor: pointer;
 }
+
 circle.mouse-down-indicator {
     stroke: #040404;
     stroke-width: 2px;

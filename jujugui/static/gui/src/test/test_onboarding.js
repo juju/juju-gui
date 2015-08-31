@@ -40,6 +40,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       container = utils.makeContainer(this, 'onboarding');
       env_help = utils.makeContainer(this, 'environment-help');
+      env_help.addClass('environment-help')
     });
 
     afterEach(function() {
@@ -61,7 +62,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       onboard = new OnboardingView({
         container: container
       });
-
       onboard.render();
       onboard.nextHandler({halt: function() {}});
       assert.equal(onboard.onboardingIndex, 1);

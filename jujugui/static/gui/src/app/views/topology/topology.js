@@ -120,7 +120,8 @@ YUI.add('juju-topology', function(Y) {
 
       svg = base.append('svg:svg')
                 .attr('width', width)
-                .attr('height', height);
+                .attr('height', height)
+                .attr('class', 'the-canvas');
       this.svg = svg;
 
       this.zoomPlane = svg.append('rect')

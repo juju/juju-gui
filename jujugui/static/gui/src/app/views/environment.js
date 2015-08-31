@@ -202,7 +202,7 @@ YUI.add('juju-view-environment', function(Y) {
      * @method updateHelpIndicator
      */
     updateHelpIndicator: function(evt) {
-      var helpText = this.get('container').one('#environment-help'),
+      var helpText = this.get('container').one('.environment-help'),
           db = this.get('db'),
           services = db.services;
       if (helpText) {

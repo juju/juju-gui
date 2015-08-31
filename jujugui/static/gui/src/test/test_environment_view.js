@@ -313,7 +313,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render().rendered();
 
       // Verify we have help text.
-      var help = Y.one('#environment-help');
+      var help = Y.one('.environment-help');
       assert.strictEqual(help.getStyle('display'), 'block');
     });
 
@@ -322,7 +322,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render().rendered();
 
       // Verify we do not have help text.
-      var help = Y.one('#environment-help');
+      var help = Y.one('.environment-help');
       assert.strictEqual(help.getStyle('display'), 'none');
     });
 
@@ -888,7 +888,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           zoom_out = container.one('#zoom-out-btn'),
           module = view.topo.modules.PanZoomModule,
           slider = module.slider,
-          svg = container.one('svg g');
+          svg = container.one('.the-canvas g');
 
       zoom_in.simulate('click');
 
@@ -921,7 +921,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
          view.rendered();
-         var svg = Y.one('svg');
+
+         var svg = Y.one('.the-canvas');
 
          parseInt(svg.one('g').getAttribute('height'), 10)
           .should.equal(
@@ -952,7 +953,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
          view.rendered();
-         var svg = container.one('svg'),
+         var svg = container.one('.the-canvas'),
              canvas = container.one('.topology');
          // We have to hide the canvas so it does not affect our calculations.
          canvas.setStyle('display', 'none');
