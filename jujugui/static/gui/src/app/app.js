@@ -706,11 +706,13 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
+      var state = this.get('subApps').charmbrowser.state;
       React.render(
         <window.juju.components.EnvSizeDisplay
           serviceCount={serviceCount}
           machineCount={machineCount}
-          changeState={this.changeState.bind(this)} />,
+          changeState={this.changeState.bind(this)}
+          getAppState={state.getState.bind(state)} />,
         document.getElementById('env-size-display-container'));
     },
 

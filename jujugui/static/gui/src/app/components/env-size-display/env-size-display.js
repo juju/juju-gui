@@ -22,28 +22,68 @@ YUI.add('env-size-display', function() {
 
   juju.components.EnvSizeDisplay = React.createClass({
 
+    getInitialState: function() {
+      return {
+        activeComponent: this.props.getAppState(
+            'current', 'sectionB', 'component')
+      }
+    },
+
+    /**
+      Click handler for the service | machine links which calls the changeState
+      event emitter with the clicked link.
+
+      @method _changeEnvironmentView
+      @param {Object} e The click event handler
+    */
     _changeEnvironmentView: function(e) {
       var view = e.currentTarget.dataset.view
+      var component = (view === 'machine') ? 'machine' : null;
       var changeState = {
         sectionB: {
-          component: (view === 'machine') ? 'machine' : null,
+          component: component,
           metadata: {}
         }
       };
       this.props.changeState(changeState);
+      this.setState({activeComponent: component});
+    },
+
+    /**
+      Returns the supplied classes with the 'active' class applied if the
+      component is the one which is active.
+
+      @method _generateClasses
+      @param {String} section The section you want to check if it needs to be
+        active.
+      @returns {String} The collection of class names.
+    */
+    _genClasses: function(section) {
+      var active = false;
+      if ((section === 'service') && !this.state.activeComponent) {
+        active = true;
+      } else if (section === this.state.activeComponent) {
+        active = true;
+      }
+      return classNames(
+        'tab',
+        {
+          active
+        }
+      );
     },
 
     render: function() {
       return (
         <div className="env-size-display">
           <ul>
-              <li className="tab services">
+              <li className={this._genClasses('service')}>
                   <a data-view="service" onClick={this._changeEnvironmentView}>
                     {this.props.serviceCount} services
                   </a>
               </li>
               <li className="spacer">|</li>
-              <li className="tab machines">
+              <li className={this._genClasses('machine')}>
                   <a data-view="machine" onClick={this._changeEnvironmentView}>
                     {this.props.machineCount} machines
                   </a>

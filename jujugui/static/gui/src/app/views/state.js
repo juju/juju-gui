@@ -80,9 +80,9 @@ YUI.add('juju-app-state', function(Y) {
     */
     getState: function(state, section, field) {
       var stateObj = this.get(state),
-          sectionObj = stateObj[section],
+          sectionObj = stateObj && stateObj[section],
           value;
-      if (sectionObj) { value = sectionObj[field]; }
+      if (sectionObj) { value = sectionObj && sectionObj[field]; }
       return value;
     },
 
