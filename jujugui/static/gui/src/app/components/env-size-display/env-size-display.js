@@ -39,13 +39,13 @@ YUI.add('env-size-display', function() {
           <ul>
               <li className="tab services">
                   <a data-view="service" onClick={this._changeEnvironmentView}>
-                    {this.props.serviceCount} Services
+                    {this.props.serviceCount} services
                   </a>
               </li>
               <li className="spacer">|</li>
               <li className="tab machines">
                   <a data-view="machine" onClick={this._changeEnvironmentView}>
-                    {this.props.machineCount} Machines
+                    {this.props.machineCount} machines
                   </a>
               </li>
           </ul>
