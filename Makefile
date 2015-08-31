@@ -129,6 +129,8 @@ $(YUI): $(NODE_MODULES)
 $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
 	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
+	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
