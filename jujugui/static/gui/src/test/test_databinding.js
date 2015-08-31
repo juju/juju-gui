@@ -55,6 +55,9 @@ describe('data binding library', function() {
     });
   });
 
+  // Required so that the cleanups instance can be attached.
+  beforeEach(function() {});
+
   describe('supports declarative bindings', function() {
     var model;
 

@@ -41,6 +41,9 @@ describe('topology bundle module', function() {
     });
   });
 
+  // Required so that the cleanups instance can be attached.
+  beforeEach(function() {});
+
   afterEach(function() {
     if (bundle) { bundle.destroy(); }
   });
@@ -140,4 +143,3 @@ describe('topology bundle module', function() {
 
 
 });
-

@@ -62,7 +62,7 @@ describe('help dropdown view', function() {
     // Landscape url should be hidden
     var container = helpView.get('container');
     assert.equal(
-        container.one('.landscape-url').getStyle('display'), 'none');
+        container.one('.landscape-url').hasClass('hidden'), true);
     assert.equal(container.all('li').size(), 4);
   });
 

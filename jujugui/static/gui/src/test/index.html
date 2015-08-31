@@ -247,12 +247,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   // tabview needs to be here since it doesn't auto load it for some reason.
   YUI().use(['node', 'event', 'tabview'], function(Y) {
+    var globals = ['testRunner', 'jsyaml',
+      'consoleManager', 'zip', 'spinner', 'yui', '_yuid', 'juju', '_gaq',
+      'PR_SHOULD_USE_CONTINUATION', 'prettyPrintOne', 'prettyPrint', 'PR',
+      'console', 'juju_config', 'lastpass_iter', 'lastpass_f', 'saveAs'];
       // Run the tests.
       if (window.mochaPhantomJS) {
-          mochaPhantomJS.run();
+          mochaPhantomJS.run().globals(globals);
       } else {
           // The global variable testRunner is required by browser tests.
-          testRunner = mocha.run();
+          testRunner = mocha.run().globals(globals);
       }
   });
   </script>

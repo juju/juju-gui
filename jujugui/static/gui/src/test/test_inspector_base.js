@@ -32,6 +32,9 @@ describe('Inspector Base', function() {
     });
   });
 
+  // Required so that the cleanups instance can be attached.
+  beforeEach(function() {});
+
   afterEach(function() {});
 
   it('can be instantiated', function() {
