@@ -179,7 +179,7 @@ YUI.add('subapp-browser', function(Y) {
       this._registerSubappHelpers();
 
       this.state = cfg.state
-      this.state.set('dispatchers', {
+      var dispatchers = {
         app: {
           deployTarget: this._deployTargetDispatcher.bind(this)
         },
@@ -193,7 +193,12 @@ YUI.add('subapp-browser', function(Y) {
           machine: this._machine.bind(this),
           empty: this.emptySectionB.bind(this)
         }
-      });
+      };
+      this.state.set(
+        'dispatchers',
+        // If there were any existing dispatchers then merge in ones for
+        // the sub app.
+        Y.merge(dispatchers, this.state.get('dispatchers')));
 
       // Setup event handlers.
       // These event handlers come from app/subapps/browser/events-extension.js
