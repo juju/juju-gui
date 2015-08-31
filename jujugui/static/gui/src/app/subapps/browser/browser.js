@@ -175,29 +175,25 @@ YUI.add('subapp-browser', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cache = new Y.juju.BrowserCache();
-      this.state = new models.UIState({
-        // Disallow routing to inspectors if we are in sandbox mode; the
-        // model to be inspected will not be available.
-        allowInspector: !cfg.sandbox,
-        baseUrl: cfg.baseUrl || '',
-        dispatchers: {
-          app: {
-            deployTarget: this._deployTargetDispatcher.bind(this)
-          },
-          sectionA: {
-            charmbrowser: this._charmBrowserDispatcher.bind(this),
-            inspector: this._inspectorDispatcher.bind(this),
-            empty: this.emptySectionA.bind(this),
-            services: this._addedServicesDispatcher.bind(this)
-          },
-          sectionB: {
-            machine: this._machine.bind(this),
-            empty: this.emptySectionB.bind(this)
-          }
-        }
-      });
 
       this._registerSubappHelpers();
+
+      this.state = cfg.state
+      this.state.set('dispatchers', {
+        app: {
+          deployTarget: this._deployTargetDispatcher.bind(this)
+        },
+        sectionA: {
+          charmbrowser: this._charmBrowserDispatcher.bind(this),
+          inspector: this._inspectorDispatcher.bind(this),
+          empty: this.emptySectionA.bind(this),
+          services: this._addedServicesDispatcher.bind(this)
+        },
+        sectionB: {
+          machine: this._machine.bind(this),
+          empty: this.emptySectionB.bind(this)
+        }
+      });
 
       // Setup event handlers.
       // These event handlers come from app/subapps/browser/events-extension.js

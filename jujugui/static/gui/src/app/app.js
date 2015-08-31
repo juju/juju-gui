@@ -660,6 +660,10 @@ YUI.add('juju-gui', function(Y) {
       cfg.envSeries = this.getEnvDefaultSeries.bind(this);
       cfg.env = this.env;
       cfg.ecs = this.env.ecs;
+
+      this._setupUIState(cfg.sandbox, cfg.baseUrl);
+      cfg.state = this.state;
+
       this.addSubApplications(cfg);
 
       this.on('*:changeState', function(e) {
@@ -681,6 +685,23 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+    },
+
+    /**
+      Sets up the UIState instance on the app
+
+      @method _setupUIState
+      @param {Boolean} sandbox
+      @param {String} baseUrl
+    */
+    _setupUIState: function(sandbox, baseUrl) {
+      this.state = new models.UIState({
+        // Disallow routing to inspectors if we are in sandbox mode; the
+        // model to be inspected will not be available.
+        allowInspector: !sandbox,
+        baseUrl: baseUrl || '',
+        dispatchers: {}
+      });
     },
 
     /**
