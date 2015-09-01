@@ -258,6 +258,10 @@ test: $(PYTEST)
 test-js-phantom: gui
 	./scripts/test-js.sh
 
+.PHONY: test-js-karma
+test-js-karma: gui
+	$(NODE_MODULES)/.bin/karma start karma.conf.js
+
 .PHONY: test-selenium
 test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
