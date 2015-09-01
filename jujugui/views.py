@@ -70,10 +70,12 @@ def config(request):
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
     env_uuid = request.matchdict.get('uuid', 'sandbox')
-    if env_uuid == 'sandbox':
-        baseUrl = ''
-    else:
-        baseUrl = '/u/anonymous/{}'.format(env_uuid)
+    baseUrl = settings.get('baseUrl')
+    if baseUrl is None:
+        if env_uuid == 'sandbox':
+            baseUrl = ''
+        else:
+            baseUrl = '/u/anonymous/{}'.format(env_uuid)
     options = {
         # Base YUI options.
         'serverRouting': False,

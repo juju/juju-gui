@@ -122,3 +122,13 @@ class ConfigTests(ViewTestCase):
         config = self.check_response(response)
         self.assertEqual('env-uuid', config['jujuEnvUUID'])
         self.assertEqual('/u/anonymous/env-uuid', config['baseUrl'])
+
+    def test_explicit_baseUrl(self):
+        settings = {'baseUrl': '/ignore/prefix'}
+        self.config = testing.setUp(
+            request=self.request, settings=settings)
+        jujugui.make_application(self.config)
+        response = views.config(self.request)
+        config = self.check_response(response)
+        self.assertEqual('sandbox', config['jujuEnvUUID'])
+        self.assertEqual('/ignore/prefix', config['baseUrl'])
