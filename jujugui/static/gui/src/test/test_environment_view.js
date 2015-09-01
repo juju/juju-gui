@@ -343,6 +343,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y.one('window').simulate('resize');
     });
 
+    it('must render services blocks correctly',
+        function() {
+          // Create an instance of EnvironmentView with custom env
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env,
+            charmstore: fakeStore
+          });
+          view.render();
+          var serviceBlock = container.one('.service').one('circle');
+          serviceBlock.getAttribute('r').should.equal('90');
+          serviceBlock.getAttribute('cy').should.equal('90');
+          serviceBlock.getAttribute('cx').should.equal('95');
+        });
+
     // Ensure the environment view loads properly
     it('must be able to render service blocks and relations',
         function() {
@@ -429,8 +445,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         charmstore: fakeStore
       });
       view.render();
-      assert.equal(container.one('.service .service-block-image').get(
-          'href').baseVal.indexOf('service_module_pending.svg') >= 0, true);
+      assert.equal(container.one('.service .service-block').getAttribute(
+          'stroke'), '#19b6ee');
     });
 
     it('must properly count subordinate relations', function() {
@@ -562,9 +578,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       container.all('.service').each(function(serviceNode) {
         // There should not be any duplicate nodes within the service.
-        serviceNode.all('.service-status').size().should.equal(1);
-        serviceNode.all('.name').size().should.equal(1);
-        serviceNode.all('.service-block-image').size().should.equal(1);
+        serviceNode.all('.service-icon').size().should.equal(1);
+        serviceNode.all('.service-block').size().should.equal(1);
       });
     });
 
@@ -752,9 +767,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .should.equal(true);
 
         // There should not be any duplicate nodes within the service.
-        serviceNode.all('.service-status').size().should.equal(1);
-        serviceNode.all('.name').size().should.equal(1);
-        serviceNode.all('.service-block-image').size().should.equal(1);
+        serviceNode.all('.service-block').size().should.equal(1);
+        serviceNode.all('.service-icon').size().should.equal(1);
       });
     });
 
@@ -1101,14 +1115,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
              after_evt;
          var service = d3.select(serviceNode.getDOMNode()).datum();
          var endpoints = {},
-             serviceName = serviceNode.one('.name')
-                                      .getDOMNode()
-                                      .firstChild
-                                      .nodeValue,
-             nextServiceName = serviceNode.next().one('.name')
-                                                 .getDOMNode()
-                                                 .firstChild
-                                                 .nodeValue;
+             serviceName = serviceNode.getAttribute('data-name'),
+             nextServiceName = serviceNode.next().getAttribute('data-name');
          endpoints[nextServiceName] = [
            [{
               service: serviceName,
