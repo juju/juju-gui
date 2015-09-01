@@ -82,7 +82,7 @@ YUI.add('juju-app-state', function(Y) {
       var stateObj = this.get(state),
           sectionObj = stateObj && stateObj[section],
           value;
-      if (sectionObj) { value = sectionObj && sectionObj[field]; }
+      value = (sectionObj) ? sectionObj && sectionObj[field] : stateObj;
       return value;
     },
 
@@ -94,11 +94,15 @@ YUI.add('juju-app-state', function(Y) {
 
       @method saveState
       @param {Object} state The state object from loadRequest
+      @param {Boolean} dispatch If it should dispatch the request or just add
+        it to the state.
     */
-    saveState: function(state) {
+    saveState: function(state, dispatch) {
       this.set('previous', Y.clone(this.get('current'))); // clones the object.
       this.set('current', state);
-      this.dispatch(state);
+      if (dispatch) {
+          this.dispatch(state);
+      }
       return state;
     },
 
@@ -114,6 +118,9 @@ YUI.add('juju-app-state', function(Y) {
     */
     dispatch: function(state) {
       var sections = ['app', 'sectionA', 'sectionB'];
+      if (!state) {
+        state = this.getState('current');
+      }
       // If the component of a section has changed then clean out that section.
       sections.forEach(function(section) {
         if (this.hasChanged(section, 'component')) {
@@ -194,7 +201,10 @@ YUI.add('juju-app-state', function(Y) {
       @param {String} section The section to call the empty listener on.
     */
     _emptySection: function(section) {
-      this.get('dispatchers')[section].empty();
+      var dispatcher = this.get('dispatchers')[section];
+      if (dispatcher && dispatcher.empty) {
+          dispatcher.empty();
+      }
     },
 
     /**
@@ -314,10 +324,13 @@ YUI.add('juju-app-state', function(Y) {
       @method loadRequest
       @param {Object} req Y.Router request object.
       @param {string} hash The hash from window.location.hash.
+      @param {Object} options A collection of options for loading the request
+        object into state.
+        'dispatch': true/false - whether it should dispatch.
       @return {Object} The state object which outlines what the application
         should render.
     */
-    loadRequest: function(req, hash) {
+    loadRequest: function(req, hash, options) {
       var url = req.path,
           query = req.query,
           state = {};
@@ -338,7 +351,7 @@ YUI.add('juju-app-state', function(Y) {
       hash = this._sanitizeHash(hash);
       // Organize the paths into their sections.
       state = this._buildSections(paths, query, hash);
-      this.saveState(state);
+      this.saveState(state, false);
       return state;
     },
 

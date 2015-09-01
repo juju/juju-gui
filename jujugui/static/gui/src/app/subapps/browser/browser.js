@@ -736,7 +736,7 @@ YUI.add('subapp-browser', function(Y) {
       // We need to render the sidebar view as default. This is the new design
       // in the near future we will likely just render it in the initializer.
       this.sidebar();
-      this.state.loadRequest(req);
+      this.state.dispatch();
       next();
     },
 

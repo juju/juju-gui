@@ -609,14 +609,6 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserDropdownView();
         }
         this._renderDeployerBarView();
-        if (window.flags && window.flags.react) {
-          this._renderEnvSizeDisplay(
-            this.db.services.size(),
-            this.db.machines.size()
-          );
-        } else {
-          this._renderEnvironmentHeaderView();
-        }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -695,6 +687,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Parses the application URL to populate the state object without
+      dispatching
+
+      @method parseURLState
+    */
+    parseURLState: function(req, res, next) {
+      this.state.loadRequest(req, '', {dispatch: false});
+      next();
+    },
+
+    /**
       Passed to the components so that they can interact with the existing
       changeState system.
 
@@ -706,7 +709,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
-      var state = this.get('subApps').charmbrowser.state;
+      var state = this.state;
       React.render(
         <window.juju.components.EnvSizeDisplay
           serviceCount={serviceCount}
@@ -1528,6 +1531,15 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
+      if (window.flags && window.flags.react) {
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
+      } else {
+        this._renderEnvironmentHeaderView();
+      }
+
       // Display the zoom message on page load.
       this._handleZoomMessage();
       next();
@@ -1710,6 +1722,7 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           // Called on each request.
+          { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
