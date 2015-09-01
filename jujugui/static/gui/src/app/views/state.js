@@ -82,7 +82,7 @@ YUI.add('juju-app-state', function(Y) {
       var stateObj = this.get(state),
           sectionObj = stateObj && stateObj[section],
           value;
-      value = (sectionObj) ? sectionObj && sectionObj[field] : stateObj;
+      if (sectionObj) { value = sectionObj[field]; }
       return value;
     },
 
@@ -119,7 +119,7 @@ YUI.add('juju-app-state', function(Y) {
     dispatch: function(state) {
       var sections = ['app', 'sectionA', 'sectionB'];
       if (!state) {
-        state = this.getState('current');
+        state = this.get('current');
       }
       // If the component of a section has changed then clean out that section.
       sections.forEach(function(section) {

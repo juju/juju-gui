@@ -28,6 +28,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script>
     // Default window.flags to an empty object.
     window.flags = {};
+    var juju = {
+      components: {}
+    };
     // This is only the Mocha timeout. There's a selenium timeout in
     //  test_mocha_selenium as well that can effect CI test runs.
     var TIMEOUT = 50000;
@@ -71,6 +74,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- Load up YUI base, app modules, and test utils -->
   <!-- Since only the tests depend on these files and the prod tests disable
        the YUI loader, we have to include them manually here. -->
+  <script src="/combo?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/classnames.js"></script>
   <script src="/combo?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
   <script src="/combo?modules.js"></script>
   <script>

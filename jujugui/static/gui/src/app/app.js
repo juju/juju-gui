@@ -609,6 +609,9 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserDropdownView();
         }
         this._renderDeployerBarView();
+        if (!window.flags || !window.flags.react) {
+          this._renderEnvironmentHeaderView();
+        }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -1536,8 +1539,6 @@ YUI.add('juju-gui', function(Y) {
           this.db.services.size(),
           this.db.machines.size()
         );
-      } else {
-        this._renderEnvironmentHeaderView();
       }
 
       // Display the zoom message on page load.

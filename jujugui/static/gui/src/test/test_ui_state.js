@@ -152,7 +152,7 @@ describe('UI State object', function() {
       assert.deepEqual(state.get('current'), {});
       var dispatchStub = testUtils.makeStubMethod(state, 'dispatch');
       this._cleanups.push(dispatchStub.reset);
-      state.saveState(newState);
+      state.saveState(newState, true);
       assert.deepEqual(state.get('previous'), {});
       assert.deepEqual(state.get('current'), newState);
       assert.equal(dispatchStub.calledOnce(), true);
