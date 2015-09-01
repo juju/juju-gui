@@ -72,7 +72,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       beforeEach(function() {
         app = new Y.juju.subapps.Browser({
-          db: new models.Database()
+          db: new models.Database(),
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
         });
         app._sidebar = {
           get: function() {
@@ -159,7 +164,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       beforeEach(function() {
         var db = new models.Database();
-        app = new Y.juju.subapps.Browser({db: db});
+        app = new Y.juju.subapps.Browser({
+          db: db,
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
         app._sidebar = {
           get: function() {
             return {
@@ -213,18 +225,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, container, next, utils;
+      var Y, app, browser, container, next, models, utils;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
             'app-subapp-extension',
             'juju-browser',
             'juju-charm-models',
+            'juju-models',
             'juju-tests-utils',
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
               utils = Y.namespace('juju-tests.utils');
+              models = Y.namespace('juju.models');
               next = function() {};
               done();
             });
@@ -252,7 +266,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             entityStub, cleanupEntity, metadata, onboarding;
 
         beforeEach(function() {
-          app = new browser.Browser({});
+          app = new browser.Browser({
+            state: new models.UIState({
+              allowInspector: true,
+              baseUrl: '',
+              dispatchers: {}
+            })
+          });
           app._sidebar = {
             destroy: utils.makeStubFunction()
           };
@@ -768,7 +788,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('listens to serviceDeployed events', function(done) {
-        app = new browser.Browser({});
+        app = new browser.Browser({
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
         var generateStub = utils.makeStubMethod(app.state, 'generateUrl');
         this._cleanups.push(generateStub.reset);
         var navigateStub = utils.makeStubMethod(app, 'navigate');
@@ -796,7 +822,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('don\'t render a destroyed inspector on serviceDeployed', function() {
-        app = new browser.Browser({});
+        app = new browser.Browser({
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
         var generateStub = utils.makeStubMethod(app.state, 'generateUrl');
         this._cleanups.push(generateStub.reset);
         var navigateStub = utils.makeStubMethod(app, 'navigate');
@@ -818,7 +850,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('listens to changeState events', function() {
-        app = new browser.Browser({});
+        app = new browser.Browser({
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
         app.state.set('allowInspector', false);
         var generateUrlStub = utils.makeStubMethod(
             app.state, 'generateUrl', 'genUrl');
@@ -832,7 +870,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('verify that route callables exist', function() {
-        app = new browser.Browser({});
+        app = new browser.Browser({
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
         Y.each(app.get('routes'), function(route) {
           assert.isTrue(typeof app[route.callback] === 'function');
         });
@@ -840,7 +884,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('browser subapp display tree', function() {
-      var Y, browser, container, hits, minRender, ns,
+      var Y, browser, container, hits, minRender, models, ns,
           resetHits, sidebarRender, utils;
 
       before(function(done) {
@@ -848,10 +892,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'app-subapp-extension',
             'juju-views',
             'juju-browser',
+            'juju-models',
             'juju-tests-utils',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
               utils = Y.namespace('juju-tests.utils');
+              models = Y.namespace('juju.models');
               done();
             });
       });
@@ -870,7 +916,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       beforeEach(function() {
         container = utils.makeContainer(this, 'container');
         addBrowserContainer(Y, container);
-        browser = new ns.Browser({ sandbox: false });
+        browser = new ns.Browser({
+          sandbox: false,
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
       });
 
       afterEach(function() {
@@ -878,7 +931,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('knows when the search cache should be updated (state)', function() {
-        var charmbrowser = new ns.Browser({ sandbox: false });
+        var charmbrowser = new ns.Browser({
+          sandbox: false,
+          state: new models.UIState({
+            allowInspector: true,
+            baseUrl: '',
+            dispatchers: {}
+          })
+        });
         charmbrowser.state.set('current', {
           sectionA: {
             component: 'charmbrowser',

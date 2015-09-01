@@ -47,7 +47,12 @@ describe('Browser bundle detail view', function() {
           d3 = Y.namespace('d3');
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
-            charmstore: factory.makeFakeCharmstore()
+            charmstore: factory.makeFakeCharmstore(),
+            state: new models.UIState({
+              allowInspector: true,
+              baseUrl: '',
+              dispatchers: {}
+            })
           });
 
           done();
