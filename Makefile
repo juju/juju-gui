@@ -19,6 +19,7 @@ NODE_MODULES := node_modules
 MODULES := $(GUIBUILD)/modules.js
 MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
+JS_MACAROON := $(NODE_MODULES)/js-macaroon/build/yui-macaroon.js
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
@@ -110,6 +111,7 @@ $(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
+	cp $(JS_MACAROON) $(JS_ASSETS)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" -not -name "*d3-wrapper*" -not -name "*unscaled-pack*" | sed s/\.js$$//g | xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
