@@ -1,0 +1,35 @@
+<div class="topology">
+    <div class="topology-canvas">
+        <div id="environment-help" style="display: none;">
+            <div class="vertical-center-floater"></div>
+            <div class="content">
+                <h1>Start adding charms!</h1>
+                <i class="sprite empty_canvas"></i>
+                <p>
+                Explore the charms to find the one you need. Drag it onto the
+                canvas to start building.
+                </p>
+            </div>
+        </div>
+        <div class="environment-menu" id="service-menu">
+            <div class="triangle">&nbsp;</div>
+            <ul>
+                <li class="add-relation sprite-hover">
+                    <i class="sprite build_relation_16 normal"></i>
+                    <i class="sprite build_relation_hover_16 hover"></i>
+                    Build Relation
+                </li>
+            </ul>
+        </div>
+        <div class="environment-menu" id="ambiguous-relation-menu">
+            <div class="triangle">&nbsp;</div>
+            <div class="menu-title">Select relation type:</div>
+            <ul/>
+        </div>
+        <div class="environment-menu top" id="relation-menu">
+        </div>
+      {{> right-sidebar }}
+    </div>
+    <div id="rmrelation-modal-panel"></div>
+    <div id="rmsubrelation-modal-panel"></div>
+</div>

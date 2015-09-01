@@ -1,0 +1,29 @@
+<div class="service">
+  <img class="icon" src="{{service.icon}}" title="{{service.name}}" alt="{{service.name}}">
+  <div class="name">{{service.name}}</div>
+  <div class="unit-count">({{service.unit_count}})</div>
+  <a class="action {{#if service.fade}}action-active{{/if}}"
+     data-action="{{#if service.fade}}show{{else}}fade{{/if}}"
+     title="{{#if service.fade}}Show{{else}}Fade{{/if}} the service">
+        <span class="active sprite-hover">
+            <i class="sprite hide_16 normal"></i>
+            <i class="sprite hide_hover_16 hover"></i>
+        </span>
+        <span class="inactive sprite-hover">
+            <i class="sprite show_16 normal"></i>
+            <i class="sprite show_hover_16 hover"></i>
+        </span>
+  </a>
+  <a class="action {{#if service.highlight}}action-active{{/if}}"
+     data-action="{{#if service.highlight}}unhighlight{{else}}highlight{{/if}}"
+     title="{{#if service.highlight}}Unhighlight{{else}}Highlight{{/if}} the service">
+        <span class="active sprite-hover">
+           <i class="sprite highlight_on_16 normal"></i>
+           <i class="sprite highlight_on_hover_16 hover"></i>
+        </span>
+        <span class="inactive sprite-hover">
+           <i class="sprite highlight_off_16 normal"></i>
+           <i class="sprite highlight_off_hover_16 hover"></i>
+        </span>
+  </a>
+</div>

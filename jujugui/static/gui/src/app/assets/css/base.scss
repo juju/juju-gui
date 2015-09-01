@@ -1,0 +1,1060 @@
+/*
+
+General CSS Notes
+=================
+
+z-indexes
+----------
+The rule of thumb for the z-index values to use is setup below
+
+ - Ground level: < 100 is for things that are flat on the surface without
+                 expectations of overlaying anything in the UX.
+ - Floaty level: >= 500 is the land of floating panels. Things like the
+                 browser and inspector which expect to float over the
+                 environment, for instance.
+ - Overlay level: > 1000 is the land for things that overlay. Spinny
+                  indicators, masks, etc.
+
+
+Using fonts
+------------
+Go forth and see the typography.scss file and use those.
+
+
+Class and property ordering
+---------------
+This is a general guide on how to structure your classes. We use four spaces
+for indentation.
+
+.class {
+    $vars;
+    .mixins;
+    properties: values;
+
+    &:states {
+        ...
+    }
+
+    &.additional-parent-classes {
+        ...
+    }
+
+    .sub-classes {
+        ...
+    }
+}
+
+*/
+
+/* Processed with SCSS from app/assets/css/base.scss */
+$font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
+
+/* Define common colors. */
+$canvas-background: #f5f5f5;
+$label-color: #292929;
+$text-entry-color: #6d6e70;
+$charm-panel-orange: #dd4814;
+$charm-panel-background-color: #eeeeee;
+$deployer-bar-height: 50px;
+$environment-header-height: 40px;
+$inspector-dark: #1c1817;
+$left-panel-width: 290px;
+$machine-view-border-colour: #d9d9d9;
+$navbar-height: 48px;
+$navbar-border-dark: #191514;
+$navbar-border-light: #2d2928;
+$text-colour: #505050;
+$border-radius: 2px;
+$uncommitted-colour: #19b6ee;
+$panel-space: 10px;
+$bws-header-height: 81px;
+
+// Imports need to be after vars.
+@import "typography";
+@import "browser/vars";
+@import "mixins";
+@import "inspector/vars";
+
+/* Common classes and setup */
+body,
+input,
+button,
+select,
+textarea {
+    font-family: $font-family;
+    font-weight: 300;
+}
+body {
+    overflow: hidden;
+    height: 100%;
+    margin-top: $navbar-height;
+    background-color: $canvas-background;
+    font-size: 14px;
+    line-height: 18px;
+    -webkit-font-smoothing: antialiased;
+    // This won't start working until Firefox 25
+    -moz-osx-font-smoothing: grayscale;
+}
+.link,
+a,
+a:hover {
+    cursor: pointer;
+    color: $charm-panel-orange;
+    text-decoration: none;
+}
+button {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type="text"],
+input[type="password"] {
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid $bws-border;
+    border-radius: $border-radius;
+}
+/*
+  Taken from:
+  http://code.stephenmorley.org/html-and-css/styling-checkboxes-and-radio-buttons/
+  The :not(old) selector just prevents unsupported browsers from getting these
+  styles. They'll just fall back to the normal rendering on radio buttons.
+*/
+input[type="radio"]:not(old) {
+  width: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  opacity: 0;
+}
+input[type="radio"]:not(old) + label {
+  display: inline-block;
+  margin-left: -2em;
+  line-height: 1.5em;
+}
+input[type="radio"]:not(old) + label > .outer {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 4px 0.5em 4px 0.25em;
+  border: 1px solid rgb(192,192,192);
+  border-radius: 7px;
+  background: #ebecee;
+  vertical-align: bottom;
+}
+input[type="radio"]:not(old):checked + label > .outer {
+  background: $charm-panel-orange;
+  border-color: $charm-panel-orange;
+}
+input[type="radio"]:not(old):checked + label > .outer > .inner {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 3px;
+  border-radius: 3px;
+  background: white;
+}
+svg {
+    stroke-width: 0;
+    overflow: hidden;
+}
+li {
+    line-height: 18px;
+}
+h2 {
+    line-height: 36px;
+}
+h4 {
+    font-size: 14px;
+}
+h4, h5, h6 {
+    line-height: 18px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: inherit;
+    font-weight: 300;
+    color: inherit;
+    text-rendering: optimizelegibility;
+}
+ul {
+    padding: 0;
+}
+label {
+    display: block;
+}
+strong {
+    font-weight: 400;
+}
+.align-right {
+    text-align: right;
+}
+i.sprite {
+    display: inline-block;
+    vertical-align: middle;
+}
+ul.menu li,
+div.inline {
+  float: left;
+}
+ul.menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.alert {
+    letter-spacing: normal;
+}
+.clearall {
+    clear: both;
+}
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+pre {
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #fdf6f2;
+    border: none;
+}
+pre,
+code {
+    font-family: $font-family-mono;
+    font-size: 14px;
+    color: #333;
+}
+th {
+    font-weight: 300;
+}
+
+/* Layout, widgets etc. */
+
+/*
+ * The main header above the canvas
+ */
+.navbar {
+    min-width: 800px;
+    height: $navbar-height;
+    margin: -$navbar-height 0 0 0;
+    background-color: #221e1b;
+
+    &,
+    & > ul > li > a {
+        color: #d7d3d0;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .right-nav,
+    #browser-nav {
+        & > li,
+        & > li.tab > a {
+            @extend .border-box;
+            display: block;
+            height: $navbar-height;
+            padding: 14px 20px 0 20px;
+        }
+        & > li {
+            float: left;
+            border-width: 0 1px;
+            border-style: solid;
+            border-left-color: $navbar-border-light;
+            border-right-color: $navbar-border-dark;
+
+            & > a {
+                &.button {
+                    margin: -8px 0 0 0;
+                }
+            }
+            &.hidden {
+                display: none !important;
+            }
+        }
+    }
+    #browser-nav {
+        float: left;
+        border-right: 1px solid $navbar-border-light;
+
+        & > li {
+            &:first-child {
+                border-left: none;
+            }
+            .brand {
+                display: block;
+                margin: -5px 10px 0 0;
+                padding: 0;
+            }
+            & > a {
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+            &.tab a {
+                margin: -14px -20px 0 -20px;
+
+                &.active {
+                    border-bottom: 3px solid $charm-panel-orange;
+                }
+                .sprite {
+                    margin-right: 6px;
+                }
+            }
+            &.notifications-nav {
+                position: relative;
+
+                #notify-indicator {
+                  @include create-border-radius(4px);
+                  border: 1px solid #d7d3d0;
+                  margin: -5px 0 0 0;
+                  padding: 2px 6px;
+
+                  &.populated {
+                    background-color: $charm-panel-orange;
+                  }
+                }
+            }
+        }
+    }
+    .right-nav {
+        float: right;
+        margin: 0;
+        border-left: 1px solid $navbar-border-dark;
+
+        & > li:last-child {
+            border-right: none;
+        }
+        a.button.inverse {
+            background-color: #1f1b18;
+
+            &:hover {
+                background-color: #1f1b18;
+            }
+        }
+        .get-started {
+            margin-left: 7px;
+            vertical-align: top;
+        }
+        .user-dropdown {
+            display: block;
+            margin-right: 20px;
+
+            .menu-link {
+                &:hover {
+                    background-color: $charm-panel-orange;
+                }
+                .sprite {
+                    margin-right: 10px;
+
+                    &.hover {
+                        display: none;
+                    }
+                    &.normal {
+                        display: inline-block;
+                    }
+                }
+            }
+            .open .menu-link,
+            .menu-link:hover {
+                .sprite.hover {
+                    display: inline-block;
+                }
+                .sprite.normal {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+#content {
+    position: relative;
+    width: 100%;
+}
+#main {
+    overflow: hidden;
+}
+#canvas {
+    position: relative;
+}
+.zoom-plane {
+    fill-opacity: 0;
+    cursor: move;
+}
+/*
+ * The keyboard shorcut panel
+ */
+#shortcut-help {
+    @include create-box-shadow(0 0 4px 0 rgba(0, 0, 0, 0.5));
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 8%;
+    bottom: 8%;
+    opacity: 0.85;
+    z-index: 1000;
+    padding: 20px;
+    background-color: black;
+    border-radius: $border-radius;
+    color: #fff;
+
+    .left {
+        float: left;
+        width: 45%;
+    }
+
+    table {
+        margin-top: 20px;
+
+        th {
+            text-align: left;
+        }
+        td {
+            padding: 5px 20px;
+        }
+    }
+}
+/*
+ * Intro text that appears on the canvas if there are no deployed services.
+ */
+#environment-help {
+    color: #757575;
+    text-align: center;
+    /* This is absolute so that it does not push the svg down when it is
+       visible.  That's important for animations hiding and showing this help,
+       and if we want the help to appear when a service is present (such as the
+       GUI itself). */
+    position: absolute;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    /* pointer-events does not work in IE 10 except in SVG, so this is just a
+       way to slightly improve the experience during transitions. */
+    pointer-events: none;
+
+    div.vertical-center-floater {
+        height: 50%;
+        margin-bottom: -250px;
+        margin-top: 0;
+        min-height: 225px;
+    }
+    div.content {
+        height: 450px;
+        padding: $environment-header-height 0 0 $left-panel-width;
+    }
+    h1 {
+        line-height: normal;
+        margin-bottom: 1ex;
+        font-size: 26px;
+    }
+    p {
+        line-height: normal;
+        font-size: 18px;
+        width: 301px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2ex;
+    }
+}
+.state-sidebar-hidden #environment-help .content {
+    // When the sidebar is hidden center the onboarding to the full width.
+    padding-left: 0;
+}
+/*
+ * The actions menu that appears next to a service block.
+ */
+.environment-menu {
+    @include create-border-radius($border-radius);
+    @include create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+    display: none;
+    background-color: #fff;
+    color: $text-colour;
+    top: 0;
+    left: 0;
+    position: absolute;
+
+    &.active {
+        display: block;
+    }
+    .triangle {
+        position: absolute;
+        top: 22px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        color: #fff;
+    }
+    &.right .triangle {
+        left: -16px;
+        border-width: 10px 17.3px 10px 0;
+        border-color: transparent #fff transparent transparent;
+    }
+    &.left .triangle {
+        right: -16px;
+        border-width: 10px 0 10px 17.3px;
+        border-color: transparent transparent transparent #fff;
+    }
+    &.top .triangle {
+        top: auto;
+        bottom: -16px;
+        border-width: 17.3px 10px 0px 10px;
+        border-color: #fff transparent transparent transparent;
+    }
+    .menu-title {
+        padding: 20px;
+    }
+    .cancel {
+        position: absolute;
+        top: 25px;
+        right: 20px;
+
+        .sprite {
+            vertical-align: top;
+        }
+    }
+    ul {
+        margin: 0;
+        list-style-type: none;
+
+        li {
+            background-position: 10px center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            line-height: 40px;
+            padding: 0 15px;
+            white-space: nowrap;
+
+            a {
+              text-decoration: none;
+              font-size: 13px;
+              color: $text-colour;
+            }
+            &.add-relation {
+                .sprite {
+                    margin-left: -25px;
+                    margin-right: 5px;
+                }
+                .disabled {
+                    color: red;
+                }
+            }
+            &.landscape-reboot {
+                background-image: url(juju-ui/assets/images/non-sprites/landscape_restart_menu.png);
+            }
+            &.landscape-security {
+                background-image: url(juju-ui/assets/images/non-sprites/landscape_security_menu.png);
+            }
+            &:last-child {
+                border-bottom: none;
+            }
+            &:hover {
+                background-color: #f2f2f2;
+            }
+            &.disabled {
+                color: gray;
+                cursor: default;
+
+                &:hover {
+                    background-color: inherit;
+                }
+            }
+        }
+    }
+    .menu {
+        li {
+            border-top: 1px solid #e9e9e9;
+        }
+    }
+    &#service-menu ul li {
+        padding-left: 36px;
+    }
+
+}
+.subordinate-rel-group {
+    display: none;
+
+    &.active {
+        display: inline;
+    }
+}
+#relation-menu {
+    .relation-container {
+        cursor: inherit;
+        padding-left: 30px;
+        padding-right: 0;
+        line-height: 30px;
+        background-repeat: no-repeat;
+        background-position: 10px 11px;
+        background-image: url("juju-ui/assets/images/unit_running_16.png");
+        &.error {
+            background-image: url("juju-ui/assets/images/error_16.png");
+        }
+        .endpoint.error {
+            color: red;
+        }
+        &:hover {
+            background-color: inherit;
+        }
+    }
+    .triangle {
+        bottom: -3px;
+        border-width: 3px 5px 0 5px;
+    }
+    .relation-remove {
+        margin: 0 10px;
+    }
+    .inspect-relation {
+        cursor: pointer;
+    }
+}
+
+.relation {
+    stroke: rgb(167, 167, 167);
+    stroke-width: 2px;
+
+    &.error {
+        stroke: #cc3333;
+    }
+    &.subordinate {
+        stroke: rgb(167, 167, 167);
+    }
+    &.healthy {
+        stroke: #38B44A;
+    }
+    &.pending {
+        stroke: #e2e2e2;
+    }
+    &.pending-healthy, &.pending-error {
+        stroke: #26b4e9;
+    }
+    &.pending-relation {
+        stroke: #faaf40;
+
+        &.dragging {
+            stroke: #fa6a40
+        }
+    }
+    &.unused {
+        visibility: hidden;
+    }
+    &.subordinate-relation {
+        stroke: #3333cc;
+    }
+}
+.visibility-classes {
+    transition: opacity 0.4s ease;
+    &.show {
+        opacity: 1.0;
+        visibility: visible;
+    }
+    &.fade {
+        opacity: 0.2;
+        visibility: visible;
+    }
+    &.hide {
+        /*
+          Put visibility on a delay so it gets hidden after the opacity is
+          finished transitioning.
+        */
+        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+.rel-group {
+    @extend .visibility-classes;
+}
+.rel-indicator {
+    cursor: pointer;
+}
+circle.mouse-down-indicator {
+    stroke: #040404;
+    stroke-width: 2px;
+    fill: none;
+}
+g.service {
+    @extend .visibility-classes;
+    fill: none;
+    stroke: none;
+    text {
+        text-anchor: middle;
+    }
+    .charm-label {
+        font-style: italic;
+        fill: #4c4c4c;
+    }
+    .name {
+      fill: rgb(80, 80, 80);
+      font-size: 14px;
+    }
+   .unit-count {
+        stroke-width: 0;
+        text-anchor: middle;
+        dominant-baseline: central;
+        fill: rgba(0,0,0,0);
+
+        &.show-count {
+            fill: rgba(0,0,0,1);
+        }
+        &.hide-count {
+            fill: rgba(0,0,0,0);
+        }
+    }
+
+    .sub-rel-count {
+        text-anchor: middle;
+        dominant_baseline: central;
+        fill: #4f4f4f;
+        font-size: 18px;
+
+        &.active {
+            font-style: italic;
+            font-weight: bold;
+            fill: #3333cc;
+        }
+    }
+
+    .exposed-indicator {
+        fill: #00F;
+
+        &.off {
+            visibility: hidden;
+        }
+        &.on {
+            visibility: visible;
+        }
+    }
+
+    .service-control-panel {
+        visibility: hidden;
+
+        &.active {
+            visibility: visible;
+        }
+        image {
+            cursor: pointer;
+        }
+    }
+}
+g.service-status {
+    path {
+        stroke-width: 0;
+        fill: #fff;
+    }
+}
+g.unit {
+    stroke-width: 0; font-weight: bold;
+    font-size: 18px;
+    fill: #1626cf;
+
+    .address {
+        fill: #fff; font-size: 14px;
+    }
+    .unit-border {
+        stroke-width: 2px; fill: #a0a0a0;
+    }
+}
+
+/*
+ * D3 StatusBar support
+ */
+.statusbar {
+  .label {
+    fill: white;
+  }
+
+  .error {
+    fill: rgb(224, 56, 45);
+  }
+
+  .pending {
+    fill: rgb(236, 168, 23);
+  }
+
+  .running {
+    fill: rgb(56, 180, 74);
+  }
+
+  .uncommitted {
+    fill: #19b6ee;
+  }
+}
+
+/*
+ * Notifier widget.
+ * Contains notifications that appear from the header.
+ */
+.notifier-box {
+    position: absolute;
+    top: $navbar-height;
+    left: 40%;
+    margin: -2px 0 0 -125px;
+    z-index: 9999;
+
+    &.bundle {
+        margin: -5px 0 0 227px;
+    }
+
+    .yui3-notifier-content {
+        $box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        @include create-border-radius($border-radius);
+        @include create-box-shadow($box-shadow);
+        position: realtive;
+        width: 250px;
+        margin-top: 5px;
+        padding: 7px 10px;
+        background-color: #fff;
+        color: #333;
+        font-size: 12px;
+
+        &.bottom-arrow {
+            width: 177px;
+        }
+
+        &:first-child {
+            margin-top: 0;
+
+            &:before {
+                content: '';
+                position: absolute;
+                display: block;
+                top: -5px;
+                left: 50%;
+                width: 10px;
+                height: 10px;
+                margin-left: -6px;
+                background-color: #fff;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            &.bottom-arrow:before {
+                top: inherit;
+                bottom: -5px;
+            }
+        }
+        div:last-child {
+          color: #aaa;
+        }
+    }
+}
+
+/*
+ * Canvas zoom control
+ */
+.zoom-controls {
+    position: absolute;
+    right: 20px;
+    top: 40px;
+}
+.zoom-controls {
+    top: 80px;
+}
+.yui3-slider-y .yui3-slider-rail,
+.yui3-slider-y .yui3-slider-rail-cap-top,
+.yui3-slider-y .yui3-slider-rail-cap-bottom {
+    background-image: none;
+}
+.yui3-slider-y .yui3-slider-rail {
+    @include create-border-radius($border-radius);
+    @include create-box-shadow(inset 0 0 4px rgba(0,0,0,.51));
+    background-color: #bbbbbb;
+    width: 10px;
+}
+
+.yui3-slider-y .yui3-slider-thumb-shadow {
+    display: none;
+}
+.yui3-slider-y .yui3-slider-thumb {
+    width: 21px;
+    height: 21px;
+    left: 0;
+    overflow: visible;
+}
+.yui3-slider-y .yui3-slider-thumb-image {
+    left: -5px;
+}
+#zoom-in-btn,
+#zoom-out-btn {
+    position: relative;
+    left: -5px;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#zoom-in-btn {
+    top: -10px;
+}
+#zoom-out-btn {
+    top: 10px;
+}
+.yui3-slider-thumb {
+  &:focus {
+    outline: none;
+  }
+}
+/*
+ * This panel is displayed when deleting relations.
+ */
+.yui3-panel {
+    @include create-border-radius($border-radius);
+    @include create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+
+    .yui3-widget-bd {
+        margin-bottom: 20px;
+    }
+    .yui3-widget-buttons {
+        float: right;
+
+        .button {
+            margin-left: 10px;
+        }
+    }
+}
+.yui3-widget-mask {
+    background: black;
+    opacity: 0.4;
+}
+.controls {
+    .read-only {
+        padding-top: 5px;
+    }
+}
+.unit-button-palette {
+    float: right;
+}
+#destroy-service {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.service-view+.viewlet-manager {
+    overflow-y: auto;
+}
+#full-screen-mask {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+/*
+ * This is used for the initial page before displaying the canvas
+ * e.g. login, connecting to Juju and browser not supported screens
+ */
+.centered-column {
+    display: block;
+    z-index: 10001;
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    text-align: center;
+    width: 320px;
+    margin-left: -160px;
+
+    /* This enables us to use the .centered-column
+    class inside of the main application */
+    &.in-main {
+        top: 0;
+    }
+    div {
+        width: 280px;
+        text-align: left;
+        margin: 0 auto;
+    }
+    .panel {
+        @include create-border-radius($border-radius);
+        margin: 20px 0;
+        padding: 0 20px 20px 20px;
+        background-color: #f5f5f5;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+
+        input {
+            @extend .border-box;
+            width: 100%;
+            margin-bottom: 20px;
+
+            &[disabled] {
+                background-color: #eee;
+            }
+        }
+        input[type=submit] {
+            @extend .button;
+        }
+        .header {
+            @extend .type9;
+            margin: 0 0 20px -20px;
+            padding: 10px 20px;
+            background-color: #ddd;
+            -webkit-border-top-left-radius: $border-radius;
+            -webkit-border-top-right-radius: $border-radius;
+            -moz-border-radius-topleft: $border-radius;
+            -moz-border-radius-topright: $border-radius;
+            border-top-left-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+            text-align: center;
+        }
+        .form-error {
+            @extend .type9;
+            margin-bottom: 20px;
+            color: red;
+        }
+    }
+    #loading-spinner {
+        height: 100px;
+    }
+}
+
+/** Browser Setup **/
+@import "browser/reset";
+
+
+/** SubApps **/
+@import "browser/main";
+
+/** Widgets **/
+@import "browser/bundle-panel";
+@import "browser/bws-searchbox";
+@import "browser/token-container";
+@import "browser/charm-full";
+@import "browser/token";
+@import "browser/overlay-indicator";
+@import "browser/section-title";
+@import "browser/tabview";
+@import "browser/added-services";
+@import "inspector/scale-up";
+@import "machine-view/serviceunit-token";
+@import "machine-view/container-token";
+@import "machine-view/create-machine-view";
+@import "machine-view/machine-token";
+@import "machine-view/machine-view-panel";
+@import "machine-view/machine-view-token-base";
+@import "machine-view/more-menu";
+@import "machine-view/service-scale-up-view";
+@import "content-panel";
+@import "deployer-bar";
+@import "dropdown";
+@import "environment-header";
+@import "inspector/juju-inspector";
+
+/** Views **/
+@import "browser/onboarding";
+@import "browser/search";
+@import "browser/added-services-button";
+
+/** Cookies **/
+@import "cookies";
