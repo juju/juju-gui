@@ -2612,9 +2612,9 @@
       "resolved": "https://registry.npmjs.org/jasmine-core/-/jasmine-core-2.3.4.tgz"
     },
     "js-macaroon": {
-      "version": "0.0.7",
-      "from": "https://registry.npmjs.org/js-macaroon/-/js-macaroon-0.0.7.tgz",
-      "resolved": "https://registry.npmjs.org/js-macaroon/-/js-macaroon-0.0.7.tgz",
+      "version": "0.0.8",
+      "from": "js-macaroon@0.0.8",
+      "resolved": "https://registry.npmjs.org/js-macaroon/-/js-macaroon-0.0.8.tgz",
       "dependencies": {
         "sjcl": {
           "version": "1.0.3",

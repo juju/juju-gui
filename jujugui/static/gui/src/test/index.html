@@ -116,6 +116,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_app.js"></script>
   <script src="test_app_hotkeys.js"></script>
   <script src="test_application_notifications.js"></script>
+  <script src="test_bakery.js"></script>
   <script src="test_browser_app.js"></script>
   <script src="test_browser_charm_details.js"></script>
   <script src="test_browser_events.js"></script>
@@ -255,7 +256,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var globals = ['testRunner', 'jsyaml',
       'consoleManager', 'zip', 'spinner', 'yui', '_yuid', 'juju', '_gaq',
       'PR_SHOULD_USE_CONTINUATION', 'prettyPrintOne', 'prettyPrint', 'PR',
-      'console', 'juju_config', 'lastpass_iter', 'lastpass_f', 'saveAs'];
+      'console', 'juju_config', 'lastpass_iter', 'lastpass_f', 'saveAs', 'nacl', 'Float64Array'];
       // Run the tests.
       if (window.mochaPhantomJS) {
           mochaPhantomJS.run().globals(globals);

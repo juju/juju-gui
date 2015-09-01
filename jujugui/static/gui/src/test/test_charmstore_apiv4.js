@@ -47,7 +47,7 @@ describe('Charmstore API v4', function() {
     assert.equal(charmstore.charmstoreURL, 'local/');
     assert.equal(charmstore.apiPath, 'v4');
     assert.equal(
-        charmstore.requestHandler instanceof Y.juju.environments.web.WebHandler,
+        charmstore.bakery instanceof Y.juju.environments.web.Bakery,
         true);
   });
 
@@ -55,50 +55,18 @@ describe('Charmstore API v4', function() {
 
     it('calls the requestHandler to make a GET request', function() {
       var getRequest = utils.makeStubMethod(
-          charmstore.requestHandler, 'sendGetRequest');
-      var requestHandler = utils.makeStubMethod(charmstore, '_requestHandler');
+          charmstore.bakery, 'sendGetRequest');
       this._cleanups.concat([
-        getRequest.reset,
-        requestHandler.reset
+        getRequest.reset
       ]);
       charmstore._makeRequest('path', 'success', 'failure');
       assert.equal(getRequest.callCount(), 1);
       var getArgs = getRequest.lastArguments();
       assert.equal(getArgs[0], 'path');
-      assert.strictEqual(getArgs[1], null);
-      assert.strictEqual(getArgs[2], null);
-      assert.strictEqual(getArgs[3], null);
-      assert.strictEqual(getArgs[4], null);
-      // Make sure that the request handler is called with the callbacks.
-      getArgs[5]();
-      assert.equal(requestHandler.callCount(), 1);
-      assert.deepEqual(requestHandler.lastArguments(), [
-        'success', 'failure']);
-    });
-  });
-
-  describe('_requestHandler', function() {
-    var success, failure;
-
-    beforeEach(function() {
-      success = utils.makeStubFunction();
-      failure = utils.makeStubFunction();
-    });
-
-    it('calls the failure callback if status > 400', function() {
-      charmstore._requestHandler(success, failure, {
-        target: { status: 404 }
-      });
-      assert.equal(success.callCount(), 0);
-      assert.equal(failure.callCount(), 1);
-    });
-
-    it('calls the success callback if status < 400', function() {
-      charmstore._requestHandler(success, failure, {
-        target: { status: 200 }
-      });
-      assert.equal(success.callCount(), 1);
-      assert.equal(failure.callCount(), 0);
+      assert.strictEqual(getArgs[1],
+                         charmstore.charmstoreURL + 'v4/set-auth-cookie');
+      assert.strictEqual(getArgs[2], 'success');
+      assert.strictEqual(getArgs[3], 'failure');
     });
   });
 

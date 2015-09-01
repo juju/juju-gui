@@ -98,7 +98,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPostRequest(
-            path, headers, data, 'user', 'passwd',
+            path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var progressCallback = utils.makeStubFunction();
         // Make a POST request.
         webHandler.sendPostRequest(
-            '/path/', {}, 'data', 'user', 'passwd', progressCallback);
+            '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -135,7 +135,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var completedCallback = utils.makeStubFunction();
         // Make a POST request.
         webHandler.sendPostRequest(
-            '/path/', {}, 'data', 'user', 'passwd',
+            '/path/', {}, 'data', 'user', 'passwd', false,
+            function() {}, completedCallback);
+        assertCompletedHandled(completedCallback);
+      });
+
+    });
+
+    describe('sendPutRequest', function() {
+
+      it('opens and sends an XHR request with the proper data', function() {
+        var path = '/juju-core/charms?series=trusty';
+        var headers = {'Content-Type': 'application/zip'};
+        var data = 'a zip file object';
+        // Make a POST request.
+        webHandler.sendPutRequest(
+            path, headers, data, 'user', 'passwd', false,
+            function() {return 'progress';}, function() {return 'completed';});
+        // Ensure the xhr instance has been used properly.
+        assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
+        // Two events listeners are added, one for request's progress and one
+        // for request's completion.
+        var args = mockXhr.addEventListener.allArguments();
+        assert.strictEqual(args[0][0], 'progress');
+        assert.strictEqual(args[1][0], 'load');
+        // The xhr is then asynchronously opened.
+        assert.strictEqual(mockXhr.open.callCount(), 1);
+        assert.deepEqual(mockXhr.open.lastArguments(), ['PUT', path, true]);
+        // Headers are properly set up.
+        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 2);
+        args = mockXhr.setRequestHeader.allArguments();
+        assert.deepEqual(args[0], ['Content-Type', 'application/zip']);
+        assert.deepEqual(args[1], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
+        // The zip file is then correctly sent.
+        assert.strictEqual(mockXhr.send.callCount(), 1);
+        assert.deepEqual(mockXhr.send.lastArguments(), ['a zip file object']);
+        // The event listeners are only removed when the completed callback is
+        // called.
+        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+      });
+
+      it('handles request progress', function() {
+        var progressCallback = utils.makeStubFunction();
+        // Make a POST request.
+        webHandler.sendPostRequest(
+            '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+        assertProgressHandled(progressCallback);
+      });
+
+      it('handles request completion', function() {
+        var completedCallback = utils.makeStubFunction();
+        // Make a POST request.
+        webHandler.sendPostRequest(
+            '/path/', {}, 'data', 'user', 'passwd', false,
             function() {}, completedCallback);
         assertCompletedHandled(completedCallback);
       });
@@ -148,7 +200,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var path = '/juju-core/charms?url=local:trusty/django-42';
         // Make a POST request.
         webHandler.sendGetRequest(
-            path, null, 'user', 'passwd',
+            path, null, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
@@ -176,7 +228,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var progressCallback = utils.makeStubFunction();
         // Make a GET request.
         webHandler.sendGetRequest(
-            '/path/', {}, 'user', 'passwd', progressCallback);
+            '/path/', {}, 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -184,7 +236,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var completedCallback = utils.makeStubFunction();
         // Make a GET request.
         webHandler.sendGetRequest(
-            '/path/', {}, 'user', 'passwd',
+            '/path/', {}, 'user', 'passwd', false,
             function() {}, completedCallback);
         assertCompletedHandled(completedCallback);
       });

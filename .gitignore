@@ -1,4 +1,8 @@
 *~
+jujugui/static/gui/src/app/assets/javascripts/d3.js
+jujugui/static/gui/src/app/assets/javascripts/d3.min.js
+jujugui/static/gui/src/app/assets/javascripts/yui
+jujugui/static/gui/src/app/assets/javascripts/yui-macaroon.js
 app/assets/javascripts/d3.js
 app/assets/javascripts/d3.min.js
 app/assets/javascripts/yui
