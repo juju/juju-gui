@@ -572,7 +572,7 @@ YUI.add('juju-topology-service', function(Y) {
       // This check is required because d3.mouse() throws an internal error
       // on touch events
       if (eType !== 'touch') {
-        var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+        var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
         if (!box.containsPoint(mouse_coords, topo.zoom)) {
           return;
         }
@@ -613,7 +613,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Do not fire unless we're within the service box.
       var topo = context.get('component');
       var container = context.get('container');
-      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
       if (!box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
@@ -625,7 +625,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Do not fire if we're within the service box.
       var topo = context.get('component');
       var container = context.get('container');
-      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
       if (box.pending || box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
