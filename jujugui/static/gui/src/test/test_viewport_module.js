@@ -43,7 +43,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
   it('aborts a resize if the "svg" element is not available', function() {
     var container = {
-      one: testUtils.getter({'svg': undefined}, {})
+      one: testUtils.getter({'.the-canvas': undefined}, {})
     };
     var view = new views.ViewportModule();
     view.getContainer = function() {return container;};

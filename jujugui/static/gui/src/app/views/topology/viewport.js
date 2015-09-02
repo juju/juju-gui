@@ -82,7 +82,6 @@ YUI.add('juju-topology-viewport', function(Y) {
       // smallest size we accept--no smaller or bigger--or else the
       // presence or absence of scrollbars may affect our calculations
       // incorrectly.  The real canvas size will be set in a moment.
-      canvas.setStyles({height: '600px', width: '800px'});
       svg.setAttribute('width', dimensions.width);
       svg.setAttribute('height', dimensions.height);
       topo.vis.attr('width', dimensions.width);
@@ -117,7 +116,7 @@ YUI.add('juju-topology-viewport', function(Y) {
      */
     resized: function() {
       var container = this.getContainer();
-      var svg = container.one('svg');
+      var svg = container.one('.the-canvas');
       var canvas = container.one('.topology-canvas');
       // Early out for tests that do not provide a full rendering environment.
       if (!Y.Lang.isValue(canvas) || !Y.Lang.isValue(svg)) {

@@ -68,7 +68,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       ev.halt();
       var container = this.get('container');
       container.hide();
-      Y.one('#environment-help').removeClass('hidden');
+      Y.one('.environment-help').removeClass('hidden');
       localStorage.setItem('force-onboarding', '');
     },
 
@@ -82,7 +82,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       this.onboardingIndex = 0;
       this.drawContent();
       this.onboarding.show();
-      Y.one('#environment-help').addClass('hidden');
+      Y.one('.environment-help').addClass('hidden');
     },
 
     /**
