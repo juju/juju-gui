@@ -68,7 +68,7 @@ YUI.add('env-size-display', function() {
       return classNames(
         'tab',
         {
-          active
+          active: active
         }
       );
     },
