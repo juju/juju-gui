@@ -575,7 +575,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
-      this.set('dragplane', Y.one('svg g').getDOMNode());
+      this.set('dragplane', Y.one('.the-canvas g').getDOMNode());
       var mouse = d3.mouse(this.get('dragplane'));
       self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
