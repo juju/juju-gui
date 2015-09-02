@@ -1198,28 +1198,41 @@ YUI.add('juju-view-utils', function(Y) {
         // the edge of the actual shape and calculating it as a percentage of
         // the total height of the shape.
         var margins = this.margins;
-        return {
-          top: [
-            this.x + (this.w / 2),
-            this.y + (margins && (margins.top * this.h) || 0)
-          ],
-          right: [
-            this.x + this.w - (margins && (margins.right * this.w) || 0),
-            this.y + (this.h / 2) - (
-                margins && (margins.bottom * this.h / 2 -
-                            margins.top * this.h / 2) || 0)
-          ],
-          bottom: [
-            this.x + (this.w / 2),
-            this.y + this.h - (margins && (margins.bottom * this.h) || 0)
-          ],
-          left: [
-            this.x + (margins && (margins.left * this.w) || 0),
-            this.y + (this.h / 2) - (
-                margins && (margins.bottom * this.h / 2 -
-                            margins.top * this.h / 2) || 0)
-          ]
-        };
+        // snapToPoles if set to true will snap the relation lines to the
+        // closest top, left, bottom or right edge of the service block.
+        var snapToPoles = false;
+
+        if (snapToPoles) {
+          return {
+            top: [
+              this.x + (this.w / 2),
+              this.y + (margins && (margins.top * this.h) || 0)
+            ],
+            right: [
+              this.x + this.w - (margins && (margins.right * this.w) || 0),
+              this.y + (this.h / 2) - (
+                  margins && (margins.bottom * this.h / 2 -
+                              margins.top * this.h / 2) || 0)
+            ],
+            bottom: [
+              this.x + (this.w / 2),
+              this.y + this.h - (margins && (margins.bottom * this.h) || 0)
+            ],
+            left: [
+              this.x + (margins && (margins.left * this.w) || 0),
+              this.y + (this.h / 2) - (
+                  margins && (margins.bottom * this.h / 2 -
+                              margins.top * this.h / 2) || 0)
+            ]
+          };
+        } else {
+          return {
+            center: [
+                this.x + (this.w / 2),
+                this.y + (this.h / 2)
+            ]
+          };
+        }
       }
     },
 

@@ -1563,34 +1563,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }};
     });
 
-    it('must be able to get us nearest connectors',
-       function() {
-         var b1 = views.BoundingBox(module, service),
-         b2 = views.BoundingBox(module, service);
-
-         // raw property access
-         b1.x = 0; b1.y = 0;
-         b1.w = 100; b1.h = 200;
-
-         // Use pos to set b2
-         b2.pos = {x: 200, y: 300, w: 100, h: 200};
-
-         b1.xy.should.eql([0, 0]);
-         b2.wh.should.eql([100, 200]);
-
-         b1.getNearestConnector([0, 0]);
-
-         b1.getNearestConnector(b2).should
-          .eql(b1.connectors.bottom);
-
-         b2.getNearestConnector(b1).should
-          .eql(b2.connectors.top);
-
-         b1.getConnectorPair(b2).should.eql([
-           b1.connectors.bottom,
-           b2.connectors.top]);
-       });
-
     it('must be able to tell if a point is inside a box', function() {
       var b = views.BoundingBox(module, service);
       b.pos = {x: 100, y: 100, w: 50, h: 50};
