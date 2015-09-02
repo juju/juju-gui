@@ -1,0 +1,45 @@
+<div class="view-container scale-up-view state-default">
+  <div class="add-units">
+    <div class="add button sprite-hover">
+      <i class="sprite add_16 normal"></i>
+      <i class="sprite add_hover_16 hover"></i>
+    </div>
+    <i class="sprite inspector-units units-icon"></i>
+    <span class="unit-count"></span>
+    <span class="uncommitted-unit-count"></span>
+  </div>
+  <div class="placement">
+    <form>
+      <span class="units-number-wrap">
+        <input class="units-number" type="text" name="units-number" />
+      </span>
+      <span class="text-in-input">Units</span>
+      <div class="cancel button sprite-hover">
+        <i class="sprite close_16 normal"></i>
+        <i class="sprite close_hover_16 hover"></i>
+      </div>
+      <div>
+        <input type="radio" name="placement" checked="checked" id="unit-per-machine" />
+        <label for="unit-per-machine"><span class="outer"><span class="inner"></span></span>1 unit per machine</label>
+      </div>
+      <div>
+        <input type="radio" name="placement" id="manually-place" />
+        <label for="manually-place"><span class="outer"><span class="inner"></span></span>Manually place</label>
+      </div>
+    </form>
+  </div>
+  <div class="constraints">
+    Scale out with these constraints?
+    <span class="constraints-defaults">
+      Default CPU, default Mem, default Disk.
+      <span class="edit link">Edit</span>
+    </span>
+  </div>
+  <div class="edit-constraints">
+    {{>constraints-form}}
+  </div>
+  <div class="inspector-buttons">
+    <button class="cancel button">Cancel</button>
+    <button class="confirm button">Confirm</button>
+  </div>
+</div>
