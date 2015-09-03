@@ -431,14 +431,11 @@ th {
     padding: 0;
     width: 100%;
     height: 100%;
-    /* pointer-events does not work in IE 10 except in SVG, so this is just a
-       way to slightly improve the experience during transitions. */
-    pointer-events: none;
 
     &__content {
         height: 450px;
         width: 789px;
-        padding: $environment-header-height 0 0 $left-panel-width;
+        padding: $environment-header-height 0 0 0;
         margin: 0 auto;
     }
 
@@ -471,16 +468,46 @@ th {
         }
     }
 
+    .plus-service {
+        cursor: pointer;
+    }
+
     &__image {
         stroke-width: 1;
         width: 789px;
         height: 386px;
     }
 
+    .environment-help__image--shrunk {
+        display: none;
+    }
+
     @at-root {
         .state-sidebar-hidden .environment-help__content {
             // When the sidebar is hidden center the onboarding to the full width.
             padding-left: 0;
+        }
+    }
+
+    &.shrink {
+        z-index: 100;
+        height: auto;
+        width: auto;
+        left: 50%;
+        top: 40%;
+
+        .environment-help__image--shrunk {
+            display: block;
+        }
+
+        .environment-help__tooltip,
+        .environment-help__image {
+            display: none;
+        }
+
+        .environment-help__content {
+            width: auto;
+            height: auto;
         }
     }
 }

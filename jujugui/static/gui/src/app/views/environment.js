@@ -209,7 +209,8 @@ YUI.add('juju-view-environment', function(Y) {
         if (services.size() === 0) {
           helpText.show(true);
         } else {
-          helpText.hide(true);
+          // helpText.hide(true);
+          helpText.addClass('shrink');
         }
       }
     },
