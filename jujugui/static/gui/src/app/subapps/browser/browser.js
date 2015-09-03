@@ -407,7 +407,9 @@ YUI.add('subapp-browser', function(Y) {
     */
     _machine: function(metadata) {
       this._renderMachineViewPanelView(this.get('db'), this.get('env'));
-      this.get('environmentHeader').setSelectedTab('machines');
+      if (!window.flags || !window.flags.react) {
+        this.get('environmentHeader').setSelectedTab('machines');
+      }
     },
 
     /**
@@ -734,7 +736,7 @@ YUI.add('subapp-browser', function(Y) {
       // We need to render the sidebar view as default. This is the new design
       // in the near future we will likely just render it in the initializer.
       this.sidebar();
-      this.state.loadRequest(req);
+      this.state.dispatch();
       next();
     },
 

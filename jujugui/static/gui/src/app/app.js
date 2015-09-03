@@ -609,7 +609,9 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserDropdownView();
         }
         this._renderDeployerBarView();
-        this._renderEnvironmentHeaderView();
+        if (!window.flags || !window.flags.react) {
+          this._renderEnvironmentHeaderView();
+        }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -685,6 +687,47 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+    },
+
+    /**
+      Parses the application URL to populate the state object without
+      dispatching
+
+      @method parseURLState
+    */
+    parseURLState: function(req, res, next) {
+      this.state.loadRequest(req, '', {dispatch: false});
+      next();
+    },
+
+    /**
+      This method is to be passed to the components so that they can interact
+      with the existing changeState system.
+
+      @method changeState
+      @param {Object} state The state to change the view to.
+    */
+    changeState: function(state) {
+      this.fire('changeState', state);
+    },
+
+    /**
+      Renders the Environment Size Display component to the page in the
+      designated element.
+
+      @method _renderEnvSizeDisplay
+      @param {Integer} serviceCount The serviceCount to display.
+      @param {Integer} machineCount The machineCount to display.
+    */
+    _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
+      var state = this.state;
+      React.render(
+        <window.juju.components.EnvSizeDisplay
+          serviceCount={serviceCount}
+          machineCount={machineCount}
+          changeState={this.changeState.bind(this)}
+          getAppState={state.getState.bind(state)} />,
+        document.getElementById('env-size-display-container'));
     },
 
     /**
@@ -1119,6 +1162,13 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
+      if (window.flags && window.flags.react) {
+        // Update the react views on database change
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
+      }
     },
 
     // Route handlers
@@ -1492,6 +1542,13 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
+      if (window.flags && window.flags.react) {
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
+      }
+
       // Display the zoom message on page load.
       this._handleZoomMessage();
       next();
@@ -1674,6 +1731,7 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           // Called on each request.
+          { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
@@ -1703,6 +1761,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
+    'env-size-display',
     // juju-views group
     'd3-components',
     'container-token',
