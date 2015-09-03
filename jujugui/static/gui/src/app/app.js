@@ -735,9 +735,14 @@ YUI.add('juju-gui', function(Y) {
       element.
 
       @method _renderAddedServices
+      @param {Array} services Array of service models.
     */
-    _renderAddedServices: function() {
-
+    _renderAddedServices: function(services) {
+      var services = this.db.services.toArray();
+      React.render(
+        <window.juju.components.Panel
+          services={services}/>,
+        document.getElementById('inspector-container'));
     },
 
     /**
@@ -1179,13 +1184,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
-      if (window.flags && window.flags.react) {
-        // Update the react views on database change
-        this._renderEnvSizeDisplay(
-          this.db.services.size(),
-          this.db.machines.size()
-        );
-      }
+      this._renderComponents();
     },
 
     // Route handlers
@@ -1525,6 +1524,17 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
     },
 
+    _renderComponents: function() {
+      // Update the react views on database change
+      if (window.flags && window.flags.react) {
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
+        this._renderAddedServices();
+      }
+    },
+
     /**
      * @method show_environment
      */
@@ -1559,12 +1569,7 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
-      if (window.flags && window.flags.react) {
-        this._renderEnvSizeDisplay(
-          this.db.services.size(),
-          this.db.machines.size()
-        );
-      }
+      this._renderComponents();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -1779,6 +1784,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-charm-models',
     'env-size-display',
+    'panel-component',
     // juju-views group
     'd3-components',
     'container-token',
