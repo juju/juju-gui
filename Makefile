@@ -75,13 +75,13 @@ $(PY):
 $(NODE_MODULES):
 	npm install --cache-min 999999
 
-.PHONY: run-server
-run-server: gui
+.PHONY: server
+server: gui
 	bin/pserve --reload development.ini
 
 .PHONY: run
-run:
-	make -j 2 run-server watch
+run: gui
+	$(MAKE) -j2 server watch
 
 #########
 # INSTALL
