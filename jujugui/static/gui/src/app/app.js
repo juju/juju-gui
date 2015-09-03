@@ -741,6 +741,7 @@ YUI.add('juju-gui', function(Y) {
       var services = this.db.services.toArray();
       React.render(
         <window.juju.components.Panel
+          instanceName="inspector-panel"
           services={services}/>,
         document.getElementById('inspector-container'));
     },
