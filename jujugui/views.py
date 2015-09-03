@@ -70,7 +70,7 @@ def config(request):
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
     env_uuid = request.matchdict.get('uuid', 'sandbox')
-    baseUrl = settings.get('baseUrl')
+    baseUrl = settings.get('jujugui.baseUrl')
     if baseUrl is None:
         if env_uuid == 'sandbox':
             baseUrl = ''
