@@ -22,9 +22,63 @@ YUI.add('added-services-list-item', function() {
 
   juju.components.AddedServicesListItem = React.createClass({
 
+    /**
+      Parses the supplied unit data to return the status color and number
+      to display.
+
+      @method _parseStatusData
+      @param {Array} units An array of units.
+    */
+    _parseStatusData: function(units) {
+      var unitStatuses = {
+        uncommitted: [],
+        started: [],
+        pending: [],
+        error: [],
+      };
+      units.forEach(function(unit) {
+        unitStatuses[unit.agent_state || 'uncommitted'].push(unit);
+      });
+      var top = {
+        key: '',
+        size: 0
+      };
+      for (var key in unitStatuses) {
+        var size = unitStatuses[key].length;
+        if (size > top.size) {
+          top.key = key;
+          top.size = size;
+        }
+      }
+      return top;
+    },
+
+    /**
+      Renders and returns the status icon if necessary.
+
+      @method _renderStatusIndicator
+      @param {Object} statusData The status data that will be used to generate
+        the staus icon.
+    */
+    _renderStatusIndicator: function(statusData) {
+      var shownStatuses = ['uncommitted', 'pending', 'error'];
+      if (shownStatuses.indexOf(statusData.key) > -1) {
+        return (
+          <span className={statusData.key}>{statusData.size}</span>
+        );
+      }
+    },
+
     render: function() {
+      var service = this.props.service.getAttrs();
+      var statusData = this._parseStatusData(service.units.toArray());
+      var statusIndicator = this._renderStatusIndicator(statusData);
       return (
-        <li>Item</li>
+        <li>
+          <img src={service.icon} />
+          {service.unit_count} {service.displayName}
+          {statusIndicator}
+        </li>
       );
     }
 

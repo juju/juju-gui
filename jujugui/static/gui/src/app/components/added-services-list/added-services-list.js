@@ -25,7 +25,9 @@ YUI.add('added-services-list', function() {
     generateItemList: function(services) {
       var items = [];
       services.forEach(function(service) {
-        items.push(<juju.components.AddedServicesListItem/>);
+        items.push(
+            <juju.components.AddedServicesListItem
+              service={service} />);
       });
       return items;
     },
