@@ -46,12 +46,18 @@ STATIC_CSS_FILES = \
 help:
 	@echo "check - run tests and check lint."
 	@echo "clean - remove build and python artifacts"
+	@echo "clean-gui - clean the built gui js code"
+	@echo "clean-downloadcache - remove the downloadcache"
 	@echo "deps - install the dependencies"
 	@echo "gui - build the gui files"
-	@echo "lint - check style with flake8"
+	@echo "lint - check python style with flake8"
+	@echo "lint-js - check javascript style with eslint"
 	@echo "run - run the development server"
-	@echo "test - run tests quickly with the default Python"
+	@echo "test - run python tests with the default Python"
+	@echo "test-js-phantom - run js tests in terminal"
 	@echo "test-deps - install the test dependencies"
+	@echo "update-downloadcache - update the download cache"
+
 
 #########
 # PREREQS
@@ -86,9 +92,6 @@ run: gui
 #########
 # INSTALL
 #########
-.PHONY: all
-all: venv deps
-
 venv: $(PY)
 
 $(JUJUGUI): $(PYRAMID)
