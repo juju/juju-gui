@@ -991,6 +991,12 @@ YUI.add('juju-view-utils', function(Y) {
     return false;
   };
 
+  /*
+   * snapToPoles if set to true will snap the relation lines to the
+   * closest top, left, bottom or right edge of the service block.
+   */
+  utils.snapToPoles = false;
+
   utils.validate = function(values, schema) {
     var errors = {};
 
@@ -1198,11 +1204,8 @@ YUI.add('juju-view-utils', function(Y) {
         // the edge of the actual shape and calculating it as a percentage of
         // the total height of the shape.
         var margins = this.margins;
-        // snapToPoles if set to true will snap the relation lines to the
-        // closest top, left, bottom or right edge of the service block.
-        var snapToPoles = false;
 
-        if (snapToPoles) {
+        if (utils.snapToPoles) {
           return {
             top: [
               this.x + (this.w / 2),
