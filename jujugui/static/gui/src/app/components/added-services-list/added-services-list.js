@@ -32,7 +32,7 @@ YUI.add('added-services-list', function() {
 
     render: function() {
       return (
-        <ul>
+        <ul className="added-services-list">
           {this.generateItemList(this.props.services)}
         </ul>
       );

@@ -22,10 +22,31 @@ YUI.add('panel-component', function() {
 
   juju.components.Panel = React.createClass({
 
+    /**
+      Returns the supplied classes with the 'active' class applied if the
+      component is the one which is active.
+
+      @method _generateClasses
+      @param {String} section The section you want to check if it needs to be
+        active.
+      @returns {String} The collection of class names.
+    */
+    _genClasses: function(section) {
+      return classNames(
+        'panel-component',
+        this.props.instanceName,
+        {
+          hidden: this.props.services.length === 0
+        }
+      );
+    },
+
     render: function() {
       return (
-        <juju.components.AddedServicesList
-          services={this.props.services} />
+        <div className={this._genClasses()}>
+          <juju.components.AddedServicesList
+            services={this.props.services} />
+        </div>
       );
     }
 
