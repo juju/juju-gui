@@ -179,26 +179,23 @@ YUI.add('subapp-browser', function(Y) {
       this._registerSubappHelpers();
 
       this.state = cfg.state;
-
-      if (window.flags && window.flags.react) {
-
-      }
-
       var dispatchers = {
         app: {
           deployTarget: this._deployTargetDispatcher.bind(this)
-        },
-        sectionA: {
-          charmbrowser: this._charmBrowserDispatcher.bind(this),
-          inspector: this._inspectorDispatcher.bind(this),
-          empty: this.emptySectionA.bind(this),
-          services: this._addedServicesDispatcher.bind(this)
         },
         sectionB: {
           machine: this._machine.bind(this),
           empty: this.emptySectionB.bind(this)
         }
       };
+      if (!window.flags || !window.flags.react) {
+        dispatchers.sectionA = {
+          charmbrowser: this._charmBrowserDispatcher.bind(this),
+          inspector: this._inspectorDispatcher.bind(this),
+          empty: this.emptySectionA.bind(this),
+          services: this._addedServicesDispatcher.bind(this)
+        };
+      }
       this.state.set(
         'dispatchers',
         // If there were any existing dispatchers then merge in ones for
@@ -740,7 +737,9 @@ YUI.add('subapp-browser', function(Y) {
       // so this method only needs these lines once switched over.
       // We need to render the sidebar view as default. This is the new design
       // in the near future we will likely just render it in the initializer.
-      this.sidebar();
+      if (!window.flags || !window.flags.react) {
+        this.sidebar();
+      }
       this.state.dispatch();
       next();
     },
