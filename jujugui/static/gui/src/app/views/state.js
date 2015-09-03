@@ -175,7 +175,13 @@ YUI.add('juju-app-state', function(Y) {
     _dispatchSectionA: function(state) {
       var component = state.component;
       // The default component is the charmbrowser.
-      if (!component) { component = 'charmbrowser'; }
+      if (!component) {
+        if (window.flags && window.flags.react) {
+          component = 'services';
+        } else {
+          component = 'charmbrowser';
+        }
+      }
       this.get('dispatchers').sectionA[component](state.metadata);
     },
 

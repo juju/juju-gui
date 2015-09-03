@@ -731,6 +731,16 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the Added Services component to the page in the appropriate
+      element.
+
+      @method _renderAddedServices
+    */
+    _renderAddedServices: function() {
+
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -745,6 +755,13 @@ YUI.add('juju-gui', function(Y) {
         baseUrl: baseUrl || '',
         dispatchers: {}
       });
+      if (window.flags && window.flags.react) {
+        var dispatchers = this.state.get('dispatchers');
+        dispatchers.sectionA = {
+          services: this._renderAddedServices.bind(this)
+        };
+        this.state.set('dispatchers', dispatchers);
+      }
     },
 
     /**
