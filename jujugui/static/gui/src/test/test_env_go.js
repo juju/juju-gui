@@ -114,6 +114,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('prepareConstraints', function() {
 
+      it('converts a constraints string to an object', function() {
+        var constraints = env.prepareConstraints('tags=foo,bar cpu-cores=4');
+        assert.deepEqual(constraints, {
+          'cpu-cores': 4,
+          'tags': ['foo', 'bar']
+        })
+      });
+
       it('converts integer constraints', function() {
         var constraints = env.prepareConstraints(
             {'root-disk': '800', 'cpu-cores': '4', mem: '2000'});
