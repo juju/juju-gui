@@ -26,7 +26,7 @@ YUI.add('env-size-display', function() {
       return {
         activeComponent: this.props.getAppState(
             'current', 'sectionB', 'component')
-      }
+      };
     },
 
     /**
@@ -37,7 +37,7 @@ YUI.add('env-size-display', function() {
       @param {Object} e The click event handler
     */
     _changeEnvironmentView: function(e) {
-      var view = e.currentTarget.dataset.view
+      var view = e.currentTarget.dataset.view;
       var component = (view === 'machine') ? 'machine' : null;
       var changeState = {
         sectionB: {
