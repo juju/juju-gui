@@ -178,7 +178,12 @@ YUI.add('subapp-browser', function(Y) {
 
       this._registerSubappHelpers();
 
-      this.state = cfg.state
+      this.state = cfg.state;
+
+      if (window.flags && window.flags.react) {
+
+      }
+
       var dispatchers = {
         app: {
           deployTarget: this._deployTargetDispatcher.bind(this)

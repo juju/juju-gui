@@ -119,7 +119,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(constraints, {
           'cpu-cores': 4,
           'tags': ['foo', 'bar']
-        })
+        });
       });
 
       it('converts integer constraints', function() {

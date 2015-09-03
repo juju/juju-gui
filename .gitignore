@@ -38,3 +38,4 @@ upload_release.py
 .vagrant
 virtualenv
 yuidoc
+yui-macaroon.js
