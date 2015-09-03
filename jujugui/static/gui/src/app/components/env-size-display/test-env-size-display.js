@@ -13,10 +13,6 @@ function queryComponentSelector(component, selector, all) {
 describe('EnvSizeDisplay', function() {
 
   beforeAll(function(done) {
-    console.log(chai.config)
-    chai.config.showDiff = true;
-    chai.config.includeStack = true;
-    chai.config.truncateThreashold = 0;
     // By loading this file it adds the component to the juju components.
     YUI().use('env-size-display', function() { done(); });
   });

@@ -701,8 +701,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Passed to the components so that they can interact with the existing
-      changeState system.
+      This method is to be passed to the components so that they can interact
+      with the existing changeState system.
 
       @method changeState
       @param {Object} state The state to change the view to.
@@ -711,6 +711,14 @@ YUI.add('juju-gui', function(Y) {
       this.fire('changeState', state);
     },
 
+    /**
+      Renders the Environment Size Display component to the page in the
+      designated element.
+
+      @method _renderEnvSizeDisplay
+      @param {Integer} serviceCount The serviceCount to display.
+      @param {Integer} machineCount The machineCount to display.
+    */
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
       var state = this.state;
       React.render(

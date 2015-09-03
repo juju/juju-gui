@@ -1,6 +1,6 @@
 // Taken from https://github.com/facebook/react/issues/945#issuecomment-37329894
 
-// Pollyfill for function.prototype.bind
+// Polyfill for function.prototype.bind
 
 // ONLY to be used in the phantomjs tests - If you upgrade to PhantomJS 2.0 This
 // can be removed.
