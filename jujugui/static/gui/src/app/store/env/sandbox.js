@@ -319,7 +319,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         Response: {
           ProviderType: state.get('providerType'),
           DefaultSeries: state.get('defaultSeries'),
-          Name: 'Sandbox'
+          Name: 'sandbox'
         }
       });
     },

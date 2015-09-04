@@ -633,7 +633,7 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
-      Y.one('.navbar').delegate('click', function(e) {
+      Y.one('.header-banner').delegate('click', function(e) {
         e.halt();
         this.logout();
       }, '.logout-trigger', this);

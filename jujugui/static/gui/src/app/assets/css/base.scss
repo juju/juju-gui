@@ -241,146 +241,6 @@ th {
 
 /* Layout, widgets etc. */
 
-/*
- * The main header above the canvas
- */
-.navbar {
-    min-width: 800px;
-    height: $navbar-height;
-    margin: -$navbar-height 0 0 0;
-    background-color: #221e1b;
-
-    &,
-    & > ul > li > a {
-        color: #d7d3d0;
-    }
-
-    ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-    .right-nav,
-    #browser-nav {
-        & > li,
-        & > li.tab > a {
-            @extend .border-box;
-            display: block;
-            height: $navbar-height;
-            padding: 14px 20px 0 20px;
-        }
-        & > li {
-            float: left;
-            border-width: 0 1px;
-            border-style: solid;
-            border-left-color: $navbar-border-light;
-            border-right-color: $navbar-border-dark;
-
-            & > a {
-                &.button {
-                    margin: -8px 0 0 0;
-                }
-            }
-            &.hidden {
-                display: none !important;
-            }
-        }
-    }
-    #browser-nav {
-        float: left;
-        border-right: 1px solid $navbar-border-light;
-
-        & > li {
-            &:first-child {
-                border-left: none;
-            }
-            .brand {
-                display: block;
-                margin: -5px 10px 0 0;
-                padding: 0;
-            }
-            & > a {
-                &:hover {
-                    text-decoration: none;
-                }
-            }
-            &.tab a {
-                margin: -14px -20px 0 -20px;
-
-                &.active {
-                    border-bottom: 3px solid $charm-panel-orange;
-                }
-                .sprite {
-                    margin-right: 6px;
-                }
-            }
-            &.notifications-nav {
-                position: relative;
-
-                #notify-indicator {
-                  @include create-border-radius(4px);
-                  border: 1px solid #d7d3d0;
-                  margin: -5px 0 0 0;
-                  padding: 2px 6px;
-
-                  &.populated {
-                    background-color: $charm-panel-orange;
-                  }
-                }
-            }
-        }
-    }
-    .right-nav {
-        float: right;
-        margin: 0;
-        border-left: 1px solid $navbar-border-dark;
-
-        & > li:last-child {
-            border-right: none;
-        }
-        a.button.inverse {
-            background-color: #1f1b18;
-
-            &:hover {
-                background-color: #1f1b18;
-            }
-        }
-        .get-started {
-            margin-left: 7px;
-            vertical-align: top;
-        }
-        .user-dropdown {
-            display: block;
-            margin-right: 20px;
-
-            .menu-link {
-                &:hover {
-                    background-color: $charm-panel-orange;
-                }
-                .sprite {
-                    margin-right: 10px;
-
-                    &.hover {
-                        display: none;
-                    }
-                    &.normal {
-                        display: inline-block;
-                    }
-                }
-            }
-            .open .menu-link,
-            .menu-link:hover {
-                .sprite.hover {
-                    display: inline-block;
-                }
-                .sprite.normal {
-                    display: none;
-                }
-            }
-        }
-    }
-}
-
 #content {
     position: relative;
     width: 100%;
@@ -449,7 +309,7 @@ th {
     &__content {
         height: 450px;
         width: 789px;
-        padding: $environment-header-height 0 0 $left-panel-width;
+        padding-right: $environment-header-height;
         margin: 0 auto;
     }
 
@@ -486,13 +346,6 @@ th {
         stroke-width: 1;
         width: 789px;
         height: 386px;
-    }
-
-    @at-root {
-        .state-sidebar-hidden .environment-help__content {
-            // When the sidebar is hidden center the onboarding to the full width.
-            padding-left: 0;
-        }
     }
 }
 
@@ -1094,6 +947,7 @@ g.unit {
 @import "environment-header";
 @import "inspector/juju-inspector";
 @import "inspector/inspector-view";
+@import "header";
 
 /** Views **/
 @import "browser/onboarding";

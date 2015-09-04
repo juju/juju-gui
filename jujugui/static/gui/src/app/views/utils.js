@@ -1718,7 +1718,7 @@ YUI.add('juju-view-utils', function(Y) {
     var containerHeight = Y.one('body').get(
         primary ? 'winHeight' : 'docHeight'),
         bottomNavbar = Y.one('.bottom-navbar'),
-        navbar = Y.one('.navbar'),
+        navbar = Y.one('.header-banner'),
         viewport = Y.one('#viewport'),
         result = {height: minheight || 0, width: minwidth || 0};
     if (containerHeight && navbar && viewport) {

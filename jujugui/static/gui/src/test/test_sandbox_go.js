@@ -243,7 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Response: {
             ProviderType: state.get('providerType'),
             DefaultSeries: state.get('defaultSeries'),
-            Name: 'Sandbox'}};
+            Name: 'sandbox'}};
         assert.deepEqual(Y.JSON.parse(received.data), expected);
         done();
       };

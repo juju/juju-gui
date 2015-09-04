@@ -37,9 +37,12 @@ class TestBasics(browser.TestCase):
         # The symptom we are trying to avoid is an error as follows:
         # "JavaScript error (WARNING: The server did not provide any stacktrace
         # information)""
-        self.wait_for_css_selector('svg')
+
+        # Waits for the canvas to appear before continuing instead of just
+        # targeting an svg element as there is more then one in the index
+        self.wait_for_css_selector('.the-canvas')
         body = self.driver.find_element_by_xpath('//body')
-        self.assertTrue('Sandbox' in body.text)
+        self.assertTrue('sandbox' in body.text)
 
     def test_environment_connection(self):
         # The GUI connects to the API backend.
@@ -49,9 +52,12 @@ class TestBasics(browser.TestCase):
         # The symptom we are trying to avoid is an error as follows:
         # "JavaScript error (WARNING: The server did not provide any stacktrace
         # information)""
-        self.wait_for_css_selector('svg')
+
+        # Waits for the canvas to appear before continuing instead of just
+        # targeting an svg element as there is more then one in the index
+        self.wait_for_css_selector('.the-canvas')
         script = 'return app && app.env && app.env.get("connected");'
-        self.wait_for_script(script, 'Environment not connected.')
+        self.wait_for_script(script, 'Environment not connected.', 60)
 
 
 @unittest.skip("New GUI layout doesn't have log in and out buttons for now.")
