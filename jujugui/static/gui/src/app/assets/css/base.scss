@@ -669,12 +669,16 @@ th {
 .visibility-classes {
     transition: opacity 0.4s ease;
     &.show {
-        opacity: 1.0;
+        opacity: 1;
         visibility: visible;
     }
     &.fade {
-        opacity: 0.2;
         visibility: visible;
+        stroke-opacity: .2;
+
+        .service-icon {
+            opacity: .2;
+        }
     }
     &.hide {
         /*

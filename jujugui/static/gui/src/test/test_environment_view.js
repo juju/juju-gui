@@ -1540,15 +1540,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('view model support infrastructure', function() {
-    var Y, views, models, module, service, testUtils;
+    var Y, views, models, module, service, testUtils, viewUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-views', 'juju-models', 'charmstore-api', 'juju-tests-utils'],
+          ['juju-views', 'juju-models', 'charmstore-api', 'juju-tests-utils',
+          'juju-view-utils'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
             testUtils = Y.namespace('juju-tests').utils;
+            viewUtils = Y.namespace('juju.views.utils');
             done();
           });
     });
@@ -1563,8 +1565,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }};
     });
 
-    it('must be able to get us nearest connectors',
+    it('must be able to get us nearest connectors when snapping to poles',
        function() {
+
          var b1 = views.BoundingBox(module, service),
          b2 = views.BoundingBox(module, service);
 
@@ -1578,6 +1581,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          b1.xy.should.eql([0, 0]);
          b2.wh.should.eql([100, 200]);
 
+         viewUtils.snapToPoles = true;
+
          b1.getNearestConnector([0, 0]);
 
          b1.getNearestConnector(b2).should
@@ -1590,6 +1595,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            b1.connectors.bottom,
            b2.connectors.top]);
        });
+
+    it('must be able to get us nearest connectors when centering',
+      function() {
+
+        var b1 = views.BoundingBox(module, service),
+        b2 = views.BoundingBox(module, service);
+
+        // raw property access
+        b1.x = 0; b1.y = 0;
+        b1.w = 100; b1.h = 200;
+
+        // Use pos to set b2
+        b2.pos = {x: 200, y: 300, w: 100, h: 200};
+
+        b1.xy.should.eql([0, 0]);
+        b2.wh.should.eql([100, 200]);
+
+        viewUtils.snapToPoles = false;
+
+        b1.getNearestConnector(b2).should
+         .eql(b1.connectors.center);
+
+        b2.getNearestConnector(b1).should
+         .eql(b2.connectors.center);
+      });
 
     it('must be able to tell if a point is inside a box', function() {
       var b = views.BoundingBox(module, service);

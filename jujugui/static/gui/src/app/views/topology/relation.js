@@ -568,7 +568,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var d = evt.service;
       // Create a pending drag-line.
       var vis = this.get('component').vis;
-      var dragline = vis.append('line')
+      var dragline = vis.insert('line',':first-child')
                         .attr('class',
                               'relation pending-relation dragline dragging');
       var self = this;
