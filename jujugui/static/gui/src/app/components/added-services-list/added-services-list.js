@@ -34,9 +34,11 @@ YUI.add('added-services-list', function() {
 
     render: function() {
       return (
-        <ul className="added-services-list">
-          {this.generateItemList(this.props.services)}
-        </ul>
+        <div className="inspector-view">
+          <ul className="added-services-list inspector-view__list">
+            {this.generateItemList(this.props.services)}
+          </ul>
+        </div>
       );
     }
 
