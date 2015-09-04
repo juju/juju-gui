@@ -1,0 +1,72 @@
+.inspector-view {
+    @extend %floating-panel;
+    $fade-in-duration: .1s;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 100%;
+    background-color: #fff;
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @mixin notification($background) {
+        $size: 24px;
+        float: right;
+        width: $size;
+        height: $size;
+        background-color: $background;
+        border-radius: 50%;
+        color: $white;
+        line-height: $size;
+        text-align: center;
+    }
+
+    &__list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    &__list-item {
+        animation: fadeIn $fade-in-duration linear forwards;
+        padding: 10px 20px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $light-grey;
+        }
+    }
+
+    &__item-icon {
+        $size: 24px;
+        width: $size;
+        height: $size;
+        margin-right: 16px;
+        vertical-align: middle;
+    }
+
+    &__item-count {
+        color: $warm-grey;
+    }
+
+    &__status {
+        &--error {
+            @include notification($error);
+        }
+
+        &--pending {
+            @include notification($pending);
+        }
+
+        &--uncommitted {
+            @include notification($uncommitted);
+        }
+    }
+}

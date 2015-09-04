@@ -62,9 +62,10 @@ YUI.add('added-services-list-item', function() {
     */
     _renderStatusIndicator: function(statusData) {
       var shownStatuses = ['uncommitted', 'pending', 'error'];
+      var className = 'inspector-view__status--' + statusData.key;
       if (shownStatuses.indexOf(statusData.key) > -1) {
         return (
-          <span className={statusData.key}>{statusData.size}</span>
+          <span className={className}>{statusData.size}</span>
         );
       }
     },
@@ -74,9 +75,9 @@ YUI.add('added-services-list-item', function() {
       var statusData = this._parseStatusData(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
       return (
-        <li>
-          <img src={service.icon} />
-          {service.unit_count} {service.displayName}
+        <li className="inspector-view__list-item" tabIndex="0" role="button">
+          <img src={service.icon} className="inspector-view__item-icon" />
+          <span className="inspector-view__item-count">{service.unit_count}</span> {service.name}
           {statusIndicator}
         </li>
       );

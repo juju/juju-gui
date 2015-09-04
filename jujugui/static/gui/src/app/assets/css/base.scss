@@ -52,23 +52,31 @@ $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Co
 
 /* Define common colors. */
 $canvas-background: #f5f5f5;
-$label-color: #292929;
-$text-entry-color: #6d6e70;
+$error: #df382c;
 $charm-panel-orange: #dd4814;
 $charm-panel-background-color: #eeeeee;
-$deployer-bar-height: 50px;
-$environment-header-height: 40px;
 $inspector-dark: #1c1817;
-$left-panel-width: 290px;
+$label-color: #292929;
+$light-grey: #f5f5f5;
 $machine-view-border-colour: #d9d9d9;
-$navbar-height: 48px;
 $navbar-border-dark: #191514;
 $navbar-border-light: #2d2928;
+$success: #38b44a;
 $text-colour: #505050;
+$text-entry-color: #6d6e70;
+$pending: #eaa818;
+$uncommitted: #19b6ee;
+$warm-grey: #888;
+$white: #fff;
+
+// Spacing.
 $border-radius: 2px;
-$uncommitted-colour: #19b6ee;
-$panel-space: 10px;
 $bws-header-height: 81px;
+$deployer-bar-height: 50px;
+$environment-header-height: 40px;
+$left-panel-width: 290px;
+$navbar-height: 48px;
+$panel-space: 10px;
 
 // Imports need to be after vars.
 @import "typography";
@@ -1078,6 +1086,7 @@ g.unit {
 @import "dropdown";
 @import "environment-header";
 @import "inspector/juju-inspector";
+@import "inspector/inspector-view";
 
 /** Views **/
 @import "browser/onboarding";
