@@ -769,6 +769,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the WhiteBox component to the page in the designated element.
+
+      @method _renderWhiteBox
+    */
+    _renderWhiteBox: function() {
+      React.render(
+        <window.juju.components.WhiteBox />,
+        document.getElementById('white-box-container'));
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -1558,6 +1569,7 @@ YUI.add('juju-gui', function(Y) {
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
+        this._renderWhiteBox();
       }
     },
 
@@ -1809,9 +1821,11 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
-    'inspector-component',
+    // React components
     'env-size-display',
+    'inspector-component',
     'panel-component',
+    'white-box',
     // juju-views group
     'd3-components',
     'container-token',
