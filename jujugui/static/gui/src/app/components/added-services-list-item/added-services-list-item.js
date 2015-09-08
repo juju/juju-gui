@@ -71,7 +71,7 @@ YUI.add('added-services-list-item', function() {
 
       @method _renderStatusIndicator
       @param {Object} statusData The status data that will be used to generate
-        the staus icon.
+        the status icon.
     */
     _renderStatusIndicator: function(statusData) {
       var shownStatuses = ['uncommitted', 'pending', 'error'];
