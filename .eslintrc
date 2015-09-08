@@ -4,6 +4,7 @@ env:
 ecmaFeatures:
   jsx: true
   defaultParams: true
+  arrowFunctions: true
   objectLiteralShorthandProperties: false
 rules:
   no-shadow: 0
