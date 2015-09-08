@@ -129,7 +129,7 @@
 .uncommitted-circle {
     vertical-align: bottom;
     margin-left: 1px;
-    color: $uncommitted-colour;
+    color: $uncommitted;
     font-size: 32px;
     line-height: 0px;
 }
@@ -150,6 +150,7 @@
 }
 
 %floating-panel {
+    @extend %customize-scrollbar;
     border-radius: $border-radius;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }

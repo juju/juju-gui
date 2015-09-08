@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
+Copyright (C) 2015 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -26,7 +26,7 @@ YUI.add('env-size-display', function() {
       return {
         activeComponent: this.props.getAppState(
             'current', 'sectionB', 'component')
-      }
+      };
     },
 
     /**
@@ -37,7 +37,7 @@ YUI.add('env-size-display', function() {
       @param {Object} e The click event handler
     */
     _changeEnvironmentView: function(e) {
-      var view = e.currentTarget.dataset.view
+      var view = e.currentTarget.dataset.view;
       var component = (view === 'machine') ? 'machine' : null;
       var changeState = {
         sectionB: {

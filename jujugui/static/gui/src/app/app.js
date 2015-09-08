@@ -731,6 +731,22 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the Added Services component to the page in the appropriate
+      element.
+
+      @method _renderAddedServices
+      @param {Array} services Array of service models.
+    */
+    _renderAddedServices: function(services) {
+      var services = this.db.services.toArray();
+      React.render(
+        <window.juju.components.Panel
+          instanceName="inspector-panel"
+          services={services}/>,
+        document.getElementById('inspector-container'));
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -745,6 +761,13 @@ YUI.add('juju-gui', function(Y) {
         baseUrl: baseUrl || '',
         dispatchers: {}
       });
+      if (window.flags && window.flags.react) {
+        var dispatchers = this.state.get('dispatchers');
+        dispatchers.sectionA = {
+          services: this._renderAddedServices.bind(this)
+        };
+        this.state.set('dispatchers', dispatchers);
+      }
     },
 
     /**
@@ -1162,13 +1185,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
-      if (window.flags && window.flags.react) {
-        // Update the react views on database change
-        this._renderEnvSizeDisplay(
-          this.db.services.size(),
-          this.db.machines.size()
-        );
-      }
+      this._renderComponents();
     },
 
     // Route handlers
@@ -1508,6 +1525,17 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
     },
 
+    _renderComponents: function() {
+      // Update the react views on database change
+      if (window.flags && window.flags.react) {
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
+        this._renderAddedServices();
+      }
+    },
+
     /**
      * @method show_environment
      */
@@ -1542,12 +1570,7 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
-      if (window.flags && window.flags.react) {
-        this._renderEnvSizeDisplay(
-          this.db.services.size(),
-          this.db.machines.size()
-        );
-      }
+      this._renderComponents();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -1762,6 +1785,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-charm-models',
     'env-size-display',
+    'panel-component',
     // juju-views group
     'd3-components',
     'container-token',
