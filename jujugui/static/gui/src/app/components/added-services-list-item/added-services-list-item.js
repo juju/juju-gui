@@ -31,30 +31,37 @@ YUI.add('added-services-list-item', function() {
     */
     _parseStatusData: function(units) {
       var unitStatuses = {
-        uncommitted: [],
-        started: [],
-        pending: [],
-        error: [],
+        uncommitted: { priority: 3, size: 0 },
+        started: { priority: 2, size: 0 },
+        pending: { priority: 1, size: 0 },
+        error: { priority: 0, size: 0 },
       };
       var agentState;
       units.forEach(function(unit) {
         agentState = unit.agent_state || 'uncommitted';
+        // If we don't have it in our status list then add it to the end
+        // with a very low priority.
         if (!unitStatuses[agentState]) {
-          unitStatuses[agentState] = [];
+          unitStatuses[agentState] = { priority: 99, size: 0 };
         }
-        unitStatuses[agentState].push(unit);
+        unitStatuses[agentState].size += 1;
       });
-      var top = {
-        key: '',
-        size: 0
-      };
+
+      var top = { priority: 99, key: '', size: 0 };
+      var status;
       for (var key in unitStatuses) {
-        var size = unitStatuses[key].length;
-        if (size > top.size) {
-          top.key = key;
-          top.size = size;
+        status = unitStatuses[key];
+        if (status.priority < top.priority && status.size > 0) {
+          top = {
+            key: key,
+            priority: status.priority,
+            size: status.size
+          };
         }
       }
+      // size needs to be a string for test comparison purposes because react
+      // converts this to a string for output but doesn't convert it in
+      // the js dom.
       top.size = top.size + '';
       return top;
     },
