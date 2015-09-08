@@ -36,8 +36,13 @@ YUI.add('added-services-list-item', function() {
         pending: [],
         error: [],
       };
+      var agentState;
       units.forEach(function(unit) {
-        unitStatuses[unit.agent_state || 'uncommitted'].push(unit);
+        agentState = unit.agent_state || 'uncommitted';
+        if (!unitStatuses[agentState]) {
+          unitStatuses[agentState] = [];
+        }
+        unitStatuses[agentState].push(unit);
       });
       var top = {
         key: '',
@@ -50,6 +55,7 @@ YUI.add('added-services-list-item', function() {
           top.size = size;
         }
       }
+      top.size = top.size + '';
       return top;
     },
 
