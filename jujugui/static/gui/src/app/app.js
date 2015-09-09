@@ -744,7 +744,6 @@ YUI.add('juju-gui', function(Y) {
       React.render(
         <components.Panel
           instanceName="inspector-panel"
-          instanceType="addedServices"
           visible={services.length > 0}>
           <components.AddedServicesList services={services} />
         </components.Panel>,
@@ -762,7 +761,6 @@ YUI.add('juju-gui', function(Y) {
       React.render(
         <components.Panel
           instanceName="inspector-panel"
-          instanceType="inspector"
           visible={true}
           metadata={metadata}>
           <components.Inspector />

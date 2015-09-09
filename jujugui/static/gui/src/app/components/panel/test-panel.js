@@ -31,35 +31,42 @@ describe('PanelComponent', function() {
     YUI().use('panel-component', function() { done(); });
   });
 
-  it('generates a visible panel if services are provided', function() {
+  it('generates a visible panel when visible flag is provided', function() {
     var instanceName = 'custom-instance-name';
-    var services = ['']; // one service.
 
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Panel
           instanceName={instanceName}
-          services={services}/>);
+          visible={true}/>);
 
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.className, 'panel-component ' + instanceName);
-    assert.deepEqual(output.props.children,
-      <juju.components.AddedServicesList services={services} />);
+    assert.equal(output.props.children, undefined);
   });
 
-  it('generates a hidden panel if no services are provided', function() {
+  it('generates a hidden panel if visible flag is falsey', function() {
     var instanceName = 'custom-instance-name';
-    var services = []; // no services.
 
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Panel
-          instanceName={instanceName}
-          services={services}/>);
+          instanceName={instanceName}/>);
 
     var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.className, 'panel-component ' + instanceName + ' hidden');
-    assert.deepEqual(output.props.children,
-      <juju.components.AddedServicesList services={services} />);
+    assert.equal(
+        output.props.className, 'panel-component ' + instanceName + ' hidden');
+    assert.equal(output.props.children, undefined);
+  });
+
+  it('renders provided children components', function() {
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Panel instanceName="custom-instance-name">
+          <div>child</div>
+        </juju.components.Panel>);
+
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children, <div>child</div>);
   });
 });
