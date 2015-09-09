@@ -34,7 +34,6 @@ YUI.add('white-box', function() {
     _genClasses: function(section) {
       return classNames(
         'white-box',
-        this.props.instanceName,
         {
           hidden: !this.props.visible
         }
