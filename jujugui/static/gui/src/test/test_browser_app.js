@@ -629,6 +629,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         describe('_deployTargetDispatcher', function() {
           it('gets bundle yaml from charmstore then deploys', function(done) {
+            var navStub = utils.makeStubMethod(app, 'navigate');
+            this._cleanups.push(navStub.reset);
+            app.state.set('current', {app: {deployTarget: ''}});
             var bundleId = 'bundle/elasticsearch';
             app.set('charmstore', {
               getBundleYAML: utils.makeStubFunction()
@@ -651,6 +654,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('requests bundle id from charmstore then deploys (namespaced)',
               function(done) {
+                var navStub = utils.makeStubMethod(app, 'navigate');
+                this._cleanups.push(navStub.reset);
+                app.state.set('current', {app: {deployTarget: ''}});
                 var bundleId = '~jorge/bundle/elasticsearch';
                 app.set('charmstore', {
                   getBundleYAML: utils.makeStubFunction()
@@ -672,6 +678,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               });
 
           it('requests charm id from store then deploys', function() {
+            var navStub = utils.makeStubMethod(app, 'navigate');
+            this._cleanups.push(navStub.reset);
+            app.state.set('current', {app: {deployTarget: ''}});
             app.setAttrs({
               charmstore: { getEntity: utils.makeStubFunction() },
               env: { deploy: utils.makeStubFunction() }
@@ -702,6 +711,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(deployArgs[4], 1);
             assert.deepEqual(deployArgs[5], {});
             assert.strictEqual(deployArgs[6], null);
+          });
+
+          it('clears the deploy target action from the state', function() {
+            var navStub = utils.makeStubMethod(app, 'navigate');
+            this._cleanups.push(navStub.reset);
+            app.state.set(
+                'current', {app: {deployTarget: 'cs:/precise/wordpress'}});
+            var bundleId = 'bundle/elasticsearch';
+            app.set('charmstore', { getBundleYAML: utils.makeStubFunction() });
+            app.set('bundleImporter', utils.makeStubFunction());
+            app._deployTargetDispatcher(bundleId);
+            assert.equal(navStub.callCount(), 1);
+            assert.equal(navStub.lastArguments()[0], '/');
           });
         });
 
