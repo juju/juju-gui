@@ -277,6 +277,13 @@ YUI.add('subapp-browser', function(Y) {
             }.bind(this),
             failureNotification.bind(this));
       }
+      // Because deploy-target is an action and not a state we need to clear
+      // it out of the state as soon as we are done with it so that we can
+      // continue calling dispatch without the worry of it trying to
+      // deploy multiple times.
+      var currentState = this.state.get('current');
+      delete currentState.app.deployTarget;
+      this.navigate(this.state.generateUrl(currentState));
     },
 
     /**
