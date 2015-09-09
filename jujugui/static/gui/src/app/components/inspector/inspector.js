@@ -23,7 +23,6 @@ YUI.add('inspector-component', function() {
   juju.components.Inspector = React.createClass({
 
     render: function() {
-      console.log('render')
       return (
         <div>
           Inspector
