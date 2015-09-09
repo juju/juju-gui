@@ -26,7 +26,7 @@ YUI.add('search-results', function() {
       var classes = 'search-results';
       return (
         <div className={classes}>
-          The search results are here!
+          Search results for "{this.props.query}".
         </div>
       );
     }

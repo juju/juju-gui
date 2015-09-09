@@ -772,13 +772,15 @@ YUI.add('juju-gui', function(Y) {
       Renders the SearchResults component to the page in the designated element.
 
       @method _renderSearchResults
+      @param {String} query The search query.
     */
-    _renderSearchResults: function() {
-      var visible = true;
+    _renderSearchResults: function(query) {
+      var visible = query ? true : false;
       React.render(
         <window.juju.components.WhiteBox
           visible={visible}>
-          <window.juju.components.SearchResults />
+          <window.juju.components.SearchResults
+            query={query} />
         </window.juju.components.WhiteBox>,
         document.getElementById('white-box-container'));
     },
@@ -1563,7 +1565,13 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
     },
 
-    _renderComponents: function() {
+    /**
+      Render the react components.
+
+      @method _renderComponents
+      @param {Object} req The request object.
+    */
+    _renderComponents: function(req) {
       // Update the react views on database change
       if (window.flags && window.flags.react) {
         this._renderEnvSizeDisplay(
@@ -1573,7 +1581,7 @@ YUI.add('juju-gui', function(Y) {
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
-        this._renderWhiteBox();
+        this._renderSearchResults(req.query.text);
       }
     },
 
@@ -1611,7 +1619,7 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
-      this._renderComponents();
+      this._renderComponents(req);
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
