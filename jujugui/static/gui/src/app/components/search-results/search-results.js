@@ -18,33 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('white-box', function() {
+YUI.add('search-results', function() {
 
-  juju.components.WhiteBox = React.createClass({
-
-    /**
-      Returns the supplied classes with the 'active' class applied if the
-      component is the one which is active.
-
-      @method _generateClasses
-      @param {String} section The section you want to check if it needs to be
-        active.
-      @returns {String} The collection of class names.
-    */
-    _genClasses: function(section) {
-      return classNames(
-        'white-box',
-        this.props.instanceName,
-        {
-          hidden: !this.props.visible
-        }
-      );
-    },
+  juju.components.SearchResults = React.createClass({
 
     render: function() {
+      var classes = 'search-results';
       return (
-        <div className={this._genClasses()}>
-          {this.props.children}
+        <div className={classes}>
+          The search results are here!
         </div>
       );
     }
