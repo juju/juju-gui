@@ -42,6 +42,8 @@ YUI.add('juju-gui', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       bundleNotifications = juju.BundleNotifications;
 
+  var components = window.juju.components;
+
   /**
    * The main app class.
    *
@@ -740,9 +742,31 @@ YUI.add('juju-gui', function(Y) {
     _renderAddedServices: function(services) {
       var services = this.db.services.toArray();
       React.render(
-        <window.juju.components.Panel
+        <components.Panel
           instanceName="inspector-panel"
-          services={services}/>,
+          instanceType="addedServices"
+          visible={services.length > 0}>
+          <components.AddedServicesList services={services} />
+        </components.Panel>,
+        document.getElementById('inspector-container'));
+    },
+
+    /**
+      Renders the Inspector component to the page.
+
+      @method _renderInspector
+      @param {Object} metadata The data to pass to the inspector which tells it
+        how to render.
+    */
+    _renderInspector: function(metadata) {
+      React.render(
+        <components.Panel
+          instanceName="inspector-panel"
+          instanceType="inspector"
+          visible={true}
+          metadata={metadata}>
+          <components.Inspector />
+        </components.Panel>,
         document.getElementById('inspector-container'));
     },
 
@@ -764,7 +788,8 @@ YUI.add('juju-gui', function(Y) {
       if (window.flags && window.flags.react) {
         var dispatchers = this.state.get('dispatchers');
         dispatchers.sectionA = {
-          services: this._renderAddedServices.bind(this)
+          services: this._renderAddedServices.bind(this),
+          inspector: this._renderInspector.bind(this)
         };
         this.state.set('dispatchers', dispatchers);
       }
@@ -1532,7 +1557,9 @@ YUI.add('juju-gui', function(Y) {
           this.db.services.size(),
           this.db.machines.size()
         );
-        this._renderAddedServices();
+        // When we render the components we also want to trigger the rest of
+        // the application to render but only based on the current state.
+        this.state.dispatch();
       }
     },
 
@@ -1784,6 +1811,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
+    'inspector-component',
     'env-size-display',
     'panel-component',
     // juju-views group
