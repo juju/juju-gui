@@ -36,7 +36,7 @@ YUI.add('panel-component', function() {
         'panel-component',
         this.props.instanceName,
         {
-          hidden: this.props.services.length === 0
+          hidden: !this.props.visible
         }
       );
     },
@@ -44,8 +44,7 @@ YUI.add('panel-component', function() {
     render: function() {
       return (
         <div className={this._genClasses()}>
-          <juju.components.AddedServicesList
-            services={this.props.services} />
+          {this.props.children}
         </div>
       );
     }
