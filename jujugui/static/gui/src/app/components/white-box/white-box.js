@@ -44,7 +44,9 @@ YUI.add('white-box', function() {
     render: function() {
       return (
         <div className={this._genClasses()}>
-          {this.props.children}
+          <div className="white-box__container">
+            {this.props.children}
+          </div>
         </div>
       );
     }

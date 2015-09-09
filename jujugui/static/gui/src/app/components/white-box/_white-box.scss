@@ -7,4 +7,8 @@
     right: 0;
     padding: $panel-space;
     background-color: rgba(255, 255, 255, 0.3);
+
+    &__container {
+        @extend %floating-panel;
+    }
 }
