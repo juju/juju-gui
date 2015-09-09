@@ -769,13 +769,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Renders the WhiteBox component to the page in the designated element.
+      Renders the SearchResults component to the page in the designated element.
 
-      @method _renderWhiteBox
+      @method _renderSearchResults
     */
-    _renderWhiteBox: function() {
+    _renderSearchResults: function() {
+      var visible = true;
       React.render(
-        <window.juju.components.WhiteBox />,
+        <window.juju.components.WhiteBox
+          visible={visible}>
+          <window.juju.components.SearchResults />
+        </window.juju.components.WhiteBox>,
         document.getElementById('white-box-container'));
     },
 
@@ -1825,6 +1829,7 @@ YUI.add('juju-gui', function(Y) {
     'env-size-display',
     'inspector-component',
     'panel-component',
+    'search-results',
     'white-box',
     // juju-views group
     'd3-components',
