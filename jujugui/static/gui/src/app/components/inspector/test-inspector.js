@@ -18,20 +18,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-component', function() {
+var juju = {components: {}};
+var testUtils = React.addons.TestUtils;
 
-  juju.components.Inspector = React.createClass({
+chai.config.includeStack = true;
+chai.config.truncateThreshold = 0;
 
-    render: function() {
-      return (
-        <div className="inspector-view">
-          <div className="inspector-content">
-            {this.props.children}
-          </div>
-        </div>
-      );
-    }
+describe('Inspector', function() {
 
+  beforeAll(function(done) {
+    // By loading this file it adds the component to the juju components.
+    YUI().use('inspector-component', function() { done(); });
   });
 
-}, '0.1.0', { requires: []});
+  it('renders provided children components', function() {
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Inspector>
+          <div>child</div>
+        </juju.components.Inspector>);
+
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children,
+        <div className="inspector-content">
+          <div>child</div>
+        </div>);
+  });
+});
