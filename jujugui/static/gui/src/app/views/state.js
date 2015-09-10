@@ -210,10 +210,15 @@ YUI.add('juju-app-state', function(Y) {
     */
     _dispatchSectionC: function(state) {
       var component = state.component;
-      // The default for this pane is to see through to the canvas so don't
-      // dispatch if there is no component provided.
-      if (!component) { return; }
-      this.get('dispatchers').sectionB[state.component](state.metadata);
+      var metadata = state.metadata;
+      if (!component) {
+        if (metadata && metadata.search && metadata.search.text) {
+          component = 'searchResults';
+        } else {
+          return;
+        }
+      }
+      this.get('dispatchers').sectionC[component](state.metadata);
     },
 
     /**
