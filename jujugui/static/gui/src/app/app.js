@@ -765,7 +765,9 @@ YUI.add('juju-gui', function(Y) {
           instanceName="inspector-panel"
           visible={true}
           metadata={metadata}>
-          <components.Inspector />
+          <components.Inspector>
+            <components.ServiceOverview />
+          </components.Inspector>
         </components.Panel>,
         document.getElementById('inspector-container'));
     },
@@ -1844,6 +1846,7 @@ YUI.add('juju-gui', function(Y) {
     'inspector-component',
     'panel-component',
     'search-results',
+    'service-overview',
     // juju-views group
     'd3-components',
     'container-token',

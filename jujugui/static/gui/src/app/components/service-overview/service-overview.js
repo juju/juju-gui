@@ -18,29 +18,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-component', function() {
+YUI.add('service-overview', function() {
 
-  juju.components.Inspector = React.createClass({
+  juju.components.ServiceOverview = React.createClass({
 
     render: function() {
-      var title = 'mediawiki';
-      var type = 'uncommitted';
-      var count = 5;
       return (
-        <div className="inspector-view">
-          <juju.components.InspectorHeader
-            count={count}
-            type={type}
-            title={title} />
-          <div className="inspector-content">
-            {this.props.children}
-          </div>
+        <div>
+          Service overview.
         </div>
       );
     }
 
   });
 
-}, '0.1.0', {
-  requires: ['inspector-header']
-});
+}, '0.1.0', { requires: []});
