@@ -154,3 +154,15 @@
     border-radius: $border-radius;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
+
+@mixin notification($background) {
+    $size: 24px;
+    float: right;
+    width: $size;
+    height: $size;
+    background-color: $background;
+    border-radius: 50%;
+    color: $white;
+    line-height: $size;
+    text-align: center;
+}

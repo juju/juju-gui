@@ -6,28 +6,6 @@
     max-height: 100%;
     background-color: #fff;
 
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-
-    @mixin notification($background) {
-        $size: 24px;
-        float: right;
-        width: $size;
-        height: $size;
-        background-color: $background;
-        border-radius: 50%;
-        color: $white;
-        line-height: $size;
-        text-align: center;
-    }
-
     &__list {
         list-style: none;
         padding-left: 0;
