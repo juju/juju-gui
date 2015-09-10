@@ -1839,7 +1839,6 @@ YUI.add('juju-gui', function(Y) {
     'inspector-component',
     'panel-component',
     'search-results',
-    'white-box',
     // juju-views group
     'd3-components',
     'container-token',
