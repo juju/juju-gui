@@ -83,12 +83,28 @@ YUI.add('added-services-list-item', function() {
       }
     },
 
+    /**
+      Click handler for clicks on the entire list item.
+
+      @method _onClickHandler
+      @param {Object} e The click event.
+    */
+    _onClickHandler: function(e) {
+      var state = {
+        sectionA: {
+          component: 'inspector',
+          metadata: { id: e.currentTarget.getAttribute('data-serviceid') }
+        }
+      };
+      this.props.changeState(state);
+    },
+
     render: function() {
       var service = this.props.service.getAttrs();
       var statusData = this._parseStatusData(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
       return (
-        <li className="inspector-view__list-item" tabIndex="0" role="button">
+        <li className="inspector-view__list-item" data-serviceid={service.id} onClick={this._onClickHandler} tabIndex="0" role="button">
           <img src={service.icon} className="inspector-view__item-icon" />
           <span className="inspector-view__item-count">{service.unit_count}</span> {service.name}
           {statusIndicator}
