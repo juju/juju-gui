@@ -776,6 +776,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderSearchResults: function(query) {
       var visible = query ? true : false;
+      /**
       React.render(
         <components.Panel
           instanceName="white-box"
@@ -784,6 +785,132 @@ YUI.add('juju-gui', function(Y) {
             query={query} />
         </components.Panel>,
         document.getElementById('white-box-container'));
+      */
+
+      Y.Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
+        if (arguments.length < 3) {
+          throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+        }
+        var operator = options.hash.operator || "==";
+        var operators = {
+          '==':       function(l,r) { return l == r; },
+          '===':      function(l,r) { return l === r; },
+          '!=':       function(l,r) { return l != r; },
+          '<':        function(l,r) { return l < r; },
+          '>':        function(l,r) { return l > r; },
+          '<=':       function(l,r) { return l <= r; },
+          '>=':       function(l,r) { return l >= r; },
+          'typeof':   function(l,r) { return typeof l == r; }
+        }
+        if (!operators[operator]) {
+          throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator);
+        }
+        var result = operators[operator](lvalue,rvalue);
+        if (result) {
+          return options.fn(this);
+        } else {
+          return options.inverse(this);
+        }
+      });
+
+      Y.Handlebars.registerHelper('fullSeries', function(series) {
+        series = series.toLowerCase();
+        if (series === 'oneiric') {
+          return 'Oneiric 11.10';
+        } else if (series === 'precise') {
+          return 'Precise 12.04';
+        } else if (series === 'quantal') {
+          return 'Quantal 12.10';
+        } else if (series === 'raring') {
+          return 'Raring 13.04';
+        } else if (series === 'saucy') {
+          return 'Saucy 13.10';
+        } else if (series === 'trusty') {
+          return 'Trusty 14.04';
+        } else if (series === 'utopic') {
+          return 'Utopic 14.10';
+        } else if (series === 'vivid') {
+          return 'Vivid 15.04';
+        } else {
+          // Capitalize.
+          return series.charAt(0).toUpperCase() + series.slice(1);
+        }
+      });
+
+      var data = {
+        hasResults: true,
+        solutionsCount: 5,
+        nameWidth: 'foobar',
+        text: query,
+        currentType: 'all',
+        currentSeries: 'trusty',
+        allSeries: ['all', 'precise', 'trusty', 'centos7'],
+        currentTopics: [],
+        promulgatedResultsCount: 2,
+        promulgatedResults: [
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'mysql',
+            displayName: 'MySQL',
+            url: 'http://example.com/mysql',
+            tags: ['database', 'sql'],
+            series: [{name: 'trusty', url: 'http://example.com/trusty-mysql'}, {name: 'precise', url: 'http://example.com/precise-mysql'}],
+            downloads: 30,
+            owner: 'test-owner-1'
+          },
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'wordpress',
+            displayName: 'Wordpress',
+            url: 'http://example.com/wordpress',
+            tags: [],
+            series: [{name: 'trusty', url: 'http://example.com/trusty-wordpress'}, {name: 'precise', url: 'http://example.com/precise-wordpress'}],
+            downloads: 300,
+            owner: 'test-owner-2'
+          },
+        ],
+        STATIC_URL: 'STATIC/',
+        resultsCount: 3,
+        results: [
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'mysql',
+            displayName: 'MySQL',
+            url: 'http://example.com/mysql',
+            tags: ['database', 'sql'],
+            series: [{name: 'trusty', url: 'http://example.com/trusty-mysql'}, {name: 'precise', url: 'http://example.com/precise-mysql'}],
+            downloads: 30,
+            owner: 'test-owner-1'
+          },
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'wordpress',
+            displayName: 'Wordpress',
+            url: 'http://example.com/wordpress',
+            tags: [],
+            series: [{name: 'trusty', url: 'http://example.com/trusty-wordpress'}, {name: 'precise', url: 'http://example.com/precise-wordpress'}],
+            downloads: 300,
+            owner: 'test-owner-2'
+          },
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'ghost',
+            displayName: 'Ghost',
+            url: 'http://example.com/ghost',
+            tags: ['cms'],
+            series: [],
+            downloads: 3,
+            owner: 'test-owner-3'
+          },
+        ]
+      };
+      var html = views.Templates['storefront-search'](data);
+      Y.one('#white-box-container').setHTML(html);
     },
 
     /**
