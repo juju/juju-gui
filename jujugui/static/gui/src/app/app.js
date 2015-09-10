@@ -777,11 +777,12 @@ YUI.add('juju-gui', function(Y) {
     _renderSearchResults: function(query) {
       var visible = query ? true : false;
       React.render(
-        <window.juju.components.WhiteBox
+        <components.Panel
+          instanceName="white-box"
           visible={visible}>
-          <window.juju.components.SearchResults
+          <components.SearchResults
             query={query} />
-        </window.juju.components.WhiteBox>,
+        </components.Panel>,
         document.getElementById('white-box-container'));
     },
 
