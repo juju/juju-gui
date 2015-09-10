@@ -30,9 +30,10 @@ YUI.add('inspector-header', function() {
       @returns {String} The collection of class names.
     */
     _headerClasses: function() {
+
       return classNames(
         'inspector-header',
-        'inspector-header--type-' + this.props.type
+        this.props.type ? 'inspector-header--type-' + this.props.type : ''
       );
     },
 
