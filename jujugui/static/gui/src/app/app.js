@@ -769,6 +769,24 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the SearchResults component to the page in the designated element.
+
+      @method _renderSearchResults
+      @param {String} query The search query.
+    */
+    _renderSearchResults: function(query) {
+      var visible = query ? true : false;
+      React.render(
+        <components.Panel
+          instanceName="white-box"
+          visible={visible}>
+          <components.SearchResults
+            query={query} />
+        </components.Panel>,
+        document.getElementById('white-box-container'));
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -1548,7 +1566,13 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
     },
 
-    _renderComponents: function() {
+    /**
+      Render the react components.
+
+      @method _renderComponents
+      @param {Object} req The request object.
+    */
+    _renderComponents: function(req) {
       // Update the react views on database change
       if (window.flags && window.flags.react) {
         this._renderEnvSizeDisplay(
@@ -1558,6 +1582,7 @@ YUI.add('juju-gui', function(Y) {
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
+        this._renderSearchResults(req.query.text);
       }
     },
 
@@ -1595,7 +1620,7 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
-      this._renderComponents();
+      this._renderComponents(req);
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -1809,9 +1834,11 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
-    'inspector-component',
+    // React components
     'env-size-display',
+    'inspector-component',
     'panel-component',
+    'search-results',
     // juju-views group
     'd3-components',
     'container-token',
