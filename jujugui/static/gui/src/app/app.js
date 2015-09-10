@@ -745,7 +745,9 @@ YUI.add('juju-gui', function(Y) {
         <components.Panel
           instanceName="inspector-panel"
           visible={services.length > 0}>
-          <components.AddedServicesList services={services} />
+          <components.AddedServicesList
+            services={services}
+            changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
     },
@@ -1582,7 +1584,10 @@ YUI.add('juju-gui', function(Y) {
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
-        this._renderSearchResults(req.query.text);
+        // XXX Passing the text query like this is only a temporary as it
+        // should use the state system instead.
+        var text = req && req.query && req.query.text;
+        this._renderSearchResults(text);
       }
     },
 

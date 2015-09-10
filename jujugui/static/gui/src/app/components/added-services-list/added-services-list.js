@@ -24,7 +24,7 @@ YUI.add('added-services-list', function() {
 
     generateItemList: function(services) {
       var items = [];
-      services.forEach(function(service) {
+      services.forEach((service) => {
         items.push(
             <juju.components.AddedServicesListItem
               // We use the 'name' instead of the 'id' here because when a
@@ -33,6 +33,7 @@ YUI.add('added-services-list', function() {
               // to treat them as the same record instead of re-rendering
               // when they key changes.
               key={service.get('name')}
+              changeState={this.props.changeState}
               service={service} />);
       });
       return items;
