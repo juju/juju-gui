@@ -28,7 +28,7 @@ YUI.add('inspector-component', function() {
     @method _handleBack
   */
   _handleBack: function() {
-    console.log('Go back!')
+    console.log('Go back!');
   },
 
     render: function() {
