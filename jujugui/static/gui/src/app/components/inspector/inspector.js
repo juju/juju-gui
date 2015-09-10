@@ -22,15 +22,6 @@ YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
 
-  /**
-    Handle the header back being clicked.
-
-    @method _handleBack
-  */
-  _handleBack: function() {
-    console.log('Go back!');
-  },
-
     render: function() {
       var title = 'mediawiki';
       var type = 'uncommitted';
@@ -38,7 +29,6 @@ YUI.add('inspector-component', function() {
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
-            backCallback={this._handleBack}
             count={count}
             type={type}
             title={title} />

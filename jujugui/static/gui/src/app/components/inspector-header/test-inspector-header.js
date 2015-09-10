@@ -25,11 +25,6 @@ var renderIntoDocument = testUtils.renderIntoDocument;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-function queryComponentSelector(component, selector, all) {
-  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
-  return component.getDOMNode()[queryFn](selector);
-}
-
 describe('InspectorHeader', function() {
 
   beforeAll(function(done) {
@@ -38,12 +33,12 @@ describe('InspectorHeader', function() {
   });
 
   it('displays the provided title', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.InspectorHeader
-          title="Juju GUI" />);
-    assert.equal(
-        queryComponentSelector(
-          component, '.inspector-header__title').innerText, 'Juju GUI');
+          title="Juju GUI"  />);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[1].props.children, 'Juju GUI');
   });
 
   it('adds a class based on the provided type', function() {
@@ -67,23 +62,24 @@ describe('InspectorHeader', function() {
   });
 
   it('displays the provided count', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.InspectorHeader
-          count="4" />);
-    assert.equal(
-        queryComponentSelector(
-          component, '.inspector-header__count').innerText, '4');
+          count="4"  />);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[2].props.children, '4');
   });
 
   it('hides the count if it is not provided', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.InspectorHeader />);
-    assert.isTrue(
-        queryComponentSelector(
-          component, '.inspector-header__count').classList.contains('hidden'));
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(output.props.children[2].props.className.indexOf(
+        'hidden') > -1);
   });
 
-  it('fires a callback when clicked', function() {
+  it('calls supplied callable when clicked', function() {
     var callbackStub = sinon.stub();
     var component = renderIntoDocument(
         <juju.components.InspectorHeader
