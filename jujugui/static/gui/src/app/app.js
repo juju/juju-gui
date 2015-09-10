@@ -776,14 +776,15 @@ YUI.add('juju-gui', function(Y) {
       @method _renderSearchResults
       @param {String} query The search query.
     */
-    _renderSearchResults: function(query) {
-      var visible = query ? true : false;
+    _renderSearchResults: function(metadata) {
+      var text = metadata.search.text;
+      var visible = text ? true : false;
       React.render(
         <components.Panel
           instanceName="white-box"
           visible={visible}>
           <components.SearchResults
-            query={query} />
+            query={text} />
         </components.Panel>,
         document.getElementById('white-box-container'));
     },
@@ -808,6 +809,9 @@ YUI.add('juju-gui', function(Y) {
         dispatchers.sectionA = {
           services: this._renderAddedServices.bind(this),
           inspector: this._renderInspector.bind(this)
+        };
+        dispatchers.sectionC = {
+          searchResults: this._renderSearchResults.bind(this)
         };
         this.state.set('dispatchers', dispatchers);
       }
@@ -1572,9 +1576,8 @@ YUI.add('juju-gui', function(Y) {
       Render the react components.
 
       @method _renderComponents
-      @param {Object} req The request object.
     */
-    _renderComponents: function(req) {
+    _renderComponents: function() {
       // Update the react views on database change
       if (window.flags && window.flags.react) {
         this._renderEnvSizeDisplay(
@@ -1584,10 +1587,6 @@ YUI.add('juju-gui', function(Y) {
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
-        // XXX Passing the text query like this is only a temporary as it
-        // should use the state system instead.
-        var text = req && req.query && req.query.text;
-        this._renderSearchResults(text);
       }
     },
 
@@ -1625,7 +1624,7 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
-      this._renderComponents(req);
+      this._renderComponents();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
