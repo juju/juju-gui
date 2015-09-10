@@ -81,6 +81,7 @@ $navbar-height: 48px;
 $panel-space: 10px;
 
 // Imports need to be after vars.
+@import "animations";
 @import "typography";
 @import "browser/vars";
 @import "mixins";
