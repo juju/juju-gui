@@ -31,21 +31,23 @@ describe('AddedServicesList', function() {
 
   it('generates a list of added services list items', function() {
     var services = [{get: () => 1}, {get: () => 2}, {get: () => 3}];
+    var changeState = 'changeStateCallable';
 
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.AddedServicesList
+          changeState={changeState}
           services={services}/>);
 
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children,
       <ul className="added-services-list inspector-view__list">
         <juju.components.AddedServicesListItem
-          key={services[0].get()} service={services[0]} />
+          key={services[0].get()} changeState={changeState} service={services[0]} />
         <juju.components.AddedServicesListItem
-          key={services[1].get()} service={services[1]} />
+          key={services[1].get()} changeState={changeState} service={services[1]} />
         <juju.components.AddedServicesListItem
-          key={services[2].get()} service={services[2]} />
+          key={services[2].get()} changeState={changeState} service={services[2]} />
       </ul>);
   });
 });

@@ -174,4 +174,35 @@ describe('AddedServicesListItem', function() {
     ]);
   });
 
+  it('calls the changeState callable on click', function() {
+    var service = {
+      getAttrs: function() {
+        return {
+          icon: 'icon.gif', unit_count: '5', name: 'demo',
+          units: {
+            toArray: function() {
+              return [];
+            }}};
+      }};
+    var changeStub = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    var component = shallowRenderer.render(
+        <juju.components.AddedServicesListItem
+          changeState={changeStub}
+          service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    output.props.onClick({
+      currentTarget: {
+        getAttribute: () => 'serviceId'
+      }
+    });
+    assert.equal(changeStub.callCount, 1);
+    assert.deepEqual(changeStub.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: { id: 'serviceId' }
+      }
+    });
+  });
+
 });
