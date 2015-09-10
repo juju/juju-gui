@@ -30,7 +30,6 @@ YUI.add('inspector-header', function() {
       @returns {String} The collection of class names.
     */
     _headerClasses: function() {
-
       return classNames(
         'inspector-header',
         this.props.type ? 'inspector-header--type-' + this.props.type : ''
@@ -59,7 +58,8 @@ YUI.add('inspector-header', function() {
       var backIcon = this.props.type ? backIconWhite : backIconGrey;
 
       return (
-        <div className={this._headerClasses()} tabIndex="0" role="button">
+        <div className={this._headerClasses()}
+          onClick={this.props.backCallback} tabIndex="0" role="button">
           <span dangerouslySetInnerHTML={{__html: backIcon}}
             className="inspector-header__back" />
           <span className="inspector-header__title">

@@ -82,4 +82,13 @@ describe('InspectorHeader', function() {
         queryComponentSelector(
           component, '.inspector-header__count').classList.contains('hidden'));
   });
+
+  it('fires a callback when clicked', function() {
+    var callbackStub = sinon.stub();
+    var component = renderIntoDocument(
+        <juju.components.InspectorHeader
+          backCallback={callbackStub} />);
+    testUtils.Simulate.click(component.getDOMNode());
+    assert.equal(callbackStub.callCount, 1);
+  });
 });
