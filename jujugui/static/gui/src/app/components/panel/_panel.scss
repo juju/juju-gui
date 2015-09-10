@@ -1,0 +1,16 @@
+.panel-component {
+    @extend %floating-panel;
+    position: absolute;
+    z-index: 601;
+    background-color: #fff;
+}
+
+.panel-component.inspector-panel {
+    background-color: transparent;
+    border-radius: none;
+    box-shadow: none;
+    top: $environment-header-height + ($panel-space * 2) + $navbar-height;
+    bottom: $deployer-bar-height + $panel-space;
+    left: $panel-space;
+    width: $left-panel-width;
+}

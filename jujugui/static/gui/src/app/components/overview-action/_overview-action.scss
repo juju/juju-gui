@@ -1,0 +1,52 @@
+.overview-action {
+    $fade-in-duration: .1s;
+    cursor: pointer;
+    padding: 11px 20px 11px 45px;
+    animation-duration: $fade-in-duration;
+    animation-name: fadeIn;
+    animation-fill-mode: forwards;
+    opacity: 0;
+
+
+    &__icon {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        left: 20px;
+    }
+
+    &__link:not(.hidden) {
+        display: block;
+        margin-top: 3px;
+    }
+
+    &__value {
+        float: right;
+
+        &--type-error,
+        &--type-pending,
+        &--type-uncommitted {
+            margin-top: -3px;
+        }
+
+        &--type-error {
+            @include notification($error);
+        }
+
+        &--type-pending {
+            @include notification($pending);
+        }
+
+        &--type-uncommitted {
+            @include notification($uncommitted);
+        }
+    }
+}
+
+@for $i from 1 through 20 {
+  $fade-in-stagger-speed: .01s;
+
+  .overview-action:nth-child(#{$i}) {
+    animation-delay: $fade-in-stagger-speed * $i;
+  }
+}
