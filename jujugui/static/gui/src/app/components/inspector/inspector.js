@@ -23,8 +23,15 @@ YUI.add('inspector-component', function() {
   juju.components.Inspector = React.createClass({
 
     render: function() {
+      var title = 'mediawiki';
+      var type = 'uncommitted';
+      var count = 5;
       return (
-        <div>
+        <div className="inspector-view">
+          <juju.components.InspectorHeader
+            count={count}
+            type={type}
+            title={title} />
           Inspector
         </div>
       );
@@ -32,4 +39,6 @@ YUI.add('inspector-component', function() {
 
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', {
+  requires: ['inspector-header']
+});

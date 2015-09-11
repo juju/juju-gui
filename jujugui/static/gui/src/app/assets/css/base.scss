@@ -52,6 +52,7 @@ $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Co
 
 /* Define common colors. */
 $canvas-background: #f5f5f5;
+$cool-grey: #333;
 $error: #df382c;
 $charm-panel-orange: #dd4814;
 $charm-panel-background-color: #eeeeee;
@@ -59,6 +60,7 @@ $inspector-dark: #1c1817;
 $label-color: #292929;
 $light-grey: #f5f5f5;
 $machine-view-border-colour: #d9d9d9;
+$mid-grey: #cdcdcd;
 $navbar-border-dark: #191514;
 $navbar-border-light: #2d2928;
 $success: #38b44a;
@@ -98,7 +100,7 @@ body {
     height: 100%;
     margin-top: $navbar-height;
     background-color: $canvas-background;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18px;
     -webkit-font-smoothing: antialiased;
     // This won't start working until Firefox 25
@@ -230,7 +232,7 @@ pre,
 code {
     font-family: $font-family-mono;
     font-size: 14px;
-    color: #333;
+    color: $cool-grey;
 }
 th {
     font-weight: 300;
@@ -848,7 +850,7 @@ g.unit {
         margin-top: 5px;
         padding: 7px 10px;
         background-color: #fff;
-        color: #333;
+        color: $cool-grey;
         font-size: 12px;
 
         &.bottom-arrow {
