@@ -20,15 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
-var renderIntoDocument = testUtils.renderIntoDocument;
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
-
-function queryComponentSelector(component, selector, all) {
-  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
-  return component.getDOMNode()[queryFn](selector);
-}
 
 describe('OverviewAction', function() {
 
@@ -39,75 +33,81 @@ describe('OverviewAction', function() {
 
   it('calls the callable provided when clicked', function() {
     var callbackStub = sinon.stub();
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction
           action={callbackStub} />);
-    testUtils.Simulate.click(component.getDOMNode());
+    var output = shallowRenderer.getRenderOutput();
+    output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });
 
   it('displays the provided title', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction
           title="My action" />);
-    assert.equal(
-        queryComponentSelector(
-          component, '.overview-action__title').innerText, 'My action');
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[1].props.children, 'My action');
   });
 
   it('sets the provided icon', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction
           icon="<svg>Icon</svg>" />);
-    assert.equal(
-        queryComponentSelector(
-          component, '.overview-action__icon').innerHTML, '<svg>Icon</svg>');
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[0].props.dangerouslySetInnerHTML.__html,
+        '<svg>Icon</svg>');
   });
 
   it('sets the link', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction
           link="http://jujucharms.com/"
           linkTitle="Juju Charms" />);
-    var link = queryComponentSelector(component, '.overview-action__link');
-    assert.equal(link.href, 'http://jujucharms.com/');
-    assert.equal(link.innerText, 'Juju Charms');
+    var output = shallowRenderer.getRenderOutput();
+    var link = output.props.children[2];
+    assert.equal(link.props.href, 'http://jujucharms.com/');
+    assert.equal(link.props.children, 'Juju Charms');
   });
 
   it('hides the link if it is not provided', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction />);
-    assert.isTrue(
-        queryComponentSelector(
-          component, '.overview-action__link').classList.contains('hidden'));
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(output.props.children[2].props.className.indexOf(
+        'hidden') > -1);
   });
 
   it('sets the value', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction
           value="5" />);
-    assert.equal(
-        queryComponentSelector(
-          component, '.overview-action__value').innerText, '5');
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[3].props.children, '5');
   });
 
   it('sets the value type class', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction
           value="5"
           valueType="pending" />);
-
-    assert.isTrue(
-        queryComponentSelector(
-          component, '.overview-action__value').classList.contains(
-            'overview-action__value--type-pending'));
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(output.props.children[3].props.className.indexOf(
+        'overview-action__value--type-pending') > -1);
   });
 
   it('hides the value if it is not provided', function() {
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.OverviewAction />);
-    assert.isTrue(
-        queryComponentSelector(
-          component, '.overview-action__value').classList.contains('hidden'));
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(output.props.children[3].props.className.indexOf(
+        'hidden') > -1);
   });
 });

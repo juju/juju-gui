@@ -39,7 +39,7 @@ describe('Inspector', function() {
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children,
+    assert.deepEqual(output.props.children[1],
         <div className="inspector-content">
           <div>child</div>
         </div>);
