@@ -769,7 +769,8 @@ YUI.add('juju-gui', function(Y) {
           <components.Inspector
             service={service}
             changeState={this.changeState.bind(this)}>
-            <components.ServiceOverview />
+            <components.ServiceOverview
+              service={service} />
           </components.Inspector>
         </components.Panel>,
         document.getElementById('inspector-container'));

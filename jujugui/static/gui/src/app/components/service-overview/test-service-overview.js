@@ -35,8 +35,17 @@ describe('ServiceOverview', function() {
   });
 
   it('generates a list of actions', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [];
+          }
+        };
+      }};
       var component = renderIntoDocument(
-          <juju.components.ServiceOverview />);
+          <juju.components.ServiceOverview
+            service={service}/>);
       assert.isTrue(
           queryComponentSelector(
             component, '.overview-action', true).length > 0);
