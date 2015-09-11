@@ -37,11 +37,11 @@ describe('OverviewAction', function() {
     YUI().use('overview-action', function() { done(); });
   });
 
-  it('fires a callback when clicked', function() {
+  it('calls the callable provided when clicked', function() {
     var callbackStub = sinon.stub();
     var component = renderIntoDocument(
         <juju.components.OverviewAction
-          callback={callbackStub} />);
+          action={callbackStub} />);
     testUtils.Simulate.click(component.getDOMNode());
     assert.equal(callbackStub.callCount, 1);
   });

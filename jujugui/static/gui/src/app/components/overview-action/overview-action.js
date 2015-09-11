@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('overview-action', function() {
 
   juju.components.OverviewAction = React.createClass({
+    baseClass: 'overview-action',
 
     /**
       Returns the supplied classes with the 'hidden' class applied if the
@@ -30,9 +31,9 @@ YUI.add('overview-action', function() {
     */
     _valueClasses: function() {
       return classNames(
-        'overview-action__value',
+        this.baseClass + '__value',
         this.props.valueType ?
-            'overview-action__value--type-' + this.props.valueType : '',
+            this.baseClass + '__value--type-' + this.props.valueType : '',
         {
           hidden: !this.props.value
         }
@@ -47,7 +48,7 @@ YUI.add('overview-action', function() {
     */
     _linkClasses: function() {
       return classNames(
-        'overview-action__link',
+        this.baseClass + '__link',
         {
           hidden: !this.props.link
         }
@@ -55,12 +56,14 @@ YUI.add('overview-action', function() {
     },
 
     render: function() {
+      var iconClass = this.baseClass + '__icon';
+      var titleClass = this.baseClass + '__title';
       return (
-        <li className="overview-action"
-          onClick={this.props.callback} tabIndex="0" role="button">
+        <li className={this.baseClass}
+          onClick={this.props.action} tabIndex="0" role="button">
           <span dangerouslySetInnerHTML={{__html: this.props.icon}}
-            className="overview-action__icon" />
-          <span className="overview-action__title">
+            className={iconClass} />
+          <span className={titleClass}>
             {this.props.title}
           </span>
           <a href={this.props.link} className={this._linkClasses()}

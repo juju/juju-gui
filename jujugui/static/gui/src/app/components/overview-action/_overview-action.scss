@@ -21,7 +21,9 @@
     }
 
     &__value {
+        @include notification(#fff);
         float: right;
+        color: $text-colour;
 
         &--type-error,
         &--type-pending,
