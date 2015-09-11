@@ -20,7 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
-var renderIntoDocument = testUtils.renderIntoDocument;
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -81,10 +80,12 @@ describe('InspectorHeader', function() {
 
   it('calls supplied callable when clicked', function() {
     var callbackStub = sinon.stub();
-    var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.InspectorHeader
           backCallback={callbackStub} />);
-    testUtils.Simulate.click(component.getDOMNode());
+    var output = shallowRenderer.getRenderOutput();
+    output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });
 });

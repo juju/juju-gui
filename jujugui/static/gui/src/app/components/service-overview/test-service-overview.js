@@ -18,29 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-component', function() {
+var juju = {components: {}};
+var testUtils = React.addons.TestUtils;
 
-  juju.components.Inspector = React.createClass({
+function queryComponentSelector(component, selector, all) {
+  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
+  return component.getDOMNode()[queryFn](selector);
+}
 
-    render: function() {
-      var title = 'mediawiki';
-      var type = 'uncommitted';
-      var count = 5;
-      return (
-        <div className="inspector-view">
-          <juju.components.InspectorHeader
-            count={count}
-            type={type}
-            title={title} />
-          <div className="inspector-content">
-            {this.props.children}
-          </div>
-        </div>
-      );
-    }
+describe('ServiceOverview', function() {
+  var listItemStub;
 
+  beforeAll(function(done) {
+    // By loading this file it adds the component to the juju components.
+    YUI().use('service-overview', function() { done(); });
   });
 
-}, '0.1.0', {
-  requires: ['inspector-header']
+  it('generates a list of actions', function() {
+      var component = renderIntoDocument(
+          <juju.components.ServiceOverview />);
+      assert.isTrue(
+          queryComponentSelector(
+            component, '.overview-action', true).length > 0);
+  });
 });

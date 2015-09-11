@@ -38,7 +38,7 @@ YUI.add('inspector-header', function() {
 
     /**
       Returns the supplied classes with the 'hidden' class applied if the
-      count is truthy.
+      count is falsey.
 
       @method _countClasses
       @returns {String} The collection of class names.
