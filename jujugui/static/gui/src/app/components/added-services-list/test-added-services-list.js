@@ -43,11 +43,17 @@ describe('AddedServicesList', function() {
     assert.deepEqual(output.props.children,
       <ul className="added-services-list inspector-view__list">
         <juju.components.AddedServicesListItem
-          key={services[0].get()} changeState={changeState} service={services[0]} />
+          key={services[0].get()}
+          changeState={changeState}
+          service={services[0]} />
         <juju.components.AddedServicesListItem
-          key={services[1].get()} changeState={changeState} service={services[1]} />
+          key={services[1].get()}
+          changeState={changeState}
+          service={services[1]} />
         <juju.components.AddedServicesListItem
-          key={services[2].get()} changeState={changeState} service={services[2]} />
+          key={services[2].get()}
+          changeState={changeState}
+          service={services[2]} />
       </ul>);
   });
 });

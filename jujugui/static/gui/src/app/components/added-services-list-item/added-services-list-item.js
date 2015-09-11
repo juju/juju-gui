@@ -104,9 +104,15 @@ YUI.add('added-services-list-item', function() {
       var statusData = this._parseStatusData(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
       return (
-        <li className="inspector-view__list-item" data-serviceid={service.id} onClick={this._onClickHandler} tabIndex="0" role="button">
+        <li className="inspector-view__list-item"
+            data-serviceid={service.id}
+            onClick={this._onClickHandler}
+            tabIndex="0"
+            role="button">
           <img src={service.icon} className="inspector-view__item-icon" />
-          <span className="inspector-view__item-count">{service.unit_count}</span> {service.name}
+          <span className="inspector-view__item-count">
+            {service.unit_count}
+          </span> {service.name}
           {statusIndicator}
         </li>
       );

@@ -7,6 +7,7 @@ ecmaFeatures:
   arrowFunctions: true
   objectLiteralShorthandProperties: false
 rules:
+  max-len: [2, 80, 2]
   no-shadow: 0
   semi: [2, "always"]
   quotes: [2, "single"]
