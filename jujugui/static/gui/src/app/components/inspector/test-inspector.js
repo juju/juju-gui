@@ -32,9 +32,14 @@ describe('Inspector', function() {
   });
 
   it('renders provided children components', function() {
+    var service = {
+      get: function() {
+        return {name: 'demo'};
+      }};
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-        <juju.components.Inspector>
+        <juju.components.Inspector
+          service={service}>
           <div>child</div>
         </juju.components.Inspector>);
 
@@ -43,5 +48,26 @@ describe('Inspector', function() {
         <div className="inspector-content">
           <div>child</div>
         </div>);
+  });
+
+  it('calls the changeState callable when on header click', function() {
+    var service = {
+      get: function() {
+        return {name: 'demo'};
+      }};
+    var changeStub = sinon.stub();
+    var component = testUtils.renderIntoDocument(
+        <juju.components.Inspector
+          changeState={changeStub}
+          service={service} />);
+    var header = testUtils.scryRenderedComponentsWithType(
+        component, juju.components.InspectorHeader);
+    testUtils.Simulate.click(header[0].getDOMNode());
+    assert.equal(changeStub.callCount, 1);
+    assert.deepEqual(changeStub.args[0][0], {
+      sectionA: {
+        component: 'services'
+      }
+    });
   });
 });

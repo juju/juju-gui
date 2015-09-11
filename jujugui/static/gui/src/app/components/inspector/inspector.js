@@ -22,16 +22,26 @@ YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
 
+    /**
+      Callback for when the header back is clicked.
+
+      @method _backCallback
+    */
+    _backCallback: function() {
+      var state = {
+        sectionA: {
+          component: 'services'
+        }
+      };
+      this.props.changeState(state);
+    },
+
     render: function() {
-      var title = 'mediawiki';
-      var type = 'uncommitted';
-      var count = 5;
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
-            count={count}
-            type={type}
-            title={title} />
+            backCallback={this._backCallback}
+            title={this.props.service.get('name')} />
           <div className="inspector-content">
             {this.props.children}
           </div>
