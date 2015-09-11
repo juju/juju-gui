@@ -184,7 +184,7 @@ describe('UI State object', function() {
         state.dispatch(newState);
         // It shouldn't empty the section if the component didn't change.
         assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 3);
+        assert.equal(dispatchSectionStub.callCount(), 4);
       });
 
       it('leaves sections when components don\'t change', function() {
@@ -201,7 +201,7 @@ describe('UI State object', function() {
         // bit of an integration test.
         state.dispatch(newState);
         assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 3);
+        assert.equal(dispatchSectionStub.callCount(), 4);
       });
     });
 
@@ -237,7 +237,7 @@ describe('UI State object', function() {
       });
 
       it('clears its flash storage after dispatch', function() {
-        var newState = { sectionA: {}, sectionB: {} };
+        var newState = { sectionA: {}, sectionB: {}, sectionC: {} };
         state.set('flash', {foo: 'bar'});
         state.dispatch(newState);
         assert.deepEqual(undefined, state.get('flash'));
@@ -384,143 +384,153 @@ describe('UI State object', function() {
   });
 
   describe('parseRequest', function() {
+
+    beforeEach(function() { window.flags = { react: true }; });
+    afterEach(function() { window.flags = null; });
+
     var urls = {
       // Old viewmode urls.
-      '/sidebar/': { sectionA: {}, sectionB: {} },
-      '/fullscreen/': { sectionA: {}, sectionB: {} },
+      '/sidebar/': { sectionA: {}, sectionB: {}, sectionC: {} },
+      '/fullscreen/': { sectionA: {}, sectionB: {}, sectionC: {} },
       // Bundle urls.
       '/bundle/~charmers/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
-        }, sectionB: {}
+        }
       },
       '/bundle/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/mediawiki/6/single' }
-        }, sectionB: {}
+        }
       },
       '/bundle/mediawiki/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/mediawiki/single' }
-        }, sectionB: {}
+        }
       },
       '/bundle/~jorge/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~jorge/mediawiki/6/single' }
-        }, sectionB: {}
+        }
       },
       '/bundle/~jorge/mediawiki/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~jorge/mediawiki/single' }
-        }, sectionB: {}
+        }
       },
       '/fullscreen/bundle/~charmers/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
-        }, sectionB: {}
+        }
       },
       '/sidebar/bundle/~charmers/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
-        }, sectionB: {}
+        }
       },
       // Charm urls.
       '/precise/mysql-38/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql-38' }
-        }, sectionB: {}
+        }
       },
       '/precise/mysql': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql' }
-        }, sectionB: {}
+        }
       },
       '/fullscreen/precise/mysql-38/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql-38' }
-        }, sectionB: {}
+        }
       },
       '/sidebar/precise/mysql-38/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql-38' }
-        }, sectionB: {}
+        }
       },
       // Non promoted charm urls.
       '/~prismakov/trusty/cf-dea-1/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        }, sectionB: {}
+        }
       },
       '/~prismakov/trusty/cf-dea/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea' }
-        }, sectionB: {}
+        }
       },
       '/fullscreen/~prismakov/trusty/cf-dea-1/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        },
-        sectionB: {}
+        }
       },
       '/sidebar/~prismakov/trusty/cf-dea-1/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        },
-        sectionB: {}
+        }
       },
       // Search urls.
       // search is an old route path so ignore it if there isn't a query param.
-      '/search/': { sectionA: {}, sectionB: {} },
+      '/search/': { sectionA: {}, sectionB: {}, sectionC: {} },
       '/search/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           metadata: { search: { text: 'apache' }}
-        },
-        sectionB: {}
+        }
       },
       '/search/?text=apache&categories=app-servers': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           metadata: {
-            search: {
-              text: 'apache',
-              categories: 'app-servers'
-            }
+            search: { text: 'apache', categories: 'app-servers' }
           }
-        },
-        sectionB: {}
+        }
       },
       // Deploy Target urls.
       '/?deploy-target=bundle:foo/5/bar': {
         app: {
           deployTarget: 'bundle:foo/5/bar'
         },
-        sectionA: {},
-        sectionB: {}
+        sectionA: {}, sectionB: {}, sectionC: {}
       },
       '/?text=apache&deploy-target=bundle:foo/5/bar': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           metadata: {
-            search: {
-              text: 'apache',
-              'deploy-target': 'bundle:foo/5/bar'
-            }
+            search: { text: 'apache', 'deploy-target': 'bundle:foo/5/bar' }
           }
         },
-        sectionB: {},
         app: {
           deployTarget: 'bundle:foo/5/bar'
         }
@@ -532,120 +542,123 @@ describe('UI State object', function() {
         sectionA: {},
         sectionB: {
           component: 'machine'
-        }
+        }, sectionC: {}
       },
       // Charm search urls.
       '/search/precise/cassandra-1/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/cassandra-1' }
-        },
-        sectionB: {}
+        }
       },
       '/search/precise/apache2-19/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
             search: { text: 'apache' }}
-        },
-        sectionB: {}
+        }
       },
       '/search/precise/apache2-19/?text=apache&categories=app-servers': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
-            search: {
-              text: 'apache',
-              categories: 'app-servers'
-            }
+            search: { text: 'apache', categories: 'app-servers' }
           }
-        },
-        sectionB: {}
+        }
       },
       '/fullscreen/search/precise/apache2-19/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
             search: { text: 'apache' }}
-        },
-        sectionB: {}
+        }
       },
       '/sidebar/search/precise/apache2-19/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
             search: { text: 'apache' }}
-        },
-        sectionB: {}
+        }
       },
       // Bundle search urls.
       '/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'bundle/~charmers/mediawiki/6/single',
             search: { text: 'apache' }}
-        },
-        sectionB: {}
+        }
       },
       '/fullscreen/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'bundle/~charmers/mediawiki/6/single',
             search: { text: 'apache' }}
-        }, sectionB: {}
+        }
       },
       '/sidebar/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'bundle/~charmers/mediawiki/6/single',
             search: { text: 'apache' }}
-        }, sectionB: {}
+        }
       },
       // New search url syntax.
       '/precise/apache2-13?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-13',
             search: { text: 'apache'}
           }
-        }, sectionB: {}
+        }
       },
       '/precise/apache2-13?text=apache#readme': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-13',
             search: { text: 'apache'},
             hash: 'readme'
           }
-        }, sectionB: {}
+        }
       },
       '/bundle/hadoop/3/demo?text=hadoop': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo'
           }
-        }, sectionB: {}
+        }
       },
       '/bundle/hadoop/3/demo?text=hadoop#readme': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo',
             hash: 'readme'
           }
-        }, sectionB: {}
+        }
       },
       // Inspector urls.
       '/inspector/service123': {
@@ -655,7 +668,7 @@ describe('UI State object', function() {
             id: 'service123',
             flash: {}
           }
-        }, sectionB: {}
+        }, sectionB: {}, sectionC: {}
       },
       '/inspector/service123/charm': {
         sectionA: {
@@ -665,7 +678,7 @@ describe('UI State object', function() {
             charm: true,
             flash: {}
           }
-        }, sectionB: {}
+        }, sectionB: {}, sectionC: {}
       },
       '/inspector/service123/unit/13': {
         sectionA: {
@@ -675,14 +688,14 @@ describe('UI State object', function() {
             unit: '13',
             flash: {}
           }
-        }, sectionB: {}
+        }, sectionB: {}, sectionC: {}
       },
       // Machine view urls.
       '/machine/': {
         sectionA: {},
         sectionB: {
           component: 'machine'
-        }
+        }, sectionC: {}
       },
       '/machine/3/': {
         sectionA: {},
@@ -691,7 +704,7 @@ describe('UI State object', function() {
           metadata: {
             id: '3'
           }
-        }
+        }, sectionC: {}
       },
       '/machine/3/lxc-0/': {
         sectionA: {},
@@ -701,18 +714,18 @@ describe('UI State object', function() {
             id: '3',
             container: 'lxc-0'
           }
-        }
+        }, sectionC: {}
       },
       '/machine/3/?text=hadoop': {
-        sectionA: {
-          metadata: {
-            search: { text: 'hadoop'}
-          }
-        },
+        sectionA: {},
         sectionB: {
           component: 'machine',
           metadata: {
             id: '3'
+          }
+        }, sectionC: {
+          metadata: {
+            search: { text: 'hadoop'}
           }
         }
       },
@@ -731,7 +744,7 @@ describe('UI State object', function() {
             id: '3',
             container: 'lxc-0'
           }
-        }
+        }, sectionC: {}
       },
       '/machine/3/lxc-0/inspector/apache2': {
         sectionA: {
@@ -747,17 +760,19 @@ describe('UI State object', function() {
             id: '3',
             container: 'lxc-0'
           }
-        }
+        }, sectionC: {}
       },
       // Invalid urls with overriding components
       '/inspector?text=hadoop': {
         sectionA: {
-          component: 'inspector',
+          component: 'inspector'
+        },
+        sectionB: {},
+        sectionC: {
           metadata: {
             search: { text: 'hadoop'}
           }
-        },
-        sectionB: {}
+        }
       }
     };
 
@@ -847,11 +862,12 @@ describe('UI State object', function() {
       state.set('baseUrl', '/foo');
       var req = buildRequest('/foo/precise/mysql-38/');
       var expected = {
-        sectionA: {
+        sectionA: {},
+        sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql-38' }
-        },
-        sectionB: {}
+        }
       };
       var result = state.loadRequest(req);
       assert.deepEqual(result, expected);
@@ -869,7 +885,7 @@ describe('UI State object', function() {
       state.set('allowInspector', false);
       assert.deepEqual(
           state.loadRequest(req),
-          { sectionA: {}, sectionB: {} },
+          { sectionA: {}, sectionB: {}, sectionC: {} },
           'inspector was added to state anyway');
       assert.isTrue(saveStub.calledOnce(),
           'saveState was still called');
@@ -879,116 +895,121 @@ describe('UI State object', function() {
   });
 
   describe('generateUrl', function() {
-    var defaultState = { sectionA: {}, sectionB: {} };
+
+    beforeEach(function() { window.flags = { react: true }; });
+    afterEach(function() { window.flags = null; });
+
+    var defaultState = { sectionA: {}, sectionB: {}, sectionC: {} };
     var stateObj = {};
     var states = [{
       '/': {
         sectionA: {},
-        sectionB: {}
+        sectionB: {},
+        sectionC: {}
       }
     }, {
       '/bundle/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~charmers/mediawiki/6/single' }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/bundle/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/mediawiki/6/single' }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/bundle/~jorge/mediawiki/6/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~jorge/mediawiki/6/single' }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/bundle/~jorge/mediawiki/single/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'bundle/~jorge/mediawiki/single' }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/precise/mysql-38/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: 'precise/mysql-38' }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/~prismakov/trusty/cf-dea-1/': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: { id: '~prismakov/trusty/cf-dea-1' }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'apache' }
           }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/precise/apache2-19?text=apache': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-19',
             search: { text: 'apache' }
           }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/precise/apache2-13?text=apache#readme': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             id: 'precise/apache2-13',
             search: { text: 'apache'},
             hash: 'readme'
           }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/bundle/hadoop/3/demo?text=hadoop': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo'
           }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/bundle/hadoop/3/demo?text=hadoop#readme': {
-        sectionA: {
+        sectionA: {}, sectionB: {},
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'},
             id: 'bundle/hadoop/3/demo',
             hash: 'readme'
           }
-        },
-        sectionB: {}
+        }
       }
     }, {
       '/inspector/service123/': {
@@ -1077,15 +1098,16 @@ describe('UI State object', function() {
       }
     }, {
       '/machine/3?text=hadoop': {
-        sectionA: {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
           component: 'charmbrowser',
           metadata: {
             search: { text: 'hadoop'}
           }
-        },
-        sectionB: {
-          component: 'machine',
-          metadata: { id: '3' }
         }
       }
     }, {
