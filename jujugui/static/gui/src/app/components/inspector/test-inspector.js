@@ -47,8 +47,8 @@ describe('Inspector', function() {
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1].props.children.type.displayName,
-        'ServiceOverview');
+    assert.deepEqual(output.props.children[1].props.children,
+        <juju.components.ServiceOverview service={service} />);
   });
 
   it('passes changeState callable to header component', function() {
