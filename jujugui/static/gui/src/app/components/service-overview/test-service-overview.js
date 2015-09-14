@@ -21,11 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
 
-function queryComponentSelector(component, selector, all) {
-  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
-  return component.getDOMNode()[queryFn](selector);
-}
-
 describe('ServiceOverview', function() {
   var listItemStub;
 
@@ -34,20 +29,79 @@ describe('ServiceOverview', function() {
     YUI().use('service-overview', function() { done(); });
   });
 
-  it('generates a list of actions', function() {
+  it('shows the all units action', function() {
     var service = {
       get: function() {
         return {
           toArray: function() {
-            return [];
+            return [{}, {}];
           }
         };
       }};
-      var component = renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
           <juju.components.ServiceOverview
             service={service}/>);
-      assert.isTrue(
-          queryComponentSelector(
-            component, '.overview-action', true).length > 0);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[0].props.title, 'Units');
+    assert.equal(output.props.children[0].props.value, 2);
+  });
+
+  it('shows the uncommitted units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [
+              {agent_state: 'uncommitted'},
+              {agent_state: 'started'},
+              {}
+              ];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[1].props.title, 'Uncommitted');
+    assert.equal(output.props.children[1].props.value, 3);
+  });
+
+  it('shows the pending units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [{agent_state: 'pending'}];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[1].props.title, 'Pending');
+    assert.equal(output.props.children[1].props.value, 1);
+  });
+
+  it('shows the pending units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [{agent_state: 'error'}];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children[1].props.title, 'Errors');
+    assert.equal(output.props.children[1].props.value, 1);
   });
 });

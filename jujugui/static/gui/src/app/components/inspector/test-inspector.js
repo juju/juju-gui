@@ -31,38 +31,41 @@ describe('Inspector', function() {
     YUI().use('inspector-component', function() { done(); });
   });
 
-  it('renders provided children components', function() {
+  it('displays the service overview for the "inspector" state', function() {
     var service = {
       get: function() {
         return {name: 'demo'};
       }};
+    var getAppState = function() {
+        return 'inspector';
+      };
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          service={service}>
-          <div>child</div>
+          service={service}
+          getAppState={getAppState}>
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
-        <div className="inspector-content">
-          <div>child</div>
-        </div>);
+    assert.deepEqual(output.props.children[1].props.children.type.displayName,
+        'ServiceOverview');
   });
 
-  it('calls the changeState callable when on header click', function() {
+  it('passes changeState callable to header component', function() {
     var service = {
       get: function() {
         return {name: 'demo'};
       }};
+    var getAppState = sinon.stub();
     var changeStub = sinon.stub();
-    var component = testUtils.renderIntoDocument(
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
         <juju.components.Inspector
           changeState={changeStub}
+          getAppState={getAppState}
           service={service} />);
-    var header = testUtils.scryRenderedComponentsWithType(
-        component, juju.components.InspectorHeader);
-    testUtils.Simulate.click(header[0].getDOMNode());
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.backCallback();
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
       sectionA: {
