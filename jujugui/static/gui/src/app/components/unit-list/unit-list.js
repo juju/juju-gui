@@ -23,12 +23,36 @@ YUI.add('unit-list', function() {
   juju.components.UnitList = React.createClass({
 
     /**
+      Get the current state of the inspector.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {
+        selectAll: false
+      };
+    },
+    /**
       Fires changeState to update the UI based on the component clicked.
 
       @method _navigate
       @param {Object} e The click event.
     */
     _navigate: function(e) { },
+
+    /**
+      Sets the selectAll state property based on the "select all" child
+      component.
+
+      @method _selectAllUnits
+      @param {Boolean} checked Whether the "select all" child component is
+        checked.
+    */
+    _selectAllUnits: function(checked) {
+      this.setState({selectAll: checked});
+    },
 
     /**
       Generates a list of unit components.
@@ -41,13 +65,15 @@ YUI.add('unit-list', function() {
       var components = [
         <juju.components.UnitListItem
           key='select-all'
-          label='Select all units'/>
+          label='Select all units'
+          whenChanged={this._selectAllUnits}/>
       ];
       units.forEach((unit) => {
         components.push(
           <juju.components.UnitListItem
-            key={unit.displayname}
-            label={unit.displayName} />);
+            key={unit.displayName}
+            label={unit.displayName}
+            checked={this.state.selectAll} />);
       });
       return components;
     },

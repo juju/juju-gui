@@ -22,11 +22,50 @@ YUI.add('unit-list-item', function() {
 
   juju.components.UnitListItem = React.createClass({
 
+    /**
+      Get the current state of the inspector.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {
+        checked: this.props.checked
+      };
+    },
+
+    /**
+      Handles the checkbox change action by either calling the parent supplied
+      whenChanged method and by setting the local checked state.
+
+      @method _handleChange
+      @param {Object} The change event from the checkbox.
+    */
+    _handleChange: function(e) {
+      var whenChanged = this.props.whenChanged;
+      var checked = e.currentTarget.checked;
+      // When whenChanged is set by the list parent and is used
+      // to (de)select all checkboxes.
+      if (whenChanged) {
+        whenChanged(checked);
+      }
+      this.setState({checked: checked});
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({checked: nextProps.checked});
+    },
+
     render: function() {
       var id = this.props.label + '-unit';
       return (
         <li className="unit-list-item">
-          <input type="checkbox" id={id} />
+          <input
+            type="checkbox"
+            id={id}
+            onChange={this._handleChange}
+            checked={this.state.checked} />
           <label htmlFor={id}>{this.props.label}</label>
         </li>
       );
