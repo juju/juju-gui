@@ -38,24 +38,27 @@ YUI.add('inspector-component', function() {
 
     render: function() {
       var childComponent = '';
+      var service = this.props.service;
       var activeComponent = this.props.getAppState(
           'current', 'sectionA', 'metadata').activeComponent;
       switch (activeComponent) {
         case undefined:
-          childComponent = (
+          childComponent =
             <juju.components.ServiceOverview
               changeState={this.props.changeState}
-              service={this.props.service} />);
+              service={service} />;
         break;
         case 'units':
-
+          childComponent =
+            <juju.components.UnitList
+              units={service.get('units')} />;
         break;
       }
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
-            title={this.props.service.get('name')} />
+            title={service.get('name')} />
           <div className="inspector-content">
             {childComponent}
           </div>
@@ -68,6 +71,7 @@ YUI.add('inspector-component', function() {
 }, '0.1.0', {
   requires: [
     'inspector-header',
+    'unit-list',
     'service-overview'
     ]
 });
