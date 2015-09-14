@@ -300,6 +300,9 @@ YUI.add('juju-app-state', function(Y) {
             if (id) {
               urlParts.push(id);
             }
+            if (metadata.activeComponent) {
+              urlParts.push(metadata.activeComponent + '/');
+            }
             if (metadata.unit) {
               urlParts.push('unit/' + metadata.unit);
             }
@@ -557,8 +560,14 @@ YUI.add('juju-app-state', function(Y) {
       } else {
         // The first index is the service id except in the above cases.
         metadata.id = parts[0];
-        if (parts[1]) {
-          metadata[parts[1]] = parts[2] || true;
+        if (!window.flags || !window.flags.react) {
+          if (parts[1]) {
+            metadata[parts[1]] = parts[2] || true;
+          }
+        } else {
+          if (parts[1]) {
+            metadata.activeComponent = parts[1];
+          }
         }
       }
       metadata.flash = this.get('flash');
