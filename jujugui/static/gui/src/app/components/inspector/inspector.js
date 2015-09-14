@@ -23,47 +23,63 @@ YUI.add('inspector-component', function() {
   juju.components.Inspector = React.createClass({
 
     /**
+      Get the current state of the inspector.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {};
+    },
+
+    /**
       Callback for when the header back is clicked.
 
       @method _backCallback
     */
     _backCallback: function() {
-      var state = {
-        sectionA: {
-          component: 'services'
-        }
-      };
-      this.props.changeState(state);
+      this.props.changeState(this.state.activeChild.backState);
     },
 
     render: function() {
-      var childComponent = '';
-      var title = '';
       var service = this.props.service;
       var activeComponent = this.props.getAppState(
           'current', 'sectionA', 'metadata').activeComponent;
       switch (activeComponent) {
         case undefined:
-          title = service.get('name');
-          childComponent =
-            <juju.components.ServiceOverview
+          this.state.activeChild = {
+            title: service.get('name'),
+            component: <juju.components.ServiceOverview
               changeState={this.props.changeState}
-              service={service} />;
+              service={service} />,
+            backState: {
+              sectionA: {
+                component: 'services'
+              }}};
         break;
         case 'units':
-          title = 'Units';
-          childComponent =
-            <juju.components.UnitList
-              units={service.get('units')} />;
+          this.state.activeChild = {
+            title: 'Units',
+            component:
+              <juju.components.UnitList
+                units={service.get('units')} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: undefined
+                }}}};
         break;
       }
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
-            title={title} />
+            title={this.state.activeChild.title} />
           <div className="inspector-content">
-            {childComponent}
+            {this.state.activeChild.component}
           </div>
         </div>
       );
