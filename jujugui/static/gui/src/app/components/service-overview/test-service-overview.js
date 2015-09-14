@@ -39,6 +39,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
     juju.components.ServiceOverview.prototype.icons = {};
     shallowRenderer.render(
           <juju.components.ServiceOverview
@@ -56,6 +57,7 @@ describe('ServiceOverview', function() {
         valueType={none}
         link={none}
         linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
   });
 
   it('shows the uncommitted units action', function() {
@@ -72,6 +74,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
     juju.components.ServiceOverview.prototype.icons = {};
     shallowRenderer.render(
           <juju.components.ServiceOverview
@@ -89,6 +92,7 @@ describe('ServiceOverview', function() {
         valueType="uncommitted"
         link={none}
         linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
   });
 
   it('shows the pending units action', function() {
@@ -101,6 +105,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
     juju.components.ServiceOverview.prototype.icons = {};
     shallowRenderer.render(
           <juju.components.ServiceOverview
@@ -118,6 +123,7 @@ describe('ServiceOverview', function() {
         valueType='pending'
         link={none}
         linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
   });
 
   it('shows the errors units action', function() {
@@ -130,6 +136,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
     juju.components.ServiceOverview.prototype.icons = {};
     shallowRenderer.render(
           <juju.components.ServiceOverview
@@ -147,5 +154,6 @@ describe('ServiceOverview', function() {
         valueType="error"
         link={none}
         linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
   });
 });
