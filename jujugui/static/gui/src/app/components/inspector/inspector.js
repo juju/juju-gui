@@ -26,10 +26,10 @@ YUI.add('inspector-component', function() {
     /**
       Get the current state of the inspector.
 
-      @method _getInitialState
+      @method getInitialState
       @returns {String} The current state.
     */
-    _getInitialState: function() {
+    getInitialState: function() {
       return {
         activeComponent: this.props.getAppState(
             'current', 'sectionA', 'component')
@@ -51,9 +51,8 @@ YUI.add('inspector-component', function() {
     },
 
     render: function() {
-      var state = this._getInitialState();
       var childComponent = '';
-      if (state.activeComponent === 'inspector') {
+      if (this.state.activeComponent === 'inspector') {
         childComponent = (
           <juju.components.ServiceOverview
             service={this.props.service} />);
