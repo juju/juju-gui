@@ -1,0 +1,17 @@
+.unit-list-item {
+    $fade-in-duration: .1s;
+    cursor: pointer;
+    padding: 11px 20px 11px 20px;
+    animation-duration: $fade-in-duration;
+    animation-name: fadeIn;
+    animation-fill-mode: forwards;
+    opacity: 0;
+
+    input[type=checkbox] {
+        margin-right: 15px;
+    }
+
+    label {
+        display: inline;
+    }
+}
