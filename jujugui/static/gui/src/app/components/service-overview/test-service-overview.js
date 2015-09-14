@@ -21,11 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
 
-function queryComponentSelector(component, selector, all) {
-  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
-  return component.getDOMNode()[queryFn](selector);
-}
-
 describe('ServiceOverview', function() {
   var listItemStub;
 
@@ -34,11 +29,131 @@ describe('ServiceOverview', function() {
     YUI().use('service-overview', function() { done(); });
   });
 
-  it('generates a list of actions', function() {
-      var component = renderIntoDocument(
-          <juju.components.ServiceOverview />);
-      assert.isTrue(
-          queryComponentSelector(
-            component, '.overview-action', true).length > 0);
+  it('shows the all units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [{}, {}];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
+    juju.components.ServiceOverview.prototype.icons = {};
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    var value = 2;
+    var none = undefined;
+    assert.deepEqual(output.props.children[0],
+      <juju.components.OverviewAction
+        key="Units"
+        title="Units"
+        value={value}
+        icon={none}
+        action={none}
+        valueType={none}
+        link={none}
+        linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
+  });
+
+  it('shows the uncommitted units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [
+              {agent_state: 'uncommitted'},
+              {agent_state: 'started'},
+              {}
+              ];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
+    juju.components.ServiceOverview.prototype.icons = {};
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    var value = 3;
+    var none = undefined;
+    assert.deepEqual(output.props.children[1],
+      <juju.components.OverviewAction
+        key="Uncommitted"
+        title="Uncommitted"
+        value={value}
+        icon={none}
+        action={none}
+        valueType="uncommitted"
+        link={none}
+        linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
+  });
+
+  it('shows the pending units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [{agent_state: 'pending'}];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
+    juju.components.ServiceOverview.prototype.icons = {};
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    var value = 1;
+    var none = undefined;
+    assert.deepEqual(output.props.children[1],
+      <juju.components.OverviewAction
+        key="Pending"
+        title="Pending"
+        value={value}
+        icon={none}
+        action={none}
+        valueType='pending'
+        link={none}
+        linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
+  });
+
+  it('shows the errors units action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [{agent_state: 'error'}];
+          }
+        };
+      }};
+    var shallowRenderer = testUtils.createRenderer();
+    var icons = juju.components.ServiceOverview.icons;
+    juju.components.ServiceOverview.prototype.icons = {};
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    var output = shallowRenderer.getRenderOutput();
+    var value = 1;
+    var none = undefined;
+    assert.deepEqual(output.props.children[1],
+      <juju.components.OverviewAction
+        key="Errors"
+        title="Errors"
+        value={value}
+        icon={none}
+        action={none}
+        valueType="error"
+        link={none}
+        linkTitle={none} />);
+    juju.components.ServiceOverview.prototype.icons = icons;
   });
 });

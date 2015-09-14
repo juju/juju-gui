@@ -31,17 +31,46 @@ describe('Inspector', function() {
     YUI().use('inspector-component', function() { done(); });
   });
 
-  it('renders provided children components', function() {
+  it('displays the service overview for the "inspector" state', function() {
+    var service = {
+      get: function() {
+        return {name: 'demo'};
+      }};
+    var getAppState = function() {
+        return 'inspector';
+      };
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-        <juju.components.Inspector>
-          <div>child</div>
+        <juju.components.Inspector
+          service={service}
+          getAppState={getAppState}>
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
-        <div className="inspector-content">
-          <div>child</div>
-        </div>);
+    assert.deepEqual(output.props.children[1].props.children,
+        <juju.components.ServiceOverview service={service} />);
+  });
+
+  it('passes changeState callable to header component', function() {
+    var service = {
+      get: function() {
+        return {name: 'demo'};
+      }};
+    var getAppState = sinon.stub();
+    var changeStub = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Inspector
+          changeState={changeStub}
+          getAppState={getAppState}
+          service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.backCallback();
+    assert.equal(changeStub.callCount, 1);
+    assert.deepEqual(changeStub.args[0][0], {
+      sectionA: {
+        component: 'services'
+      }
+    });
   });
 });

@@ -760,14 +760,17 @@ YUI.add('juju-gui', function(Y) {
         how to render.
     */
     _renderInspector: function(metadata) {
+      var service = this.db.services.getById(metadata.id);
+      var state = this.state;
       React.render(
         <components.Panel
           instanceName="inspector-panel"
           visible={true}
           metadata={metadata}>
-          <components.Inspector>
-            <components.ServiceOverview />
-          </components.Inspector>
+          <components.Inspector
+            service={service}
+            changeState={this.changeState.bind(this)}
+            getAppState={state.getState.bind(state)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
     },
@@ -1845,7 +1848,6 @@ YUI.add('juju-gui', function(Y) {
     'inspector-component',
     'panel-component',
     'search-results',
-    'service-overview',
     // juju-views group
     'd3-components',
     'container-token',
