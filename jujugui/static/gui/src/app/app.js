@@ -42,6 +42,8 @@ YUI.add('juju-gui', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       bundleNotifications = juju.BundleNotifications;
 
+  var components = window.juju.components;
+
   /**
    * The main app class.
    *
@@ -609,7 +611,9 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserDropdownView();
         }
         this._renderDeployerBarView();
-        this._renderEnvironmentHeaderView();
+        if (!window.flags || !window.flags.react) {
+          this._renderEnvironmentHeaderView();
+        }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -688,6 +692,109 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Parses the application URL to populate the state object without
+      dispatching
+
+      @method parseURLState
+    */
+    parseURLState: function(req, res, next) {
+      this.state.loadRequest(req, '', {dispatch: false});
+      next();
+    },
+
+    /**
+      This method is to be passed to the components so that they can interact
+      with the existing changeState system.
+
+      @method changeState
+      @param {Object} state The state to change the view to.
+    */
+    changeState: function(state) {
+      this.fire('changeState', state);
+    },
+
+    /**
+      Renders the Environment Size Display component to the page in the
+      designated element.
+
+      @method _renderEnvSizeDisplay
+      @param {Integer} serviceCount The serviceCount to display.
+      @param {Integer} machineCount The machineCount to display.
+    */
+    _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
+      var state = this.state;
+      React.render(
+        <window.juju.components.EnvSizeDisplay
+          serviceCount={serviceCount}
+          machineCount={machineCount}
+          changeState={this.changeState.bind(this)}
+          getAppState={state.getState.bind(state)} />,
+        document.getElementById('env-size-display-container'));
+    },
+
+    /**
+      Renders the Added Services component to the page in the appropriate
+      element.
+
+      @method _renderAddedServices
+      @param {Array} services Array of service models.
+    */
+    _renderAddedServices: function(services) {
+      var services = this.db.services.toArray();
+      React.render(
+        <components.Panel
+          instanceName="inspector-panel"
+          visible={services.length > 0}>
+          <components.AddedServicesList
+            services={services}
+            changeState={this.changeState.bind(this)} />
+        </components.Panel>,
+        document.getElementById('inspector-container'));
+    },
+
+    /**
+      Renders the Inspector component to the page.
+
+      @method _renderInspector
+      @param {Object} metadata The data to pass to the inspector which tells it
+        how to render.
+    */
+    _renderInspector: function(metadata) {
+      var service = this.db.services.getById(metadata.id);
+      var state = this.state;
+      React.render(
+        <components.Panel
+          instanceName="inspector-panel"
+          visible={true}
+          metadata={metadata}>
+          <components.Inspector
+            service={service}
+            changeState={this.changeState.bind(this)}
+            getAppState={state.getState.bind(state)} />
+        </components.Panel>,
+        document.getElementById('inspector-container'));
+    },
+
+    /**
+      Renders the SearchResults component to the page in the designated element.
+
+      @method _renderSearchResults
+      @param {String} query The search query.
+    */
+    _renderSearchResults: function(metadata) {
+      var text = metadata.search.text;
+      var visible = text ? true : false;
+      React.render(
+        <components.Panel
+          instanceName="white-box"
+          visible={visible}>
+          <components.SearchResults
+            query={text} />
+        </components.Panel>,
+        document.getElementById('white-box-container'));
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -702,6 +809,17 @@ YUI.add('juju-gui', function(Y) {
         baseUrl: baseUrl || '',
         dispatchers: {}
       });
+      if (window.flags && window.flags.react) {
+        var dispatchers = this.state.get('dispatchers');
+        dispatchers.sectionA = {
+          services: this._renderAddedServices.bind(this),
+          inspector: this._renderInspector.bind(this)
+        };
+        dispatchers.sectionC = {
+          searchResults: this._renderSearchResults.bind(this)
+        };
+        this.state.set('dispatchers', dispatchers);
+      }
     },
 
     /**
@@ -1119,6 +1237,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
+      this._renderComponents();
     },
 
     // Route handlers
@@ -1459,6 +1578,24 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Render the react components.
+
+      @method _renderComponents
+    */
+    _renderComponents: function() {
+      // Update the react views on database change
+      if (window.flags && window.flags.react) {
+        this._renderEnvSizeDisplay(
+          this.db.services.size(),
+          this.db.machines.size()
+        );
+        // When we render the components we also want to trigger the rest of
+        // the application to render but only based on the current state.
+        this.state.dispatch();
+      }
+    },
+
+    /**
      * @method show_environment
      */
     show_environment: function(req, res, next) {
@@ -1491,6 +1628,8 @@ YUI.add('juju-gui', function(Y) {
         },
         render: true
       });
+
+      this._renderComponents();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -1674,6 +1813,7 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           // Called on each request.
+          { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
@@ -1703,6 +1843,11 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-handler',
     'juju-env-web-sandbox',
     'juju-charm-models',
+    // React components
+    'env-size-display',
+    'inspector-component',
+    'panel-component',
+    'search-results',
     // juju-views group
     'd3-components',
     'container-token',

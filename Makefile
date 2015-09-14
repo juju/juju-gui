@@ -24,6 +24,7 @@ BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.1-py2.7.egg/selenium/selenium.py
+REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
@@ -35,7 +36,7 @@ RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/as
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
 TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
-SCSS_FILES := $(shell find $(GUISRC)/app/assets/css -type f -name "*.scss")
+SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
 STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
 	$(GUIBUILD)/app/assets/stylesheets/prettify.css \
@@ -45,13 +46,18 @@ STATIC_CSS_FILES = \
 help:
 	@echo "check - run tests and check lint."
 	@echo "clean - remove build and python artifacts"
+	@echo "clean-gui - clean the built gui js code"
+	@echo "clean-downloadcache - remove the downloadcache"
 	@echo "deps - install the dependencies"
-	@echo "dev - install jujugui in develop mode"
 	@echo "gui - build the gui files"
-	@echo "lint - check style with flake8"
+	@echo "lint - check python style with flake8"
+	@echo "lint-js - check javascript style with eslint"
 	@echo "run - run the development server"
-	@echo "test - run tests quickly with the default Python"
+	@echo "test - run python tests with the default Python"
+	@echo "test-js-phantom - run js tests in terminal"
 	@echo "test-deps - install the test dependencies"
+	@echo "update-downloadcache - update the download cache"
+
 
 #########
 # PREREQS
@@ -75,20 +81,17 @@ $(PY):
 $(NODE_MODULES):
 	npm install --cache-min 999999
 
-.PHONY: run-server
-run-server: gui
+.PHONY: server
+server: gui
 	bin/pserve --reload development.ini
 
 .PHONY: run
-run:
-	make -j 2 run-server watch
+run: gui
+	$(MAKE) -j2 server watch
 
 #########
 # INSTALL
 #########
-.PHONY: all
-all: venv deps dev
-
 venv: $(PY)
 
 $(JUJUGUI): $(PYRAMID)
@@ -107,7 +110,7 @@ modules-js: $(MODULESMIN)
 build-js: $(BUILT_RAWJSFILES) $(MIN_JS_FILES)
 
 $(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUISRC)/app/$*.js -o $@
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/$*.js -o $@
 
 $(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
 	mkdir -p $(@D)
@@ -117,9 +120,20 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
 	cp $(JS_MACAROON) $(JS_ASSETS)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
-	find $(BUILT_JS_ASSETS) -type f -name "*.js" -not -name "*d3-wrapper*" -not -name "*unscaled-pack*" | sed s/\.js$$//g | xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
+	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
+		-not -name "react*" \
+		-not -name "*d3-wrapper*" \
+		-not -name "*unscaled-pack*" | \
+		sed s/\.js$$//g | \
+		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
 $(YUI): $(NODE_MODULES)
+
+$(REACT_ASSETS): $(NODE_MODULES)
+	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
+	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
+	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
@@ -174,7 +188,7 @@ $(STATIC_IMAGES):
 images: $(SPRITE_FILE) $(STATIC_IMAGES)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(REACT_ASSETS)
 
 .PHONY: watch
 watch:
@@ -247,12 +261,16 @@ test: $(PYTEST)
 test-js-phantom: gui
 	./scripts/test-js.sh
 
+.PHONY: test-js-karma
+test-js-karma: gui
+	$(NODE_MODULES)/.bin/karma start karma.conf.js
+
 .PHONY: test-selenium
 test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
-check: clean-pyc lint lint-js test test-js-phantom
+check: clean-pyc lint lint-js test test-js-phantom test-js-karma
 
 # ci-check is the target run by CI.
 .PHONY: ci-check

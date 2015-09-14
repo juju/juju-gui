@@ -1,8 +1,15 @@
 env:
   browser: true
   node: true
+ecmaFeatures:
+  jsx: true
+  defaultParams: true
+  arrowFunctions: true
+  objectLiteralShorthandProperties: false
 rules:
+  max-len: [2, 80, 2]
   no-shadow: 0
+  semi: [2, "always"]
   quotes: [2, "single"]
   strict: [2, "global"]
   no-underscore-dangle: 0

@@ -252,7 +252,7 @@ YUI.add('juju-topology-service', function(Y) {
               'xlink:href': 'juju-ui/assets/svgs/exposed.svg',
               'width': 32,
               'height': 32
-            })
+            });
       }
       existing = d3.select(this).select('.exposed-indicator')
                       .attr({
@@ -1433,7 +1433,7 @@ YUI.add('juju-topology-service', function(Y) {
           width: 96,
           height: 96,
           transform: 'translate(47, 42)',
-          'clip-path': function(d) { return 'url(#clip-' + d.name + ')' }
+          'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
         });
 
       // Manually attach the touchstart event (see method for details)

@@ -316,6 +316,20 @@ YUI.add('juju-env-go', function(Y) {
       @return {Object} an object of valid constraint values.
     */
     prepareConstraints: function(constraints) {
+      if (typeof constraints === 'string') {
+        var constraintsObj = {};
+        constraints.trim()
+          .split(/\s+/).forEach(function(constraint) {
+            var constraintParts = constraint.trim().split('=');
+            if (constraintParts.length !== 2) {
+              console.error('Got unexpected malformed constraint', constraint);
+              return;
+            }
+            constraintsObj[constraintParts[0].trim()] =
+              constraintParts[1].trim();
+          });
+        constraints = constraintsObj;
+      }
       var result = Object.create(null);
       Object.keys(constraints).forEach(function(key) {
         var value;

@@ -178,22 +178,24 @@ YUI.add('subapp-browser', function(Y) {
 
       this._registerSubappHelpers();
 
-      this.state = cfg.state
+      this.state = cfg.state;
       var dispatchers = {
         app: {
           deployTarget: this._deployTargetDispatcher.bind(this)
-        },
-        sectionA: {
-          charmbrowser: this._charmBrowserDispatcher.bind(this),
-          inspector: this._inspectorDispatcher.bind(this),
-          empty: this.emptySectionA.bind(this),
-          services: this._addedServicesDispatcher.bind(this)
         },
         sectionB: {
           machine: this._machine.bind(this),
           empty: this.emptySectionB.bind(this)
         }
       };
+      if (!window.flags || !window.flags.react) {
+        dispatchers.sectionA = {
+          charmbrowser: this._charmBrowserDispatcher.bind(this),
+          inspector: this._inspectorDispatcher.bind(this),
+          empty: this.emptySectionA.bind(this),
+          services: this._addedServicesDispatcher.bind(this)
+        };
+      }
       this.state.set(
         'dispatchers',
         // If there were any existing dispatchers then merge in ones for
@@ -275,6 +277,13 @@ YUI.add('subapp-browser', function(Y) {
             }.bind(this),
             failureNotification.bind(this));
       }
+      // Because deploy-target is an action and not a state we need to clear
+      // it out of the state as soon as we are done with it so that we can
+      // continue calling dispatch without the worry of it trying to
+      // deploy multiple times.
+      var currentState = this.state.get('current');
+      delete currentState.app.deployTarget;
+      this.navigate(this.state.generateUrl(currentState));
     },
 
     /**
@@ -407,7 +416,9 @@ YUI.add('subapp-browser', function(Y) {
     */
     _machine: function(metadata) {
       this._renderMachineViewPanelView(this.get('db'), this.get('env'));
-      this.get('environmentHeader').setSelectedTab('machines');
+      if (!window.flags || !window.flags.react) {
+        this.get('environmentHeader').setSelectedTab('machines');
+      }
     },
 
     /**
@@ -733,8 +744,10 @@ YUI.add('subapp-browser', function(Y) {
       // so this method only needs these lines once switched over.
       // We need to render the sidebar view as default. This is the new design
       // in the near future we will likely just render it in the initializer.
-      this.sidebar();
-      this.state.loadRequest(req);
+      if (!window.flags || !window.flags.react) {
+        this.sidebar();
+      }
+      this.state.dispatch();
       next();
     },
 

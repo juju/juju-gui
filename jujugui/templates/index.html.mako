@@ -124,6 +124,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="onboarding"></div>
       <div id="deployer-bar"></div>
       <div id="environment-header"></div>
+      <div id="env-size-display-container"></div>
+      <div id="inspector-container"></div>
+      <div id="white-box-container"></div>
       <div id="machine-view-panel"></div>
 
       <div class="cookie-policy" style="display:none;">
@@ -181,6 +184,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <script src="${convoy_url}?app/assets/javascripts/spin.min.js"></script>
     <script id="app-startup">
+      // Global to store all of the shared application data.
+      var juju = {
+        // Collection of components.
+        components: {}
+      };
+
       var flags = {}; // Declare an empty set of feature flags.
       startSpinner = function() {
         var opts = {
@@ -382,9 +391,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'use strict' and d3 doesn't work under strict.
     -->
     % if raw:
+    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/classnames.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     % else:
+    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/classnames-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     % endif

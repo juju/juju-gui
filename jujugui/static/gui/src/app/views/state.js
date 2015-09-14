@@ -80,7 +80,7 @@ YUI.add('juju-app-state', function(Y) {
     */
     getState: function(state, section, field) {
       var stateObj = this.get(state),
-          sectionObj = stateObj[section],
+          sectionObj = stateObj && stateObj[section],
           value;
       if (sectionObj) { value = sectionObj[field]; }
       return value;
@@ -94,11 +94,15 @@ YUI.add('juju-app-state', function(Y) {
 
       @method saveState
       @param {Object} state The state object from loadRequest
+      @param {Boolean} dispatch If it should dispatch the request or just add
+        it to the state.
     */
-    saveState: function(state) {
+    saveState: function(state, dispatch) {
       this.set('previous', Y.clone(this.get('current'))); // clones the object.
       this.set('current', state);
-      this.dispatch(state);
+      if (dispatch) {
+          this.dispatch(state);
+      }
       return state;
     },
 
@@ -113,7 +117,10 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state The current state object.
     */
     dispatch: function(state) {
-      var sections = ['app', 'sectionA', 'sectionB'];
+      var sections = ['app', 'sectionA', 'sectionB', 'sectionC'];
+      if (!state) {
+        state = this.get('current');
+      }
       // If the component of a section has changed then clean out that section.
       sections.forEach(function(section) {
         if (this.hasChanged(section, 'component')) {
@@ -137,7 +144,8 @@ YUI.add('juju-app-state', function(Y) {
       var sections = {
         app: 'App',
         sectionA: 'SectionA',
-        sectionB: 'SectionB'
+        sectionB: 'SectionB',
+        sectionC: 'SectionC'
       };
       // calls _dispatchSectionA or _dispatchSectionB
       this['_dispatch' + sections[section]](state);
@@ -168,7 +176,13 @@ YUI.add('juju-app-state', function(Y) {
     _dispatchSectionA: function(state) {
       var component = state.component;
       // The default component is the charmbrowser.
-      if (!component) { component = 'charmbrowser'; }
+      if (!component) {
+        if (window.flags && window.flags.react) {
+          component = 'services';
+        } else {
+          component = 'charmbrowser';
+        }
+      }
       this.get('dispatchers').sectionA[component](state.metadata);
     },
 
@@ -188,13 +202,36 @@ YUI.add('juju-app-state', function(Y) {
     },
 
     /**
+      Calls the dispatcher subscribed on instantiation for the sectionC
+      component.
+
+      @method _dispatchSectionC
+      @param {Object} state SectionB's state object.
+    */
+    _dispatchSectionC: function(state) {
+      var component = state.component;
+      var metadata = state.metadata;
+      if (!component) {
+        if (metadata && metadata.search && metadata.search.text) {
+          component = 'searchResults';
+        } else {
+          return;
+        }
+      }
+      this.get('dispatchers').sectionC[component](state.metadata);
+    },
+
+    /**
       Calls the subscribed empty method for the passed in section.
 
       @method _emptySection
       @param {String} section The section to call the empty listener on.
     */
     _emptySection: function(section) {
-      this.get('dispatchers')[section].empty();
+      var dispatcher = this.get('dispatchers')[section];
+      if (dispatcher && dispatcher.empty) {
+          dispatcher.empty();
+      }
     },
 
     /**
@@ -314,10 +351,13 @@ YUI.add('juju-app-state', function(Y) {
       @method loadRequest
       @param {Object} req Y.Router request object.
       @param {string} hash The hash from window.location.hash.
+      @param {Object} options A collection of options for loading the request
+        object into state.
+        'dispatch': true/false - whether it should dispatch.
       @return {Object} The state object which outlines what the application
         should render.
     */
-    loadRequest: function(req, hash) {
+    loadRequest: function(req, hash, options) {
       var url = req.path,
           query = req.query,
           state = {};
@@ -338,7 +378,7 @@ YUI.add('juju-app-state', function(Y) {
       hash = this._sanitizeHash(hash);
       // Organize the paths into their sections.
       state = this._buildSections(paths, query, hash);
-      this.saveState(state);
+      this.saveState(state, false);
       return state;
     },
 
@@ -376,7 +416,7 @@ YUI.add('juju-app-state', function(Y) {
       @return {Object} The section delimited state object.
     */
     _buildSections: function(paths, query, hash) {
-      var state = { sectionA: {}, sectionB: {} };
+      var state = { sectionA: {}, sectionB: {}, sectionC: {} };
       // Loop through each part and dispatch each part to the appropriate url
       // parse method.
       paths.forEach(function(part) {
@@ -412,7 +452,11 @@ YUI.add('juju-app-state', function(Y) {
         } else if (part.length > 0) {
           // If it's not an inspector or machine and it's more than 0 characters
           // then it's a charm url.
-          state.sectionA = this._addToSection({
+          var section = 'sectionA';
+          if (window.flags && window.flags.react) {
+            section = 'sectionC';
+          }
+          state[section] = this._addToSection({
             component: 'charmbrowser',
             metadata: this._parseCharmUrl(part, hash)
           });
@@ -442,10 +486,18 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} query The query param object.
     */
     _addQueryState: function(state, query) {
-      Y.namespace.call(state, 'sectionA.metadata.search');
-      // This gets passed the entire query even fields which are not search
-      // related.
-      state.sectionA.metadata.search = query;
+      if (!window.flags || !window.flags.react) {
+        Y.namespace.call(state, 'sectionA.metadata.search');
+        // This gets passed the entire query even fields which are not search
+        // related.
+        state.sectionA.metadata.search = query;
+      } else {
+        Y.namespace.call(state, 'sectionC.metadata.search');
+        // This gets passed the entire query even fields which are not search
+        // related.
+        state.sectionC.metadata.search = query;
+      }
+
       this.filter.update(query);
     },
 
