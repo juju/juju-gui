@@ -22,12 +22,35 @@ var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
 
 describe('ServiceOverview', function() {
-  var listItemStub;
+  var listItemStub, icons;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('service-overview', function() { done(); });
   });
+
+  beforeEach(function() {
+    // Set icons to null so we can check if they were stored
+    // here in the afterEach.
+    icons = null;
+  });
+
+  afterEach(function() {
+    // Make sure we reset the icons after every test even if it fails
+    // so that we don't cause cascading failures.
+    resetIcons();
+  });
+
+  function stubIcons() {
+    icons = juju.components.ServiceOverview.icons;
+    juju.components.ServiceOverview.prototype.icons = {};
+  }
+
+  function resetIcons() {
+    if (icons !== null) {
+      juju.components.ServiceOverview.prototype.icons = icons;
+    }
+  }
 
   it('shows the all units action', function() {
     var service = {
@@ -39,8 +62,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
-    var icons = juju.components.ServiceOverview.icons;
-    juju.components.ServiceOverview.prototype.icons = {};
+    stubIcons();
     shallowRenderer.render(
           <juju.components.ServiceOverview
             service={service}/>);
@@ -57,7 +79,6 @@ describe('ServiceOverview', function() {
         valueType={none}
         link={none}
         linkTitle={none} />);
-    juju.components.ServiceOverview.prototype.icons = icons;
   });
 
   it('shows the uncommitted units action', function() {
@@ -74,8 +95,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
-    var icons = juju.components.ServiceOverview.icons;
-    juju.components.ServiceOverview.prototype.icons = {};
+    stubIcons();
     shallowRenderer.render(
           <juju.components.ServiceOverview
             service={service}/>);
@@ -92,7 +112,6 @@ describe('ServiceOverview', function() {
         valueType="uncommitted"
         link={none}
         linkTitle={none} />);
-    juju.components.ServiceOverview.prototype.icons = icons;
   });
 
   it('shows the pending units action', function() {
@@ -105,8 +124,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
-    var icons = juju.components.ServiceOverview.icons;
-    juju.components.ServiceOverview.prototype.icons = {};
+    stubIcons();
     shallowRenderer.render(
           <juju.components.ServiceOverview
             service={service}/>);
@@ -123,7 +141,6 @@ describe('ServiceOverview', function() {
         valueType='pending'
         link={none}
         linkTitle={none} />);
-    juju.components.ServiceOverview.prototype.icons = icons;
   });
 
   it('shows the errors units action', function() {
@@ -136,8 +153,7 @@ describe('ServiceOverview', function() {
         };
       }};
     var shallowRenderer = testUtils.createRenderer();
-    var icons = juju.components.ServiceOverview.icons;
-    juju.components.ServiceOverview.prototype.icons = {};
+    stubIcons();
     shallowRenderer.render(
           <juju.components.ServiceOverview
             service={service}/>);
@@ -154,6 +170,5 @@ describe('ServiceOverview', function() {
         valueType="error"
         link={none}
         linkTitle={none} />);
-    juju.components.ServiceOverview.prototype.icons = icons;
   });
 });
