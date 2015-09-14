@@ -1007,7 +1007,8 @@ describe('utilities', function() {
     var models, views, unit, utils, Y, inputRelation, source, target;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-models', 'juju-views', 'juju-view-utils'], function(Y) {
+      var modules = ['juju-models', 'juju-views', 'juju-view-utils'];
+      Y = YUI(GlobalConfig).use(modules, function(Y) {
         models = Y.namespace('juju.models');
         views = Y.namespace('juju.views');
         utils = Y.namespace('juju.views.utils');
