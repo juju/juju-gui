@@ -22,20 +22,6 @@ YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
 
-
-    /**
-      Get the current state of the inspector.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      return {
-        activeComponent: this.props.getAppState(
-            'current', 'sectionA', 'component')
-      };
-    },
-
     /**
       Callback for when the header back is clicked.
 
@@ -52,10 +38,18 @@ YUI.add('inspector-component', function() {
 
     render: function() {
       var childComponent = '';
-      if (this.state.activeComponent === 'inspector') {
-        childComponent = (
-          <juju.components.ServiceOverview
-            service={this.props.service} />);
+      var activeComponent = this.props.getAppState(
+          'current', 'sectionA', 'metadata').activeComponent;
+      switch (activeComponent) {
+        case undefined:
+          childComponent = (
+            <juju.components.ServiceOverview
+              changeState={this.props.changeState}
+              service={this.props.service} />);
+        break;
+        case 'units':
+
+        break;
       }
       return (
         <div className="inspector-view">
