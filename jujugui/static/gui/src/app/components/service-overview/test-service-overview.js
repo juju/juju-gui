@@ -81,7 +81,7 @@ describe('ServiceOverview', function() {
         action={output.props.children[0].props.action} />);
   });
 
-  it('clicks to All Units line item navigates to the unit list', function() {
+  it('navigates to the unit list when All Units is clicked', function() {
     var getStub = sinon.stub();
     getStub.withArgs('units').returns({toArray: function() {
       return [{}, {}];

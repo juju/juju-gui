@@ -119,6 +119,9 @@ describe('Inspector', function() {
           appState={appState}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.children[0].props.title, 'demo');
+    assert.deepEqual(output.props.children[0],
+      <juju.components.InspectorHeader
+        backCallback={output.props.children[0].props.backCallback}
+        title="demo"/>);
   });
 });

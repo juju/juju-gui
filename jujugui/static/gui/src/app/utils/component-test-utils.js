@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var jsTestUtils = {
 
   /**
-    shalloRender provides a convenience wrapper around the React
+    shallowRender provides a convenience wrapper around the React
     testUtils createRenderer method.
 
     The createRenderer isn't well documented but you can view it's source
@@ -42,6 +42,15 @@ var jsTestUtils = {
       shallowRenderer : shallowRenderer.getRenderOutput();
   },
 
+  /**
+    JSON.stringify doesn't print undefined values to the console when trying
+    to inspect an object. This loging wrapper prints the undefined values
+    and also gives you the option to print the functions as well.
+
+    @method log
+    @param {Object} obj The object to stringify
+    @param {Boolean} showFn Whether you want to show the functions.
+  */
   log: function(obj, showFn) {
     console.log(
         JSON.stringify(

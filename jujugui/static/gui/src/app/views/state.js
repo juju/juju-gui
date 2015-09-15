@@ -567,6 +567,7 @@ YUI.add('juju-app-state', function(Y) {
         } else {
           if (parts[1]) {
             metadata.activeComponent = parts[1];
+            metadata[parts[1]] = parts[2] || true;
           }
         }
       }
