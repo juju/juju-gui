@@ -20,8 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('search-results', function(Y) {
 
-  var Templates = Y.juju.views.Templates;
-
   juju.components.SearchResults = React.createClass({
     search: function() {
       /*
@@ -116,7 +114,7 @@ YUI.add('search-results', function(Y) {
 
     render: function() {
       var classes = 'search-results';
-      var html = Templates['storefront-search'](this.search());
+      var html = Handlebars.templates['search-results.hbs'](this.search());
       return (
         <div className={classes}
           dangerouslySetInnerHTML={{__html: html}}>
@@ -125,7 +123,4 @@ YUI.add('search-results', function(Y) {
     }
   });
 
-}, '0.1.0', {requires: [
-  'juju-templates',
-  'juju-view-helpers'
-]});
+}, '0.1.0', {requires: []});

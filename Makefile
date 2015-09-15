@@ -3,7 +3,8 @@ PY := bin/python
 PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
-TEMPLATES_FILE := $(GUIBUILD)/app/templates.js
+OLD_TEMPLATES_FILE := $(GUIBUILD)/app/templates.js
+NEW_TEMPLATES_FILE := $(GUIBUILD)/app/components/templates.js
 SPRITE_FILE := $(GUIBUILD)/app/assets/sprites.png
 SPRITE_CSS_FILE := $(GUIBUILD)/app/assets/sprites.css
 STATIC_CSS := $(GUIBUILD)/app/assets/css
@@ -25,6 +26,7 @@ D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.1-py2.7.egg/selenium/selenium.py
 REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
+HANDLEBARS_ASSETS := $(BUILT_JS_ASSETS)/handlebars.runtime.js $(BUILT_JS_ASSETS)/handlebars.runtime.min.js
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
@@ -35,7 +37,8 @@ PIP = bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) -
 RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/assets/javascripts/*")
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
-TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
+OLD_TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
+NEW_TEMPLATE_FILES := $(shell find $(GUISRC)/app/components -type f -name "*.hbs")
 SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
 STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
@@ -97,7 +100,7 @@ venv: $(PY)
 $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
-$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
+$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(OLD_TEMPLATES_FILE) $(NEW_TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
 
@@ -135,6 +138,10 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
 
+$(HANDLEBARS_ASSETS): $(NODE_MODULES)
+	cp $(NODE_MODULES)/handlebars/dist/handlebars.runtime.js $(BUILT_JS_ASSETS)/handlebars.runtime.js
+	cp $(NODE_MODULES)/handlebars/dist/handlebars.runtime.min.js $(BUILT_JS_ASSETS)/handlebars.runtime.min.js
+
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
 
@@ -157,13 +164,20 @@ $(BUILT_D3):
 	  $(GUISRC)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
 	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3-min.js
 
-$(TEMPLATES_FILE): $(NODE_MODULES) $(TEMPLATE_FILES)
+$(OLD_TEMPLATES_FILE): $(NODE_MODULES) $(OLD_TEMPLATE_FILES)
 	mkdir -p $(GUIBUILD)/app/assets
 	scripts/generateTemplates
-	node_modules/.bin/uglifyjs --screw-ie8 $(TEMPLATES_FILE) -o $(basename $(TEMPLATES_FILE))-min.js
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(OLD_TEMPLATES_FILE) -o $(basename $(OLD_TEMPLATES_FILE))-min.js
+
+$(NEW_TEMPLATES_FILE): $(NODE_MODULES) $(NEW_TEMPLATE_FILES)
+	mkdir -p $(GUIBUILD)/app/assets
+	cp $(GUISRC)/app/components/helpers.js $(GUIBUILD)/app/components/helpers.js
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/components/helpers.js -o $(GUIBUILD)/app/components/helpers-min.js
+	$(NODE_MODULES)/.bin/handlebars $(NEW_TEMPLATE_FILES) -f $(NEW_TEMPLATES_FILE)
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NEW_TEMPLATES_FILE) -o $(basename $(NEW_TEMPLATES_FILE))-min.js
 
 .PHONY: template
-template: $(TEMPLATES_FILE)
+template: $(OLD_TEMPLATES_FILE) $(NEW_TEMPLATES_FILE)
 
 $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
@@ -188,7 +202,7 @@ $(STATIC_IMAGES):
 images: $(SPRITE_FILE) $(STATIC_IMAGES)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(REACT_ASSETS)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
 
 .PHONY: watch
 watch:
