@@ -171,8 +171,6 @@ $(OLD_TEMPLATES_FILE): $(NODE_MODULES) $(OLD_TEMPLATE_FILES)
 
 $(NEW_TEMPLATES_FILE): $(NODE_MODULES) $(NEW_TEMPLATE_FILES)
 	mkdir -p $(GUIBUILD)/app/assets
-	cp $(GUISRC)/app/components/helpers.js $(GUIBUILD)/app/components/helpers.js
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/components/helpers.js -o $(GUIBUILD)/app/components/helpers-min.js
 	$(NODE_MODULES)/.bin/handlebars $(NEW_TEMPLATE_FILES) -f $(NEW_TEMPLATES_FILE)
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NEW_TEMPLATES_FILE) -o $(basename $(NEW_TEMPLATES_FILE))-min.js
 
