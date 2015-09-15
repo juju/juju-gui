@@ -31,6 +31,35 @@ YUI.add('service-overview', function() {
     },
 
     /**
+      Get the current state of the inspector.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {};
+    },
+
+    /**
+      Fires changeState to update the UI based on the component clicked.
+
+      @method _navigate
+      @param {Object} e The click event.
+    */
+    _navigate: function(e) {
+      var title = e.currentTarget.getAttribute('title');
+      var activeAction;
+      this.state.actions.some((action) => {
+          if (action.title === title) {
+            activeAction = action;
+            return true;
+          }
+      });
+      this.props.changeState(activeAction.state);
+    },
+
+    /**
       Returns the actions for the overview view.
       @method _generateActionList
       @returns {Array} The array of overview action components.
@@ -88,7 +117,17 @@ YUI.add('service-overview', function() {
       var actions = [{
         title: 'Units',
         value: unitStatuses.all,
-        icon: this.icons.all
+        icon: this.icons.all,
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: service.get('id'),
+              activeComponent: 'units'
+            }
+          }
+        }
       }];
 
       if (unitStatuses.error > 0) {
@@ -139,15 +178,15 @@ YUI.add('service-overview', function() {
           icon: this.icons.version
         });
 
-      return actions;
+      this.state.actions = actions;
     },
 
     render: function() {
-      var actions = this._generateActions(this.props.service);
+      this._generateActions(this.props.service);
 
       return (
         <ul className="service-overview__actions">
-          {this._generateActionList(actions)}
+          {this._generateActionList(this.state.actions)}
         </ul>
       );
     }

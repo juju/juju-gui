@@ -675,6 +675,7 @@ describe('UI State object', function() {
           component: 'inspector',
           metadata: {
             id: 'service123',
+            activeComponent: 'charm',
             charm: true,
             flash: {}
           }
@@ -685,6 +686,7 @@ describe('UI State object', function() {
           component: 'inspector',
           metadata: {
             id: 'service123',
+            activeComponent: 'unit',
             unit: '13',
             flash: {}
           }
