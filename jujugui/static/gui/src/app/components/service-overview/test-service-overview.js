@@ -71,14 +71,50 @@ describe('ServiceOverview', function() {
     var none = undefined;
     assert.deepEqual(output.props.children[0],
       <juju.components.OverviewAction
+        icon={none}
         key="Units"
         title="Units"
         value={value}
-        icon={none}
-        action={none}
         valueType={none}
         link={none}
-        linkTitle={none} />);
+        linkTitle={none}
+        action={output.props.children[0].props.action} />);
+  });
+
+  it('clicks to All Units line item navigates to the unit list', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('units').returns({toArray: function() {
+      return [{}, {}];
+    }});0
+    getStub.withArgs('id').returns('demo');
+    var service = {
+      get: getStub
+    };
+    var changeState = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    stubIcons();
+    shallowRenderer.render(
+          <juju.components.ServiceOverview
+            changeState={changeState}
+            service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    // call the action method which is passed to the child to make sure it
+    // is hooked up to the changeState method.
+    output.props.children[0].props.action({
+      currentTarget: {
+        getAttribute: function() { return 'Units'; }
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'demo',
+          activeComponent: 'units'
+        }
+      }
+    });
   });
 
   it('shows the uncommitted units action', function() {

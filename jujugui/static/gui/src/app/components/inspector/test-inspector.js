@@ -24,7 +24,7 @@ var testUtils = React.addons.TestUtils;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-fdescribe('Inspector', function() {
+describe('Inspector', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
