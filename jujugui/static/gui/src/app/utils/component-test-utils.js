@@ -40,6 +40,23 @@ var jsTestUtils = {
     shallowRenderer.render(component);
     return (returnRenderer) ?
       shallowRenderer : shallowRenderer.getRenderOutput();
+  },
+
+  log: function(obj, showFn) {
+    console.log(
+        JSON.stringify(
+            obj,
+            (k, v) => {
+              if (v === undefined) {
+                return 'undefined';
+              }
+              if (showFn && typeof v === 'function') {
+                return '' + v;
+              }
+              return v;
+           },
+           4
+    ));
   }
 
 };
