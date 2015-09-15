@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-footer', function() {
+YUI.add('button-row', function() {
 
-  juju.components.InspectorFooter = React.createClass({
+  juju.components.ButtonRow = React.createClass({
 
     /**
       Returns the classes for the footer based on the provided props.
@@ -29,8 +29,8 @@ YUI.add('inspector-footer', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'inspector-footer',
-        this.props.buttons.length > 1 ? 'inspector-footer--multiple' : ''
+        'button-row',
+        this.props.buttons.length > 1 ? 'button-row--multiple' : ''
       );
     },
 

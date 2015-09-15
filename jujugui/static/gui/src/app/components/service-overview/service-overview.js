@@ -38,7 +38,9 @@ YUI.add('service-overview', function() {
     */
     getInitialState: function() {
       // Setting a default state object.
-      return {};
+      return {
+        confirmationOpen: this.props.confirmationOpen
+      };
     },
 
     /**
@@ -181,17 +183,51 @@ YUI.add('service-overview', function() {
       this.state.actions = actions;
     },
 
+    /**
+      Set the confirmation state to open.
+      @method _showConfirmation
+    */
+    _showConfirmation: function() {
+      this.setState({confirmationOpen: true});
+    },
+
+    /**
+      Set the confirmation state to closed.
+      @method _hideConfirmation
+    */
+    _hideConfirmation: function() {
+      this.setState({confirmationOpen: false});
+    },
+
     render: function() {
       this._generateActions(this.props.service);
-      var buttons = [{title: 'Destroy'}];
-
+      var buttons = [{
+        title: 'Destroy',
+        action: this._showConfirmation
+        }];
+      var confirmMessage = "Are you sure you want to destroy the service? " +
+        "This cannot be undone."
+      var confirmButtons = [
+        {
+          title: 'Cancel',
+          action: this._hideConfirmation
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm'
+          }
+        ];
       return (
         <div className="service-overview">
           <ul className="service-overview__actions">
             {this._generateActionList(this.state.actions)}
           </ul>
-          <juju.components.InspectorFooter
+          <juju.components.ButtonRow
             buttons={buttons} />
+          <juju.components.InspectorConfirm
+            buttons={confirmButtons}
+            message={confirmMessage}
+            open={this.state.confirmationOpen} />
         </div>
       );
     }
@@ -199,6 +235,7 @@ YUI.add('service-overview', function() {
   });
 
 }, '0.1.0', { requires: [
-  'inspector-footer',
+  'button-row',
+  'inspector-confirm',
   'overview-action'
 ]});

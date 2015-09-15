@@ -24,11 +24,11 @@ var testUtils = React.addons.TestUtils;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('InspectorFooter', function() {
+describe('ButtonRow', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-footer', function() { done(); });
+    YUI().use('button-row', function() { done(); });
   });
 
   it('generates a button', function() {
@@ -42,7 +42,7 @@ describe('InspectorFooter', function() {
         ];
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.InspectorFooter
+      <juju.components.ButtonRow
         buttons={buttons} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children, [
@@ -69,7 +69,7 @@ describe('InspectorFooter', function() {
         ];
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.InspectorFooter
+      <juju.components.ButtonRow
         buttons={buttons} />);
     var output = shallowRenderer.getRenderOutput();
     var children = [
@@ -85,7 +85,7 @@ describe('InspectorFooter', function() {
         type="submit" />
       ];
     assert.deepEqual(output,
-      <div className="inspector-footer inspector-footer--multiple">
+      <div className="button-row button-row--multiple">
         {children}
       </div>);
   });

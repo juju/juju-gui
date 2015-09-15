@@ -14,9 +14,19 @@
     &:hover {
         background-color: $light-grey;
     }
+
+    &.inspector-button--type-confirm {
+        background-color: $charm-panel-orange;
+        border-color: $charm-panel-orange;
+        color: $white;
+
+        &:hover {
+            background-color: #ae3910;
+        }
+    }
 }
 
-.inspector-footer--multiple .inspector-button {
+.button-row--multiple .inspector-button {
     width: calc(50% - 5px);
 
     &:first-child {
