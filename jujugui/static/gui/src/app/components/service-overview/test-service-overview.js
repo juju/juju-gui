@@ -85,7 +85,7 @@ describe('ServiceOverview', function() {
     var getStub = sinon.stub();
     getStub.withArgs('units').returns({toArray: function() {
       return [{}, {}];
-    }});0
+    }});
     getStub.withArgs('id').returns('demo');
     var service = {
       get: getStub
