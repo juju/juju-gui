@@ -183,16 +183,22 @@ YUI.add('service-overview', function() {
 
     render: function() {
       this._generateActions(this.props.service);
+      var buttons = [{title: 'Destroy'}];
 
       return (
-        <ul className="service-overview__actions">
-          {this._generateActionList(this.state.actions)}
-        </ul>
+        <div className="service-overview">
+          <ul className="service-overview__actions">
+            {this._generateActionList(this.state.actions)}
+          </ul>
+          <juju.components.InspectorFooter
+            buttons={buttons} />
+        </div>
       );
     }
 
   });
 
 }, '0.1.0', { requires: [
+  'inspector-footer',
   'overview-action'
 ]});

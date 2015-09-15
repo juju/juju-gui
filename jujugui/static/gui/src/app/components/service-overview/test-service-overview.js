@@ -69,7 +69,7 @@ describe('ServiceOverview', function() {
     var output = shallowRenderer.getRenderOutput();
     var value = 2;
     var none = undefined;
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
         icon={none}
         key="Units"
@@ -138,7 +138,7 @@ describe('ServiceOverview', function() {
     var output = shallowRenderer.getRenderOutput();
     var value = 3;
     var none = undefined;
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
         title="Uncommitted"
@@ -167,7 +167,7 @@ describe('ServiceOverview', function() {
     var output = shallowRenderer.getRenderOutput();
     var value = 1;
     var none = undefined;
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
         title="Pending"
@@ -196,7 +196,7 @@ describe('ServiceOverview', function() {
     var output = shallowRenderer.getRenderOutput();
     var value = 1;
     var none = undefined;
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
         title="Errors"
