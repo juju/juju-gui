@@ -22,6 +22,7 @@ class TestUpdate(unittest.TestCase):
         options.update(settings)
         defaults = deepcopy(self.default_settings)
         defaults['jujugui.baseUrl'] = None
+        defaults['jujugui.auth'] = None
         self.assertEqual(defaults, settings)
 
     def test_customized_values(self):
@@ -32,6 +33,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.raw': False,
             'jujugui.combine': True,
             'jujugui.baseUrl': None,
+            'jujugui.auth': None,
         }
         settings = {
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
@@ -48,6 +50,7 @@ class TestUpdate(unittest.TestCase):
         options.update(settings)
         defaults = deepcopy(self.default_settings)
         defaults['jujugui.baseUrl'] = None
+        defaults['jujugui.auth'] = None
         self.assertEqual(defaults, settings)
 
     def test_none_returned(self):

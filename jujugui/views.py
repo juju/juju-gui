@@ -78,6 +78,7 @@ def config(request):
             baseUrl = '/u/anonymous/{}'.format(env_uuid)
     options = {
         # Base YUI options.
+        'auth': settings.get('jujugui.auth'),
         'serverRouting': False,
         'html5': True,
         'container': '#main',
