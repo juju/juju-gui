@@ -1,0 +1,51 @@
+.scale-service {
+
+    input[type=text] {
+        margin: 20px;
+        height: 28px;
+    }
+
+    &__units {
+        position: relative;
+
+        input[type=text] {
+            background-color: transparent;
+        }
+
+        span {
+            position: absolute;
+            right: 25px;
+            top: 30px;
+            color: $mid-grey;
+        }
+    }
+
+    &__selector {
+
+      input[type=radio] {
+        opacity: 1;
+        margin: 10px 0px 10px 15px;
+
+        &+label {
+            margin: 0;
+            margin-left: 0;
+        }
+      }
+
+      div:last-of-type {
+        margin-bottom: 30px;
+      }
+
+    }
+
+    &__constraints {
+
+        input[type=text] {
+            margin-top: 5px;
+        }
+
+        label {
+            margin-left: 30px;
+        }
+    }
+}
