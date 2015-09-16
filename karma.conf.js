@@ -21,10 +21,9 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
-      'jujugui/static/gui/build/app/assets/javascripts/yui/handlebars-base/handlebars-base.js',
 
-      'jujugui/static/gui/build/app/templates.js',
-      'jujugui/static/gui/build/app/views/helpers.js',
+      'jujugui/static/gui/build/app/assets/javascripts/handlebars.runtime.js',
+
       'jujugui/static/gui/build/app/components/**/*.js',
       'jujugui/static/gui/build/**/test-*.js'
     ],

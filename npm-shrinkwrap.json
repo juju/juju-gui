@@ -2565,6 +2565,47 @@
         }
       }
     },
+    "handlebars": {
+      "version": "4.0.2",
+      "from": "handlebars@",
+      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.0.2.tgz",
+      "dependencies": {
+        "async": {
+          "version": "1.4.2",
+          "from": "async@^1.4.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-1.4.2.tgz"
+        },
+        "optimist": {
+          "version": "0.6.1",
+          "from": "optimist@^0.6.1",
+          "resolved": "https://registry.npmjs.org/optimist/-/optimist-0.6.1.tgz",
+          "dependencies": {
+            "wordwrap": {
+              "version": "0.0.3",
+              "from": "wordwrap@~0.0.2",
+              "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.3.tgz"
+            },
+            "minimist": {
+              "version": "0.0.10",
+              "from": "minimist@~0.0.1",
+              "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.10.tgz"
+            }
+          }
+        },
+        "source-map": {
+          "version": "0.4.4",
+          "from": "source-map@^0.4.4",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.4.4.tgz",
+          "dependencies": {
+            "amdefine": {
+              "version": "1.0.0",
+              "from": "amdefine@>=0.0.4",
+              "resolved": "https://registry.npmjs.org/amdefine/-/amdefine-1.0.0.tgz"
+            }
+          }
+        }
+      }
+    },
     "jasmine-core": {
       "version": "2.3.4",
       "from": "https://registry.npmjs.org/jasmine-core/-/jasmine-core-2.3.4.tgz",
