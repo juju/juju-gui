@@ -22,7 +22,7 @@ var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
 
 describe('ServiceOverview', function() {
-  var listItemStub, icons;
+  var listItemStub, icons, fakeService;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -30,9 +30,18 @@ describe('ServiceOverview', function() {
   });
 
   beforeEach(function() {
+    fakeService = {
+      get: function() {
+        return {
+          toArray: function() {
+            return []
+          }
+        };
+      }};
     // Set icons to null so we can check if they were stored
     // here in the afterEach.
     icons = null;
+    stubIcons();
   });
 
   afterEach(function() {
@@ -61,12 +70,10 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    stubIcons();
-    shallowRenderer.render(
+
+    var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var output = shallowRenderer.getRenderOutput();
     var value = 2;
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
@@ -90,13 +97,10 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     var changeState = sinon.stub();
-    var shallowRenderer = testUtils.createRenderer();
-    stubIcons();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             changeState={changeState}
             service={service} />);
-    var output = shallowRenderer.getRenderOutput();
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
     output.props.children[0].props.children[0].props.action({
@@ -129,12 +133,9 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    stubIcons();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var output = shallowRenderer.getRenderOutput();
     var value = 3;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
@@ -157,12 +158,9 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    stubIcons();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var output = shallowRenderer.getRenderOutput();
     var value = 1;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
@@ -185,12 +183,9 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var shallowRenderer = testUtils.createRenderer();
-    stubIcons();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var output = shallowRenderer.getRenderOutput();
     var value = 1;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
@@ -202,5 +197,103 @@ describe('ServiceOverview', function() {
         valueType="error"
         link={undefined}
         linkTitle={undefined} />);
+  });
+
+  it('renders the delete button', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        service={fakeService} />);
+    var buttons = [{
+      title: 'Destroy',
+      action: output.props.children[1].props.buttons[0].action
+      }];
+    assert.deepEqual(output.props.children[1],
+      <juju.components.ButtonRow
+        buttons={buttons} />);
+  });
+
+  it('renders the delete confirmation', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        service={fakeService} />);
+    var buttons = [
+        {
+          title: 'Cancel',
+          action: output.props.children[2].props.buttons[0].action
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm'
+          }
+        ];
+    var confirmMessage = "Are you sure you want to destroy the service? " +
+      "This cannot be undone."
+    assert.deepEqual(output.props.children[2],
+      <juju.components.InspectorConfirm
+        message={confirmMessage}
+        open={undefined}
+        buttons={buttons} />);
+  });
+
+  it('shows the confirmation when the delete button is clicked', function() {
+    var confirmMessage = "Are you sure you want to destroy the service? " +
+        "This cannot be undone."
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        service={fakeService} />, true);
+    var output = shallowRenderer.getRenderOutput();
+      var buttons = [
+        {
+          title: 'Cancel',
+          action: output.props.children[2].props.buttons[0].action
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm'
+          }
+        ];
+    // Fire the click action.
+    output.props.children[1].props.buttons[0].action();
+    shallowRenderer.render(
+      <juju.components.ServiceOverview
+        service={fakeService} />);
+    output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children[2],
+      <juju.components.InspectorConfirm
+        message={confirmMessage}
+        open={true}
+        buttons={buttons} />);
+  });
+
+  it('hides the confirmation when the cancel button is clicked', function() {
+    var confirmMessage = "Are you sure you want to destroy the service? " +
+        "This cannot be undone."
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        service={fakeService} />, true);
+    var output = shallowRenderer.getRenderOutput();
+      var buttons = [
+        {
+          title: 'Cancel',
+          action: output.props.children[2].props.buttons[0].action
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm'
+          }
+        ];
+    // Open the confirmation.
+    output.props.children[1].props.buttons[0].action();
+    // close the confirmation.
+    output.props.children[2].props.buttons[0].action();
+    shallowRenderer.render(
+      <juju.components.ServiceOverview
+        service={fakeService} />);
+    output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children[2],
+      <juju.components.InspectorConfirm
+        message={confirmMessage}
+        open={false}
+        buttons={buttons} />);
   });
 });
