@@ -42,7 +42,19 @@ YUI.add('scale-service', function() {
       );
     },
 
+    _resetScaleUp: function() {},
+
+    _scaleUpService: function() {},
+
     render: function() {
+      var buttons = [{
+        title: 'Cancel',
+        action: this._resetScaleUp
+      }, {
+        title: 'Confirm',
+        action: this._scaleUpService
+      }];
+
       return (
         <div className="scale-service">
           <div className="scale-service__units">
@@ -76,9 +88,12 @@ YUI.add('scale-service', function() {
             <label htmlFor="disk-constraint">Disk (MB)</label>
             <input type="text" id="disk-constraint" />
           </div>
+          <juju.components.ButtonRow buttons={buttons} />
         </div>
       );
     }
   });
 
-}, '0.1.0', { requires: [] });
+}, '0.1.0', { requires: [
+  'button-row'
+] });
