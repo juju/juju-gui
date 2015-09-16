@@ -40,11 +40,9 @@ describe('ButtonRow', function() {
           action: callbackStub
           }
         ];
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
       <juju.components.ButtonRow
         buttons={buttons} />);
-    var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children, [
       <juju.components.InspectorButton
         title="My button"
@@ -67,11 +65,9 @@ describe('ButtonRow', function() {
           action: callbackStub
           }
         ];
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
       <juju.components.ButtonRow
         buttons={buttons} />);
-    var output = shallowRenderer.getRenderOutput();
     var children = [
       <juju.components.InspectorButton
         title="My button"

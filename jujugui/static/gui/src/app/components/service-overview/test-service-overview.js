@@ -68,17 +68,16 @@ describe('ServiceOverview', function() {
             service={service}/>);
     var output = shallowRenderer.getRenderOutput();
     var value = 2;
-    var none = undefined;
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
-        icon={none}
+        icon={undefined}
         key="Units"
         title="Units"
         value={value}
-        valueType={none}
-        link={none}
-        linkTitle={none}
-        action={output.props.children[0].props.action} />);
+        valueType={undefined}
+        link={undefined}
+        linkTitle={undefined}
+        action={output.props.children[0].props.children[0].props.action} />);
   });
 
   it('navigates to the unit list when All Units is clicked', function() {
@@ -100,7 +99,7 @@ describe('ServiceOverview', function() {
     var output = shallowRenderer.getRenderOutput();
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
-    output.props.children[0].props.action({
+    output.props.children[0].props.children[0].props.action({
       currentTarget: {
         getAttribute: function() { return 'Units'; }
       }
@@ -137,17 +136,16 @@ describe('ServiceOverview', function() {
             service={service}/>);
     var output = shallowRenderer.getRenderOutput();
     var value = 3;
-    var none = undefined;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
         title="Uncommitted"
         value={value}
-        icon={none}
-        action={none}
+        icon={undefined}
+        action={undefined}
         valueType="uncommitted"
-        link={none}
-        linkTitle={none} />);
+        link={undefined}
+        linkTitle={undefined} />);
   });
 
   it('shows the pending units action', function() {
@@ -166,17 +164,16 @@ describe('ServiceOverview', function() {
             service={service}/>);
     var output = shallowRenderer.getRenderOutput();
     var value = 1;
-    var none = undefined;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
         title="Pending"
         value={value}
-        icon={none}
-        action={none}
+        icon={undefined}
+        action={undefined}
         valueType='pending'
-        link={none}
-        linkTitle={none} />);
+        link={undefined}
+        linkTitle={undefined} />);
   });
 
   it('shows the errors units action', function() {
@@ -195,16 +192,15 @@ describe('ServiceOverview', function() {
             service={service}/>);
     var output = shallowRenderer.getRenderOutput();
     var value = 1;
-    var none = undefined;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
         title="Errors"
         value={value}
-        icon={none}
-        action={none}
+        icon={undefined}
+        action={undefined}
         valueType="error"
-        link={none}
-        linkTitle={none} />);
+        link={undefined}
+        linkTitle={undefined} />);
   });
 });

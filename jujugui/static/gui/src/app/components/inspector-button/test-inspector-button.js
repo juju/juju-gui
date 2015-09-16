@@ -33,21 +33,17 @@ describe('InspectorButton', function() {
 
   it('calls the callable provided when clicked', function() {
     var callbackStub = sinon.stub();
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
         <juju.components.InspectorButton
           action={callbackStub} />);
-    var output = shallowRenderer.getRenderOutput();
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });
 
   it('displays the provided title', function() {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
         <juju.components.InspectorButton
           title="My action" />);
-    var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
       <button className="inspector-button" onClick={undefined}>
         My action
@@ -55,12 +51,10 @@ describe('InspectorButton', function() {
   });
 
   it('sets the type class', function() {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
         <juju.components.InspectorButton
           title="My action"
           type="confirm" />);
-    var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
       <button className="inspector-button inspector-button--type-confirm"
        onClick={undefined}>
