@@ -205,8 +205,8 @@ YUI.add('service-overview', function() {
         title: 'Destroy',
         action: this._showConfirmation
         }];
-      var confirmMessage = "Are you sure you want to destroy the service? " +
-        "This cannot be undone."
+      var confirmMessage = 'Are you sure you want to destroy the service? ' +
+        'This cannot be undone.';
       var confirmButtons = [
         {
           title: 'Cancel',

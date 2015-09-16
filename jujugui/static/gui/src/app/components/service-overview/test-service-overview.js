@@ -34,7 +34,7 @@ describe('ServiceOverview', function() {
       get: function() {
         return {
           toArray: function() {
-            return []
+            return [];
           }
         };
       }};
@@ -226,8 +226,8 @@ describe('ServiceOverview', function() {
           type: 'confirm'
           }
         ];
-    var confirmMessage = "Are you sure you want to destroy the service? " +
-      "This cannot be undone."
+    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+        'This cannot be undone.';
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
         message={confirmMessage}
@@ -236,8 +236,8 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the confirmation when the delete button is clicked', function() {
-    var confirmMessage = "Are you sure you want to destroy the service? " +
-        "This cannot be undone."
+    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+        'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         service={fakeService} />, true);
@@ -266,8 +266,8 @@ describe('ServiceOverview', function() {
   });
 
   it('hides the confirmation when the cancel button is clicked', function() {
-    var confirmMessage = "Are you sure you want to destroy the service? " +
-        "This cannot be undone."
+    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+        'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         service={fakeService} />, true);
