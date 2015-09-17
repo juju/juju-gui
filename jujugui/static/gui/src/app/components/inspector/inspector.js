@@ -103,7 +103,9 @@ YUI.add('inspector-component', function() {
           state.activeChild = {
             title: 'Scale',
             component:
-              <juju.components.ScaleService />,
+              <juju.components.ScaleService
+                serviceId={service.get('id')}
+                changeState={this.props.changeState} />,
             backState: {
               sectionA: {
                 component: 'inspector',

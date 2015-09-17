@@ -28,11 +28,23 @@ YUI.add('scale-service', function() {
       };
     },
 
+    /**
+      Event handler for the radio button selection which should show or
+      hide the constraint options.
+
+      @method _toggleConstraints
+      @param {Object} e The change event.
+    */
     _toggleConstraints: function(e) {
       var id = e.currentTarget.id;
       this.setState({ constraintsVisibility: id === 'auto-place-units'});
     },
 
+    /**
+      Generates the classes for each render for the constraints element.
+
+      @method _generateClasses
+    */
     _generateClasses: function() {
       return classNames(
         'scale-service__constraints',
@@ -42,15 +54,46 @@ YUI.add('scale-service', function() {
       );
     },
 
-    _resetScaleUp: function() {},
+    /**
+      When an input element value is changed by the user we update state
+      so that we don't have to query the DOM again when they submit.
 
-    _scaleUpService: function() {},
+      @method _udpateState
+      @param {Object} e The change event.
+    */
+    _updateState: function(e) {
+      var currentTarget = e.currentTarget;
+      var state = {};
+      state[currentTarget.name] = currentTarget.value;
+      this.setState(state);
+    },
+
+    /**
+      Handles calling the appropriate methods to scale up the service.
+
+      @method _scaleUpService
+    */
+    _scaleUpService: function() {
+      var state = this.state;
+      // Constraints will not be shown if the user wants to manually place.
+      if (!state.constraintsVisibility) {
+        this.props.changeState({
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: this.props.serviceId,
+              activeComponent: 'units'
+            }
+          },
+          sectionB: {
+            component: 'machine'
+          }
+        });
+      }
+    },
 
     render: function() {
       var buttons = [{
-        title: 'Cancel',
-        action: this._resetScaleUp
-      }, {
         title: 'Confirm',
         action: this._scaleUpService
       }];
@@ -58,7 +101,7 @@ YUI.add('scale-service', function() {
       return (
         <div className="scale-service">
           <div className="scale-service__units">
-            <input type="text" name="num-units" />
+            <input type="text" name="num-units" onChange={this._updateState}/>
             <span>units</span>
           </div>
           <div className="scale-service__selector">
@@ -80,13 +123,25 @@ YUI.add('scale-service', function() {
           </div>
           <div className={this._generateClasses()}>
             <label htmlFor="cpu-constraint">CPU (GHZ)</label>
-            <input type="text" id="cpu-constraint" />
+            <input type="text"
+              id="cpu-constraint"
+              name="cpu-constraint"
+              onChange={this._updateState}/>
             <label htmlFor="cores-constraint">Cores</label>
-            <input type="text" id="cores-constraint" />
+            <input type="text"
+              id="cores-constraint"
+              name="cores-constraint"
+              onChange={this._updateState} />
             <label htmlFor="ram-constraint">Ram (MB)</label>
-            <input type="text" id="ram-constraint" />
+            <input type="text"
+              id="ram-constraint"
+              name="ram-constraint"
+              onChange={this._updateState} />
             <label htmlFor="disk-constraint">Disk (MB)</label>
-            <input type="text" id="disk-constraint" />
+            <input type="text"
+              id="disk-constraint"
+              name="disk-constraint"
+              onChange={this._updateState} />
           </div>
           <juju.components.ButtonRow buttons={buttons} />
         </div>
