@@ -22,9 +22,53 @@ YUI.add('unit-details', function() {
 
   juju.components.UnitDetails = React.createClass({
 
+    /**
+      Get the current state of the inspector.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {
+        confirmationOpen: this.props.confirmationOpen
+      };
+    },
+
+    /**
+      Set the confirmation state to open.
+      @method _showConfirmation
+    */
+    _showConfirmation: function() {
+      this.setState({confirmationOpen: true});
+    },
+
+    /**
+      Set the confirmation state to closed.
+      @method _hideConfirmation
+    */
+    _hideConfirmation: function() {
+      this.setState({confirmationOpen: false});
+    },
+
     render: function() {
       var unit = this.props.unit;
-      var buttons = [{title: 'Remove'}];
+      var buttons = [{
+        title: 'Remove',
+        action: this._showConfirmation
+        }];
+      var confirmMessage = 'Are you sure you want to remove the unit? ' +
+        'This cannot be undone.';
+      var confirmButtons = [
+        {
+          title: 'Cancel',
+          action: this._hideConfirmation
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm'
+          }
+        ];
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
@@ -34,6 +78,10 @@ YUI.add('unit-details', function() {
           </div>
           <juju.components.ButtonRow
             buttons={buttons} />
+          <juju.components.InspectorConfirm
+            buttons={confirmButtons}
+            message={confirmMessage}
+            open={this.state.confirmationOpen} />
         </div>
       );
     }
@@ -41,5 +89,6 @@ YUI.add('unit-details', function() {
   });
 
 }, '0.1.0', { requires: [
-  'button-row'
+  'button-row',
+  'inspector-confirm'
 ]});
