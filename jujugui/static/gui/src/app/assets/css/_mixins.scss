@@ -158,11 +158,13 @@
 
 @mixin notification($background) {
     $size: 24px;
+    box-sizing: border-box;
     float: right;
-    width: $size;
+    min-width: $size;
     height: $size;
+    padding: 0 7px;
     background-color: $background;
-    border-radius: 50%;
+    border-radius: $size / 2;
     color: $white;
     line-height: $size;
     text-align: center;

@@ -23,16 +23,23 @@ YUI.add('unit-details', function() {
   juju.components.UnitDetails = React.createClass({
 
     render: function() {
-      var unit = this.props.unit
+      var unit = this.props.unit;
+      var buttons = [{title: 'Remove'}];
       return (
         <div className="unit-details">
+          <div className="unit-details__properties">
             <p>IP address: {unit.private_address || 'none'}</p>
             <p>Status: {unit.agent_state || 'uncommitted'}</p>
             <p>Public address: {unit.public_address || 'none'}</p>
+          </div>
+          <juju.components.ButtonRow
+            buttons={buttons} />
         </div>
       );
     }
 
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'button-row'
+]});

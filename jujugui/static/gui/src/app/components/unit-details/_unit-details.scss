@@ -1,11 +1,14 @@
 .unit-details {
-    padding: 10px;
+    &__properties {
+        padding: 10px 20px;
 
-    p {
-        margin: 0 0 10px 0;
+        p {
+            @extend %stagger-fade-in;
+            margin: 0 0 10px 0;
 
-        &:last-child {
-            margin-bottom: 0;
+            &:last-child {
+                margin-bottom: 0;
+            }
         }
     }
 }
