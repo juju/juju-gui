@@ -75,21 +75,31 @@ YUI.add('scale-service', function() {
     */
     _scaleUpService: function() {
       var state = this.state;
+      var appState = {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.serviceId,
+            activeComponent: 'units'
+          }}};
+      var numUnits = this.state['num-units'];
       // Constraints will not be shown if the user wants to manually place.
       if (!state.constraintsVisibility) {
-        this.props.changeState({
-          sectionA: {
-            component: 'inspector',
-            metadata: {
-              id: this.props.serviceId,
-              activeComponent: 'units'
-            }
-          },
-          sectionB: {
-            component: 'machine'
-          }
+        // db, env, and service have already been bound to this function in
+        // the app.js definition.
+        this.props.addGhostAndEcsUnits(numUnits);
+        appState.sectionB = {
+          component: 'machine'
+        };
+      } else {
+        this.props.createMachinesPlaceUnits(numUnits, {
+          'cpu-power': this.state['cpu-constraint'],
+          'cpu-cores': this.state['cores-constraint'],
+          'mem': this.state['ram-constraint'],
+          'root-disk': this.state['disk-constraint']
         });
       }
+      this.props.changeState(appState);
     },
 
     render: function() {

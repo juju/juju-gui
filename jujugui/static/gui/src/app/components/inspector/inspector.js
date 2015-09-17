@@ -105,6 +105,8 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.ScaleService
                 serviceId={service.get('id')}
+                addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
+                createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
                 changeState={this.props.changeState} />,
             backState: {
               sectionA: {

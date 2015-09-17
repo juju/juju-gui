@@ -2195,6 +2195,33 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Given the db, env, service, unit count and constraints, create and auto
+    place those units on new machines.
+
+    @method createMachinesPlaceUnits
+    @param {Object} db Reference to the app db.
+    @param {Object} env Reference to the app env.
+    @param {Object} service Reference to the service model to add units to.
+    @param {Integer} numUnits The unit count from the form input.
+    @param {Object} constraints The constraints to create the new machines with.
+  */
+  utils.createMachinesPlaceUnits = function(
+      db, env, service, numUnits, constraints) {
+    var machine;
+    for (var i = 0; i < parseInt(numUnits, 10); i += 1) {
+      machine = db.machines.addGhost();
+      env.addMachines([{
+        constraints: constraints
+      }], function(machine) {
+        db.machines.remove(machine);
+      }.bind(this, machine), { modelId: machine.id});
+      env.placeUnit(
+          utils.addGhostAndEcsUnits(db, env, service, 1)[0],
+          machine.id);
+    }
+  };
+
+  /**
     Given the db, env, service, and unit count, add these units to the db
     and to the environment such that the unit tokens can be displayed and that
     the ECS will clean them up on deploy.
