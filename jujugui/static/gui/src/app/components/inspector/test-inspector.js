@@ -80,6 +80,31 @@ describe('Inspector', function() {
           changeState={undefined} />);
   });
 
+  it('displays the unit details when the app state calls for it', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({getById: function() {
+      return 'unit';
+    }});
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'unit',
+          unit: '5'
+        }}};
+    var output = jsTestUtils.shallowRender(
+        <juju.components.Inspector
+          service={service}
+          appState={appState}>
+        </juju.components.Inspector>);
+    assert.deepEqual(output.props.children[1].props.children,
+        <juju.components.UnitDetails
+          unit="unit" />);
+  });
+
   it('passes changeState callable to header component', function() {
     var service = {
       get: function() {

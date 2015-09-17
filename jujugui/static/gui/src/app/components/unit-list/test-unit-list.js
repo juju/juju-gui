@@ -118,4 +118,36 @@ describe('UnitList', () => {
     ]);
   });
 
+  it('navigates to the unit when a list item is clicked', function() {
+    var units = [{
+      displayName: 'mysql/5'
+    }];
+    var unitsList = {
+      toArray: () => units
+    };
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          changeState={changeState}
+          serviceId="mysql"
+          units={unitsList} />);
+    output.props.children[1].props.children[1].props.action({
+      currentTarget: {
+        getElementsByTagName: function() {
+          return [{innerText: 'mysql/5'}];
+        }
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'mysql',
+          unit: '5',
+          activeComponent: 'unit'
+        }
+      }
+    });
+  });
 });

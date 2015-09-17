@@ -44,6 +44,43 @@ describe('UnitListItem', () => {
         <label htmlFor="unit-name-unit">unit-name</label>]);
   });
 
+  it('does not have a for id if it is a nav element', () => {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitListItem
+          key="unique"
+          checked={false}
+          label="unit-name"
+          action="action"
+        />);
+    assert.deepEqual(output.props.children, [
+        <input
+          type="checkbox"
+          id="unit-name-unit"
+          onChange={output.props.children[0].props.onChange}
+          checked={false} />,
+        <label htmlFor="">unit-name</label>]);
+  });
+
+  it('has a nav class if it is a nav element', () => {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitListItem
+          key="unique"
+          checked={false}
+          label="unit-name"
+          action="action"
+        />);
+    assert.deepEqual(output,
+      <li className="unit-list-item unit-list-item--nav"
+        onClick={output.props.onClick}>
+        <input
+          type="checkbox"
+          id="unit-name-unit"
+          onChange={output.props.children[0].props.onChange}
+          checked={false} />
+        <label htmlFor="">unit-name</label>
+      </li>);
+  });
+
   it('calls the supplied whenChanged if supplied', () => {
     var whenChanged = sinon.stub();
     var output = jsTestUtils.shallowRender(
