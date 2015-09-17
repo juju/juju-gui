@@ -54,10 +54,12 @@ describe('Inspector', function() {
   });
 
   it('displays the unit list when the app state calls for it', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns(['units']);
     var service = {
-      get: function() {
-        return ['units'];
-      }};
+      get: getStub
+    };
     var appState = {
       sectionA: {
         metadata: {
@@ -73,7 +75,9 @@ describe('Inspector', function() {
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[1].props.children,
         <juju.components.UnitList
-          units={['units']}/>);
+          serviceId="demo"
+          units={['units']}
+          changeState={undefined} />);
   });
 
   it('passes changeState callable to header component', function() {

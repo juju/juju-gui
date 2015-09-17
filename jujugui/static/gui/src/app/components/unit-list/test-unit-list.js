@@ -49,10 +49,12 @@ describe('UnitList', () => {
       <juju.components.UnitListItem
         key={units[0].displayName}
         label={units[0].displayName}
+        action={output.props.children[1].props.children[1].props.action}
         checked={false} />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         label={units[1].displayName}
+        action={output.props.children[1].props.children[2].props.action}
         checked={false} />
     ]);
   });
@@ -106,10 +108,12 @@ describe('UnitList', () => {
       <juju.components.UnitListItem
         key={units[0].displayName}
         label={units[0].displayName}
+        action={output.props.children[1].props.children[1].props.action}
         checked={true} />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         label={units[1].displayName}
+        action={output.props.children[1].props.children[2].props.action}
         checked={true} />
     ]);
   });
