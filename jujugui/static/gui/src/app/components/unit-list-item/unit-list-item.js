@@ -23,6 +23,30 @@ YUI.add('unit-list-item', function() {
   juju.components.UnitListItem = React.createClass({
 
     /**
+      Returns the classes for the item based on the provided props.
+
+      @method _valueClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'unit-list-item',
+        this.props.action ? 'unit-list-item--nav' : ''
+      );
+    },
+
+    /**
+      Returns the id if the item is not a navigation element.
+
+      @method _valueClasses
+      @param {String} id The id of the checkbox.
+      @returns {String} The id of the element or a blank string.
+    */
+    _generateId: function(id) {
+      return this.props.action ? '' : id;
+    },
+
+    /**
       Get the current state of the inspector.
 
       @method getInitialState
@@ -60,13 +84,14 @@ YUI.add('unit-list-item', function() {
     render: function() {
       var id = this.props.label + '-unit';
       return (
-        <li className="unit-list-item">
+        <li className={this._generateClasses()}
+          onClick={this.props.action}>
           <input
             type="checkbox"
             id={id}
             onChange={this._handleChange}
             checked={this.state.checked} />
-          <label htmlFor={id}>{this.props.label}</label>
+          <label htmlFor={this._generateId(id)}>{this.props.label}</label>
         </li>
       );
     }

@@ -71,13 +71,32 @@ YUI.add('inspector-component', function() {
             title: 'Units',
             component:
               <juju.components.UnitList
-                units={service.get('units')} />,
+                serviceId={service.get('id')}
+                units={service.get('units')}
+                changeState={this.props.changeState} />,
             backState: {
               sectionA: {
                 component: 'inspector',
                 metadata: {
                   id: service.get('id'),
                   activeComponent: undefined
+                }}}};
+        break;
+        case 'unit':
+          var unitId = nextProps.appState.sectionA.metadata.unit;
+          var unit = service.get('units').getById(
+              service.get('id') + '/' + unitId);
+          state.activeChild = {
+            title: unit.displayName,
+            component:
+              <juju.components.UnitDetails
+                unit={unit} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: 'units'
                 }}}};
         break;
       }
@@ -106,6 +125,7 @@ YUI.add('inspector-component', function() {
 }, '0.1.0', {
   requires: [
     'inspector-header',
+    'unit-details',
     'unit-list',
     'service-overview'
     ]

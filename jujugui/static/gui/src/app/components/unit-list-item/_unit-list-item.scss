@@ -1,6 +1,5 @@
 .unit-list-item {
     $fade-in-duration: .1s;
-    cursor: pointer;
     padding: 11px 20px 11px 20px;
     animation-duration: $fade-in-duration;
     animation-name: fadeIn;
@@ -13,5 +12,15 @@
 
     label {
         display: inline;
+    }
+
+    &--nav:hover {
+        background-color: $light-grey;
+        cursor: pointer;
+
+        label {
+            cursor: pointer;
+            text-decoration: underline;
+        }
     }
 }
