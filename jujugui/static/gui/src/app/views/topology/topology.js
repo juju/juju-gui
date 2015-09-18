@@ -134,6 +134,34 @@ YUI.add('juju-topology', function(Y) {
 
       vis = svg.append('svg:g');
       this.vis = vis;
+
+      // Only add the plus service block when requested, leaving it out of
+      // the bundle details view.
+      if (this.options.includePlus) {
+        var plusIndicatorRadius = 32.5;
+        // Disable max-len, in order to maintain an easy way to paste in new
+        // assets from design should they arrive.
+        /*eslint-disable max-len*/
+        vis.html('<g class="plus-service included-plus">' +
+            '<path fill="#FAFBFB" d="M63.5 126.5c-34.738 0-63-28.262-63-63s28.262-63 63-63 63 28.262 63 63-28.262 63-63 63z"/>' +
+            '<path fill="#CECDCD" d="M63.5 1C97.962 1 126 29.038 126 63.5S97.962 126 63.5 126 1 97.962 1 63.5 29.038 1 63.5 1m0-1C28.43 0 0 28.43 0 63.5S28.43 127 63.5 127 127 98.57 127 63.5 98.57 0 63.5 0z"/>' +
+            '<circle fill="#DC4A26" cx="63.5" cy="63.5" r="32.5"/>' +
+            '<g fill="none" stroke="#FFF" stroke-width="2" stroke-miterlimit="10">' +
+            '<path d="M63.5 54.5v18M72.5 63.5h-18"/>' +
+            '</g>' +
+            '</g>');
+        /*eslint-enable max-len*/
+        var plusIndicator = vis.select('.included-plus');
+        var plusDrag = d3.behavior.drag()
+          .on('drag', function(d) {
+            d3.select(this)
+              .attr('transform', 
+                  'translate(' + [d3.event.x - plusIndicatorRadius, 
+                                  d3.event.y - plusIndicatorRadius] + ')');
+          });
+        plusIndicator.call(plusDrag);
+      }
+
       Topology.superclass.renderOnce.apply(this, arguments);
       return this;
     },

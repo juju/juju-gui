@@ -193,8 +193,9 @@ gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STAT
 .PHONY: watch
 watch:
 	while true; do \
-		inotifywait -qr -e modify -e create -e delete -e move $(GUISRC); \
-		make gui; \
+		inotifywait -q -r --exclude=".*sw[px]$$" -e modify -e create -e delete -e move $(GUISRC); \
+		$(MAKE) gui; \
+		echo "\033[1;32m-- Done rebuilding\033[0m"; \
 	done
 
 ################

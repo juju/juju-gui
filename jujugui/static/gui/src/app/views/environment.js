@@ -155,6 +155,7 @@ YUI.add('juju-view-environment', function(Y) {
       topo.recordSubscription(
           'ServiceModule',
           db.services.after('add', Y.bind(this.updateHelpIndicator, this)));
+      debugger;
 
       topo.render();
       topo.once('rendered', Y.bind(this.updateHelpIndicator, this));
@@ -170,7 +171,7 @@ YUI.add('juju-view-environment', function(Y) {
       var container = this.get('container'),
           topo = this.topo;
       if (!topo) {
-        topo = new views.Topology();
+        topo = new views.Topology({includePlus: true});
         topo.setAttrs({
           size: [640, 480],
           ecs: this.get('ecs'),
@@ -202,15 +203,18 @@ YUI.add('juju-view-environment', function(Y) {
      * @method updateHelpIndicator
      */
     updateHelpIndicator: function(evt) {
+      debugger;
       var helpText = this.get('container').one('.environment-help'),
+          includedPlus = this.topo.vis.select('.included-plus'),
           db = this.get('db'),
           services = db.services;
       if (helpText) {
         if (services.size() === 0) {
-          helpText.show(true);
+          helpText.removeClass('shrink');
+          includedPlus.classed('show', false);
         } else {
-          // helpText.hide(true);
           helpText.addClass('shrink');
+          includedPlus.classed('show', true);
         }
       }
     },

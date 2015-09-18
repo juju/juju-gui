@@ -479,18 +479,10 @@ th {
         }
     }
 
-    .plus-service {
-        cursor: pointer;
-    }
-
     &__image {
         stroke-width: 1;
         width: 789px;
         height: 386px;
-    }
-
-    .environment-help__image--shrunk {
-        display: none;
     }
 
     @at-root {
@@ -507,10 +499,6 @@ th {
         left: 50%;
         top: 40%;
 
-        .environment-help__image--shrunk {
-            display: block;
-        }
-
         .environment-help__tooltip,
         .environment-help__image {
             display: none;
@@ -519,6 +507,19 @@ th {
         .environment-help__content {
             width: auto;
             height: auto;
+        }
+    }
+}
+
+
+.plus-service {
+    cursor: pointer;
+    
+    &.included-plus {
+        display: none;
+
+        &.show {
+            display: block;
         }
     }
 }
