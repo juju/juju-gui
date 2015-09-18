@@ -14,6 +14,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'jujugui/static/gui/build/app/assets/javascripts/jujulib/*.js',
+
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
       'jujugui/static/gui/build/app/assets/javascripts/classnames.js',
