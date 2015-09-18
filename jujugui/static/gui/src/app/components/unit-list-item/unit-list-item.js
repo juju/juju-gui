@@ -77,6 +77,16 @@ YUI.add('unit-list-item', function() {
       this.setState({checked: checked});
     },
 
+    /**
+      Don't bubble the click event to the parent.
+
+      @method _stopBubble
+      @param {Object} The click event from the checkbox.
+    */
+    _stopBubble: function(e) {
+      e.stopPropagation();
+    },
+
     componentWillReceiveProps: function(nextProps) {
       this.setState({checked: nextProps.checked});
     },
@@ -85,13 +95,17 @@ YUI.add('unit-list-item', function() {
       var id = this.props.label + '-unit';
       return (
         <li className={this._generateClasses()}
-          onClick={this.props.action}>
-          <input
-            type="checkbox"
-            id={id}
-            onChange={this._handleChange}
-            checked={this.state.checked} />
-          <label htmlFor={this._generateId(id)}>{this.props.label}</label>
+          data-id={this.props.unitId}
+          onClick={this.props.action} tabIndex="0" role="button">
+          <label htmlFor={this._generateId(id)}>
+            <input
+              type="checkbox"
+              id={id}
+              onClick={this._stopBubble}
+              onChange={this._handleChange}
+              checked={this.state.checked} />
+            {this.props.label}
+          </label>
         </li>
       );
     }

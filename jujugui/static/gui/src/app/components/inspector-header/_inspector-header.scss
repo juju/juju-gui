@@ -22,14 +22,17 @@
 
         &-error {
             background-color: $error;
+            border-color: $error;
         }
 
         &-pending {
             background-color: $pending;
+            border-color: $pending;
         }
 
         &-uncommitted {
             background-color: $uncommitted;
+            border-color: $uncommitted;
         }
     }
 }

@@ -62,8 +62,7 @@ YUI.add('unit-list', function() {
       @param {Object} e The click event.
     */
     _unitItemAction: function(e) {
-      var unitId = e.currentTarget.getElementsByTagName(
-          'label')[0].innerText.split('/')[1];
+      var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
       this.props.changeState({
         sectionA: {
           component: 'inspector',
@@ -96,7 +95,8 @@ YUI.add('unit-list', function() {
             key={unit.displayName}
             label={unit.displayName}
             action={this._unitItemAction}
-            checked={this.state.selectAll} />);
+            checked={this.state.selectAll}
+            unitId={unit.id} />);
       });
       return components;
     },

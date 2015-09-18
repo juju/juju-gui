@@ -9,7 +9,7 @@
     animation-duration: 0.1s;
 
     &:hover {
-        background-color: #f5f5f5;
+        background-color: $light-grey;
 
         .action .inactive {
             display: inline-block;

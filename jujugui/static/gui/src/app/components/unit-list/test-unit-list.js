@@ -30,9 +30,11 @@ describe('UnitList', () => {
 
   it('renders a list of unit components', () => {
     var units = [{
-      displayName: 'mysql/0'
+      displayName: 'mysql/0',
+      id: 'mysql/0'
     }, {
-      displayName: 'mysql/1'
+      displayName: 'mysql/1',
+      id: 'mysql/1'
     }];
     var unitsList = {
       toArray: () => units
@@ -50,12 +52,14 @@ describe('UnitList', () => {
         key={units[0].displayName}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
-        checked={false} />,
+        checked={false}
+        unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
-        checked={false} />
+        checked={false}
+        unitId="mysql/1" />
     ]);
   });
 
@@ -78,9 +82,11 @@ describe('UnitList', () => {
 
   it('propagates select-all to all children', () => {
     var units = [{
-      displayName: 'mysql/0'
+      displayName: 'mysql/0',
+      id: 'mysql/0'
     }, {
-      displayName: 'mysql/1'
+      displayName: 'mysql/1',
+      id: 'mysql/1'
     }];
     var unitsList = {
       toArray: () => units
@@ -109,18 +115,21 @@ describe('UnitList', () => {
         key={units[0].displayName}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
-        checked={true} />,
+        checked={true}
+        unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
-        checked={true} />
+        checked={true}
+        unitId="mysql/1" />
     ]);
   });
 
   it('navigates to the unit when a list item is clicked', function() {
     var units = [{
-      displayName: 'mysql/5'
+      displayName: 'mysql/5',
+      id: 'mysql/5'
     }];
     var unitsList = {
       toArray: () => units
@@ -133,8 +142,8 @@ describe('UnitList', () => {
           units={unitsList} />);
     output.props.children[1].props.children[1].props.action({
       currentTarget: {
-        getElementsByTagName: function() {
-          return [{innerText: 'mysql/5'}];
+        getAttribute: function() {
+          return 'mysql/5';
         }
       }
     });

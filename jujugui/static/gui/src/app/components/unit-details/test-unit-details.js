@@ -43,9 +43,15 @@ describe('UnitDetails', function() {
         unit={fakeUnit} />);
     assert.deepEqual(output.props.children[0],
       <div className="unit-details__properties">
-        <p>IP address: {fakeUnit.private_address}</p>
-        <p>Status: {fakeUnit.agent_state}</p>
-        <p>Public address: {fakeUnit.public_address}</p>
+        <p className="unit-details__property">
+          IP address: {fakeUnit.private_address}
+        </p>
+        <p className="unit-details__property">
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className="unit-details__property">
+          Public address: {fakeUnit.public_address}
+        </p>
       </div>);
   });
 
@@ -53,97 +59,9 @@ describe('UnitDetails', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         unit={fakeUnit} />);
-    var buttons = [{
-      title: 'Remove',
-      action: output.props.children[1].props.buttons[0].action
-      }];
+    var buttons = [{title: 'Remove'}];
     assert.deepEqual(output.props.children[1],
       <juju.components.ButtonRow
-        buttons={buttons} />);
-  });
-
-  it('renders the remove confirmation', function() {
-    var output = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
-        unit={fakeUnit} />);
-    var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm'
-          }
-        ];
-    var confirmMessage = 'Are you sure you want to remove the unit? ' +
-        'This cannot be undone.';
-    assert.deepEqual(output.props.children[2],
-      <juju.components.InspectorConfirm
-        message={confirmMessage}
-        open={undefined}
-        buttons={buttons} />);
-  });
-
-  it('shows the confirmation when the remove button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to remove the unit? ' +
-        'This cannot be undone.';
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
-        unit={fakeUnit} />, true);
-    var output = shallowRenderer.getRenderOutput();
-      var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm'
-          }
-        ];
-    // Fire the click action.
-    output.props.children[1].props.buttons[0].action();
-    shallowRenderer.render(
-      <juju.components.UnitDetails
-        unit={fakeUnit} />);
-    output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[2],
-      <juju.components.InspectorConfirm
-        message={confirmMessage}
-        open={true}
-        buttons={buttons} />);
-  });
-
-  it('hides the confirmation when the cancel button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to remove the unit? ' +
-        'This cannot be undone.';
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.UnitDetails
-        unit={fakeUnit} />, true);
-    var output = shallowRenderer.getRenderOutput();
-      var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm'
-          }
-        ];
-    // Open the confirmation.
-    output.props.children[1].props.buttons[0].action();
-    // close the confirmation.
-    output.props.children[2].props.buttons[0].action();
-    shallowRenderer.render(
-      <juju.components.UnitDetails
-        unit={fakeUnit} />);
-    output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[2],
-      <juju.components.InspectorConfirm
-        message={confirmMessage}
-        open={false}
         buttons={buttons} />);
   });
 });

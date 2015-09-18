@@ -22,66 +22,24 @@ YUI.add('unit-details', function() {
 
   juju.components.UnitDetails = React.createClass({
 
-    /**
-      Get the current state of the inspector.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      // Setting a default state object.
-      return {
-        confirmationOpen: this.props.confirmationOpen
-      };
-    },
-
-    /**
-      Set the confirmation state to open.
-      @method _showConfirmation
-    */
-    _showConfirmation: function() {
-      this.setState({confirmationOpen: true});
-    },
-
-    /**
-      Set the confirmation state to closed.
-      @method _hideConfirmation
-    */
-    _hideConfirmation: function() {
-      this.setState({confirmationOpen: false});
-    },
-
     render: function() {
       var unit = this.props.unit;
-      var buttons = [{
-        title: 'Remove',
-        action: this._showConfirmation
-        }];
-      var confirmMessage = 'Are you sure you want to remove the unit? ' +
-        'This cannot be undone.';
-      var confirmButtons = [
-        {
-          title: 'Cancel',
-          action: this._hideConfirmation
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm'
-          }
-        ];
+      var buttons = [{title: 'Remove'}];
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
-            <p>IP address: {unit.private_address || 'none'}</p>
-            <p>Status: {unit.agent_state || 'uncommitted'}</p>
-            <p>Public address: {unit.public_address || 'none'}</p>
+            <p className="unit-details__property">
+              IP address: {unit.private_address || 'none'}
+            </p>
+            <p className="unit-details__property">
+              Status: {unit.agent_state || 'uncommitted'}
+            </p>
+            <p className="unit-details__property">
+              Public address: {unit.public_address || 'none'}
+            </p>
           </div>
           <juju.components.ButtonRow
             buttons={buttons} />
-          <juju.components.InspectorConfirm
-            buttons={confirmButtons}
-            message={confirmMessage}
-            open={this.state.confirmationOpen} />
         </div>
       );
     }

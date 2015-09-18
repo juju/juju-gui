@@ -54,6 +54,7 @@ describe('Inspector', function() {
   });
 
   it('displays the unit list when the app state calls for it', function() {
+    var changeStateStub = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns(['units']);
@@ -69,7 +70,8 @@ describe('Inspector', function() {
     shallowRenderer.render(
         <juju.components.Inspector
           service={service}
-          appState={appState}>
+          appState={appState}
+          changeState={changeStateStub}>
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
@@ -77,7 +79,7 @@ describe('Inspector', function() {
         <juju.components.UnitList
           serviceId="demo"
           units={['units']}
-          changeState={undefined} />);
+          changeState={changeStateStub} />);
   });
 
   it('displays the unit details when the app state calls for it', function() {

@@ -3,6 +3,8 @@
     cursor: pointer;
     padding: 11px 20px 11px 45px;
 
+    &:focus,
+    &:active,
     &:hover {
         background-color: $light-grey;
     }
@@ -22,13 +24,8 @@
     &__value {
         @include notification(transparent);
         float: right;
+        margin-top: -3px;
         color: $text-colour;
-
-        &--type-error,
-        &--type-pending,
-        &--type-uncommitted {
-            margin-top: -3px;
-        }
 
         &--type-error {
             @include notification($error);
