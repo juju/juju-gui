@@ -952,7 +952,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        function() {
          // The height of a navbar is used in calculating the viewport size,
          // so add a temporary one to the DOM
-         var navbar = Y.Node.create('<div class="navbar" ' +
+         var navbar = Y.Node.create('<div class="header-banner" ' +
              'style="height:70px;">Navbar</div>');
          Y.one('body').append(navbar);
          var viewport = Y.Node.create('<div id="viewport" ' +

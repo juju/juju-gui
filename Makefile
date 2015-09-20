@@ -24,7 +24,7 @@ JS_MACAROON := $(NODE_MODULES)/js-macaroon/build/yui-macaroon.js
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
-SELENIUM := lib/python2.7/site-packages/selenium-2.47.1-py2.7.egg/selenium/selenium.py
+SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
 REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
 HANDLEBARS_ASSETS := $(BUILT_JS_ASSETS)/handlebars.runtime.js $(BUILT_JS_ASSETS)/handlebars.runtime.min.js
 
@@ -252,7 +252,7 @@ $(SELENIUM): $(PY)
 	@# requirements.txt.
 	bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) ez_setup==0.9
 	bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) shelltoolbox==0.2.1
-	bin/pip install archives/selenium-2.47.1.tar.gz
+	bin/pip install archives/selenium-2.47.3.tar.gz
 
 #######
 # Tests

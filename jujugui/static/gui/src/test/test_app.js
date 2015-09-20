@@ -219,12 +219,12 @@ function injectData(app, data) {
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
-      var name = 'Sandbox';
+      var name = 'sandbox';
       assert.equal(
           'Environment',
           container.one('.environment-name').get('text'));
       app.env.set('environmentName', name);
-      assert.equal(container.one('.environment-name').get('text'), 'Sandbox');
+      assert.equal(container.one('.environment-name').get('text'), 'sandbox');
     });
 
     it('should show the environment name override when requested', function() {
@@ -237,7 +237,7 @@ function injectData(app, data) {
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
-      var name = 'Sandbox';
+      var name = 'sandbox';
       localStorage.setItem('environmentName', 'not sandbox');
       assert.equal(
           'Environment',
