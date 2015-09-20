@@ -1,4 +1,5 @@
 .inspector-header {
+    @extend %fade-in;
     cursor: pointer;
     padding: 10px 20px;
     border-bottom: 1px solid $mid-grey;
@@ -21,14 +22,17 @@
 
         &-error {
             background-color: $error;
+            border-color: $error;
         }
 
         &-pending {
             background-color: $pending;
+            border-color: $pending;
         }
 
         &-uncommitted {
             background-color: $uncommitted;
+            border-color: $uncommitted;
         }
     }
 }

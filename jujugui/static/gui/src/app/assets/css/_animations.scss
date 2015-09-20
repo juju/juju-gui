@@ -7,3 +7,23 @@
         opacity: 1;
     }
 }
+
+%fade-in {
+    $fade-in-duration: .1s;
+    animation-duration: $fade-in-duration;
+    animation-name: fadeIn;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+%stagger-fade-in {
+    @extend %fade-in;
+
+    @for $i from 1 through 99 {
+        $fade-in-stagger-speed: .03s;
+
+        &:nth-child(#{$i}) {
+            animation-delay: $fade-in-stagger-speed * $i;
+        }
+    }
+}

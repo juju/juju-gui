@@ -30,9 +30,11 @@ describe('UnitList', () => {
 
   it('renders a list of unit components', () => {
     var units = [{
-      displayName: 'mysql/0'
+      displayName: 'mysql/0',
+      id: 'mysql/0'
     }, {
-      displayName: 'mysql/1'
+      displayName: 'mysql/1',
+      id: 'mysql/1'
     }];
     var unitsList = {
       toArray: () => units
@@ -49,11 +51,15 @@ describe('UnitList', () => {
       <juju.components.UnitListItem
         key={units[0].displayName}
         label={units[0].displayName}
-        checked={false} />,
+        action={output.props.children[1].props.children[1].props.action}
+        checked={false}
+        unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         label={units[1].displayName}
-        checked={false} />
+        action={output.props.children[1].props.children[2].props.action}
+        checked={false}
+        unitId="mysql/1" />
     ]);
   });
 
@@ -76,9 +82,11 @@ describe('UnitList', () => {
 
   it('propagates select-all to all children', () => {
     var units = [{
-      displayName: 'mysql/0'
+      displayName: 'mysql/0',
+      id: 'mysql/0'
     }, {
-      displayName: 'mysql/1'
+      displayName: 'mysql/1',
+      id: 'mysql/1'
     }];
     var unitsList = {
       toArray: () => units
@@ -106,12 +114,49 @@ describe('UnitList', () => {
       <juju.components.UnitListItem
         key={units[0].displayName}
         label={units[0].displayName}
-        checked={true} />,
+        action={output.props.children[1].props.children[1].props.action}
+        checked={true}
+        unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         label={units[1].displayName}
-        checked={true} />
+        action={output.props.children[1].props.children[2].props.action}
+        checked={true}
+        unitId="mysql/1" />
     ]);
   });
 
+  it('navigates to the unit when a list item is clicked', function() {
+    var units = [{
+      displayName: 'mysql/5',
+      id: 'mysql/5'
+    }];
+    var unitsList = {
+      toArray: () => units
+    };
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          changeState={changeState}
+          serviceId="mysql"
+          units={unitsList} />);
+    output.props.children[1].props.children[1].props.action({
+      currentTarget: {
+        getAttribute: function() {
+          return 'mysql/5';
+        }
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'mysql',
+          unit: '5',
+          activeComponent: 'unit'
+        }
+      }
+    });
+  });
 });

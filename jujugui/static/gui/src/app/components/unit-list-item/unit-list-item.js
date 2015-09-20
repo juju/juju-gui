@@ -23,6 +23,30 @@ YUI.add('unit-list-item', function() {
   juju.components.UnitListItem = React.createClass({
 
     /**
+      Returns the classes for the item based on the provided props.
+
+      @method _valueClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'unit-list-item',
+        this.props.action ? 'unit-list-item--nav' : ''
+      );
+    },
+
+    /**
+      Returns the id if the item is not a navigation element.
+
+      @method _valueClasses
+      @param {String} id The id of the checkbox.
+      @returns {String} The id of the element or a blank string.
+    */
+    _generateId: function(id) {
+      return this.props.action ? '' : id;
+    },
+
+    /**
       Get the current state of the inspector.
 
       @method getInitialState
@@ -53,6 +77,16 @@ YUI.add('unit-list-item', function() {
       this.setState({checked: checked});
     },
 
+    /**
+      Don't bubble the click event to the parent.
+
+      @method _stopBubble
+      @param {Object} The click event from the checkbox.
+    */
+    _stopBubble: function(e) {
+      e.stopPropagation();
+    },
+
     componentWillReceiveProps: function(nextProps) {
       this.setState({checked: nextProps.checked});
     },
@@ -60,13 +94,18 @@ YUI.add('unit-list-item', function() {
     render: function() {
       var id = this.props.label + '-unit';
       return (
-        <li className="unit-list-item">
-          <input
-            type="checkbox"
-            id={id}
-            onChange={this._handleChange}
-            checked={this.state.checked} />
-          <label htmlFor={id}>{this.props.label}</label>
+        <li className={this._generateClasses()}
+          data-id={this.props.unitId}
+          onClick={this.props.action} tabIndex="0" role="button">
+          <label htmlFor={this._generateId(id)}>
+            <input
+              type="checkbox"
+              id={id}
+              onClick={this._stopBubble}
+              onChange={this._handleChange}
+              checked={this.state.checked} />
+            {this.props.label}
+          </label>
         </li>
       );
     }

@@ -1,6 +1,5 @@
 .inspector-view {
     @extend %floating-panel;
-    $fade-in-duration: .1s;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 100%;
@@ -12,10 +11,12 @@
     }
 
     &__list-item {
-        animation: fadeIn $fade-in-duration linear forwards;
+        @extend %stagger-fade-in;
         padding: 10px 20px;
         cursor: pointer;
 
+        &:focus,
+        &:active,
         &:hover {
             background-color: $light-grey;
         }

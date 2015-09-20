@@ -54,10 +54,13 @@ describe('Inspector', function() {
   });
 
   it('displays the unit list when the app state calls for it', function() {
+    var changeStateStub = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns(['units']);
     var service = {
-      get: function() {
-        return ['units'];
-      }};
+      get: getStub
+    };
     var appState = {
       sectionA: {
         metadata: {
@@ -67,13 +70,41 @@ describe('Inspector', function() {
     shallowRenderer.render(
         <juju.components.Inspector
           service={service}
-          appState={appState}>
+          appState={appState}
+          changeState={changeStateStub}>
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[1].props.children,
         <juju.components.UnitList
-          units={['units']}/>);
+          serviceId="demo"
+          units={['units']}
+          changeState={changeStateStub} />);
+  });
+
+  it('displays the unit details when the app state calls for it', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({getById: function() {
+      return 'unit';
+    }});
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'unit',
+          unit: '5'
+        }}};
+    var output = jsTestUtils.shallowRender(
+        <juju.components.Inspector
+          service={service}
+          appState={appState}>
+        </juju.components.Inspector>);
+    assert.deepEqual(output.props.children[1].props.children,
+        <juju.components.UnitDetails
+          unit="unit" />);
   });
 
   it('passes changeState callable to header component', function() {

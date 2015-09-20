@@ -55,6 +55,27 @@ YUI.add('unit-list', function() {
     },
 
     /**
+      The callable to be passed to the unit items for navigating to the unit
+      details.
+
+      @method _unitItemAction
+      @param {Object} e The click event.
+    */
+    _unitItemAction: function(e) {
+      var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.serviceId,
+            unit: unitId,
+            activeComponent: 'unit'
+          }
+        }
+      });
+    },
+
+    /**
       Generates a list of unit components.
 
       @method _generateUnitList
@@ -73,7 +94,9 @@ YUI.add('unit-list', function() {
           <juju.components.UnitListItem
             key={unit.displayName}
             label={unit.displayName}
-            checked={this.state.selectAll} />);
+            action={this._unitItemAction}
+            checked={this.state.selectAll}
+            unitId={unit.id} />);
       });
       return components;
     },

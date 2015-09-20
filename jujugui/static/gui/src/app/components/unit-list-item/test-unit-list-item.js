@@ -34,14 +34,68 @@ describe('UnitListItem', () => {
           key="unique"
           checked={false}
           label="unit-name"
+          unitId="apache/2"
         />);
-    assert.deepEqual(output.props.children, [
-        <input
-          type="checkbox"
-          id="unit-name-unit"
-          onChange={output.props.children[0].props.onChange}
-          checked={false} />,
-        <label htmlFor="unit-name-unit">unit-name</label>]);
+    assert.deepEqual(output,
+        <li className="unit-list-item"
+          data-id="apache/2"
+          onClick={undefined} tabIndex="0" role="button">
+          <label htmlFor="unit-name-unit">
+            <input
+              type="checkbox"
+              id="unit-name-unit"
+              onClick={output.props.children.props.children[0].props.onClick}
+              onChange={output.props.children.props.children[0].props.onChange}
+              checked={false} />
+            unit-name
+          </label>
+        </li>);
+  });
+
+  it('does not set a "for" id on the label if it is a nav element', () => {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitListItem
+          key="unique"
+          checked={false}
+          label="unit-name"
+          action="action"
+          unitId="apache/2"
+        />);
+    assert.deepEqual(output.props.children,
+        <label htmlFor="">
+          <input
+            type="checkbox"
+            id="unit-name-unit"
+            onClick={output.props.children.props.children[0].props.onClick}
+            onChange={output.props.children.props.children[0].props.onChange}
+            checked={false} />
+          unit-name
+        </label>);
+  });
+
+  it('has a nav class if it is a nav element', () => {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitListItem
+          key="unique"
+          checked={false}
+          label="unit-name"
+          action="action"
+          unitId="apache/2"
+        />);
+    assert.deepEqual(output,
+      <li className="unit-list-item unit-list-item--nav"
+        data-id="apache/2"
+        onClick={output.props.onClick} tabIndex="0" role="button">
+        <label htmlFor="">
+          <input
+            type="checkbox"
+            id="unit-name-unit"
+            onClick={output.props.children.props.children[0].props.onClick}
+            onChange={output.props.children.props.children[0].props.onChange}
+            checked={false} />
+          unit-name
+        </label>
+      </li>);
   });
 
   it('calls the supplied whenChanged if supplied', () => {
@@ -53,7 +107,7 @@ describe('UnitListItem', () => {
         whenChanged={whenChanged}
         label="unit-name"
       />);
-    output.props.children[0].props.onChange({
+    output.props.children.props.children[0].props.onChange({
       currentTarget: {
         checked: true
       }
@@ -68,29 +122,50 @@ describe('UnitListItem', () => {
           key="unique"
           checked={false}
           label="unit-name"
+          unitId="apache/2"
         />, true);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
-      output.props.children[0],
+      output.props.children.props.children[0],
       <input
         type="checkbox"
         id="unit-name-unit"
-        onChange={output.props.children[0].props.onChange}
+        onClick={output.props.children.props.children[0].props.onClick}
+        onChange={output.props.children.props.children[0].props.onChange}
         checked={false} />);
 
     shallowRenderer.render(<juju.components.UnitListItem
       key="unique"
       checked={true}
       label="unit-name"
+      unitId="apache/2"
     />);
 
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
-      output.props.children[0],
+      output.props.children.props.children[0],
       <input
         type="checkbox"
         id="unit-name-unit"
-        onChange={output.props.children[0].props.onChange}
+        onClick={output.props.children.props.children[0].props.onClick}
+        onChange={output.props.children.props.children[0].props.onChange}
         checked={true} />);
+  });
+
+  it('does not bubble the click event when clicking a checkbox', () => {
+    var actionStub = sinon.stub();
+    // Need to render the full component here as shallowRenderer does not yet
+    // support simulating click events.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitListItem
+          key="unique"
+          checked={false}
+          label="unit-name"
+          unitId="apache/2"
+          action={actionStub}
+        />);
+    var checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
+    testUtils.Simulate.click(checkbox);
+    assert.equal(actionStub.callCount, 0);
   });
 });

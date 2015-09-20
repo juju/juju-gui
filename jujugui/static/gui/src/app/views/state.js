@@ -304,7 +304,14 @@ YUI.add('juju-app-state', function(Y) {
               urlParts.push(metadata.activeComponent + '/');
             }
             if (metadata.unit) {
-              urlParts.push('unit/' + metadata.unit);
+              if (!window.flags || !window.flags.react) {
+                // Using the new activeComponent to indicate what subcomponent
+                // should be shown this causes conflicts when defining a unit
+                // id with the key 'unit'.
+                urlParts.push('unit/' + metadata.unit);
+              } else {
+                urlParts.push(metadata.unit);
+              }
             }
             if (metadata.charm) {
               urlParts.push('charm');
