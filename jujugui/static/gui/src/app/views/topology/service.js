@@ -278,10 +278,6 @@ YUI.add('juju-topology-service', function(Y) {
       return !d.pending &&
           !d3.select(this).select('.pending-indicator').empty();
     }).select('.pending-indicator').remove();
-
-    // Position the plus-service indicator.
-    topo.vis.select('.included-plus')
-      .attr('transform', 'translate(' + topo.servicePointOutside() + ')');
   };
   views.ServiceModuleCommon = ServiceModuleCommon;
 
