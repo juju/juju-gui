@@ -125,7 +125,12 @@ describe('Inspector', function() {
         service={service}
         appState={appState} />);
     var children = output.props.children[1].props.children;
-    assert.deepEqual(children, <juju.components.ScaleService />);
+    assert.deepEqual(children,
+        <juju.components.ScaleService
+          serviceId={service.get('id')}
+          addGhostAndEcsUnits={children.props.addGhostAndEcsUnits}
+          createMachinesPlaceUnits={children.props.createMachinesPlaceUnits}
+          changeState={children.props.changeState} />);
   });
 
   it('passes changeState callable to header component', function() {
