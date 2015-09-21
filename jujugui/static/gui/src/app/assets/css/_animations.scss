@@ -27,3 +27,7 @@
         }
     }
 }
+
+.fade-in {
+    @extend %fade-in;
+}
