@@ -160,8 +160,9 @@ YUI.add('juju-topology', function(Y) {
               .split(',');
             plus
               .attr('transform', 
-                  'translate(' + [d3.event.dx + parseInt(oldCoords[0], 10), 
-                                  d3.event.dy + parseInt(oldCoords[1], 10)] + ')');
+                  'translate(' 
+                    + [d3.event.dx + parseInt(oldCoords[0], 10), 
+                       d3.event.dy + parseInt(oldCoords[1], 10)] + ')');
           });
         plusIndicator.call(plusDrag);
       }
