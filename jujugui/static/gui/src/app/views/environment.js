@@ -170,7 +170,7 @@ YUI.add('juju-view-environment', function(Y) {
       var container = this.get('container'),
           topo = this.topo;
       if (!topo) {
-        topo = new views.Topology();
+        topo = new views.Topology({includePlus: true});
         topo.setAttrs({
           size: [640, 480],
           ecs: this.get('ecs'),
@@ -203,13 +203,17 @@ YUI.add('juju-view-environment', function(Y) {
      */
     updateHelpIndicator: function(evt) {
       var helpText = this.get('container').one('.environment-help'),
+          includedPlus = this.topo.vis.select('.included-plus'),
           db = this.get('db'),
           services = db.services;
       if (helpText) {
         if (services.size() === 0) {
-          helpText.show(true);
+          helpText.show();
+          helpText.removeClass('shrink');
+          includedPlus.classed('show', false);
         } else {
-          helpText.hide(true);
+          helpText.addClass('shrink');
+          includedPlus.classed('show', true);
         }
       }
     },

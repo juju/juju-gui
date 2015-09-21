@@ -314,7 +314,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Verify we have help text.
       var help = Y.one('.environment-help');
-      assert.strictEqual(help.getStyle('display'), 'block');
+      assert.isFalse(help.hasClass('shrink'));
     });
 
 
@@ -1536,6 +1536,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var endpointsController = view.topo.get('endpointsController');
       assert.equal('hidy ho', endpointsController);
       view.destroy();
+    });
+
+    describe.only('onboarding integration with the environment', function() {
+      // XXX This test does not run in Phantom, but passes in the browser.
+      // See https://github.com/ariya/phantomjs/issues/12782 for details.
+      // Makyo - 2015-09-21
+      it('shows/hides the integrated button when a service is added',
+          function() {
+            if (Y.UA.phantomjs) {
+              return;
+            }
+            db = new models.Database();
+            view.set('db', db);
+            view.render().rendered();
+            var includedPlus = view.topo.vis.select('.included-plus');
+            var helpText = container.one('.environment-help');
+            assert.equal(false, includedPlus.classed('show'));
+            assert.equal(false, helpText.hasClass('shrink'));
+            
+            var service = new models.Service({
+              id: 'service-1',
+              charm: 'precise/mysql-1'
+            });
+            db.services.add([service]);
+
+            assert.equal(true, includedPlus.classed('show'));
+            assert.equal(true, helpText.hasClass('shrink'));
+            view.destroy();
+          }
+        );
     });
   });
 
