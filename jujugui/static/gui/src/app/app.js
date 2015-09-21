@@ -774,6 +774,8 @@ YUI.add('juju-gui', function(Y) {
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
                 this, this.db, this.env, service)}
+            destroyService={utils.destroyService.bind(
+                this, this.db, this.env, service)}
             changeState={this.changeState.bind(this)}
             appState={state.get('current')} />
         </components.Panel>,

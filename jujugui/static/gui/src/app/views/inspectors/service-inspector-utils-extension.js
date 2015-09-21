@@ -154,7 +154,22 @@ YUI.add('service-inspector-utils-extension', function(Y) {
       @return {undefined} Nothing.
     */
     initiateServiceDestroy: function() {
-      utils.destroyService(this.get('db'), this.get('env'), this.get('model'));
+      utils.destroyService(this.get('db'), this.get('env'), this.get('model'),
+          this.serviceDestroyCallback.bind(this));
+    },
+
+    /**
+      Callback to change the inspector state after the service has been
+      removed.
+
+      @method serviceDestroyCallback
+    */
+    serviceDestroyCallback: function() {
+      // The emptySectionA method will destroy this inspector.
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: { id: null }}});
     }
   };
 

@@ -2299,10 +2299,10 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} env Reference to the app env.
     @param {Object} service Reference to the service model to add units to.
   */
-  utils.destroyService = function(db, env, service) {
+  utils.destroyService = function(db, env, service, callback) {
     if (service.name === 'service') {
       env.destroy_service(service.get('id'),
-          Y.bind(this._destroyServiceCallback, this, service, db),
+          Y.bind(utils._destroyServiceCallback, this, service, db, callback),
           {modelId: null});
     } else if (service.get('pending')) {
       db.services.remove(service);
@@ -2321,7 +2321,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} evt The event describing the destruction (or lack
       thereof).
   */
-  utils._destroyServiceCallback = function(service, db, evt) {
+  utils._destroyServiceCallback = function(service, db, callback, evt) {
     if (evt.err) {
       // If something bad happend we need to alert the user.
       db.notifications.add(
@@ -2342,6 +2342,9 @@ YUI.add('juju-view-utils', function(Y) {
         message: 'Service: ' + evt.service_name + ' is being destroyed.',
         level: 'important'
       });
+    }
+    if (callback) {
+      callback();
     }
   };
 
