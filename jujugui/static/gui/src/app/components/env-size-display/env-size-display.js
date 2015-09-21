@@ -29,6 +29,11 @@ YUI.add('env-size-display', function() {
       };
     },
 
+    componentWillReceiveProps: function() {
+      this.setState({activeComponent: this.props.getAppState(
+          'current', 'sectionB', 'component')});
+    },
+
     /**
       Click handler for the service | machine links which calls the changeState
       event emitter with the clicked link.

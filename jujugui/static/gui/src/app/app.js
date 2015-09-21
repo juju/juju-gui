@@ -762,6 +762,7 @@ YUI.add('juju-gui', function(Y) {
     _renderInspector: function(metadata) {
       var service = this.db.services.getById(metadata.id);
       var state = this.state;
+      var utils = views.utils;
       React.render(
         <components.Panel
           instanceName="inspector-panel"
@@ -769,6 +770,10 @@ YUI.add('juju-gui', function(Y) {
           metadata={metadata}>
           <components.Inspector
             service={service}
+            addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
+                this, this.db, this.env, service)}
+            createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
+                this, this.db, this.env, service)}
             changeState={this.changeState.bind(this)}
             appState={state.get('current')} />
         </components.Panel>,

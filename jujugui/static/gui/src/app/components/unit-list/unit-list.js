@@ -40,7 +40,15 @@ YUI.add('unit-list', function() {
       @method _navigate
       @param {Object} e The click event.
     */
-    _navigate: function(e) { },
+    _navigate: function(e) {
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.serviceId,
+            activeComponent: 'scale'
+          }}});
+    },
 
     /**
       Sets the selectAll state property based on the "select all" child
