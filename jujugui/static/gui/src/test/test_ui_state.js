@@ -675,6 +675,7 @@ describe('UI State object', function() {
           component: 'inspector',
           metadata: {
             id: 'service123',
+            activeComponent: 'charm',
             charm: true,
             flash: {}
           }
@@ -685,6 +686,7 @@ describe('UI State object', function() {
           component: 'inspector',
           metadata: {
             id: 'service123',
+            activeComponent: 'unit',
             unit: '13',
             flash: {}
           }
@@ -1129,6 +1131,7 @@ describe('UI State object', function() {
     }];
 
     it('can generate proper urls from the state object', function() {
+      window.flags.react = false;
       states.forEach(function(record) {
         state.set('current', Y.clone(defaultState));
         Object.keys(record).forEach(function(url) {

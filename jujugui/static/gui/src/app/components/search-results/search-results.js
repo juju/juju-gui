@@ -18,15 +18,106 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('search-results', function() {
+YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
+    search: function() {
+      /*
+       * XXX: replace this placeholder and its dummy data with live call to
+       * search service.
+       */
+      return {
+        hasResults: true,
+        solutionsCount: 5,
+        nameWidth: 'foobar',
+        text: this.props.query,
+        currentType: 'all',
+        currentSeries: 'trusty',
+        allSeries: ['all', 'precise', 'trusty', 'centos7'],
+        currentTopics: [],
+        promulgatedResultsCount: 2,
+        promulgatedResults: [
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'mysql',
+            displayName: 'MySQL',
+            url: 'http://example.com/mysql',
+            tags: ['database', 'sql'],
+            series: [
+              {name: 'trusty', url: 'http://example.com/trusty-mysql'},
+              {name: 'precise', url: 'http://example.com/precise-mysql'}
+            ],
+            downloads: 30,
+            owner: 'test-owner-1'
+          },
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'wordpress',
+            displayName: 'Wordpress',
+            url: 'http://example.com/wordpress',
+            tags: [],
+            series: [
+              {name: 'trusty', url: 'http://example.com/trusty-wordpress'},
+              {name: 'precise', url: 'http://example.com/precise-wordpress'}
+            ],
+            downloads: 300,
+            owner: 'test-owner-2'
+          },
+        ],
+        STATIC_URL: 'STATIC/',
+        resultsCount: 3,
+        results: [
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'mysql',
+            displayName: 'MySQL',
+            url: 'http://example.com/mysql',
+            tags: ['database', 'sql'],
+            series: [
+              {name: 'trusty', url: 'http://example.com/trusty-mysql'},
+              {name: 'precise', url: 'http://example.com/precise-mysql'}
+            ],
+            downloads: 30,
+            owner: 'test-owner-1'
+          },
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'wordpress',
+            displayName: 'Wordpress',
+            url: 'http://example.com/wordpress',
+            tags: [],
+            series: [
+              {name: 'trusty', url: 'http://example.com/trusty-wordpress'},
+              {name: 'precise', url: 'http://example.com/precise-wordpress'}
+            ],
+            downloads: 300,
+            owner: 'test-owner-2'
+          },
+          {
+            type: 'charm',
+            docType: 'charm',
+            name: 'ghost',
+            displayName: 'Ghost',
+            url: 'http://example.com/ghost',
+            tags: ['cms'],
+            series: [],
+            downloads: 3,
+            owner: 'test-owner-3'
+          },
+        ]
+      };
+    },
 
     render: function() {
       var classes = 'search-results';
+      var html = Handlebars.templates['search-results.hbs'](this.search());
       return (
-        <div className={classes}>
-          Search results for "{this.props.query}".
+        <div className={classes}
+          dangerouslySetInnerHTML={{__html: html}}>
         </div>
       );
     }

@@ -22,7 +22,6 @@ YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
 
-
     /**
       Get the current state of the inspector.
 
@@ -30,10 +29,8 @@ YUI.add('inspector-component', function() {
       @returns {String} The current state.
     */
     getInitialState: function() {
-      return {
-        activeComponent: this.props.getAppState(
-            'current', 'sectionA', 'component')
-      };
+      // Setting a default state object.
+      return this.generateState(this.props);
     },
 
     /**
@@ -42,28 +39,82 @@ YUI.add('inspector-component', function() {
       @method _backCallback
     */
     _backCallback: function() {
+      this.props.changeState(this.state.activeChild.backState);
+    },
+
+    /**
+      Generates the state for the inspector based on the app state.
+
+      @method generateState
+      @param {Object} nextProps The props which were sent to the component.
+      @return {Object} A generated state object which can be passed to setState.
+    */
+    generateState: function(nextProps) {
+      var service = nextProps.service;
       var state = {
-        sectionA: {
-          component: 'services'
-        }
+        activeComponent: nextProps.appState.sectionA.metadata.activeComponent
       };
-      this.props.changeState(state);
+      switch (state.activeComponent) {
+        case undefined:
+          state.activeChild = {
+            title: service.get('name'),
+            component: <juju.components.ServiceOverview
+              changeState={this.props.changeState}
+              service={service} />,
+            backState: {
+              sectionA: {
+                component: 'services'
+              }}};
+        break;
+        case 'units':
+          state.activeChild = {
+            title: 'Units',
+            component:
+              <juju.components.UnitList
+                serviceId={service.get('id')}
+                units={service.get('units')}
+                changeState={this.props.changeState} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: undefined
+                }}}};
+        break;
+        case 'unit':
+          var unitId = nextProps.appState.sectionA.metadata.unit;
+          var unit = service.get('units').getById(
+              service.get('id') + '/' + unitId);
+          state.activeChild = {
+            title: unit.displayName,
+            component:
+              <juju.components.UnitDetails
+                unit={unit} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: 'units'
+                }}}};
+        break;
+      }
+      return state;
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState(this.generateState(nextProps));
     },
 
     render: function() {
-      var childComponent = '';
-      if (this.state.activeComponent === 'inspector') {
-        childComponent = (
-          <juju.components.ServiceOverview
-            service={this.props.service} />);
-      }
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
-            title={this.props.service.get('name')} />
+            title={this.state.activeChild.title} />
           <div className="inspector-content">
-            {childComponent}
+            {this.state.activeChild.component}
           </div>
         </div>
       );
@@ -74,6 +125,8 @@ YUI.add('inspector-component', function() {
 }, '0.1.0', {
   requires: [
     'inspector-header',
+    'unit-details',
+    'unit-list',
     'service-overview'
     ]
 });

@@ -1,0 +1,10 @@
+.unit-list {
+    ul, &__actions {
+        list-style: none;
+        margin: 0;
+    }
+
+    &__actions {
+        border-bottom: 1px solid $mid-grey;
+    }
+}

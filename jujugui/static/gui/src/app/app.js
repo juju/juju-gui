@@ -633,7 +633,7 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
-      Y.one('.navbar').delegate('click', function(e) {
+      Y.one('.header-banner').delegate('click', function(e) {
         e.halt();
         this.logout();
       }, '.logout-trigger', this);
@@ -770,7 +770,7 @@ YUI.add('juju-gui', function(Y) {
           <components.Inspector
             service={service}
             changeState={this.changeState.bind(this)}
-            getAppState={state.getState.bind(state)} />
+            appState={state.get('current')} />
         </components.Panel>,
         document.getElementById('inspector-container'));
     },

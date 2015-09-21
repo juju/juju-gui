@@ -60,7 +60,8 @@ YUI.add('overview-action', function() {
       var titleClass = this.baseClass + '__title';
       return (
         <li className={this.baseClass}
-          onClick={this.props.action} tabIndex="0" role="button">
+            onClick={this.props.action}
+            title={this.props.title} tabIndex="0" role="button">
           <span dangerouslySetInnerHTML={{__html: this.props.icon}}
             className={iconClass} />
           <span className={titleClass}>

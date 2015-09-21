@@ -40,7 +40,7 @@ describe('SearchResults', function() {
 
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.className, 'search-results');
-    assert.deepEqual(output.props.children,
-        ['Search results for "', 'spinach', '".']);
+    var html = output.props.dangerouslySetInnerHTML.__html;
+    assert.isAbove(html.indexOf(query), -1);
   });
 });

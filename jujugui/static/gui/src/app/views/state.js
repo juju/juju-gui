@@ -300,8 +300,18 @@ YUI.add('juju-app-state', function(Y) {
             if (id) {
               urlParts.push(id);
             }
+            if (metadata.activeComponent) {
+              urlParts.push(metadata.activeComponent + '/');
+            }
             if (metadata.unit) {
-              urlParts.push('unit/' + metadata.unit);
+              if (!window.flags || !window.flags.react) {
+                // Using the new activeComponent to indicate what subcomponent
+                // should be shown this causes conflicts when defining a unit
+                // id with the key 'unit'.
+                urlParts.push('unit/' + metadata.unit);
+              } else {
+                urlParts.push(metadata.unit);
+              }
             }
             if (metadata.charm) {
               urlParts.push('charm');
@@ -557,8 +567,15 @@ YUI.add('juju-app-state', function(Y) {
       } else {
         // The first index is the service id except in the above cases.
         metadata.id = parts[0];
-        if (parts[1]) {
-          metadata[parts[1]] = parts[2] || true;
+        if (!window.flags || !window.flags.react) {
+          if (parts[1]) {
+            metadata[parts[1]] = parts[2] || true;
+          }
+        } else {
+          if (parts[1]) {
+            metadata.activeComponent = parts[1];
+            metadata[parts[1]] = parts[2] || true;
+          }
         }
       }
       metadata.flash = this.get('flash');

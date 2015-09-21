@@ -31,6 +31,37 @@ YUI.add('service-overview', function() {
     },
 
     /**
+      Get the current state of the inspector.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {
+        confirmationOpen: this.props.confirmationOpen
+      };
+    },
+
+    /**
+      Fires changeState to update the UI based on the component clicked.
+
+      @method _navigate
+      @param {Object} e The click event.
+    */
+    _navigate: function(e) {
+      var title = e.currentTarget.getAttribute('title');
+      var activeAction;
+      this.state.actions.some((action) => {
+          if (action.title === title) {
+            activeAction = action;
+            return true;
+          }
+      });
+      this.props.changeState(activeAction.state);
+    },
+
+    /**
       Returns the actions for the overview view.
       @method _generateActionList
       @returns {Array} The array of overview action components.
@@ -88,7 +119,17 @@ YUI.add('service-overview', function() {
       var actions = [{
         title: 'Units',
         value: unitStatuses.all,
-        icon: this.icons.all
+        icon: this.icons.all,
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: service.get('id'),
+              activeComponent: 'units'
+            }
+          }
+        }
       }];
 
       if (unitStatuses.error > 0) {
@@ -139,21 +180,62 @@ YUI.add('service-overview', function() {
           icon: this.icons.version
         });
 
-      return actions;
+      this.state.actions = actions;
+    },
+
+    /**
+      Set the confirmation state to open.
+      @method _showConfirmation
+    */
+    _showConfirmation: function() {
+      this.setState({confirmationOpen: true});
+    },
+
+    /**
+      Set the confirmation state to closed.
+      @method _hideConfirmation
+    */
+    _hideConfirmation: function() {
+      this.setState({confirmationOpen: false});
     },
 
     render: function() {
-      var actions = this._generateActions(this.props.service);
-
+      this._generateActions(this.props.service);
+      var buttons = [{
+        title: 'Destroy',
+        action: this._showConfirmation
+        }];
+      var confirmMessage = 'Are you sure you want to destroy the service? ' +
+        'This cannot be undone.';
+      var confirmButtons = [
+        {
+          title: 'Cancel',
+          action: this._hideConfirmation
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm'
+          }
+        ];
       return (
-        <ul className="service-overview__actions">
-          {this._generateActionList(actions)}
-        </ul>
+        <div className="service-overview">
+          <ul className="service-overview__actions">
+            {this._generateActionList(this.state.actions)}
+          </ul>
+          <juju.components.ButtonRow
+            buttons={buttons} />
+          <juju.components.InspectorConfirm
+            buttons={confirmButtons}
+            message={confirmMessage}
+            open={this.state.confirmationOpen} />
+        </div>
       );
     }
 
   });
 
 }, '0.1.0', { requires: [
+  'button-row',
+  'inspector-confirm',
   'overview-action'
 ]});

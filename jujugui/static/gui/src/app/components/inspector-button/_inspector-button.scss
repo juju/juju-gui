@@ -1,0 +1,39 @@
+.inspector-button {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    background: $white;
+    border: 1px solid $mid-grey;
+    border-radius: 2px;
+    font-size: 16px;
+    color: $charm-panel-orange;
+    text-align: center;
+    transition: background .3s;
+
+    &:focus,
+    &:active,
+    &:hover {
+        background-color: $light-grey;
+    }
+
+    &.inspector-button--type-confirm {
+        background-color: $charm-panel-orange;
+        border-color: $charm-panel-orange;
+        color: $white;
+
+        &:focus,
+        &:active,
+        &:hover {
+            background-color: #ae3910;
+        }
+    }
+}
+
+.button-row--multiple .inspector-button {
+    width: calc(50% - 5px);
+
+    &:first-child {
+        margin-right: 10px;
+    }
+}

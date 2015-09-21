@@ -51,20 +51,20 @@ $font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
 /* Define common colors. */
-$canvas-background: #f5f5f5;
+$light-grey: #f7f7f7;
+$canvas-background: $light-grey;
 $cool-grey: #333;
 $error: #df382c;
 $charm-panel-orange: #dd4814;
 $charm-panel-background-color: #eeeeee;
 $inspector-dark: #1c1817;
 $label-color: #292929;
-$light-grey: #f5f5f5;
 $machine-view-border-colour: #d9d9d9;
 $mid-grey: #cdcdcd;
 $navbar-border-dark: #191514;
 $navbar-border-light: #2d2928;
 $success: #38b44a;
-$text-colour: #505050;
+$text-colour: #333;
 $text-entry-color: #6d6e70;
 $pending: #eaa818;
 $uncommitted: #19b6ee;
@@ -88,6 +88,16 @@ $panel-space: 10px;
 @import "inspector/vars";
 
 /* Common classes and setup */
+
+
+//XXX: Temporarily remove the focus state of interactive elements:
+// Luca says: "Can we remove it for the time being and we'll make sure we
+// explore a solution for tabbing post-ODS."
+// https://github.com/juju/juju-gui/pull/840#issuecomment-141111802
+*:focus {
+    outline: none;
+}
+
 body,
 input,
 button,
@@ -101,6 +111,7 @@ body {
     height: 100%;
     margin-top: $navbar-height;
     background-color: $canvas-background;
+    color: $text-colour;
     font-size: 16px;
     line-height: 18px;
     -webkit-font-smoothing: antialiased;
@@ -241,146 +252,6 @@ th {
 
 /* Layout, widgets etc. */
 
-/*
- * The main header above the canvas
- */
-.navbar {
-    min-width: 800px;
-    height: $navbar-height;
-    margin: -$navbar-height 0 0 0;
-    background-color: #221e1b;
-
-    &,
-    & > ul > li > a {
-        color: #d7d3d0;
-    }
-
-    ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-    .right-nav,
-    #browser-nav {
-        & > li,
-        & > li.tab > a {
-            @extend .border-box;
-            display: block;
-            height: $navbar-height;
-            padding: 14px 20px 0 20px;
-        }
-        & > li {
-            float: left;
-            border-width: 0 1px;
-            border-style: solid;
-            border-left-color: $navbar-border-light;
-            border-right-color: $navbar-border-dark;
-
-            & > a {
-                &.button {
-                    margin: -8px 0 0 0;
-                }
-            }
-            &.hidden {
-                display: none !important;
-            }
-        }
-    }
-    #browser-nav {
-        float: left;
-        border-right: 1px solid $navbar-border-light;
-
-        & > li {
-            &:first-child {
-                border-left: none;
-            }
-            .brand {
-                display: block;
-                margin: -5px 10px 0 0;
-                padding: 0;
-            }
-            & > a {
-                &:hover {
-                    text-decoration: none;
-                }
-            }
-            &.tab a {
-                margin: -14px -20px 0 -20px;
-
-                &.active {
-                    border-bottom: 3px solid $charm-panel-orange;
-                }
-                .sprite {
-                    margin-right: 6px;
-                }
-            }
-            &.notifications-nav {
-                position: relative;
-
-                #notify-indicator {
-                  @include create-border-radius(4px);
-                  border: 1px solid #d7d3d0;
-                  margin: -5px 0 0 0;
-                  padding: 2px 6px;
-
-                  &.populated {
-                    background-color: $charm-panel-orange;
-                  }
-                }
-            }
-        }
-    }
-    .right-nav {
-        float: right;
-        margin: 0;
-        border-left: 1px solid $navbar-border-dark;
-
-        & > li:last-child {
-            border-right: none;
-        }
-        a.button.inverse {
-            background-color: #1f1b18;
-
-            &:hover {
-                background-color: #1f1b18;
-            }
-        }
-        .get-started {
-            margin-left: 7px;
-            vertical-align: top;
-        }
-        .user-dropdown {
-            display: block;
-            margin-right: 20px;
-
-            .menu-link {
-                &:hover {
-                    background-color: $charm-panel-orange;
-                }
-                .sprite {
-                    margin-right: 10px;
-
-                    &.hover {
-                        display: none;
-                    }
-                    &.normal {
-                        display: inline-block;
-                    }
-                }
-            }
-            .open .menu-link,
-            .menu-link:hover {
-                .sprite.hover {
-                    display: inline-block;
-                }
-                .sprite.normal {
-                    display: none;
-                }
-            }
-        }
-    }
-}
-
 #content {
     position: relative;
     width: 100%;
@@ -446,7 +317,7 @@ th {
     &__content {
         height: 450px;
         width: 789px;
-        padding: $environment-header-height 0 0 0;
+        padding-right: $environment-header-height;
         margin: 0 auto;
     }
 
@@ -484,6 +355,7 @@ th {
         width: 789px;
         height: 386px;
     }
+<<<<<<< HEAD
 
     @at-root {
         .state-sidebar-hidden .environment-help__content {
@@ -522,6 +394,8 @@ th {
             display: block;
         }
     }
+=======
+>>>>>>> pyramid-fork
 }
 
 /*
@@ -1051,7 +925,7 @@ g.unit {
         @include create-border-radius($border-radius);
         margin: 20px 0;
         padding: 0 20px 20px 20px;
-        background-color: #f5f5f5;
+        background-color: $light-grey;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
         input {
@@ -1122,6 +996,7 @@ g.unit {
 @import "environment-header";
 @import "inspector/juju-inspector";
 @import "inspector/inspector-view";
+@import "header";
 
 /** Views **/
 @import "browser/onboarding";
