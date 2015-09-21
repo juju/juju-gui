@@ -2291,6 +2291,61 @@ YUI.add('juju-view-utils', function(Y) {
   utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
 
   /**
+    Remove a service. If it is uncommitted then remove it otherwise use the
+    ecs.
+
+    @method destroyService
+    @param {Object} db Reference to the app db.
+    @param {Object} env Reference to the app env.
+    @param {Object} service Reference to the service model to add units to.
+  */
+  utils.destroyService = function(db, env, service) {
+    if (service.name === 'service') {
+      env.destroy_service(service.get('id'),
+          Y.bind(this._destroyServiceCallback, this, service, db),
+          {modelId: null});
+    } else if (service.get('pending')) {
+      db.services.remove(service);
+      service.destroy();
+    } else {
+      throw new Error('Unexpected model type: ' + service.name);
+    }
+  };
+
+  /**
+    React to a service being destroyed (or not).
+
+    @method _destroyServiceCallback
+    @param {Object} service The service we attempted to destroy.
+    @param {Object} db The database responsible for storing the service.
+    @param {Object} evt The event describing the destruction (or lack
+      thereof).
+  */
+  utils._destroyServiceCallback = function(service, db, evt) {
+    if (evt.err) {
+      // If something bad happend we need to alert the user.
+      db.notifications.add(
+          new Y.juju.models.Notification({
+            title: 'Error destroying service',
+            message: 'Service name: ' + evt.service_name,
+            level: 'error',
+            link: undefined,
+            modelId: service
+          })
+      );
+    } else {
+      // Remove the relations from the database (they will be removed from
+      // the state server by Juju, so we don't need to interact with env).
+      db.relations.remove(service.get('relations'));
+      db.notifications.add({
+        title: 'Destroying service',
+        message: 'Service: ' + evt.service_name + ' is being destroyed.',
+        level: 'important'
+      });
+    }
+  };
+
+  /**
     Returns the real service name for the provided service ghost id.
 
     @method getServiceNameFromGhostId
