@@ -1538,14 +1538,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.destroy();
     });
 
-    describe('onboarding integration with the environment', function() {
+    describe.only('onboarding integration with the environment', function() {
       // XXX This test does not run in Phantom, but passes in the browser.
       // See https://github.com/ariya/phantomjs/issues/12782 for details.
-      // When touching the integrated button code, this should be enabled
-      // and tested, then skipped before proposing or CI will fail.
       // Makyo - 2015-09-21
-      it.skip('shows/hides the integrated button when a service is added',
+      it('shows/hides the integrated button when a service is added',
           function() {
+            if (Y.UA.phantomjs) {
+              return;
+            }
             db = new models.Database();
             view.set('db', db);
             view.render().rendered();
