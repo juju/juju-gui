@@ -1398,7 +1398,7 @@ YUI.add('juju-topology-service', function(Y) {
       node.append('circle')
         .attr({
           cx: 95,
-          cy: 90,
+          cy: 95,
           r: 90,
           fill: '#f5f5f5',
           'stroke-width': 1,
@@ -1432,7 +1432,7 @@ YUI.add('juju-topology-service', function(Y) {
           },
           width: 96,
           height: 96,
-          transform: 'translate(47, 42)',
+          transform: 'translate(47, 47)',
           'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
         });
 

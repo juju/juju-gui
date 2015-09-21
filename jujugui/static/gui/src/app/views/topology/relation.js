@@ -359,6 +359,30 @@ YUI.add('juju-topology-relation', function(Y) {
             // Style relation lines differently depending on status.
             return 'relation ' + d.aggregatedStatus;
           });
+
+      // The knob connecting the relation line with the FROM service block
+      enter.append('circle')
+            .attr({
+              'cx': 0,
+              'cy': 0,
+              'r': 4,
+              'class': function(d) {
+                // Style relation connector differently depending on status.
+                return 'connector1 ' + d.aggregatedStatus;
+              }
+            });
+
+      // The knob connecting the relation line with the TO service block
+      enter.append('circle')
+            .attr({
+              'cx': 0,
+              'cy': 0,
+              'r': 4,
+              'class': function(d) {
+                // Style relation connector differently depending on status.
+                return 'connector2 ' + d.aggregatedStatus;
+              }
+          });
       enter.append('g')
         .classed('rel-indicator', true)
         .append('image')
@@ -411,7 +435,10 @@ YUI.add('juju-topology-relation', function(Y) {
       var t = connectors[1];
       var length = relation.source._distance(s, t);
       var link = d3.select(this).select('line');
+      var connector1 = d3.select(this).select('.connector1');
+      var connector2 = d3.select(this).select('.connector2');
       var imageSize = 20;
+      var serviceRadius = 90;
 
       link
                 .attr('x1', s[0])
@@ -424,6 +451,30 @@ YUI.add('juju-topology-relation', function(Y) {
             // Style relation lines differently depending on status.
             return 'relation ' + relation.aggregatedStatus;
           });
+
+      // Calculate the angle in radians from both service block
+      var deg = Math.atan2(s[1] - t[1], s[0] - t[0]);
+
+      // Convert the radian to a point[x, y] for the FROM knob
+      var dot1 = [
+        s[0] + -(Math.cos(deg) * serviceRadius),
+        s[1] + -(Math.sin(deg) * serviceRadius)];
+
+      // Convert the radian to a point[x, y] for the TO knob
+      var dot2 = [
+        t[0] + Math.cos(deg) * serviceRadius,
+        t[1] + Math.sin(deg) * serviceRadius];
+
+      // Position the TO knob
+      connector1
+        .attr('cx', dot1[0])
+        .attr('cy', dot1[1]);
+
+      // Position the FROM knob
+      connector2
+        .attr('cx', dot2[0])
+        .attr('cy', dot2[1]);
+
       return link;
     },
 
