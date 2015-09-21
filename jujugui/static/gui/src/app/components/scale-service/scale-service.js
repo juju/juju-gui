@@ -47,7 +47,7 @@ YUI.add('scale-service', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'scale-service__constraints',
+        'scale-service--constraints',
         {
           hidden: !this.state.constraintsVisibility
         }
@@ -110,13 +110,18 @@ YUI.add('scale-service', function() {
 
       return (
         <div className="scale-service">
-          <div className="scale-service__units">
-            <input type="text" name="num-units" onChange={this._updateState}/>
-            <span>units</span>
+          <div className="scale-service--units">
+            <input
+              className="scale-service__input scale-service--units__input"
+              type="text"
+              name="num-units"
+              onChange={this._updateState} />
+            <span className="scale-service--units__span">units</span>
           </div>
-          <div className="scale-service__selector">
+          <div className="scale-service--selector">
             <div>
               <input
+                className="scale-service--selector__radio"
                 name="placement" type="radio"
                 onChange={this._toggleConstraints}
                 id="auto-place-units" />
@@ -124,6 +129,7 @@ YUI.add('scale-service', function() {
             </div>
             <div>
               <input
+                className="scale-service--selector__radio"
                 name="placement" type="radio"
                 onChange={this._toggleConstraints}
                 defaultChecked={true}
@@ -134,21 +140,25 @@ YUI.add('scale-service', function() {
           <div className={this._generateClasses()}>
             <label htmlFor="cpu-constraint">CPU (GHZ)</label>
             <input type="text"
+              className="scale-service__input scale-service--constraints__input"
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={this._updateState}/>
             <label htmlFor="cores-constraint">Cores</label>
             <input type="text"
+              className="scale-service__input scale-service--constraints__input"
               id="cores-constraint"
               name="cores-constraint"
               onChange={this._updateState} />
             <label htmlFor="ram-constraint">Ram (MB)</label>
             <input type="text"
+              className="scale-service__input scale-service--constraints__input"
               id="ram-constraint"
               name="ram-constraint"
               onChange={this._updateState} />
             <label htmlFor="disk-constraint">Disk (MB)</label>
             <input type="text"
+              className="scale-service__input scale-service--constraints__input"
               id="disk-constraint"
               name="disk-constraint"
               onChange={this._updateState} />

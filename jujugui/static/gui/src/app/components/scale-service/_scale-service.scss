@@ -1,51 +1,56 @@
 .scale-service {
 
-    input[type=text] {
-        margin: 20px;
+    &__input {
+        margin: 20px 20px 10px 20px;
         height: 28px;
     }
 
-    &__units {
+    &--units {
         position: relative;
 
-        input[type=text] {
+        &__input {
             background-color: transparent;
+            margin-bottom: 13px;
         }
 
-        span {
+        &__span {
             position: absolute;
             right: 25px;
             top: 30px;
-            color: $mid-grey;
+            color: $warm-grey;
         }
     }
 
-    &__selector {
+    &--selector {
 
-      input[type=radio] {
-        opacity: 1;
-        margin: 10px 0px 10px 15px;
+      & &__radio {
+          opacity: 1;
+          margin: 10px 0px 6px 15px;
 
-        &+label {
-            margin: 0;
-            margin-left: 0;
-        }
+          &+label {
+              color: $cool-grey;
+              margin: 0;
+              margin-left: 0;
+          }
       }
 
       div:last-of-type {
-        margin-bottom: 30px;
+          margin-bottom: 30px;
       }
 
     }
 
-    &__constraints {
+    &--constraints {
 
-        input[type=text] {
+        &__input {
             margin-top: 5px;
         }
 
         label {
             margin-left: 30px;
+            font-size: .875em;
+            margin-bottom: 1px;
+            color: $cool-grey;
         }
     }
 }
