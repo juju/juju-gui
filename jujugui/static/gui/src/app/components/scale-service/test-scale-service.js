@@ -37,7 +37,7 @@ describe('ScaleService', function() {
         serviceId="123" />);
 
     var child = output.props.children[2];
-    assert.equal(child.props.className, 'scale-service__constraints hidden');
+    assert.equal(child.props.className, 'scale-service--constraints hidden');
   });
 
   it('hides and shows constraints based on deployment option', function() {
@@ -49,13 +49,13 @@ describe('ScaleService', function() {
 
     var autoToggle = output.getDOMNode().querySelector('#auto-place-units');
     var constraints =
-      output.getDOMNode().querySelector('.scale-service__constraints.hidden');
+      output.getDOMNode().querySelector('.scale-service--constraints.hidden');
     assert.isNotNull(constraints);
 
     testUtils.Simulate.change(autoToggle);
 
     constraints =
-      output.getDOMNode().querySelector('.scale-service__constraints');
+      output.getDOMNode().querySelector('.scale-service--constraints');
     assert.isNotNull(constraints);
   });
 
