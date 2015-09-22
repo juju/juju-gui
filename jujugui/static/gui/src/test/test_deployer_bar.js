@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('deployer bar view', function() {
+describe.only('deployer bar view', function() {
   var container, db, ECS, ecs, importBundleFile, mockEvent,
       models, testUtils, utils, view, View, views, Y;
 
@@ -234,6 +234,21 @@ describe('deployer bar view', function() {
                  'ECS commit not called');
     assert.equal(container.hasClass('summary-open'), false,
                  'summary-open class still present');
+  });
+
+  it('closes the inspector on deploy', function() {
+    var stubCommit = utils.makeStubMethod(ecs, 'commit');
+    var fireStub = utils.makeStubMethod(view, 'fire');
+    this._cleanups.push(fireStub.reset);
+    this._cleanups.push(stubCommit.reset);
+    view.deploy(mockEvent);
+    assert.equal(fireStub.callCount(), 1);
+    assert.deepEqual(fireStub.lastArguments(), ['changeState', {
+      sectionA: {
+        component: null,
+        metadata: {id: null}}}]);
+    assert.equal(stubCommit.calledOnce(), true,
+                 'ECS commit not called');
   });
 
   it('updates when the change set is modified', function(done) {
