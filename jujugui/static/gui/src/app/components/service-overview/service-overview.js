@@ -99,10 +99,6 @@ YUI.add('service-overview', function() {
         var agentState;
         units.forEach(function(unit) {
           agentState = unit.agent_state || 'uncommitted';
-          // Show started units as uncommitted.
-          if (agentState === 'started') {
-            agentState = 'uncommitted';
-          }
           unitStatuses[agentState] += 1;
         });
         return unitStatuses;
