@@ -827,6 +827,7 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
+      var charm = app.db.charms.getById(service.get('charm'));
       var state = this.state;
       var utils = views.utils;
       React.render(
@@ -836,6 +837,7 @@ YUI.add('juju-gui', function(Y) {
           metadata={metadata}>
           <components.Inspector
             service={service}
+            charm={charm}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
