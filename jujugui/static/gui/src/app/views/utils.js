@@ -2380,6 +2380,18 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Destroy a list of units.
+
+    @method destroyUnits
+    @param {Object} env The current environment.
+    @param {Array} units A list of unit ids.
+    @param {Function} callback A function to call after removal.
+  */
+  utils.destroyUnits = function(env, units, callback) {
+    env.remove_units(units, callback);
+  };
+
+  /**
     Returns the icon path result from either the Juju environment (for local
     charms) or the charmstore (for all others). You should call this method
     instead of the others directly to maintain consistency throughout the app.

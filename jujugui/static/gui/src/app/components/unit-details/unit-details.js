@@ -22,9 +22,38 @@ YUI.add('unit-details', function() {
 
   juju.components.UnitDetails = React.createClass({
 
+    /**
+      Set the confirmation state to closed.
+
+      @method _handleRemoveUnit
+      @param {Object} unit The unit model.
+    */
+    _handleRemoveUnit: function(unit) {
+      this.props.destroyUnits([unit.id], this._navigateToUnits);
+      this._navigateToUnits();
+    },
+
+    /**
+      Set the confirmation state to closed.
+
+      @method _navigateToUnits
+    */
+    _navigateToUnits: function() {
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.serviceId,
+            activeComponent: 'units'
+          }}});
+    },
+
     render: function() {
       var unit = this.props.unit;
-      var buttons = [{title: 'Remove'}];
+      var buttons = [{
+        title: 'Remove',
+        action: this._handleRemoveUnit.bind(this, unit)
+      }];
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
