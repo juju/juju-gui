@@ -136,7 +136,7 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var value = 3;
+    var value = 2;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
