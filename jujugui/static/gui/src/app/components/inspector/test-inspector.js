@@ -41,16 +41,23 @@ describe('Inspector', function() {
         metadata: {}
       }};
     var shallowRenderer = testUtils.createRenderer();
+    var clearState = sinon.stub();
+    var destroyService = sinon.stub();
     shallowRenderer.render(
         <juju.components.Inspector
           service={service}
+          destroyService={destroyService}
+          clearState={clearState}
           appState={appState}>
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[1].props.children,
         <juju.components.ServiceOverview
-          changeState={undefined} service={service} />);
+          changeState={undefined}
+          destroyService={destroyService}
+          clearState={clearState}
+          service={service} />);
   });
 
   it('displays the unit list when the app state calls for it', function() {

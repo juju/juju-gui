@@ -204,16 +204,12 @@ YUI.add('service-overview', function() {
       this._hideConfirmation();
       // db, env, and service have already been bound to this function in
       // the app.js definition.
-      this.props.destroyService(this._navigateToServices);
+      this.props.destroyService();
+      // Fire the clearState event to cancel relation building to destroyed
+      // services.
       this.props.clearState();
-      this._navigateToServices();
-    },
-
-    /**
-      Navigate to the list of added services.
-      @method _navigateToServices
-    */
-    _navigateToServices: function() {
+      // Navigate back to the list of services now that this service has been
+      // removed.
       this.props.changeState({
         sectionA: {
           component: 'services'
