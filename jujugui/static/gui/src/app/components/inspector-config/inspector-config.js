@@ -26,6 +26,30 @@ YUI.add('inspector-config', function() {
     _resetValues: function() {},
     _saveConfig: function() {},
 
+    _generateConfigElements: function() {
+      var charmOptions = this.props.charm.get('options');
+      var serviceConfig = this.props.service.get('config');
+      var configElements = [];
+      Object.keys(charmOptions).forEach((key) => {
+        var option = charmOptions[key];
+        option.key = key;
+        // We use one component for numeric and string values and
+        // another for boolean values.
+        if (option.type === 'boolean') {
+          configElements.push(
+              <juju.components.BooleanConfig
+                option={option}
+                config={serviceConfig[key]} />);
+        } else {
+          configElements.push(
+              <juju.components.StringConfig
+                option={option}
+                config={serviceConfig[key]} />);
+        }
+      });
+      return configElements;
+    },
+
     render: function() {
       var importButton = [{
           title: 'Import config file',
@@ -39,9 +63,12 @@ YUI.add('inspector-config', function() {
         action: this._saveConfig
       }];
 
+      var configElements = this._generateConfigElements();
+
       return (
         <div className="inspector-config">
           <juju.components.ButtonRow buttons={importButton} />
+          {configElements}
           <juju.components.ButtonRow buttons={actionButtons} />
         </div>
       );
@@ -49,5 +76,7 @@ YUI.add('inspector-config', function() {
   });
 
 }, '0.1.0', { requires: [
-  'button-row'
+  'button-row',
+  'string-config',
+  'boolean-config'
 ]});

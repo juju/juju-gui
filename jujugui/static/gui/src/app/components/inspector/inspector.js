@@ -126,7 +126,9 @@ YUI.add('inspector-component', function() {
           state.activeChild = {
             title: 'Configure',
             component:
-              <juju.components.Configuration />,
+              <juju.components.Configuration
+                service={service}
+                charm={nextProps.charm} />,
             backState: {
               sectionA: {
                 component: 'inspector',
