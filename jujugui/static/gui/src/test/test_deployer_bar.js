@@ -236,6 +236,21 @@ describe('deployer bar view', function() {
                  'summary-open class still present');
   });
 
+  it('closes the inspector on deploy', function() {
+    var stubCommit = utils.makeStubMethod(ecs, 'commit');
+    var fireStub = utils.makeStubMethod(view, 'fire');
+    this._cleanups.push(fireStub.reset);
+    this._cleanups.push(stubCommit.reset);
+    view.deploy(mockEvent);
+    assert.equal(fireStub.callCount(), 1);
+    assert.deepEqual(fireStub.lastArguments(), ['changeState', {
+      sectionA: {
+        component: null,
+        metadata: {id: null}}}]);
+    assert.equal(stubCommit.calledOnce(), true,
+                 'ECS commit not called');
+  });
+
   it('updates when the change set is modified', function(done) {
     view.update = function(evt) {
       done();

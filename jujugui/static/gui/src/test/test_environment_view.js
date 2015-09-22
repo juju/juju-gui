@@ -1538,7 +1538,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.destroy();
     });
 
-    describe.only('onboarding integration with the environment', function() {
+    describe('onboarding integration with the environment', function() {
       // XXX This test does not run in Phantom, but passes in the browser.
       // See https://github.com/ariya/phantomjs/issues/12782 for details.
       // Makyo - 2015-09-21
@@ -1554,7 +1554,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             var helpText = container.one('.environment-help');
             assert.equal(false, includedPlus.classed('show'));
             assert.equal(false, helpText.hasClass('shrink'));
-            
+
             var service = new models.Service({
               id: 'service-1',
               charm: 'precise/mysql-1'
