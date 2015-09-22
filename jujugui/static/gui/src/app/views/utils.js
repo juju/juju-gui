@@ -1466,7 +1466,7 @@ YUI.add('juju-view-utils', function(Y) {
     var source = relation.source,
         target = relation.target,
         subordinateModel = true;
-    if (target && source) {
+    if (target && target.model && source && source.model) {
       subordinateModel = target.model.get('subordinate') ||
           source.model.get('subordinate');
     }
