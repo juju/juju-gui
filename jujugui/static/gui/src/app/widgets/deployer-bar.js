@@ -157,6 +157,10 @@ YUI.add('deployer-bar', function(Y) {
       @param {Object} evt The event object.
     */
     deploy: function(evt) {
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: {id: null}}});
       if (evt && typeof evt.halt === 'function') {
         evt.halt();
       }
