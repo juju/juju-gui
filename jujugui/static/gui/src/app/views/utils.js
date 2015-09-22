@@ -1466,7 +1466,7 @@ YUI.add('juju-view-utils', function(Y) {
     var source = relation.source,
         target = relation.target,
         subordinateModel = true;
-    if (target && target.model && source && source.model) {
+    if (target && source) {
       subordinateModel = target.model.get('subordinate') ||
           source.model.get('subordinate');
     }
@@ -2346,6 +2346,16 @@ YUI.add('juju-view-utils', function(Y) {
     if (callback) {
       callback();
     }
+  };
+
+  /**
+    Fire the clearState event.
+
+    @method clearState
+    @param {Object} topo The topology object.
+  */
+  utils.clearState = function(topo) {
+    topo.fire('clearState');
   };
 
   /**

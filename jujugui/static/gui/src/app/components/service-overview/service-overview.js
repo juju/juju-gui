@@ -202,13 +202,22 @@ YUI.add('service-overview', function() {
     */
     _destroyService: function() {
       this._hideConfirmation();
+      // db, env, and service have already been bound to this function in
+      // the app.js definition.
+      this.props.destroyService(this._navigateToServices);
+      this.props.clearState();
+      this._navigateToServices();
+    },
+
+    /**
+      Navigate to the list of added services.
+      @method _navigateToServices
+    */
+    _navigateToServices: function() {
       this.props.changeState({
         sectionA: {
           component: 'services'
         }});
-      // db, env, and service have already been bound to this function in
-      // the app.js definition.
-      this.props.destroyService();
     },
 
     render: function() {
