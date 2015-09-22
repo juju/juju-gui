@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe.only('deployer bar view', function() {
+describe('deployer bar view', function() {
   var container, db, ECS, ecs, importBundleFile, mockEvent,
       models, testUtils, utils, view, View, views, Y;
 
