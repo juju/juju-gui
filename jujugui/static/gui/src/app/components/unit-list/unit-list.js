@@ -84,6 +84,16 @@ YUI.add('unit-list', function() {
     },
 
     /**
+      Remove the selected units.
+
+      @method _handleRemoveUnits
+    */
+    _handleRemoveUnits: function() {
+      var units = [];
+      this.props.destroyUnits(units);
+    },
+
+    /**
       Generates a list of unit components.
 
       @method _generateUnitList
@@ -111,6 +121,10 @@ YUI.add('unit-list', function() {
 
     render: function() {
       var units = this._generateUnitList(this.props.units.toArray());
+      var buttons = [{
+        title: 'Remove',
+        action: this._handleRemoveUnits
+      }];
       return (
         <div className="unit-list">
           <div className="unit-list__actions">
@@ -121,6 +135,8 @@ YUI.add('unit-list', function() {
           <ul>
             {units}
           </ul>
+          <juju.components.ButtonRow
+            buttons={buttons} />
         </div>
       );
     }
@@ -128,5 +144,6 @@ YUI.add('unit-list', function() {
   });
 
 }, '0.1.0', { requires: [
+  'button-row',
   'unit-list-item'
 ]});

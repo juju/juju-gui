@@ -23,7 +23,7 @@ YUI.add('unit-details', function() {
   juju.components.UnitDetails = React.createClass({
 
     /**
-      Set the confirmation state to closed.
+      Handle removing a unit if the button has been clicked.
 
       @method _handleRemoveUnit
       @param {Object} unit The unit model.
@@ -34,7 +34,7 @@ YUI.add('unit-details', function() {
     },
 
     /**
-      Set the confirmation state to closed.
+      Navigate to the unit list for the unit's service.
 
       @method _navigateToUnits
     */
