@@ -118,7 +118,9 @@ YUI.add('juju-charm-models', function(Y) {
    * @extends {Y.Model}
    *
    */
-  models.Charm = Y.Base.create('browser-charm', Y.Model, [], {
+  models.Charm = Y.Base.create('browser-charm', Y.Model, [
+    models.SearchResult
+  ], {
     /**
      * Parse the relations ATTR from the api into specific provides/requires
      * information.
@@ -367,7 +369,8 @@ YUI.add('juju-charm-models', function(Y) {
         ids[key] = keepId;
       });
       return ids;
-    }
+    },
+
   }, {
     /**
       Static to indicate the type of entity so that other code
@@ -720,7 +723,26 @@ YUI.add('juju-charm-models', function(Y) {
 
       summary: {},
       tested_providers: {},
-      url: {}
+      url: {},
+      iconPath: {
+        /**
+         * Provides the URL path to the icon image.
+         *
+         * @method iconUrl.getter
+         *
+         */
+        getter: function() {
+          var owner = this.get('owner');
+          var revision = this.get('revision');
+          revision = Y.Lang.isValue(revision) ? '-' + revision : '';
+          return [
+            (owner ? '~' + owner : ''),
+            this.get('series'),
+            (this.get('package_name') + revision),
+            'icon.svg'
+          ].join('/');
+        }
+      }
     }
   });
 
@@ -841,6 +863,7 @@ YUI.add('juju-charm-models', function(Y) {
 }, '0.1.0', {
   requires: [
     'model',
-    'model-list'
+    'model-list',
+    'search-result-extension'
   ]
 });
