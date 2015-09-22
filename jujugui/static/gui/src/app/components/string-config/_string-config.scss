@@ -1,0 +1,13 @@
+.string-config {
+    margin: 10px;
+
+    &--value {
+        border: 1px solid $bws-border;
+        margin: 10px 0;
+        padding: 8px 10px;
+    }
+
+    &--description {
+      color: $cool-grey;
+    }
+}
