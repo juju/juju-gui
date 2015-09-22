@@ -8,11 +8,11 @@ chai.config.truncateThreshold = 0;
 describe('juju.js', function() {
 
     it('exists', function() {
-        var cs = new jujulib.charmstore();
-        var env = new jujulib.environment();
-        var identity = new jujulib.identity();
-        assert.isTrue(cs instanceof jujulib.charmstore);
-        assert.isTrue(env instanceof jujulib.environment);
-        assert.isTrue(identity instanceof jujulib.identity);
+        var cs = new window.jujulib.charmstore();
+        var env = new window.jujulib.environment();
+        var identity = new window.jujulib.identity();
+        assert.isTrue(cs instanceof window.jujulib.charmstore);
+        assert.isTrue(env instanceof window.jujulib.environment);
+        assert.isTrue(identity instanceof window.jujulib.identity);
     });
 });

@@ -1,3 +1,4 @@
+;
 /*
 Copyright (C) 2015 Canonical Ltd.
 
@@ -5,16 +6,18 @@ XXX jcssackett 2015-09-18: Licensing for juju.js? It's different then the
 licensing for the GUI.
 */
 
-;
+'use strict';
 
-var jujulib = (function (exports) {
+var module = module;
 
-    var juju = {
+(function (exports) {
+
+    var jujulib = {
         charmstore: function() {},
         environment: function() {},
         identity: function() {}
     };
 
-    return juju;
+    exports.jujulib = jujulib;
 
-})(typeof exports === 'undefined'? this.jujulib={}: exports);
+}((module && module.exports) ? module.exports : this));
