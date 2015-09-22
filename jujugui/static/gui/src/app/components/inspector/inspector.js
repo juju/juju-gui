@@ -144,6 +144,19 @@ YUI.add('inspector-component', function() {
                   activeComponent: 'units'
                 }}}};
         break;
+        case 'config':
+          state.activeChild = {
+            title: 'Configure',
+            component:
+              <juju.components.Configuration />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: undefined
+                }}}};
+        break;
       }
       return state;
     },
@@ -176,6 +189,7 @@ YUI.add('inspector-component', function() {
     'unit-details',
     'scale-service',
     'unit-list',
-    'service-overview'
-    ]
+    'service-overview',
+    'inspector-config'
+  ]
 });

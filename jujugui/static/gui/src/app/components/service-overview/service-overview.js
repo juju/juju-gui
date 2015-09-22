@@ -133,7 +133,17 @@ YUI.add('service-overview', function() {
 
       actions.push({
           title: 'Configure',
-          icon: this.icons.configure
+          icon: this.icons.configure,
+          action: this._navigate,
+          state: {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: service.get('id'),
+                activeComponent: 'config'
+              }
+            }
+          }
         },
         {
           title: 'Relations',
