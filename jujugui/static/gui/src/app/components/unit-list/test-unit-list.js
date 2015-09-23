@@ -43,21 +43,26 @@ describe('UnitList', () => {
         <juju.components.UnitList
           units={unitsList} />);
     var children = output.props.children[1].props.children;
+    var refs = [
+      'UnitListItem-' + units[0].id,
+      'UnitListItem-' + units[1].id
+    ];
     assert.deepEqual(children, [
       <juju.components.UnitListItem
         key="select-all"
         label="Select all units"
+        checked={false}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
-        ref={units[0].displayName}
+        ref={refs[0]}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
         checked={false}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
-        ref={units[1].displayName}
+        ref={refs[1]}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
         checked={false}
@@ -108,21 +113,26 @@ describe('UnitList', () => {
     output = shallowRenderer.getRenderOutput();
 
     var children = output.props.children[1].props.children;
+    var refs = [
+      'UnitListItem-' + units[0].id,
+      'UnitListItem-' + units[1].id
+    ];
     assert.deepEqual(children, [
       <juju.components.UnitListItem
         key="select-all"
         label="Select all units"
+        checked={true}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
-        ref={units[0].displayName}
+        ref={refs[0]}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
         checked={true}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
-        ref={units[1].displayName}
+        ref={refs[1]}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
         checked={true}
@@ -204,8 +214,8 @@ describe('UnitList', () => {
           changeState={changeState}
           serviceId="service1"
           units={unitsList} />);
-    output.refs[units[0].id].setState({checked: true});
-    output.refs[units[2].id].setState({checked: true});
+    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
+    output.refs['UnitListItem-' + units[2].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'inspector-button');
     testUtils.Simulate.click(button);
@@ -231,10 +241,10 @@ describe('UnitList', () => {
           changeState={changeState}
           serviceId="service1"
           units={unitsList} />);
-    output.refs[units[0].id].setState({checked: true});
+    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'inspector-button');
     testUtils.Simulate.click(button);
-    assert.isFalse(output.refs[units[0].id].state.checked);
+    assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
   });
 });

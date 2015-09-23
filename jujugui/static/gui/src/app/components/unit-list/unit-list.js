@@ -92,9 +92,10 @@ YUI.add('unit-list', function() {
       var units = [];
       var refs = this.refs;
       Object.keys(refs).forEach(function (ref) {
-        var isInstance = refs[ref] instanceof juju.components.UnitListItem;
+        var refParts = ref.split('-');
+        var isInstance = refParts[0] === 'UnitListItem';
         if (isInstance && refs[ref].state.checked) {
-          units.push(ref);
+          units.push(refParts[1]);
         }
       });
       this.props.destroyUnits(units);
@@ -113,13 +114,15 @@ YUI.add('unit-list', function() {
         <juju.components.UnitListItem
           key='select-all'
           label='Select all units'
+          checked={this.state.selectAll}
           whenChanged={this._selectAllUnits}/>
       ];
       units.forEach((unit) => {
+        var ref = 'UnitListItem-' + unit.id;
         components.push(
           <juju.components.UnitListItem
             key={unit.displayName}
-            ref={unit.displayName}
+            ref={ref}
             label={unit.displayName}
             action={this._unitItemAction}
             checked={this.state.selectAll}
