@@ -69,8 +69,13 @@ def config(request):
     settings = request.registry.settings
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
+    # If sandbox is enabled then set the password to "admin" so that the
+    # Juju GUI will automatically log in.
+    user, password = 'user-admin', 'admin'
+    if not sandbox_enabled:
+        user, password = settings['jujugui.user'], settings['jujugui.password']
     env_uuid = request.matchdict.get('uuid', 'sandbox')
-    baseUrl = settings.get('jujugui.baseUrl')
+    baseUrl = settings['jujugui.baseUrl']
     if baseUrl is None:
         if env_uuid == 'sandbox':
             baseUrl = ''
@@ -78,7 +83,7 @@ def config(request):
             baseUrl = '/u/anonymous/{}'.format(env_uuid)
     options = {
         # Base YUI options.
-        'auth': settings.get('jujugui.auth'),
+        'auth': settings['jujugui.auth'],
         'serverRouting': False,
         'html5': True,
         'container': '#main',
@@ -93,10 +98,9 @@ def config(request):
         'charmstoreURL': settings['jujugui.charmstore_url'],
         # WebSocket connection to the Juju API.
         'socket_protocol': 'wss',
-        'user': 'user-admin',
-        # If sandbox is enabled then set the password to "admin" so that the
-        # Juju GUI will automatically log in.
-        'password': 'admin' if sandbox_enabled else None,
+        'socket_path': settings['jujugui.socket_path'],
+        'user': user,
+        'password': password,
         'jujuEnvUUID': request.matchdict.get('uuid', 'sandbox'),
         # Enable/disable sandbox (demonstration) mode.
         'sandbox': sandbox_enabled,

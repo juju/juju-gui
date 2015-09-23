@@ -10,37 +10,48 @@ from jujugui import options
 class TestUpdate(unittest.TestCase):
 
     default_settings = {
+        'jujugui.auth': None,
+        'jujugui.baseUrl': None,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
-        'jujugui.ga_key': '',
-        'jujugui.sandbox': False,
-        'jujugui.raw': False,
         'jujugui.combine': True,
+        'jujugui.ga_key': '',
+        'jujugui.password': None,
+        'jujugui.raw': False,
+        'jujugui.sandbox': False,
+        'jujugui.socket_path': None,
+        'jujugui.user': '',
     }
 
     def test_default_values(self):
         settings = {}
         options.update(settings)
         defaults = deepcopy(self.default_settings)
-        defaults['jujugui.baseUrl'] = None
-        defaults['jujugui.auth'] = None
         self.assertEqual(defaults, settings)
 
     def test_customized_values(self):
         expected_settings = {
+            'jujugui.auth': 'blob',
+            'jujugui.baseUrl': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
-            'jujugui.ga_key': 'my-key',
-            'jujugui.sandbox': True,
-            'jujugui.raw': False,
             'jujugui.combine': True,
-            'jujugui.baseUrl': None,
-            'jujugui.auth': None,
+            'jujugui.ga_key': 'my-key',
+            'jujugui.password': 'Secret!',
+            'jujugui.raw': False,
+            'jujugui.sandbox': True,
+            'jujugui.socket_path': '1.2.3.4:17070',
+            'jujugui.user': 'who',
         }
         settings = {
+            'jujugui.auth': 'blob',
+            'jujugui.baseUrl': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
-            'jujugui.ga_key': 'my-key',
-            'jujugui.sandbox': 'on',
-            'jujugui.raw': 'off',
             'jujugui.combine': 'true',
+            'jujugui.ga_key': 'my-key',
+            'jujugui.password': 'Secret!',
+            'jujugui.raw': 'off',
+            'jujugui.sandbox': 'on',
+            'jujugui.socket_path': '1.2.3.4:17070',
+            'jujugui.user': 'who',
         }
         options.update(settings)
         self.assertEqual(expected_settings, settings)
@@ -49,8 +60,6 @@ class TestUpdate(unittest.TestCase):
         settings = dict((k, '') for k in self.default_settings)
         options.update(settings)
         defaults = deepcopy(self.default_settings)
-        defaults['jujugui.baseUrl'] = None
-        defaults['jujugui.auth'] = None
         self.assertEqual(defaults, settings)
 
     def test_none_returned(self):
