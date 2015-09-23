@@ -223,7 +223,8 @@ describe('ServiceOverview', function() {
           },
         {
           title: 'Confirm',
-          type: 'confirm'
+          type: 'confirm',
+          action: output.props.children[2].props.buttons[1].action
           }
         ];
     var confirmMessage = 'Are you sure you want to destroy the service? ' +
@@ -249,7 +250,8 @@ describe('ServiceOverview', function() {
           },
         {
           title: 'Confirm',
-          type: 'confirm'
+          type: 'confirm',
+          action: output.props.children[2].props.buttons[1].action
           }
         ];
     // Fire the click action.
@@ -279,7 +281,8 @@ describe('ServiceOverview', function() {
           },
         {
           title: 'Confirm',
-          type: 'confirm'
+          type: 'confirm',
+          action: output.props.children[2].props.buttons[1].action
           }
         ];
     // Open the confirmation.
@@ -295,5 +298,77 @@ describe('ServiceOverview', function() {
         message={confirmMessage}
         open={false}
         buttons={buttons} />);
+  });
+
+  it('hides the confirmation when confirm button is clicked', function() {
+    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+        'This cannot be undone.';
+    var clearState = sinon.stub();
+    var destroyService = sinon.stub();
+    var changeState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        destroyService={destroyService}
+        clearState={clearState}
+        changeState={changeState}
+        service={fakeService} />, true);
+    var output = shallowRenderer.getRenderOutput();
+      var buttons = [
+        {
+          title: 'Cancel',
+          action: output.props.children[2].props.buttons[0].action
+          },
+        {
+          title: 'Confirm',
+          type: 'confirm',
+          action: output.props.children[2].props.buttons[1].action
+          }
+        ];
+    // Open the confirmation.
+    output.props.children[1].props.buttons[0].action();
+    // Simulate the confirm click.
+    output.props.children[2].props.buttons[1].action();
+    shallowRenderer.render(
+      <juju.components.ServiceOverview
+        destroyService={destroyService}
+        clearState={clearState}
+        changeState={changeState}
+        service={fakeService} />);
+    output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children[2],
+      <juju.components.InspectorConfirm
+        message={confirmMessage}
+        open={false}
+        buttons={buttons} />);
+  });
+
+  it('calls the destroy service method if confirm is clicked', function() {
+    var clearState = sinon.stub();
+    var destroyService = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        destroyService={destroyService}
+        clearState={clearState}
+        changeState={changeState}
+        service={fakeService} />);
+    // Simulate the confirm click.
+    output.props.children[2].props.buttons[1].action();
+    assert.equal(destroyService.callCount, 1);
+  });
+
+  it('calls clearState if confirm is clicked', function() {
+    var clearState = sinon.stub();
+    var destroyService = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        destroyService={destroyService}
+        clearState={clearState}
+        changeState={changeState}
+        service={fakeService} />);
+    // Simulate the confirm click.
+    output.props.children[2].props.buttons[1].action();
+    assert.equal(clearState.callCount, 1);
   });
 });

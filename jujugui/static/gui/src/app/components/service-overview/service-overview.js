@@ -195,6 +195,27 @@ YUI.add('service-overview', function() {
       this.setState({confirmationOpen: false});
     },
 
+    /**
+      Handle destroying the service from the button click.
+
+      @method _destroyService
+    */
+    _destroyService: function() {
+      this._hideConfirmation();
+      // db, env, and service have already been bound to this function in
+      // the app.js definition.
+      this.props.destroyService();
+      // Fire the clearState event to cancel relation building to destroyed
+      // services.
+      this.props.clearState();
+      // Navigate back to the list of services now that this service has been
+      // removed.
+      this.props.changeState({
+        sectionA: {
+          component: 'services'
+        }});
+    },
+
     render: function() {
       this._generateActions(this.props.service);
       var buttons = [{
@@ -210,7 +231,8 @@ YUI.add('service-overview', function() {
           },
         {
           title: 'Confirm',
-          type: 'confirm'
+          type: 'confirm',
+          action: this._destroyService
           }
         ];
       return (

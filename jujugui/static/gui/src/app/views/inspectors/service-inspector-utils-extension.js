@@ -20,6 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('service-inspector-utils-extension', function(Y) {
   var ns = Y.namespace('juju.views');
+  var utils = Y.namespace('juju.views.utils');
 
   /**
     Extension for the ghost and service inspectors for the methods that they
@@ -153,62 +154,27 @@ YUI.add('service-inspector-utils-extension', function(Y) {
       @return {undefined} Nothing.
     */
     initiateServiceDestroy: function() {
-      var model = this.get('model');
-      var db = this.get('db');
-      if (model.name === 'service') {
-        var env = this.get('env');
-        env.destroy_service(model.get('id'),
-            Y.bind(this._destroyServiceCallback, this, model, db),
-            {modelId: null});
-      } else if (model.get('pending')) {
-        db.services.remove(model);
-        model.destroy();
-      } else {
-        throw new Error('Unexpected model type: ' + model.name);
-      }
+      utils.destroyService(this.get('db'), this.get('env'), this.get('model'),
+          this.serviceDestroyCallback.bind(this));
     },
 
     /**
-      React to a service being destroyed (or not).
+      Callback to change the inspector state after the service has been
+      removed.
 
-      @method _destroyServiceCallback
-      @param {Object} service The service we attempted to destroy.
-      @param {Object} db The database responsible for storing the service.
-      @param {Object} evt The event describing the destruction (or lack
-        thereof).
+      @method serviceDestroyCallback
     */
-    _destroyServiceCallback: function(service, db, evt) {
-      if (evt.err) {
-        // If something bad happend we need to alert the user.
-        db.notifications.add(
-            new Y.juju.models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + evt.service_name,
-              level: 'error',
-              link: undefined,
-              modelId: service
-            })
-        );
-      } else {
-        // Remove the relations from the database (they will be removed from
-        // the state server by Juju, so we don't need to interact with env).
-        db.relations.remove(service.get('relations'));
-        db.notifications.add({
-          title: 'Destroying service',
-          message: 'Service: ' + evt.service_name + ' is being destroyed.',
-          level: 'important'
-        });
-        this.fire('changeState', {
-          sectionA: {
-            component: null,
-            metadata: { id: null }}});
-        // The emptySectionA method will destroy this inspector.
-      }
+    serviceDestroyCallback: function() {
+      // The emptySectionA method will destroy this inspector.
+      this.fire('changeState', {
+        sectionA: {
+          component: null,
+          metadata: { id: null }}});
     }
   };
 
   ns.ServiceInspectorUtilsExtension = ServiceInspectorUtilsExtension;
 
 }, '', {
-  requires: []
+  requires: ['juju-view-utils']
 });

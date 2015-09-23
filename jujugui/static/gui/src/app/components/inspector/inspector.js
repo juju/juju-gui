@@ -59,6 +59,8 @@ YUI.add('inspector-component', function() {
           state.activeChild = {
             title: service.get('name'),
             component: <juju.components.ServiceOverview
+              destroyService={this.props.destroyService}
+              clearState={this.props.clearState}
               changeState={this.props.changeState}
               service={service} />,
             backState: {

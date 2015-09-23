@@ -1738,4 +1738,84 @@ describe('utilities', function() {
 
   });
 
+  describe('destroyService', function() {
+    var utils, testUtils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    it('responds to service removal failure by alerting the user', function() {
+      var notificationAdded;
+      var SERVICE_NAME = 'the name of the service being removed';
+      var evt = {
+        err: true,
+        service_name: SERVICE_NAME
+      };
+      var service = ['service', 'mediawiki'];
+
+      var db = {
+        notifications: {
+          add: function(notification) {
+            var attrs = notification.getAttrs();
+            // The notification has the required attributes.
+            assert.isTrue(attrs.hasOwnProperty('title'));
+            assert.isTrue(attrs.hasOwnProperty('message'));
+            // The service name is mentioned in the error message.
+            assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
+            assert.equal(attrs.level, 'error');
+            assert.deepEqual(attrs.modelId, ['service', 'mediawiki']);
+            notificationAdded = true;
+          }
+        }
+      };
+
+      utils._destroyServiceCallback(service, db, null, evt);
+      assert.isTrue(notificationAdded);
+    });
+
+    it('removes the relations when the service is destroyed', function() {
+      var notificationAdded = false;
+      var SERVICE_NAME = 'the name of the service being removed';
+      var evt = {
+        err: false,
+        service_name: SERVICE_NAME
+      };
+      var service = {
+        get: function () {
+          return [];
+        }
+      };
+
+      var db = {
+        notifications: {
+          add: function(attrs) {
+            // The notification has the required attributes.
+            assert.equal(attrs.hasOwnProperty('title'), true,
+                'Does not have a title');
+            assert.equal(attrs.hasOwnProperty('message'), true,
+                'Does not have a message');
+            // The service name is mentioned in the error message.
+            assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
+            assert.equal(attrs.level, 'important');
+            notificationAdded = true;
+          }
+        },
+        relations: {
+          remove: testUtils.makeStubFunction()
+        }
+      };
+
+      utils._destroyServiceCallback(service, db, null, evt);
+      assert.isTrue(notificationAdded);
+      // Check that relations were removed.
+      assert.equal(db.relations.remove.calledOnce(), true,
+          'Remove relations not called');
+    });
+  });
+
 })();
