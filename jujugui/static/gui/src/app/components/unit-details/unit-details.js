@@ -26,10 +26,9 @@ YUI.add('unit-details', function() {
       Handle removing a unit if the button has been clicked.
 
       @method _handleRemoveUnit
-      @param {Object} unit The unit model.
     */
-    _handleRemoveUnit: function(unit) {
-      this.props.destroyUnits([unit.id]);
+    _handleRemoveUnit: function() {
+      this.props.destroyUnits([this.props.unit.id]);
       // Navigate to the unit list for the unit's service.
       this.props.changeState({
         sectionA: {
@@ -44,7 +43,7 @@ YUI.add('unit-details', function() {
       var unit = this.props.unit;
       var buttons = [{
         title: 'Remove',
-        action: this._handleRemoveUnit.bind(this, unit)
+        action: this._handleRemoveUnit
       }];
       return (
         <div className="unit-details">
