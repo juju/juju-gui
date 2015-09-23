@@ -301,7 +301,7 @@ YUI.add('juju-app-state', function(Y) {
               urlParts.push(id);
             }
             if (metadata.activeComponent) {
-              urlParts.push(metadata.activeComponent + '/');
+              urlParts.push(metadata.activeComponent);
             }
             if (metadata.unit) {
               if (!window.flags || !window.flags.react) {
