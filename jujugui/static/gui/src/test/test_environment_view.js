@@ -355,7 +355,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.render();
           var serviceBlock = container.one('.service').one('circle');
           serviceBlock.getAttribute('r').should.equal('90');
-          serviceBlock.getAttribute('cy').should.equal('90');
+          serviceBlock.getAttribute('cy').should.equal('95');
           serviceBlock.getAttribute('cx').should.equal('95');
         });
 
@@ -378,7 +378,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               .should.equal(2);
 
           // Count all the subordinate relations.
-          container.all('.rel-group .subordinate').size()
+          container.all('.rel-group .relation.subordinate').size()
               .should.equal(1);
 
           // Verify that the paths render 'properly' where this

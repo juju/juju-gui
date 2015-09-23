@@ -550,10 +550,10 @@ th {
 
 .relation {
     stroke: rgb(167, 167, 167);
-    stroke-width: 2px;
+    stroke-width: 1px;
 
     &.error {
-        stroke: #cc3333;
+        stroke: $error;
     }
     &.subordinate {
         stroke: rgb(167, 167, 167);
@@ -562,10 +562,10 @@ th {
         stroke: #38B44A;
     }
     &.pending {
-        stroke: #e2e2e2;
+        stroke: $uncommitted;
     }
     &.pending-healthy, &.pending-error {
-        stroke: #26b4e9;
+        stroke: $uncommitted;
     }
     &.pending-relation {
         stroke: #faaf40;
@@ -579,6 +579,38 @@ th {
     }
     &.subordinate-relation {
         stroke: #3333cc;
+    }
+}
+.connector1,
+.connector2 {
+
+    &.error {
+        fill: $error;
+    }
+    &.subordinate {
+        fill: rgb(167, 167, 167);
+    }
+    &.healthy {
+        fill: #38B44A;
+    }
+    &.pending {
+        fill: $uncommitted;
+    }
+    &.pending-healthy, &.pending-error {
+        fill: $uncommitted;
+    }
+    &.pending-relation {
+        fill: #faaf40;
+
+        &.dragging {
+            fill: #fa6a40
+        }
+    }
+    &.unused {
+        visibility: hidden;
+    }
+    &.subordinate-relation {
+        fill: #3333cc;
     }
 }
 .visibility-classes {
@@ -727,7 +759,7 @@ g.unit {
   }
 
   .uncommitted {
-    fill: #19b6ee;
+    fill: $uncommitted;
   }
 }
 
