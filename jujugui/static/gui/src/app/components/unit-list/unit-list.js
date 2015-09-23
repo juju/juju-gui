@@ -84,6 +84,24 @@ YUI.add('unit-list', function() {
     },
 
     /**
+      Remove the selected units.
+
+      @method _handleRemoveUnits
+    */
+    _handleRemoveUnits: function() {
+      var units = [];
+      var refs = this.refs;
+      Object.keys(refs).forEach(function (ref) {
+        var isInstance = ref.split('-')[0] === 'UnitListItem';
+        if (isInstance && refs[ref].state.checked) {
+          units.push(ref.slice(ref.indexOf('-') + 1));
+        }
+      });
+      this.props.destroyUnits(units);
+      this._selectAllUnits(false);
+    },
+
+    /**
       Generates a list of unit components.
 
       @method _generateUnitList
@@ -95,12 +113,15 @@ YUI.add('unit-list', function() {
         <juju.components.UnitListItem
           key='select-all'
           label='Select all units'
+          checked={this.state.selectAll}
           whenChanged={this._selectAllUnits}/>
       ];
       units.forEach((unit) => {
+        var ref = 'UnitListItem-' + unit.id;
         components.push(
           <juju.components.UnitListItem
             key={unit.displayName}
+            ref={ref}
             label={unit.displayName}
             action={this._unitItemAction}
             checked={this.state.selectAll}
@@ -111,6 +132,10 @@ YUI.add('unit-list', function() {
 
     render: function() {
       var units = this._generateUnitList(this.props.units.toArray());
+      var buttons = [{
+        title: 'Remove',
+        action: this._handleRemoveUnits
+      }];
       return (
         <div className="unit-list">
           <div className="unit-list__actions">
@@ -121,6 +146,8 @@ YUI.add('unit-list', function() {
           <ul>
             {units}
           </ul>
+          <juju.components.ButtonRow
+            buttons={buttons} />
         </div>
       );
     }
@@ -128,5 +155,6 @@ YUI.add('unit-list', function() {
   });
 
 }, '0.1.0', { requires: [
+  'button-row',
   'unit-list-item'
 ]});

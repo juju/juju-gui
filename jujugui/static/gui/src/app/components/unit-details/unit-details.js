@@ -22,9 +22,29 @@ YUI.add('unit-details', function() {
 
   juju.components.UnitDetails = React.createClass({
 
+    /**
+      Handle removing a unit if the button has been clicked.
+
+      @method _handleRemoveUnit
+    */
+    _handleRemoveUnit: function() {
+      this.props.destroyUnits([this.props.unit.id]);
+      // Navigate to the unit list for the unit's service.
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.serviceId,
+            activeComponent: 'units'
+          }}});
+    },
+
     render: function() {
       var unit = this.props.unit;
-      var buttons = [{title: 'Remove'}];
+      var buttons = [{
+        title: 'Remove',
+        action: this._handleRemoveUnit
+      }];
       return (
         <div className="unit-details">
           <div className="unit-details__properties">

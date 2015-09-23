@@ -43,19 +43,26 @@ describe('UnitList', () => {
         <juju.components.UnitList
           units={unitsList} />);
     var children = output.props.children[1].props.children;
+    var refs = [
+      'UnitListItem-' + units[0].id,
+      'UnitListItem-' + units[1].id
+    ];
     assert.deepEqual(children, [
       <juju.components.UnitListItem
         key="select-all"
         label="Select all units"
+        checked={false}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
+        ref={refs[0]}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
         checked={false}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
+        ref={refs[1]}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
         checked={false}
@@ -106,19 +113,26 @@ describe('UnitList', () => {
     output = shallowRenderer.getRenderOutput();
 
     var children = output.props.children[1].props.children;
+    var refs = [
+      'UnitListItem-' + units[0].id,
+      'UnitListItem-' + units[1].id
+    ];
     assert.deepEqual(children, [
       <juju.components.UnitListItem
         key="select-all"
         label="Select all units"
+        checked={true}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
+        ref={refs[0]}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
         checked={true}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
+        ref={refs[1]}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
         checked={true}
@@ -158,5 +172,79 @@ describe('UnitList', () => {
         }
       }
     });
+  });
+
+  it('displays a remove button', function() {
+    var unitsList = {
+      toArray: () => []
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          units={unitsList} />);
+    var buttons = [{
+      title: 'Remove',
+      action: output.props.children[2].props.buttons[0].action
+    }];
+    assert.deepEqual(output.props.children[2],
+      <juju.components.ButtonRow
+        buttons={buttons} />);
+  });
+
+  it('can remove the selected units', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      id: 'mysql/2'
+    }];
+    var unitsList = {
+      toArray: () => units
+    };
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          destroyUnits={destroyUnits}
+          changeState={changeState}
+          serviceId="service1"
+          units={unitsList} />);
+    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
+    output.refs['UnitListItem-' + units[2].id].setState({checked: true});
+    var button = testUtils.findRenderedDOMComponentWithClass(
+        output, 'inspector-button');
+    testUtils.Simulate.click(button);
+    assert.equal(destroyUnits.callCount, 1);
+    assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
+  });
+
+  it('deselects all units after removal', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }];
+    var unitsList = {
+      toArray: () => units
+    };
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          destroyUnits={destroyUnits}
+          changeState={changeState}
+          serviceId="service1"
+          units={unitsList} />);
+    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
+    var button = testUtils.findRenderedDOMComponentWithClass(
+        output, 'inspector-button');
+    testUtils.Simulate.click(button);
+    assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
   });
 });

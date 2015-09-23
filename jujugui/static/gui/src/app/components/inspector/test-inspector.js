@@ -62,6 +62,7 @@ describe('Inspector', function() {
 
   it('displays the unit list when the app state calls for it', function() {
     var changeStateStub = sinon.stub();
+    var destroyUnits = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns(['units']);
@@ -77,6 +78,7 @@ describe('Inspector', function() {
         <juju.components.Inspector
           service={service}
           appState={appState}
+          destroyUnits={destroyUnits}
           changeState={changeStateStub}>
         </juju.components.Inspector>);
 
@@ -85,10 +87,13 @@ describe('Inspector', function() {
         <juju.components.UnitList
           serviceId="demo"
           units={['units']}
+          destroyUnits={destroyUnits}
           changeState={changeStateStub} />);
   });
 
   it('displays the unit details when the app state calls for it', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
@@ -106,11 +111,16 @@ describe('Inspector', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
           service={service}
+          destroyUnits={destroyUnits}
+          changeState={changeState}
           appState={appState}>
         </juju.components.Inspector>);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.UnitDetails
+          destroyUnits={destroyUnits}
+          serviceId="demo"
+          changeState={changeState}
           unit="unit" />);
   });
 

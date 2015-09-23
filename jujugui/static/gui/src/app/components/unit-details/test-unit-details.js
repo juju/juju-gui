@@ -33,7 +33,8 @@ describe('UnitDetails', function() {
     fakeUnit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
-      agent_state: 'started'
+      agent_state: 'started',
+      id: 'unit1'
     };
   });
 
@@ -59,9 +60,45 @@ describe('UnitDetails', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         unit={fakeUnit} />);
-    var buttons = [{title: 'Remove'}];
+    var buttons = [{
+      title: 'Remove',
+      action: output.props.children[1].props.buttons[0].action
+    }];
     assert.deepEqual(output.props.children[1],
       <juju.components.ButtonRow
         buttons={buttons} />);
+  });
+
+  it('destroys the unit when the destroy button is clicked', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={destroyUnits}
+        changeState={changeState}
+        unit={fakeUnit} />);
+    output.props.children[1].props.buttons[0].action();
+    assert.equal(destroyUnits.callCount, 1);
+    assert.deepEqual(destroyUnits.args[0][0], [fakeUnit.id]);
+  });
+
+  it('navigates to the unit list when the unit is destroyed', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={destroyUnits}
+        changeState={changeState}
+        serviceId="service1"
+        unit={fakeUnit} />);
+    output.props.children[1].props.buttons[0].action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'service1',
+          activeComponent: 'units'
+        }}});
   });
 });
