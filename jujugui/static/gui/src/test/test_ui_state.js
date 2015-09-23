@@ -1033,10 +1033,11 @@ describe('UI State object', function() {
         sectionB: {}
       }
     }, {
-      '/inspector/service123/13/': {
+      '/inspector/service123/unit/13/': {
         sectionA: {
           component: 'inspector',
           metadata: {
+            activeComponent: 'unit',
             id: 'service123',
             unit: '13'
           }
