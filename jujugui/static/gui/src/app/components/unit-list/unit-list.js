@@ -90,7 +90,15 @@ YUI.add('unit-list', function() {
     */
     _handleRemoveUnits: function() {
       var units = [];
+      var refs = this.refs;
+      Object.keys(refs).forEach(function (ref) {
+        var isInstance = refs[ref] instanceof juju.components.UnitListItem;
+        if (isInstance && refs[ref].state.checked) {
+          units.push(ref);
+        }
+      });
       this.props.destroyUnits(units);
+      this._selectAllUnits(false);
     },
 
     /**
@@ -111,6 +119,7 @@ YUI.add('unit-list', function() {
         components.push(
           <juju.components.UnitListItem
             key={unit.displayName}
+            ref={unit.displayName}
             label={unit.displayName}
             action={this._unitItemAction}
             checked={this.state.selectAll}

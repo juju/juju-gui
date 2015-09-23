@@ -75,6 +75,7 @@ YUI.add('inspector-component', function() {
               <juju.components.UnitList
                 serviceId={service.get('id')}
                 units={service.get('units')}
+                destroyUnits={this.props.destroyUnits}
                 changeState={this.props.changeState} />,
             backState: {
               sectionA: {
