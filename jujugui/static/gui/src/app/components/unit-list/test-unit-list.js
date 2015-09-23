@@ -50,12 +50,14 @@ describe('UnitList', () => {
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
+        ref={units[0].displayName}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
         checked={false}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
+        ref={units[1].displayName}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
         checked={false}
@@ -113,12 +115,14 @@ describe('UnitList', () => {
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
+        ref={units[0].displayName}
         label={units[0].displayName}
         action={output.props.children[1].props.children[1].props.action}
         checked={true}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
+        ref={units[1].displayName}
         label={units[1].displayName}
         action={output.props.children[1].props.children[2].props.action}
         checked={true}

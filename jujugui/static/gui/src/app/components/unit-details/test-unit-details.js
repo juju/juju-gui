@@ -59,7 +59,10 @@ describe('UnitDetails', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
         unit={fakeUnit} />);
-    var buttons = [{title: 'Remove'}];
+    var buttons = [{
+      title: 'Remove',
+      action: output.props.children[1].props.buttons[0].action
+      }];
     assert.deepEqual(output.props.children[1],
       <juju.components.ButtonRow
         buttons={buttons} />);
