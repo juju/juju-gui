@@ -86,26 +86,35 @@ class ConfigTests(ViewTestCase):
         self.assertIs(False, config['hideLoginButton'])
         self.assertEqual('', config['jujuCoreVersion'])
         self.assertIs(False, config['sandbox'])
-        self.assertEqual('user-admin', config['user'])
+        self.assertEqual('', config['user'])
         self.assertIsNone(config['password'])
+        self.assertEqual('', config['baseUrl'])
+        self.assertIsNone(config['auth'])
+        self.assertIsNone(config['socket_path'])
 
     def test_customized_options(self):
         self.update_settings({
             'jujugui.charmstore_url': '1.2.3.4/api',
             'jujugui.ga_key': 'my-key',
             'jujugui.sandbox': 'true',
+            'jujugui.auth': 'blob',
+            'jujugui.socket_path': '/api/address',
+            'jujugui.user': 'who',
+            'jujugui.password': 'secret',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
         self.assertEqual('1.2.3.4/api', config['charmstoreURL'])
         self.assertEqual('my-key', config['GA_key'])
+        self.assertEqual('blob', config['auth'])
+        self.assertEqual('/api/address', config['socket_path'])
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['sandbox'])
-        self.assertEqual('user-admin', config['user'])
-        # The hideLoginButton and password values reflect sandbox status.
+        # The hideLoginButton, user and password values reflect sandbox status.
         self.assertIs(True, config['hideLoginButton'])
+        self.assertEqual('user-admin', config['user'])
         self.assertEqual('admin', config['password'])
 
     def test_standalone(self):
@@ -124,11 +133,22 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('/u/anonymous/env-uuid', config['baseUrl'])
 
     def test_explicit_baseUrl(self):
-        settings = {'jujugui.baseUrl': '/ignore/prefix'}
-        self.config = testing.setUp(
-            request=self.request, settings=settings)
+        self.update_settings({'jujugui.baseUrl': '/ignore/prefix'})
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
         self.assertEqual('sandbox', config['jujuEnvUUID'])
         self.assertEqual('/ignore/prefix', config['baseUrl'])
+
+    def test_credentials(self):
+        self.update_settings({
+            'jujugui.user': 'dalek',
+            'jujugui.password': 'exterminate!',
+        })
+        jujugui.make_application(self.config)
+        response = views.config(self.request)
+        config = self.check_response(response)
+        # When sandbox mode is disabled, the real credentials are provided.
+        self.assertIs(False, config['sandbox'])
+        self.assertEqual('dalek', config['user'])
+        self.assertEqual('exterminate!', config['password'])

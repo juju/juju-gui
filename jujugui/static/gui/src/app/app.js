@@ -445,9 +445,11 @@ YUI.add('juju-gui', function(Y) {
         });
         // Instantiate the environment specified in the configuration, choosing
         // between the available implementations, currently Go and Python.
+        var socketUrl = this._generateSocketUrl();
+        this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
-          socket_url: this._generateSocketUrl(),
+          socket_url: socketUrl,
           user: this.get('user'),
           password: this.get('password'),
           readOnly: this.get('readOnly'),
@@ -832,11 +834,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Composes the various socket paths and protocols and returns the corret
-      url that the GUI should use to communicate with the environment.
+      Composes the various socket paths and protocols and returns the correct
+      URL that the GUI should use to communicate with the environment.
 
       @method _generateSocketUrl
-      @return {String} The fully qualified socket url.
+      @return {String} The fully qualified WebSocket URL.
     */
     _generateSocketUrl: function() {
       var socketProtocol = this.get('socket_protocol');
@@ -847,6 +849,12 @@ YUI.add('juju-gui', function(Y) {
       if (loc.port) {
         socketUrl += ':' + loc.port;
       }
+      // If a WebSocket path is explicitly provided, it gets precedence over
+      // all the other methods to automatically calculate it.
+      var path = this.get('socket_path');
+      if (path) {
+        return socketUrl + path;
+      }
       // If the Juju version is over 1.21 then we need to make requests to the
       // api using the environments uuid.
       var jujuVersion = this.get('jujuCoreVersion').split('.');
@@ -856,9 +864,7 @@ YUI.add('juju-gui', function(Y) {
       if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
         suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
       }
-      socketUrl = socketUrl + '/ws' + suffix;
-      this.set('socket_url', socketUrl);
-      return socketUrl;
+      return socketUrl + '/ws' + suffix;
     },
 
     /**

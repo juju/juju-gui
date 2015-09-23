@@ -15,10 +15,13 @@ def update(settings):
 
     Modify the given settings object in place.
     """
+    _update(settings, 'jujugui.auth', default=None)
+    _update(settings, 'jujugui.baseUrl', default=None)
     _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
     _update(settings, 'jujugui.ga_key', default='')
-    _update(settings, 'jujugui.baseUrl', default=None)
-    _update(settings, 'jujugui.auth', default=None)
+    _update(settings, 'jujugui.password', default=None)
+    _update(settings, 'jujugui.socket_path', default=None)
+    _update(settings, 'jujugui.user', default='')
     _update_bool(settings, 'jujugui.sandbox', default=False)
     _update_bool(settings, 'jujugui.raw', default=False)
     _update_bool(settings, 'jujugui.combine', default=True)

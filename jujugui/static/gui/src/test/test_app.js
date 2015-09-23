@@ -1354,6 +1354,37 @@ describe('File drag over notification system', function() {
           app.env.get('socket_url'),
           'ws://example.net:71070/ws/environment/1234-1234/api');
     });
+
+    it('uses an explicitly provided socket path', function() {
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        socket_path: '/these/are/the/voyages',
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuEnvUUID: '1234-1234',
+        conn: {close: function() {}}
+      });
+      app.showView(new Y.View());
+      assert.equal(
+          app.env.get('socket_url'),
+          'wss://example.net:71070/these/are/the/voyages');
+    });
+
+    it('ignores socket path if empty', function() {
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        socket_path: '',
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuEnvUUID: '1234-1234',
+        conn: {close: function() {}}
+      });
+      app.showView(new Y.View());
+      assert.equal(
+          app.env.get('socket_url'),
+          'wss://example.net:71070/ws/environment/1234-1234/api');
+    });
+
   });
 
 })();
