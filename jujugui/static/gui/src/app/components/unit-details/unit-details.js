@@ -29,16 +29,8 @@ YUI.add('unit-details', function() {
       @param {Object} unit The unit model.
     */
     _handleRemoveUnit: function(unit) {
-      this.props.destroyUnits([unit.id], this._navigateToUnits);
-      this._navigateToUnits();
-    },
-
-    /**
-      Navigate to the unit list for the unit's service.
-
-      @method _navigateToUnits
-    */
-    _navigateToUnits: function() {
+      this.props.destroyUnits([unit.id]);
+      // Navigate to the unit list for the unit's service.
       this.props.changeState({
         sectionA: {
           component: 'inspector',
