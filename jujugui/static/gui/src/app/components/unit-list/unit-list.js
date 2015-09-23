@@ -92,10 +92,9 @@ YUI.add('unit-list', function() {
       var units = [];
       var refs = this.refs;
       Object.keys(refs).forEach(function (ref) {
-        var refParts = ref.split('-');
-        var isInstance = refParts[0] === 'UnitListItem';
+        var isInstance = ref.split('-')[0] === 'UnitListItem';
         if (isInstance && refs[ref].state.checked) {
-          units.push(refParts[1]);
+          units.push(ref.slice(ref.indexOf('-') + 1));
         }
       });
       this.props.destroyUnits(units);
