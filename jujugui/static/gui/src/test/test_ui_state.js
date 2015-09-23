@@ -1033,7 +1033,7 @@ describe('UI State object', function() {
         sectionB: {}
       }
     }, {
-      '/inspector/service123/unit/13/': {
+      '/inspector/service123/13/': {
         sectionA: {
           component: 'inspector',
           metadata: {
@@ -1131,7 +1131,6 @@ describe('UI State object', function() {
     }];
 
     it('can generate proper urls from the state object', function() {
-      window.flags.react = false;
       states.forEach(function(record) {
         state.set('current', Y.clone(defaultState));
         Object.keys(record).forEach(function(url) {
