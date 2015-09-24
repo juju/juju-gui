@@ -10,7 +10,6 @@
     @extend %floating-panel;
     color: $cool-grey;
     border-radius: inherit;
-    box-shadow: none;
 
     .inner-wrapper {
         max-width: none;
@@ -346,4 +345,3 @@
         }
     }
 }
-

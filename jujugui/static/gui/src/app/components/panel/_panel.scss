@@ -21,9 +21,9 @@
     bottom: $deployer-bar-height;
     left: 0;
     right: 0;
-    padding: $panel-space;
+    padding: 0 0 0 $panel-space;
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: inherit;
     box-shadow: none;
-    overflow: scroll;
+    overflow: auto;
 }

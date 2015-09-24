@@ -735,6 +735,21 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the Header Search component to the page in the
+      designated element.
+
+      @method _renderHeaderSearch
+    */
+    _renderHeaderSearch: function() {
+      var state = this.state;
+      React.render(
+        <window.juju.components.HeaderSearch
+          changeState={this.changeState.bind(this)}
+          getAppState={state.getState.bind(state)} />,
+        document.getElementById('header-search-container'));
+    },
+
+    /**
       Renders the Added Services component to the page in the appropriate
       element.
 
@@ -1605,6 +1620,7 @@ YUI.add('juju-gui', function(Y) {
           this.db.services.size(),
           this.db.machines.size()
         );
+        this._renderHeaderSearch();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
@@ -1861,6 +1877,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-models',
     // React components
     'env-size-display',
+    'header-search',
     'inspector-component',
     'panel-component',
     'search-results',
