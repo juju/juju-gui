@@ -21,15 +21,50 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('boolean-config', function() {
 
   juju.components.BooleanConfig = React.createClass({
+
+    getInitialState: function() {
+      return { value: this.props.config };
+    },
+
+    /**
+      Handles the checkbox change action.
+
+      @method _handleChange
+      @param {Object} The change event from the checkbox.
+    */
+    _handleChange: function(e) {
+      this.setState({ value: e.currentTarget.checked });
+    },
+
+    /**
+      Don't bubble the click event to the parent.
+
+      @method _stopBubble
+      @param {Object} The click event from the checkbox.
+    */
+    _stopBubble: function(e) {
+      e.stopPropagation();
+    },
+
     render: function() {
       return (
         <div className="boolean-config">
-          <span>{this.props.option.key}</span>
-          <div
-            contentEditable="true"
-            dangerouslySetInnerHTML={{__html: 'Boolean'}}>
+          <div className="boolean-config--title">{this.props.option.key}: </div>
+          <div className="boolean-config--toggle">
+            <input
+              type="checkbox"
+              id={this.props.option.key}
+              onClick={this._stopBubble}
+              onChange={this._handleChange}
+              checked={this.state.value}
+              className="boolean-config--input" />
+            <label htmlFor={this.props.option.key} className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
           </div>
-          <span>{this.props.option.description}</span>
+          <div className="boolean-config--description">
+            {this.props.option.description}
+          </div>
         </div>
       );
     }
