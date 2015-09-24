@@ -150,7 +150,8 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.Configuration
                 service={service}
-                charm={nextProps.charm} />,
+                charm={nextProps.charm}
+                setConfig={nextProps.setConfig} />,
             backState: {
               sectionA: {
                 component: 'inspector',

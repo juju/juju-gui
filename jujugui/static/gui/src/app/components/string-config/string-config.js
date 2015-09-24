@@ -21,6 +21,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('string-config', function() {
 
   juju.components.StringConfig = React.createClass({
+
+    getInitialState: function() {
+      return { value: this.props.config };
+    },
+
+    /**
+      When the value is updated in the input element then update the state
+      with its innerText.
+
+      @method _updateValue
+      @param {Object} e The input or blur event objects.
+    */
+    _updateValue: function(e) {
+      this.setState({ value: e.currentTarget.innerText });
+    },
+
     render: function() {
       return (
         <div className="string-config">
@@ -28,6 +44,8 @@ YUI.add('string-config', function() {
         <div
           className="string-config--value"
           contentEditable="true"
+          onInput={this._updateValue}
+          onBlur={this._updateValue}
           dangerouslySetInnerHTML={{__html: this.props.config}}>
         </div>
         <span className="string-config--description">

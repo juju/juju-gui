@@ -838,6 +838,7 @@ YUI.add('juju-gui', function(Y) {
           <components.Inspector
             service={service}
             charm={charm}
+            setConfig={this.env.set_config}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(

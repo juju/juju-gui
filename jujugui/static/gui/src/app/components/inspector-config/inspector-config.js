@@ -24,7 +24,35 @@ YUI.add('inspector-config', function() {
 
     _importConfig: function() {},
     _resetValues: function() {},
-    _saveConfig: function() {},
+
+    _saveConfig: function() {
+      var refs = this.refs;
+      var configValues = {};
+      Object.keys(refs).forEach((ref) => {
+        // Just in case we ever have any sub components which have refs
+        // and aren't a configuration component.
+        var isConfig = ref.split('-')[0] === 'Config';
+        if (isConfig) {
+          var value;
+          if (refs[ref].state) {
+            value = refs[ref].state.value;
+          }
+          configValues[refs[ref].props.option.key] = value;
+        }
+      });
+      var changedConfig = this._getChangedValues(configValues);
+    },
+
+    _getChangedValues: function(configValues) {
+      var serviceConfig = this.props.service.get('config');
+      var changedValues = {};
+      Object.keys(serviceConfig).forEach((key) => {
+        if (serviceConfig[key] !== configValues[key]) {
+          changedValues[key] = configValues[key];
+        }
+      });
+      return changedValues;
+    },
 
     _generateConfigElements: function() {
       var charmOptions = this.props.charm.get('options');
@@ -33,16 +61,19 @@ YUI.add('inspector-config', function() {
       Object.keys(charmOptions).forEach((key) => {
         var option = charmOptions[key];
         option.key = key;
+        var ref = 'Config-' + key;
         // We use one component for numeric and string values and
         // another for boolean values.
         if (option.type === 'boolean') {
           configElements.push(
               <juju.components.BooleanConfig
+                ref={ref}
                 option={option}
                 config={serviceConfig[key]} />);
         } else {
           configElements.push(
               <juju.components.StringConfig
+                ref={ref}
                 option={option}
                 config={serviceConfig[key]} />);
         }
