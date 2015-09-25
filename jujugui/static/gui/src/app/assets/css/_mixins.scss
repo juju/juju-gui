@@ -1,0 +1,177 @@
+/* Mixins */
+@mixin animation ($arguments) {
+    -webkit-animation: $arguments;
+    -moz-animation: $arguments;
+    -ms-animation: $arguments;
+    -o-animation: $arguments;
+    animation: $arguments;
+}
+@mixin animation-fill-mode ($arguments) {
+    -webkit-animation-fill-mode: $arguments;
+    -moz-animation-fill-mode: $arguments;
+    -ms-animation-fill-mode: $arguments;
+    -o-animation-fill-mode: $arguments;
+    animation-fill-mode: $arguments;
+}
+@mixin transition ($arguments) {
+    -webkit-transition: $arguments;
+    -moz-transition: $arguments;
+    -ms-transition: $arguments;
+    -o-transition: $arguments;
+    transition: $arguments;
+}
+@mixin create-border-radius($radius) {
+    -moz-border-radius: $radius;
+    -webkit-border-radius: $radius;
+    border-radius: $radius;
+}
+@mixin create-box-shadow($arguments) {
+    -moz-box-shadow: $arguments;
+    -webkit-box-shadow: $arguments;
+    box-shadow: $arguments;
+}
+@mixin create-linear-gradient($gradient-start, $gradient-end) {
+    background-image: -ms-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from($gradient-start), to($gradient-end));
+    background-image: -webkit-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: -o-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: -moz-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: linear-gradient(top, $gradient-start, $gradient-end);
+    background-repeat: repeat-x;
+}
+/*
+ * Rotation transform.  Call with numerical value and units, e.g.
+ * .rotate(-90deg);
+ */
+@mixin rotate($angle) {
+    -webkit-transform: rotate($angle);
+    -moz-transform: rotate($angle);
+    -ms-transform: rotate($angle);
+    -o-transform: rotate($angle);
+    transform: rotate($angle);
+}
+.border-box {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.button {
+    @include create-border-radius($border-radius);
+    @include create-linear-gradient($charm-panel-orange, #c03f11);
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0;
+    padding: 8px 14px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-transition: background .3s;
+    transition: background .3s;
+
+    &:hover {
+        background: $charm-panel-orange;
+    }
+    &.inverse {
+        // Using a variable here because commas aren't allowed in mixin args.
+        $box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        @include create-box-shadow($box-shadow);
+        background:  #eee;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        &:hover {
+            background: #eee;
+        }
+        &.orange {
+            background: $charm-panel-orange;
+        }
+    }
+}
+%customize-scrollbar {
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background-color: #fff;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #d4d4d4;
+        border: 1px solid #fff;
+        border-radius: 5px;
+    }
+}
+.sprite-hover {
+    &:focus,
+    &:hover {
+        .sprite.hover {
+            display: inline-block;
+        }
+        .sprite.normal {
+            display: none;
+        }
+    }
+    .sprite.hover {
+        display: none;
+    }
+}
+.display-flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+@mixin flex-direction($direction) {
+    -webkit-flex-direction: $direction;
+    -webkit-box-orient: vertical;
+    -ms-flex-direction: $direction;
+    flex-direction: $direction;
+}
+.uncommitted-circle {
+    vertical-align: bottom;
+    margin-left: 1px;
+    color: $uncommitted;
+    font-size: 32px;
+    line-height: 0px;
+}
+@mixin diamond($color: inherit) {
+  @include rotate(45deg);
+  content: '';
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  display: block;
+  background-color: $color;
+}
+
+%bws-list {
+  overflow-y: auto;
+  max-height: 350px;
+  border-top: 1px solid $bws-border;
+}
+
+%floating-panel {
+    @extend %customize-scrollbar;
+    background-color: #fff;
+    border-radius: $border-radius;
+    box-shadow: 0 1px 4.85px .15px rgba(0, 0, 0, 0.2);
+}
+
+@mixin notification($background) {
+    $size: 24px;
+    box-sizing: border-box;
+    float: right;
+    min-width: $size;
+    height: $size;
+    padding: 0 7px;
+    background-color: $background;
+    border-radius: $size / 2;
+    color: $white;
+    line-height: $size;
+    text-align: center;
+}
+
+ %list-style {
+     margin: 0;
+     padding: 0;
+     list-style: none;
+ }

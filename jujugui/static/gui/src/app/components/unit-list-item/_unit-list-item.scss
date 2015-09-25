@@ -1,0 +1,29 @@
+.unit-list-item {
+    @extend %stagger-fade-in;
+
+    &:focus,
+    &:active,
+    &:hover {
+        background-color: $light-grey;
+        cursor: pointer;
+
+        label {
+            cursor: pointer;
+        }
+    }
+
+    input[type=checkbox] {
+        margin-right: 15px;
+        cursor: pointer;
+    }
+
+    label {
+        padding: 11px 20px 11px 20px;
+    }
+
+    &--nav:hover {
+        label {
+            text-decoration: underline;
+        }
+    }
+}
