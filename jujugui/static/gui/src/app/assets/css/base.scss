@@ -81,7 +81,7 @@ $bws-header-height: 81px;
 $deployer-bar-height: 50px;
 $environment-header-height: 40px;
 $left-panel-width: 290px;
-$navbar-height: 48px;
+$navbar-height: 60px;
 $panel-space: 10px;
 
 // Imports need to be after vars.
@@ -112,6 +112,7 @@ textarea {
     font-weight: 300;
 }
 body {
+    @extend %customize-scrollbar;
     overflow: hidden;
     height: 100%;
     margin-top: $navbar-height;
@@ -390,7 +391,7 @@ th {
 
 .plus-service {
     cursor: pointer;
-    
+
     &.included-plus {
         display: none;
 

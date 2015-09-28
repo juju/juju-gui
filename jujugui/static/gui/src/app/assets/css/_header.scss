@@ -49,18 +49,16 @@
         &--right {
             @extend %list-style;
             float: right;
-            margin-right: 20px;
         }
-    }
-
-    .header-banner__logo {
-        position: relative;
-        top: -2px;
     }
 
     .header-banner__list-item {
         float: left;
-        padding: 14px 8px;
+        padding: 21px 8px;
+
+        &--no-padding {
+            padding: 0;
+        }
     }
 
     .user-dropdown {
