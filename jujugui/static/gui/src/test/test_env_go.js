@@ -444,14 +444,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('warns on environmentGet errors', function() {
-      env.environmentGet();
+      env.environmentInfo();
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
       var warning = null;
       console.warn = function(msg) {
         warning = msg;
       };
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          DefaultSeries: 'precise',
+          'ProviderType': 'maas',
+          'Name': 'envname'
+        }
+      });
+      conn.msg({RequestId: 2, Error: 'bad wolf'});
       assert.strictEqual(
           warning, 'error calling EnvironmentGet API: bad wolf');
       // Restore the original "console.warn".
@@ -459,10 +467,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('stores the MAAS server on EnvironmentGet results on MAAS', function() {
-      env.environmentGet();
-      env.set('providerType', 'maas');
+      env.environmentInfo();
       conn.msg({
         RequestId: 1,
+        Response: {
+          DefaultSeries: 'trusty',
+          'ProviderType': 'maas',
+          'Name': 'envname'
+        }
+      });
+      conn.msg({
+        RequestId: 2,
         Response: {
           Config: {'maas-server': '1.2.3.4/MAAS'}
         }
@@ -2230,6 +2245,233 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(callback.lastArguments()[0], {
         err: ['food']
       });
+    });
+
+    it('successfully creates a local environment', function(done) {
+      env.set('providerType', 'local');
+      env.createEnv('myenv', 'user-who', function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.name, 'myenv');
+        assert.strictEqual(data.owner, 'user-rose');
+        assert.strictEqual(data.uuid, 'unique-id');
+        assert.equal(conn.messages.length, 3);
+        assert.deepEqual(conn.messages[0], {
+          Type: 'EnvironmentManager',
+          Version: env.environmentManagerFacadeVersion,
+          Request: 'ConfigSkeleton',
+          Params: {},
+          RequestId: 1
+        });
+        assert.deepEqual(conn.messages[1], {
+          Type: 'Client',
+          Request: 'EnvironmentGet',
+          Params: {},
+          RequestId: 2
+        });
+        assert.deepEqual(conn.messages[2], {
+          Type: 'EnvironmentManager',
+          Version: env.environmentManagerFacadeVersion,
+          Request: 'CreateEnvironment',
+          Params: {
+            OwnerTag: 'user-who',
+            Config: {
+              attr1: 'value1',
+              attr2: 'value2',
+              name: 'myenv',
+              namespace: 'who-local',
+              'authorized-keys': 'ssh-rsa INVALID'
+            }
+          },
+          RequestId: 3
+        });
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
+      });
+      // Mimic the second response to Client.EnvironmentGet.
+      conn.msg({
+        RequestId: 2,
+        Response: {Config: {namespace: 'who-local'}}
+      });
+      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      conn.msg({
+        RequestId: 3,
+        Response: {
+          Name: 'myenv',
+          OwnerTag: 'user-rose',
+          UUID: 'unique-id'
+        }
+      });
+    });
+
+    it('successfully creates an ec2 environment', function(done) {
+      env.set('providerType', 'ec2');
+      env.createEnv('myenv', 'user-who', function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.name, 'my-ec2-env');
+        assert.equal(conn.messages.length, 3);
+        assert.deepEqual(conn.messages[2], {
+          Type: 'EnvironmentManager',
+          Version: env.environmentManagerFacadeVersion,
+          Request: 'CreateEnvironment',
+          Params: {
+            OwnerTag: 'user-who',
+            Config: {
+              attr1: 'value1',
+              attr2: 'value2',
+              name: 'myenv',
+              'authorized-keys': 'ssh-rsa INVALID',
+              'access-key': 'access!',
+              'secret-key': 'secret!'
+            }
+          },
+          RequestId: 3
+        });
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
+      });
+      // Mimic the second response to Client.EnvironmentGet.
+      conn.msg({
+        RequestId: 2,
+        Response: {Config: {'access-key': 'access!', 'secret-key': 'secret!'}}
+      });
+      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      conn.msg({
+        RequestId: 3,
+        Response: {
+          Name: 'my-ec2-env',
+          OwnerTag: 'user-rose',
+          UUID: 'unique-id'
+        }
+      });
+    });
+
+    it('handles failures while retrieving env skeleton', function(done) {
+      env.createEnv('bad-env', 'user-dalek', function(data) {
+        assert.strictEqual(
+          data.err, 'cannot get configuration skeleton: bad wolf');
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
+    });
+
+    it('handles failures while retrieving env config', function(done) {
+      env.createEnv('bad-env', 'user-dalek', function(data) {
+        assert.strictEqual(
+          data.err, 'cannot get environment configuration: bad wolf');
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
+      });
+      // Mimic the second response to Client.EnvironmentGet.
+      conn.msg({RequestId: 2, Error: 'bad wolf'});
+    });
+
+    it('handles failures while creating environments', function(done) {
+      env.set('providerType', 'local');
+      env.createEnv('bad-env', 'user-dalek', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
+      });
+      // Mimic the second response to Client.EnvironmentGet.
+      conn.msg({
+        RequestId: 2,
+        Response: {Config: {}}
+      });
+      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      conn.msg({RequestId: 3, Error: 'bad wolf'});
+    });
+
+    it('handles failures due to unsupported provider', function(done) {
+      env.set('providerType', 'invalid');
+      env.createEnv('bad-env', 'user-dalek', function(data) {
+        assert.strictEqual(data.err, 'invalid provider is not supported yet');
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
+      });
+      // Mimic the second response to Client.EnvironmentGet.
+      conn.msg({
+        RequestId: 2,
+        Response: {Config: {}}
+      });
+    });
+
+    it('lists environments for a specific owner', function(done) {
+      env.listEnvs('user-who', function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.deepEqual([
+          {
+              name: 'env1',
+              owner: 'user-who',
+              uuid: 'unique1',
+              lastConnection: 'today'
+            },
+            {
+              name: 'env2',
+              owner: 'user-rose',
+              uuid: 'unique2',
+              lastConnection: 'yesterday'
+            }
+        ], data.envs);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'EnvironmentManager',
+          Version: env.environmentManagerFacadeVersion,
+          Request: 'ListEnvironments',
+          Params: {Tag: 'user-who'},
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          UserEnvironments: [
+            {
+              Name: 'env1',
+              OwnerTag: 'user-who',
+              UUID: 'unique1',
+              LastConnection: 'today'
+            },
+            {
+              Name: 'env2',
+              OwnerTag: 'user-rose',
+              UUID: 'unique2',
+              LastConnection: 'yesterday'
+            }
+          ]
+        }
+      });
+    });
+
+    it('handles failures while listing environments', function(done) {
+      env.listEnvs('user-dalek', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
   });

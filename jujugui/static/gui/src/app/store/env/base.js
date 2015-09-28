@@ -262,6 +262,16 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
+      Close the WebSocket connection to the Juju API server.
+
+      @method close
+    */
+    close: function() {
+      this.ws.close();
+      this.set('connected', false);
+    },
+
+    /**
      * Fire a "msg" event when a message is received from the WebSocket.
      *
      * @method on_message

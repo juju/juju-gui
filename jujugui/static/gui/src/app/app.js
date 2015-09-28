@@ -1488,6 +1488,31 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Switch the application to another environment.
+      Disconnect the current WebSocket connection and establish a new one
+      pointed to the environment referenced by the given unique identifier.
+
+      @method switchEnv
+      @param {String} uuid The environment UUID where to switch to.
+    */
+    switchEnv: function(uuid) {
+      var socketUrl = this.env.get('socket_url');
+      // XXX frankban: this is not generic, and very specific for how the
+      // socket URL is composed in the GUI embedded in OpenStack. Therefore,
+      // the logic here for calculating the new socket URL for the given UUID
+      // must be considered temporary demo code.
+      var baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
+      var newSocketUrl = baseUrl + '/' + uuid;
+      // Tell the environment to use the new socket URL when reconnecting.
+      this.env.set('socket_url', newSocketUrl);
+      // Disconnect and reconnect the environment.
+      this.env.close();
+      this.db.reset();
+      this.db.fire('update');
+      this.env.connect();
+    },
+
+    /**
       If we are in a MAAS environment, react to the MAAS server address
       retrieval adding a link to the header pointing to the MAAS server.
 
