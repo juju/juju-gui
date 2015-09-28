@@ -25,6 +25,11 @@ YUI.add('inspector-config', function() {
     _importConfig: function() {},
     _resetValues: function() {},
 
+    /**
+      Callback handler for clicking the Save config button.
+
+      @method _saveConfig
+    */
     _saveConfig: function() {
       var refs = this.refs;
       var configValues = {};
@@ -41,8 +46,22 @@ YUI.add('inspector-config', function() {
         }
       });
       var changedConfig = this._getChangedValues(configValues);
+      // If there are no changed values then don't set the config.
+      var size = Object.keys(changedConfig).length;
+      if (size > 0) {
+        this._setConfig(changedConfig);
+      }
     },
 
+    /**
+      Given an object of key/value pairs for the configuration values
+      this returns a new object with the values which are different from the
+      service model.
+
+      @method _getChangedValues
+      @param {Object} configValues The values from the configuration UI.
+      @returns {Object} The configuration values with new data.
+    */
     _getChangedValues: function(configValues) {
       var serviceConfig = this.props.service.get('config');
       var changedValues = {};
@@ -54,6 +73,37 @@ YUI.add('inspector-config', function() {
       return changedValues;
     },
 
+    /**
+      Calls the env set config method.
+
+      @method _setConfig
+      @param {Object} configValues The configuration values to save.
+    */
+    _setConfig: function(configValues) {
+      this.props.setConfig(
+        this.props.service.get('id'),
+        configValues,
+        null,
+        this.props.charm.get('options'),
+        this._setConfigCallback.bind(this)
+      );
+    },
+
+    /**
+      Callback for the set config environment call.
+
+      @method _setConfigCallback
+    */
+    _setConfigCallback: function() {
+      // TODO
+    },
+
+    /**
+      Generates the list of elements to render for the config UI.
+
+      @method _generateConfigElements
+      @returns {Array} An array of React components.
+    */
     _generateConfigElements: function() {
       var charmOptions = this.props.charm.get('options');
       var serviceConfig = this.props.service.get('config');
