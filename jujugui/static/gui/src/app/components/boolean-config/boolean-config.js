@@ -23,7 +23,14 @@ YUI.add('boolean-config', function() {
   juju.components.BooleanConfig = React.createClass({
 
     getInitialState: function() {
-      return { value: this.props.config };
+      var config = this.props.config;
+      // If the type of the value is a boolean but we have to stringify all
+      // values when sending them to juju-core so this value could be a string
+      // representation of a boolean value.
+      if (typeof config === 'string') {
+        config = config.toLowerCase() === 'true' ? true : false;
+      }
+      return { value: config };
     },
 
     /**
