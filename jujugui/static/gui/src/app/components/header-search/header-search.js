@@ -40,7 +40,10 @@ YUI.add('header-search', function() {
       if (search) {
         query = search.search.text;
       }
-      var active = query !== undefined;
+      var active = true;
+      if (query === undefined) {
+        active = this.props.active === undefined ? false : this.props.active;
+      }
 
       return {
         search: active,

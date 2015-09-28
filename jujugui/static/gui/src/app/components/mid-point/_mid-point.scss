@@ -1,0 +1,44 @@
+.mid-point {
+    color: $cool-grey;
+    padding: 30px 20px;
+
+    &__title {
+        margin-bottom: 20px;
+        font-size: 22px;
+    }
+
+    &__charm-list {
+        display: flex;
+        // The list items have margin right and we don't want a double gap on
+        // the right.
+        margin: 0 -20px 0 0;
+        list-style: none;
+    }
+
+    &__charm {
+        flex: 1 1 auto;
+        cursor: pointer;
+        margin-right: 20px;
+        padding: 20px;
+        border: 1px solid $mid-grey;
+        text-align: center;
+
+        &:active,
+        &:focus,
+        &:hover {
+            background-color: $light-grey;
+        }
+    }
+
+    &__charm-icon {
+        $size: 60px;
+        width: $size;
+        height: $size;
+        margin-bottom: 20px;
+    }
+
+    &__charm-name {
+        display: block;
+        text-align: center;
+    }
+}

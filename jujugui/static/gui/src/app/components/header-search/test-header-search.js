@@ -64,8 +64,7 @@ describe('HeaderSearch', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         getAppState={getAppState}
-        changeState={changeState}
-        active={true} />);
+        changeState={changeState} />);
     assert.deepEqual(output,
       <div className="header-search header-search--active">
         {output.props.children}
@@ -79,7 +78,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState}
-        active={true} />);
+        active={false} />);
     assert.deepEqual(output.props.children[2],
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
@@ -113,7 +112,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState}
-        active={true} />);
+        active={false} />);
     var input = output.getDOMNode().querySelector('.header-search__input');
     testUtils.Simulate.focus(input);
     assert.isTrue(
