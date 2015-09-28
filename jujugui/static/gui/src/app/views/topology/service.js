@@ -135,8 +135,9 @@ YUI.add('juju-topology-service', function(Y) {
     var rerenderRelations = false;
     node.select('.service-block').each(function(d) {
       var curr_node = d3.select(this),
-          curr_state = curr_node.attr('data-state'),
-          new_state = 'service_module';
+          is_pending = false,
+          is_erroring = false;
+
       if (d.subordinate) {
         curr_node.attr({
           'stroke': '#19b6ee',
@@ -151,10 +152,30 @@ YUI.add('juju-topology-service', function(Y) {
       } else if (d.highlighted) {
         rerenderRelations = true;
       } else {
-        curr_node.attr({
-          'stroke': '#888888',
-          'stroke-width': 1
+        var units = d.units._items;
+        units.forEach(function(unit) {
+          if (unit.agent_state === 'installing'
+              || unit.agent_state === 'pending') {
+            is_pending = true;
+          } else if (unit.agent_state === 'error') {
+            is_erroring = true;
+          }
         });
+
+        // Add the current state class
+        if (is_erroring) {
+          curr_node.classed('is-erroring', true)
+            .classed('is-pending', false)
+            .classed('is-running', false);
+        } else if (is_pending) {
+          curr_node.classed('is-pending', true)
+            .classed('is-erroring', false)
+            .classed('is-running', false);
+        } else {
+          curr_node.classed('is-running', true)
+            .classed('is-erroring', false)
+            .classed('is-pending', false);
+        }
         rerenderRelations = true;
       }
 
