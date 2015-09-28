@@ -58,7 +58,9 @@ YUI.add('boolean-config', function() {
               onChange={this._handleChange}
               checked={this.state.value}
               className="boolean-config--input" />
-            <label htmlFor={this.props.option.key} className="boolean-config--label">
+            <label
+              htmlFor={this.props.option.key}
+              className="boolean-config--label">
               <div className="boolean-config--handle"></div>
             </label>
           </div>
