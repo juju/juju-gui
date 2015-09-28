@@ -548,6 +548,7 @@ YUI.add('juju-env-go', function(Y) {
       controller address as an attribute of this environment.
 
       @method _handleEnvironmentGet
+      @param {Function} callback The originally submitted callback.
       @param {Object} data The response returned by the server.
     */
     _handleEnvironmentGet: function(callback, data) {
