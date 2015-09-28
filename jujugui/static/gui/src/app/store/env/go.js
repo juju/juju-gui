@@ -478,29 +478,28 @@ YUI.add('juju-env-go', function(Y) {
         console.warn('Error retrieving environment information.');
         return;
       }
-      var self = this;
       // Store default series and provider type in the env.
       var response = data.Response;
-      self.set('defaultSeries', response.DefaultSeries);
-      self.set('providerType', response.ProviderType);
+      this.set('defaultSeries', response.DefaultSeries);
+      this.set('providerType', response.ProviderType);
       if (localStorage.getItem('environmentName')) {
-        self.set('environmentName', localStorage.getItem('environmentName'));
+        this.set('environmentName', localStorage.getItem('environmentName'));
       } else {
-        self.set('environmentName', response.Name);
+        this.set('environmentName', response.Name);
       }
       // For now we only need to call environmentGet if the provider is MAAS.
       if (response.ProviderType !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
         // attribute to be set can be released.
-        self.set('maasServer', null);
+        this.set('maasServer', null);
         return;
       }
-      self.environmentGet(function(data) {
+      this.environmentGet(data => {
         if (data.err) {
           console.warn('error calling EnvironmentGet API: ' + data.err);
           return;
         }
-        self.set('maasServer', data.config['maas-server']);
+        this.set('maasServer', data.config['maas-server']);
       });
     },
 
@@ -2312,11 +2311,10 @@ YUI.add('juju-env-go', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     createEnv: function(envName, userTag, callback) {
-      var self = this;
       var intermediateCallback;
       if (callback) {
         // Capture the callback. No context is passed.
-        intermediateCallback = Y.bind(self._handleCreateEnv, null, callback);
+        intermediateCallback = this._handleCreateEnv.bind(null, callback);
       } else {
         intermediateCallback = function(callback, data) {
           console.log('createEnv done: err:', data.Error);
@@ -2324,11 +2322,11 @@ YUI.add('juju-env-go', function(Y) {
       }
       // In order to create a new environment, we first need to retrieve the
       // configuration skeleton for this provider.
-      self._send_rpc({
+      this._send_rpc({
         Type: 'EnvironmentManager',
-        Version: self.environmentManagerFacadeVersion,
+        Version: this.environmentManagerFacadeVersion,
         Request: 'ConfigSkeleton',
-      }, function(data) {
+      }, data => {
         if (data.Error) {
           intermediateCallback({
             Error: 'cannot get configuration skeleton: ' + data.Error
@@ -2338,7 +2336,7 @@ YUI.add('juju-env-go', function(Y) {
         var config = data.Response.Config;
         // Then, having the configuration skeleton, we need configuration
         // options for this specific environment.
-        self.environmentGet(function(data) {
+        this.environmentGet(data => {
           if (data.err) {
             intermediateCallback({
               Error: 'cannot get environment configuration: ' + data.err
@@ -2350,7 +2348,7 @@ YUI.add('juju-env-go', function(Y) {
           // keys at this point, but only when strictly necessary. Provide an
           // invalid one for now.
           config['authorized-keys'] = 'ssh-rsa INVALID';
-          var ptype = self.get('providerType');
+          var ptype = this.get('providerType');
           switch(ptype) {
             case 'local':
               config.namespace = data.config.namespace;
@@ -2368,9 +2366,9 @@ YUI.add('juju-env-go', function(Y) {
           }
           // At this point, having both skeleton and environment options, we
           // are ready to create the new environment in this system.
-          self._send_rpc({
+          this._send_rpc({
             Type: 'EnvironmentManager',
-            Version: self.environmentManagerFacadeVersion,
+            Version: this.environmentManagerFacadeVersion,
             Request: 'CreateEnvironment',
             Params: {OwnerTag: userTag, Config: config}
           }, intermediateCallback);
@@ -2425,7 +2423,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback. No context is passed.
-        intermediateCallback = Y.bind(this._handleListEnvs, null, callback);
+        intermediateCallback = this._handleListEnvs.bind(null, callback);
       }
       this._send_rpc({
         Type: 'EnvironmentManager',
