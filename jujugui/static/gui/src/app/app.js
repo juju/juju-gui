@@ -742,11 +742,34 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderHeaderSearch: function() {
       var state = this.state;
+      // XXX: Need to correctly set active from the midpoint state.
+      var active = this.get('currentUrl').split('?')[1] === 'midpoint=';
       React.render(
         <window.juju.components.HeaderSearch
+          active={active}
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)} />,
         document.getElementById('header-search-container'));
+    },
+
+    /**
+      Renders the Mid-Point component to the page in the
+      designated element.
+
+      @method _renderMidPoint
+    */
+    _renderMidPoint: function() {
+      var utils = views.utils;
+      // XXX: Need to correctly set visible from the midpoint state.
+      var visible = this.get('currentUrl').split('?')[1] === 'midpoint=';
+      React.render(
+        <components.Panel
+          instanceName="mid-point-panel"
+          visible={visible}>
+          <window.juju.components.MidPoint
+            addService={utils.addService.bind(this, this)} />
+        </components.Panel>,
+        document.getElementById('mid-point-container'));
     },
 
     /**
@@ -1621,6 +1644,7 @@ YUI.add('juju-gui', function(Y) {
           this.db.machines.size()
         );
         this._renderHeaderSearch();
+        this._renderMidPoint();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
@@ -1878,6 +1902,7 @@ YUI.add('juju-gui', function(Y) {
     // React components
     'env-size-display',
     'header-search',
+    'mid-point',
     'inspector-component',
     'panel-component',
     'search-results',
