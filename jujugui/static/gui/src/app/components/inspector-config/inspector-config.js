@@ -84,7 +84,7 @@ YUI.add('inspector-config', function() {
         this.props.service.get('id'),
         configValues,
         null,
-        this.props.charm.get('options'),
+        null,
         this._setConfigCallback.bind(this)
       );
     },
