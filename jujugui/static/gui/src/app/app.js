@@ -760,7 +760,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderMidPoint: function() {
       var utils = views.utils;
-      // XXX: Need to correctly set visiblw from the midpoint state.
+      // XXX: Need to correctly set visible from the midpoint state.
       var visible = this.get('currentUrl').split('?')[1] === 'midpoint=';
       React.render(
         <components.Panel
