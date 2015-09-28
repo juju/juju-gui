@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('header-search', function() {
 
   juju.components.HeaderSearch = React.createClass({
-    mixins: [React.addons.LinkedStateMixin],
     icons: {
       submit: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class="search-icon__image"><g transform="matrix(.667 0 0 .667 -74.667 -285.575)"><path d="M129.93 444.03l-2.27 2.275 6.07 6.07L136 450.1z" fill="#878787"></path><ellipse ry="9.479" rx="9.479" cy="438.862" cx="122.5" fill="none" stroke="#878787" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></ellipse></g></svg>',  // eslint-disable-line max-len
       store: '<svg class="store-button__image" xmlns="http://www.w3.org/2000/svg" width="21" height="18" viewBox="0 0 21 18"><path d="M18.1 12.11H6.19l-1.39.01L3.71 1.38H.86V0h4.1l.46 4.14h15.46l-2.78 7.97zM5.62 5.56l.45 5.14H17.14l1.64-5.14H5.62zm1.5 8.3c1.15 0 2.08.93 2.08 2.07 0 1.14-.93 2.07-2.08 2.07-1.16 0-2.09-.93-2.09-2.07 0-1.14.93-2.07 2.09-2.07zm8.9 0c1.15 0 2.08.93 2.08 2.07 0 1.14-.93 2.07-2.08 2.07-1.16 0-2.09-.93-2.09-2.07 0-1.14.93-2.07 2.09-2.07z" fill="#878787"></path></svg>',  // eslint-disable-line max-len
@@ -153,6 +152,16 @@ YUI.add('header-search', function() {
       });
     },
 
+    /**
+      Update the state from the value of the query input.
+
+      @method _handleQueryChange
+      @param {Object} e The input change event
+    */
+    _handleQueryChange: function(e) {
+      this.setState({query: e.currentTarget.value});
+    },
+
     render: function() {
       return (
         <div className={this._generateClasses()}>
@@ -164,10 +173,11 @@ YUI.add('header-search', function() {
             <input type="search" name="query"
               className="header-search__input"
               placeholder="Search the store"
+              value={this.state.query}
+              onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
               onBlur={this._handleSearchBlur}
-              style={this.state.inputStyles}
-              valueLink={this.linkState('query')} />
+              style={this.state.inputStyles} />
           </form>
           <span tabIndex="0" role="button"
             className="header-search__store">
