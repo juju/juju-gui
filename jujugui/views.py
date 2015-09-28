@@ -69,6 +69,7 @@ def config(request):
     settings = request.registry.settings
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
+    jem_url = settings['jujugui.jem_url']
     # If sandbox is enabled then set the password to "admin" so that the
     # Juju GUI will automatically log in.
     user, password = 'user-admin', 'admin'
@@ -102,6 +103,7 @@ def config(request):
         'user': user,
         'password': password,
         'jujuEnvUUID': request.matchdict.get('uuid', 'sandbox'),
+        'jemUrl': jem_url,
         # Enable/disable sandbox (demonstration) mode.
         'sandbox': sandbox_enabled,
         'sandboxSocketURL': 'wss://demo.jujucharms.com/ws',
