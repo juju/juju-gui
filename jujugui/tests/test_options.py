@@ -11,7 +11,7 @@ class TestUpdate(unittest.TestCase):
 
     default_settings = {
         'jujugui.auth': None,
-        'jujugui.baseUrl': None,
+        'jujugui.base_url': None,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
         'jujugui.combine': True,
         'jujugui.ga_key': '',
@@ -31,7 +31,7 @@ class TestUpdate(unittest.TestCase):
     def test_customized_values(self):
         expected_settings = {
             'jujugui.auth': 'blob',
-            'jujugui.baseUrl': '/another/url',
+            'jujugui.base_url': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': True,
             'jujugui.ga_key': 'my-key',
@@ -43,7 +43,7 @@ class TestUpdate(unittest.TestCase):
         }
         settings = {
             'jujugui.auth': 'blob',
-            'jujugui.baseUrl': '/another/url',
+            'jujugui.base_url': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': 'true',
             'jujugui.ga_key': 'my-key',
