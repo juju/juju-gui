@@ -59,6 +59,7 @@ YUI.add('charmbrowser-component', function() {
             panelInstanceName: 'white-box',
             component:
               <juju.components.SearchResults
+                charmstore={this.props.charmstore}
                 query={query} />
           };
         break;

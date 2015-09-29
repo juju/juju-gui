@@ -829,6 +829,7 @@ YUI.add('juju-gui', function(Y) {
       var query = metadata.search.text;
       React.render(
         <components.Charmbrowser
+          charmstore={this.get('charmstore')}
           appState={state.get('current')}
           addService={utils.addService.bind(this, this)}
           query={query} />,
