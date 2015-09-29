@@ -47,25 +47,34 @@ YUI.add('juju-env-bakery', function(Y) {
        Initialize.
 
        @method initializer
+       @param {WebHandler} The web handler used to send request.
+       @param {Function} The visit method that would be used for interaction.
        @return {undefined} Nothing.
        */
-      initializer: function () {
-        this.webhandler = new Y.juju.environments.web.WebHandler();
+      initializer: function (cfg) {
+        this.webhandler = cfg.webhandler;
+        if (cfg.visitMethod == null) {
+          this.visitMethod = this._defaultVisitMethod;
+        } else {
+          this.visitMethod = cfg.visitMethod;
+        }
+        this.macaroonName = 'Macaroons-' + cfg.serviceName;
+        this.setCookiePath = cfg.setCookiePath;
       },
 
       /**
-       Send get request.
+       Takes the path supplied by the caller and makes a get request to the
+       requestHandlerWithInteraction instance. If setCookiePath is set then
+       it is used to set a cookie back to the ui after authentication.
 
        @param {String} The path to make the api request to.
-       @param {String} The path to make a request to set the cookie.
        @param {Function} successCallback Called when the api request completes
        successfully.
        @param {Function} failureCallback Called when the api request fails
        with a response of >= 400 except 401/407 where it does authentication.
        */
-      sendGetRequest: function (path, setCookiePath,
-                                successCallback, failureCallback) {
-        var macaroons = Y.Cookie.get('Macaroons');
+      sendGetRequest: function (path, successCallback, failureCallback) {
+        var macaroons = this._getMacaroon();
         var headers = {'Bakery-Protocol-Version': 1};
         if (macaroons !== null) {
           headers['Macaroons'] = macaroons;
@@ -76,7 +85,6 @@ YUI.add('juju-env-bakery', function(Y) {
           this._requestHandlerWithInteraction.bind(
             this,
             path,
-            setCookiePath,
             successCallback,
             failureCallback
           )
@@ -92,25 +100,20 @@ YUI.add('juju-env-bakery', function(Y) {
 
        @method _requestHandlerWithInteraction
        @param {String} The path to make the api request to.
-       @param {String} The path to make a request to set the cookie.
        @param {Function} successCallback Called when the api request completes
        successfully.
        @param {Function} failureCallback Called when the api request fails
        with a response of >= 400 (except 401/407).
        @param {Object} response The XHR response object.
        */
-      _requestHandlerWithInteraction: function (path,
-                                                setCookiePath,
-                                                successCallback,
-                                                failureCallback,
-                                                response) {
+      _requestHandlerWithInteraction: function (path, successCallback,
+                                                failureCallback, response) {
         var target = response.target;
         if (target.status === 401 &&
           target.getResponseHeader('Www-Authenticate') === 'Macaroon') {
           var jsonResponse = JSON.parse(target.responseText);
           this._authenticate(
             jsonResponse.Info.Macaroon,
-            setCookiePath,
             this._sendOriginalRequest.bind(
               this, path, successCallback, failureCallback
             ),
@@ -132,7 +135,7 @@ YUI.add('juju-env-bakery', function(Y) {
        with a response of >= 400 (except 401/407).
        */
       _sendOriginalRequest: function(path, successCallback, failureCallback) {
-          var macaroons = Y.Cookie.get('Macaroons');
+          var macaroons = this._getMacaroon();
           var headers = {'Bakery-Protocol-Version': 1};
           if (macaroons !== null) {
             headers['Macaroons'] = macaroons;
@@ -167,25 +170,22 @@ YUI.add('juju-env-bakery', function(Y) {
       },
 
       /**
-       Authenticate  by discharging the macaroon and
+       Authenticate by discharging the macaroon and
        then set the cookie by calling the authCookiePath provided
 
        @method authenticate
        @param {Macaroon} The macaroon to be discharged
-       @param {String} The path where to send put request to set the cookie back
        @param {Function} The request to be sent again in case of
        successful authentication
        @param {Function} The callback failure in case of wrong authentication
        */
-      _authenticate: function (m, authCookiePath,
-                               requestFunction, failureCallback) {
+      _authenticate: function (m, requestFunction, failureCallback) {
         try {
           macaroon.discharge(
             macaroon.import(m),
             this._obtainThirdPartyDischarge.bind(this),
             this._processDischarges.bind(
               this,
-              authCookiePath,
               requestFunction,
               failureCallback
             ),
@@ -198,26 +198,30 @@ YUI.add('juju-env-bakery', function(Y) {
 
       /**
        Process the discharged macaroon and call the end point to be able to set
-       a cookie for the origin domain only when n auth cooie path i provided,
-       then call the original function.
+       a cookie for the origin domain only when an auth cookie path is
+       provided, then call the original function.
 
        @method _processDischarges
-       @param {String} The path where to send put request to set the cookie back
        @param {Function} The request to be sent again in case of
        successful authentication
        @param {Function} The callback failure in case of wrong authentication
        @param {[Macaroon]} The macaroons being discharged
        */
-      _processDischarges: function (authCookiePath, requestFunction,
-                                    failureCallback, discharges) {
-        var jsonMacaroon = macaroon.export(discharges);
+      _processDischarges: function (requestFunction, failureCallback,
+                                    discharges) {
+        var jsonMacaroon;
+        try {
+          jsonMacaroon = macaroon.export(discharges);
+        } catch (ex) {
+          failureCallback(ex.message);
+        }
         var content = JSON.stringify({'Macaroons': jsonMacaroon});
-        if (authCookiePath === null) {
+        if (this.setCookiePath === undefined) {
           this._setMacaroonsCookie(requestFunction, jsonMacaroon);
           return;
         }
         this.webhandler.sendPutRequest(
-          authCookiePath,
+          this.setCookiePath,
           null, content, null, null, true, null,
           this._requestHandler.bind(
             this,
@@ -228,7 +232,7 @@ YUI.add('juju-env-bakery', function(Y) {
       },
 
       /**
-       Process succesful discharche by setting MAcaroons Cookie
+       Process successful discharge by setting Macaroons Cookie
        and invoke the original request
 
        @method _setMacaroonsCookie
@@ -237,7 +241,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {Object} an exported Macaroon
        */
       _setMacaroonsCookie: function (originalRequest, jsonMacaroon) {
-        Y.Cookie.set('Macaroons', btoa(JSON.stringify(jsonMacaroon)));
+        document.cookie = 'Macaroons=' + btoa(JSON.stringify(jsonMacaroon));
         originalRequest();
       },
 
@@ -311,7 +315,7 @@ YUI.add('juju-env-bakery', function(Y) {
         return;
       }
 
-      window.open(response.Info.VisitURL, 'Login');
+      this.visitMethod(response);
 
       this.webhandler.sendGetRequest(
           response.Info.WaitURL,
@@ -322,6 +326,33 @@ YUI.add('juju-env-bakery', function(Y) {
             failureCallback
           )
       );
+    },
+
+    /**
+      Default visit method which is to open a window to the
+      response.Info.VisitURL.
+
+      @method _defaultVisitMethod
+    */
+    _defaultVisitMethod: function(response) {
+      window.open(response.Info.VisitURL, 'Login');
+    },
+
+    /**
+      Get macaroon from local cookie.
+
+      @method _getMacaroon
+      @return {String} Macaroons that was set in local cookie.
+    */
+    _getMacaroon: function() {
+      var name = this.macaroonName + '=';
+      var ca = document.cookie.split(';');
+      for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+      }
+      return null;
     }
   });
 

@@ -75,9 +75,9 @@ YUI.add('juju-env-web-handler', function(Y) {
     },
 
     /**
-      Send an asynchronous POST request to the given URL.
+      Send an asynchronous PUT request to the given URL.
 
-      @method sendPostRequest
+      @method sendPutRequest
       @param {String} path The remote target path/URL.
       @param {Object} headers Additional request headers as key/value pairs.
       @param {Object} data The data to send as a file object, a string or in

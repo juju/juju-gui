@@ -37,9 +37,12 @@ YUI.add('charmstore-api', function(Y) {
     // then we should accept a requestHandler class being passed in on
     // instantiation as well as a different _makeRequest method for the
     // prototype.
-    this.bakery = new Y.juju.environments.web.Bakery();
-    this.setAuthCookiePath = this.charmstoreURL + this.apiPath +
-                             '/set-auth-cookie';
+    this.bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      visitMethod: null,
+      serviceName: 'charmstore',
+      setCookiePath: this.charmstoreURL + this.apiPath + '/set-auth-cookie'
+    });
   }
 
   APIv4.prototype = {
@@ -57,7 +60,6 @@ YUI.add('charmstore-api', function(Y) {
     _makeRequest: function(path, successCallback, failureCallback) {
       this.bakery.sendGetRequest(
         path,
-        this.setAuthCookiePath,
         successCallback,
         failureCallback
       );
@@ -421,6 +423,7 @@ YUI.add('charmstore-api', function(Y) {
 }, '', {
   requires: [
     'juju-env-bakery',
+    'juju-env-web-handler',
     'querystring-stringify',
     'juju-charm-models',
     'juju-bundle-models'

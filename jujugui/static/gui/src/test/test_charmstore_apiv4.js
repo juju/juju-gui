@@ -63,10 +63,8 @@ describe('Charmstore API v4', function() {
       assert.equal(getRequest.callCount(), 1);
       var getArgs = getRequest.lastArguments();
       assert.equal(getArgs[0], 'path');
-      assert.strictEqual(getArgs[1],
-                         charmstore.charmstoreURL + 'v4/set-auth-cookie');
-      assert.strictEqual(getArgs[2], 'success');
-      assert.strictEqual(getArgs[3], 'failure');
+      assert.strictEqual(getArgs[1], 'success');
+      assert.strictEqual(getArgs[2], 'failure');
     });
   });
 

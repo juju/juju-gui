@@ -22,7 +22,8 @@ describe('Bakery', function() {
   var bakery, macaroon, utils, Y;
 
   before(function (done) {
-    var modules = ['juju-env-bakery', 'juju-tests-utils', 'macaroon' ];
+    var modules = ['juju-env-bakery', 'juju-env-web-handler',
+                   'juju-tests-utils', 'macaroon' ];
     Y = YUI(GlobalConfig).use(modules, function (Y) {
       utils = Y['juju-tests'].utils;
       macaroon = Y['macaroon'];
@@ -31,7 +32,11 @@ describe('Bakery', function() {
   });
 
   beforeEach(function () {
-    bakery = new Y.juju.environments.web.Bakery();
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      visitMethod: null,
+      serviceName: 'test'
+    });
   });
 
   afterEach(function () {
@@ -78,6 +83,12 @@ describe('Bakery', function() {
     });
 
     it('calls original send with macaroon without auth needed', function() {
+      bakery = new Y.juju.environments.web.Bakery({
+        webhandler: new Y.juju.environments.web.WebHandler(),
+        visitMethod: null,
+        serviceName: 'test',
+        setCookiePath: 'set-auth-cookie'
+      });
       var putCalled = 0;
       bakery.webhandler.sendPutRequest = function(a,b,c,d,e,f,g,h) {
         putCalled++;
@@ -96,7 +107,7 @@ describe('Bakery', function() {
         macaroon.newMacaroon(['secret'], 'some id', 'a location')
       );
       bakery._requestHandlerWithInteraction(
-        'path', 'set-cookie-auth', success, failure, {
+        'path', success, failure, {
           target: {
             status: 401,
             responseText: '{"Info": {"Macaroon": ' + JSON.stringify(m) + '}}',
@@ -127,7 +138,7 @@ describe('Bakery', function() {
         macaroon.newMacaroon(['secret'], 'some id', 'a location')
       );
       bakery._requestHandlerWithInteraction(
-        'path', null, success, failure, {
+        'path', success, failure, {
           target: {
             status: 401,
             responseText: '{"Info": {"Macaroon": ' + JSON.stringify(m) + '}}',
@@ -146,7 +157,7 @@ describe('Bakery', function() {
       this._cleanups.push(requestHandler.reset);
 
       bakery._requestHandlerWithInteraction(
-        'path', 'set-cookie-auth', success, failure, {
+        'path', success, failure, {
           target: {
             status: 200,
             responseText: '{"Info": "Success"}'
