@@ -1,0 +1,15 @@
+.env-switcher {
+  margin-left: 50px;
+
+  & &--input__float {
+    float: left;
+    padding: 10px;
+    margin-right: 20px;
+  }
+
+  & .inspector-button {
+    float: left;
+    width: 100px;
+    margin-right: 10px;
+  }
+}
