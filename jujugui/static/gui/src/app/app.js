@@ -835,6 +835,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
+    _renderEnvSwitcher: function() {
+      React.render(
+        <components.EnvSwitcher />,
+        document.getElementById('demo-environment-switcher'));
+    },
+
     /**
       Sets up the UIState instance on the app
 
@@ -1659,6 +1665,7 @@ YUI.add('juju-gui', function(Y) {
           this.db.services.size(),
           this.db.machines.size()
         );
+        this._renderEnvSwitcher();
         this._renderHeaderSearch();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
@@ -1920,6 +1927,7 @@ YUI.add('juju-gui', function(Y) {
     'header-search',
     'inspector-component',
     'panel-component',
+    'env-switcher',
     // juju-views group
     'd3-components',
     'container-token',
