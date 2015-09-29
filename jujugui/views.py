@@ -75,7 +75,7 @@ def config(request):
     if not sandbox_enabled:
         user, password = settings['jujugui.user'], settings['jujugui.password']
     env_uuid = request.matchdict.get('uuid', 'sandbox')
-    baseUrl = settings['jujugui.baseUrl']
+    baseUrl = settings['jujugui.base_url']
     if baseUrl is None:
         if env_uuid == 'sandbox':
             baseUrl = ''

@@ -16,7 +16,7 @@ def update(settings):
     Modify the given settings object in place.
     """
     _update(settings, 'jujugui.auth', default=None)
-    _update(settings, 'jujugui.baseUrl', default=None)
+    _update(settings, 'jujugui.base_url', default=None)
     _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
     _update(settings, 'jujugui.ga_key', default='')
     _update(settings, 'jujugui.password', default=None)
