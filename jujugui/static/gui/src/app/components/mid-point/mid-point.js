@@ -47,6 +47,32 @@ YUI.add('mid-point', function() {
         name: 'Mongodb'
       }],
 
+      tags: [{
+        name: 'databases',
+        count: 71
+      }, {
+        name: 'app-servers',
+        count: 75
+      }, {
+        name: 'file-servers',
+        count: 48
+      }, {
+        name: 'monitoring',
+        count: 48
+      }, {
+        name: 'ops',
+        count: 22
+      }, {
+        name: 'openstack',
+        count: 108
+      }, {
+        name: 'applications',
+        count: 248
+      }, {
+        name: 'misc',
+        count: 279
+      }],
+
     /**
       Add the charm to the canvas when clicked.
 
@@ -86,6 +112,28 @@ YUI.add('mid-point', function() {
       return charms;
     },
 
+    /**
+      Generate the list of tags.
+
+      @method _generateTagList
+      @returns {Array} The list of tags.
+    */
+    _generateTagList: function() {
+      var tags = [];
+      this.tags.forEach(function (tag) {
+        tags.push(
+          <li tabIndex="0" role="button"
+            className="mid-point__tag">
+            {tag.name}
+            <span className="mid-point__tag-count">
+              ({tag.count})
+            </span>
+          </li>
+        );
+      }, this);
+      return tags;
+    },
+
     render: function() {
       return (
         <div className="mid-point">
@@ -93,6 +141,14 @@ YUI.add('mid-point', function() {
           <ul className="mid-point__charm-list">
             {this._generateCharmList()}
           </ul>
+          <div className="mid-point__footer-row">
+            <ul className="mid-point__tag-list">
+              {this._generateTagList()}
+            </ul>
+            <button className="mid-point__store-button">
+              Show more
+            </button>
+          </div>
         </div>
       );
     }
