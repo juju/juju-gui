@@ -1,15 +1,35 @@
 .env-switcher {
-  margin-left: 50px;
+    margin-left: 50px;
+    position: relative;
 
-  & &--input__float {
-    float: left;
-    padding: 10px;
-    margin-right: 20px;
-  }
+    & &--input__float {
+        float: left;
+        padding: 10px;
+        margin-right: 20px;
+    }
 
-  & .inspector-button {
-    float: left;
-    width: 100px;
-    margin-right: 10px;
-  }
+    & .inspector-button {
+        float: left;
+        width: 100px;
+        margin-right: 10px;
+    }
+}
+
+.env-list {
+    position: absolute;
+    top: 40px;
+    width: 480px;
+    z-index: 1000;
+
+    &__environment {
+        @extend %floating-panel;
+        list-style-type: none;
+        padding: 10px;
+        margin-top: 10px
+    }
+
+    &__environment:hover {
+        background-color: $light-grey;
+        cursor: pointer;
+    }
 }
