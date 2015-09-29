@@ -476,25 +476,31 @@ YUI.add('juju-env-go', function(Y) {
     handleEnvironmentInfo: function(data) {
       if (data.Error) {
         console.warn('Error retrieving environment information.');
-      } else {
-        // Store default series and provider type in the env.
-        var response = data.Response;
-        this.set('defaultSeries', response.DefaultSeries);
-        this.set('providerType', response.ProviderType);
-        if (localStorage.getItem('environmentName')) {
-          this.set('environmentName', localStorage.getItem('environmentName'));
-        } else {
-          this.set('environmentName', response.Name);
-        }
-        // For now we only need to call environmentGet if the provider is MAAS.
-        if (response.ProviderType === 'maas') {
-          this.environmentGet();
-        } else {
-          // Set the MAAS server to null, so that subscribers waiting for this
-          // attribute to be set can be released.
-          this.set('maasServer', null);
-        }
+        return;
       }
+      // Store default series and provider type in the env.
+      var response = data.Response;
+      this.set('defaultSeries', response.DefaultSeries);
+      this.set('providerType', response.ProviderType);
+      if (localStorage.getItem('environmentName')) {
+        this.set('environmentName', localStorage.getItem('environmentName'));
+      } else {
+        this.set('environmentName', response.Name);
+      }
+      // For now we only need to call environmentGet if the provider is MAAS.
+      if (response.ProviderType !== 'maas') {
+        // Set the MAAS server to null, so that subscribers waiting for this
+        // attribute to be set can be released.
+        this.set('maasServer', null);
+        return;
+      }
+      this.environmentGet(data => {
+        if (data.err) {
+          console.warn('error calling EnvironmentGet API: ' + data.err);
+          return;
+        }
+        this.set('maasServer', data.config['maas-server']);
+      });
     },
 
     /**
@@ -516,12 +522,23 @@ YUI.add('juju-env-go', function(Y) {
       environment definition.
 
       @method environmentGet
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the "config" attribute if everything went well.
+      @return {undefined} Sends a message to the server only.
     */
-    environmentGet: function() {
+    environmentGet: function(callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Capture the callback. No context is passed.
+        intermediateCallback = Y.bind(
+            this._handleEnvironmentGet, null, callback);
+      }
       this._send_rpc({
         Type: 'Client',
         Request: 'EnvironmentGet'
-      }, this._handleEnvironmentGet);
+      }, intermediateCallback);
     },
 
     /**
@@ -530,17 +547,18 @@ YUI.add('juju-env-go', function(Y) {
       controller address as an attribute of this environment.
 
       @method _handleEnvironmentGet
+      @param {Function} callback The originally submitted callback.
       @param {Object} data The response returned by the server.
     */
-    _handleEnvironmentGet: function(data) {
-      if (data.Error) {
-        console.warn('error calling EnvironmentGet API: ' + data.Error);
-        return;
+    _handleEnvironmentGet: function(callback, data) {
+      var transformedData = {
+        err: data.Error,
+      };
+      if (!data.Error) {
+        transformedData.config = data.Response.Config;
       }
-      var config = data.Response.Config;
-      if (this.get('providerType') === 'maas') {
-        this.set('maasServer', config['maas-server']);
-      }
+      // Call the original user callback.
+      callback(transformedData);
     },
 
     /**
@@ -2264,6 +2282,183 @@ YUI.add('juju-env-go', function(Y) {
         response.changeSet = data.Response.Changes;
       }
       userCallback(response);
+    },
+
+    // EnvironmentManager facade API endpoints.
+    // XXX frankban: facade management should be improved. We should store
+    // the list of facades and their corresponding available versions upon
+    // login, and then activate/deactivate the ability to perform specific
+    // API calls based on the server capabilities. Also, facades could help
+    // namespacing client functions, so that we don't store all the API calls
+    // inside a common namespace, resulting in a more organized code. Perhaps
+    // this can be done as part of creating an external JavaScript API library.
+    environmentManagerFacadeVersion: 1,
+
+    /**
+      Create an environment within this system, using the given name.
+
+      @method createEnv
+      @param {String} envName The name of the new environment.
+      @param {String} userTag The name of the new environment owner, including
+        the "user-" prefix.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the following attributes if everything went well:
+        - name: the name of the new environment;
+        - owner: the environment owner tag;
+        - uuid: the unique identifier of the new environment.
+      @return {undefined} Sends a message to the server only.
+    */
+    createEnv: function(envName, userTag, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Capture the callback. No context is passed.
+        intermediateCallback = this._handleCreateEnv.bind(null, callback);
+      } else {
+        intermediateCallback = function(callback, data) {
+          console.log('createEnv done: err:', data.Error);
+        };
+      }
+      // In order to create a new environment, we first need to retrieve the
+      // configuration skeleton for this provider.
+      this._send_rpc({
+        Type: 'EnvironmentManager',
+        Version: this.environmentManagerFacadeVersion,
+        Request: 'ConfigSkeleton',
+      }, data => {
+        if (data.Error) {
+          intermediateCallback({
+            Error: 'cannot get configuration skeleton: ' + data.Error
+          });
+          return;
+        };
+        var config = data.Response.Config;
+        // Then, having the configuration skeleton, we need configuration
+        // options for this specific environment.
+        this.environmentGet(data => {
+          if (data.err) {
+            intermediateCallback({
+              Error: 'cannot get environment configuration: ' + data.err
+            });
+            return;
+          }
+          config.name = envName;
+          // XXX frankban: juju-core should not require clients to provide SSH
+          // keys at this point, but only when strictly necessary. Provide an
+          // invalid one for now.
+          config['authorized-keys'] = 'ssh-rsa INVALID';
+          var ptype = this.get('providerType');
+          switch(ptype) {
+            case 'local':
+              config.namespace = data.config.namespace;
+              break;
+            case 'ec2':
+              config['access-key'] = data.config['access-key'];
+              config['secret-key'] = data.config['secret-key'];
+              break;
+            default:
+              // XXX frankban: add support for the remaining providers.
+              intermediateCallback({
+                Error: ptype + ' provider is not supported yet'
+              });
+              return;
+          }
+          // At this point, having both skeleton and environment options, we
+          // are ready to create the new environment in this system.
+          this._send_rpc({
+            Type: 'EnvironmentManager',
+            Version: this.environmentManagerFacadeVersion,
+            Request: 'CreateEnvironment',
+            Params: {OwnerTag: userTag, Config: config}
+          }, intermediateCallback);
+        });
+      });
+    },
+
+    /**
+      Transform the data returned from the juju-core createEnv call into that
+      suitable for the user callback.
+
+      @method _handleCreateEnv
+      @static
+      @param {Function} callback The originally submitted callback.
+      @param {Object} data The response returned by the server.
+    */
+    _handleCreateEnv: function(callback, data) {
+      var transformedData = {
+        err: data.Error,
+      };
+      if (!data.Error) {
+        var response = data.Response;
+        transformedData.name = response.Name;
+        transformedData.owner = response.OwnerTag;
+        transformedData.uuid = response.UUID;
+      }
+      // Call the original user callback.
+      callback(transformedData);
+    },
+
+  /**
+      List all environments the user can access on the current system.
+
+      @method listEnvs
+      @param {String} userTag The name of the new environments owner, including
+        the "user-" prefix.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the "envs" attribute if everything went well. The
+        "envs" field will contain a list of objects, each one representing an
+        environment with the following attributes:
+        - name: the name of the environment;
+        - owner: the environment owner tag;
+        - uuid: the unique identifier of the environment;
+        - lastConnection: the date of the last connection as a string, e.g.:
+          '2015-09-24T10:08:50Z' or null if the environment has been never
+          connected to;
+      @return {undefined} Sends a message to the server only.
+    */
+    listEnvs: function(userTag, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Capture the callback. No context is passed.
+        intermediateCallback = this._handleListEnvs.bind(null, callback);
+      }
+      this._send_rpc({
+        Type: 'EnvironmentManager',
+        Version: this.environmentManagerFacadeVersion,
+        Request: 'ListEnvironments',
+        Params: {Tag: userTag}
+      }, intermediateCallback);
+    },
+
+    /**
+      Transform the data returned from the juju-core listEnvs call into that
+      suitable for the user callback.
+
+      @method _handleListEnvs
+      @static
+      @param {Function} callback The originally submitted callback.
+      @param {Object} data The response returned by the server.
+    */
+    _handleListEnvs: function(callback, data) {
+      var transformedData = {
+        err: data.Error,
+      };
+      if (!data.Error) {
+        var response = data.Response;
+        transformedData.envs = response.UserEnvironments.map(function(value) {
+          return {
+            name: value.Name,
+            owner: value.OwnerTag,
+            uuid: value.UUID,
+            lastConnection: value.LastConnection
+          };
+        });
+      }
+      // Call the original user callback.
+      callback(transformedData);
     }
 
   });
