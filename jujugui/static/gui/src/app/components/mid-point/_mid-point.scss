@@ -1,6 +1,6 @@
 .mid-point {
     color: $cool-grey;
-    padding: 30px 20px;
+    padding: 30px 20px 20px 20px;
 
     &__title {
         margin-bottom: 20px;
@@ -42,5 +42,41 @@
     &__charm-name {
         display: block;
         text-align: center;
+    }
+
+    &__footer-row {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    &__tag-list {
+        float: left;
+        margin: 10px 0 0 0;
+        list-style: none;
+    }
+
+    &__tag {
+        display: inline-block;
+        cursor: pointer;
+
+        &:after {
+            content: ',';
+            margin-right: 4px;
+            color: $warm_grey;
+        }
+
+        &:last-child:after {
+            content: '';
+            margin-right: 0;
+        }
+    }
+
+    &__tag-count {
+        margin-left: 4px;
+        color: $warm_grey;
+    }
+
+    &__store-button {
+        @extend %button;
     }
 }

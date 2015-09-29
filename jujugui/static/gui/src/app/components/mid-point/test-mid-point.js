@@ -25,7 +25,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('MidPoint', function() {
-  var charms;
+  var charms, tags;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -34,12 +34,14 @@ describe('MidPoint', function() {
 
   beforeEach(function() {
     stubCharms();
+    stubTags();
   });
 
   afterEach(function() {
-    // Make sure we reset the charms after every test even if it fails
+    // Make sure we reset the charms and tags after every test even if it fails
     // so that we don't cause cascading failures.
     stubCharms();
+    stubTags();
   });
 
   function stubCharms() {
@@ -50,6 +52,17 @@ describe('MidPoint', function() {
   function resetCharms() {
     if (charms !== null) {
       juju.components.MidPoint.prototype.charms = charms;
+    }
+  }
+
+  function stubTags() {
+    tags = juju.components.MidPoint.tags;
+    juju.components.MidPoint.prototype.tags = [];
+  }
+
+  function resetTags() {
+    if (tags !== null) {
+      juju.components.MidPoint.prototype.tags = tags;
     }
   }
 
@@ -94,6 +107,14 @@ describe('MidPoint', function() {
             </span>
           </li>
         </ul>
+        <div className="mid-point__footer-row">
+          <ul className="mid-point__tag-list">
+            {juju.components.MidPoint.prototype.tags}
+          </ul>
+          <button className="mid-point__store-button">
+            Show more
+          </button>
+        </div>
       </div>);
   });
 
@@ -116,5 +137,53 @@ describe('MidPoint', function() {
     });
     assert.equal(addService.callCount, 1);
     assert.deepEqual(addService.args[0][0], 'trusty/mariadb');
+  });
+
+  it('renders a list of tags', function() {
+    juju.components.MidPoint.prototype.tags = [{
+        count: 5,
+        name: 'databases'
+      }, {
+        count: 30,
+        name: 'ops'
+    }];
+    // JSX doesn't like parentheses so it creates arrays of the data and we
+    // have to define those outside of the markup.
+    var counts = [
+      ['(', 5, ')'],
+      ['(', 30, ')']
+    ];
+    var addService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        addService={addService} />);
+    assert.deepEqual(output,
+      <div className="mid-point">
+        <h4 className="mid-point__title">Featured searches</h4>
+        <ul className="mid-point__charm-list">
+          {juju.components.MidPoint.prototype.charms}
+        </ul>
+        <div className="mid-point__footer-row">
+          <ul className="mid-point__tag-list">
+            <li tabIndex="0" role="button"
+              className="mid-point__tag">
+              databases
+              <span className="mid-point__tag-count">
+                {counts[0]}
+              </span>
+            </li>
+            <li tabIndex="0" role="button"
+              className="mid-point__tag">
+              ops
+              <span className="mid-point__tag-count">
+                {counts[1]}
+              </span>
+            </li>
+          </ul>
+          <button className="mid-point__store-button">
+            Show more
+          </button>
+        </div>
+      </div>);
   });
 });
