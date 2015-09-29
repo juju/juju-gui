@@ -742,34 +742,14 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderHeaderSearch: function() {
       var state = this.state;
-      // XXX: Need to correctly set active from the midpoint state.
-      var active = this.get('currentUrl').split('?')[1] === 'midpoint=';
+      // XXX: Need to correctly set active from the sectionC state.
+      var active = this.get('currentUrl').indexOf('midpoint') > -1;
       React.render(
         <window.juju.components.HeaderSearch
           active={active}
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)} />,
         document.getElementById('header-search-container'));
-    },
-
-    /**
-      Renders the Mid-Point component to the page in the
-      designated element.
-
-      @method _renderMidPoint
-    */
-    _renderMidPoint: function() {
-      var utils = views.utils;
-      // XXX: Need to correctly set visible from the midpoint state.
-      var visible = this.get('currentUrl').split('?')[1] === 'midpoint=';
-      React.render(
-        <components.Panel
-          instanceName="mid-point-panel"
-          visible={visible}>
-          <window.juju.components.MidPoint
-            addService={utils.addService.bind(this, this)} />
-        </components.Panel>,
-        document.getElementById('mid-point-container'));
     },
 
     /**
@@ -826,22 +806,33 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Renders the SearchResults component to the page in the designated element.
+      Renders the Charmbrowser component to the page in the designated element.
 
-      @method _renderSearchResults
-      @param {String} query The search query.
+      @method _renderCharmbrowser
+      @param {Object} metadata The data to pass to the charmbrowser which tells
+        it how to render.
     */
-    _renderSearchResults: function(metadata) {
-      var text = metadata.search.text;
-      var visible = text ? true : false;
+    _renderCharmbrowser: function(metadata) {
+      // XXX: Need to correctly set visible from the sectionC state. The
+      // following is a hack to select the active component until the state
+      // updates have been made.
+      var activeComponent;
+      var currentUrl = this.get('currentUrl');
+      if (currentUrl.indexOf('midpoint') > -1) {
+        activeComponent = 'mid-point';
+      } else {
+        activeComponent = 'search-results';
+      }
+      metadata.activeComponent = activeComponent;
+      var state = this.state;
+      var utils = views.utils;
+      var query = metadata.search.text;
       React.render(
-        <components.Panel
-          instanceName="white-box"
-          visible={visible}>
-          <components.SearchResults
-            query={text} />
-        </components.Panel>,
-        document.getElementById('white-box-container'));
+        <components.Charmbrowser
+          appState={state.get('current')}
+          addService={utils.addService.bind(this, this)}
+          query={query} />,
+        document.getElementById('charmbrowser-container'));
     },
 
     /**
@@ -866,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
           inspector: this._renderInspector.bind(this)
         };
         dispatchers.sectionC = {
-          searchResults: this._renderSearchResults.bind(this)
+          charmbrowser: this._renderCharmbrowser.bind(this)
         };
         this.state.set('dispatchers', dispatchers);
       }
@@ -1669,7 +1660,6 @@ YUI.add('juju-gui', function(Y) {
           this.db.machines.size()
         );
         this._renderHeaderSearch();
-        this._renderMidPoint();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
@@ -1925,12 +1915,11 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-charm-models',
     // React components
+    'charmbrowser-component',
     'env-size-display',
     'header-search',
-    'mid-point',
     'inspector-component',
     'panel-component',
-    'search-results',
     // juju-views group
     'd3-components',
     'container-token',

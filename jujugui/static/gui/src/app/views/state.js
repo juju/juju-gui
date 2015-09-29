@@ -213,7 +213,7 @@ YUI.add('juju-app-state', function(Y) {
       var metadata = state.metadata;
       if (!component) {
         if (metadata && metadata.search && metadata.search.text) {
-          component = 'searchResults';
+          component = 'charmbrowser';
         } else {
           return;
         }
