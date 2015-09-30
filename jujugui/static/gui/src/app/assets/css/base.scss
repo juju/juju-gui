@@ -718,6 +718,21 @@ g.service {
             fill: #fff;
         }
     }
+
+    .is-erroring {
+        stroke: #ed3146;
+        stroke-width: 3;
+    }
+
+    .is-pending {
+        stroke: #f99b0f;
+        stroke-width: 3;
+    }
+
+    .is-running {
+        stroke: #888888;
+        stroke-width: 1;
+    }
 }
 g.service-status {
     path {
