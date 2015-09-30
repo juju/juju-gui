@@ -49,7 +49,16 @@ YUI.add('env-switcher', function() {
     createEnvironment: function(e) {
       e.preventDefault();
       this.props.env.createEnv(
-          this.state.envName, 'user-admin', this.updateEnvList);
+          this.state.envName, 'user-admin', this.createEnvironmentCallback);
+    },
+
+    createEnvironmentCallback: function(data) {
+      if (data.err) {
+        console.log(data.err);
+      } else {
+        this.updateEnvList(data);
+        this.props.app.switchEnv(data.uuid);
+      }
     },
 
     toggleEnvList: function(e) {
