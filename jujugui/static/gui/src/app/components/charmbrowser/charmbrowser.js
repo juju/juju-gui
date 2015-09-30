@@ -41,10 +41,10 @@ YUI.add('charmbrowser-component', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
+      var metadata = nextProps.appState.sectionC.metadata;
       var state = {
-        activeComponent: nextProps.appState.sectionC.metadata.activeComponent
+        activeComponent: metadata.activeComponent
       };
-      var query = this.props.query;
       switch (state.activeComponent) {
         case 'mid-point':
           state.activeChild = {
@@ -56,11 +56,19 @@ YUI.add('charmbrowser-component', function() {
         break;
         case 'search-results':
           state.activeChild = {
-            panelInstanceName: 'white-box',
+            panelInstanceName: 'search-results-panel',
             component:
               <juju.components.SearchResults
                 charmstore={this.props.charmstore}
-                query={nextProps.appState.sectionC.metadata.search} />
+                query={metadata.search} />
+          };
+        break;
+        case 'entity-details':
+          state.activeChild = {
+            panelInstanceName: 'entity-details-panel',
+            component:
+              <juju.components.EntityDetails
+                id={metadata.id} />
           };
         break;
       }
@@ -85,6 +93,7 @@ YUI.add('charmbrowser-component', function() {
 
 }, '0.1.0', {
   requires: [
+    'entity-details',
     'mid-point',
     'search-results'
   ]

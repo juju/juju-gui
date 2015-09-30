@@ -27,16 +27,19 @@ chai.config.truncateThreshold = 0;
 describe('Charmbrowser', function() {
 
   beforeAll(function(done) {
+    // Mock these out since we just do shallow renders.
+    juju.components.Panel = function() {};
     // By loading this file it adds the component to the juju components.
     YUI().use('charmbrowser-component', function() { done(); });
   });
 
   it('displays the search results when the app state calls for it', function() {
+    var query = 'django';
     var appState = {
       sectionC: {
         metadata: {
           activeComponent: 'search-results',
-          search: 'django'
+          search: query
         }
       }};
     var clearState = sinon.stub();
@@ -46,14 +49,13 @@ describe('Charmbrowser', function() {
       <juju.components.Charmbrowser
         appState={appState}
         charmstore={charmstore}
-        addService={addService}
-        query="django" />);
+        addService={addService} />);
     assert.deepEqual(output,
         <juju.components.Panel
-          instanceName="white-box"
+          instanceName="search-results-panel"
           visible={true}>
           <juju.components.SearchResults
-            query="django"
+            query={query}
             charmstore={charmstore} />
         </juju.components.Panel>);
   });
@@ -70,14 +72,37 @@ describe('Charmbrowser', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
-        changeState={changeState}
-        query="django" />);
+        changeState={changeState} />);
     assert.deepEqual(output,
         <juju.components.Panel
           instanceName="mid-point-panel"
           visible={true}>
           <juju.components.MidPoint
             changeState={changeState} />
+        </juju.components.Panel>);
+  });
+
+  it('displays entity details when the app state calls for it', function() {
+    var id = 'foobar';
+    var appState = {
+      sectionC: {
+        metadata: {
+          activeComponent: 'entity-details',
+          id: id
+        }
+      }};
+    var clearState = sinon.stub();
+    var addService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Charmbrowser
+        appState={appState}
+        addService={addService} />);
+    assert.deepEqual(output,
+        <juju.components.Panel
+          instanceName="entity-details-panel"
+          visible={true}>
+          <juju.components.EntityDetails
+            id={id} />
         </juju.components.Panel>);
   });
 });
