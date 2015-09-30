@@ -5,12 +5,14 @@
     & &--input__float {
         float: left;
         padding: 10px;
-        margin-right: 20px;
+        margin-right: 10px;
     }
 
-    & .inspector-button {
+    .inspector-button {
         float: left;
-        width: 100px;
+        width: auto;
+        padding-left: 20px;
+        padding-right: 20px;
         margin-right: 10px;
     }
 }

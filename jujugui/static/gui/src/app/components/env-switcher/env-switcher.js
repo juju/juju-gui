@@ -23,37 +23,72 @@ YUI.add('env-switcher', function() {
   juju.components.EnvSwitcher = React.createClass({
 
     getInitialState: function() {
-        return { showEnvList: false };
+        return {
+          showEnvList: false,
+          envName: '',
+          envList: []
+        };
     },
 
-    createEnvironment: function() {},
+    componentDidMount: function() {
+      this.updateEnvList();
+    },
 
-    toggleEnvList: function() {
+    updateEnvList: function(data) {
+      app.env.listEnvs('user-admin', this.updateEnvListCallback);
+    },
+
+    updateEnvListCallback: function(data) {
+      if (data.err) {
+        console.log(data.err);
+      } else {
+        this.setState({envList: data.envs});
+      }
+    },
+
+    createEnvironment: function(e) {
+      e.preventDefault();
+      this.props.env.createEnv(
+          this.state.envName, 'user-admin', this.updateEnvList);
+    },
+
+    toggleEnvList: function(e) {
+      e.preventDefault();
       this.setState({ showEnvList: !this.state.showEnvList });
     },
 
     showEnvList: function() {
       if (this.state.showEnvList) {
-        return <juju.components.EnvList />;
+        return <juju.components.EnvList
+          app={this.props.app}
+          envs={this.state.envList} />;
       }
+    },
+
+    _handleEnvNameChange: function(e) {
+      this.setState({envName: e.currentTarget.value});
     },
 
     render: function() {
       return (
         <div className="env-switcher">
-          <div className="env-switcher--create">
+          <form className="env-switcher--create">
             <input
               type="text"
               name="env-name"
               className="env-switcher--input__float"
-              placeholder="Environment Name" />
-            <juju.components.InspectorButton
-              title="Create"
-              action={this.createEnvironment} />
-            <juju.components.InspectorButton
-              title="List"
-              action={this.toggleEnvList} />
-          </div>
+              placeholder="Environment Name"
+              value={this.state.envName}
+              onChange={this._handleEnvNameChange} />
+            <input type="submit"
+              className="inspector-button"
+              value="Create"
+              onClick={this.createEnvironment} />
+            <input type="button"
+              className="inspector-button"
+              value="List"
+              onClick={this.toggleEnvList} />
+          </form>
           {this.showEnvList()}
         </div>
       );

@@ -21,12 +21,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('env-list', function() {
 
   juju.components.EnvList = React.createClass({
+    getInitialState: function() {
+        return {
+          envs: this.props.envs
+        };
+    },
+
+    handleEnvClick: function(e) {
+      var uuid = e.currentTarget.getAttribute('data-id');
+      this.props.app.switchEnv(uuid);
+    },
+
+    generateEnvList: function() {
+      var envs = [];
+      this.state.envs.forEach(function(env) {
+        envs.push(
+          <li className="env-list__environment"
+            data-id={env.uuid}
+            onClick={this.handleEnvClick}
+            key={env.uuid}>
+            {env.name}
+          </li>);
+      }, this);
+      return envs;
+    },
+
     render: function() {
       return (
         <ul className="env-list">
-          <li className="env-list__environment">Demo 1</li>
-          <li className="env-list__environment">Demo 2</li>
-          <li className="env-list__environment">Demo 3</li>
+          {this.generateEnvList()}
         </ul>
       );
     }
