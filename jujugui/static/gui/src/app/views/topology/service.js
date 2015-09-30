@@ -140,7 +140,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (d.subordinate) {
         curr_node.attr({
-          'stroke': '#19b6ee',
+          'stroke': '#888888',
           'stroke-width': 1
         });
       } else if ((d.pending || d.deleted)) {
@@ -1420,7 +1420,9 @@ YUI.add('juju-topology-service', function(Y) {
         .attr({
           cx: 95,
           cy: 95,
-          r: 90,
+          r: function(d) {
+            return (d.subordinate ? 60 : 90);
+          },
           fill: '#f5f5f5',
           'stroke-width': 1,
           stroke: '#888888'
@@ -1592,7 +1594,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      selection.classed(topoUtils.getVisibilityClasses('show'));
+      //selection.classed(topoUtils.getVisibilityClasses('show'));
     },
 
     hide: function(evt) {
