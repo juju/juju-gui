@@ -27,18 +27,13 @@ YUI.add('env-list', function() {
         };
     },
 
-    handleEnvClick: function(e) {
-      var uuid = e.currentTarget.getAttribute('data-id');
-      this.props.app.switchEnv(uuid);
-    },
-
     generateEnvList: function() {
       var envs = [];
       this.state.envs.forEach(function(env) {
         envs.push(
           <li className="env-list__environment"
             data-id={env.uuid}
-            onClick={this.handleEnvClick}
+            onClick={this.props.action}
             key={env.uuid}>
             {env.name}
           </li>);

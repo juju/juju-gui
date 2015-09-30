@@ -48,8 +48,10 @@ YUI.add('env-switcher', function() {
 
     createEnvironment: function(e) {
       e.preventDefault();
+      this.setState({showEnvList: false});
       this.props.env.createEnv(
           this.state.envName, 'user-admin', this.createEnvironmentCallback);
+      this.setState({envName: ''});
     },
 
     createEnvironmentCallback: function(data) {
@@ -66,10 +68,16 @@ YUI.add('env-switcher', function() {
       this.setState({ showEnvList: !this.state.showEnvList });
     },
 
+    handleEnvClick: function(e) {
+      var uuid = e.currentTarget.getAttribute('data-id');
+      this.setState({showEnvList: false});
+      this.props.app.switchEnv(uuid);
+    },
+
     showEnvList: function() {
       if (this.state.showEnvList) {
         return <juju.components.EnvList
-          app={this.props.app}
+          action={this.handleEnvClick}
           envs={this.state.envList} />;
       }
     },
