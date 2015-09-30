@@ -128,8 +128,12 @@ YUI.add('juju-topology-service', function(Y) {
 
     // Size the node for drawing.
     node.attr({
-      'width': function(box) { box.w = 190; return box.w;},
-      'height': function(box) { box.h = 190; return box.h;}
+      'width': function(box) {
+        box.subordinate ? box.w = 130 : box.w = 190; return box.w;
+      },
+      'height': function(box) {
+        box.subordinate ? box.h = 130 : box.h = 190; return box.h;
+      }
     });
 
     var rerenderRelations = false;
@@ -195,23 +199,46 @@ YUI.add('juju-topology-service', function(Y) {
           d3.select(this)
           .select('.sub-rel-block').empty();
     })
-        .append('g')
+        .insert('g', ':first-child')
         .attr('class', 'sub-rel-block')
         .attr('transform', function(d) {
           // Position the block so that the relation indicator will
           // appear at the right connector.
-          return 'translate(' + [d.w, d.h / 2 - 26] + ')';
+          return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
         });
 
-    subRelationIndicator.append('image')
-        .attr({'xlink:href': 'juju-ui/assets/svgs/sub_relation.svg',
-          'width': 87,
-          'height': 47});
-    subRelationIndicator.append('text').append('tspan')
-              .attr({'class': 'sub-rel-count',
 
-          'x': 64,
-          'y': 47 * 0.8});
+    subRelationIndicator.append('line')
+      .attr({
+        'x1': 0,
+        'y1': 30,
+        'x2': 20,
+        'y2': 30
+      })
+      .attr('stroke-width', 1)
+      .attr('stroke', '#888888');
+    subRelationIndicator.append('circle')
+      .attr({
+        'cx': 0,
+        'cy': 30,
+        'r': 4
+      })
+      .attr('fill', '#888888');
+    subRelationIndicator.append('circle')
+      .attr({
+        'cx': 35,
+        'cy': 30,
+        'r': 15
+      })
+      .attr('stroke-width', 1)
+      .attr('stroke', '#888888')
+      .attr('fill', '#f5f5f5');
+    subRelationIndicator.append('text').append('tspan')
+      .attr({
+        'class': 'sub-rel-count',
+        'x': 35,
+        'y': 45 * 0.8
+      });
 
     // The following are sizes in pixels of the SVG assets used to
     // render a service, and are used to in calculating the vertical
@@ -1418,8 +1445,12 @@ YUI.add('juju-topology-service', function(Y) {
 
       node.append('circle')
         .attr({
-          cx: 95,
-          cy: 95,
+          cx: function(d) {
+            return (d.subordinate ? 65 : 95);
+          },
+          cy: function(d) {
+            return (d.subordinate ? 65 : 95);
+          },
           r: function(d) {
             return (d.subordinate ? 60 : 90);
           },
@@ -1455,7 +1486,9 @@ YUI.add('juju-topology-service', function(Y) {
           },
           width: 96,
           height: 96,
-          transform: 'translate(47, 47)',
+          transform: function(d) {
+            return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
+          },
           'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
         });
 

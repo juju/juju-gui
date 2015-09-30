@@ -438,7 +438,8 @@ YUI.add('juju-topology-relation', function(Y) {
       var connector1 = d3.select(this).select('.connector1');
       var connector2 = d3.select(this).select('.connector2');
       var imageSize = 20;
-      var serviceRadius = 90;
+      var sRadius = (relation.source.w / 2) - 4;
+      var tRadius = (relation.target.w / 2) - 4;
 
       link
                 .attr('x1', s[0])
@@ -457,13 +458,13 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Convert the radian to a point[x, y] for the FROM knob
       var dot1 = [
-        s[0] + -(Math.cos(deg) * serviceRadius),
-        s[1] + -(Math.sin(deg) * serviceRadius)];
+        s[0] + -(Math.cos(deg) * sRadius),
+        s[1] + -(Math.sin(deg) * sRadius)];
 
       // Convert the radian to a point[x, y] for the TO knob
       var dot2 = [
-        t[0] + Math.cos(deg) * serviceRadius,
-        t[1] + Math.sin(deg) * serviceRadius];
+        t[0] + Math.cos(deg) * tRadius,
+        t[1] + Math.sin(deg) * tRadius];
 
       // Position the TO knob
       connector1
