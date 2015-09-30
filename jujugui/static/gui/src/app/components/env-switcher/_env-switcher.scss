@@ -1,11 +1,18 @@
-.env-switcher {
-    margin-left: 50px;
+#demo-environment-switcher {
     position: relative;
+}
+
+.env-switcher {
+    position: absolute;
+    left: 40px;
+    width: 450px;
+    padding-top: 10px;
 
     & &--input__float {
         float: left;
-        padding: 10px;
+        width: 150px;
         margin-right: 10px;
+        padding: 10px;
     }
 
     .inspector-button {
@@ -14,13 +21,17 @@
         padding-left: 20px;
         padding-right: 20px;
         margin-right: 10px;
+
+        &:last-child {
+            margin-right: 0;
+        }
     }
 }
 
 .env-list {
     position: absolute;
-    top: 40px;
-    width: 480px;
+    top: 50px;
+    width: 350px;
     z-index: 1000;
 
     &__environment {

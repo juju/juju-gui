@@ -77,7 +77,7 @@ YUI.add('env-switcher', function() {
               type="text"
               name="env-name"
               className="env-switcher--input__float"
-              placeholder="Environment Name"
+              placeholder="Environment name"
               value={this.state.envName}
               onChange={this._handleEnvNameChange} />
             <input type="submit"
