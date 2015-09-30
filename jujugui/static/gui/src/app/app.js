@@ -742,11 +742,8 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderHeaderSearch: function() {
       var state = this.state;
-      // XXX: Need to correctly set active from the sectionC state.
-      var active = this.get('currentUrl').indexOf('midpoint') > -1;
       React.render(
         <window.juju.components.HeaderSearch
-          active={active}
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)} />,
         document.getElementById('header-search-container'));
@@ -813,26 +810,19 @@ YUI.add('juju-gui', function(Y) {
         it how to render.
     */
     _renderCharmbrowser: function(metadata) {
-      // XXX: Need to correctly set visible from the sectionC state. The
-      // following is a hack to select the active component until the state
-      // updates have been made.
-      var activeComponent;
-      var currentUrl = this.get('currentUrl');
-      if (currentUrl.indexOf('midpoint') > -1) {
-        activeComponent = 'mid-point';
-      } else {
-        activeComponent = 'search-results';
-      }
-      metadata.activeComponent = activeComponent;
       var state = this.state;
       var utils = views.utils;
-      var query = metadata.search.text;
       React.render(
         <components.Charmbrowser
           charmstore={this.get('charmstore')}
           appState={state.get('current')}
           addService={utils.addService.bind(this, this)}
-          query={query} />,
+          changeState={this.changeState.bind(this)} />,
+        document.getElementById('charmbrowser-container'));
+    },
+
+    _emptySectionC: function() {
+      React.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
     },
 
@@ -858,7 +848,8 @@ YUI.add('juju-gui', function(Y) {
           inspector: this._renderInspector.bind(this)
         };
         dispatchers.sectionC = {
-          charmbrowser: this._renderCharmbrowser.bind(this)
+          charmbrowser: this._renderCharmbrowser.bind(this),
+          empty: this._emptySectionC.bind(this)
         };
         this.state.set('dispatchers', dispatchers);
       }

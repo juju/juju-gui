@@ -34,20 +34,13 @@ YUI.add('header-search', function() {
       @returns {String} The current state.
     */
     getInitialState: function() {
-      // Setting a default state object.
-      var query;
-      var search = this.props.getAppState('current', 'sectionC', 'metadata');
-      if (search) {
-        query = search.search.text;
-      }
-      var active = true;
-      if (query === undefined) {
-        active = this.props.active === undefined ? false : this.props.active;
-      }
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
+      var active = !!component;
 
       return {
-        search: active,
-        query: query,
+        query: metadata && metadata.search,
         active: active,
         inputStyles: this._generateInputStyles(active)
       };
@@ -87,24 +80,33 @@ YUI.add('header-search', function() {
       @method _handleSearchFocus
     */
     _handleSearchFocus: function() {
-      this.setState({
-        active: true,
-        inputStyles: this._generateInputStyles(true)
-      });
+      if (!this.state.active && !this.state.query) {
+        this.setState({
+          active: true,
+          inputStyles: this._generateInputStyles(true)
+        });
+        this.props.changeState({
+          sectionC: {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'mid-point'
+            }
+          }
+        });
+      }
     },
 
     /**
       Handle the search input losing focus.
 
-      @method _handleSearchBlur
+      @method _handleSearchClose
     */
-    _handleSearchBlur: function() {
-      if (!this.state.search && !this.state.query) {
-        this.setState({
-          active: false,
-          inputStyles: this._generateInputStyles(false)
-        });
-      }
+    _handleSearchClose: function() {
+      this.setState({
+        query: undefined,
+        active: false,
+        inputStyles: this._generateInputStyles(false)
+      });
     },
 
     /**
@@ -132,10 +134,10 @@ YUI.add('header-search', function() {
       e.preventDefault();
       this.props.changeState({
         sectionC: {
+          component: 'charmbrowser',
           metadata: {
-            search: {
-              text: this.state.query
-            }
+            activeComponent: 'search-results',
+            text: this.state.query
           }
         }
       });
@@ -147,10 +149,11 @@ YUI.add('header-search', function() {
       @method _handleClose
     */
     _handleClose: function() {
+      this._handleSearchClose();
       this.props.changeState({
         sectionC: {
           component: null,
-          metadata: {}
+          metadata: null
         }
       });
     },
@@ -179,7 +182,6 @@ YUI.add('header-search', function() {
               value={this.state.query}
               onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
-              onBlur={this._handleSearchBlur}
               style={this.state.inputStyles} />
           </form>
           <span tabIndex="0" role="button"

@@ -57,7 +57,7 @@ YUI.add('search-result-extension', function(Y) {
     toSearchResult: function(charmstore) {
       var attrs = this.getAttrs(),
           type = attrs.entityType;
-      result = {
+      var result = {
           name: attrs.name,
           displayName: attrs.name.replace('-', ' '),
           type: type,
