@@ -20,6 +20,7 @@
     "graceful-fs": "1.1.x",
     "grunt": "0.3.17",
     "handlebars": "^4.0.2",
+    "js-macaroon": "0.0.8",
     "jasmine-core": "^2.3.4",
     "js-macaroon": "0.0.7",
     "jshint": "2.1.9",

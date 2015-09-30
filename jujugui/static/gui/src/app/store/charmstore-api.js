@@ -37,7 +37,12 @@ YUI.add('charmstore-api', function(Y) {
     // then we should accept a requestHandler class being passed in on
     // instantiation as well as a different _makeRequest method for the
     // prototype.
-    this.requestHandler = new Y.juju.environments.web.WebHandler();
+    this.bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      visitMethod: null,
+      serviceName: 'charmstore',
+      setCookiePath: this.charmstoreURL + this.apiPath + '/set-auth-cookie'
+    });
   }
 
   APIv4.prototype = {
@@ -53,33 +58,11 @@ YUI.add('charmstore-api', function(Y) {
         with a response of >= 400.
     */
     _makeRequest: function(path, successCallback, failureCallback) {
-      this.requestHandler.sendGetRequest(
-          path,
-          // The WebHandler methods allow you to pass in headers, username,
-          // password, progressCallback which we do not need.
-          null, null, null, null,
-          this._requestHandler.bind(this, successCallback, failureCallback));
-    },
-
-    /**
-      Handles the request response from the _makeRequest method, calling the
-      supplied failure callback if the response status was >= 400 or passing the
-      response object to the supplied success callback.
-
-      @method _requestHandler
-      @param {Function} successCallback Called when the api request completes
-        successfully.
-      @param {Function} failureCallback Called when the api request fails
-        with a response of >= 400.
-      @param {Object} response The XHR response object.
-    */
-    _requestHandler: function(successCallback, failureCallback, response) {
-      var target = response.target;
-      if (target.status >= 400) {
-        failureCallback(response);
-        return;
-      }
-      successCallback(response);
+      this.bakery.sendGetRequest(
+        path,
+        successCallback,
+        failureCallback
+      );
     },
 
     /**
@@ -439,6 +422,7 @@ YUI.add('charmstore-api', function(Y) {
 
 }, '', {
   requires: [
+    'juju-env-bakery',
     'juju-env-web-handler',
     'querystring-stringify',
     'juju-charm-models',
