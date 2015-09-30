@@ -298,17 +298,15 @@ YUI.add('juju-app-state', function(Y) {
           if (window.flags && window.flags.react) {
             var activeComponent = metadata.activeComponent;
             if (activeComponent === 'search-results') {
-              queryValues.search = metadata.text;
+              queryValues.search = metadata.search;
             }
             if (activeComponent === 'mid-point') {
               queryValues.midpoint = '';
             }
             if (activeComponent === 'entity-details') {
-              queryValues.store = metadata.id || '';
+              queryValues.store = id || '';
             }
           }
-        } else if (component === 'charmbrowser') {
-          queryValues.search = metadata.text;
         } else {
           if (component) {
             urlParts.push(component);
@@ -365,7 +363,7 @@ YUI.add('juju-app-state', function(Y) {
         }
       }
       if (window.flags && window.flags.react) {
-        if (queryValues) {
+        if (Object.keys(queryValues).length > 0) {
           url = url.replace(/\/$/, '');
           Object.keys(queryValues).forEach((key) => {
             url += '?' + key + '=' + queryValues[key];

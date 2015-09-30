@@ -137,7 +137,7 @@ YUI.add('header-search', function() {
           component: 'charmbrowser',
           metadata: {
             activeComponent: 'search-results',
-            text: this.state.query
+            search: this.state.query
           }
         }
       });

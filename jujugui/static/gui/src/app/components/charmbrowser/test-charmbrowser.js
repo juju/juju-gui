@@ -36,7 +36,7 @@ describe('Charmbrowser', function() {
       sectionC: {
         metadata: {
           activeComponent: 'search-results',
-          text: 'django'
+          search: 'django'
         }
       }};
     var clearState = sinon.stub();
@@ -66,18 +66,18 @@ describe('Charmbrowser', function() {
         }
       }};
     var clearState = sinon.stub();
-    var addService = sinon.stub();
+    var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
-        addService={addService}
+        changeState={changeState}
         query="django" />);
     assert.deepEqual(output,
         <juju.components.Panel
           instanceName="mid-point-panel"
           visible={true}>
           <juju.components.MidPoint
-            addService={addService} />
+            changeState={changeState} />
         </juju.components.Panel>);
   });
 });

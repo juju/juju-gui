@@ -118,16 +118,16 @@ describe('MidPoint', function() {
       </div>);
   });
 
-  it('calls addService when clicking on a charm', function() {
+  it('calls to show the charm details when clicking on a charm', function() {
     juju.components.MidPoint.prototype.charms = [{
         id: 'trusty/mariadb',
         icon: 'icon.svg',
         name: 'Mariadb'
       }];
-    var addService = sinon.stub();
+    var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint
-        addService={addService} />);
+        changeState={changeState} />);
     output.props.children[1].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: function() {
@@ -135,8 +135,16 @@ describe('MidPoint', function() {
         }
       }
     });
-    assert.equal(addService.callCount, 1);
-    assert.deepEqual(addService.args[0][0], 'trusty/mariadb');
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'entity-details',
+          id: 'trusty/mariadb'
+        }
+      }
+    });
   });
 
   it('renders a list of tags', function() {
