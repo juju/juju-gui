@@ -1501,7 +1501,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(module.relations[2].relations.length, 2);
       // Only one line is drawn (that is, there are four container relations,
       // but only three lines on the canvas).
-      assert.equal(view.topo.vis.selectAll('line').size(),
+      assert.equal(view.topo.vis.selectAll('.relation').size(),
           module.relations.length);
       assert.equal(module.relations.length, 3);
       assert.equal(db.relations.filter(function(relation) {

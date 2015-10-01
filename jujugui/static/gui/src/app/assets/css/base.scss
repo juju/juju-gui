@@ -681,7 +681,7 @@ g.service {
     .sub-rel-count {
         text-anchor: middle;
         dominant_baseline: central;
-        fill: #4f4f4f;
+        fill: $warm-grey;
         font-size: 18px;
 
         &.active {
