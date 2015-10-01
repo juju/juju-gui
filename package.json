@@ -21,7 +21,7 @@
     "grunt": "0.3.17",
     "handlebars": "^4.0.2",
     "jasmine-core": "^2.3.4",
-    "js-macaroon": "https://registry.npmjs.org/js-macaroon/-/js-macaroon-0.0.8.tgz",
+    "js-macaroon": "0.0.8",
     "jshint": "2.1.9",
     "karma": "^0.13.9",
     "karma-chai-sinon": "^0.1.5",

@@ -52,6 +52,9 @@ YUI.add('header-search', function() {
       @method componentWillReceiveProps
     */
     componentWillReceiveProps: function() {
+      // Need to check if there is a change to sectionC and if it has been
+      // cleared (mid-point/search results have been closed) then we also need
+      // to deactivate the search box.
       var component = this.props.getAppState(
         'current', 'sectionC', 'component');
       if (!component) {
