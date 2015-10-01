@@ -393,12 +393,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'use strict' and d3 doesn't work under strict.
     -->
     % if raw:
-    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/classnames.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/classnames.js&app/assets/javascripts/react-onclickoutside.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/handlebars.runtime.js&app/components/templates.js&app/components/helpers.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     % else:
-    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/classnames-min.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/react-onclickoutside-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/handlebars.runtime.min.js&app/components/templates-min.js&app/components/helpers-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>

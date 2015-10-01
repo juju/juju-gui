@@ -47,6 +47,19 @@ YUI.add('header-search', function() {
     },
 
     /**
+      Update the state when the app state changes.
+
+      @method componentWillReceiveProps
+    */
+    componentWillReceiveProps: function() {
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      if (!component) {
+        this._handleSearchClose();
+      }
+    },
+
+    /**
       Generate the base classes based on the props.
 
       @method _generateClasses
@@ -55,6 +68,7 @@ YUI.add('header-search', function() {
     _generateClasses: function() {
       return classNames(
         'header-search',
+        'ignore-react-onclickoutside',
         this.state.active ? 'header-search--active' : ''
       );
     },
