@@ -263,7 +263,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
     },
 
-
     /**
     Handle Login messages to the state object.
 
@@ -339,6 +338,55 @@ YUI.add('juju-env-sandbox', function(Y) {
           // For now only the MAAS server is required by the GUI.
           Config: {'maas-server': state.get('maasServer')}
         }
+      });
+    },
+
+    /**
+    Handle ListEnvironments.
+
+    @method handleEnvironmentManagerListEnvironments
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleEnvironmentManagerListEnvironments: function(data, client, state) {
+      client.receive({
+        RequestId: data.RequestId,
+        Response: {
+          UserEnvironments: [{
+            Name: 'sandbox',
+            UUID: 'sandbox1',
+            OwnerTag: 'user-admin',
+            LastConnection: 'today'
+          }]
+        }
+      });
+    },
+
+    /**
+    Handle ConfigSkeleton.
+
+    @method handleEnvironmentManagerConfigSkeleton
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleEnvironmentManagerConfigSkeleton: function(data, client, state) {
+      client.receive({
+        RequestId: data.RequestId,
+        Response: {
+          OwnerTag: 'user-admin',
+          Config: {
+            attr1: 'value1',
+            attr2: 'value2',
+            name: 'sandbox',
+            'authorized-keys': 'ssh-rsa INVALID',
+            'access-key': 'access!',
+            'secret-key': 'secret!'
+          }
+        },
       });
     },
 
