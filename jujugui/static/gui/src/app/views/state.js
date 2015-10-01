@@ -527,7 +527,7 @@ YUI.add('juju-app-state', function(Y) {
           state.sectionC = {
             component: 'charmbrowser',
             metadata: {
-              activeComponent: 'entityDetails',
+              activeComponent: 'entity-details',
               id: query.store
             }
           };
