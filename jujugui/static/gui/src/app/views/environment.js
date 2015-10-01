@@ -40,6 +40,13 @@ YUI.add('juju-view-environment', function(Y) {
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [
     views.JujuBaseView, Y.Event.EventTracker
   ], {
+
+    events: {
+      '.environment-help .plus-service': {
+        click: '_handlePlusClick'
+      }
+    },
+
     /**
      * @method EnvironmentView.initializer
      */
@@ -247,6 +254,23 @@ YUI.add('juju-view-environment', function(Y) {
     _attachTopoEvents: function() {
       this.topo.on(
           '*:destroyServiceInspector', this.destroyInspector, this);
+    },
+
+    /**
+      Handles clicking on the plus button in the onboarding.
+
+      @method _handlePlusClick
+      @param {Object} e The click event
+    */
+    _handlePlusClick: function(e) {
+      this.fire('changeState', {
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'mid-point'
+          }
+        }
+      });
     }
   }, {
     ATTRS: {

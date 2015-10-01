@@ -151,6 +151,17 @@ YUI.add('juju-topology', function(Y) {
             '</g>');
         /*eslint-enable max-len*/
         var plusIndicator = vis.select('.included-plus');
+        var self = this;
+        plusIndicator.on('click', function() {
+          self.fire('changeState', {
+            sectionC: {
+              component: 'charmbrowser',
+              metadata: {
+                activeComponent: 'mid-point'
+              }
+            }
+          });
+        });
         var plusDrag = d3.behavior.drag()
           .on('drag', function(d) {
             var plus = d3.select(this);
@@ -159,9 +170,9 @@ YUI.add('juju-topology', function(Y) {
               .split(')')[0]
               .split(',');
             plus
-              .attr('transform', 
-                  'translate(' 
-                    + [d3.event.dx + parseInt(oldCoords[0], 10), 
+              .attr('transform',
+                  'translate('
+                    + [d3.event.dx + parseInt(oldCoords[0], 10),
                        d3.event.dy + parseInt(oldCoords[1], 10)] + ')');
           });
         plusIndicator.call(plusDrag);
