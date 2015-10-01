@@ -211,6 +211,16 @@ YUI.add('juju-view-environment', function(Y) {
           helpText.show();
           helpText.removeClass('shrink');
           includedPlus.classed('show', false);
+          helpText.one('.plus-service').on('click', function() {
+            this.fire('changeState', {
+              sectionC: {
+                component: 'charmbrowser',
+                metadata: {
+                  activeComponent: 'mid-point'
+                }
+              }
+            });
+          }, this);
         } else {
           helpText.addClass('shrink');
           includedPlus.classed('show', true);
