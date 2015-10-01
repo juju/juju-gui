@@ -57,8 +57,10 @@ YUI.add('header-search', function() {
       // to deactivate the search box.
       var component = this.props.getAppState(
         'current', 'sectionC', 'component');
-      if (!component) {
-        this._handleSearchClose();
+      if (component) {
+        this._openSearch();
+      } else {
+        this._closeSearch();
       }
     },
 
@@ -98,10 +100,7 @@ YUI.add('header-search', function() {
     */
     _handleSearchFocus: function() {
       if (!this.state.active && !this.state.query) {
-        this.setState({
-          active: true,
-          inputStyles: this._generateInputStyles(true)
-        });
+        this._openSearch();
         this.props.changeState({
           sectionC: {
             component: 'charmbrowser',
@@ -114,11 +113,23 @@ YUI.add('header-search', function() {
     },
 
     /**
-      Handle the search input losing focus.
+      Open the search box.
 
-      @method _handleSearchClose
+      @method _openSearch
     */
-    _handleSearchClose: function() {
+    _openSearch: function() {
+      this.setState({
+        active: true,
+        inputStyles: this._generateInputStyles(true)
+      });
+    },
+
+    /**
+      Close the search box.
+
+      @method _closeSearch
+    */
+    _closeSearch: function() {
       this.setState({
         query: undefined,
         active: false,
@@ -166,7 +177,7 @@ YUI.add('header-search', function() {
       @method _handleClose
     */
     _handleClose: function() {
-      this._handleSearchClose();
+      this._closeSearch();
       this.props.changeState({
         sectionC: {
           component: null,
