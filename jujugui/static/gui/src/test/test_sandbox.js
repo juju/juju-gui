@@ -21,15 +21,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('sandbox.ClientConnection', function() {
-    var requires = ['juju-env-sandbox', 'json-stringify'];
-    var Y, sandboxModule, ClientConnection;
+    var requires = ['juju-env-sandbox', 'json-stringify', 'juju-tests-factory'];
+    var Y, sandboxModule, ClientConnection, factory, state, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         ClientConnection = sandboxModule.ClientConnection;
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
+    });
+
+    beforeEach(function() {
+      state = factory.makeFakeBackend();
+      juju = new sandboxModule.GoJujuAPI({
+        state: state,
+        socket_url: 'socket url'});
     });
 
     it('opens successfully in isolation.', function() {
@@ -174,6 +182,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.throws(
           conn.receive.bind(conn, {response: 42}),
           'INVALID_STATE_ERR : Connection is closed.');
+    });
+
+    it('returns ListEnvironments responses', function(done) {
+      var client = new ClientConnection({juju: juju});
+      var data = {
+        RequestId: 42,
+        Type: 'EnvironmentManager',
+        Request: 'ListEnvironments'
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42,
+          Response: {
+            UserEnvironments: [{
+              Name: 'sandbox',
+              UUID: 'sandbox1',
+              OwnerTag: 'user-admin',
+              LastConnection: 'today'
+            }]
+          }
+        };
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('returns ConfigSkeleton responses', function(done) {
+      var client = new ClientConnection({juju: juju});
+      var data = {
+        RequestId: 42,
+        Type: 'EnvironmentManager',
+        Request: 'ConfigSkeleton'
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42,
+          Response: {
+            OwnerTag: 'user-admin',
+            Config: {
+              attr1: 'value1',
+              attr2: 'value2',
+              name: 'sandbox',
+              'authorized-keys': 'ssh-rsa INVALID',
+              'access-key': 'access!',
+              'secret-key': 'secret!'
+            }
+          }
+        };
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
     });
 
   });
