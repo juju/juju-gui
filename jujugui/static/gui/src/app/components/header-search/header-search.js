@@ -47,6 +47,22 @@ YUI.add('header-search', function() {
     },
 
     /**
+      Update the state when the app state changes.
+
+      @method componentWillReceiveProps
+    */
+    componentWillReceiveProps: function() {
+      // Need to check if there is a change to sectionC and if it has been
+      // cleared (mid-point/search results have been closed) then we also need
+      // to deactivate the search box.
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      if (!component) {
+        this._handleSearchClose();
+      }
+    },
+
+    /**
       Generate the base classes based on the props.
 
       @method _generateClasses
@@ -55,6 +71,7 @@ YUI.add('header-search', function() {
     _generateClasses: function() {
       return classNames(
         'header-search',
+        'ignore-react-onclickoutside',
         this.state.active ? 'header-search--active' : ''
       );
     },

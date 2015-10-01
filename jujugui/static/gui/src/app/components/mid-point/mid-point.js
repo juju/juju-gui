@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('mid-point', function() {
 
   juju.components.MidPoint = React.createClass({
+    mixins: [OnClickOutside],
+
     charms: [{
         id: 'trusty/mariadb',
         icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mariadb/icon.svg', // eslint-disable-line max-len
@@ -45,9 +47,9 @@ YUI.add('mid-point', function() {
         id: 'trusty/mongodb',
         icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mongodb/icon.svg', // eslint-disable-line max-len
         name: 'Mongodb'
-      }],
+    }],
 
-      tags: [{
+    tags: [{
         name: 'databases',
         count: 71
       }, {
@@ -71,7 +73,23 @@ YUI.add('mid-point', function() {
       }, {
         name: 'misc',
         count: 279
-      }],
+    }],
+
+    /**
+      Close the midpoint when there is a click outside of the component.
+      Called by the OnClickOutside mixin.
+
+      @method handleClickOutside
+      @param {Object} e The click event
+    */
+    handleClickOutside: function(e) {
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: null
+        }
+      });
+    },
 
     /**
       Show the charm details when clicked.

@@ -59,12 +59,14 @@ describe('HeaderSearch', function() {
     getAppState.returns({
       search: 'apache2'
     });
+    var className = 'header-search ignore-react-onclickoutside ' +
+      'header-search--active';
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />);
     assert.deepEqual(output,
-      <div className="header-search header-search--active">
+      <div className={className}>
         {output.props.children}
       </div>);
   });
