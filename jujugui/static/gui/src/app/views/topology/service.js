@@ -230,7 +230,7 @@ YUI.add('juju-topology-service', function(Y) {
         'cy': 30,
         'r': 15
       })
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 1.1)
       .attr('stroke', '#888888')
       .attr('fill', '#f5f5f5');
     subRelationIndicator.append('text').append('tspan')
