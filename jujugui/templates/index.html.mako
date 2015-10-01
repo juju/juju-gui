@@ -397,11 +397,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="${convoy_url}?app/assets/javascripts/handlebars.runtime.js&app/components/templates.js&app/components/helpers.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
+    <script src="${convoy_url}?app/store/env/bakery.js&app/assets/javascripts/jujulib/juju.js"></script>
     % else:
     <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/classnames-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/handlebars.runtime.min.js&app/components/templates-min.js&app/components/helpers-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
+    <script src="${convoy_url}?app/store/env/bakery-min.js&app/assets/javascripts/jujulib/juju-min.js"></script>
     % endif
 
     <script>
@@ -460,6 +462,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
 
+          // XXX j.c.sackett 2015-09-24 The following bit is for demo purposes
+          // only--we should remove this as we integrate JEM/JES and the GUI.
+          if (window.juju_config && window.juju_config.jemUrl) {
+            var bakery = new Y.juju.environments.web.Bakery({
+              webhandler: new Y.juju.environments.web.WebHandler(),
+              visitMethod: null,
+              serviceName: 'jem',
+            });
+            var environment = new window.jujulib.environment(
+                window.juju_config.jemUrl, bakery);
+            environment.listEnvironments(function(data) {
+              console.log('Environment listing success!');
+              console.log(data);
+            }, function(error) {
+              console.log('Environment listing failure.');
+              console.log(error);
+            });
+          }
           window.ga_id = juju_config.GA_key || '';
           if (window.ga_id != '') {
             _gaq.push(['_setAccount', window.ga_id]);

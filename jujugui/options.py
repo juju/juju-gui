@@ -22,6 +22,7 @@ def update(settings):
     _update(settings, 'jujugui.password', default=None)
     _update(settings, 'jujugui.socket_path', default=None)
     _update(settings, 'jujugui.user', default='')
+    _update(settings, 'jujugui.jem_url', default=None)
     _update_bool(settings, 'jujugui.sandbox', default=False)
     _update_bool(settings, 'jujugui.raw', default=False)
     _update_bool(settings, 'jujugui.combine', default=True)
