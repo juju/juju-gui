@@ -74,16 +74,21 @@ YUI.add('mid-point', function() {
       }],
 
     /**
-      Add the charm to the canvas when clicked.
+      Show the charm details when clicked.
 
       @method _handleCharmClick
       @param {Object} e The click event
     */
     _handleCharmClick: function(e) {
-      var charmId = e.currentTarget.getAttribute('data-id');
-      // app has already been bound to this function in
-      // the app.js definition.
-      this.props.addService(charmId);
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: e.currentTarget.getAttribute('data-id')
+          }
+        }
+      });
     },
 
     /**

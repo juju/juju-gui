@@ -51,7 +51,7 @@ YUI.add('charmbrowser-component', function() {
             panelInstanceName: 'mid-point-panel',
             component:
               <juju.components.MidPoint
-                addService={this.props.addService} />
+                changeState={this.props.changeState} />
           };
         break;
         case 'search-results':
@@ -60,7 +60,7 @@ YUI.add('charmbrowser-component', function() {
             component:
               <juju.components.SearchResults
                 charmstore={this.props.charmstore}
-                query={query} />
+                query={nextProps.appState.sectionC.metadata.search} />
           };
         break;
       }
