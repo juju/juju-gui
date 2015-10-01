@@ -313,23 +313,11 @@ YUI.add('juju-topology-relation', function(Y) {
                       .getConnectorPair(relation.target);
             var s = connectors[0];
             var t = connectors[1];
-            // Retrieve the actual distance between the connectors to create
-            // a stroke-array, leaving a gap for the indicator (the background
-            // of which is transparent and will show the relation line).
-            var length = relation.source._distance(s, t);
             rel_group.select('line')
                   .attr('x1', s[0])
                   .attr('y1', s[1])
                   .attr('x2', t[0])
-                  .attr('y2', t[1])
-                  .attr('stroke-dasharray', [length / 2 - 9, 18]);
-            // Find the label for this relation line and adjust it to the mid
-            // point.
-            var label = rel_group.select('.rel-indicator');
-            label.attr('transform', function(d) {
-              var points = topoUtils.findCenterPoint(s, t);
-              return 'translate(' + points + ')';
-            });
+                  .attr('y2', t[1]);
           });
     },
 
@@ -398,19 +386,6 @@ YUI.add('juju-topology-relation', function(Y) {
         .append('tspan')
         .text(function(d) {return d.display_name; });
 
-      // Now, on create and update, modify the attributes of all of the rel
-      // group items to match the current state of the model.
-      g.select('.rel-indicator')
-          .attr('transform', function(d) {
-            var connectors = d.source.getConnectorPair(d.target);
-            var s = connectors[0];
-            var t = connectors[1];
-            return 'translate(' +
-                [Math.max(s[0], t[0]) -
-                     Math.abs((s[0] - t[0]) / 2),
-                     Math.max(s[1], t[1]) -
-                     Math.abs((s[1] - t[1]) / 2)] + ')';
-          });
       g.filter(function(d) {
         var currStatus = d3.select(this).select('image')
             .attr('xlink:href') || '';
@@ -437,6 +412,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var link = d3.select(this).select('line');
       var connector1 = d3.select(this).select('.connector1');
       var connector2 = d3.select(this).select('.connector2');
+      var relationIcon = d3.select(this).select('.rel-indicator');
       var imageSize = 20;
       var sRadius = (relation.source.w / 2) - 4;
       var tRadius = (relation.target.w / 2) - 4;
@@ -446,8 +422,6 @@ YUI.add('juju-topology-relation', function(Y) {
                 .attr('y1', s[1])
                 .attr('x2', t[0])
                 .attr('y2', t[1])
-                .attr('stroke-dasharray',
-          [length / 2 - (imageSize / 2), imageSize])
                 .attr('class', function(d) {
             // Style relation lines differently depending on status.
             return 'relation ' + relation.aggregatedStatus;
@@ -475,6 +449,13 @@ YUI.add('juju-topology-relation', function(Y) {
       connector2
         .attr('cx', dot2[0])
         .attr('cy', dot2[1]);
+
+      relationIcon.attr('transform', function(d) {
+        return 'translate(' + [
+            Math.max(dot1[0], dot2[0]) - Math.abs(((dot1[0] - dot2[0])) / 2),
+            Math.max(dot1[1], dot2[1]) - Math.abs(((dot1[1] - dot2[1])) / 2)
+        ] + ')';
+      });
 
       return link;
     },

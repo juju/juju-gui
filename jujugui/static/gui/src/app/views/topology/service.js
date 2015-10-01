@@ -1627,7 +1627,7 @@ YUI.add('juju-topology-service', function(Y) {
         }
         selection = this.selectionFromServiceNames(serviceNames);
       }
-      //selection.classed(topoUtils.getVisibilityClasses('show'));
+      selection.classed(topoUtils.getVisibilityClasses('show'));
     },
 
     hide: function(evt) {
