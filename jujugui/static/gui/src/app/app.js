@@ -778,6 +778,19 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderInspector: function(metadata) {
       var service = this.db.services.getById(metadata.id);
+      // If the url was provided with a service id which isn't in the localType
+      // db then change state back to the added services list. This usually
+      // happens if the user tries to visit the inspector of a ghost service
+      // id which no longer exists.
+      if (service === null) {
+        this.changeState({
+          sectionA: {
+            component: 'services',
+            metadata: null
+          }
+        });
+        return;
+      }
       var state = this.state;
       var utils = views.utils;
       React.render(
