@@ -241,7 +241,8 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {Object} an exported Macaroon
        */
       _setMacaroonsCookie: function (originalRequest, jsonMacaroon) {
-        document.cookie = 'Macaroons=' + btoa(JSON.stringify(jsonMacaroon));
+        var prefix = this.macaroonName + '=';
+        document.cookie = prefix + btoa(JSON.stringify(jsonMacaroon));
         originalRequest();
       },
 
