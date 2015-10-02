@@ -861,6 +861,16 @@ describe('UI State object', function() {
         sectionC: {}
       }
     }, {
+      '?store=': {
+        sectionA: {}, sectionB: {},
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'store'
+          }
+        }
+      }
+    }, {
       '?store=bundle/mediawiki/6/single': {
         sectionA: {}, sectionB: {},
         sectionC: {

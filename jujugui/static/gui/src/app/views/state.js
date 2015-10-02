@@ -306,6 +306,9 @@ YUI.add('juju-app-state', function(Y) {
             if (activeComponent === 'entity-details') {
               queryValues.store = id || '';
             }
+            if (activeComponent === 'store') {
+              queryValues.store = '';
+            }
           }
         } else {
           if (component) {
@@ -523,7 +526,14 @@ YUI.add('juju-app-state', function(Y) {
             }
           };
         }
-        if (query.store != undefined) {
+        if (query.store === '') {
+          state.sectionC = {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'store'
+            }
+          };
+        } else if (query.store) {
           state.sectionC = {
             component: 'charmbrowser',
             metadata: {

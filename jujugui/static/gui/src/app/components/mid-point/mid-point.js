@@ -157,6 +157,23 @@ YUI.add('mid-point', function() {
       return tags;
     },
 
+    /**
+      Navigate to the store when the button is clicked.
+
+      @method _handleStoreClick
+      @param {Object} e The click event
+    */
+    _handleStoreClick: function(e) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'store'
+          }
+        }
+      });
+    },
+
     render: function() {
       return (
         <div className="mid-point">
@@ -168,7 +185,8 @@ YUI.add('mid-point', function() {
             <ul className="mid-point__tag-list">
               {this._generateTagList()}
             </ul>
-            <button className="mid-point__store-button">
+            <button className="mid-point__store-button"
+              onClick={this._handleStoreClick}>
               Show more
             </button>
           </div>
