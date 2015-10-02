@@ -80,6 +80,49 @@ describe('SearchResults', function() {
       assert.equal(data.solutionsCount, mockData.length,
                    'total results returned is incorrect');
     });
+
+    it('navigates to the entity on click', function() {
+      var changeState = sinon.stub();
+      var query = 'spinach';
+      var result = {
+        name: 'spinach',
+        displayName: 'spinach',
+        url: 'http://example.com/spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        series: 'wily',
+        type: 'charm'
+      };
+      var mockModel = {};
+      mockModel.toSearchResult = sinon.stub().returns(result);
+      var mockData = [mockModel];
+      var charmstore = {};
+      charmstore.search = sinon.stub().callsArgWith(1, mockData);
+      var output = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            changeState={changeState}
+            query={query}
+            charmstore={charmstore} />);
+
+      output.props.onClick({
+        preventDefault: sinon.stub(),
+        target: {
+          className: 'list-block__entity-link',
+          getAttribute: sinon.stub().returns('wily/spinach')
+        }
+      });
+      assert.equal(changeState.callCount, 1);
+      assert.deepEqual(changeState.args[0][0], {
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: 'wily/spinach'
+          }
+        }
+      });
+    });
   });
 
   describe('unit tests', function() {
@@ -104,6 +147,7 @@ describe('SearchResults', function() {
           last = entities[2];
       var expected = [
         {
+          id: 'trusty/' + first.name,
           name: first.name,
           owner: first.owner,
           type: first.type,
@@ -112,6 +156,7 @@ describe('SearchResults', function() {
           series: [{name: 'trusty', url: ''}, {name: 'precise', url: ''}]
         },
         {
+          id: 'vivid/' + last.name,
           name: last.name,
           owner: last.owner,
           type: last.type,

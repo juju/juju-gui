@@ -84,6 +84,8 @@ YUI.add('search-results', function(Y) {
           // Ensure downloads and URL are present.
           entity.downloads = entity.downloads || 0;
           entity.url = entity.url || '';
+          entity.id = entity.series.length > 0 ?
+              entity.series[0].name + '/' + entity.name : entity.name;
           collapsedEntities[key] = entity;
           // Save the key so we can preserve sort order.
           orderedKeys.push(key);
@@ -171,11 +173,45 @@ YUI.add('search-results', function(Y) {
       return this.shouldSearch(nextProps) && !this.state.waitingForSearch;
     },
 
+    /**
+      Handle any clicks inside the template and route them to the correct
+      handler.
+
+      @method _handleTemplateClicks
+      @param {Object} e The click event
+    */
+    _handleTemplateClicks: function(e) {
+      e.preventDefault();
+      var target = e.target;
+      var className = target.className;
+      if (className.indexOf('list-block__entity-link') > -1) {
+        this._handleEntityClick(target);
+      }
+    },
+
+    /**
+      Show the entity details when clicked.
+
+      @method _handleEntityClick
+      @param {Object} target The element that was clicked
+    */
+    _handleEntityClick: function(target) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: target.getAttribute('data-id')
+          }
+        }
+      });
+    },
+
     render: function() {
-      var classes = 'search-results';
       var html = Handlebars.templates['search-results.hbs'](this.state.data);
       return (
-        <div className={classes}
+        <div className="search-results"
+          onClick={this._handleTemplateClicks}
           dangerouslySetInnerHTML={{__html: html}}>
         </div>
       );

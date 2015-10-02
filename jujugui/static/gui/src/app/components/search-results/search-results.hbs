@@ -1,4 +1,6 @@
 {{#*inline "searchRow"}}
+  <span tabindex="0" role="button" class="list-block__entity-link"
+        data-id="{{id}}"></span>
   <div class="{{#if nameWidth}}{{nameWidth}}{{else}}four-col{{/if}} charm-name__column">
     <h3 class="list-block__list--item-title">
       {{displayName}}
@@ -6,13 +8,15 @@
         <span class="special-flag"></span>
       {{/if}}
     </h3>
-    {{#if tags}}
-      <ul class="tag-list">
+    <ul class="tag-list">
+      {{#if tags}}
         {{#each tags}}
           <li class="tag-list--item"><a href="/q?tags={{this}}">{{this}}</a></li>
         {{/each}}
-      </ul>
-    {{/if}}
+      {{else}}
+        &nbsp;
+      {{/if}}
+    </ul>
   </div>
   <div class="{{#if seriesWidth}}{{seriesWidth}}{{else}}two-col{{/if}} series__column">
     {{#if series}}
@@ -182,7 +186,6 @@
             <ul class="list-block__list promulgated">
               {{#each promulgatedResults}}
                 <li class="list-block__list--item {{type}}">
-                <a href="{{url}}" class="list-block__tags--link"></a>
                 {{> searchRow index=@index}}
                 </li>
               {{/each}}
@@ -193,7 +196,6 @@
             <ul class="list-block__list">
               {{#each normalResults}}
                 <li class="list-block__list--item {{type}}">
-                <a href="{{url}}" class="list-block__tags--link"></a>
                 {{> searchRow index=@index}}
                 </li>
               {{/each}}
