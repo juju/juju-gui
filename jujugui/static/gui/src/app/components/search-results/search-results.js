@@ -85,7 +85,7 @@ YUI.add('search-results', function(Y) {
           entity.downloads = entity.downloads || 0;
           entity.url = entity.url || '';
           entity.id = entity.series.length > 0 ?
-              entity.series[0].name + '/' + entity.name : '';
+              entity.series[0].name + '/' + entity.name : entity.name;
           collapsedEntities[key] = entity;
           // Save the key so we can preserve sort order.
           orderedKeys.push(key);
