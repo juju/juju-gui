@@ -56,16 +56,17 @@ YUI.add('charmbrowser-component', function() {
         break;
         case 'search-results':
           state.activeChild = {
-            panelInstanceName: 'search-results-panel',
+            panelInstanceName: 'white-box',
             component:
               <juju.components.SearchResults
+                changeState={this.props.changeState}
                 charmstore={this.props.charmstore}
                 query={metadata.search} />
           };
         break;
         case 'entity-details':
           state.activeChild = {
-            panelInstanceName: 'entity-details-panel',
+            panelInstanceName: 'white-box',
             component:
               <juju.components.EntityDetails
                 id={metadata.id} />
