@@ -653,17 +653,25 @@ g.service {
     @extend .visibility-classes;
     fill: none;
     stroke: none;
+
     text {
         text-anchor: middle;
     }
+
     .charm-label {
         font-style: italic;
         fill: #4c4c4c;
     }
+
     .name {
       fill: rgb(80, 80, 80);
       font-size: 14px;
     }
+
+    .service-block {
+        transition: all .3s;
+    }
+
    .unit-count {
         stroke-width: 0;
         text-anchor: middle;
@@ -691,17 +699,6 @@ g.service {
         }
     }
 
-    .exposed-indicator {
-        fill: #00F;
-
-        &.off {
-            visibility: hidden;
-        }
-        &.on {
-            visibility: visible;
-        }
-    }
-
     .service-control-panel {
         visibility: hidden;
 
@@ -716,6 +713,12 @@ g.service {
     &.highlight {
         .service-block {
             fill: #fff;
+        }
+    }
+
+    &.is-exposed {
+        .service-block {
+            stroke-width: 4;
         }
     }
 

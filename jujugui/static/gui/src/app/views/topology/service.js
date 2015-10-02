@@ -293,39 +293,16 @@ YUI.add('juju-topology-service', function(Y) {
       return d.exposed;
     });
     exposed.each(function(d) {
-      var existing = Y.one(this).one('.exposed-indicator');
-      if (!existing) {
-        existing = d3.select(this).append('image')
-                        .attr({'class': 'exposed-indicator on',
-              'xlink:href': 'juju-ui/assets/svgs/exposed.svg',
-              'width': 32,
-              'height': 32
-            });
-      }
-      existing = d3.select(this).select('.exposed-indicator')
-                      .attr({
-            'x': 145,
-            'y': 79
-          });
+      d3.select(this).classed('is-exposed', true);
     });
 
     // Remove exposed indicator from nodes that are no longer exposed.
-    node.filter(function(d) {
-      return !d.exposed &&
-          !d3.select(this)
-                      .select('.exposed-indicator').empty();
-    }).select('.exposed-indicator').remove();
-
-    // Show whether or not the service is pending using an indicator.
-    var pending = node.filter(function(d) {
-      return d.pending;
+    var unexposed = node.filter(function(d) {
+      return !d.exposed;
     });
-
-    // Remove pending indicator from nodes that are no longer pending.
-    node.filter(function(d) {
-      return !d.pending &&
-          !d3.select(this).select('.pending-indicator').empty();
-    }).select('.pending-indicator').remove();
+    unexposed.each(function(d) {
+      d3.select(this).classed('is-exposed', false);
+    });
   };
   views.ServiceModuleCommon = ServiceModuleCommon;
 
