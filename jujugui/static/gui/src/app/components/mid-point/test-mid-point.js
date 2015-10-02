@@ -213,4 +213,48 @@ describe('MidPoint', function() {
       }
     });
   });
+
+  it('closes the store when clicking the Show less button', function() {
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        storeOpen={true}
+        changeState={changeState} />);
+    output.props.children[2].props.children[1].props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'mid-point'
+        }
+      }
+    });
+  });
+
+  it('display the correct label when the store is closed', function() {
+    var addService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        storeOpen={false}
+        addService={addService} />);
+    assert.deepEqual(output.props.children[2].props.children[1],
+      <button className="mid-point__store-button"
+        onClick={output.props.children[2].props.children[1].props.onClick}>
+        Show more
+      </button>);
+  });
+
+  it('display the correct label when the store is open', function() {
+    var addService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        storeOpen={true}
+        addService={addService} />);
+    assert.deepEqual(output.props.children[2].props.children[1],
+      <button className="mid-point__store-button"
+        onClick={output.props.children[2].props.children[1].props.onClick}>
+        Show less
+      </button>);
+  });
 });

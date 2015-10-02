@@ -76,6 +76,19 @@ YUI.add('mid-point', function() {
     }],
 
     /**
+      Get the current state of the mid-point.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      return {
+        storeOpen: this.props.storeOpen,
+        outsideClickClose: this.props.outsideClickClose
+      };
+    },
+
+    /**
       Close the midpoint when there is a click outside of the component.
       Called by the OnClickOutside mixin.
 
@@ -83,12 +96,14 @@ YUI.add('mid-point', function() {
       @param {Object} e The click event
     */
     handleClickOutside: function(e) {
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
-      });
+      if (this.state.outsideClickClose) {
+        this.props.changeState({
+          sectionC: {
+            component: null,
+            metadata: null
+          }
+        });
+      }
     },
 
     /**
@@ -164,14 +179,36 @@ YUI.add('mid-point', function() {
       @param {Object} e The click event
     */
     _handleStoreClick: function(e) {
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'store'
+      if (this.state.storeOpen) {
+        this.props.changeState({
+          sectionC: {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'mid-point'
+            }
           }
-        }
-      });
+        });
+      } else {
+        this.props.changeState({
+          sectionC: {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'store'
+            }
+          }
+        });
+      }
+    },
+
+    /**
+      Display the appropriate label for the store button depending on the store
+      state.
+
+      @method _generateStoreLabel
+      @returns {String} The button label
+    */
+    _generateStoreLabel: function() {
+      return this.state.storeOpen ? 'Show less' : 'Show more';
     },
 
     render: function() {
@@ -187,7 +224,7 @@ YUI.add('mid-point', function() {
             </ul>
             <button className="mid-point__store-button"
               onClick={this._handleStoreClick}>
-              Show more
+              {this._generateStoreLabel()}
             </button>
           </div>
         </div>

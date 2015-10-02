@@ -40,11 +40,30 @@ describe('SearchResults', function() {
             query={query} />);
 
       var output = shallowRenderer.getRenderOutput();
-      assert.equal(output.props.className, 'search-results',
+      assert.equal(output.props.className,
+                   'search-results search-results--floating',
                    'Class name not set properly');
       var html = output.props.dangerouslySetInnerHTML.__html;
       assert.isAbove(html.indexOf('Loading'), -1,
                      'Loading message not found');
+    });
+
+    it('does not have the floating class if it is inline', function() {
+      var shallowRenderer = testUtils.createRenderer();
+      var query = 'spinach';
+      shallowRenderer.render(
+          <juju.components.SearchResults
+            inline={true}
+            query={query} />);
+      var output = shallowRenderer.getRenderOutput();
+      console.log(output.props);
+      console.log(output.props.dangerouslySetInnerHTML);
+      assert.deepEqual(output,
+        <div className="search-results"
+          onClick={output.props.onClick}
+          dangerouslySetInnerHTML={{__html:
+              output.props.dangerouslySetInnerHTML.__html}}>
+        </div>);
     });
 
     it('loads search results', function() {

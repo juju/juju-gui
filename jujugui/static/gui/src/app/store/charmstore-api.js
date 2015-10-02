@@ -289,9 +289,9 @@ YUI.add('charmstore-api', function(Y) {
     search: function(filters, successCallback, failureCallback, limit) {
       var defaultFilters;
       if (limit) {
-        defaultFilters = '&limit=' + limit + '&'
+        defaultFilters = '&limit=' + limit + '&';
       } else {
-        defaultFilters = '&limit=30&'
+        defaultFilters = '&limit=30&';
       }
       defaultFilters += 'include=charm-metadata&' +
           'include=charm-config&' +

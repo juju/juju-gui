@@ -51,6 +51,17 @@ YUI.add('charmbrowser-component', function() {
             panelInstanceName: 'mid-point-panel',
             component:
               <juju.components.MidPoint
+                changeState={this.props.changeState}
+                outsideClickClose={true}
+                storeOpen={false} />
+          };
+        break;
+        case 'store':
+          state.activeChild = {
+            panelInstanceName: 'white-box',
+            component:
+              <juju.components.Store
+                charmstore={this.props.charmstore}
                 changeState={this.props.changeState} />
           };
         break;
@@ -96,6 +107,7 @@ YUI.add('charmbrowser-component', function() {
   requires: [
     'entity-details',
     'mid-point',
-    'search-results'
+    'search-results',
+    'store'
   ]
 });
