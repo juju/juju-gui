@@ -79,16 +79,15 @@ describe('SearchResults', function() {
       var mockModel = {};
       mockModel.toSearchResult = sinon.stub().returns(result);
       var mockData = [mockModel];
-      var charmstore = {};
-      charmstore.search = sinon.stub().callsArgWith(1, mockData);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
 
       var output = testUtils.renderIntoDocument(
           <juju.components.SearchResults
             query={query}
-            charmstore={charmstore} />);
+            charmstoreSearch={charmstoreSearch} />);
 
-      assert.isTrue(charmstore.search.calledOnce,
-                    'charmstore API not called');
+      assert.isTrue(charmstoreSearch.calledOnce,
+                    'search function not called');
       assert.isTrue(mockModel.toSearchResult.callCount == mockData.length,
                     'all models not converted to plain old objects');
       var data = output.state.data;
@@ -114,13 +113,12 @@ describe('SearchResults', function() {
       var mockModel = {};
       mockModel.toSearchResult = sinon.stub().returns(result);
       var mockData = [mockModel];
-      var charmstore = {};
-      charmstore.search = sinon.stub().callsArgWith(1, mockData);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
       var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             changeState={changeState}
             query={query}
-            charmstore={charmstore} />);
+            charmstoreSearch={charmstoreSearch} />);
 
       output.props.onClick({
         preventDefault: sinon.stub(),
@@ -303,14 +301,13 @@ describe('SearchResults', function() {
                        'search data returned is incorrect');
     });
 
-    it('passes the right data to the charmstore search API', function() {
+    it('passes the right data to the search', function() {
       var query = 'spinach';
       searchResults.setState = sinon.spy();
       var stateSpy = searchResults.setState;
-      var charmstore = {};
-      charmstore.search = sinon.spy();
-      var searchSpy = charmstore.search;
-      searchResults.searchRequest(charmstore, query);
+      var searchSpy = sinon.spy();
+      searchResults.props = {charmstoreSearch: searchSpy};
+      searchResults.searchRequest(query);
       assert.deepEqual(stateSpy.getCall(0).args[0], {waitingForSearch: true},
                        'waitingForSearch flag is not set');
       assert.deepEqual(searchSpy.getCall(0).args[0], {text: query},
@@ -335,7 +332,7 @@ describe('SearchResults', function() {
     });
 
     it('triggers a search request upon component mount', function() {
-      searchResults.props = {query: 'foobar', charmstore: {}};
+      searchResults.props = {query: 'foobar'};
       searchResults.searchRequest = sinon.spy();
       searchResults.componentDidMount();
       assert.isTrue(searchResults.searchRequest.calledOnce);
@@ -347,7 +344,7 @@ describe('SearchResults', function() {
       searchResults.searchRequest = sinon.spy();
       var spy = searchResults.searchRequest;
       searchResults.componentWillReceiveProps(nextProps);
-      assert.equal(spy.getCall(0).args[1], nextProps.query);
+      assert.equal(spy.getCall(0).args[0], nextProps.query);
     });
 
     it('re-renders only after a new search has finished', function() {

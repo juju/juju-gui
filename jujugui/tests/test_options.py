@@ -10,6 +10,7 @@ from jujugui import options
 class TestUpdate(unittest.TestCase):
 
     default_settings = {
+        'jujugui.api_path': options.DEFAULT_API_PATH,
         'jujugui.auth': None,
         'jujugui.base_url': None,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
@@ -31,6 +32,7 @@ class TestUpdate(unittest.TestCase):
 
     def test_customized_values(self):
         expected_settings = {
+            'jujugui.api_path': 'v4',
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
@@ -44,6 +46,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.user': 'who',
         }
         settings = {
+            'jujugui.api_path': 'v4',
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',

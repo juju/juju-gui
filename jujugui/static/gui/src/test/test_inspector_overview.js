@@ -175,7 +175,7 @@ describe('Inspector Overview', function() {
     var icon = container.one('.icon img');
 
     // The icon url comes from the fake store and the service charm attribute.
-    assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-18');
+    assert.equal(icon.getAttribute('src'), '/precise/mediawiki-18/icon.svg');
   });
 
   it('renders the scale up view', function() {

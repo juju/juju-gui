@@ -330,9 +330,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      var fakeStore = new Y.juju.charmstore.APIv4({
-        charmstoreURL: 'localhost/'
-      });
+      window.juju_config = {
+        charmstoreURL: 'localhost/',
+        apiPath: 'v4'
+      };
+
       view = new CharmView({
         entity: new models.Charm({
           files: [
@@ -346,7 +348,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }),
         container: utils.makeContainer(this),
-        charmstore: fakeStore
       });
 
       var fireStub = utils.makeStubMethod(view, 'fire');

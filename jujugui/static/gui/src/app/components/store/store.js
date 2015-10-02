@@ -31,7 +31,7 @@ YUI.add('store', function() {
             storeOpen={true} />
           <juju.components.SearchResults
             changeState={this.props.changeState}
-            charmstore={this.props.charmstore}
+            charmstoreSearch={this.props.charmstoreSearch}
             inline={true}
             query="" />
         </div>

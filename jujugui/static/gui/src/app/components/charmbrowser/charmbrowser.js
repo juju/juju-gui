@@ -61,7 +61,7 @@ YUI.add('charmbrowser-component', function() {
             panelInstanceName: 'white-box',
             component:
               <juju.components.Store
-                charmstore={this.props.charmstore}
+                charmstoreSearch={this.props.charmstoreSearch}
                 changeState={this.props.changeState} />
           };
         break;
@@ -71,7 +71,7 @@ YUI.add('charmbrowser-component', function() {
             component:
               <juju.components.SearchResults
                 changeState={this.props.changeState}
-                charmstore={this.props.charmstore}
+                charmstoreSearch={this.props.charmstoreSearch}
                 query={metadata.search} />
           };
         break;

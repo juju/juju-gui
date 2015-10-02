@@ -1325,11 +1325,9 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {ServiceModule} Module holding box canvas and context.
    * @param {ModelList} services Service modellist.
    * @param {Object} existing id:box mapping.
-   * @param {Object} charmstore The charm store.
    * @return {Object} id:box mapping.
    */
-  views.toBoundingBoxes = function(
-      module, services, existing, charmstore, env) {
+  views.toBoundingBoxes = function(module, services, existing, env) {
     var result = existing || {};
     Y.each(result, function(val, key, obj) {
       if (!Y.Lang.isValue(services.getById(key))) {
@@ -1347,7 +1345,7 @@ YUI.add('juju-view-utils', function(Y) {
           if (!service.get('icon') && service.get('charm')) {
             var icon;
             var charmId = service.get('charm');
-            icon = utils.getIconPath(charmId, null, charmstore, env);
+            icon = utils.getIconPath(charmId, null, env);
             service.set('icon', icon);
           }
           result[id].icon = service.get('icon');
@@ -2179,11 +2177,10 @@ YUI.add('juju-view-utils', function(Y) {
   utils.charmIconParser = function(services) {
     var charmIcons = [];
     Object.keys(services).forEach(function(key) {
-      var iconData = '<img src="' +
-          // The handlebars helper has reference to the charmstore so that's
-          // why we are calling it from here.
-          Y.Template.Handlebars.helpers.charmIconPath(services[key].charm) +
-          '" alt="' + key + '"/>';
+      var service = services[key],
+          id = service.charm || service.id,
+          src = utils.getIconPath(id);
+      var iconData = '<img src="' + src + '" alt="' + key + '"/>';
       charmIcons.push(iconData);
     });
 
@@ -2413,16 +2410,33 @@ YUI.add('juju-view-utils', function(Y) {
     @param {String} charmId The id of the charm to fetch the icon for.
     @param {Boolean} isBundle Whether or not this is an icon for a bundle.
   */
-  utils.getIconPath = function(charmId, isBundle, charmstore, env) {
-    var localIndex = charmId.indexOf('local:');
-    var path;
+  utils.getIconPath = function(charmId, isBundle, env) {
+    var cfg = window.juju_config,
+        charmstoreURL = (cfg && cfg.charmstoreURL) || '',
+        apiPath = (cfg && cfg.apiPath) || '',
+        localIndex = charmId.indexOf('local:'),
+        path;
     if (localIndex > -1 && env) {
       path = env.getLocalCharmFileUrl(charmId, 'icon.svg');
-    } else if (localIndex === -1 && charmstore) {
-      path = charmstore.getIconPath(charmId, isBundle);
+    } else if (localIndex === -1) {
+      if (typeof isBundle === 'boolean' && isBundle) {
+        path = '/juju-ui/assets/images/non-sprites/bundle.svg';
+      } else {
+        // Get the charm ID from the service.  In some cases, this will be
+        // the charm URL with a protocol, which will need to be removed.
+        // The following regular expression removes everything up to the
+        // colon portion of the quote and leaves behind a charm ID.
+        charmId = charmId.replace(/^[^:]+:/, '');
+        // Note that we make sure isBundle is Boolean. It's coming from a
+        // handlebars template helper which will make the second argument the
+        // context object when it's not supplied. We want it optional for
+        // normal use to default to the charm version, but if it's a boolean,
+        // then check that boolean because the author cares specifically if
+        // it's a bundle or not.
+        path = charmstoreURL + [apiPath, charmId, 'icon.svg'].join('/');
+      }
     } else {
-      // If no charmstore or env if provided as necessary then return the
-      // default icon.
+      // If no env is provided as necessary then return the default icon.
       path = 'juju-ui/assets/images/non-sprites/charm_160.svg';
     }
     return path;

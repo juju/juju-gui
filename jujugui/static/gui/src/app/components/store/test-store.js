@@ -34,10 +34,10 @@ describe('Store', function() {
 
   it('can render correctly', function() {
     var changeState = sinon.stub();
-    var charmstore = sinon.stub();
+    var charmstoreSearch = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
-        charmstore={charmstore}
+        charmstoreSearch={charmstoreSearch}
         changeState={changeState} />);
     assert.deepEqual(output,
       <div className="store">
@@ -47,7 +47,7 @@ describe('Store', function() {
           storeOpen={true} />
         <juju.components.SearchResults
           changeState={changeState}
-          charmstore={charmstore}
+          charmstoreSearch={charmstoreSearch}
           inline={true}
           query="" />
       </div>);

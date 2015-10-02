@@ -35,7 +35,8 @@ describe('Charmstore API v4', function() {
       env: {
         getLocalCharmFileUrl: utils.makeStubFunction('localcharmpath')
       },
-      charmstoreURL: 'local/'
+      charmstoreURL: 'local/',
+      apiPath: 'v4'
     });
   });
 
@@ -274,21 +275,6 @@ describe('Charmstore API v4', function() {
         revisions: 5,
         services: ''
       });
-    });
-  });
-
-  describe('getIconpath', function() {
-
-    it('returns local default bundle icon location for bundles', function() {
-      var path = charmstore.getIconPath('bundle:elasticsearch', true);
-      assert.equal(path, '/juju-ui/assets/images/non-sprites/bundle.svg');
-    });
-
-    it('returns a qualified charmstoreURL icon location', function() {
-      var path = charmstore.getIconPath('~paulgear/precise/quassel-core-2');
-      assert.equal(
-          path,
-          'local/v4/~paulgear/precise/quassel-core-2/icon.svg');
     });
   });
 
