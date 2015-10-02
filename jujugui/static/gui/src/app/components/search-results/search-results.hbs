@@ -8,13 +8,15 @@
         <span class="special-flag"></span>
       {{/if}}
     </h3>
-    {{#if tags}}
-      <ul class="tag-list">
+    <ul class="tag-list">
+      {{#if tags}}
         {{#each tags}}
           <li class="tag-list--item"><a href="/q?tags={{this}}">{{this}}</a></li>
         {{/each}}
-      </ul>
-    {{/if}}
+      {{else}}
+        &nbsp;
+      {{/if}}
+    </ul>
   </div>
   <div class="{{#if seriesWidth}}{{seriesWidth}}{{else}}two-col{{/if}} series__column">
     {{#if series}}

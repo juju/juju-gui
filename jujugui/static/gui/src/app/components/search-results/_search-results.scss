@@ -8,12 +8,18 @@
 
 .search-results {
     @extend %floating-panel;
+    $bottom-space: $deployer-bar-height + $panel-space;
+    position: absolute;
+    top: 0;
+    left: $panel-space;
+    right: 0;
+    max-height: calc(100% - #{$bottom-space});
     color: $cool-grey;
-    border-radius: inherit;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     .inner-wrapper {
         max-width: none;
-        overflow: auto;
     }
 
     .entity-search-results h4 {
@@ -41,7 +47,6 @@
     .list-block {
 
         .list-block__list {
-            border-bottom: 1px solid $light-mid-grey;
             margin: 0;
 
             &.list-block__list--dotted .list-block__list--item {
