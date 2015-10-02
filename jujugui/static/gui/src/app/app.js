@@ -778,7 +778,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderInspector: function(metadata) {
       var service = this.db.services.getById(metadata.id);
-      var charm = app.db.charms.getById(service.get('charm'));
+      var charm = this.db.charms.getById(service.get('charm'));
       var state = this.state;
       var utils = views.utils;
       React.render(
