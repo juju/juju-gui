@@ -318,6 +318,20 @@ describe('Charmstore API v4', function() {
             'include=stats']);
     });
 
+    it('accepts a custom limit when generating an apiv4 path', function() {
+      charmstore.search({ text: 'foo' }, null, null, 99);
+      assert.equal(generatePath.callCount(), 1, 'generatePath not called');
+      assert.deepEqual(generatePath.lastArguments(), [
+        'search',
+        'text=foo&' +
+            'limit=99&' +
+            'include=charm-metadata&' +
+            'include=charm-config&' +
+            'include=bundle-metadata&' +
+            'include=extra-info&' +
+            'include=stats']);
+    });
+
     it('calls to make a valid charmstore v4 request', function() {
       var transform = utils.makeStubMethod(
           charmstore, '_transformQueryResults');
