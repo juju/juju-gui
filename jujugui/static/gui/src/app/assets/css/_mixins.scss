@@ -88,6 +88,20 @@
         }
     }
 }
+
+%button {
+    padding: 10px 20px;
+    background-color: $white;
+    border: 1px solid $mid-grey;
+    border-radius: $border-radius;
+    color: $charm-panel-orange;
+    text-align: center;
+
+    &:hover {
+        background-color: $light-grey;
+    }
+}
+
 %customize-scrollbar {
     ::-webkit-scrollbar {
         width: 10px;

@@ -213,7 +213,7 @@ YUI.add('juju-app-state', function(Y) {
       var metadata = state.metadata;
       if (!component) {
         if (metadata && metadata.search && metadata.search.text) {
-          component = 'searchResults';
+          component = 'charmbrowser';
         } else {
           return;
         }
@@ -263,6 +263,7 @@ YUI.add('juju-app-state', function(Y) {
       // Clear the filter, if there is a valid search value, it will be
       // re-populated in the state loops.
       this.filter.clear();
+      var queryValues = {};
       // Loop through each section in the state to generate the urls.
       Object.keys(newState).forEach(function(section) {
         sectionState = newState[section];
@@ -275,9 +276,11 @@ YUI.add('juju-app-state', function(Y) {
           id = id.replace(/\/?~charmers/, '');
         }
         // Setup the search status and filters based on metadata.search
-        if (Y.Lang.isValue(metadata.search)) {
-          search = true;
-          this.filter.update(metadata.search);
+        if (!window.flags || !window.flags.react) {
+          if (Y.Lang.isValue(metadata.search)) {
+            search = true;
+            this.filter.update(metadata.search);
+          }
         }
 
         // If metadata contains any flash data, store it.
@@ -289,8 +292,20 @@ YUI.add('juju-app-state', function(Y) {
         // because no state parameters are required.
         if (component === 'charmbrowser') {
           hash = metadata.hash || '';
-          if (id) {
+          if (id && (!window.flags || !window.flags.react)) {
             urlParts.push(id);
+          }
+          if (window.flags && window.flags.react) {
+            var activeComponent = metadata.activeComponent;
+            if (activeComponent === 'search-results') {
+              queryValues.search = metadata.search;
+            }
+            if (activeComponent === 'mid-point') {
+              queryValues.midpoint = '';
+            }
+            if (activeComponent === 'entity-details') {
+              queryValues.store = id || '';
+            }
           }
         } else {
           if (component) {
@@ -341,9 +356,19 @@ YUI.add('juju-app-state', function(Y) {
         url = '/' + urlParts.join('/') + '/';
       }
       // Add the query string to the end of the url.
-      if (search) {
-        url = url.replace(/\/$/, '');
-        url += '?' + this.filter.genQueryString();
+      if (!window.flags || !window.flags.react) {
+        if (search) {
+          url = url.replace(/\/$/, '');
+          url += '?' + this.filter.genQueryString();
+        }
+      }
+      if (window.flags && window.flags.react) {
+        if (Object.keys(queryValues).length > 0) {
+          url = url.replace(/\/$/, '');
+          Object.keys(queryValues).forEach((key) => {
+            url += '?' + key + '=' + queryValues[key];
+          });
+        }
       }
       // Add the hash to the end of the url.
       if (hash.length > 0) {
@@ -473,9 +498,40 @@ YUI.add('juju-app-state', function(Y) {
         }
       }, this);
       // There's always a query component, if it reflects a search.
-      if (query && (query.text || query.categories)) {
-        // `state` is passed in by reference and modified in place.
-        this._addQueryState(state, query);
+      if (!window.flags && window.flags.react) {
+        if (query && (query.text || query.categories)) {
+          // `state` is passed in by reference and modified in place.
+          this._addQueryState(state, query);
+        }
+      }
+      if (query) {
+        // midpoint doesn't typically have a value, just the key existing.
+        if (query.midpoint !== undefined) {
+          state.sectionC = {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'mid-point'
+            }
+          };
+        }
+        if (query.search) {
+          state.sectionC = {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'search-results',
+              search: query.search
+            }
+          };
+        }
+        if (query.store != undefined) {
+          state.sectionC = {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'entity-details',
+              id: query.store
+            }
+          };
+        }
       }
       // For demonstration purposes it's nice to open the GUI to an already
       // deployed bundle or charm.

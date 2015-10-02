@@ -57,17 +57,16 @@ describe('HeaderSearch', function() {
     var getAppState = sinon.stub();
     var changeState = sinon.stub();
     getAppState.returns({
-      search: {
-        text: 'apache2'
-      }
+      search: 'apache2'
     });
+    var className = 'header-search ignore-react-onclickoutside ' +
+      'header-search--active';
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         getAppState={getAppState}
-        changeState={changeState}
-        active={true} />);
+        changeState={changeState} />);
     assert.deepEqual(output,
-      <div className="header-search header-search--active">
+      <div className={className}>
         {output.props.children}
       </div>);
   });
@@ -79,7 +78,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState}
-        active={true} />);
+        active={false} />);
     assert.deepEqual(output.props.children[2],
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
@@ -87,8 +86,28 @@ describe('HeaderSearch', function() {
         dangerouslySetInnerHTML={{__html: undefined}} />);
   });
 
-  // it('changes state when the close button is clicked', function() {
-  // });
+  it('changes state when the close button is clicked', function() {
+    var getAppState = sinon.stub();
+    getAppState.withArgs(
+      'current', 'sectionC', 'component').returns('charmbrowser');
+    getAppState.withArgs(
+      'current', 'sectionC', 'metadata').returns(undefined);
+    var changeState = sinon.stub();
+    var output = testUtils.renderIntoDocument(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />);
+    var close = output.getDOMNode().querySelector('.header-search__close');
+    testUtils.Simulate.click(close);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: null,
+        metadata: null
+      }
+    });
+    assert.equal(output.state.active, false);
+  });
 
   it('becomes active when the input is focused', function() {
     var getAppState = sinon.stub();
@@ -106,64 +125,4 @@ describe('HeaderSearch', function() {
     assert.equal(input.style.getPropertyValue('width'), '160px');
   });
 
-  it('becomes inactive if the input loses focus with no text', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
-    var output = testUtils.renderIntoDocument(
-      <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState}
-        active={true} />);
-    var input = output.getDOMNode().querySelector('.header-search__input');
-    testUtils.Simulate.focus(input);
-    assert.isTrue(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-    testUtils.Simulate.blur(input);
-    assert.isFalse(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-    assert.isNull(input.style.getPropertyValue('width'));
-  });
-
-  it('remains active if the input loses focus and there is text', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
-    var output = testUtils.renderIntoDocument(
-      <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState}
-        active={true} />);
-    var input = output.getDOMNode().querySelector('.header-search__input');
-    testUtils.Simulate.focus(input);
-    assert.isTrue(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-    input.value = 'search text';
-    testUtils.Simulate.change(input);
-    testUtils.Simulate.blur(input);
-    assert.isTrue(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-  });
-
-  it('remains active if there is search metadata', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
-    getAppState.returns({
-      search: {
-        text: 'apache2'
-      }
-    });
-    var output = testUtils.renderIntoDocument(
-      <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState}
-        active={true} />);
-    var input = output.getDOMNode().querySelector('.header-search__input');
-    testUtils.Simulate.focus(input);
-    assert.isTrue(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-    input.value = '';
-    testUtils.Simulate.change(input);
-    testUtils.Simulate.blur(input);
-    assert.isTrue(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-  });
 });

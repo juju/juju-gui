@@ -33,7 +33,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-bundle-models', function(Y) {
 
-  var models = Y.namespace('juju.models');
+  var models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils');
 
   /**
    * Model to represent the Bundles from the Charmworld API.
@@ -42,7 +43,9 @@ YUI.add('juju-bundle-models', function(Y) {
    * @extends {Y.Model}
    *
    */
-  models.Bundle = Y.Base.create('browser-bundle', Y.Model, [], {
+  models.Bundle = Y.Base.create('browser-bundle', Y.Model, [
+    models.SearchResult
+  ], {
 
     /**
      * Initializer
@@ -88,6 +91,30 @@ YUI.add('juju-bundle-models', function(Y) {
       }
       return [parts[1], parts[2]];
     },
+
+    /**
+      Populate data about bundled services; provides display data for each
+      service.
+      @method parseBundleServices
+      @param {Object} services more of a hash or dict than an object; contains
+                      service names as keys to their service objects.
+      @param {Object} charmstore the backing charmstore for the bundle.
+      @return {Object} a service display object.
+    */
+    parseBundleServices: function(services, charmstore) {
+      var parsedServices = [];
+      for (var name in services) {
+        var service = services[name],
+            id = service.charm.replace(/^cs:/, '');
+        parsedServices.push({
+          iconPath: utils.getIconPath(id, false, charmstore),
+          url: '',  // XXX implement once determined how to handle links
+          displayName: name.replace('-', ' ')
+        });
+      }
+      return parsedServices;
+    },
+
     /**
 
      Extract the recent commits into a format we can use nicely.  Output matches
@@ -142,7 +169,7 @@ YUI.add('juju-bundle-models', function(Y) {
       this.set('stateId', stateId);
       // We want to set this attribute to it's actual ID;
       return id;
-    }
+    },
   }, {
     /**
       Static to indicate the type of entity so that other code
@@ -305,7 +332,9 @@ YUI.add('juju-bundle-models', function(Y) {
 
 }, '0.0.1', {
   requires: [
+    'juju-view-utils',
     'model',
-    'model-list'
+    'model-list',
+    'search-result-extension'
   ]
 });

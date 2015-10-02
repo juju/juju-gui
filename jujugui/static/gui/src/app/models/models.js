@@ -2641,6 +2641,7 @@ YUI.add('juju-models', function(Y) {
 
   });
   models.Database = Database;
+
 }, '0.1.0', {
   requires: [
     'model',

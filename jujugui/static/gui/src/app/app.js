@@ -778,6 +778,19 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderInspector: function(metadata) {
       var service = this.db.services.getById(metadata.id);
+      // If the url was provided with a service id which isn't in the localType
+      // db then change state back to the added services list. This usually
+      // happens if the user tries to visit the inspector of a ghost service
+      // id which no longer exists.
+      if (service === null) {
+        this.changeState({
+          sectionA: {
+            component: 'services',
+            metadata: null
+          }
+        });
+        return;
+      }
       var charm = this.db.charms.getById(service.get('charm'));
       var state = this.state;
       var utils = views.utils;
@@ -806,22 +819,35 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Renders the SearchResults component to the page in the designated element.
+      Renders the Charmbrowser component to the page in the designated element.
 
-      @method _renderSearchResults
-      @param {String} query The search query.
+      @method _renderCharmbrowser
+      @param {Object} metadata The data to pass to the charmbrowser which tells
+        it how to render.
     */
-    _renderSearchResults: function(metadata) {
-      var text = metadata.search.text;
-      var visible = text ? true : false;
+    _renderCharmbrowser: function(metadata) {
+      var state = this.state;
+      var utils = views.utils;
       React.render(
-        <components.Panel
-          instanceName="white-box"
-          visible={visible}>
-          <components.SearchResults
-            query={text} />
-        </components.Panel>,
-        document.getElementById('white-box-container'));
+        <components.Charmbrowser
+          charmstore={this.get('charmstore')}
+          appState={state.get('current')}
+          addService={utils.addService.bind(this, this)}
+          changeState={this.changeState.bind(this)} />,
+        document.getElementById('charmbrowser-container'));
+    },
+
+    _emptySectionC: function() {
+      React.unmountComponentAtNode(
+        document.getElementById('charmbrowser-container'));
+    },
+
+    _renderEnvSwitcher: function() {
+      React.render(
+        <components.EnvSwitcher
+          app={this}
+          env={this.env} />,
+        document.getElementById('demo-environment-switcher'));
     },
 
     /**
@@ -846,7 +872,8 @@ YUI.add('juju-gui', function(Y) {
           inspector: this._renderInspector.bind(this)
         };
         dispatchers.sectionC = {
-          searchResults: this._renderSearchResults.bind(this)
+          charmbrowser: this._renderCharmbrowser.bind(this),
+          empty: this._emptySectionC.bind(this)
         };
         this.state.set('dispatchers', dispatchers);
       }
@@ -1491,6 +1518,31 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Switch the application to another environment.
+      Disconnect the current WebSocket connection and establish a new one
+      pointed to the environment referenced by the given unique identifier.
+
+      @method switchEnv
+      @param {String} uuid The environment UUID where to switch to.
+    */
+    switchEnv: function(uuid) {
+      var socketUrl = this.env.get('socket_url');
+      // XXX frankban: this is not generic, and very specific for how the
+      // socket URL is composed in the GUI embedded in OpenStack. Therefore,
+      // the logic here for calculating the new socket URL for the given UUID
+      // must be considered temporary demo code.
+      var baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
+      var newSocketUrl = baseUrl + '/' + uuid;
+      // Tell the environment to use the new socket URL when reconnecting.
+      this.env.set('socket_url', newSocketUrl);
+      // Disconnect and reconnect the environment.
+      this.env.close();
+      this.db.reset();
+      this.db.fire('update');
+      this.env.connect();
+    },
+
+    /**
       If we are in a MAAS environment, react to the MAAS server address
       retrieval adding a link to the header pointing to the MAAS server.
 
@@ -1623,6 +1675,7 @@ YUI.add('juju-gui', function(Y) {
           this.db.services.size(),
           this.db.machines.size()
         );
+        this._renderEnvSwitcher();
         this._renderHeaderSearch();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
@@ -1879,11 +1932,12 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-charm-models',
     // React components
+    'charmbrowser-component',
     'env-size-display',
     'header-search',
     'inspector-component',
     'panel-component',
-    'search-results',
+    'env-switcher',
     // juju-views group
     'd3-components',
     'container-token',

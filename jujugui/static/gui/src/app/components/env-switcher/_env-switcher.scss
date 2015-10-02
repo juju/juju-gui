@@ -1,0 +1,48 @@
+#demo-environment-switcher {
+    position: relative;
+}
+
+.env-switcher {
+    position: absolute;
+    left: 40px;
+    width: 450px;
+    padding-top: 10px;
+
+    & &--input__float {
+        float: left;
+        width: 150px;
+        margin-right: 10px;
+        padding: 10px;
+    }
+
+    .inspector-button {
+        float: left;
+        width: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-right: 10px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+.env-list {
+    position: absolute;
+    top: 50px;
+    width: 350px;
+    z-index: 1000;
+
+    &__environment {
+        @extend %floating-panel;
+        list-style-type: none;
+        padding: 10px;
+        margin-top: 10px
+    }
+
+    &__environment:hover {
+        background-color: $light-grey;
+        cursor: pointer;
+    }
+}

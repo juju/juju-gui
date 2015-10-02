@@ -65,11 +65,37 @@ YUI.add('juju-env-web-handler', function(Y) {
       @param {Function} completedCallback The load event callback.
     */
     sendPostRequest: function(path, headers, data, username, password,
-                              progressCallback, completedCallback) {
+                              withCredentials, progressCallback,
+                              completedCallback) {
       var xhr = this._createRequest(
-          path, 'POST', headers, username, password,
+          path, 'POST', headers, username, password, withCredentials,
           progressCallback, completedCallback);
       // Send the POST data.
+      xhr.send(data);
+    },
+
+    /**
+      Send an asynchronous PUT request to the given URL.
+
+      @method sendPutRequest
+      @param {String} path The remote target path/URL.
+      @param {Object} headers Additional request headers as key/value pairs.
+      @param {Object} data The data to send as a file object, a string or in
+        general as an ArrayBufferView/Blob object.
+      @param {String} username The user name for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {String} password The password for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {Function} progressCallback The progress event callback.
+      @param {Function} completedCallback The load event callback.
+    */
+    sendPutRequest: function(path, headers, data, username, password,
+                             withCredentials, progressCallback,
+                             completedCallback) {
+      var xhr = this._createRequest(
+          path, 'PUT', headers, username, password, withCredentials,
+          progressCallback, completedCallback);
+      // Send the PUT data.
       xhr.send(data);
     },
 
@@ -86,10 +112,10 @@ YUI.add('juju-env-web-handler', function(Y) {
       @param {Function} progressCallback The progress event callback.
       @param {Function} completedCallback The load event callback.
     */
-    sendGetRequest: function(path, headers, username, password,
+    sendGetRequest: function(path, headers, username, password, withCredentials,
                              progressCallback, completedCallback) {
       var xhr = this._createRequest(
-          path, 'GET', headers, username, password,
+          path, 'GET', headers, username, password, withCredentials,
           progressCallback, completedCallback);
       // Send the GET request.
       xhr.send();
@@ -182,7 +208,8 @@ YUI.add('juju-env-web-handler', function(Y) {
       @return {Object} The asynchronous request instance.
     */
     _createRequest: function(path, method, headers, username, password,
-                             progressCallback, completedCallback) {
+                             withCredentials, progressCallback,
+                             completedCallback) {
       var xhr = new XMLHttpRequest({});
       // Set up the event handlers.
       var progressHandler = this._createProgressHandler(progressCallback);
@@ -202,6 +229,9 @@ YUI.add('juju-env-web-handler', function(Y) {
       if (username && password) {
         var authHeader = this._createAuthorizationHeader(username, password);
         xhr.setRequestHeader('Authorization', authHeader);
+      }
+      if (withCredentials === true) {
+        xhr.withCredentials = withCredentials;
       }
       return xhr;
     }

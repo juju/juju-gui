@@ -19,6 +19,7 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
       'jujugui/static/gui/build/app/assets/javascripts/classnames.js',
+      'jujugui/static/gui/build/app/assets/javascripts/react-onclickoutside.js',
       'jujugui/static/gui/build/app/utils/component-test-utils.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
@@ -51,7 +52,8 @@ module.exports = function(config) {
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['mocha'],
 
-    // web server port
+    // web server and port
+    hostname: '0.0.0.0',
     port: 6543,
 
 

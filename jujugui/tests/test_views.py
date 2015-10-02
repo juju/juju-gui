@@ -132,8 +132,8 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('env-uuid', config['jujuEnvUUID'])
         self.assertEqual('/u/anonymous/env-uuid', config['baseUrl'])
 
-    def test_explicit_baseUrl(self):
-        self.update_settings({'jujugui.baseUrl': '/ignore/prefix'})
+    def test_explicit_base_url(self):
+        self.update_settings({'jujugui.base_url': '/ignore/prefix'})
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)

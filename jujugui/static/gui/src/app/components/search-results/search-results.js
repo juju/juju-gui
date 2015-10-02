@@ -21,102 +21,197 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
-    search: function() {
-      /*
-       * XXX: replace this placeholder and its dummy data with live call to
-       * search service.
-       */
-      return {
-        hasResults: true,
-        solutionsCount: 5,
-        nameWidth: 'foobar',
+     /**
+      If it's the same charm but for different series, collapse into one
+      entity. We do this by converting the list to an OrderedDict, keyed on
+      the match criteria (name, owner, type). When there is a key collision,
+      add the series to the exist entity. Using an OrderedDict (versus a
+      normal dict) is important to preserve sorting.
+     */
+    collapseSeries: function(entities) {
+
+      function seriesKey(series) {
+        // XXX kadams54, 2015-05-21: This series mapping needs to be updated
+        // with each release, at least until we can figure out a better way.
+        return {
+          precise: 12.04,
+          trusty:  14.04,
+          utopic:  14.10,
+          vivid:   15.04,
+          wily:    15.10
+        }[series.name];
+      }
+
+      function entityKey(entity) {
+        return [entity.name, entity.owner, entity.type, entity.promulgated];
+      }
+
+      var collapsedEntities = {},
+          orderedKeys = [];
+      for (var i = 0, l = entities.length; i < l; i++) {
+        var entity = entities[i],
+            key = entityKey(entity),
+            series = entity.series,
+            url = entity.url || '',
+            value = {name: series, url: url};
+        // If the key already exists, append the series to the existing list.
+        if (collapsedEntities[key]) {
+          var collapsed = collapsedEntities[key];
+          // Aggregate downloads across different series.
+          collapsed.downloads += entity.downloads || 0;
+          // Add series to the list.
+          collapsed.series.push(value);
+          // Ensure that the most recent series is first.
+          collapsed.series.sort(function(a, b) {
+            var k1 = seriesKey(a),
+                k2 = seriesKey(b);
+            // We want a reverse sort, so...
+            return k2 - k1;
+          });
+          // De-dupe the series array.
+          collapsed.series = collapsed.series.filter(function(s, pos, arry) {
+            return !pos || s.name != arry[pos - 1].name;
+          });
+          // And that its URL is used for the entity.
+          collapsed.url = collapsed.series[0].url;
+        } else {
+          // Convert all series attributes in the entities to lists.
+          if (series) {
+            entity.series = [value];
+          } else {
+            entity.series = [];
+          }
+          // Ensure downloads and URL are present.
+          entity.downloads = entity.downloads || 0;
+          entity.url = entity.url || '';
+          entity.id = entity.series.length > 0 ?
+              entity.series[0].name + '/' + entity.name : entity.name;
+          collapsedEntities[key] = entity;
+          // Save the key so we can preserve sort order.
+          orderedKeys.push(key);
+        }
+      }
+      // Now convert that object back to an ordered list and return it.
+      var returnedEntities = [];
+      for (var i = 0, l = orderedKeys.length; i < l; i++) {
+        var k = orderedKeys[i];
+        returnedEntities.push(collapsedEntities[k]);
+      }
+      return returnedEntities;
+    },
+
+    searchSuccess: function(rawResults) {
+      // Parse the raw results.
+      var results = rawResults.map(function(model) {
+        return model.toSearchResult(this.props.charmstore);
+      }, this);
+      results = this.collapseSeries(results);
+      // Split the results into promulgated and normal.
+      var promulgatedResults = [],
+          normalResults = [];
+      results.forEach(function(obj) {
+        if (obj.promulgated) {
+          promulgatedResults.push(obj);
+        } else {
+          normalResults.push(obj);
+        }
+      });
+      var data = {
+        standalone: false,
+        initialized: true,
         text: this.props.query,
-        currentType: 'all',
-        currentSeries: 'trusty',
-        allSeries: ['all', 'precise', 'trusty', 'centos7'],
-        currentTopics: [],
-        promulgatedResultsCount: 2,
-        promulgatedResults: [
-          {
-            type: 'charm',
-            docType: 'charm',
-            name: 'mysql',
-            displayName: 'MySQL',
-            url: 'http://example.com/mysql',
-            tags: ['database', 'sql'],
-            series: [
-              {name: 'trusty', url: 'http://example.com/trusty-mysql'},
-              {name: 'precise', url: 'http://example.com/precise-mysql'}
-            ],
-            downloads: 30,
-            owner: 'test-owner-1'
-          },
-          {
-            type: 'charm',
-            docType: 'charm',
-            name: 'wordpress',
-            displayName: 'Wordpress',
-            url: 'http://example.com/wordpress',
-            tags: [],
-            series: [
-              {name: 'trusty', url: 'http://example.com/trusty-wordpress'},
-              {name: 'precise', url: 'http://example.com/precise-wordpress'}
-            ],
-            downloads: 300,
-            owner: 'test-owner-2'
-          },
-        ],
-        STATIC_URL: 'STATIC/',
-        resultsCount: 3,
-        results: [
-          {
-            type: 'charm',
-            docType: 'charm',
-            name: 'mysql',
-            displayName: 'MySQL',
-            url: 'http://example.com/mysql',
-            tags: ['database', 'sql'],
-            series: [
-              {name: 'trusty', url: 'http://example.com/trusty-mysql'},
-              {name: 'precise', url: 'http://example.com/precise-mysql'}
-            ],
-            downloads: 30,
-            owner: 'test-owner-1'
-          },
-          {
-            type: 'charm',
-            docType: 'charm',
-            name: 'wordpress',
-            displayName: 'Wordpress',
-            url: 'http://example.com/wordpress',
-            tags: [],
-            series: [
-              {name: 'trusty', url: 'http://example.com/trusty-wordpress'},
-              {name: 'precise', url: 'http://example.com/precise-wordpress'}
-            ],
-            downloads: 300,
-            owner: 'test-owner-2'
-          },
-          {
-            type: 'charm',
-            docType: 'charm',
-            name: 'ghost',
-            displayName: 'Ghost',
-            url: 'http://example.com/ghost',
-            tags: ['cms'],
-            series: [],
-            downloads: 3,
-            owner: 'test-owner-3'
-          },
-        ]
+        hasResults: results.length > 0,
+        solutionsCount: results.length,
+        normalResultsCount: normalResults.length,
+        normalResults: normalResults,
+        promulgatedResultsCount: promulgatedResults.length,
+        promulgatedResults: promulgatedResults
+      };
+      // These need to be set separately, seemingly due to a React quirk.
+      this.setState({waitingForSearch: false});
+      this.setState({data: data});
+    },
+
+    searchFailure: function(type, data, request) {
+      // XXX: Implement error handling.
+      console.error('Search request failed.');
+    },
+
+    searchRequest: function(charmstore, query) {
+      this.setState({ waitingForSearch: true });
+      charmstore.search(
+        {text: query},
+        this.searchSuccess,
+        this.searchFailure
+      );
+    },
+
+    shouldSearch: function(nextProps) {
+      var nextQuery = JSON.stringify(nextProps.query),
+          currentQuery = JSON.stringify(this.state.data.text);
+      return nextQuery !== currentQuery;
+    },
+
+    getInitialState: function() {
+      return {
+        data: {initialized: false},
+        waitingForSearch: false
       };
     },
 
+    componentDidMount: function() {
+      this.searchRequest(this.props.charmstore, this.props.query);
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      if (this.shouldSearch(nextProps)) {
+        this.searchRequest(this.props.charmstore, nextProps.query);
+      }
+    },
+
+    shouldComponentUpdate: function(nextProps, nextState) {
+      return this.shouldSearch(nextProps) && !this.state.waitingForSearch;
+    },
+
+    /**
+      Handle any clicks inside the template and route them to the correct
+      handler.
+
+      @method _handleTemplateClicks
+      @param {Object} e The click event
+    */
+    _handleTemplateClicks: function(e) {
+      e.preventDefault();
+      var target = e.target;
+      var className = target.className;
+      if (className.indexOf('list-block__entity-link') > -1) {
+        this._handleEntityClick(target);
+      }
+    },
+
+    /**
+      Show the entity details when clicked.
+
+      @method _handleEntityClick
+      @param {Object} target The element that was clicked
+    */
+    _handleEntityClick: function(target) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: target.getAttribute('data-id')
+          }
+        }
+      });
+    },
+
     render: function() {
-      var classes = 'search-results';
-      var html = Handlebars.templates['search-results.hbs'](this.search());
+      var html = Handlebars.templates['search-results.hbs'](this.state.data);
       return (
-        <div className={classes}
+        <div className="search-results"
+          onClick={this._handleTemplateClicks}
           dangerouslySetInnerHTML={{__html: html}}>
         </div>
       );

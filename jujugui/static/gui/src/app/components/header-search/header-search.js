@@ -34,20 +34,34 @@ YUI.add('header-search', function() {
       @returns {String} The current state.
     */
     getInitialState: function() {
-      // Setting a default state object.
-      var query;
-      var search = this.props.getAppState('current', 'sectionC', 'metadata');
-      if (search) {
-        query = search.search.text;
-      }
-      var active = query !== undefined;
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
+      var active = !!component;
 
       return {
-        search: active,
-        query: query,
+        query: metadata && metadata.search,
         active: active,
         inputStyles: this._generateInputStyles(active)
       };
+    },
+
+    /**
+      Update the state when the app state changes.
+
+      @method componentWillReceiveProps
+    */
+    componentWillReceiveProps: function() {
+      // Need to check if there is a change to sectionC and if it has been
+      // cleared (mid-point/search results have been closed) then we also need
+      // to deactivate the search box.
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      if (component) {
+        this._openSearch();
+      } else {
+        this._closeSearch();
+      }
     },
 
     /**
@@ -59,6 +73,7 @@ YUI.add('header-search', function() {
     _generateClasses: function() {
       return classNames(
         'header-search',
+        'ignore-react-onclickoutside',
         this.state.active ? 'header-search--active' : ''
       );
     },
@@ -84,6 +99,25 @@ YUI.add('header-search', function() {
       @method _handleSearchFocus
     */
     _handleSearchFocus: function() {
+      if (!this.state.active && !this.state.query) {
+        this._openSearch();
+        this.props.changeState({
+          sectionC: {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'mid-point'
+            }
+          }
+        });
+      }
+    },
+
+    /**
+      Open the search box.
+
+      @method _openSearch
+    */
+    _openSearch: function() {
       this.setState({
         active: true,
         inputStyles: this._generateInputStyles(true)
@@ -91,17 +125,16 @@ YUI.add('header-search', function() {
     },
 
     /**
-      Handle the search input losing focus.
+      Close the search box.
 
-      @method _handleSearchBlur
+      @method _closeSearch
     */
-    _handleSearchBlur: function() {
-      if (!this.state.search && !this.state.query) {
-        this.setState({
-          active: false,
-          inputStyles: this._generateInputStyles(false)
-        });
-      }
+    _closeSearch: function() {
+      this.setState({
+        query: undefined,
+        active: false,
+        inputStyles: this._generateInputStyles(false)
+      });
     },
 
     /**
@@ -129,10 +162,10 @@ YUI.add('header-search', function() {
       e.preventDefault();
       this.props.changeState({
         sectionC: {
+          component: 'charmbrowser',
           metadata: {
-            search: {
-              text: this.state.query
-            }
+            activeComponent: 'search-results',
+            search: this.state.query
           }
         }
       });
@@ -144,10 +177,11 @@ YUI.add('header-search', function() {
       @method _handleClose
     */
     _handleClose: function() {
+      this._closeSearch();
       this.props.changeState({
         sectionC: {
           component: null,
-          metadata: {}
+          metadata: null
         }
       });
     },
@@ -176,7 +210,6 @@ YUI.add('header-search', function() {
               value={this.state.query}
               onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
-              onBlur={this._handleSearchBlur}
               style={this.state.inputStyles} />
           </form>
           <span tabIndex="0" role="button"

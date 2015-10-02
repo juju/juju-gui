@@ -8,8 +8,15 @@
 
 .search-results {
     @extend %floating-panel;
+    $bottom-space: $deployer-bar-height + $panel-space;
+    position: absolute;
+    top: 0;
+    left: $panel-space;
+    right: 0;
+    max-height: calc(100% - #{$bottom-space});
     color: $cool-grey;
-    border-radius: inherit;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     .inner-wrapper {
         max-width: none;
@@ -23,6 +30,16 @@
         }
     }
 
+    .initial-load-container {
+        text-align: center;
+        margin: 100px 0;
+    }
+
+    .no-results-container {
+        margin: 20px;
+        line-height: 1.3;
+    }
+
     .row {
         padding: 0;
     }
@@ -30,7 +47,6 @@
     .list-block {
 
         .list-block__list {
-            border-bottom: 1px solid $light-mid-grey;
             margin: 0;
 
             &.list-block__list--dotted .list-block__list--item {
@@ -41,11 +57,7 @@
                 }
             }
 
-            .list-block__tags--link {
-                font-size: 18px;
-            }
-            .list-block__tags--link:link,
-            .list-block__tags--link:visited {
+            .list-block__entity-link {
                 box-sizing: border-box;
                 position: absolute;
                 top: 0;
@@ -55,6 +67,8 @@
                 height: 100%;
                 overflow: hidden;
                 z-index: 2;
+                font-size: 18px;
+                cursor: pointer;
             }
 
             .list-icons li,

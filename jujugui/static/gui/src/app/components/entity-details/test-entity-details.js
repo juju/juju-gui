@@ -21,35 +21,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}};
 var testUtils = React.addons.TestUtils;
 
-describe('StringConfig', () => {
+chai.config.includeStack = true;
+chai.config.truncateThreshold = 0;
 
-  beforeAll((done) => {
-    // By loading this file it adds the component to the juju components.
-    YUI().use('string-config', () => { done(); });
+describe('EntityDetails', function() {
+
+  beforeAll(function(done) {
+    // By loading these files it makes their classes available in the tests.
+    YUI().use('entity-details', function() { done(); });
   });
 
-  it('renders string options', () => {
-    var option = {
-      key: 'foo',
-      type: 'number',
-      value: 123
-    }
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
-      <juju.components.StringConfig
-        ref='Config-foo'
-        option={option}
-        config={123} />);
-    var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.className, 'string-config');
-    // XXX is there a better way?
-    assert.equal(
-      output.props.children[1].props.dangerouslySetInnerHTML.__html,
-      123);
-  });
-
-  it('handles change events', () => {
-    // TODO
+  it('can be rendered', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails />);
+    assert.equal(output.props.children, 'Entity details');
   });
 
 });

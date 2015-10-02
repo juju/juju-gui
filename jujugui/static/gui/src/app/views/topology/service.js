@@ -128,18 +128,23 @@ YUI.add('juju-topology-service', function(Y) {
 
     // Size the node for drawing.
     node.attr({
-      'width': function(box) { box.w = 190; return box.w;},
-      'height': function(box) { box.h = 190; return box.h;}
+      'width': function(box) {
+        box.subordinate ? box.w = 130 : box.w = 190; return box.w;
+      },
+      'height': function(box) {
+        box.subordinate ? box.h = 130 : box.h = 190; return box.h;
+      }
     });
 
     var rerenderRelations = false;
     node.select('.service-block').each(function(d) {
       var curr_node = d3.select(this),
-          curr_state = curr_node.attr('data-state'),
-          new_state = 'service_module';
+          is_pending = false,
+          is_erroring = false;
+
       if (d.subordinate) {
         curr_node.attr({
-          'stroke': '#19b6ee',
+          'stroke': '#888888',
           'stroke-width': 1
         });
       } else if ((d.pending || d.deleted)) {
@@ -151,10 +156,30 @@ YUI.add('juju-topology-service', function(Y) {
       } else if (d.highlighted) {
         rerenderRelations = true;
       } else {
-        curr_node.attr({
-          'stroke': '#888888',
-          'stroke-width': 1
+        var units = d.units._items;
+        units.forEach(function(unit) {
+          if (unit.agent_state === 'installing'
+              || unit.agent_state === 'pending') {
+            is_pending = true;
+          } else if (unit.agent_state === 'error') {
+            is_erroring = true;
+          }
         });
+
+        // Add the current state class
+        if (is_erroring) {
+          curr_node.classed('is-erroring', true)
+            .classed('is-pending', false)
+            .classed('is-running', false);
+        } else if (is_pending) {
+          curr_node.classed('is-pending', true)
+            .classed('is-erroring', false)
+            .classed('is-running', false);
+        } else {
+          curr_node.classed('is-running', true)
+            .classed('is-erroring', false)
+            .classed('is-pending', false);
+        }
         rerenderRelations = true;
       }
 
@@ -174,23 +199,46 @@ YUI.add('juju-topology-service', function(Y) {
           d3.select(this)
           .select('.sub-rel-block').empty();
     })
-        .append('g')
+        .insert('g', ':first-child')
         .attr('class', 'sub-rel-block')
         .attr('transform', function(d) {
           // Position the block so that the relation indicator will
           // appear at the right connector.
-          return 'translate(' + [d.w, d.h / 2 - 26] + ')';
+          return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
         });
 
-    subRelationIndicator.append('image')
-        .attr({'xlink:href': 'juju-ui/assets/svgs/sub_relation.svg',
-          'width': 87,
-          'height': 47});
-    subRelationIndicator.append('text').append('tspan')
-              .attr({'class': 'sub-rel-count',
 
-          'x': 64,
-          'y': 47 * 0.8});
+    subRelationIndicator.append('line')
+      .attr({
+        'x1': 0,
+        'y1': 30,
+        'x2': 20,
+        'y2': 30
+      })
+      .attr('stroke-width', 1)
+      .attr('stroke', '#888888');
+    subRelationIndicator.append('circle')
+      .attr({
+        'cx': 0,
+        'cy': 30,
+        'r': 4
+      })
+      .attr('fill', '#888888');
+    subRelationIndicator.append('circle')
+      .attr({
+        'cx': 35,
+        'cy': 30,
+        'r': 15
+      })
+      .attr('stroke-width', 1.1) // Extra .1 fix for antialiased jittery edges
+      .attr('stroke', '#888888')
+      .attr('fill', '#f5f5f5');
+    subRelationIndicator.append('text').append('tspan')
+      .attr({
+        'class': 'sub-rel-count',
+        'x': 35,
+        'y': 45 * 0.8
+      });
 
     // The following are sizes in pixels of the SVG assets used to
     // render a service, and are used to in calculating the vertical
@@ -245,39 +293,16 @@ YUI.add('juju-topology-service', function(Y) {
       return d.exposed;
     });
     exposed.each(function(d) {
-      var existing = Y.one(this).one('.exposed-indicator');
-      if (!existing) {
-        existing = d3.select(this).append('image')
-                        .attr({'class': 'exposed-indicator on',
-              'xlink:href': 'juju-ui/assets/svgs/exposed.svg',
-              'width': 32,
-              'height': 32
-            });
-      }
-      existing = d3.select(this).select('.exposed-indicator')
-                      .attr({
-            'x': 145,
-            'y': 79
-          });
+      d3.select(this).classed('is-exposed', true);
     });
 
     // Remove exposed indicator from nodes that are no longer exposed.
-    node.filter(function(d) {
-      return !d.exposed &&
-          !d3.select(this)
-                      .select('.exposed-indicator').empty();
-    }).select('.exposed-indicator').remove();
-
-    // Show whether or not the service is pending using an indicator.
-    var pending = node.filter(function(d) {
-      return d.pending;
+    var unexposed = node.filter(function(d) {
+      return !d.exposed;
     });
-
-    // Remove pending indicator from nodes that are no longer pending.
-    node.filter(function(d) {
-      return !d.pending &&
-          !d3.select(this).select('.pending-indicator').empty();
-    }).select('.pending-indicator').remove();
+    unexposed.each(function(d) {
+      d3.select(this).classed('is-exposed', false);
+    });
   };
   views.ServiceModuleCommon = ServiceModuleCommon;
 
@@ -1397,9 +1422,15 @@ YUI.add('juju-topology-service', function(Y) {
 
       node.append('circle')
         .attr({
-          cx: 95,
-          cy: 95,
-          r: 90,
+          cx: function(d) {
+            return (d.subordinate ? 65 : 95);
+          },
+          cy: function(d) {
+            return (d.subordinate ? 65 : 95);
+          },
+          r: function(d) {
+            return (d.subordinate ? 60 : 90);
+          },
           fill: '#f5f5f5',
           'stroke-width': 1,
           stroke: '#888888'
@@ -1432,7 +1463,9 @@ YUI.add('juju-topology-service', function(Y) {
           },
           width: 96,
           height: 96,
-          transform: 'translate(47, 47)',
+          transform: function(d) {
+            return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
+          },
           'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
         });
 

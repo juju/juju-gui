@@ -297,21 +297,15 @@ YUI.add('juju-view-bundle', function(Y) {
         return d.exposed;
       });
       exposed.each(function(d) {
-        var existing = Y.one(this).one('.exposed-indicator');
-        if (!existing) {
-          existing = d3.select(this).append('image')
-        .attr({'class': 'exposed-indicator on',
-                    'xlink:href': 'juju-ui/assets/svgs/exposed.svg',
-                    'width': 32,
-                    'height': 32
-                  })
-        .append('title')
-        .text(function(d) {
-                    return d.exposed ? 'Exposed' : '';
-                  });
-        }
-        existing = d3.select(this).select('.exposed-indicator')
-        .attr({ 'x': 64, 'y': 64 });
+        d3.select(this).classed('is-exposed', true);
+      });
+
+      // Remove exposed indicator from nodes that are no longer exposed.
+      var unexposed = node.filter(function(d) {
+        return !d.exposed;
+      });
+      unexposed.each(function(d) {
+        d3.select(this).classed('is-exposed', false);
       });
     },
 

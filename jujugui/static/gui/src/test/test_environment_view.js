@@ -317,7 +317,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isFalse(help.hasClass('shrink'));
     });
 
-
     it('should not display help text when canvas is populated', function() {
       view.render().rendered();
 
@@ -326,6 +325,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(help.getStyle('display'), 'none');
     });
 
+    it('should handle clicking the plus', function(done) {
+      // Use a db w/o the delta loaded
+      var changeStateCalled;
+      var db = new models.Database();
+      view.set('db', db);
+      view.render().rendered();
+
+      view.on('*:changeState', function(e) {
+        changeStateCalled = e.details[0];
+        done();
+      });
+
+      var plus = Y.one('.environment-help .plus-service');
+      plus.simulate('click');
+      assert.deepEqual(changeStateCalled, {
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'mid-point'
+          }
+        }
+      });
+    });
 
     it('must handle the window resize event', function(done) {
       var beforeResizeEventFired = false;
@@ -1501,7 +1523,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(module.relations[2].relations.length, 2);
       // Only one line is drawn (that is, there are four container relations,
       // but only three lines on the canvas).
-      assert.equal(view.topo.vis.selectAll('line').size(),
+      assert.equal(view.topo.vis.selectAll('.relation').size(),
           module.relations.length);
       assert.equal(module.relations.length, 3);
       assert.equal(db.relations.filter(function(relation) {
