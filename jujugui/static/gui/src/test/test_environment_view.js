@@ -375,7 +375,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             charmstore: fakeStore
           });
           view.render();
-          var serviceBlock = container.one('.service').one('circle');
+          var serviceBlock = container.one('.service').one('.service-block');
           serviceBlock.getAttribute('r').should.equal('90');
           serviceBlock.getAttribute('cy').should.equal('95');
           serviceBlock.getAttribute('cx').should.equal('95');
