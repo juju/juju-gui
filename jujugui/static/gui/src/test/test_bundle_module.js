@@ -94,12 +94,7 @@ describe('topology bundle module', function() {
           assert.equal(normalizeTranslate(service.attr('transform')),
               'translate(115 89)');
           // Ensure that we've exposed one service
-          assert.equal(container.all('.exposed-indicator').size(), 1);
-          var indicator = selection.select('.exposed-indicator');
-          assert.equal(indicator.attr('width'), '32');
-          assert.equal(indicator.attr('height'), '32');
-          assert.equal(indicator.attr('x'), '64');
-          assert.equal(indicator.attr('y'), '64');
+          assert.equal(container.all('.is-exposed').size(), 1);
           done();
         }).then(undefined, done);
   });
