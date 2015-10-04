@@ -161,6 +161,7 @@ YUI.add('mid-point', function() {
       this.tags.forEach(function (tag) {
         tags.push(
           <li tabIndex="0" role="button"
+            key={tag.name}
             className="mid-point__tag">
             {tag.name}
             <span className="mid-point__tag-count">
