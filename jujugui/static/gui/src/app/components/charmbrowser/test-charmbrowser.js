@@ -80,6 +80,32 @@ describe('Charmbrowser', function() {
           instanceName="mid-point-panel"
           visible={true}>
           <juju.components.MidPoint
+            outsideClickClose={true}
+            storeOpen={false}
+            changeState={changeState} />
+        </juju.components.Panel>);
+  });
+
+  it('displays the store when the app state calls for it', function() {
+    var appState = {
+      sectionC: {
+        metadata: {
+          activeComponent: 'store'
+        }
+      }};
+    var charmstore = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Charmbrowser
+        appState={appState}
+        charmstore={charmstore}
+        changeState={changeState} />);
+    assert.deepEqual(output,
+        <juju.components.Panel
+          instanceName="white-box"
+          visible={true}>
+          <juju.components.Store
+            charmstore={charmstore}
             changeState={changeState} />
         </juju.components.Panel>);
   });

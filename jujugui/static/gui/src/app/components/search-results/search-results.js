@@ -142,7 +142,8 @@ YUI.add('search-results', function(Y) {
       charmstore.search(
         {text: query},
         this.searchSuccess,
-        this.searchFailure
+        this.searchFailure,
+        150
       );
     },
 
@@ -207,10 +208,23 @@ YUI.add('search-results', function(Y) {
       });
     },
 
+    /**
+      Generate the base classes from on the props.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'search-results',
+        this.props.inline ? '' : 'search-results--floating'
+      );
+    },
+
     render: function() {
       var html = Handlebars.templates['search-results.hbs'](this.state.data);
       return (
-        <div className="search-results"
+        <div className={this._generateClasses()}
           onClick={this._handleTemplateClicks}
           dangerouslySetInnerHTML={{__html: html}}>
         </div>

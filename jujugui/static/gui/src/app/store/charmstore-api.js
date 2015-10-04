@@ -284,16 +284,16 @@ YUI.add('charmstore-api', function(Y) {
         successfully.
       @param {Function} failureCallback Called when the api request fails
         with a response of >= 400.
+      @param {Integer} limit The number of results to get.
     */
-    search: function(filters, successCallback, failureCallback) {
+    search: function(filters, successCallback, failureCallback, limit) {
       var defaultFilters =
-                        '&limit=30&' +
+                        '&limit=' + (limit || 30) + '&' +
                         'include=charm-metadata&' +
                         'include=charm-config&' +
                         'include=bundle-metadata&' +
                         'include=extra-info&' +
                         'include=stats';
-
       var path = this._generatePath(
           'search', Y.QueryString.stringify(filters) + defaultFilters);
       this._makeRequest(

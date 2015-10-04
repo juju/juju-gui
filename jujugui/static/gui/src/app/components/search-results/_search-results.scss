@@ -7,16 +7,18 @@
 }
 
 .search-results {
-    @extend %floating-panel;
-    $bottom-space: $deployer-bar-height + $panel-space;
-    position: absolute;
-    top: 0;
-    left: $panel-space;
-    right: 0;
-    max-height: calc(100% - #{$bottom-space});
-    color: $cool-grey;
-    overflow-x: hidden;
-    overflow-y: auto;
+    &--floating {
+        @extend %floating-panel;
+        $bottom-space: $deployer-bar-height + $panel-space;
+        position: absolute;
+        top: 0;
+        left: $panel-space;
+        right: 0;
+        max-height: calc(100% - #{$bottom-space});
+        color: $cool-grey;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
 
     .inner-wrapper {
         max-width: none;
@@ -48,6 +50,22 @@
 
         .list-block__list {
             margin: 0;
+
+            &.promulgated {
+                margin: 0 10px;
+                border: none;
+
+                .list-block__list--item {
+                    margin-bottom: 10px;
+                    padding-bottom: 8px;
+                    border-width: 1px;
+                    border-radius: 2px;
+
+                    @media only screen and (min-width : 768px) {
+                        padding-bottom: 8px;
+                    }
+                }
+            }
 
             &.list-block__list--dotted .list-block__list--item {
                 border-top-style: dotted;
@@ -333,21 +351,6 @@
             }
 
             .list-block__list {
-                &.promulgated {
-                    border: none;
-
-                    .list-block__list--item {
-                        margin-bottom: 10px;
-                        padding-bottom: 8px;
-                        border-width: 1px;
-                        border-radius: 2px;
-
-                        @media only screen and (min-width : 768px) {
-                            padding-bottom: 8px;
-                        }
-                    }
-                }
-
                 .list-block__list--item-title {
                     font-size: 18px;
                 }
@@ -357,5 +360,17 @@
                 }
             }
         }
+    }
+}
+
+
+.store .search-results {
+    margin: 0 20px;
+    padding-top: 20px;
+    border-top: 1px solid $light-mid-grey;
+
+    .list-block__list.promulgated {
+        margin-left: 0;
+        margin-right: 0;
     }
 }

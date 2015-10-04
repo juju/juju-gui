@@ -125,4 +125,23 @@ describe('HeaderSearch', function() {
     assert.equal(input.style.getPropertyValue('width'), '160px');
   });
 
+  it('navigates to the store when the Store button is clicked', function() {
+    var getAppState = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />);
+    output.props.children[1].props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'store'
+        }
+      }
+    });
+  });
+
 });
