@@ -56,8 +56,6 @@ describe('SearchResults', function() {
             inline={true}
             query={query} />);
       var output = shallowRenderer.getRenderOutput();
-      console.log(output.props);
-      console.log(output.props.dangerouslySetInnerHTML);
       assert.deepEqual(output,
         <div className="search-results"
           onClick={output.props.onClick}

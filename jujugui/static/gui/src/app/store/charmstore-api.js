@@ -287,17 +287,13 @@ YUI.add('charmstore-api', function(Y) {
       @param {Integer} limit The number of results to get.
     */
     search: function(filters, successCallback, failureCallback, limit) {
-      var defaultFilters;
-      if (limit) {
-        defaultFilters = '&limit=' + limit + '&';
-      } else {
-        defaultFilters = '&limit=30&';
-      }
-      defaultFilters += 'include=charm-metadata&' +
-          'include=charm-config&' +
-          'include=bundle-metadata&' +
-          'include=extra-info&' +
-          'include=stats';
+      var defaultFilters =
+                        '&limit=' + (limit || 30) + '&' +
+                        'include=charm-metadata&' +
+                        'include=charm-config&' +
+                        'include=bundle-metadata&' +
+                        'include=extra-info&' +
+                        'include=stats';
       var path = this._generatePath(
           'search', Y.QueryString.stringify(filters) + defaultFilters);
       this._makeRequest(

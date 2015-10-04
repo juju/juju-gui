@@ -179,25 +179,14 @@ YUI.add('mid-point', function() {
       @param {Object} e The click event
     */
     _handleStoreClick: function(e) {
-      if (this.state.storeOpen) {
-        this.props.changeState({
-          sectionC: {
-            component: 'charmbrowser',
-            metadata: {
-              activeComponent: 'mid-point'
-            }
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: this.state.storeOpen ? 'mid-point' : 'store'
           }
-        });
-      } else {
-        this.props.changeState({
-          sectionC: {
-            component: 'charmbrowser',
-            metadata: {
-              activeComponent: 'store'
-            }
-          }
-        });
-      }
+        }
+      });
     },
 
     /**
