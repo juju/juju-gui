@@ -398,6 +398,23 @@ th {
             display: block;
         }
     }
+
+    .plus-service__halo {
+        transition: all .3s;
+        opacity: 0;
+        r: 60;
+    }
+
+    &:hover {
+        .plus-service__halo {
+            r: 80;
+            opacity: 1;
+        }
+
+        .plus-service__inner-circle {
+            fill: $white;
+        }
+    }
 }
 
 /*
@@ -746,6 +763,7 @@ g.service {
     .service-block__halo {
         transition: all .3s;
         opacity: 0;
+        r: 90;
     }
 
     .service-block {
@@ -756,6 +774,7 @@ g.service {
 
         .service-block__halo {
             opacity: 1;
+            r: 110;
             stroke-width: 1;
             stroke: #19b6ee;
         }
@@ -774,6 +793,19 @@ g.service {
 
         .service-block {
             fill: $white;
+        }
+    }
+
+    &.subordinate {
+        .service-block__halo {
+            r: 60;
+            stroke: #888888;
+        }
+
+        &:hover {
+            .service-block__halo {
+                r: 80;
+            }
         }
     }
 }
