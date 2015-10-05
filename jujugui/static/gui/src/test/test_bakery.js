@@ -34,7 +34,6 @@ describe('Bakery', function() {
   beforeEach(function () {
     bakery = new Y.juju.environments.web.Bakery({
       webhandler: new Y.juju.environments.web.WebHandler(),
-      visitMethod: null,
       serviceName: 'test'
     });
   });
@@ -44,9 +43,27 @@ describe('Bakery', function() {
   });
 
   it('can be instantiated with the proper config values', function() {
-    assert.equal(
-        bakery.webhandler instanceof Y.juju.environments.web.WebHandler,
-        true);
+    assert(bakery.webhandler instanceof Y.juju.environments.web.WebHandler);
+    assert.equal(bakery.visitMethod, bakery._defaultVisitMethod);
+  });
+
+  it('can be configured to use a noninteractive visit method', function() {
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      interactive: false,
+      serviceName: 'test'
+    });
+    assert.equal(bakery.visitMethod, bakery._nonInteractiveVisitMethod);
+  });
+
+  it('can be configured to use a custom visit method', function() {
+    var newVisitMethod = function() {};
+    bakery = new Y.juju.environments.web.Bakery({
+        webhandler: new Y.juju.environments.web.WebHandler(),
+        serviceName: 'test',
+        visitMethod: newVisitMethod
+    });
+    assert.equal(bakery.visitMethod, newVisitMethod);
   });
 
   describe('_requestHandler', function() {
@@ -151,8 +168,7 @@ describe('Bakery', function() {
     });
 
     it('no need for authentication when not 401', function() {
-      var requestHandler = utils.makeStubMethod(
-        bakery, '_requestHandler');
+      var requestHandler = utils.makeStubMethod(bakery, '_requestHandler');
 
       this._cleanups.push(requestHandler.reset);
 
