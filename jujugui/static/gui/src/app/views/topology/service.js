@@ -139,6 +139,7 @@ YUI.add('juju-topology-service', function(Y) {
     var rerenderRelations = false;
     node.select('.service-block').each(function(d) {
       var curr_node = d3.select(this),
+          parent_node = d3.select(this.parentNode),
           is_pending = false,
           is_erroring = false;
 
@@ -168,15 +169,15 @@ YUI.add('juju-topology-service', function(Y) {
 
         // Add the current state class
         if (is_erroring) {
-          curr_node.classed('is-erroring', true)
+          parent_node.classed('is-erroring', true)
             .classed('is-pending', false)
             .classed('is-running', false);
         } else if (is_pending) {
-          curr_node.classed('is-pending', true)
+          parent_node.classed('is-pending', true)
             .classed('is-erroring', false)
             .classed('is-running', false);
         } else {
-          curr_node.classed('is-running', true)
+          parent_node.classed('is-running', true)
             .classed('is-erroring', false)
             .classed('is-pending', false);
         }
@@ -1419,6 +1420,22 @@ YUI.add('juju-topology-service', function(Y) {
      */
     createServiceNode: function(node, self) {
       node.attr({'data-name':  function(d) { return d.name; }});
+
+      node.append('circle')
+        .attr({
+          cx: function(d) {
+            return (d.subordinate ? 65 : 95);
+          },
+          cy: function(d) {
+            return (d.subordinate ? 65 : 95);
+          },
+          r: function(d) {
+            return (d.subordinate ? 80 : 110);
+          },
+          fill: 'transparent',
+          'stroke-dasharray': '5, 5'
+        })
+        .classed('service-block__halo', true);
 
       node.append('circle')
         .attr({
