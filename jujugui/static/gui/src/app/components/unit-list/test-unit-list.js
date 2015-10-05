@@ -84,7 +84,7 @@ describe('UnitList', () => {
     assert.deepEqual(child,
       <juju.components.OverviewAction
         action={child.props.action}
-        title="Scale Service"/>);
+        title="Scale service"/>);
   });
 
   it('propagates select-all to all children', () => {

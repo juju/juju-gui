@@ -175,6 +175,7 @@ describe('MidPoint', function() {
         <div className="mid-point__footer-row">
           <ul className="mid-point__tag-list">
             <li tabIndex="0" role="button"
+              key="databases"
               className="mid-point__tag">
               databases
               <span className="mid-point__tag-count">
@@ -182,6 +183,7 @@ describe('MidPoint', function() {
               </span>
             </li>
             <li tabIndex="0" role="button"
+              key="ops"
               className="mid-point__tag">
               ops
               <span className="mid-point__tag-count">
