@@ -141,7 +141,7 @@ YUI.add('unit-list', function() {
           <div className="unit-list__actions">
             <juju.components.OverviewAction
               action={this._navigate}
-              title="Scale Service" />
+              title="Scale service" />
           </div>
           <ul className="unit-list__units">
             {units}
