@@ -623,6 +623,13 @@ YUI.add('juju-topology-service', function(Y) {
       // Get the current click action
       var curr_click_action = self.get('currentServiceClickAction');
 
+      // Remove is-selected class from all services and add to the currently
+      // clicked service.
+      if (box.node) {
+        topo.vis.selectAll('.is-selected').classed('is-selected', false);
+        box.node.classList.add('is-selected');
+      }
+
       // Fire the action named in the following scheme:
       //   <action>
       // with the service, the SVG node, and the view
@@ -991,6 +998,7 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
               topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
+      container.all('.service.is-selected').removeClass('is-selected');
       this.hideServiceMenu();
     },
 
@@ -1767,6 +1775,13 @@ YUI.add('juju-topology-service', function(Y) {
         topo.set('active_context', box.node);
         serviceMenu.addClass('active');
 
+        // Remove is-selected class from all services and add to the currently
+        // clicked service.
+        if (box.node) {
+          topo.vis.selectAll('.is-selected').classed('is-selected', false);
+          box.node.classList.add('is-selected');
+        }
+
         var menuHeight = serviceMenu.getDOMNode().getClientRects()[0].height;
         var triHeight = 18;
         triangle.setStyle('top', ((menuHeight - triHeight) / 2) + 'px');
@@ -1793,6 +1808,7 @@ YUI.add('juju-topology-service', function(Y) {
     hideServiceMenu: function(box) {
       var serviceMenu = this.get('container').one('#service-menu');
       var topo = this.get('component');
+      topo.vis.selectAll('.is-selected').classed('is-selected', false);
 
       if (serviceMenu.hasClass('active')) {
         serviceMenu.removeClass('active');
