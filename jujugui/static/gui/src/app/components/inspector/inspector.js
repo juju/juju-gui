@@ -69,12 +69,14 @@ YUI.add('inspector-component', function() {
               }}};
         break;
         case 'units':
+          var units = service.get('units');
           state.activeChild = {
             title: 'Units',
+            count: units.size(),
             component:
               <juju.components.UnitList
                 serviceId={service.get('id')}
-                units={service.get('units')}
+                units={units}
                 destroyUnits={this.props.destroyUnits}
                 changeState={this.props.changeState} />,
             backState: {
@@ -136,6 +138,7 @@ YUI.add('inspector-component', function() {
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
             activeComponent={this.state.activeComponent}
+            count={this.state.activeChild.count}
             title={this.state.activeChild.title} />
           <div className="inspector-content">
             {this.state.activeChild.component}

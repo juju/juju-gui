@@ -65,7 +65,7 @@ describe('Inspector', function() {
     var destroyUnits = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
-    getStub.withArgs('units').returns(['units']);
+    getStub.withArgs('units').returns({size: sinon.stub()});
     var service = {
       get: getStub
     };
@@ -86,7 +86,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.UnitList
           serviceId="demo"
-          units={['units']}
+          units={getStub('units')}
           destroyUnits={destroyUnits}
           changeState={changeStateStub} />);
   });
@@ -197,6 +197,7 @@ describe('Inspector', function() {
       <juju.components.InspectorHeader
         backCallback={output.props.children[0].props.backCallback}
         activeComponent={undefined}
+        count={undefined}
         title="demo"/>);
   });
 });
