@@ -47,9 +47,4 @@ describe('StringConfig', () => {
       output.props.children[1].props.dangerouslySetInnerHTML.__html,
       123);
   });
-
-  it('handles change events', () => {
-    // TODO
-  });
-
 });

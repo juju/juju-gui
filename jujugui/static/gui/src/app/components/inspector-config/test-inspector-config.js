@@ -63,18 +63,26 @@ describe('Configuration', () => {
   });
 
   it('renders service configuration', () => {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
         service={service}
         charm={charm} />);
-    var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.className, 'inspector-config')
     assert.equal(output.props.children[1][0].ref, 'Config-foo')
     assert.equal(output.props.children[1][1].ref, 'Config-bar')
   });
 
-  it('handles changes', () => {
+  it('handles string changes', () => {
     // TODO
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        service={service}
+        charm={charm} />);
+    jsTestUtils.log(output.props.children)
+    // TODO
+  });
+
+  it('handles boolean changes', () => {
+    //TODO
   });
 });

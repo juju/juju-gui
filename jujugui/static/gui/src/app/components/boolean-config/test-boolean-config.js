@@ -66,8 +66,4 @@ describe('BooleanConfig', () => {
       false);
   });
 
-  it('handles change events', () => {
-    // TODO
-  });
-
 });
