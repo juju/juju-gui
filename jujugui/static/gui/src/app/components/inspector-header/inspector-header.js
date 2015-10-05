@@ -52,17 +52,22 @@ YUI.add('inspector-header', function() {
       );
     },
 
-
     /**
       Use the post update call to animate the header on change.
+
+      @param {Object} prevProps The props which were sent to the component.
+      @param {Object} prevState The state that was sent to the component.
     */
-    componentDidUpdate: function () {
-      var node = React.findDOMNode(this);
-      node.classList.remove('fade-in');
-      // Animate the header change.
-      window.requestAnimationFrame(function() {
-        node.classList.add('fade-in');
-      });
+    componentDidUpdate: function(prevProps, prevState) {
+      // Only animate when switching between components.
+      if (this.props.activeComponent !== prevProps.activeComponent) {
+        var node = React.findDOMNode(this);
+        node.classList.remove('fade-in');
+        // Animate the header change.
+        window.requestAnimationFrame(function() {
+          node.classList.add('fade-in');
+        });
+      }
     },
 
     render: function() {
