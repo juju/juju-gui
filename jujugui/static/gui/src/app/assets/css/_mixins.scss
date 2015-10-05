@@ -58,7 +58,7 @@
 .button {
     @include create-border-radius($border-radius);
     @include create-linear-gradient($charm-panel-orange, #c03f11);
-    color: #fff;
+    color: $white;
     text-decoration: none;
     display: inline-block;
     margin: 0;
@@ -107,11 +107,11 @@
         width: 10px;
     }
     ::-webkit-scrollbar-track {
-        background-color: #fff;
+        background-color: $white;
     }
     ::-webkit-scrollbar-thumb {
         background-color: #d4d4d4;
-        border: 1px solid #fff;
+        border: 1px solid $white;
         border-radius: 5px;
     }
 }
