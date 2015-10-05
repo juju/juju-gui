@@ -143,7 +143,7 @@ YUI.add('unit-list', function() {
               action={this._navigate}
               title="Scale Service" />
           </div>
-          <ul>
+          <ul className="unit-list__units">
             {units}
           </ul>
           <juju.components.ButtonRow

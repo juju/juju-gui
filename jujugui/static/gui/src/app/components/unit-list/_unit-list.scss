@@ -1,7 +1,14 @@
 .unit-list {
-    ul, &__actions {
+    @extend %scroll-children;
+
+    &__units,
+    &__actions {
         list-style: none;
         margin: 0;
+    }
+
+    &__units {
+        @extend %collapse-children;
     }
 
     &__actions {

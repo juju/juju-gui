@@ -1,3 +1,4 @@
 .inspector-content {
+    @extend %scroll-children;
     position: relative;
 }
