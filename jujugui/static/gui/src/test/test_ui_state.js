@@ -978,6 +978,18 @@ describe('UI State object', function() {
         },
         sectionB: {}
       }
+    }, {
+      '/inspector/service123/units/uncommitted/': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            activeComponent: 'units',
+            id: 'service123',
+            unitStatus: 'uncommitted'
+          }
+        },
+        sectionB: {}
+      }
     },
 
     // inspector/local urls get data from the state's flash object, as well as

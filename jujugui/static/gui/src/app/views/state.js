@@ -337,6 +337,9 @@ YUI.add('juju-app-state', function(Y) {
             if (metadata.localType) {
               urlParts.push('local/' + metadata.localType);
             }
+            if (metadata.activeComponent === 'units' && metadata.unitStatus) {
+              urlParts.push(metadata.unitStatus);
+            }
           }
           if (component === 'machine') {
             // With machine view the id is optional.
