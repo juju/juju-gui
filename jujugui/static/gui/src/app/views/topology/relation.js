@@ -618,7 +618,7 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('x2', point[1][0])
               .attr('y2', point[1][1]);
       self.dragline = dragline;
-
+      vis.select('.plus-service').classed('fade', true);
       // Start the add-relation process.
       self.addRelationStart(d, self);
     },
@@ -661,6 +661,7 @@ YUI.add('juju-topology-relation', function(Y) {
         self.cancelRelationBuild();
         self.addRelation(); // Will clear the state.
       }
+      topo.vis.select('.plus-service').classed('fade', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
     },

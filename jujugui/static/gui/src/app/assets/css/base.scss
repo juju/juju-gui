@@ -630,7 +630,8 @@ th {
         fill: #3333cc;
     }
 }
-.visibility-classes {
+.visibility-classes,
+.plus-service {
     transition: opacity 0.4s ease;
     &.show {
         opacity: 1;
@@ -639,10 +640,7 @@ th {
     &.fade {
         visibility: visible;
         stroke-opacity: .2;
-
-        .service-icon {
-            opacity: .2;
-        }
+        opacity: .2;
     }
     &.hide {
         /*
