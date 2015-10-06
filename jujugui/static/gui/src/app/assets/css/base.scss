@@ -181,6 +181,38 @@ input[type="radio"]:not(old):checked + label > .outer > .inner {
   border-radius: 3px;
   background: white;
 }
+
+input[type="checkbox"] {
+  $size: 14px;
+  width: $size;
+  height: $size;
+  background-color: $white;
+  border: 1px solid $mid-grey;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+  color: $white;
+  text-align: center;
+  overflow: hidden;
+  -webkit-appearance: button;
+
+  &:after {
+    content: '';
+    display: none;
+    width: $size;
+    height: $size;
+    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center center;
+  }
+
+  &:checked {
+    background-color: $success;
+    border: none;
+  }
+
+  &:checked:after {
+    display: inline-block;
+  }
+}
+
 svg {
     stroke-width: 0;
     overflow: hidden;
