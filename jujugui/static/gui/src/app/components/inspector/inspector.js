@@ -70,15 +70,17 @@ YUI.add('inspector-component', function() {
               }}};
         break;
         case 'units':
-          var units = service.get('units');
           var unitStatus = metadata.units;
+          unitStatus = unitStatus === true ? null : unitStatus;
+          var units = service.get('units').filterByStatus(unitStatus);
           state.activeChild = {
             title: 'Units',
-            count: units.size(),
-            headerType: unitStatus === true ? null : unitStatus,
+            count: units.length,
+            headerType: unitStatus,
             component:
               <juju.components.UnitList
                 serviceId={service.get('id')}
+                showActions={!unitStatus}
                 units={units}
                 destroyUnits={this.props.destroyUnits}
                 changeState={this.props.changeState} />,

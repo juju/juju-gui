@@ -36,12 +36,9 @@ describe('UnitList', () => {
       displayName: 'mysql/1',
       id: 'mysql/1'
     }];
-    var unitsList = {
-      toArray: () => units
-    };
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
-          units={unitsList} />);
+          units={units} />);
     var children = output.props.children[1].props.children;
     var refs = [
       'UnitListItem-' + units[0].id,
@@ -74,17 +71,31 @@ describe('UnitList', () => {
     var units = [{
       displayName: 'mysql/0'
     }];
-    var unitsList = {
-      toArray: () => units
-    };
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
-          units={unitsList} />);
+          units={units} />);
     var child = output.props.children[0].props.children;
     assert.deepEqual(child,
       <juju.components.OverviewAction
         action={child.props.action}
         title="Scale service"/>);
+  });
+
+  it('hides the actions when requested', () => {
+    var units = [{
+      displayName: 'mysql/0'
+    }];
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          showActions={false}
+          units={units} />);
+    var child = output.props.children[0];
+    assert.deepEqual(child,
+      <div className="unit-list__actions hidden">
+        <juju.components.OverviewAction
+          action={child.props.children.props.action}
+          title="Scale service"/>
+      </div>);
   });
 
   it('propagates select-all to all children', () => {
@@ -95,12 +106,9 @@ describe('UnitList', () => {
       displayName: 'mysql/1',
       id: 'mysql/1'
     }];
-    var unitsList = {
-      toArray: () => units
-    };
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
-          units={unitsList} />, true);
+          units={units} />, true);
     var output = shallowRenderer.getRenderOutput();
     var selectAll = output.props.children[1].props.children[0];
 
@@ -109,7 +117,7 @@ describe('UnitList', () => {
     // re-render the component
     shallowRenderer.render(
         <juju.components.UnitList
-          units={unitsList} />);
+          units={units} />);
     output = shallowRenderer.getRenderOutput();
 
     var children = output.props.children[1].props.children;
@@ -145,15 +153,12 @@ describe('UnitList', () => {
       displayName: 'mysql/5',
       id: 'mysql/5'
     }];
-    var unitsList = {
-      toArray: () => units
-    };
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           changeState={changeState}
           serviceId="mysql"
-          units={unitsList} />);
+          units={units} />);
     output.props.children[1].props.children[1].props.action({
       currentTarget: {
         getAttribute: function() {
@@ -175,12 +180,9 @@ describe('UnitList', () => {
   });
 
   it('displays a remove button', function() {
-    var unitsList = {
-      toArray: () => []
-    };
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
-          units={unitsList} />);
+          units={[]} />);
     var buttons = [{
       title: 'Remove',
       action: output.props.children[2].props.buttons[0].action
@@ -203,9 +205,6 @@ describe('UnitList', () => {
       displayName: 'mysql/2',
       id: 'mysql/2'
     }];
-    var unitsList = {
-      toArray: () => units
-    };
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
@@ -213,7 +212,7 @@ describe('UnitList', () => {
           destroyUnits={destroyUnits}
           changeState={changeState}
           serviceId="service1"
-          units={unitsList} />);
+          units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     output.refs['UnitListItem-' + units[2].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
@@ -230,9 +229,6 @@ describe('UnitList', () => {
       displayName: 'mysql/0',
       id: 'mysql/0'
     }];
-    var unitsList = {
-      toArray: () => units
-    };
     // Have to use renderIntoDocument here as shallowRenderer does not support
     // refs.
     var output = testUtils.renderIntoDocument(
@@ -240,7 +236,7 @@ describe('UnitList', () => {
           destroyUnits={destroyUnits}
           changeState={changeState}
           serviceId="service1"
-          units={unitsList} />);
+          units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'inspector-button');

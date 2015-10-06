@@ -130,15 +130,30 @@ YUI.add('unit-list', function() {
       return components;
     },
 
+    /**
+      Generate the classes for the actions from the props.
+
+      @method _generateActionsClasses
+      @returns {String} The collection of class names.
+    */
+    _generateActionsClasses: function() {
+      return classNames(
+        'unit-list__actions',
+        {
+          hidden: !this.props.showActions
+        }
+      );
+    },
+
     render: function() {
-      var units = this._generateUnitList(this.props.units.toArray());
+      var units = this._generateUnitList(this.props.units);
       var buttons = [{
         title: 'Remove',
         action: this._handleRemoveUnits
       }];
       return (
         <div className="unit-list">
-          <div className="unit-list__actions">
+          <div className={this._generateActionsClasses()}>
             <juju.components.OverviewAction
               action={this._navigate}
               title="Scale service" />

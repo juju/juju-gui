@@ -65,7 +65,9 @@ describe('Inspector', function() {
     var destroyUnits = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
-    getStub.withArgs('units').returns({size: sinon.stub()});
+    getStub.withArgs('units').returns({
+      filterByStatus: sinon.stub().returns([])
+    });
     var service = {
       get: getStub
     };
@@ -86,7 +88,8 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.UnitList
           serviceId="demo"
-          units={getStub('units')}
+          showActions={true}
+          units={[]}
           destroyUnits={destroyUnits}
           changeState={changeStateStub} />);
   });
@@ -204,7 +207,9 @@ describe('Inspector', function() {
 
   it('passes the type to the header component', function() {
     var service = {
-      get: sinon.stub().returns({size: sinon.stub().returns(5)})
+      get: sinon.stub().returns({
+        filterByStatus: sinon.stub().returns([])
+      })
     };
     var appState = {
       sectionA: {
@@ -225,7 +230,7 @@ describe('Inspector', function() {
     assert.deepEqual(output.props.children[0],
       <juju.components.InspectorHeader
         backCallback={output.props.children[0].props.backCallback}
-        count={5}
+        count={0}
         type="error"
         title="Units"/>);
   });
