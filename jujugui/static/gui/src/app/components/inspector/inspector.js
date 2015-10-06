@@ -135,6 +135,7 @@ YUI.add('inspector-component', function() {
         <div className="inspector-view">
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
+            activeComponent={this.state.activeComponent}
             title={this.state.activeChild.title} />
           <div className="inspector-content">
             {this.state.activeChild.component}

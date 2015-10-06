@@ -196,6 +196,7 @@ describe('Inspector', function() {
     assert.deepEqual(output.props.children[0],
       <juju.components.InspectorHeader
         backCallback={output.props.children[0].props.backCallback}
+        activeComponent={undefined}
         title="demo"/>);
   });
 });
