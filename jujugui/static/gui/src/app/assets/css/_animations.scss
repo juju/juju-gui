@@ -8,12 +8,15 @@
     }
 }
 
-%fade-in {
-    $fade-in-duration: .1s;
+@mixin fadeIn($fade-in-duration) {
     animation-duration: $fade-in-duration;
     animation-name: fadeIn;
     animation-fill-mode: forwards;
     opacity: 0;
+}
+
+%fade-in {
+    @include fadeIn(.1s);
 }
 
 %stagger-fade-in {
@@ -29,5 +32,5 @@
 }
 
 .fade-in {
-    @extend %fade-in;
+    @include fadeIn(.3s);
 }
