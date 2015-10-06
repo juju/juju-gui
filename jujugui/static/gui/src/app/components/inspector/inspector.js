@@ -51,8 +51,9 @@ YUI.add('inspector-component', function() {
     */
     generateState: function(nextProps) {
       var service = nextProps.service;
+      var metadata = nextProps.appState.sectionA.metadata;
       var state = {
-        activeComponent: nextProps.appState.sectionA.metadata.activeComponent
+        activeComponent: metadata.activeComponent
       };
       switch (state.activeComponent) {
         case undefined:
@@ -70,9 +71,11 @@ YUI.add('inspector-component', function() {
         break;
         case 'units':
           var units = service.get('units');
+          var unitStatus = metadata.units;
           state.activeChild = {
             title: 'Units',
             count: units.size(),
+            headerType: unitStatus === true ? null : unitStatus,
             component:
               <juju.components.UnitList
                 serviceId={service.get('id')}
@@ -88,7 +91,7 @@ YUI.add('inspector-component', function() {
                 }}}};
         break;
         case 'unit':
-          var unitId = nextProps.appState.sectionA.metadata.unit;
+          var unitId = metadata.unit;
           var unit = service.get('units').getById(
               service.get('id') + '/' + unitId);
           state.activeChild = {
@@ -138,6 +141,7 @@ YUI.add('inspector-component', function() {
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
             activeComponent={this.state.activeComponent}
+            type={this.state.activeChild.headerType}
             count={this.state.activeChild.count}
             title={this.state.activeChild.title} />
           <div className="inspector-content">

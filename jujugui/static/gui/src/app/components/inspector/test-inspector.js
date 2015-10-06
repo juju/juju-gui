@@ -198,6 +198,35 @@ describe('Inspector', function() {
         backCallback={output.props.children[0].props.backCallback}
         activeComponent={undefined}
         count={undefined}
+        type={undefined}
         title="demo"/>);
+  });
+
+  it('passes the type to the header component', function() {
+    var service = {
+      get: sinon.stub().returns({size: sinon.stub().returns(5)})
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          id: 'django',
+          activeComponent: 'units',
+          units: 'error'
+        }
+      }};
+    var changeStub = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Inspector
+          changeState={changeStub}
+          appState={appState}
+          service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.InspectorHeader
+        backCallback={output.props.children[0].props.backCallback}
+        count={5}
+        type="error"
+        title="Units"/>);
   });
 });
