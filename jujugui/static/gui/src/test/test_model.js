@@ -1037,6 +1037,53 @@ describe('test_model.js', function() {
 
     });
 
+    describe('serviceUnits.filterByStatus', function() {
+      var units;
+
+      beforeEach(function() {
+        units = new models.ServiceUnitList();
+        units.add([
+          {id: 'django/0', agent_state: 'error'},
+          {id: 'django/42', agent_state: 'pending'},
+          {id: 'haproxy/4', agent_state: 'error'},
+          {id: 'django/47', agent_state: 'started'},
+          {id: 'rails/0', agent_state: 'started'},
+          {id: 'rails/42', agent_state: 'error'},
+          {id: 'postgres/1'},
+          {id: 'rails/2', agent_state: 'pending'},
+          {id: 'postgres/2'},
+          {id: 'mysql/47', agent_state: 'started'},
+        ]);
+      });
+
+      afterEach(function() {
+        units.destroy();
+      });
+
+      // Map a list of units to their ids.
+      var mapUnitIds = function(units) {
+        return units.map(function(unit) {
+          return unit.id;
+        });
+      };
+
+      // Ensure the resulting units match the given identifier.
+      var assertUnits = function(resultingUnits, ids) {
+        var resultingIds = mapUnitIds(resultingUnits);
+        assert.deepEqual(resultingIds, ids);
+      };
+
+      it('returns all the units with an error status', function() {
+        var resultingUnits = units.filterByStatus('error');
+        assertUnits(resultingUnits, ['django/0', 'haproxy/4', 'rails/42']);
+      });
+
+      it('returns all the units with an uncommitted status', function() {
+        var resultingUnits = units.filterByStatus('uncommitted');
+        assertUnits(resultingUnits, ['postgres/1', 'postgres/2']);
+      });
+    });
+
     describe('machines model list', function() {
       var machineJobs, machines;
 
