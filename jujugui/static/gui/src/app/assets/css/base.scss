@@ -200,7 +200,7 @@ input[type="checkbox"] {
     display: none;
     width: $size;
     height: $size;
-    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center center;
+    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
   }
 
   &:checked {
