@@ -111,46 +111,46 @@ YUI.add('service-overview', function() {
       @returns {Array} The array of actions.
     */
     _generateActions: function(service) {
-      var unitStatuses = this._parseStatusData(service.get('units').toArray());
-      var actions = [{
-        title: 'Units',
-        value: unitStatuses.all,
-        icon: this.icons.all,
-        action: this._navigate,
-        state: {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
-              id: service.get('id'),
-              activeComponent: 'units'
-            }
-          }
-        }
+      var actions = [];
+      var statusCounts = this._parseStatusData(service.get('units').toArray());
+      var statuses = [{
+          title: 'Units',
+          key: 'all',
+          icon: this.icons.all
+        }, {
+          title: 'Errors',
+          key: 'error'
+        }, {
+          title: 'Pending',
+          key: 'pending'
+        }, {
+          title: 'Uncommitted',
+          key: 'uncommitted'
+        }, {
       }];
-
-      if (unitStatuses.error > 0) {
+      statuses.forEach(function(status) {
+        var key = status.key;
+        var count = statusCounts[key];
+        if (count > 0) {
           actions.push({
-            title: 'Errors',
-            value: unitStatuses.error,
-            valueType: 'error',
+            title: status.title,
+            icon: status.icon,
+            value: count,
+            valueType: key,
+            action: this._navigate,
+            state: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: 'units',
+                  unitStatus: key === 'all' ? null : key
+                }
+              }
+            }
           });
-      }
-
-      if (unitStatuses.pending > 0) {
-          actions.push({
-            title: 'Pending',
-            value: unitStatuses.pending,
-            valueType: 'pending',
-          });
-      }
-
-      if (unitStatuses.uncommitted > 0) {
-          actions.push({
-            title: 'Uncommitted',
-            value: unitStatuses.uncommitted,
-            valueType: 'uncommitted',
-          });
-      }
+        }
+      }, this);
 
       actions.push({
           title: 'Configure',
