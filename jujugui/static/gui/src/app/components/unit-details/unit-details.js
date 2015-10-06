@@ -35,7 +35,9 @@ YUI.add('unit-details', function() {
           component: 'inspector',
           metadata: {
             id: this.props.serviceId,
-            activeComponent: 'units'
+            activeComponent: 'units',
+            unitStatus: this.props.unitStatus,
+            unit: null
           }}});
     },
 

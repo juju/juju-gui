@@ -321,12 +321,17 @@ YUI.add('juju-app-state', function(Y) {
             if (metadata.activeComponent) {
               urlParts.push(metadata.activeComponent);
             }
+            if (metadata.activeComponent === 'units' && metadata.unitStatus) {
+              urlParts.push(metadata.unitStatus);
+            }
             if (metadata.unit) {
               if (!window.flags || !window.flags.react) {
                 // Using the new activeComponent to indicate what subcomponent
                 // should be shown this causes conflicts when defining a unit
                 // id with the key 'unit'.
-                urlParts.push('unit/' + metadata.unit);
+                if (metadata.activeComponent === 'unit') {
+                  urlParts.push('unit/' + metadata.unit);
+                }
               } else {
                 urlParts.push(metadata.unit);
               }
@@ -336,9 +341,6 @@ YUI.add('juju-app-state', function(Y) {
             }
             if (metadata.localType) {
               urlParts.push('local/' + metadata.localType);
-            }
-            if (metadata.activeComponent === 'units' && metadata.unitStatus) {
-              urlParts.push(metadata.unitStatus);
             }
           }
           if (component === 'machine') {
@@ -642,7 +644,15 @@ YUI.add('juju-app-state', function(Y) {
           }
         } else {
           if (parts[1]) {
-            metadata.activeComponent = parts[1];
+            var activeComponent = parts[1];
+            // Handle URLS like /inspector/django/units/uncommitted/11/ where
+            // we want to display the unit details but have come from a status
+            // list.
+            if (parts[1] === 'units' && parts[3] !== undefined) {
+              activeComponent = 'unit';
+              metadata.unit = parts[3];
+            }
+            metadata.activeComponent = activeComponent;
             metadata[parts[1]] = parts[2] || true;
           }
         }

@@ -70,6 +70,7 @@ YUI.add('unit-list', function() {
       @param {Object} e The click event.
     */
     _unitItemAction: function(e) {
+      var unitStatus = this.props.unitStatus;
       var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
       this.props.changeState({
         sectionA: {
@@ -77,7 +78,8 @@ YUI.add('unit-list', function() {
           metadata: {
             id: this.props.serviceId,
             unit: unitId,
-            activeComponent: 'unit'
+            unitStatus: unitStatus,
+            activeComponent: unitStatus ? 'units' : 'unit'
           }
         }
       });
@@ -140,7 +142,7 @@ YUI.add('unit-list', function() {
       return classNames(
         'unit-list__actions',
         {
-          hidden: !this.props.showActions
+          hidden: this.props.unitStatus
         }
       );
     },

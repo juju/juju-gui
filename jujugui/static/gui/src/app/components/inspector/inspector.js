@@ -55,6 +55,10 @@ YUI.add('inspector-component', function() {
       var state = {
         activeComponent: metadata.activeComponent
       };
+      var unitStatus = metadata.units;
+      if (unitStatus) {
+        unitStatus = unitStatus === true ? null : unitStatus;
+      }
       switch (state.activeComponent) {
         case undefined:
           state.activeChild = {
@@ -70,8 +74,6 @@ YUI.add('inspector-component', function() {
               }}};
         break;
         case 'units':
-          var unitStatus = metadata.units;
-          unitStatus = unitStatus === true ? null : unitStatus;
           var units = service.get('units').filterByStatus(unitStatus);
           state.activeChild = {
             title: 'Units',
@@ -80,7 +82,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.UnitList
                 serviceId={service.get('id')}
-                showActions={!unitStatus}
+                unitStatus={unitStatus}
                 units={units}
                 destroyUnits={this.props.destroyUnits}
                 changeState={this.props.changeState} />,
@@ -98,18 +100,22 @@ YUI.add('inspector-component', function() {
               service.get('id') + '/' + unitId);
           state.activeChild = {
             title: unit.displayName,
+            headerType: unitStatus,
             component:
               <juju.components.UnitDetails
                 destroyUnits={this.props.destroyUnits}
                 serviceId={service.get('id')}
                 changeState={this.props.changeState}
+                unitStatus={unitStatus}
                 unit={unit} />,
             backState: {
               sectionA: {
                 component: 'inspector',
                 metadata: {
                   id: service.get('id'),
-                  activeComponent: 'units'
+                  activeComponent: 'units',
+                  unitStatus: unitStatus,
+                  unit: null
                 }}}};
         break;
         case 'scale':

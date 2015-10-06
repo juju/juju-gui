@@ -74,7 +74,8 @@ describe('Inspector', function() {
     var appState = {
       sectionA: {
         metadata: {
-          activeComponent: 'units'
+          activeComponent: 'units',
+          units: 'error'
         }}};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
@@ -88,7 +89,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.UnitList
           serviceId="demo"
-          showActions={true}
+          unitStatus="error"
           units={[]}
           destroyUnits={destroyUnits}
           changeState={changeStateStub} />);
@@ -109,7 +110,8 @@ describe('Inspector', function() {
       sectionA: {
         metadata: {
           activeComponent: 'unit',
-          unit: '5'
+          unit: '5',
+          units: 'error'
         }}};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
@@ -123,6 +125,7 @@ describe('Inspector', function() {
         <juju.components.UnitDetails
           destroyUnits={destroyUnits}
           serviceId="demo"
+          unitStatus="error"
           changeState={changeState}
           unit="unit" />);
   });
