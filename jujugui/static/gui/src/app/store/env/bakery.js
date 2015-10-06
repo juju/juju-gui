@@ -47,16 +47,22 @@ YUI.add('juju-env-bakery', function(Y) {
        Initialize.
 
        @method initializer
-       @param {WebHandler} The web handler used to send request.
-       @param {Function} The visit method that would be used for interaction.
+       @param {Object} cfg A config object providing webhandler and visit method
+           information. A visitMethod can be provided, which becomes the
+           bakery's visitMethod. Alternatively, the bakery can be configured to
+           non interactive mode. If neither is true, the default method is used.
+           {visitMethod: fn, interactive: boolean,
+            webhandler: obj, serviceName: string}
        @return {undefined} Nothing.
        */
       initializer: function (cfg) {
         this.webhandler = cfg.webhandler;
-        if (cfg.visitMethod == null) {
-          this.visitMethod = this._defaultVisitMethod;
-        } else {
+        if (cfg.visitMethod) {
           this.visitMethod = cfg.visitMethod;
+        } else if (cfg.interactive !== undefined && !cfg.interactive) {
+          this.visitMethod = this._nonInteractiveVisitMethod;
+        } else {
+          this.visitMethod = this._defaultVisitMethod;
         }
         this.macaroonName = 'Macaroons-' + cfg.serviceName;
         this.setCookiePath = cfg.setCookiePath;
@@ -79,7 +85,6 @@ YUI.add('juju-env-bakery', function(Y) {
         if (macaroons !== null) {
           headers['Macaroons'] = macaroons;
         }
-
         this.webhandler.sendGetRequest(
           path, headers, null, null, false, null,
           this._requestHandlerWithInteraction.bind(
@@ -330,10 +335,34 @@ YUI.add('juju-env-bakery', function(Y) {
     },
 
     /**
+      Non interactive visit method which sends the jujugui "auth" blob
+      to the IdM to login.
+
+      @method _nonInteractiveVisitMethod
+      @param {Object} response An xhr response object.
+    */
+    _nonInteractiveVisitMethod: function(response) {
+      var acceptHeaders = {'Accept': 'application/json'};
+      var contentHeaders = {'Content-Type': 'application/json'};
+      var login = function(response) {
+        var method = JSON.parse(response.target.responseText).jujugui;
+        var data = JSON.stringify({login: window.juju_config.auth});
+        this.webhandler.sendPostRequest(
+            method, contentHeaders, data,
+            null, null, false, null, null);
+      };
+
+      this.webhandler.sendGetRequest(
+          response.Info.VisitURL,
+          acceptHeaders, null, null, false, null, login.bind(this));
+    },
+
+    /**
       Default visit method which is to open a window to the
       response.Info.VisitURL.
 
       @method _defaultVisitMethod
+      @param {Object} response An xhr response object.
     */
     _defaultVisitMethod: function(response) {
       window.open(response.Info.VisitURL, 'Login');

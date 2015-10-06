@@ -467,7 +467,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           if (window.juju_config && window.juju_config.jemUrl) {
             var bakery = new Y.juju.environments.web.Bakery({
               webhandler: new Y.juju.environments.web.WebHandler(),
-              visitMethod: null,
+              interactive: false,
               serviceName: 'jem',
             });
             var environment = new window.jujulib.environment(

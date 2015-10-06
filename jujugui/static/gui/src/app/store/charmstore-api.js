@@ -39,7 +39,6 @@ YUI.add('charmstore-api', function(Y) {
     // prototype.
     this.bakery = new Y.juju.environments.web.Bakery({
       webhandler: new Y.juju.environments.web.WebHandler(),
-      visitMethod: null,
       serviceName: 'charmstore',
       setCookiePath: this.charmstoreURL + this.apiPath + '/set-auth-cookie'
     });
