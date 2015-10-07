@@ -68,13 +68,17 @@ describe('AddedServicesListItem', function() {
 
   it('only shows the status icon for pending, uncommitted, error', function() {
     var statuses = [{
-      name: 'started', icon: false, statusCounts: getUnitStatusCounts(0, 0, 0, 1)
+      name: 'started', icon: false,
+      statusCounts: getUnitStatusCounts(0, 0, 0, 1)
     }, {
-      name: 'uncommitted', icon: true, statusCounts: getUnitStatusCounts(0, 0, 1)
+      name: 'uncommitted', icon: true, statusCounts:
+      getUnitStatusCounts(0, 0, 1)
     }, {
-      name: 'pending', icon: true, statusCounts: getUnitStatusCounts(0, 1)
+      name: 'pending', icon: true,
+      statusCounts: getUnitStatusCounts(0, 1)
     }, {
-      name: 'error', icon: true, statusCounts: getUnitStatusCounts(1)
+      name: 'error', icon: true,
+      statusCounts: getUnitStatusCounts(1)
     }];
 
     // Generate what the icon should look like depending on the value in
