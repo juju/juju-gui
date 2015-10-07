@@ -74,14 +74,38 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var value = 2;
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
         icon={undefined}
         key="Units"
         title="Units"
-        value={value}
-        valueType={undefined}
+        value={2}
+        valueType="all"
+        link={undefined}
+        linkTitle={undefined}
+        action={output.props.children[0].props.children[0].props.action} />);
+  });
+
+  it('shows the all units action even if there are no units', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [];
+          }
+        };
+      }};
+
+    var output = jsTestUtils.shallowRender(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[0],
+      <juju.components.OverviewAction
+        icon={undefined}
+        key="Units"
+        title="Units"
+        value={0}
+        valueType="all"
         link={undefined}
         linkTitle={undefined}
         action={output.props.children[0].props.children[0].props.action} />);
@@ -114,7 +138,8 @@ describe('ServiceOverview', function() {
         component: 'inspector',
         metadata: {
           id: 'demo',
-          activeComponent: 'units'
+          activeComponent: 'units',
+          unitStatus: null
         }
       }
     });
@@ -136,14 +161,13 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var value = 2;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
         title="Uncommitted"
-        value={value}
+        value={2}
         icon={undefined}
-        action={undefined}
+        action={output.props.children[0].props.children[1].props.action}
         valueType="uncommitted"
         link={undefined}
         linkTitle={undefined} />);
@@ -161,14 +185,13 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var value = 1;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
         title="Pending"
-        value={value}
+        value={1}
         icon={undefined}
-        action={undefined}
+        action={output.props.children[0].props.children[1].props.action}
         valueType='pending'
         link={undefined}
         linkTitle={undefined} />);
@@ -186,14 +209,13 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             service={service}/>);
-    var value = 1;
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
         title="Errors"
-        value={value}
+        value={1}
         icon={undefined}
-        action={undefined}
+        action={output.props.children[0].props.children[1].props.action}
         valueType="error"
         link={undefined}
         linkTitle={undefined} />);

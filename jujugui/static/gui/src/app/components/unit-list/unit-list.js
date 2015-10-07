@@ -70,6 +70,7 @@ YUI.add('unit-list', function() {
       @param {Object} e The click event.
     */
     _unitItemAction: function(e) {
+      var unitStatus = this.props.unitStatus;
       var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
       this.props.changeState({
         sectionA: {
@@ -130,15 +131,30 @@ YUI.add('unit-list', function() {
       return components;
     },
 
+    /**
+      Generate the classes for the actions from the props.
+
+      @method _generateActionsClasses
+      @returns {String} The collection of class names.
+    */
+    _generateActionsClasses: function() {
+      return classNames(
+        'unit-list__actions',
+        {
+          hidden: this.props.unitStatus
+        }
+      );
+    },
+
     render: function() {
-      var units = this._generateUnitList(this.props.units.toArray());
+      var units = this._generateUnitList(this.props.units);
       var buttons = [{
         title: 'Remove',
         action: this._handleRemoveUnits
       }];
       return (
         <div className="unit-list">
-          <div className="unit-list__actions">
+          <div className={this._generateActionsClasses()}>
             <juju.components.OverviewAction
               action={this._navigate}
               title="Scale service" />

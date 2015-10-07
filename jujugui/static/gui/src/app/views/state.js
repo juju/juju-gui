@@ -321,6 +321,9 @@ YUI.add('juju-app-state', function(Y) {
             if (metadata.activeComponent) {
               urlParts.push(metadata.activeComponent);
             }
+            if (metadata.activeComponent === 'units' && metadata.unitStatus) {
+              urlParts.push(metadata.unitStatus);
+            }
             if (metadata.unit) {
               if (!window.flags || !window.flags.react) {
                 // Using the new activeComponent to indicate what subcomponent
