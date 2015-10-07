@@ -661,7 +661,6 @@ YUI.add('juju-topology-relation', function(Y) {
         self.cancelRelationBuild();
         self.addRelation(); // Will clear the state.
       }
-      topo.vis.select('.plus-service').classed('fade', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
     },
@@ -757,6 +756,7 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.buildingRelation = false;
       topo.update();
       vis.selectAll('.service').classed('selectable-service', false);
+      vis.select('.plus-service').classed('fade', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
     },

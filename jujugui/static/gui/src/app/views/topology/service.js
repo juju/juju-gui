@@ -1531,6 +1531,7 @@ YUI.add('juju-topology-service', function(Y) {
         this.fade({serviceNames: actions.fade});
       }
       if (actions.highlight.length > 0) {
+
         this.show({serviceNames: actions.highlight});
         this.highlight({serviceName: actions.highlight});
       }
