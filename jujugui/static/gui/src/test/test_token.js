@@ -203,22 +203,22 @@ describe('charm/bundle token', function() {
   it('Renders the proper charm icons into the token', function() {
     var bundleData = {
       haproxy: {
-        id: 'precise/haproxy-18',
+        charm: 'precise/haproxy-18',
         is_approved: true,
         name: 'haproxy'
       },
       mediawiki: {
-        id: 'precise/mediawiki-10',
+        charm: 'precise/mediawiki-10',
         is_approved: true,
         name: 'mediawiki'
       },
       memcached: {
-        id: 'precise/memcached-7',
+        charm: 'precise/memcached-7',
         is_approved: true,
         name: 'memcached'
       },
       mysql: {
-        id: 'precise/mysql-27',
+        charm: 'precise/mysql-27',
         is_approved: true,
         name: 'mysql'
       }

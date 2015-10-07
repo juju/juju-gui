@@ -68,18 +68,19 @@ describe('Change version viewlet', function() {
             CharmURL: 'cs:precise/mediawiki-14'}]
       ]}});
     }
-    var fakeStore = new Y.juju.charmstore.APIv4({});
-    fakeStore.getIconPath = function(id) {
-      if (allowIcon) {
-        return '/icon/' + id;
-      }
-      return '';
-    };
+
+    var cfg = { apiPath: '' };
+    if (allowIcon) {
+      cfg.charmstoreURL = '/icon/';
+    } else {
+      cfg.charmstoreURL = '';
+    }
+    window.juju_config = cfg;
     view = new jujuViews.environment({
       container: container,
       db: db,
       env: env,
-      charmstore: fakeStore
+      charmstore: new Y.juju.charmstore.APIv4({})
     });
     view.render();
     Y.Node.create([
@@ -123,6 +124,7 @@ describe('Change version viewlet', function() {
     if (state) {
       state.destroy();
     }
+    delete window.juju_config;
   });
 
   it('loads versions on click', function() {

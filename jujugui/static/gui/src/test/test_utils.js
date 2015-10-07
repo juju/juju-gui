@@ -1505,6 +1505,38 @@ describe('utilities', function() {
 
   });
 
+  describe('getIconPath', function() {
+    var utils, Y;
+
+    before(function(done) {
+      window.juju_config = {
+        charmstoreURL: 'local/',
+        apiPath: 'v4'
+      };
+      Y = YUI(GlobalConfig).use('juju-view-utils',
+          function(Y) {
+            utils = Y.namespace('juju.views.utils');
+            done();
+          });
+    });
+
+    it('returns local default bundle icon location for bundles', function() {
+      var path = utils.getIconPath('bundle:elasticsearch', true);
+      assert.equal(path, '/juju-ui/assets/images/non-sprites/bundle.svg');
+    });
+
+    it('returns a qualified charmstoreURL icon location', function() {
+      var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
+      assert.equal(
+          path,
+          'local/v4/~paulgear/precise/quassel-core-2/icon.svg');
+    });
+
+    after(function() {
+      delete window.juju_config;
+    });
+  });
+
   describe('utils.charmIconParser', function() {
     var cleanIconHelper, testUtils, utils, Y;
 
@@ -1542,12 +1574,12 @@ describe('utilities', function() {
 
       var parsed = utils.charmIconParser(bundleData.services);
       var expected = [
-        '<img src="/path/to/charm/undefined" alt="configsvr"/>',
-        '<img src="/path/to/charm/undefined" alt="mongos"/>',
-        '<img src="/path/to/charm/undefined" alt="shard1"/>',
-        '<img src="/path/to/charm/undefined" alt="shard2"/>',
-        '<img src="/path/to/charm/undefined" alt="shard3"/>',
-        '<img src="/path/to/charm/undefined" alt="foo"/>'
+        '<img src="/precise/mongodb-28/icon.svg" alt="configsvr"/>',
+        '<img src="/precise/mongodb-28/icon.svg" alt="mongos"/>',
+        '<img src="/precise/mongodb-28/icon.svg" alt="shard1"/>',
+        '<img src="/precise/mongodb-28/icon.svg" alt="shard2"/>',
+        '<img src="/precise/mongodb-28/icon.svg" alt="shard3"/>',
+        '<img src="/fooId/icon.svg" alt="foo"/>'
       ];
       assert.deepEqual(parsed, expected);
     });

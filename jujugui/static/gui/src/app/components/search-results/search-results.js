@@ -103,7 +103,7 @@ YUI.add('search-results', function(Y) {
     searchSuccess: function(rawResults) {
       // Parse the raw results.
       var results = rawResults.map(function(model) {
-        return model.toSearchResult(this.props.charmstore);
+        return model.toSearchResult();
       }, this);
       results = this.collapseSeries(results);
       // Split the results into promulgated and normal.
@@ -137,9 +137,9 @@ YUI.add('search-results', function(Y) {
       console.error('Search request failed.');
     },
 
-    searchRequest: function(charmstore, query) {
+    searchRequest: function(query) {
       this.setState({ waitingForSearch: true });
-      charmstore.search(
+      this.props.charmstoreSearch(
         {text: query},
         this.searchSuccess,
         this.searchFailure,
@@ -161,12 +161,12 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
-      this.searchRequest(this.props.charmstore, this.props.query);
+      this.searchRequest(this.props.query);
     },
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(this.props.charmstore, nextProps.query);
+        this.searchRequest(nextProps.query);
       }
     },
 

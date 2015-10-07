@@ -825,9 +825,10 @@ YUI.add('juju-gui', function(Y) {
     _renderCharmbrowser: function(metadata) {
       var state = this.state;
       var utils = views.utils;
+      var cs = this.get('charmstore');
       React.render(
         <components.Charmbrowser
-          charmstore={this.get('charmstore')}
+          charmstoreSearch={cs.search.bind(cs)}
           appState={state.get('current')}
           addService={utils.addService.bind(this, this)}
           changeState={this.changeState.bind(this)} />,
@@ -921,14 +922,16 @@ YUI.add('juju-gui', function(Y) {
     _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
         var jujuConfig = window.juju_config,
-            charmstoreURL;
-        if (!jujuConfig || !jujuConfig.charmstoreURL) {
-          console.error('No juju config for charmstoreURL availble');
+            charmstoreURL, apiPath;
+        if (!jujuConfig || !jujuConfig.charmstoreURL || !jujuConfig.apiPath) {
+          console.error('No juju config for charmstoreURL or apiPath availble');
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
+          apiPath = jujuConfig.apiPath;
         }
         this.set('charmstore', new Charmstore({
-          charmstoreURL: charmstoreURL
+          charmstoreURL: charmstoreURL,
+          apiPath: apiPath
         }));
       }
     },

@@ -51,10 +51,9 @@ YUI.add('search-result-extension', function(Y) {
       Produces a search results object for rendering in the search result
       templates.
       @method toSearchResult
-      @param {Object} charmstore the charmstore being searched.
       @return {Object} a plain Javascript object containing bundle attributes.
     */
-    toSearchResult: function(charmstore) {
+    toSearchResult: function() {
       var attrs = this.getAttrs(),
           type = attrs.entityType;
       var result = {
@@ -69,11 +68,11 @@ YUI.add('search-result-extension', function(Y) {
       };
       if (type === 'bundle') {
         var srvcs = this.get('services');
-        result.services = this.parseBundleServices(srvcs, charmstore);
+        result.services = this.parseBundleServices(srvcs);
       } else {
         result.tags = attrs.categories;
         result.series = attrs.series;
-        result.iconPath = utils.getIconPath(attrs.id, false, charmstore);
+        result.iconPath = utils.getIconPath(attrs.id, false);
       }
       return result;
     }
