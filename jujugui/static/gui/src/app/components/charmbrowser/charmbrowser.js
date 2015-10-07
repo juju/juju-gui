@@ -72,7 +72,8 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.SearchResults
                 changeState={this.props.changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
-                query={metadata.search} />
+                query={metadata.search}
+                tags={metadata.tags} />
           };
         break;
         case 'entity-details':

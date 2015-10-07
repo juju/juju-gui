@@ -151,6 +151,25 @@ YUI.add('mid-point', function() {
     },
 
     /**
+      Show the search results for a tag when clicked.
+
+      @method _handleTagClick
+      @param {Object} e The click event
+    */
+    _handleTagClick: function(e) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            tags: e.currentTarget.getAttribute('data-id')
+          }
+        }
+      });
+    },
+
+    /**
       Generate the list of tags.
 
       @method _generateTagList
@@ -162,6 +181,8 @@ YUI.add('mid-point', function() {
         tags.push(
           <li tabIndex="0" role="button"
             key={tag.name}
+            data-id={tag.name}
+            onClick={this._handleTagClick}
             className="mid-point__tag">
             {tag.name}
             <span className="mid-point__tag-count">

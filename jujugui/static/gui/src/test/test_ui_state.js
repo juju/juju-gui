@@ -686,6 +686,38 @@ describe('UI State object', function() {
           }
         }
       },
+      '/machine/3/?search=hadoop&tags=misc': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            tags: 'misc'
+          }
+        }
+      },
+      '/machine/3/?search&tags=misc': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: '',
+            tags: 'misc'
+          }
+        }
+      },
       // Multi section urls.
       '/inspector/apache2/machine/3/lxc-0': {
         sectionA: {
@@ -867,7 +899,7 @@ describe('UI State object', function() {
         sectionC: {}
       }
     }, {
-      '?store=': {
+      '?store': {
         sectionA: {}, sectionB: {},
         sectionC: {
           component: 'charmbrowser',
@@ -1076,6 +1108,38 @@ describe('UI State object', function() {
           metadata: {
             activeComponent: 'search-results',
             search: 'hadoop'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search=hadoop&tags=misc': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            tags: 'misc'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search&tags=misc': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            tags: 'misc'
           }
         }
       }

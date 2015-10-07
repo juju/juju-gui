@@ -235,7 +235,7 @@ YUI.add('juju-app-state', function(Y) {
     },
 
     /**
-      Given a valud state change object, generate a url which the application
+      Given a valid state change object, generate a url which the application
       can route to.
 
       @method generateUrl
@@ -299,6 +299,9 @@ YUI.add('juju-app-state', function(Y) {
             var activeComponent = metadata.activeComponent;
             if (activeComponent === 'search-results') {
               queryValues.search = metadata.search;
+              if (metadata.tags) {
+                queryValues.tags = metadata.tags;
+              }
             }
             if (activeComponent === 'mid-point') {
               queryValues.midpoint = '';
@@ -371,9 +374,22 @@ YUI.add('juju-app-state', function(Y) {
       if (window.flags && window.flags.react) {
         if (Object.keys(queryValues).length > 0) {
           url = url.replace(/\/$/, '');
-          Object.keys(queryValues).forEach((key) => {
-            url += '?' + key + '=' + queryValues[key];
-          });
+          var keys = Object.keys(queryValues);
+          if (keys.length > 0) {
+            url += '?';
+            var i = 0;
+            keys.forEach((key) => {
+              var value = queryValues[key];
+              if (i > 0) {
+                url += '&';
+              }
+              url += key;
+              if (value && value !== '') {
+                url += '=' + value;
+              }
+              i += 1;
+            });
+          }
         }
       }
       // Add the hash to the end of the url.
@@ -520,13 +536,17 @@ YUI.add('juju-app-state', function(Y) {
             }
           };
         }
-        if (query.search) {
+        if (query.search !== undefined) {
+          var metadata = {
+            activeComponent: 'search-results',
+            search: query.search
+          };
+          if (query.tags) {
+            metadata.tags = query.tags;
+          }
           state.sectionC = {
             component: 'charmbrowser',
-            metadata: {
-              activeComponent: 'search-results',
-              search: query.search
-            }
+            metadata: metadata
           };
         }
         if (query.store === '') {

@@ -58,6 +58,7 @@ describe('Charmbrowser', function() {
           <juju.components.SearchResults
             changeState={changeState}
             query={query}
+            tags={undefined}
             charmstoreSearch={charmstoreSearch} />
         </juju.components.Panel>);
   });
