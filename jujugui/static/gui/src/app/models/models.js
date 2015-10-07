@@ -284,6 +284,36 @@ YUI.add('juju-models', function(Y) {
       });
     },
 
+    getOtherServiceFromRelation: function(relation) {
+      var endpoints = relation.get('endpoints');
+      if (endpoints[0][0] === this.get('id')) {
+        return db.services.getById(endpoints[1][0]);
+      }
+      return db.services.getById(endpoints[0][0]);
+    },
+
+    updateSubordinateUnits: function(action, data) {
+      var relations = db.relations.get_relations_for_service(this);
+      debugger;
+      if (this.get('subordinate')) {
+        // Update units on this
+        var units = [];
+        relations.forEach(function(relation) {
+          var farService = this.getOtherServiceFromRelation(relation);
+          if (!farService.get('subordinate')) {
+            units.push(farService.get('units').toArray());
+          }
+        });
+      } else {
+        relations.forEach(function(relation) {
+          var farService = this.getOtherServiceFromRelation(relation);
+          if (!farService.get('subordinate')) {
+            units.push(farService.get('units').toArray());
+          }
+        });
+      }
+    },
+
     /**
       Detaches all of the events in the models _event property
 
@@ -720,7 +750,7 @@ YUI.add('juju-models', function(Y) {
     */
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
-    }
+    },
   });
 
   models.ServiceList = ServiceList;
@@ -877,6 +907,8 @@ YUI.add('juju-models', function(Y) {
       }
       // Include the new change in the service own units model list.
       _process_delta(service.get('units'), action, data, {});
+      // Also do for subordinates
+      service.updateSubordinateUnits(action, data);
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -1057,6 +1089,7 @@ YUI.add('juju-models', function(Y) {
      * delta, ensuring that they're up to date.
      */
     update_service_unit_aggregates: function(service) {
+      // TODO add units to subordinates
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
           Y.Object.values(aggregate[0]), 0, function(a, b) {return a + b;});
