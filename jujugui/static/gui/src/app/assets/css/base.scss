@@ -712,20 +712,6 @@ g.service {
     fill: none;
     stroke: none;
 
-    text {
-        text-anchor: middle;
-    }
-
-    .charm-label {
-        font-style: italic;
-        fill: #4c4c4c;
-    }
-
-    .name {
-      fill: rgb(80, 80, 80);
-      font-size: 14px;
-    }
-
     .service-block {
         transition: all .3s;
     }
@@ -847,6 +833,49 @@ g.service {
             .service-block__halo {
                 r: 80;
             }
+        }
+    }
+
+    &.is-selected {
+        .service-block__halo {
+            -webkit-animation: serviceBlockHaloSelected 1s alternate;
+            animation: serviceBlockHaloSelected 1s alternate;
+            opacity: .3;
+            r: 110;
+            stroke-width: 0;
+            fill: #19b6ee;
+        }
+
+        &.is-erroring .service-block__halo {
+            fill: #ed3146;
+        }
+
+        &.is-pending .service-block__halo {
+            fill: #f99b0f;
+        }
+
+        &.is-running .service-block__halo {
+            fill: #888888;
+        }
+
+        &.subordinate {
+            .service-block__halo {
+                r: 80;
+                fill: #888888;
+            }
+        }
+
+        .service-block {
+            fill: $white;
+        }
+
+        @-webkit-keyframes serviceBlockHaloSelected {
+            0% { opacity: 0 }
+            100% { opacity: .3 }
+        }
+        @keyframes serviceBlockHaloSelected {
+            0% { opacity: 0 }
+            100% { opacity: .3 }
         }
     }
 }

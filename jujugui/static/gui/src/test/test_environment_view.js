@@ -1054,6 +1054,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must show Build Relation as disabled if charm is not loaded',
        function() {
+         if (Y.UA.phantomjs) {
+           return;
+         }
          var view = new views.environment({
            container: container,
            db: db,
@@ -1089,6 +1092,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must not respond to clicks on disabled Build Relation link',
        function() {
+         if (Y.UA.phantomjs) {
+           return;
+         }
          var view = new views.environment({
            container: container,
            db: db,
@@ -1124,6 +1130,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must be able to add a relation from the service menu',
        function() {
+         if (Y.UA.phantomjs) {
+           return;
+         }
          var view = new views.environment({
            container: container,
            db: db,
