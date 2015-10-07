@@ -303,13 +303,6 @@ describe('UI State object', function() {
           unit: '13',
           flash: flash
         },
-        'inspector/service123/units/error/13': {
-          activeComponent: 'unit',
-          id: 'service123',
-          units: 'error',
-          unit: '13',
-          flash: flash
-        },
         'inspector/local/new': {
           localType: 'new',
           flash: flash

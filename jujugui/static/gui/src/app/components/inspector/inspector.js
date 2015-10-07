@@ -55,10 +55,6 @@ YUI.add('inspector-component', function() {
       var state = {
         activeComponent: metadata.activeComponent
       };
-      var unitStatus = metadata.units;
-      if (unitStatus) {
-        unitStatus = unitStatus === true ? null : unitStatus;
-      }
       switch (state.activeComponent) {
         case undefined:
           state.activeChild = {
@@ -74,6 +70,10 @@ YUI.add('inspector-component', function() {
               }}};
         break;
         case 'units':
+          var unitStatus = metadata.units;
+          // A unit status of 'true' is provided when there is no status, but
+          // we don't want to pass that on as the status value.
+          unitStatus = unitStatus === true ? null : unitStatus;
           var units = service.get('units').filterByStatus(unitStatus);
           state.activeChild = {
             title: 'Units',
@@ -98,9 +98,17 @@ YUI.add('inspector-component', function() {
           var unitId = metadata.unit;
           var unit = service.get('units').getById(
               service.get('id') + '/' + unitId);
+          var unitStatus = null;
+          var previousState = this.props.appPreviousState;
+          if (previousState.hasOwnProperty('sectionA')) {
+            var units = previousState.sectionA.metadata.units;
+            // A unit status of 'true' is provided when there is no status, but
+            // we don't want to pass that on as the status value.
+            unitStatus = units === true ? null : units;
+          }
           state.activeChild = {
             title: unit.displayName,
-            headerType: unitStatus,
+            headerType: unit.agent_state || 'uncommitted',
             component:
               <juju.components.UnitDetails
                 destroyUnits={this.props.destroyUnits}
@@ -114,8 +122,8 @@ YUI.add('inspector-component', function() {
                 metadata: {
                   id: service.get('id'),
                   activeComponent: 'units',
-                  unitStatus: unitStatus,
-                  unit: null
+                  unit: null,
+                  unitStatus: unitStatus
                 }}}};
         break;
         case 'scale':

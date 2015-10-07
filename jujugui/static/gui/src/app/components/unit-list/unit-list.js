@@ -78,8 +78,7 @@ YUI.add('unit-list', function() {
           metadata: {
             id: this.props.serviceId,
             unit: unitId,
-            unitStatus: unitStatus,
-            activeComponent: unitStatus ? 'units' : 'unit'
+            activeComponent: 'unit'
           }
         }
       });

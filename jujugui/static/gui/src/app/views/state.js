@@ -329,9 +329,7 @@ YUI.add('juju-app-state', function(Y) {
                 // Using the new activeComponent to indicate what subcomponent
                 // should be shown this causes conflicts when defining a unit
                 // id with the key 'unit'.
-                if (metadata.activeComponent === 'unit') {
-                  urlParts.push('unit/' + metadata.unit);
-                }
+                urlParts.push('unit/' + metadata.unit);
               } else {
                 urlParts.push(metadata.unit);
               }
@@ -644,15 +642,7 @@ YUI.add('juju-app-state', function(Y) {
           }
         } else {
           if (parts[1]) {
-            var activeComponent = parts[1];
-            // Handle URLS like /inspector/django/units/uncommitted/11/ where
-            // we want to display the unit details but have come from a status
-            // list.
-            if (parts[1] === 'units' && parts[3] !== undefined) {
-              activeComponent = 'unit';
-              metadata.unit = parts[3];
-            }
-            metadata.activeComponent = activeComponent;
+            metadata.activeComponent = parts[1];
             metadata[parts[1]] = parts[2] || true;
           }
         }

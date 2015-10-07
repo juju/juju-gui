@@ -174,41 +174,7 @@ describe('UnitList', () => {
         metadata: {
           id: 'mysql',
           unit: '5',
-          unitStatus: null,
           activeComponent: 'unit'
-        }
-      }
-    });
-  });
-
-  it('navigates to the unit details with a status url', function() {
-    var units = [{
-      displayName: 'mysql/5',
-      id: 'mysql/5'
-    }];
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-        <juju.components.UnitList
-          changeState={changeState}
-          serviceId="mysql"
-          unitStatus="uncommitted"
-          units={units} />);
-    output.props.children[1].props.children[1].props.action({
-      currentTarget: {
-        getAttribute: function() {
-          return 'mysql/5';
-        }
-      }
-    });
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
-          id: 'mysql',
-          unit: '5',
-          unitStatus: 'uncommitted',
-          activeComponent: 'units'
         }
       }
     });

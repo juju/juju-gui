@@ -810,7 +810,8 @@ YUI.add('juju-gui', function(Y) {
             clearState={utils.clearState.bind(
                 this, this.views.environment.instance.topo)}
             changeState={this.changeState.bind(this)}
-            appState={state.get('current')} />
+            appState={state.get('current')}
+            appPreviousState={state.get('previous')} />
         </components.Panel>,
         document.getElementById('inspector-container'));
     },
