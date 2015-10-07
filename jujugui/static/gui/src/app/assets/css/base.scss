@@ -686,6 +686,15 @@ th {
         visibility: hidden;
     }
 }
+.plus-service {
+    transition: opacity 0.4s ease;
+    &.fade {
+        visibility: visible;
+        stroke-opacity: .2;
+        opacity: .2;
+    }
+}
+
 .rel-group {
     @extend .visibility-classes;
 }
