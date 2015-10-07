@@ -176,6 +176,8 @@ describe('MidPoint', function() {
           <ul className="mid-point__tag-list">
             <li tabIndex="0" role="button"
               key="databases"
+              data-id="databases"
+              onClick={output.props.children[2].props.children[0].props.children[0].props.onClick} // eslint-disable-line max-len
               className="mid-point__tag">
               databases
               <span className="mid-point__tag-count">
@@ -184,6 +186,8 @@ describe('MidPoint', function() {
             </li>
             <li tabIndex="0" role="button"
               key="ops"
+              data-id="ops"
+              onClick={output.props.children[2].props.children[0].props.children[1].props.onClick} // eslint-disable-line max-len
               className="mid-point__tag">
               ops
               <span className="mid-point__tag-count">
@@ -197,6 +201,35 @@ describe('MidPoint', function() {
           </button>
         </div>
       </div>);
+  });
+
+  it('calls to show the tag search results when clicking on a tag', function() {
+    juju.components.MidPoint.prototype.tags = [{
+      count: 5,
+      name: 'databases'
+    }];
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        changeState={changeState} />);
+    output.props.children[2].props.children[0].props.children[0].props.onClick({
+      currentTarget: {
+        getAttribute: function() {
+          return 'databases';
+        }
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'search-results',
+          search: null,
+          tags: 'databases'
+        }
+      }
+    });
   });
 
   it('navigates to the store when clicking the Show more button', function() {

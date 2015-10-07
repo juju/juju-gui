@@ -310,7 +310,8 @@ describe('SearchResults', function() {
       searchResults.searchRequest(query);
       assert.deepEqual(stateSpy.getCall(0).args[0], {waitingForSearch: true},
                        'waitingForSearch flag is not set');
-      assert.deepEqual(searchSpy.getCall(0).args[0], {text: query},
+      assert.deepEqual(searchSpy.getCall(0).args[0],
+                       {text: query, tags: undefined},
                        'query not passed in correctly');
     });
 

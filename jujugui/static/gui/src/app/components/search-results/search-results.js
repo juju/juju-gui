@@ -137,10 +137,17 @@ YUI.add('search-results', function(Y) {
       console.error('Search request failed.');
     },
 
-    searchRequest: function(query) {
+    /**
+      Search the charmstore with the given filters.
+
+      @method searchRequest
+      @param {String} query The text to search for.
+      @param {String} tags The tags to limit the search by.
+    */
+    searchRequest: function(query, tags) {
       this.setState({ waitingForSearch: true });
       this.props.charmstoreSearch(
-        {text: query},
+        {text: query, tags: tags},
         this.searchSuccess,
         this.searchFailure,
         150
@@ -161,12 +168,12 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
-      this.searchRequest(this.props.query);
+      this.searchRequest(this.props.query, this.props.tags);
     },
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(nextProps.query);
+        this.searchRequest(nextProps.query, this.props.tags);
       }
     },
 
