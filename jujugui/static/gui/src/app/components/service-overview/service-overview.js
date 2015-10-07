@@ -83,27 +83,6 @@ YUI.add('service-overview', function() {
       return items;
     },
 
-      /**
-        Parses the supplied unit data to return the status number.
-
-        @method _parseStatusData
-        @param {Array} units An array of units.
-      */
-      _parseStatusData: function(units) {
-        var unitStatuses = {
-          all: units.length,
-          uncommitted: 0,
-          pending: 0,
-          error: 0,
-        };
-        var agentState;
-        units.forEach(function(unit) {
-          agentState = unit.agent_state || 'uncommitted';
-          unitStatuses[agentState] += 1;
-        });
-        return unitStatuses;
-      },
-
     /**
       create the actions based on the provded service.
       @method _generateActions
@@ -112,7 +91,9 @@ YUI.add('service-overview', function() {
     */
     _generateActions: function(service) {
       var actions = [];
-      var statusCounts = this._parseStatusData(service.get('units').toArray());
+      var units = service.get('units').toArray();
+      var statusCounts = this.props.getUnitStatusCounts(units);
+      statusCounts.all = {size: units.length};
       var statuses = [{
           title: 'Units',
           key: 'all',
@@ -126,11 +107,10 @@ YUI.add('service-overview', function() {
         }, {
           title: 'Uncommitted',
           key: 'uncommitted'
-        }, {
       }];
       statuses.forEach(function(status) {
         var key = status.key;
-        var count = statusCounts[key];
+        var count = statusCounts[key].size;
         if (count > 0 || key === 'all') {
           actions.push({
             title: status.title,

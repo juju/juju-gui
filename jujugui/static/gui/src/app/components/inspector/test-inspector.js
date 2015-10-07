@@ -43,10 +43,12 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
+    var getUnitStatusCounts = sinon.stub();
     shallowRenderer.render(
         <juju.components.Inspector
           service={service}
           destroyService={destroyService}
+          getUnitStatusCounts={getUnitStatusCounts}
           clearState={clearState}
           appState={appState}>
         </juju.components.Inspector>);
@@ -56,6 +58,7 @@ describe('Inspector', function() {
         <juju.components.ServiceOverview
           changeState={undefined}
           destroyService={destroyService}
+          getUnitStatusCounts={getUnitStatusCounts}
           clearState={clearState}
           service={service} />);
   });

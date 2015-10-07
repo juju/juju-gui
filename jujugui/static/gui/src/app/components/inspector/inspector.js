@@ -63,6 +63,7 @@ YUI.add('inspector-component', function() {
               destroyService={this.props.destroyService}
               clearState={this.props.clearState}
               changeState={this.props.changeState}
+              getUnitStatusCounts={this.props.getUnitStatusCounts}
               service={service} />,
             backState: {
               sectionA: {

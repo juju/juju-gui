@@ -26,27 +26,11 @@ YUI.add('added-services-list-item', function() {
       Parses the supplied unit data to return the status color and number
       to display.
 
-      @method _parseStatusData
+      @method _getPriorityUnits
       @param {Array} units An array of units.
     */
-    _parseStatusData: function(units) {
-      var unitStatuses = {
-        uncommitted: { priority: 3, size: 0 },
-        started: { priority: 2, size: 0 },
-        pending: { priority: 1, size: 0 },
-        error: { priority: 0, size: 0 },
-      };
-      var agentState;
-      units.forEach(function(unit) {
-        agentState = unit.agent_state || 'uncommitted';
-        // If we don't have it in our status list then add it to the end
-        // with a very low priority.
-        if (!unitStatuses[agentState]) {
-          unitStatuses[agentState] = { priority: 99, size: 0 };
-        }
-        unitStatuses[agentState].size += 1;
-      });
-
+    _getPriorityUnits: function(units) {
+      var unitStatuses = this.props.getUnitStatusCounts(units);
       var top = { priority: 99, key: '', size: 0 };
       var status;
       for (var key in unitStatuses) {
@@ -101,7 +85,7 @@ YUI.add('added-services-list-item', function() {
 
     render: function() {
       var service = this.props.service.getAttrs();
-      var statusData = this._parseStatusData(service.units.toArray());
+      var statusData = this._getPriorityUnits(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
       return (
         <li className="inspector-view__list-item"

@@ -32,6 +32,15 @@ describe('AddedServicesListItem', function() {
     YUI().use('added-services-list-item', function() { done(); });
   });
 
+  function getUnitStatusCounts(error=0, pending=0, uncommitted=0, started=0) {
+    return sinon.stub().returns({
+      error: {size: error, priority: 0},
+      pending: {size: pending, priority: 1},
+      uncommitted: {size: uncommitted, priority: 3},
+      started: {size: started, priority: 2}
+    });
+  }
+
   it('renders the icon, count and display name', function() {
     var service = {
       getAttrs: function() {
@@ -46,6 +55,7 @@ describe('AddedServicesListItem', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.AddedServicesListItem
+          getUnitStatusCounts={getUnitStatusCounts()}
           service={service} />);
 
     var output = shallowRenderer.getRenderOutput();
@@ -58,13 +68,17 @@ describe('AddedServicesListItem', function() {
 
   it('only shows the status icon for pending, uncommitted, error', function() {
     var statuses = [{
-      name: 'started', icon: false
+      name: 'started', icon: false,
+      statusCounts: getUnitStatusCounts(0, 0, 0, 1)
     }, {
-      name: 'uncommitted', icon: true
+      name: 'uncommitted', icon: true, statusCounts:
+      getUnitStatusCounts(0, 0, 1)
     }, {
-      name: 'pending', icon: true
+      name: 'pending', icon: true,
+      statusCounts: getUnitStatusCounts(0, 1)
     }, {
-      name: 'error', icon: true
+      name: 'error', icon: true,
+      statusCounts: getUnitStatusCounts(1)
     }];
 
     // Generate what the icon should look like depending on the value in
@@ -91,6 +105,7 @@ describe('AddedServicesListItem', function() {
       var shallowRenderer = testUtils.createRenderer();
       shallowRenderer.render(
           <juju.components.AddedServicesListItem
+            getUnitStatusCounts={status.statusCounts}
             service={service} />);
 
       var output = shallowRenderer.getRenderOutput();
@@ -116,6 +131,7 @@ describe('AddedServicesListItem', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.AddedServicesListItem
+          getUnitStatusCounts={getUnitStatusCounts()}
           service={service} />);
 
     var output = shallowRenderer.getRenderOutput();
@@ -140,6 +156,7 @@ describe('AddedServicesListItem', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.AddedServicesListItem
+          getUnitStatusCounts={getUnitStatusCounts(1, 1, 0)}
           service={service} />);
 
     var output = shallowRenderer.getRenderOutput();
@@ -164,6 +181,7 @@ describe('AddedServicesListItem', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.AddedServicesListItem
+          getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
           service={service} />);
 
     var output = shallowRenderer.getRenderOutput();
@@ -189,6 +207,7 @@ describe('AddedServicesListItem', function() {
     var component = shallowRenderer.render(
         <juju.components.AddedServicesListItem
           changeState={changeStub}
+          getUnitStatusCounts={getUnitStatusCounts()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.onClick({
