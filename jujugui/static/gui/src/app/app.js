@@ -461,6 +461,24 @@ YUI.add('juju-gui', function(Y) {
           conn: this.get('conn')
         };
         var webModule = environments.web;
+        if (this.get('jemUrl')) {
+          var bakery = new Y.juju.environments.web.Bakery({
+            webhandler: new Y.juju.environments.web.WebHandler(),
+            interactive: false,
+            serviceName: 'jem'
+          });
+          this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
+
+          // XXX j.c.sackett 2015-10-07 This is only for demo to make sure the
+          // JEM is hooked up properly--we should remove it down the line.
+          this.jem.listEnvironments(function(data) {
+            console.log('Environment listing success!');
+            console.log(data);
+          }, function(error) {
+            console.log('Environment listing failure.');
+            console.log(error);
+          });
+        }
         if (this.get('sandbox')) {
           envOptions.socket_url = this.get('sandboxSocketURL');
           // The GUI is running in sandbox mode.
@@ -1903,6 +1921,15 @@ YUI.add('juju-gui', function(Y) {
         @default undefined
       */
       charmstore: {},
+
+      /**
+        Store the url for the JEM if it exists.
+
+        @attribute jemUrl
+        @type {String}
+        @default undefined
+       */
+      jemUrl: {},
 
       /**
        * Routes

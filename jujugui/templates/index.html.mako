@@ -464,24 +464,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
 
-          // XXX j.c.sackett 2015-09-24 The following bit is for demo purposes
-          // only--we should remove this as we integrate JEM/JES and the GUI.
-          if (window.juju_config && window.juju_config.jemUrl) {
-            var bakery = new Y.juju.environments.web.Bakery({
-              webhandler: new Y.juju.environments.web.WebHandler(),
-              interactive: false,
-              serviceName: 'jem',
-            });
-            var environment = new window.jujulib.environment(
-                window.juju_config.jemUrl, bakery);
-            environment.listEnvironments(function(data) {
-              console.log('Environment listing success!');
-              console.log(data);
-            }, function(error) {
-              console.log('Environment listing failure.');
-              console.log(error);
-            });
-          }
           window.ga_id = juju_config.GA_key || '';
           if (window.ga_id != '') {
             _gaq.push(['_setAccount', window.ga_id]);

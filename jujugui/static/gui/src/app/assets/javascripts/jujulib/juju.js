@@ -43,11 +43,11 @@ var module = module;
    *
    * @private _makeRequest
    * @param path {String} The JEM endpoint to make the request from,
-   *   e.g. '/env'
+   *     e.g. '/env'
    * @param success {function} A callback to be called on success. Takes
-   *   an xhr object as its only parameter.
+   *     an xhr object as its only parameter.
    * @param failure {function} A callback to be called on failure. Takes
-   *   an xhr object as its only parameter.
+   *     an xhr object as its only parameter.
   */
   environment.prototype._makeRequest = function(path, success, failure) {
     this.bakery.sendGetRequest(path, function(xhr) {
@@ -61,10 +61,10 @@ var module = module;
    *
    * @public listEnvironments
    * @param success {function} A callback to be called on success. Should
-   *   take an array of objects containing Juju environment data as its
-   *   one parameter.
+   *     take an array of objects containing Juju environment data as its
+   *     one parameter.
    * @param failure {function} A callback to be called on failure. Should
-   *   take an error message as its one parameter.
+   *     take an error message as its one parameter.
    */
   environment.prototype.listEnvironments = function(success, failure) {
     this._makeRequest(this.jemUrl + '/env', function(data) {
@@ -80,9 +80,9 @@ var module = module;
    *     names are always of the form owner/environment,
    *     e.g. rose/tardis.
    * @param success {function} A callback to be called on success. Should
-   *   take an object with environment data as its one parameter.
+   *     take an object with environment data as its one parameter.
    * @param failure {function} A callback to be called on failure. Should
-   *   take an error message as its one parameter.
+   *     take an error message as its one parameter.
    */
   environment.prototype.getEnvironment = function (envName, success, failure) {
     var url = [this.jemUrl, 'env', envName].join('/');
