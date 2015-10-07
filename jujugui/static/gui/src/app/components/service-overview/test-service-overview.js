@@ -86,6 +86,31 @@ describe('ServiceOverview', function() {
         action={output.props.children[0].props.children[0].props.action} />);
   });
 
+  it('shows the all units action even if there are no units', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [];
+          }
+        };
+      }};
+
+    var output = jsTestUtils.shallowRender(
+          <juju.components.ServiceOverview
+            service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[0],
+      <juju.components.OverviewAction
+        icon={undefined}
+        key="Units"
+        title="Units"
+        value={0}
+        valueType="all"
+        link={undefined}
+        linkTitle={undefined}
+        action={output.props.children[0].props.children[0].props.action} />);
+  });
+
   it('navigates to the unit list when All Units is clicked', function() {
     var getStub = sinon.stub();
     getStub.withArgs('units').returns({toArray: function() {

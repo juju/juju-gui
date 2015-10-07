@@ -131,7 +131,7 @@ YUI.add('service-overview', function() {
       statuses.forEach(function(status) {
         var key = status.key;
         var count = statusCounts[key];
-        if (count > 0) {
+        if (count > 0 || key === 'all') {
           actions.push({
             title: status.title,
             icon: status.icon,
