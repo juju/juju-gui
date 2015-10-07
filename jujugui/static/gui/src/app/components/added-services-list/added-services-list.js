@@ -34,6 +34,7 @@ YUI.add('added-services-list', function() {
               // when they key changes.
               key={service.get('name')}
               changeState={this.props.changeState}
+              getUnitStatusCounts={this.props.getUnitStatusCounts}
               service={service} />);
       });
       return items;

@@ -34,9 +34,11 @@ describe('AddedServicesList', function() {
     var changeState = 'changeStateCallable';
 
     var shallowRenderer = testUtils.createRenderer();
+    var getUnitStatusCounts = sinon.stub();
     shallowRenderer.render(
         <juju.components.AddedServicesList
           changeState={changeState}
+          getUnitStatusCounts={getUnitStatusCounts}
           services={services}/>);
 
     var output = shallowRenderer.getRenderOutput();
@@ -45,14 +47,17 @@ describe('AddedServicesList', function() {
         <juju.components.AddedServicesListItem
           key={services[0].get()}
           changeState={changeState}
+          getUnitStatusCounts={getUnitStatusCounts}
           service={services[0]} />
         <juju.components.AddedServicesListItem
           key={services[1].get()}
           changeState={changeState}
+          getUnitStatusCounts={getUnitStatusCounts}
           service={services[1]} />
         <juju.components.AddedServicesListItem
           key={services[2].get()}
           changeState={changeState}
+          getUnitStatusCounts={getUnitStatusCounts}
           service={services[2]} />
       </ul>);
   });

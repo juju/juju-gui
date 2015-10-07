@@ -757,6 +757,7 @@ YUI.add('juju-gui', function(Y) {
       @param {Array} services Array of service models.
     */
     _renderAddedServices: function(services) {
+      var utils = views.utils;
       var services = this.db.services.toArray();
       React.render(
         <components.Panel
@@ -764,6 +765,7 @@ YUI.add('juju-gui', function(Y) {
           visible={services.length > 0}>
           <components.AddedServicesList
             services={services}
+            getUnitStatusCounts={utils.getUnitStatusCounts.bind(this)}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
@@ -810,6 +812,7 @@ YUI.add('juju-gui', function(Y) {
             clearState={utils.clearState.bind(
                 this, this.views.environment.instance.topo)}
             changeState={this.changeState.bind(this)}
+            getUnitStatusCounts={utils.getUnitStatusCounts.bind(this)}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
         </components.Panel>,

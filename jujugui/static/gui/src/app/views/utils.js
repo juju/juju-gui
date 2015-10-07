@@ -2367,6 +2367,33 @@ YUI.add('juju-view-utils', function(Y) {
       app.deployService(entity[0]);
     });
   };
+  /**
+
+    Calculate the number of units per status.
+
+    @method getUnitStatusCounts
+    @param {Array} units An array of units.
+    @returns {Object} The unit statuses.
+  */
+  utils.getUnitStatusCounts = function(units) {
+    var unitStatuses = {
+      uncommitted: { priority: 3, size: 0 },
+      started: { priority: 2, size: 0 },
+      pending: { priority: 1, size: 0 },
+      error: { priority: 0, size: 0 },
+    };
+    var agentState;
+    units.forEach(function(unit) {
+      agentState = unit.agent_state || 'uncommitted';
+      // If we don't have it in our status list then add it to the end
+      // with a very low priority.
+      if (!unitStatuses[agentState]) {
+        unitStatuses[agentState] = { priority: 99, size: 0 };
+      }
+      unitStatuses[agentState].size += 1;
+    });
+    return unitStatuses;
+  };
 
   /**
     Returns the real service name for the provided service ghost id.

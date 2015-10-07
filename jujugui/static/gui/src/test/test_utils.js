@@ -192,6 +192,26 @@ describe('utilities', function() {
     views.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');
   });
 
+  it('generate a list of status by unit counts', function() {
+    var units = [
+      {id: 1, agent_state: 'started'},
+      {id: 2, agent_state: 'pending'},
+      {id: 3, agent_state: 'error'},
+      {id: 4},
+      {id: 5},
+      {id: 6, agent_state: 'started'},
+      {id: 7, agent_state: 'error'},
+      {id: 8, agent_state: 'error'},
+      {id: 9}
+    ];
+    assert.deepEqual(utils.getUnitStatusCounts(units), {
+      uncommitted: {priority: 3, size: 3},
+      started: {priority: 2, size: 2},
+      pending: {priority: 1, size: 1},
+      error: {priority: 0, size: 3}
+    });
+  });
+
 
   describe('getConstraints', function() {
     var customConstraints, genericConstraints,
