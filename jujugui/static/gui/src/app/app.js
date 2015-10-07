@@ -765,7 +765,7 @@ YUI.add('juju-gui', function(Y) {
           visible={services.length > 0}>
           <components.AddedServicesList
             services={services}
-            getUnitStatusCounts={utils.getUnitStatusCounts.bind(this)}
+            getUnitStatusCounts={utils.getUnitStatusCounts}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
@@ -812,7 +812,7 @@ YUI.add('juju-gui', function(Y) {
             clearState={utils.clearState.bind(
                 this, this.views.environment.instance.topo)}
             changeState={this.changeState.bind(this)}
-            getUnitStatusCounts={utils.getUnitStatusCounts.bind(this)}
+            getUnitStatusCounts={utils.getUnitStatusCounts}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
         </components.Panel>,
