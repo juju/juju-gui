@@ -103,7 +103,7 @@ YUI.add('search-results', function(Y) {
     searchSuccess: function(rawResults) {
       // Parse the raw results.
       var results = rawResults.map(function(model) {
-        return model.toSearchResult(this.props.charmstore);
+        return model.toSearchResult();
       }, this);
       results = this.collapseSeries(results);
       // Split the results into promulgated and normal.
@@ -137,12 +137,13 @@ YUI.add('search-results', function(Y) {
       console.error('Search request failed.');
     },
 
-    searchRequest: function(charmstore, query) {
+    searchRequest: function(query) {
       this.setState({ waitingForSearch: true });
-      charmstore.search(
+      this.props.charmstoreSearch(
         {text: query},
         this.searchSuccess,
-        this.searchFailure
+        this.searchFailure,
+        150
       );
     },
 
@@ -160,12 +161,12 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
-      this.searchRequest(this.props.charmstore, this.props.query);
+      this.searchRequest(this.props.query);
     },
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(this.props.charmstore, nextProps.query);
+        this.searchRequest(nextProps.query);
       }
     },
 
@@ -207,10 +208,23 @@ YUI.add('search-results', function(Y) {
       });
     },
 
+    /**
+      Generate the base classes from on the props.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'search-results',
+        this.props.inline ? '' : 'search-results--floating'
+      );
+    },
+
     render: function() {
       var html = Handlebars.templates['search-results.hbs'](this.state.data);
       return (
-        <div className="search-results"
+        <div className={this._generateClasses()}
           onClick={this._handleTemplateClicks}
           dangerouslySetInnerHTML={{__html: html}}>
         </div>

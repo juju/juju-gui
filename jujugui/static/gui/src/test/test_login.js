@@ -138,6 +138,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     afterEach(function() {
       env.destroy();
       sessionStorage.setItem('credentials', null);
+      delete window.juju_config;
     });
 
     test('the view login method logs in through the environment', function() {

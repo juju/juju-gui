@@ -1,8 +1,13 @@
 .inspector-view {
     @extend %floating-panel;
-    overflow-x: hidden;
-    overflow-y: auto;
-    max-height: 100%;
+    @extend %scroll-children;
+    $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + $deployer-bar-height + $panel-space;
+    position: absolute;
+    z-index: 601;
+    top: $environment-header-height + ($panel-space * 2) + $navbar-height;
+    left: $panel-space;
+    width: $left-panel-width;
+    max-height: calc(100% - #{$extra-space});
 
     &__list {
         list-style: none;

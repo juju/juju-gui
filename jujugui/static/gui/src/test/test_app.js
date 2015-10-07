@@ -487,6 +487,10 @@ function injectData(app, data) {
 
     describe('_setupCharmstore', function() {
 
+      afterEach(function() {
+        delete window.juju_config;
+      });
+
       it('is called on application instantiation', function() {
         var setup = utils.makeStubMethod(
             Y.juju.App.prototype, '_setupCharmstore');
@@ -502,7 +506,8 @@ function injectData(app, data) {
 
       it('is idempotent', function() {
         window.juju_config = {
-          charmstoreURL: 'charmurl'
+          charmstoreURL: 'charmurl',
+          apiPath: 'v4'
         };
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
@@ -513,6 +518,7 @@ function injectData(app, data) {
         // The charmstore attribute is undefined by default
         assert.equal(typeof app.get('charmstore'), 'object');
         assert.equal(app.get('charmstore').charmstoreURL, 'charmurl');
+        assert.equal(app.get('charmstore').apiPath, 'v4');
         window.juju_config.charmstoreURL = 'it broke';
         assert.equal(
             app.get('charmstore').charmstoreURL,

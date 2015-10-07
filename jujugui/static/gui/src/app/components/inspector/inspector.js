@@ -51,8 +51,9 @@ YUI.add('inspector-component', function() {
     */
     generateState: function(nextProps) {
       var service = nextProps.service;
+      var metadata = nextProps.appState.sectionA.metadata;
       var state = {
-        activeComponent: nextProps.appState.sectionA.metadata.activeComponent
+        activeComponent: metadata.activeComponent
       };
       switch (state.activeComponent) {
         case undefined:
@@ -69,12 +70,20 @@ YUI.add('inspector-component', function() {
               }}};
         break;
         case 'units':
+          var unitStatus = metadata.units;
+          // A unit status of 'true' is provided when there is no status, but
+          // we don't want to pass that on as the status value.
+          unitStatus = unitStatus === true ? null : unitStatus;
+          var units = service.get('units').filterByStatus(unitStatus);
           state.activeChild = {
             title: 'Units',
+            count: units.length,
+            headerType: unitStatus,
             component:
               <juju.components.UnitList
                 serviceId={service.get('id')}
-                units={service.get('units')}
+                unitStatus={unitStatus}
+                units={units}
                 destroyUnits={this.props.destroyUnits}
                 changeState={this.props.changeState} />,
             backState: {
@@ -86,23 +95,35 @@ YUI.add('inspector-component', function() {
                 }}}};
         break;
         case 'unit':
-          var unitId = nextProps.appState.sectionA.metadata.unit;
+          var unitId = metadata.unit;
           var unit = service.get('units').getById(
               service.get('id') + '/' + unitId);
+          var unitStatus = null;
+          var previousState = this.props.appPreviousState;
+          if (previousState.hasOwnProperty('sectionA')) {
+            var units = previousState.sectionA.metadata.units;
+            // A unit status of 'true' is provided when there is no status, but
+            // we don't want to pass that on as the status value.
+            unitStatus = units === true ? null : units;
+          }
           state.activeChild = {
             title: unit.displayName,
+            headerType: unit.agent_state || 'uncommitted',
             component:
               <juju.components.UnitDetails
                 destroyUnits={this.props.destroyUnits}
                 serviceId={service.get('id')}
                 changeState={this.props.changeState}
+                unitStatus={unitStatus}
                 unit={unit} />,
             backState: {
               sectionA: {
                 component: 'inspector',
                 metadata: {
                   id: service.get('id'),
-                  activeComponent: 'units'
+                  activeComponent: 'units',
+                  unit: null,
+                  unitStatus: unitStatus
                 }}}};
         break;
         case 'scale':
@@ -151,6 +172,9 @@ YUI.add('inspector-component', function() {
         <div className="inspector-view">
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
+            activeComponent={this.state.activeComponent}
+            type={this.state.activeChild.headerType}
+            count={this.state.activeChild.count}
             title={this.state.activeChild.title} />
           <div className="inspector-content">
             {this.state.activeChild.component}

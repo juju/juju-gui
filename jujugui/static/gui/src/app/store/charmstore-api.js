@@ -30,7 +30,7 @@ YUI.add('charmstore-api', function(Y) {
   */
   function APIv4(config) {
     this.charmstoreURL = config.charmstoreURL;
-    this.apiPath = 'v4';
+    this.apiPath = config.apiPath;
     // We are using the webHandler class included in our source as a wrapper
     // around XHR. In the future if we would like to provide this class
     // as a public module for people to interact with the charmstore v4 api
@@ -39,7 +39,6 @@ YUI.add('charmstore-api', function(Y) {
     // prototype.
     this.bakery = new Y.juju.environments.web.Bakery({
       webhandler: new Y.juju.environments.web.WebHandler(),
-      visitMethod: null,
       serviceName: 'charmstore',
       setCookiePath: this.charmstoreURL + this.apiPath + '/set-auth-cookie'
     });
@@ -284,57 +283,22 @@ YUI.add('charmstore-api', function(Y) {
         successfully.
       @param {Function} failureCallback Called when the api request fails
         with a response of >= 400.
+      @param {Integer} limit The number of results to get.
     */
-    search: function(filters, successCallback, failureCallback) {
+    search: function(filters, successCallback, failureCallback, limit) {
       var defaultFilters =
-                        '&limit=30&' +
+                        '&limit=' + (limit || 30) + '&' +
                         'include=charm-metadata&' +
                         'include=charm-config&' +
                         'include=bundle-metadata&' +
                         'include=extra-info&' +
                         'include=stats';
-
       var path = this._generatePath(
           'search', Y.QueryString.stringify(filters) + defaultFilters);
       this._makeRequest(
           path,
           this._transformQueryResults.bind(this, successCallback),
           failureCallback);
-    },
-
-    /**
-      Returns the correct path for a charm or bundle icon provided an id and
-      whether or not it is a bundle.
-
-      This method should not be called directly from within the application.
-      Instead use utils.getIconPath() as it handles local charms as well and
-      then defaults to this method if it's not local.
-
-      @method getIconPath
-      @param {String} charmId The id of the charm to fetch the icon for.
-      @param {Boolean} isBundle Whether or not this is an icon for a bundle.
-      @return {String} The URL of the charm's icon.
-    */
-    getIconPath: function(charmId, isBundle) {
-      var path;
-      if (typeof isBundle === 'boolean' && isBundle) {
-        path = '/juju-ui/assets/images/non-sprites/bundle.svg';
-      } else {
-        // Get the charm ID from the service.  In some cases, this will be
-        // the charm URL with a protocol, which will need to be removed.
-        // The following regular expression removes everything up to the
-        // colon portion of the quote and leaves behind a charm ID.
-        charmId = charmId.replace(/^[^:]+:/, '');
-        // Note that we make sure isBundle is Boolean. It's coming from a
-        // handlebars template helper which will make the second argument the
-        // context object when it's not supplied. We want it optional for
-        // normal use to default to the charm version, but if it's a boolean,
-        // then check that boolean because the author cares specifically if
-        // it's a bundle or not.
-        path = this.charmstoreURL + [
-          this.apiPath, charmId, 'icon.svg'].join('/');
-      }
-      return path;
     },
 
     /**

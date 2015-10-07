@@ -181,6 +181,38 @@ input[type="radio"]:not(old):checked + label > .outer > .inner {
   border-radius: 3px;
   background: white;
 }
+
+input[type="checkbox"] {
+  $size: 14px;
+  width: $size;
+  height: $size;
+  background-color: $white;
+  border: 1px solid $mid-grey;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+  color: $white;
+  text-align: center;
+  overflow: hidden;
+  -webkit-appearance: button;
+
+  &:after {
+    content: '';
+    display: none;
+    width: $size;
+    height: $size;
+    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
+  }
+
+  &:checked {
+    background-color: $success;
+    border: none;
+  }
+
+  &:checked:after {
+    display: inline-block;
+  }
+}
+
 svg {
     stroke-width: 0;
     overflow: hidden;
@@ -396,6 +428,23 @@ th {
 
         &.show {
             display: block;
+        }
+    }
+
+    .plus-service__halo {
+        transition: all .3s;
+        opacity: 0;
+        r: 60;
+    }
+
+    &:hover {
+        .plus-service__halo {
+            r: 80;
+            opacity: 1;
+        }
+
+        .plus-service__inner-circle {
+            fill: $white;
         }
     }
 }
@@ -637,6 +686,15 @@ th {
         visibility: hidden;
     }
 }
+.plus-service {
+    transition: opacity 0.4s ease;
+    &.fade {
+        visibility: visible;
+        stroke-opacity: .2;
+        opacity: .2;
+    }
+}
+
 .rel-group {
     @extend .visibility-classes;
 }
@@ -722,19 +780,74 @@ g.service {
         }
     }
 
-    .is-erroring {
-        stroke: #ed3146;
-        stroke-width: 3;
+    &.is-erroring {
+        .service-block {
+            stroke: #ed3146;
+            stroke-width: 3;
+        }
     }
 
-    .is-pending {
-        stroke: #f99b0f;
-        stroke-width: 3;
+    &.is-pending {
+        .service-block {
+            stroke: #f99b0f;
+            stroke-width: 3;
+        }
     }
 
-    .is-running {
-        stroke: #888888;
-        stroke-width: 1;
+    &.is-running {
+        .service-block {
+            stroke: #888888;
+            stroke-width: 1;
+        }
+    }
+
+    .service-block__halo {
+        transition: all .3s;
+        opacity: 0;
+        r: 90;
+    }
+
+    .service-block {
+        transition: all .3s;
+    }
+
+    &:hover {
+
+        .service-block__halo {
+            opacity: 1;
+            r: 110;
+            stroke-width: 1;
+            stroke: #19b6ee;
+        }
+
+        &.is-erroring .service-block__halo {
+            stroke: #ed3146;
+        }
+
+        &.is-pending .service-block__halo {
+            stroke: #f99b0f;
+        }
+
+        &.is-running .service-block__halo {
+            stroke: #888888;
+        }
+
+        .service-block {
+            fill: $white;
+        }
+    }
+
+    &.subordinate {
+        .service-block__halo {
+            r: 60;
+            stroke: #888888;
+        }
+
+        &:hover {
+            .service-block__halo {
+                r: 80;
+            }
+        }
     }
 }
 g.service-status {

@@ -76,16 +76,16 @@ var module = module;
    * Provides the data for a particular environment.
    *
    * @public getEnvironment
-   * @param username {String} The username for the given environment.
-   * @param envName {String} The name of the given environment.
+   * @param envName {String} The name of the given environment. Environment
+   *     names are always of the form owner/environment,
+   *     e.g. rose/tardis.
    * @param success {function} A callback to be called on success. Should
    *   take an object with environment data as its one parameter.
    * @param failure {function} A callback to be called on failure. Should
    *   take an error message as its one parameter.
    */
-  environment.prototype.getEnvironment = function (
-      username, envName, success, failure) {
-    var url = [this.jemUrl, 'env', username, envName].join('/');
+  environment.prototype.getEnvironment = function (envName, success, failure) {
+    var url = [this.jemUrl, 'env', envName].join('/');
     this._makeRequest(url, success, failure);
   };
 

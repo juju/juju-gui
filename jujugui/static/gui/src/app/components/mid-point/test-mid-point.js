@@ -111,7 +111,8 @@ describe('MidPoint', function() {
           <ul className="mid-point__tag-list">
             {juju.components.MidPoint.prototype.tags}
           </ul>
-          <button className="mid-point__store-button">
+          <button className="mid-point__store-button"
+            onClick={output.props.children[2].props.children[1].props.onClick}>
             Show more
           </button>
         </div>
@@ -174,6 +175,7 @@ describe('MidPoint', function() {
         <div className="mid-point__footer-row">
           <ul className="mid-point__tag-list">
             <li tabIndex="0" role="button"
+              key="databases"
               className="mid-point__tag">
               databases
               <span className="mid-point__tag-count">
@@ -181,6 +183,7 @@ describe('MidPoint', function() {
               </span>
             </li>
             <li tabIndex="0" role="button"
+              key="ops"
               className="mid-point__tag">
               ops
               <span className="mid-point__tag-count">
@@ -188,10 +191,72 @@ describe('MidPoint', function() {
               </span>
             </li>
           </ul>
-          <button className="mid-point__store-button">
+          <button className="mid-point__store-button"
+            onClick={output.props.children[2].props.children[1].props.onClick}>
             Show more
           </button>
         </div>
       </div>);
+  });
+
+  it('navigates to the store when clicking the Show more button', function() {
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        changeState={changeState} />);
+    output.props.children[2].props.children[1].props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'store'
+        }
+      }
+    });
+  });
+
+  it('closes the store when clicking the Show less button', function() {
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        storeOpen={true}
+        changeState={changeState} />);
+    output.props.children[2].props.children[1].props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'mid-point'
+        }
+      }
+    });
+  });
+
+  it('display the correct label when the store is closed', function() {
+    var addService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        storeOpen={false}
+        addService={addService} />);
+    assert.deepEqual(output.props.children[2].props.children[1],
+      <button className="mid-point__store-button"
+        onClick={output.props.children[2].props.children[1].props.onClick}>
+        Show more
+      </button>);
+  });
+
+  it('display the correct label when the store is open', function() {
+    var addService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MidPoint
+        storeOpen={true}
+        addService={addService} />);
+    assert.deepEqual(output.props.children[2].props.children[1],
+      <button className="mid-point__store-button"
+        onClick={output.props.children[2].props.children[1].props.onClick}>
+        Show less
+      </button>);
   });
 });

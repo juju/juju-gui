@@ -276,6 +276,9 @@ describe('UI State object', function() {
 
   describe('url part parsing', function() {
 
+    beforeEach(function() { window.flags = { react: true }; });
+    afterEach(function() { window.flags = null; });
+
     describe('_parseInspectorUrl', function() {
       var flash = {
         file: 'foo',
@@ -289,11 +292,13 @@ describe('UI State object', function() {
           flash: flash
         },
         'inspector/service123/charm': {
+          activeComponent: 'charm',
           id: 'service123',
           charm: true,
           flash: flash
         },
         'inspector/service123/unit/13': {
+          activeComponent: 'unit',
           id: 'service123',
           unit: '13',
           flash: flash
@@ -323,7 +328,8 @@ describe('UI State object', function() {
             'inspector/service123/charm', '#code');
         assert.deepEqual(
             data,
-            { id: 'service123', charm: true, hash: '#code', flash: {} });
+            { id: 'service123', charm: true, hash: '#code',
+              activeComponent: 'charm', flash: {} });
       });
     });
 
@@ -861,6 +867,16 @@ describe('UI State object', function() {
         sectionC: {}
       }
     }, {
+      '?store=': {
+        sectionA: {}, sectionB: {},
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'store'
+          }
+        }
+      }
+    }, {
       '?store=bundle/mediawiki/6/single': {
         sectionA: {}, sectionB: {},
         sectionC: {
@@ -964,6 +980,31 @@ describe('UI State object', function() {
             activeComponent: 'unit',
             id: 'service123',
             unit: '13'
+          }
+        },
+        sectionB: {}
+      }
+    }, {
+      '/inspector/service123/units/uncommitted/': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            activeComponent: 'units',
+            id: 'service123',
+            unitStatus: 'uncommitted'
+          }
+        },
+        sectionB: {}
+      }
+    }, {
+      '/inspector/service123/units/uncommitted/5/': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            activeComponent: 'units',
+            id: 'service123',
+            unitStatus: 'uncommitted',
+            unit: 5
           }
         },
         sectionB: {}

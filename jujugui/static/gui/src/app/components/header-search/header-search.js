@@ -196,6 +196,23 @@ YUI.add('header-search', function() {
       this.setState({query: e.currentTarget.value});
     },
 
+    /**
+      Navigate to the store when the button is clicked.
+
+      @method _handleStoreClick
+      @param {Object} e The click event
+    */
+    _handleStoreClick: function(e) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'store'
+          }
+        }
+      });
+    },
+
     render: function() {
       return (
         <div className={this._generateClasses()}>
@@ -213,6 +230,7 @@ YUI.add('header-search', function() {
               style={this.state.inputStyles} />
           </form>
           <span tabIndex="0" role="button"
+            onClick={this._handleStoreClick}
             className="header-search__store">
             <span dangerouslySetInnerHTML={{__html: this.icons.store}}
               className="header-search__store-icon" />

@@ -258,7 +258,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         if (app) {
           app.destroy();
         }
-        window.juju_config = undefined;
+        delete window.juju_config;
       });
 
       describe('state dispatchers', function() {

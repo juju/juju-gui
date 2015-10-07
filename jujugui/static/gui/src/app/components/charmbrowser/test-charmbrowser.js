@@ -44,12 +44,12 @@ describe('Charmbrowser', function() {
       }};
     var changeState = sinon.stub();
     var addService = sinon.stub();
-    var charmstore = sinon.stub();
+    var charmstoreSearch = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         changeState={changeState}
-        charmstore={charmstore}
+        charmstoreSearch={charmstoreSearch}
         addService={addService} />);
     assert.deepEqual(output,
         <juju.components.Panel
@@ -58,7 +58,7 @@ describe('Charmbrowser', function() {
           <juju.components.SearchResults
             changeState={changeState}
             query={query}
-            charmstore={charmstore} />
+            charmstoreSearch={charmstoreSearch} />
         </juju.components.Panel>);
   });
 
@@ -80,6 +80,32 @@ describe('Charmbrowser', function() {
           instanceName="mid-point-panel"
           visible={true}>
           <juju.components.MidPoint
+            outsideClickClose={true}
+            storeOpen={false}
+            changeState={changeState} />
+        </juju.components.Panel>);
+  });
+
+  it('displays the store when the app state calls for it', function() {
+    var appState = {
+      sectionC: {
+        metadata: {
+          activeComponent: 'store'
+        }
+      }};
+    var charmstoreSearch = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Charmbrowser
+        appState={appState}
+        charmstoreSearch={charmstoreSearch}
+        changeState={changeState} />);
+    assert.deepEqual(output,
+        <juju.components.Panel
+          instanceName="white-box"
+          visible={true}>
+          <juju.components.Store
+            charmstoreSearch={charmstoreSearch}
             changeState={changeState} />
         </juju.components.Panel>);
   });

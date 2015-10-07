@@ -306,6 +306,9 @@ YUI.add('juju-app-state', function(Y) {
             if (activeComponent === 'entity-details') {
               queryValues.store = id || '';
             }
+            if (activeComponent === 'store') {
+              queryValues.store = '';
+            }
           }
         } else {
           if (component) {
@@ -317,6 +320,9 @@ YUI.add('juju-app-state', function(Y) {
             }
             if (metadata.activeComponent) {
               urlParts.push(metadata.activeComponent);
+            }
+            if (metadata.activeComponent === 'units' && metadata.unitStatus) {
+              urlParts.push(metadata.unitStatus);
             }
             if (metadata.unit) {
               if (!window.flags || !window.flags.react) {
@@ -523,7 +529,14 @@ YUI.add('juju-app-state', function(Y) {
             }
           };
         }
-        if (query.store != undefined) {
+        if (query.store === '') {
+          state.sectionC = {
+            component: 'charmbrowser',
+            metadata: {
+              activeComponent: 'store'
+            }
+          };
+        } else if (query.store) {
           state.sectionC = {
             component: 'charmbrowser',
             metadata: {

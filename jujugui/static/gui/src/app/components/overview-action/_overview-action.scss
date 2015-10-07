@@ -7,6 +7,13 @@
     &:active,
     &:hover {
         background-color: $light-grey;
+
+        .overview-action__icon {
+          circle,
+          path {
+            fill: $cool-grey;
+          }
+        }
     }
 
     &__icon {
@@ -14,6 +21,11 @@
         height: 16px;
         position: absolute;
         left: 20px;
+
+        circle,
+        path {
+          transition: fill .3s;
+        }
     }
 
     &__link:not(.hidden) {

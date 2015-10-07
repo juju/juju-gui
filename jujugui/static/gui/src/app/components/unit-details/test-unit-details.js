@@ -89,6 +89,7 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={destroyUnits}
         changeState={changeState}
+        unitStatus="pending"
         serviceId="service1"
         unit={fakeUnit} />);
     output.props.children[1].props.buttons[0].action();
@@ -98,7 +99,9 @@ describe('UnitDetails', function() {
         component: 'inspector',
         metadata: {
           id: 'service1',
-          activeComponent: 'units'
+          activeComponent: 'units',
+          unitStatus: 'pending',
+          unit: null
         }}});
   });
 });

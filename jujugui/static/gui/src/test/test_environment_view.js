@@ -235,9 +235,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.connect();
         conn.open();
         fakeStore = new Y.juju.charmstore.APIv4({});
-        fakeStore.getIconPath = function() {
-          return 'charm icon url';
-        };
         charmConfig = testUtils.loadFixture(
             'data/mediawiki-api-response.json', true);
         done();
@@ -375,7 +372,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             charmstore: fakeStore
           });
           view.render();
-          var serviceBlock = container.one('.service').one('circle');
+          var serviceBlock = container.one('.service').one('.service-block');
           serviceBlock.getAttribute('r').should.equal('90');
           serviceBlock.getAttribute('cy').should.equal('95');
           serviceBlock.getAttribute('cx').should.equal('95');
@@ -451,7 +448,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.render();
           var service = container.one('.service');
           assert.equal(service.one('.service-icon').getAttribute('href'),
-         'charm icon url');
+            '/precise/wordpress-6/icon.svg');
 
           done();
         }
@@ -1780,9 +1777,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('retrieves local charms icons from the Juju env', function() {
-      var iconFakeStore = new Y.juju.charmstore.APIv4({
-        charmstoreURL: 'http://localhost/'
-      });
       var fakeEnv = {
         getLocalCharmFileUrl: testUtils.makeStubFunction('local charm icon')
       };
@@ -1808,16 +1802,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       };
 
-      var boxes = views.toBoundingBoxes(
-          module, services, existing, iconFakeStore, fakeEnv);
+      var boxes = views.toBoundingBoxes(module, services, existing, fakeEnv);
 
       assert.equal(boxes['local:ceph-1'].icon, 'local charm icon');
 
       // The mysql charm has an icon from on the server.
-      assert.equal(
-          boxes['cs:mysql-1'].icon,
-          'http://localhost/v4/mysql-1/icon.svg'
-      );
+      assert.equal(boxes['cs:mysql-1'].icon, '/mysql-1/icon.svg');
     });
   });
 })();

@@ -42,6 +42,7 @@ var juju_config = {
   // Path to the charmstore. This property supersedes the charmworldURL
   // property above.
   charmstoreURL: 'https://api.jujucharms.com/charmstore/',
+  apiPath: 'v4',
   socket_protocol: 'ws',
   sandboxSocketURL: 'wss://demo.jujucharms.com/ws',
   user: 'admin',

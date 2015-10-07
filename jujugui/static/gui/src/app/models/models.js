@@ -991,6 +991,27 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Return a list of all the units with a given status
+
+      If status is null it will return the full list of units.
+
+      @method filterByStatus
+      @param {String} status The status to filter by.
+      @return {Array} The matching units as a list of objects.
+    */
+    filterByStatus: function(status) {
+      if (!status) {
+        return this.toArray();
+      }
+      return this.filter(function(unit) {
+        var agentState = unit.agent_state || 'uncommitted';
+        if (agentState === status) {
+          return unit;
+        }
+      });
+    },
+
+    /**
       Returns information about the state of the set of units for a given
       service in the form of a map of agent states.
 

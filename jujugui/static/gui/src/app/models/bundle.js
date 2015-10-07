@@ -98,16 +98,15 @@ YUI.add('juju-bundle-models', function(Y) {
       @method parseBundleServices
       @param {Object} services more of a hash or dict than an object; contains
                       service names as keys to their service objects.
-      @param {Object} charmstore the backing charmstore for the bundle.
       @return {Object} a service display object.
     */
-    parseBundleServices: function(services, charmstore) {
+    parseBundleServices: function(services) {
       var parsedServices = [];
       for (var name in services) {
         var service = services[name],
             id = service.charm.replace(/^cs:/, '');
         parsedServices.push({
-          iconPath: utils.getIconPath(id, false, charmstore),
+          iconPath: utils.getIconPath(id, false),
           url: '',  // XXX implement once determined how to handle links
           displayName: name.replace('-', ' ')
         });

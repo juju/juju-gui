@@ -95,8 +95,9 @@ def config(request):
         # Debugging options.
         'consoleEnabled': True,
         'simulateEvents': False,
-        # The charm store URL.
+        # The charm store URL and path.
         'charmstoreURL': settings['jujugui.charmstore_url'],
+        'apiPath': settings['jujugui.api_path'],
         # WebSocket connection to the Juju API.
         'socket_protocol': 'wss',
         'socket_path': settings['jujugui.socket_path'],
