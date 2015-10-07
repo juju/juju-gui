@@ -107,6 +107,7 @@ describe('ServiceOverview', function() {
 
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            getUnitStatusCounts={getUnitStatusCounts()}
             service={service}/>);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
