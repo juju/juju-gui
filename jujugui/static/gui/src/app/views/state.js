@@ -377,8 +377,7 @@ YUI.add('juju-app-state', function(Y) {
           var keys = Object.keys(queryValues);
           if (keys.length > 0) {
             url += '?';
-            var i = 0;
-            keys.forEach((key) => {
+            keys.forEach((key, i) => {
               var value = queryValues[key];
               if (i > 0) {
                 url += '&';
@@ -387,7 +386,6 @@ YUI.add('juju-app-state', function(Y) {
               if (value && value !== '') {
                 url += '=' + value;
               }
-              i += 1;
             });
           }
         }
