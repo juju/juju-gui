@@ -1428,6 +1428,39 @@ YUI.add('juju-topology-service', function(Y) {
     createServiceNode: function(node, self) {
       node.attr({'data-name':  function(d) { return d.name; }});
 
+      // Draw a relation button.
+      var relationButton = node.filter(function(d) {
+        return d3.select(this)
+            .select('.relation-button').empty();
+      })
+          .insert('g', ':first-child')
+          .attr('class', 'relation-button')
+          .attr('transform', function(d) {
+            // Position the block so that the relation indicator will
+            // appear at the top.
+            return 'translate(' + [d.subordinate ? 65 : 95, -30] + ')';
+          });
+
+      relationButton.append('circle')
+        .attr({
+          cx: 0,
+          cy: 0,
+          r: 15,
+          fill: '#f8f8f8',
+          stroke: '#888888',
+          'stroke-width': 1
+        });
+
+      relationButton.append('image')
+        .classed('relation-button__image', true)
+        .attr({
+           'xlink:href': 'juju-ui/assets/svgs/build-relation_16.svg',
+           width: 16,
+           height: 16,
+           transform: 'translate(-8, -8)'
+         });
+
+
       node.append('circle')
         .attr({
           cx: function(d) {
