@@ -861,9 +861,10 @@ YUI.add('juju-gui', function(Y) {
       React.render(
         <components.Charmbrowser
           charmstoreSearch={cs.search.bind(cs)}
+          getEntity={cs.getEntity.bind(cs)}
           appState={state.get('current')}
-          addService={utils.addService.bind(this, this)}
-          changeState={this.changeState.bind(this)} />,
+          changeState={this.changeState.bind(this)}
+          utils={utils} />,
         document.getElementById('charmbrowser-container'));
     },
 

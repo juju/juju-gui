@@ -1,0 +1,613 @@
+.entity-details {
+    overflow: auto;
+    background-color: white;
+    p {
+      line-height: 1.6;
+    }
+    .inline {
+        margin-left: 0;
+        overflow: auto;
+        li {
+            display: inline;
+            list-style: none;
+            margin-left: 0;
+            float: left;
+        }
+    }
+    .tag-list {
+        list-style: none;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .tag-list__item {
+        display: inline-block;
+        text-transform: lowercase;
+
+        a,
+        a:link,
+        a:visited {
+            color: #333;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+        a:after {
+            content: ',';
+        }
+        &:last-child a:after {
+            content: '';
+        }
+        &.tag-list__item_no-comma a:after {
+            content: '';
+        }
+    }
+
+
+    .tag-list.tag-list_spaced .tag-list__item {
+        margin-right: 20px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        a:after {
+            content: '';
+        }
+    }
+    .row-hero {
+        @extend %shadow-header;
+
+        .summary {
+            margin-bottom: 1em;
+
+            a:link,
+            a:visited {
+                color: $ubuntu-orange;
+                text-decoration: underline;
+            }
+        }
+
+        .featured {
+            float: right;
+            font-size: 0.875em;
+            color: #BABABA;
+        }
+
+        .header__icon {
+            width: 45px;
+            height: 45px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 1em;
+        }
+
+        .header__title {
+            line-height: 1.3;
+            display: inline-block;
+        }
+
+        .bundle-stats {
+            overflow: hidden;
+            clear: both;
+            margin-bottom: 10px;
+            padding: .55em;
+            border: 1px solid $dark-grey;
+
+            .bundle-stats__deploys {
+                width: 100%;
+                float: left;
+                text-align: center;
+                margin-bottom: 0;
+                font-size: 1.25em;
+            }
+        }
+
+        .commerical-details__used,
+        .commerical-details__current {
+            padding: 6px;
+            border-top: 1px solid $dark-grey;
+        }
+
+        .commerical-details__used {
+            margin-bottom: 5px;
+        }
+
+        .commerical-details__current-total {
+            color: $success;
+            font-size: 1.25em;
+            float: right;
+            position: relative;
+            top: -5px;
+        }
+
+        .subscription-tag {
+            margin-bottom: 0.5em;
+
+            .commercial-flag {
+                margin-right: 4px;
+            }
+        }
+    }
+
+    .cover-content {
+            -moz-transition: all .4s;
+            -webkit-transition: all .4s;
+        transition: all .4s;
+        opacity: 0;
+        visibility: hidden;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(51, 51, 51, 0.9);
+
+        &.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
+    .charms {
+
+        a:link,
+        a:visited {
+            color: #333;
+        }
+
+        img {
+            vertical-align: middle;
+        }
+
+        &.section {
+            border-bottom: 0;
+        }
+
+        &.section.is-closed {
+            border-bottom: 1px solid $light-mid-grey;
+        }
+    }
+
+    .details {
+        margin-bottom: 0;
+    }
+
+    .revisions__list_message {
+        white-space: pre-line;
+    }
+
+    .decription {
+        p {
+            white-space: pre-wrap;
+        }
+    }
+
+    .box {
+        @include create-box-shadow(none);
+        @include create-border-radius(0);
+        background-color: transparent;
+        border-bottom: 1px solid $light-mid-grey;
+        @media only screen and (min-width : 769px) {
+            border: 1px solid $light-mid-grey;
+        }
+    }
+
+    .bullet {
+        color: $warm-grey;
+    }
+
+    .main {
+        margin-bottom: 0;
+
+        .related {
+            border-bottom: 1px dotted $warm-grey;
+            overflow: visible;
+
+            &.is-closed {
+                border-bottom: none;
+                overflow: hidden;
+            }
+
+            .box {
+                padding: 0 20px 20px;
+                margin-bottom: 20px;
+                transition: box-shadow .4s;
+
+                &:hover {
+                    background: $white;
+                    @include create-box-shadow(0 1px 1px 0 rgba(0, 0, 0, 0.15));
+                }
+
+                .details {
+                    float: left;
+                    width: 50%;
+                }
+
+                .name {
+                    @extend .border-box;
+                    margin-bottom: 0.25em;
+                    color: $cool-grey;
+                    display: block;
+                    height: 100%;
+                    width: 50%;
+                    padding: 20px 0 0 0;
+                }
+
+                .deploys {
+                    color: $warm-grey;
+                    font-size: 1em;
+                }
+
+                @media only screen and (min-width : 768px) {
+                    & {
+                        padding-top: 20px;
+
+                        .name {
+                            left: 0;
+                            position: absolute;
+                            top: 0;
+                            padding-left: 20px;
+                        }
+                    }
+
+                    .list__icons {
+                        float: right;
+                        width: 45%;
+                        margin-top: -10px;
+                    }
+
+                }
+            }
+        }
+
+        .readme.section {
+            border-bottom: 1px solid $light-mid-grey;
+
+            .readme {
+                h1 {
+                    font-size: 2em;
+                }
+
+                h2 {
+                    font-size: 1.4375em;
+                }
+
+                h3 {
+                    font-size: 1.25em;
+                }
+
+                h4,
+                strong{
+                    font-weight: 500;
+                }
+            }
+        }
+
+        &.has-description {
+            display: block;
+        }
+    }
+
+    .row.details {
+        padding-left: 40px;
+        background-color: #fff;
+        padding-top: 0px;
+    }
+
+    .charms-visual {
+        display: none;
+
+        @include create-box-shadow(inset 0px -1px 1px 0px rgba(0, 0, 0, 0.15));
+        background: url('../img/shared/pattern_tile.png') top repeat #f1f1f1;
+        overflow: visible;
+
+        &.is-closed {
+            height: 40px;
+
+            .charm-visual__image {
+                display: none;
+            }
+
+            .toggle {
+                .hide {
+                    display: none;
+                }
+                .show {
+                    display: inline;
+                }
+            }
+        }
+
+        .toggle {
+            $height: 30px;
+            $shadow: inset 0 -2px 4px 0 rgba(0,0,0,0.12);
+            $width: 120px;
+
+            display: block;
+            position: absolute;
+            // Set the z-index so that it is above other content so we can
+            // click on it.
+            z-index: 2;
+            bottom: - ($height - 2px);
+            left: 50%;
+            height: $height;
+            width: $width;
+            margin-left: -($width / 2);
+            background: url('../img/shared/pattern_tile.png') top repeat #f1f1f1;
+            -moz-box-shadow: $shadow;
+            -webkit-box-shadow: $shadow;
+            box-shadow: $shadow;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            font-size: 13px;
+            line-height: ($height - 3px);
+            text-align: center;
+            cursor: pointer;
+
+            .show {
+                display: none;
+            }
+        }
+    }
+
+    .link__try-demo {
+        display: none;
+    }
+
+    .search-form {
+        border-bottom: 1px solid $light-mid-grey;
+
+        @media only screen and (min-width : 769px) {
+            border-bottom: none;
+        }
+    }
+
+    .commercial-icon {
+        display: inline-block;
+        background-color: $ubuntu-orange;
+        padding-bottom: 9px;
+        width: 24px;
+        height: 15px;
+        color: $white;
+        border-radius: 50%;
+        text-align: center;
+        margin-right: .2em;
+    }
+
+    .commercial-icon--purchased {
+        @extend .commercial-icon;
+        background-color: $success;
+    }
+
+    .unsubscribe-error {
+        color: $error;
+        text-align: right;
+        margin-bottom: .5em;
+        font-size: 13px;
+    }
+
+    &.bundle, &.charm {
+        .row-hero {
+            .header__icon {
+                @include create-border-radius(14px);
+                height: 96px;
+                width: 96px;
+                margin-bottom: 20px;
+                vertical-align: top;
+            }
+
+            .header__details {
+                margin-top: -10px;
+                display: inline-block;
+
+                p {
+                    margin-bottom: .1em;
+                }
+
+                ul.bullets {
+                    margin-top: 0;
+                    li {
+                        &:after {
+                            color: $warm-grey;
+                            content: "•";
+                            vertical-align: middle;
+                            margin: 0 5px;
+                        }
+                        &:last-child:after {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .header__by {
+                margin-top: 0;
+            }
+
+            .sticky-headers {
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+                width: 100%;
+                padding-top: 0;
+                // Make the browser use the GPU for this animation.
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+                -webkit-animation: slidedown .4s;
+                animation: slidedown .4s;
+
+                .header.twelve-col {
+                    padding: 10px;
+                }
+
+                .header__icon {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 3px;
+                    margin-bottom: 0;
+                }
+
+                .header__title {
+                    font-size: 2em;
+                }
+
+                .eight-col {
+                    margin-bottom: 0;
+                    height: 37px;
+                    padding-top: 5px;
+                }
+
+                .four-col {
+                    margin-bottom: 0;
+                }
+
+                .header__by,
+                .bullets,
+                .tag-list,
+                .bundle-stats,
+                .deploy-command,
+                .revisions,
+                .subscription-tag {
+                    display: none;
+                }
+
+                + .details {
+                    margin-top: 212px;
+                }
+
+                .entity-subscribed a {
+                    margin-left: 0.5em;
+                    line-height: 1.6;
+                }
+            }
+        }
+
+        ul.bullets li {
+            &:after {
+                color: $warm-grey;
+                content: "•";
+                vertical-align: middle;
+                margin: 0 5px;
+            }
+
+            &:last-child:after {
+                display: none;
+            }
+        }
+
+        .files {
+            .section__title {
+                margin-bottom: 0.5em;
+            }
+
+            .section__links li {
+                margin-bottom: 0.5em;
+            }
+        }
+    }
+
+    &.charm {
+        .row-hero {
+            .header {
+                background-color: $white;
+                color: $cool-grey;
+                padding: 40px 10px 20px 10px;
+                    -moz-transition: background .4s;
+                    -webkit-transition: background .4s;
+                transition: background .4s;
+                overflow: hidden;
+            }
+
+            .inner-wrapper {
+                overflow: visible;
+            }
+
+            .header__title {
+                color: $cool-grey;
+                font-size: 2.8125em;
+                margin-bottom: 0;
+            }
+            &.dark {
+
+                .bundle-stats {
+                    border-color: #E2E2E2;
+                }
+
+                .header,
+                .header__title,
+                a:link,
+                a:visited {
+                    color: #fff;
+                }
+            }
+            .entity-subscribed .unsubscribe {
+                float: right;
+                padding-top: 8px;
+                color: $cool-grey;
+            }
+        }
+
+        .row.details {
+            aside {
+                border-top: 1px solid $light-mid-grey;
+
+                .relations .relation__title {
+                    font-weight: 400;
+                    border-bottom: 1px dotted #CBCBCB;
+                    padding-bottom: .6em;
+                    margin-bottom: .6em;
+                }
+
+                .relations ul {
+                    margin-bottom: 20px;
+                }
+            }
+        }
+    }
+
+    &.bundle {
+        .row-hero {
+            padding-bottom: 0;
+
+            .header__title {
+                margin-bottom: 0;
+            }
+
+            .header__icon {
+                float: left;
+                width: 45px;
+                height: 45px;
+                margin-top: 10px;
+                margin-bottom: 0;
+            }
+
+            .counts {
+                margin-top: 10px;
+            }
+        }
+    }
+
+    .footer-cta .link__try-demo {
+        display: block;
+
+        .not-available {
+            display: block;
+            .link-cta-negative:hover {
+                background-color: $mid-grey;
+            }
+        }
+    }
+
+    @-webkit-keyframes slidedown {
+        from { top: -50px; }
+        to { top: 0; }
+    }
+
+    @keyframes slidedown {
+        from { top: -50px; }
+        to { top: 0; }
+    }
+}

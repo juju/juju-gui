@@ -77,7 +77,7 @@ describe('SearchResults', function() {
         type: 'charm'
       };
       var mockModel = {};
-      mockModel.toSearchResult = sinon.stub().returns(result);
+      mockModel.toEntity = sinon.stub().returns(result);
       var mockData = [mockModel];
       var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
 
@@ -88,7 +88,7 @@ describe('SearchResults', function() {
 
       assert.isTrue(charmstoreSearch.calledOnce,
                     'search function not called');
-      assert.isTrue(mockModel.toSearchResult.callCount == mockData.length,
+      assert.isTrue(mockModel.toEntity.callCount == mockData.length,
                     'all models not converted to plain old objects');
       var data = output.state.data;
       assert.equal(data.text, query,
@@ -111,7 +111,7 @@ describe('SearchResults', function() {
         type: 'charm'
       };
       var mockModel = {};
-      mockModel.toSearchResult = sinon.stub().returns(result);
+      mockModel.toEntity = sinon.stub().returns(result);
       var mockData = [mockModel];
       var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
       var output = jsTestUtils.shallowRender(
@@ -277,7 +277,7 @@ describe('SearchResults', function() {
       ];
       var rawResults = results.map(function(obj) {
         var m = {};
-        m.toSearchResult = sinon.stub().returns(obj);
+        m.toEntity = sinon.stub().returns(obj);
         return m;
       });
       var expected = {

@@ -21,8 +21,159 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-details', function() {
 
   juju.components.EntityDetails = React.createClass({
+    /**
+      Callback for when an entity has been successfully fetched. Though the
+      data passed in is an Array of models, only the first model is used.
+
+      @method fetchSuccess
+      @param {Array} models A list of the entity models found.
+    */
+    fetchSuccess: function(models) {
+      this.setState({waitingForFetch: false});
+      if (models.length > 0) {
+        this.setState({entity: models[0].toEntity()});
+      }
+    },
+
+    /**
+      Callback for when an error occurs while fetching an entity.
+
+      @method fetchFailure
+      @param {Object} response The failure response.
+    */
+    fetchFailure: function(response) {
+      // XXX Implement error handling.
+      console.error('Fetching the entity failed.');
+    },
+
+    /**
+      Retrieve, or fetch, an entity based on ID.
+
+      @method fetchFailure
+      @param {String} id the entity ID to locate
+    */
+    fetchEntity: function(id) {
+      this.setState({waitingForFetch: true});
+      this.props.getEntity(
+        id,
+        this.fetchSuccess,
+        this.fetchFailure
+      );
+    },
+
+    /**
+      Determine whether an entity needs to be fetched; we only need to query
+      when we either don't have an entity, or the entity's ID has changed.
+
+      @method shouldRefetch
+      @param {Object} nextProps the next set of properties
+    */
+    shouldRefetch: function(nextProps) {
+      var entity = this.state.entity;
+      return !entity || nextProps.id !== entity.id;
+    },
+
+    /**
+      Show the search results for a tag when clicked.
+
+      @method _handleTagClick
+      @param {Object} e The click event
+    */
+    _handleTagClick: function(e) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            tags: e.target.getAttribute('data-id')
+          }
+        }
+      });
+    },
+
+    getInitialState: function() {
+      return {
+        entity: null,
+        waitingForFetch: false
+      };
+    },
+
+    componentDidMount: function() {
+      this.fetchEntity(this.props.id);
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      if (this.shouldRefetch(nextProps)) {
+        this.fetchEntity(nextProps.id);
+      }
+    },
+
+    shouldComponentUpdate: function(nextProps, nextState) {
+      return this.shouldRefetch(nextProps) && !this.state.waitingForFetch;
+    },
+
     render: function() {
-      return <h1>Entity details</h1>;
+      var entity = this.state.entity,
+          tags = (entity && entity.tags) || [],
+          revisions = (entity && entity.revisions) || [];
+      if (!entity) {
+        return (
+          <div className="spinner-loader">Loading...</div>
+        );
+      }
+      tags = tags.map(function(tag) {
+        return(
+          <li key={tag} className="tag-list__item">
+            <a data-id={tag} onClick={this._handleTagClick}>
+              {tag}
+            </a>
+          </li>
+        );
+      }, this);
+      var ownerUrl = 'https://launchpad.net/~' + entity.owner;
+      return (
+        <div className={'entity-details ' + entity.type}>
+          <div className="row-hero">
+            <header className="twelve-col header">
+              <div className="inner-wrapper">
+                <div className="eight-col no-margin-bottom">
+                  <img src={entity.iconPath} alt="{entity.displayName}"
+                       width="96" className="header__icon"/>
+                  <div className="header__details">
+                    <h1 className="header__title" itemProp="name">
+                      {entity.displayName}
+                    </h1>
+                    <p className="header__by">
+                      By <a href={ownerUrl} target="_blank">{entity.owner}</a>
+                    </p>
+                    <ul className="bullets inline">
+                      <li className="revisions-item">
+                        <a href="#revisions" className="revisions-link">
+                          {revisions.length}
+                          {this.props.pluralize('revision', revisions.length)}
+                        </a>
+                      </li>
+                      <li className="header__series">{entity.series}</li>
+                    </ul>
+                  </div>
+                  <ul className="tag-list">{tags}</ul>
+                </div>
+                <div className="four-col last-col no-margin-bottom">
+                  <ul className="no-bullets bundle-stats">
+                    <li className="bundle-stats__deploys">
+                      <span className="bundle-stats__deploys-count">
+                        {entity.downloads}
+                      </span>
+                      {this.props.pluralize('deploy', entity.downloads)}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </header>
+          </div>
+        </div>
+      );
     }
   });
 

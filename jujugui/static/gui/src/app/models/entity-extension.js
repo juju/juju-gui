@@ -18,19 +18,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('search-result-extension', function(Y) {
+YUI.add('entity-extension', function(Y) {
   var ns = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
   /**
-   * Class extension that allows models to be displayed as search results.
+   * Class extension containing functionality common to both charms and
+   * bundles.
    *
    * @namespace juju.models
-   * @class SearchResult
+   * @class EntityExtension
    */
-  function SearchResult() {}
+  function EntityExtension() {}
 
-  SearchResult.prototype = {
+  EntityExtension.prototype = {
 
     /**
       Parse the owner from the ID.
@@ -48,37 +49,43 @@ YUI.add('search-result-extension', function(Y) {
     },
 
     /**
-      Produces a search results object for rendering in the search result
-      templates.
-      @method toSearchResult
-      @return {Object} a plain Javascript object containing bundle attributes.
+      Produces a POJO useful as a display object.
+      @method toEntity
+      @return {Object} a plain Javascript object containing attributes.
     */
-    toSearchResult: function() {
+    toEntity: function() {
       var attrs = this.getAttrs(),
           type = attrs.entityType;
-      var result = {
-          name: attrs.name,
+      var entity = {
           displayName: attrs.name.replace('-', ' '),
-          type: type,
-          special: attrs.special,  // XXX Not currently implemented.
-          url: attrs.url,
           downloads: attrs.downloads,
+          id: attrs.id,
+          name: attrs.name,
           owner: attrs.owner || this.ownerFromId(),
-          promulgated: attrs.is_approved
+          promulgated: attrs.is_approved,
+          revisions: attrs.revisions,
+          special: attrs.special,  // XXX Not currently implemented.
+          type: type,
+          url: attrs.url
       };
       if (type === 'bundle') {
         var srvcs = this.get('services');
-        result.services = this.parseBundleServices(srvcs);
+        entity.services = this.parseBundleServices(srvcs);
       } else {
-        result.tags = attrs.categories;
-        result.series = attrs.series;
-        result.iconPath = utils.getIconPath(attrs.id, false);
+        entity.iconPath = utils.getIconPath(attrs.id, false);
+        entity.series = attrs.series;
+        entity.tags = [];
+        var categories = attrs.categories,
+            idx;
+        for (idx in categories) {
+          entity.tags.push(categories[idx]);
+        }
       }
-      return result;
+      return entity;
     }
   };
 
-  ns.SearchResult = SearchResult;
+  ns.EntityExtension = EntityExtension;
 
 }, '', {
   requires: ['juju-view-utils']

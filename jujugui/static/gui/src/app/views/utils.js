@@ -2010,29 +2010,30 @@ YUI.add('juju-view-utils', function(Y) {
     string. This handles the regular case (e.g. cat => cats). Irregular
     cases are handled by passing in a plural form (e.g. octopus => ocotopi).
     */
-  Y.Handlebars.registerHelper('pluralize',
-      function(word, object, plural_word, options) {
-        var plural = false;
-        if (typeof(object) === 'number') {
-          plural = (object !== 1);
-        }
-        if (object) {
-          if (object.size) {
-            plural = (object.size() !== 1);
-          } else if (object.length) {
-            plural = (object.length !== 1);
-          }
-        }
-        if (plural) {
-          if (typeof(plural_word) === 'string') {
-            return plural_word;
-          } else {
-            return word + 's';
-          }
-        } else {
-          return word;
-        }
-      });
+  utils.pluralize = function(word, object, plural_word, options) {
+    var plural = false;
+    if (typeof(object) === 'number') {
+      plural = (object !== 1);
+    }
+    if (object) {
+      if (object.size) {
+        plural = (object.size() !== 1);
+      } else if (object.length) {
+        plural = (object.length !== 1);
+      }
+    }
+    if (plural) {
+      if (typeof(plural_word) === 'string') {
+        return plural_word;
+      } else {
+        return word + 's';
+      }
+    } else {
+      return word;
+    }
+  };
+
+  Y.Handlebars.registerHelper('pluralize', utils.pluralize);
 
   /*
    * Truncate helper to keep text sizes to a specified limit.
