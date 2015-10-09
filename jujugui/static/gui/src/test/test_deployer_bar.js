@@ -21,10 +21,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('deployer bar view', function() {
   var container, db, ECS, ecs, importBundleFile, mockEvent,
-      models, testUtils, utils, view, View, views, Y;
+      models, testUtils, utils, changesUtils, view, View, views, Y;
 
   before(function(done) {
     var requirements = [
+      'changes-utils',
       'deployer-bar',
       'environment-change-set',
       'event-simulate',
@@ -48,6 +49,7 @@ describe('deployer bar view', function() {
   beforeEach(function() {
     db = new models.Database();
     ecs = new ECS({db: db});
+    changesUtils = new Y.juju.ChangesUtils();
     container = utils.makeContainer(this, 'deployer-bar');
     importBundleFile = utils.makeStubFunction();
     view = new View({
@@ -77,13 +79,13 @@ describe('deployer bar view', function() {
 
     it('returns the service', function() {
       addEntities(db);
-      var service = view._getServiceByUnitId('django/0');
+      var service = changesUtils.getServiceByUnitId('django/0', db.services, db.units);
       assert.strictEqual(service.get('id'), 'django');
     });
 
     it('raises an error if the service is not found', function() {
       assert.throw(function() {
-        view._getServiceByUnitId('no-such/42');
+        changesUtils.getServiceByUnitId('no-such/42', db.services, db.units);
       }, 'unit no-such/42 not found');
     });
 
@@ -216,8 +218,8 @@ describe('deployer bar view', function() {
   });
 
   it('can show a list of recent changes', function() {
-    var changesStub = utils.makeStubMethod(view,
-        '_generateAllChangeDescriptions', []);
+    var changesStub = utils.makeStubMethod(changesUtils,
+        'generateAllChangeDescriptions', []);
     this._cleanups.push(changesStub.reset);
     view._showChanges();
     assert.equal(container.hasClass('changes-open'), true,
@@ -280,6 +282,7 @@ describe('deployer bar view', function() {
   });
 
   it('can convert relation endpoints to their real names', function() {
+    var services = new Y.ModelList();
     var args = [
       ['wordpress', {
         name: 'db',
@@ -292,21 +295,21 @@ describe('deployer bar view', function() {
       function() {}
     ];
     view.set('db', {
-      services: new Y.ModelList()
+      services: services
     });
     view.get('db').services.add([
       { id: 'foobar' },
       { id: '84882221$', displayName: '(mysql)' },
       { id: 'wordpress', displayName: 'wordpress' }
     ]);
-    var services = view._getRealRelationEndpointNames(args);
+    var services = changesUtils.getRealRelationEndpointNames(args, services);
     assert.deepEqual(services, ['mysql', 'wordpress']);
   });
 
   it('can generate descriptions for any change type', function() {
     addEntities(db);
     var tests = [{
-      icon: 'changes-service-added',
+      icon: undefined,
       msg: ' django has been added.',
       change: {
         command: {
@@ -415,10 +418,11 @@ describe('deployer bar view', function() {
     }];
     // This method needs to be stubbed out for the add relation path.
     var endpointNames = utils.makeStubMethod(
-        view, '_getRealRelationEndpointNames', ['foo', 'baz']);
+        changesUtils, 'getRealRelationEndpointNames', ['foo', 'baz']);
     this._cleanups.push(endpointNames.reset);
     tests.forEach(function(test) {
-      var change = view._generateChangeDescription(test.change, true);
+      var change = changesUtils.generateChangeDescription(test.change,
+          db.services, db.units, true);
       assert.equal(change.icon, test.icon);
       assert.equal(change.description, test.msg);
       if (test.timestamp) {
@@ -457,11 +461,12 @@ describe('deployer bar view', function() {
 
   it('can generate descriptions for all the changes in the ecs', function() {
     var stubDescription = utils.makeStubMethod(
-        view,
-        '_generateChangeDescription');
+        changesUtils,
+        'generateChangeDescription');
     this._cleanups.push(stubDescription.reset);
     ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
-    view._generateAllChangeDescriptions(ecs);
+    changesUtils.generateAllChangeDescriptions(ecs.changeSet, db.services,
+        db.units);
     assert.equal(stubDescription.callCount(), 2);
   });
 
@@ -485,7 +490,7 @@ describe('deployer bar view', function() {
     ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django-1/0'});
     ecs.lazyAddUnits(['django', 1], {modelId: 'ghost-django-2/0'});
     ecs.lazyAddUnits(['rails', 1], {modelId: 'rails/1'});
-    var delta = view._getChanges(ecs),
+    var delta = view._getChanges(ecs.changeSet, db.services, db.units),
         results = delta.changes.addUnits;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], {
@@ -504,7 +509,7 @@ describe('deployer bar view', function() {
     var machine = {};
     ecs.lazyAddMachines([[machine]], { modelId: 'new-0' });
     ecs.lazyAddMachines([[machine]], { modelId: 'new-1' });
-    var delta = view._getChanges(ecs),
+    var delta = view._getChanges(ecs.changeSet, db.services, db.units),
         results = delta.changes.addMachines;
     assert.lengthOf(results, 2);
     assert.deepEqual(results[0], machine);
@@ -518,7 +523,7 @@ describe('deployer bar view', function() {
       parentId: 'new-0', containerType: 'lxc'
     };
     ecs.lazyAddMachines([[container]], { modelId: 'new-1' });
-    var delta = view._getChanges(ecs),
+    var delta = view._getChanges(ecs.changeSet, db.services, db.units),
         results = delta.changes.addMachines;
     assert.lengthOf(results, 1);
     assert.deepEqual(results[0], machine);
@@ -540,7 +545,7 @@ describe('deployer bar view', function() {
     };
     ecs._createNewRecord('setConfig', command1, []);
     ecs._createNewRecord('setConfig', command2, []);
-    var delta = view._getChanges(ecs),
+    var delta = view._getChanges(ecs.changeSet, db.services, db.units),
         results = delta.changes.setConfigs;
     assert.lengthOf(results, 2);
     assert.deepEqual(results, [

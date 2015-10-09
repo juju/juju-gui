@@ -22,6 +22,8 @@ YUI.add('changes-utils', function(Y) {
 
   var ns = Y.namespace('juju');
 
+  var removeBrackets = /^\(?(.{0,}?)\)?$/;
+
   /**
     Util methods for handling ecs changes.
 
