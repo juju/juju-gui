@@ -154,6 +154,10 @@ YUI.add('juju-topology', function(Y) {
         var plusIndicator = vis.select('.included-plus');
         var self = this;
         plusIndicator.on('click', function() {
+          if (d3.event.defaultPrevented) {
+            // Don't allow the click if the element is being dragged.
+            return;
+          }
           self.fire('changeState', {
             sectionC: {
               component: 'charmbrowser',
