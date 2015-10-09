@@ -129,14 +129,16 @@ YUI.add('juju-topology-panzoom', function(Y) {
      * @method zoomHandler
      */
     zoomHandler: function(evt) {
-      var slider = this.slider;
+      if (!window.flags || !window.flags.react) {
+        var slider = this.slider;
 
-      // Don't zoom if we don't have a slider yet.
-      if (!slider) {
-        return;
+        // Don't zoom if we don't have a slider yet.
+        if (!slider) {
+          return;
+        }
+        // Set the slider value to match our new zoom level.
+        slider._set('value', this.toSlider(evt.scale));
       }
-      // Set the slider value to match our new zoom level.
-      slider._set('value', this.toSlider(evt.scale));
       // Let rescale handle the actual transformation; evt.scale and
       // evt.translate have both been set by D3 at this point.
       this.rescale(evt);
@@ -270,7 +272,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
           currentScale = topo.get('scale'),
           currentTranslate = topo.get('translate');
 
-      this.renderSlider();
+      if (!window.flags || !window.flags.react) {
+        this.renderSlider();
+      }
       if (currentTranslate && currentTranslate !== topo.get('translate')) {
         topo.zoom.translate(currentTranslate);
         changed = true;

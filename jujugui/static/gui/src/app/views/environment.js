@@ -149,7 +149,9 @@ YUI.add('juju-view-environment', function(Y) {
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
-        container.setHTML(Templates.overview());
+        var hideZoomControls = window.flags && window.flags.react;
+        container.setHTML(Templates.overview(
+          {showZoomControls: !hideZoomControls}));
         this._rendered = true;
       }
 
