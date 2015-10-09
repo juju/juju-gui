@@ -66,7 +66,7 @@ describe('jujulib', function() {
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.getEnvironment('rose/fnord', function(data) {
+      env.getEnvironment('rose', 'fnord', function(data) {
         assert.deepEqual(data, {uuid: 'foo'});
         done();
       }, function() {});
@@ -81,7 +81,7 @@ describe('jujulib', function() {
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.getEnvironment('rose/fnord', function(data) {
+      env.getEnvironment('rose', 'fnord', function(data) {
         assert.fail('success callback should not have been called');
       }, function(error) {
         assert.equal(error, err);

@@ -44,16 +44,25 @@ var module = module;
    * @private _makeRequest
    * @param path {String} The JEM endpoint to make the request from,
    *     e.g. '/env'
+   * @param method {String} The type of http method to use, e.g. GET or POST.
+   * @param params {Object} Optional data object to sent with e.g. POST commands.
    * @param success {function} A callback to be called on success. Takes
    *     an xhr object as its only parameter.
    * @param failure {function} A callback to be called on failure. Takes
    *     an xhr object as its only parameter.
   */
-  environment.prototype._makeRequest = function(path, success, failure) {
-    this.bakery.sendGetRequest(path, function(xhr) {
-      var data = JSON.parse(xhr.target.responseText);
-      success(data);
-    }, failure);
+  environment.prototype._makeRequest = function(path, method, params, success, failure) {
+    if (method === 'GET') {
+      this.bakery.sendGetRequest(path, function(xhr) {
+        var data = JSON.parse(xhr.target.responseText);
+        success(data);
+      }, failure);
+    } else if (method === 'POST') {
+      this.bakery.sendPostRequest(path, JSON.stringify(params), function(xhr) {
+        var data = JSON.parse(xhr.target.responseText);
+        success(data);
+      }, failure);
+    }
   };
 
   /**
@@ -67,26 +76,70 @@ var module = module;
    *     take an error message as its one parameter.
    */
   environment.prototype.listEnvironments = function(success, failure) {
-    this._makeRequest(this.jemUrl + '/env', function(data) {
+    this._makeRequest(this.jemUrl + '/env', 'GET', null, function(data) {
       success(data.environments);
     }, failure);
   };
 
   /**
+   * Lists the available state servers on the JEM.
+   *
+   * @public listServers
+   * @param success {function} A callback to be called on success. Should
+   *     take an array of objects containing Juju environment data as its
+   *     one parameter.
+   * @param failure {function} A callback to be called on failure. Should
+   *     take an error message as its one parameter.
+   */
+  environment.prototype.listServers = function(success, failure) {
+    this._makeRequest(this.jemUrl + '/server', 'GET', null, function(data) {
+      success(data['state-servers']);
+    }, failure);
+  };
+  /**
    * Provides the data for a particular environment.
    *
    * @public getEnvironment
-   * @param envName {String} The name of the given environment. Environment
-   *     names are always of the form owner/environment,
-   *     e.g. rose/tardis.
+   * @param envOwnerName {String} The user name of the given environment's owner.
+   * @param envName {String} The name of the given environment.
    * @param success {function} A callback to be called on success. Should
    *     take an object with environment data as its one parameter.
    * @param failure {function} A callback to be called on failure. Should
    *     take an error message as its one parameter.
    */
-  environment.prototype.getEnvironment = function (envName, success, failure) {
-    var url = [this.jemUrl, 'env', envName].join('/');
-    this._makeRequest(url, success, failure);
+  environment.prototype.getEnvironment = function (envOwnerName, envName, success, failure) {
+    var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
+    this._makeRequest(url, 'GET', null, success, failure);
+  };
+
+  /**
+   * Create a new environment.
+   *
+   * @public newEnvironment
+   * @param envOwnerName {String} The name of the given environment's owner.
+   * @param envName {String} The name of the given environment.
+   * @param configTemplate {String} The name of the config template to be used
+   *     for creating the environment.
+   * @param password {String} The password for the new environment.
+   * @param success {function} An optional callback to be called on success.
+   *     Should receive a 200 OK response as its only object.
+   * @param failure {function} A callback to be called on failure. Should
+   *     take an error message as its one parameter.
+   */
+  environment.prototype.newEnvironment = function (
+      envOwnerName, envName, baseTemplate, password, success, failure) {
+    var body = {
+      name: envName,
+      password: password,
+      templates: [baseTemplate]
+    };
+    var url = [this.jemUrl, 'env', envOwnerName].join('/');
+    var _newEnvironment = function(servers) {
+      var path = servers[0].path;
+      body['state-server'] = path;
+      this._makeRequest(url, 'POST', body, success, failure);
+    };
+    this.listServers(_newEnvironment.bind(this), failure);
   };
 
   /**
