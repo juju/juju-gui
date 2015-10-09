@@ -1,0 +1,14 @@
+.deployment-bar__change-count {
+    display: inline-block;
+    margin-right: 1px;
+    padding: 10px 15px;
+    background-color: $mid-grey;
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+    color: $white;
+    transition: background .3s;
+
+    &--active {
+        background-color: $uncommitted;
+    }
+}

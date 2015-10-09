@@ -1,0 +1,12 @@
+.deployment-bar__deploy-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    &--active {
+        @extend %button-orange;
+    }
+
+    &:not(&.deployment-bar__deploy-button--active) {
+            @extend %button-disabled;
+    }
+}
