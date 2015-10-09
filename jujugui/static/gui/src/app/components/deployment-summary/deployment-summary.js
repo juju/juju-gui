@@ -42,7 +42,8 @@ YUI.add('deployment-summary', function() {
     },
 
     render: function() {
-      var listHeaderClassName = 'deployment-summary-change-item deployment-summary__list-header'; // eslint-disable-line max-len
+      var listHeaderClassName = 'deployment-summary-change-item ' +
+          'deployment-summary__list-header';
       return (
         <juju.components.Panel
           instanceName="deployment-summary-panel"

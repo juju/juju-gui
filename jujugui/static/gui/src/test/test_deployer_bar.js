@@ -79,7 +79,8 @@ describe('deployer bar view', function() {
 
     it('returns the service', function() {
       addEntities(db);
-      var service = changesUtils.getServiceByUnitId('django/0', db.services, db.units);
+      var service = changesUtils.getServiceByUnitId('django/0',
+          db.services, db.units);
       assert.strictEqual(service.get('id'), 'django');
     });
 
