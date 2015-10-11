@@ -117,8 +117,7 @@ describe.skip('service module events', function() {
       'juju-gui',
       'juju-view-environment',
       'juju-topology-service',
-      'node-event-simulate',
-      'slider'],
+      'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
