@@ -68,12 +68,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
           options = topo.options;
 
       this.toScale = d3.scale.linear()
-                            .domain([options.minSlider, options.maxSlider])
-                            .range([options.minZoom, options.maxZoom])
-                            .clamp(true);
-      this.toSlider = d3.scale.linear()
                             .domain([options.minZoom, options.maxZoom])
-                            .range([options.minSlider, options.maxSlider])
+                            .range([options.minZoom, options.maxZoom])
                             .clamp(true);
     },
 
@@ -163,7 +159,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
     rescale: function(evt) {
       // Make sure we don't scale outside of our bounds.
       // This check is needed because we're messing with d3's zoom
-      // behavior outside of mouse events (e.g.: with the slider),
+      // behavior outside of mouse events,
       // and can't trust that zoomExtent will play well.
       var topo = this.get('component'),
           options = topo.options,
@@ -175,7 +171,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       // Ensure that we're definitely within bounds by coercing the scale
       // to fit within our range.
-      evt.scale = this.toScale(this.toSlider(evt.scale));
+      evt.scale = this.toScale(evt.scale);
 
       // Store the current value of scale so that it can be restored later.
       topo.set('scale', evt.scale);
@@ -193,7 +189,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
           changed = false,
           currentScale = topo.get('scale'),
           currentTranslate = topo.get('translate');
-
       if (currentTranslate && currentTranslate !== topo.get('translate')) {
         topo.zoom.translate(currentTranslate);
         changed = true;

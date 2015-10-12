@@ -52,9 +52,7 @@ YUI.add('juju-topology', function(Y) {
     initializer: function(options) {
       this.options = Y.mix(options || {}, {
         minZoom: 0.25,
-        maxZoom: 2,
-        minSlider: 25,
-        maxSlider: 200
+        maxZoom: 2
       });
       Topology.superclass.constructor.apply(this, arguments);
       // Build a service.id -> BoundingBox map for services.
