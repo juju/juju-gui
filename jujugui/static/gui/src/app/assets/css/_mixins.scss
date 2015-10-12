@@ -90,6 +90,7 @@
 }
 
 %button {
+    transition: background-color .3s;
     padding: 10px 20px;
     background-color: $white;
     border: 1px solid $mid-grey;
@@ -97,8 +98,41 @@
     color: $charm-panel-orange;
     text-align: center;
 
+    &:active,
+    &:focus,
     &:hover {
         background-color: $light-grey;
+    }
+}
+
+%button-orange {
+    @extend %button;
+    border: none;
+    background-color: $ubuntu-orange;
+    color: $white;
+
+    &:active,
+    &:focus,
+    &:hover {
+        $colour: darken($ubuntu-orange, 10%);
+        background-color: $colour;
+        border-color: $colour;
+    }
+}
+
+%button-disabled {
+    @extend %button;
+    $colour: $mid-grey;
+    border: none;
+    background-color: $colour;
+    color: $white;
+    cursor: default;
+
+    &:active,
+    &:focus,
+    &:hover {
+        background-color: $colour;
+        border-color: $colour;
     }
 }
 

@@ -44,7 +44,7 @@ describe('ButtonRow', function() {
       <juju.components.ButtonRow
         buttons={buttons} />);
     assert.deepEqual(output.props.children, [
-      <juju.components.InspectorButton
+      <juju.components.GenericButton
         title="My button"
         key="My button"
         action={callbackStub}
@@ -69,12 +69,12 @@ describe('ButtonRow', function() {
       <juju.components.ButtonRow
         buttons={buttons} />);
     var children = [
-      <juju.components.InspectorButton
+      <juju.components.GenericButton
         title="My button"
         key="My button"
         action={callbackStub}
         type="submit" />,
-      <juju.components.InspectorButton
+      <juju.components.GenericButton
         title="Another button"
         key="Another button"
         action={callbackStub}

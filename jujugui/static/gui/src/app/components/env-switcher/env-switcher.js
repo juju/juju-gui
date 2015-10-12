@@ -98,11 +98,11 @@ YUI.add('env-switcher', function() {
               value={this.state.envName}
               onChange={this._handleEnvNameChange} />
             <input type="submit"
-              className="inspector-button"
+              className="generic-button"
               value="Create"
               onClick={this.createEnvironment} />
             <input type="button"
-              className="inspector-button"
+              className="generic-button"
               value="List"
               onClick={this.toggleEnvList} />
           </form>
@@ -113,6 +113,6 @@ YUI.add('env-switcher', function() {
   });
 
 }, '0.1.0', { requires: [
-  'inspector-button',
+  'generic-button',
   'env-list'
 ] });

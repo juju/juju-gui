@@ -217,7 +217,7 @@ describe('UnitList', () => {
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     output.refs['UnitListItem-' + units[2].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
-        output, 'inspector-button');
+        output, 'generic-button');
     testUtils.Simulate.click(button);
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
@@ -240,7 +240,7 @@ describe('UnitList', () => {
           units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
-        output, 'inspector-button');
+        output, 'generic-button');
     testUtils.Simulate.click(button);
     assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
   });

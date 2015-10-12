@@ -443,6 +443,11 @@ YUI.add('juju-gui', function(Y) {
         var ecs = new juju.EnvironmentChangeSet({
           db: this.db
         });
+
+        if(window.flags && window.flags.react) {
+          ecs.on('changeSetModified', this._renderDeployment.bind(this));
+          ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
+        }
         // Instantiate the environment specified in the configuration, choosing
         // between the available implementations, currently Go and Python.
         var socketUrl = this._generateSocketUrl();
@@ -501,6 +506,8 @@ YUI.add('juju-gui', function(Y) {
         fakebackend: state
       });
       cfg.bundleImporter = this.bundleImporter;
+
+      this.changesUtils = window.juju.utils.ChangesUtils;
 
       // Create notifications controller
       this.notifications = new juju.NotificationController({
@@ -612,8 +619,8 @@ YUI.add('juju-gui', function(Y) {
           // demo mode.
           this._renderUserDropdownView();
         }
-        this._renderDeployerBarView();
         if (!window.flags || !window.flags.react) {
+          this._renderDeployerBarView();
           this._renderEnvironmentHeaderView();
         }
         this.get('subApps').charmbrowser.on(
@@ -747,6 +754,27 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)} />,
         document.getElementById('header-search-container'));
+    },
+
+    /**
+      Renders the Deployment component to the page in the
+      designated element.
+
+      @method _renderDeployment
+    */
+    _renderDeployment: function() {
+      var env = this.env;
+      var ecs = env.get('ecs');
+      var changesUtils = this.changesUtils;
+      var currentChangeSet = ecs.getCurrentChangeSet();
+      var changeDescriptions = changesUtils.generateAllChangeDescriptions(
+          currentChangeSet, this.db.services, this.db.units);
+      React.render(
+        <window.juju.components.Deployment
+          ecsCommit={ecs.commit.bind(ecs, env)}
+          changeDescriptions={changeDescriptions}
+          currentChangeSet={currentChangeSet} />,
+        document.getElementById('deployment-container'));
     },
 
     /**
@@ -1681,6 +1709,7 @@ YUI.add('juju-gui', function(Y) {
         );
         this._renderEnvSwitcher();
         this._renderHeaderSearch();
+        this._renderDeployment();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
@@ -1922,6 +1951,7 @@ YUI.add('juju-gui', function(Y) {
 
 }, '0.5.3', {
   requires: [
+    'changes-utils',
     'juju-charm-models',
     'juju-models',
     'ns-routing-app-extension',
@@ -1937,6 +1967,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-models',
     // React components
     'charmbrowser-component',
+    'deployment-component',
     'env-size-display',
     'header-search',
     'inspector-component',

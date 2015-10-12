@@ -29,7 +29,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Default window.flags to an empty object.
     window.flags = {};
     var juju = {
-      components: {}
+      components: {},
+      utils: {}
     };
     // This is only the Mocha timeout. There's a selenium timeout in
     //  test_mocha_selenium as well that can effect CI test runs.
@@ -131,6 +132,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_bundle_module.js"></script>
   <script src="test_bundle_importer.js"></script>
   <script src="test_bundle_import_notifications.js"></script>
+  <script src="test_changes_utils.js"></script>
   <script src="test_token_container.js"></script>
   <script src="test_token.js"></script>
   <script src="test_token_drag_and_drop.js"></script>

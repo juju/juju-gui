@@ -29,6 +29,7 @@ YUI.add('deployer-bar', function(Y) {
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates,
+      changesUtils = juju.utils.ChangesUtils,
       bundleHelpers = Y.namespace('juju.BundleHelpers');
 
   var removeBrackets = /^\(?(.{0,}?)\)?$/;
@@ -261,8 +262,10 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container');
       var changesPanel = container.one('.panel.changes section');
       var ecs = this.get('ecs');
+      var db = this.get('db');
       changesPanel.setHTML(this.changesTemplate({
-        changeList: this._generateAllChangeDescriptions(ecs)
+        changeList: changesUtils.generateAllChangeDescriptions(
+            ecs.getCurrentChangeSet(), db.services, db.units)
       }));
       container.addClass('changes-open');
     },
@@ -292,7 +295,8 @@ YUI.add('deployer-bar', function(Y) {
       var container = this.get('container'),
           ecs = this.get('ecs'),
           db = this.get('db'),
-          delta = this._getChanges(ecs),
+          delta = this._getChanges(
+              ecs.getCurrentChangeSet(), db.services, db.units),
           changes = delta.changes,
           totalUnits = delta.totalUnits,
           unplacedUnits = db.units.filterByMachine(null);
@@ -336,7 +340,8 @@ YUI.add('deployer-bar', function(Y) {
       container.addClass('summary-open');
       container.one('.panel.summary .changes .list').setHTML(
           this.changesTemplate({
-            changeList: this._generateAllChangeDescriptions(ecs)
+            changeList: changesUtils.generateAllChangeDescriptions(
+                ecs.getCurrentChangeSet(), db.services, db.units)
           }));
     },
 
@@ -501,204 +506,9 @@ YUI.add('deployer-bar', function(Y) {
     */
     _getChangeNotification: function(ecs) {
       var latest = ecs.getCurrentChangeSet()[this._getLatestChange()];
-      return this._generateChangeDescription(latest);
-    },
-
-    /**
-      Return a list of all change descriptions.
-
-      @method _generateAllChangeDescriptions
-      @param {Object} ecs The environment change set.
-    */
-    _generateAllChangeDescriptions: function(ecs) {
-      var changes = [],
-          change,
-          changeSet = ecs.getCurrentChangeSet();
-      Object.keys(changeSet).forEach(function(key) {
-        change = this._generateChangeDescription(changeSet[key]);
-        if (change) {
-          changes.push(change);
-        }
-      }, this);
-      return changes;
-    },
-
-    /**
-      Return a description of an ecs change for the summary.
-
-      @method _generateChangeDescription
-      @param {Object} change The environment change.
-      @param {Bool} skipTime optional, used for testing, don't generate time.
-    */
-    _generateChangeDescription: function(change, skipTime) {
-      var changeItem = {};
       var db = this.get('db');
-
-      if (change && change.command) {
-        // XXX: The add_unit is just the same as the service because adding
-        // the service also adds the unit. We need to look at the UX for
-        // units as follow up.
-        switch (change.command.method) {
-          case '_deploy':
-            if (!change.command.options || !change.command.options.modelId) {
-              // When using the deploy-target query parameter we want to auto
-              // deploy so we can skip generating the line item in the deployer
-              // bar.
-              return;
-            }
-            var ghostService = db.services.getById(
-                change.command.options.modelId);
-            changeItem.icon = 'changes-service-added';
-            changeItem.description = ' ' + ghostService.get('name') +
-                ' has been added.';
-            break;
-          case '_destroyService':
-            changeItem.icon = 'changes-service-destroyed';
-            changeItem.description = ' ' + change.command.args[0] +
-                ' has been destroyed.';
-            break;
-          case '_add_unit':
-            var service = this._getServiceByUnitId(
-                change.command.options.modelId);
-            changeItem.icon = 'changes-units-added';
-            var units = change.command.args[1],
-                msg;
-            if (units !== 1) {
-              msg = 'units have been added.';
-            } else {
-              msg = 'unit has been added.';
-            }
-            changeItem.description = ' ' + units + ' ' +
-                service.get('name') + ' ' + msg;
-            break;
-          case '_remove_units':
-            changeItem.icon = 'changes-units-removed';
-            /*jslint -W004*/
-            var units = change.command.args[0];
-            changeItem.description = units.length + ' unit' +
-                (units.length === 1 ? ' has' : 's have') +
-                ' been removed from ' + units[0].split('/')[0];
-            break;
-          case '_expose':
-            changeItem.icon = 'changes-service-exposed';
-            changeItem.description = change.command.args[0] + ' exposed';
-            break;
-          case '_unexpose':
-            changeItem.icon = 'changes-service-unexposed';
-            changeItem.description = change.command.args[0] + ' unexposed';
-            break;
-          case '_add_relation':
-            var services = this._getRealRelationEndpointNames(
-                change.command.args);
-            changeItem.icon = 'changes-relation-added';
-            changeItem.description = change.command.args[0][1].name +
-                ' relation added between ' +
-                services[0] + ' and ' + services[1] + '.';
-            break;
-          case '_remove_relation':
-            changeItem.icon = 'changes-relation-removed';
-            changeItem.description = change.command.args[0][1].name +
-                ' relation removed between ' +
-                change.command.args[0][0] +
-                ' and ' +
-                change.command.args[1][0] + '.';
-            break;
-          case '_addMachines':
-            var machineType = change.command.args[0][0].parentId ?
-                'container' : 'machine';
-            changeItem.icon = 'changes-' + machineType + '-created';
-            changeItem.description = change.command.args[0].length +
-                ' ' + machineType +
-                (change.command.args[0].length !== 1 ? 's have' : ' has') +
-                ' been added.';
-            break;
-          case '_destroyMachines':
-            /*jshint -W004*/
-            var machineType = change.command.args[0][0].indexOf('/') !== -1 ?
-                'container' : 'machine';
-            changeItem.icon = 'changes-' + machineType + '-destroyed';
-            changeItem.description = change.command.args[0].length +
-                ' ' + machineType +
-                (change.command.args[0].length !== 1 ? 's have' : ' has') +
-                ' been destroyed.';
-            break;
-          case '_set_config':
-            var cfgServ = db.services.getById(change.command.args[0]);
-            changeItem.icon = 'changes-config-changed';
-            changeItem.description = 'Configuration values changed for ' +
-                cfgServ.get('displayName').match(removeBrackets)[1] + '.';
-            break;
-          default:
-            changeItem.icon = 'changes-service-exposed';
-            changeItem.description = 'An unknown change has been made ' +
-                'to this enviroment via the CLI.';
-            break;
-        }
-      }
-      if (skipTime || !change) {
-        changeItem.time = '00:00';
-      } else {
-        changeItem.time = this._formatAMPM(new Date(change.timestamp));
-      }
-      return changeItem;
-    },
-
-    /**
-      Loops through the services in the db to find ones which have id's which
-      match the temporary id's assigned to the add realation call.
-
-      @method _getRealRelationEndpointNames
-      @param {Array} args The arguments array from the ecs add relations call.
-      @return {Array} An array of the service names involved in the relation.
-    */
-    _getRealRelationEndpointNames: function(args) {
-      var services = [],
-          serviceId;
-      this.get('db').services.each(function(service) {
-        serviceId = service.get('id');
-        args.forEach(function(arg) {
-          if (serviceId === arg[0]) {
-            services.push(
-                service.get('displayName').replace(/^\(|\)$/g, ''));
-          }
-        });
-      });
-      return services;
-    },
-
-    /**
-      Return the service unitId belongs to.
-      Raise an error if the unit is not found.
-
-      @method _getServiceByUnitId
-      @param {String} unitId The unit identifier in the database.
-      @return {Model} The service model instance.
-    */
-    _getServiceByUnitId: function(unitId) {
-      var db = this.get('db');
-      var unit = db.units.getById(unitId);
-      if (!unit) {
-        // This should never happen in the deployer panel context.
-        throw 'unit ' + unitId + ' not found';
-      }
-      return db.services.getById(unit.service);
-    },
-
-    /**
-      Return formatted time for display.
-
-      @method _formatAMPM
-      @param {Date} date The current date.
-    */
-    _formatAMPM: function(date) {
-      var hours = date.getHours();
-      var minutes = date.getMinutes();
-      var ampm = hours >= 12 ? 'pm' : 'am';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      var strTime = hours + ':' + minutes + ' ' + ampm;
-      return strTime;
+      return changesUtils.generateChangeDescription(
+          latest, db.services, db.units);
     },
 
     /**
@@ -714,14 +524,17 @@ YUI.add('deployer-bar', function(Y) {
       return Object.keys(changeSet)[len];
     },
 
+
     /**
      * Fetch and format the changeSet command records for the deployment
      * summary.
      *
      * @method _getChanges
-     * @param {Object} ecs The environment change set.
+     * @param {Object} services The list of services from the db.
+     * @param {Object} units The list of units from the db.
+     * @param {Object} changeSet The current environment change set.
      */
-    _getChanges: function(ecs) {
+    _getChanges: function(changeSet, services, units) {
       var changes = {
         deployedServices: [],
         destroyedServices: [],
@@ -735,35 +548,34 @@ YUI.add('deployer-bar', function(Y) {
         destroyMachines: [],
         setConfigs: []
       };
-      var db = this.get('db'),
-          unitCount = {},
-          totalUnits = 0,
-          changeSet = ecs.getCurrentChangeSet();
+      var unitCount = {},
+          totalUnits = 0;
       Object.keys(changeSet).forEach(function(key) {
         var command = changeSet[key].command,
             args = command.args,
             name, service;
         switch (command.method) {
           case '_deploy':
-            service = db.services.getById(command.options.modelId);
+            service = services.getById(command.options.modelId);
             changes.deployedServices.push({
               icon: service.get('icon'),
               name: service.get('name')
             });
             break;
           case '_destroyService':
-            service = db.services.getById(args[0]);
+            service = services.getById(args[0]);
             changes.destroyedServices.push({
               icon: service.get('icon'),
               name: service.get('name')
             });
             break;
           case '_add_relation':
-            var services = this._getRealRelationEndpointNames(args);
+            var serviceList = changesUtils.getRealRelationEndpointNames(
+                args, services);
             changes.addRelations.push({
               type: args[0][1].name,
-              from: services[0],
-              to: services[1]
+              from: serviceList[0],
+              to: serviceList[1]
             });
             break;
           case '_remove_relation':
@@ -775,7 +587,8 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_add_unit':
             // This can be either a ghost or a real deployed service.
-            service = this._getServiceByUnitId(command.options.modelId);
+            service = changesUtils.getServiceByUnitId(
+                command.options.modelId, services, units);
             // XXX kadams54 2014-08-08: this is a temporary hack right now
             // because the ECS doesn't batch operations. Add 10 units and
             // you'll get 10 log entries with numUnits set to 1. Once
@@ -793,7 +606,7 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_remove_units':
             name = args[0][0].split('/')[0];
-            service = db.services.getById(name);
+            service = services.getById(name);
             changes.removeUnits.push({
               icon: service.get('icon'),
               numUnits: args[0].length,
@@ -802,13 +615,13 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_expose':
             changes.exposed.push({
-              icon: db.services.getById(args[0]).get('icon'),
+              icon: services.getById(args[0]).get('icon'),
               serviceName: args[0]
             });
             break;
           case '_unexpose':
             changes.unexposed.push({
-              icon: db.services.getById(args[0]).get('icon'),
+              icon: services.getById(args[0]).get('icon'),
               serviceName: args[0]
             });
             break;
@@ -839,14 +652,14 @@ YUI.add('deployer-bar', function(Y) {
             break;
           case '_set_config':
             name = args[0];
-            service = db.services.getById(name);
+            service = services.getById(name);
             // The ecs changes the set config service name to the real name
             // before the services model id has changed to its deploy name.
             // So if no service is found then it's because the name hasn't
             // yet been changed and we need to search through the services
             // for the one which matches.
             if (service === null) {
-              db.services.some(function(dbService) {
+              services.some(function(dbService) {
                 if (dbService.get('displayName')
                            .replace(/^\(/, '').replace(/\)$/, '') === name) {
                   service = dbService;
@@ -1000,6 +813,7 @@ YUI.add('deployer-bar', function(Y) {
 }, '0.1.0', {
   requires: [
     'autodeploy-extension',
+    'changes-utils',
     'event-tracker',
     'handlebars',
     'juju-templates',

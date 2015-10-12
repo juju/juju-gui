@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-button', function() {
+YUI.add('deployment-bar-change-count', function() {
 
-  juju.components.InspectorButton = React.createClass({
+  juju.components.DeploymentBarChangeCount = React.createClass({
 
     /**
       Returns the classes for the button based on the provided props.
@@ -29,17 +29,18 @@ YUI.add('inspector-button', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'inspector-button',
-        this.props.type ? 'inspector-button--type-' + this.props.type : ''
+        'deployment-bar__change-count',
+        {
+          'deployment-bar__change-count--active': this.props.count > 0
+        }
       );
     },
 
     render: function() {
       return (
-        <button className={this._generateClasses()}
-          onClick={this.props.action}>
-          {this.props.title}
-        </button>
+          <div className={this._generateClasses()}>
+            {this.props.count}
+          </div>
       );
     }
   });

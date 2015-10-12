@@ -124,6 +124,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="onboarding"></div>
       <div id="charmbrowser-container"></div>
       <div id="deployer-bar"></div>
+      <div id="deployment-container"></div>
       <div id="environment-header"></div>
       <div id="env-size-display-container"></div>
       <div id="inspector-container"></div>
@@ -191,7 +192,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Global to store all of the shared application data.
       var juju = {
         // Collection of components.
-        components: {}
+        components: {},
+        utils: {}
       };
 
       var flags = {}; // Declare an empty set of feature flags.
