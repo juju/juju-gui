@@ -52,9 +52,7 @@ YUI.add('juju-topology', function(Y) {
     initializer: function(options) {
       this.options = Y.mix(options || {}, {
         minZoom: 0.25,
-        maxZoom: 2,
-        minSlider: 25,
-        maxSlider: 200
+        maxZoom: 2
       });
       Topology.superclass.constructor.apply(this, arguments);
       // Build a service.id -> BoundingBox map for services.
@@ -154,6 +152,10 @@ YUI.add('juju-topology', function(Y) {
         var plusIndicator = vis.select('.included-plus');
         var self = this;
         plusIndicator.on('click', function() {
+          if (d3.event.defaultPrevented) {
+            // Don't allow the click if the element is being dragged.
+            return;
+          }
           self.fire('changeState', {
             sectionC: {
               component: 'charmbrowser',

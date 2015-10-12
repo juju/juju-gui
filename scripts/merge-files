@@ -127,7 +127,6 @@ require('yui').YUI().use(['yui'], function(Y) {
   cssFiles.push(
     'node_modules/yui/app-transitions-css/app-transitions-css-min.css');
   cssFiles.push('node_modules/yui/panel/assets/panel-core.css');
-  cssFiles.push('node_modules/yui/slider-base/assets/slider-base-core.css');
   cssFiles.push('node_modules/yui/widget-base/assets/widget-base-core.css');
   cssFiles.push('node_modules/yui/widget-stack/assets/widget-stack-core.css');
 

@@ -63,43 +63,6 @@ describe('pan zoom module', function() {
     }
     return translate;
   }
-  // Test the zoom handler calculations.
-  it('should handle fractional values properly in zoom scale',
-     function() {
-       // Floor is used so the scale will round down.
-       var evt = { scale: 0.609 };
-       var rescaleCalled = false;
-       pz.rescale = function() {
-         rescaleCalled = true;
-       };
-       pz.zoomHandler(evt);
-       pz.slider.get('value').should.equal(61);
-       assert.isTrue(rescaleCalled);
-     });
-
-  it('should have an upper limit on the slider',
-     function() {
-       var evt = { scale: 3.5 };
-       var rescaleCalled = false;
-       pz.rescale = function() {
-         rescaleCalled = true;
-       };
-       pz.zoomHandler(evt);
-       pz.slider.get('value').should.equal(200);
-       assert.isTrue(rescaleCalled);
-     });
-
-  it('should have a lower limit on the slider',
-     function() {
-       var evt = { scale: 0.18 };
-       var rescaleCalled = false;
-       pz.rescale = function() {
-         rescaleCalled = true;
-       };
-       pz.zoomHandler(evt);
-       pz.slider.get('value').should.equal(25);
-       assert.isTrue(rescaleCalled);
-     });
 
   // Test the zoom calculations.
   it('should handle fractional values within the limit for rescale',

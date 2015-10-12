@@ -219,7 +219,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'charmstore-api',
-        'd3', 'node-event-simulate', 'juju-gui', 'slider',
+        'd3', 'node-event-simulate', 'juju-gui',
         'landscape', 'dump', 'juju-view-utils',
         'juju-charm-models', 'environment-change-set'
       ], function(Y) {
@@ -905,41 +905,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          rel_block.firstChild.nodeValue.should.equal('1');
        }
     );
-
-    // Ensure that the zoom controls work
-    it('must be able to zoom using controls', function() {
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        charmstore: fakeStore
-      }).render();
-      // Attach the view to the DOM so that sizes get set properly
-      // from the viewport (only available from DOM).
-      view.rendered();
-      var zoom_in = container.one('#zoom-in-btn'),
-          zoom_out = container.one('#zoom-out-btn'),
-          module = view.topo.modules.PanZoomModule,
-          slider = module.slider,
-          svg = container.one('.the-canvas g');
-
-      zoom_in.simulate('click');
-
-      var attr = svg.getAttribute('transform');
-      // Ensure that, after clicking the zoom in button, that the
-      // scale portion of the transform attribute of the svg
-      // element has been upped by 0.2.  The transform attribute
-      // also contains translate, so test via a regex.
-      /scale\(1\.1\)/.test(attr).should.equal(true);
-
-      // Ensure that the slider agrees.
-      slider.get('value').should.equal(110);
-
-      // Ensure that zooming via slider sets scale.
-      slider.set('value', 150);
-      attr = svg.getAttribute('transform');
-      /scale\(1\.5\)/.test(attr).should.equal(true);
-    });
 
     // Ensure that sizes are computed properly
     it('must be able to compute rect sizes based on the svg and' +

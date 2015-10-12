@@ -44,18 +44,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
   var PanZoomModule = Y.Base.create('PanZoomModule', components.Module, [], {
 
     events: {
-      scene: {
-        '#zoom-out-btn': {
-          click: 'zoom_out',
-          mouseover: 'add_hover_out',
-          mouseout: 'remove_hover_out'
-        },
-        '#zoom-in-btn': {
-          click: 'zoom_in',
-          mouseover: 'add_hover_in',
-          mouseout: 'remove_hover_in'
-        }
-      },
       yui: {
         /**
           Fired when the canvas is zoomed.
@@ -80,47 +68,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
           options = topo.options;
 
       this.toScale = d3.scale.linear()
-                            .domain([options.minSlider, options.maxSlider])
+                            .domain([options.minZoom, options.maxZoom])
                             .range([options.minZoom, options.maxZoom])
                             .clamp(true);
-      this.toSlider = d3.scale.linear()
-                            .domain([options.minZoom, options.maxZoom])
-                            .range([options.minSlider, options.maxSlider])
-                            .clamp(true);
-    },
-
-    renderSlider: function() {
-      var self = this,
-          topo = this.get('component'),
-          options = topo.options,
-          currentScale = topo.get('scale'),
-          slider;
-
-      if (self.slider) {
-        return;
-      }
-
-      slider = new Y.Slider({
-        // Vertical sliders normally have min at the top and max at the
-        // bottom.  Switch them in the definition for our needs.
-        min: options.maxSlider,
-        max: options.minSlider,
-        axis: 'y',
-        length: '300px',
-        thumbUrl: 'juju-ui/assets/images/non-sprites/zoom-handle.png',
-        value: this.toSlider(currentScale)
-      });
-      // XXX: selection to module option
-      slider.render('#slider-parent');
-      topo.recordSubscription(this,
-                              slider.after('valueChange', function(evt) {
-                                if (d3.event && d3.event.scale &&
-                                    d3.event.translate) {
-                                  return;
-                                }
-                                self._fire_zoom(self.toScale(evt.newVal));
-                              }));
-      this.slider = slider;
     },
 
     /**
@@ -129,39 +79,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
      * @method zoomHandler
      */
     zoomHandler: function(evt) {
-      var slider = this.slider;
-
-      // Don't zoom if we don't have a slider yet.
-      if (!slider) {
-        return;
-      }
-      // Set the slider value to match our new zoom level.
-      slider._set('value', this.toSlider(evt.scale));
       // Let rescale handle the actual transformation; evt.scale and
       // evt.translate have both been set by D3 at this point.
       this.rescale(evt);
-    },
-
-    /**
-     * Zoom out event handler.
-     *
-     * @method zoom_out
-     */
-    zoom_out: function(data, self) {
-      var slider = this.slider || self.slider,
-          val = slider.get('value');
-      slider.set('value', val - 10);
-    },
-
-    /**
-     * Zoom in event handler.
-     *
-     * @method zoom_in
-     */
-    zoom_in: function(data, self) {
-      var slider = this.slider || self.slider,
-          val = slider.get('value');
-      slider.set('value', val + 10);
     },
 
     /**
@@ -239,7 +159,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
     rescale: function(evt) {
       // Make sure we don't scale outside of our bounds.
       // This check is needed because we're messing with d3's zoom
-      // behavior outside of mouse events (e.g.: with the slider),
+      // behavior outside of mouse events,
       // and can't trust that zoomExtent will play well.
       var topo = this.get('component'),
           options = topo.options,
@@ -251,7 +171,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       // Ensure that we're definitely within bounds by coercing the scale
       // to fit within our range.
-      evt.scale = this.toScale(this.toSlider(evt.scale));
+      evt.scale = this.toScale(evt.scale);
 
       // Store the current value of scale so that it can be restored later.
       topo.set('scale', evt.scale);
@@ -269,8 +189,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
           changed = false,
           currentScale = topo.get('scale'),
           currentTranslate = topo.get('translate');
-
-      this.renderSlider();
       if (currentTranslate && currentTranslate !== topo.get('translate')) {
         topo.zoom.translate(currentTranslate);
         changed = true;
@@ -318,7 +236,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
   requires: [
     'node',
     'event',
-    'slider',
     'd3',
     'd3-components',
     'juju-models'
