@@ -192,7 +192,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Global to store all of the shared application data.
       var juju = {
         // Collection of components.
-        components: {}
+        components: {},
+        utils: {}
       };
 
       var flags = {}; // Declare an empty set of feature flags.

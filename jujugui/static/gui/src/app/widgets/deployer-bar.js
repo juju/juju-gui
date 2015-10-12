@@ -29,7 +29,7 @@ YUI.add('deployer-bar', function(Y) {
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates,
-      changesUtils = new Y.juju.ChangesUtils(),
+      changesUtils = juju.utils.ChangesUtils,
       bundleHelpers = Y.namespace('juju.BundleHelpers');
 
   var removeBrackets = /^\(?(.{0,}?)\)?$/;

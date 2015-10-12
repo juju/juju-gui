@@ -507,7 +507,7 @@ YUI.add('juju-gui', function(Y) {
       });
       cfg.bundleImporter = this.bundleImporter;
 
-      this.changesUtils = new Y.juju.ChangesUtils();
+      this.changesUtils = window.juju.utils.ChangesUtils;
 
       // Create notifications controller
       this.notifications = new juju.NotificationController({

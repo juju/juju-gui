@@ -40,6 +40,7 @@ describe('deployer bar view', function() {
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
+      changesUtils = window.juju.utils.ChangesUtils;
       View = views.DeployerBarView;
       mockEvent = { halt: function() {} };
       done();
@@ -49,7 +50,6 @@ describe('deployer bar view', function() {
   beforeEach(function() {
     db = new models.Database();
     ecs = new ECS({db: db});
-    changesUtils = new Y.juju.ChangesUtils();
     container = utils.makeContainer(this, 'deployer-bar');
     importBundleFile = utils.makeStubFunction();
     view = new View({
@@ -74,23 +74,6 @@ describe('deployer bar view', function() {
     db.services.add({id: 'django', charm: 'cs:trusty/django-1'});
     db.addUnits({id: 'django/0'});
   };
-
-  describe('_getServiceByUnitId', function() {
-
-    it('returns the service', function() {
-      addEntities(db);
-      var service = changesUtils.getServiceByUnitId('django/0',
-          db.services, db.units);
-      assert.strictEqual(service.get('id'), 'django');
-    });
-
-    it('raises an error if the service is not found', function() {
-      assert.throw(function() {
-        changesUtils.getServiceByUnitId('no-such/42', db.services, db.units);
-      }, 'unit no-such/42 not found');
-    });
-
-  });
 
   it('should exist in the views namespace', function() {
     assert(views.DeployerBarView);
@@ -282,158 +265,6 @@ describe('deployer bar view', function() {
     assert.equal(container.hasClass('summary-open'), false);
   });
 
-  it('can convert relation endpoints to their real names', function() {
-    var services = new Y.ModelList();
-    var args = [
-      ['wordpress', {
-        name: 'db',
-        role: 'server'
-      }],
-      ['84882221$', {
-        name: 'db',
-        role: 'client'
-      }],
-      function() {}
-    ];
-    view.set('db', {
-      services: services
-    });
-    view.get('db').services.add([
-      { id: 'foobar' },
-      { id: '84882221$', displayName: '(mysql)' },
-      { id: 'wordpress', displayName: 'wordpress' }
-    ]);
-    var services = changesUtils.getRealRelationEndpointNames(args, services);
-    assert.deepEqual(services, ['mysql', 'wordpress']);
-  });
-
-  it('can generate descriptions for any change type', function() {
-    addEntities(db);
-    var tests = [{
-      icon: undefined,
-      msg: ' django has been added.',
-      change: {
-        command: {
-          method: '_deploy',
-          args: ['cs:trusty/django-1', 'django'],
-          options: {modelId: 'django'}
-        }
-      },
-      time: '12:34 PM'
-    }, {
-      icon: 'changes-units-added',
-      msg: ' 1 django unit has been added.',
-      change: {
-        command: {
-          method: '_add_unit',
-          args: ['django', 1],
-          options: {modelId: 'django/0'}
-        }
-      }
-    }, {
-      icon: 'changes-units-removed',
-      msg: '1 unit has been removed from foo',
-      change: {
-        command: {
-          method: '_remove_units',
-          args: [['foo/0']]
-        }
-      }
-    }, {
-      // Note that this case is never used in production code.
-      // We always add a single unit to a service.
-      icon: 'changes-units-added',
-      msg: ' 2 django units have been added.',
-      change: {
-        command: {
-          method: '_add_unit',
-          args: ['django', 2],
-          options: {modelId: 'django/0'}
-        }
-      }
-    }, {
-      icon: 'changes-relation-added',
-      msg: 'bar relation added between foo and baz.',
-      change: {
-        command: {
-          method: '_add_relation',
-          args: [
-            ['foo', { name: 'bar' }],
-            ['baz']
-          ]
-        }
-      }
-    }, {
-      icon: 'changes-container-created',
-      msg: '1 container has been added.',
-      change: {
-        command: {
-          method: '_addMachines',
-          args: [[{ parentId: 1 }]]
-        }
-      }
-    }, {
-      icon: 'changes-container-created',
-      msg: '2 containers have been added.',
-      change: {
-        command: {
-          method: '_addMachines',
-          args: [[{ parentId: 1 }, { parentId: 1 }]]
-        }
-      }
-    }, {
-      icon: 'changes-machine-created',
-      msg: '1 machine has been added.',
-      change: {
-        command: {
-          method: '_addMachines',
-          args: [[{}]]
-        }
-      }
-    }, {
-      icon: 'changes-machine-created',
-      msg: '2 machines have been added.',
-      change: {
-        command: {
-          method: '_addMachines',
-          args: [[{}, {}]]
-        }
-      }
-    }, {
-      icon: 'changes-config-changed',
-      msg: 'Configuration values changed for django.',
-      change: {
-        command: {
-          method: '_set_config',
-          args: ['django']
-        }
-      }
-    }, {
-      icon: 'changes-service-exposed',
-      msg: 'An unknown change has been made to this enviroment via the CLI.',
-      change: {
-        command: {
-          method: '_anUnknownMethod'
-        }
-      }
-    }];
-    // This method needs to be stubbed out for the add relation path.
-    var endpointNames = utils.makeStubMethod(
-        changesUtils, 'getRealRelationEndpointNames', ['foo', 'baz']);
-    this._cleanups.push(endpointNames.reset);
-    tests.forEach(function(test) {
-      var change = changesUtils.generateChangeDescription(test.change,
-          db.services, db.units, true);
-      assert.equal(change.icon, test.icon);
-      assert.equal(change.description, test.msg);
-      if (test.timestamp) {
-        assert.equal(change.time, test.time);
-      } else {
-        assert.equal(change.time, '00:00');
-      }
-    });
-  });
-
   it('can display the constraints', function() {
     ecs.lazyAddMachines([[{
       modelId: 'new0',
@@ -458,17 +289,6 @@ describe('deployer bar view', function() {
     assert.equal(container.one('.summary-panel li').get(
         'text').replace(/\s+/g, ' ').trim(),
         'new-0 created');
-  });
-
-  it('can generate descriptions for all the changes in the ecs', function() {
-    var stubDescription = utils.makeStubMethod(
-        changesUtils,
-        'generateChangeDescription');
-    this._cleanups.push(stubDescription.reset);
-    ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
-    changesUtils.generateAllChangeDescriptions(ecs.changeSet, db.services,
-        db.units);
-    assert.equal(stubDescription.callCount(), 2);
   });
 
   it('retrieves all the unit changes', function() {
