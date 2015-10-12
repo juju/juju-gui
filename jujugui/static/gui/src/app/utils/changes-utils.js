@@ -169,7 +169,7 @@ YUI.add('changes-utils', function(Y) {
         }
       }
       if (skipTime || !change) {
-        changeItem.time = '00:00';
+        changeItem.time = '-';
       } else {
         changeItem.time = this._formatAMPM(new Date(change.timestamp));
       }
@@ -209,7 +209,7 @@ YUI.add('changes-utils', function(Y) {
         args.forEach(function(arg) {
           if (serviceId === arg[0]) {
             serviceList.push(
-                service.get('displayName').replace(/^\(|\)$/g, ''));
+                service.get('displayName').match(removeBrackets));
           }
         });
       });
@@ -217,7 +217,7 @@ YUI.add('changes-utils', function(Y) {
     },
 
     /**
-      Return the service unitId belongs to.
+      Return the service for a unit with the supplied id.
       Raise an error if the unit is not found.
 
       @method getServiceByUnitId

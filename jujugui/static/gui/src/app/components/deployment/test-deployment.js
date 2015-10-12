@@ -60,18 +60,18 @@ describe('Deployment', function() {
 
   it('can display the deployment summary', function() {
     var currentChangeSet = sinon.stub();
-    var generateAllChangeDescriptions = sinon.stub();
+    var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         currentChangeSet={currentChangeSet}
-        generateAllChangeDescriptions={generateAllChangeDescriptions}
+        changeDescriptions={changeDescriptions}
         activeComponent="deployment-summary" />);
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentSummary
           deployButtonAction={output.props.children.props.deployButtonAction}
           closeButtonAction={output.props.children.props.closeButtonAction}
-          generateAllChangeDescriptions={generateAllChangeDescriptions}
+          changeDescriptions={changeDescriptions}
           currentChangeSet={currentChangeSet} />
       </div>);
   });

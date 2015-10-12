@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-button', function() {
+YUI.add('generic-button', function() {
 
-  juju.components.InspectorButton = React.createClass({
+  juju.components.GenericButton = React.createClass({
 
     /**
       Returns the classes for the button based on the provided props.
@@ -29,15 +29,29 @@ YUI.add('inspector-button', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'inspector-button',
-        this.props.type ? 'inspector-button--type-' + this.props.type : ''
+        'generic-button',
+        this.props.type ? 'generic-button--type-' + this.props.type : '',
+        {
+          'generic-button--disabled': this.props.disabled
+        }
       );
+    },
+
+    /**
+      Call the action if not disabled.
+
+      @method _handleClick
+    */
+    _handleClick: function() {
+      if (!this.props.disabled) {
+        this.props.action();
+      }
     },
 
     render: function() {
       return (
         <button className={this._generateClasses()}
-          onClick={this.props.action}>
+          onClick={this._handleClick}>
           {this.props.title}
         </button>
       );

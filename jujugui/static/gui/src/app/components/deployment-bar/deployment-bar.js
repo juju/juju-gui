@@ -22,6 +22,17 @@ YUI.add('deployment-bar', function() {
 
   juju.components.DeploymentBar = React.createClass({
 
+  /**
+    Get the label for the deploy button.
+
+    @method _getDeployButtonLabel
+    @param {Boolean} hasCommits Does the env have commits.
+    @returns {String} the label for the deploy button
+  */
+  _getDeployButtonLabel: function(hasCommits) {
+    return hasCommits ? 'Commit changes' : 'Deploy changes';
+  },
+
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
       return (
@@ -30,16 +41,16 @@ YUI.add('deployment-bar', function() {
           visible={true}>
           <juju.components.DeploymentBarChangeCount
             count={changeCount} />
-          <juju.components.DeploymentBarDeployButton
+          <juju.components.GenericButton
             action={this.props.deployButtonAction}
-            hasChanges={changeCount > 0}
-            hasCommits={false} />
+            type="confirm"
+            disabled={changeCount === 0}
+            title={this._getDeployButtonLabel(this.props.hasCommits)} />
         </juju.components.Panel>
       );
     }
   });
 
 }, '0.1.0', { requires: [
-  'deployment-bar-change-count',
-  'deployment-bar-deploy-button'
+  'deployment-bar-change-count'
 ]});

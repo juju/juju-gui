@@ -90,7 +90,7 @@
 }
 
 %button {
-    transition: background .3s;
+    transition: background-color .3s;
     padding: 10px 20px;
     background-color: $white;
     border: 1px solid $mid-grey;
@@ -114,7 +114,7 @@
     &:active,
     &:focus,
     &:hover {
-        $colour: #ae3910;
+        $colour: darken($ubuntu-orange, 10%);
         background-color: $colour;
         border-color: $colour;
     }

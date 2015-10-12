@@ -57,8 +57,7 @@ YUI.add('deployment-component', function() {
             component: <juju.components.DeploymentSummary
               deployButtonAction={this._summaryDeployAction}
               closeButtonAction={this._summaryCloseAction}
-              generateAllChangeDescriptions={
-                  this.props.generateAllChangeDescriptions}
+              changeDescriptions={this.props.changeDescriptions}
               currentChangeSet={this.props.currentChangeSet} />
           };
         break;

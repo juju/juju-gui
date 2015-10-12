@@ -29,7 +29,7 @@ YUI.add('deployment-summary', function() {
       @returns {Array} The collection of changes.
     */
     _generateChangeItems: function() {
-      var changeList = this.props.generateAllChangeDescriptions();
+      var changeList = this.props.changeDescriptions;
       var changes = [];
       changeList.forEach(function(change, i) {
         changes.push(
@@ -73,10 +73,10 @@ YUI.add('deployment-summary', function() {
               </ul>
             </div>
             <div className="deployment-summary__footer">
-              <button className="deployment-summary__deploy-button"
-                onClick={this.props.deployButtonAction}>
-                Deploy
-              </button>
+              <juju.components.GenericButton
+                action={this.props.deployButtonAction}
+                type="confirm"
+                title="Deploy" />
             </div>
           </div>
         </juju.components.Panel>
@@ -85,5 +85,6 @@ YUI.add('deployment-summary', function() {
   });
 
 }, '0.1.0', { requires: [
-  'deployment-summary-change-item'
+  'deployment-summary-change-item',
+  'generic-button'
 ]});

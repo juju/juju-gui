@@ -44,7 +44,7 @@ YUI.add('button-row', function() {
       var components = [];
       buttons.forEach((button) => {
         components.push(
-          <juju.components.InspectorButton
+          <juju.components.GenericButton
             key={button.title}
             title={button.title}
             action={button.action}
@@ -64,5 +64,5 @@ YUI.add('button-row', function() {
   });
 
 }, '0.1.0', { requires: [
-  'inspector-button'
+  'generic-button'
 ]});

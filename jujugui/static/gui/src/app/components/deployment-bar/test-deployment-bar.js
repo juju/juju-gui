@@ -44,14 +44,15 @@ describe('DeploymentBar', function() {
         visible={true}>
         <juju.components.DeploymentBarChangeCount
           count={2} />
-        <juju.components.DeploymentBarDeployButton
+        <juju.components.GenericButton
           action={deployButtonAction}
-          hasChanges={true}
-          hasCommits={false} />
+          type="confirm"
+          disabled={false}
+          title="Deploy changes" />
       </juju.components.Panel>);
   });
 
-  it('passes the button the correct values if there are changes', function() {
+  it('enables the button if there are changes', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
@@ -59,13 +60,14 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction} />);
     assert.deepEqual(output.props.children[1],
-        <juju.components.DeploymentBarDeployButton
+        <juju.components.GenericButton
           action={deployButtonAction}
-          hasChanges={true}
-          hasCommits={false} />);
+          type="confirm"
+          disabled={false}
+          title="Deploy changes" />);
   });
 
-  it('passes the button the correct values if no changes', function() {
+  it('disables the button if there are no changes', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
@@ -73,9 +75,26 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction} />);
     assert.deepEqual(output.props.children[1],
-        <juju.components.DeploymentBarDeployButton
+        <juju.components.GenericButton
           action={deployButtonAction}
-          hasChanges={false}
-          hasCommits={false} />);
+          type="confirm"
+          disabled={true}
+          title="Deploy changes" />);
+  });
+
+  it('passes the button the correct title if there are commits', function() {
+    var currentChangeSet = {};
+    var deployButtonAction = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    assert.deepEqual(output.props.children[1],
+        <juju.components.GenericButton
+          action={deployButtonAction}
+          type="confirm"
+          disabled={true}
+          title="Commit changes" />);
   });
 });

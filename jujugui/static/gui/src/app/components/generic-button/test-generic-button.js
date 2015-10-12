@@ -24,40 +24,63 @@ var testUtils = React.addons.TestUtils;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('InspectorButton', function() {
+describe('GenericButton', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-button', function() { done(); });
+    YUI().use('generic-button', function() { done(); });
   });
 
   it('calls the callable provided when clicked', function() {
     var callbackStub = sinon.stub();
     var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorButton
+        <juju.components.GenericButton
           action={callbackStub} />);
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });
 
+  it('does not call the callable if clicked when disabled', function() {
+    var callbackStub = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.GenericButton
+          disabled={true}
+          action={callbackStub} />);
+    output.props.onClick();
+    assert.equal(callbackStub.callCount, 0);
+  });
+
   it('displays the provided title', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorButton
+        <juju.components.GenericButton
           title="My action" />);
     assert.deepEqual(output,
-      <button className="inspector-button" onClick={undefined}>
+      <button className="generic-button"
+        onClick={output.props.onClick}>
         My action
       </button>);
   });
 
   it('sets the type class', function() {
     var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorButton
+        <juju.components.GenericButton
           title="My action"
           type="confirm" />);
     assert.deepEqual(output,
-      <button className="inspector-button inspector-button--type-confirm"
-       onClick={undefined}>
+      <button className="generic-button generic-button--type-confirm"
+       onClick={output.props.onClick}>
+        My action
+      </button>);
+  });
+
+  it('sets the disabled class if disabled', function() {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.GenericButton
+          title="My action"
+          disabled="true" />);
+    assert.deepEqual(output,
+      <button className="generic-button generic-button--disabled"
+       onClick={output.props.onClick}>
         My action
       </button>);
   });

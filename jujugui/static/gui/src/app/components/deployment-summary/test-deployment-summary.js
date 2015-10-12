@@ -34,7 +34,7 @@ describe('DeploymentSummary', function() {
   it('can display a list of changes', function() {
     var closeButtonAction = sinon.stub();
     var deployButtonAction = sinon.stub();
-    var changes = [{
+    var changeDescriptions = [{
         icon: 'my-icon.svg',
         description: 'Django was added',
         time: '10:12 am'
@@ -43,19 +43,18 @@ describe('DeploymentSummary', function() {
         description: 'Apache2 was added',
         time: '10:13 am'
     }];
-    var generateAllChangeDescriptions = sinon.stub().returns(changes);
     var changeItems = [
     <juju.components.DeploymentSummaryChangeItem
       key={0}
-      change={changes[0]} />,
+      change={changeDescriptions[0]} />,
     <juju.components.DeploymentSummaryChangeItem
       key={1}
-      change={changes[1]} />];
+      change={changeDescriptions[1]} />];
     var className = 'deployment-summary-change-item ' +
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        generateAllChangeDescriptions={generateAllChangeDescriptions}
+        changeDescriptions={changeDescriptions}
         deployButtonAction={deployButtonAction}
         closeButtonAction={closeButtonAction} />);
     assert.deepEqual(output,
@@ -87,10 +86,10 @@ describe('DeploymentSummary', function() {
             </ul>
           </div>
           <div className="deployment-summary__footer">
-            <button className="deployment-summary__deploy-button"
-              onClick={deployButtonAction}>
-              Deploy
-            </button>
+            <juju.components.GenericButton
+              action={deployButtonAction}
+              type="confirm"
+              title="Deploy" />
           </div>
         </div>
       </juju.components.Panel>);

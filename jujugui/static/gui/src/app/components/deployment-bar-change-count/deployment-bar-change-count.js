@@ -30,7 +30,9 @@ YUI.add('deployment-bar-change-count', function() {
     _generateClasses: function() {
       return classNames(
         'deployment-bar__change-count',
-        this.props.count > 0 ? 'deployment-bar__change-count--active' : ''
+        {
+          'deployment-bar__change-count--active': this.props.count > 0
+        }
       );
     },
 

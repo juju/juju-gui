@@ -1,0 +1,35 @@
+.generic-button {
+    @extend %button;
+
+    &--type-confirm {
+        @extend %button-orange;
+    }
+
+    &--disabled {
+        @extend %button-disabled;
+    }
+}
+
+.button-row {
+    .generic-button {
+        width: 100%;
+    }
+
+    &--multiple .generic-button {
+        width: calc(50% - 5px);
+
+        &:first-child {
+            margin-right: 10px;
+        }
+    }
+}
+
+.deployment-bar-panel .generic-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.deployment-summary .generic-button {
+    padding-left: 60px;
+    padding-right: 60px;
+}

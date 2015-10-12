@@ -6,7 +6,7 @@
     border-top-left-radius: $border-radius;
     border-bottom-left-radius: $border-radius;
     color: $white;
-    transition: background .3s;
+    transition: background-color .3s;
 
     &--active {
         background-color: $uncommitted;
