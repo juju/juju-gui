@@ -376,4 +376,3 @@ describe('Bundle Importer', function() {
     });
   });
 });
-
