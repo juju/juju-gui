@@ -1,0 +1,119 @@
+.inspector-expose {
+    @extend %scroll-children;
+    line-height: 18px;
+
+    &__label {
+        @extend %fade-in;
+        line-height: 34px;
+    }
+
+    &__warning {
+        @extend %fade-in;
+        margin: 0 20px 20px;
+    }
+
+    &__units {
+        @extend %collapse-children;
+        margin: 0;
+        border-top: 1px solid $mid-grey;
+        list-style: none;
+    }
+}
+
+
+.inspector-expose__control {
+    margin: 10px 20px 14px 20px;
+    position: relative;
+
+    &--title {
+      padding-top: 8px;
+    }
+
+    &--toggle {
+      position:absolute;
+      right: 0;
+      top: 0;
+    }
+
+    &--input {
+      display: none;
+    }
+
+    &--label {
+        @include create-border-radius($border-radius);
+        width: 56px;
+        display: inline-block;
+        position: relative;
+        margin: 0;
+        cursor: pointer;
+        height: 32px;
+        border: 1px solid $inspector-border-color;
+
+        &--handle {
+            @include create-border-radius($border-radius);
+            position: absolute;
+            z-index: 501;
+            left: 0;
+            height: 24px;
+            width: 24px;
+            margin: 4px;
+            background-color: #505050;
+            text-align: center;
+            line-height: 20px;
+            font-size: 16px;
+            @include transition(left .1s ease-in-out);
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        &:after,
+        &:before {
+            content: '';
+            position: absolute;
+            display: block;
+            top: 4px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        &:before {
+            z-index: 502;
+            background-image:
+                url(juju-ui/assets/images/toggle-off.png);
+            background-color: #dd4814;
+        }
+        &:after {
+            z-index: 502;
+            left: 29px;
+            background-image:
+                url(juju-ui/assets/images/toggle-on-inactive.png);
+            background-color: inherit;
+        }
+    }
+
+    &--input:checked ~ label {
+        .inspector-expose__control--handle {
+            left: 25px;
+            background-color: $confirm-button-color;
+        }
+        &:before {
+            background-image:
+                url(juju-ui/assets/images/toggle-off-inactive.png);
+            background-color: inherit;
+        }
+        &:after {
+            background-image:
+                url(juju-ui/assets/images/toggle-on.png);
+            background-color: #dd4814;
+        }
+    }
+
+    &--description {
+        margin-top: 15px;
+        color: $cool-grey;
+        font-size: 0.875em;
+    }
+}

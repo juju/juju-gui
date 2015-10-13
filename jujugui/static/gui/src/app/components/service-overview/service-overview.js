@@ -149,10 +149,11 @@ YUI.add('service-overview', function() {
         {
           title: 'Relations',
           icon: this.icons.relations
-        },
-        {
+      });
+      if (!service.get('pending')) {
+        actions.push({
           title: 'Expose',
-          value: 'Off',
+          value: service.get('exposed') ? 'On' : 'Off',
           icon: this.icons.expose,
           action: this._navigate,
           state: {
@@ -164,13 +165,14 @@ YUI.add('service-overview', function() {
               }
             }
           }
-        },
-        {
-          title: 'Change version',
-          link: 'https://jujucharms.com/mediawiki/',
-          linkTitle: 'cs:precise/mediawiki-18',
-          icon: this.icons.version
         });
+      }
+      actions.push({
+        title: 'Change version',
+        link: 'https://jujucharms.com/mediawiki/',
+        linkTitle: 'cs:precise/mediawiki-18',
+        icon: this.icons.version
+      });
 
       this.state.actions = actions;
     },

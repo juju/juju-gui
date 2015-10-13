@@ -101,9 +101,12 @@ YUI.add('inspector-component', function() {
           var unit = service.get('units').getById(
               serviceId + '/' + unitId);
           var unitStatus = null;
+          var activeComponent;
           var previousState = this.props.appPreviousState;
           if (previousState.hasOwnProperty('sectionA')) {
-            var units = previousState.sectionA.metadata.units;
+            var metadata = previousState.sectionA.metadata
+            var units = metadata.units;
+            activeComponent = metadata.activeComponent
             // A unit status of 'true' is provided when there is no status, but
             // we don't want to pass that on as the status value.
             unitStatus = units === true ? null : units;
@@ -123,7 +126,7 @@ YUI.add('inspector-component', function() {
                 component: 'inspector',
                 metadata: {
                   id: serviceId,
-                  activeComponent: 'units',
+                  activeComponent: activeComponent || 'units',
                   unit: null,
                   unitStatus: unitStatus
                 }}}};
@@ -165,7 +168,12 @@ YUI.add('inspector-component', function() {
           state.activeChild = {
             title: 'Expose',
             component:
-              <juju.components.InspectorExpose />,
+              <juju.components.InspectorExpose
+                changeState={this.props.changeState}
+                exposeService={this.props.exposeService}
+                unexposeService={this.props.unexposeService}
+                service={service}
+                units={service.get('units')}/>,
             backState: {
               sectionA: {
                 component: 'inspector',
