@@ -51,6 +51,7 @@ YUI.add('inspector-component', function() {
     */
     generateState: function(nextProps) {
       var service = nextProps.service;
+      var serviceId = service.get('id');
       var metadata = nextProps.appState.sectionA.metadata;
       var state = {
         activeComponent: metadata.activeComponent
@@ -82,7 +83,7 @@ YUI.add('inspector-component', function() {
             headerType: unitStatus,
             component:
               <juju.components.UnitList
-                serviceId={service.get('id')}
+                serviceId={serviceId}
                 unitStatus={unitStatus}
                 units={units}
                 destroyUnits={this.props.destroyUnits}
@@ -91,14 +92,14 @@ YUI.add('inspector-component', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: service.get('id'),
+                  id: serviceId,
                   activeComponent: undefined
                 }}}};
         break;
         case 'unit':
           var unitId = metadata.unit;
           var unit = service.get('units').getById(
-              service.get('id') + '/' + unitId);
+              serviceId + '/' + unitId);
           var unitStatus = null;
           var previousState = this.props.appPreviousState;
           if (previousState.hasOwnProperty('sectionA')) {
@@ -113,7 +114,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.UnitDetails
                 destroyUnits={this.props.destroyUnits}
-                serviceId={service.get('id')}
+                serviceId={serviceId}
                 changeState={this.props.changeState}
                 unitStatus={unitStatus}
                 unit={unit} />,
@@ -121,7 +122,7 @@ YUI.add('inspector-component', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: service.get('id'),
+                  id: serviceId,
                   activeComponent: 'units',
                   unit: null,
                   unitStatus: unitStatus
@@ -132,7 +133,7 @@ YUI.add('inspector-component', function() {
             title: 'Scale',
             component:
               <juju.components.ScaleService
-                serviceId={service.get('id')}
+                serviceId={serviceId}
                 addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
                 createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
                 changeState={this.props.changeState} />,
@@ -140,7 +141,7 @@ YUI.add('inspector-component', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: service.get('id'),
+                  id: serviceId,
                   activeComponent: 'units'
                 }}}};
         break;
@@ -156,7 +157,20 @@ YUI.add('inspector-component', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: service.get('id'),
+                  id: serviceId,
+                  activeComponent: undefined
+                }}}};
+        break;
+        case 'expose':
+          state.activeChild = {
+            title: 'Expose',
+            component:
+              <juju.components.InspectorExpose />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
                   activeComponent: undefined
                 }}}};
         break;
@@ -188,6 +202,7 @@ YUI.add('inspector-component', function() {
 
 }, '0.1.0', {
   requires: [
+    'inspector-expose',
     'inspector-header',
     'unit-details',
     'scale-service',

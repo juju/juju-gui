@@ -89,6 +89,7 @@ YUI.add('service-overview', function() {
       @returns {Array} The array of actions.
     */
     _generateActions: function(service) {
+      var serviceId = service.get('id');
       var actions = [];
       var units = service.get('units').toArray();
       var statusCounts = this.props.getUnitStatusCounts(units);
@@ -121,7 +122,7 @@ YUI.add('service-overview', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: service.get('id'),
+                  id: serviceId,
                   activeComponent: 'units',
                   unitStatus: key === 'all' ? null : key
                 }
@@ -152,7 +153,17 @@ YUI.add('service-overview', function() {
         {
           title: 'Expose',
           value: 'Off',
-          icon: this.icons.expose
+          icon: this.icons.expose,
+          action: this._navigate,
+          state: {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'expose'
+              }
+            }
+          }
         },
         {
           title: 'Change version',
