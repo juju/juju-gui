@@ -520,9 +520,22 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addUnit: function(record, next) {
+      var serviceId, charmUrl, size, name;
+      // The bundlelib no longer returns the same format as required by the
+      // GUI's add_unit env method so this re-maps the arguments so that they
+      // match.
+      // If the length is longer than 2 then it's still using the old format
+      // which includes the matching args.
+      // XXX This can be removed once the bundlelib has been updated across
+      // all platforms.
+      if (record.args.length === 2) {
+        // Move the machine placement to the third argument spot.
+        record.args[2] = record.args[1];
+        // Set the number of units to one.
+        record.args[1] = 1;
+      }
       // Loop through the args and update the fields which required a previous
       // record to complete.
-      var serviceId, charmUrl, size, name;
       record.args.forEach(function(arg, index) {
         // If the record value is a record key in the format $addMachines-123
         if (typeof arg === 'string' &&
