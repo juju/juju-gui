@@ -464,7 +464,7 @@ YUI.add('juju-gui', function(Y) {
         if (this.get('jemUrl')) {
           var bakery = new Y.juju.environments.web.Bakery({
             webhandler: new Y.juju.environments.web.WebHandler(),
-            interactive: false,
+            interactive: this.get('interactiveLogin'),
             serviceName: 'jem'
           });
           this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
@@ -1930,6 +1930,15 @@ YUI.add('juju-gui', function(Y) {
         @default undefined
        */
       jemUrl: {},
+
+      /**
+       Whether or not to use interactive login for the IdM/JEM connection.
+
+       @attribute interactiveLogin
+       @type {Boolean}
+       @default false
+       */
+      interactiveLogin: {value: false},
 
       /**
        * Routes
