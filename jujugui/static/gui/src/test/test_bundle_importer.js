@@ -280,9 +280,9 @@ describe('Bundle Importer', function() {
           'data/wordpress-bundle-recordset.json', true);
       var sorted = bundleImporter._sortDryRunRecords(data);
       var order = [
-        'addCharm-0', 'addService-1', 'setAnnotations-2',
-        'addCharm-3', 'addService-4', 'setAnnotations-5',
-        'addCharm-6', 'addService-7', 'addService-99', 'setAnnotations-8',
+        'addCharm-0', 'deploy-1', 'setAnnotations-2',
+        'addCharm-3', 'deploy-4', 'setAnnotations-5',
+        'addCharm-6', 'deploy-7', 'deploy-99', 'setAnnotations-8',
         'addMachines-9', 'addMachines-10',
         'addRelation-11', 'addRelation-12',
         'addUnit-13', 'addMachines-16',
@@ -356,10 +356,10 @@ describe('Bundle Importer', function() {
         // Relations
         assert.equal(
             db.relations.item(0).get('id'),
-            'pending-$addService-1:reverseproxy$addService-4:website');
+            'pending-$deploy-1:reverseproxy$deploy-4:website');
         assert.equal(
             db.relations.item(1).get('id'),
-            'pending-$addService-4:db$addService-7:db');
+            'pending-$deploy-4:db$deploy-7:db');
         done();
       });
       bundleImporter.importBundleDryRun(data);
