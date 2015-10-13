@@ -43,11 +43,12 @@ YUI.add('autodeploy-extension', function(Y) {
       @param {Object} e The click event facade.
     */
     _autoPlaceUnits: function(e) {
-      var db = this.get('db'),
+      var db = this.get('db') || this.db,
+          env = this.get('env') || this.env,
           unplacedUnits = db.units.filterByMachine(null);
       unplacedUnits.forEach(function(unit) {
         var machine = this._createMachine();
-        this.get('env').placeUnit(unit, machine.id);
+        env.placeUnit(unit, machine.id);
       }, this);
     },
 

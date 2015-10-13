@@ -52,6 +52,7 @@ YUI.add('juju-gui', function(Y) {
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
+                                                  widgets.AutodeployExtension,
                                                   Y.juju.Cookies,
                                                   Y.juju.GhostDeployer,
                                                   Y.juju.EnvironmentHeader,
@@ -1165,6 +1166,8 @@ YUI.add('juju-gui', function(Y) {
       this._autoPlaceUnits();
       if (!window.flags || !window.flags.react) {
         this.deployerBar.deploy();
+      } else {
+        this.env.get('ecs').commit(this.env);
       }
     },
 
