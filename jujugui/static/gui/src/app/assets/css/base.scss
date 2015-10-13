@@ -744,6 +744,23 @@ g.service {
         }
     }
 
+    .relation-button {
+        transition: transform .3s;
+        transform: translate(95px, 30px);
+
+        &__link {
+            cursor: pointer;
+
+            &:hover {
+                fill: $white;
+            }
+        }
+
+        &__image {
+            pointer-events: none;
+        }
+    }
+
     .service-control-panel {
         visibility: hidden;
 
@@ -822,6 +839,10 @@ g.service {
         .service-block {
             fill: $white;
         }
+
+        .relation-button {
+            transform: translate(95px, -30px);
+        }
     }
 
     &.subordinate {
@@ -830,9 +851,17 @@ g.service {
             stroke: #888888;
         }
 
+        .relation-button {
+            transform: translate(65px, 30px);
+        }
+
         &:hover {
             .service-block__halo {
                 r: 80;
+            }
+
+            .relation-button {
+                transform: translate(65px, -30px);
             }
         }
     }
@@ -845,6 +874,10 @@ g.service {
             r: 110;
             stroke-width: 0;
             fill: #19b6ee;
+        }
+
+        .relation-button {
+            transform: translate(95px, -30px);
         }
 
         &.is-erroring .service-block__halo {
@@ -863,6 +896,10 @@ g.service {
             .service-block__halo {
                 r: 80;
                 fill: #888888;
+            }
+
+            .relation-button {
+                transform: translate(65px, -30px);
             }
         }
 

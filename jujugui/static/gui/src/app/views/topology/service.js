@@ -1438,10 +1438,28 @@ YUI.add('juju-topology-service', function(Y) {
           .attr('transform', function(d) {
             // Position the block so that the relation indicator will
             // appear at the top.
-            return 'translate(' + [d.subordinate ? 65 : 95, -30] + ')';
+            return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
           });
 
+      relationButton.append('line')
+        .attr({
+          'x1': 0,
+          'y1': 0,
+          'x2': 0,
+          'y2': 30
+        })
+        .attr('stroke-width', 1)
+        .attr('stroke', '#888888');
+        relationButton.append('circle')
+        .attr({
+          'cx': 0,
+          'cy': 34,
+          'r': 4
+        })
+        .attr('fill', '#888888');
+
       relationButton.append('circle')
+        .classed('relation-button__link', true)
         .attr({
           cx: 0,
           cy: 0,
