@@ -30,9 +30,7 @@ YUI.add('deployment-bar', function() {
       @returns {Object} The current state.
     */
     getInitialState: function() {
-      // Setting a default state object.
       return {
-        latestChange: null,
         latestChangeDescription: null
       };
     },
@@ -55,21 +53,6 @@ YUI.add('deployment-bar', function() {
     _updateLatestChange: function(changeSet) {
       var keys = Object.keys(changeSet);
       var latestChange = keys[keys.length - 1];
-      if (latestChange !== this.state.latestChange) {
-        this.setState({latestChange: latestChange});
-      }
-      this._getLatestChange(changeSet, latestChange);
-    },
-
-    /**
-      Get the latest ecs change.
-
-      @method _getLatestChange
-      @param {Object} currentChangeSet The collection of ecs changes.
-      @param {Object} latestChange The object key for the latest change.
-      @returns  {Object} The lastest ecs change.
-    */
-    _getLatestChange: function(changeSet, latestChange) {
       var previousIndex = this.previousNotifications.indexOf(latestChange);
       if (latestChange && previousIndex === -1) {
         var change = changeSet[latestChange];
@@ -114,5 +97,6 @@ YUI.add('deployment-bar', function() {
 
 }, '0.1.0', { requires: [
   'deployment-bar-change-count',
-  'deployment-bar-notification'
+  'deployment-bar-notification',
+  'panel-component'
 ]});

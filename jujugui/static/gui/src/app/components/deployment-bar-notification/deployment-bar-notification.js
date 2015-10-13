@@ -37,13 +37,25 @@ YUI.add('deployment-bar-notification', function() {
       }
       // Fade out the notification.
       if (node) {
-        window.requestAnimationFrame(function() {
-          node.classList.remove('deployment-bar__notification--visible');
-        });
+        node.classList.remove('deployment-bar__notification--visible');
       }
     },
 
+    componentDidMount: function() {
+      this._showNotification(null);
+    },
+
     componentDidUpdate: function(prevProps, prevState) {
+      this._showNotification(prevProps);
+    },
+
+    /**
+      Show the notification with the supplied change.
+
+      @method _showNotification
+      @param {Object} prevProps The previous props for the component.
+    */
+    _showNotification: function(prevProps) {
       if (this.props.change) {
         var newId = this.props.change.id;
         var oldId = prevProps && prevProps.change ? prevProps.change.id : null;
@@ -52,11 +64,9 @@ YUI.add('deployment-bar-notification', function() {
           var node = React.findDOMNode(this);
           // Fade in the notification.
           if (node) {
-            window.requestAnimationFrame(function() {
-              node.classList.add('deployment-bar__notification--visible');
-            });
-            clearTimeout(this.timeout);
-            this.timeout = setTimeout(this._hideNotification, 4000);
+            node.classList.add('deployment-bar__notification--visible');
+            window.clearTimeout(this.timeout);
+            this.timeout = window.setTimeout(this._hideNotification, 4000);
           }
         }
       }
@@ -68,7 +78,7 @@ YUI.add('deployment-bar-notification', function() {
       @method _handleClick
     */
     _handleClick: function() {
-      clearTimeout(this.timeout);
+      window.clearTimeout(this.timeout);
       this._hideNotification();
     },
 
