@@ -390,6 +390,21 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_deploy: function(record, next) {
+      // loop through the args and update the fields which required a previous
+      // record to complete.
+      record.args.forEach(function(arg, index) {
+        if (typeof arg === 'string' &&
+            arg.indexOf('$') === 0 &&
+            arg.split('-').length === 2) {
+          var recordId = arg.replace(/^\$/, '');
+          var requiredModel = record[recordId];
+          switch (index) {
+            case 0:
+              record.args[0] = requiredModel.get('id');
+              break;
+          }
+        }
+      });
       this.fakebackend._loadCharm(record.args[0], {
         'success': function(charm) {
           var ghostService = this.db.services.ghostService(charm);
