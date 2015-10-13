@@ -1162,8 +1162,10 @@ YUI.add('juju-gui', function(Y) {
       @method _autoplaceAndCommitAll
     */
     _autoplaceAndCommitAll: function() {
-      this.deployerBar._autoPlaceUnits();
-      this.deployerBar.deploy();
+      this._autoPlaceUnits();
+      if (!window.flags || !window.flags.react) {
+        this.deployerBar.deploy();
+      }
     },
 
     /**
@@ -1994,6 +1996,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-view-login',
     'juju-landscape',
     // end juju-views group
+    'autodeploy-extension',
     'juju-websocket-logging',
     'io',
     'json-parse',
