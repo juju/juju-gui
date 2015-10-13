@@ -119,7 +119,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   models.Charm = Y.Base.create('browser-charm', Y.Model, [
-    models.SearchResult
+    models.EntityExtension
   ], {
     /**
      * Parse the relations ATTR from the api into specific provides/requires
@@ -864,6 +864,6 @@ YUI.add('juju-charm-models', function(Y) {
   requires: [
     'model',
     'model-list',
-    'search-result-extension'
+    'entity-extension'
   ]
 });

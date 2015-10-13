@@ -237,3 +237,18 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
+%shadow-header {
+    overflow: hidden;
+    padding-top: 0;
+    background: #fff;
+    color: $cool-grey;
+
+    .header {
+        $shadow-size: 3px;
+        @include create-box-shadow(0px 1px $shadow-size 0px rgba(0, 0, 0, 0.35));
+        margin-bottom: $shadow-size;
+        display: block;
+        padding-top: 30px;
+        padding-bottom: 20px;
+    }
+}

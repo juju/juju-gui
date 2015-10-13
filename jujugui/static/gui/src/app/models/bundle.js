@@ -44,7 +44,7 @@ YUI.add('juju-bundle-models', function(Y) {
    *
    */
   models.Bundle = Y.Base.create('browser-bundle', Y.Model, [
-    models.SearchResult
+    models.EntityExtension
   ], {
 
     /**
@@ -334,6 +334,6 @@ YUI.add('juju-bundle-models', function(Y) {
     'juju-view-utils',
     'model',
     'model-list',
-    'search-result-extension'
+    'entity-extension'
   ]
 });

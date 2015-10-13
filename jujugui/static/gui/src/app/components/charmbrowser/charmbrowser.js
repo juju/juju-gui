@@ -42,6 +42,7 @@ YUI.add('charmbrowser-component', function() {
     */
     generateState: function(nextProps) {
       var metadata = nextProps.appState.sectionC.metadata;
+      var utils = this.props.utils;
       var state = {
         activeComponent: metadata.activeComponent
       };
@@ -81,7 +82,10 @@ YUI.add('charmbrowser-component', function() {
             panelInstanceName: 'white-box',
             component:
               <juju.components.EntityDetails
-                id={metadata.id} />
+                changeState={this.props.changeState}
+                getEntity={this.props.getEntity}
+                id={metadata.id}
+                pluralize={utils.pluralize} />
           };
         break;
       }

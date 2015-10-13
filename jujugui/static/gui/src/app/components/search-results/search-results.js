@@ -27,6 +27,9 @@ YUI.add('search-results', function(Y) {
       the match criteria (name, owner, type). When there is a key collision,
       add the series to the exist entity. Using an OrderedDict (versus a
       normal dict) is important to preserve sorting.
+
+      @method collapseSeries
+      @param {Array} entities The entities in their uncollapsed state.
      */
     collapseSeries: function(entities) {
 
@@ -100,10 +103,16 @@ YUI.add('search-results', function(Y) {
       return returnedEntities;
     },
 
+    /**
+      Handle successful searches by updating internal state with the results.
+
+      @method searchSuccess
+      @param {Array} rawResults The entity models returned by the search.
+    */
     searchSuccess: function(rawResults) {
       // Parse the raw results.
       var results = rawResults.map(function(model) {
-        return model.toSearchResult();
+        return model.toEntity();
       }, this);
       results = this.collapseSeries(results);
       // Split the results into promulgated and normal.
@@ -132,7 +141,13 @@ YUI.add('search-results', function(Y) {
       this.setState({data: data});
     },
 
-    searchFailure: function(type, data, request) {
+    /**
+      Handle failed searches by displaying appropriate error notification.
+
+      @method searchFailure
+      @param {Object} response The failure response.
+    */
+    searchFailure: function(response) {
       // XXX: Implement error handling.
       console.error('Search request failed.');
     },
@@ -154,6 +169,13 @@ YUI.add('search-results', function(Y) {
       );
     },
 
+    /**
+      Determines whether an API search request is actually needed. We only need
+      to make a new search request if the query has changed since the last one.
+
+      @method shouldSearch
+      @param {Object} nextProps The next set of properties.
+    */
     shouldSearch: function(nextProps) {
       var nextQuery = JSON.stringify(nextProps.query),
           currentQuery = JSON.stringify(this.state.data.text);

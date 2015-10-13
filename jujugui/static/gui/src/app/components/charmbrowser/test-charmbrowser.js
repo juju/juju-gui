@@ -43,14 +43,12 @@ describe('Charmbrowser', function() {
         }
       }};
     var changeState = sinon.stub();
-    var addService = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         changeState={changeState}
-        charmstoreSearch={charmstoreSearch}
-        addService={addService} />);
+        charmstoreSearch={charmstoreSearch} />);
     assert.deepEqual(output,
         <juju.components.Panel
           instanceName="white-box"
@@ -70,7 +68,6 @@ describe('Charmbrowser', function() {
           activeComponent: 'mid-point'
         }
       }};
-    var clearState = sinon.stub();
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
@@ -120,18 +117,26 @@ describe('Charmbrowser', function() {
           id: id
         }
       }};
-    var clearState = sinon.stub();
-    var addService = sinon.stub();
+    var getEntity = sinon.spy();
+    var changeState = sinon.spy();
+    var utils = {
+      pluralize: sinon.spy()
+    };
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
-        addService={addService} />);
+        changeState={changeState}
+        getEntity={getEntity}
+        utils={utils} />);
     assert.deepEqual(output,
         <juju.components.Panel
           instanceName="white-box"
           visible={true}>
           <juju.components.EntityDetails
-            id={id} />
+            changeState={changeState}
+            getEntity={getEntity}
+            id={id}
+            pluralize={utils.pluralize} />
         </juju.components.Panel>);
   });
 });
