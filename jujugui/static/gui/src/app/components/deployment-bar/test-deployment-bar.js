@@ -42,6 +42,8 @@ describe('DeploymentBar', function() {
       <juju.components.Panel
         instanceName="deployment-bar-panel"
         visible={true}>
+        <juju.components.DeploymentBarNotification
+          change={null} />
         <juju.components.DeploymentBarChangeCount
           count={2} />
         <juju.components.GenericButton
@@ -59,7 +61,7 @@ describe('DeploymentBar', function() {
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction} />);
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -74,7 +76,7 @@ describe('DeploymentBar', function() {
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction} />);
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -90,7 +92,7 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"

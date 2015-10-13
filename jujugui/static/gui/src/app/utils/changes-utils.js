@@ -38,7 +38,7 @@ YUI.add('changes-utils', function(Y) {
         change;
     Object.keys(changeSet).forEach(function(key) {
       change = this.generateChangeDescription(
-          changeSet[key], services, units);
+          services, units, changeSet[key]);
       if (change) {
         changes.push(change);
       }
@@ -50,16 +50,17 @@ YUI.add('changes-utils', function(Y) {
     Return a description of an ecs change for the summary.
 
     @method generateChangeDescription
-    @param {Object} change The environment change.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
+    @param {Object} change The environment change.
     @param {Bool} skipTime optional, used for testing, don't generate time.
   */
-  ChangesUtils.generateChangeDescription = function(change, services, units,
+  ChangesUtils.generateChangeDescription = function(services, units, change,
                                                     skipTime) {
     var changeItem = {};
 
     if (change && change.command) {
+      changeItem.id = change.id;
       // XXX: The add_unit is just the same as the service because adding
       // the service also adds the unit. We need to look at the UX for
       // units as follow up.

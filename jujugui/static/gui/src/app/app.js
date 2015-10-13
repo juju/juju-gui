@@ -765,14 +765,19 @@ YUI.add('juju-gui', function(Y) {
     _renderDeployment: function() {
       var env = this.env;
       var ecs = env.get('ecs');
+      var services = this.db.services;
+      var units = this.db.units;
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
-          currentChangeSet, this.db.services, this.db.units);
+          currentChangeSet, services, units);
       React.render(
         <window.juju.components.Deployment
           ecsCommit={ecs.commit.bind(ecs, env)}
           changeDescriptions={changeDescriptions}
+          generateChangeDescription={
+              changesUtils.generateChangeDescription.bind(
+                  changesUtils, services, units)}
           currentChangeSet={currentChangeSet} />,
         document.getElementById('deployment-container'));
     },
