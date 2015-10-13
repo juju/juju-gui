@@ -437,7 +437,16 @@ YUI.add('bundle-importer', function(Y) {
           ghostService.set('displayName', displayName);
 
           ghostService.set('config', config);
-
+          // Convert the string space delimeted constraints into an object
+          // as required by the juju api.
+          var constraints = {};
+          var stringConstraints = record.args[3];
+          if (stringConstraints && stringConstraints.length > 0) {
+            stringConstraints.split(' ').forEach(function(constraint) {
+              var vals = constraint.split('=');
+              constraints[vals[0]] = vals[1];
+            });
+          }
           this.env.deploy(
               // Utilize the charm's id, as bundles may specify charms without
               // fully qualified charm IDs in the service specification. This
@@ -448,7 +457,7 @@ YUI.add('bundle-importer', function(Y) {
               record.args[2],
               undefined, // Config file content.
               0, // Number of units.
-              {}, // Constraints.
+              constraints, // Constraints.
               null, // toMachine.
               function(ghostService) {
                 var name = ghostService.get('name');
@@ -458,7 +467,7 @@ YUI.add('bundle-importer', function(Y) {
                   pending: false,
                   loading: false,
                   config: ghostService.get('config'),
-                  constraints: {}
+                  constraints: constraints
                 });
                 this.env.update_annotations(
                     name, 'service', ghostService.get('annotations'));
