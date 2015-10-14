@@ -31,7 +31,9 @@ YUI.add('entity-details', function() {
     fetchSuccess: function(models) {
       this.setState({waitingForFetch: false});
       if (models.length > 0) {
-        this.setState({entity: models[0].toEntity()});
+        var entity = models[0];
+        this.setState({entityModel: entity});
+        this.setState({entity: entity.toEntity()});
       }
     },
 
@@ -92,9 +94,26 @@ YUI.add('entity-details', function() {
       });
     },
 
+    /**
+      Add a service for this charm to the canvas.
+
+      @method _handleDeployClick
+      @param {Object} e The click event
+    */
+    _handleDeployClick: function(e) {
+      this.props.deployService(this.state.entityModel);
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: null
+        }
+      });
+    },
+
     getInitialState: function() {
       return {
         entity: null,
+        entityModel: null,
         waitingForFetch: false
       };
     },
@@ -168,6 +187,10 @@ YUI.add('entity-details', function() {
                       {this.props.pluralize('deploy', entity.downloads)}
                     </li>
                   </ul>
+                  <juju.components.GenericButton
+                    action={this._handleDeployClick}
+                    type="confirm"
+                    title="Add to canvas" />
                 </div>
               </div>
             </header>

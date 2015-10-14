@@ -868,6 +868,7 @@ YUI.add('juju-gui', function(Y) {
         <components.Charmbrowser
           charmstoreSearch={cs.search.bind(cs)}
           getEntity={cs.getEntity.bind(cs)}
+          deployService={this.deployService.bind(this)}
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
           utils={utils} />,
