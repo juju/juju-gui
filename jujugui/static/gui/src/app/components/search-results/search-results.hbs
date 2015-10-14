@@ -1,0 +1,217 @@
+{{#*inline "searchRow"}}
+  <span tabindex="0" role="button" class="list-block__entity-link"
+        data-id="{{id}}"></span>
+  <div class="{{#if nameWidth}}{{nameWidth}}{{else}}four-col{{/if}} charm-name__column">
+    <h3 class="list-block__list--item-title">
+      {{displayName}}
+      {{#if special}}
+        <span class="special-flag"></span>
+      {{/if}}
+    </h3>
+    <ul class="tag-list">
+      {{#if tags}}
+        {{#each tags}}
+          <li class="tag-list--item"><a href="/q?tags={{this}}">{{this}}</a></li>
+        {{/each}}
+      {{else}}
+        &nbsp;
+      {{/if}}
+    </ul>
+  </div>
+  <div class="{{#if seriesWidth}}{{seriesWidth}}{{else}}two-col{{/if}} series__column">
+    {{#if series}}
+      <ul class="tag-list tag-list--spaced">
+        {{#each series}}
+          <li class="tag-list--item"><a href="{{url}}">{{name}}</a></li>
+        {{/each}}
+      </ul>
+    {{else}}
+      {{!Add some content so the row is spaced correctly.}}
+      &nbsp;
+    {{/if}}
+  </div>
+  <div class="{{#if iconsWidth}}{{iconsWidth}}{{else}}three-col{{/if}} charm-logos__column list-block__column">
+    <ul class="list-icons clearfix">
+      {{#each services}}
+        <li class="list-icons__item">
+          <a href="{{url}}">
+            {{#compare index 20 operator='>'}}
+              <p>
+                <span class="tip">
+                  {{#if iconPath}}
+                    <img class="icon-scroll list-icons__image"
+                         data-icon="{{ iconPath }}"
+                         src="{{../STATIC_URL}}img/icons/default-charm.svg"
+                         alt="{{displayName}} icon" />
+                  {{else}}
+                    <img class="list-icons__image"
+                         src="{{../STATIC_URL}}img/icons/default-charm.svg"
+                         alt="{{displayName}} icon" />
+                  {{/if}}
+                  <span class="tip-content" data-tooltip="{{ displayName }}"></span>
+                </span>
+              </p>
+            {{else}}
+              <p>
+                <span class="tip">
+                  <img src="{{#if iconPath}}{{iconPath}}{{else}}{{../STATIC_URL}}img/icons/default-charm.svg{{/if}}"
+                       class="list-icons__image"
+                       alt="{{displayName}} icon" />
+                  <span class="tip-content" data-tooltip="{{displayName}}"></span>
+                </span>
+              </p>
+            {{/compare}}
+          </a>
+        </li>
+      {{else}}
+        <li class="list-icons__item">
+          <a href="{{ url }}">
+            {{#compare index 20 operator='>'}}
+              <p>
+                <span class="tip">
+                  {{#if iconPath}}
+                  <img class="icon-scroll list-icons__image"
+                       data-icon="{{iconPath}}"
+                       src="{{../STATIC_URL}}img/icons/default-charm.svg"
+                       alt="{{displayName}} icon" />
+                  {{else}}
+                  <img src="{{../STATIC_URL}}img/icons/default-charm.svg"
+                       class="list-icons__image"
+                       alt="{{displayName}} icon" />
+                  {{/if}}
+                  <span class="tip-content" data-tooltip="{{displayName}}"></span>
+                </span>
+              </p>
+            {{else}}
+              <p>
+                <span class="tip">
+                  <img src="{{#if iconPath}}{{iconPath}}{{else}}{{../STATIC_URL}}img/icons/default-charm.svg{{/if}}" class="list-icons__image" alt="{{displayName}} icon" />
+                  <span class="tip-content" data-tooltip="{{displayName}}"></span>
+                </span>
+              </p>
+            {{/compare}}
+          </a>
+        </li>
+      {{/each}}
+      </ul>
+  </div>
+  <div class="one-col deploys__column list-block__column">
+    <p class="cell">
+      <span class="tip">
+        <span>{{downloads}}</span>
+        <span class="tip-content" data-tooltip="{{downloads}} deploys"></span>
+      </span>
+    </p>
+  </div>
+  <div class="two-col owner__column list-block__column last-col">
+    <p class="cell">
+      {{#if owner}}
+        {{owner}}
+      {{else}}
+        'No owner'
+      {{/if}}
+    </p>
+  </div>
+{{/inline}}
+
+
+<div class="row no-padding-top">
+  <div class="inner-wrapper list-block">
+    {{#if initialized}}
+      {{#if hasResults}}
+        {{#if text}}
+          <div class="twelve-col list-block__title no-margin-bottom">
+            Your search for &lsquo;{{text}}&rsquo; returned {{solutionsCount}} results.
+          </div>
+        {{/if}}
+        <div class="list-block__filters">
+          <nav class="six-col list-block__type">
+            <ul>
+              <li class="{{#compare currentType 'all'}}selected{{/compare}}" data-type="all" tabindex="0" role="button">All</li>
+              <li class="{{#compare currentType 'charm'}}selected{{/compare}}" data-type="charm" tabindex="0" role="button">Charms</li>
+              <li class="{{#compare currentType 'bundle'}}selected{{/compare}}" data-type="bundle" tabindex="0" role="button">Bundles</li>
+            </ul>
+          </nav>
+          <div class="six-col last-col">
+            <div class="list-block__filters--selects">
+              <form>
+                <div class="list-block__sort">
+                  Sort by:
+                  <select>
+                    <option value="-downloads" {{#compare currentSort '-downloads'}}selected="selected"{{/compare}}>Most popular</option>
+                    <option value="downloads" {{#compare currentSort 'downloads'}}selected="selected"{{/compare}}>Least popular</option>
+                    <option value="name" {{#compare currentSort 'name'}}selected="selected"{{/compare}}>Name (a-z)</option>
+                    <option value="-name" {{#compare currentSort '-name'}}selected="selected"{{/compare}}>Name (z-a)</option>
+                    <option value="owner" {{#compare currentSort 'owner'}}selected="selected"{{/compare}}>Author (a-z)</option>
+                    <option value="-owner" {{#compare currentSort '-owner'}}selected="selected"{{/compare}}>Author (z-a)</option>
+                  </select>
+                </div>
+                <div class="list-block__series">
+                  Series:
+                  <select>
+                    {{! The series list has been limited to sane options, full list is here:
+                    https://github.com/juju/charmstore/blob/v5-unstable/internal/router/router.go#L33 }}
+                    {{#each allSeries}}
+                      <option value="{{this}}" {{#compare currentSeries this}}selected="selected"{{/compare}}>{{fullSeries this}}</option>
+                    {{/each}}
+                  </select>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {{#if standalone}}
+          {{#each currentTopics}}
+            <div class="twelve-col solutions__feature-link">
+              <div class="ten-col no-margin-bottom">
+                {{#if topic.searchIcon}}
+                  <img src="{{STATIC_URL}}{{topic.searchIcon}}" alt="{{topic.name}} icon" />
+                {{/if}}
+                <h3 class="solutions__feature-heading">
+                  <a href="{{topic.url}}">Juju solutions for {{topic.displayName}}&nbsp;&rsaquo;</a>
+                </h3>
+                <p class="solutions__feature-text">
+                  {{#compare id 'openstack'}}
+                    Juju makes it easy to deploy OpenStack at scale.  Quickly and reliably build an enterprise-scale cloud run on Ubuntu &mdash; the most popular operating system for OpenStack.
+                  {{/compare}}
+                  <a href="{{topic.url}}">Find out more&nbsp;&rsaquo;</a>
+                </p>
+              </div>
+            </div>
+          {{/each}}
+        {{/if}}
+        <div class="entity-search-results">
+          {{#if promulgatedResultsCount}}
+            <h4>Community recommended <span class="count">({{promulgatedResultsCount}})</span></h4>
+            <ul class="list-block__list promulgated">
+              {{#each promulgatedResults}}
+                <li class="list-block__list--item {{type}}">
+                {{> searchRow index=@index}}
+                </li>
+              {{/each}}
+            </ul>
+          {{/if}}
+          {{#if normalResultsCount}}
+            <h4>Recommended <span class="count">({{normalResultsCount}})</span></h4>
+            <ul class="list-block__list">
+              {{#each normalResults}}
+                <li class="list-block__list--item {{type}}">
+                {{> searchRow index=@index}}
+                </li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </div>
+      {{else}}
+        <div class="eight-col no-results-container last-col">
+          <h1 class="row-title">Your search for <strong>{{text}}</strong> returned 0 results</h1>
+          <p>Try a more specific or different query, try other keywords or learn how to <a href="/docs/authors-charm-writing">create your own solution</a>.</p>
+        </div>
+      {{/if}}
+    {{else}}
+      <div class="twelve-col initial-load-container last-col">
+        <div class="spinner-loader">Loading...</div>
+      </div>
+    {{/if}}
+  </div>
+</div>
