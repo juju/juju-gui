@@ -133,7 +133,7 @@ YUI.add('entity-details', function() {
     _getSeries: function(series) {
       console.log(series);
       if (series) {
-        return <li className="header__series">{series}</li>
+        return <li className="header__series">{series}</li>;
       } else {
         return null;
       }
