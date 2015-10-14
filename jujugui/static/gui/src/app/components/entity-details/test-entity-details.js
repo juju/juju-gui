@@ -134,9 +134,11 @@ describe('EntityDetails', function() {
         pluralize={pluralize}
         id="django"/>, true);
     output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children.props.children.props.children[1].props.children[1],
+    var deployButton = output.props.children.props.children.props.children
+                             .props.children[1].props.children[1];
+    assert.deepEqual(deployButton,
       <juju.components.GenericButton
-        action={output.props.children.props.children.props.children.props.children[1].props.children[1].props.action}
+        action={deployButton.props.action}
         type="confirm"
         title="Add to canvas" />);
   });
@@ -162,7 +164,8 @@ describe('EntityDetails', function() {
         pluralize={pluralize}
         id="django"/>, true);
     output = shallowRenderer.getRenderOutput();
-    output.props.children.props.children.props.children.props.children[1].props.children[1].props.action();
+    output.props.children.props.children.props.children.props.children[1]
+          .props.children[1].props.action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockData[0]);
     assert.equal(changeState.callCount, 1);
