@@ -135,7 +135,12 @@ var module = module;
     };
     var url = [this.jemUrl, 'env', envOwnerName].join('/');
     var _newEnvironment = function(servers) {
-      var path = servers[0].path;
+      var path;
+      if (servers && servers.length > 0 && servers[0].path) {
+        path = servers[0].path;
+      } else {
+        failure('Cannot create a new environment: No state servers found.');
+      }
       body['state-server'] = path;
       this._makeRequest(url, 'POST', body, success, failure);
     };
