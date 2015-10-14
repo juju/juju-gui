@@ -235,6 +235,31 @@ describe('ServiceOverview', function() {
         linkTitle={undefined} />);
   });
 
+  it('shows the configure action', function() {
+    var service = {
+      get: function() {
+        return {
+          toArray: function() {
+            return [{agent_state: 'error'}];
+          }
+        };
+      }};
+    var output = jsTestUtils.shallowRender(
+          <juju.components.ServiceOverview
+            getUnitStatusCounts={getUnitStatusCounts()}
+            service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[1],
+      <juju.components.OverviewAction
+        key="Configure"
+        title="Configure"
+        value={undefined}
+        icon={undefined}
+        action={output.props.children[0].props.children[1].props.action}
+        valueType={undefined}
+        link={undefined}
+        linkTitle={undefined} />);
+  });
+
   it('renders the delete button', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview

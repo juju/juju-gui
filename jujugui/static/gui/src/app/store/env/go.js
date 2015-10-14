@@ -1763,8 +1763,16 @@ YUI.add('juju-env-go', function(Y) {
         request.Request = 'ServiceSetYAML';
         request.Params.Config = data;
       } else {
-        // Only the modified options are sent to the API backend.
-        newValues = utils.getChangedConfigOptions(config, serviceConfig);
+        // Only the modified options are sent to the API backend. With the
+        // new React configuration system the modified values is determined
+        // in the view and set in the service model so we can faithfully
+        // take what it says to set as correct.
+        if (!window.flags || !window.flags.react) {
+          newValues = utils.getChangedConfigOptions(config, serviceConfig);
+        } else {
+          newValues = config;
+        }
+
         request.Request = 'ServiceSet';
         request.Params.Options = stringifyObjectValues(newValues);
       }

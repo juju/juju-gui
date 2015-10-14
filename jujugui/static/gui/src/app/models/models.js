@@ -246,13 +246,17 @@ YUI.add('juju-models', function(Y) {
           Y.merge(this.get('environmentConfig'), changeConfig));
       // If there are any fields where the local version is different from the
       // new environment fields that means that it has been changed locally.
-      if (conflicted.length > 0) {
-        // Loop through the conflicted values and make sure we don't update the
-        // local values of those properties in the model.
-        conflicted.forEach(function(key) {
-          combined[key] = serviceConfig[key];
-        });
-        this.set('_conflictedFields', conflicted);
+      // XXX We will want to enable conflicted field support for the react
+      // stuff in the future but for now it's only causing issues with the UI.
+      if (!window.flags || !window.flags.react) {
+        if (conflicted.length > 0) {
+          // Loop through the conflicted values and make sure we don't update
+          // the local values of those properties in the model.
+          conflicted.forEach(function(key) {
+            combined[key] = serviceConfig[key];
+          });
+          this.set('_conflictedFields', conflicted);
+        }
       }
       // Update the config property with the appropriate values.
       this.set('config', combined);
