@@ -250,8 +250,8 @@ YUI.add('juju-models', function(Y) {
       // stuff in the future but for now it's only causing issues with the UI.
       if (!window.flags || !window.flags.react) {
         if (conflicted.length > 0) {
-          // Loop through the conflicted values and make sure we don't update the
-          // local values of those properties in the model.
+          // Loop through the conflicted values and make sure we don't update
+          // the local values of those properties in the model.
           conflicted.forEach(function(key) {
             combined[key] = serviceConfig[key];
           });

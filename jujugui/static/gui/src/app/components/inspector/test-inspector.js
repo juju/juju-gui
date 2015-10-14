@@ -98,6 +98,34 @@ describe('Inspector', function() {
           changeState={changeStateStub} />);
   });
 
+  it('displays the configuration when the app state calls for it', function() {
+    var setConfig = sinon.stub();
+    var charm = 'charm';
+    var getStub = sinon.stub();
+
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'config'
+        }}};
+    var output = jsTestUtils.shallowRender(
+        <juju.components.Inspector
+          appState={appState}
+          service={service}
+          charm={charm}
+          setConfig={setConfig} /> );
+
+    var children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+        <juju.components.Configuration
+          service={service}
+          charm={charm}
+          setConfig={setConfig} />);
+  });
+
   it('displays the unit details when the app state calls for it', function() {
     var destroyUnits = sinon.stub();
     var changeState = sinon.stub();
