@@ -107,8 +107,16 @@ YUI.add('inspector-config', function() {
     */
     _generateConfigElements: function() {
       var charmOptions = this.props.charm.get('options');
+      // Some charms don't have any options, in this case, just return.
+      if (!charmOptions) {
+        return (
+          <div className="inspector-config--no-config">
+            No configuration options.
+          </div>);
+      }
       var serviceConfig = this.props.service.get('config');
       var configElements = [];
+
       Object.keys(charmOptions).forEach((key) => {
         var option = charmOptions[key];
         option.key = key;

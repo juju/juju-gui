@@ -53,7 +53,7 @@ describe('Configuration', function() {
         charm={charm}
         setConfig={setConfig} />);
 
-    assert.deepEqual(output.props.children[1], [
+    assert.deepEqual(output.props.children[0].props.children[1], [
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
@@ -65,6 +65,21 @@ describe('Configuration', function() {
         option={option2}
         config={option2key} />
     ]);
+  });
+
+  it('renders message when no config available', function() {
+    var charm = {
+      get: function() {
+        // Return the charm options.
+        return null;
+      }};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        charm={charm} />);
+    assert.deepEqual(output.props.children[0].props.children[1],
+      <div className="inspector-config--no-config">
+        No configuration options.
+      </div>);
   });
 
   it('saves the config when save config is clicked', function() {

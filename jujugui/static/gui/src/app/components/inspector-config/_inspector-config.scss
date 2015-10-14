@@ -4,4 +4,8 @@
     &__fields {
         @extend %collapse-children;
     }
+
+    &--no-config {
+      margin: 10px 20px 14px 20px;
+    }
 }
