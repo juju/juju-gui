@@ -16,6 +16,25 @@
       display: none;
     }
 
+    &--handle {
+        border-radius: $border-radius;
+        position: absolute;
+        z-index: 501;
+        left: 0;
+        height: 24px;
+        width: 24px;
+        margin: 4px;
+        background-color: #505050;
+        text-align: center;
+        line-height: 20px;
+        font-size: 16px;
+        transition: left .1s ease-in-out;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
     &--label {
         @include create-border-radius($border-radius);
         width: 56px;
@@ -26,24 +45,6 @@
         height: 32px;
         border: 1px solid $inspector-border-color;
 
-        &--handle {
-            @include create-border-radius($border-radius);
-            position: absolute;
-            z-index: 501;
-            left: 0;
-            height: 24px;
-            width: 24px;
-            margin: 4px;
-            background-color: #505050;
-            text-align: center;
-            line-height: 20px;
-            font-size: 16px;
-            @include transition(left .1s ease-in-out);
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
         &:after,
         &:before {
             content: '';
@@ -60,14 +61,12 @@
             z-index: 502;
             background-image:
                 url(juju-ui/assets/images/toggle-off.png);
-            background-color: #dd4814;
         }
         &:after {
             z-index: 502;
             left: 29px;
             background-image:
                 url(juju-ui/assets/images/toggle-on-inactive.png);
-            background-color: inherit;
         }
     }
 
@@ -79,12 +78,10 @@
         &:before {
             background-image:
                 url(juju-ui/assets/images/toggle-off-inactive.png);
-            background-color: inherit;
         }
         &:after {
             background-image:
                 url(juju-ui/assets/images/toggle-on.png);
-            background-color: #dd4814;
         }
     }
 

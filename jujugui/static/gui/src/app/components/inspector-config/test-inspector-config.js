@@ -103,7 +103,7 @@ describe('Configuration', function() {
     // actually interacting with the DOM.
     testUtils.Simulate.change(bool, {target: {checked: false}});
 
-    var save = getDOMNode().querySelector('.generic-button--type-save-changes');
+    var save = getDOMNode().querySelector('.generic-button--type-confirm');
 
     testUtils.Simulate.click(save);
 

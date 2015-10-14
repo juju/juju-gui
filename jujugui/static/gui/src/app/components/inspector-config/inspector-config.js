@@ -37,12 +37,13 @@ YUI.add('inspector-config', function() {
         // Just in case we ever have any sub components which have refs
         // and aren't a configuration component.
         var isConfig = ref.split('-')[0] === 'Config';
+        var activeRef = refs[ref];
         if (isConfig) {
           var value;
-          if (refs[ref].state) {
-            value = refs[ref].state.value;
+          if (activeRef.state) {
+            value = activeRef.state.value;
           }
-          configValues[refs[ref].props.option.key] = value;
+          configValues[activeRef.props.option.key] = value;
         }
       });
       var changedConfig = this._getChangedValues(configValues);
@@ -143,16 +144,16 @@ YUI.add('inspector-config', function() {
         action: this._resetValues
       }, {
         title: 'Save changes',
-        type: 'save-changes',
+        type: 'confirm',
         action: this._saveConfig
       }];
 
-      var configElements = this._generateConfigElements();
-
       return (
         <div className="inspector-config">
-          <juju.components.ButtonRow buttons={importButton} />
-          {configElements}
+         <div className="inspector-config__fields">
+            <juju.components.ButtonRow buttons={importButton} />
+            {this._generateConfigElements()}
+          </div>
           <juju.components.ButtonRow buttons={actionButtons} />
         </div>
       );

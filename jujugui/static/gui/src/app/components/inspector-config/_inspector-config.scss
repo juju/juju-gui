@@ -1,0 +1,7 @@
+.inspector-config {
+    @extend %scroll-children;
+
+    &__fields {
+        @extend %collapse-children;
+    }
+}
