@@ -31,9 +31,7 @@ YUI.add('entity-details', function() {
     fetchSuccess: function(models) {
       this.setState({waitingForFetch: false});
       if (models.length > 0) {
-        var entity = models[0];
-        this.setState({entityModel: entity});
-        this.setState({entity: entity.toEntity()});
+        this.setState({entityModel: models[0]});
       }
     },
 
@@ -71,8 +69,8 @@ YUI.add('entity-details', function() {
       @param {Object} nextProps the next set of properties
     */
     shouldRefetch: function(nextProps) {
-      var entity = this.state.entity;
-      return !entity || nextProps.id !== entity.id;
+      var entityModel = this.state.entityModel;
+      return !entityModel || nextProps.id !== entityModel.get('id');
     },
 
     /**
@@ -112,7 +110,6 @@ YUI.add('entity-details', function() {
 
     getInitialState: function() {
       return {
-        entity: null,
         entityModel: null,
         waitingForFetch: false
       };
@@ -133,14 +130,15 @@ YUI.add('entity-details', function() {
     },
 
     render: function() {
-      var entity = this.state.entity,
-          tags = (entity && entity.tags) || [],
-          revisions = (entity && entity.revisions) || [];
-      if (!entity) {
+      var entityModel = this.state.entityModel;
+      if (!entityModel) {
         return (
           <div className="spinner-loader">Loading...</div>
         );
       }
+      var entity = entityModel.toEntity(),
+          tags = entity.tags || [],
+          revisions = entity.revisions || [];
       tags = tags.map(function(tag) {
         return(
           <li key={tag} className="tag-list__item">

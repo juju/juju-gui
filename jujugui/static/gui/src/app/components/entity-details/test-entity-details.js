@@ -36,11 +36,14 @@ describe('EntityDetails', function() {
       promulgated: true,
       id: 'spinach',
       type: 'charm',
-      iconPath: 'icon.svg',
+      iconPath: 'data:image/gif;base64,',
       tags: ['database']
     };
     var mockModel = {};
     mockModel.toEntity = sinon.stub().returns(result);
+    mockModel.get = function(key) {
+      return result[key];
+    };
     return [mockModel];
   };
 
@@ -73,7 +76,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var entity = output.state.entity;
+    var entity = output.state.entityModel.toEntity();
     assert.equal(entity.id, id,
                  'entity ID does not match the ID requested');
     var root = output.getDOMNode();
