@@ -815,7 +815,16 @@ YUI.add('environment-change-set', function(Y) {
       var config = args[1],
           serviceConfig = args[3];
       var service = this.get('db').services.getById(ghostServiceName);
-      var changedFields = utils.getChangedConfigOptions(config, serviceConfig);
+      // Only the modified options are sent to the API backend. With the
+      // new React configuration system the modified values is determined
+      // in the view and set in the service model so we can faithfully
+      // take what it says to set as correct.
+      var changedFields;
+      if (!window.flags || !window.flags.react) {
+        changedFields = utils.getChangedConfigOptions(config, serviceConfig);
+      } else {
+        changedFields = config;
+      }
       // Set the values in the service model and keep the dirty fields array
       // up to date.
       var DIRTYFIELDS = '_dirtyFields';
