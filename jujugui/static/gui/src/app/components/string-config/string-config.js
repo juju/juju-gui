@@ -40,17 +40,17 @@ YUI.add('string-config', function() {
     render: function() {
       return (
         <div className="string-config">
-        <span>{this.props.option.key} ({this.props.option.type})</span>
-        <div
-          className="string-config--value"
-          contentEditable="true"
-          onInput={this._updateValue}
-          onBlur={this._updateValue}
-          dangerouslySetInnerHTML={{__html: this.props.config}}>
-        </div>
-        <span className="string-config--description">
-          {this.props.option.description}
-        </span>
+          <span>{this.props.option.key} ({this.props.option.type})</span>
+          <div
+            className="string-config--value"
+            contentEditable="true"
+            onInput={this._updateValue}
+            onBlur={this._updateValue}
+            dangerouslySetInnerHTML={{__html: this.props.config}}>
+          </div>
+          <span className="string-config--description">
+            {this.props.option.description}
+          </span>
         </div>
       );
     }
