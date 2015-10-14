@@ -33,13 +33,13 @@ describe('DeploymentBar', function() {
   });
 
   beforeEach(function() {
-    var DeploymentBar = juju.components.DeploymentBar
+    var DeploymentBar = juju.components.DeploymentBar;
     previousNotifications = DeploymentBar.prototype.previousNotifications;
     juju.components.DeploymentBar.prototype.previousNotifications = [];
   });
 
   afterEach(function() {
-    var DeploymentBar = juju.components.DeploymentBar
+    var DeploymentBar = juju.components.DeploymentBar;
     DeploymentBar.prototype.previousNotifications = previousNotifications;
   });
 
