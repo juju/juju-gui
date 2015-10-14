@@ -25,10 +25,20 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentBar', function() {
+  var previousNotifications;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-bar', function() { done(); });
+  });
+
+  beforeEach(function() {
+    previousNotifications = juju.components.DeploymentBar.prototype.previousNotifications;
+    juju.components.DeploymentBar.prototype.previousNotifications = [];
+  });
+
+  afterEach(function() {
+    juju.components.DeploymentBar.prototype.previousNotifications = previousNotifications;
   });
 
   it('can render and pass the correct props', function() {
@@ -98,5 +108,123 @@ describe('DeploymentBar', function() {
           type="confirm"
           disabled={true}
           title="Commit changes" />);
+  });
+
+  it('can display a notification', function() {
+    var change = 'add-services-1';
+    var currentChangeSet = {'add-services-1': 'add-services-change'};
+    var deployButtonAction = sinon.stub();
+    var generateChangeDescription = sinon.stub().returns(change);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />, true);
+    var output = renderer.getRenderOutput();
+    // Re-render the component so that componentWillReceiveProps is called.
+    renderer.render(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.DeploymentBarNotification
+        change={change} />);
+    assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
+  });
+
+
+  it('can display a new notification', function() {
+    var change = 'add-services-1';
+    var currentChangeSet = {'add-services-1': 'add-services-change'};
+    var deployButtonAction = sinon.stub();
+    var generateChangeDescription = sinon.stub().returns(change);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />, true);
+    var output = renderer.getRenderOutput();
+    // Re-render the component so that componentWillReceiveProps is called.
+    renderer.render(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.DeploymentBarNotification
+        change={change} />);
+    // Re-render with the new props.
+    change = 'added-unit-1';
+    currentChangeSet['added-unit-1'] = 'added-unit-change';
+    generateChangeDescription.returns(change);
+    renderer.render(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.DeploymentBarNotification
+        change={change} />);
+  });
+
+  it('does not display a previously displayed notification', function() {
+    var change = 'add-services-1';
+    var currentChangeSet = {'add-services-1': 'add-services-change'};
+    var deployButtonAction = sinon.stub();
+    var generateChangeDescription = sinon.stub().returns(change);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />, true);
+    var output = renderer.getRenderOutput();
+    // Re-render the component so that componentWillReceiveProps is called.
+    renderer.render(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.DeploymentBarNotification
+        change={change} />);
+    // Re-render with the new props.
+    change = 'added-unit-1';
+    currentChangeSet['added-unit-1'] = 'added-unit-change';
+    generateChangeDescription.returns(change);
+    renderer.render(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.DeploymentBarNotification
+        change={change} />);
+    // Remove the last change and check that the notification does not update.
+    delete currentChangeSet['added-unit-1'];
+    generateChangeDescription.returns('add-services-change');
+    renderer.render(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
+        hasCommits={true}
+        deployButtonAction={deployButtonAction} />);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0],
+      <juju.components.DeploymentBarNotification
+        change={change} />);
   });
 });
