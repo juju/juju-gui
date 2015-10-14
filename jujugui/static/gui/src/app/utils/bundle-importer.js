@@ -390,6 +390,21 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_deploy: function(record, next) {
+      // loop through the args and update the fields which required a previous
+      // record to complete.
+      record.args.forEach(function(arg, index) {
+        if (typeof arg === 'string' &&
+            arg.indexOf('$') === 0 &&
+            arg.split('-').length === 2) {
+          var recordId = arg.replace(/^\$/, '');
+          var requiredModel = record[recordId];
+          switch (index) {
+            case 0:
+              record.args[0] = requiredModel.get('id');
+              break;
+          }
+        }
+      });
       this.fakebackend._loadCharm(record.args[0], {
         'success': function(charm) {
           var ghostService = this.db.services.ghostService(charm);
@@ -420,8 +435,9 @@ YUI.add('bundle-importer', function(Y) {
           var displayName = record.args[1];
           ghostService.set('name', displayName);
           ghostService.set('displayName', displayName);
-
           ghostService.set('config', config);
+
+          var constraints = record.args[3] || {};
 
           this.env.deploy(
               // Utilize the charm's id, as bundles may specify charms without
@@ -433,7 +449,7 @@ YUI.add('bundle-importer', function(Y) {
               record.args[2],
               undefined, // Config file content.
               0, // Number of units.
-              {}, // Constraints.
+              constraints, // Constraints.
               null, // toMachine.
               function(ghostService) {
                 var name = ghostService.get('name');
@@ -443,7 +459,7 @@ YUI.add('bundle-importer', function(Y) {
                   pending: false,
                   loading: false,
                   config: ghostService.get('config'),
-                  constraints: {}
+                  constraints: constraints
                 });
                 this.env.update_annotations(
                     name, 'service', ghostService.get('annotations'));
@@ -505,9 +521,22 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addUnit: function(record, next) {
+      var serviceId, charmUrl, size, name;
+      // The bundlelib no longer returns the same format as required by the
+      // GUI's add_unit env method so this re-maps the arguments so that they
+      // match.
+      // If the length is longer than 2 then it's still using the old format
+      // which includes the matching args.
+      // XXX This can be removed once the bundlelib has been updated across
+      // all platforms.
+      if (record.args.length === 2) {
+        // Move the machine placement to the third argument spot.
+        record.args[2] = record.args[1];
+        // Set the number of units to one.
+        record.args[1] = 1;
+      }
       // Loop through the args and update the fields which required a previous
       // record to complete.
-      var serviceId, charmUrl, size, name;
       record.args.forEach(function(arg, index) {
         // If the record value is a record key in the format $addMachines-123
         if (typeof arg === 'string' &&
