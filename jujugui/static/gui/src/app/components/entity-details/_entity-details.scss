@@ -58,6 +58,33 @@
     .row-hero {
         @extend %shadow-header;
 
+        &.dark {
+            .bundle-stats {
+                border-color: #E2E2E2;
+            }
+
+            .header,
+            .header__title,
+            a:link,
+            a:visited {
+                color: $white;
+            }
+        }
+
+        .header {
+            padding-top: 40px;
+            background-color: $white;
+            color: $cool-grey;
+            -moz-transition: background .4s;
+            -webkit-transition: background .4s;
+            transition: background .4s;
+            overflow: hidden;
+        }
+
+        .inner-wrapper {
+            overflow: visible;
+        }
+
         .summary {
             margin-bottom: 1em;
 
@@ -75,16 +102,17 @@
         }
 
         .header__icon {
-            width: 45px;
-            height: 45px;
             display: inline-block;
+            margin: 0 20px 20px 0;
             vertical-align: middle;
-            margin-right: 1em;
         }
 
         .header__title {
-            line-height: 1.3;
             display: inline-block;
+            margin-bottom: 0;
+            color: $cool-grey;
+            font-size: 2.8125em;
+            line-height: 1.3;
         }
 
         .bundle-stats {
@@ -151,7 +179,6 @@
     }
 
     .charms {
-
         a:link,
         a:visited {
             color: #333;
@@ -388,13 +415,13 @@
         font-size: 13px;
     }
 
-    &.bundle, &.charm {
+    &.bundle,
+    &.charm {
         .row-hero {
             .header__icon {
                 @include create-border-radius(14px);
                 height: 96px;
                 width: 96px;
-                margin-bottom: 20px;
                 vertical-align: top;
             }
 
@@ -510,46 +537,6 @@
     }
 
     &.charm {
-        .row-hero {
-            .header {
-                background-color: $white;
-                color: $cool-grey;
-                padding: 40px 10px 20px 10px;
-                    -moz-transition: background .4s;
-                    -webkit-transition: background .4s;
-                transition: background .4s;
-                overflow: hidden;
-            }
-
-            .inner-wrapper {
-                overflow: visible;
-            }
-
-            .header__title {
-                color: $cool-grey;
-                font-size: 2.8125em;
-                margin-bottom: 0;
-            }
-            &.dark {
-
-                .bundle-stats {
-                    border-color: #E2E2E2;
-                }
-
-                .header,
-                .header__title,
-                a:link,
-                a:visited {
-                    color: #fff;
-                }
-            }
-            .entity-subscribed .unsubscribe {
-                float: right;
-                padding-top: 8px;
-                color: $cool-grey;
-            }
-        }
-
         .row.details {
             aside {
                 border-top: 1px solid $light-mid-grey;
@@ -564,28 +551,6 @@
                 .relations ul {
                     margin-bottom: 20px;
                 }
-            }
-        }
-    }
-
-    &.bundle {
-        .row-hero {
-            padding-bottom: 0;
-
-            .header__title {
-                margin-bottom: 0;
-            }
-
-            .header__icon {
-                float: left;
-                width: 45px;
-                height: 45px;
-                margin-top: 10px;
-                margin-bottom: 0;
-            }
-
-            .counts {
-                margin-top: 10px;
             }
         }
     }

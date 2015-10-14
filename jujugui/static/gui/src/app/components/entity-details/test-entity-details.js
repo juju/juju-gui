@@ -26,19 +26,35 @@ chai.config.truncateThreshold = 0;
 
 describe('EntityDetails', function() {
 
-  function setupMockData() {
-    var result = {
-      name: 'spinach',
-      displayName: 'spinach',
-      url: 'http://example.com/spinach',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: 'spinach',
-      type: 'charm',
-      iconPath: 'data:image/gif;base64,',
-      tags: ['database']
-    };
+  function setupMockData(isBundle) {
+    var result;
+    if (isBundle) {
+      result = {
+        name: 'spinach',
+        displayName: 'spinach',
+        url: 'http://example.com/spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'spinach',
+        type: 'bundle',
+        tags: ['database']
+      };
+    } else {
+      result = {
+        name: 'spinach',
+        displayName: 'spinach',
+        url: 'http://example.com/spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'spinach',
+        type: 'charm',
+        iconPath: 'icon.svg',
+        series: 'wily',
+        tags: ['database']
+      };
+    }
     var mockModel = {};
     mockModel.toEntity = sinon.stub().returns(result);
     mockModel.get = function(key) {
@@ -94,7 +110,7 @@ describe('EntityDetails', function() {
   it('dispatches to search when a tag is clicked', function() {
     var id = 'spinach';
     var tag = 'database';
-    var mockData = setupMockData(id);
+    var mockData = setupMockData();
     var getEntity = sinon.stub().callsArgWith(1, mockData);
     var pluralize = sinon.spy();
     var changeState = sinon.stub();
@@ -161,11 +177,11 @@ describe('EntityDetails', function() {
     var output = shallowRenderer.getRenderOutput();
     shallowRenderer.render(
       <juju.components.EntityDetails
-        getEntity={getEntity}
-        deployService={deployService}
-        changeState={changeState}
-        pluralize={pluralize}
-        id="django"/>, true);
+      getEntity={getEntity}
+      deployService={deployService}
+      changeState={changeState}
+      pluralize={pluralize}
+      id="django"/>, true);
     output = shallowRenderer.getRenderOutput();
     output.props.children.props.children.props.children.props.children[1]
           .props.children[1].props.action();
@@ -178,5 +194,92 @@ describe('EntityDetails', function() {
         metadata: null
       }
     });
+  });
+
+  it('can display the series for a charm', function() {
+    var mockData = setupMockData();
+    var getEntity = sinon.stub().callsArgWith(1, mockData);
+    var pluralize = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize}
+        id="django"/>, true);
+    output = shallowRenderer.getRenderOutput();
+    var seriesNode = output.props.children.props.children.props.children
+                           .props.children[0].props.children[1]
+                           .props.children[2].props.children[1];
+    assert.deepEqual(seriesNode,
+      <li className="header__series">wily</li>);
+  });
+
+  it('does not display the series for a bundle', function() {
+    var mockData = setupMockData(true);
+    var getEntity = sinon.stub().callsArgWith(1, mockData);
+    var pluralize = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize}
+        id="django"/>, true);
+    output = shallowRenderer.getRenderOutput();
+    var seriesNode = output.props.children.props.children.props.children
+                           .props.children[0].props.children[1]
+                           .props.children[2].props.children[1];
+    assert.isNull(seriesNode);
+  });
+
+  it('displays the icon for a charm', function() {
+    var mockData = setupMockData();
+    var getEntity = sinon.stub().callsArgWith(1, mockData);
+    var pluralize = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize}
+        id="django"/>, true);
+    output = shallowRenderer.getRenderOutput();
+    var imgNode = output.props.children.props.children.props.children
+                        .props.children[0].props.children[0];
+    assert.deepEqual(imgNode,
+      <img src="icon.svg" alt="spinach"
+           width="96" className="header__icon"/>);
+  });
+
+  it('displays the default icon for a bundle', function() {
+    var mockData = setupMockData(true);
+    var getEntity = sinon.stub().callsArgWith(1, mockData);
+    var pluralize = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize}
+        id="django"/>, true);
+    output = shallowRenderer.getRenderOutput();
+    var imgNode = output.props.children.props.children.props.children
+                        .props.children[0].props.children[0];
+    assert.deepEqual(imgNode,
+      <img src="/juju-ui/assets/images/non-sprites/bundle.svg" alt="spinach"
+           width="96" className="header__icon"/>);
   });
 });

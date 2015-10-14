@@ -108,6 +108,37 @@ YUI.add('entity-details', function() {
       });
     },
 
+    /**
+      Get the charm icon or display the default bundle icon.
+
+      @method _getIcon
+      @returns {String} The icon URL
+    */
+    _getIcon: function(entity) {
+      var icon;
+      if (entity.type === 'bundle') {
+        icon = '/juju-ui/assets/images/non-sprites/bundle.svg';
+      } else {
+        icon = entity.iconPath;
+      }
+      return icon;
+    },
+
+    /**
+      Get the element for the series.
+
+      @method _getSeries
+      @returns {String} The icon URL
+    */
+    _getSeries: function(series) {
+      console.log(series);
+      if (series) {
+        return <li className="header__series">{series}</li>
+      } else {
+        return null;
+      }
+    },
+
     getInitialState: function() {
       return {
         entityModel: null,
@@ -155,7 +186,7 @@ YUI.add('entity-details', function() {
             <header className="twelve-col header">
               <div className="inner-wrapper">
                 <div className="eight-col no-margin-bottom">
-                  <img src={entity.iconPath} alt="{entity.displayName}"
+                  <img src={this._getIcon(entity)} alt={entity.displayName}
                        width="96" className="header__icon"/>
                   <div className="header__details">
                     <h1 className="header__title" itemProp="name">
@@ -167,11 +198,11 @@ YUI.add('entity-details', function() {
                     <ul className="bullets inline">
                       <li className="revisions-item">
                         <a href="#revisions" className="revisions-link">
-                          {revisions.length}
-                          {this.props.pluralize('revision', revisions.length)}
+                          {revisions.length} {this.props.pluralize(
+                              'revision', revisions.length)}
                         </a>
                       </li>
-                      <li className="header__series">{entity.series}</li>
+                      {this._getSeries(entity.series)}
                     </ul>
                   </div>
                   <ul className="tag-list">{tags}</ul>
@@ -181,8 +212,8 @@ YUI.add('entity-details', function() {
                     <li className="bundle-stats__deploys">
                       <span className="bundle-stats__deploys-count">
                         {entity.downloads}
-                      </span>
-                      {this.props.pluralize('deploy', entity.downloads)}
+                      </span> {this.props.pluralize('deploy',
+                          entity.downloads)}
                     </li>
                   </ul>
                   <juju.components.GenericButton
