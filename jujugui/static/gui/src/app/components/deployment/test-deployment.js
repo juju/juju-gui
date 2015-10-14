@@ -94,6 +94,39 @@ describe('Deployment', function() {
       </div>);
   });
 
+  it('tracks that it has commits if existing non-pending service', function() {
+    var currentChangeSet = sinon.stub();
+    var generateChangeDescription = sinon.stub();
+    var services = [
+      {get: sinon.stub().returns(true)},
+      {get: sinon.stub().returns(false)}
+    ];
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        ecsCommit={sinon.stub()}
+        services={services}
+        generateChangeDescription={generateChangeDescription}
+        activeComponent="deployment-summary"
+        currentChangeSet={currentChangeSet} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.Deployment
+        ecsCommit={sinon.stub()}
+        services={services}
+        generateChangeDescription={generateChangeDescription}
+        activeComponent="deployment-bar"
+        currentChangeSet={currentChangeSet} />);
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output,
+      <div className="deployment-view">
+        <juju.components.DeploymentBar
+          hasCommits={true}
+          generateChangeDescription={generateChangeDescription}
+          deployButtonAction={output.props.children.props.deployButtonAction}
+          currentChangeSet={currentChangeSet} />
+      </div>);
+  });
+
   it('can display the deployment summary', function() {
     var currentChangeSet = sinon.stub();
     var changeDescriptions = {};

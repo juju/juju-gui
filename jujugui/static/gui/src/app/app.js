@@ -774,6 +774,7 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       React.render(
         <window.juju.components.Deployment
+          services={services.toArray()}
           ecsCommit={ecs.commit.bind(ecs, env)}
           changeDescriptions={changeDescriptions}
           generateChangeDescription={

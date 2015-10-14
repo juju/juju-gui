@@ -70,8 +70,30 @@ YUI.add('deployment-component', function() {
       return state;
     },
 
+    componentDidMount: function() {
+      this._updateHasCommits();
+    },
+
     componentWillReceiveProps: function(nextProps) {
+      this._updateHasCommits();
       this.setState(this.generateState(nextProps));
+    },
+
+    /**
+      Check if we have an commits.
+
+      @method _updateHasCommits
+    */
+    _updateHasCommits: function() {
+      if (!this.state.hasCommits) {
+        var services = this.props.services;
+        services.forEach(function(service) {
+          if (!service.get('pending')) {
+            this.setState({hasCommits: true});
+            return false;
+          }
+        }, this);
+      }
     },
 
     /**
