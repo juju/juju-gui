@@ -32,12 +32,10 @@ YUI.add('deployment-bar-notification', function() {
       var node;
       try {
         node = React.findDOMNode(this);
+        // Fade out the notification.
+        node.classList.remove('deployment-bar__notification--visible');
       } catch (e) {
         // The notification has already been removed.
-      }
-      // Fade out the notification.
-      if (node) {
-        node.classList.remove('deployment-bar__notification--visible');
       }
     },
 

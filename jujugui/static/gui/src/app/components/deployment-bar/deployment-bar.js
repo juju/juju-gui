@@ -35,10 +35,6 @@ YUI.add('deployment-bar', function() {
       };
     },
 
-    componentDidMount: function() {
-      this._updateLatestChange(this.props.currentChangeSet);
-    },
-
     componentWillReceiveProps: function(nextProps) {
       this._updateLatestChange(nextProps.currentChangeSet);
     },
@@ -48,7 +44,6 @@ YUI.add('deployment-bar', function() {
 
       @method _updateLatestChange
       @param {Object} currentChangeSet The collection of ecs changes.
-      @returns  {Object} The lastest ecs change.
     */
     _updateLatestChange: function(changeSet) {
       var keys = Object.keys(changeSet);
@@ -61,7 +56,6 @@ YUI.add('deployment-bar', function() {
           latestChangeDescription: this.props.generateChangeDescription(change)
         });
       }
-      return this.state.latestChangeDescription;
     },
 
     /**
