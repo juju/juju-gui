@@ -21,17 +21,53 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-bar', function() {
 
   juju.components.DeploymentBar = React.createClass({
+    previousNotifications: [],
 
-  /**
-    Get the label for the deploy button.
+    /**
+      Get the current state of the deployment bar.
 
-    @method _getDeployButtonLabel
-    @param {Boolean} hasCommits Does the env have commits.
-    @returns {String} the label for the deploy button
-  */
-  _getDeployButtonLabel: function(hasCommits) {
-    return hasCommits ? 'Commit changes' : 'Deploy changes';
-  },
+      @method getInitialState
+      @returns {Object} The current state.
+    */
+    getInitialState: function() {
+      return {
+        latestChangeDescription: null
+      };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this._updateLatestChange(nextProps.currentChangeSet);
+    },
+
+    /**
+      Update the state with the latest change if it has changed.
+
+      @method _updateLatestChange
+      @param {Object} currentChangeSet The collection of ecs changes.
+    */
+    _updateLatestChange: function(changeSet) {
+      var keys = Object.keys(changeSet);
+      var latestChange = keys[keys.length - 1];
+      var previousIndex = this.previousNotifications.indexOf(latestChange);
+      if (latestChange && previousIndex === -1) {
+        var change = changeSet[latestChange];
+        this.previousNotifications.push(latestChange);
+        this.setState({
+          latestChangeDescription: this.props.generateChangeDescription(change)
+        });
+      }
+    },
+
+    /**
+      Get the label for the deploy button.
+
+      @method _getDeployButtonLabel
+      @param {Boolean} hasCommits Does the env have commits.
+      @returns {String} the label for the deploy button
+    */
+    _getDeployButtonLabel: function(hasCommits) {
+      return hasCommits ? 'Commit changes' : 'Deploy changes';
+    },
 
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
@@ -39,6 +75,8 @@ YUI.add('deployment-bar', function() {
         <juju.components.Panel
           instanceName="deployment-bar-panel"
           visible={true}>
+          <juju.components.DeploymentBarNotification
+            change={this.state.latestChangeDescription} />
           <juju.components.DeploymentBarChangeCount
             count={changeCount} />
           <juju.components.GenericButton
@@ -52,5 +90,7 @@ YUI.add('deployment-bar', function() {
   });
 
 }, '0.1.0', { requires: [
-  'deployment-bar-change-count'
+  'deployment-bar-change-count',
+  'deployment-bar-notification',
+  'panel-component'
 ]});

@@ -508,7 +508,7 @@ YUI.add('deployer-bar', function(Y) {
       var latest = ecs.getCurrentChangeSet()[this._getLatestChange()];
       var db = this.get('db');
       return changesUtils.generateChangeDescription(
-          latest, db.services, db.units);
+          db.services, db.units, latest);
     },
 
     /**

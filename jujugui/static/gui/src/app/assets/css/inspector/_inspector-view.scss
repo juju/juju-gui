@@ -1,7 +1,7 @@
 .inspector-view {
     @extend %floating-panel;
     @extend %scroll-children;
-    $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + $deployer-bar-height + $panel-space;
+    $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + $panel-space;
     position: absolute;
     z-index: 601;
     top: $environment-header-height + ($panel-space * 2) + $navbar-height;

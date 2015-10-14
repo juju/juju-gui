@@ -33,13 +33,16 @@ describe('Deployment', function() {
 
   it('can display the deployment bar', function() {
     var currentChangeSet = sinon.stub();
+    var generateChangeDescription = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         currentChangeSet={currentChangeSet}
+        generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar" />);
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
+          generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={currentChangeSet} />
       </div>);
@@ -47,12 +50,15 @@ describe('Deployment', function() {
 
   it('displays the deployment bar by default', function() {
     var currentChangeSet = sinon.stub();
+    var generateChangeDescription = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet} />);
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
+          generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={currentChangeSet} />
       </div>);

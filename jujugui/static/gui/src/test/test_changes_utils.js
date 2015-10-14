@@ -209,8 +209,8 @@ describe('ChangesUtils', function() {
         changesUtils, 'getRealRelationEndpointNames', ['foo', 'baz']);
     this._cleanups.push(endpointNames.reset);
     tests.forEach(function(test) {
-      var change = changesUtils.generateChangeDescription(test.change,
-          db.services, db.units, true);
+      var change = changesUtils.generateChangeDescription(
+          db.services, db.units, test.change, true);
       assert.equal(change.icon, test.icon);
       assert.equal(change.description, test.msg);
       if (test.timestamp) {

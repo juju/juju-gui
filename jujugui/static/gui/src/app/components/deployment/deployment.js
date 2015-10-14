@@ -49,6 +49,7 @@ YUI.add('deployment-component', function() {
           state.activeChild = {
             component: <juju.components.DeploymentBar
               deployButtonAction={this._barDeployAction}
+              generateChangeDescription={this.props.generateChangeDescription}
               currentChangeSet={this.props.currentChangeSet} />
           };
         break;
