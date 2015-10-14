@@ -411,7 +411,7 @@
                     li {
                         &:after {
                             color: $warm-grey;
-                            content: "•";
+                            content: "\2022";
                             vertical-align: middle;
                             margin: 0 5px;
                         }
@@ -488,7 +488,7 @@
         ul.bullets li {
             &:after {
                 color: $warm-grey;
-                content: "•";
+                content: "\2022";
                 vertical-align: middle;
                 margin: 0 5px;
             }
