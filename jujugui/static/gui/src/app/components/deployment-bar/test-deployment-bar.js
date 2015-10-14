@@ -33,12 +33,14 @@ describe('DeploymentBar', function() {
   });
 
   beforeEach(function() {
-    previousNotifications = juju.components.DeploymentBar.prototype.previousNotifications;
+    var DeploymentBar = juju.components.DeploymentBar
+    previousNotifications = DeploymentBar.prototype.previousNotifications;
     juju.components.DeploymentBar.prototype.previousNotifications = [];
   });
 
   afterEach(function() {
-    juju.components.DeploymentBar.prototype.previousNotifications = previousNotifications;
+    var DeploymentBar = juju.components.DeploymentBar
+    DeploymentBar.prototype.previousNotifications = previousNotifications;
   });
 
   it('can render and pass the correct props', function() {
