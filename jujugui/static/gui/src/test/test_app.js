@@ -303,13 +303,13 @@ function injectData(app, data) {
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
+      app._autoPlaceUnits = utils.makeStubFunction();
       app.deployerBar = {
-        _autoPlaceUnits: utils.makeStubFunction(),
         deploy: utils.makeStubFunction(),
         destroy: function() {}
       };
       app._autoplaceAndCommitAll();
-      assert.equal(app.deployerBar._autoPlaceUnits.callCount(), 1);
+      assert.equal(app._autoPlaceUnits.callCount(), 1);
       assert.equal(app.deployerBar.deploy.callCount(), 1);
     });
 
