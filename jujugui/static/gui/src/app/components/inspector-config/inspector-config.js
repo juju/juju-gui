@@ -85,7 +85,7 @@ YUI.add('inspector-config', function() {
         configValues,
         null,
         null,
-        this._setConfigCallback.bind(this)
+        this._setConfigCallback
       );
     },
 
@@ -117,12 +117,14 @@ YUI.add('inspector-config', function() {
         if (option.type === 'boolean') {
           configElements.push(
               <juju.components.BooleanConfig
+                key={ref}
                 ref={ref}
                 option={option}
                 config={serviceConfig[key]} />);
         } else {
           configElements.push(
               <juju.components.StringConfig
+                key={ref}
                 ref={ref}
                 option={option}
                 config={serviceConfig[key]} />);
@@ -141,6 +143,7 @@ YUI.add('inspector-config', function() {
         action: this._resetValues
       }, {
         title: 'Save changes',
+        type: 'save-changes',
         action: this._saveConfig
       }];
 

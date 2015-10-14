@@ -40,7 +40,10 @@ YUI.add('boolean-config', function() {
       @param {Object} The change event from the checkbox.
     */
     _handleChange: function(e) {
-      this.setState({ value: e.currentTarget.checked });
+      // Due to a bug in React we must use target here because we aren't able
+      // to simulate changes on currentTarget.
+      // https://github.com/facebook/react/issues/4950
+      this.setState({ value: e.target.checked });
     },
 
     /**
