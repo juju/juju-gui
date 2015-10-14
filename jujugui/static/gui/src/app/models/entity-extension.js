@@ -69,6 +69,7 @@ YUI.add('entity-extension', function(Y) {
           url: attrs.url
       };
       if (type === 'bundle') {
+        entity.iconPath = '/juju-ui/assets/images/non-sprites/bundle.svg';
         var srvcs = this.get('services');
         entity.services = this.parseBundleServices(srvcs);
       } else {

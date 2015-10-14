@@ -21,6 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-details', function() {
 
   juju.components.EntityDetails = React.createClass({
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      deployService: React.PropTypes.func.isRequired,
+      getEntity: React.PropTypes.func.isRequired,
+      id: React.PropTypes.string.isRequired,
+      pluralize: React.PropTypes.func.isRequired
+    },
+
     /**
       Callback for when an entity has been successfully fetched. Though the
       data passed in is an Array of models, only the first model is used.
@@ -29,8 +37,7 @@ YUI.add('entity-details', function() {
       @param {Array} models A list of the entity models found.
     */
     fetchSuccess: function(models) {
-      this.setState({waitingForFetch: false});
-      if (models.length > 0) {
+      if (models.length > 0 && this.isMounted()) {
         this.setState({entityModel: models[0]});
       }
     },
@@ -46,186 +53,44 @@ YUI.add('entity-details', function() {
       console.error('Fetching the entity failed.');
     },
 
-    /**
-      Retrieve, or fetch, an entity based on ID.
+    getInitialState: function() {
+      return {
+        entityModel: null,
+      };
+    },
 
-      @method fetchFailure
-      @param {String} id the entity ID to locate
-    */
-    fetchEntity: function(id) {
-      this.setState({waitingForFetch: true});
+    componentDidMount: function() {
       this.props.getEntity(
-        id,
+        this.props.id,
         this.fetchSuccess,
         this.fetchFailure
       );
     },
 
-    /**
-      Determine whether an entity needs to be fetched; we only need to query
-      when we either don't have an entity, or the entity's ID has changed.
-
-      @method shouldRefetch
-      @param {Object} nextProps the next set of properties
-    */
-    shouldRefetch: function(nextProps) {
-      var entityModel = this.state.entityModel;
-      return !entityModel || nextProps.id !== entityModel.get('id');
-    },
-
-    /**
-      Show the search results for a tag when clicked.
-
-      @method _handleTagClick
-      @param {Object} e The click event
-    */
-    _handleTagClick: function(e) {
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: null,
-            tags: e.target.getAttribute('data-id')
-          }
-        }
-      });
-    },
-
-    /**
-      Add a service for this charm to the canvas.
-
-      @method _handleDeployClick
-      @param {Object} e The click event
-    */
-    _handleDeployClick: function(e) {
-      this.props.deployService(this.state.entityModel);
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
-      });
-    },
-
-    /**
-      Get the charm icon or display the default bundle icon.
-
-      @method _getIcon
-      @returns {String} The icon URL
-    */
-    _getIcon: function(entity) {
-      var icon;
-      if (entity.type === 'bundle') {
-        icon = '/juju-ui/assets/images/non-sprites/bundle.svg';
-      } else {
-        icon = entity.iconPath;
-      }
-      return icon;
-    },
-
-    /**
-      Get the element for the series.
-
-      @method _getSeries
-      @returns {Object} The series node if required.
-    */
-    _getSeries: function(series) {
-      if (series) {
-        return <li className="header__series">{series}</li>;
-      }
-    },
-
-    getInitialState: function() {
-      return {
-        entityModel: null,
-        waitingForFetch: false
-      };
-    },
-
-    componentDidMount: function() {
-      this.fetchEntity(this.props.id);
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      if (this.shouldRefetch(nextProps)) {
-        this.fetchEntity(nextProps.id);
-      }
-    },
-
-    shouldComponentUpdate: function(nextProps, nextState) {
-      return this.shouldRefetch(nextProps) && !this.state.waitingForFetch;
-    },
-
     render: function() {
-      var entityModel = this.state.entityModel;
+      var entityModel = this.state.entityModel,
+          output;
       if (!entityModel) {
-        return (
+        output = (
           <div className="spinner-loader">Loading...</div>
         );
-      }
-      var entity = entityModel.toEntity(),
-          tags = entity.tags || [],
-          revisions = entity.revisions || [];
-      tags = tags.map(function(tag) {
-        return(
-          <li key={tag} className="tag-list__item">
-            <a data-id={tag} onClick={this._handleTagClick}>
-              {tag}
-            </a>
-          </li>
-        );
-      }, this);
-      var ownerUrl = 'https://launchpad.net/~' + entity.owner;
-      return (
-        <div className={'entity-details ' + entity.type}>
-          <div className="row-hero">
-            <header className="twelve-col header">
-              <div className="inner-wrapper">
-                <div className="eight-col no-margin-bottom">
-                  <img src={this._getIcon(entity)} alt={entity.displayName}
-                       width="96" className="header__icon"/>
-                  <div className="header__details">
-                    <h1 className="header__title" itemProp="name">
-                      {entity.displayName}
-                    </h1>
-                    <p className="header__by">
-                      By <a href={ownerUrl} target="_blank">{entity.owner}</a>
-                    </p>
-                    <ul className="bullets inline">
-                      <li className="revisions-item">
-                        <a href="#revisions" className="revisions-link">
-                          {revisions.length} {this.props.pluralize(
-                              'revision', revisions.length)}
-                        </a>
-                      </li>
-                      {this._getSeries(entity.series)}
-                    </ul>
-                  </div>
-                  <ul className="tag-list">{tags}</ul>
-                </div>
-                <div className="four-col last-col no-margin-bottom">
-                  <ul className="no-bullets bundle-stats">
-                    <li className="bundle-stats__deploys">
-                      <span className="bundle-stats__deploys-count">
-                        {entity.downloads}
-                      </span> {this.props.pluralize('deploy',
-                          entity.downloads)}
-                    </li>
-                  </ul>
-                  <juju.components.GenericButton
-                    action={this._handleDeployClick}
-                    type="confirm"
-                    title="Add to canvas" />
-                </div>
-              </div>
-            </header>
+      } else {
+        output = (
+          <div className={'entity-details ' + entityModel.get('entityType')}>
+            <juju.components.EntityHeader
+              entityModel={entityModel}
+              changeState={this.props.changeState}
+              deployService={this.props.deployService}
+              pluralize={this.props.pluralize} />
           </div>
-        </div>
-      );
+        );
+      }
+      return output;
     }
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'entity-header'
+  ]
 });
