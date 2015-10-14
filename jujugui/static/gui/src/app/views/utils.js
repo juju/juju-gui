@@ -2357,18 +2357,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Add a service to the canvas.
-
-    @method addService
-    @param {App} app The app object.
-    @param {String} charmId The id of the charm to add a service for.
-  */
-  utils.addService = function(app, charmId) {
-    app.get('charmstore').getEntity(charmId, function(entity) {
-      app.deployService(entity[0]);
-    });
-  };
-  /**
 
     Calculate the number of units per status.
 

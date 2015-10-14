@@ -84,6 +84,7 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.EntityDetails
                 changeState={this.props.changeState}
                 getEntity={this.props.getEntity}
+                deployService={this.props.deployService}
                 id={metadata.id}
                 pluralize={utils.pluralize} />
           };

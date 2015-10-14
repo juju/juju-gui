@@ -118,4 +118,62 @@ describe('EntityDetails', function() {
       }
     }, 'App state not set properly.');
   });
+
+  it('displays an add to canvas button', function() {
+    var mockData = setupMockData();
+    var getEntity = sinon.stub().callsArgWith(1, mockData);
+    var pluralize = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        pluralize={pluralize}
+        id="django"/>, true);
+    output = shallowRenderer.getRenderOutput();
+    var deployButton = output.props.children.props.children.props.children
+                             .props.children[1].props.children[1];
+    assert.deepEqual(deployButton,
+      <juju.components.GenericButton
+        action={deployButton.props.action}
+        type="confirm"
+        title="Add to canvas" />);
+  });
+
+  it('adds the service when the add button is clicked', function() {
+    var mockData = setupMockData();
+    var getEntity = sinon.stub().callsArgWith(1, mockData);
+    var pluralize = sinon.spy();
+    var deployService = sinon.stub();
+    var changeState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        deployService={deployService}
+        changeState={changeState}
+        getEntity={getEntity}
+        pluralize={pluralize} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.EntityDetails
+        getEntity={getEntity}
+        deployService={deployService}
+        changeState={changeState}
+        pluralize={pluralize}
+        id="django"/>, true);
+    output = shallowRenderer.getRenderOutput();
+    output.props.children.props.children.props.children.props.children[1]
+          .props.children[1].props.action();
+    assert.equal(deployService.callCount, 1);
+    assert.equal(deployService.args[0][0], mockData[0]);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: null,
+        metadata: null
+      }
+    });
+  });
 });

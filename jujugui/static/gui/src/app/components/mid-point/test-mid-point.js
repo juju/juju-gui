@@ -76,10 +76,8 @@ describe('MidPoint', function() {
         icon: 'icon.svg',
         name: 'Mongodb'
     }];
-    var addService = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.MidPoint
-        addService={addService} />);
+      <juju.components.MidPoint />);
     assert.deepEqual(output,
       <div className="mid-point">
         <h4 className="mid-point__title">Featured searches</h4>
@@ -162,10 +160,8 @@ describe('MidPoint', function() {
       ['(', 5, ')'],
       ['(', 30, ')']
     ];
-    var addService = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.MidPoint
-        addService={addService} />);
+      <juju.components.MidPoint />);
     assert.deepEqual(output,
       <div className="mid-point">
         <h4 className="mid-point__title">Featured searches</h4>
@@ -268,11 +264,9 @@ describe('MidPoint', function() {
   });
 
   it('display the correct label when the store is closed', function() {
-    var addService = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint
-        storeOpen={false}
-        addService={addService} />);
+        storeOpen={false} />);
     assert.deepEqual(output.props.children[2].props.children[1],
       <button className="mid-point__store-button"
         onClick={output.props.children[2].props.children[1].props.onClick}>
@@ -281,11 +275,9 @@ describe('MidPoint', function() {
   });
 
   it('display the correct label when the store is open', function() {
-    var addService = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint
-        storeOpen={true}
-        addService={addService} />);
+        storeOpen={true} />);
     assert.deepEqual(output.props.children[2].props.children[1],
       <button className="mid-point__store-button"
         onClick={output.props.children[2].props.children[1].props.onClick}>
