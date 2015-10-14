@@ -119,6 +119,7 @@ describe('Charmbrowser', function() {
       }};
     var getEntity = sinon.spy();
     var changeState = sinon.spy();
+    var deployService = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -126,6 +127,7 @@ describe('Charmbrowser', function() {
       <juju.components.Charmbrowser
         appState={appState}
         changeState={changeState}
+        deployService={deployService}
         getEntity={getEntity}
         utils={utils} />);
     assert.deepEqual(output,
@@ -135,6 +137,7 @@ describe('Charmbrowser', function() {
           <juju.components.EntityDetails
             changeState={changeState}
             getEntity={getEntity}
+            deployService={deployService}
             id={id}
             pluralize={utils.pluralize} />
         </juju.components.Panel>);
