@@ -128,14 +128,11 @@ YUI.add('entity-details', function() {
       Get the element for the series.
 
       @method _getSeries
-      @returns {String} The icon URL
+      @returns {Object} The series node if required.
     */
     _getSeries: function(series) {
-      console.log(series);
       if (series) {
         return <li className="header__series">{series}</li>;
-      } else {
-        return null;
       }
     },
 

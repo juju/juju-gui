@@ -236,7 +236,7 @@ describe('EntityDetails', function() {
     var seriesNode = output.props.children.props.children.props.children
                            .props.children[0].props.children[1]
                            .props.children[2].props.children[1];
-    assert.isNull(seriesNode);
+    assert.isUndefined(seriesNode);
   });
 
   it('displays the icon for a charm', function() {
