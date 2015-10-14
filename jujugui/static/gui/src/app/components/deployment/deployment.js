@@ -30,7 +30,9 @@ YUI.add('deployment-component', function() {
     */
     getInitialState: function() {
       // Setting a default state object.
-      return this.generateState(this.props);
+      var state = this.generateState(this.props);
+      state.hasCommits = false;
+      return state;
     },
 
     /**
@@ -44,10 +46,12 @@ YUI.add('deployment-component', function() {
       var state = {
         activeComponent: nextProps.activeComponent || 'deployment-bar'
       };
+      var hasCommits = this.state ? this.state.hasCommits : false;
       switch (state.activeComponent) {
         case 'deployment-bar':
           state.activeChild = {
             component: <juju.components.DeploymentBar
+              hasCommits={hasCommits}
               deployButtonAction={this._barDeployAction}
               generateChangeDescription={this.props.generateChangeDescription}
               currentChangeSet={this.props.currentChangeSet} />
@@ -87,6 +91,7 @@ YUI.add('deployment-component', function() {
     _summaryDeployAction: function() {
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
+      this.setState({hasCommits: true});
       this._changeActiveComponent('deployment-bar');
     },
 
