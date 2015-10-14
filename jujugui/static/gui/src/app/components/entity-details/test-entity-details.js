@@ -36,7 +36,7 @@ describe('EntityDetails', function() {
       promulgated: true,
       id: 'spinach',
       type: 'charm',
-      iconPath: 'icon.svg',
+      iconPath: 'data:image/gif;base64,',
       tags: ['database']
     };
     var mockModel = {};
