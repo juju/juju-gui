@@ -399,6 +399,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="${convoy_url}?app/assets/javascripts/handlebars.runtime.js&app/components/templates.js&app/components/helpers.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/gallery-markdown.js"></script>
     <script src="${convoy_url}?app/store/env/bakery.js&app/assets/javascripts/jujulib/juju.js"></script>
     % else:
     <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/react-onclickoutside-min.js"></script>
@@ -406,6 +407,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     <script src="${convoy_url}?app/store/env/bakery-min.js&app/assets/javascripts/jujulib/juju-min.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/gallery-markdown-min.js"></script>
     % endif
 
     <script>
