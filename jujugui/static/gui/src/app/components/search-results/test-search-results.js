@@ -384,7 +384,7 @@ describe('SearchResults', function() {
         return m;
       });
       searchResults.collapseSeries = sinon.stub().returns(results);
-      var setState = sinon.spy()
+      var setState = sinon.spy();
       searchResults.setState = setState;
       searchResults.searchSuccess(rawResults);
       var result = setState.getCall(1).args[0].data.promulgatedResults[0];
