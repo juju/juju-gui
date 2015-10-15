@@ -119,6 +119,8 @@ YUI.add('search-results', function(Y) {
       var promulgatedResults = [],
           normalResults = [];
       results.forEach(function(obj) {
+        // Pass in a full id including the owner to allow looking up the entity.
+        obj.storeId = '~' + obj.owner + '/' + obj.id;
         if (obj.promulgated) {
           promulgatedResults.push(obj);
         } else {
