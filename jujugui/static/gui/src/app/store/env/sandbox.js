@@ -304,6 +304,19 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Handle Ping messages.
+
+    @method handlePingerPing
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handlePingerPing: function(data, client, state) {
+      client.receive({RequestId: data.RequestId, Response: {}});
+    },
+
+    /**
     Handle EnvironmentInfo messages.
 
     @method handleClientEnvironmentInfo

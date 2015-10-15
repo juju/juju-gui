@@ -145,6 +145,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn, user: 'user', password: 'password'
       }, 'go');
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       db = {notifications: {add: testUtils.makeStubFunction()}};
       bundleNotifications._watchDeployment = testUtils.makeStubFunction();
     });

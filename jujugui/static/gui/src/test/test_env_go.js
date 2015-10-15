@@ -93,6 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn, user: 'user', password: 'password', ecs: ecs
       });
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       cleanups = [];
     });
 
@@ -534,6 +535,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.lengthOf(conn.messages, 1);
       // The MAAS server attribute has been set to null.
       assert.isNull(env.get('maasServer'));
+    });
+
+    it('pings the server correctly', function() {
+      env.ping();
+      var expectedMessage = {
+        Type: 'Pinger',
+        Request: 'Ping',
+        RequestId: 1,
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
     it('sends the correct AddServiceUnits message', function() {

@@ -27,6 +27,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-env-go', function(Y) {
 
+  // Define the pinger interval in seconds.
+  var PING_INTERVAL = 10;
+
   var environments = Y.namespace('juju.environments');
   var utils = Y.namespace('juju.views.utils');
 
@@ -385,6 +388,13 @@ YUI.add('juju-env-go', function(Y) {
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
         this._watchAll();
+        // Start pinging the server.
+        // XXX frankban: this is only required as a temporary workaround to
+        // prevent Apache to disconnect the WebSocket in the embedded Juju.
+        if (!this.pinger) {
+          this.pinger = setInterval(
+            this.ping.bind(this), PING_INTERVAL * 1000);
+        }
         // Clean up for log out text.
         this.failedAuthentication = this.failedTokenAuthentication = false;
       } else {
@@ -442,6 +452,16 @@ YUI.add('juju-env-go', function(Y) {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
       }
+    },
+
+    /**
+      Send a ping request to the server. The response is ignored.
+
+      @method ping
+      @return {undefined} Sends a message to the server only.
+    */
+    ping: function() {
+      this._send_rpc({Type: 'Pinger', Request: 'Ping'});
     },
 
     /**

@@ -44,7 +44,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state = factory.makeFakeBackend();
       juju = new sandboxModule.GoJujuAPI({
         state: state,
-        socket_url: 'socket url'});
+        socket_url: 'socket url'
+      });
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
@@ -52,6 +53,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       // We need to clear any credentials stored in sessionStorage.
+      if (env.get('connected')) {
+        env.close();
+      }
       env.setCredentials(null);
       env.destroy();
       client.destroy();

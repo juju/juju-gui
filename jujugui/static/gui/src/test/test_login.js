@@ -41,6 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
+      env.close();
       env.destroy();
       sessionStorage.setItem('credentials', null);
     });
@@ -136,6 +137,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
+      env.close();
       env.destroy();
       sessionStorage.setItem('credentials', null);
       delete window.juju_config;

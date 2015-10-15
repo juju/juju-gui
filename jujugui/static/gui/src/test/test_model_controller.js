@@ -53,6 +53,7 @@ describe('Model Controller Promises', function() {
 
   afterEach(function() {
     serviceError = false;
+    env.close();
     aEach([env, db, modelController], function(instance) {
       instance.destroy();
     });

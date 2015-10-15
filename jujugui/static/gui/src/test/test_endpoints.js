@@ -60,6 +60,7 @@ describe('Relation endpoints logic', function() {
   afterEach(function(done) {
     app.destroy();
     db.destroy();
+    env.close();
     env.destroy();
     done();
   });
@@ -357,6 +358,7 @@ describe('Endpoints map handlers', function() {
     env = new juju.environments.GoEnvironment({conn: conn});
     env.setCredentials({user: 'user', password: 'password'});
     env.connect();
+    this._cleanups.push(env.close.bind(env));
     destroyMe.push(env);
     var _renderDeployerBarView = utils.makeStubMethod(
         Y.juju.App.prototype, '_renderDeployerBarView');
@@ -551,6 +553,7 @@ describe('Service config handlers', function() {
     var ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     env.connect();
+    this._cleanups.push(env.close.bind(env));
     app = new Y.juju.App({env: env, consoleEnabled: true });
     destroyMe.push(app);
     app.showView(new Y.View());

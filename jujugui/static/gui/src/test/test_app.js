@@ -98,6 +98,7 @@ function injectData(app, data) {
       config = config || {};
       if (config.env && config.env.connect) {
         config.env.connect();
+        context._cleanups.push(config.env.close.bind(config.env));
         config.env.ecs = new juju.EnvironmentChangeSet();
       }
       config.container = container;
@@ -116,6 +117,7 @@ function injectData(app, data) {
 
     it('should not have login credentials if missing from the configuration',
         function() {
+
           constructAppInstance({
             env: new juju.environments.GoEnvironment({
               conn: new utils.SocketStub(),
@@ -203,7 +205,7 @@ function injectData(app, data) {
              },
              ecs: new juju.EnvironmentChangeSet()
            })
-         });
+         }, this);
          assert.equal(
          container.one('#environment-name').get('text'),
          'Environment');
@@ -319,7 +321,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       app._displayZoomMessage(1024, 'linux');
       assert.equal(app.db.notifications.item(0).get('title'),
           'Browser size adjustment');
@@ -331,7 +333,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       assert.equal(app.db.notifications.size(), 0);
       app._displayZoomMessage(1024, 'linux');
       assert.equal(app.db.notifications.item(0).get('title'),
@@ -346,7 +348,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       app._displayZoomMessage(1024, 'macintosh');
       assert.isTrue(app.db.notifications.item(0).get(
           'message').indexOf('command+-') !== -1);
@@ -358,7 +360,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       app._displayZoomMessage(1024, 'linux');
       assert.isTrue(app.db.notifications.item(0).get(
           'message').indexOf('ctrl+-') !== -1);
@@ -372,7 +374,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       app.after('ready', function() {
         assert.isObject(app.environmentHeader);
         assert.equal(container.one('#environment-header').hasClass(
@@ -388,7 +390,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       app.after('ready', function() {
         assert.isObject(app.userDropdown);
         assert.equal(container.one('#user-dropdown').hasClass(
@@ -405,7 +407,7 @@ function injectData(app, data) {
           conn: new utils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
-      });
+      }, this);
       app.after('ready', function() {
         assert.isNotObject(app.userDropdown);
         assert.equal(container.one('#user-dropdown').hasClass(
@@ -440,7 +442,7 @@ function injectData(app, data) {
       };
 
       it('shows a link to the MAAS server if provider is MAAS', function() {
-        constructAppInstance({env: env});
+        constructAppInstance({env: env}, this);
         // The MAAS node is initially hidden.
         assert.strictEqual(maasNode.getStyle('display'), 'none');
         env.set('maasServer', 'http://1.2.3.4/MAAS');
@@ -454,7 +456,7 @@ function injectData(app, data) {
 
       it('shows a link to the MAAS server if already in the env', function() {
         env.set('maasServer', 'http://1.2.3.4/MAAS');
-        constructAppInstance({env: env});
+        constructAppInstance({env: env}, this);
         // The link to the MAAS server should be already activated.
         assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
         // Further changes to the maasServer attribute don't change the link.
@@ -463,7 +465,7 @@ function injectData(app, data) {
       });
 
       it('does not show the MAAS link if provider is not MAAS', function() {
-        constructAppInstance({env: env});
+        constructAppInstance({env: env}, this);
         // The MAAS node is initially hidden.
         assert.strictEqual(maasNode.getStyle('display'), 'none');
         env.set('maasServer', null);
@@ -476,7 +478,7 @@ function injectData(app, data) {
 
       it('does not show the MAAS link if already null in the env', function() {
         env.set('maasServer', null);
-        constructAppInstance({env: env});
+        constructAppInstance({env: env}, this);
         assert.strictEqual(maasNode.getStyle('display'), 'none');
         // Further changes to the maasServer attribute don't activate the link.
         env.set('maasServer', 'http://1.2.3.4/MAAS');
@@ -568,7 +570,7 @@ describe('File drag over notification system', function() {
     app.destroy();
   });
 
-  function constructAppInstance(config) {
+  function constructAppInstance(config, context) {
     config = config || {};
     if (!config.env) {
       config.env = new juju.environments.GoEnvironment({
@@ -581,6 +583,7 @@ describe('File drag over notification system', function() {
     }
     if (config.env && config.env.connect) {
       config.env.connect();
+      context._cleanups.push(config.env.close.bind(config.env));
     }
     config.container = container;
     config.viewContainer = container;
@@ -592,7 +595,7 @@ describe('File drag over notification system', function() {
   describe('drag event attach and detach', function() {
     it('binds the drag handlers', function() {
       var stub = testUtils.makeStubMethod(Y.config.doc, 'addEventListener');
-      constructAppInstance();
+      constructAppInstance({}, this);
       // This function doesn't exist until the appDragOverHandler
       // function is bound to the app.
       assert.isFunction(app._boundAppDragOverHandler);
@@ -609,7 +612,7 @@ describe('File drag over notification system', function() {
 
     it('removes the drag handlers', function(done) {
       var stub = testUtils.makeStubMethod(Y.config.doc, 'removeEventListener');
-      constructAppInstance();
+      constructAppInstance({}, this);
 
       app.after('destroy', function() {
         assert.equal(stub.callCount(), 3);
@@ -630,7 +633,7 @@ describe('File drag over notification system', function() {
   describe('_determineFileType', function() {
     before(function() {
       // This gets cleaned up by the parent after function.
-      constructAppInstance();
+      constructAppInstance({}, this);
     });
 
     it('returns false if it\'s not a file being dragged', function() {
@@ -682,7 +685,7 @@ describe('File drag over notification system', function() {
 
   describe('UI notifications', function() {
     beforeEach(function() {
-      constructAppInstance();
+      constructAppInstance({}, this);
     });
 
     it('showDragNotification: is a function', function() {
@@ -708,7 +711,7 @@ describe('File drag over notification system', function() {
   it('dispatches drag events properly: _appDragOverHanlder', function() {
     var determineFileTypeStub, showNotificationStub, dragTimerControlStub;
 
-    constructAppInstance();
+    constructAppInstance({}, this);
 
     determineFileTypeStub = testUtils.makeStubMethod(
         app, '_determineFileType', 'zip');
@@ -741,7 +744,7 @@ describe('File drag over notification system', function() {
 
   it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
     var laterStub, hideDragNotificationStub, dragCancelStub;
-    constructAppInstance();
+    constructAppInstance({}, this);
 
     var dragTimer = {};
     dragCancelStub = testUtils.makeStubMethod(dragTimer, 'cancel');
@@ -811,20 +814,16 @@ describe('File drag over notification system', function() {
     });
 
     // Create and return a new app. If connect is True, also connect the env.
-    var makeApp = function(connect, fakeview) {
+    var makeApp = function(connect, context) {
       var app = new Y.juju.App({
         env: env,
         viewContainer: container,
         consoleEnabled: true
       });
       app.navigate = function() { return true; };
-      if (fakeview) {
-        var fakeView = new Y.View();
-        fakeView.name = FAKE_VIEW_NAME;
-        app.showView(fakeView);
-      }
       if (connect) {
         env.connect();
+        context._cleanups.push(env.close.bind(env));
       }
       destroyMe.push(app);
       return app;
@@ -837,7 +836,7 @@ describe('File drag over notification system', function() {
     };
 
     it('avoids trying to login if the env is not connected', function(done) {
-      var app = makeApp(false); // Create a disconnected app.
+      var app = makeApp(false, this); // Create a disconnected app.
       app.after('ready', function() {
         assert.equal(0, conn.messages.length);
         done();
@@ -845,7 +844,7 @@ describe('File drag over notification system', function() {
     });
 
     it('tries to login if the env connection is established', function(done) {
-      var app = makeApp(true); // Create a connected app.
+      var app = makeApp(true, this); // Create a connected app.
       app.after('ready', function() {
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
@@ -855,7 +854,7 @@ describe('File drag over notification system', function() {
 
     it('avoids trying to login without credentials', function(done) {
       env.setCredentials(null);
-      var app = makeApp(true); // Create a connected app.
+      var app = makeApp(true, this); // Create a connected app.
       app.navigate = function() { return; };
       app.after('ready', function() {
         assert.equal(app.env.getCredentials(), null);
@@ -865,11 +864,12 @@ describe('File drag over notification system', function() {
     });
 
     it('uses the authtoken when there are no credentials', function(done) {
-      var app = makeApp(false);
+      var app = makeApp(false, this);
       // Override the local window.location object.
       app.location = {search: '?authtoken=demoToken'};
       env.setCredentials(null);
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       app.after('ready', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
@@ -883,11 +883,12 @@ describe('File drag over notification system', function() {
     });
 
     it('handles multiple authtokens', function(done) {
-      var app = makeApp(false);
+      var app = makeApp(false, this);
       // Override the local window.location object.
       app.location = {search: '?authtoken=demoToken&authtoken=discarded'};
       env.setCredentials(null);
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       app.after('ready', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
@@ -901,10 +902,11 @@ describe('File drag over notification system', function() {
     });
 
     it('ignores the authtoken if credentials exist', function(done) {
-      var app = makeApp(false);
+      var app = makeApp(false, this);
       // Override the local window.location object.
       app.location = {search: '?authtoken=demoToken'};
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       app.after('ready', function() {
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
@@ -913,7 +915,7 @@ describe('File drag over notification system', function() {
     });
 
     it('displays the login view if credentials are not valid', function(done) {
-      var app = makeApp(true); // Create a connected app.
+      var app = makeApp(true, this); // Create a connected app.
       app.after('ready', function() {
         app.env.login();
         // Mimic a login failed response assuming login is the first request.
@@ -938,6 +940,7 @@ describe('File drag over notification system', function() {
       };
       var app = new Y.juju.App({ env: env, viewContainer: container });
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       app.env.userIsAuthenticated = true;
       app.env.login();
       app.destroy(true);
@@ -950,7 +953,7 @@ describe('File drag over notification system', function() {
       var popup = utils.makeStubMethod(
           Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
       this._cleanups.push(popup.reset);
-      var app = makeApp(true);
+      var app = makeApp(true, this);
       stubit(app, 'hideMask');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
@@ -976,7 +979,7 @@ describe('File drag over notification system', function() {
       var popup = utils.makeStubMethod(
           Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar#baz');
       this._cleanups.push(popup.reset);
-      var app = makeApp(true);
+      var app = makeApp(true, this);
       stubit(app, 'hideMask');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
@@ -989,7 +992,7 @@ describe('File drag over notification system', function() {
     });
 
     it('retrieves the bundle deployments status on login', function() {
-      var app = makeApp(true);
+      var app = makeApp(true, this);
       app.onLogin({data: {result: true}});
       var expectedMessage = {
         RequestId: 2, // The first request is the login one.
@@ -1006,7 +1009,7 @@ describe('File drag over notification system', function() {
       // We need to change the prototype before we instantiate.
       // See the "this.reset()" call in the callback below that cleans up.
       var stub = utils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
-      var app = makeApp(false);
+      var app = makeApp(false, this);
       utils.makeStubMethod(app, 'hideMask');
       app.redirectPath = '/foo/bar/';
       app.location = {
@@ -1041,16 +1044,19 @@ describe('File drag over notification system', function() {
       });
       env.setCredentials(null);
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       conn.msg({
         RequestId: conn.last_message().RequestId,
         Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
     it('tries to log in on first connection', function(done) {
+      var self = this;
       // This is the case when credential are stashed.
-      var app = makeApp(true); // Create a disconnected app.
+      var app = makeApp(false, this); // Create a disconnected app.
       app.after('ready', function() {
         env.connect();
+        self._cleanups.push(env.close.bind(env));
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
         done();
@@ -1059,7 +1065,7 @@ describe('File drag over notification system', function() {
 
     it('tries to re-login on disconnections', function(done) {
       // This is the case when credential are stashed.
-      var app = makeApp(true); // Create a connected app.
+      var app = makeApp(true, this); // Create a connected app.
       app.after('ready', function() {
         // Disconnect and reconnect the WebSocket.
         conn.transient_close();
@@ -1072,6 +1078,7 @@ describe('File drag over notification system', function() {
 
     it('should allow logging out', function() {
       env.connect();
+      this._cleanups.push(env.close.bind(env));
       env.logout();
       assert.equal(false, env.userIsAuthenticated);
       assert.equal(null, env.getCredentials());
@@ -1083,13 +1090,13 @@ describe('File drag over notification system', function() {
       // the app copies window.location to app.location, so that we
       // can easily override it.  This test verifies that the initialization
       // actually does stash window.location as we exprect.
-      var app = makeApp(false);
+      var app = makeApp(false, this);
       assert.strictEqual(window.location, app.location);
     });
 
     describe('popLoginRedirectPath', function() {
       it('returns and clears redirectPath', function() {
-        var app = makeApp(false);
+        var app = makeApp(false, this);
         app.redirectPath = '/foo/bar/';
         app.location = {toString: function() {return '/login/';}};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
@@ -1097,7 +1104,7 @@ describe('File drag over notification system', function() {
       });
 
       it('prefers the current path if not login', function() {
-        var app = makeApp(false);
+        var app = makeApp(false, this);
         app.redirectPath = '/';
         app.location = {toString: function() {return '/foo/bar/';}};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
@@ -1105,7 +1112,7 @@ describe('File drag over notification system', function() {
       });
 
       it('uses root if the redirectPath is /login/', function() {
-        var app = makeApp(false);
+        var app = makeApp(false, this);
         app.redirectPath = '/login/';
         app.location = {toString: function() {return '/login/';}};
         assert.equal(app.popLoginRedirectPath(), '/');
@@ -1113,7 +1120,7 @@ describe('File drag over notification system', function() {
       });
 
       it('uses root if the redirectPath is /login', function() {
-        var app = makeApp(false);
+        var app = makeApp(false, this);
         // Missing trailing slash is only difference from previous test.
         app.redirectPath = '/login';
         app.location = {toString: function() {return '/login';}};
@@ -1124,7 +1131,7 @@ describe('File drag over notification system', function() {
 
     describe('currentUrl', function() {
       it('returns the full current path', function() {
-        var app = makeApp(false);
+        var app = makeApp(false, this);
         var expected = '/foo/bar/';
         app.location = {
           toString: function() {return 'https://foo.com' + expected;}};
@@ -1137,7 +1144,7 @@ describe('File drag over notification system', function() {
 
       // Ensure the given token is removed from the query string.
       var checkTokenIgnored = function(token) {
-        var app = makeApp(false);
+        var app = makeApp(false, this);
         var expected_path = '/foo/bar/';
         var expected_querystring = '';
         var expected_hash = '';
@@ -1250,6 +1257,7 @@ describe('File drag over notification system', function() {
       login_called = false;
       conn.open();
       reset_called.should.equal(true);
+      env.close();
       //dispatch_called.should.equal(true);
       app.destroy();
     });

@@ -323,6 +323,7 @@ describe('Inspector Settings', function() {
   it('saves changes to settings values', function() {
     inspector = setUpInspector();
     env.connect();
+    this._cleanups.push(env.close.bind(env));
     var vmContainer = inspector.get('container'),
         input = vmContainer.one('textarea[name=admins]'),
         button = vmContainer.one('.configuration-buttons .confirm');
@@ -345,6 +346,7 @@ describe('Inspector Settings', function() {
   it('does not modify the inspector if it is destroyed after save', function() {
     inspector = setUpInspector();
     env.connect();
+    this._cleanups.push(env.close.bind(env));
     var vmContainer = inspector.get('container'),
         input = vmContainer.one('textarea[name=admins]'),
         button = vmContainer.one('.configuration-buttons .confirm');
@@ -363,6 +365,7 @@ describe('Inspector Settings', function() {
     // Set up.
     inspector = setUpInspector();
     env.connect();
+    this._cleanups.push(env.close.bind(env));
     var viewlet = getViewlet(inspector);
     var node = viewlet.get('container')
                       .one('textarea[data-bind="config.admins"]');
