@@ -105,6 +105,7 @@ def config(request):
         'password': password,
         'jujuEnvUUID': request.matchdict.get('uuid', 'sandbox'),
         'jemUrl': jem_url,
+        'interactiveLogin': settings['jujugui.interactive_login'],
         # Enable/disable sandbox (demonstration) mode.
         'sandbox': sandbox_enabled,
         'sandboxSocketURL': 'wss://demo.jujucharms.com/ws',

@@ -22,6 +22,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.sandbox': False,
         'jujugui.socket_path': None,
         'jujugui.user': '',
+        'jujugui.interactive_login': False,
     }
 
     def test_default_values(self):
@@ -39,6 +40,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.combine': True,
             'jujugui.ga_key': 'my-key',
             'jujugui.jem_url': 'http://1.2.3.4:8082',
+            'jujugui.interactive_login': False,
             'jujugui.password': 'Secret!',
             'jujugui.raw': False,
             'jujugui.sandbox': True,
@@ -53,6 +55,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.combine': 'true',
             'jujugui.ga_key': 'my-key',
             'jujugui.jem_url': 'http://1.2.3.4:8082',
+            'jujugui.interactive_login': False,
             'jujugui.password': 'Secret!',
             'jujugui.raw': 'off',
             'jujugui.sandbox': 'on',
