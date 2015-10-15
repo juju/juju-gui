@@ -69,6 +69,7 @@ describe('Inspector Overview', function() {
       }
       view.destroy();
     }
+    env.close();
     env.after('destroy', function() { done(); });
     env.destroy();
 

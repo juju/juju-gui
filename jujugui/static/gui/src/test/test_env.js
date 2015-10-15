@@ -35,13 +35,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls "open" on connection if available.', function() {
-      var conn = new ClientConnection({juju: {open: function() {}}});
+      var conn = new ClientConnection({
+        juju: {open: function() {}, close: function() {}}
+      });
       var env = new environments.BaseEnvironment({conn: conn});
       assert.isFalse(conn.connected);
       assert.isFalse(env.get('connected'));
       env.connect();
       assert.isTrue(conn.connected);
       assert.isTrue(env.get('connected'));
+      env.close();
+      env.destroy();
     });
 
     it('uses the module-defined sessionStorage.', function() {

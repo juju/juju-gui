@@ -100,6 +100,7 @@ describe('Change version viewlet', function() {
     ecs = new juju.EnvironmentChangeSet({ db: db });
     env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     env.connect();
+    this._cleanups.push(env.close.bind(env));
     conn.open();
     inspector = setUpInspector();
     done();

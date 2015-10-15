@@ -49,6 +49,7 @@ describe('Service Inspector', function() {
 
   afterEach(function(done) {
     db.destroy();
+    env.close();
     env.after('destroy', function() { done(); });
     env.destroy();
   });

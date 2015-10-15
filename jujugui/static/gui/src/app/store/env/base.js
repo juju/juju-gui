@@ -212,6 +212,7 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
+      this.pinger = null;
       // Populate our credentials if they don't already exist.
       var credentials = this.getCredentials() || {};
       if (Y.Lang.isValue(this.get('user'))) {
@@ -269,6 +270,10 @@ YUI.add('juju-env-base', function(Y) {
     close: function() {
       this.ws.close();
       this.set('connected', false);
+      if (this.pinger) {
+        clearInterval(this.pinger);
+        this.pinger = null;
+      }
     },
 
     /**

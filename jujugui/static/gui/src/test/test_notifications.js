@@ -188,6 +188,7 @@ describe('notifications', function() {
     app.navigate = function() { return; };
     app.showView(new Y.View());
     env.connect();
+    this._cleanups.push(env.close.bind(env));
 
     var notifications = app.db.notifications,
         view = new views.NotificationsView({

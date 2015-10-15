@@ -1346,6 +1346,8 @@ describe('test_model.js', function() {
     });
 
     afterEach(function() {
+      env.close();
+      env.destroy();
       container.destroy();
     });
 
