@@ -47,23 +47,29 @@ YUI.add('deployment-component', function() {
         activeComponent: nextProps.activeComponent || 'deployment-bar'
       };
       var hasCommits = this.state ? this.state.hasCommits : false;
+      var currentChangeSet = nextProps.currentChangeSet ||
+          this.props.currentChangeSet;
       switch (state.activeComponent) {
         case 'deployment-bar':
+          var generateChangeDescription = nextProps.generateChangeDescription ||
+              this.props.generateChangeDescription;
           state.activeChild = {
             component: <juju.components.DeploymentBar
               hasCommits={hasCommits}
               deployButtonAction={this._barDeployAction}
-              generateChangeDescription={this.props.generateChangeDescription}
-              currentChangeSet={this.props.currentChangeSet} />
+              generateChangeDescription={generateChangeDescription}
+              currentChangeSet={currentChangeSet} />
           };
         break;
         case 'deployment-summary':
+          var changeDescriptions = nextProps.changeDescriptions ||
+              this.props.changeDescriptions;
           state.activeChild = {
             component: <juju.components.DeploymentSummary
               deployButtonAction={this._summaryDeployAction}
               closeButtonAction={this._summaryCloseAction}
-              changeDescriptions={this.props.changeDescriptions}
-              currentChangeSet={this.props.currentChangeSet} />
+              changeDescriptions={changeDescriptions}
+              currentChangeSet={currentChangeSet} />
           };
         break;
       }

@@ -144,4 +144,35 @@ describe('Deployment', function() {
           currentChangeSet={currentChangeSet} />
       </div>);
   });
+
+  it('can pass updated props to the components', function() {
+    var currentChangeSet = sinon.stub();
+    var newChangeSet = sinon.stub();
+    var generateChangeDescription = sinon.stub();
+    var services = [];
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        ecsCommit={sinon.stub()}
+        services={services}
+        generateChangeDescription={generateChangeDescription}
+        activeComponent="deployment-summary"
+        currentChangeSet={currentChangeSet} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.render(
+      <juju.components.Deployment
+        ecsCommit={sinon.stub()}
+        services={services}
+        generateChangeDescription={generateChangeDescription}
+        activeComponent="deployment-bar"
+        currentChangeSet={newChangeSet} />);
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output,
+      <div className="deployment-view">
+        <juju.components.DeploymentBar
+          hasCommits={false}
+          generateChangeDescription={generateChangeDescription}
+          deployButtonAction={output.props.children.props.deployButtonAction}
+          currentChangeSet={newChangeSet} />
+      </div>);
+  });
 });
