@@ -66,10 +66,10 @@ describe('EntityHeader', function() {
 
     var entity = output.props.entityModel.toEntity();
     var root = output.getDOMNode();
-    var title = root.querySelector('.header__title');
+    var title = root.querySelector('.entity-header__title');
     assert.equal(entity.displayName, title.textContent,
                  'rendered name does not match entity name');
-    var owner = root.querySelector('.header__by a');
+    var owner = root.querySelector('.entity-header__by a');
     assert.equal(entity.owner, owner.textContent,
                  'rendered owner does not match entity owner');
     var downloads = root.querySelector('.bundle-stats__deploys-count');
