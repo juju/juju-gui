@@ -273,7 +273,7 @@ YUI.add('juju-app-state', function(Y) {
         // Compress the id to remove default values.
         id = metadata.id;
         if (id) {
-          id = id.replace(/\/?~charmers/, '');
+          id = id.replace(/~charmers\//, '');
         }
         // Setup the search status and filters based on metadata.search
         if (!window.flags || !window.flags.react) {

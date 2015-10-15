@@ -9,12 +9,11 @@
 .search-results {
     &--floating {
         @extend %floating-panel;
-        $bottom-space: $deployer-bar-height + $panel-space;
         position: absolute;
         top: 0;
         left: $panel-space;
         right: 0;
-        max-height: calc(100% - #{$bottom-space});
+        max-height: calc(100% - 20px);
         color: $cool-grey;
         overflow-x: hidden;
         overflow-y: auto;

@@ -362,5 +362,33 @@ describe('SearchResults', function() {
       assert.isFalse(searchResults.shouldComponentUpdate(),
                      'Should not re-render when waiting for a search');
     });
+
+    it('sets the correct ids for entities', function() {
+      var query = 'spinach';
+      searchResults.props = {query: query};
+      var results = [
+        {
+          name: 'mysql',
+          displayName: 'mysql',
+          url: 'http://example.com/mysql',
+          downloads: 1000,
+          owner: 'charmers',
+          promulgated: true,
+          id: 'mysql',
+          type: 'charm'
+        }
+      ];
+      var rawResults = results.map(function(obj) {
+        var m = {};
+        m.toEntity = sinon.stub().returns(obj);
+        return m;
+      });
+      searchResults.collapseSeries = sinon.stub().returns(results);
+      var setState = sinon.spy()
+      searchResults.setState = setState;
+      searchResults.searchSuccess(rawResults);
+      var result = setState.getCall(1).args[0].data.promulgatedResults[0];
+      assert.deepEqual(result.storeId, '~charmers/mysql');
+    });
   });
 });
