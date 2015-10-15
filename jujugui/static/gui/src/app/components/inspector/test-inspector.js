@@ -272,8 +272,16 @@ describe('Inspector', function() {
   });
 
   it('displays Expose when the app state calls for it', function() {
+    var changeState = sinon.stub();
+    var exposeService = sinon.stub();
+    var unexposeService = sinon.stub();
+    var service = sinon.stub();
+    var units = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns(units);
     var service = {
-      get: sinon.stub().returns('demo')
+      get: getStub
     };
     var appState = {
       sectionA: {
@@ -282,11 +290,19 @@ describe('Inspector', function() {
         }}};
     var output = jsTestUtils.shallowRender(
       <juju.components.Inspector
+        changeState={changeState}
+        exposeService={exposeService}
+        unexposeService={unexposeService}
         service={service}
         appState={appState} />);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
-        <juju.components.InspectorExpose />);
+        <juju.components.InspectorExpose
+          changeState={changeState}
+          exposeService={exposeService}
+          unexposeService={unexposeService}
+          service={service}
+          units={units} />);
   });
 
   it('passes changeState callable to header component', function() {

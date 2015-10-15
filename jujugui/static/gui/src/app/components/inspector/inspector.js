@@ -173,7 +173,7 @@ YUI.add('inspector-component', function() {
                 exposeService={this.props.exposeService}
                 unexposeService={this.props.unexposeService}
                 service={service}
-                units={service.get('units')}/>,
+                units={service.get('units')} />,
             backState: {
               sectionA: {
                 component: 'inspector',

@@ -39,11 +39,12 @@ describe('BooleanConfig', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config={true}
+        label="Test"
         option={option} />
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">{option.key}: </div>
+        <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
             type="checkbox"
@@ -72,11 +73,12 @@ describe('BooleanConfig', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config={false}
+        label="Test"
         option={option} />
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">{option.key}: </div>
+        <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
             type="checkbox"
@@ -105,11 +107,12 @@ describe('BooleanConfig', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config="True"
+        label="Test"
         option={option} />
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">{option.key}: </div>
+        <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
             type="checkbox"
@@ -138,11 +141,12 @@ describe('BooleanConfig', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config="False"
+        label="Test"
         option={option} />
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">{option.key}: </div>
+        <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
             type="checkbox"
@@ -161,5 +165,26 @@ describe('BooleanConfig', function() {
           {option.description}
         </div>
       </div>);
+  });
+
+  it('can call an onChange method if supplied', function() {
+    var onChange = sinon.stub();
+    var option = {
+      key: 'testcheck',
+      description: 'it is a test config option',
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.BooleanConfig
+        config="False"
+        label="Test"
+        onChange={onChange}
+        option={option} />
+    );
+    output.props.children[1].props.children[0].props.onChange({
+      target: {
+        checked: true
+      }
+    });
+    assert.equal(onChange.callCount, 1);
   });
 });

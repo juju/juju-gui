@@ -30,7 +30,6 @@ YUI.add('inspector-expose', function() {
       @param {Object} e The click event.
     */
     _unitItemAction: function(e) {
-      var unitStatus = this.props.unitStatus;
       var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
       this.props.changeState({
         sectionA: {
@@ -101,7 +100,7 @@ YUI.add('inspector-expose', function() {
       @param {object} e The expose event
     */
     _exposeServiceCallback: function(e) {
-      // xxx: Need to implement expose error handling.
+      // XXX: Need to implement expose error handling.
       if (e.err) {
         console.error(e.err);
       }
