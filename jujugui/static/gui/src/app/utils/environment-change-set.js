@@ -1184,6 +1184,8 @@ YUI.add('environment-change-set', function(Y) {
               this.args[0] = newService;
               // Also need to update the service name in the unit model.
               unit.service = newService;
+              var unitId = unit.id.split('/')[1];
+              unit.id = newService + '/' + unitId;
               break;
           }
         }

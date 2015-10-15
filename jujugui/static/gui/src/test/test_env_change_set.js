@@ -1151,7 +1151,9 @@ describe('Environment Change Set', function() {
         var args = ['django', 1, 'new1'];
         var db = ecs.get('db');
         db.units = {};
-        var unit = {};
+        var unit = {
+          id: '756482$/3'
+        };
         var stubFinder = testUtils.makeStubMethod(db.units, 'getById', unit);
         var key = ecs.lazyAddUnits(args, {modelId: '1'});
         var command = ecs.changeSet[key].command;
@@ -1171,6 +1173,8 @@ describe('Environment Change Set', function() {
                      'did not query DB for unit');
         assert.equal(unit.service, 'my-service',
                      'service name not updated on unit');
+        assert.equal(unit.id, 'my-service/3',
+                     'service id not updated on unit');
       });
 
     });
