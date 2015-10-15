@@ -43,5 +43,8 @@
     "uglify-js": "2.4.x",
     "yui": "3.11.0",
     "yuidocjs": "0.3.x"
+  },
+  "devDependencies": {
+    "karma-babel-preprocessor": "^5.2.2"
   }
 }
