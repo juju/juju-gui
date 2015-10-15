@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-header', function() {
 
   juju.components.EntityHeader = React.createClass({
+    /* Define and validate the properites available on this component. */
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
@@ -86,7 +87,7 @@ YUI.add('entity-header', function() {
           <header className="twelve-col entity-header">
             <div className="inner-wrapper">
               <div className="eight-col no-margin-bottom">
-                <img src={entity.iconPath} alt="{entity.displayName}"
+                <img src={entity.iconPath} alt={entity.displayName}
                      width="96" className="entity-header__icon"/>
                 <div className="entity-header__details">
                   <h1 className="entity-header__title" itemProp="name">
