@@ -104,9 +104,9 @@ YUI.add('inspector-component', function() {
           var activeComponent;
           var previousState = this.props.appPreviousState;
           if (previousState.hasOwnProperty('sectionA')) {
-            var metadata = previousState.sectionA.metadata
+            var metadata = previousState.sectionA.metadata;
             var units = metadata.units;
-            activeComponent = metadata.activeComponent
+            activeComponent = metadata.activeComponent;
             // A unit status of 'true' is provided when there is no status, but
             // we don't want to pass that on as the status value.
             unitStatus = units === true ? null : units;

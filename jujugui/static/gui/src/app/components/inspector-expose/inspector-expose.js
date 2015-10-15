@@ -108,24 +108,19 @@ YUI.add('inspector-expose', function() {
     },
 
     render: function() {
+      var toggle = {
+        key: 'expose-toggle'
+      };
       return (
         <div className="inspector-expose">
             <div className="inspector-expose__control">
-              <div className="inspector-expose__control--toggle">
-                <input
-                  id="inspector-expose__control"
-                  onChange={this._handleExposeChange}
-                  checked={this.props.service.get('exposed')}
-                  type="checkbox"
-                  className="inspector-expose__control--input" />
-                <label htmlFor="inspector-expose__control"
-                  className="inspector-expose__control--label">
-                  <div className="inspector-expose__control--handle"></div>
-                </label>
-              </div>
-              <div className="inspector-expose__label">
-              Expose service
-              </div>
+              <juju.components.BooleanConfig
+                key={toggle.key}
+                ref={toggle.key}
+                option={toggle}
+                onChange={this._handleExposeChange}
+                label="Expose service"
+                config={this.props.service.get('exposed')} />
             </div>
             <p className="inspector-expose__warning">
               Exposing this service will make it publicly accessible from
@@ -139,5 +134,6 @@ YUI.add('inspector-expose', function() {
   });
 
 }, '0.1.0', { requires: [
+  'boolean-config',
   'inspector-expose-unit'
 ]});

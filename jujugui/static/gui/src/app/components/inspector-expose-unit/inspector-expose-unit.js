@@ -32,7 +32,7 @@ YUI.add('inspector-expose-unit', function() {
                 {unit.displayName}
             </div>
             <div className="inspector-expose__unit-detail">
-                {unit.public_address}
+                {unit.public_address || 'No public address'}
             </div>
         </li>
       );
