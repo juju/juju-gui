@@ -1084,6 +1084,14 @@ describe('test_model.js', function() {
       });
     });
 
+    it('can get a unit but displayName', function() {
+      var units = new models.ServiceUnitList();
+      units.add([
+        {id: '012345$/0', displayName: 'django/0'},
+      ]);
+      assert.equal(units.getByDisplayName('django/0').id, '012345$/0');
+    });
+
     describe('machines model list', function() {
       var machineJobs, machines;
 

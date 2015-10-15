@@ -99,6 +99,14 @@ YUI.add('inspector-component', function() {
           var unitId = metadata.unit;
           var unit = service.get('units').getById(
               service.get('id') + '/' + unitId);
+          if (!unit) {
+            // If the unit was left uncommitted when the service was committed
+            // (e.g. it wasn't placed on a machine) then there will be an id
+            // mismatch between the unit and the service and therefore need to
+            // look up the unit by displayName
+            unit = service.get('units').getByDisplayName(
+                service.get('id') + '/' + unitId);
+          }
           var unitStatus = null;
           var previousState = this.props.appPreviousState;
           if (previousState.hasOwnProperty('sectionA')) {

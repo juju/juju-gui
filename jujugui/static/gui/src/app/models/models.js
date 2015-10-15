@@ -1012,6 +1012,25 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Get a unit by displayName.
+
+      @method getByDisplayName
+      @param {String} displayName The display name for a unit.
+      @return {Object} The matching unit with the matching display name.
+    */
+    getByDisplayName: function(displayName) {
+      var units = this.filter(function(unit) {
+        if (unit.displayName === displayName) {
+          return unit;
+        }
+      });
+      if (units.length > 0) {
+        return units[0];
+      }
+      return;
+    },
+
+    /**
       Returns information about the state of the set of units for a given
       service in the form of a map of agent states.
 

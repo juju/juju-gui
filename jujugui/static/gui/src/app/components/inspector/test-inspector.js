@@ -162,6 +162,40 @@ describe('Inspector', function() {
           unit="unit" />);
   });
 
+  it('can get a unit by display name if it can not find it by id', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var getStub = sinon.stub();
+    var getById = sinon.stub().returns(false);
+    var getByDisplayName = sinon.stub().returns('unit1');
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({
+      getById: getById,
+      getByDisplayName: getByDisplayName
+    });
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'unit',
+          unit: '5'
+        }}};
+    var appPreviousState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.Inspector
+          service={service}
+          destroyUnits={destroyUnits}
+          changeState={changeState}
+          appPreviousState={appPreviousState}
+          appState={appState}>
+        </juju.components.Inspector>);
+    var children = output.props.children[1].props.children;
+    assert.equal(getById.callCount, 1);
+    assert.equal(getByDisplayName.callCount, 1);
+  });
+
   it('can go back from the unit details to a status list', function() {
     var destroyUnits = sinon.stub();
     var changeState = sinon.stub();
