@@ -158,6 +158,7 @@ describe('Inspector', function() {
           destroyUnits={destroyUnits}
           serviceId="demo"
           changeState={changeState}
+          previousComponent={undefined}
           unitStatus={null}
           unit="unit" />);
   });

@@ -122,7 +122,7 @@ YUI.add('inspector-expose', function() {
                 config={this.props.service.get('exposed')} />
             </div>
             <p className="inspector-expose__warning">
-              Exposing this service will make it publicly accessible from
+              Exposing this service may make it publicly accessible from
               the web
             </p>
             {this._displayUnitList()}

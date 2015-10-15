@@ -53,7 +53,7 @@ describe('InspectorExpose', function() {
                 config={false} />
             </div>
             <p className="inspector-expose__warning">
-              Exposing this service will make it publicly accessible from
+              Exposing this service may make it publicly accessible from
               the web
             </p>
             {undefined}
@@ -90,7 +90,7 @@ describe('InspectorExpose', function() {
                 config={true} />
             </div>
             <p className="inspector-expose__warning">
-              Exposing this service will make it publicly accessible from
+              Exposing this service may make it publicly accessible from
               the web
             </p>
             <ul className="inspector-expose__units">

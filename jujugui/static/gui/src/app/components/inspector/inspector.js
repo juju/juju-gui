@@ -101,12 +101,12 @@ YUI.add('inspector-component', function() {
           var unit = service.get('units').getById(
               serviceId + '/' + unitId);
           var unitStatus = null;
-          var activeComponent;
+          var previousComponent;
           var previousState = this.props.appPreviousState;
           if (previousState.hasOwnProperty('sectionA')) {
             var metadata = previousState.sectionA.metadata;
             var units = metadata.units;
-            activeComponent = metadata.activeComponent;
+            previousComponent = metadata.activeComponent;
             // A unit status of 'true' is provided when there is no status, but
             // we don't want to pass that on as the status value.
             unitStatus = units === true ? null : units;
@@ -120,13 +120,14 @@ YUI.add('inspector-component', function() {
                 serviceId={serviceId}
                 changeState={this.props.changeState}
                 unitStatus={unitStatus}
+                previousComponent={previousComponent}
                 unit={unit} />,
             backState: {
               sectionA: {
                 component: 'inspector',
                 metadata: {
                   id: serviceId,
-                  activeComponent: activeComponent || 'units',
+                  activeComponent: previousComponent || 'units',
                   unit: null,
                   unitStatus: unitStatus
                 }}}};
