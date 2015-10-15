@@ -24,60 +24,48 @@ var testUtils = React.addons.TestUtils;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('EntityDetails', function() {
+describe('EntityContent', function() {
+  var mockEntity;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-details', function() { done(); });
+    YUI().use('entity-content', function() { done(); });
   });
 
-  it('can be rendered', function() {
-    var output = jsTestUtils.shallowRender(
-      <juju.components.EntityDetails
-        id="test"
-        deployService={sinon.spy()}
-        changeState={sinon.spy()}
-        getEntity={sinon.spy()}
-        pluralize={sinon.spy()} />);
-    assert.equal(output.props.children, 'Loading...');
-  });
-
-  it('fetches an entity properly', function() {
-    var id = 'spinach';
-    var result = {
+  beforeEach(function() {
+    var pojo = {
       name: 'spinach',
+      description: 'Julia felt cool.',
       displayName: 'spinach',
       url: 'http://example.com/spinach',
       downloads: 1000,
       owner: 'test-owner',
       promulgated: true,
-      id: id,
+      id: 'spinach',
       type: 'charm',
       iconPath: 'data:image/gif;base64,',
       tags: ['database']
     };
-    var mockModel = {};
-    mockModel.toEntity = sinon.stub().returns(result);
-    mockModel.get = function(key) {
-      return result[key];
+    mockEntity = {};
+    mockEntity.toEntity = sinon.stub().returns(pojo);
+    mockEntity.get = function(key) {
+      return pojo[key];
     };
-    var mockData = [mockModel];
-    var getEntity = sinon.stub().callsArgWith(1, mockData);
+  });
 
+  afterEach(function() {
+    mockEntity = undefined;
+  });
+
+  it('renders the description', function() {
     var output = testUtils.renderIntoDocument(
-        <juju.components.EntityDetails
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
-          getEntity={getEntity}
-          id={id}
-          pluralize={sinon.spy()} />);
+      <juju.components.EntityContent
+        entityModel={mockEntity} />);
 
-    assert.isTrue(getEntity.calledOnce,
-                  'getEntity function not called');
-    assert.equal(getEntity.args[0][0], id,
-                 'getEntity not called with the entity ID');
-    var entity = output.state.entityModel.toEntity();
-    assert.equal(entity.id, id,
-                 'entity ID does not match the ID requested');
+    var entity = mockEntity.toEntity();
+    var root = output.getDOMNode();
+    var description = root.querySelector('.entity__description p');
+    assert.equal(entity.description, description.textContent,
+                 'rendered description does not match entity description');
   });
 });

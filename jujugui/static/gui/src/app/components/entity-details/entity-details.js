@@ -83,6 +83,8 @@ YUI.add('entity-details', function() {
               changeState={this.props.changeState}
               deployService={this.props.deployService}
               pluralize={this.props.pluralize} />
+            <juju.components.EntityContent
+              entityModel={entityModel} />
           </div>
         );
       }
@@ -92,6 +94,7 @@ YUI.add('entity-details', function() {
 
 }, '0.1.0', {
   requires: [
-    'entity-header'
+    'entity-header',
+    'entity-content'
   ]
 });
