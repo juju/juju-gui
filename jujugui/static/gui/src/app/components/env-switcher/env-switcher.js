@@ -25,7 +25,6 @@ YUI.add('env-switcher', function() {
     getInitialState: function() {
         return {
           showEnvList: false,
-          envName: '',
           envList: []
         };
     },
@@ -34,10 +33,21 @@ YUI.add('env-switcher', function() {
       this.updateEnvList();
     },
 
-    updateEnvList: function(data) {
+    /**
+      Calls to the environment to list the active environments.
+
+      @method updateEnvList
+    */
+    updateEnvList: function() {
       app.env.listEnvs('user-admin', this.updateEnvListCallback);
     },
 
+    /**
+      Sets the state with the supplied data from the listEnvs call.
+
+      @method updateEnvListCallback
+      @param {Object} data The data from the listEnvs call.
+    */
     updateEnvListCallback: function(data) {
       if (data.err) {
         console.log(data.err);
@@ -46,35 +56,39 @@ YUI.add('env-switcher', function() {
       }
     },
 
-    createEnvironment: function(e) {
-      e.preventDefault();
-      this.setState({showEnvList: false});
-      this.props.env.createEnv(
-          this.state.envName, 'user-admin', this.createEnvironmentCallback);
-      this.setState({envName: ''});
-    },
+    /**
+      Sets the state of the 'showEnvList' property to the inverse of what
+      it was.
 
-    createEnvironmentCallback: function(data) {
-      if (data.err) {
-        console.log(data.err);
-      } else {
-        this.updateEnvList(data);
-        this.props.app.switchEnv(data.uuid);
-      }
-    },
-
+      @method toggleEnvList
+      @param {Object} e The click event.
+    */
     toggleEnvList: function(e) {
       e.preventDefault();
       this.setState({ showEnvList: !this.state.showEnvList });
     },
 
+    /**
+      Hides the env list and calls the switchEnv method based on the data-id of
+      the currentTarget passed to this click handler.
+
+      @method handleEnvClick
+      @param {Object} e The click event.
+    */
     handleEnvClick: function(e) {
       var uuid = e.currentTarget.getAttribute('data-id');
       this.setState({showEnvList: false});
       this.props.app.switchEnv(uuid);
     },
 
-    showEnvList: function() {
+    /**
+      Returns the environment list components if the showEnvList state property
+      is truthy.
+
+      @method environmentList
+      @return {Function} The EnvList component.
+    */
+    environmentList: function() {
       if (this.state.showEnvList) {
         return <juju.components.EnvList
           action={this.handleEnvClick}
@@ -82,31 +96,15 @@ YUI.add('env-switcher', function() {
       }
     },
 
-    _handleEnvNameChange: function(e) {
-      this.setState({envName: e.currentTarget.value});
-    },
-
     render: function() {
       return (
         <div className="env-switcher">
-          <form className="env-switcher--create">
-            <input
-              type="text"
-              name="env-name"
-              className="env-switcher--input__float"
-              placeholder="Environment name"
-              value={this.state.envName}
-              onChange={this._handleEnvNameChange} />
-            <input type="submit"
-              className="generic-button"
-              value="Create"
-              onClick={this.createEnvironment} />
-            <input type="button"
-              className="generic-button"
-              value="List"
-              onClick={this.toggleEnvList} />
-          </form>
-          {this.showEnvList()}
+          <div
+            className="env-switcher--toggle"
+            onClick={this.toggleEnvList}>
+            ▼
+          </div>
+          {this.environmentList()}
         </div>
       );
     }

@@ -1,12 +1,13 @@
-#demo-environment-switcher {
+#environment-switcher {
     position: relative;
+    display: inline-block;
 }
 
 .env-switcher {
-    position: absolute;
-    left: 40px;
-    width: 450px;
-    padding-top: 10px;
+
+    &--toggle {
+      cursor: pointer;
+    }
 
     & &--input__float {
         float: left;

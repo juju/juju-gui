@@ -917,7 +917,7 @@ YUI.add('juju-gui', function(Y) {
         <components.EnvSwitcher
           app={this}
           env={this.env} />,
-        document.getElementById('demo-environment-switcher'));
+        document.getElementById('environment-switcher'));
     },
 
     /**
