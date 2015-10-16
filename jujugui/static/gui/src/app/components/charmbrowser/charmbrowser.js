@@ -83,6 +83,8 @@ YUI.add('charmbrowser-component', function() {
             component:
               <juju.components.EntityDetails
                 changeState={this.props.changeState}
+                importBundleYAML={this.props.importBundleYAML}
+                getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
                 deployService={this.props.deployService}
                 id={metadata.id}

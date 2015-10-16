@@ -33,28 +33,47 @@ describe('EntityHeader', function() {
   });
 
   beforeEach(function() {
-    var pojo = {
-      name: 'spinach',
-      displayName: 'spinach',
-      url: 'http://example.com/spinach',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: 'spinach',
-      type: 'charm',
-      iconPath: 'data:image/gif;base64,',
-      tags: ['database']
-    };
-    mockEntity = {};
-    mockEntity.toEntity = sinon.stub().returns(pojo);
-    mockEntity.get = function(key) {
-      return pojo[key];
-    };
+    mockEntity = makeEntity();
   });
 
   afterEach(function() {
     mockEntity = undefined;
   });
+
+  function makeEntity(isBundle) {
+      var pojo;
+      if (isBundle) {
+        pojo = {
+          name: 'spinach',
+          displayName: 'spinach',
+          url: 'http://example.com/spinach',
+          downloads: 1000,
+          owner: 'test-owner',
+          promulgated: true,
+          id: 'cs:spinach',
+          type: 'bundle'
+        };
+      } else {
+        pojo = {
+          name: 'spinach',
+          displayName: 'spinach',
+          url: 'http://example.com/spinach',
+          downloads: 1000,
+          owner: 'test-owner',
+          promulgated: true,
+          id: 'spinach',
+          type: 'charm',
+          iconPath: 'data:image/gif;base64,',
+          tags: ['database']
+        };
+      }
+      mockEntity = {};
+      mockEntity.toEntity = sinon.stub().returns(pojo);
+      mockEntity.get = function(key) {
+        return pojo[key];
+      };
+      return mockEntity;
+  }
 
   it('renders an entity properly', function() {
     var output = testUtils.renderIntoDocument(
@@ -120,11 +139,15 @@ describe('EntityHeader', function() {
         title="Add to canvas" />);
   });
 
-  it('adds the service when the add button is clicked', function() {
+  it('adds a charm when the add button is clicked', function() {
     var deployService = sinon.stub();
     var changeState = sinon.stub();
+    var importBundleYAML = sinon.stub();
+    var getBundleYAML = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
         deployService={deployService}
         changeState={changeState}
         entityModel={mockEntity}
@@ -142,5 +165,29 @@ describe('EntityHeader', function() {
         metadata: null
       }
     });
+  });
+
+  it('adds a bundle when the add button is clicked', function() {
+    var deployService = sinon.stub();
+    var changeState = sinon.stub();
+    var getBundleYAML = sinon.stub().callsArgWith(1, 'mock yaml');
+    var importBundleYAML = sinon.stub();
+    var entity = makeEntity(true);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        deployService={deployService}
+        changeState={changeState}
+        entityModel={entity}
+        pluralize={sinon.stub()} />);
+    var deployButton = output.props.children.props.children.props.children[1]
+                             .props.children[1];
+    // Simulate a click.
+    deployButton.props.action();
+    assert.equal(getBundleYAML.callCount, 1);
+    assert.equal(getBundleYAML.args[0][0], 'spinach');
+    assert.equal(importBundleYAML.callCount, 1);
+    assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
   });
 });

@@ -120,6 +120,8 @@ describe('Charmbrowser', function() {
     var getEntity = sinon.spy();
     var changeState = sinon.spy();
     var deployService = sinon.spy();
+    var importBundleYAML = sinon.spy();
+    var getBundleYAML = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -128,6 +130,8 @@ describe('Charmbrowser', function() {
         appState={appState}
         changeState={changeState}
         deployService={deployService}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
         getEntity={getEntity}
         utils={utils} />);
     assert.deepEqual(output,
@@ -135,6 +139,8 @@ describe('Charmbrowser', function() {
           instanceName="white-box"
           visible={true}>
           <juju.components.EntityDetails
+            importBundleYAML={importBundleYAML}
+            getBundleYAML={getBundleYAML}
             changeState={changeState}
             getEntity={getEntity}
             deployService={deployService}

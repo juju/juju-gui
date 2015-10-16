@@ -887,11 +887,14 @@ YUI.add('juju-gui', function(Y) {
     _renderCharmbrowser: function(metadata) {
       var state = this.state;
       var utils = views.utils;
-      var cs = this.get('charmstore');
+      var charmstore = this.get('charmstore');
       React.render(
         <components.Charmbrowser
-          charmstoreSearch={cs.search.bind(cs)}
-          getEntity={cs.getEntity.bind(cs)}
+          charmstoreSearch={charmstore.search.bind(charmstore)}
+          importBundleYAML={this.bundleImporter.importBundleYAML.bind(
+              this.bundleImporter)}
+          getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
+          getEntity={charmstore.getEntity.bind(charmstore)}
           deployService={this.deployService.bind(this)}
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
