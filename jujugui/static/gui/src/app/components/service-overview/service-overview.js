@@ -89,6 +89,7 @@ YUI.add('service-overview', function() {
       @returns {Array} The array of actions.
     */
     _generateActions: function(service) {
+      var serviceId = service.get('id');
       var actions = [];
       var units = service.get('units').toArray();
       var statusCounts = this.props.getUnitStatusCounts(units);
@@ -121,7 +122,7 @@ YUI.add('service-overview', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: service.get('id'),
+                  id: serviceId,
                   activeComponent: 'units',
                   unitStatus: key === 'all' ? null : key
                 }
@@ -148,18 +149,30 @@ YUI.add('service-overview', function() {
         {
           title: 'Relations',
           icon: this.icons.relations
-        },
-        {
+      });
+      if (!service.get('pending')) {
+        actions.push({
           title: 'Expose',
-          value: 'Off',
-          icon: this.icons.expose
-        },
-        {
-          title: 'Change version',
-          link: 'https://jujucharms.com/mediawiki/',
-          linkTitle: 'cs:precise/mediawiki-18',
-          icon: this.icons.version
+          value: service.get('exposed') ? 'On' : 'Off',
+          icon: this.icons.expose,
+          action: this._navigate,
+          state: {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'expose'
+              }
+            }
+          }
         });
+      }
+      actions.push({
+        title: 'Change version',
+        link: 'https://jujucharms.com/mediawiki/',
+        linkTitle: 'cs:precise/mediawiki-18',
+        icon: this.icons.version
+      });
 
       this.state.actions = actions;
     },

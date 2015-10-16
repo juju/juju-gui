@@ -62,6 +62,7 @@ describe('Configuration', function() {
       <juju.components.BooleanConfig
         key="Config-option2"
         ref="Config-option2"
+        label="option2:"
         option={option2}
         config={option2key} />
     ]);

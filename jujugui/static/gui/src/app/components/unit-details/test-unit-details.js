@@ -104,4 +104,27 @@ describe('UnitDetails', function() {
           unit: null
         }}});
   });
+
+  it('can navigate to the expose view when the unit is destroyed', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={destroyUnits}
+        changeState={changeState}
+        previousComponent="expose"
+        serviceId="service1"
+        unit={fakeUnit} />);
+    output.props.children[1].props.buttons[0].action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'service1',
+          activeComponent: 'expose',
+          unitStatus: undefined,
+          unit: null
+        }}});
+  });
 });

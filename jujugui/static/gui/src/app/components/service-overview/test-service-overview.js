@@ -260,6 +260,52 @@ describe('ServiceOverview', function() {
         linkTitle={undefined} />);
   });
 
+  it('shows the expose action if the service is committed', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[3],
+      <juju.components.OverviewAction
+        key="Expose"
+        title="Expose"
+        value="On"
+        icon={undefined}
+        action={output.props.children[0].props.children[3].props.action}
+        valueType={undefined}
+        link={undefined}
+        linkTitle={undefined} />);
+    assert.equal(output.props.children[0].props.children.length, 5);
+  });
+
+  it('does not show the expose action for an uncommitted service', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(true);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service}/>);
+    assert.equal(output.props.children[0].props.children.length, 4);
+  });
+
   it('renders the delete button', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview

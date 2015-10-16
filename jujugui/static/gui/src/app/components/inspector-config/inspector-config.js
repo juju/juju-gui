@@ -124,11 +124,13 @@ YUI.add('inspector-config', function() {
         // We use one component for numeric and string values and
         // another for boolean values.
         if (option.type === 'boolean') {
+          var label = option.key + ':';
           configElements.push(
               <juju.components.BooleanConfig
                 key={ref}
                 ref={ref}
                 option={option}
+                label={label}
                 config={serviceConfig[key]} />);
         } else {
           configElements.push(
