@@ -148,7 +148,17 @@ YUI.add('service-overview', function() {
         },
         {
           title: 'Relations',
-          icon: this.icons.relations
+          icon: this.icons.relations,
+          action: this._navigate,
+          state: {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'relations'
+              }
+            }
+          }
       });
       if (!service.get('pending')) {
         actions.push({

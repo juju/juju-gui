@@ -183,6 +183,21 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined
                 }}}};
         break;
+        case 'relations':
+          state.activeChild = {
+            title: 'Relations',
+            component:
+              <juju.components.InpsectorRelations
+                relations={[]}
+                changeState={this.props.changeState} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: service.get('id'),
+                  activeComponent: undefined
+                }}}};
+        break;
       }
       return state;
     },
@@ -213,10 +228,11 @@ YUI.add('inspector-component', function() {
   requires: [
     'inspector-expose',
     'inspector-header',
-    'unit-details',
+    'inspector-config',
+    'inspector-relations',
     'scale-service',
-    'unit-list',
     'service-overview',
-    'inspector-config'
+    'unit-details',
+    'unit-list'
   ]
 });
