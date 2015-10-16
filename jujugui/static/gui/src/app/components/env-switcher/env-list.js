@@ -33,7 +33,7 @@ YUI.add('env-list', function() {
         envs.push(
           <li className="env-list__environment"
             data-id={env.uuid}
-            onClick={this.props.action}
+            onClick={this.props.handleEnvClick}
             key={env.uuid}>
             {env.name}
           </li>);
@@ -42,12 +42,28 @@ YUI.add('env-list', function() {
     },
 
     render: function() {
+      var actionButtons = [{
+        title: 'More'
+      }, {
+        title: 'New',
+        type: 'confirm',
+        action: this.props.createNewEnv
+      }];
+
       return (
-        <ul className="env-list">
-          {this.generateEnvList()}
-        </ul>
+        <juju.components.Panel
+          instanceName="env-list-panel"
+          visible={true}>
+          <ul className="env-list">
+            {this.generateEnvList()}
+            <juju.components.ButtonRow buttons={actionButtons} />
+          </ul>
+        </juju.components.Panel>
       );
     }
   });
 
-}, '0.1.0', { requires: [] });
+}, '0.1.0', { requires: [
+  'button-row',
+  'panel-component'
+]});

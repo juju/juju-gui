@@ -82,6 +82,36 @@ YUI.add('env-switcher', function() {
     },
 
     /**
+      Create a new environment.
+
+      @method createNewEnv
+    */
+    createNewEnv: function(e) {
+      this.setState({showEnvList: false});
+      // XXX For now we will create a new env with an auto-incrementing
+      // number at the end. Users will be able to customize their env names
+      // once there is UX for it.
+      var envName = 'new-env-' + this.state.envList.length;
+      this.props.env.createEnv(
+          envName, 'user-admin', this.createEnvCallback);
+    },
+
+    /**
+      Handle the callback for the new env creation.
+
+      @method createEnvCallback
+      @param {Object} data The data from the create env callback.
+    */
+    createEnvCallback: function(data) {
+      if (data.err) {
+        console.log(data.err);
+      } else {
+        this.updateEnvList();
+        this.props.app.switchEnv(data.uuid);
+      }
+    },
+
+    /**
       Returns the environment list components if the showEnvList state property
       is truthy.
 
@@ -91,7 +121,8 @@ YUI.add('env-switcher', function() {
     environmentList: function() {
       if (this.state.showEnvList) {
         return <juju.components.EnvList
-          action={this.handleEnvClick}
+          handleEnvClick={this.handleEnvClick}
+          createNewEnv={this.createNewEnv}
           envs={this.state.envList} />;
       }
     },
@@ -111,6 +142,5 @@ YUI.add('env-switcher', function() {
   });
 
 }, '0.1.0', { requires: [
-  'generic-button',
   'env-list'
 ] });
