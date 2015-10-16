@@ -80,6 +80,8 @@ YUI.add('entity-details', function() {
           <div className={'entity-details ' + entityModel.get('entityType')}>
             <juju.components.EntityHeader
               entityModel={entityModel}
+              importBundleYAML={this.props.importBundleYAML}
+              getBundleYAML={this.props.getBundleYAML}
               changeState={this.props.changeState}
               deployService={this.props.deployService}
               pluralize={this.props.pluralize} />

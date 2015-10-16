@@ -120,11 +120,15 @@ describe('EntityHeader', function() {
         title="Add to canvas" />);
   });
 
-  it('adds the service when the add button is clicked', function() {
+  it('adds a charm when the add button is clicked', function() {
     var deployService = sinon.stub();
     var changeState = sinon.stub();
+    var importBundleYAML = sinon.stub();
+    var getBundleYAML = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
         deployService={deployService}
         changeState={changeState}
         entityModel={mockEntity}

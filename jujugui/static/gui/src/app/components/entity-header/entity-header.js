@@ -55,7 +55,24 @@ YUI.add('entity-header', function() {
       @param {Object} e The click event
     */
     _handleDeployClick: function(e) {
-      this.props.deployService(this.props.entityModel);
+      var entityModel = this.props.entityModel;
+      var entity = entityModel.toEntity();
+      if (entity.type === 'charm') {
+        this.props.deployService(entityModel);
+        this._closeEntityDetails();
+      } else {
+        var id = entity.id.replace('cs:', '');
+        this.props.getBundleYAML(id, this._getBundleYAMLSuccess,
+            this._getBundleYAMLFailure);
+      }
+    },
+
+    /**
+      Close the entity details
+
+      @method _closeEntityDetails
+    */
+    _closeEntityDetails: function() {
       this.props.changeState({
         sectionC: {
           component: null,
@@ -64,8 +81,28 @@ YUI.add('entity-header', function() {
       });
     },
 
+    /**
+      Callback for successfully getting the bundle YAML.
+
+      @method _closeEntityDetails
+      @param {String} yaml The yaml for the bundle
+    */
+    _getBundleYAMLSuccess: function(yaml) {
+      this.props.importBundleYAML(yaml);
+      this._closeEntityDetails();
+    },
+
+    /**
+      Callback for failing to get the bundle YAML.
+
+      @method _closeEntityDetails
+      @param {String} yaml The yaml for the bundle
+    */
+    _getBundleYAMLFailure: function() {
+      //XXX: Need to figure out what to do if there's a failure.
+    },
+
     render: function() {
-      var entityModel = this.props.entityModel;
       var entity = this.props.entityModel.toEntity(),
           tags = entity.tags || [],
           revisions = entity.revisions || [];
