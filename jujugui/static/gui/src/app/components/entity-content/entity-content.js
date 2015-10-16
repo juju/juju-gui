@@ -120,7 +120,6 @@ YUI.add('entity-content', function() {
             </main>
 
             <aside className="four-col last-col">
-              Side column?
             </aside>
           </div>
         </div>
