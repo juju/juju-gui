@@ -57,6 +57,7 @@ YUI.add('entity-extension', function(Y) {
       var attrs = this.getAttrs(),
           type = attrs.entityType;
       var entity = {
+          description: attrs.description,
           displayName: attrs.name.replace('-', ' '),
           downloads: attrs.downloads,
           id: attrs.id,
