@@ -143,7 +143,7 @@ YUI.add('inspector-component', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: serviceId,
+                  id: previousMetadata.id || serviceId,
                   activeComponent: previousComponent || 'units',
                   unit: null,
                   unitStatus: unitStatus

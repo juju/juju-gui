@@ -2293,6 +2293,63 @@ describe('test_model.js', function() {
         assert.deepEqual(django.get('environmentConfig'), {debug: 'bar'});
       });
     });
+
+    describe('updateSubordinateUnits', function() {
+      var db;
+      beforeEach(function() {
+        db = new models.Database();
+        db.services = list;
+        rails.set('subordinate', true);
+        db.addUnits({
+          id: 'mysql/0'
+        });
+        db.addUnits({
+          id: 'django/0'
+        });
+
+        db.relations.add([
+          {
+            id: 'rails:db mysql:db',
+            endpoints: [
+              ['mysql', {name: 'db', role: 'provider'}],
+              ['rails', {name: 'db', role: 'requirer'}]
+            ],
+            interface: 'mysql',
+            scope: 'container'
+          },
+          {
+            id: 'rails:sub django:sub',
+            endpoints: [
+              ['django', {name: 'sub', role: 'provider'}],
+              ['rails', {name: 'sub', role: 'requirer'}]
+            ],
+            interface: 'django',
+            scope: 'container'
+          },
+          {
+            id: 'rails:nonsub django:nonsub',
+            endpoints: [
+              ['django', {name: 'nonsub', role: 'provider'}],
+              ['rails', {name: 'nonsub', role: 'requirer'}]
+            ],
+            interface: 'django',
+            scope: 'global'
+          }
+        ]);
+      });
+
+      it('updates subordinate unit lists', function() {
+        assert.equal(rails.get('units').size(), 0);
+        rails.updateSubordinateUnits(db);
+        assert.equal(rails.get('units').size(), 2);
+      });
+
+      it('attempts to update opposite units if not subordinate', function() {
+        assert.equal(rails.get('units').size(), 0);
+        mysql.updateSubordinateUnits(db);
+        assert.equal(rails.get('units').size(), 2);
+      });
+    });
   });
 
   describe('db.charms.addFromCharmData', function() {

@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Environment Change Set', function() {
-  var Y, ECS, ecs, envObj, dbObj, testUtils;
+  var Y, ECS, ecs, envObj, dbObj, models, testUtils;
 
   before(function(done) {
     var modules = [
@@ -30,13 +30,14 @@ describe('Environment Change Set', function() {
     Y = YUI(GlobalConfig).use(modules, function(Y) {
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       testUtils = Y.namespace('juju-tests').utils;
+      models = Y.namespace('juju.models');
       done();
     });
     window.flags = { mv: true };
   });
 
   beforeEach(function() {
-    dbObj = {};
+    dbObj = new models.Database();
     ecs = new ECS({
       db: dbObj
     });
@@ -842,6 +843,7 @@ describe('Environment Change Set', function() {
       it('destroys create records for undeployed services', function() {
         var stubRemove = testUtils.makeStubFunction();
         var stubDestroy = testUtils.makeStubFunction();
+        var stubUpdateSubordinates = testUtils.makeStubFunction();
         var db = ecs.get('db');
         var fakeUnits = new Y.LazyModelList();
         fakeUnits.add({});
@@ -852,7 +854,8 @@ describe('Environment Change Set', function() {
               destroy: stubDestroy,
               get: function(key) {
                 if (key === 'units') { return fakeUnits; }
-              }
+              },
+              updateSubordinateUnits: stubUpdateSubordinates
             };
           }
         };
@@ -870,6 +873,8 @@ describe('Environment Change Set', function() {
             stubRemoveUnits.calledOnce(), true, 'remove units not called');
         assert.equal(db.relations.remove.calledOnce(), true,
             'remove relations not called');
+        assert.equal(stubUpdateSubordinates.calledOnce(), true,
+            'subordinate units not updated');
         assert.deepEqual(ecs.changeSet, {});
       });
 
@@ -1044,7 +1049,7 @@ describe('Environment Change Set', function() {
             '_translateKeysToIds');
         this._cleanups.push(translateStub.reset);
         var args = [[{}], done];
-        var key = ecs.lazyAddMachines(args);
+        var key = ecs.lazyAddMachines(args, {modelId: ''});
         var record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
@@ -1091,6 +1096,17 @@ describe('Environment Change Set', function() {
     });
 
     describe('lazyAddUnits', function() {
+      var stubUpdateSubordinates;
+
+      beforeEach(function() {
+        stubUpdateSubordinates = testUtils.makeStubFunction();
+        ecs.get('db').services.getServiceByName = function() {
+          return {
+            updateSubordinateUnits: stubUpdateSubordinates
+          };
+        };
+      });
+
       it('creates a new `addUnits` record', function(done) {
         var args = ['mysql', 1, null, done];
         var key = ecs.lazyAddUnits(args);
@@ -1102,6 +1118,7 @@ describe('Environment Change Set', function() {
         var cb = record.command.args.pop();
         args.pop();
         assert.deepEqual(record.command.args, args);
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
         cb();
       });
 
@@ -1119,6 +1136,7 @@ describe('Environment Change Set', function() {
         var key = ecs.lazyAddUnits(args);
         var record = ecs.changeSet[key];
         assert.equal(record.parents[0], 'service-1');
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
       it('creates a record with a queued machine', function() {
@@ -1134,6 +1152,7 @@ describe('Environment Change Set', function() {
         var key = ecs.lazyAddUnits(args);
         var record = ecs.changeSet[key];
         assert.equal(record.parents[0], 'addMachines-1');
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
       it('updates the machine where to deploy on parent results', function() {
@@ -1145,6 +1164,7 @@ describe('Environment Change Set', function() {
         command.onParentResults(parentRecord, parentResults);
         // The unit will be added to the real machine.
         assert.strictEqual(command.args[2], '42');
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
       it('updates the service and unit on parent results', function() {
@@ -1182,6 +1202,11 @@ describe('Environment Change Set', function() {
                            'service name not set properly');
         assert.equal(command.options.modelId, 'my-service/3',
                      'options model id not updated');
+        assert.equal(stubFinder.calledOnce(), true,
+                     'did not query DB for unit');
+        assert.equal(unit.service, 'my-service',
+                     'service name not updated on unit');
+       assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
     });
@@ -1286,6 +1311,12 @@ describe('Environment Change Set', function() {
             }
           }
         };
+        var stubUpdateSubordinates = testUtils.makeStubFunction();
+        ecs.get('db').services.getServiceByName = function() {
+          return {
+            updateSubordinateUnits: stubUpdateSubordinates
+          };
+        };
         var args = [['serviceId1$', ['db', 'client']],
               ['serviceId2$', ['db', 'server']]];
         var key = ecs._lazyAddRelation(args);
@@ -1306,6 +1337,7 @@ describe('Environment Change Set', function() {
         assert.equal(Y.Object.size(ecs.changeSet), 3);
         // Perform this last, as it will mutate ecs.changeSet.
         assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
     });
 
@@ -1367,7 +1399,17 @@ describe('Environment Change Set', function() {
       it('can remove a ghost unit from the changeset', function() {
         ecs.get('db').removeUnits = testUtils.makeStubFunction();
         ecs.get('db').units = {
-          getById: testUtils.makeStubFunction()
+          getById: function() {
+            return {
+              service: 'foo'
+            };
+          }
+        };
+        var stubUpdateSubordinates = testUtils.makeStubFunction();
+        ecs.get('db').services.getServiceByName = function() {
+          return {
+            updateSubordinateUnits: stubUpdateSubordinates
+          };
         };
         ecs.changeSet['addUnit-982'] = {
           command: {
@@ -1379,6 +1421,7 @@ describe('Environment Change Set', function() {
         assert.strictEqual(record, undefined);
         assert.strictEqual(ecs.changeSet['addUnit-982'], undefined);
         assert.equal(remove.calledOnce(), true);
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
       it('can add a remove unit record into the changeset', function() {
