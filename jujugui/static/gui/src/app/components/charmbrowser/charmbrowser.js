@@ -86,7 +86,10 @@ YUI.add('charmbrowser-component', function() {
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
+                getDiagramURL={this.props.getDiagramURL}
                 deployService={this.props.deployService}
+                getFile={this.props.getFile}
+                renderMarkdown={this.props.renderMarkdown}
                 id={metadata.id}
                 pluralize={utils.pluralize} />
           };

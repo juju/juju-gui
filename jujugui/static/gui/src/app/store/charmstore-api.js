@@ -252,6 +252,17 @@ YUI.add('charmstore-api', function(Y) {
     },
 
     /**
+      Get the URL for a  bundle diagram.
+
+      @method getDiagramURL
+      @param {String} entityId The id of the charm or bundle's file we want.
+    */
+    getDiagramURL: function(entityId) {
+      entityId = entityId.replace('cs:', '');
+      return this._generatePath(entityId, null, '/diagram.svg');
+    },
+
+    /**
       Makes a request to the charmstore api for the supplied id. Whether that
       be a charm or bundle.
 

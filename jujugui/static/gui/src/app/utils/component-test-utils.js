@@ -38,6 +38,14 @@ var jsTestUtils = {
   shallowRender: function(component, returnRenderer) {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(component);
+    // XXX: Add the getMountedInstance until it lands, at which point this can
+    // removed. See:
+    // https://github.com/facebook/react/pull/4918/files
+    if (!shallowRenderer.getMountedInstance) {
+      shallowRenderer.getMountedInstance = function() {
+        return this._instance ? this._instance._instance : null;
+      };
+    }
     return (returnRenderer) ?
       shallowRenderer : shallowRenderer.getRenderOutput();
   },

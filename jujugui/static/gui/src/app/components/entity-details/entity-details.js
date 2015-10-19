@@ -68,6 +68,22 @@ YUI.add('entity-details', function() {
       );
     },
 
+    /**
+    Generate the diagram markup for a bundle.
+
+    @method _generateDiagram
+    @param {Object} entityModel The entity model.
+    @return {Object} The diagram markup.
+    */
+    _generateDiagram: function(entityModel) {
+      if (entityModel.get('entityType') !== 'bundle') {
+        return;
+      }
+      return <juju.components.EntityContentDiagram
+        getDiagramURL={this.props.getDiagramURL}
+        id={entityModel.get('id')} />;
+    },
+
     render: function() {
       var entityModel = this.state.entityModel,
           output;
@@ -85,6 +101,11 @@ YUI.add('entity-details', function() {
               changeState={this.props.changeState}
               deployService={this.props.deployService}
               pluralize={this.props.pluralize} />
+            {this._generateDiagram(entityModel)}
+            <juju.components.EntityContent
+              getFile={this.props.getFile}
+              renderMarkdown={this.props.renderMarkdown}
+              entityModel={entityModel} />
           </div>
         );
       }
@@ -94,6 +115,8 @@ YUI.add('entity-details', function() {
 
 }, '0.1.0', {
   requires: [
-    'entity-header'
+    'entity-header',
+    'entity-content',
+    'entity-content-diagram'
   ]
 });
