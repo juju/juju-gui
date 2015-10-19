@@ -985,7 +985,7 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
               topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
-      container.all('.service.is-selected').removeClass('is-selected');
+      topo.vis.selectAll('.is-selected').classed('is-selected', false);
     },
 
     /**
