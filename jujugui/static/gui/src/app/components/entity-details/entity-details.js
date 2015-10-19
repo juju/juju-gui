@@ -86,6 +86,8 @@ YUI.add('entity-details', function() {
               deployService={this.props.deployService}
               pluralize={this.props.pluralize} />
             <juju.components.EntityContent
+              getFile={this.props.getFile}
+              renderMarkdown={this.props.renderMarkdown}
               entityModel={entityModel} />
           </div>
         );

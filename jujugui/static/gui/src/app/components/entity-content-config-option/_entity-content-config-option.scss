@@ -5,6 +5,8 @@
         border-top: 1px dotted $light_mid_grey;
 
         &:first-of-type {
+            margin-top: 0;
+            padding-top: 0;
             border-top: none;
         }
     }

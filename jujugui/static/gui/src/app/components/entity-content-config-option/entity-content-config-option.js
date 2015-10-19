@@ -22,21 +22,21 @@ YUI.add('entity-content-config-option', function() {
 
   juju.components.EntityContentConfigOption = React.createClass({
 
-  /**
-    Create the markup for default value.
+    /**
+      Create the markup for default value.
 
-    @method _generateDefault
-    @param {String} defaultValue The option default.
-    @return {Object} The generated markup.
-  */
-  _generateDefault: function(defaultValue) {
-    if (defaultValue) {
-      return <dd className="entity-content__config-default">
-          {defaultValue}
-        </dd>;
-    }
-    return;
-  },
+      @method _generateDefault
+      @param {String} defaultValue The option default.
+      @return {Object} The generated markup.
+    */
+    _generateDefault: function(defaultValue) {
+      if (defaultValue) {
+        return <dd className="entity-content__config-default">
+            {defaultValue}
+          </dd>;
+      }
+      return;
+    },
 
     render: function() {
       var name = this.props.name;

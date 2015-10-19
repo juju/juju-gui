@@ -122,6 +122,8 @@ describe('Charmbrowser', function() {
     var deployService = sinon.spy();
     var importBundleYAML = sinon.spy();
     var getBundleYAML = sinon.spy();
+    var getFile = sinon.spy();
+    var renderMarkdown = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -133,6 +135,8 @@ describe('Charmbrowser', function() {
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getEntity={getEntity}
+        getFile={getFile}
+        renderMarkdown={renderMarkdown}
         utils={utils} />);
     assert.deepEqual(output,
         <juju.components.Panel
@@ -143,6 +147,8 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             getEntity={getEntity}
+            getFile={getFile}
+            renderMarkdown={renderMarkdown}
             deployService={deployService}
             id={id}
             pluralize={utils.pluralize} />

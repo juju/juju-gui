@@ -75,49 +75,23 @@ YUI.add('entity-content', function() {
       return optionsList;
     },
 
-    /**
-      Create the markup for the description.
-
-      @method _generateDescription
-      @param {String} description The entity's description.
-      @return {Object} The description markup.
-    */
-    _generateDescription: function(description) {
-      return description ?
-        <div className="entity__description section is-closed"
-             itemProp="description">
-          <h2 className="section__title">Description</h2>
-          <p>{description}</p>
-        </div> :
-        '';
-    },
-
-    /**
-      Create the markup for the readme.
-
-      @method _generateReadme
-      @param {String} readme The entity's readme.
-      @return {Object} The options readme.
-    */
-    _generateReadme: function(readme) {
-      return readme ?
-        <div className="readme section">
-          <h2 id="readme" className="section__title">Readme</h2>
-          <div className="readme" dangerouslySetInnerHTML={readme} />
-        </div> :
-        '';
-    },
-
     render: function() {
       var entityModel = this.props.entityModel;
       var entity = entityModel.toEntity();
       return (
-        <div className="row details">
+        <div className="row entity-content">
           <div className="inner-wrapper">
             <main className="seven-col append-one">
-              {this._generateDescription(entity.description)}
+              <div className="entity__description section"
+                   itemProp="description">
+                <h2 className="section__title">Description</h2>
+                <p>{entity.description}</p>
+              </div>
               {this._listRelated(entity.related)}
-              {this._generateReadme(entity.readme)}
+              <juju.components.EntityContentReadme
+                entityModel={entityModel}
+                renderMarkdown={this.props.renderMarkdown}
+                getFile={this.props.getFile} />
               <div className="configuration section" id="configuration">
                   <h3 className="section__title">Configuration</h3>
                   <dl>
@@ -133,6 +107,7 @@ YUI.add('entity-content', function() {
 
 }, '0.1.0', {
   requires: [
-    'entity-content-config-option'
+    'entity-content-config-option',
+    'entity-content-readme'
   ]
 });

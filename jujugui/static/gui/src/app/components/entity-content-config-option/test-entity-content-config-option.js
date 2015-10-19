@@ -54,4 +54,28 @@ describe('EntityContentConfigOption', function() {
           </dd>
         </div>);
   });
+
+  it('can render without a default value', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.EntityContentConfigOption
+        key="password"
+        name="password"
+        description="Required password"
+        type="string" />);
+    assert.deepEqual(output,
+        <div className="entity-content__config-option">
+          <dt id="charm-config-password"
+              className="entity-content__config-name">
+            password
+          </dt>
+          <dd className="entity-content__config-description">
+            <span className="entity-content__config-type">
+              ({"string"})
+            </span>
+            {' '}
+            Required password
+          </dd>
+          {undefined}
+        </div>);
+  });
 });
