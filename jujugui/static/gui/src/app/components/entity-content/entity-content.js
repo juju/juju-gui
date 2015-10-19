@@ -51,10 +51,10 @@ YUI.add('entity-content', function() {
         );
       }, this);
       return <div className="entity-content__configuration" id="configuration">
-            <h3>Configuration</h3>
-            <dl>
-              {optionsList}
-            </dl>
+          <h3>Configuration</h3>
+          <dl>
+            {optionsList}
+          </dl>
         </div>;
     },
 
