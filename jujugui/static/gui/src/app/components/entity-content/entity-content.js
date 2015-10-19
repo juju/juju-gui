@@ -26,40 +26,18 @@ YUI.add('entity-content', function() {
       entityModel: React.PropTypes.object.isRequired
     },
 
-    _listRelated: function(related) {
-      if (!related || related.length <= 0) {
-        return '';
-      }
-      var relatedList = related.map(function(bundle) {
-        return (
-          <li className="list-item twelve-col box related-bundle">
-            <a target="_blank" data-id="{bundle.Id}" className="name">
-              {bundle.Id}
-            </a>
-          </li>
-        );
-      });
-      var seeMore = related.length <= 2 ? '' :
-        <li className="seven-col list__controls align-center">See more</li>;
-      return (
-        <div className="related section clearfix" id="related">
-          <h2 className="section__title">Used in {related.length} solutions</h2>
-          <ul className="eq-height list--concealed list--visible-2 no-bullets">
-            {relatedList}
-            {seeMore}
-          </ul>
-        </div>
-      );
-    },
-
     /**
       Generate the list of configuration options.
 
       @method _generateOptionsList
-      @param {Object} options The collection of options.
+      @param {Object} entityModel The entity model.
       @return {Object} The options markup.
     */
-    _generateOptionsList: function(options) {
+    _generateOptionsList: function(entityModel) {
+      if (entityModel.get('entityType') === 'bundle') {
+        return;
+      }
+      var options = entityModel.get('options');
       var optionsList = [];
       Object.keys(options).forEach(function(name) {
         var option = options[name];
@@ -72,7 +50,29 @@ YUI.add('entity-content', function() {
             default={option.default} />
         );
       }, this);
-      return optionsList;
+      return <div className="configuration section" id="configuration">
+            <h3 className="section__title">Configuration</h3>
+            <dl>
+              {optionsList}
+            </dl>
+        </div>;
+    },
+
+    /**
+      Generate the description if it is a charm.
+
+      @method _generateDescription
+      @param {Object} entityModel The entity model.
+      @return {Object} The description markup.
+    */
+    _generateDescription: function(entityModel) {
+      if (entityModel.get('entityType') === 'charm') {
+          return <div className="entity__description section"
+               itemProp="description">
+            <h2 className="section__title">Description</h2>
+            <p>{entityModel.get('description')}</p>
+          </div>;
+      }
     },
 
     render: function() {
@@ -82,22 +82,12 @@ YUI.add('entity-content', function() {
         <div className="row entity-content">
           <div className="inner-wrapper">
             <main className="seven-col append-one">
-              <div className="entity__description section"
-                   itemProp="description">
-                <h2 className="section__title">Description</h2>
-                <p>{entity.description}</p>
-              </div>
-              {this._listRelated(entity.related)}
+              {this._generateDescription(entityModel)}
               <juju.components.EntityContentReadme
                 entityModel={entityModel}
                 renderMarkdown={this.props.renderMarkdown}
                 getFile={this.props.getFile} />
-              <div className="configuration section" id="configuration">
-                  <h3 className="section__title">Configuration</h3>
-                  <dl>
-                    {this._generateOptionsList(entityModel.get('options'))}
-                  </dl>
-              </div>
+              {this._generateOptionsList(entityModel)}
             </main>
           </div>
         </div>
