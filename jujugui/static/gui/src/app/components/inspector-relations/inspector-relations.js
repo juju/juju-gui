@@ -28,7 +28,6 @@ YUI.add('inspector-relations', function() {
     getInitialState: function() {
       // Setting a default state object.
       var state = this.generateState(this.props);
-      state.hasCommits = false;
       return state;
     },
 
@@ -41,9 +40,9 @@ YUI.add('inspector-relations', function() {
     */
     generateState: function(nextProps) {
       var state = {
-        activeComponent: relations.length > 0 ? 'relations' : 'onboarding'
+        activeComponent: nextProps.relations.length > 0 ?
+            'relations' : 'onboarding'
       };
-      var hasCommits = this.state ? this.state.hasCommits : false;
       switch (state.activeComponent) {
         case 'onboarding':
           state.activeChild = {
@@ -52,6 +51,22 @@ YUI.add('inspector-relations', function() {
                     This service doesn&rsquo;t have any relations. Build
                     relationships between services and find out about them here.
                   </p>
+                  <div className="inspector-relations-item">
+                    <span className="inspector-relations-item__details">
+                      <p className="inspector-relations-item__property">
+                        Interface: mysql
+                      </p>
+                      <p className="inspector-relations-item__property">
+                        Name: slave
+                      </p>
+                      <p className="inspector-relations-item__property">
+                        Role: client
+                      </p>
+                      <p className="inspector-relations-item__property">
+                        Scope: global
+                      </p>
+                    </span>
+                  </div>
                 </div>
           };
         break;
@@ -80,4 +95,6 @@ YUI.add('inspector-relations', function() {
 
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'inspector-relations-item'
+]});

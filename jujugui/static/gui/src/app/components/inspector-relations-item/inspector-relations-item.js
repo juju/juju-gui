@@ -15,7 +15,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-expose', function() {
+YUI.add('inspector-relations-item', function() {
 
   juju.components.InspectorRelationsItem = React.createClass({
 
@@ -41,7 +41,7 @@ YUI.add('inspector-expose', function() {
           <span className="inspector-relations-item__service"
             onClick={this._handleServiceClick}>
             <span className="inspector-relations-item__status">
-              >
+              &rarr;
             </span>
             {this.props.serviceId}
           </span>

@@ -1,0 +1,8 @@
+.inspector-relations-item {
+    @extend %stagger-fade-in;
+    padding: 0 20px;
+}
+
+.inspector-relations__onboarding .inspector-relations-item {
+    color: $light-mid-grey;
+}

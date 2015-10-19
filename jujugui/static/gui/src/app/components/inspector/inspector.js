@@ -187,7 +187,7 @@ YUI.add('inspector-component', function() {
           state.activeChild = {
             title: 'Relations',
             component:
-              <juju.components.InpsectorRelations
+              <juju.components.InspectorRelations
                 relations={[]}
                 changeState={this.props.changeState} />,
             backState: {
