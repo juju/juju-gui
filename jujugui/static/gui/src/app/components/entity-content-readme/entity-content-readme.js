@@ -22,7 +22,6 @@ YUI.add('entity-content-readme', function() {
 
   juju.components.EntityContentReadme = React.createClass({
 
-
     getInitialState: function() {
       return {
         readme: null,
@@ -46,7 +45,7 @@ YUI.add('entity-content-readme', function() {
       if (!readmeFile) {
         this._getReadmeFailure();
       } else {
-        var id = entityModel.get('storeId') || entityModel.get('id');
+        var id = entityModel.get('id');
         this.props.getFile(id, readmeFile, this._getReadmeSuccess,
             this._getReadmeFailure);
       }
@@ -93,8 +92,8 @@ YUI.add('entity-content-readme', function() {
 
     render: function() {
       return (
-        <div className="entity-content_readme section">
-          <h2 id="readme" className="section__title">Readme</h2>
+        <div className="entity-content_readme">
+          <h2 id="readme">Readme</h2>
           <div className="entity-content_readme-content"
             dangerouslySetInnerHTML={{__html: this.state.readme}} />
         </div>

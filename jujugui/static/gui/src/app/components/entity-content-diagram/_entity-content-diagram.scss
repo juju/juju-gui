@@ -1,0 +1,11 @@
+.entity-content__diagram {
+    clear: both;
+    padding: 60px;
+    background-color: $canvas-background;
+    box-shadow: inset 0px -1px 3px 0px rgba(0,0,0,0.35);
+    text-align: center;
+
+    &-image {
+        height: 350px;
+    }
+}

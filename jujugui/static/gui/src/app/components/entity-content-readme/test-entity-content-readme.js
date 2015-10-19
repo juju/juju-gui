@@ -80,8 +80,8 @@ describe('EntityContentReadme', function() {
     assert.equal(renderMarkdown.callCount, 1);
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
     assert.deepEqual(output,
-      <div className="entity-content_readme section">
-        <h2 id="readme" className="section__title">Readme</h2>
+      <div className="entity-content_readme">
+        <h2 id="readme">Readme</h2>
         <div className="entity-content_readme-content"
           dangerouslySetInnerHTML={{__html: "<p>Readme</p>"}} />
       </div>);
@@ -94,8 +94,8 @@ describe('EntityContentReadme', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
-      <div className="entity-content_readme section">
-        <h2 id="readme" className="section__title">Readme</h2>
+      <div className="entity-content_readme">
+        <h2 id="readme">Readme</h2>
         <div className="entity-content_readme-content"
           dangerouslySetInnerHTML={{__html: "No readme."}} />
       </div>);
@@ -117,8 +117,8 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 0);
     assert.deepEqual(output,
-      <div className="entity-content_readme section">
-        <h2 id="readme" className="section__title">Readme</h2>
+      <div className="entity-content_readme">
+        <h2 id="readme">Readme</h2>
         <div className="entity-content_readme-content"
           dangerouslySetInnerHTML={{__html: "No readme."}} />
       </div>);

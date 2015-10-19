@@ -50,8 +50,8 @@ YUI.add('entity-content', function() {
             default={option.default} />
         );
       }, this);
-      return <div className="configuration section" id="configuration">
-            <h3 className="section__title">Configuration</h3>
+      return <div className="entity-content__configuration" id="configuration">
+            <h3>Configuration</h3>
             <dl>
               {optionsList}
             </dl>
@@ -67,9 +67,8 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-          return <div className="entity__description section"
-               itemProp="description">
-            <h2 className="section__title">Description</h2>
+        return <div className="entity-content__description">
+            <h2>Description</h2>
             <p>{entityModel.get('description')}</p>
           </div>;
       }

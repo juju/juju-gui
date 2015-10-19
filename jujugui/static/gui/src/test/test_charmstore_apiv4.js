@@ -334,6 +334,13 @@ describe('Charmstore API v4', function() {
     });
   });
 
+  describe('getDiagramURL', function() {
+    it('can generate a URL for a bundle diagram', function() {
+      assert.equal(charmstore.getDiagramURL('apache2'),
+          'local/v4/apache2/diagram.svg');
+    });
+  });
+
   describe('getBundleYAML', function() {
     var success, failure;
 

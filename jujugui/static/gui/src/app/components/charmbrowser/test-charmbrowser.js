@@ -124,6 +124,7 @@ describe('Charmbrowser', function() {
     var getBundleYAML = sinon.spy();
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
+    var getDiagramURL = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -134,6 +135,7 @@ describe('Charmbrowser', function() {
         deployService={deployService}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         renderMarkdown={renderMarkdown}
@@ -147,6 +149,7 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             getEntity={getEntity}
+            getDiagramURL={getDiagramURL}
             getFile={getFile}
             renderMarkdown={renderMarkdown}
             deployService={deployService}
