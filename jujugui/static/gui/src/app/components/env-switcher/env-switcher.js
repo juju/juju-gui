@@ -39,7 +39,12 @@ YUI.add('env-switcher', function() {
       @method updateEnvList
     */
     updateEnvList: function() {
-      app.env.listEnvs('user-admin', this.updateEnvListCallback);
+      var jem = this.props.jem;
+      if (jem) {
+        jem.listEnvironments(this.updateEnvListCallback, this.jemFailHandler);
+      } else {
+        app.env.listEnvs('user-admin', this.updateEnvListCallback);
+      }
     },
 
     /**
@@ -52,8 +57,22 @@ YUI.add('env-switcher', function() {
       if (data.err) {
         console.log(data.err);
       } else {
-        this.setState({envList: data.envs});
+        // data.envs is only populated in the JES environments, when using JEM
+        // the environments are in the top level 'data' object.
+        this.setState({envList: data.envs || data});
       }
+    },
+
+    /**
+      Because the JEM api uses a different success and failure callback this
+      method simply logs out the error. We'll want to revisit this to
+      properly handle errors.
+
+      @method jemFailHandler
+      @param {Object} err The error message.
+    */
+    jemFailHandler: function(err) {
+      console.log(err);
     },
 
     /**
@@ -88,12 +107,27 @@ YUI.add('env-switcher', function() {
     */
     createNewEnv: function(e) {
       this.setState({showEnvList: false});
+      var jem = this.props.jem;
+      var envOwnerName = 'admin';
+      var auth = window.juju_config.auth;
+      if (auth && auth.user && auth.user.name) {
+        envOwnerName = auth.user.name;
+      }
       // XXX For now we will create a new env with an auto-incrementing
       // number at the end. Users will be able to customize their env names
       // once there is UX for it.
       var envName = 'new-env-' + this.state.envList.length;
-      this.props.env.createEnv(
-          envName, 'user-admin', this.createEnvCallback);
+      var baseTemplate = 'admin/gui';
+      var password = 'password';
+
+      if (jem) {
+        jem.newEnvironment(
+          envOwnerName, envName, baseTemplate, password,
+          this.createEnvCallback, this.jemFailHandler);
+      } else {
+        this.props.env.createEnv(
+            envName, 'user-admin', this.createEnvCallback);
+      }
     },
 
     /**

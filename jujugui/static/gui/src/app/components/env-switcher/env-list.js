@@ -30,12 +30,14 @@ YUI.add('env-list', function() {
     generateEnvList: function() {
       var envs = [];
       this.state.envs.forEach(function(env) {
+        // below the env.name is for JES response object and env.path is for
+        // the JEM response object.
         envs.push(
           <li className="env-list__environment"
             data-id={env.uuid}
             onClick={this.props.handleEnvClick}
             key={env.uuid}>
-            {env.name}
+            {env.name || env.path}
           </li>);
       }, this);
       return envs;

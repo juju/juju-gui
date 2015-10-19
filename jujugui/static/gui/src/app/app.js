@@ -916,7 +916,8 @@ YUI.add('juju-gui', function(Y) {
       React.render(
         <components.EnvSwitcher
           app={this}
-          env={this.env} />,
+          env={this.env}
+          jem={this.jem} />,
         document.getElementById('environment-switcher'));
     },
 

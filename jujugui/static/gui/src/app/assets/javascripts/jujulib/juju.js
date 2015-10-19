@@ -118,7 +118,7 @@ var module = module;
    * @public newEnvironment
    * @param envOwnerName {String} The name of the given environment's owner.
    * @param envName {String} The name of the given environment.
-   * @param configTemplate {String} The name of the config template to be used
+   * @param baseTemplate {String} The name of the config template to be used
    *     for creating the environment.
    * @param password {String} The password for the new environment.
    * @param success {function} An optional callback to be called on success.
