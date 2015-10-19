@@ -1449,7 +1449,7 @@ YUI.add('juju-topology-service', function(Y) {
           r: 15,
           fill: '#f8f8f8',
           stroke: '#888888',
-          'stroke-width': 1
+          'stroke-width': 1.1
         })
         .on('click', function(d) {
           self.get('component').fire('addRelationDragStart', { service: d });
