@@ -471,16 +471,7 @@ YUI.add('juju-gui', function(Y) {
             serviceName: 'jem'
           });
           this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
-
-          // XXX j.c.sackett 2015-10-07 This is only for demo to make sure the
-          // JEM is hooked up properly--we should remove it down the line.
-          this.jem.listEnvironments(function(data) {
-            console.log('Environment listing success!');
-            console.log(data);
-          }, function(error) {
-            console.log('Environment listing failure.');
-            console.log(error);
-          });
+          this._connectJEMSocketUrl();
         }
         if (this.get('sandbox')) {
           envOptions.socket_url = this.get('sandboxSocketURL');
@@ -982,6 +973,32 @@ YUI.add('juju-gui', function(Y) {
         suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
       }
       return socketUrl + '/ws' + suffix;
+    },
+
+    _connectJEMSocketUrl: function(environmentList) {
+      this.jem.listEnvironments(function(envList) {
+        // XXX This picks the first environment but we'll want to default to
+        // sandbox mode then allow the user to choose an env.
+        var envData = envList[0];
+        var doc = window.document;
+        var host = doc.location.hostname;
+        var port = doc.port;
+        var socketUrl = 'wss://' + host;
+        if (port) {
+          socketUrl += ':' + port;
+        }
+        var wssData = envData['host-ports'][1].split(':');
+        socketUrl += '/juju/api/' +
+                      wssData[0] + '/' +
+                      wssData[1] + '/' +
+                      envData.uuid;
+        this.set('socket_url', socketUrl);
+        this.env.set('socket_url', socketUrl);
+        this.switchEnv(envData.uuid);
+      }.bind(this), function(error) {
+        console.log('Environment listing failure.');
+        console.log(error);
+      });
     },
 
     /**
@@ -1613,7 +1630,9 @@ YUI.add('juju-gui', function(Y) {
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', newSocketUrl);
       // Disconnect and reconnect the environment.
-      this.env.close();
+      if (this.env.ws) {
+        this.env.close();
+      }
       this.db.reset();
       this.db.fire('update');
       this.env.connect();
