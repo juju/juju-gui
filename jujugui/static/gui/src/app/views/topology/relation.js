@@ -42,8 +42,6 @@ YUI.add('juju-topology-relation', function(Y) {
    * - *clearState:* clear all possible states that the environment view can
    *   be in as it pertains to actions (building a relation, viewing a service
    *   menu, etc.)
-   * - *hideServiceMenu:* hide the service menu after the 'Add Relation' item
-   *   was clicked.
    * - *fade:* fade services that are not valid endpoints for a pending
    *   relation.
    * - *show:* show faded services at 100% opacity again.
@@ -493,8 +491,6 @@ YUI.add('juju-topology-relation', function(Y) {
         return;
       }
 
-      // Remove the service menu.
-      topo.fire('hideServiceMenu');
       // Signify that a relation is being drawn.
       topo.fire('addRelationStart');
 
@@ -513,9 +509,6 @@ YUI.add('juju-topology-relation', function(Y) {
       var curr_action = this.get('currentServiceClickAction');
       if (curr_action === 'show_service') {
         this.set('currentServiceClickAction', 'addRelationStart');
-      } else if (curr_action === 'addRelationStart' ||
-              curr_action === 'ambiguousAddRelationCheck') {
-        this.set('currentServiceClickAction', 'hideServiceMenu');
       } // Otherwise do nothing.
     },
 
@@ -752,7 +745,6 @@ YUI.add('juju-topology-relation', function(Y) {
         this.dragline = null;
       }
       this.clickAddRelation = null;
-      this.set('currentServiceClickAction', 'hideServiceMenu');
       topo.buildingRelation = false;
       topo.update();
       vis.selectAll('.service').classed('selectable-service', false);
@@ -1104,7 +1096,6 @@ YUI.add('juju-topology-relation', function(Y) {
       var env = topo.get('env');
       // Ignore peer relations
       if (endpoints[0][0] === endpoints[1][0]) {
-        module.set('currentServiceClickAction', 'hideServiceMenu');
         return;
       }
       // Create a pending relation in the database between the two services.
@@ -1120,7 +1111,6 @@ YUI.add('juju-topology-relation', function(Y) {
                  module, relation.get('relation_id')),
           {modelId: relation.get('id')}
       );
-      module.set('currentServiceClickAction', 'hideServiceMenu');
     },
 
     /**

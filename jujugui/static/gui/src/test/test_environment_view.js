@@ -1018,82 +1018,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       done();
     });
 
-    it('must show Build Relation as disabled if charm is not loaded',
-       function() {
-         if (Y.UA.phantomjs) {
-           return;
-         }
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore
-         }).render();
-         var serviceNode = container.one('.service'),
-             add_rel = container.one('.add-relation');
-
-         // Toggle the service menu for the Add Relation button.
-         var sm = view.topo.modules.ServiceModule;
-
-         var service = d3.select(serviceNode.getDOMNode()).datum();
-         // Add a mock charm for the service.
-         var charm = {'id': service.charm,
-                       loaded: false};
-         db.charms.add(charm);
-         sm.showServiceMenu(service);
-
-         // Since the service's charm is not loaded the 'Build Relation' link
-         // is disabled.
-         assert.isTrue(add_rel.hasClass('disabled'));
-         charm = db.charms.getById(service.charm);
-         charm.loaded = true;
-         // Toggle the service menu twice to cause re-rendering.
-         sm.hideServiceMenu(service);
-         sm.showServiceMenu(service);
-         // Now that the charm is loaded and the menu is re-rendered, the
-         // Build Relation link is no longer disabled.
-         assert.isFalse(add_rel.hasClass('disabled'));
-       });
-
-
-    it('must not respond to clicks on disabled Build Relation link',
-       function() {
-         if (Y.UA.phantomjs) {
-           return;
-         }
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore
-         }).render();
-         var serviceNode = container.one('.service'),
-             add_rel = container.one('.add-relation'),
-             after_evt;
-
-         var service = d3.select(serviceNode.getDOMNode()).datum();
-         // Add a mock charm for the service.
-         var charm = {id: service.charm,
-           loaded: false};
-         db.charms.add(charm);
-
-         // Toggle the service menu for the Add Relation button.
-         var sm = view.topo.modules.ServiceModule;
-         sm.showServiceMenu(service);
-         // Mock an event object so that d3.mouse does not throw a NPE.
-         d3.event = {};
-         add_rel.simulate('click');
-         // And nothing happens.
-         container.all('.selectable-service')
-               .size()
-               .should.equal(0);
-         container.all('.dragline')
-               .size()
-               .should.equal(0);
-
-         view.destroy();
-       });
-
     it('must be able to add a relation from the service menu',
        function() {
          if (Y.UA.phantomjs) {
@@ -1106,7 +1030,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            charmstore: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
-             add_rel = container.one('.add-relation'),
+             add_rel = container.one('.relation-button__link'),
              after_evt;
          var service = d3.select(serviceNode.getDOMNode()).datum();
          var endpoints = {},
@@ -1156,9 +1080,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          container.one('.topology rect:first-child')
            .simulate('mousemove', { clientX: -1, clientY: -1 });
          parseInt(view.topo.vis.select('.dragline').attr('x2'), 10)
-           .should.equal(x2 - 1);
+           .should.not.equal(x2);
          parseInt(view.topo.vis.select('.dragline').attr('y2'), 10)
-           .should.equal(y2 - 1);
+           .should.not.equal(y2);
 
          // Start the process of adding a relation.
          module.ambiguousAddRelationCheck(

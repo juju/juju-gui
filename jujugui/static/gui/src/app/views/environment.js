@@ -114,11 +114,6 @@ YUI.add('juju-view-environment', function(Y) {
       // listen for the event and remove it from the list of open inspectors
       inspector.after('destroy', function(e) {
         delete this.inspector;
-        // We want the service menu to hide when the inspector does.
-        // For now, at least, with only one inspector, we can simply close
-        // all service menus.  We expect the service menus to go away
-        // soon-ish anyway in favor of a new approach.
-        this.topo.fire('hideServiceMenu');
       }, this);
 
 
@@ -127,7 +122,6 @@ YUI.add('juju-view-environment', function(Y) {
       model.on('destroy', function(e) {
         var inspector = this.inspector;
         if (inspector) { inspector.destroy(); }
-        this.topo.fire('hideServiceMenu');
       }, this);
 
       if (this.inspector) { this.inspector.destroy(); }
