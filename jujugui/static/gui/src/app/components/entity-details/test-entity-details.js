@@ -25,11 +25,57 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EntityDetails', function() {
+  var mockEntity;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
     YUI().use('entity-details', function() { done(); });
   });
+
+  beforeEach(function() {
+    mockEntity = makeEntity();
+  });
+
+  afterEach(function() {
+    mockEntity = undefined;
+  });
+
+  function makeEntity(isBundle) {
+      var pojo;
+      if (isBundle) {
+        pojo = {
+          name: 'spinach',
+          displayName: 'spinach',
+          url: 'http://example.com/spinach',
+          downloads: 1000,
+          owner: 'test-owner',
+          promulgated: true,
+          id: 'spinach',
+          entityType: 'bundle',
+          type: 'bundle'
+        };
+      } else {
+        pojo = {
+          name: 'spinach',
+          displayName: 'spinach',
+          url: 'http://example.com/spinach',
+          downloads: 1000,
+          owner: 'test-owner',
+          promulgated: true,
+          id: 'spinach',
+          entityType: 'charm',
+          type: 'charm',
+          iconPath: 'data:image/gif;base64,',
+          tags: ['database']
+        };
+      }
+      mockEntity = {};
+      mockEntity.toEntity = sinon.stub().returns(pojo);
+      mockEntity.get = function(key) {
+        return pojo[key];
+      };
+      return mockEntity;
+  }
 
   it('can be rendered', function() {
     var output = jsTestUtils.shallowRender(
@@ -44,42 +90,94 @@ describe('EntityDetails', function() {
 
   it('fetches an entity properly', function() {
     var id = 'spinach';
-    var result = {
-      name: 'spinach',
-      displayName: 'spinach',
-      url: 'http://example.com/spinach',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: id,
-      type: 'charm',
-      iconPath: 'data:image/gif;base64,',
-      tags: ['database'],
-      options: {},
-      files: []
-    };
-    var mockModel = {};
-    mockModel.toEntity = sinon.stub().returns(result);
-    mockModel.get = function(key) {
-      return result[key];
-    };
-    var mockData = [mockModel];
-    var getEntity = sinon.stub().callsArgWith(1, mockData);
-
-    var output = testUtils.renderIntoDocument(
+    var getEntity = sinon.stub().callsArgWith(1, [mockEntity]);
+    var deployService = sinon.spy();
+    var changeState = sinon.spy();
+    var importBundleYAML = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    var pluralize = sinon.spy();
+    var getFile = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
-          deployService={sinon.spy()}
-          changeState={sinon.spy()}
+          deployService={deployService}
+          changeState={changeState}
+          importBundleYAML={importBundleYAML}
+          getBundleYAML={getBundleYAML}
           getEntity={getEntity}
+          getFile={getFile}
+          renderMarkdown={renderMarkdown}
           id={id}
-          pluralize={sinon.spy()} />);
-
+          pluralize={pluralize} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    var entity = output.state.entityModel.toEntity();
-    assert.equal(entity.id, id,
-                 'entity ID does not match the ID requested');
+    assert.deepEqual(output,
+      <div className={'entity-details charm'}>
+        <juju.components.EntityHeader
+          entityModel={mockEntity}
+          importBundleYAML={importBundleYAML}
+          getBundleYAML={getBundleYAML}
+          changeState={changeState}
+          deployService={deployService}
+          pluralize={pluralize} />
+        {undefined}
+        <juju.components.EntityContent
+          getFile={getFile}
+          renderMarkdown={renderMarkdown}
+          entityModel={mockEntity} />
+      </div>);
+  });
+
+  it('can display a bundle diagram', function() {
+    var id = 'spinach';
+    var mockEntity = makeEntity(true);
+    var getEntity = sinon.stub().callsArgWith(1, [mockEntity]);
+    var deployService = sinon.spy();
+    var changeState = sinon.spy();
+    var importBundleYAML = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    var pluralize = sinon.spy();
+    var getFile = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var getDiagramURL = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.EntityDetails
+          deployService={deployService}
+          changeState={changeState}
+          importBundleYAML={importBundleYAML}
+          getBundleYAML={getBundleYAML}
+          getEntity={getEntity}
+          getFile={getFile}
+          renderMarkdown={renderMarkdown}
+          getDiagramURL={getDiagramURL}
+          id={id}
+          pluralize={pluralize} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(getEntity.calledOnce,
+                  'getEntity function not called');
+    assert.equal(getEntity.args[0][0], id,
+                 'getEntity not called with the entity ID');
+    assert.deepEqual(output,
+      <div className={'entity-details bundle'}>
+        <juju.components.EntityHeader
+          entityModel={mockEntity}
+          importBundleYAML={importBundleYAML}
+          getBundleYAML={getBundleYAML}
+          changeState={changeState}
+          deployService={deployService}
+          pluralize={pluralize} />
+        <juju.components.EntityContentDiagram
+          getDiagramURL={getDiagramURL}
+          id={id} />
+        <juju.components.EntityContent
+          getFile={getFile}
+          renderMarkdown={renderMarkdown}
+          entityModel={mockEntity} />
+      </div>);
   });
 });

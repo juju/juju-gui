@@ -79,11 +79,9 @@ YUI.add('entity-details', function() {
       if (entityModel.get('entityType') !== 'bundle') {
         return;
       }
-      var id = entityModel.get('id');
-      var url = this.props.getDiagramURL(id);
       return <juju.components.EntityContentDiagram
         getDiagramURL={this.props.getDiagramURL}
-        id={id} />
+        id={entityModel.get('id')} />;
     },
 
     render: function() {

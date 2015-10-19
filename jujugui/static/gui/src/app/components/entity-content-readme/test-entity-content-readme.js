@@ -83,7 +83,7 @@ describe('EntityContentReadme', function() {
       <div className="entity-content_readme">
         <h2 id="readme">Readme</h2>
         <div className="entity-content_readme-content"
-          dangerouslySetInnerHTML={{__html: "<p>Readme</p>"}} />
+          dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}} />
       </div>);
   });
 
@@ -97,7 +97,7 @@ describe('EntityContentReadme', function() {
       <div className="entity-content_readme">
         <h2 id="readme">Readme</h2>
         <div className="entity-content_readme-content"
-          dangerouslySetInnerHTML={{__html: "No readme."}} />
+          dangerouslySetInnerHTML={{__html: 'No readme.'}} />
       </div>);
   });
 
@@ -120,7 +120,7 @@ describe('EntityContentReadme', function() {
       <div className="entity-content_readme">
         <h2 id="readme">Readme</h2>
         <div className="entity-content_readme-content"
-          dangerouslySetInnerHTML={{__html: "No readme."}} />
+          dangerouslySetInnerHTML={{__html: 'No readme.'}} />
       </div>);
   });
 });
