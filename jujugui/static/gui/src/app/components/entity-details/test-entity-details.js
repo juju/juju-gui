@@ -54,7 +54,8 @@ describe('EntityDetails', function() {
       id: id,
       type: 'charm',
       iconPath: 'data:image/gif;base64,',
-      tags: ['database']
+      tags: ['database'],
+      options: {}
     };
     var mockModel = {};
     mockModel.toEntity = sinon.stub().returns(result);

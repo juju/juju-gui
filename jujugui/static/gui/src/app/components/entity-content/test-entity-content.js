@@ -44,7 +44,8 @@ describe('EntityContent', function() {
       id: 'spinach',
       type: 'charm',
       iconPath: 'data:image/gif;base64,',
-      tags: ['database']
+      tags: ['database'],
+      options: {}
     };
     mockEntity = {};
     mockEntity.toEntity = sinon.stub().returns(pojo);

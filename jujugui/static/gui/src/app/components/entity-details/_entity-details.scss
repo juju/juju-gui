@@ -1,12 +1,14 @@
 .entity-details {
-    overflow: auto;
-    background-color: white;
+    @extend %fullscreen-panel;
+
     p {
       line-height: 1.6;
     }
+
     .inline {
         margin-left: 0;
         overflow: auto;
+
         li {
             display: inline;
             list-style: none;

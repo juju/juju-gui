@@ -52,75 +52,79 @@ YUI.add('entity-content', function() {
       );
     },
 
-    _listOptions: function(options) {
-      if (!options) {
-        return '';
-      }
-      var optionsList = [],
-          n;
-      for (n in options) {
-        var val = options[n];
-        var valType = val.Type ?
-          <span className="charms__list--config-type">({val.Type})</span> :
-          '';
+    /**
+      Generate the list of configuration options.
+
+      @method _generateOptionsList
+      @param {Object} options The collection of options.
+      @return {Object} The options markup.
+    */
+    _generateOptionsList: function(options) {
+      var optionsList = [];
+      Object.keys(options).forEach(function(name) {
+        var option = options[name];
         optionsList.push(
-          <dt id={'charm-config-' + n} className="charms__list--config-name">
-            {n}
-          </dt>
+          <juju.components.EntityContentConfigOption
+            key={name}
+            name={name}
+            description={option.description}
+            type={option.type}
+            default={option.default} />
         );
-        optionList.push(
-          <dd className="charms__list--config-description">
-            {valType}
-            {' '}
-            {val.Description ? val.Description : ''}
-          </dd>
-        );
-        if (val.Default) {
-          optionsList.push(
-            <dd className="charms__list--config-setting">{val.Default}</dd>
-          );
-        }
-      }
-      return (
-        <div className="configuration section" id="configuration">
-            <h3 className="section__title">Configuration</h3>
-            <dl>
-              {optionsList}
-            </dl>
-        </div>
-      );
+      }, this);
+      return optionsList;
     },
 
-    render: function() {
-      var entity = this.props.entityModel.toEntity();
+    /**
+      Create the markup for the description.
 
-      var description = entity.description ?
+      @method _generateDescription
+      @param {String} description The entity's description.
+      @return {Object} The description markup.
+    */
+    _generateDescription: function(description) {
+      return description ?
         <div className="entity__description section is-closed"
              itemProp="description">
           <h2 className="section__title">Description</h2>
-          <p>{entity.description}</p>
+          <p>{description}</p>
         </div> :
         '';
+    },
 
-      var readme = entity.readme ?
+    /**
+      Create the markup for the readme.
+
+      @method _generateReadme
+      @param {String} readme The entity's readme.
+      @return {Object} The options readme.
+    */
+    _generateReadme: function(readme) {
+      return readme ?
         <div className="readme section">
           <h2 id="readme" className="section__title">Readme</h2>
           <div className="readme" dangerouslySetInnerHTML={readme} />
         </div> :
         '';
+    },
 
+    render: function() {
+      var entityModel = this.props.entityModel;
+      var entity = entityModel.toEntity();
       return (
         <div className="row details">
           <div className="inner-wrapper">
             <main className="seven-col append-one">
-              {description}
+              {this._generateDescription(entity.description)}
               {this._listRelated(entity.related)}
-              {readme}
-              {this._listOptions(entity.options)}
+              {this._generateReadme(entity.readme)}
+              <div className="configuration section" id="configuration">
+                  <h3 className="section__title">Configuration</h3>
+                  <dl>
+                    {this._generateOptionsList(entityModel.get('options'))}
+                  </dl>
+              </div>
             </main>
-
-            <aside className="four-col last-col">
-            </aside>
           </div>
         </div>
       );
@@ -128,5 +132,7 @@ YUI.add('entity-content', function() {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'entity-content-config-option'
+  ]
 });

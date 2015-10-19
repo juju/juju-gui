@@ -252,3 +252,14 @@
         padding-bottom: 20px;
     }
 }
+%fullscreen-panel {
+    @extend %floating-panel;
+    position: absolute;
+    top: 0;
+    left: $panel-space;
+    right: 0;
+    max-height: calc(100% - 20px);
+    color: $cool-grey;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
