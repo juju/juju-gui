@@ -45,8 +45,6 @@ YUI.add('env-list', function() {
 
     render: function() {
       var actionButtons = [{
-        title: 'More'
-      }, {
         title: 'New',
         type: 'confirm',
         action: this.props.createNewEnv

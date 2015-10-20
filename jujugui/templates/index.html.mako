@@ -161,7 +161,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           </ul>
           <ul class="header-banner__list--right">
             <li class="user-dropdown header-banner__list-item">
-              <span id="user-dropdown"></span>
+              <span id="user-dropdown hidden"></span>
             </li>
             <li id="maas-server" style="display:none" class="header-banner__list-item">
               <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
@@ -171,7 +171,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 Get started
               </a>
             </li>
-            <li class="header-banner__list-item">
+            <li class="header-banner__list-item hidden">
               <a href="/login/" class="header-banner__link">
                 Sign in
               </a>

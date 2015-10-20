@@ -1620,10 +1620,17 @@ YUI.add('juju-gui', function(Y) {
       @param {String} uuid The environment UUID where to switch to.
     */
     switchEnv: function(uuid, username, password) {
+      // Set the credentials so the GUI will automatically log in when we
+      // switch the environments.
       this.env.setCredentials({
         user: username,
         password: password
       });
+      // XXX Update the header breadcrumb to show the username. This is a
+      // quick hack for the demo.
+      document.querySelector(
+          '#user-name .header-banner__link--breadcrumb').innerText = username;
+
       var socketUrl = this.env.get('socket_url');
       // XXX frankban: this is not generic, and very specific for how the
       // socket URL is composed in the GUI embedded in OpenStack. Therefore,
