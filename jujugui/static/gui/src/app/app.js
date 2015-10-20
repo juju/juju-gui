@@ -861,6 +861,7 @@ YUI.add('juju-gui', function(Y) {
       var charm = app.db.charms.getById(service.get('charm'));
       var state = this.state;
       var utils = views.utils;
+      var charmstore = this.get('charmstore');
       React.render(
         <components.Panel
           instanceName="inspector-panel"
@@ -884,6 +885,8 @@ YUI.add('juju-gui', function(Y) {
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
             unexposeService={this.env.unexpose.bind(this.env)}
+            getAvailableVersions={charmstore.getAvailableVersions.bind(
+                charmstore)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />

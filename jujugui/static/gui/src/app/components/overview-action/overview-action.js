@@ -55,6 +55,16 @@ YUI.add('overview-action', function() {
       );
     },
 
+    /**
+      Don't bubble the click the parent.
+
+      @method _stopBubble
+      @param {Object} e The click event.
+    */
+    _stopBubble: function(e) {
+      e.stopPropagation();
+    },
+
     render: function() {
       var iconClass = this.baseClass + '__icon';
       var titleClass = this.baseClass + '__title';
@@ -68,6 +78,7 @@ YUI.add('overview-action', function() {
             {this.props.title}
           </span>
           <a href={this.props.link} className={this._linkClasses()}
+            onClick={this._stopBubble}
             target="_blank">
             {this.props.linkTitle}
           </a>

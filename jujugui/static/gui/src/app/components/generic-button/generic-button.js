@@ -41,8 +41,11 @@ YUI.add('generic-button', function() {
       Call the action if not disabled.
 
       @method _handleClick
+      @param {Object} e The click event.
     */
-    _handleClick: function() {
+    _handleClick: function(e) {
+      // Don't bubble the click the parent.
+      e.stopPropagation();
       if (!this.props.disabled) {
         this.props.action();
       }

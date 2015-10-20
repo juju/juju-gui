@@ -220,7 +220,9 @@ YUI.add('inspector-component', function() {
             title: 'Change version',
             component:
               <juju.components.InspectorChangeVersion
-                service={service} />,
+                changeState={this.props.changeState}
+                charmId={service.get('charm')}
+                getAvailableVersions={this.props.getAvailableVersions} />,
             backState: {
               sectionA: {
                 component: 'inspector',
@@ -257,6 +259,7 @@ YUI.add('inspector-component', function() {
 
 }, '0.1.0', {
   requires: [
+    'inspector-change-version',
     'inspector-expose',
     'inspector-header',
     'inspector-config',

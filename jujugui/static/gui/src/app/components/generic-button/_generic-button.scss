@@ -41,3 +41,20 @@
 .inspector-config .generic-button {
     padding: 10px 10px;
 }
+
+.inspector-current-version__item {
+    .generic-button {
+        display: none;
+        float: right;
+        margin-top: -3px;
+        padding: 5px 10px;
+    }
+
+    &:focus,
+    &:active,
+    &:hover {
+        .generic-button {
+            display: block;
+        }
+    }
+}
