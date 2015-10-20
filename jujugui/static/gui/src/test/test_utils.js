@@ -290,7 +290,7 @@ describe('utilities', function() {
 
 
   describe('relations visualization', function() {
-    var db, service;
+    var db, service, getById;
 
     beforeEach(function() {
       db = new models.Database();
@@ -301,6 +301,18 @@ describe('utilities', function() {
         loaded: true
       });
       db.services.add(service);
+      getById = db.services.getById;
+      db.services.getById = function() {
+        return {
+          get: function() {
+            return 'mediawiki';
+          }
+        };
+      };
+    });
+
+    afterEach(function() {
+      db.services.getById = getById;
     });
 
     it('shows a PyJuju rel from the perspective of a service', function() {
@@ -361,6 +373,22 @@ describe('utilities', function() {
       assert.strictEqual('mediawiki', result.far.service, 'far service');
       assert.strictEqual('requirer', result.far.role, 'far role');
       assert.strictEqual('db', result.far.name, 'far name');
+    });
+
+    it('includes the service names', function() {
+      db.relations.add({
+        'interface': 'mysql',
+        scope: 'global',
+        endpoints: [
+          ['mysql', {role: 'provider', name: 'mydb'}],
+          ['mediawiki', {role: 'requirer', name: 'db'}]
+        ],
+        'id': 'mediawiki:db mysql:mydb'
+      });
+      var results = utils.getRelationDataForService(db, service);
+      var result = results[0];
+      assert.strictEqual(result.near.serviceName, 'cs:mysql');
+      assert.strictEqual(result.far.serviceName, 'mediawiki');
     });
 
   });

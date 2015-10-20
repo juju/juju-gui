@@ -40,7 +40,7 @@ YUI.add('inspector-relations', function() {
     */
     generateState: function(nextProps) {
       var getRelationDataForService = nextProps.getRelationDataForService ||
-          this.props.getRelationDataForService
+          this.props.getRelationDataForService;
       var relations = getRelationDataForService();
       var state = {
         activeComponent: relations.length > 0 ?

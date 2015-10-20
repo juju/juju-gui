@@ -56,19 +56,19 @@ YUI.add('inspector-component', function() {
       var state = {
         activeComponent: metadata.activeComponent
       };
-      var previousState = nextProps.appPreviousState ||
+      var appPreviousState = nextProps.appPreviousState ||
           this.props.appPreviousState;
       var previousMetadata;
-      if (previousState.hasOwnProperty('sectionA')) {
-        previousMetadata = previousState.sectionA.metadata;
+      if (appPreviousState.hasOwnProperty('sectionA')) {
+        previousMetadata = appPreviousState.sectionA.metadata;
       }
       switch (state.activeComponent) {
         case undefined:
           var component;
-          var metadata;
+          var newMetadata;
           if (previousMetadata && previousMetadata.id !== serviceId) {
             component = 'inspector';
-            metadata = {
+            newMetadata = {
               id: previousMetadata.id,
               activeComponent: previousMetadata.activeComponent
             };
@@ -84,7 +84,7 @@ YUI.add('inspector-component', function() {
             backState: {
               sectionA: {
                 component: component || 'services',
-                metadata: metadata || null
+                metadata: newMetadata || null
               }}};
         break;
         case 'units':

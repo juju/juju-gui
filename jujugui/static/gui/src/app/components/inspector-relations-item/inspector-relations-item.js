@@ -62,7 +62,7 @@ YUI.add('inspector-relations-item', function() {
               <span dangerouslySetInnerHTML={{__html:
                   this._getIcon(relation.pending)}} />
             </span>
-            {relation.far.displayName}
+            {relation.far.serviceName}
           </span>
           <span className="inspector-relations-item__details">
             <p className="inspector-relations-item__property">
