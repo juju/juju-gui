@@ -41,6 +41,7 @@ describe('Entity Extension', function() {
     var attrs = {
       id: '~owner/foobar',
       name: 'foo-bar',
+      description: 'A test description.',
       downloads: '0',
       is_approved: false,
       revisions: [],
@@ -49,11 +50,9 @@ describe('Entity Extension', function() {
     entityModel.setAttrs(attrs);
   });
 
-  /*
   afterEach(function() {
     entityModel.destroy();
   });
-  */
 
   it('parses owner from the ID', function() {
     assert.equal('owner', entityModel.ownerFromId(),
@@ -77,6 +76,7 @@ describe('Entity Extension', function() {
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
     var expected = {
+      description: 'A test description.',
       displayName: 'foo bar',
       downloads: '0',
       id: '~owner/foobar',
@@ -106,6 +106,7 @@ describe('Entity Extension', function() {
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
     var expected = {
+      description: 'A test description.',
       displayName: 'foo bar',
       downloads: '0',
       id: 'foobar',
