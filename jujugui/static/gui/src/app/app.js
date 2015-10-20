@@ -1621,6 +1621,10 @@ YUI.add('juju-gui', function(Y) {
       @param {String} uuid The environment UUID where to switch to.
     */
     switchEnv: function(uuid, username, password) {
+      if (this.get('sandbox')) {
+        console.log('switching environments is not supported in sandbox');
+        return;
+      }
       // Set the credentials so the GUI will automatically log in when we
       // switch the environments.
       this.env.setCredentials({
