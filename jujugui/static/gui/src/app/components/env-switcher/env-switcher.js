@@ -22,6 +22,12 @@ YUI.add('env-switcher', function() {
 
   juju.components.EnvSwitcher = React.createClass({
 
+    propTypes: {
+      jem: React.PropTypes.object,
+      env: React.PropTypes.object,
+      app: React.PropTypes.object
+    },
+
     getInitialState: function() {
         return {
           showEnvList: false,
@@ -46,7 +52,8 @@ YUI.add('env-switcher', function() {
         jem.listEnvironments(
           this.updateEnvListCallback.bind(this, callback), this.jemFailHandler);
       } else {
-        app.env.listEnvs('user-admin', this.updateEnvListCallback);
+        this.props.env.listEnvs(
+            'user-admin', this.updateEnvListCallback.bind(this, null));
       }
     },
 
@@ -113,11 +120,11 @@ YUI.add('env-switcher', function() {
 
       @method createNewEnv
     */
-    createNewEnv: function(e) {
+    createNewEnv: function() {
       this.setState({showEnvList: false});
       var jem = this.props.jem;
       var envOwnerName = 'admin';
-      var auth = window.juju_config.auth;
+      var auth = this.props.authDetails;
       if (auth && auth.user && auth.user.name) {
         envOwnerName = auth.user.name;
       }
@@ -191,6 +198,7 @@ YUI.add('env-switcher', function() {
           createNewEnv={this.createNewEnv}
           envs={this.state.envList} />;
       }
+      return '';
     },
 
     render: function() {
