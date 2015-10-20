@@ -215,6 +215,20 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined
                 }}}};
         break;
+        case 'change-version':
+          state.activeChild = {
+            title: 'Change version',
+            component:
+              <juju.components.InspectorChangeVersion
+                service={service} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: undefined
+                }}}};
+        break;
       }
       return state;
     },

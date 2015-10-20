@@ -181,7 +181,17 @@ YUI.add('service-overview', function() {
         title: 'Change version',
         link: 'https://jujucharms.com/mediawiki/',
         linkTitle: 'cs:precise/mediawiki-18',
-        icon: this.icons.version
+        icon: this.icons.version,
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: serviceId,
+              activeComponent: 'change-version'
+            }
+          }
+        }
       });
 
       this.state.actions = actions;
