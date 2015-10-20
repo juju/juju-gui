@@ -1174,12 +1174,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
       Makes a request using a real websocket to get the bundle changeSet data.
 
-      @method handleChangeSetGetChanges
+      @method handleClientGetBundleChanges
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} state An instance of FakeBackend.
     */
-    handleChangeSetGetChanges: function(data, client, state) {
+    handleClientGetBundleChanges: function(data, client, state) {
       // The getBundleChanges functionality still needs to be possible when
       // deployed via charm and in sandbox mode.
       var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
@@ -1190,6 +1190,19 @@ YUI.add('juju-env-sandbox', function(Y) {
       // bail and throw an error after trying a few times. We try a few times
       // in the event of a poor connection.
       ws.onerror = this._changeSetWsOnError.bind(this, data, client);
+    },
+
+    /**
+      Makes a request using a real websocket to get the bundle changeSet data.
+      This enables supporting legacy GUI server API for getting bundle changes.
+
+      @method handleChangeSetGetChanges
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleChangeSetGetChanges: function(data, client, state) {
+      this.handleClientGetBundleChanges(data, client, state);
     },
 
     /**
@@ -1232,9 +1245,19 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} response The websocket response.
     */
     _changeSetWsOnMessage: function(data, client, response) {
+      var responseData = JSON.parse(response.data);
+      if (responseData.Error === 'not implemented (sandbox mode)') {
+        // We requested an endpoint not implemented by the GUI server in
+        // sandbox mode. For instance, a Juju Client.GetBundleChanges has been
+        // issued and cannot be handled. Let callers be notified of this
+        // failure in the way they expect from juju-core.
+        responseData.ErrorCode = 'not implemented';
+      }
       client.receive({
         RequestId: data.RequestId,
-        Response: JSON.parse(response.data).Response
+        Error: responseData.Error,
+        ErrorCode: responseData.ErrorCode,
+        Response: responseData.Response
       });
       response.currentTarget.close();
     }
