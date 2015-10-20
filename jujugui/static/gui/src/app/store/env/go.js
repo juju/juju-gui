@@ -2385,8 +2385,13 @@ YUI.add('juju-env-go', function(Y) {
               config['access-key'] = data.config['access-key'];
               config['secret-key'] = data.config['secret-key'];
               break;
+            case 'openstack':
+              config['tenant-name'] = data.config['tenant-name'];
+              config.username = data.config.username;
+              config.password = data.config.password;
+              break;
             default:
-              // XXX frankban: add support for the remaining providers.
+              // XXX frankban: add support for the remaining Juju providers.
               intermediateCallback({
                 Error: ptype + ' provider is not supported yet'
               });
