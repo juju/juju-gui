@@ -180,14 +180,14 @@ describe('Bundle Importer', function() {
 
     describe('fetchDryRun', function() {
 
-      it('calls to the env to get a changeset from a YAML', function() {
+      it('calls to the env to get bundle changes from a YAML', function() {
         var yaml = '{"services":{}}';
-        var getChangeSet = utils.makeStubMethod(
-            bundleImporter.env, 'getChangeSet');
-        this._cleanups.push(getChangeSet.reset);
+        var getBundleChanges = utils.makeStubMethod(
+            bundleImporter.env, 'getBundleChanges');
+        this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getChangeSet.callCount(), 1);
-        var args = getChangeSet.lastArguments();
+        assert.equal(getBundleChanges.callCount(), 1);
+        var args = getBundleChanges.lastArguments();
         assert.equal(args.length, 3);
         assert.equal(args[0], yaml);
         assert.strictEqual(args[1], null);
@@ -195,42 +195,42 @@ describe('Bundle Importer', function() {
 
       it('ensures v4 format on import', function() {
         var yaml = '{"foo":{"services":{}}}';
-        var getChangeSet = utils.makeStubMethod(
-            bundleImporter.env, 'getChangeSet');
-        this._cleanups.push(getChangeSet.reset);
+        var getBundleChanges = utils.makeStubMethod(
+            bundleImporter.env, 'getBundleChanges');
+        this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getChangeSet.callCount(), 1);
-        var args = getChangeSet.lastArguments();
+        assert.equal(getBundleChanges.callCount(), 1);
+        var args = getBundleChanges.lastArguments();
         assert.equal(args.length, 3);
         assert.equal(args[0], '{"services":{}}');
         assert.strictEqual(args[1], null);
       });
 
-      it('calls to the env to get a changeset from a token', function() {
+      it('calls to the env to get bundle changes from a token', function() {
         var token = 'foo';
-        var getChangeSet = utils.makeStubMethod(
-            bundleImporter.env, 'getChangeSet');
-        this._cleanups.push(getChangeSet.reset);
+        var getBundleChanges = utils.makeStubMethod(
+            bundleImporter.env, 'getBundleChanges');
+        this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(null, token);
-        assert.equal(getChangeSet.callCount(), 1);
-        var args = getChangeSet.lastArguments();
+        assert.equal(getBundleChanges.callCount(), 1);
+        var args = getBundleChanges.lastArguments();
         assert.equal(args.length, 3);
         assert.strictEqual(args[0], null);
         assert.equal(args[1], token);
       });
 
-      it('has a callback which calls to import the dryrun', function() {
+      it('has a callback which calls to import the dry run', function() {
         var yaml = 'foo';
         var dryRun = utils.makeStubMethod(bundleImporter, 'importBundleDryRun');
-        var getChangeSet = utils.makeStubMethod(
-            bundleImporter.env, 'getChangeSet');
-        this._cleanups.concat([dryRun.reset, getChangeSet.reset]);
-        var changeSet = { foo: 'bar' };
+        var getBundleChanges = utils.makeStubMethod(
+            bundleImporter.env, 'getBundleChanges');
+        this._cleanups.concat([dryRun.reset, getBundleChanges.reset]);
+        var changes = [{foo: 'bar'}];
         bundleImporter.fetchDryRun(yaml);
-        var callback = getChangeSet.lastArguments()[2];
-        callback({changeSet: changeSet});
+        var callback = getBundleChanges.lastArguments()[2];
+        callback({changes: changes});
         assert.equal(dryRun.callCount(), 1);
-        assert.deepEqual(dryRun.lastArguments()[0], changeSet);
+        assert.deepEqual(dryRun.lastArguments()[0], changes);
       });
     });
   });

@@ -1180,7 +1180,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} state An instance of FakeBackend.
     */
     handleChangeSetGetChanges: function(data, client, state) {
-      // The getChangeSet functionality still needs to be possible when
+      // The getBundleChanges functionality still needs to be possible when
       // deployed via charm and in sandbox mode.
       var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
       ws.onopen = this._changeSetWsOnOpen.bind(this, ws, data);

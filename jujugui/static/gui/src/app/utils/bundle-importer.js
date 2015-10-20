@@ -124,7 +124,7 @@ YUI.add('bundle-importer', function(Y) {
       if (bundleYAML) {
         bundleYAML = this._ensureV4Format(bundleYAML);
       }
-      this.env.getChangeSet(
+      this.env.getBundleChanges(
           bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
     },
 
@@ -135,17 +135,16 @@ YUI.add('bundle-importer', function(Y) {
       @param {Object} response The processed response data.
     */
     _handleFetchDryRun: function(response) {
-      if (response.err) {
+      if (response.errors && response.errors.length) {
         this.db.notifications.add({
           title: 'Error generating changeSet',
-          message: 'There was an error generating the changeSet. See browser' +
-              ' console for additional information',
+          message: 'The following errors occurred while retrieving bundle ' +
+              'changes: ' + response.errors.join(', '),
           level: 'error'
         });
-        console.error('Response', response);
         return;
       }
-      this.importBundleDryRun(response.changeSet);
+      this.importBundleDryRun(response.changes);
     },
 
     /**

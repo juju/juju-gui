@@ -2257,59 +2257,67 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Makes a request of the WebSocket for the changeSet list of commands from
-      the supplied bundle YAML contents.
+      Make a WebSocket request to retrieve the list of changes required to
+      deploy a bundle, given the bundle YAML contents or token.
 
-      @method getChangeSet
+      @method getBundleChanges
       @param {String} bundleYAML The bundle YAML file contents.
       @param {String} changesToken The token identifying a bundle change set
         (ignored if bundleYAML is provided).
-      @param {Function} callback The user supplied callback to send the
-        changeset response to after post processing in _handleGetChangeSet.
-        Detailed responses can be found:
+      @param {Function} callback The user supplied callback to send the bundle
+        changes response to after proper post processing. The callback receives
+        an object with an "errors" attribute containing possible errors and
+        with a "changes" attribute with the list of bundle changes.
+        Detailed responses for the legacy GUI server calls can be found at
         http://bazaar.launchpad.net/~juju-gui/charms/trusty/juju-gui/trunk/
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
-    getChangeSet: function(bundleYAML, changesToken, callback) {
-      // Since the callback argument of this._send_rpc is optional, if a
-      // callback is not provided, we can leave intermediateCallback undefined.
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback and service.  No context is passed.
-        intermediateCallback = this._handleGetChangeSet.bind(this, callback);
-      }
+    getBundleChanges: function(bundleYAML, changesToken, callback) {
+      self = this;
+      // Define callbacks for both legacy and new Juju API calls.
+      var handleLegacy = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by ChangeSet.GetChanges:', data);
+          return;
+        }
+        userCallback({
+          errors: data.Error && [data.Error] || data.Response.Errors,
+          changes: data.Response && data.Response.Changes
+        });
+      };
+      var handle = function(userCallback, data) {
+        if (data.ErrorCode === 'not implemented') {
+          // The current Juju API server does not support
+          // Client.GetBundleChanges calls. Fall back to the GUI server call.
+          self._send_rpc({
+            Type: 'ChangeSet',
+            Request: 'GetChanges',
+            Params: params
+          }, handleLegacy.bind(self, userCallback));
+          return;
+        }
+        if (!userCallback) {
+          console.log('data returned by Client.GetBundleChanges:', data);
+          return;
+        }
+        userCallback({
+          errors: data.Error && [data.Error] || data.Response.errors,
+          changes: data.Response && data.Response.changes
+        });
+      };
+      // Prepare the request parameters.
       var params = Object.create(null);
       if (bundleYAML !== null) {
         params.YAML = bundleYAML;
       } else {
         params.Token = changesToken;
       }
-      this._send_rpc({
-        Type: 'ChangeSet',
-        Request: 'GetChanges',
+      // Send the request to retrieve bundle changes from Juju.
+      self._send_rpc({
+        Type: 'Client',
+        Request: 'GetBundleChanges',
         Params: params
-      }, intermediateCallback);
-    },
-
-    /**
-      Post process the bundle changeset content before sending it to the user
-      supplied callback
-
-      @method _handleGetChangeSet
-      @param {Function} userCallback The supplied user callback to call with
-        the processed response data.
-      @param {Object} data The response from the websocket with the changeset.
-    */
-    _handleGetChangeSet: function(userCallback, data) {
-      var response = {};
-      if (data.Response && data.Response.Errors) {
-        response.err = data.Response.Errors;
-      } else if (data.Error) {
-        response.err = data.Error;
-      } else {
-        response.changeSet = data.Response.Changes;
-      }
-      userCallback(response);
+      }, handle.bind(self, callback));
     },
 
     // EnvironmentManager facade API endpoints.
