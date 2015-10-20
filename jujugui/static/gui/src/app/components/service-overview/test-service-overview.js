@@ -51,7 +51,7 @@ describe('ServiceOverview', function() {
   });
 
   function stubIcons() {
-    icons = juju.components.ServiceOverview.icons;
+    icons = juju.components.ServiceOverview.prototype.icons;
     juju.components.ServiceOverview.prototype.icons = {};
   }
 
