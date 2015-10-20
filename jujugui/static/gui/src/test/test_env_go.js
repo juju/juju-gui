@@ -2183,79 +2183,114 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('requests the changeset from the GUI server using a YAML', function() {
+    it('requests the changes from Juju using a YAML', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, null, callback);
+      env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
-        Params: {
-          YAML: yaml
-        },
-        Request: 'GetChanges',
         RequestId: 1,
-        Type: 'ChangeSet'
+        Type: 'Client',
+        Request: 'GetBundleChanges',
+        Params: {YAML: yaml}
       });
     });
 
-    it('requests the changeset from the GUI server using a token', function() {
+    it('requests the changes from the GUI server using a token', function() {
       var callback = utils.makeStubFunction();
-      env.getChangeSet(null, 'TOKEN', callback);
+      env.getBundleChanges(null, 'TOKEN', callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
-        Params: {Token: 'TOKEN'},
-        Request: 'GetChanges',
         RequestId: 1,
-        Type: 'ChangeSet'
+        Type: 'Client',
+        Request: 'GetBundleChanges',
+        Params: {Token: 'TOKEN'}
       });
     });
 
-    it('handles processing the changeset response', function() {
+    it('handles processing the bundle changes response', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, null, callback);
+      env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
-        Response: {
-          Changes: ['foo']
-        }
+        Response: {changes: ['foo']}
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
-        changeSet: ['foo']
+        changes: ['foo'],
+        errors: undefined
       });
     });
 
-    it('handles process a changeset error response', function() {
+    it('handles bundle changes error response', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, null, callback);
+      env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
-        Response: {
-          Errors: ['foo']
-        }
+        Response: {errors: ['bad wolf']}
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
-        err: ['foo']
+        changes: undefined,
+        errors: ['bad wolf']
       });
     });
 
-    it('handles yaml parsing errors from the guiserver', function() {
+    it('handles yaml parsing errors from the GUI server', function() {
       var yaml = 'foo:\n  bar: baz';
       var callback = utils.makeStubFunction();
-      env.getChangeSet(yaml, null, callback);
+      env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
-        Error: ['food']
+        Error: 'bad wolf'
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
-        err: ['food']
+        changes: undefined,
+        errors: ['bad wolf']
+      });
+    });
+
+    it('falls back to GUI server for bundle deployments', function(done) {
+      var yaml = 'foo:\n  bar: baz';
+      env.getBundleChanges(yaml, null, function(data) {
+        assert.strictEqual(data.errors, undefined);
+        assert.deepEqual(data.changes, ['foo']);
+        done();
+      });
+      // Mimic the first response to Client.GetBundleChanges (Juju).
+      conn.msg({
+        RequestId: 1,
+        ErrorCode: 'not implemented'
+      });
+      // Mimic the second response to ChangeSet.GetChanges (GUI server).
+      conn.msg({
+        RequestId: 2,
+        Response: {Changes: ['foo']}
+      });
+    });
+
+    it('handles errors on GUI server bundle deployments', function(done) {
+      var yaml = 'foo:\n  bar: baz';
+      env.getBundleChanges(yaml, null, function(data) {
+        assert.strictEqual(data.changes, undefined);
+        assert.deepEqual(data.errors, ['bad wolf']);
+        done();
+      });
+      // Mimic the first response to Client.GetBundleChanges (Juju).
+      conn.msg({
+        RequestId: 1,
+        ErrorCode: 'not implemented'
+      });
+      // Mimic the second response to ChangeSet.GetChanges (GUI server).
+      conn.msg({
+        RequestId: 2,
+        Response: {Errors: ['bad wolf']}
       });
     });
 
