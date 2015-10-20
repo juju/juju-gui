@@ -1,0 +1,37 @@
+.deployment-summary {
+    @extend %scroll-children;
+    // Expand this container to take the full parent height.
+    flex: 2;
+
+    &__header {
+        padding: 40px 20px 20px;
+    }
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+    }
+
+    &__title {
+        font-size: 1.375em;
+    }
+
+    &__content {
+        @extend %collapse-children;
+        padding: 0 20px 5px 20px;
+    }
+
+    &__list {
+        margin: 0;
+        border-top: 1px solid $light-mid-grey;
+        list-style: none;
+    }
+
+    &__footer {
+        padding: 20px;
+        border-top: 1px solid $light-mid-grey;
+        text-align: right;
+    }
+}

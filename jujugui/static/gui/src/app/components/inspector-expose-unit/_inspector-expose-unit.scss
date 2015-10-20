@@ -1,0 +1,18 @@
+.inspector-expose__unit {
+    @extend %stagger-fade-in;
+    padding: 10px 20px;
+    border-bottom: 1px solid $mid-grey;
+    cursor: pointer;
+
+    &:last-child {
+        border: none;
+    }
+
+    &-detail {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

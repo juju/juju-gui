@@ -1,0 +1,32 @@
+<div class="view-container">
+  <div class="scale-up-container">
+  </div>
+  {{#unless subordinate}}
+    <div class="view-content unit-scaling">
+      <div class="units-input">
+        <div class="unit-label">of</div>
+        <input type="text" class="num-units-control" value="{{unit_count}}"/>
+        <span class="text-in-input">Units</span>
+      </div>
+      <div class="current-unit-num" data-bind="unit_count"></div>
+      <div class="unit-constraints-confirm closed"></div>
+    </div>
+    <ul class="overview-unit-list" data-bind="units">
+    </ul>
+  {{/unless}}
+  <div class="overview-footer-item expose {{#if pending}}hidden{{/if}}">
+    <div class="toggle single-line">
+      <label for="expose-toggle">Expose this service?</label>
+      <div class="toggle-switch" data-bind="exposed">
+          <input type="checkbox"
+                 name="expose-toggle"
+                 class="expose-toggle hidden"
+                 data-skipconflictux=true
+                 id="expose-toggle">
+          <label for="expose-toggle" class="light">
+            <div class="handle"></div>
+          </label>
+      </div>
+    </div>
+  </div>
+</div>

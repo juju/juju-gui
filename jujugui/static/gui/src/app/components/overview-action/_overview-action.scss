@@ -1,0 +1,58 @@
+.overview-action {
+    @extend %stagger-fade-in;
+    cursor: pointer;
+    padding: 11px 20px 11px 45px;
+
+    &:focus,
+    &:active,
+    &:hover {
+        background-color: $light-grey;
+
+        .overview-action__icon {
+          circle,
+          path {
+            fill: $cool-grey;
+          }
+        }
+    }
+
+    &__icon {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        left: 20px;
+
+        circle,
+        path {
+          transition: fill .3s;
+        }
+    }
+
+    &__link:not(.hidden) {
+        display: block;
+        margin-top: 3px;
+    }
+
+    &__value {
+        @include notification(transparent);
+        float: right;
+        margin-top: -3px;
+        color: $text-colour;
+
+        &--type-error {
+            @include notification($error);
+        }
+
+        &--type-pending {
+            @include notification($pending);
+        }
+
+        &--type-uncommitted {
+            @include notification($uncommitted);
+        }
+    }
+}
+
+.unit-list .overview-action {
+  padding-left: 20px;
+}

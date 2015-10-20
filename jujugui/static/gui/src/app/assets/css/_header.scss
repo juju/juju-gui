@@ -1,0 +1,97 @@
+
+/*
+ * The main header above the canvas
+ */
+
+.header-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $navbar-height;
+
+    .header-banner__link,
+    .header-banner__link--breadcrumb {
+        @extend .border-box;
+        color: $text-colour;
+        display: block;
+    }
+
+    .header-banner__link--breadcrumb {
+        color: $charm-panel-orange;
+        font-size: 23px;
+
+        &:before {
+            content: '/';
+            position: relative;
+            left: -5px;
+            top: 1px;
+            color: #cdcdcd;
+        }
+
+        &:after {
+            content: '/';
+            position: relative;
+            right: -5px;
+            top: 1px;
+            color: #cdcdcd;
+        }
+    }
+
+    .environment-name {
+        color: $text-colour;
+        font-size: 23px;
+    }
+
+    .header-banner__list {
+        @extend %list-style;
+
+        &--right {
+            @extend %list-style;
+            float: right;
+        }
+    }
+
+    .header-banner__list-item {
+        float: left;
+        padding: 21px 8px;
+
+        &--no-padding {
+            padding: 0;
+        }
+    }
+
+    .user-dropdown {
+        display: block;
+        margin-right: 20px;
+
+        &.hidden {
+            display: none;
+        }
+
+        .menu-link {
+            &:hover {
+                background-color: $charm-panel-orange;
+            }
+            .sprite {
+                margin-right: 10px;
+
+                &.hover {
+                    display: none;
+                }
+                &.normal {
+                    display: inline-block;
+                }
+            }
+        }
+        .open .menu-link,
+        .menu-link:hover {
+            .sprite.hover {
+                display: inline-block;
+            }
+            .sprite.normal {
+                display: none;
+            }
+        }
+    }
+}
