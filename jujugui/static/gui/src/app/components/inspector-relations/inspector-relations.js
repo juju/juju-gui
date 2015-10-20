@@ -39,8 +39,11 @@ YUI.add('inspector-relations', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
+      var getRelationDataForService = nextProps.getRelationDataForService ||
+          this.props.getRelationDataForService
+      var relations = getRelationDataForService();
       var state = {
-        activeComponent: nextProps.relations.length > 0 ?
+        activeComponent: relations.length > 0 ?
             'relations' : 'onboarding'
       };
       switch (state.activeComponent) {
@@ -72,9 +75,9 @@ YUI.add('inspector-relations', function() {
         break;
         case 'relations':
           state.activeChild = {
-            component: <div className="inspector-relations__list">
-                  relations
-                </div>
+            component: <ul className="inspector-relations__list">
+                  {this._generateRelations(relations)}
+                </ul>
           };
         break;
       }
@@ -83,6 +86,25 @@ YUI.add('inspector-relations', function() {
 
     componentWillReceiveProps: function(nextProps) {
       this.setState(this.generateState(nextProps));
+    },
+
+    /**
+      Generate the relation list of components.
+
+      @method _generateRelations
+      @param {Array} relations The list of relation objects.
+      @returns {Object} The relation components.
+    */
+    _generateRelations: function(relations) {
+      var components = [];
+      relations.forEach(function(relation) {
+        components.push(
+        <juju.components.InspectorRelationsItem
+          key={relation.id}
+          relation={relation}
+          changeState={this.props.changeState} />);
+      }, this);
+      return components;
     },
 
     render: function() {

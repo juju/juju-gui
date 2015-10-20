@@ -674,6 +674,7 @@ YUI.add('juju-view-utils', function(Y) {
     // endpoints for all of the relationships `rels`.  If it is a peer
     // relationship, then `far` will be undefined.
     var service_name = service.get('id');
+    var services = db.services;
     return Y.Array.map(
         db.relations.get_relations_for_service(service),
         function(relation) {
@@ -688,9 +689,18 @@ YUI.add('juju-view-utils', function(Y) {
             far = rel.endpoints[0];
           }
           rel.near = {service: near[0], role: near[1].role, name: near[1].name};
+          var farService;
           // far will be undefined or the far endpoint service.
-          rel.far = far && {
-            service: far[0], role: far[1].role, name: far[1].name};
+          if (far) {
+            var id = far[0];
+            farService = {
+              service: id,
+              role: far[1].role,
+              name: far[1].name,
+              displayName: services.getById(id).get('name')
+            };
+          }
+          rel.far = farService;
           var relationId = rel.relation_id;
           if (utils.isPythonRelation(relationId)) {
             // This is a Python relation id.

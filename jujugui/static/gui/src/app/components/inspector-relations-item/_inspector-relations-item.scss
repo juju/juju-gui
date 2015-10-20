@@ -1,6 +1,31 @@
 .inspector-relations-item {
     @extend %stagger-fade-in;
-    padding: 0 20px;
+    border-bottom: 1px solid $mid-grey;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__service {
+        display: block;
+        padding: 10px 20px;
+        border-bottom: 1px solid $mid-grey;
+        line-height: 1.5;
+        cursor: pointer;
+    }
+
+    &__status {
+        float: right;
+
+        svg {
+            vertical-align: text-bottom;
+        }
+    }
+
+    &__details {
+        display: block;
+        padding: 0 20px;
+    }
 }
 
 .inspector-relations__onboarding .inspector-relations-item {
