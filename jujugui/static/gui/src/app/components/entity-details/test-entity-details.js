@@ -85,7 +85,10 @@ describe('EntityDetails', function() {
         changeState={sinon.spy()}
         getEntity={sinon.spy()}
         pluralize={sinon.spy()} />);
-    assert.equal(output.props.children, 'Loading...');
+    assert.equal(output,
+      <div className="entity-details">
+        <juju.components.Spinner/>
+      </div>);
   });
 
   it('fetches an entity properly', function() {

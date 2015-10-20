@@ -89,7 +89,9 @@ YUI.add('entity-details', function() {
           output;
       if (!entityModel) {
         output = (
-          <div className="spinner-loader">Loading...</div>
+          <div className="entity-details">
+            <juju.components.Spinner/>
+          </div>
         );
       } else {
         output = (
