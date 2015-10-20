@@ -994,7 +994,7 @@ YUI.add('juju-gui', function(Y) {
                       envData.uuid;
         this.set('socket_url', socketUrl);
         this.env.set('socket_url', socketUrl);
-        this.switchEnv(envData.uuid);
+        this.switchEnv(envData.uuid, envData.user, envData.password);
       }.bind(this), function(error) {
         console.log('Environment listing failure.');
         console.log(error);
@@ -1619,7 +1619,11 @@ YUI.add('juju-gui', function(Y) {
       @method switchEnv
       @param {String} uuid The environment UUID where to switch to.
     */
-    switchEnv: function(uuid) {
+    switchEnv: function(uuid, username, password) {
+      this.env.setCredentials({
+        user: username,
+        password: password
+      });
       var socketUrl = this.env.get('socket_url');
       // XXX frankban: this is not generic, and very specific for how the
       // socket URL is composed in the GUI embedded in OpenStack. Therefore,

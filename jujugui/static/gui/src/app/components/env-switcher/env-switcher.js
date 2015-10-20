@@ -97,7 +97,7 @@ YUI.add('env-switcher', function() {
     handleEnvClick: function(e) {
       var uuid = e.currentTarget.getAttribute('data-id');
       this.setState({showEnvList: false});
-      this.props.app.switchEnv(uuid);
+      this.switchEnv(uuid);
     },
 
     /**
@@ -118,7 +118,9 @@ YUI.add('env-switcher', function() {
       // once there is UX for it.
       var envName = 'new-env-' + this.state.envList.length;
       var baseTemplate = 'admin/gui';
-      var password = 'password';
+      // Generates an alphanumeric string
+      var randomString = () => Math.random().toString(36).slice(2);
+      var password = randomString() + randomString();
 
       if (jem) {
         jem.newEnvironment(
@@ -141,8 +143,31 @@ YUI.add('env-switcher', function() {
         console.log(data.err);
       } else {
         this.updateEnvList();
-        this.props.app.switchEnv(data.uuid);
+        this.switchEnv(data.uuid);
       }
+    },
+
+    /**
+      Take the supplied UUID, fetch the username and password then call the
+      passed in switchEnv method.
+
+      @method switchEnv
+      @param {String} uuid The env UUID.
+    */
+    switchEnv: function(uuid) {
+      var username = '';
+      var password = '';
+      var found = this.state.envList.some((env) => {
+        if (env.uuid === uuid) {
+          username = env.user;
+          password = env.password;
+          return true;
+        }
+      });
+      if (!found) {
+        console.log('No user credentials for env: ', uuid);
+      }
+      this.props.app.switchEnv(uuid, username, password);
     },
 
     /**
