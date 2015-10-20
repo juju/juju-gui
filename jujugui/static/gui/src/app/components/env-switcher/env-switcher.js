@@ -37,11 +37,14 @@ YUI.add('env-switcher', function() {
       Calls to the environment to list the active environments.
 
       @method updateEnvList
+      @param {Function} callback The callback to call after the list has been
+        updated.
     */
-    updateEnvList: function() {
+    updateEnvList: function(callback) {
       var jem = this.props.jem;
       if (jem) {
-        jem.listEnvironments(this.updateEnvListCallback, this.jemFailHandler);
+        jem.listEnvironments(
+          this.updateEnvListCallback.bind(this, callback), this.jemFailHandler);
       } else {
         app.env.listEnvs('user-admin', this.updateEnvListCallback);
       }
@@ -51,15 +54,20 @@ YUI.add('env-switcher', function() {
       Sets the state with the supplied data from the listEnvs call.
 
       @method updateEnvListCallback
+      @param {Function} callback The callback to call after the list has been
+        updated.
       @param {Object} data The data from the listEnvs call.
     */
-    updateEnvListCallback: function(data) {
+    updateEnvListCallback: function(callback, data) {
       if (data.err) {
         console.log(data.err);
       } else {
         // data.envs is only populated in the JES environments, when using JEM
         // the environments are in the top level 'data' object.
         this.setState({envList: data.envs || data});
+        if (callback) {
+          callback();
+        }
       }
     },
 
@@ -142,8 +150,7 @@ YUI.add('env-switcher', function() {
       if (data.err) {
         console.log(data.err);
       } else {
-        this.updateEnvList();
-        this.switchEnv(data.uuid);
+        this.updateEnvList(this.switchEnv.bind(this, data.uuid));
       }
     },
 
