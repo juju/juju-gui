@@ -67,7 +67,6 @@ describe('topology relation module', function() {
 
   it('fires \'addRelationStart\' event when making a relation', function() {
     var flags = {
-      hideServiceMenu: 0,
       addRelationStart: 0
     };
     var topo = {
@@ -108,7 +107,6 @@ describe('topology relation module', function() {
     };
     view.addRelButtonClicked(null, context);
     assert.deepEqual(flags, {
-      hideServiceMenu: 1,
       addRelationStart: 1
     });
   });

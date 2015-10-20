@@ -425,23 +425,11 @@ YUI.add('juju-topology-service', function(Y) {
         */
         dragend: 'dragend',
         /**
-          Hide a service's click-actions menu.
-
-          @event hideServiceMenu
-        */
-        hideServiceMenu: 'hideServiceMenu',
-        /**
           Clear view state as pertaining to services.
 
           @event clearState
         */
         clearState: 'clearStateHandler',
-        /**
-          Update the service menu location.
-
-          @event rescaled
-        */
-        rescaled: 'updateServiceMenuLocation',
         /**
           Pans the environment view to the center.
 
@@ -997,8 +985,7 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
               topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
-      container.all('.service.is-selected').removeClass('is-selected');
-      this.hideServiceMenu();
+      topo.vis.selectAll('.is-selected').classed('is-selected', false);
     },
 
     /**
@@ -1156,15 +1143,11 @@ YUI.add('juju-topology-service', function(Y) {
       selection.attr('transform', function(d, i) {
         return d.translateStr;
       });
-      if (topo.get('active_service') === box) {
-        self.updateServiceMenuLocation();
-      }
 
       // Remove any active menus.
       self.get('container').all('.environment-menu.active')
       .removeClass('active');
       if (box.inDrag === views.DRAG_START) {
-        self.hideServiceMenu();
         box.inDrag = views.DRAG_ACTIVE;
       }
       topo.fire('cancelRelationBuild');
@@ -1428,6 +1411,60 @@ YUI.add('juju-topology-service', function(Y) {
     createServiceNode: function(node, self) {
       node.attr({'data-name':  function(d) { return d.name; }});
 
+      // Draw a relation button.
+      var relationButton = node.filter(function(d) {
+        return d3.select(this)
+            .select('.relation-button').empty();
+      })
+          .insert('g', ':first-child')
+          .attr('class', 'relation-button')
+          .attr('transform', function(d) {
+            // Position the block so that the relation indicator will
+            // appear at the top.
+            return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
+          });
+
+      relationButton.append('line')
+        .attr({
+          'x1': 0,
+          'y1': 0,
+          'x2': 0,
+          'y2': 30
+        })
+        .attr('stroke-width', 1)
+        .attr('stroke', '#888888');
+        relationButton.append('circle')
+        .attr({
+          'cx': 0,
+          'cy': 34,
+          'r': 4
+        })
+        .attr('fill', '#888888');
+
+      relationButton.append('circle')
+        .classed('relation-button__link', true)
+        .attr({
+          cx: 0,
+          cy: 0,
+          r: 15,
+          fill: '#f8f8f8',
+          stroke: '#888888',
+          'stroke-width': 1.1
+        })
+        .on('click', function(d) {
+          self.get('component').fire('addRelationDragStart', { service: d });
+        });
+
+      relationButton.append('image')
+        .classed('relation-button__image', true)
+        .attr({
+           'xlink:href': 'juju-ui/assets/svgs/build-relation_16.svg',
+           width: 16,
+           height: 16,
+           transform: 'translate(-8, -8)'
+         });
+
+
       node.append('circle')
         .attr({
           cx: function(d) {
@@ -1686,51 +1723,6 @@ YUI.add('juju-topology-service', function(Y) {
       topo.fire('clearState');
     },
 
-    updateServiceMenuLocation: function() {
-      var topo = this.get('component'),
-              container = this.get('container'),
-              cp = container.one('.environment-menu.active'),
-              service = topo.get('active_service'),
-              tr = topo.get('translate'),
-              z = topo.get('scale');
-
-      if (service && cp) {
-        var cpRect = cp.getDOMNode().getClientRects()[0],
-                cpWidth = cpRect.width,
-                serviceCenter = service.relativeCenter,
-                menuLeft = (service.x * z + tr[0] + serviceCenter[0] * z <
-                        topo.get('width') / 2),
-                cpHeight = cpRect.height,
-                arrowWidth = 16; // Hard coded for now for simplicity.
-
-        if (menuLeft) {
-          cp.removeClass('left')
-            .addClass('right');
-        } else {
-          cp.removeClass('right')
-            .addClass('left');
-        }
-        // Set the position of the div in the following way:
-        // top: aligned to the scaled/panned service minus the
-        //   location of the tip of the arrow such that the arrow always
-        //   points at the service.
-        // left: aligned to the scaled/panned service; if the
-        //   service is left of the midline, display it to the
-        //   right, and vice versa.
-        cp.setStyles({
-          'top': (
-                  service.y * z + tr[1] +
-                  (serviceCenter[1] * z) - (cpHeight / 2)),
-          'left': (
-              service.x * z +
-                  (menuLeft ?
-                  service.w * z + arrowWidth :
-                  -(cpWidth) - arrowWidth) +
-                  tr[0])
-        });
-      }
-    },
-
     /**
       Shows the inspector and popup service menu.
 
@@ -1754,67 +1746,6 @@ YUI.add('juju-topology-service', function(Y) {
             flash: { hideHelp: true }
           }
         }});
-      this.showServiceMenu(box);
-    },
-
-    /**
-     * Show the service menu.
-     *
-     * @method showServiceMenu
-     * @param {object} box The presentation state for the service.
-     * @return {undefined} Side effects only.
-     */
-    showServiceMenu: function(box) {
-      var serviceMenu = this.get('container').one('#service-menu');
-      var topo = this.get('component');
-      var service = box.model;
-      var triangle = serviceMenu.one('.triangle');
-
-      if (box && !serviceMenu.hasClass('active')) {
-        topo.set('active_service', box);
-        topo.set('active_context', box.node);
-        serviceMenu.addClass('active');
-
-        // Remove is-selected class from all services and add to the currently
-        // clicked service.
-        if (box.node) {
-          topo.vis.selectAll('.is-selected').classed('is-selected', false);
-          box.node.classList.add('is-selected');
-        }
-
-        var menuHeight = serviceMenu.getDOMNode().getClientRects()[0].height;
-        var triHeight = 18;
-        triangle.setStyle('top', ((menuHeight - triHeight) / 2) + 'px');
-
-        // Disable the 'Build Relation' link if the charm has not yet loaded.
-        var addRelation = serviceMenu.one('.add-relation');
-        if (this.allowBuildRelation(topo, service)) {
-          addRelation.removeClass('disabled');
-        } else {
-          addRelation.addClass('disabled');
-        }
-
-        this.updateServiceMenuLocation();
-      }
-    },
-
-    /**
-     * Hide the service menu.
-     *
-     * @method hideServiceMenu
-     * @param {object} box The presentation state for the service (unused).
-     * @return {undefined} Side effects only.
-     */
-    hideServiceMenu: function(box) {
-      var serviceMenu = this.get('container').one('#service-menu');
-      var topo = this.get('component');
-      topo.vis.selectAll('.is-selected').classed('is-selected', false);
-
-      if (serviceMenu.hasClass('active')) {
-        serviceMenu.removeClass('active');
-        topo.set('active_service', null);
-        topo.set('active_context', null);
-      }
     },
 
     /*
