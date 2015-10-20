@@ -2391,7 +2391,7 @@ YUI.add('juju-env-go', function(Y) {
               config.password = data.config.password;
               break;
             default:
-              // XXX frankban: add support for the remaining providers.
+              // XXX frankban: add support for the remaining Juju providers.
               intermediateCallback({
                 Error: ptype + ' provider is not supported yet'
               });
