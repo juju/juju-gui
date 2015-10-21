@@ -986,11 +986,11 @@ YUI.add('juju-gui', function(Y) {
                         wssData[1] + '/' +
                         envData.uuid;
           callback.call(this, socketUrl, envData.user, envData.password);
-          return;
         }.bind(this), function(error) {
           console.log('Environment listing failure.');
           console.log(error);
         });
+        return;
       }
       var socketProtocol = this.get('socket_protocol');
       // Assemble a socket URL from the Location.
