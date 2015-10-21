@@ -176,24 +176,24 @@ YUI.add('service-overview', function() {
             }
           }
         });
-      }
-      var charmId = service.get('charm');
-      actions.push({
-        title: 'Change version',
-        link: 'https://jujucharms.com/' + charmId.replace('cs:', ''),
-        linkTitle: charmId,
-        icon: this.icons.version,
-        action: this._navigate,
-        state: {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
-              id: serviceId,
-              activeComponent: 'change-version'
+        var charmId = service.get('charm');
+        actions.push({
+          title: 'Change version',
+          link: 'https://jujucharms.com/' + charmId.replace('cs:', ''),
+          linkTitle: charmId,
+          icon: this.icons.version,
+          action: this._navigate,
+          state: {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'change-version'
+              }
             }
           }
-        }
-      });
+        });
+      }
 
       this.state.actions = actions;
     },
