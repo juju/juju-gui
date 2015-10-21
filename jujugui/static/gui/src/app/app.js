@@ -508,6 +508,14 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} env The environment instance.
      */
     _init: function(cfg, env) {
+      // If the user closed the GUI when they were on a different env than
+      // their default then it would show them the login screen. This sets
+      // the credentials to the environment that they are logging into
+      // initially.
+      env.setCredentials({
+        user: env.get('user'),
+        password: env.get('password')
+      });
       this.env = env;
 
       // Create an event simulator where possible.
