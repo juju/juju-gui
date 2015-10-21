@@ -85,7 +85,7 @@ describe('EntityDetails', function() {
         changeState={sinon.spy()}
         getEntity={sinon.spy()}
         pluralize={sinon.spy()} />);
-    assert.equal(output.props.children, 'Loading...');
+    assert.equal(output.props.className, 'entity-details');
   });
 
   it('fetches an entity properly', function() {
