@@ -73,6 +73,18 @@ describe('OverviewAction', function() {
     assert.equal(link.props.children, 'Juju Charms');
   });
 
+  it('stops propogation when the link is clicked', function() {
+    var stopPropagation = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.OverviewAction
+          link="http://jujucharms.com/"
+          linkTitle="Juju Charms" />);
+    output.props.children[2].props.onClick({
+      stopPropagation: stopPropagation
+    });
+    assert.equal(stopPropagation.callCount, 1);
+  });
+
   it('hides the link if it is not provided', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(

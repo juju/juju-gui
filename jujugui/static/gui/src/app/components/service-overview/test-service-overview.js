@@ -127,6 +127,7 @@ describe('ServiceOverview', function() {
       return [{}, {}];
     }});
     getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(true);
     var service = {
       get: getStub
     };
@@ -290,6 +291,7 @@ describe('ServiceOverview', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(false);
     getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
@@ -313,7 +315,36 @@ describe('ServiceOverview', function() {
     assert.equal(output.props.children[0].props.children.length, 5);
   });
 
-  it('does not show the expose action for an uncommitted service', function() {
+  it('shows the Change version action if the service is committed', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[4],
+      <juju.components.OverviewAction
+        key="Change version"
+        title="Change version"
+        link="https://jujucharms.com/demo"
+        linkTitle="cs:demo"
+        icon={undefined}
+        action={output.props.children[0].props.children[4].props.action}
+        valueType={undefined}
+        value={undefined} />);
+    assert.equal(output.props.children[0].props.children.length, 5);
+  });
+
+  it('does not show Expose or Change version if uncommitted', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(true);
@@ -328,7 +359,7 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}/>);
-    assert.equal(output.props.children[0].props.children.length, 4);
+    assert.equal(output.props.children[0].props.children.length, 3);
   });
 
   it('renders the delete button', function() {

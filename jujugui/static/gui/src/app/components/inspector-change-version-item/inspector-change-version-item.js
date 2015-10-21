@@ -29,7 +29,7 @@ YUI.add('inspector-change-version-item', function() {
       @returns {String} The button label.
     */
     _generateButtonLabel: function() {
-      return this.props.downgrade ? 'Downgrade' : 'Upgrade'
+      return this.props.downgrade ? 'Downgrade' : 'Upgrade';
     },
 
     /**
