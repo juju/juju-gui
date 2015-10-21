@@ -42,9 +42,9 @@ YUI.add('inspector-change-version-item', function() {
       var charmId = this.props.id.replace('cs:', '');
       var title = charmId;
       var idLength = charmId.length;
-      if (idLength > 15) {
-        var start = charmId.slice(0, 5);
-        var end = charmId.slice(idLength - 10, idLength);
+      if (idLength > 13) {
+        var start = charmId.slice(0, 4);
+        var end = charmId.slice(idLength - 9, idLength);
         title = start + '...' + end;
       }
       return title;

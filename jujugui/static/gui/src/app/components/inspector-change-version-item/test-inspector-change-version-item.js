@@ -70,7 +70,7 @@ describe('InspectorChangeVersionItem', function() {
           role="button" tabIndex="0"
           onClick={itemAction}>
           <span title="cs:django-django-pango-pongo-5">
-            djang...go-pongo-5
+            djan...o-pongo-5
           </span>
           <juju.components.GenericButton
             key="cs:django-django-pango-pongo-5"
