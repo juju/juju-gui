@@ -458,7 +458,8 @@ YUI.add('juju-gui', function(Y) {
         var breadcrumb = '#user-name .header-banner__link--breadcrumb';
         var auth = this.get('auth');
         document.querySelector(
-            breadcrumb).innerText = auth && auth.user || 'anonymous';
+            breadcrumb).innerText = auth && auth.user && auth.user.name ||
+            'anonymous';
 
         this.set('socket_url', socketUrl);
         var envOptions = {
@@ -1658,8 +1659,10 @@ YUI.add('juju-gui', function(Y) {
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumb = '#user-name .header-banner__link--breadcrumb';
+      var auth = this.get('auth');
       document.querySelector(
-          breadcrumb).innerText = this.get('auth').user || 'anonymous';
+          breadcrumb).innerText = auth && auth.user && auth.user.name ||
+          'anonymous';
 
       var socketUrl = this.env.get('socket_url');
       // XXX frankban: this is not generic, and very specific for how the
