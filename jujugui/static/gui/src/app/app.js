@@ -974,7 +974,12 @@ YUI.add('juju-gui', function(Y) {
           if (port) {
             socketUrl += ':' + port;
           }
-          var wssData = envData['host-ports'][1].split(':');
+          // XXX frankban: we cannot rely on the fact that the public address
+          // is the last one. There is really no ordering in the returned
+          // hosts and ports. We need to try them all in parallel so that at
+          // least one connection will succeed. The same logic will be then
+          // reused for handling high availability controllers.
+          var wssData = envData['host-ports'][envData.length - 1].split(':');
           socketUrl += '/juju/api/' +
                         wssData[0] + '/' +
                         wssData[1] + '/' +
