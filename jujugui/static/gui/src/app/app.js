@@ -455,8 +455,11 @@ YUI.add('juju-gui', function(Y) {
       this._generateSocketUrl(function(socketUrl, user, password) {
         // XXX Update the header breadcrumb to show the username. This is a
         // quick hack for the demo.
+        var breadcrumb = '#user-name .header-banner__link--breadcrumb';
+        var auth = this.get('auth');
         document.querySelector(
-          '#user-name .header-banner__link--breadcrumb').innerText = user;
+            breadcrumb).innerText = auth && auth.user || 'anonymous';
+
         this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
@@ -1654,8 +1657,9 @@ YUI.add('juju-gui', function(Y) {
       });
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
+      var breadcrumb = '#user-name .header-banner__link--breadcrumb';
       document.querySelector(
-          '#user-name .header-banner__link--breadcrumb').innerText = username;
+          breadcrumb).innerText = this.get('auth').user || 'anonymous';
 
       var socketUrl = this.env.get('socket_url');
       // XXX frankban: this is not generic, and very specific for how the
