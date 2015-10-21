@@ -117,26 +117,29 @@ YUI.add('inspector-change-version', function() {
     */
     _getVersionsSuccess: function(versions) {
       var components = [];
-      if (versions.length === 0) {
-        components = '<li>No other versions.</li>';
+      if (versions.length === 1) {
+        components = <li className="inspector-change-version__none">
+              No other versions.
+            </li>;
+      } else {
+        var currentVersion = this._getVersionNumber(this.props.charmId);
+        versions.forEach(function(version) {
+          var thisVersion = this._getVersionNumber(version);
+          var downgrade = false;
+          if (thisVersion === currentVersion) {
+            return true;
+          } else if (thisVersion < currentVersion) {
+            downgrade = true;
+          }
+          components.push(
+            <juju.components.InspectorChangeVersionItem
+              key={version}
+              downgrade={downgrade}
+              itemAction={this._viewCharmDetails.bind(this, version)}
+              buttonAction={this._versionButtonAction.bind(this, version)}
+              id={version} />);
+        }, this);
       }
-      var currentVersion = this._getVersionNumber(this.props.charmId);
-      versions.forEach(function(version) {
-        var thisVersion = this._getVersionNumber(version);
-        var downgrade = false;
-        if (thisVersion === currentVersion) {
-          return true;
-        } else if (thisVersion < currentVersion) {
-          downgrade = true;
-        }
-        components.push(
-          <juju.components.InspectorChangeVersionItem
-            key={version}
-            downgrade={downgrade}
-            itemAction={this._viewCharmDetails.bind(this, version)}
-            buttonAction={this._versionButtonAction.bind(this, version)}
-            id={version} />);
-      }, this);
       this.setState({versionsList: components});
     },
 
@@ -164,16 +167,16 @@ YUI.add('inspector-change-version', function() {
     render: function() {
       var charmId = this.props.charmId;
       return (
-        <div className="inspector-current-version">
-          <div className="inspector-current-version__current">
+        <div className="inspector-change-version">
+          <div className="inspector-change-version__current">
             Current version:
-            <div className="inspector-current-version__current-version"
+            <div className="inspector-change-version__current-version"
               role="button" tabIndex="0"
               onClick={this._viewCharmDetails.bind(this, charmId)}>
               {charmId}
             </div>
           </div>
-          <ul className="inspector-current-version__versions">
+          <ul className="inspector-change-version__versions">
             {this.state.versionsList}
           </ul>
         </div>

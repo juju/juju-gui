@@ -36,7 +36,7 @@ describe('InspectorChangeVersion', function() {
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, []);
+    var getAvailableVersions = sinon.stub().callsArgWith(1, ['cs:django']);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
           changeState={changeState}
@@ -48,17 +48,19 @@ describe('InspectorChangeVersion', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
-      <div className="inspector-current-version">
-        <div className="inspector-current-version__current">
+      <div className="inspector-change-version">
+        <div className="inspector-change-version__current">
           Current version:
-          <div className="inspector-current-version__current-version"
+          <div className="inspector-change-version__current-version"
             role="button" tabIndex="0"
             onClick={output.props.children[0].props.children[1].props.onClick}>
             cs:django
           </div>
         </div>
-        <ul className="inspector-current-version__versions">
-          {"<li>No other versions.</li>"}
+        <ul className="inspector-change-version__versions">
+          <li className="inspector-change-version__none">
+            No other versions.
+          </li>
         </ul>
       </div>);
   });
@@ -83,16 +85,16 @@ describe('InspectorChangeVersion', function() {
     var output = shallowRenderer.getRenderOutput();
     var list = output.props.children[1];
     assert.deepEqual(output,
-      <div className="inspector-current-version">
-        <div className="inspector-current-version__current">
+      <div className="inspector-change-version">
+        <div className="inspector-change-version__current">
           Current version:
-          <div className="inspector-current-version__current-version"
+          <div className="inspector-change-version__current-version"
             role="button" tabIndex="0"
             onClick={output.props.children[0].props.children[1].props.onClick}>
             cs:django-5
           </div>
         </div>
-        <ul className="inspector-current-version__versions">
+        <ul className="inspector-change-version__versions">
           <juju.components.InspectorChangeVersionItem
             key="cs:django-4"
             downgrade={true}
