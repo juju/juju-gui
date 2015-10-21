@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('env-list', function() {
 
   juju.components.EnvList = React.createClass({
-
     propTypes: {
       envs: React.PropTypes.array,
       handleEnvClick: React.PropTypes.func,
@@ -34,17 +33,22 @@ YUI.add('env-list', function() {
         };
     },
 
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({envs: nextProps.envs});
+    },
+
     generateEnvList: function() {
       var envs = [];
       this.state.envs.forEach(function(env) {
         // below the env.name is for JES response object and env.path is for
         // the JEM response object.
+        var envName = env.name || env.path;
         envs.push(
           <li className="env-list__environment"
             data-id={env.uuid}
             onClick={this.props.handleEnvClick}
             key={env.uuid}>
-            {env.name || env.path}
+            {envName}
           </li>);
       }, this);
       return envs;
@@ -63,8 +67,8 @@ YUI.add('env-list', function() {
           visible={true}>
           <ul className="env-list">
             {this.generateEnvList()}
-            <juju.components.ButtonRow buttons={actionButtons} />
           </ul>
+          <juju.components.ButtonRow buttons={actionButtons} />
         </juju.components.Panel>
       );
     }
