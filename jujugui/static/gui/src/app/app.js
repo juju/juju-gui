@@ -976,7 +976,7 @@ YUI.add('juju-gui', function(Y) {
       return socketUrl + '/ws' + suffix;
     },
 
-    _connectJEMSocketUrl: function(environmentList) {
+    _connectJEMSocketUrl: function() {
       this.jem.listEnvironments(function(envList) {
         // XXX This picks the first environment but we'll want to default to
         // sandbox mode then allow the user to choose an env.
