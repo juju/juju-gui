@@ -434,45 +434,37 @@ YUI.add('juju-gui', function(Y) {
         environment_node.set('text', environment_name);
       }
       var environments = Y.namespace('juju.environments');
-      var State = environments.FakeBackend;
-      var state = new State({
+      var state = new environments.FakeBackend({
         charmstore: this.get('charmstore')
       });
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
-      if (this.get('env')) {
-        this.env = this.get('env');
-      } else {
-        var ecs = new juju.EnvironmentChangeSet({
-          db: this.db
-        });
-
-        if(window.flags && window.flags.react) {
-          ecs.on('changeSetModified', this._renderDeployment.bind(this));
-          ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
-        }
-        // Instantiate the environment specified in the configuration, choosing
-        // between the available implementations, currently Go and Python.
-        var socketUrl = this._generateSocketUrl();
+      var env = this.get('env');
+      if (env) {
+        this._init(cfg, env);
+        return;
+      }
+      var ecs = new juju.EnvironmentChangeSet({db: this.db});
+      if(window.flags && window.flags.react) {
+        ecs.on('changeSetModified', this._renderDeployment.bind(this));
+        ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
+      }
+      // Instantiate the Juju environment.
+      this._generateSocketUrl(function(socketUrl, user, password) {
+        // XXX Update the header breadcrumb to show the username. This is a
+        // quick hack for the demo.
+        document.querySelector(
+          '#user-name .header-banner__link--breadcrumb').innerText = user;
         this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
           socket_url: socketUrl,
-          user: this.get('user'),
-          password: this.get('password'),
+          user: user,
+          password: password,
           readOnly: this.get('readOnly'),
           conn: this.get('conn')
         };
         var webModule = environments.web;
-        if (this.get('jemUrl')) {
-          var bakery = new Y.juju.environments.web.Bakery({
-            webhandler: new Y.juju.environments.web.WebHandler(),
-            interactive: this.get('interactiveLogin'),
-            serviceName: 'jem'
-          });
-          this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
-          this._connectJEMSocketUrl();
-        }
         if (this.get('sandbox')) {
           envOptions.socket_url = this.get('sandboxSocketURL');
           // The GUI is running in sandbox mode.
@@ -498,9 +490,19 @@ YUI.add('juju-gui', function(Y) {
           // requests to the juju-core API.
           envOptions.webHandler = new webModule.WebHandler();
         }
+        this._init(cfg, new environments.GoEnvironment(envOptions), state);
+      });
+    },
 
-        this.env = new environments.GoEnvironment(envOptions);
-      }
+    /**
+     * Complete the application initialization.
+     *
+     * @method _init
+     * @param {Object} cfg Application configuration data.
+     * @param {Object} env The environment instance.
+     */
+    _init: function(cfg, env) {
+      this.env = env;
 
       // Create an event simulator where possible.
       // Starting the simulator is handled by hotkeys
@@ -512,10 +514,13 @@ YUI.add('juju-gui', function(Y) {
       this.modelController.set('env', this.env);
 
       // Create a Bundle Importer instance.
+      var environments = Y.namespace('juju.environments');
       this.bundleImporter = new Y.juju.BundleImporter({
         db: this.db,
         env: this.env,
-        fakebackend: state
+        fakebackend: new environments.FakeBackend({
+          charmstore: this.get('charmstore')
+        })
       });
       cfg.bundleImporter = this.bundleImporter;
 
@@ -949,7 +954,38 @@ YUI.add('juju-gui', function(Y) {
       @method _generateSocketUrl
       @return {String} The fully qualified WebSocket URL.
     */
-    _generateSocketUrl: function() {
+    _generateSocketUrl: function(callback) {
+      this.jem = null;
+      if (this.get('jemUrl')) {
+        var bakery = new Y.juju.environments.web.Bakery({
+          webhandler: new Y.juju.environments.web.WebHandler(),
+          interactive: this.get('interactiveLogin'),
+          serviceName: 'jem'
+        });
+        this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
+        this.jem.listEnvironments(function(envList) {
+          // XXX This picks the first environment but we'll want to default to
+          // sandbox mode then allow the user to choose an env.
+          var envData = envList[0];
+          var doc = window.document;
+          var host = doc.location.hostname;
+          var port = doc.port;
+          var socketUrl = 'wss://' + host;
+          if (port) {
+            socketUrl += ':' + port;
+          }
+          var wssData = envData['host-ports'][1].split(':');
+          socketUrl += '/juju/api/' +
+                        wssData[0] + '/' +
+                        wssData[1] + '/' +
+                        envData.uuid;
+          callback.call(this, socketUrl, envData.user, envData.password);
+          return;
+        }.bind(this), function(error) {
+          console.log('Environment listing failure.');
+          console.log(error);
+        });
+      }
       var socketProtocol = this.get('socket_protocol');
       // Assemble a socket URL from the Location.
       var loc = Y.getLocation();
@@ -962,44 +998,20 @@ YUI.add('juju-gui', function(Y) {
       // all the other methods to automatically calculate it.
       var path = this.get('socket_path');
       if (path) {
-        return socketUrl + path;
-      }
-      // If the Juju version is over 1.21 then we need to make requests to the
-      // api using the environments uuid.
-      var jujuVersion = this.get('jujuCoreVersion').split('.');
-      var suffix = '';
-      var majorVersion = parseInt(jujuVersion[0], 10);
-      var minorVersion = parseInt(jujuVersion[1], 10);
-      if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
-        suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
-      }
-      return socketUrl + '/ws' + suffix;
-    },
-
-    _connectJEMSocketUrl: function() {
-      this.jem.listEnvironments(function(envList) {
-        // XXX This picks the first environment but we'll want to default to
-        // sandbox mode then allow the user to choose an env.
-        var envData = envList[0];
-        var doc = window.document;
-        var host = doc.location.hostname;
-        var port = doc.port;
-        var socketUrl = 'wss://' + host;
-        if (port) {
-          socketUrl += ':' + port;
+        socketUrl += path;
+      } else {
+        // If the Juju version is over 1.21 then we need to make requests to the
+        // api using the environments uuid.
+        var jujuVersion = this.get('jujuCoreVersion').split('.');
+        var suffix = '';
+        var majorVersion = parseInt(jujuVersion[0], 10);
+        var minorVersion = parseInt(jujuVersion[1], 10);
+        if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
+          suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
         }
-        var wssData = envData['host-ports'][1].split(':');
-        socketUrl += '/juju/api/' +
-                      wssData[0] + '/' +
-                      wssData[1] + '/' +
-                      envData.uuid;
-        this.set('socket_url', socketUrl);
-        this.env.set('socket_url', socketUrl);
-        this.switchEnv(envData.uuid, envData.user, envData.password);
-      }.bind(this), function(error) {
-        console.log('Environment listing failure.');
-        console.log(error);
-      });
+        socketUrl += '/ws' + suffix;
+      }
+      callback.call(this, socketUrl, this.get('user'), this.get('password'));
     },
 
     /**
