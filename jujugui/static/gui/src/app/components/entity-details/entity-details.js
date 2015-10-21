@@ -120,6 +120,6 @@ YUI.add('entity-details', function() {
     'entity-header',
     'entity-content',
     'entity-content-diagram',
-    'spinner'
+    'loading-spinner'
   ]
 });

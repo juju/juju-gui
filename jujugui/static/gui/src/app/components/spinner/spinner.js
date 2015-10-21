@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('spinner', function() {
+YUI.add('loading-spinner', function() {
 
   juju.components.Spinner = React.createClass({
     render: function() {
