@@ -177,10 +177,11 @@ YUI.add('service-overview', function() {
           }
         });
       }
+      var charmId = service.get('charm');
       actions.push({
         title: 'Change version',
-        link: 'https://jujucharms.com/mediawiki/',
-        linkTitle: 'cs:precise/mediawiki-18',
+        link: 'https://jujucharms.com/' + charmId.replace('cs:', ''),
+        linkTitle: charmId,
         icon: this.icons.version,
         action: this._navigate,
         state: {

@@ -32,12 +32,32 @@ YUI.add('inspector-change-version-item', function() {
       return this.props.downgrade ? 'Downgrade' : 'Upgrade'
     },
 
+    /**
+      Generate the title for the charm.
+
+      @method _generateTitle
+      @returns {String} The charm title.
+    */
+    _generateTitle: function() {
+      var charmId = this.props.id.replace('cs:', '');
+      var title = charmId;
+      var idLength = charmId.length;
+      if (idLength > 15) {
+        var start = charmId.slice(0, 5);
+        var end = charmId.slice(idLength - 10, idLength);
+        title = start + '...' + end;
+      }
+      return title;
+    },
+
     render: function() {
       return (
         <li className="inspector-current-version__item"
           role="button" tabIndex="0"
           onClick={this.props.itemAction}>
-          {this.props.id.replace('cs:', '')}
+          <span title={this.props.id}>
+            {this._generateTitle()}
+          </span>
           <juju.components.GenericButton
             key={this.props.id}
             title={this._generateButtonLabel()}

@@ -35,36 +35,49 @@ YUI.add('inspector-change-version', function() {
     },
 
     componentDidMount: function() {
-      this._getVersions();
+      this._getVersions(this.props.charmId);
     },
 
-    /**
-      The callable to be passed to the version item to change versions.
-
-      @method _versionItemAction
-      @param {Object} e The click event.
-    */
-    _versionItemAction: function(e) {
-      console.log('view version');
+    componentWillReceiveProps: function(nextProps) {
+      this._getVersions(nextProps.charmId);
     },
 
     /**
       The callable to be passed to the version item to view the charm details.
 
+      @method _viewCharmDetails
+      @param {Object} e The click event.
+    */
+    _viewCharmDetails: function(charmId, e) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: charmId.replace('cs:', '')
+          }
+        }
+      });
+    },
+
+    /**
+    The callable to be passed to the version item to change versions.
+
       @method _versionButtonAction
       @param {Object} e The click event.
     */
-    _versionButtonAction: function(e) {
-      console.log('change version');
+    _versionButtonAction: function(charmId, e) {
+      console.log('change version', charmId);
     },
 
     /**
       Get a list of versions for the charm.
 
       @method _getVersions
+      @param {String} charmId The charm id.
     */
-    _getVersions: function() {
-      this.props.getAvailableVersions(this.props.charmId,
+    _getVersions: function(charmId) {
+      this.props.getAvailableVersions(charmId,
           this._getVersionsSuccess, this._getVersionsFailure);
     },
 
@@ -78,16 +91,36 @@ YUI.add('inspector-change-version', function() {
       if (versions.length === 0) {
         components = '<li>No other versions.</li>';
       }
+      var currentVersion = this._getVersionNumber(this.props.charmId);
       versions.forEach(function(version) {
+        var thisVersion = this._getVersionNumber(version);
+        var downgrade = false;
+        if (thisVersion === currentVersion) {
+          return true;
+        } else if (thisVersion < currentVersion) {
+          downgrade = true;
+        }
         components.push(
           <juju.components.InspectorChangeVersionItem
             key={version}
-            downgrade={false}
-            itemAction={this._versionItemAction}
-            buttonAction={this._versionButtonAction}
+            downgrade={downgrade}
+            itemAction={this._viewCharmDetails.bind(this, version)}
+            buttonAction={this._versionButtonAction.bind(this, version)}
             id={version} />);
       }, this);
       this.setState({versionsList: components});
+    },
+
+    /**
+      Get the version number from the charm id.
+
+      @method _getVersionNumber
+      @param {String} charmId The charm id.
+      @returns {Integer} The version number.
+    */
+    _getVersionNumber: function(charmId) {
+      var parts = charmId.split('-');
+      return parseInt(parts[parts.length - 1]);
     },
 
     /**
@@ -100,12 +133,15 @@ YUI.add('inspector-change-version', function() {
     },
 
     render: function() {
+      var charmId = this.props.charmId;
       return (
         <div className="inspector-current-version">
           <div className="inspector-current-version__current">
             Current version:
-            <div className="inspector-current-version__current-version">
-              {this.props.charmId}
+            <div className="inspector-current-version__current-version"
+              role="button" tabIndex="0"
+              onClick={this._viewCharmDetails.bind(this, charmId)}>
+              {charmId}
             </div>
           </div>
           <ul className="inspector-current-version__versions">

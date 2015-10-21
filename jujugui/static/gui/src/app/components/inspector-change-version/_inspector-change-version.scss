@@ -1,4 +1,6 @@
 .inspector-current-version {
+    @extend %scroll-children;
+
     &__current {
         @extend %fade-in;
         padding: 10px 20px;
@@ -7,9 +9,11 @@
     }
     &__current-version {
         color: $warm-grey;
+        cursor: pointer;
     }
 
     &__versions {
+        @extend %collapse-children;
         margin: 0;
         list-style: none;
     }
