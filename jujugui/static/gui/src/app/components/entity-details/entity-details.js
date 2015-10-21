@@ -119,6 +119,7 @@ YUI.add('entity-details', function() {
   requires: [
     'entity-header',
     'entity-content',
-    'entity-content-diagram'
+    'entity-content-diagram',
+    'spinner'
   ]
 });
