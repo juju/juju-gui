@@ -27,23 +27,43 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/app/assets/javascripts/handlebars.runtime.js',
 
-      'jujugui/static/gui/build/app/components/**/*.js',
-      'jujugui/static/gui/build/**/test-*.js'
+      'jujugui/static/gui/src/app/components/**/*.hbs',
+      'jujugui/static/gui/src/app/components/**/*.js'
     ],
 
 
     // list of files to exclude
     exclude: [
-      'jujugui/static/gui/build/app/components/**/*-min.js',
-      'jujugui/static/gui/build/**/test-*-min.js',
-      'jujugui/static/gui/build/app/assets/javascripts/yui/node_modules/**/*',
-      'jujugui/static/gui/build/app/assets/javascripts/yui/yui/node_modules/**/*'
+      'jujugui/static/gui/build/app/components/**/*-min.js'
     ],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'jujugui/static/gui/src/app/components/**/*.js': ['babel'],
+      'jujugui/static/gui/src/app/components/**/*.hbs': ['handlebars']
+    },
+
+
+    // set the options for the various preprocessors used
+    babelPreprocessor: {
+      filename: function (file) {
+        return file.originalPath.replace(/\/src\//, '/build/');
+      },
+      sourceFileName: function (file) {
+        return file.originalPath;
+      }
+    },
+
+
+    handlebarsPreprocessor: {
+      templateName: function(filepath) {
+        return filepath.replace(/^.*\/([^\/]+\.hbs)$/, '$1');
+      },
+      transformPath: function(path) {
+        return path.replace(/\.hbs$/, '.js').replace(/\/src\//, '/build/');
+      }
     },
 
 

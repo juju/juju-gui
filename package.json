@@ -45,6 +45,7 @@
     "yuidocjs": "0.3.x"
   },
   "devDependencies": {
-    "karma-babel-preprocessor": "^5.2.2"
+    "karma-babel-preprocessor": "^5.2.2",
+    "karma-handlebars-preprocessor": "^0.3.0"
   }
 }

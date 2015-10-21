@@ -280,7 +280,7 @@ test-js-phantom: gui
 	./scripts/test-js.sh
 
 .PHONY: test-js-karma
-test-js-karma: gui
+test-js-karma:
 	$(NODE_MODULES)/.bin/karma start karma.conf.js
 
 .PHONY: test-selenium
