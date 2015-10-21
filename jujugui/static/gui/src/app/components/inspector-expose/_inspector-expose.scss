@@ -1,0 +1,20 @@
+.inspector-expose {
+    @extend %scroll-children;
+    line-height: 18px;
+
+    &__control {
+        @extend %fade-in;
+    }
+
+    &__warning {
+        @extend %fade-in;
+        margin: 5px 20px 20px;
+    }
+
+    &__units {
+        @extend %collapse-children;
+        margin: 0;
+        border-top: 1px solid $mid-grey;
+        list-style: none;
+    }
+}

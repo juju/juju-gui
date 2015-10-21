@@ -1,0 +1,55 @@
+.inspector-view {
+    @extend %floating-panel;
+    @extend %scroll-children;
+    $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + $panel-space;
+    position: absolute;
+    z-index: 601;
+    top: $environment-header-height + ($panel-space * 2) + $navbar-height;
+    left: $panel-space;
+    width: $left-panel-width;
+    max-height: calc(100% - #{$extra-space});
+
+    &__list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    &__list-item {
+        @extend %stagger-fade-in;
+        padding: 10px 20px;
+        cursor: pointer;
+
+        &:focus,
+        &:active,
+        &:hover {
+            background-color: $light-grey;
+        }
+    }
+
+    &__item-icon {
+        $size: 24px;
+        width: $size;
+        height: $size;
+        margin-right: 16px;
+        vertical-align: middle;
+    }
+
+    &__item-count {
+        color: $warm-grey;
+    }
+
+    &__status {
+        &--error {
+            @include notification($error);
+        }
+
+        &--pending {
+            @include notification($pending);
+        }
+
+        &--uncommitted {
+            @include notification($uncommitted);
+        }
+    }
+}
