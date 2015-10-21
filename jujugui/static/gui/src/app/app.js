@@ -979,7 +979,8 @@ YUI.add('juju-gui', function(Y) {
           // hosts and ports. We need to try them all in parallel so that at
           // least one connection will succeed. The same logic will be then
           // reused for handling high availability controllers.
-          var wssData = envData['host-ports'][envData.length - 1].split(':');
+          var addresses = envData['host-ports'];
+          var wssData = addresses[addresses.length - 1].split(':');
           socketUrl += '/juju/api/' +
                         wssData[0] + '/' +
                         wssData[1] + '/' +
