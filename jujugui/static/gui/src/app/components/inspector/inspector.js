@@ -59,13 +59,15 @@ YUI.add('inspector-component', function() {
       var appPreviousState = nextProps.appPreviousState ||
           this.props.appPreviousState;
       var previousMetadata;
-      if (appPreviousState.hasOwnProperty('sectionA')) {
+      if (appPreviousState.sectionA) {
         previousMetadata = appPreviousState.sectionA.metadata;
       }
       switch (state.activeComponent) {
         case undefined:
           var component;
           var newMetadata;
+          // Handle navigating back from the service details to a previous
+          // service view e.g. relations.
           if (previousMetadata && previousMetadata.id !== serviceId) {
             component = 'inspector';
             newMetadata = {
