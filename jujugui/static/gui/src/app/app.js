@@ -914,6 +914,7 @@ YUI.add('juju-gui', function(Y) {
           app={this}
           env={this.env}
           jem={this.jem}
+          envList={this.get('environmentList')}
           authDetails={this.get('auth')} />,
         document.getElementById('environment-switcher'));
     },
@@ -967,6 +968,8 @@ YUI.add('juju-gui', function(Y) {
           // XXX This picks the first environment but we'll want to default to
           // sandbox mode then allow the user to choose an env.
           var envData = envList[0];
+          this.set('environmentList', envList);
+          this._renderEnvSwitcher();
           var doc = window.document;
           var host = doc.location.hostname;
           var port = doc.port;

@@ -99,6 +99,7 @@ YUI.add('env-switcher', function() {
     */
     toggleEnvList: function(e) {
       e.preventDefault();
+      this.updateEnvList();
       this.setState({ showEnvList: !this.state.showEnvList });
     },
 
