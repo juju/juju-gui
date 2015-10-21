@@ -437,6 +437,8 @@ YUI.add('juju-gui', function(Y) {
       var state = new environments.FakeBackend({
         charmstore: this.get('charmstore')
       });
+      this._setupUIState(cfg.sandbox, cfg.baseUrl);
+      cfg.state = this.state;
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
@@ -690,9 +692,6 @@ YUI.add('juju-gui', function(Y) {
       cfg.envSeries = this.getEnvDefaultSeries.bind(this);
       cfg.env = this.env;
       cfg.ecs = this.env.ecs;
-
-      this._setupUIState(cfg.sandbox, cfg.baseUrl);
-      cfg.state = this.state;
 
       this.addSubApplications(cfg);
 
