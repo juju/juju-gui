@@ -46,6 +46,7 @@ YUI.add('inspector-change-version', function() {
       The callable to be passed to the version item to view the charm details.
 
       @method _viewCharmDetails
+      @param {String} charmId The charm id.
       @param {Object} e The click event.
     */
     _viewCharmDetails: function(charmId, e) {
@@ -64,10 +65,38 @@ YUI.add('inspector-change-version', function() {
     The callable to be passed to the version item to change versions.
 
       @method _versionButtonAction
+      @param {String} charmId The charm id.
       @param {Object} e The click event.
     */
     _versionButtonAction: function(charmId, e) {
-      console.log('change version', charmId);
+      this.props.setCharm(this.props.service.get('id'), charmId, false,
+          this._setCharmCallback.bind(this, charmId));
+    },
+
+    /**
+      Callback for handling the results of setCharm.
+
+      @method _setCharmCallback
+    */
+    _setCharmCallback: function(charmId, data) {
+      if (data.err) {
+        // XXX: Handle errors for upgrading the service version.
+        return;
+      }
+      this.props.getCharm(charmId, this._getCharmCallback.bind(this, charmId));
+    },
+
+    /**
+      Callback for handling the results of getCharm.
+
+      @method _getCharmCallback
+    */
+    _getCharmCallback: function(charmId, data) {
+      if (data.err) {
+        // XXX: Handle errors for upgrading the service version.
+        return;
+      }
+      this.props.service.set('charm', charmId);
     },
 
     /**

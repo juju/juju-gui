@@ -222,6 +222,9 @@ YUI.add('inspector-component', function() {
               <juju.components.InspectorChangeVersion
                 changeState={this.props.changeState}
                 charmId={service.get('charm')}
+                service={service}
+                setCharm={this.props.setCharm}
+                getCharm={this.props.getCharm}
                 getAvailableVersions={this.props.getAvailableVersions} />,
             backState: {
               sectionA: {
