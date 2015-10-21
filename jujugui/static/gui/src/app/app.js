@@ -622,34 +622,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.enableBehaviors();
 
-      this.once('ready', function(e) {
-        if (this.get('socket_url') || this.get('sandbox')) {
-          // Connect to the environment.
-          this.env.connect();
-        }
-        if (this.get('activeView')) {
-          this.get('activeView').render();
-        } else {
-          this.dispatch();
-        }
-        this._renderHelpDropdownView();
-        if (!window.juju_config || !window.juju_config.hideLoginButton) {
-          // We only want to show the user dropdown view if the gui isn't in
-          // demo mode.
-          this._renderUserDropdownView();
-        }
-        if (!window.flags || !window.flags.react) {
-          this._renderDeployerBarView();
-          this._renderEnvironmentHeaderView();
-        }
-        this.get('subApps').charmbrowser.on(
-            '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
-      }, this);
-
-      this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
-        this._handleZoomMessage();
-      }, this);
-
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
@@ -714,6 +686,35 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+
+      // We are now ready to connect the environment and bootstrap the app.
+      this.once('ready', function(e) {
+        if (this.get('socket_url') || this.get('sandbox')) {
+          // Connect to the environment.
+          this.env.connect();
+        }
+        if (this.get('activeView')) {
+          this.get('activeView').render();
+        } else {
+          this.dispatch();
+        }
+        this._renderHelpDropdownView();
+        if (!window.juju_config || !window.juju_config.hideLoginButton) {
+          // We only want to show the user dropdown view if the gui isn't in
+          // demo mode.
+          this._renderUserDropdownView();
+        }
+        if (!window.flags || !window.flags.react) {
+          this._renderDeployerBarView();
+          this._renderEnvironmentHeaderView();
+        }
+        this.get('subApps').charmbrowser.on(
+            '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
+      }, this);
+
+      this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
+        this._handleZoomMessage();
+      }, this);
     },
 
     /**
