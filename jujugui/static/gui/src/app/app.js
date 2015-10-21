@@ -231,7 +231,9 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
-          this.deployerBar.close();
+          if (!window.flags || !window.flags.react) {
+            this.deployerBar.close();
+          }
         },
         help: 'Cancel current action',
         label: 'Esc'
