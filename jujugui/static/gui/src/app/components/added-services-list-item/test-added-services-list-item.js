@@ -45,25 +45,30 @@ describe('AddedServicesListItem', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo',
+          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
           units: {
             toArray: function() {
               return [];
             }}};
       }};
-
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
         <juju.components.AddedServicesListItem
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service} />);
-
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children, [
-      <img src="icon.gif" className="inspector-view__item-icon" />,
-      <span className="inspector-view__item-count">5</span>,' ' ,'demo',
-      undefined
-    ]);
+    assert.deepEqual(output,
+      <li className="inspector-view__list-item"
+          data-serviceid="demo"
+          onClick={output.props.onClick}
+          tabIndex="0"
+          role="button">
+        <img src="icon.gif" className="inspector-view__item-icon" />
+        <span className="inspector-view__item-count">5</span>
+        {' '}
+        <span className="inspector-view__item-name">
+          demo
+        </span>
+        {undefined}
+      </li>);
   });
 
   it('only shows the status icon for pending, uncommitted, error', function() {
@@ -95,25 +100,30 @@ describe('AddedServicesListItem', function() {
       var service = {
         getAttrs: function() {
           return {
-            icon: 'icon.gif', unit_count: '1', name: 'demo',
+            icon: 'icon.gif', unit_count: '1', name: 'demo', id: 'demo',
             units: {
               toArray: function() {
                 return [{agent_state: status.name}];
               }}};
         }};
-
-      var shallowRenderer = testUtils.createRenderer();
-      shallowRenderer.render(
+      var output = jsTestUtils.shallowRender(
           <juju.components.AddedServicesListItem
             getUnitStatusCounts={status.statusCounts}
             service={service} />);
-
-      var output = shallowRenderer.getRenderOutput();
-      assert.deepEqual(output.props.children, [
-        <img src="icon.gif" className="inspector-view__item-icon" />,
-        <span className="inspector-view__item-count">1</span>,' ' ,'demo',
-        statusIcon(status)
-      ]);
+      assert.deepEqual(output,
+        <li className="inspector-view__list-item"
+            data-serviceid="demo"
+            onClick={output.props.onClick}
+            tabIndex="0"
+            role="button">
+          <img src="icon.gif" className="inspector-view__item-icon" />
+          <span className="inspector-view__item-count">1</span>
+          {' '}
+          <span className="inspector-view__item-name">
+            demo
+          </span>
+          {statusIcon(status)}
+        </li>);
     });
   });
 
@@ -121,82 +131,97 @@ describe('AddedServicesListItem', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo',
+          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
           units: {
             toArray: function() {
               return [{agent_state: 'unknown-state'}];
             }}};
       }};
-
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
-        <juju.components.AddedServicesListItem
-          getUnitStatusCounts={getUnitStatusCounts()}
-          service={service} />);
-
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children, [
-      <img src="icon.gif" className="inspector-view__item-icon" />,
-      <span className="inspector-view__item-count">5</span>,' ' ,'demo',
-      undefined
-    ]);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.AddedServicesListItem
+        getUnitStatusCounts={getUnitStatusCounts()}
+        service={service} />);
+    assert.deepEqual(output,
+        <li className="inspector-view__list-item"
+            data-serviceid="demo"
+            onClick={output.props.onClick}
+            tabIndex="0"
+            role="button">
+          <img src="icon.gif" className="inspector-view__item-icon" />
+          <span className="inspector-view__item-count">5</span>
+          {' '}
+          <span className="inspector-view__item-name">
+            demo
+          </span>
+          {undefined}
+        </li>);
   });
 
   it('prioiritizes error, over pending status icon', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo',
+          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
           units: {
             toArray: function() {
               return [{agent_state: 'pending'}, {agent_state: 'error'}];
             }}};
       }};
-
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
-        <juju.components.AddedServicesListItem
-          getUnitStatusCounts={getUnitStatusCounts(1, 1, 0)}
-          service={service} />);
-
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children, [
-      <img src="icon.gif" className="inspector-view__item-icon" />,
-      <span className="inspector-view__item-count">2</span>,' ' ,'demo',
-      <span className="inspector-view__status--error">1</span>
-    ]);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.AddedServicesListItem
+        getUnitStatusCounts={getUnitStatusCounts(1, 1)}
+        service={service} />);
+    assert.deepEqual(output,
+        <li className="inspector-view__list-item"
+            data-serviceid="demo"
+            onClick={output.props.onClick}
+            tabIndex="0"
+            role="button">
+          <img src="icon.gif" className="inspector-view__item-icon" />
+          <span className="inspector-view__item-count">2</span>
+          {' '}
+          <span className="inspector-view__item-name">
+            demo
+          </span>
+          <span className="inspector-view__status--error">1</span>
+        </li>);
   });
 
   it('prioritizes pending over uncommitted status icon', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo',
+          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
           units: {
             toArray: function() {
               return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
             }}};
       }};
-
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
-        <juju.components.AddedServicesListItem
-          getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
-          service={service} />);
-
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children, [
-      <img src="icon.gif" className="inspector-view__item-icon" />,
-      <span className="inspector-view__item-count">2</span>,' ' ,'demo',
-      <span className="inspector-view__status--pending">1</span>
-    ]);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.AddedServicesListItem
+        getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
+        service={service} />);
+    assert.deepEqual(output,
+        <li className="inspector-view__list-item"
+            data-serviceid="demo"
+            onClick={output.props.onClick}
+            tabIndex="0"
+            role="button">
+          <img src="icon.gif" className="inspector-view__item-icon" />
+          <span className="inspector-view__item-count">2</span>
+          {' '}
+          <span className="inspector-view__item-name">
+            demo
+          </span>
+          <span className="inspector-view__status--pending">1</span>
+        </li>);
   });
 
   it('calls the changeState callable on click', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo',
+          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
           units: {
             toArray: function() {
               return [];
