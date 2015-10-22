@@ -1682,9 +1682,7 @@ YUI.add('juju-gui', function(Y) {
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', newSocketUrl);
       // Disconnect and reconnect the environment.
-      if (this.env.ws) {
-        this.env.close();
-      }
+      this.env.close();
       this.db.reset();
       this.db.fire('update');
       this.env.connect();

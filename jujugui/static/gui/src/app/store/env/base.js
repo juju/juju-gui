@@ -268,8 +268,9 @@ YUI.add('juju-env-base', function(Y) {
       @method close
     */
     close: function() {
-      this.ws.close();
-      this.set('connected', false);
+      if (this.ws) {
+        this.ws.close();
+      }
       if (this.pinger) {
         clearInterval(this.pinger);
         this.pinger = null;

@@ -160,6 +160,9 @@ function ReconnectingWebSocket(url, protocols) {
 
     this.close = function() {
         if (ws) {
+            // Handle onclose events sooner rather than later.
+            this.onclose(null);
+            this.onclose = function(event) {};
             forcedClose = true;
             ws.close();
         }
