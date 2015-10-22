@@ -52,8 +52,12 @@ describe('EnvSwitcher', function() {
 
   it('open the list on click', function() {
     var envs = [{ uuid: 'abc123', name: 'the name' }];
+    var env = {
+      listEnvs: sinon.stub()
+    };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher />, true);
+      <juju.components.EnvSwitcher
+        env={env} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
@@ -61,7 +65,8 @@ describe('EnvSwitcher', function() {
     });
 
     renderer.render(
-      <juju.components.EnvSwitcher />);
+      <juju.components.EnvSwitcher
+        env={env} />);
 
     var instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
@@ -108,6 +113,28 @@ describe('EnvSwitcher', function() {
       envs: {env: 'env'}
     };
     listEnvs.args[0][1](envData);
+    assert.deepEqual(instance.state.envList, envData.envs);
+  });
+
+  it('fetches the env list when opening', function() {
+    var envs = [{ uuid: 'abc123', name: 'the name' }];
+    var env = {
+      listEnvs: sinon.stub()
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher
+        env={env} />, true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    // Click the toggler
+    output.props.children[0].props.onClick({
+      preventDefault: () => null
+    });
+    assert.equal(env.listEnvs.callCount, 1);
+    var envData = {
+      envs: {env: 'env'}
+    };
+    env.listEnvs.args[0][1](envData);
     assert.deepEqual(instance.state.envList, envData.envs);
   });
 

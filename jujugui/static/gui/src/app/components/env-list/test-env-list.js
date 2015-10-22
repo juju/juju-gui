@@ -39,7 +39,7 @@ describe('EnvList', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         envs={envs} />);
-    assert.deepEqual(output.props.children.props.children[0], [
+    assert.deepEqual(output.props.children[0].props.children, [
           <li className="env-list__environment"
             data-id={envs[0].uuid}
             onClick={undefined}
@@ -61,7 +61,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         envs={envs}
         handleEnvClick={handleEnvClick} />);
-    output.props.children.props.children[0][0].props.onClick();
+    output.props.children[0].props.children[0].props.onClick();
     assert.equal(handleEnvClick.callCount, 1);
   });
 
@@ -72,7 +72,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         envs={envs}
         createNewEnv={createNewEnv} />);
-    output.props.children.props.children[1].props.buttons[0].action();
+    output.props.children[1].props.buttons[0].action();
     assert.equal(createNewEnv.callCount, 1);
   });
 
