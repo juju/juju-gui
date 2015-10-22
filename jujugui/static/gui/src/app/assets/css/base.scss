@@ -1,0 +1,1191 @@
+/*
+
+General CSS Notes
+=================
+
+z-indexes
+----------
+The rule of thumb for the z-index values to use is setup below
+
+ - Ground level: < 100 is for things that are flat on the surface without
+                 expectations of overlaying anything in the UX.
+ - Floaty level: >= 500 is the land of floating panels. Things like the
+                 browser and inspector which expect to float over the
+                 environment, for instance.
+ - Overlay level: > 1000 is the land for things that overlay. Spinny
+                  indicators, masks, etc.
+
+
+Using fonts
+------------
+Go forth and see the typography.scss file and use those.
+
+
+Class and property ordering
+---------------
+This is a general guide on how to structure your classes. We use four spaces
+for indentation.
+
+.class {
+    $vars;
+    .mixins;
+    properties: values;
+
+    &:states {
+        ...
+    }
+
+    &.additional-parent-classes {
+        ...
+    }
+
+    .sub-classes {
+        ...
+    }
+}
+
+*/
+
+/* Processed with SCSS from app/assets/css/base.scss */
+$font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
+
+/* Define common colors. */
+$light-grey: #f7f7f7;
+$canvas-background: $light-grey;
+$cool-grey: #333;
+$error: #df382c;
+$ubuntu-orange: #dd4814;
+$charm-panel-orange: #dd4814;
+$charm-panel-background-color: #eeeeee;
+$inspector-dark: #1c1817;
+$label-color: #292929;
+$light-grey: #f5f5f5;
+$light-mid-grey: #d4d4d4;
+$machine-view-border-colour: #d9d9d9;
+$mid-grey: #cdcdcd;
+$navbar-border-dark: #191514;
+$navbar-border-light: #2d2928;
+$success: #38b44a;
+$text-colour: #333;
+$text-entry-color: #6d6e70;
+$pending: #eaa818;
+$uncommitted: #19b6ee;
+$warm-grey: #888;
+$white: #fff;
+$dark-grey: #9fa7aa;
+
+// Spacing.
+$base: 16;
+$border-radius: 2px;
+$bws-header-height: 81px;
+$deployer-bar-height: 50px;
+$environment-header-height: 40px;
+$left-panel-width: 290px;
+$navbar-height: 60px;
+$panel-space: 10px;
+
+// Imports need to be after vars.
+@import "animations";
+@import "typography";
+@import "browser/vars";
+@import "mixins";
+@import "inspector/vars";
+@import "grid";
+
+/* Common classes and setup */
+
+
+//XXX: Temporarily remove the focus state of interactive elements:
+// Luca says: "Can we remove it for the time being and we'll make sure we
+// explore a solution for tabbing post-ODS."
+// https://github.com/juju/juju-gui/pull/840#issuecomment-141111802
+*:focus {
+    outline: none;
+}
+
+body,
+input,
+button,
+select,
+textarea {
+    font-family: $font-family;
+    font-weight: 300;
+}
+body {
+    @extend %customize-scrollbar;
+    overflow: hidden;
+    height: 100%;
+    margin-top: $navbar-height;
+    background-color: $canvas-background;
+    color: $text-colour;
+    font-size: 16px;
+    line-height: 18px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.link,
+a,
+a:hover {
+    cursor: pointer;
+    color: $charm-panel-orange;
+    text-decoration: none;
+}
+button {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type="text"],
+input[type="password"] {
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid $bws-border;
+    border-radius: $border-radius;
+}
+/*
+  Taken from:
+  http://code.stephenmorley.org/html-and-css/styling-checkboxes-and-radio-buttons/
+  The :not(old) selector just prevents unsupported browsers from getting these
+  styles. They'll just fall back to the normal rendering on radio buttons.
+*/
+input[type="radio"]:not(old) {
+  width: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  opacity: 0;
+}
+input[type="radio"]:not(old) + label {
+  display: inline-block;
+  margin-left: -2em;
+  line-height: 1.5em;
+}
+input[type="radio"]:not(old) + label > .outer {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 4px 0.5em 4px 0.25em;
+  border: 1px solid rgb(192,192,192);
+  border-radius: 7px;
+  background: #ebecee;
+  vertical-align: bottom;
+}
+input[type="radio"]:not(old):checked + label > .outer {
+  background: $charm-panel-orange;
+  border-color: $charm-panel-orange;
+}
+input[type="radio"]:not(old):checked + label > .outer > .inner {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 3px;
+  border-radius: 3px;
+  background: white;
+}
+
+input[type="checkbox"] {
+  $size: 14px;
+  width: $size;
+  height: $size;
+  background-color: $white;
+  border: 1px solid $mid-grey;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+  color: $white;
+  text-align: center;
+  overflow: hidden;
+  -webkit-appearance: button;
+
+  &:after {
+    content: '';
+    display: none;
+    width: $size;
+    height: $size;
+    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
+  }
+
+  &:checked {
+    background-color: $success;
+    border: none;
+  }
+
+  &:checked:after {
+    display: inline-block;
+  }
+}
+
+svg {
+    stroke-width: 0;
+    overflow: hidden;
+}
+li {
+    line-height: 18px;
+}
+h2 {
+    line-height: 36px;
+}
+h4 {
+    font-size: 14px;
+}
+h4, h5, h6 {
+    line-height: 18px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: inherit;
+    font-weight: 300;
+    color: inherit;
+    text-rendering: optimizelegibility;
+}
+ul {
+    padding: 0;
+}
+label {
+    display: block;
+}
+strong {
+    font-weight: 400;
+}
+.align-right {
+    text-align: right;
+}
+i.sprite {
+    display: inline-block;
+    vertical-align: middle;
+}
+ul.menu li,
+div.inline {
+  float: left;
+}
+ul.menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.alert {
+    letter-spacing: normal;
+}
+.clearall {
+    clear: both;
+}
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+pre {
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #fdf6f2;
+    border: none;
+}
+pre,
+code {
+    font-family: $font-family-mono;
+    font-size: 14px;
+    color: $cool-grey;
+}
+th {
+    font-weight: 300;
+}
+
+/* Layout, widgets etc. */
+
+#content {
+    position: relative;
+    width: 100%;
+}
+#main {
+    overflow: hidden;
+}
+#canvas {
+    position: relative;
+}
+.zoom-plane {
+    fill-opacity: 0;
+    cursor: move;
+}
+/*
+ * The keyboard shorcut panel
+ */
+#shortcut-help {
+    @include create-box-shadow(0 0 4px 0 rgba(0, 0, 0, 0.5));
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 8%;
+    bottom: 8%;
+    opacity: 0.85;
+    z-index: 1000;
+    padding: 20px;
+    background-color: black;
+    border-radius: $border-radius;
+    color: #fff;
+
+    .left {
+        float: left;
+        width: 45%;
+    }
+
+    table {
+        margin-top: 20px;
+
+        th {
+            text-align: left;
+        }
+        td {
+            padding: 5px 20px;
+        }
+    }
+}
+/*
+ * Intro text that appears on the canvas if there are no deployed services.
+ */
+.environment-help {
+    text-align: center;
+    /* This is absolute so that it does not push the svg down when it is
+       visible.  That's important for animations hiding and showing this help,
+       and if we want the help to appear when a service is present (such as the
+       GUI itself). */
+    position: absolute;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    &__content {
+        height: 450px;
+        width: 789px;
+        padding-right: $environment-header-height;
+        margin: 0 auto;
+    }
+
+    &__tooltip {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        line-height: normal;
+        font-size: 18px;
+        width: 260px;
+        background: #fff;
+        margin: 20px auto;
+        padding: 12px 25px;
+        color: #757575;
+        position: relative;
+        left: -20px;
+        top: 35px;
+        box-sizing: border-box;
+
+        &:after {
+            content: "";
+            background: #fff;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #eee;
+            border-bottom: 2px solid #eee;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            position: absolute;
+            bottom: -8px;
+            left: calc(50% - 8px);
+        }
+    }
+
+    &__image {
+        stroke-width: 1;
+        width: 789px;
+        height: 386px;
+    }
+
+    @at-root {
+        .state-sidebar-hidden .environment-help__content {
+            // When the sidebar is hidden center the onboarding to the full width.
+            padding-left: 0;
+        }
+    }
+
+    &.shrink {
+        z-index: 100;
+        height: auto;
+        width: auto;
+        left: 50%;
+        top: 40%;
+
+        .environment-help__tooltip,
+        .environment-help__image {
+            display: none;
+        }
+
+        .environment-help__content {
+            width: auto;
+            height: auto;
+        }
+    }
+}
+
+
+.plus-service {
+    cursor: pointer;
+
+    &.included-plus {
+        display: none;
+
+        &.show {
+            display: block;
+        }
+    }
+
+    .plus-service__halo {
+        transition: all .3s;
+        opacity: 0;
+        r: 60;
+    }
+
+    &:hover {
+        .plus-service__halo {
+            r: 80;
+            opacity: 1;
+        }
+
+        .plus-service__inner-circle {
+            fill: $white;
+        }
+    }
+}
+
+/*
+ * The actions menu that appears next to a service block.
+ */
+.environment-menu {
+    @include create-border-radius($border-radius);
+    @include create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+    display: none;
+    background-color: #fff;
+    color: $text-colour;
+    top: 0;
+    left: 0;
+    position: absolute;
+
+    &.active {
+        display: block;
+    }
+    .triangle {
+        position: absolute;
+        top: 22px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        color: #fff;
+    }
+    &.right .triangle {
+        left: -16px;
+        border-width: 10px 17.3px 10px 0;
+        border-color: transparent #fff transparent transparent;
+    }
+    &.left .triangle {
+        right: -16px;
+        border-width: 10px 0 10px 17.3px;
+        border-color: transparent transparent transparent #fff;
+    }
+    &.top .triangle {
+        top: auto;
+        bottom: -16px;
+        border-width: 17.3px 10px 0px 10px;
+        border-color: #fff transparent transparent transparent;
+    }
+    .menu-title {
+        padding: 20px;
+    }
+    .cancel {
+        position: absolute;
+        top: 25px;
+        right: 20px;
+
+        .sprite {
+            vertical-align: top;
+        }
+    }
+    ul {
+        margin: 0;
+        list-style-type: none;
+
+        li {
+            background-position: 10px center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            line-height: 40px;
+            padding: 0 15px;
+            white-space: nowrap;
+
+            a {
+              text-decoration: none;
+              font-size: 13px;
+              color: $text-colour;
+            }
+            &.add-relation {
+                .sprite {
+                    margin-left: -25px;
+                    margin-right: 5px;
+                }
+                .disabled {
+                    color: red;
+                }
+            }
+            &.landscape-reboot {
+                background-image: url(juju-ui/assets/images/non-sprites/landscape_restart_menu.png);
+            }
+            &.landscape-security {
+                background-image: url(juju-ui/assets/images/non-sprites/landscape_security_menu.png);
+            }
+            &:last-child {
+                border-bottom: none;
+            }
+            &:hover {
+                background-color: #f2f2f2;
+            }
+            &.disabled {
+                color: gray;
+                cursor: default;
+
+                &:hover {
+                    background-color: inherit;
+                }
+            }
+        }
+    }
+    .menu {
+        li {
+            border-top: 1px solid #e9e9e9;
+        }
+    }
+    &#service-menu ul li {
+        padding-left: 36px;
+    }
+
+}
+.subordinate-rel-group {
+    display: none;
+
+    &.active {
+        display: inline;
+    }
+}
+#relation-menu {
+    .relation-container {
+        cursor: inherit;
+        padding-left: 30px;
+        padding-right: 0;
+        line-height: 30px;
+        background-repeat: no-repeat;
+        background-position: 10px 11px;
+        background-image: url("juju-ui/assets/images/unit_running_16.png");
+        &.error {
+            background-image: url("juju-ui/assets/images/error_16.png");
+        }
+        .endpoint.error {
+            color: red;
+        }
+        &:hover {
+            background-color: inherit;
+        }
+    }
+    .triangle {
+        bottom: -3px;
+        border-width: 3px 5px 0 5px;
+    }
+    .relation-remove {
+        margin: 0 10px;
+    }
+    .inspect-relation {
+        cursor: pointer;
+    }
+}
+
+.relation {
+    stroke: rgb(167, 167, 167);
+    stroke-width: 1px;
+
+    &.error {
+        stroke: $error;
+    }
+    &.subordinate {
+        stroke: rgb(167, 167, 167);
+    }
+    &.healthy {
+        stroke: #38B44A;
+    }
+    &.pending {
+        stroke: $uncommitted;
+    }
+    &.pending-healthy, &.pending-error {
+        stroke: $uncommitted;
+    }
+    &.pending-relation {
+        stroke: #faaf40;
+
+        &.dragging {
+            stroke: #fa6a40
+        }
+    }
+    &.unused {
+        visibility: hidden;
+    }
+    &.subordinate-relation {
+        stroke: #3333cc;
+    }
+}
+.connector1,
+.connector2 {
+
+    &.error {
+        fill: $error;
+    }
+    &.subordinate {
+        fill: rgb(167, 167, 167);
+    }
+    &.healthy {
+        fill: #38B44A;
+    }
+    &.pending {
+        fill: $uncommitted;
+    }
+    &.pending-healthy, &.pending-error {
+        fill: $uncommitted;
+    }
+    &.pending-relation {
+        fill: #faaf40;
+
+        &.dragging {
+            fill: #fa6a40
+        }
+    }
+    &.unused {
+        visibility: hidden;
+    }
+    &.subordinate-relation {
+        fill: #3333cc;
+    }
+}
+.visibility-classes {
+    transition: opacity 0.4s ease;
+    &.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    &.fade {
+        visibility: visible;
+        stroke-opacity: .2;
+
+        .service-icon {
+            opacity: .2;
+        }
+    }
+    &.hide {
+        /*
+          Put visibility on a delay so it gets hidden after the opacity is
+          finished transitioning.
+        */
+        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+.plus-service {
+    transition: opacity 0.4s ease;
+    &.fade {
+        visibility: visible;
+        stroke-opacity: .2;
+        opacity: .2;
+    }
+}
+
+.rel-group {
+    @extend .visibility-classes;
+}
+.rel-indicator {
+    cursor: pointer;
+}
+
+circle.mouse-down-indicator {
+    stroke: #040404;
+    stroke-width: 2px;
+    fill: none;
+}
+g.service {
+    @extend .visibility-classes;
+    fill: none;
+    stroke: none;
+
+    .service-block {
+        transition: all .3s;
+    }
+
+   .unit-count {
+        stroke-width: 0;
+        text-anchor: middle;
+        dominant-baseline: central;
+        fill: rgba(0,0,0,0);
+
+        &.show-count {
+            fill: rgba(0,0,0,1);
+        }
+        &.hide-count {
+            fill: rgba(0,0,0,0);
+        }
+    }
+
+    .sub-rel-count {
+        text-anchor: middle;
+        dominant_baseline: central;
+        fill: $warm-grey;
+        font-size: 18px;
+
+        &.active {
+            font-style: italic;
+            font-weight: bold;
+            fill: #3333cc;
+        }
+    }
+
+    .relation-button {
+        transition: transform .3s;
+        transform: translate(95px, 30px);
+
+        &__link {
+            cursor: pointer;
+
+            &:hover {
+                fill: $white;
+            }
+        }
+
+        &__image {
+            pointer-events: none;
+        }
+    }
+
+    .service-control-panel {
+        visibility: hidden;
+
+        &.active {
+            visibility: visible;
+        }
+        image {
+            cursor: pointer;
+        }
+    }
+
+    &.highlight {
+        .service-block {
+            fill: #fff;
+        }
+    }
+
+    &.is-exposed {
+        .service-block {
+            stroke-width: 4;
+        }
+    }
+
+    &.is-erroring {
+        .service-block {
+            stroke: #ed3146;
+            stroke-width: 3;
+        }
+    }
+
+    &.is-pending {
+        .service-block {
+            stroke: #f99b0f;
+            stroke-width: 3;
+        }
+    }
+
+    &.is-running {
+        .service-block {
+            stroke: #888888;
+            stroke-width: 1;
+        }
+    }
+
+    .service-block__halo {
+        transition: all .3s;
+        opacity: 0;
+        r: 90;
+    }
+
+    .service-block {
+        transition: all .3s;
+    }
+
+    &:hover {
+
+        .service-block__halo {
+            opacity: 1;
+            r: 110;
+            stroke-width: 1;
+            stroke: #19b6ee;
+        }
+
+        &.is-erroring .service-block__halo {
+            stroke: #ed3146;
+        }
+
+        &.is-pending .service-block__halo {
+            stroke: #f99b0f;
+        }
+
+        &.is-running .service-block__halo {
+            stroke: #888888;
+        }
+
+        .service-block {
+            fill: $white;
+        }
+
+        .relation-button {
+            transform: translate(95px, -30px);
+        }
+    }
+
+    &.subordinate {
+        .service-block__halo {
+            r: 60;
+            stroke: #888888;
+        }
+
+        .relation-button {
+            transform: translate(65px, 30px);
+        }
+
+        &:hover {
+            .service-block__halo {
+                r: 80;
+            }
+
+            .relation-button {
+                transform: translate(65px, -30px);
+            }
+        }
+    }
+
+    &.is-selected {
+        .service-block__halo {
+            -webkit-animation: serviceBlockHaloSelected 1s alternate;
+            animation: serviceBlockHaloSelected 1s alternate;
+            opacity: .3;
+            r: 110;
+            stroke-width: 0;
+            fill: #19b6ee;
+        }
+
+        .relation-button {
+            transform: translate(95px, -30px);
+        }
+
+        &.is-erroring .service-block__halo {
+            fill: #ed3146;
+        }
+
+        &.is-pending .service-block__halo {
+            fill: #f99b0f;
+        }
+
+        &.is-running .service-block__halo {
+            fill: #888888;
+        }
+
+        &.subordinate {
+            .service-block__halo {
+                r: 80;
+                fill: #888888;
+            }
+
+            .relation-button {
+                transform: translate(65px, -30px);
+            }
+        }
+
+        .service-block {
+            fill: $white;
+        }
+
+        @-webkit-keyframes serviceBlockHaloSelected {
+            0% { opacity: 0 }
+            100% { opacity: .3 }
+        }
+        @keyframes serviceBlockHaloSelected {
+            0% { opacity: 0 }
+            100% { opacity: .3 }
+        }
+    }
+}
+g.service-status {
+    path {
+        stroke-width: 0;
+        fill: #fff;
+    }
+}
+g.unit {
+    stroke-width: 0; font-weight: bold;
+    font-size: 18px;
+    fill: #1626cf;
+
+    .address {
+        fill: #fff; font-size: 14px;
+    }
+    .unit-border {
+        stroke-width: 2px; fill: #a0a0a0;
+    }
+}
+
+.relation-button {
+    circle {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIgICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiICAgd2lkdGg9IjE2IiAgIGhlaWdodD0iMTUuOTk5OTk5IiAgIGlkPSJzdmc1OTE4IiAgIHZlcnNpb249IjEuMSIgICBpbmtzY2FwZTp2ZXJzaW9uPSIwLjkxcHJlMiByIiAgIHZpZXdCb3g9IjAgMCAxNiAxNS45OTk5OTkiICAgc29kaXBvZGk6ZG9jbmFtZT0iYnVpbGQtcmVsYXRpb25fMTYuc3ZnIj4gIDxkZWZzICAgICBpZD0iZGVmczU5MjAiPiAgICA8Y2xpcFBhdGggICAgICAgaWQ9ImNsaXBQYXRoMTYiICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIj4gICAgICA8cGF0aCAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiICAgICAgICAgaWQ9InBhdGgxOCIgICAgICAgICBkPSJtIDAsNTk1LjI4IDg0MS44OSwwIEwgODQxLjg5LDAgMCwwIDAsNTk1LjI4IFoiIC8+ICAgIDwvY2xpcFBhdGg+ICAgIDxjbGlwUGF0aCAgICAgICBpZD0iY2xpcFBhdGgxNi0wIiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+ICAgICAgPHBhdGggICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAgICAgICAgIGlkPSJwYXRoMTgtMSIgICAgICAgICBkPSJtIDAsNTk1LjI4IDg0MS44OSwwIEwgODQxLjg5LDAgMCwwIDAsNTk1LjI4IFoiIC8+ICAgIDwvY2xpcFBhdGg+ICAgIDxjbGlwUGF0aCAgICAgICBpZD0iY2xpcFBhdGgxNi05IiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+ICAgICAgPHBhdGggICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAgICAgICAgIGlkPSJwYXRoMTgtMyIgICAgICAgICBkPSJtIDAsNTk1LjI4IDg0MS44OSwwIEwgODQxLjg5LDAgMCwwIDAsNTk1LjI4IFoiIC8+ICAgIDwvY2xpcFBhdGg+ICA8L2RlZnM+ICA8c29kaXBvZGk6bmFtZWR2aWV3ICAgICBpZD0iYmFzZSIgICAgIHBhZ2Vjb2xvcj0iI2RlZGVkZSIgICAgIGJvcmRlcmNvbG9yPSIjNjY2NjY2IiAgICAgYm9yZGVyb3BhY2l0eT0iMS4wIiAgICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAiICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIiAgICAgaW5rc2NhcGU6em9vbT0iMzAuMzU3NjYxIiAgICAgaW5rc2NhcGU6Y3g9IjYuMTE0MzgzIiAgICAgaW5rc2NhcGU6Y3k9IjcuNDYzMTc1OSIgICAgIGlua3NjYXBlOmRvY3VtZW50LXVuaXRzPSJweCIgICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9Imc1MzQ2IiAgICAgc2hvd2dyaWQ9InRydWUiICAgICBmaXQtbWFyZ2luLXRvcD0iMCIgICAgIGZpdC1tYXJnaW4tbGVmdD0iMCIgICAgIGZpdC1tYXJnaW4tcmlnaHQ9IjAiICAgICBmaXQtbWFyZ2luLWJvdHRvbT0iMC4yIiAgICAgaW5rc2NhcGU6c25hcC1iYm94PSJ0cnVlIiAgICAgaW5rc2NhcGU6YmJveC1wYXRocz0idHJ1ZSIgICAgIGlua3NjYXBlOmJib3gtbm9kZXM9InRydWUiICAgICBpbmtzY2FwZTpzbmFwLWJib3gtZWRnZS1taWRwb2ludHM9InRydWUiICAgICBpbmtzY2FwZTpzbmFwLWJib3gtbWlkcG9pbnRzPSJ0cnVlIiAgICAgaW5rc2NhcGU6b2JqZWN0LXBhdGhzPSJ0cnVlIiAgICAgaW5rc2NhcGU6c25hcC1pbnRlcnNlY3Rpb24tcGF0aHM9InRydWUiICAgICBpbmtzY2FwZTpvYmplY3Qtbm9kZXM9InRydWUiICAgICBpbmtzY2FwZTpzbmFwLXNtb290aC1ub2Rlcz0idHJ1ZSIgICAgIGlua3NjYXBlOnNuYXAtbWlkcG9pbnRzPSJ0cnVlIiAgICAgaW5rc2NhcGU6c25hcC1vYmplY3QtbWlkcG9pbnRzPSJ0cnVlIiAgICAgaW5rc2NhcGU6c25hcC1jZW50ZXI9InRydWUiPiAgICA8aW5rc2NhcGU6Z3JpZCAgICAgICB0eXBlPSJ4eWdyaWQiICAgICAgIGlkPSJncmlkNDEzNyIgICAgICAgb3JpZ2lueD0iLTAuMDAwMTEyOTYzNTRweCIgICAgICAgb3JpZ2lueT0iLTguOTk5OTczcHgiIC8+ICA8L3NvZGlwb2RpOm5hbWVkdmlldz4gIDxtZXRhZGF0YSAgICAgaWQ9Im1ldGFkYXRhNTkyMyI+ICAgIDxyZGY6UkRGPiAgICAgIDxjYzpXb3JrICAgICAgICAgcmRmOmFib3V0PSIiPiAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+ICAgICAgICA8ZGM6dHlwZSAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4gICAgICAgIDxkYzp0aXRsZT48L2RjOnRpdGxlPiAgICAgIDwvY2M6V29yaz4gICAgPC9yZGY6UkRGPiAgPC9tZXRhZGF0YT4gIDxnICAgICBpbmtzY2FwZTpsYWJlbD0iTGF5ZXIgMSIgICAgIGlua3NjYXBlOmdyb3VwbW9kZT0ibGF5ZXIiICAgICBpZD0ibGF5ZXIxIiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE4Mi45Mzg0OSwtNTYwLjcyMDEpIj4gICAgPGcgICAgICAgc3R5bGU9ImRpc3BsYXk6aW5saW5lIiAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgwLjY2NjY2NjA3LDAsMCwwLjY2NjY2NjY4LC02MzMuMDYwOTYsNi44MTE5NDI3KSIgICAgICAgaWQ9Imc1Njg3IiAvPiAgICA8ZyAgICAgICBzdHlsZT0iZGlzcGxheTppbmxpbmUiICAgICAgIGlkPSJnNTM0NiIgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTc2OS4wNjE1MSw0MDQuMzU3OTIpIj4gICAgICA8ZyAgICAgICAgIHN0eWxlPSJkaXNwbGF5OmlubGluZSIgICAgICAgICBpbmtzY2FwZTpsYWJlbD0iTGF5ZXIgMSIgICAgICAgICBpZD0ibGF5ZXIxLTgiICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTk4OC41NzEzLC03MC44NTY5MzEpIj4gICAgICAgIDxwYXRoICAgICAgICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMDtmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZTp4eC1zbWFsbDtsaW5lLWhlaWdodDpub3JtYWw7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1pbmRlbnQ6MDt0ZXh0LWFsaWduOnN0YXJ0O3RleHQtZGVjb3JhdGlvbjpub25lO3RleHQtZGVjb3JhdGlvbi1saW5lOm5vbmU7bGV0dGVyLXNwYWNpbmc6bm9ybWFsO3dvcmQtc3BhY2luZzpub3JtYWw7dGV4dC10cmFuc2Zvcm06bm9uZTtkaXJlY3Rpb246bHRyO2Jsb2NrLXByb2dyZXNzaW9uOnRiO3dyaXRpbmctbW9kZTpsci10YjtiYXNlbGluZS1zaGlmdDpiYXNlbGluZTt0ZXh0LWFuY2hvcjpzdGFydDtjbGlwLXJ1bGU6bm9uemVybztkaXNwbGF5OmlubGluZTtvdmVyZmxvdzp2aXNpYmxlO3Zpc2liaWxpdHk6dmlzaWJsZTtjb2xvci1pbnRlcnBvbGF0aW9uOnNSR0I7Y29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzOmxpbmVhclJHQjtmaWxsOiM4MDgwODA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjE7bWFya2VyOm5vbmU7Y29sb3ItcmVuZGVyaW5nOmF1dG87aW1hZ2UtcmVuZGVyaW5nOmF1dG87c2hhcGUtcmVuZGVyaW5nOmF1dG87dGV4dC1yZW5kZXJpbmc6YXV0bztlbmFibGUtYmFja2dyb3VuZDphY2N1bXVsYXRlIiAgICAgICAgICAgZD0ibSAtMTAzNS40MDQ3LDI0My4yMTkzMyBjIC0wLjYzNzcsMCAtMS4xNjY3LC0wLjUyODk4IC0xLjE2NjcsLTEuMTY2NjcgbCAwLC0yLjY2NjY2IGMgMCwtMC42Mzc2OSAwLjUyOSwtMS4xNjY2NyAxLjE2NjcsLTEuMTY2NjcgbCAyLjY2NjYsMCBjIDAuNjM3NywwIDEuMTY2NywwLjUyODk4IDEuMTY2NywxLjE2NjY3IGwgMCwyLjY2NjY2IGMgMCwwLjYzNzY5IC0wLjUyOSwxLjE2NjY3IC0xLjE2NjcsMS4xNjY2NyBsIC0yLjY2NjYsMCB6IG0gMCwtMSAyLjY2NjYsMCBjIDAuMTAxLDAgMC4xNjY3LC0wLjA2NTcgMC4xNjY3LC0wLjE2NjY3IGwgMCwtMi42NjY2NiBjIDAsLTAuMTAwOTkgLTAuMDY2LC0wLjE2NjY3IC0wLjE2NjcsLTAuMTY2NjcgbCAtMi42NjY2LDAgYyAtMC4xMDEsMCAtMC4xNjY3LDAuMDY1NyAtMC4xNjY3LDAuMTY2NjcgbCAwLDIuNjY2NjYgYyAwLDAuMTAwOTkgMC4wNjYsMC4xNjY2NyAwLjE2NjcsMC4xNjY2NyB6IiAgICAgICAgICAgaWQ9InJlY3Q0MTk0IiAgICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4gICAgICAgIDxwYXRoICAgICAgICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMDtmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZTp4eC1zbWFsbDtsaW5lLWhlaWdodDpub3JtYWw7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1pbmRlbnQ6MDt0ZXh0LWFsaWduOnN0YXJ0O3RleHQtZGVjb3JhdGlvbjpub25lO3RleHQtZGVjb3JhdGlvbi1saW5lOm5vbmU7bGV0dGVyLXNwYWNpbmc6bm9ybWFsO3dvcmQtc3BhY2luZzpub3JtYWw7dGV4dC10cmFuc2Zvcm06bm9uZTtkaXJlY3Rpb246bHRyO2Jsb2NrLXByb2dyZXNzaW9uOnRiO3dyaXRpbmctbW9kZTpsci10YjtiYXNlbGluZS1zaGlmdDpiYXNlbGluZTt0ZXh0LWFuY2hvcjpzdGFydDtjbGlwLXJ1bGU6bm9uemVybztkaXNwbGF5OmlubGluZTtvdmVyZmxvdzp2aXNpYmxlO3Zpc2liaWxpdHk6dmlzaWJsZTtjb2xvci1pbnRlcnBvbGF0aW9uOnNSR0I7Y29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzOmxpbmVhclJHQjtmaWxsOiM4MDgwODA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjE7bWFya2VyOm5vbmU7Y29sb3ItcmVuZGVyaW5nOmF1dG87aW1hZ2UtcmVuZGVyaW5nOmF1dG87c2hhcGUtcmVuZGVyaW5nOmF1dG87dGV4dC1yZW5kZXJpbmc6YXV0bztlbmFibGUtYmFja2dyb3VuZDphY2N1bXVsYXRlIiAgICAgICAgICAgZD0ibSAtMTAyNC40MDQ3LDIzMi4yMTkzMyBjIC0wLjYzNzcsMCAtMS4xNjY3LC0wLjUyODk4IC0xLjE2NjcsLTEuMTY2NjcgbCAwLC0yLjY2NjY2IGMgMCwtMC42Mzc2OSAwLjUyOSwtMS4xNjY2NyAxLjE2NjcsLTEuMTY2NjcgbCAyLjY2NjYsMCBjIDAuNjM3NywwIDEuMTY2NywwLjUyODk4IDEuMTY2NywxLjE2NjY3IGwgMCwyLjY2NjY2IGMgMCwwLjYzNzY5IC0wLjUyOSwxLjE2NjY3IC0xLjE2NjcsMS4xNjY2NyBsIC0yLjY2NjYsMCB6IG0gMCwtMSAyLjY2NjYsMCBjIDAuMTAxLDAgMC4xNjY3LC0wLjA2NTcgMC4xNjY3LC0wLjE2NjY3IGwgMCwtMi42NjY2NiBjIDAsLTAuMTAwOTkgLTAuMDY2LC0wLjE2NjY3IC0wLjE2NjcsLTAuMTY2NjcgbCAtMi42NjY2LDAgYyAtMC4xMDEsMCAtMC4xNjY3LDAuMDY1NyAtMC4xNjY3LDAuMTY2NjcgbCAwLDIuNjY2NjYgYyAwLDAuMTAwOTkgMC4wNjYsMC4xNjY2NyAwLjE2NjcsMC4xNjY2NyB6IiAgICAgICAgICAgaWQ9InJlY3Q0MTk2IiAgICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4gICAgICAgIDxwYXRoICAgICAgICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMDtmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZTp4eC1zbWFsbDtsaW5lLWhlaWdodDpub3JtYWw7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1pbmRlbnQ6MDt0ZXh0LWFsaWduOnN0YXJ0O3RleHQtZGVjb3JhdGlvbjpub25lO3RleHQtZGVjb3JhdGlvbi1saW5lOm5vbmU7bGV0dGVyLXNwYWNpbmc6bm9ybWFsO3dvcmQtc3BhY2luZzpub3JtYWw7dGV4dC10cmFuc2Zvcm06bm9uZTtkaXJlY3Rpb246bHRyO2Jsb2NrLXByb2dyZXNzaW9uOnRiO3dyaXRpbmctbW9kZTpsci10YjtiYXNlbGluZS1zaGlmdDpiYXNlbGluZTt0ZXh0LWFuY2hvcjpzdGFydDtjbGlwLXJ1bGU6bm9uemVybztkaXNwbGF5OmlubGluZTtvdmVyZmxvdzp2aXNpYmxlO3Zpc2liaWxpdHk6dmlzaWJsZTtjb2xvci1pbnRlcnBvbGF0aW9uOnNSR0I7Y29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzOmxpbmVhclJHQjtmaWxsOiM4MDgwODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjE7bWFya2VyOm5vbmU7Y29sb3ItcmVuZGVyaW5nOmF1dG87aW1hZ2UtcmVuZGVyaW5nOmF1dG87c2hhcGUtcmVuZGVyaW5nOmF1dG87dGV4dC1yZW5kZXJpbmc6YXV0bztlbmFibGUtYmFja2dyb3VuZDphY2N1bXVsYXRlIiAgICAgICAgICAgZD0ibSAtMTAyOC41NzE0LDIzNy4yMTkzMiBjIC0xLjA5NjcsMCAtMiwtMC45MDMzMyAtMiwtMiAwLC0xLjA5NjY4IDAuOTAzMywtMiAyLC0yIDEuMDk2NiwwIDIsMC45MDMzMiAyLDIgMCwxLjA5NjY3IC0wLjkwMzQsMiAtMiwyIHoiICAgICAgICAgICBpZD0icGF0aDQxOTgiICAgICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAgICAgICAgICAgc29kaXBvZGk6bm9kZXR5cGVzPSJzc3NzcyIgLz4gICAgICAgIDxwYXRoICAgICAgICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMDtmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZTp4eC1zbWFsbDtsaW5lLWhlaWdodDpub3JtYWw7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1pbmRlbnQ6MDt0ZXh0LWFsaWduOnN0YXJ0O3RleHQtZGVjb3JhdGlvbjpub25lO3RleHQtZGVjb3JhdGlvbi1saW5lOm5vbmU7bGV0dGVyLXNwYWNpbmc6bm9ybWFsO3dvcmQtc3BhY2luZzpub3JtYWw7dGV4dC10cmFuc2Zvcm06bm9uZTtkaXJlY3Rpb246bHRyO2Jsb2NrLXByb2dyZXNzaW9uOnRiO3dyaXRpbmctbW9kZTpsci10YjtiYXNlbGluZS1zaGlmdDpiYXNlbGluZTt0ZXh0LWFuY2hvcjpzdGFydDtjbGlwLXJ1bGU6bm9uemVybztkaXNwbGF5OmlubGluZTtvdmVyZmxvdzp2aXNpYmxlO3Zpc2liaWxpdHk6dmlzaWJsZTtjb2xvci1pbnRlcnBvbGF0aW9uOnNSR0I7Y29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzOmxpbmVhclJHQjtmaWxsOiM4MDgwODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjE7bWFya2VyOm5vbmU7Y29sb3ItcmVuZGVyaW5nOmF1dG87aW1hZ2UtcmVuZGVyaW5nOmF1dG87c2hhcGUtcmVuZGVyaW5nOmF1dG87dGV4dC1yZW5kZXJpbmc6YXV0bztlbmFibGUtYmFja2dyb3VuZDphY2N1bXVsYXRlIiAgICAgICAgICAgZD0ibSAtMTAyNC45MjUsMjMwLjg2NTc4IC04LDggMC43MDcyLDAuNzA3MSA4LC04IC0wLjcwNzIsLTAuNzA3MSB6IiAgICAgICAgICAgaWQ9InBhdGg0MjAwIiAgICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4gICAgICAgIDxyZWN0ICAgICAgICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMDtkaXNwbGF5OmlubGluZTtvdmVyZmxvdzp2aXNpYmxlO3Zpc2liaWxpdHk6dmlzaWJsZTtmaWxsOiM4MDgwODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjE7bWFya2VyOm5vbmU7ZW5hYmxlLWJhY2tncm91bmQ6YWNjdW11bGF0ZSIgICAgICAgICAgIGlkPSJyZWN0NDI1MSIgICAgICAgICAgIHdpZHRoPSIxIiAgICAgICAgICAgaGVpZ2h0PSI3IiAgICAgICAgICAgeD0iLTEwMjQuNTcxNCIgICAgICAgICAgIHk9IjIzNi4yMTkzMyIgLz4gICAgICAgIDxyZWN0ICAgICAgICAgICB5PSIxMDIwLjU3MTQiICAgICAgICAgICB4PSIyMzkuMjE5MzMiICAgICAgICAgICBoZWlnaHQ9IjciICAgICAgICAgICB3aWR0aD0iMSIgICAgICAgICAgIGlkPSJyZWN0NDI1MyIgICAgICAgICAgIHN0eWxlPSJjb2xvcjojMDAwMDAwO2Rpc3BsYXk6aW5saW5lO292ZXJmbG93OnZpc2libGU7dmlzaWJpbGl0eTp2aXNpYmxlO2ZpbGw6IzgwODA4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MTttYXJrZXI6bm9uZTtlbmFibGUtYmFja2dyb3VuZDphY2N1bXVsYXRlIiAgICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMCwxLC0xLDAsMCwwKSIgLz4gICAgICA8L2c+ICAgIDwvZz4gIDwvZz48L3N2Zz4=);
+    }
+}
+
+/*
+ * D3 StatusBar support
+ */
+.statusbar {
+  .label {
+    fill: white;
+  }
+
+  .error {
+    fill: rgb(224, 56, 45);
+  }
+
+  .pending {
+    fill: rgb(236, 168, 23);
+  }
+
+  .running {
+    fill: rgb(56, 180, 74);
+  }
+
+  .uncommitted {
+    fill: $uncommitted;
+  }
+}
+
+/*
+ * Notifier widget.
+ * Contains notifications that appear from the header.
+ */
+.notifier-box {
+    position: absolute;
+    top: $navbar-height;
+    left: 40%;
+    margin: -2px 0 0 -125px;
+    z-index: 9999;
+
+    &.bundle {
+        margin: -5px 0 0 227px;
+    }
+
+    .yui3-notifier-content {
+        $box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        @include create-border-radius($border-radius);
+        @include create-box-shadow($box-shadow);
+        position: realtive;
+        width: 250px;
+        margin-top: 5px;
+        padding: 7px 10px;
+        background-color: #fff;
+        color: $cool-grey;
+        font-size: 12px;
+
+        &.bottom-arrow {
+            width: 177px;
+        }
+
+        &:first-child {
+            margin-top: 0;
+
+            &:before {
+                content: '';
+                position: absolute;
+                display: block;
+                top: -5px;
+                left: 50%;
+                width: 10px;
+                height: 10px;
+                margin-left: -6px;
+                background-color: #fff;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            &.bottom-arrow:before {
+                top: inherit;
+                bottom: -5px;
+            }
+        }
+        div:last-child {
+          color: #aaa;
+        }
+    }
+}
+
+/*
+ * This panel is displayed when deleting relations.
+ */
+.yui3-panel {
+    @include create-border-radius($border-radius);
+    @include create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+
+    .yui3-widget-bd {
+        margin-bottom: 20px;
+    }
+    .yui3-widget-buttons {
+        float: right;
+
+        .button {
+            margin-left: 10px;
+        }
+    }
+}
+.yui3-widget-mask {
+    background: black;
+    opacity: 0.4;
+}
+.controls {
+    .read-only {
+        padding-top: 5px;
+    }
+}
+.unit-button-palette {
+    float: right;
+}
+#destroy-service {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.service-view+.viewlet-manager {
+    overflow-y: auto;
+}
+#full-screen-mask {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+/*
+ * This is used for the initial page before displaying the canvas
+ * e.g. login, connecting to Juju and browser not supported screens
+ */
+.centered-column {
+    display: block;
+    z-index: 10001;
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    text-align: center;
+    width: 320px;
+    margin-left: -160px;
+
+    /* This enables us to use the .centered-column
+    class inside of the main application */
+    &.in-main {
+        top: 0;
+    }
+    div {
+        width: 280px;
+        text-align: left;
+        margin: 0 auto;
+    }
+    .panel {
+        @include create-border-radius($border-radius);
+        margin: 20px 0;
+        padding: 0 20px 20px 20px;
+        background-color: $light-grey;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+
+        input {
+            @extend .border-box;
+            width: 100%;
+            margin-bottom: 20px;
+
+            &[disabled] {
+                background-color: #eee;
+            }
+        }
+        input[type=submit] {
+            @extend .button;
+        }
+        .header {
+            @extend .type9;
+            margin: 0 0 20px -20px;
+            padding: 10px 20px;
+            background-color: #ddd;
+            -webkit-border-top-left-radius: $border-radius;
+            -webkit-border-top-right-radius: $border-radius;
+            -moz-border-radius-topleft: $border-radius;
+            -moz-border-radius-topright: $border-radius;
+            border-top-left-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+            text-align: center;
+        }
+        .form-error {
+            @extend .type9;
+            margin-bottom: 20px;
+            color: red;
+        }
+    }
+    #loading-spinner {
+        height: 100px;
+    }
+}
+
+/** Browser Setup **/
+@import "browser/reset";
+
+
+/** SubApps **/
+@import "browser/main";
+
+/** Widgets **/
+@import "browser/bundle-panel";
+@import "browser/bws-searchbox";
+@import "browser/token-container";
+@import "browser/charm-full";
+@import "browser/token";
+@import "browser/overlay-indicator";
+@import "browser/section-title";
+@import "browser/tabview";
+@import "browser/added-services";
+@import "inspector/scale-up";
+@import "machine-view/serviceunit-token";
+@import "machine-view/container-token";
+@import "machine-view/create-machine-view";
+@import "machine-view/machine-token";
+@import "machine-view/machine-view-panel";
+@import "machine-view/machine-view-token-base";
+@import "machine-view/more-menu";
+@import "machine-view/service-scale-up-view";
+@import "content-panel";
+@import "deployer-bar";
+@import "dropdown";
+@import "environment-header";
+@import "inspector/juju-inspector";
+@import "inspector/inspector-view";
+@import "header";
+
+/** Views **/
+@import "browser/onboarding";
+@import "browser/search";
+@import "browser/added-services-button";
+
+/** Cookies **/
+@import "cookies";
+
+@import "components";
+
+/** Pull in the Vanilla grid **/
+@include vf-grid;

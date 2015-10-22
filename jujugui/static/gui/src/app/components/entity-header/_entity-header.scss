@@ -1,0 +1,118 @@
+.entity-header {
+    @extend %shadow-header;
+    margin-bottom: 0;
+    padding-top: 40px;
+    background-color: $white;
+    color: $cool-grey;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.35);
+    overflow: hidden;
+
+    &.dark {
+        color: $white;
+
+        .bundle-stats {
+            border-color: #E2E2E2;
+        }
+
+        .entity-header__title,
+        a:link,
+        a:visited {
+            color: $white;
+        }
+    }
+
+    .row-hero {
+        overflow: hidden;
+    }
+
+    .inner-wrapper {
+      overflow: visible;
+    }
+
+    .tag-list {
+        list-style: none;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .tag-list__item {
+        display: inline-block;
+        text-transform: lowercase;
+
+        a,
+        a:link,
+        a:visited {
+            color: #333;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+        a:after {
+            content: ',';
+        }
+        &:last-child a:after {
+            content: '';
+        }
+        &.tag-list__item_no-comma a:after {
+            content: '';
+        }
+    }
+
+    .entity-header__details {
+        margin-top: -10px;
+        display: inline-block;
+
+        ul.bullets {
+            margin-top: 0;
+            li {
+                &:after {
+                    color: $warm-grey;
+                    content: "\2022";
+                    vertical-align: middle;
+                    margin: 0 5px;
+                }
+                &:last-child:after {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .entity-header__by {
+        margin-top: 0;
+        margin-bottom: .1em;
+    }
+
+    .entity-header__icon {
+        @include create-border-radius(14px);
+        height: 96px;
+        width: 96px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 20px 20px 0;
+    }
+
+    .entity-header__title {
+        line-height: 1.3;
+        display: inline-block;
+        margin-bottom: 0;
+        color: $cool-grey;
+        font-size: 2.8125em;
+    }
+
+    .bundle-stats {
+        overflow: hidden;
+        clear: both;
+        margin-bottom: 10px;
+        padding: .55em;
+        border: 1px solid $dark-grey;
+
+        .bundle-stats__deploys {
+            width: 100%;
+            float: left;
+            text-align: center;
+            margin-bottom: 0;
+            font-size: 1.25em;
+        }
+    }
+}

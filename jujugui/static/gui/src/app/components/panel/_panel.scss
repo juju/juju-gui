@@ -1,0 +1,45 @@
+.panel-component {
+    @extend %floating-panel;
+    position: absolute;
+    z-index: 601;
+}
+
+.panel-component.inspector-panel {
+    position: static;
+    background-color: transparent;
+    border-radius: none;
+    box-shadow: none;
+}
+
+.panel-component.white-box,
+.panel-component.mid-point-panel {
+    z-index: 1000;
+    top: $navbar-height;
+    right: 0;
+    border-radius: none;
+}
+
+.panel-component.white-box {
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+}
+
+.panel-component.mid-point-panel {
+    left: $panel-space;
+}
+
+.panel-component.deployment-bar-panel {
+    right: 20px;
+    bottom: 30px;
+}
+
+.panel-component.deployment-summary-panel {
+    @extend %scroll-children;
+    z-index: 1000;
+    top: 20px;
+    bottom: 20px;
+    left: 30px;
+    right: 30px;
+}
