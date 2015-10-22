@@ -595,7 +595,6 @@ YUI.add('juju-gui', function(Y) {
           this.db.reset();
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
-          debugger;
           var credentials = this.env.getCredentials();
           if (credentials && credentials.areAvailable) {
             this.env.login();
