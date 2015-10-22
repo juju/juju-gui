@@ -137,11 +137,12 @@ function ReconnectingWebSocket(url, protocols) {
             }
             self.onerror(event);
         };
-        ws.close = function(event) {
+        ws.destroy = function(event) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
                 console.debug('ReconnectingWebSocket', 'close', url, event);
             }
             self.reconnect = false;
+            ws.close();
         }
     }
     connect(url);
@@ -160,11 +161,8 @@ function ReconnectingWebSocket(url, protocols) {
 
     this.close = function() {
         if (ws) {
-            // Handle onclose events sooner rather than later.
-            this.onclose(null);
-            this.onclose = function(event) {};
             forcedClose = true;
-            ws.close();
+            ws.destroy();
         }
     };
 

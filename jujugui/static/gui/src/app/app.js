@@ -1681,11 +1681,16 @@ YUI.add('juju-gui', function(Y) {
       var newSocketUrl = baseUrl + '/' + uuid;
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', newSocketUrl);
+      // Clear uncommitted state.
+      this.env.get('ecs').clear();
       // Disconnect and reconnect the environment.
+      this.env.ws.onclose = function(event) {
+        this.env.on_close();
+        this.env.connect();
+      }.bind(this);
       this.env.close();
       this.db.reset();
       this.db.fire('update');
-      this.env.connect();
     },
 
     /**
