@@ -112,6 +112,7 @@ textarea {
     font-family: $font-family;
     font-weight: 300;
 }
+
 body {
     @extend %customize-scrollbar;
     overflow: hidden;
@@ -124,6 +125,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 .link,
 a,
 a:hover {
@@ -131,10 +133,12 @@ a:hover {
     color: $charm-panel-orange;
     text-decoration: none;
 }
+
 button {
     cursor: pointer;
     -webkit-appearance: button;
 }
+
 input[type="text"],
 input[type="password"] {
     padding: 5px 10px;
@@ -142,6 +146,7 @@ input[type="password"] {
     border: 1px solid $bws-border;
     border-radius: $border-radius;
 }
+
 /*
   Taken from:
   http://code.stephenmorley.org/html-and-css/styling-checkboxes-and-radio-buttons/
@@ -155,11 +160,13 @@ input[type="radio"]:not(old) {
   font-size: 1em;
   opacity: 0;
 }
+
 input[type="radio"]:not(old) + label {
   display: inline-block;
   margin-left: -2em;
   line-height: 1.5em;
 }
+
 input[type="radio"]:not(old) + label > .outer {
   display: inline-block;
   width: 12px;
@@ -170,10 +177,12 @@ input[type="radio"]:not(old) + label > .outer {
   background: #ebecee;
   vertical-align: bottom;
 }
+
 input[type="radio"]:not(old):checked + label > .outer {
   background: $charm-panel-orange;
   border-color: $charm-panel-orange;
 }
+
 input[type="radio"]:not(old):checked + label > .outer > .inner {
   display: block;
   width: 6px;

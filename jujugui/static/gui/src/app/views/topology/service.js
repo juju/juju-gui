@@ -463,7 +463,7 @@ YUI.add('juju-topology-service', function(Y) {
     _attachDragEvents: function() {
       var container = this.get('container'),
           ZP = '.zoom-plane',
-          EC = '.environment-help__image';
+          EC = '.environment-help';
 
       container.delegate('drop', this.canvasDropHandler, ZP, this);
       container.delegate('dragenter', this._ignore, ZP, this);
