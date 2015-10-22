@@ -46,6 +46,7 @@ YUI.add('entity-content', function() {
         option.name = name;
         optionsList.push(
           <juju.components.EntityContentConfigOption
+            key={name}
             option={option} />
         );
       }, this);

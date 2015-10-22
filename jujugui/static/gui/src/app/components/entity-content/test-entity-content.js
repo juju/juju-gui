@@ -76,8 +76,10 @@ describe('EntityContent', function() {
               <h3>Configuration</h3>
               <dl>
                 <juju.components.EntityContentConfigOption
+                  key={option1.name}
                   option={option1} />
                 <juju.components.EntityContentConfigOption
+                  key={option2.name}
                   option={option2} />
               </dl>
             </div>
