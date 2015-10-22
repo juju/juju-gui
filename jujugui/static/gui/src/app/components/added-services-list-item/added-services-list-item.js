@@ -96,7 +96,11 @@ YUI.add('added-services-list-item', function() {
           <img src={service.icon} className="inspector-view__item-icon" />
           <span className="inspector-view__item-count">
             {service.unit_count}
-          </span> {service.name}
+          </span>
+          {' '}
+          <span className="inspector-view__item-name">
+            {service.name}
+          </span>
           {statusIndicator}
         </li>
       );
