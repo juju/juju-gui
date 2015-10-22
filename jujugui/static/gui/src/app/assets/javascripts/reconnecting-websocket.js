@@ -89,7 +89,7 @@ function ReconnectingWebSocket(url, protocols) {
                 console.debug('ReconnectingWebSocket', 'connection-timeout', url);
             }
             timedOut = true;
-            localWs.close();
+            localWs.disconnect(false);
             timedOut = false;
         }, self.timeoutInterval);
 
@@ -137,12 +137,15 @@ function ReconnectingWebSocket(url, protocols) {
             }
             self.onerror(event);
         };
-        ws.destroy = function(event) {
+        ws.disconnect = function(close) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
-                console.debug('ReconnectingWebSocket', 'close', url, event);
+                console.debug('ReconnectingWebSocket', close ? 'close' : 'disconnect', url, event);
             }
             self.reconnect = false;
-            ws.close();
+            if (close) {
+                ws.close();
+            }
+
         }
     }
     connect(url);
@@ -162,7 +165,9 @@ function ReconnectingWebSocket(url, protocols) {
     this.close = function() {
         if (ws) {
             forcedClose = true;
-            ws.destroy();
+            // The client decided to close the connection, so also properly
+            // close the TCP connection in this case.
+            ws.disconnect(true);
         }
     };
 
@@ -172,7 +177,7 @@ function ReconnectingWebSocket(url, protocols) {
      */
     this.refresh = function() {
         if (ws) {
-            ws.close();
+            ws.disconnect(false);
         }
     };
 }
