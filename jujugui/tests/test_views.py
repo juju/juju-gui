@@ -114,8 +114,8 @@ class ConfigTests(ViewTestCase):
         self.assertIs(True, config['sandbox'])
         # The hideLoginButton, user and password values reflect sandbox status.
         self.assertIs(True, config['hideLoginButton'])
-        self.assertEqual('user-admin', config['user'])
-        self.assertEqual('admin', config['password'])
+        self.assertEqual('admin', config['user'])
+        self.assertEqual('password', config['password'])
 
     def test_standalone(self):
         jujugui.make_application(self.config)
