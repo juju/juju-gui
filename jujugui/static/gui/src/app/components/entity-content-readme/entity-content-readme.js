@@ -65,12 +65,13 @@ YUI.add('entity-content-readme', function() {
     _getReadmeFile: function(entityModel) {
       var files = entityModel.get('files');
       var match;
-      files.some(function(file) {
+      for (var i = 0, l = files.length; i < l; i++) {
+        var file = files[i];
         if (file.toLowerCase().slice(0, 6) === 'readme') {
           match = file;
-          return true;
+          break;
         }
-      });
+      }
       return match;
     },
 
