@@ -87,21 +87,17 @@ describe('EntityContentReadme', function() {
       </div>);
   });
 
-  it('will not try to display a readme if already unmounted', function() {
-    var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
-    var getFile = sinon.stub().callsArgWith(2, {target: {
-      responseText: 'mock markdown'
-    }});
+  it('will cancel the readme request when unmounting', function() {
+    var abort = sinon.stub();
+    var getFile = sinon.stub().returns({abort: abort});
     var mockEntity = makeEntity(['Readme.md']);
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
-        renderMarkdown={renderMarkdown}
         getFile={getFile}
         entityModel={mockEntity} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
     shallowRenderer.unmount();
-    shallowRenderer.getMountedInstance()._getReadmeSuccess();
-    var output = shallowRenderer.getRenderOutput();
-    assert.equal(renderMarkdown.callCount, 0);
+    assert.equal(abort.callCount, 1);
   });
 
   it('can display a message if there is no readme file', function() {

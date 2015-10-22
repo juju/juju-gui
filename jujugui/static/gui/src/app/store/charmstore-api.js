@@ -55,9 +55,10 @@ YUI.add('charmstore-api', function(Y) {
         successfully.
       @param {Function} failureCallback Called when the api request fails
         with a response of >= 400.
+      @return {Object} The asynchronous request instance.
     */
     _makeRequest: function(path, successCallback, failureCallback) {
-      this.bakery.sendGetRequest(
+      return this.bakery.sendGetRequest(
         path,
         successCallback,
         failureCallback
@@ -242,10 +243,11 @@ YUI.add('charmstore-api', function(Y) {
         successfully.
       @param {Function} failureCallback Called when the api request fails
         with a response of >= 400.
+      @return {Object} The asynchronous request instance.
     */
     getFile: function(entityId, filename, successCallback, failureCallback) {
       entityId = entityId.replace('cs:', '');
-      this._makeRequest(
+      return this._makeRequest(
           this._generatePath(entityId, null, '/archive/' + filename),
           successCallback,
           failureCallback);
@@ -272,12 +274,13 @@ YUI.add('charmstore-api', function(Y) {
         successfully.
       @param {Function} failureCallback Called when the api request fails
         with a response of >= 400.
+      @return {Object} The asynchronous request instance.
     */
     getEntity: function(entityId, successCallback, failureCallback) {
       var filters = 'include=bundle-metadata&include=charm-metadata' +
                     '&include=charm-config&include=manifest' +
                     '&include=charm-related&include=extra-info';
-      this._makeRequest(
+      return this._makeRequest(
           this._generatePath(entityId, filters, '/meta/any'),
           this._transformQueryResults.bind(this, successCallback),
           failureCallback);
@@ -295,6 +298,7 @@ YUI.add('charmstore-api', function(Y) {
       @param {Function} failureCallback Called when the api request fails
         with a response of >= 400.
       @param {Integer} limit The number of results to get.
+      @return {Object} The asynchronous request instance.
     */
     search: function(filters, successCallback, failureCallback, limit) {
       var defaultFilters =
@@ -306,7 +310,7 @@ YUI.add('charmstore-api', function(Y) {
                         'include=stats';
       var path = this._generatePath(
           'search', Y.QueryString.stringify(filters) + defaultFilters);
-      this._makeRequest(
+      return this._makeRequest(
           path,
           this._transformQueryResults.bind(this, successCallback),
           failureCallback);
@@ -335,9 +339,10 @@ YUI.add('charmstore-api', function(Y) {
       @param {Function} successCallback The success callback.
       @param {Function} failureCallback The failure callback.
       @param {Array} bundle An array containing the requested bundle model.
+      @return {Object} The asynchronous request instance.
     */
     _getBundleYAMLResponse: function(successCallback, failureCallback, bundle) {
-      this._makeRequest(
+      return this._makeRequest(
           bundle[0].get('deployerFileUrl'),
           function(resp) {
             successCallback(resp.currentTarget.responseText);
@@ -352,11 +357,12 @@ YUI.add('charmstore-api', function(Y) {
       @param {String} charmId The charm id to fetch all of the versions for.
       @param {Function} successCallback The success callback.
       @param {Function} failureCallback The failure callback.
+      @return {Object} The asynchronous request instance.
     */
     getAvailableVersions: function(charmId, successCallback, failureCallback) {
       charmId = charmId.replace('cs:', '');
       var series = charmId.split('/')[0];
-      this._makeRequest(
+      return this._makeRequest(
           this._generatePath(charmId, null, '/expand-id'),
           this._processAvailableVersions.bind(
               this, series, successCallback, failureCallback),
