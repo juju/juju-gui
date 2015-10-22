@@ -44,12 +44,14 @@ describe('Inspector', function() {
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
+    var appPreviousState = sinon.stub();
     shallowRenderer.render(
         <juju.components.Inspector
           service={service}
           destroyService={destroyService}
           getUnitStatusCounts={getUnitStatusCounts}
           clearState={clearState}
+          appPreviousState={appPreviousState}
           appState={appState}>
         </juju.components.Inspector>);
 
@@ -66,6 +68,7 @@ describe('Inspector', function() {
   it('displays the unit list when the app state calls for it', function() {
     var changeStateStub = sinon.stub();
     var destroyUnits = sinon.stub();
+    var appPreviousState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
@@ -85,6 +88,7 @@ describe('Inspector', function() {
           service={service}
           appState={appState}
           destroyUnits={destroyUnits}
+          appPreviousState={appPreviousState}
           changeState={changeStateStub}>
         </juju.components.Inspector>);
 
@@ -102,7 +106,7 @@ describe('Inspector', function() {
     var setConfig = sinon.stub();
     var charm = 'charm';
     var getStub = sinon.stub();
-
+    var appPreviousState = sinon.stub();
     var service = {
       get: getStub
     };
@@ -116,6 +120,7 @@ describe('Inspector', function() {
           appState={appState}
           service={service}
           charm={charm}
+          appPreviousState={appPreviousState}
           setConfig={setConfig} /> );
 
     var children = output.props.children[1].props.children;
@@ -247,6 +252,7 @@ describe('Inspector', function() {
   });
 
   it('displays the Scale Service when the app state calls for it', function() {
+    var appPreviousState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
 
@@ -262,6 +268,7 @@ describe('Inspector', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Inspector
         service={service}
+        appPreviousState={appPreviousState}
         appState={appState} />);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -278,6 +285,7 @@ describe('Inspector', function() {
     var unexposeService = sinon.stub();
     var service = sinon.stub();
     var units = sinon.stub();
+    var appPreviousState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns(units);
@@ -295,6 +303,7 @@ describe('Inspector', function() {
         exposeService={exposeService}
         unexposeService={unexposeService}
         service={service}
+        appPreviousState={appPreviousState}
         appState={appState} />);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -306,7 +315,38 @@ describe('Inspector', function() {
           units={units} />);
   });
 
+  it('displays Relations when the app state calls for it', function() {
+    var changeState = sinon.stub();
+    var getRelationDataForService = sinon.stub();
+    var service = sinon.stub();
+    var appPreviousState = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'relations',
+        }}};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        changeState={changeState}
+        service={service}
+        getRelationDataForService={getRelationDataForService}
+        appPreviousState={appPreviousState}
+        appState={appState} />);
+    var children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+        <juju.components.InspectorRelations
+          changeState={changeState}
+          getRelationDataForService={getRelationDataForService}
+          service={service} />);
+  });
+
   it('passes changeState callable to header component', function() {
+    var appPreviousState = sinon.stub();
     var service = {
       get: function() {
         return {name: 'demo'};
@@ -321,18 +361,92 @@ describe('Inspector', function() {
         <juju.components.Inspector
           changeState={changeStub}
           appState={appState}
+          appPreviousState={appPreviousState}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
       sectionA: {
-        component: 'services'
+        component: 'services',
+        metadata: null
+      }
+    });
+  });
+
+  it('can navigate back to the inspector from a service', function() {
+    var appPreviousState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'relations',
+          id: 'service2'
+        }}};
+    var service = {
+      get: function() {
+        return {name: 'demo'};
+      }};
+    var appState = {
+      sectionA: {
+        metadata: {}
+      }};
+    var changeStub = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Inspector
+          changeState={changeStub}
+          appState={appState}
+          appPreviousState={appPreviousState}
+          service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.backCallback();
+    assert.equal(changeStub.callCount, 1);
+    assert.deepEqual(changeStub.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'service2',
+          activeComponent: 'relations'
+        }
+      }
+    });
+  });
+
+  it('does not go back to the inspector from the same service', function() {
+    var appPreviousState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'relations',
+          id: 'demo'
+        }}};
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('name').returns('demo');
+    var service = {get: getStub};
+    var appState = {
+      sectionA: {
+        metadata: {}
+      }};
+    var changeStub = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Inspector
+          changeState={changeStub}
+          appState={appState}
+          appPreviousState={appPreviousState}
+          service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.backCallback();
+    assert.equal(changeStub.callCount, 1);
+    assert.deepEqual(changeStub.args[0][0], {
+      sectionA: {
+        component: 'services',
+        metadata: null
       }
     });
   });
 
   it('passes a title to the header component', function() {
+    var appPreviousState = sinon.stub();
     var service = {
       get: function() {
         return 'demo';
@@ -347,6 +461,7 @@ describe('Inspector', function() {
         <juju.components.Inspector
           changeState={changeStub}
           appState={appState}
+          appPreviousState={appPreviousState}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0],
@@ -359,6 +474,7 @@ describe('Inspector', function() {
   });
 
   it('passes the type to the header component', function() {
+    var appPreviousState = sinon.stub();
     var service = {
       get: sinon.stub().returns({
         filterByStatus: sinon.stub().returns([])
@@ -378,6 +494,7 @@ describe('Inspector', function() {
         <juju.components.Inspector
           changeState={changeStub}
           appState={appState}
+          appPreviousState={appPreviousState}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0],

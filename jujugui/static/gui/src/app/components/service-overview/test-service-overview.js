@@ -51,7 +51,7 @@ describe('ServiceOverview', function() {
   });
 
   function stubIcons() {
-    icons = juju.components.ServiceOverview.icons;
+    icons = juju.components.ServiceOverview.prototype.icons;
     juju.components.ServiceOverview.prototype.icons = {};
   }
 
@@ -255,6 +255,31 @@ describe('ServiceOverview', function() {
         value={undefined}
         icon={undefined}
         action={output.props.children[0].props.children[1].props.action}
+        valueType={undefined}
+        link={undefined}
+        linkTitle={undefined} />);
+  });
+
+  it('shows the relations action', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[2],
+      <juju.components.OverviewAction
+        key="Relations"
+        title="Relations"
+        value={undefined}
+        icon={undefined}
+        action={output.props.children[0].props.children[2].props.action}
         valueType={undefined}
         link={undefined}
         linkTitle={undefined} />);

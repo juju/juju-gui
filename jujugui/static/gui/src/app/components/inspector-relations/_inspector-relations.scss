@@ -1,0 +1,16 @@
+.inspector-relations {
+    &__onboarding {
+        &-description {
+            @extend %fade-in;
+            margin: 0;
+            padding: 20px 20px 0 20px;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+    }
+
+    &__list {
+        margin: 0;
+        list-style: none;
+    }
+}

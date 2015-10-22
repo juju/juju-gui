@@ -687,10 +687,24 @@ YUI.add('juju-view-utils', function(Y) {
             near = rel.endpoints[1];
             far = rel.endpoints[0];
           }
-          rel.near = {service: near[0], role: near[1].role, name: near[1].name};
+          rel.near = {
+            service: near[0],
+            serviceName: service.get('name'),
+            role: near[1].role,
+            name: near[1].name
+          };
+          var farService;
           // far will be undefined or the far endpoint service.
-          rel.far = far && {
-            service: far[0], role: far[1].role, name: far[1].name};
+          if (far) {
+            var id = far[0];
+            farService = {
+              service: id,
+              serviceName: db.services.getById(id).get('name'),
+              role: far[1].role,
+              name: far[1].name
+            };
+          }
+          rel.far = farService;
           var relationId = rel.relation_id;
           if (utils.isPythonRelation(relationId)) {
             // This is a Python relation id.
