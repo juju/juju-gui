@@ -43,11 +43,7 @@ YUI.add('entity-content', function() {
         var option = options[name];
         optionsList.push(
           <juju.components.EntityContentConfigOption
-            key={name}
-            name={name}
-            description={option.description}
-            type={option.type}
-            default={option.default} />
+            option={option} />
         );
       }, this);
       return <div className="entity-content__configuration" id="configuration">

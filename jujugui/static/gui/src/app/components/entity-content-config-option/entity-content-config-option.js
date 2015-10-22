@@ -39,21 +39,21 @@ YUI.add('entity-content-config-option', function() {
     },
 
     render: function() {
-      var name = this.props.name;
+      var option = this.props.option;
       return (
         <div className="entity-content__config-option">
-          <dt id={'charm-config-' + name}
+          <dt id={'charm-config-' + option.name}
               className="entity-content__config-name">
-            {name}
+            {option.name}
           </dt>
           <dd className="entity-content__config-description">
             <span className="entity-content__config-type">
-              ({this.props.type})
+              ({option.type})
             </span>
             {' '}
-            {this.props.description}
+            {option.description}
           </dd>
-          {this._generateDefault(this.props.default)}
+          {this._generateDefault(option.default)}
         </div>
       );
     }
