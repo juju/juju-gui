@@ -50,19 +50,20 @@ YUI.add('overview-action', function() {
       return classNames(
         this.baseClass + '__link',
         {
-          hidden: !this.props.link
+          hidden: !this.props.linkAction
         }
       );
     },
 
     /**
-      Don't bubble the click the parent.
+      Call the supplied link action
 
-      @method _stopBubble
+      @method _handleLinkClick
       @param {Object} e The click event.
     */
-    _stopBubble: function(e) {
+    _handleLinkClick: function(e) {
       e.stopPropagation();
+      this.props.linkAction();
     },
 
     render: function() {
@@ -77,11 +78,10 @@ YUI.add('overview-action', function() {
           <span className={titleClass}>
             {this.props.title}
           </span>
-          <a href={this.props.link} className={this._linkClasses()}
-            onClick={this._stopBubble}
-            target="_blank">
+          <span className={this._linkClasses()}
+            onClick={this._handleLinkClick}>
             {this.props.linkTitle}
-          </a>
+          </span>
           <span className={this._valueClasses()}>
             {this.props.value}
           </span>

@@ -76,7 +76,7 @@ YUI.add('service-overview', function() {
               title={action.title}
               value={action.value}
               valueType={action.valueType}
-              link={action.link}
+              linkAction={action.linkAction}
               linkTitle={action.linkTitle} />);
       });
       return items;
@@ -179,7 +179,7 @@ YUI.add('service-overview', function() {
         var charmId = service.get('charm');
         actions.push({
           title: 'Change version',
-          link: 'https://jujucharms.com/' + charmId.replace('cs:', ''),
+          linkAction: this._viewCharmDetails.bind(this, charmId),
           linkTitle: charmId,
           icon: this.icons.version,
           action: this._navigate,
@@ -196,6 +196,25 @@ YUI.add('service-overview', function() {
       }
 
       this.state.actions = actions;
+    },
+
+    /**
+      The callable to view the charm details.
+
+      @method _viewCharmDetails
+      @param {String} charmId The charm id.
+      @param {Object} e The click event.
+    */
+    _viewCharmDetails: function(charmId, e) {
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: charmId.replace('cs:', '')
+          }
+        }
+      });
     },
 
     /**
