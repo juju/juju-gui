@@ -345,6 +345,44 @@ describe('Inspector', function() {
           service={service} />);
   });
 
+  it('displays Change versions when the app state calls for it', function() {
+    var changeState = sinon.stub();
+    var service = sinon.stub();
+    var setCharm = sinon.stub();
+    var getCharm = sinon.stub();
+    var getAvailableVersions = sinon.stub();
+    var appPreviousState = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('charm').returns('cs:demo');
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'change-version',
+        }}};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        changeState={changeState}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions}
+        appPreviousState={appPreviousState}
+        service={service}
+        appState={appState} />);
+    var children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+      <juju.components.InspectorChangeVersion
+        changeState={changeState}
+        charmId="cs:demo"
+        service={service}
+        setCharm={setCharm}
+        getCharm={getCharm}
+        getAvailableVersions={getAvailableVersions} />);
+  });
+
   it('passes changeState callable to header component', function() {
     var appPreviousState = sinon.stub();
     var service = {

@@ -90,7 +90,7 @@ describe('ServiceOverview', function() {
         title="Units"
         value={2}
         valueType="all"
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined}
         action={output.props.children[0].props.children[0].props.action} />);
   });
@@ -116,7 +116,7 @@ describe('ServiceOverview', function() {
         title="Units"
         value={0}
         valueType="all"
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined}
         action={output.props.children[0].props.children[0].props.action} />);
   });
@@ -127,6 +127,7 @@ describe('ServiceOverview', function() {
       return [{}, {}];
     }});
     getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(true);
     var service = {
       get: getStub
     };
@@ -181,7 +182,7 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[1].props.action}
         valueType="uncommitted"
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
   });
 
@@ -206,7 +207,7 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[1].props.action}
         valueType='pending'
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
   });
 
@@ -231,7 +232,7 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[1].props.action}
         valueType="error"
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
   });
 
@@ -256,7 +257,7 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[1].props.action}
         valueType={undefined}
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
   });
 
@@ -281,7 +282,7 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[2].props.action}
         valueType={undefined}
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
   });
 
@@ -290,6 +291,7 @@ describe('ServiceOverview', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(false);
     getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
@@ -308,12 +310,72 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[3].props.action}
         valueType={undefined}
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
     assert.equal(output.props.children[0].props.children.length, 5);
   });
 
-  it('does not show the expose action for an uncommitted service', function() {
+  it('shows the Change version action if the service is committed', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service}/>);
+    assert.deepEqual(output.props.children[0].props.children[4],
+      <juju.components.OverviewAction
+        key="Change version"
+        title="Change version"
+        linkAction={output.props.children[0].props.children[4].props.linkAction}
+        linkTitle="cs:demo"
+        icon={undefined}
+        action={output.props.children[0].props.children[4].props.action}
+        valueType={undefined}
+        value={undefined} />);
+    assert.equal(output.props.children[0].props.children.length, 5);
+  });
+
+  it('shows the charm details if the version is clicked', function() {
+    var changeState = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          changeState={changeState}
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service} />);
+    output.props.children[0].props.children[4].props.linkAction();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'entity-details',
+          id: 'demo'
+        }
+      }
+    });
+  });
+
+  it('does not show Expose or Change version if uncommitted', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(true);
@@ -328,7 +390,7 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}/>);
-    assert.equal(output.props.children[0].props.children.length, 4);
+    assert.equal(output.props.children[0].props.children.length, 3);
   });
 
   it('renders the delete button', function() {

@@ -215,6 +215,25 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined
                 }}}};
         break;
+        case 'change-version':
+          state.activeChild = {
+            title: 'Change version',
+            component:
+              <juju.components.InspectorChangeVersion
+                changeState={this.props.changeState}
+                charmId={service.get('charm')}
+                service={service}
+                setCharm={this.props.setCharm}
+                getCharm={this.props.getCharm}
+                getAvailableVersions={this.props.getAvailableVersions} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: undefined
+                }}}};
+        break;
       }
       return state;
     },
@@ -243,6 +262,7 @@ YUI.add('inspector-component', function() {
 
 }, '0.1.0', {
   requires: [
+    'inspector-change-version',
     'inspector-expose',
     'inspector-header',
     'inspector-config',

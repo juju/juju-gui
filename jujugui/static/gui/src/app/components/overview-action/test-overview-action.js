@@ -62,15 +62,31 @@ describe('OverviewAction', function() {
   });
 
   it('sets the link', function() {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var linkAction = sinon.stub();
+    var output = jsTestUtils.shallowRender(
         <juju.components.OverviewAction
-          link="http://jujucharms.com/"
+          linkAction={linkAction}
           linkTitle="Juju Charms" />);
-    var output = shallowRenderer.getRenderOutput();
     var link = output.props.children[2];
-    assert.equal(link.props.href, 'http://jujucharms.com/');
-    assert.equal(link.props.children, 'Juju Charms');
+    assert.deepEqual(link,
+        <span className="overview-action__link"
+          onClick={link.props.onClick}>
+          Juju Charms
+        </span>);
+  });
+
+  it('calls the supplied action when the link is clicked', function() {
+    var linkAction = sinon.stub();
+    var stopPropagation = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.OverviewAction
+          linkAction={linkAction}
+          linkTitle="Juju Charms" />);
+    output.props.children[2].props.onClick({
+      stopPropagation: stopPropagation
+    });
+    assert.equal(linkAction.callCount, 1);
+    assert.equal(stopPropagation.callCount, 1);
   });
 
   it('hides the link if it is not provided', function() {

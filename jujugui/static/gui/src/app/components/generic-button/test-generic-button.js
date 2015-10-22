@@ -36,7 +36,9 @@ describe('GenericButton', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton
           action={callbackStub} />);
-    output.props.onClick();
+    output.props.onClick({
+      stopPropagation: sinon.stub()
+    });
     assert.equal(callbackStub.callCount, 1);
   });
 
@@ -46,8 +48,22 @@ describe('GenericButton', function() {
         <juju.components.GenericButton
           disabled={true}
           action={callbackStub} />);
-    output.props.onClick();
+    output.props.onClick({
+      stopPropagation: sinon.stub()
+    });
     assert.equal(callbackStub.callCount, 0);
+  });
+
+  it('stop the event propogating when clicked', function() {
+    var callbackStub = sinon.stub();
+    var stopPropagation = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.GenericButton
+          action={callbackStub} />);
+    output.props.onClick({
+      stopPropagation: stopPropagation
+    });
+    assert.equal(stopPropagation.callCount, 1);
   });
 
   it('displays the provided title', function() {
