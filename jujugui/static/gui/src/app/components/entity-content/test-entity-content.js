@@ -84,8 +84,6 @@ describe('EntityContent', function() {
           </main>
         </div>
       </div>);
-    jsTestUtils.log(expected);
-    jsTestUtils.log(output);
     assert.deepEqual(output, expected);
   });
 

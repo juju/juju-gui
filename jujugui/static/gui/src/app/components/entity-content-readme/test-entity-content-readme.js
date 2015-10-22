@@ -79,6 +79,8 @@ describe('EntityContentReadme', function() {
   it('can display a message if there is no readme file', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
+        renderMarkdown={sinon.spy()}
+        getFile={sinon.spy()}
         entityModel={mockEntity} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();

@@ -23,7 +23,9 @@ YUI.add('entity-content', function() {
   juju.components.EntityContent = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
-      entityModel: React.PropTypes.object.isRequired
+      entityModel: React.PropTypes.object.isRequired,
+      renderMarkdown: React.PropTypes.func.isRequired,
+      getFile: React.PropTypes.func.isRequired
     },
 
     /**

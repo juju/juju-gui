@@ -22,6 +22,11 @@ YUI.add('entity-content-config-option', function() {
 
   juju.components.EntityContentConfigOption = React.createClass({
 
+    /* Define and validate the properites available on this component. */
+    propTypes: {
+      option: React.PropTypes.object.isRequired
+    },
+
     /**
       Create the markup for default value.
 

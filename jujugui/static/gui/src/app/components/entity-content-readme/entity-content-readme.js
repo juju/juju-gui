@@ -23,6 +23,13 @@ YUI.add('entity-content-readme', function() {
   juju.components.EntityContentReadme = React.createClass({
     readmeXhr: null,
 
+    /* Define and validate the properites available on this component. */
+    propTypes: {
+      entityModel: React.PropTypes.object.isRequired,
+      getFile: React.PropTypes.func.isRequired,
+      renderMarkdown: React.PropTypes.func.isRequired
+    },
+
     getInitialState: function() {
       return {
         readme: null,

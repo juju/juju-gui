@@ -27,7 +27,7 @@ chai.config.truncateThreshold = 0;
 describe('Spinner', function() {
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
-    YUI().use('spinner', function() { done(); });
+    YUI().use('loading-spinner', function() { done(); });
   });
 
   it('renders the spinner', function() {
