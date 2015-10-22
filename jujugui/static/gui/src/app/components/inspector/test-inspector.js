@@ -351,6 +351,7 @@ describe('Inspector', function() {
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
+    var appPreviousState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('charm').returns('cs:demo');
@@ -368,6 +369,7 @@ describe('Inspector', function() {
         setCharm={setCharm}
         getCharm={getCharm}
         getAvailableVersions={getAvailableVersions}
+        appPreviousState={appPreviousState}
         service={service}
         appState={appState} />);
     var children = output.props.children[1].props.children;

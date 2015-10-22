@@ -282,7 +282,7 @@ describe('ServiceOverview', function() {
         icon={undefined}
         action={output.props.children[0].props.children[2].props.action}
         valueType={undefined}
-        link={undefined}
+        linkAction={undefined}
         linkTitle={undefined} />);
   });
 
