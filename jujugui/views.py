@@ -72,7 +72,7 @@ def config(request):
     jem_url = settings['jujugui.jem_url']
     # If sandbox is enabled then set the password to "admin" so that the
     # Juju GUI will automatically log in.
-    user, password = 'user-admin', 'admin'
+    user, password = 'admin', 'password'
     if not sandbox_enabled:
         user, password = settings['jujugui.user'], settings['jujugui.password']
     env_uuid = request.matchdict.get('uuid', 'sandbox')

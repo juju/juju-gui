@@ -251,8 +251,15 @@ YUI.add('machine-view-panel', function(Y) {
          @param {Object} e Change event facade.
         */
         _displayEnvironmentName: function(e) {
-          this.get('container').one('.column.machines .head .title').setHTML(
-              this.get('env').get('environmentName'));
+          var title = this.get('container')
+                          .one('.column.machines .head .title');
+          // When switching environments with the machine view closed this
+          // still gets triggered to update but the title element doesn't
+          // exist.
+          if (title) {
+            title.setHTML(
+                this.get('env').get('environmentName'));
+          }
         },
 
         /**

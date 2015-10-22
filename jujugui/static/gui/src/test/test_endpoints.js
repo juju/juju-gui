@@ -355,8 +355,11 @@ describe('Endpoints map handlers', function() {
   beforeEach(function() {
     destroyMe = [];
     conn = new utils.SocketStub();
-    env = new juju.environments.GoEnvironment({conn: conn});
-    env.setCredentials({user: 'user', password: 'password'});
+    env = new juju.environments.GoEnvironment({
+      user: 'user',
+      password: 'password',
+      conn: conn
+    });
     env.connect();
     this._cleanups.push(env.close.bind(env));
     destroyMe.push(env);
@@ -551,7 +554,12 @@ describe('Service config handlers', function() {
     destroyMe = [];
     conn = new utils.SocketStub();
     var ecs = new juju.EnvironmentChangeSet();
-    env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
+    env = new juju.environments.GoEnvironment({
+      conn: conn,
+      ecs: ecs,
+      user: 'user',
+      password: 'password'
+    });
     env.connect();
     this._cleanups.push(env.close.bind(env));
     app = new Y.juju.App({env: env, consoleEnabled: true });

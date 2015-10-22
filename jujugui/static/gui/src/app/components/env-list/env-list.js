@@ -21,33 +21,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('env-list', function() {
 
   juju.components.EnvList = React.createClass({
+
+    propTypes: {
+      envs: React.PropTypes.array,
+      handleEnvClick: React.PropTypes.func,
+      createNewEnv: React.PropTypes.func
+    },
+
     getInitialState: function() {
         return {
           envs: this.props.envs
         };
     },
 
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({envs: nextProps.envs});
+    },
+
     generateEnvList: function() {
       var envs = [];
       this.state.envs.forEach(function(env) {
+        // below the env.name is for JES response object and env.path is for
+        // the JEM response object.
+        var envName = env.name || env.path;
         envs.push(
           <li className="env-list__environment"
             data-id={env.uuid}
-            onClick={this.props.action}
+            onClick={this.props.handleEnvClick}
             key={env.uuid}>
-            {env.name}
+            {envName}
           </li>);
       }, this);
       return envs;
     },
 
     render: function() {
+      var actionButtons = [{
+        title: 'New',
+        type: 'confirm',
+        action: this.props.createNewEnv
+      }];
+
       return (
-        <ul className="env-list">
-          {this.generateEnvList()}
-        </ul>
+        <juju.components.Panel
+          instanceName="env-list-panel"
+          visible={true}>
+          <ul className="env-list">
+            {this.generateEnvList()}
+          </ul>
+          <juju.components.ButtonRow buttons={actionButtons} />
+        </juju.components.Panel>
       );
     }
   });
 
-}, '0.1.0', { requires: [] });
+}, '0.1.0', { requires: [
+  'button-row',
+  'panel-component'
+]});
