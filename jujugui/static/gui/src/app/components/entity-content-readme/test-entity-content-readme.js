@@ -30,43 +30,19 @@ describe('EntityContentReadme', function() {
   });
 
   beforeEach(function() {
-    mockEntity = makeEntity();
+    mockEntity = jsTestUtils.makeEntity();
   });
 
   afterEach(function() {
     mockEntity = undefined;
   });
 
-  function makeEntity(files=[]) {
-    var pojo = {
-      name: 'django',
-      description: 'Django framework.',
-      displayName: 'django',
-      url: 'http://example.com/django',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: 'django',
-      type: 'charm',
-      iconPath: 'data:image/gif;base64,',
-      tags: ['database'],
-      options: {},
-      files: files
-    };
-    var mockEntity = {};
-    mockEntity.toEntity = sinon.stub().returns(pojo);
-    mockEntity.get = function(key) {
-      return pojo[key];
-    };
-    return mockEntity;
-  }
-
   it('can display a readme', function() {
     var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     var getFile = sinon.stub().callsArgWith(2, {target: {
       responseText: 'mock markdown'
     }});
-    var mockEntity = makeEntity(['Readme.md']);
+    var mockEntity = jsTestUtils.makeEntity(false, ['Readme.md']);
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
         renderMarkdown={renderMarkdown}
@@ -75,7 +51,7 @@ describe('EntityContentReadme', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.equal(getFile.callCount, 1);
-    assert.equal(getFile.args[0][0], 'django');
+    assert.equal(getFile.args[0][0], 'cs:django');
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 1);
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
@@ -117,7 +93,7 @@ describe('EntityContentReadme', function() {
   it('displays a message if there is an error getting the file', function() {
     var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     var getFile = sinon.stub().callsArg(3);
-    var mockEntity = makeEntity(['Readme.md']);
+    var mockEntity = jsTestUtils.makeEntity(false, ['Readme.md']);
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
         renderMarkdown={renderMarkdown}
@@ -126,7 +102,7 @@ describe('EntityContentReadme', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.equal(getFile.callCount, 1);
-    assert.equal(getFile.args[0][0], 'django');
+    assert.equal(getFile.args[0][0], 'cs:django');
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 0);
     assert.deepEqual(output,

@@ -74,6 +74,72 @@ var jsTestUtils = {
            },
            4
     ));
-  }
+  },
 
+  /**
+    Constructs either a charm or bundle object, suitable for being used in
+    place of a YUI model. The object stubs out the getEntity function to
+    return a POJO, as well as the get function to return various keys in the
+    underlying POJO.
+
+    @method makeEntity
+    @param {Object} isBundle A boolean flag to control whether the entity
+      produced is a charm or a bundle. Optional.
+    @param {Boolean} files An list of files included in the entity. Optional.
+   */
+  makeEntity: function(isBundle=false, files=[]) {
+    var pojo;
+    if (isBundle) {
+      pojo = {
+        name: 'django-cluster',
+        description: 'HA Django cluster.',
+        displayName: 'django cluster',
+        url: 'http://example.com/django-cluster',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'django-cluster',
+        type: 'bundle',
+        entityType: 'bundle',
+        iconPath: 'data:image/gif;base64,',
+        tags: ['database'],
+        options: {},
+        files: files
+      };
+    } else {
+      pojo = {
+        name: 'django',
+        description: 'Django framework.',
+        displayName: 'django',
+        url: 'http://example.com/django',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'cs:django',
+        type: 'charm',
+        entityType: 'charm',
+        iconPath: 'data:image/gif;base64,',
+        tags: ['database'],
+        files: files,
+        options: {
+          username: {
+            description: 'Your username',
+            type: 'string',
+            default: 'spinach'
+          },
+          password: {
+            description: 'Your password',
+            type: 'string',
+            default: 'abc123'
+          }
+        }
+      };
+    }
+    var mockEntity = {};
+    mockEntity.toEntity = sinon.stub().returns(pojo);
+    mockEntity.get = function(key) {
+      return pojo[key];
+    };
+    return mockEntity;
+  }
 };

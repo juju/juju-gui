@@ -41,6 +41,7 @@ YUI.add('entity-content', function() {
       var optionsList = [];
       Object.keys(options).forEach(function(name) {
         var option = options[name];
+        option.name = name;
         optionsList.push(
           <juju.components.EntityContentConfigOption
             option={option} />
