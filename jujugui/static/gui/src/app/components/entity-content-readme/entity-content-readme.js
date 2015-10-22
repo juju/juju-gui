@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-content-readme', function() {
 
   juju.components.EntityContentReadme = React.createClass({
-    readme_xhr: null,
+    readmeXhr: null,
 
     getInitialState: function() {
       return {
@@ -34,7 +34,7 @@ YUI.add('entity-content-readme', function() {
     },
 
     componentWillUnmount: function() {
-      this.readme_xhr.abort();
+      this.readmeXhr.abort();
     },
 
     /**
@@ -51,8 +51,8 @@ YUI.add('entity-content-readme', function() {
         this._getReadmeFailure();
       } else {
         var id = entityModel.get('id');
-        this.readme_xhr = this.props.getFile(id, readmeFile, this._getReadmeSuccess,
-            this._getReadmeFailure);
+        this.readmeXhr = this.props.getFile(id, readmeFile,
+            this._getReadmeSuccess, this._getReadmeFailure);
       }
     },
 
