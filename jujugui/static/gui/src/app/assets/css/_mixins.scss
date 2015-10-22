@@ -6,6 +6,7 @@
     -o-animation: $arguments;
     animation: $arguments;
 }
+
 @mixin animation-fill-mode ($arguments) {
     -webkit-animation-fill-mode: $arguments;
     -moz-animation-fill-mode: $arguments;
@@ -13,6 +14,7 @@
     -o-animation-fill-mode: $arguments;
     animation-fill-mode: $arguments;
 }
+
 @mixin transition ($arguments) {
     -webkit-transition: $arguments;
     -moz-transition: $arguments;
@@ -20,16 +22,19 @@
     -o-transition: $arguments;
     transition: $arguments;
 }
+
 @mixin create-border-radius($radius) {
     -moz-border-radius: $radius;
     -webkit-border-radius: $radius;
     border-radius: $radius;
 }
+
 @mixin create-box-shadow($arguments...) {
     -moz-box-shadow: $arguments;
     -webkit-box-shadow: $arguments;
     box-shadow: $arguments;
 }
+
 @mixin create-linear-gradient($gradient-start, $gradient-end) {
     background-image: -ms-linear-gradient(top, $gradient-start, $gradient-end);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from($gradient-start), to($gradient-end));
@@ -39,6 +44,7 @@
     background-image: linear-gradient(top, $gradient-start, $gradient-end);
     background-repeat: repeat-x;
 }
+
 /*
  * Rotation transform.  Call with numerical value and units, e.g.
  * .rotate(-90deg);
@@ -50,11 +56,13 @@
     -o-transform: rotate($angle);
     transform: rotate($angle);
 }
+
 .border-box {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
+
 .button {
     @include create-border-radius($border-radius);
     @include create-linear-gradient($charm-panel-orange, #c03f11);
@@ -72,6 +80,7 @@
     &:hover {
         background: $charm-panel-orange;
     }
+
     &.inverse {
         // Using a variable here because commas aren't allowed in mixin args.
         $box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -149,6 +158,7 @@
         border-radius: 5px;
     }
 }
+
 .sprite-hover {
     &:focus,
     &:hover {
@@ -163,17 +173,20 @@
         display: none;
     }
 }
+
 .display-flex {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
 }
+
 @mixin flex-direction($direction) {
     -webkit-flex-direction: $direction;
     -webkit-box-orient: vertical;
     -ms-flex-direction: $direction;
     flex-direction: $direction;
 }
+
 .uncommitted-circle {
     vertical-align: bottom;
     margin-left: 1px;
@@ -181,6 +194,7 @@
     font-size: 32px;
     line-height: 0px;
 }
+
 @mixin diamond($color: inherit) {
   @include rotate(45deg);
   content: '';

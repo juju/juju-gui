@@ -245,5 +245,3 @@ YUI.add('juju-env-web-handler', function(Y) {
     'base'
   ]
 });
-
-
