@@ -458,7 +458,7 @@ YUI.add('juju-gui', function(Y) {
         var breadcrumb = '#user-name .header-banner__link--breadcrumb';
         var auth = this.get('auth');
         document.querySelector(
-            breadcrumb).innerText = auth && auth.user && auth.user.name ||
+            breadcrumb).textContent = auth && auth.user && auth.user.name ||
             'anonymous';
 
         this.set('socket_url', socketUrl);
@@ -1669,7 +1669,7 @@ YUI.add('juju-gui', function(Y) {
       var breadcrumb = '#user-name .header-banner__link--breadcrumb';
       var auth = this.get('auth');
       document.querySelector(
-          breadcrumb).innerText = auth && auth.user && auth.user.name ||
+          breadcrumb).textContent = auth && auth.user && auth.user.name ||
           'anonymous';
 
       var socketUrl = this.env.get('socket_url');
