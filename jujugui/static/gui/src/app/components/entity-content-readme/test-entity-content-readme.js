@@ -87,7 +87,7 @@ describe('EntityContentReadme', function() {
       </div>);
   });
 
-  it('will not try to display a readme if the component is unmounted', function() {
+  it('will not try to display a readme if already unmounted', function() {
     var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     var getFile = sinon.stub().callsArgWith(2, {target: {
       responseText: 'mock markdown'
