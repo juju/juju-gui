@@ -29,7 +29,8 @@ describe('application hotkeys', function() {
             get: function() {},
             on: function() {},
             once: function() {},
-            set: function() {}
+            set: function() {},
+            setCredentials: function() {}
           };
           windowNode = Y.one(window);
           done();
@@ -125,4 +126,3 @@ describe('application hotkeys', function() {
     assert.equal(body.hasClass('state-sidebar-hidden'), true);
   });
 });
-

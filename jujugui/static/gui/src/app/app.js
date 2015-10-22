@@ -455,11 +455,13 @@ YUI.add('juju-gui', function(Y) {
       this._generateSocketUrl(function(socketUrl, user, password) {
         // XXX Update the header breadcrumb to show the username. This is a
         // quick hack for the demo.
-        var breadcrumb = '#user-name .header-banner__link--breadcrumb';
+        var breadcrumbElement = document.querySelector(
+            '#user-name .header-banner__link--breadcrumb');
         var auth = this.get('auth');
-        document.querySelector(
-            breadcrumb).textContent = auth && auth.user && auth.user.name ||
+        if (breadcrumbElement) {
+          breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
             'anonymous';
+        }
 
         this.set('socket_url', socketUrl);
         var envOptions = {
@@ -593,6 +595,7 @@ YUI.add('juju-gui', function(Y) {
           this.db.reset();
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
+          debugger;
           var credentials = this.env.getCredentials();
           if (credentials && credentials.areAvailable) {
             this.env.login();
@@ -1666,11 +1669,13 @@ YUI.add('juju-gui', function(Y) {
       });
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
-      var breadcrumb = '#user-name .header-banner__link--breadcrumb';
+      var breadcrumbElement = document.querySelector(
+          '#user-name .header-banner__link--breadcrumb');
       var auth = this.get('auth');
-      document.querySelector(
-          breadcrumb).textContent = auth && auth.user && auth.user.name ||
+      if (breadcrumbElement) {
+        breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
           'anonymous';
+      }
 
       var socketUrl = this.env.get('socket_url');
       // XXX frankban: this is not generic, and very specific for how the

@@ -799,7 +799,12 @@ describe('File drag over notification system', function() {
       container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
-      env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
+      env = new juju.environments.GoEnvironment({
+        conn: conn,
+        ecs: ecs,
+        user: 'user',
+        password: 'password'
+      });
       env.setCredentials({user: 'user', password: 'password'});
       destroyMe = [env, ecs];
       done();
@@ -853,8 +858,12 @@ describe('File drag over notification system', function() {
     });
 
     it('avoids trying to login without credentials', function(done) {
-      env.setCredentials(null);
+      env.setAttrs({
+        user: null,
+        password: null
+      });
       var app = makeApp(true, this); // Create a connected app.
+      env.setCredentials(null);
       app.navigate = function() { return; };
       app.after('ready', function() {
         assert.equal(app.env.getCredentials(), null);
