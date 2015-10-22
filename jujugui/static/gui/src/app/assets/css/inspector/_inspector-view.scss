@@ -35,6 +35,15 @@
         vertical-align: middle;
     }
 
+    &__item-name {
+        overflow: hidden;
+        display: inline-block;
+        max-width: 165px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: text-bottom;
+    }
+
     &__item-count {
         color: $warm-grey;
     }
