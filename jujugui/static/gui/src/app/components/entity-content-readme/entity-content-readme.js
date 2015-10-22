@@ -77,8 +77,10 @@ YUI.add('entity-content-readme', function() {
       @param {Object} data The returned data for the readme.
     */
     _getReadmeSuccess: function(data) {
-      var readme = data.target.responseText;
-      this.setState({readme: this.props.renderMarkdown(readme)});
+      if (this.isMounted()) {
+        var readme = data.target.responseText;
+        this.setState({readme: this.props.renderMarkdown(readme)});
+      }
     },
 
     /**
