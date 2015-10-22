@@ -278,6 +278,9 @@ YUI.add('juju-env-bakery', function(Y) {
       _setMacaroonsCookie: function (originalRequest, jsonMacaroon) {
         var prefix = this.macaroonName + '=';
         document.cookie = prefix + btoa(JSON.stringify(jsonMacaroon));
+        window.addEventListener('unload', function() {
+          document.cookie = prefix + ';'
+        });
         originalRequest();
       },
 
