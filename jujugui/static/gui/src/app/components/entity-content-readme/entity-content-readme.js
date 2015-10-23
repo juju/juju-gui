@@ -23,6 +23,13 @@ YUI.add('entity-content-readme', function() {
   juju.components.EntityContentReadme = React.createClass({
     readmeXhr: null,
 
+    /* Define and validate the properites available on this component. */
+    propTypes: {
+      entityModel: React.PropTypes.object.isRequired,
+      getFile: React.PropTypes.func.isRequired,
+      renderMarkdown: React.PropTypes.func.isRequired
+    },
+
     getInitialState: function() {
       return {
         readme: null,
@@ -30,7 +37,7 @@ YUI.add('entity-content-readme', function() {
     },
 
     componentDidMount: function() {
-      this._getReadme(this.props.entityModel);
+      this._getReadme();
     },
 
     componentWillUnmount: function() {
@@ -41,10 +48,9 @@ YUI.add('entity-content-readme', function() {
       Get the content for the readme.
 
       @method _getReadme
-      @param {Object} entityModel The entity model.
       @return {Object} The readme content.
     */
-    _getReadme: function(entityModel) {
+    _getReadme: function() {
       var entityModel = this.props.entityModel;
       var readmeFile = this._getReadmeFile(entityModel);
       if (!readmeFile) {
@@ -66,12 +72,13 @@ YUI.add('entity-content-readme', function() {
     _getReadmeFile: function(entityModel) {
       var files = entityModel.get('files');
       var match;
-      files.some(function(file) {
+      for (var i = 0, l = files.length; i < l; i++) {
+        var file = files[i];
         if (file.toLowerCase().slice(0, 6) === 'readme') {
           match = file;
-          return true;
+          break;
         }
-      });
+      }
       return match;
     },
 

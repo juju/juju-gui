@@ -22,6 +22,12 @@ YUI.add('entity-content-diagram', function() {
 
   juju.components.EntityContentDiagram = React.createClass({
 
+    /* Define and validate the properites available on this component. */
+    propTypes: {
+      getDiagramURL: React.PropTypes.func.isRequired,
+      id: React.PropTypes.string.isRequired
+    },
+
     render: function() {
       var url = this.props.getDiagramURL(this.props.id);
       return (

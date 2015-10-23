@@ -33,62 +33,12 @@ describe('EntityContent', function() {
   });
 
   beforeEach(function() {
-    mockEntity = makeEntity();
+    mockEntity = jsTestUtils.makeEntity();
   });
 
   afterEach(function() {
     mockEntity = undefined;
   });
-
-  function makeEntity(isBundle) {
-      var pojo;
-      if (isBundle) {
-        pojo = {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'spinach',
-          entityType: 'bundle',
-          type: 'bundle'
-        };
-      } else {
-        pojo = {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'spinach',
-          entityType: 'charm',
-          type: 'charm',
-          iconPath: 'data:image/gif;base64,',
-          tags: ['database'],
-          description: 'charm description',
-          options: {
-            username: {
-              description: 'Your username',
-              type: 'string',
-              default: 'spinach'
-            },
-            password: {
-              description: 'Your password',
-              type: 'string',
-              default: 'abc123'
-            }
-          }
-        };
-      }
-      mockEntity = {};
-      mockEntity.toEntity = sinon.stub().returns(pojo);
-      mockEntity.get = function(key) {
-        return pojo[key];
-      };
-      return mockEntity;
-  }
 
   it('can display a charm', function() {
     var renderMarkdown = sinon.spy();
@@ -98,50 +48,85 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={getFile}
           renderMarkdown={renderMarkdown} />);
-    assert.deepEqual(output,
+    var option1 = {
+      name: 'username',
+      description: 'Your username',
+      type: 'string',
+      default: 'spinach'
+    };
+    var option2 = {
+      name: 'password',
+      description: 'Your password',
+      type: 'string',
+      default: 'abc123'
+    };
+    var expected = (
       <div className="row entity-content">
         <div className="inner-wrapper">
           <main className="seven-col append-one">
             <div className="entity-content__description">
               <h2>Description</h2>
-              <p>charm description</p>
+              <p>Django framework.</p>
             </div>
             <juju.components.EntityContentReadme
               entityModel={mockEntity}
               renderMarkdown={renderMarkdown}
               getFile={getFile} />
-              <div className="entity-content__configuration" id="configuration">
-                <h3>Configuration</h3>
-                <dl>
-                  <juju.components.EntityContentConfigOption
-                    key="username"
-                    name="username"
-                    description="Your username"
-                    type="string"
-                    default="spinach" />
-                  <juju.components.EntityContentConfigOption
-                    key="password"
-                    name="password"
-                    description="Your password"
-                    type="string"
-                    default="abc123" />
-                </dl>
-              </div>
+            <div className="entity-content__configuration" id="configuration">
+              <h3>Configuration</h3>
+              <dl>
+                <juju.components.EntityContentConfigOption
+                  key={option1.name}
+                  option={option1} />
+                <juju.components.EntityContentConfigOption
+                  key={option2.name}
+                  option={option2} />
+              </dl>
+            </div>
           </main>
         </div>
       </div>);
+    assert.deepEqual(output, expected);
   });
 
-  it('can display a bundle', function() {
+  it('can display a charm with no options', function() {
+    mockEntity.set('options', null);
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
-    var mockEntity = makeEntity(true);
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           entityModel={mockEntity}
           getFile={getFile}
           renderMarkdown={renderMarkdown} />);
-    assert.deepEqual(output,
+    var expected = (
+      <div className="row entity-content">
+        <div className="inner-wrapper">
+          <main className="seven-col append-one">
+            <div className="entity-content__description">
+              <h2>Description</h2>
+              <p>Django framework.</p>
+            </div>
+            <juju.components.EntityContentReadme
+              entityModel={mockEntity}
+              renderMarkdown={renderMarkdown}
+              getFile={getFile} />
+            {undefined}
+          </main>
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a bundle', function() {
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var mockEntity = jsTestUtils.makeEntity(true);
+    var output = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          entityModel={mockEntity}
+          getFile={getFile}
+          renderMarkdown={renderMarkdown} />);
+    var expected = (
       <div className="row entity-content">
         <div className="inner-wrapper">
           <main className="seven-col append-one">
@@ -154,5 +139,6 @@ describe('EntityContent', function() {
           </main>
         </div>
       </div>);
+    assert.deepEqual(output, expected);
   });
 });

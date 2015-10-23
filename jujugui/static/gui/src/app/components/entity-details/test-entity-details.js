@@ -33,49 +33,12 @@ describe('EntityDetails', function() {
   });
 
   beforeEach(function() {
-    mockEntity = makeEntity();
+    mockEntity = jsTestUtils.makeEntity();
   });
 
   afterEach(function() {
     mockEntity = undefined;
   });
-
-  function makeEntity(isBundle) {
-      var pojo;
-      if (isBundle) {
-        pojo = {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'spinach',
-          entityType: 'bundle',
-          type: 'bundle'
-        };
-      } else {
-        pojo = {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'spinach',
-          entityType: 'charm',
-          type: 'charm',
-          iconPath: 'data:image/gif;base64,',
-          tags: ['database']
-        };
-      }
-      mockEntity = {};
-      mockEntity.toEntity = sinon.stub().returns(pojo);
-      mockEntity.get = function(key) {
-        return pojo[key];
-      };
-      return mockEntity;
-  }
 
   it('can be rendered', function() {
     var output = jsTestUtils.shallowRender(
@@ -89,7 +52,7 @@ describe('EntityDetails', function() {
   });
 
   it('fetches an entity properly', function() {
-    var id = 'spinach';
+    var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, [mockEntity]);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
@@ -115,7 +78,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    assert.deepEqual(output,
+    var expected = (
       <div className={'entity-details charm'}>
         <juju.components.EntityHeader
           entityModel={mockEntity}
@@ -130,11 +93,12 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           entityModel={mockEntity} />
       </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('can display a bundle diagram', function() {
-    var id = 'spinach';
-    var mockEntity = makeEntity(true);
+    var mockEntity = jsTestUtils.makeEntity(true);
+    var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, [mockEntity]);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
@@ -162,7 +126,7 @@ describe('EntityDetails', function() {
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
-    assert.deepEqual(output,
+    var expected = (
       <div className={'entity-details bundle'}>
         <juju.components.EntityHeader
           entityModel={mockEntity}
@@ -179,5 +143,6 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           entityModel={mockEntity} />
       </div>);
+    assert.deepEqual(output, expected);
   });
 });

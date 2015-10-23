@@ -23,7 +23,9 @@ YUI.add('entity-content', function() {
   juju.components.EntityContent = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
-      entityModel: React.PropTypes.object.isRequired
+      entityModel: React.PropTypes.object.isRequired,
+      renderMarkdown: React.PropTypes.func.isRequired,
+      getFile: React.PropTypes.func.isRequired
     },
 
     /**
@@ -38,24 +40,25 @@ YUI.add('entity-content', function() {
         return;
       }
       var options = entityModel.get('options');
-      var optionsList = [];
-      Object.keys(options).forEach(function(name) {
-        var option = options[name];
-        optionsList.push(
-          <juju.components.EntityContentConfigOption
-            key={name}
-            name={name}
-            description={option.description}
-            type={option.type}
-            default={option.default} />
-        );
-      }, this);
-      return <div className="entity-content__configuration" id="configuration">
-          <h3>Configuration</h3>
-          <dl>
-            {optionsList}
-          </dl>
-        </div>;
+      if (options) {
+        var optionsList = [];
+        Object.keys(options).forEach(function(name) {
+          var option = options[name];
+          option.name = name;
+          optionsList.push(
+            <juju.components.EntityContentConfigOption
+              key={name}
+              option={option} />
+          );
+        }, this);
+        return (
+          <div className="entity-content__configuration" id="configuration">
+            <h3>Configuration</h3>
+            <dl>
+              {optionsList}
+            </dl>
+          </div>);
+      }
     },
 
     /**

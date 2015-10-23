@@ -33,47 +33,12 @@ describe('EntityHeader', function() {
   });
 
   beforeEach(function() {
-    mockEntity = makeEntity();
+    mockEntity = jsTestUtils.makeEntity();
   });
 
   afterEach(function() {
     mockEntity = undefined;
   });
-
-  function makeEntity(isBundle) {
-      var pojo;
-      if (isBundle) {
-        pojo = {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'cs:spinach',
-          type: 'bundle'
-        };
-      } else {
-        pojo = {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'spinach',
-          type: 'charm',
-          iconPath: 'data:image/gif;base64,',
-          tags: ['database']
-        };
-      }
-      mockEntity = {};
-      mockEntity.toEntity = sinon.stub().returns(pojo);
-      mockEntity.get = function(key) {
-        return pojo[key];
-      };
-      return mockEntity;
-  }
 
   it('renders an entity properly', function() {
     var output = testUtils.renderIntoDocument(
@@ -172,7 +137,7 @@ describe('EntityHeader', function() {
     var changeState = sinon.stub();
     var getBundleYAML = sinon.stub().callsArgWith(1, 'mock yaml');
     var importBundleYAML = sinon.stub();
-    var entity = makeEntity(true);
+    var entity = jsTestUtils.makeEntity(true);
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         importBundleYAML={importBundleYAML}
@@ -186,7 +151,7 @@ describe('EntityHeader', function() {
     // Simulate a click.
     deployButton.props.action();
     assert.equal(getBundleYAML.callCount, 1);
-    assert.equal(getBundleYAML.args[0][0], 'spinach');
+    assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
     assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
   });

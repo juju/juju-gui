@@ -22,6 +22,12 @@ YUI.add('entity-content-config-option', function() {
 
   juju.components.EntityContentConfigOption = React.createClass({
 
+    /* Define and validate the properites available on this component. */
+    propTypes: {
+      option: React.PropTypes.object.isRequired,
+      key: React.PropTypes.string
+    },
+
     /**
       Create the markup for default value.
 
@@ -39,21 +45,21 @@ YUI.add('entity-content-config-option', function() {
     },
 
     render: function() {
-      var name = this.props.name;
+      var option = this.props.option;
       return (
         <div className="entity-content__config-option">
-          <dt id={'charm-config-' + name}
+          <dt id={'charm-config-' + option.name}
               className="entity-content__config-name">
-            {name}
+            {option.name}
           </dt>
           <dd className="entity-content__config-description">
             <span className="entity-content__config-type">
-              ({this.props.type})
+              ({option.type})
             </span>
             {' '}
-            {this.props.description}
+            {option.description}
           </dd>
-          {this._generateDefault(this.props.default)}
+          {this._generateDefault(option.default)}
         </div>
       );
     }
