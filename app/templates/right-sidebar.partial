@@ -1,5 +1,0 @@
-<div class="controls zoom-controls">
-  <div id="zoom-in-btn" class="sprite zoom_plus"></div>
-  <span id="slider-parent"></span>
-  <div id="zoom-out-btn" class="sprite zoom_minus"></div>
-</div>

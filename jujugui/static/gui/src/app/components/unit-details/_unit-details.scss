@@ -1,0 +1,12 @@
+.unit-details {
+    &__properties {
+        padding: 10px 20px;
+    }
+
+    &__property {
+        @extend %stagger-fade-in;
+        margin-top: 0;
+        margin-bottom: 0;
+        line-height: 24px;
+    }
+}
