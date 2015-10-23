@@ -2467,6 +2467,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               attr1: 'valueA',
               attr2: 'valueB',
               name: 'myenv',
+              'authorized-keys': 'ssh-rsa INVALID',
               'maas-server': 'server',
               'maas-oauth': 'oauth',
               'maas-agent-name': 'agent'
