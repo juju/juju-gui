@@ -1147,12 +1147,24 @@ describe('Environment Change Set', function() {
         assert.strictEqual(command.args[2], '42');
       });
 
-      it('updates the service name on parent results', function() {
+      it('updates the service and unit on parent results', function() {
         var args = ['django', 1, 'new1'];
         var db = ecs.get('db');
-        db.units = {};
-        var unit = {};
+        db.units = {
+          _idMap: {},
+          fire: testUtils.makeStubFunction()
+        };
+        db.services = {
+          getById: testUtils.makeStubFunction()
+        };
+        var unit = {
+          id: '756482$/3',
+          number: '3'
+        };
         var stubFinder = testUtils.makeStubMethod(db.units, 'getById', unit);
+        var stubUpdateUnitId = testUtils.makeStubMethod(db, 'updateUnitId', {
+          id: 'my-service/3'
+        });
         var key = ecs.lazyAddUnits(args, {modelId: '1'});
         var command = ecs.changeSet[key].command;
         var parentRecord = {
@@ -1162,15 +1174,14 @@ describe('Environment Change Set', function() {
           }
         };
         var parentResults = {}; // Not used in this case.
+        command.options = {modelId: '756482$/3'};
         command.onParentResults(parentRecord, parentResults);
         // The first add_unit argument has been updated with the new service
         // name.
         assert.strictEqual(command.args[0], 'my-service',
                            'service name not set properly');
-        assert.equal(stubFinder.calledOnce(), true,
-                     'did not query DB for unit');
-        assert.equal(unit.service, 'my-service',
-                     'service name not updated on unit');
+        assert.equal(command.options.modelId, 'my-service/3',
+                     'options model id not updated');
       });
 
     });

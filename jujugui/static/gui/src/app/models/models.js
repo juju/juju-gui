@@ -2537,6 +2537,36 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Update the map for a unit id on a service.
+
+      @method updateUnitId
+      @param {String} serviceId The service id.
+      @param {String} oldId The previous unit id.
+      @returns {Model} The updated unit.
+    */
+    updateUnitId: function(serviceId, oldId) {
+      var service = this.services.getById(serviceId);
+      var serviceUnits = service.get('units');
+      var units = this.units;
+      var unit = units.getById(oldId);
+      var unitNumber = unit.number;
+      var newId = serviceId + '/' + unitNumber;
+      unit.service = serviceId;
+      unit.id = newId;
+      unit.urlName = serviceId + '-' + unitNumber;
+      // Due to a YUI bug we need to update the id map to the new id.
+      delete units._idMap[oldId];
+      units._idMap[newId] = unit;
+      // Also update the id map on the service.
+      delete serviceUnits._idMap[oldId];
+      serviceUnits._idMap[unit.id] = unit;
+      // Fire the db change events.
+      units.fire('change');
+      serviceUnits.fire('change');
+      return unit;
+    },
+
+    /**
       Returns a list of the deployed (both uncommitted and committed) services
       that are not related to the provided service.
 
