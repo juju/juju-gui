@@ -45,7 +45,7 @@ YUI.add('entity-content-config-option', function() {
     },
 
     render: function() {
-      var option = this.props.option || {};
+      var option = this.props.option;
       return (
         <div className="entity-content__config-option">
           <dt id={'charm-config-' + option.name}

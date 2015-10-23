@@ -40,22 +40,25 @@ YUI.add('entity-content', function() {
         return;
       }
       var options = entityModel.get('options');
-      var optionsList = [];
-      Object.keys(options).forEach(function(name) {
-        var option = options[name];
-        option.name = name;
-        optionsList.push(
-          <juju.components.EntityContentConfigOption
-            key={name}
-            option={option} />
-        );
-      }, this);
-      return <div className="entity-content__configuration" id="configuration">
-          <h3>Configuration</h3>
-          <dl>
-            {optionsList}
-          </dl>
-        </div>;
+      if (options) {
+        var optionsList = [];
+        Object.keys(options).forEach(function(name) {
+          var option = options[name];
+          option.name = name;
+          optionsList.push(
+            <juju.components.EntityContentConfigOption
+              key={name}
+              option={option} />
+          );
+        }, this);
+        return (
+          <div className="entity-content__configuration" id="configuration">
+            <h3>Configuration</h3>
+            <dl>
+              {optionsList}
+            </dl>
+          </div>);
+      }
     },
 
     /**
