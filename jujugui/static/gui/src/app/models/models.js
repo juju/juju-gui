@@ -2540,7 +2540,7 @@ YUI.add('juju-models', function(Y) {
       Update the map for a unit id on a service.
 
       @method updateUnitId
-      @param {Model} serviceId The service id.
+      @param {String} serviceId The service id.
       @param {String} oldId The previous unit id.
       @returns {Model} The updated unit.
     */

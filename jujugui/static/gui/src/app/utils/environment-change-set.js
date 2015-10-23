@@ -1181,6 +1181,9 @@ YUI.add('environment-change-set', function(Y) {
               // changed by users before the changes are committed.
               var newServiceId = record.command.args[1];
               this.args[0] = newServiceId;
+              // We also need to update the unit id to match the new service id
+              // so that we can correctly look up the unit using service id +
+              // unit number.
               var unit = db.updateUnitId(newServiceId, this.options.modelId);
               // Update the ecs change with the new id.
               this.options.modelId = unit.id;
