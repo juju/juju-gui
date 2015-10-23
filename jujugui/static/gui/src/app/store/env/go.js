@@ -2398,6 +2398,11 @@ YUI.add('juju-env-go', function(Y) {
               config.username = data.config.username;
               config.password = data.config.password;
               break;
+            case 'maas':
+              config['maas-server'] = data.config['maas-server'];
+              config['maas-oauth'] = data.config['maas-oauth'];
+              config['maas-agent-name'] = data.config['maas-agent-name'];
+              break;
             default:
               // XXX frankban: add support for the remaining Juju providers.
               intermediateCallback({

@@ -1072,14 +1072,15 @@ YUI.add('juju-models', function(Y) {
           // If in error status then we need to parse out why it's in error.
           var info = unit.agent_state_info;
           if (info !== undefined && info.indexOf('failed') > -1) {
-            // If we parse more than the relation info then split this out
+            // If we parse more than the relation info then split this out.
             if (info.indexOf('relation') > -1) {
               var stateData = unit.agent_state_data;
               if (stateData) {
-                var farService = stateData['remote-unit'].split('/')[0];
-                if (farService) {
-                  relationError[farService] = stateData.hook;
-                }
+                var remoteUnit = stateData['remote-unit'];
+                // The remote unit is not present when the kind of the relation
+                // hook in error is "broken".
+                var svc = remoteUnit ? remoteUnit.split('/')[0] : unit.service;
+                relationError[svc] = stateData.hook;
               }
             }
           }

@@ -316,14 +316,26 @@ describe('test_model.js', function() {
         agent_state: 'error',
         agent_state_info: 'hook failed: "install"'
       };
-      wordpress.get('units').add([wp0, wp1, wp2], true);
+      var wp3 = {
+        id: 'wordpress/3',
+        agent_state: 'error',
+        agent_state_info: 'hook failed: "peer-relation-broken"',
+        agent_state_data: {
+          hook: 'peer-relation-broken',
+          'relation-id': 2
+        }
+      };
+      wordpress.get('units').add([wp0, wp1, wp2, wp3], true);
 
       assert.deepEqual(mysql.get('units')
                        .get_informative_states_for_service(mysql),
           [{'pending': 2}, {}]);
       assert.deepEqual(wordpress.get('units')
                        .get_informative_states_for_service(wordpress),
-          [{'pending': 1, 'error': 2}, { mysql: 'db-relation-changed'}]);
+          [{'pending': 1, 'error': 3}, {
+            mysql: 'db-relation-changed',
+            wordpress: 'peer-relation-broken'
+      }]);
     });
 
     it('service unit list should update analytics when units are added',
