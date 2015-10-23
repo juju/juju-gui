@@ -148,7 +148,7 @@ describe('test_model.js', function() {
       tester('fade');
     });
 
-    it('can update a unit map', function() {
+    it('can update a unit id', function() {
       var db = new models.Database();
       db.services.add([
         {id: 'mysql', name: 'mysql'}
@@ -157,9 +157,16 @@ describe('test_model.js', function() {
       db.addUnits([
         {id: 'mysql/0'}
       ]);
+      var unit = db.units.getById('mysql/0');
+      service.set('id', 'mysql2');
+      assert.deepEqual(Object.keys(db.units._idMap), ['mysql/0']);
       assert.deepEqual(Object.keys(service.get('units')._idMap), ['mysql/0']);
-      db.updateUnitMap(service, 'mysql/0', {id: 'mysql2/0'});
+      db.updateUnitId('mysql2', 'mysql/0');
+      assert.deepEqual(Object.keys(db.units._idMap), ['mysql2/0']);
       assert.deepEqual(Object.keys(service.get('units')._idMap), ['mysql2/0']);
+      assert.equal(unit.service, 'mysql2');
+      assert.equal(unit.id, 'mysql2/0');
+      assert.equal(unit.urlName, 'mysql2-0');
     });
 
     it('finds unrelated services', function() {

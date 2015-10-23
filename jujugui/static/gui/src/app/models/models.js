@@ -2539,17 +2539,31 @@ YUI.add('juju-models', function(Y) {
     /**
       Update the map for a unit id on a service.
 
-      @method updateUnitMap
-      @param {Model} service The service model.
+      @method updateUnitId
+      @param {Model} serviceId The service id.
       @param {String} oldId The previous unit id.
-      @param {Model} newModel The new unit model.
+      @returns {Model} The updated unit.
     */
-    updateUnitMap: function(service, oldId, newModel) {
-    // Due to a YUI bug we need to update the id map to the new id.
-      var units = service.get('units');
+    updateUnitId: function(serviceId, oldId) {
+      var service = this.services.getById(serviceId);
+      var serviceUnits = service.get('units');
+      var units = this.units;
+      var unit = units.getById(oldId);
+      var unitNumber = unit.number;
+      var newId = serviceId + '/' + unitNumber;
+      unit.service = serviceId;
+      unit.id = newId;
+      unit.urlName = serviceId + '-' + unitNumber;
+      // Due to a YUI bug we need to update the id map to the new id.
       delete units._idMap[oldId];
-      units._idMap[newModel.id] = newModel;
+      units._idMap[newId] = unit;
+      // Also update the id map on the service.
+      delete serviceUnits._idMap[oldId];
+      serviceUnits._idMap[unit.id] = unit;
+      // Fire the db change events.
       units.fire('change');
+      serviceUnits.fire('change');
+      return unit;
     },
 
     /**

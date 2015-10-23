@@ -1179,26 +1179,11 @@ YUI.add('environment-change-set', function(Y) {
               // Update the service name. The add_unit record is first added
               // passing the initial service name. This service name can be
               // changed by users before the changes are committed.
-              var newService = record.command.args[1];
-              var units = db.units;
-              var oldId = this.options.modelId;
-              var unit = units.getById(oldId);
-              this.args[0] = newService;
-              // Update the unit to the new service name.
-              var unitId = unit.number;
-              var newId = newService + '/' + unitId;
-              unit.service = newService;
-              unit.id = newId;
-              unit.urlName = newService + '-' + unitId;
-              // Due to a YUI bug we need to update the id map to the new id.
-              delete units._idMap[oldId];
-              units._idMap[newId] = unit;
-              units.fire('change');
-              // Also need to update the idMap on the service.
-              var service = db.services.getById(newService);
-              db.updateUnitMap(service, oldId, unit);
+              var newServiceId = record.command.args[1];
+              this.args[0] = newServiceId;
+              var unit = db.updateUnitId(newServiceId, this.options.modelId);
               // Update the ecs change with the new id.
-              this.options.modelId = newId;
+              this.options.modelId = unit.id;
               break;
           }
         }
