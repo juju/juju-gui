@@ -107,10 +107,13 @@ $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(
 .PHONY: modules-js
 modules-js: $(MODULESMIN)
 
-# The build-js target is used to build and minify only the js files that have
-# changed since the last time they were built.
-.PHONY: build-js
-build-js: $(BUILT_RAWJSFILES) $(MIN_JS_FILES)
+# fast-babel is simply passed an input and output folder which dramatically
+# speeds up the build time because it doesn't need to spin up a new instance
+# for every file.
+.PHONE: fast-babel
+fast-babel:
+	$(NODE_MODULES)/.bin/babel $(GUISRC)/app --out-dir $(GUIBUILD)/app \
+		--ignore /assets/javascripts/
 
 $(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/$*.js -o $@
@@ -289,7 +292,7 @@ check: clean-pyc lint lint-js test test-js-phantom test-js-karma
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
-ci-check: clean-downloadcache deps check test-selenium
+ci-check: clean-downloadcache deps fast-babel check test-selenium
 
 ###########
 # Packaging
