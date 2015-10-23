@@ -111,7 +111,7 @@ modules-js: $(MODULESMIN)
 # speeds up the build time because it doesn't need to spin up a new instance
 # for every file.
 .PHONE: fast-babel
-fast-babel:
+fast-babel: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/babel $(GUISRC)/app --out-dir $(GUIBUILD)/app \
 		--ignore /assets/javascripts/
 
