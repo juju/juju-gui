@@ -148,6 +148,20 @@ describe('test_model.js', function() {
       tester('fade');
     });
 
+    it('can update a unit map', function() {
+      var db = new models.Database();
+      db.services.add([
+        {id: 'mysql', name: 'mysql'}
+      ]);
+      var service = db.services.getById('mysql');
+      db.addUnits([
+        {id: 'mysql/0'}
+      ]);
+      assert.deepEqual(Object.keys(service.get('units')._idMap), ['mysql/0']);
+      db.updateUnitMap(service, 'mysql/0', {id: 'mysql2/0'});
+      assert.deepEqual(Object.keys(service.get('units')._idMap), ['mysql2/0']);
+    });
+
     it('finds unrelated services', function() {
       var db = new models.Database(),
           service = new models.Service({name: 'mysql'});
