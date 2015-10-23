@@ -66,7 +66,7 @@ describe('EntityContentReadme', function() {
   it('will cancel the readme request when unmounting', function() {
     var abort = sinon.stub();
     var getFile = sinon.stub().returns({abort: abort});
-    var mockEntity = jsTestUtils.makeEntity(['Readme.md']);
+    var mockEntity = jsTestUtils.makeEntity(false, ['Readme.md']);
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
         getFile={getFile}
