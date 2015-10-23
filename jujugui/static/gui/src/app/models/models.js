@@ -698,19 +698,54 @@ YUI.add('juju-models', function(Y) {
         });
       } while (invalid);
 
+      var charmId = charm.get('id');
+      var charmName = charm.get('package_name');
+      var name = this._generateServiceName(charmName, charmId);
       var ghostService = this.create({
         // Creating a temporary id because it's undefined by default.
         id: randomId,
-        displayName: charm.get('package_name'),
+        displayName: name,
+        name: name,
         annotations: {},
         pending: true,
-        charm: charm.get('id'),
+        charm: charmId,
         unit_count: 0,  // No units yet.
         loaded: false,
         subordinate: charm.get('is_subordinate'),
         config: config
       });
       return ghostService;
+    },
+
+    /**
+      Generate a name for this service with an incremented number if needed.
+
+      @method _generateServiceName
+      @param {String} charmName The charm name.
+      @param {String} charmId the full charm id.
+      @returns {String} The name for the service.
+    */
+    _generateServiceName: function(charmName, charmId) {
+      var highestId = 0;
+      this.each(function(service) {
+        // Only check the count for matching charms.
+        if (service.get('charm') === charmId) {
+          var count = parseInt(service.get('name').replace(
+              charmName + '-', ''));
+          if (count > highestId) {
+            highestId = count;
+          } else {
+            highestId = 1;
+          }
+        }
+      }, this);
+      var count = '';
+      // The first shouldn't get a count, but subsquent names should.
+      if (highestId > 0) {
+        highestId += 1;
+        count = '-' + highestId;
+      }
+      return charmName + count;
     },
 
     /**

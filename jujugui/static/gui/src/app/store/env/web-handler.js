@@ -63,6 +63,7 @@ YUI.add('juju-env-web-handler', function(Y) {
         (or null if no authentication is required).
       @param {Function} progressCallback The progress event callback.
       @param {Function} completedCallback The load event callback.
+      @return {Object} The asynchronous request instance.
     */
     sendPostRequest: function(path, headers, data, username, password,
                               withCredentials, progressCallback,
@@ -72,6 +73,7 @@ YUI.add('juju-env-web-handler', function(Y) {
           progressCallback, completedCallback);
       // Send the POST data.
       xhr.send(data);
+      return xhr;
     },
 
     /**
@@ -88,6 +90,7 @@ YUI.add('juju-env-web-handler', function(Y) {
         (or null if no authentication is required).
       @param {Function} progressCallback The progress event callback.
       @param {Function} completedCallback The load event callback.
+      @return {Object} The asynchronous request instance.
     */
     sendPutRequest: function(path, headers, data, username, password,
                              withCredentials, progressCallback,
@@ -97,6 +100,7 @@ YUI.add('juju-env-web-handler', function(Y) {
           progressCallback, completedCallback);
       // Send the PUT data.
       xhr.send(data);
+      return xhr;
     },
 
     /**
@@ -111,6 +115,7 @@ YUI.add('juju-env-web-handler', function(Y) {
         (or null if no authentication is required).
       @param {Function} progressCallback The progress event callback.
       @param {Function} completedCallback The load event callback.
+      @return {Object} The asynchronous request instance.
     */
     sendGetRequest: function(path, headers, username, password, withCredentials,
                              progressCallback, completedCallback) {
@@ -119,6 +124,7 @@ YUI.add('juju-env-web-handler', function(Y) {
           progressCallback, completedCallback);
       // Send the GET request.
       xhr.send();
+      return xhr;
     },
 
     /**

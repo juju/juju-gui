@@ -67,8 +67,9 @@ YUI.add('inspector-component', function() {
           var component;
           var newMetadata;
           // Handle navigating back from the service details to a previous
-          // service view e.g. relations.
-          if (previousMetadata && previousMetadata.id !== serviceId) {
+          // service's relations.
+          if (previousMetadata && previousMetadata.id !== serviceId &&
+              previousMetadata.activeComponent === 'relations') {
             component = 'inspector';
             newMetadata = {
               id: previousMetadata.id,

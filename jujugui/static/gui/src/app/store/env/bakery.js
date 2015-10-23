@@ -78,6 +78,7 @@ YUI.add('juju-env-bakery', function(Y) {
        successfully.
        @param {Function} failureCallback Called when the api request fails
        with a response of >= 400 except 401/407 where it does authentication.
+       @return {Object} The asynchronous request instance.
        */
       sendGetRequest: function (path, successCallback, failureCallback) {
         var macaroons = this._getMacaroon();
@@ -85,7 +86,7 @@ YUI.add('juju-env-bakery', function(Y) {
         if (macaroons !== null) {
           headers['Macaroons'] = macaroons;
         }
-        this.webhandler.sendGetRequest(
+        return this.webhandler.sendGetRequest(
           path, headers, null, null, false, null,
           this._requestHandlerWithInteraction.bind(
             this,
@@ -109,6 +110,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @param failureCallback {Function} Called when the api request fails
            with a response of >= 400 except 401/407 where it does
            authentication.
+       @return {Object} The asynchronous request instance.
        */
       sendPostRequest: function (path, data, successCallback, failureCallback) {
         var macaroons = this._getMacaroon();
@@ -119,7 +121,7 @@ YUI.add('juju-env-bakery', function(Y) {
         if (macaroons !== null) {
           headers['Macaroons'] = macaroons;
         }
-        this.webhandler.sendPostRequest(
+        return this.webhandler.sendPostRequest(
           path, headers, data, null, null, false, null,
           this._requestHandlerWithInteraction.bind(
             this, path, successCallback, failureCallback)
@@ -168,6 +170,7 @@ YUI.add('juju-env-bakery', function(Y) {
        successfully.
        @param {Function} failureCallback Called when the api request fails
        with a response of >= 400 (except 401/407).
+       @return {Object} The asynchronous request instance.
        */
       _sendOriginalRequest: function(path, successCallback, failureCallback) {
           var macaroons = this._getMacaroon();
@@ -175,7 +178,7 @@ YUI.add('juju-env-bakery', function(Y) {
           if (macaroons !== null) {
             headers['Macaroons'] = macaroons;
           }
-          this.webhandler.sendGetRequest(
+          return this.webhandler.sendGetRequest(
             path, headers, null, null, false, null,
             this._requestHandler.bind(
               this, successCallback, failureCallback
@@ -241,6 +244,7 @@ YUI.add('juju-env-bakery', function(Y) {
        successful authentication
        @param {Function} The callback failure in case of wrong authentication
        @param {[Macaroon]} The macaroons being discharged
+       @return {Object} The asynchronous request instance.
        */
       _processDischarges: function (requestFunction, failureCallback,
                                     discharges) {
@@ -255,7 +259,7 @@ YUI.add('juju-env-bakery', function(Y) {
           this._setMacaroonsCookie(requestFunction, jsonMacaroon);
           return;
         }
-        this.webhandler.sendPutRequest(
+        return this.webhandler.sendPutRequest(
           this.setCookiePath,
           null, content, null, null, true, null,
           this._requestHandler.bind(
@@ -294,6 +298,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {Function} The request to be sent again in case of
        successful authentication
        @param {Function} The callback failure in case of wrong authentication
+       @return {Object} The asynchronous request instance.
        */
       _obtainThirdPartyDischarge: function (location,
                                             thirdPartyLocation, condition,
@@ -305,7 +310,7 @@ YUI.add('juju-env-bakery', function(Y) {
         };
         var content = 'id=' + encodeURI(condition) +
           '&location=' + encodeURI(location);
-        this.webhandler.sendPostRequest(
+        return this.webhandler.sendPostRequest(
           thirdPartyLocation,
           headers, content, null, null, false, null,
           this._requestHandler.bind(
@@ -346,6 +351,7 @@ YUI.add('juju-env-bakery', function(Y) {
                         successful authentication
       @param {Function} The callback function failure in case of
                         wrong authentication
+      @return {Object} The asynchronous request instance.
     */
     _interact: function(successCallback, failureCallback, e) {
       var response = JSON.parse(e.target.responseText);
@@ -356,7 +362,7 @@ YUI.add('juju-env-bakery', function(Y) {
 
       this.visitMethod(response);
 
-      this.webhandler.sendGetRequest(
+      return this.webhandler.sendGetRequest(
           response.Info.WaitURL,
           null, null, null, false, null,
           this._requestHandler.bind(
@@ -373,6 +379,7 @@ YUI.add('juju-env-bakery', function(Y) {
 
       @method _nonInteractiveVisitMethod
       @param {Object} response An xhr response object.
+      @return {Object} The asynchronous request instance.
     */
     _nonInteractiveVisitMethod: function(response) {
       var acceptHeaders = {'Accept': 'application/json'};
@@ -380,12 +387,12 @@ YUI.add('juju-env-bakery', function(Y) {
       var login = function(response) {
         var method = JSON.parse(response.target.responseText).jujugui;
         var data = JSON.stringify({login: window.juju_config.auth});
-        this.webhandler.sendPostRequest(
+        return this.webhandler.sendPostRequest(
             method, contentHeaders, data,
             null, null, false, null, null);
       };
 
-      this.webhandler.sendGetRequest(
+      return this.webhandler.sendGetRequest(
           response.Info.VisitURL,
           acceptHeaders, null, null, false, null, login.bind(this));
     },
