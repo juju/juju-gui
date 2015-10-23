@@ -32,7 +32,7 @@ YUI.add('added-services-list', function() {
               // of the final deployed service id structure and we want react
               // to treat them as the same record instead of re-rendering
               // when they key changes.
-              key={service.get('id')}
+              key={service.get('name')}
               changeState={this.props.changeState}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
               service={service} />);

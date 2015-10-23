@@ -76,6 +76,7 @@ describe('Ghost Deployer Extension', function() {
     return new Y.Model({
       id: 'cs:trusty/django-42',
       name: 'django',
+      package_name: 'django',
       is_subordinate: false
     });
   };
@@ -129,6 +130,16 @@ describe('Ghost Deployer Extension', function() {
       sectionA: {
         component: 'inspector',
         metadata: { id: 'ghost-service-id' }}});
+  });
+
+  it('increments the name for duplicate ghost services', function() {
+    var charm = makeCharm();
+    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    ghostDeployer.db.services.ghostService(charm);
+    ghostDeployer.db.services.ghostService(charm);
+    var services = ghostDeployer.db.services;
+    assert.equal(services.item(0).get('name'), 'django');
+    assert.equal(services.item(1).get('name'), 'django-2');
   });
 
   it('can create a ghost unit', function() {
