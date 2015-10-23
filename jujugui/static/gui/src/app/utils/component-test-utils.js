@@ -140,6 +140,9 @@ var jsTestUtils = {
     mockEntity.get = function(key) {
       return pojo[key];
     };
+    mockEntity.set = function(key, value) {
+      pojo[key] = value;
+    };
     return mockEntity;
   }
 };

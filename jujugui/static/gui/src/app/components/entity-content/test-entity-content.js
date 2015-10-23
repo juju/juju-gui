@@ -89,6 +89,34 @@ describe('EntityContent', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can display a charm with no options', function() {
+    mockEntity.set('options', null);
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          entityModel={mockEntity}
+          getFile={getFile}
+          renderMarkdown={renderMarkdown} />);
+    var expected = (
+      <div className="row entity-content">
+        <div className="inner-wrapper">
+          <main className="seven-col append-one">
+            <div className="entity-content__description">
+              <h2>Description</h2>
+              <p>Django framework.</p>
+            </div>
+            <juju.components.EntityContentReadme
+              entityModel={mockEntity}
+              renderMarkdown={renderMarkdown}
+              getFile={getFile} />
+            {undefined}
+          </main>
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can display a bundle', function() {
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
