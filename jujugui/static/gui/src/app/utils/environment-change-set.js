@@ -1181,16 +1181,20 @@ YUI.add('environment-change-set', function(Y) {
               // changed by users before the changes are committed.
               var newService = record.command.args[1]
               var units = db.units;
-              var unit = units.getById(this.options.modelId);
+              var oldId = this.options.modelId;
+              var unit = units.getById(oldId);
               this.args[0] = newService;
-              // Also need to update the service name in the unit model.
+              // Update the unit to the new service name.
               var unitId = unit.number;
               var newId = newService + '/' + unitId;
-              var unitModel = units.revive(unit);
-              unitModel.set('service', newService);
-              unitModel.set('id', newId);
-              unitModel.set('urlName', newService + '-' + unitId);
-              units.free(unitModel);
+              unit.service = newService;
+              unit.id = newId;
+              unit.urlName = newService + '-' + unitId;
+              // Due to a YUI bug we need to update the id map to the new id.
+              delete units._idMap[oldId];
+              units._idMap[newId] = unit;
+              units.fire('change');
+              // Update the ecs change with the new id.
               this.options.modelId = newId;
               break;
           }
