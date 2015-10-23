@@ -2451,6 +2451,56 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('successfully creates a MAAS environment', function(done) {
+      env.set('providerType', 'maas');
+      env.createEnv('myenv', 'user-who', function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.name, 'my-maas-env');
+        assert.equal(conn.messages.length, 3);
+        assert.deepEqual(conn.messages[2], {
+          Type: 'EnvironmentManager',
+          Version: env.environmentManagerFacadeVersion,
+          Request: 'CreateEnvironment',
+          Params: {
+            OwnerTag: 'user-who',
+            Config: {
+              attr1: 'valueA',
+              attr2: 'valueB',
+              name: 'myenv',
+              'maas-server': 'server',
+              'maas-oauth': 'oauth',
+              'maas-agent-name': 'agent'
+            }
+          },
+          RequestId: 3
+        });
+        done();
+      });
+      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'valueA', attr2: 'valueB'}}
+      });
+      // Mimic the second response to Client.EnvironmentGet.
+      conn.msg({
+        RequestId: 2,
+        Response: {Config: {
+          'maas-server': 'server',
+          'maas-oauth': 'oauth',
+          'maas-agent-name': 'agent'
+        }}
+      });
+      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      conn.msg({
+        RequestId: 3,
+        Response: {
+          Name: 'my-maas-env',
+          OwnerTag: 'user-rose',
+          UUID: 'unique-id'
+        }
+      });
+    });
+
     it('handles failures while retrieving env skeleton', function(done) {
       env.createEnv('bad-env', 'user-dalek', function(data) {
         assert.strictEqual(
