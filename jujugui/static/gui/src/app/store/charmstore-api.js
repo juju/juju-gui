@@ -278,7 +278,7 @@ YUI.add('charmstore-api', function(Y) {
     */
     getEntity: function(entityId, successCallback, failureCallback) {
       var filters = 'include=bundle-metadata&include=charm-metadata' +
-                    '&include=charm-config&include=manifest' +
+                    '&include=charm-config&include=manifest&include=stats' +
                     '&include=charm-related&include=extra-info';
       return this._makeRequest(
           this._generatePath(entityId, filters, '/meta/any'),

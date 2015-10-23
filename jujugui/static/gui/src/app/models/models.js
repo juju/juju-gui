@@ -722,7 +722,7 @@ YUI.add('juju-models', function(Y) {
 
       @method _generateServiceName
       @param {String} charmName The charm name.
-      @param {Object} services The services in the db.
+      @param {String} charmId the full charm id.
       @returns {String} The name for the service.
     */
     _generateServiceName: function(charmName, charmId) {
