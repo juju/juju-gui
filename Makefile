@@ -57,7 +57,9 @@ help:
 	@echo "lint-js - check javascript style with eslint"
 	@echo "run - run the development server"
 	@echo "test - run python tests with the default Python"
-	@echo "test-js-phantom - run js tests in terminal"
+	@echo "test-js-phantom - run older js tests in terminal"
+	@echo "test-js-karma - run newer js tests in terminal; primarily for CI build"
+	@echo "start-karma - run Karma for development js testing"
 	@echo "test-deps - install the test dependencies"
 	@echo "update-downloadcache - update the download cache"
 
@@ -281,6 +283,10 @@ test-js-phantom: gui
 
 .PHONY: test-js-karma
 test-js-karma: gui
+	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --no-colors --log-level warn --reporters mocha
+
+.PHONY: start-karma
+start-karma:
 	$(NODE_MODULES)/.bin/karma start karma.conf.js
 
 .PHONY: test-selenium

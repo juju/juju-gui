@@ -253,7 +253,8 @@ YUI.add('search-results', function(Y) {
     },
 
     render: function() {
-      var html = Handlebars.templates['search-results.hbs'](this.state.data);
+      var tmpl = Handlebars.templates['search-results-tmpl.hbs'];
+      var html = tmpl(this.state.data);
       return (
         <div className={this._generateClasses()}
           onClick={this._handleTemplateClicks}

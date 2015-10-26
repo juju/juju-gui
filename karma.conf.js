@@ -12,7 +12,9 @@ module.exports = function(config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine', 'chai-sinon'],
 
-    // list of files / patterns to load in the browser
+    // List of files / patterns to load in the browser; Karma is smart enough,
+    // with the preprocessors, to watch the source files and serve the compiled
+    // files.
     files: [
       'jujugui/static/gui/build/app/assets/javascripts/jujulib/*.js',
 
@@ -27,23 +29,43 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/app/assets/javascripts/handlebars.runtime.js',
 
-      'jujugui/static/gui/build/app/components/**/*.js',
-      'jujugui/static/gui/build/**/test-*.js'
+      'jujugui/static/gui/src/app/components/**/*.hbs',
+      'jujugui/static/gui/src/app/components/**/*.js'
     ],
 
 
     // list of files to exclude
     exclude: [
-      'jujugui/static/gui/build/app/components/**/*-min.js',
-      'jujugui/static/gui/build/**/test-*-min.js',
-      'jujugui/static/gui/build/app/assets/javascripts/yui/node_modules/**/*',
-      'jujugui/static/gui/build/app/assets/javascripts/yui/yui/node_modules/**/*'
+      'jujugui/static/gui/build/app/components/**/*-min.js'
     ],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'jujugui/static/gui/src/app/components/**/*.js': ['babel'],
+      'jujugui/static/gui/src/app/components/**/*.hbs': ['handlebars']
+    },
+
+
+    // set the options for the various preprocessors used
+    babelPreprocessor: {
+      filename: function (file) {
+        return file.originalPath.replace(/\/src\//, '/build/');
+      },
+      sourceFileName: function (file) {
+        return file.originalPath;
+      }
+    },
+
+
+    handlebarsPreprocessor: {
+      templateName: function(filepath) {
+        return filepath.replace(/^.*\/([^\/]+\.hbs)$/, '$1');
+      },
+      transformPath: function(path) {
+        return path.replace(/\.hbs$/, '.js').replace(/\/src\//, '/build/');
+      }
     },
 
 
@@ -67,7 +89,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers
@@ -77,6 +99,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: false
   });
 };
