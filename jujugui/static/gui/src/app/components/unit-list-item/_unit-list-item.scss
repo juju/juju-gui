@@ -26,4 +26,12 @@
             text-decoration: underline;
         }
     }
+
+    &--select-all {
+        border-top: 1px solid $mid-grey;
+
+        &:first-child {
+            border-top: none;
+        }
+    }
 }

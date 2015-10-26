@@ -47,6 +47,7 @@ describe('UnitList', () => {
     assert.deepEqual(children, [
       <juju.components.UnitListItem
         key="select-all"
+        className="select-all"
         label="Select all units"
         checked={false}
         whenChanged={children[0].props.whenChanged}/>,
@@ -54,14 +55,63 @@ describe('UnitList', () => {
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
-        action={output.props.children[1].props.children[1].props.action}
+        action={children[1].props.action}
         checked={false}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
-        action={output.props.children[1].props.children[2].props.action}
+        action={children[2].props.action}
+        checked={false}
+        unitId="mysql/1" />
+    ]);
+  });
+
+  it('renders a grouped list of error unit components', () => {
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0',
+      agent_state_info: 'hook failed: install'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1',
+      agent_state_info: 'hook failed: config-changed'
+    }];
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          unitStatus='error'
+          units={units} />);
+    var children = output.props.children[1].props.children;
+    var refs = [
+      'UnitListItem-' + units[0].id,
+      'UnitListItem-' + units[1].id
+    ];
+    assert.deepEqual(children, [
+      <juju.components.UnitListItem
+        key="select-all-0"
+        className="select-all"
+        label="hook failed: install"
+        checked={false}
+        whenChanged={children[0].props.whenChanged}/>,
+      <juju.components.UnitListItem
+        key={units[0].displayName}
+        ref={refs[0]}
+        label={units[0].displayName}
+        action={children[1].props.action}
+        checked={false}
+        unitId="mysql/0" />,
+      <juju.components.UnitListItem
+        key="select-all-1"
+        className="select-all"
+        label="hook failed: config-changed"
+        checked={false}
+        whenChanged={children[2].props.whenChanged}/>,
+      <juju.components.UnitListItem
+        key={units[1].displayName}
+        ref={refs[1]}
+        label={units[1].displayName}
+        action={children[3].props.action}
         checked={false}
         unitId="mysql/1" />
     ]);
@@ -128,6 +178,7 @@ describe('UnitList', () => {
     assert.deepEqual(children, [
       <juju.components.UnitListItem
         key="select-all"
+        className="select-all"
         label="Select all units"
         checked={true}
         whenChanged={children[0].props.whenChanged}/>,

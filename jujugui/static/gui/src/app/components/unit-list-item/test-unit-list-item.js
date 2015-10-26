@@ -35,9 +35,10 @@ describe('UnitListItem', () => {
           checked={false}
           label="unit-name"
           unitId="apache/2"
+          className="select-all"
         />);
     assert.deepEqual(output,
-        <li className="unit-list-item"
+        <li className="unit-list-item unit-list-item--select-all"
           data-id="apache/2"
           onClick={undefined} tabIndex="0" role="button">
           <label htmlFor="unit-name-unit">
