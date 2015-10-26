@@ -23,7 +23,7 @@ YUI.add('loading-spinner', function() {
   juju.components.Spinner = React.createClass({
     render: function() {
       return (
-        <div className="spinner_loading">Loading...</div>
+        <div className="spinner-loading">Loading...</div>
       );
     }
   });

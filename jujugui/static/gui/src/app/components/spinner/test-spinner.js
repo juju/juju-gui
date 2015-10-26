@@ -34,7 +34,7 @@ describe('Spinner', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.Spinner/>);
     assert.deepEqual(output,
-      <div className="spinner_loading">
+      <div className="spinner-loading">
         Loading...
       </div>);
   });

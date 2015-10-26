@@ -31,6 +31,38 @@ describe('InspectorChangeVersion', function() {
     YUI().use('inspector-change-version', function() { done(); });
   });
 
+  it('can display a loading spinner', function() {
+    var changeState = sinon.stub();
+    var service = sinon.stub();
+    var setCharm = sinon.stub();
+    var getCharm = sinon.stub();
+    var getAvailableVersions = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersion
+          changeState={changeState}
+          charmId="cs:django"
+          service={service}
+          setCharm={setCharm}
+          getCharm={getCharm}
+          getAvailableVersions={getAvailableVersions} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output,
+      <div className="inspector-change-version">
+        <div className="inspector-change-version__current">
+          Current version:
+          <div className="inspector-change-version__current-version"
+            role="button" tabIndex="0"
+            onClick={output.props.children[0].props.children[1].props.onClick}>
+            cs:django
+          </div>
+        </div>
+        <div className="inspector-spinner">
+          <juju.components.Spinner />
+        </div>
+      </div>);
+  });
+
   it('can display an empty versions list', function() {
     var changeState = sinon.stub();
     var service = sinon.stub();

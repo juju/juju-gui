@@ -116,7 +116,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div id="loading-message-text" class="header">
               Loading the Juju GUI
             </div>
-            <div id="loading-spinner"></div>
+            <div id="loading-spinner">
+              <span class="spinner-loading"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -197,32 +199,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var flags = {}; // Declare an empty set of feature flags.
-      startSpinner = function() {
-        var opts = {
-          lines: 17, // The number of lines to draw
-          length: 0, // The length of each line
-          width: 3, // The line thickness
-          radius: 30, // The radius of the inner circle
-          corners: 1, // Corner roundness (0..1)
-          rotate: 14, // The rotation offset
-          color: '#000', // #rgb or #rrggbb
-          speed: 1.3, // Rounds per second
-          trail: 60, // Afterglow percentage
-          shadow: false, // Whether to render a shadow
-          hwaccel: true, // Whether to use hardware acceleration
-          className: 'spinner', // The CSS class to assign to the spinner
-          zIndex: 2e9, // The z-index (defaults to 2000000000)
-          top: '15', // Top position relative to parent in px
-          left: 'auto' // Left position relative to parent in px
-        };
-        var document = getDocument();
-        var target = document.getElementById('loading-spinner');
-        // If we are in a testing environment, then actually starting the
-        // spinner is unnecessary and counterproductive.
-        if (target.style !== undefined) {
-          spinner = new Spinner(opts).spin(target);
-        }
-      };
 
       getDocument = function() {
         return document;
@@ -380,7 +356,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // This code is here instead of in the "app-startup" script tag above
       // because we extract that JS in order to test it.  This bit here is just
       // to bootstrap the app when actually loaded into a browser.
-      startSpinner();
       go(navigator.userAgent);
     </script>
     <!--

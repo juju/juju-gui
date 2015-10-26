@@ -30,6 +30,7 @@ YUI.add('inspector-change-version', function() {
     */
     getInitialState: function() {
       return {
+        loading: false,
         versionsList: null
       };
     },
@@ -106,6 +107,7 @@ YUI.add('inspector-change-version', function() {
       @param {String} charmId The charm id.
     */
     _getVersions: function(charmId) {
+      this.setState({loading: true});
       this.props.getAvailableVersions(charmId,
           this._getVersionsSuccess, this._getVersionsFailure);
     },
@@ -140,6 +142,7 @@ YUI.add('inspector-change-version', function() {
               id={version} />);
         }, this);
       }
+      this.setState({loading: false});
       this.setState({versionsList: components});
     },
 
@@ -164,6 +167,27 @@ YUI.add('inspector-change-version', function() {
       // XXX: handle getting versions failure.
     },
 
+    /**
+      Display the versions list or a spinner if it is loading.
+
+      @method _displayVersionsList
+    */
+    _displayVersionsList: function(loading, versionsList) {
+      if (loading) {
+        return(
+          <div className="inspector-spinner">
+            <juju.components.Spinner />
+          </div>
+        );
+      } else {
+        return (
+          <ul className="inspector-change-version__versions">
+            {versionsList}
+          </ul>
+        );
+      }
+    },
+
     render: function() {
       var charmId = this.props.charmId;
       return (
@@ -176,9 +200,8 @@ YUI.add('inspector-change-version', function() {
               {charmId}
             </div>
           </div>
-          <ul className="inspector-change-version__versions">
-            {this.state.versionsList}
-          </ul>
+          {this._displayVersionsList(this.state.loading,
+              this.state.versionsList)}
         </div>
       );
     }
@@ -186,5 +209,6 @@ YUI.add('inspector-change-version', function() {
   });
 
 }, '0.1.0', { requires: [
-  'inspector-change-version-item'
+  'inspector-change-version-item',
+  'loading-spinner'
 ]});
