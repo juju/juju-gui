@@ -31,7 +31,7 @@ YUI.add('unit-list', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        selectAll: false
+        selectAll: {}
       };
     },
     /**
@@ -55,11 +55,23 @@ YUI.add('unit-list', function() {
       component.
 
       @method _selectAllUnits
+      @param {String} group The key for a group of checkboxes.
       @param {Boolean} checked Whether the "select all" child component is
         checked.
     */
-    _selectAllUnits: function(checked) {
-      this.setState({selectAll: checked});
+    _selectAllUnits: function(group, checked) {
+      var selectAll = this.state.selectAll;
+      if (checked === undefined) {
+        checked = !selectAll[group];
+      }
+      if (group === null) {
+        Object.keys(selectAll).forEach(function(key) {
+          selectAll[key] = checked;
+        });
+      } else {
+        selectAll[group] = checked;
+      }
+      this.setState({selectAll: selectAll});
     },
 
     /**
@@ -99,25 +111,28 @@ YUI.add('unit-list', function() {
         }
       });
       this.props.destroyUnits(units);
-      this._selectAllUnits(false);
+      this._selectAllUnits(null, false);
     },
 
     /**
       Generates a list of unit components.
 
       @method _generateUnitList
-      @param {Array} units Collection of units.
+      @param {Object} group A definition for a group of checkboxes .
       @returns {Array} Collection of unit components.
     */
-    _generateUnitList: function(units) {
+    _generateUnitList: function(group) {
+      var key = group.key;
+      var checked = this.state.selectAll[key] || false;
       var components = [
         <juju.components.UnitListItem
-          key='select-all'
-          label='Select all units'
-          checked={this.state.selectAll}
-          whenChanged={this._selectAllUnits}/>
+          key={key}
+          label={group.label}
+          checked={checked}
+          className='select-all'
+          whenChanged={this._selectAllUnits.bind(this, key)}/>
       ];
-      units.forEach((unit) => {
+      group.units.forEach((unit) => {
         var ref = 'UnitListItem-' + unit.id;
         components.push(
           <juju.components.UnitListItem
@@ -125,7 +140,7 @@ YUI.add('unit-list', function() {
             ref={ref}
             label={unit.displayName}
             action={this._unitItemAction}
-            checked={this.state.selectAll}
+            checked={checked}
             unitId={unit.id} />);
       });
       return components;
@@ -146,8 +161,45 @@ YUI.add('unit-list', function() {
       );
     },
 
+    /**
+      Generate the groups of units.
+
+      @returns {Object} The list components
+    */
+    _generateListGroups: function() {
+      var units = this.props.units;
+      var components = [];
+      var groups = [];
+      if (this.props.unitStatus === 'error') {
+        var errors = {};
+        units.forEach(function(unit) {
+          var agentState = unit.agent_state_info;
+          if (!errors[agentState]) {
+            errors[agentState] = [];
+          }
+          errors[agentState].push(unit);
+        });
+        Object.keys(errors).forEach(function (error, i) {
+          groups.push({
+            label: error,
+            units: errors[error],
+            key: 'select-all-' + i
+          });
+        });
+      } else {
+        groups.push({
+          label: 'Select all units',
+          units: units,
+          key: 'select-all'
+        });
+      }
+      groups.forEach(function(group) {
+        components = components.concat(this._generateUnitList(group));
+      }, this);
+      return components;
+    },
+
     render: function() {
-      var units = this._generateUnitList(this.props.units);
       var buttons = [{
         title: 'Remove',
         action: this._handleRemoveUnits
@@ -160,7 +212,7 @@ YUI.add('unit-list', function() {
               title="Scale service" />
           </div>
           <ul className="unit-list__units">
-            {units}
+            {this._generateListGroups()}
           </ul>
           <juju.components.ButtonRow
             buttons={buttons} />

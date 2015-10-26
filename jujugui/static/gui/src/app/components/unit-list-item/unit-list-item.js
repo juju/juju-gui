@@ -29,8 +29,10 @@ YUI.add('unit-list-item', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      var className = this.props.className;
       return classNames(
         'unit-list-item',
+        className ? 'unit-list-item--' + className : '',
         this.props.action ? 'unit-list-item--nav' : ''
       );
     },
