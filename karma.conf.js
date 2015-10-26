@@ -12,7 +12,9 @@ module.exports = function(config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine', 'chai-sinon'],
 
-    // list of files / patterns to load in the browser
+    // List of files / patterns to load in the browser; Karma is smart enough,
+    // with the preprocessors, to watch the source files and serve the compiled
+    // files.
     files: [
       'jujugui/static/gui/build/app/assets/javascripts/jujulib/*.js',
 
