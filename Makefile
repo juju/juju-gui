@@ -140,6 +140,10 @@ $(YUI): $(NODE_MODULES)
 $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
 	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
+	# There is a bug in how the React shadow renderer renders the owner property
+	# in 0.14. Below is the workaround code which gets replaced into the 'built'
+	# React release. Hopefully the PR will make it into the next release.
+	# https://github.com/facebook/react/issues/5292
 	sed	-i -e '/var NoopInternalComponent = function (element) {/,/^};/c\
 	var NoopInternalComponent = function (element) {\
 	  var type = element.type.name || element.type;\
