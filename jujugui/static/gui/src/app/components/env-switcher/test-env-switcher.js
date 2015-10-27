@@ -24,11 +24,6 @@ var testUtils = React.addons.TestUtils;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-function queryComponentSelector(component, selector, all) {
-  var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
-  return component.getDOMNode()[queryFn](selector);
-}
-
 describe('EnvSwitcher', function() {
 
   beforeAll(function(done) {
@@ -132,7 +127,7 @@ describe('EnvSwitcher', function() {
     });
     assert.equal(env.listEnvs.callCount, 1);
     var envData = {
-      envs: {env: 'env'}
+      envs: [{env: 'env'}]
     };
     env.listEnvs.args[0][1](envData);
     assert.deepEqual(instance.state.envList, envData.envs);

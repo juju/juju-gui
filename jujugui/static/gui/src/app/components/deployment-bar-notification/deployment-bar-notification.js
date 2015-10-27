@@ -31,7 +31,9 @@ YUI.add('deployment-bar-notification', function() {
     _hideNotification: function() {
       var node;
       try {
-        node = React.findDOMNode(this);
+        // This will throw a warning that it can't be found sometimes, that's
+        // fine to ignore.
+        node = ReactDOM.findDOMNode(this);
         // Fade out the notification.
         node.classList.remove('deployment-bar__notification--visible');
       } catch (e) {
@@ -59,7 +61,7 @@ YUI.add('deployment-bar-notification', function() {
         var oldId = prevProps && prevProps.change ? prevProps.change.id : null;
         // Only show the notification if we've received a new id.
         if (newId !== oldId) {
-          var node = React.findDOMNode(this);
+          var node = ReactDOM.findDOMNode(this);
           // Fade in the notification.
           if (node) {
             node.classList.add('deployment-bar__notification--visible');
@@ -87,7 +89,8 @@ YUI.add('deployment-bar-notification', function() {
       }
       return (
           <div className="deployment-bar__notification"
-            onClick={this._handleClick}>
+            onClick={this._handleClick}
+            ref="deploymentBarNotificationContainer">
             {description}
           </div>
       );
