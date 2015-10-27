@@ -30,7 +30,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     initializer: function(cfg) {
       this.hide();
-      this._spinner = Y.spinner.getSpinner();
     },
 
     /**
@@ -53,8 +52,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      * method.
      *
      * This is a copy of the YUI method, except for using our
-     * own parentNode.  This is needed so the spinner overlays
-     * correctly.
+     * own parentNode.
      *
      * @method _renderUI
      */
@@ -97,8 +95,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
      * @method setBusy
      */
     setBusy: function() {
-      var target = this.get('target').getDOMNode();
-      this._spinner.spin(target);
       this.show();
     },
 
@@ -109,7 +105,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     success: function() {
       this.hide();
-      this._spinner.stop();
       var callback = this.get('success_action');
       if (typeof callback === 'function') {
         callback.call(this);
@@ -123,7 +118,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     error: function() {
       this.hide();
-      this._spinner.stop();
       var callback = this.get('error_action');
       if (typeof callback === 'function') {
         callback.call(this);
@@ -160,11 +154,11 @@ YUI.add('browser-overlay-indicator', function(Y) {
 
       /**
        * @attribute loading_image
-       * @default 'juju-ui/assets/images/loading-spinner.gif'
+       * @default ''
        * @type {string}
        */
       loading_image: {
-        value: 'juju-ui/assets/images/non-sprites/loading-spinner.gif'
+        value: ''
       }
     }
   });
@@ -250,6 +244,5 @@ YUI.add('browser-overlay-indicator', function(Y) {
 }, '0.1.0', { requires: [
   'base',
   'node-screen',
-  'spinner',
   'widget'
 ]});

@@ -62,14 +62,6 @@ describe('overlay indicator', function() {
     assert.equal(container, indicator.get('boundingBox').get('parentNode'));
   });
 
-  it('has a spinner', function() {
-    indicator = new Y.juju.widgets.browser.OverlayIndicator(
-        {target: container});
-    indicator.render();
-    indicator.setBusy();
-    assert.isObject(container.one('.spinner'));
-  });
-
   it('starts invisible', function() {
     // OverlayIndicator widgets should start hidden.
     indicator = new Y.juju.widgets.browser.OverlayIndicator(

@@ -22,8 +22,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('Application start up', function() {
     var startTheApp, isBrowserSupported, displayBrowserWarning,
         hideBrowserWarning, continueWithCurrentBrowser, go, juju_config,
-        getDocument, appStarted, warningStyle, loadingStyle, Spinner, spinner,
-        startSpinner, displayLoadingMessage, hideLoadingMessage,
+        getDocument, appStarted, warningStyle, loadingStyle,
+        displayLoadingMessage, hideLoadingMessage,
         hideLoginButton, setLoadingMessageText;
 
     beforeEach(function() {
