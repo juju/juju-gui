@@ -107,10 +107,10 @@ describe('Configuration', function() {
         charm={charm}
         setConfig={setConfig} />);
 
-    var getDOMNode = component.getDOMNode;
+    var domNode = ReactDOM.findDOMNode(component);
 
-    var string = getDOMNode().querySelector('.string-config--value');
-    var bool = getDOMNode().querySelector('.boolean-config--input');
+    var string = domNode.querySelector('.string-config--value');
+    var bool = domNode.querySelector('.boolean-config--input');
 
     string.innerText = 'new value';
     testUtils.Simulate.input(string);
@@ -119,7 +119,7 @@ describe('Configuration', function() {
     // actually interacting with the DOM.
     testUtils.Simulate.change(bool, {target: {checked: false}});
 
-    var save = getDOMNode().querySelector('.generic-button--type-confirm');
+    var save = domNode.querySelector('.generic-button--type-confirm');
 
     testUtils.Simulate.click(save);
 

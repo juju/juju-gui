@@ -215,7 +215,7 @@ YUI.add('header-search', function() {
 
     render: function() {
       return (
-        <div className={this._generateClasses()}>
+        <div className={this._generateClasses()} ref="headerSearchContainer">
           <form className="header-search__form">
             <button type="submit"
               onClick={this._handleSubmit}
@@ -227,7 +227,8 @@ YUI.add('header-search', function() {
               value={this.state.query}
               onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
-              style={this.state.inputStyles} />
+              style={this.state.inputStyles}
+              ref="searchInput"/>
           </form>
           <span tabIndex="0" role="button"
             onClick={this._handleStoreClick}
@@ -239,7 +240,8 @@ YUI.add('header-search', function() {
           <span tabIndex="0" role="button"
             className={this._closeClasses()}
             onClick={this._handleClose}
-            dangerouslySetInnerHTML={{__html: this.icons.close}} />
+            dangerouslySetInnerHTML={{__html: this.icons.close}}
+            ref="closeButton" />
         </div>
       );
     }
