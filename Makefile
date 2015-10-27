@@ -30,9 +30,11 @@ HANDLEBARS_ASSETS := $(BUILT_JS_ASSETS)/handlebars.runtime.js $(BUILT_JS_ASSETS)
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
-WHEEL_CACHE := file:///$(CACHE)/wheels/$(shell lsb_release -c -s)
+WHEEL_CACHE := file:///$(CACHE)/wheels/generic
+LSB_WHEEL_CACHE := file:///$(CACHE)/wheels/$(shell lsb_release -c -s)
 
-PIP = bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r $(1)
+PIP = bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(LSB_WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r $(1)
+VPART ?= patch
 
 RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/assets/javascripts/*")
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
@@ -51,6 +53,8 @@ help:
 	@echo "clean - remove build and python artifacts"
 	@echo "clean-gui - clean the built gui js code"
 	@echo "clean-downloadcache - remove the downloadcache"
+	@echo "dist - bump version and package."
+	@echo "  By default bumps patch level. 'VPART=[major|minor|patch] make dist' to specify."
 	@echo "deps - install the dependencies"
 	@echo "gui - build the gui files"
 	@echo "lint - check python style with flake8"
@@ -304,7 +308,8 @@ ci-check: clean-downloadcache deps fast-babel check test-selenium
 # Packaging
 ###########
 .PHONY: dist
-dist: gui
+dist: gui test-deps
+	bin/bumpversion $(VPART)
 	python setup.py sdist
 
 #######
