@@ -65,7 +65,7 @@ YUI.add('view-dropdown-extension', function(Y) {
               'click', this.__toggleDropdown, this));
       this.addEvent(
           container.on(
-              'clickoutside', this.__close, this));
+              this._eventPrefix + ':clickoutside', this.__close, this));
     },
 
     /**

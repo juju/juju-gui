@@ -925,7 +925,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _emptySectionC: function() {
-      React.unmountComponentAtNode(
+      ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
     },
 
