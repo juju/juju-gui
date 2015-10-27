@@ -140,8 +140,11 @@ $(YUI): $(NODE_MODULES)
 $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
 	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
+	cp $(NODE_MODULES)/react-dom/dist/react-dom.js $(BUILT_JS_ASSETS)/react-dom.js
+	cp $(NODE_MODULES)/react-dom/dist/react-dom.min.js $(BUILT_JS_ASSETS)/react-dom.min.js
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
 	cp $(NODE_MODULES)/react-onclickoutside/index.js $(BUILT_JS_ASSETS)/react-onclickoutside.js
+	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/react-onclickoutside/index.js -o $(BUILT_JS_ASSETS)/react-onclickoutside-min.js
 
