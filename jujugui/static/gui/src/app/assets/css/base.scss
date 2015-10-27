@@ -79,7 +79,7 @@ $dark-grey: #9fa7aa;
 $base: 16;
 $border-radius: 2px;
 $bws-header-height: 81px;
-$deployer-bar-height: 50px;
+$deployer-bar-height: 90px;
 $environment-header-height: 40px;
 $left-panel-width: 290px;
 $navbar-height: 60px;
@@ -1180,7 +1180,6 @@ g.unit {
 @import "machine-view/more-menu";
 @import "machine-view/service-scale-up-view";
 @import "content-panel";
-@import "deployer-bar";
 @import "dropdown";
 @import "inspector/juju-inspector";
 @import "inspector/inspector-view";

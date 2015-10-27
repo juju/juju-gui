@@ -103,11 +103,6 @@ function injectData(app, data) {
       }
       config.container = container;
       config.viewContainer = container;
-      if (context) {
-        var _renderDeployerBarView = utils.makeStubMethod(
-            Y.juju.App.prototype, '_renderDeployerBarView');
-        context._cleanups.push(_renderDeployerBarView.reset);
-      }
       app = new Y.juju.App(Y.mix(config, {consoleEnabled: true}));
       app.navigate = function() {};
       app.showView(new Y.View());
@@ -132,9 +127,6 @@ function injectData(app, data) {
         function(done) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
-          var _renderDeployerBarView = utils.makeStubMethod(
-              Y.juju.App.prototype, '_renderDeployerBarView');
-          this._cleanups.push(_renderDeployerBarView.reset);
           app = new Y.juju.App(
               { container: container,
                 user: the_username,
@@ -152,9 +144,6 @@ function injectData(app, data) {
         });
 
     it('propagates the readOnly option from the configuration', function() {
-      var _renderDeployerBarView = utils.makeStubMethod(
-          Y.juju.App.prototype, '_renderDeployerBarView');
-      this._cleanups.push(_renderDeployerBarView.reset);
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -306,13 +295,8 @@ function injectData(app, data) {
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
       app._autoPlaceUnits = utils.makeStubFunction();
-      app.deployerBar = {
-        deploy: utils.makeStubFunction(),
-        destroy: function() {}
-      };
       app._autoplaceAndCommitAll();
       assert.equal(app._autoPlaceUnits.callCount(), 1);
-      assert.equal(app.deployerBar.deploy.callCount(), 1);
     });
 
     it('should display a zoom message on small browsers', function() {
@@ -538,9 +522,6 @@ describe('File drag over notification system', function() {
         .append(Y.Node.create('<span/>')
           .set('id', 'environment-name'))
         .hide();
-    var _renderDeployerBarView = testUtils.makeStubMethod(
-        Y.juju.App.prototype, '_renderDeployerBarView');
-    this._cleanups.push(_renderDeployerBarView.reset);
   });
 
   afterEach(function(done) {
