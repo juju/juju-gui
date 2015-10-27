@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('dropdown view extension', function() {
+describe.skip('dropdown view extension', function() {
   var Y, container, utils, view, View;
 
   before(function(done) {
