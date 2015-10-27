@@ -154,12 +154,6 @@ describe('MidPoint', function() {
         count: 30,
         name: 'ops'
     }];
-    // JSX doesn't like parentheses so it creates arrays of the data and we
-    // have to define those outside of the markup.
-    var counts = [
-      ['(', 5, ')'],
-      ['(', 30, ')']
-    ];
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint />);
     assert.deepEqual(output,
@@ -177,7 +171,7 @@ describe('MidPoint', function() {
               className="mid-point__tag">
               databases
               <span className="mid-point__tag-count">
-                {counts[0]}
+                (5)
               </span>
             </li>
             <li tabIndex="0" role="button"
@@ -187,7 +181,7 @@ describe('MidPoint', function() {
               className="mid-point__tag">
               ops
               <span className="mid-point__tag-count">
-                {counts[1]}
+                (30)
               </span>
             </li>
           </ul>

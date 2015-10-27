@@ -86,5 +86,6 @@ YUI.add('deployment-summary', function() {
 
 }, '0.1.0', { requires: [
   'deployment-summary-change-item',
-  'generic-button'
+  'generic-button',
+  'panel-component'
 ]});
