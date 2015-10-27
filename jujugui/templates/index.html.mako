@@ -189,7 +189,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div> <!-- /container -->
         </div>
     </div>
-    <script src="${convoy_url}?app/assets/javascripts/spin.min.js"></script>
     <script id="app-startup">
       // Global to store all of the shared application data.
       var juju = {
