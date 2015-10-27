@@ -311,6 +311,9 @@ YUI.add('juju-gui', function(Y) {
       });
       this._keybindings = Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
+        // This gets triggered by different types of elements some YUI some
+        // React. So try and use the native tagName property first, if That
+        // fails then fall back to getDOMNode().
         var tagName = evt.target.tagName;
         if (!tagName) {
           tagName = evt.target.getDOMNode().tagName;
