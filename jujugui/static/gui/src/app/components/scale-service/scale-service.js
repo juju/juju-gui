@@ -115,7 +115,8 @@ YUI.add('scale-service', function() {
               className="scale-service__input scale-service--units__input"
               type="text"
               name="num-units"
-              onChange={this._updateState} />
+              onChange={this._updateState}
+              ref="numUnitsInput"/>
             <span className="scale-service--units__span">units</span>
           </div>
           <div className="scale-service--selector">
@@ -124,7 +125,8 @@ YUI.add('scale-service', function() {
                 className="scale-service--selector__radio"
                 name="placement" type="radio"
                 onChange={this._toggleConstraints}
-                id="auto-place-units" />
+                id="auto-place-units"
+                ref="autoPlaceUnitsToggle" />
               <label htmlFor="auto-place-units">1 unit per machine</label>
             </div>
             <div>
@@ -137,31 +139,35 @@ YUI.add('scale-service', function() {
               <label htmlFor="manually-place-units">Manually place</label>
             </div>
           </div>
-          <div className={this._generateClasses()}>
+          <div className={this._generateClasses()} ref="constraintsContainer">
             <label htmlFor="cpu-constraint">CPU (GHZ)</label>
             <input type="text"
               className="scale-service__input scale-service--constraints__input"
               id="cpu-constraint"
               name="cpu-constraint"
-              onChange={this._updateState}/>
+              onChange={this._updateState}
+              ref="cpuConstraintInput"/>
             <label htmlFor="cores-constraint">Cores</label>
             <input type="text"
               className="scale-service__input scale-service--constraints__input"
               id="cores-constraint"
               name="cores-constraint"
-              onChange={this._updateState} />
+              onChange={this._updateState}
+              ref="coresConstraintInput"/>
             <label htmlFor="ram-constraint">Ram (MB)</label>
             <input type="text"
               className="scale-service__input scale-service--constraints__input"
               id="ram-constraint"
               name="ram-constraint"
-              onChange={this._updateState} />
+              onChange={this._updateState}
+              ref="ramConstraintInput"/>
             <label htmlFor="disk-constraint">Disk (MB)</label>
             <input type="text"
               className="scale-service__input scale-service--constraints__input"
               id="disk-constraint"
               name="disk-constraint"
-              onChange={this._updateState} />
+              onChange={this._updateState}
+              ref="diskConstraintInput"/>
           </div>
           <juju.components.ButtonRow buttons={buttons} />
         </div>

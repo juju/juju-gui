@@ -47,16 +47,14 @@ describe('ScaleService', function() {
       <juju.components.ScaleService
         serviceId="123" />);
 
-    var autoToggle = output.getDOMNode().querySelector('#auto-place-units');
-    var constraints =
-      output.getDOMNode().querySelector('.scale-service--constraints.hidden');
-    assert.isNotNull(constraints);
+    var domNode = ReactDOM.findDOMNode(output);
+    var autoToggle = output.refs.autoPlaceUnitsToggle;
+    var constraints = output.refs.constraintsContainer;
+    assert.isTrue(constraints.classList.contains('hidden'));
 
     testUtils.Simulate.change(autoToggle);
 
-    constraints =
-      output.getDOMNode().querySelector('.scale-service--constraints');
-    assert.isNotNull(constraints);
+    assert.isFalse(constraints.classList.contains('hidden'));
   });
 
   it('creates and autoplaces units if constraints is open', function() {
@@ -73,34 +71,31 @@ describe('ScaleService', function() {
         changeState={changeStateStub} />);
 
     // Set the value in the input.
-    var unitCount = output.getDOMNode().querySelector('input[name=num-units]');
+    var unitCount = output.refs.numUnitsInput;
     unitCount.value = 3;
     testUtils.Simulate.change(unitCount);
 
     // Open the constraints and set their values.
-    var autoToggle = output.getDOMNode().querySelector('#auto-place-units');
-    testUtils.Simulate.change(autoToggle);
+    testUtils.Simulate.change(output.refs.autoPlaceUnitsToggle);
 
-    var cpu = output.getDOMNode().querySelector('input[name=cpu-constraint]');
+    var cpu = output.refs.cpuConstraintInput;
     cpu.value = 'c p u';
     testUtils.Simulate.change(cpu);
 
-    var cores = output.getDOMNode().querySelector(
-        'input[name=cores-constraint]');
+    var cores = output.refs.coresConstraintInput;
     cores.value = 'c o r e s';
     testUtils.Simulate.change(cores);
 
-    var ram = output.getDOMNode().querySelector('input[name=ram-constraint]');
+    var ram = output.refs.ramConstraintInput;
     ram.value = 'r a m';
     testUtils.Simulate.change(ram);
 
-    var disk  = output.getDOMNode().querySelector(
-        'input[name=disk-constraint]');
+    var disk  = output.refs.diskConstraintInput;
     disk.value = 'd i s k';
     testUtils.Simulate.change(disk);
 
     // Click the submit button in the ButtonRow component.
-    var button = output.getDOMNode().querySelector('button');
+    var button = ReactDOM.findDOMNode(output).querySelector('button');
     testUtils.Simulate.click(button);
     assert.equal(createMachineStub.callCount, 1);
     assert.equal(addGhostStub.callCount, 0);
@@ -138,11 +133,11 @@ describe('ScaleService', function() {
         changeState={changeStateStub} />);
 
     // Set the value in the input.
-    var unitCount = output.getDOMNode().querySelector('input[name=num-units]');
+    var unitCount = output.refs.numUnitsInput;
     unitCount.value = 3;
     testUtils.Simulate.change(unitCount);
     // Click the submit button in the ButtonRow component.
-    var button = output.getDOMNode().querySelector('button');
+    var button = ReactDOM.findDOMNode(output).querySelector('button');
     testUtils.Simulate.click(button);
     assert.equal(createMachineStub.callCount, 0);
     assert.equal(addGhostStub.callCount, 1);
