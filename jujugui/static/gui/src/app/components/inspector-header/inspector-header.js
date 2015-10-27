@@ -61,7 +61,7 @@ YUI.add('inspector-header', function() {
     componentDidUpdate: function(prevProps, prevState) {
       // Only animate when switching between components.
       if (this.props.activeComponent !== prevProps.activeComponent) {
-        var node = React.findDOMNode(this);
+        var node = ReactDOM.findDOMNode(this);
         node.classList.remove('fade-in');
         // Animate the header change.
         window.requestAnimationFrame(function() {

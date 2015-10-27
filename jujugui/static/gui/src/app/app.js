@@ -311,11 +311,14 @@ YUI.add('juju-gui', function(Y) {
       });
       this._keybindings = Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
-        var source = evt.target.getDOMNode();
+        var tagName = evt.target.tagName;
+        if (!tagName) {
+          tagName = evt.target.getDOMNode().tagName;
+        }
         // Target filtering, we want to listen on window
         // but not honor hotkeys when focused on
         // text oriented input fields
-        if (['INPUT', 'TEXTAREA'].indexOf(source.tagName) !== -1) {
+        if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1) {
           return;
         }
         var symbolic = [];
