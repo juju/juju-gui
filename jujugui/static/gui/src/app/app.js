@@ -228,9 +228,6 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
-          if (!window.flags || !window.flags.react) {
-            this.deployerBar.close();
-          }
         },
         help: 'Cancel current action',
         label: 'Esc'
@@ -249,7 +246,7 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          this.deployerBar.exportFile();
+          views.utils.exportEnvironmentFile(this.db);
         },
         help: 'Export the environment',
         label: 'Shift + d'
@@ -444,10 +441,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
-      if(window.flags && window.flags.react) {
-        ecs.on('changeSetModified', this._renderDeployment.bind(this));
-        ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
-      }
+      ecs.on('changeSetModified', this._renderDeployment.bind(this));
+      ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // XXX Update the header breadcrumb to show the username. This is a
@@ -714,9 +709,6 @@ YUI.add('juju-gui', function(Y) {
           // We only want to show the user dropdown view if the gui isn't in
           // demo mode.
           this._renderUserDropdownView();
-        }
-        if (!window.flags || !window.flags.react) {
-          this._renderDeployerBarView();
         }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -1235,35 +1227,14 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Handles rendering the deployer bar view on application load.
-     *
-     * @method _renderDeployerBarView
-     */
-    _renderDeployerBarView: function() {
-      this.deployerBar = new views.DeployerBarView({
-        container: Y.one('#deployer-bar'),
-        ecs: this.env.get('ecs'),
-        env: this.env,
-        db: this.db,
-        bundleImporter: this.bundleImporter
-      }).render();
-      this.deployerBar.addTarget(this);
-    },
-
-    /**
       When the user provides a charm id in the deploy-target query param we want
-      to auto deploy that charm. This calls the appropriate methods in the
-      deployer bar to auto place any outstanding units and deploy the charm.
+      to auto deploy that charm.
 
       @method _autoplaceAndCommitAll
     */
     _autoplaceAndCommitAll: function() {
       this._autoPlaceUnits();
-      if (!window.flags || !window.flags.react) {
-        this.deployerBar.deploy();
-      } else {
-        this.env.get('ecs').commit(this.env);
-      }
+      this.env.get('ecs').commit(this.env);
     },
 
     /**
@@ -1347,9 +1318,6 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this.userDropdown) {
         this.userDropdown.destroy();
-      }
-      if (this.deployerBar) {
-        this.deployerBar.destroy();
       }
       if (this._keybindings) {
         this._keybindings.detach();
@@ -1825,10 +1793,10 @@ YUI.add('juju-gui', function(Y) {
         this.db.services.size(),
         this.db.machines.size()
       );
+      this._renderDeployment();
       if (window.flags && window.flags.react) {
         this._renderEnvSwitcher();
         this._renderHeaderSearch();
-        this._renderDeployment();
         // When we render the components we also want to trigger the rest of
         // the application to render but only based on the current state.
         this.state.dispatch();
@@ -2155,7 +2123,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'ghost-deployer-extension',
     'juju-view-bundle',
-    'deployer-bar',
     'local-charm-import-helpers',
     'environment-change-set',
     // This must stay down here else it breaks the merge-files by being put

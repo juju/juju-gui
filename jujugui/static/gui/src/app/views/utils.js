@@ -1618,6 +1618,23 @@ YUI.add('juju-view-utils', function(Y) {
 
   };
 
+
+  /**
+    Export the YAML for this environment.
+
+    @method _exportFile
+    @param {Object} db Reference to the app db.
+  */
+  utils.exportEnvironmentFile = function(db) {
+    var result = db.exportDeployer();
+    var exportData = jsyaml.dump(result);
+    // In order to support Safari 7 the type of this blob needs
+    // to be text/plain instead of it's actual type of application/yaml.
+    var exportBlob = new Blob([exportData],
+        {type: 'text/plain;charset=utf-8'});
+    saveAs(exportBlob, 'bundle.yaml');
+  },
+
   /**
     Returns an array of user friendly Landscape ids that are contained
     on the passed in unit.

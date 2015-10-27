@@ -77,7 +77,6 @@ describe('Relation endpoints logic', function() {
     } else {
       delta = sample_env;
     }
-    console.log(delta);
     db.onDelta({data: {result: delta}});
   }
 
@@ -355,9 +354,11 @@ describe('Endpoints map handlers', function() {
   beforeEach(function() {
     destroyMe = [];
     conn = new utils.SocketStub();
+    ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({
       user: 'user',
       password: 'password',
+      ecs: ecs,
       conn: conn
     });
     env.connect();
