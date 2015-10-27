@@ -1182,7 +1182,6 @@ g.unit {
 @import "content-panel";
 @import "deployer-bar";
 @import "dropdown";
-@import "environment-header";
 @import "inspector/juju-inspector";
 @import "inspector/inspector-view";
 @import "header";
@@ -1195,6 +1194,7 @@ g.unit {
 /** Cookies **/
 @import "cookies";
 
+/** Components **/
 @import "components";
 
 /** Pull in the Vanilla grid **/
