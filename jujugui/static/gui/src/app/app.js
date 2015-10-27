@@ -305,11 +305,17 @@ YUI.add('juju-gui', function(Y) {
       });
       this._keybindings = Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
-        var source = evt.target.getDOMNode();
+        // This gets triggered by different types of elements some YUI some
+        // React. So try and use the native tagName property first, if That
+        // fails then fall back to getDOMNode().
+        var tagName = evt.target.tagName;
+        if (!tagName) {
+          tagName = evt.target.getDOMNode().tagName;
+        }
         // Target filtering, we want to listen on window
         // but not honor hotkeys when focused on
         // text oriented input fields
-        if (['INPUT', 'TEXTAREA'].indexOf(source.tagName) !== -1) {
+        if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1) {
           return;
         }
         var symbolic = [];
@@ -751,7 +757,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
       var state = this.state;
-      React.render(
+      ReactDOM.render(
         <window.juju.components.EnvSizeDisplay
           serviceCount={serviceCount}
           machineCount={machineCount}
@@ -768,7 +774,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderHeaderSearch: function() {
       var state = this.state;
-      React.render(
+      ReactDOM.render(
         <window.juju.components.HeaderSearch
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)} />,
@@ -790,7 +796,7 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
-      React.render(
+      ReactDOM.render(
         <window.juju.components.Deployment
           services={services.toArray()}
           ecsCommit={ecs.commit.bind(ecs, env)}
@@ -812,7 +818,7 @@ YUI.add('juju-gui', function(Y) {
     _renderAddedServices: function(services) {
       var utils = views.utils;
       var services = this.db.services.toArray();
-      React.render(
+      ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
           visible={services.length > 0}>
@@ -850,7 +856,7 @@ YUI.add('juju-gui', function(Y) {
       var state = this.state;
       var utils = views.utils;
       var charmstore = this.get('charmstore');
-      React.render(
+      ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
           visible={true}
@@ -895,7 +901,7 @@ YUI.add('juju-gui', function(Y) {
       var state = this.state;
       var utils = views.utils;
       var charmstore = this.get('charmstore');
-      React.render(
+      ReactDOM.render(
         <components.Charmbrowser
           charmstoreSearch={charmstore.search.bind(charmstore)}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
@@ -913,12 +919,12 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _emptySectionC: function() {
-      React.unmountComponentAtNode(
+      ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
     },
 
     _renderEnvSwitcher: function() {
-      React.render(
+      ReactDOM.render(
         <components.EnvSwitcher
           app={this}
           env={this.env}

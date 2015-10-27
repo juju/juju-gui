@@ -53,7 +53,8 @@ describe('DeploymentBarNotification', function() {
           change={change} />);
     assert.deepEqual(output,
         <div className="deployment-bar__notification"
-          onClick={output.props.onClick}>
+          onClick={output.props.onClick}
+          ref="deploymentBarNotificationContainer">
           Django added
         </div>);
   });
@@ -69,7 +70,8 @@ describe('DeploymentBarNotification', function() {
     output.props.onClick();
     assert.deepEqual(output,
         <div className="deployment-bar__notification"
-          onClick={output.props.onClick}>
+          onClick={output.props.onClick}
+          ref="deploymentBarNotificationContainer">
           Django added
         </div>);
     assert.equal(window.clearTimeout.callCount, 1);
@@ -85,8 +87,9 @@ describe('DeploymentBarNotification', function() {
     var output = testUtils.renderIntoDocument(
         <juju.components.DeploymentBarNotification
           change={change} />);
-    assert.equal(output.getDOMNode().className,
-        'deployment-bar__notification deployment-bar__notification--visible');
+    assert.isTrue(
+        output.refs.deploymentBarNotificationContainer
+              .classList.contains('deployment-bar__notification--visible'));
     assert.equal(window.clearTimeout.callCount, 1);
     assert.equal(window.setTimeout.callCount, 1);
   });
@@ -98,13 +101,18 @@ describe('DeploymentBarNotification', function() {
     };
     // Have to render to the document here as the shallow renderer does not
     // support componentDidMount or componentWillReceiveProps.
-    var output = testUtils.renderIntoDocument(
+    var node = document.createElement('div');
+    var component = ReactDOM.render(
         <juju.components.DeploymentBarNotification
-          change={change} />);
-    testUtils.Simulate.click(output.getDOMNode());
-    assert.equal(output.getDOMNode().className, 'deployment-bar__notification');
-    output.setProps({change: change});
+          change={change} />, node);
+
+    testUtils.Simulate.click(ReactDOM.findDOMNode(component));
+    var container = component.refs.deploymentBarNotificationContainer;
+    assert.equal(container.classList.length, 1);
+    ReactDOM.render(
+        <juju.components.DeploymentBarNotification
+          change={change} />, node);
     assert.equal(window.setTimeout.callCount, 1);
-    assert.equal(output.getDOMNode().className, 'deployment-bar__notification');
+    assert.equal(container.classList.length, 1);
   });
 });

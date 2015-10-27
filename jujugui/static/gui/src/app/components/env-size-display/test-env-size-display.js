@@ -25,7 +25,7 @@ var renderIntoDocument = testUtils.renderIntoDocument;
 
 function queryComponentSelector(component, selector, all) {
   var queryFn = (all) ? 'querySelectorAll' : 'querySelector';
-  return component.getDOMNode()[queryFn](selector);
+  return ReactDOM.findDOMNode(component)[queryFn](selector);
 }
 
 describe('EnvSizeDisplay', function() {

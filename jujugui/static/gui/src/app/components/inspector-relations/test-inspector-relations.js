@@ -32,7 +32,8 @@ describe('InspectorRelations', function() {
   });
 
   it('can render the onboarding', function() {
-    var getRelationDataForService = sinon.stub.returns([]);
+    var getRelationDataForService = sinon.stub();
+    getRelationDataForService.returns([]);
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
           getRelationDataForService={getRelationDataForService} />);

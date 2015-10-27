@@ -178,6 +178,8 @@ YUI.add('mid-point', function() {
     _generateTagList: function() {
       var tags = [];
       this.tags.forEach(function (tag) {
+        var tagCount = '(' + tag.count + ')';
+
         tags.push(
           <li tabIndex="0" role="button"
             key={tag.name}
@@ -186,7 +188,7 @@ YUI.add('mid-point', function() {
             className="mid-point__tag">
             {tag.name}
             <span className="mid-point__tag-count">
-              ({tag.count})
+              {tagCount}
             </span>
           </li>
         );

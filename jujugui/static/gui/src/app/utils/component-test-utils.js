@@ -50,31 +50,71 @@ var jsTestUtils = {
       shallowRenderer : shallowRenderer.getRenderOutput();
   },
 
-  /**
-    JSON.stringify doesn't print undefined values to the console when trying
-    to inspect an object. This loging wrapper prints the undefined values
-    and also gives you the option to print the functions as well.
+    /**
+      JSON.stringify doesn't print undefined values to the console when trying
+      to inspect an object. This loging wrapper prints the undefined values
+      and also gives you the option to print the functions as well.
 
-    @method log
-    @param {Object} obj The object to stringify
-    @param {Boolean} showFn Whether you want to show the functions.
-  */
-  log: function(obj, showFn) {
-    console.log(
-        JSON.stringify(
-            obj,
-            (k, v) => {
-              if (v === undefined) {
-                return 'undefined';
-              }
-              if (showFn && typeof v === 'function') {
-                return '' + v;
-              }
-              return v;
-           },
-           4
-    ));
-  },
+      @method log
+      @param {Object} obj The object to stringify
+      @param {Boolean} showFn Whether you want to show the functions.
+    */
+    log: function log(obj, showFn) {
+      console.log(jsTestUtils.superStringify(obj, showFn));
+    },
+
+    /**
+      Custom JSON.stringify to properly parse complex objects with cyclical
+      dependencies.
+
+      @method superStringify
+      @param {Object} obj The object to stringify
+      @param {Boolean} showFn Whether you want to show the functions.
+    */
+    superStringify: function superStringify(obj, showFn) {
+      var seen = [];
+      return JSON.stringify(obj, function (k, v) {
+        if (v !== null && typeof v === 'object') {
+          // Handle cyclical dependencies.
+          var seenIndex = seen.indexOf(v);
+          if (seenIndex > -1) {
+            return;
+          }
+          seen.push(v);
+        }
+        if (v === undefined) {
+          return 'undefined';
+        }
+        if (showFn && typeof v === 'function') {
+          return '' + v;
+        }
+        return v;
+      }, 4);
+    },
+
+    /**
+      Takes the two supplied objects, stringifies them and then outputs their
+      diffs to the console.
+
+      @method compare
+      @param {Object} a The source object.
+      @param {Object} b The expected object.
+    */
+    compare: function compare(a, b) {
+      var stringA = jsTestUtils.superStringify(a);
+      var stringB = jsTestUtils.superStringify(b);
+
+      var diff = JsDiff.diffLines(stringA, stringB);
+      diff.forEach(function (part) {
+        if (part.added === true) {
+          console.log('+ ' + part.value);
+        } else if (part.removed === true) {
+          console.log('- ' + part.value);
+        } else {
+          console.log(part.value);
+        }
+      });
+    },
 
   /**
     Constructs either a charm or bundle object, suitable for being used in

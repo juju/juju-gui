@@ -66,7 +66,7 @@ describe('HeaderSearch', function() {
         getAppState={getAppState}
         changeState={changeState} />);
     assert.deepEqual(output,
-      <div className={className}>
+      <div className={className} ref="headerSearchContainer">
         {output.props.children}
       </div>);
   });
@@ -83,7 +83,8 @@ describe('HeaderSearch', function() {
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
         onClick={output.props.children[2].props.onClick}
-        dangerouslySetInnerHTML={{__html: undefined}} />);
+        dangerouslySetInnerHTML={{__html: undefined}}
+        ref="closeButton" />);
   });
 
   it('changes state when the close button is clicked', function() {
@@ -97,7 +98,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />);
-    var close = output.getDOMNode().querySelector('.header-search__close');
+    var close = output.refs.closeButton;
     testUtils.Simulate.click(close);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -117,11 +118,13 @@ describe('HeaderSearch', function() {
         getAppState={getAppState}
         changeState={changeState}
         active={true} />);
-    var input = output.getDOMNode().querySelector('.header-search__input');
+    var input = output.refs.searchInput;
     testUtils.Simulate.focus(input);
     assert.isTrue(
-        output.getDOMNode().className.indexOf('header-search--active') > -1);
-    var input = output.getDOMNode().querySelector('.header-search__input');
+        output.refs.headerSearchContainer
+                   .classList.contains('header-search--active'));
+
+    var input = output.refs.searchInput;
     assert.equal(input.style.getPropertyValue('width'), '160px');
   });
 

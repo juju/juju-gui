@@ -109,7 +109,10 @@ YUI.add('entity-header', function() {
       tags = tags.map(function(tag) {
         return (
           <li key={tag} className="tag-list__item">
-            <a data-id={tag} onClick={this._handleTagClick}>
+            <a
+              data-id={tag}
+              onClick={this._handleTagClick}
+              ref="tagListItem">
               {tag}
             </a>
           </li>
@@ -127,11 +130,17 @@ YUI.add('entity-header', function() {
                 <img src={entity.iconPath} alt={entity.displayName}
                      width="96" className="entity-header__icon"/>
                 <div className="entity-header__details">
-                  <h1 className="entity-header__title" itemProp="name">
+                  <h1
+                    className="entity-header__title"
+                    itemProp="name"
+                    ref="entityHeaderTitle">
                     {entity.displayName}
                   </h1>
                   <p className="entity-header__by">
-                    By <a href={ownerUrl} target="_blank">{entity.owner}</a>
+                    By <a
+                          href={ownerUrl}
+                          target="_blank"
+                          ref="entityHeaderBy">{entity.owner}</a>
                   </p>
                   <ul className="bullets inline">
                     <li className="revisions-item">
@@ -149,7 +158,9 @@ YUI.add('entity-header', function() {
               <div className="four-col last-col no-margin-bottom">
                 <ul className="no-bullets bundle-stats">
                   <li className="bundle-stats__deploys">
-                    <span className="bundle-stats__deploys-count">
+                    <span
+                      className="bundle-stats__deploys-count"
+                      ref="bundleDeploysCount">
                       {entity.downloads}
                     </span>
                     {' '}

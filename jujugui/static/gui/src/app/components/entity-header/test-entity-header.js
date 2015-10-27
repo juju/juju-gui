@@ -49,15 +49,11 @@ describe('EntityHeader', function() {
           pluralize={sinon.spy()} />);
 
     var entity = output.props.entityModel.toEntity();
-    var root = output.getDOMNode();
-    var title = root.querySelector('.entity-header__title');
-    assert.equal(entity.displayName, title.textContent,
+    assert.equal(entity.displayName, output.refs.entityHeaderTitle.textContent,
                  'rendered name does not match entity name');
-    var owner = root.querySelector('.entity-header__by a');
-    assert.equal(entity.owner, owner.textContent,
+    assert.equal(entity.owner, output.refs.entityHeaderBy.textContent,
                  'rendered owner does not match entity owner');
-    var downloads = root.querySelector('.bundle-stats__deploys-count');
-    assert.equal(entity.downloads, downloads.textContent,
+    assert.equal(entity.downloads, output.refs.bundleDeploysCount.textContent,
                  'rendered downloads does not match entity downloads');
   });
 
@@ -71,7 +67,7 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={mockEntity}
         pluralize={sinon.spy()} />);
-    var node = component.getDOMNode().querySelector('.tag-list__item a');
+    var node = component.refs.tagListItem;
     testUtils.Simulate.click(node);
 
     assert.equal(changeState.callCount, 1,

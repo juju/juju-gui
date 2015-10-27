@@ -26,7 +26,7 @@ describe('UnitDetails', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('service-overview', function() { done(); });
+    YUI().use('unit-details', function() { done(); });
   });
 
   beforeEach(function() {
@@ -41,7 +41,13 @@ describe('UnitDetails', function() {
   it('shows the unit properties', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId="abc123"
+        previousComponent="units"
+        unitStatus="error"
         unit={fakeUnit} />);
+
     assert.deepEqual(output.props.children[0],
       <div className="unit-details__properties">
         <p className="unit-details__property">
