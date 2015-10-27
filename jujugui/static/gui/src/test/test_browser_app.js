@@ -733,17 +733,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             renderMachineStub = utils.makeStubMethod(app,
                 '_renderMachineViewPanelView');
             context._cleanups.push(renderMachineStub.reset);
-            app.set('environmentHeader', {});
-            setSelectedStub = utils.makeStubMethod(app.get('environmentHeader'),
-                'setSelectedTab');
-            context._cleanups.push(setSelectedStub.reset);
           }
-
-          it('highlights the machine tab', function() {
-            stubRenderers(this);
-            app._machine();
-            assert.equal(setSelectedStub.callCount(), 1);
-          });
 
           it('renders the machine view panel view', function() {
             stubRenderers(this);

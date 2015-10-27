@@ -415,9 +415,6 @@ YUI.add('subapp-browser', function(Y) {
     */
     _machine: function(metadata) {
       this._renderMachineViewPanelView(this.get('db'), this.get('env'));
-      if (!window.flags || !window.flags.react) {
-        this.get('environmentHeader').setSelectedTab('machines');
-      }
     },
 
     /**
@@ -817,14 +814,6 @@ YUI.add('subapp-browser', function(Y) {
          @type {Function}
        */
       deployService: {},
-
-      /**
-       * @attribute environmentHeader
-       * @default undefined
-       * @type {Object}
-       *
-       */
-      environmentHeader: {},
 
       /**
          A timer for retrying dispatch.

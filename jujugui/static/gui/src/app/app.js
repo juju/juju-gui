@@ -53,7 +53,6 @@ YUI.add('juju-gui', function(Y) {
                                                   widgets.AutodeployExtension,
                                                   Y.juju.Cookies,
                                                   Y.juju.GhostDeployer,
-                                                  Y.juju.EnvironmentHeader,
                                                   Y.Event.EventTracker], {
 
     /*
@@ -718,7 +717,6 @@ YUI.add('juju-gui', function(Y) {
         }
         if (!window.flags || !window.flags.react) {
           this._renderDeployerBarView();
-          this._renderEnvironmentHeaderView();
         }
         this.get('subApps').charmbrowser.on(
             '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -1353,9 +1351,6 @@ YUI.add('juju-gui', function(Y) {
       if (this.deployerBar) {
         this.deployerBar.destroy();
       }
-      if (this.environmentHeader) {
-        this.destroyEnvironmentHeader();
-      }
       if (this._keybindings) {
         this._keybindings.detach();
       }
@@ -1826,11 +1821,11 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderComponents: function() {
       // Update the react views on database change
+      this._renderEnvSizeDisplay(
+        this.db.services.size(),
+        this.db.machines.size()
+      );
       if (window.flags && window.flags.react) {
-        this._renderEnvSizeDisplay(
-          this.db.services.size(),
-          this.db.machines.size()
-        );
         this._renderEnvSwitcher();
         this._renderHeaderSearch();
         this._renderDeployment();
@@ -2123,7 +2118,6 @@ YUI.add('juju-gui', function(Y) {
     'help-dropdown',
     'user-dropdown',
     'create-machine-view',
-    'environment-header',
     'machine-token',
     'juju-serviceunit-token',
     'machine-view-panel',
@@ -2162,7 +2156,6 @@ YUI.add('juju-gui', function(Y) {
     'ghost-deployer-extension',
     'juju-view-bundle',
     'deployer-bar',
-    'environment-header-extension',
     'local-charm-import-helpers',
     'environment-change-set',
     // This must stay down here else it breaks the merge-files by being put

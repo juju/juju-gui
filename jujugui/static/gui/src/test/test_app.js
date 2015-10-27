@@ -366,23 +366,6 @@ function injectData(app, data) {
           'message').indexOf('ctrl+-') !== -1);
     });
 
-    it('renders the environment header', function(done) {
-      container.appendChild(Y.Node.create(
-          '<div id="environment-header"></div>'));
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app.after('ready', function() {
-        assert.isObject(app.environmentHeader);
-        assert.equal(container.one('#environment-header').hasClass(
-            'environment-header'), true);
-        done();
-      });
-    });
-
     it('renders the user dropdown', function(done) {
       container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
       constructAppInstance({
