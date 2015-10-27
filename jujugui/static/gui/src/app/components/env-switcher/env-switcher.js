@@ -133,16 +133,16 @@ YUI.add('env-switcher', function() {
       // number at the end. Users will be able to customize their env names
       // once there is UX for it.
       var envName = 'new-env-' + this.state.envList.length;
-      var baseTemplate = 'admin/gui';
       // Generates an alphanumeric string
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();
 
       var srvCb = function(servers) {
         if (servers && servers.length > 0 && servers[0].path) {
-          var path = servers[0].path;
+          var serverName = servers[0].path;
+          var baseTemplate = serverName;
           jem.newEnvironment(
-            envOwnerName, envName, baseTemplate, path, password,
+            envOwnerName, envName, baseTemplate, serverName, password,
             this.createEnvCallback, this.jemFailHandler);
         } else {
           this.jemFailHandler(
