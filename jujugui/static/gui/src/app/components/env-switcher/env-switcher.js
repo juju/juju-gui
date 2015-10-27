@@ -138,10 +138,20 @@ YUI.add('env-switcher', function() {
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();
 
+      var srvCb = function(servers) {
+        if (servers && servers.length > 0 && servers[0].path) {
+          var path = servers[0].path;
+          jem.newEnvironment(
+            envOwnerName, envName, baseTemplate, path, password,
+            this.createEnvCallback, this.jemFailHandler);
+        } else {
+          this.jemFailHandler(
+            'Cannot create a new environment: No state servers found.');
+        }
+      };
+
       if (jem) {
-        jem.newEnvironment(
-          envOwnerName, envName, baseTemplate, password,
-          this.createEnvCallback, this.jemFailHandler);
+        jem.listServers(srvCb.bind(this), this.jemFailure);
       } else {
         this.props.env.createEnv(
             envName, 'user-admin', this.createEnvCallback);

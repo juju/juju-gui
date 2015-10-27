@@ -179,10 +179,15 @@ describe('EnvSwitcher', function() {
       password: 'buffalo'
     }];
     var listEnvs = sinon.stub();
+    var listSrv = sinon.stub();
     var newEnv = sinon.stub();
+
+    listSrv.callsArgWith(0, [{path: 'stateserver'}]);
+
     var jem = {
-      newEnvironment: newEnv,
-      listEnvironments: listEnvs
+      listEnvironments: listEnvs,
+      listServers: listSrv,
+      newEnvironment: newEnv
     };
     var switchEnv = sinon.stub();
     var app = {
@@ -201,10 +206,11 @@ describe('EnvSwitcher', function() {
     assert.equal(newEnv.args[0][0], 'admin');
     assert.equal(newEnv.args[0][1], 'new-env-1');
     assert.equal(newEnv.args[0][2], 'admin/gui');
-    assert.closeTo(newEnv.args[0][3].length, 31, 2);
+    assert.equal(newEnv.args[0][3], 'stateserver');
+    assert.closeTo(newEnv.args[0][4].length, 31, 2);
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {uuid: '123abc'};
-    newEnv.args[0][4](createdEnv);
+    newEnv.args[0][5](createdEnv);
     // After creating an env it should re-list them.
     assert.equal(listEnvs.callCount, 2);
     // Then switch to the new one.
