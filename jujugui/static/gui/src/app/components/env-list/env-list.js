@@ -69,6 +69,11 @@ YUI.add('env-list', function() {
           <ul className="env-list">
             {this.generateEnvList()}
           </ul>
+          <input
+            type="text"
+            name="envName"
+            placeholder="New environment name"
+            className="env-list__input" />
           <juju.components.ButtonRow buttons={actionButtons} />
         </juju.components.Panel>
       );
