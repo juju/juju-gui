@@ -137,6 +137,9 @@ YUI.add('env-switcher', function() {
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();
 
+      // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
+      // and template selection in the GUI, this code should be updated to not
+      // select template based on state server.
       var srvCb = function(servers) {
         if (servers && servers.length > 0 && servers[0].path) {
           var serverName = servers[0].path;
