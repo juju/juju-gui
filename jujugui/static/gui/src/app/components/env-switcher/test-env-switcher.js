@@ -182,7 +182,7 @@ describe('EnvSwitcher', function() {
     var listSrv = sinon.stub();
     var newEnv = sinon.stub();
 
-    listSrv.callsArgWith(0, [{path: 'admin/gui'}]);
+    listSrv.callsArgWith(0, [{path: 'admin/foo'}]);
 
     var jem = {
       listEnvironments: listEnvs,
@@ -205,8 +205,8 @@ describe('EnvSwitcher', function() {
     assert.equal(newEnv.callCount, 1);
     assert.equal(newEnv.args[0][0], 'admin');
     assert.equal(newEnv.args[0][1], 'new-env-1');
-    assert.equal(newEnv.args[0][2], 'admin/gui');
-    assert.equal(newEnv.args[0][3], 'admin/gui');
+    assert.equal(newEnv.args[0][2], 'admin/foo');
+    assert.equal(newEnv.args[0][3], 'admin/foo');
     assert.closeTo(newEnv.args[0][4].length, 31, 2);
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {uuid: '123abc'};
