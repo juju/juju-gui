@@ -25,9 +25,20 @@ describe('Relation endpoints logic', function() {
   var Y, juju, utils, db, app, models, sample_endpoints, sample_env, env, ecs;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'array-extras', 'io', 'json-parse', 'juju-tests-utils'], function(Y) {
+    Y = YUI(GlobalConfig).use(['array-extras',
+                               'io',
+                               'json-parse',
+                               'juju-tests-utils',
+                               'juju-views',
+                               'juju-models',
+                               'juju-gui',
+                               'juju-tests-utils',
+                               'juju-controllers',
+                               'environment-change-set'],
+    function(Y) {
       utils = Y.namespace('juju-tests.utils');
+      juju = Y.namespace('juju');
+      models = Y.namespace('juju.models');
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
       done();
@@ -35,26 +46,15 @@ describe('Relation endpoints logic', function() {
   });
 
 
-  beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-views',
-                               'juju-models',
-                               'juju-gui',
-                               'juju-tests-utils',
-                               'juju-controllers',
-                               'environment-change-set'],
-    function(Y) {
-      juju = Y.namespace('juju');
-      models = Y.namespace('juju.models');
-      var conn = new utils.SocketStub();
-      ecs = new juju.EnvironmentChangeSet();
-      env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
-      env.connect();
-      app = new Y.juju.App({env: env, consoleEnabled: true});
-      app.navigate = function() { return true; };
-      app.showView(new Y.View());
-      db = app.db;
-      done();
-    });
+  beforeEach(function() {
+    var conn = new utils.SocketStub();
+    ecs = new juju.EnvironmentChangeSet();
+    env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
+    env.connect();
+    app = new Y.juju.App({env: env, consoleEnabled: true});
+    app.navigate = function() { return true; };
+    app.showView(new Y.View());
+    db = app.db;
   });
 
   afterEach(function(done) {
@@ -172,7 +172,7 @@ describe('Relation endpoints logic', function() {
 describe('Endpoints map', function() {
   var Y, juju, models, controller, data;
 
-  beforeEach(function(done) {
+  before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
                                'juju-tests-utils',
                                'juju-endpoints-controller',
@@ -180,10 +180,13 @@ describe('Endpoints map', function() {
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
-      var EndpointsController = Y.namespace('juju.EndpointsController');
-      controller = new EndpointsController();
       done();
     });
+  });
+
+  beforeEach(function() {
+    var EndpointsController = Y.namespace('juju.EndpointsController');
+    controller = new EndpointsController();
   });
 
   afterEach(function(done) {

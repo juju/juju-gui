@@ -88,20 +88,6 @@ describe('UI State object', function() {
       assert.deepEqual(state.filter.get('text'), '');
       assert.deepEqual(state.filter.get('type'), []);
     });
-
-    it('updates the filter when a search param is provided', function() {
-      var change = {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: {
-            search: {
-              text: 'apache'
-            }
-          }}};
-      assert.equal(state.filter.get('text'), '');
-      state.generateUrl(change);
-      assert.equal(state.filter.get('text'), 'apache');
-    });
   });
 
   describe('_stripViewmode', function() {
@@ -237,7 +223,14 @@ describe('UI State object', function() {
       });
 
       it('clears its flash storage after dispatch', function() {
-        var newState = { sectionA: {}, sectionB: {}, sectionC: {} };
+        var newState = {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: {}
+          },
+          sectionB: {},
+          sectionC: {}
+        };
         state.set('flash', {foo: 'bar'});
         state.dispatch(newState);
         assert.deepEqual(undefined, state.get('flash'));
@@ -275,10 +268,6 @@ describe('UI State object', function() {
   });
 
   describe('url part parsing', function() {
-
-    beforeEach(function() { window.flags = { react: true }; });
-    afterEach(function() { window.flags = null; });
-
     describe('_parseInspectorUrl', function() {
       var flash = {
         file: 'foo',
@@ -390,10 +379,6 @@ describe('UI State object', function() {
   });
 
   describe('parseRequest', function() {
-
-    beforeEach(function() { window.flags = { react: true }; });
-    afterEach(function() { window.flags = null; });
-
     var urls = {
       // Old viewmode urls.
       '/sidebar/': { sectionA: {}, sectionB: {}, sectionC: {} },
@@ -886,10 +871,6 @@ describe('UI State object', function() {
   });
 
   describe('generateUrl', function() {
-
-    beforeEach(function() { window.flags = { react: true }; });
-    afterEach(function() { window.flags = null; });
-
     var defaultState = { sectionA: {}, sectionB: {}, sectionC: {} };
     var stateObj = {};
     var states = [{
