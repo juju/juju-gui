@@ -170,7 +170,7 @@ describe('Relation endpoints logic', function() {
 
 
 describe('Endpoints map', function() {
-  var Y, juju, models, controller, data;
+  var Y, juju, models, controller, data, EndpointsController, charm;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
@@ -180,23 +180,24 @@ describe('Endpoints map', function() {
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
+      EndpointsController = Y.namespace('juju.EndpointsController');
       done();
     });
   });
 
   beforeEach(function() {
-    var EndpointsController = Y.namespace('juju.EndpointsController');
     controller = new EndpointsController();
+    charm = new models.Charm({id: 'cs:precise/wordpress-2'});
   });
 
   afterEach(function(done) {
     controller.destroy();
+    charm.destroy();
     done();
   });
 
   it('should add a service to the map', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       provides: {
         url: {
@@ -244,12 +245,10 @@ describe('Endpoints map', function() {
         }
       ]
     }});
-    charm.destroy();
   });
 
   it('should add a service to the map, requires only', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       requires: {
         db: {
@@ -277,12 +276,10 @@ describe('Endpoints map', function() {
         }
       ]
     }});
-    charm.destroy();
   });
 
   it('should add a service to the map, provides only', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       provides: {
         url: {
@@ -309,18 +306,15 @@ describe('Endpoints map', function() {
           scope: 'container'
         }
       ] }});
-    charm.destroy();
   });
 
   it('should add a service to the map, neither provides nor requires',
      function() {
        controller.endpointsMap = {};
-       var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
        controller.addServiceToEndpointsMap('wordpress', charm);
        controller.endpointsMap.should.eql({wordpress: {
          requires: [],
          provides: []}});
-       charm.destroy();
      });
 
   it('should reset the map', function() {
@@ -463,7 +457,7 @@ describe('Endpoints map handlers', function() {
 
       });
 
-  it('should update endpoints map when a service\'s charm changes', function() {
+  it('should update endpoints map when a service\'s charm changes', function(done) {
     var service_name = 'wordpress';
     var charm_id = 'cs:precise/wordpress-2';
     app.db.charms.add({id: charm_id});
@@ -501,6 +495,7 @@ describe('Endpoints map handlers', function() {
             name: 'url',
             'interface': 'http'
           }]}});
+      done();
     });
   });
 
