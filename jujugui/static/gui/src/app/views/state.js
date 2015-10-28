@@ -177,11 +177,7 @@ YUI.add('juju-app-state', function(Y) {
       var component = state.component;
       // The default component is the charmbrowser.
       if (!component) {
-        if (window.flags && window.flags.react) {
-          component = 'services';
-        } else {
-          component = 'charmbrowser';
-        }
+        component = 'services';
       }
       this.get('dispatchers').sectionA[component](state.metadata);
     },
@@ -275,13 +271,6 @@ YUI.add('juju-app-state', function(Y) {
         if (id) {
           id = id.replace(/~charmers\//, '');
         }
-        // Setup the search status and filters based on metadata.search
-        if (!window.flags || !window.flags.react) {
-          if (Y.Lang.isValue(metadata.search)) {
-            search = true;
-            this.filter.update(metadata.search);
-          }
-        }
 
         // If metadata contains any flash data, store it.
         if (metadata.flash) {
@@ -292,26 +281,21 @@ YUI.add('juju-app-state', function(Y) {
         // because no state parameters are required.
         if (component === 'charmbrowser') {
           hash = metadata.hash || '';
-          if (id && (!window.flags || !window.flags.react)) {
-            urlParts.push(id);
+          var activeComponent = metadata.activeComponent;
+          if (activeComponent === 'search-results') {
+            queryValues.search = metadata.search;
+            if (metadata.tags) {
+              queryValues.tags = metadata.tags;
+            }
           }
-          if (window.flags && window.flags.react) {
-            var activeComponent = metadata.activeComponent;
-            if (activeComponent === 'search-results') {
-              queryValues.search = metadata.search;
-              if (metadata.tags) {
-                queryValues.tags = metadata.tags;
-              }
-            }
-            if (activeComponent === 'mid-point') {
-              queryValues.midpoint = '';
-            }
-            if (activeComponent === 'entity-details') {
-              queryValues.store = id || '';
-            }
-            if (activeComponent === 'store') {
-              queryValues.store = '';
-            }
+          if (activeComponent === 'mid-point') {
+            queryValues.midpoint = '';
+          }
+          if (activeComponent === 'entity-details') {
+            queryValues.store = id || '';
+          }
+          if (activeComponent === 'store') {
+            queryValues.store = '';
           }
         } else {
           if (component) {
@@ -328,14 +312,7 @@ YUI.add('juju-app-state', function(Y) {
               urlParts.push(metadata.unitStatus);
             }
             if (metadata.unit) {
-              if (!window.flags || !window.flags.react) {
-                // Using the new activeComponent to indicate what subcomponent
-                // should be shown this causes conflicts when defining a unit
-                // id with the key 'unit'.
-                urlParts.push('unit/' + metadata.unit);
-              } else {
-                urlParts.push(metadata.unit);
-              }
+              urlParts.push(metadata.unit);
             }
             if (metadata.charm) {
               urlParts.push('charm');
@@ -365,29 +342,21 @@ YUI.add('juju-app-state', function(Y) {
         url = '/' + urlParts.join('/') + '/';
       }
       // Add the query string to the end of the url.
-      if (!window.flags || !window.flags.react) {
-        if (search) {
-          url = url.replace(/\/$/, '');
-          url += '?' + this.filter.genQueryString();
-        }
-      }
-      if (window.flags && window.flags.react) {
-        if (Object.keys(queryValues).length > 0) {
-          url = url.replace(/\/$/, '');
-          var keys = Object.keys(queryValues);
-          if (keys.length > 0) {
-            url += '?';
-            keys.forEach((key, i) => {
-              var value = queryValues[key];
-              if (i > 0) {
-                url += '&';
-              }
-              url += key;
-              if (value && value !== '') {
-                url += '=' + value;
-              }
-            });
-          }
+      if (Object.keys(queryValues).length > 0) {
+        url = url.replace(/\/$/, '');
+        var keys = Object.keys(queryValues);
+        if (keys.length > 0) {
+          url += '?';
+          keys.forEach((key, i) => {
+            var value = queryValues[key];
+            if (i > 0) {
+              url += '&';
+            }
+            url += key;
+            if (value && value !== '') {
+              url += '=' + value;
+            }
+          });
         }
       }
       // Add the hash to the end of the url.
@@ -507,10 +476,7 @@ YUI.add('juju-app-state', function(Y) {
         } else if (part.length > 0) {
           // If it's not an inspector or machine and it's more than 0 characters
           // then it's a charm url.
-          var section = 'sectionA';
-          if (window.flags && window.flags.react) {
-            section = 'sectionC';
-          }
+          var section = 'sectionC';
           state[section] = this._addToSection({
             component: 'charmbrowser',
             metadata: this._parseCharmUrl(part, hash)
@@ -518,12 +484,6 @@ YUI.add('juju-app-state', function(Y) {
         }
       }, this);
       // There's always a query component, if it reflects a search.
-      if (!window.flags && window.flags.react) {
-        if (query && (query.text || query.categories)) {
-          // `state` is passed in by reference and modified in place.
-          this._addQueryState(state, query);
-        }
-      }
       if (query) {
         // midpoint doesn't typically have a value, just the key existing.
         if (query.midpoint !== undefined) {
@@ -583,17 +543,10 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} query The query param object.
     */
     _addQueryState: function(state, query) {
-      if (!window.flags || !window.flags.react) {
-        Y.namespace.call(state, 'sectionA.metadata.search');
-        // This gets passed the entire query even fields which are not search
-        // related.
-        state.sectionA.metadata.search = query;
-      } else {
-        Y.namespace.call(state, 'sectionC.metadata.search');
-        // This gets passed the entire query even fields which are not search
-        // related.
-        state.sectionC.metadata.search = query;
-      }
+      Y.namespace.call(state, 'sectionC.metadata.search');
+      // This gets passed the entire query even fields which are not search
+      // related.
+      state.sectionC.metadata.search = query;
 
       this.filter.update(query);
     },
@@ -654,15 +607,9 @@ YUI.add('juju-app-state', function(Y) {
       } else {
         // The first index is the service id except in the above cases.
         metadata.id = parts[0];
-        if (!window.flags || !window.flags.react) {
-          if (parts[1]) {
-            metadata[parts[1]] = parts[2] || true;
-          }
-        } else {
-          if (parts[1]) {
-            metadata.activeComponent = parts[1];
-            metadata[parts[1]] = parts[2] || true;
-          }
+        if (parts[1]) {
+          metadata.activeComponent = parts[1];
+          metadata[parts[1]] = parts[2] || true;
         }
       }
       metadata.flash = this.get('flash');
