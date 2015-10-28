@@ -169,7 +169,10 @@ describe('EnvSwitcher', function() {
     ]);
   });
 
-  it('can call to create a new env (JEM)', function() {
+  // To fully test the new env creation it has to be tested accepting a custom
+  // name as well. So there are two tests which call this method passing it
+  // different data.
+  function createNewJEMEnvTest(envName) {
     // To create a new environment you click a button in a sub component. this
     // excersizes the method that gets passed down.
     var envs = [{
@@ -201,10 +204,14 @@ describe('EnvSwitcher', function() {
     instance.componentDidMount();
     listEnvs.args[0][0](envs);
     // Previous code is to set up the state of the component.
-    instance.createNewEnv();
+    instance.createNewEnv(envName);
     assert.equal(newEnv.callCount, 1);
     assert.equal(newEnv.args[0][0], 'admin');
-    assert.equal(newEnv.args[0][1], 'new-env-1');
+    // First we check that the env name is not undefined.
+    assert.notEqual(newEnv.args[0][1], undefined);
+    // Then we check to see if it matches either the name passed in, or what
+    // it shoudl generate if it was passed in.
+    assert.equal(newEnv.args[0][1], envName || 'new-env-1');
     assert.equal(newEnv.args[0][2], 'admin/foo');
     assert.equal(newEnv.args[0][3], 'admin/foo');
     assert.closeTo(newEnv.args[0][4].length, 31, 2);
@@ -217,6 +224,14 @@ describe('EnvSwitcher', function() {
     envs.push(createdEnv);
     listEnvs.args[1][0](envs);
     assert.equal(switchEnv.callCount, 1);
+  }
+
+  it('can call to create a new env (JEM)', function() {
+    createNewJEMEnvTest();
+  });
+
+  it('can use a custom env name if provided (JEM)', function() {
+    createNewJEMEnvTest('custom-env-name');
   });
 
   it('can call to create a new env (JES)', function() {
