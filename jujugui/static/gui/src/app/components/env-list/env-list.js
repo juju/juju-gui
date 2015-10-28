@@ -30,7 +30,8 @@ YUI.add('env-list', function() {
 
     getInitialState: function() {
         return {
-          envs: this.props.envs
+          envs: this.props.envs,
+          envName: '',
         };
     },
 
@@ -55,11 +56,32 @@ YUI.add('env-list', function() {
       return envs;
     },
 
+    /**
+      Environment name input change handler. Sets the envName state value
+      with the value of the input.
+
+      @method envNameChange
+      @param {Object} e The change event.
+    */
+    envNameChange: function(e) {
+      this.setState({envName: e.target.value});
+    },
+
+    /**
+      Calls the createNewEnv prop passing it the current envName state value.
+
+      @method createNewEnv
+    */
+    createNewEnv: function() {
+      var name = this.state.envName;
+      this.props.createNewEnv(this.state.envName);
+    },
+
     render: function() {
       var actionButtons = [{
         title: 'New',
         type: 'confirm',
-        action: this.props.createNewEnv
+        action: this.createNewEnv
       }];
 
       return (
@@ -73,6 +95,7 @@ YUI.add('env-list', function() {
             type="text"
             name="envName"
             placeholder="New environment name"
+            onChange={this.envNameChange}
             className="env-list__input" />
           <juju.components.ButtonRow buttons={actionButtons} />
         </juju.components.Panel>
