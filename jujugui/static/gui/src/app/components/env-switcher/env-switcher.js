@@ -121,7 +121,7 @@ YUI.add('env-switcher', function() {
 
       @method createNewEnv
     */
-    createNewEnv: function() {
+    createNewEnv: function(customEnvName) {
       this.setState({showEnvList: false});
       var jem = this.props.jem;
       var envOwnerName = 'admin';
@@ -129,10 +129,8 @@ YUI.add('env-switcher', function() {
       if (auth && auth.user && auth.user.name) {
         envOwnerName = auth.user.name;
       }
-      // XXX For now we will create a new env with an auto-incrementing
-      // number at the end. Users will be able to customize their env names
-      // once there is UX for it.
-      var envName = 'new-env-' + this.state.envList.length;
+      // Use the custom provided name or fall back to an auto-incremented one.
+      var envName = customEnvName || 'new-env-' + this.state.envList.length;
       // Generates an alphanumeric string
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();

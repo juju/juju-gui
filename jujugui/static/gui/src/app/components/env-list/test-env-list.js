@@ -65,15 +65,22 @@ describe('EnvList', function() {
     assert.equal(handleEnvClick.callCount, 1);
   });
 
-  it('createNewEnv prop passed to buttonRow', function() {
+  it('createNewEnv prop passed to buttonRow passes envName', function() {
     var envs = [{ uuid: 'abc123', name: 'the name' }];
     var createNewEnv = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         envs={envs}
         createNewEnv={createNewEnv} />);
-    output.props.children[1].props.buttons[0].action();
+    // Set the new environment name
+    component.refs.envName.value = 'new env name';
+    testUtils.Simulate.change(component.refs.envName);
+
+    testUtils.Simulate.click(
+        ReactDOM.findDOMNode(component).querySelector('.generic-button'));
+
     assert.equal(createNewEnv.callCount, 1);
+    assert.equal(createNewEnv.args[0][0], 'new env name');
   });
 
 });

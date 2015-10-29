@@ -1,0 +1,26 @@
+.env-list-panel {
+    box-sizing: border-box;
+    width: 275px;
+    padding: 20px;
+
+    .env-list {
+        &__input {
+            box-sizing: border-box;
+            padding: 10px 10px 8px 10px;
+            margin: 10px 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        &__environment {
+            list-style-type: none;
+            padding: 10px 10px;
+            margin-top: 10px
+        }
+
+        &__environment:hover {
+            background-color: $light-grey;
+            cursor: pointer;
+        }
+    }
+}

@@ -9,18 +9,3 @@
       cursor: pointer;
     }
 }
-
-.env-list {
-    width: 275px;
-
-    &__environment {
-        list-style-type: none;
-        padding: 20px;
-        margin-top: 10px
-    }
-
-    &__environment:hover {
-        background-color: $light-grey;
-        cursor: pointer;
-    }
-}
