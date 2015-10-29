@@ -187,12 +187,6 @@ YUI.add('subapp-browser', function(Y) {
           empty: this.emptySectionB.bind(this)
         }
       };
-      dispatchers.sectionA = {
-        charmbrowser: this._charmBrowserDispatcher.bind(this),
-        inspector: this._inspectorDispatcher.bind(this),
-        empty: this.emptySectionA.bind(this),
-        services: this._addedServicesDispatcher.bind(this)
-      };
       this.state.set(
         'dispatchers',
         // If there were any existing dispatchers then merge in ones for
