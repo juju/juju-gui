@@ -133,15 +133,28 @@ YUI.add('env-switcher', function() {
       // number at the end. Users will be able to customize their env names
       // once there is UX for it.
       var envName = 'new-env-' + this.state.envList.length;
-      var baseTemplate = 'admin/gui';
       // Generates an alphanumeric string
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();
 
+      // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
+      // and template selection in the GUI, this code should be updated to not
+      // select template based on state server.
+      var srvCb = function(servers) {
+        if (servers && servers.length > 0 && servers[0].path) {
+          var serverName = servers[0].path;
+          var baseTemplate = serverName;
+          jem.newEnvironment(
+            envOwnerName, envName, baseTemplate, serverName, password,
+            this.createEnvCallback, this.jemFailHandler);
+        } else {
+          this.jemFailHandler(
+            'Cannot create a new environment: No state servers found.');
+        }
+      };
+
       if (jem) {
-        jem.newEnvironment(
-          envOwnerName, envName, baseTemplate, password,
-          this.createEnvCallback, this.jemFailHandler);
+        jem.listServers(srvCb.bind(this), this.jemFailure);
       } else {
         this.props.env.createEnv(
             envName, 'user-admin', this.createEnvCallback);

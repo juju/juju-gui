@@ -136,44 +136,18 @@ describe('jujulib', function() {
             });
           var xhr = _makeXHRRequest({});
           success(xhr);
-        },
-        sendGetRequest: function(path, success, failure) {
-          var xhr = _makeXHRRequest({"state-servers": [{path: "foo"}]});
-          success(xhr);
         }
       };
 
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.newEnvironment('rose', 'fnord', 'rose/template', 'password', function(data) {
-        done();
-      }, function(error) {
-        assert.fail('Failure callback should not have been called.');
-        done();
-      });
-    });
-
-    it('handles no state servers being available when creating a new environment',
-        function(done) {
-      var err = 'Cannot create a new environment: No state servers found.';
-      var bakery = {
-        sendPostRequest: function(path, data, success, failure) {
-          assert.equal(path, 'http://example.com/v1/env/rose');
-          failure(err);
-        },
-        sendGetRequest: function(path, success, failure) {
-          var xhr = _makeXHRRequest({"state-servers": []});
-          success(xhr);
+      env.newEnvironment('rose', 'fnord', 'rose/template', 'foo', 'password',
+        function(data) {
+          done();
+        }, function(error) {
+          assert.fail('Failure callback should not have been called.');
+          done();
         }
-      };
-
-      env = new window.jujulib.environment('http://example.com', bakery);
-      env.newEnvironment('rose', 'fnord', 'rose/template', 'password', function(data) {
-        done();
-        assert.fail('Success callback should not have been called.');
-      }, function(error) {
-        assert.equal(error, err)
-        done();
-      });
+      );
     });
 
     it('handles errors creating a new environment', function(done) {
@@ -183,20 +157,18 @@ describe('jujulib', function() {
           assert.equal(path, 'http://example.com/v1/env/rose');
           failure(err);
         },
-        sendGetRequest: function(path, success, failure) {
-          var xhr = _makeXHRRequest({"state-servers": [{path: "foo"}]});
-          success(xhr);
-        }
       };
 
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.newEnvironment('rose', 'fnord', 'rose/template', 'password', function(data) {
-        done();
-        assert.fail('Success callback should not have been called.');
-      }, function(error) {
-        assert.equal(error, err)
-        done();
-      });
+      env.newEnvironment('rose', 'fnord', 'rose/template', 'foo', 'password',
+        function(data) {
+          done();
+          assert.fail('Success callback should not have been called.');
+        }, function(error) {
+          assert.equal(error, err)
+          done();
+        }
+      );
     });
   });
 

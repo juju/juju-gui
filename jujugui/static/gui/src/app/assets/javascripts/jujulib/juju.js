@@ -6,8 +6,6 @@ XXX jcssackett 2015-09-18: Licensing for juju.js? It's different then the
 licensing for the GUI.
 */
 
-'use strict';
-
 var module = module;
 
 /**
@@ -18,6 +16,7 @@ var module = module;
  * manager (IdM).
  */
 (function (exports) {
+  'use strict';
 
   /**
    * Environment object for jujulib.
@@ -120,6 +119,8 @@ var module = module;
    * @param envName {String} The name of the given environment.
    * @param baseTemplate {String} The name of the config template to be used
    *     for creating the environment.
+   * @param stateServer {String} The entityPath name of the state server to
+   *     create the environment with.
    * @param password {String} The password for the new environment.
    * @param success {function} An optional callback to be called on success.
    *     Should receive a 200 OK response as its only object.
@@ -127,24 +128,16 @@ var module = module;
    *     take an error message as its one parameter.
    */
   environment.prototype.newEnvironment = function (
-      envOwnerName, envName, baseTemplate, password, success, failure) {
+      envOwnerName, envName, baseTemplate, stateServer, password,
+      success, failure) {
     var body = {
       name: envName,
       password: password,
-      templates: [baseTemplate]
+      templates: [baseTemplate],
+      'state-server': stateServer
     };
     var url = [this.jemUrl, 'env', envOwnerName].join('/');
-    var _newEnvironment = function(servers) {
-      var path;
-      if (servers && servers.length > 0 && servers[0].path) {
-        path = servers[0].path;
-      } else {
-        failure('Cannot create a new environment: No state servers found.');
-      }
-      body['state-server'] = path;
-      this._makeRequest(url, 'POST', body, success, failure);
-    };
-    this.listServers(_newEnvironment.bind(this), failure);
+    this._makeRequest(url, 'POST', body, success, failure);
   };
 
   /**
