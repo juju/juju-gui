@@ -2299,8 +2299,8 @@ describe('test_model.js', function() {
         django.set('environmentConfig', {python: 'snake', debug: 'foo'});
         django.set('_dirtyFields', ['debug']);
         django.updateConfig({debug: 'bar'});
-        assert.deepEqual(django.get('_conflictedFields'), ['debug']);
-        assert.deepEqual(django.get('config'), {python: 'snake', debug: 'foo'});
+        assert.deepEqual(django.get('_conflictedFields'), []);
+        assert.deepEqual(django.get('config'), {python: 'snake', debug: 'bar'});
         assert.deepEqual(
             django.get('environmentConfig'), {python: 'snake', debug: 'bar'});
       });

@@ -1614,7 +1614,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {
           ServiceName: 'mysql',
           Options: {
-            'cfg-key': 'cfg-val'
+            'cfg-key': 'cfg-val',
+            'unchanged': 'bar'
           }
         },
         Request: 'ServiceSet',
@@ -1659,7 +1660,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles successful set config', function() {
       var dataReturned;
       var oldConfig = {key1: 'value1', key2: 'value2', key3: 'value3'};
-      var newConfig = {key1: 'value1', key2: 'CHANGED!', key3: 'value3'};
+      var newConfig = {key2: 'CHANGED!'};
       env.set_config('django', newConfig, null, oldConfig, function(evt) {
         dataReturned = evt;
       }, {immediate: true});
@@ -1676,7 +1677,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(
           oldConfig, {key1: 'value1', key2: 'value2', key3: 'value3'});
       assert.deepEqual(
-          newConfig, {key1: 'value1', key2: 'CHANGED!', key3: 'value3'});
+          newConfig, {key2: 'CHANGED!'});
     });
 
     it('can destroy a service', function() {

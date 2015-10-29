@@ -41,10 +41,11 @@ describe('Relation endpoints logic', function() {
       models = Y.namespace('juju.models');
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
+      var _renderComponents = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
-
 
   beforeEach(function() {
     var conn = new utils.SocketStub();
@@ -344,6 +345,8 @@ describe('Endpoints map handlers', function() {
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
       models = Y.namespace('juju.models');
+      var _renderComponents = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
@@ -364,6 +367,9 @@ describe('Endpoints map handlers', function() {
     var _renderDeployerBarView = utils.makeStubMethod(
         Y.juju.App.prototype, '_renderDeployerBarView');
     this._cleanups.push(_renderDeployerBarView.reset);
+    var _renderComponents = utils.makeStubMethod(
+        Y.juju.App.prototype, '_renderComponents');
+    this._cleanups.push(_renderComponents.reset);
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
@@ -457,7 +463,7 @@ describe('Endpoints map handlers', function() {
 
       });
 
-  it('should update endpoints map when a service\'s charm changes', function(done) {
+  it('should update endpoints map when a service\'s charm changes', function() {
     var service_name = 'wordpress';
     var charm_id = 'cs:precise/wordpress-2';
     app.db.charms.add({id: charm_id});
@@ -495,7 +501,6 @@ describe('Endpoints map handlers', function() {
             name: 'url',
             'interface': 'http'
           }]}});
-      done();
     });
   });
 
@@ -545,6 +550,9 @@ describe('Service config handlers', function() {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
+
+      var _renderComponents = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
