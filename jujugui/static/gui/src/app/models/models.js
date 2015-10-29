@@ -274,7 +274,7 @@ YUI.add('juju-models', function(Y) {
       @method removeRelations
       @param {String} relationId The id of the relation to remove.
     */
-    removeRelations: function(relationId, db) {
+    removeRelations: function(relationId) {
       var relations = this.get('relations');
       relations.some(function(rel) {
         if (rel.get('relation_id') === relationId) {
@@ -298,6 +298,9 @@ YUI.add('juju-models', function(Y) {
       if (!endpoints || endpoints.length !== 2) {
         return;
       }
+      // Endpoints do not differentiate which end which service is connected to,
+      // this returns the service at the oppostite end from the end that we
+      // check.
       if (endpoints[0][0] === this.get('id')) {
         return db.services.getById(endpoints[1][0]);
       }
@@ -1117,7 +1120,6 @@ YUI.add('juju-models', function(Y) {
      * delta, ensuring that they're up to date.
      */
     update_service_unit_aggregates: function(service) {
-      // TODO add units to subordinates
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
           Y.Object.values(aggregate[0]), 0, function(a, b) {return a + b;});

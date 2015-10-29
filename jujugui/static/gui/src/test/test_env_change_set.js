@@ -60,6 +60,8 @@ describe('Environment Change Set', function() {
 
   after(function() {
     window.flags = {};
+    dbObj.reset();
+    dbObj.destroy();
   });
 
   describe('ECS methods', function() {
@@ -1174,9 +1176,7 @@ describe('Environment Change Set', function() {
           _idMap: {},
           fire: testUtils.makeStubFunction()
         };
-        db.services = {
-          getById: testUtils.makeStubFunction()
-        };
+        db.services.getById = testUtils.makeStubFunction();
         var unit = {
           id: '756482$/3',
           number: '3'
@@ -1202,10 +1202,6 @@ describe('Environment Change Set', function() {
                            'service name not set properly');
         assert.equal(command.options.modelId, 'my-service/3',
                      'options model id not updated');
-        assert.equal(stubFinder.calledOnce(), true,
-                     'did not query DB for unit');
-        assert.equal(unit.service, 'my-service',
-                     'service name not updated on unit');
        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
