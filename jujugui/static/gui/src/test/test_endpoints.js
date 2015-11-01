@@ -25,36 +25,37 @@ describe('Relation endpoints logic', function() {
   var Y, juju, utils, db, app, models, sample_endpoints, sample_env, env, ecs;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'array-extras', 'io', 'json-parse', 'juju-tests-utils'], function(Y) {
-      utils = Y.namespace('juju-tests.utils');
-      sample_env = utils.loadFixture('data/large_stream.json', true);
-      sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
-      done();
-    });
-  });
-
-
-  beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-views',
+    Y = YUI(GlobalConfig).use(['array-extras',
+                               'io',
+                               'json-parse',
+                               'juju-tests-utils',
+                               'juju-views',
                                'juju-models',
                                'juju-gui',
                                'juju-tests-utils',
                                'juju-controllers',
                                'environment-change-set'],
     function(Y) {
+      utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
-      var conn = new utils.SocketStub();
-      ecs = new juju.EnvironmentChangeSet();
-      env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
-      env.connect();
-      app = new Y.juju.App({env: env, consoleEnabled: true});
-      app.navigate = function() { return true; };
-      app.showView(new Y.View());
-      db = app.db;
+      sample_env = utils.loadFixture('data/large_stream.json', true);
+      sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
+      var _renderComponents = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderComponents');
       done();
     });
+  });
+
+  beforeEach(function() {
+    var conn = new utils.SocketStub();
+    ecs = new juju.EnvironmentChangeSet();
+    env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
+    env.connect();
+    app = new Y.juju.App({env: env, consoleEnabled: true});
+    app.navigate = function() { return true; };
+    app.showView(new Y.View());
+    db = app.db;
   });
 
   afterEach(function(done) {
@@ -170,9 +171,9 @@ describe('Relation endpoints logic', function() {
 
 
 describe('Endpoints map', function() {
-  var Y, juju, models, controller, data;
+  var Y, juju, models, controller, data, EndpointsController, charm;
 
-  beforeEach(function(done) {
+  before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
                                'juju-tests-utils',
                                'juju-endpoints-controller',
@@ -180,20 +181,24 @@ describe('Endpoints map', function() {
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
-      var EndpointsController = Y.namespace('juju.EndpointsController');
-      controller = new EndpointsController();
+      EndpointsController = Y.namespace('juju.EndpointsController');
       done();
     });
   });
 
+  beforeEach(function() {
+    controller = new EndpointsController();
+    charm = new models.Charm({id: 'cs:precise/wordpress-2'});
+  });
+
   afterEach(function(done) {
     controller.destroy();
+    charm.destroy();
     done();
   });
 
   it('should add a service to the map', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       provides: {
         url: {
@@ -241,12 +246,10 @@ describe('Endpoints map', function() {
         }
       ]
     }});
-    charm.destroy();
   });
 
   it('should add a service to the map, requires only', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       requires: {
         db: {
@@ -274,12 +277,10 @@ describe('Endpoints map', function() {
         }
       ]
     }});
-    charm.destroy();
   });
 
   it('should add a service to the map, provides only', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       provides: {
         url: {
@@ -306,18 +307,15 @@ describe('Endpoints map', function() {
           scope: 'container'
         }
       ] }});
-    charm.destroy();
   });
 
   it('should add a service to the map, neither provides nor requires',
      function() {
        controller.endpointsMap = {};
-       var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
        controller.addServiceToEndpointsMap('wordpress', charm);
        controller.endpointsMap.should.eql({wordpress: {
          requires: [],
          provides: []}});
-       charm.destroy();
      });
 
   it('should reset the map', function() {
@@ -347,6 +345,8 @@ describe('Endpoints map handlers', function() {
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
       models = Y.namespace('juju.models');
+      var _renderComponents = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
@@ -367,6 +367,9 @@ describe('Endpoints map handlers', function() {
     var _renderDeployerBarView = utils.makeStubMethod(
         Y.juju.App.prototype, '_renderDeployerBarView');
     this._cleanups.push(_renderDeployerBarView.reset);
+    var _renderComponents = utils.makeStubMethod(
+        Y.juju.App.prototype, '_renderComponents');
+    this._cleanups.push(_renderComponents.reset);
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
@@ -547,6 +550,9 @@ describe('Service config handlers', function() {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
+
+      var _renderComponents = utils.makeStubMethod(
+          Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });

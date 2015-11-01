@@ -1787,11 +1787,7 @@ YUI.add('juju-env-go', function(Y) {
         // new React configuration system the modified values is determined
         // in the view and set in the service model so we can faithfully
         // take what it says to set as correct.
-        if (!window.flags || !window.flags.react) {
-          newValues = utils.getChangedConfigOptions(config, serviceConfig);
-        } else {
-          newValues = config;
-        }
+        newValues = config;
 
         request.Request = 'ServiceSet';
         request.Params.Options = stringifyObjectValues(newValues);

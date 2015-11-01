@@ -949,18 +949,16 @@ YUI.add('juju-gui', function(Y) {
         baseUrl: baseUrl || '',
         dispatchers: {}
       });
-      if (window.flags && window.flags.react) {
-        var dispatchers = this.state.get('dispatchers');
-        dispatchers.sectionA = {
-          services: this._renderAddedServices.bind(this),
-          inspector: this._renderInspector.bind(this)
-        };
-        dispatchers.sectionC = {
-          charmbrowser: this._renderCharmbrowser.bind(this),
-          empty: this._emptySectionC.bind(this)
-        };
-        this.state.set('dispatchers', dispatchers);
-      }
+      var dispatchers = this.state.get('dispatchers');
+      dispatchers.sectionA = {
+        services: this._renderAddedServices.bind(this),
+        inspector: this._renderInspector.bind(this)
+      };
+      dispatchers.sectionC = {
+        charmbrowser: this._renderCharmbrowser.bind(this),
+        empty: this._emptySectionC.bind(this)
+      };
+      this.state.set('dispatchers', dispatchers);
     },
 
     /**
@@ -1800,13 +1798,11 @@ YUI.add('juju-gui', function(Y) {
         this.db.machines.size()
       );
       this._renderDeployment();
-      if (window.flags && window.flags.react) {
-        this._renderEnvSwitcher();
-        this._renderHeaderSearch();
-        // When we render the components we also want to trigger the rest of
-        // the application to render but only based on the current state.
-        this.state.dispatch();
-      }
+      this._renderEnvSwitcher();
+      this._renderHeaderSearch();
+      // When we render the components we also want to trigger the rest of
+      // the application to render but only based on the current state.
+      this.state.dispatch();
     },
 
     /**

@@ -819,12 +819,7 @@ YUI.add('environment-change-set', function(Y) {
       // new React configuration system the modified values is determined
       // in the view and set in the service model so we can faithfully
       // take what it says to set as correct.
-      var changedFields;
-      if (!window.flags || !window.flags.react) {
-        changedFields = utils.getChangedConfigOptions(config, serviceConfig);
-      } else {
-        changedFields = config;
-      }
+      var changedFields = config;
       // Set the values in the service model and keep the dirty fields array
       // up to date.
       var DIRTYFIELDS = '_dirtyFields';
