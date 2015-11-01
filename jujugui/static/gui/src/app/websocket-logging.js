@@ -25,7 +25,6 @@ YUI.add('juju-websocket-logging', function(Y) {
     A logger of websocket traffic for debugging purposes.
 
     @class Browser
-    @extends {juju.SubApp}
   */
   juju.WebsocketLogging = Y.Base.create('WebsocketLogging', Y.Base, [], {
 
@@ -117,7 +116,5 @@ YUI.add('juju-websocket-logging', function(Y) {
   });
 
 }, '0.1.0', {
-  requires: [
-    'sub-app'
-  ]
+  requires: []
 });

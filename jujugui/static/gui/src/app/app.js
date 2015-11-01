@@ -48,7 +48,6 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
-                                                  Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   widgets.AutodeployExtension,
                                                   Y.juju.Cookies,
@@ -59,7 +58,6 @@ YUI.add('juju-gui', function(Y) {
     /*
       Extension properties
     */
-    subApplications: [],
 
     defaultNamespace: 'charmbrowser',
     /*
@@ -534,7 +532,6 @@ YUI.add('juju-gui', function(Y) {
           charmstore: this.get('charmstore')
         })
       });
-      cfg.bundleImporter = this.bundleImporter;
 
       this.changesUtils = window.juju.utils.ChangesUtils;
 
@@ -648,13 +645,6 @@ YUI.add('juju-gui', function(Y) {
         this.logout();
       }, '.logout-trigger', this);
 
-      // Attach SubApplications. The subapps should share the same db.
-      cfg.db = this.db;
-
-      // To use the new service Inspector use the deploy method
-      // from the Y.juju.GhostDeployer extension
-      cfg.deployService = Y.bind(this.deployService, this);
-
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
@@ -666,21 +656,10 @@ YUI.add('juju-gui', function(Y) {
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
 
-      if (window.juju_config && window.juju_config.baseUrl) {
-        cfg.baseUrl = window.juju_config.baseUrl;
-      }
-      // Share the store instance with subapps.
-      cfg.charmstore = this.get('charmstore');
-      cfg.envSeries = this.getEnvDefaultSeries.bind(this);
-      cfg.env = this.env;
-      cfg.ecs = this.env.ecs;
-
-      this.addSubApplications(cfg);
-
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
-        cfg.deployService(charm, ghostAttributes);
+        this.deployService(charm, ghostAttributes);
       }, this);
 
       this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
@@ -2131,8 +2110,6 @@ YUI.add('juju-gui', function(Y) {
     'app-cookies-extension',
     'cookie',
     'querystring',
-    'app-subapp-extension',
-    'sub-app',
     'event-key',
     'event-touch',
     'model-controller',
