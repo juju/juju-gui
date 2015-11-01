@@ -53,15 +53,13 @@ YUI.add('juju-gui', function(Y) {
                                                   widgets.AutodeployExtension,
                                                   Y.juju.Cookies,
                                                   Y.juju.GhostDeployer,
+                                                  Y.juju.MachineViewPanel,
                                                   Y.Event.EventTracker], {
 
     /*
       Extension properties
     */
-    subApplications: [{
-      type: Y.juju.subapps.Browser,
-      config: {}
-    }],
+    subApplications: [],
 
     defaultNamespace: 'charmbrowser',
     /*
@@ -679,10 +677,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.addSubApplications(cfg);
 
-      this.on('*:changeState', function(e) {
-        this.get('subApps').charmbrowser.fire('changeState', e.details[0]);
-      });
-
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
@@ -705,19 +699,14 @@ YUI.add('juju-gui', function(Y) {
           // Connect to the environment.
           this.env.connect();
         }
-        if (this.get('activeView')) {
-          this.get('activeView').render();
-        } else {
-          this.dispatch();
-        }
+        this.dispatch();
         this._renderHelpDropdownView();
+        this.renderOnboarding();
         if (!window.juju_config || !window.juju_config.hideLoginButton) {
           // We only want to show the user dropdown view if the gui isn't in
           // demo mode.
           this._renderUserDropdownView();
         }
-        this.get('subApps').charmbrowser.on(
-            '*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
 
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
@@ -935,6 +924,29 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handles rendering and/or updating the machine UI component.
+
+      @method _machine
+      @param {Object|String} metadata The metadata to pass to the machine
+        view.
+    */
+    _renderMachineView: function(metadata) {
+      this._renderMachineViewPanelView(this.db, this.env);
+    },
+
+    /**
+      Empties out the sectionB UI making sure to properly clean up.
+
+      @method emptySectionB
+    */
+    emptySectionB: function() {
+      if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+        this.machineViewPanel = null;
+      }
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -954,11 +966,31 @@ YUI.add('juju-gui', function(Y) {
         services: this._renderAddedServices.bind(this),
         inspector: this._renderInspector.bind(this)
       };
+      dispatchers.sectionB = {
+        machine: this._renderMachineView.bind(this),
+        empty: this.emptySectionB.bind(this)
+      };
       dispatchers.sectionC = {
         charmbrowser: this._renderCharmbrowser.bind(this),
         empty: this._emptySectionC.bind(this)
       };
+      dispatchers.app = {
+        deployTarget: views.utils.deployTargetDispatcher.bind(this)
+      };
       this.state.set('dispatchers', dispatchers);
+      this.on('*:changeState', this._changeState, this);
+    },
+
+    /**
+      Sets up the UIState instance on the app
+
+      @method _changeState
+      @param {Object} e The event facade.
+    */
+    _changeState: function(e) {
+      var state = e.details[0];
+      var url = this.state.generateUrl(state);
+      this.navigate(url);
     },
 
     /**
@@ -1231,6 +1263,26 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Create a 'welcome' message walkthrough for new users.
+
+      @method renderOnboarding
+    */
+    renderOnboarding: function() {
+      if (!this._onboarding) {
+        this._onboarding = new Y.juju.views.OnboardingView({
+          'container': '#onboarding'
+        });
+      }
+      if (localStorage.getItem('force-onboarding')) {
+        localStorage.setItem('force-onboarding', '');
+        this._onboarding.reset();
+      }
+      if (!this._onboarding.get('seen')) {
+        this._onboarding.render();
+      }
+    },
+
+    /**
       When the user provides a charm id in the deploy-target query param we want
       to auto deploy that charm.
 
@@ -1320,6 +1372,12 @@ YUI.add('juju-gui', function(Y) {
       if (this.helpDropdown) {
         this.helpDropdown.destroy();
       }
+      if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+      }
+      if (this._onboarding) {
+        this._onboarding.destroy();
+      }
       if (this.userDropdown) {
         this.userDropdown.destroy();
       }
@@ -1387,19 +1445,12 @@ YUI.add('juju-gui', function(Y) {
       @private
     */
     _dbChangedHandler: function() {
-      var active = this.get('activeView');
-
       // Regardless of which view we are rendering,
       // update the env view on db change.
       if (this.views.environment.instance) {
         this.views.environment.instance.topo.update();
       }
-      // Redispatch to current view to update.
-      if (active && active.name === 'EnvironmentView') {
-        active.rendered();
-      } else {
-        this.dispatch();
-      }
+      this.dispatch();
       this._renderComponents();
     },
 
@@ -1742,42 +1793,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-       Determine if the browser or environment should be rendered or not.
-
-       When hitting static views the browser needs to disappear
-       entirely from the UX for users. However, when we pop back it needs to
-       appear back in the previous state.
-
-       The environment only needs to render when another full page view isn't
-       visible.
-
-       @method toggleStaticViews
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-     */
-    toggleStaticViews: function(req, res, next) {
-      var url = req.url,
-          match = /logout/;
-      var subapps = this.get('subApps');
-
-      if (subapps && subapps.charmbrowser) {
-        var charmbrowser = subapps.charmbrowser;
-        if (url.match(match)) {
-          charmbrowser.hidden = true;
-          // XXX At some point in the near future we will add the ability to
-          // route on root namespaced paths and this check will no longer
-          // be needed
-          this.renderEnvironment = false;
-        } else {
-          charmbrowser.hidden = false;
-          this.renderEnvironment = true;
-        }
-      }
-      next();
-    },
-
-    /**
       Shows the root view of the application erasing all namespaces
 
       @method showRootView
@@ -1834,7 +1849,6 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           var envView = this.views.environment.instance;
           envView.rendered();
-          this.get('subApps').charmbrowser.set('topo', envView.topo);
         },
         render: true
       });
@@ -2044,7 +2058,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
           { path: '*', callbacks: 'show_notifications_view'},
-          { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Authorization
@@ -2060,8 +2073,9 @@ YUI.add('juju-gui', function(Y) {
   requires: [
     'changes-utils',
     'juju-charm-models',
-    'juju-models',
     'ns-routing-app-extension',
+    'juju-models',
+    'juju-app-state',
     'juju-notification-controller',
     'juju-endpoints-controller',
     'juju-env-fakebackend',
@@ -2091,12 +2105,14 @@ YUI.add('juju-gui', function(Y) {
     'machine-token',
     'juju-serviceunit-token',
     'machine-view-panel',
+    'machine-view-panel-extension',
     'machine-view-panel-header',
     'juju-view-utils',
     'service-scale-up-view',
     'juju-topology',
     'juju-view-environment',
     'juju-view-login',
+    'juju-view-onboarding',
     'juju-landscape',
     // end juju-views group
     'autodeploy-extension',
@@ -2117,12 +2133,10 @@ YUI.add('juju-gui', function(Y) {
     'querystring',
     'app-subapp-extension',
     'sub-app',
-    'subapp-browser',
     'event-key',
     'event-touch',
     'model-controller',
     'FileSaver',
-    'juju-inspector-widget',
     'ghost-deployer-extension',
     'juju-view-bundle',
     'local-charm-import-helpers',

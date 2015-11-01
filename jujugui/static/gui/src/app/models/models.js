@@ -213,7 +213,7 @@ YUI.add('juju-models', function(Y) {
 
     /**
       Updates the appropriate configuration objects based on the passed in delta
-      from handlers.js. It also updates the conflictedFields attribute.
+      from handlers.js.
 
       @method updateConfig
       @param {Object} changeConfig The configuration change delta.
@@ -224,23 +224,10 @@ YUI.add('juju-models', function(Y) {
       var serviceConfig = this.get('config') || {};
       var combined = Y.merge(serviceConfig, changeConfig);
       // Compare the local and new config objects.
-      var conflicted = [];
-      Object.keys(combined).forEach(function(key) {
-        if (combined[key] !== serviceConfig[key]) {
-          this.get('_dirtyFields').forEach(function(dirtyKey) {
-            if (dirtyKey === key) {
-              conflicted.push(key);
-            }
-          });
-        }
-      }, this);
       // Update the environmentConfig config options with the values as they are
       // in the real Juju environment. This should never be
       // done by anything but this method so that it says as representation of
       // the config options as juju sees it.
-      // The order that we set the environmentConfig and conflicted fields is
-      // important so that the inspector databinding can pick up the correct
-      // values.
       this.set(
           'environmentConfig',
           Y.merge(this.get('environmentConfig'), changeConfig));
@@ -321,17 +308,7 @@ YUI.add('juju-models', function(Y) {
       _dirtyFields: {
         value: []
       },
-      /**
-        Stores the fields which are in conflict between the ecs change values
-        and the environment values.
 
-        @attribute _conflictedFields
-        @type {Array}
-        @default []
-      */
-      _conflictedFields: {
-        value: []
-      },
       displayName: {
         'getter': function(val) {
           var name = val || this.get('id').replace('service-', '');

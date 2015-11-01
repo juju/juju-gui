@@ -102,7 +102,6 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/ns-routing-app-extension.js',
     'app/assets/javascripts/prettify.js',
     'app/assets/javascripts/reconnecting-websocket.js',
-    'app/assets/javascripts/resizing_textarea.js',
     'app/assets/javascripts/sub-app.js',
     'app/assets/javascripts/zip.js',
     'app/assets/javascripts/inflate.js',

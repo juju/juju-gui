@@ -54,8 +54,6 @@ YUI.add('juju-view-environment', function(Y) {
       this.publish('navigateTo', {
         broadcast: true,
         preventable: false});
-
-      this.inspector = null;
     },
 
     /**
@@ -71,63 +69,6 @@ YUI.add('juju-view-environment', function(Y) {
     update: function() {
       this.topo.update();
       return this;
-    },
-
-    /**
-      Creates a new service inspector instance of the passed in type.
-
-      @method createServiceInspector
-      @param {Y.Model} model service or charm depending on inspector type.
-      @param {Object} config object of options to overwrite default config.
-      @return {Object} The created service inspector.
-    */
-    createServiceInspector: function(model, config) {
-      config = config || {};
-      // If the user is trying to open the same inspector twice
-      if (this.inspector) {
-        if (this.inspector.get('model').get('clientId') ===
-            model.get('clientId')) {
-          return this.inspector;
-        }
-      }
-
-      var db = this.get('db'),
-          env = this.get('env'),
-          ecs = this.get('ecs'),
-          topo = this.topo,
-          charm = db.charms.getById(model.get('charm')),
-          inspector = {};
-
-      var inspectorConfig = Y.mix({
-        db: db,
-        model: model,
-        env: env,
-        ecs: ecs,
-        environment: this,
-        enableDatabinding: true,
-        topo: topo,
-        charmstore: topo.get('charmstore')
-      }, config, true);
-      inspector = new Y.juju.views.ServiceInspector(inspectorConfig).render();
-
-      // Because the inspector can trigger it's own destruction we need to
-      // listen for the event and remove it from the list of open inspectors
-      inspector.after('destroy', function(e) {
-        delete this.inspector;
-      }, this);
-
-
-      // If the service is destroyed from the console then we need to
-      // destroy the inspector and hide the service menu.
-      model.on('destroy', function(e) {
-        var inspector = this.inspector;
-        if (inspector) { inspector.destroy(); }
-      }, this);
-
-      if (this.inspector) { this.inspector.destroy(); }
-
-      this.inspector = inspector;
-      return inspector;
     },
 
     /**
@@ -177,8 +118,6 @@ YUI.add('juju-view-environment', function(Y) {
           ecs: this.get('ecs'),
           env: this.get('env'),
           db: this.get('db'),
-          charmstore: this.get('charmstore'),
-          createServiceInspector: Y.bind(this.createServiceInspector, this),
           bundleImporter: this.get('bundleImporter'),
           getModelURL: this.get('getModelURL'),
           container: container,
@@ -192,7 +131,6 @@ YUI.add('juju-view-environment', function(Y) {
 
         topo.addTarget(this);
         this.topo = topo;
-        this._attachTopoEvents();
       }
       return topo;
     },
@@ -227,27 +165,6 @@ YUI.add('juju-view-environment', function(Y) {
       this.topo.fire('rendered');
       // Bind d3 events (manually).
       this.topo.bindAllD3Events();
-    },
-
-    /**
-      Loops through the inspectors and destroys them all
-
-      @method destroyInspector
-    */
-    destroyInspector: function() {
-      if (this.inspector) {
-        this.inspector.destroy();
-      }
-    },
-
-    /**
-      Attaches events after the topology has been created.
-
-      @method _attachTopoEvents
-    */
-    _attachTopoEvents: function() {
-      this.topo.on(
-          '*:destroyServiceInspector', this.destroyInspector, this);
     },
 
     /**
@@ -288,7 +205,6 @@ YUI.add('juju-view-environment', function(Y) {
     'juju-templates',
     'juju-topology',
     'juju-view-utils',
-    'service-inspector',
     'node',
     'view'
   ]

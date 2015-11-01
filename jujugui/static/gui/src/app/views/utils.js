@@ -859,47 +859,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Find unchanged config options from a collection of config values and return
-    only those that are different from the supplied charm or service defaults
-    at the time of parsing.
-
-    @method getChangedConfigOptions
-    @param {Object} config is a reference to service config values in the GUI.
-    @param {Object} options is a reference to the charm or
-                    service configuration options.
-    @return {Object} the key/value pairs of config options.
-  */
-  utils.getChangedConfigOptions = function(config, options) {
-    // This method is always called even if the config is provided by
-    // a configuration file - in this case, return.
-    if (!config) {
-      return;
-    }
-    var newValues = Object.create(null);
-    Object.keys(config).forEach(function(key) {
-      // Find the config options which are not different from the charm or
-      // service defaults intentionally letting the browser do the type
-      // conversion.
-      // The || check is to allow empty inputs to match an undefined default.
-      /* jshint -W116 */
-      if (Y.Lang.isObject(options[key])) {
-        // Options represents a charm config.
-        if (config[key] == (options[key]['default'] || '')) {
-          return;
-        }
-      } else {
-        // Options represents a service config.
-        if (config[key] == (options[key] || '')) {
-          return;
-        }
-      }
-      /* jshint +W116 */
-      newValues[key] = config[key];
-    });
-    return newValues;
-  };
-
-  /**
    Return a template-friendly array of settings.
 
    Used for service-configuration.partial adding isBool, isNumeric metadata.
@@ -2127,55 +2086,85 @@ YUI.add('juju-view-utils', function(Y) {
     /*jshint debug:false */
   });
 
-  /*
-   * Extension for views to provide an apiFailure method.
-   *
-   * @class apiFailingView
-   */
-  utils.apiFailingView = function() {
-    this._initAPIFailingView();
-  };
-  utils.apiFailingView.prototype = {
-    /**
-     * Constructor
-     *
-     * @method _initAPIFailingView
-     */
-    _initAPIFailingView: function() {},
 
+
+  /**
+    Handles deploying the charm or bundle id passed in as a deploy-target
+    as a query param on app load.
+
+    Be sure to use the fully qualified urls like cs:precise/mysql-48 and
+    bundle:mediawiki/7/single because it make it easy to check what type of
+    entity the id is referring to.
+
+    @method _deployTargetDispatcher
+    @param {String} entityId The id of the charm or bundle to deploy.
+  */
+  utils.deployTargetDispatcher = function(entityId) {
+    var charmstore = this.get('charmstore');
     /**
-     * Shared method to generate a message to the user based on a bad api
-     * call from a view.
-     *
-     * @method apiFailure
-     * @param {Object} data the json decoded response text.
-     * @param {Object} request the original io_request object for debugging.
-     * @param {String} title the title for the generated notification.
-     */
-    _apiFailure: function(data, request, title) {
-      var message;
-      if (data && data.type) {
-        message = 'Charm API error of type: ' + data.type;
-      } else {
-        message = 'Charm API server did not respond';
+      Handles parsing and displaying the failure notification returned from
+      the charmstore api.
+
+      @method failureNotification
+      @param {Object} error The XHR request object from the charmstore req.
+    */
+    var failureNotification = function(error) {
+      var message = 'Unable to deploy target: ' + entityId;
+      try {
+        message = JSON.parse(error.currentTarget.responseText).Message;
+      } catch (e) {
+        console.error(e);
       }
-      if (!title) {
-        title = 'Unidentified API failure';
-      }
-      this.get('db').notifications.add(
-          new models.Notification({
-            title: title,
-            message: message,
-            level: 'error'
-          })
-      );
-      // If there's a spinning indicator on the View then make sure to hide
-      // it.
-      if (this.hideIndicator && this.get('renderTo')) {
-        this.hideIndicator(this.get('renderTo'));
-      }
+      this.db.notifications.add({
+        title: 'Error deploying target.',
+        message: message,
+        level: 'error'
+      });
+    };
+
+    // The charmstore apiv4 format can have the bundle keyword either at the
+    // start, for charmers bundles, or after the username, for namespaced
+    // bundles. ex) bundle/swift & ~jorge/bundle/swift
+    if (entityId.indexOf('bundle/') > -1) {
+      charmstore.getBundleYAML(
+          entityId,
+          function(bundleYAML) {
+            this.bundleImporter.importBundleYAML(bundleYAML);
+          }.bind(this),
+          failureNotification.bind(this));
+    } else {
+      // If it's not a bundle then it's a charm.
+      charmstore.getEntity(
+          entityId.replace('cs:', ''),
+          function(charm) {
+            charm = charm[0];
+            var config = {},
+                options = charm.get('options');
+            Object.keys(options).forEach(function(key) {
+              config[key] = options[key]['default'];
+            });
+            // We call the env deploy method directly because we don't want
+            // the ghost inspector to open.
+            this.env.deploy(
+                charm.get('id'),
+                charm.get('name'),
+                config,
+                undefined, //config file content
+                1, // number of units
+                {}, //constraints
+                null); // toMachine
+            this.fire('autoplaceAndCommitAll');
+          }.bind(this),
+          failureNotification.bind(this));
     }
-  };
+    // Because deploy-target is an action and not a state we need to clear
+    // it out of the state as soon as we are done with it so that we can
+    // continue calling dispatch without the worry of it trying to
+    // deploy multiple times.
+    var currentState = this.state.get('current');
+    delete currentState.app.deployTarget;
+    this.navigate(this.state.generateUrl(currentState));
+  },
 
   /**
     Given a mapping of key/value pairs, determine if the data describes a charm

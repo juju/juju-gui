@@ -101,7 +101,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
             {modelId: unitId}
         );
       }
-      this.get('subApps').charmbrowser.fire('changeState', {
+      this.fire('changeState', {
         sectionA: {
           component: 'inspector',
           metadata: { id: ghostService.get('id') }

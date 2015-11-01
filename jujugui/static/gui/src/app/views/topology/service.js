@@ -1780,8 +1780,6 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-templates',
     'juju-models',
     'local-charm-import-helpers',
-    'juju-viewlet-manager',
-    'local-new-upgrade-inspector',
     'zip-utils'
   ]
 });
