@@ -240,42 +240,6 @@ function injectData(app, data) {
       localStorage.removeItem('environmentName');
     });
 
-    it('hides the browser subapp on some urls', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: {
-            send: function() {},
-            close: function() {}
-          },
-          ecs: new juju.EnvironmentChangeSet(),
-          jujuCoreVersion: '1.21.1.1-trusty-amd64'
-        })
-      }, this);
-
-      // XXX bug:1217383
-      // Force an app._controlEvents so that we don't try to bind viewmode
-      // controls.
-      var fakeEv = {
-        detach: function() {}
-      };
-      app._controlEvents = [fakeEv, fakeEv];
-
-      var checkUrls = [{
-        url: '/logout',
-        hidden: true
-      }, {
-        url: '/',
-        hidden: false
-      }];
-
-      Y.Array.each(checkUrls, function(check) {
-        var req = {url: check.url};
-        var next = function() {};
-        app.toggleStaticViews(req, undefined, next);
-        app.get('subApps').charmbrowser.hidden.should.eql(check.hidden);
-      });
-    });
-
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
@@ -286,7 +250,7 @@ function injectData(app, data) {
         done();
       };
       app.after('ready', function() {
-        app.get('subApps').charmbrowser.fire('autoplaceAndCommitAll');
+        app.fire('autoplaceAndCommitAll');
       });
     });
 

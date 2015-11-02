@@ -686,6 +686,7 @@ YUI.add('juju-gui', function(Y) {
           // demo mode.
           this._renderUserDropdownView();
         }
+        this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
 
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {

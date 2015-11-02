@@ -62,9 +62,6 @@ describe('Ghost Deployer Extension', function() {
       addUnits: utils.makeStubFunction(),
       removeUnits: utils.makeStubFunction()
     };
-    ghostDeployer.set('subApps', {
-      charmbrowser: {
-        fire: utils.makeStubFunction() }});
   });
 
   afterEach(function() {
@@ -116,13 +113,14 @@ describe('Ghost Deployer Extension', function() {
 
   it('creates a ghost service', function() {
     var charm = makeCharm();
+    ghostDeployer.fire = utils.makeStubFunction();
     ghostDeployer.deployService(charm);
     var services = ghostDeployer.db.services;
     assert.strictEqual(services.ghostService.calledOnce(), true);
     var args = services.ghostService.lastArguments();
     assert.lengthOf(args, 1);
     assert.deepEqual(args[0], charm);
-    var fire = ghostDeployer.get('subApps').charmbrowser.fire;
+    var fire = ghostDeployer.fire;
     assert.equal(fire.calledOnce(), true);
     var fireArgs = fire.lastArguments();
     assert.equal(fireArgs[0], 'changeState');

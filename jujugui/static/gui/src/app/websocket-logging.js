@@ -116,5 +116,5 @@ YUI.add('juju-websocket-logging', function(Y) {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: ['base']
 });
