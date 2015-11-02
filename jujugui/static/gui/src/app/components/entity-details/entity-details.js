@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-details', function() {
 
   juju.components.EntityDetails = React.createClass({
+    detailsXhr: null,
+
     /* Define and validate the properites available on this component. */
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
@@ -38,7 +40,7 @@ YUI.add('entity-details', function() {
       @param {Array} models A list of the entity models found.
     */
     fetchSuccess: function(models) {
-      if (models.length > 0 && this.isMounted()) {
+      if (models.length > 0) {
         this.setState({entityModel: models[0]});
       }
     },
@@ -61,11 +63,15 @@ YUI.add('entity-details', function() {
     },
 
     componentDidMount: function() {
-      this.props.getEntity(
+      this.detailsXhr = this.props.getEntity(
         this.props.id,
         this.fetchSuccess,
         this.fetchFailure
       );
+    },
+
+    componentWillUnmount: function() {
+      this.detailsXhr.abort();
     },
 
     /**

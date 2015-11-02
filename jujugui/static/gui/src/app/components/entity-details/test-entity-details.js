@@ -145,4 +145,31 @@ describe('EntityDetails', function() {
       </div>);
     assert.deepEqual(output, expected);
   });
+
+  it('will abort the request when unmounting', function() {
+    var abort = sinon.stub();
+    var id = mockEntity.get('id');
+    var getEntity = sinon.stub().returns({abort: abort});
+    var deployService = sinon.spy();
+    var changeState = sinon.spy();
+    var importBundleYAML = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    var pluralize = sinon.spy();
+    var getFile = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.EntityDetails
+          deployService={deployService}
+          changeState={changeState}
+          importBundleYAML={importBundleYAML}
+          getBundleYAML={getBundleYAML}
+          getEntity={getEntity}
+          getFile={getFile}
+          renderMarkdown={renderMarkdown}
+          id={id}
+          pluralize={pluralize} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    shallowRenderer.unmount();
+    assert.equal(abort.callCount, 1);
+  });
 });

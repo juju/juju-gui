@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
+    searchXhr: null,
+
      /**
       If it's the same charm but for different series, collapse into one
       entity. We do this by converting the list to an OrderedDict, keyed on
@@ -163,7 +165,7 @@ YUI.add('search-results', function(Y) {
     */
     searchRequest: function(query, tags) {
       this.setState({ waitingForSearch: true });
-      this.props.charmstoreSearch(
+      this.searchXhr = this.props.charmstoreSearch(
         {text: query, tags: tags},
         this.searchSuccess,
         this.searchFailure,
@@ -193,6 +195,10 @@ YUI.add('search-results', function(Y) {
 
     componentDidMount: function() {
       this.searchRequest(this.props.query, this.props.tags);
+    },
+
+    componentWillUnmount: function() {
+      this.searchXhr.abort();
     },
 
     componentWillReceiveProps: function(nextProps) {

@@ -363,6 +363,34 @@ describe('SearchResults', function() {
                      'Should not re-render when waiting for a search');
     });
 
+    it('will abort the request when unmounting', function() {
+      var abort = sinon.stub();
+      var changeState = sinon.stub();
+      var query = 'spinach';
+      var result = {
+        name: 'spinach',
+        displayName: 'spinach',
+        url: 'http://example.com/spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        series: 'wily',
+        type: 'charm'
+      };
+      var mockModel = {};
+      mockModel.toEntity = sinon.stub().returns(result);
+      var mockData = [mockModel];
+      var charmstoreSearch = sinon.stub().returns({abort: abort});
+      var shallowRenderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            changeState={changeState}
+            query={query}
+            charmstoreSearch={charmstoreSearch} />, true);
+      shallowRenderer.getMountedInstance().componentDidMount();
+      shallowRenderer.unmount();
+      assert.equal(abort.callCount, 1);
+    });
+
     it('sets the correct ids for entities', function() {
       var query = 'spinach';
       searchResults.props = {query: query};

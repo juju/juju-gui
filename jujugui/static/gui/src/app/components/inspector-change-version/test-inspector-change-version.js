@@ -231,4 +231,28 @@ describe('InspectorChangeVersion', function() {
     assert.equal(serviceSet.callCount, 1);
     assert.equal(serviceSet.args[0][1], 'cs:django-4');
   });
+
+  it('will abort the request when unmounting', function() {
+    var abort = sinon.stub();
+    var changeState = sinon.stub();
+    var serviceSet = sinon.stub();
+    var service = {
+      get: sinon.stub().returns('django'),
+      set: serviceSet
+    };
+    var setCharm = sinon.stub();
+    var getCharm = sinon.stub();
+    var getAvailableVersions = sinon.stub().returns({abort: abort});
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersion
+          changeState={changeState}
+          charmId="cs:django-5"
+          service={service}
+          setCharm={setCharm}
+          getCharm={getCharm}
+          getAvailableVersions={getAvailableVersions} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    shallowRenderer.unmount();
+    assert.equal(abort.callCount, 1);
+  });
 });

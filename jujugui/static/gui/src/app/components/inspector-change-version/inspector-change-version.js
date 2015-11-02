@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-change-version', function() {
 
   juju.components.InspectorChangeVersion = React.createClass({
+    versionsXhr: null,
 
     /**
       Get the current state.
@@ -41,6 +42,10 @@ YUI.add('inspector-change-version', function() {
 
     componentWillReceiveProps: function(nextProps) {
       this._getVersions(nextProps.charmId);
+    },
+
+    componentWillUnmount: function() {
+      this.versionsXhr.abort();
     },
 
     /**
@@ -108,7 +113,7 @@ YUI.add('inspector-change-version', function() {
     */
     _getVersions: function(charmId) {
       this.setState({loading: true});
-      this.props.getAvailableVersions(charmId,
+      this.versionsXhr = this.props.getAvailableVersions(charmId,
           this._getVersionsSuccess, this._getVersionsFailure);
     },
 
