@@ -22,6 +22,7 @@ YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
     searchXhr: null,
+    template: Handlebars.templates['search-results-tmpl.hbs'],
 
      /**
       If it's the same charm but for different series, collapse into one
@@ -133,7 +134,6 @@ YUI.add('search-results', function(Y) {
       });
       var data = {
         standalone: false,
-        initialized: true,
         text: this.props.query,
         hasResults: results.length > 0,
         solutionsCount: results.length,
@@ -145,6 +145,7 @@ YUI.add('search-results', function(Y) {
       // These need to be set separately, seemingly due to a React quirk.
       this.setState({waitingForSearch: false});
       this.setState({data: data});
+      this._changeActiveComponent('search-results');
     },
 
     /**
@@ -166,6 +167,7 @@ YUI.add('search-results', function(Y) {
       @param {String} tags The tags to limit the search by.
     */
     searchRequest: function(query, tags) {
+      this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
       this.searchXhr = this.props.charmstoreSearch(
         {text: query, tags: tags},
@@ -183,16 +185,18 @@ YUI.add('search-results', function(Y) {
       @param {Object} nextProps The next set of properties.
     */
     shouldSearch: function(nextProps) {
+      if (!this.state.data || !this.state.data.text) {
+        return true;
+      }
       var nextQuery = JSON.stringify(nextProps.query),
           currentQuery = JSON.stringify(this.state.data.text);
       return nextQuery !== currentQuery;
     },
 
     getInitialState: function() {
-      return {
-        data: {initialized: false},
-        waitingForSearch: false
-      };
+      var state = this.generateState(this.props);
+      state.waitingForSearch = false;
+      return state;
     },
 
     componentDidMount: function() {
@@ -210,7 +214,53 @@ YUI.add('search-results', function(Y) {
     },
 
     shouldComponentUpdate: function(nextProps, nextState) {
-      return this.shouldSearch(nextProps) && !this.state.waitingForSearch;
+      return this.state.activeComponent !== 'loading' ||
+          this.shouldSearch(nextProps) && !this.state.waitingForSearch;
+    },
+
+    /**
+      Generates the state for the search results.
+
+      @method generateState
+      @param {Object} nextProps The props which were sent to the component.
+      @return {Object} A generated state object which can be passed to setState.
+    */
+    generateState: function(nextProps) {
+      var state = {
+        activeComponent: nextProps.activeComponent || 'loading'
+      };
+      switch (state.activeComponent) {
+        case 'loading':
+          var generateChangeDescription = nextProps.generateChangeDescription ||
+              this.props.generateChangeDescription;
+          state.activeChild = {
+            component: <div className="twelve-col initial-load-container last-col">
+              <juju.components.Spinner />
+            </div>
+          };
+        break;
+        case 'search-results':
+          var html = this.template(this.state.data);
+          state.activeChild = {
+            component: <div onClick={this._handleTemplateClicks}
+              dangerouslySetInnerHTML={{__html: html}}>
+            </div>
+          };
+        break;
+      }
+      return state;
+    },
+
+    /**
+      Change the state to reflect the chosen component.
+
+      @method _changeActiveComponent
+      @param {String} newComponent The component to switch to.
+    */
+    _changeActiveComponent: function(newComponent) {
+      var nextProps = this.state;
+      nextProps.activeComponent = newComponent;
+      this.setState(this.generateState(nextProps));
     },
 
     /**
@@ -261,15 +311,14 @@ YUI.add('search-results', function(Y) {
     },
 
     render: function() {
-      var tmpl = Handlebars.templates['search-results-tmpl.hbs'];
-      var html = tmpl(this.state.data);
       return (
-        <div className={this._generateClasses()}
-          onClick={this._handleTemplateClicks}
-          dangerouslySetInnerHTML={{__html: html}}>
+        <div className={this._generateClasses()}>
+          {this.state.activeChild.component}
         </div>
       );
     }
   });
 
-}, '0.1.0', {requires: []});
+}, '0.1.0', {requires: [
+  'loading-spinner'
+]});
