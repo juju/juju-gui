@@ -234,9 +234,10 @@ YUI.add('search-results', function(Y) {
           var generateChangeDescription = nextProps.generateChangeDescription ||
               this.props.generateChangeDescription;
           state.activeChild = {
-            component: <div className="twelve-col initial-load-container last-col">
-              <juju.components.Spinner />
-            </div>
+            component:
+              <div className="twelve-col initial-load-container last-col">
+                <juju.components.Spinner />
+              </div>
           };
         break;
         case 'search-results':
