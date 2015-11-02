@@ -32,35 +32,30 @@ describe('SearchResults', function() {
   });
 
   describe('functional tests', function() {
-    it('can be rendered', function() {
-      var shallowRenderer = testUtils.createRenderer();
+    it('can initially show the spinner', function() {
       var query = 'spinach';
-      shallowRenderer.render(
+      var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query={query} />);
-
-      var output = shallowRenderer.getRenderOutput();
-      assert.equal(output.props.className,
-                   'search-results search-results--floating',
-                   'Class name not set properly');
-      var html = output.props.dangerouslySetInnerHTML.__html;
-      assert.isAbove(html.indexOf('Loading'), -1,
-                     'Loading message not found');
+      assert.deepEqual(output,
+        <div className="search-results search-results--floating">
+          <div className="twelve-col initial-load-container last-col">
+            <juju.components.Spinner />
+          </div>
+        </div>);
     });
 
     it('does not have the floating class if it is inline', function() {
-      var shallowRenderer = testUtils.createRenderer();
       var query = 'spinach';
-      shallowRenderer.render(
+      var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             inline={true}
             query={query} />);
-      var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
-        <div className="search-results"
-          onClick={output.props.onClick}
-          dangerouslySetInnerHTML={{__html:
-              output.props.dangerouslySetInnerHTML.__html}}>
+        <div className="search-results">
+          <div className="twelve-col initial-load-container last-col">
+            <juju.components.Spinner />
+          </div>
         </div>);
     });
 
@@ -114,13 +109,14 @@ describe('SearchResults', function() {
       mockModel.toEntity = sinon.stub().returns(result);
       var mockData = [mockModel];
       var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
-      var output = jsTestUtils.shallowRender(
+      var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             changeState={changeState}
             query={query}
-            charmstoreSearch={charmstoreSearch} />);
-
-      output.props.onClick({
+            charmstoreSearch={charmstoreSearch} />, true);
+      shallowRenderer.getMountedInstance().componentDidMount();
+      var output = shallowRenderer.getRenderOutput();
+      output.props.children.props.onClick({
         preventDefault: sinon.stub(),
         target: {
           className: 'list-block__entity-link',
@@ -144,7 +140,7 @@ describe('SearchResults', function() {
     var searchResults;
 
     beforeEach(function() {
-      searchResults = new juju.components.SearchResults();
+      searchResults = new juju.components.SearchResults({});
     });
 
     afterEach(function() {
@@ -282,7 +278,6 @@ describe('SearchResults', function() {
       });
       var expected = {
         standalone: false,
-        initialized: true,
         text: 'spinach',
         hasResults: true,
         solutionsCount: 2,
@@ -308,7 +303,7 @@ describe('SearchResults', function() {
       var searchSpy = sinon.spy();
       searchResults.props = {charmstoreSearch: searchSpy};
       searchResults.searchRequest(query);
-      assert.deepEqual(stateSpy.getCall(0).args[0], {waitingForSearch: true},
+      assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
                        'waitingForSearch flag is not set');
       assert.deepEqual(searchSpy.getCall(0).args[0],
                        {text: query, tags: undefined},
@@ -322,14 +317,6 @@ describe('SearchResults', function() {
                      'Unchanged query should not trigger search');
       assert.isTrue(searchResults.shouldSearch({query: 'foo'}),
                     'Changed query should trigger search');
-    });
-
-    it('initializes the state properly', function() {
-      var actual = searchResults.getInitialState();
-      assert.isFalse(actual.data.initialized,
-                     'data init flag should not be set');
-      assert.isFalse(actual.waitingForSearch,
-                     'waitingForSearch flag should not be set');
     });
 
     it('triggers a search request upon component mount', function() {
@@ -354,11 +341,17 @@ describe('SearchResults', function() {
       assert.isTrue(searchResults.shouldComponentUpdate(),
                     'Should re-render after new search finished');
       searchResults.shouldSearch = sinon.stub().returns(false);
-      searchResults.state = {waitingForSearch: false};
+      searchResults.state = {
+        waitingForSearch: false,
+        activeComponent: 'loading'
+      };
       assert.isFalse(searchResults.shouldComponentUpdate(),
                      'Should not re-render without a new search');
       searchResults.shouldSearch = sinon.stub().returns(true);
-      searchResults.state = {waitingForSearch: true};
+      searchResults.state = {
+        waitingForSearch: true,
+        activeComponent: 'loading'
+      };
       assert.isFalse(searchResults.shouldComponentUpdate(),
                      'Should not re-render when waiting for a search');
     });
