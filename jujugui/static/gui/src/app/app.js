@@ -2119,6 +2119,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-view-bundle',
     'local-charm-import-helpers',
     'environment-change-set',
+    'gallery-markdown',
     // This must stay down here else it breaks the merge-files by being put
     // first in the dependency list, before even YUI.
     'handlebars'
