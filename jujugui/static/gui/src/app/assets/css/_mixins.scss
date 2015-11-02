@@ -1,28 +1,3 @@
-/* Mixins */
-@mixin animation ($arguments) {
-    -webkit-animation: $arguments;
-    -moz-animation: $arguments;
-    -ms-animation: $arguments;
-    -o-animation: $arguments;
-    animation: $arguments;
-}
-
-@mixin animation-fill-mode ($arguments) {
-    -webkit-animation-fill-mode: $arguments;
-    -moz-animation-fill-mode: $arguments;
-    -ms-animation-fill-mode: $arguments;
-    -o-animation-fill-mode: $arguments;
-    animation-fill-mode: $arguments;
-}
-
-@mixin transition ($arguments) {
-    -webkit-transition: $arguments;
-    -moz-transition: $arguments;
-    -ms-transition: $arguments;
-    -o-transition: $arguments;
-    transition: $arguments;
-}
-
 @mixin create-border-radius($radius) {
     -moz-border-radius: $radius;
     -webkit-border-radius: $radius;
@@ -208,7 +183,7 @@
 %bws-list {
   overflow-y: auto;
   max-height: 350px;
-  border-top: 1px solid $bws-border;
+  border-top: 1px solid $mid-grey;
 }
 
 %floating-panel {

@@ -255,7 +255,6 @@ YUI.add('local-charm-import-helpers', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'juju-templates',
-    'request-series-inspector'
+    'juju-templates'
   ]
 });

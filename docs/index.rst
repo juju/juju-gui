@@ -17,8 +17,6 @@ Juju GUI documentation
    continuous-integration
    datasources
    recording-and-playing-back-websocket-traffic
-   databinding
-   viewlets
    analytics
    floobits
 
@@ -33,8 +31,6 @@ Juju GUI documentation
 |   `Continuous Integration`_
 |   `Datasources`_
 |   `Recording and Playing Back Websocket Traffic`_
-|   `Databinding`_
-|   `Viewlets`_
 |   `Analytics`_
 |   `Collaborating using Floobits`_
 
@@ -49,7 +45,5 @@ Juju GUI documentation
 .. _Continuous Integration: https://github.com/juju/juju-gui/blob/develop/docs/continuous-integration.rst
 .. _Datasources: https://github.com/juju/juju-gui/blob/develop/docs/datasources.rst
 .. _Recording and Playing Back Websocket Traffic: https://github.com/juju/juju-gui/blob/develop/docs/recording-and-playing-back-websocket-traffic.rst
-.. _Databinding: https://github.com/juju/juju-gui/blob/develop/docs/databinding.rst
-.. _Viewlets: https://github.com/juju/juju-gui/blob/develop/docs/viewlets.rst
 .. _Analytics: https://github.com/juju/juju-gui/blob/develop/docs/analytics.rst
 .. _Collaborating using Floobits: https://github.com/juju/juju-gui/blob/develop/docs/floobits.rst

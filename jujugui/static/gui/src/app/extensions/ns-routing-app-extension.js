@@ -477,7 +477,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           // variables in the enclosing scope, most notably the callbacks and
           // routes.  Read carefully!
           req.next = function(err) {
-            var subApp, callback, route, callingContext;
+            var callback, route, callingContext;
 
             if (err) {
               // Special case "route" to skip to the next route handler
@@ -492,13 +492,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
             } else if ((callback = callbacks.shift())) {
 
               if (typeof callback === 'string') {
-                subApp = self.get('subApps')[namespace];
-
-                if (subApp && typeof subApp[callback] === 'function') {
-                  callback = subApp[callback];
-                  callingContext = subApp;
-                  subApp.verifyRendered();
-                } else if (typeof self[callback] === 'function') {
+                if (typeof self[callback] === 'function') {
                   callback = self[callback];
                   callingContext = self;
                 } else {

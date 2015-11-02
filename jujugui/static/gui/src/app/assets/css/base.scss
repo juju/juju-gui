@@ -58,7 +58,6 @@ $error: #df382c;
 $ubuntu-orange: #dd4814;
 $charm-panel-orange: #dd4814;
 $charm-panel-background-color: #eeeeee;
-$inspector-dark: #1c1817;
 $label-color: #292929;
 $light-grey: #f5f5f5;
 $light-mid-grey: #d4d4d4;
@@ -88,9 +87,7 @@ $panel-space: 10px;
 // Imports need to be after vars.
 @import "animations";
 @import "typography";
-@import "browser/vars";
 @import "mixins";
-@import "inspector/vars";
 @import "grid";
 
 /* Common classes and setup */
@@ -143,7 +140,7 @@ input[type="text"],
 input[type="password"] {
     padding: 5px 10px;
     background-color: #fff;
-    border: 1px solid $bws-border;
+    border: 1px solid $mid-grey;
     border-radius: $border-radius;
 }
 
@@ -537,12 +534,7 @@ th {
                     color: red;
                 }
             }
-            &.landscape-reboot {
-                background-image: url(juju-ui/assets/images/non-sprites/landscape_restart_menu.png);
-            }
-            &.landscape-security {
-                background-image: url(juju-ui/assets/images/non-sprites/landscape_security_menu.png);
-            }
+
             &:last-child {
                 border-bottom: none;
             }
@@ -1153,24 +1145,7 @@ g.unit {
     }
 }
 
-/** Browser Setup **/
-@import "browser/reset";
-
-
-/** SubApps **/
-@import "browser/main";
-
 /** Widgets **/
-@import "browser/bundle-panel";
-@import "browser/bws-searchbox";
-@import "browser/token-container";
-@import "browser/charm-full";
-@import "browser/token";
-@import "browser/overlay-indicator";
-@import "browser/section-title";
-@import "browser/tabview";
-@import "browser/added-services";
-@import "inspector/scale-up";
 @import "machine-view/serviceunit-token";
 @import "machine-view/container-token";
 @import "machine-view/create-machine-view";
@@ -1179,16 +1154,11 @@ g.unit {
 @import "machine-view/machine-view-token-base";
 @import "machine-view/more-menu";
 @import "machine-view/service-scale-up-view";
-@import "content-panel";
 @import "dropdown";
-@import "inspector/juju-inspector";
-@import "inspector/inspector-view";
 @import "header";
 
 /** Views **/
-@import "browser/onboarding";
-@import "browser/search";
-@import "browser/added-services-button";
+@import "onboarding";
 
 /** Cookies **/
 @import "cookies";

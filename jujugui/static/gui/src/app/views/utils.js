@@ -37,111 +37,6 @@ YUI.add('juju-view-utils', function(Y) {
     @class utils
   */
 
-  // These are tools for the linkify function, below.
-  var _url = new RegExp(
-      '\\bhttps?:\\/\\/' +
-      '[-A-Za-z0-9+&@#\\/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#\\/%=~_()|]+',
-      'i');
-  var _lp = /\blp:~[^ ]*[0-9A-Za-z_]+/i;
-  var _long = /\b[\w]{50,}/;
-  var _splitter = new RegExp(
-      '(?=' + _url.source + '|' + _lp.source + '|' + _long.source + ')', 'i');
-  var _link_template = (
-      '<a href="$value" target="_blank" class="break-word">$safe</a>');
-  var _span_template = '<span class="break-word">$safe</span>';
-  /**
-    Linkify links in text.  Wrap launchpad branch locations in links.  Mark
-    long words as needing to break.  HTML escape everywhere possible.
-
-    @method linkify
-    @param {String} text The string to linkify.
-    @return {String} The linkified string.
-   */
-  var linkify = function(text) {
-    if (text) {
-      // The function's strategy is to use a regex to split the string
-      // whenever we have a link, a Launchpad branch reference, or a long
-      // word.  The regex is careful to not actually consume anything, because
-      // then we would lose content from the text.  It also does not remember
-      // any matches, because this inserts the matches into the split string,
-      // which can be difficult to work with.
-
-      // After we have the split string, then we walk through each segment of
-      // the array and identify why we split: was it a link?  A Launchpad
-      // branch identifier?  A long word?  Or are we just at the beginning of
-      // the string?  For each of these cases, we reassemble the content, HTML
-      // escaping as much as possible so as to reduce the chance of XSS attack
-      // vectors.
-
-      // This will hold the segments of the resulting string.  After our work,
-      // we join all the segments together and return the result.
-      var segments = [];
-      /**
-        Process a segment and add its parts to the segments array.
-
-        This is a function to try and make the main loop a bit cleaner.
-
-        @method pushMatch
-        @param {string} segment The full segment, as split from the original
-               string, that we are working with right now.
-        @param {string} match The regex match: the link, Launchpad branch, or
-               long word that comes at the beginning of the segment.
-        @param {string} template A string in which $value is replaced by the
-               unprocessed value, and $safe is replaced by the HTML-escaped
-               match.
-        @param {string or undefined} value to be used in the template.  If
-              this is not provided, the match is used.
-       */
-      var pushMatch = function(segment, match, template, value) {
-        if (!Y.Lang.isValue(value)) {
-          value = match;
-        }
-        var safe = Y.Escape.html(match);
-        segments.push(
-            template.replace('$value', value).replace('$safe', safe));
-        segments.push(Y.Escape.html(segment.slice(match.length)));
-      };
-      // This is the main loop, doing the job described in the comment at the
-      // top of the function.
-      text.split(_splitter).forEach(function(segment) {
-        var match = _url.exec(segment);
-        if (match) {
-          pushMatch(segment, match[0], _link_template);
-        } else {
-          match = _lp.exec(segment);
-          if (match) {
-            pushMatch(
-                segment, match[0], _link_template,
-                'https://code.launchpad.net/' + match[0].slice(3));
-          } else {
-            match = _long.exec(segment);
-            if (match) {
-              pushMatch(segment, match[0], _span_template);
-            } else {
-              segments.push(Y.Escape.html(segment));
-            }
-          }
-        }
-      });
-      // The trim helps out for when the output is used in a whitespace: pre-
-      // line context, which is true in all cases as of this writing.  It
-      // shouldn't affect other uses, but if it does and we want to remove
-      // `trim` from the function, doublecheck that the trim is added back in
-      // elsewhere as desired.
-      text = segments.join('').trim();
-    }
-    return text;
-  };
-  utils.linkify = linkify;
-
-  Y.Handlebars.registerHelper('linkify', function(text) {
-    var result = linkify(text);
-    if (result) {
-      result = new Y.Handlebars.SafeString(result);
-    }
-    return result;
-  });
-
   /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
@@ -505,156 +400,6 @@ YUI.add('juju-view-utils', function(Y) {
     return panel;
   };
 
-  function _addAlertMessage(container, alertClass, message) {
-    var div = container.one('#message-area');
-
-    // If the div cannot be found (often an issue with testing), give up and
-    // return.
-    if (!div) {
-      return;
-    }
-
-    var errorDiv = div.one('#alert-area');
-
-    if (!errorDiv) {
-      errorDiv = Y.Node.create('<div/>')
-        .set('id', 'alert-area')
-        .addClass('alert')
-        .addClass(alertClass);
-
-      Y.Node.create('<span/>')
-        .set('id', 'alert-area-text')
-        .appendTo(errorDiv);
-
-      var close = Y.Node.create('<a class="close">x</a>');
-
-      errorDiv.appendTo(div);
-      close.appendTo(errorDiv);
-
-      close.on('click', function() {
-        errorDiv.remove();
-      });
-    }
-
-    errorDiv.one('#alert-area-text').setHTML(message);
-    window.scrollTo(0, 0);
-  }
-
-  utils.showSuccessMessage = function(container, message) {
-    _addAlertMessage(container, 'alert-success', message);
-  };
-
-
-  utils.buildRpcHandler = function(config) {
-    var utils = Y.namespace('juju.views.utils'),
-        container = config.container,
-        scope = config.scope,
-        finalizeHandler = config.finalizeHandler,
-        successHandler = config.successHandler,
-        errorHandler = config.errorHandler;
-
-    function invokeCallback(callback) {
-      if (callback) {
-        if (scope) {
-          callback.apply(scope);
-        } else {
-          callback();
-        }
-      }
-    }
-
-    return function(ev) {
-      if (ev && ev.err) {
-        _addAlertMessage(container, 'alert-error', utils.SERVER_ERROR_MESSAGE);
-        invokeCallback(errorHandler);
-      } else {
-        // The usual result of a successful request is a page refresh.
-        // Therefore, we need to set this delay in order to show the "success"
-        // message after the page page refresh.
-        setTimeout(function() {
-          utils.showSuccessMessage(container, 'Settings updated');
-        }, 1000);
-        invokeCallback(successHandler);
-      }
-      invokeCallback(finalizeHandler);
-    };
-  };
-
-  utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
-
-  /**
-    Prepare and return a constraints list to be used as part of the template
-    context.
-
-    @method getConstraints
-    @private
-    @param {Object} serviceConstraints Key-value pairs representing the
-      current service constraints.
-    @param {Array} genericConstraints Generic constraint keys for the
-      environment in use.
-    @return {Array} The resulting constraints list, each item being
-      an object with the following fields: name, value, title, unit
-      (optional).
-  */
-  utils.getConstraints = function(serviceConstraints, genericConstraints) {
-
-    var constraints = [];
-    var initial = Object.create(null);
-    var readOnlyConstraints = utils.readOnlyConstraints;
-    var constraintDescriptions = utils.constraintDescriptions;
-    // Exclude read-only constraints.
-    Y.Object.each(serviceConstraints, function(value, key) {
-      if (readOnlyConstraints.indexOf(key) === -1) {
-        initial[key] = value;
-      }
-    });
-    // Add generic constraints.
-    Y.Array.each(genericConstraints, function(key) {
-      if (key in initial) {
-        constraints.push({name: key, value: initial[key]});
-        delete initial[key];
-      } else {
-        constraints.push({name: key, value: ''});
-      }
-    });
-    // Add missing initial constraints.
-    Y.Object.each(initial, function(value, key) {
-      constraints.push({name: key, value: value});
-    });
-    // Add constraint descriptions.
-    return Y.Array.filter(constraints, function(item) {
-      if (item.name in constraintDescriptions) {
-        return Y.mix(item, constraintDescriptions[item.name]);
-      }
-      // If the current key is not included in the descriptions, use the
-      // name as the title to display to the user.
-      item.title = item.name;
-      return item;
-    });
-  };
-
-  /**
-    Constraint descriptions used in getConstraints
-
-    @property constraintDescriptions
-  */
-  utils.constraintDescriptions = {
-    'arch': {title: 'Architecture'},
-    'cpu': {title: 'CPU', unit: 'GHz'},
-    'cpu-cores': {title: 'CPU cores'},
-    'cpu-power': {title: 'CPU power', unit: 'GHz'},
-    'mem': {title: 'Memory', unit: 'MB'},
-    'root-disk': {title: 'Root Disk Size', unit: 'MB'},
-    'tags': {title: 'Tags'}
-  };
-
-  /**
-    Read-only constraints used in getConstraints
-
-    @property readOnlyConstraints
-  */
-  utils.readOnlyConstraints = ['provider-type', 'ubuntu-series'];
-
   /**
      Check whether or not the given relationId represents a PyJuju relation.
 
@@ -826,183 +571,6 @@ YUI.add('juju-view-utils', function(Y) {
       result.requires.type = result.requireType;
     }
     return result;
-  };
-
-  /*
-   * Given a CSS selector, gather up form values and return in a mapping
-   * (object).
-   */
-  utils.getElementsValuesMapping = function(container, selector) {
-    var result = {};
-    container.all(selector).each(function(el) {
-
-      var name = el.get('name');
-      // Unnamed elements are resizing textarea artifacts.  Skip them.
-      if (!name) {
-        return;
-      }
-      var value = null;
-      if (el.getAttribute('type') === 'checkbox') {
-        value = el.get('checked');
-      } else {
-        value = el.get('value');
-      }
-
-      if (value && typeof value === 'string' && value.trim() === '') {
-        value = null;
-      }
-
-      result[el.get('name')] = value;
-    });
-
-    return result;
-  };
-
-  /**
-    Find unchanged config options from a collection of config values and return
-    only those that are different from the supplied charm or service defaults
-    at the time of parsing.
-
-    @method getChangedConfigOptions
-    @param {Object} config is a reference to service config values in the GUI.
-    @param {Object} options is a reference to the charm or
-                    service configuration options.
-    @return {Object} the key/value pairs of config options.
-  */
-  utils.getChangedConfigOptions = function(config, options) {
-    // This method is always called even if the config is provided by
-    // a configuration file - in this case, return.
-    if (!config) {
-      return;
-    }
-    var newValues = Object.create(null);
-    Object.keys(config).forEach(function(key) {
-      // Find the config options which are not different from the charm or
-      // service defaults intentionally letting the browser do the type
-      // conversion.
-      // The || check is to allow empty inputs to match an undefined default.
-      /* jshint -W116 */
-      if (Y.Lang.isObject(options[key])) {
-        // Options represents a charm config.
-        if (config[key] == (options[key]['default'] || '')) {
-          return;
-        }
-      } else {
-        // Options represents a service config.
-        if (config[key] == (options[key] || '')) {
-          return;
-        }
-      }
-      /* jshint +W116 */
-      newValues[key] = config[key];
-    });
-    return newValues;
-  };
-
-  /**
-   Return a template-friendly array of settings.
-
-   Used for service-configuration.partial adding isBool, isNumeric metadata.
-
-   @method extractServiceSettings
-   @param {Object} schema The schema for a charm.
-   @param {Object} config An optional object of configuration values for
-     the service.  If it isn't given, the defaults from the charm are used.
-     If the config is passed it must complete in that it contains values for
-     all entries in the schema.  The value of entries in the schema that
-     are not in the config will be undefined.
-   @return {Array} An array of settings for use in the template.
-   */
-  utils.extractServiceSettings = function(schema, config) {
-    var settings = [];
-
-    if (!config) {
-      // If no separate service config is given, use the defaults from the
-      // schema.
-      config = {};
-      Y.Object.each(schema, function(v, k) {
-        config[k] = v['default'];
-      });
-    }
-
-    Y.Object.each(schema, function(field_def, field_name) {
-      var entry = {
-        'name': field_name
-      };
-
-      var dataType = schema[field_name].type;
-
-      if (dataType === 'boolean') {
-        entry.isBool = true;
-
-        if (config[field_name]) {
-          // The "checked" string will be used inside an input tag
-          // like <input id="id" type="checkbox" checked>
-          entry.value = 'checked';
-        } else {
-          // The output will be <input id="id" type="checkbox">
-          entry.value = '';
-        }
-      } else {
-        if (dataType === 'int' || dataType === 'float') {
-          entry.isNumeric = true;
-        }
-
-        entry.value = config[field_name] || '';
-      }
-      settings.push(Y.mix(entry, field_def));
-    });
-    return settings;
-  };
-
-  utils.stateToStyle = function(state, current) {
-    // TODO: also check relations.
-    var classes;
-    switch (state) {
-      case 'installed':
-      case 'pending':
-      case 'stopped':
-        classes = 'state-pending';
-        break;
-      case 'started':
-        classes = 'state-started';
-        break;
-      case 'install-error':
-      case 'start-error':
-      case 'stop-error':
-        classes = 'state-error';
-        break;
-      default:
-        Y.log('Unhandled agent state: ' + state, 'debug');
-    }
-    classes = current && classes + ' ' + current || classes;
-    return classes;
-  };
-
-  /**
-    Checks the database for an existing service with the same name.
-
-    @method checkForExistingService
-    @param {String} serviceName of the new service to deploy.
-    @return {Boolean} true if it exists, false if doesn't.
-  */
-  utils.checkForExistingService = function(serviceName, db) {
-    var existingService = db.services.getById(serviceName);
-    return (existingService) ? true : false;
-  };
-
-  utils.validateServiceName = function(serviceName, db) {
-    if (!utils.checkForExistingService(serviceName, db)) {
-      // Regex re-worked from juju-core to work properly in javascript
-      // http://bazaar.launchpad.net/
-      // ~go-bot/juju-core/trunk/view/head:/names/service.go
-      var regex = /[a-z][a-z0-9]*(?:-[a-z0-9]*[a-z][a-z0-9]*)*/,
-          result = serviceName.match(regex);
-      if (Y.Lang.isArray(result) && result[0] === serviceName) {
-        return true;
-      }
-    }
-    return false;
   };
 
   /*
@@ -1618,7 +1186,6 @@ YUI.add('juju-view-utils', function(Y) {
 
   };
 
-
   /**
     Export the YAML for this environment.
 
@@ -1634,26 +1201,6 @@ YUI.add('juju-view-utils', function(Y) {
         {type: 'text/plain;charset=utf-8'});
     saveAs(exportBlob, 'bundle.yaml');
   },
-
-  /**
-    Returns an array of user friendly Landscape ids that are contained
-    on the passed in unit.
-
-    @method landscapeAnnotations
-    @param {Object} unit A unit object.
-    @return {Array} An array of user friendly Landscape id's.
-  */
-  utils.landscapeAnnotations = function(unit) {
-    var ids = [];
-    if (!unit.annotations) { return ids; }
-    if (unit.annotations['landscape-needs-reboot']) {
-      ids.push('landscape-needs-reboot');
-    }
-    if (unit.annotations['landscape-security-upgrades']) {
-      ids.push('landscape-security-upgrades');
-    }
-    return ids;
-  };
 
   /**
     Determines the category type for the unit status list of the inspector.
@@ -1783,200 +1330,6 @@ YUI.add('juju-view-utils', function(Y) {
     return parts[0];
   };
 
-  /**
-   * Determine if a service is the Juju GUI by inspecting the charm URL.
-   *
-   * @method isGuiCharmUrl
-   * @param {String} charmUrl The service to inspect.
-   * @return {Boolean} True if the charm URL is that of the Juju GUI.
-   */
-  utils.isGuiCharmUrl = function(charmUrl) {
-    // Regular expression to match charm URLs.  Explanation generated by
-    // http://rick.measham.id.au/paste/explain.pl and then touched up a bit to
-    // fit in our maximum line width.  Note that the bit about an optional
-    // newline matched by $ is a Perlism that JS does not share.
-    //
-    // NODE                     EXPLANATION
-    // ------------------------------------------------------------------------
-    //   ^                        the beginning of the string
-    // ------------------------------------------------------------------------
-    //   (?:                      group, but do not capture:
-    // ------------------------------------------------------------------------
-    //     [^:]+                    any character except: ':' (1 or more
-    //                              times (matching the most amount
-    //                              possible))
-    // ------------------------------------------------------------------------
-    //     :                        ':'
-    // ------------------------------------------------------------------------
-    //   )                        end of grouping
-    // ------------------------------------------------------------------------
-    //   (?:                      group, but do not capture (0 or more times
-    //                            (matching the most amount possible)):
-    // ------------------------------------------------------------------------
-    //     [^\/]+                   any character except: '\/' (1 or more
-    //                              times (matching the most amount
-    //                              possible))
-    // ------------------------------------------------------------------------
-    //     \/                       '/'
-    // ------------------------------------------------------------------------
-    //   )*                       end of grouping
-    // ------------------------------------------------------------------------
-    //   juju-gui-                'juju-gui-'
-    // ------------------------------------------------------------------------
-    //   \d+                      digits (0-9) (1 or more times (matching
-    //                            the most amount possible))
-    // ------------------------------------------------------------------------
-    //   $                        before an optional \n, and the end of the
-    //                            string
-    return (/^(?:[^:]+:)(?:[^\/]+\/)*juju-gui-\d+$/).test(charmUrl);
-  };
-
-  /**
-   * Determine if a service is the Juju GUI by inspecting the charm URL.
-   *
-   * @method isGuiService
-   * @param {Object} candidate The service to inspect.
-   * @return {Boolean} True if the service is the Juju GUI.
-   */
-  utils.isGuiService = function(candidate) {
-    // Some candidates have the charm URL as an attribute, others require a
-    // "get".
-    var charmUrl = candidate.charm || candidate.get('charm');
-    return utils.isGuiCharmUrl(charmUrl);
-  };
-  /**
-   * Normalize the list of open ports on the unit.
-   * The list of open ports can be received in different formats based on the
-   * Juju implementations. In essence, while pyJuju sends e.g. [80, 42],
-   * juju-core includes the protocol information, e.g. ['80/tcp', '47/udp'].
-   *
-   * @method normalizeUnitPorts
-   * @param {Array} ports The list of open ports on a unit.
-   * @return {Array} A list of objects each one with the following properties:
-   *   - port (int): the port number;
-   *   - protocol (string): 'tcp' or 'udp'.
-   */
-  utils.normalizeUnitPorts = function(ports) {
-    if (!ports) {
-      return [];
-    }
-    return Y.Array.map(ports, function(port) {
-      var splitted = port.toString().split('/');
-      return {port: parseInt(splitted[0], 10), protocol: splitted[1] || 'tcp'};
-    });
-  };
-
-  /**
-   * Parse a list of normalized open ports.
-   *
-   * @method parseUnitPorts
-   * @param {String} ipAddress The unit IP address.
-   * @param {Array} normalizedPorts A list of normalized unit ports
-   *   (see utils.normalizeUnitPorts above).
-   * @return {Array} An array of two elements. The first element is a data
-   *   object describing the IP address. The second element is a list of data
-       objects describing each open port. A data object is an object with the
-       following properties:
-   *   - text (string): the text to show in the template;
-   *   - href (string, optional): the URL where the text can link to (
-         if applicable).
-   */
-  utils.parseUnitPorts = function(ipAddress, normalizedPorts) {
-    var httpHref, httpsHref;
-    var ipAddressData = {text: ipAddress};
-    var portDataList = [];
-    normalizedPorts.forEach(function(normalizedPort) {
-      var port = normalizedPort.port;
-      var protocol = normalizedPort.protocol;
-      var portData = {text: port + '/' + protocol};
-      if (protocol === 'tcp') {
-        if (port === 443) {
-          portData.href = httpsHref = 'https://' + ipAddress + '/';
-        } else if (port === 80) {
-          portData.href = httpHref = 'http://' + ipAddress + '/';
-        } else {
-          portData.href = 'http://' + ipAddress + ':' + port + '/';
-        }
-      }
-      portDataList.push(portData);
-    });
-    ipAddressData.href = httpsHref || httpHref;
-    return [ipAddressData, portDataList];
-  };
-
-  Y.Handlebars.registerHelper('unitState', function(relation_errors,
-      agent_state) {
-        if ('started' === agent_state && relation_errors &&
-            Y.Object.keys(relation_errors).length) {
-          return 'relation-error';
-        }
-        return agent_state;
-      });
-
-  Y.Handlebars.registerHelper('any', function() {
-    var conditions = Y.Array(arguments, 0, true),
-        options = conditions.pop();
-    if (Y.Array.some(conditions, function(c) { return !!c; })) {
-      return options.fn(this);
-    } else {
-      return options.inverse(this);
-    }
-  });
-
-  Y.Handlebars.registerHelper('dateformat', function(date, format) {
-    // See http://yuilibrary.com/yui/docs/datatype/ for formatting options.
-    if (date) {
-      return Y.Date.format(date, {format: format});
-    }
-    return '';
-  });
-
-  Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
-    //console.log('helper', iface_decl, options, this);
-    var result = [];
-    var ret = '';
-    Y.Object.each(iface_decl, function(value, name) {
-      if (name) {
-        result.push({
-          name: name, 'interface': value['interface']
-        });
-      }
-    });
-
-    if (result && result.length > 0) {
-      for (var x = 0, j = result.length; x < j; x += 1) {
-        ret = ret + options.fn(result[x]);
-      }
-    } else {
-      ret = 'None';
-    }
-    return ret;
-  });
-
-  Y.Handlebars.registerHelper('markdown', function(text) {
-    if (!text || text === undefined) {return '';}
-    return new Y.Handlebars.SafeString(
-        Y.Markdown.toHTML(text));
-  });
-
-  /*
-   * Generate a landscape badge using a partial internally.
-   */
-  Y.Handlebars.registerHelper('landscapeBadge', function(
-      landscape, model, intent, hint) {
-        if (!landscape) {
-          return '';
-        }
-        var output = '';
-        var badge = landscape.getLandscapeBadge(model, intent, hint);
-
-        if (badge) {
-          output += Y.Handlebars.render(
-              '{{>landscape-badges}}', {badge: badge});
-        }
-        return new Y.Handlebars.SafeString(output);
-      });
-
   /*
    * Build a list of relation types given a list of endpoints.
    */
@@ -1986,48 +1339,6 @@ YUI.add('juju-view-utils', function(Y) {
       out += options.fn({start: ep[0], end: ep[1]});
     });
     return out;
-  });
-
-
-  Y.Handlebars.registerHelper('arrayObject', function(object, options) {
-    var res = '';
-    if (object) {
-      Y.Array.each(Y.Object.keys(object), function(key) {
-        res = res + options.fn({
-          key: key,
-          value: object[key]
-        });
-      });
-    }
-    return res;
-  });
-
-
-  /*
-    If built around checking if x == y.
-    Supports an inverse so that we can use an else clause.
-   */
-  Y.Handlebars.registerHelper('if_eq', function(x, y, options) {
-    if (x === y) {
-      return options.fn(this);
-    } else {
-      return options.inverse(this);
-    }
-  });
-
-  /*
-    Supplies a version of 'unless' block helper that will check two specified
-    values against each other. The default unless helper is based on a single
-    truthy value.
-    Supports an inverse function so that we can use an else clause.
-
-   */
-  Y.Handlebars.registerHelper('unless_eq', function(x, y, options) {
-    if (x !== y) {
-      return options.fn(this);
-    } else {
-      return options.inverse(this);
-    }
   });
 
   /*
@@ -2066,33 +1377,6 @@ YUI.add('juju-view-utils', function(Y) {
 
   Y.Handlebars.registerHelper('pluralize', utils.pluralize);
 
-  /*
-   * Truncate helper to keep text sizes to a specified limit.
-   *
-   * {{truncate field 100}}
-   *
-   */
-  Y.Handlebars.registerHelper('truncate', function(string, length) {
-    if (string && string.length > length) {
-      return Y.Lang.trimRight(string.substring(0, length)) + '...';
-    }
-    else {
-      return string;
-    }
-  });
-
-  /*
-   * Check if a flag is set.
-   *
-   * {{#ifFlag 'flag_name'}} {{/ifFlag}}
-   *
-   */
-  Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
-    if (window.flags && window.flags[flag]) {
-      return options.fn(this);
-    }
-  });
-
   Y.Handlebars.registerHelper('getRealServiceName', function(id, relation) {
     var endpoint;
     if (id === relation.sourceId) {
@@ -2110,10 +1394,6 @@ YUI.add('juju-view-utils', function(Y) {
                    .replace(/\)$/, '') + ':' + type;
   });
 
-  Y.Handlebars.registerHelper('strip_cs', function(id) {
-    return id.replace('cs:', '/');
-  });
-
   /*
    * Dev tool: dump to debugger in template.
    * Allows you to inspect a variable by passing it to
@@ -2127,55 +1407,83 @@ YUI.add('juju-view-utils', function(Y) {
     /*jshint debug:false */
   });
 
-  /*
-   * Extension for views to provide an apiFailure method.
-   *
-   * @class apiFailingView
-   */
-  utils.apiFailingView = function() {
-    this._initAPIFailingView();
-  };
-  utils.apiFailingView.prototype = {
-    /**
-     * Constructor
-     *
-     * @method _initAPIFailingView
-     */
-    _initAPIFailingView: function() {},
+  /**
+    Handles deploying the charm or bundle id passed in as a deploy-target
+    as a query param on app load.
 
+    Be sure to use the fully qualified urls like cs:precise/mysql-48 and
+    bundle:mediawiki/7/single because it make it easy to check what type of
+    entity the id is referring to.
+
+    @method _deployTargetDispatcher
+    @param {String} entityId The id of the charm or bundle to deploy.
+  */
+  utils.deployTargetDispatcher = function(entityId) {
+    var charmstore = this.get('charmstore');
     /**
-     * Shared method to generate a message to the user based on a bad api
-     * call from a view.
-     *
-     * @method apiFailure
-     * @param {Object} data the json decoded response text.
-     * @param {Object} request the original io_request object for debugging.
-     * @param {String} title the title for the generated notification.
-     */
-    _apiFailure: function(data, request, title) {
-      var message;
-      if (data && data.type) {
-        message = 'Charm API error of type: ' + data.type;
-      } else {
-        message = 'Charm API server did not respond';
+      Handles parsing and displaying the failure notification returned from
+      the charmstore api.
+
+      @method failureNotification
+      @param {Object} error The XHR request object from the charmstore req.
+    */
+    var failureNotification = function(error) {
+      var message = 'Unable to deploy target: ' + entityId;
+      try {
+        message = JSON.parse(error.currentTarget.responseText).Message;
+      } catch (e) {
+        console.error(e);
       }
-      if (!title) {
-        title = 'Unidentified API failure';
-      }
-      this.get('db').notifications.add(
-          new models.Notification({
-            title: title,
-            message: message,
-            level: 'error'
-          })
-      );
-      // If there's a spinning indicator on the View then make sure to hide
-      // it.
-      if (this.hideIndicator && this.get('renderTo')) {
-        this.hideIndicator(this.get('renderTo'));
-      }
+      this.db.notifications.add({
+        title: 'Error deploying target.',
+        message: message,
+        level: 'error'
+      });
+    };
+
+    // The charmstore apiv4 format can have the bundle keyword either at the
+    // start, for charmers bundles, or after the username, for namespaced
+    // bundles. ex) bundle/swift & ~jorge/bundle/swift
+    if (entityId.indexOf('bundle/') > -1) {
+      charmstore.getBundleYAML(
+          entityId,
+          function(bundleYAML) {
+            this.bundleImporter.importBundleYAML(bundleYAML);
+          }.bind(this),
+          failureNotification.bind(this));
+    } else {
+      // If it's not a bundle then it's a charm.
+      charmstore.getEntity(
+          entityId.replace('cs:', ''),
+          function(charm) {
+            charm = charm[0];
+            var config = {},
+                options = charm.get('options');
+            Object.keys(options).forEach(function(key) {
+              config[key] = options[key]['default'];
+            });
+            // We call the env deploy method directly because we don't want
+            // the ghost inspector to open.
+            this.env.deploy(
+                charm.get('id'),
+                charm.get('name'),
+                config,
+                undefined, //config file content
+                1, // number of units
+                {}, //constraints
+                null); // toMachine
+            this.fire('autoplaceAndCommitAll');
+          }.bind(this),
+          failureNotification.bind(this));
     }
-  };
+    // Because deploy-target is an action and not a state we need to clear
+    // it out of the state as soon as we are done with it so that we can
+    // continue calling dispatch without the worry of it trying to
+    // deploy multiple times.
+    var currentState = this.state.get('current');
+    delete currentState.app.deployTarget;
+    this.navigate(this.state.generateUrl(currentState));
+  },
 
   /**
     Given a mapping of key/value pairs, determine if the data describes a charm
@@ -2195,32 +1503,6 @@ YUI.add('juju-view-utils', function(Y) {
       return 'bundle';
     }
     return 'charm';
-  };
-
-  /**
-    Given a set of services from bundle metadata, generate image html tags for
-    the bundles charm icons.
-
-    @method charmIconParser
-    @param {Object} services The service object from charmstore apiv4 bundle
-      data response.
-    @return {Array} Array of charm icon html.
-  */
-  utils.charmIconParser = function(services) {
-    var charmIcons = [];
-    Object.keys(services).forEach(function(key) {
-      var service = services[key],
-          id = service.charm || service.id,
-          src = utils.getIconPath(id);
-      var iconData = '<img src="' + src + '" alt="' + key + '"/>';
-      charmIcons.push(iconData);
-    });
-
-    if (charmIcons.length > 9) {
-      charmIcons = charmIcons.slice(0, 9);
-      charmIcons.push('&hellip;');
-    }
-    return charmIcons;
   };
 
   /**
@@ -2416,27 +1698,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Returns the real service name for the provided service ghost id.
-
-    @method getServiceNameFromGhostId
-    @param {String} id The ghost service id.
-    @param {Object} db Reference to the app db.
-    @return {String} The service name.
-  */
-  utils.getServiceNameFromGhostId = function(id, db) {
-    var serviceName;
-    db.services.some(function(service) {
-      if (service.get('id') === id) {
-        serviceName = service.get('displayName')
-                             .replace(/^\(/, '')
-                             .replace(/\)$/, '');
-        return true;
-      }
-    });
-    return serviceName;
-  };
-
-  /**
     Destroy a list of units.
 
     @method destroyUnits
@@ -2489,29 +1750,6 @@ YUI.add('juju-view-utils', function(Y) {
     return path;
   };
 
-  /**
-    Shuffles the elements on the supplied array, returning the shuffled version.
-
-    @method shuffleArray
-    @param {Array} array The array to shuffle
-    @return {Array} The shuffled array.
-  */
-  utils.shuffleArray = function(array) {
-    var length = array.length;
-    var temp, index;
-    while (length) {
-      // Pick a random element.
-      index = Math.floor(Math.random() * length);
-      length -= 1;
-      // Swap the random element with the current index.
-      temp = array[length];
-      array[length] = array[index];
-      array[index] = temp;
-    }
-    return array;
-  };
-
-
 }, '0.1.0', {
   requires: [
     'base-build',
@@ -2521,7 +1759,6 @@ YUI.add('juju-view-utils', function(Y) {
     'view',
     'panel',
     'json-stringify',
-    'gallery-markdown',
     'datatype-date-format'
   ]
 });

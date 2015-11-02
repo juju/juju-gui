@@ -44,7 +44,7 @@
         margin: 0;
         cursor: pointer;
         height: 32px;
-        border: 1px solid $inspector-border-color;
+        border: 1px solid $mid-grey;
 
         &:after,
         &:before {
@@ -74,7 +74,7 @@
     &--input:checked ~ label {
         .boolean-config--handle {
             left: 25px;
-            background-color: $confirm-button-color;
+            background-color: $ubuntu-orange;
         }
         &:before {
             background-image:

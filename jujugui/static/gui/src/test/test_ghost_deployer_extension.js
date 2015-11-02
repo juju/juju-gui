@@ -62,9 +62,6 @@ describe('Ghost Deployer Extension', function() {
       addUnits: utils.makeStubFunction(),
       removeUnits: utils.makeStubFunction()
     };
-    ghostDeployer.set('subApps', {
-      charmbrowser: {
-        fire: utils.makeStubFunction() }});
   });
 
   afterEach(function() {
@@ -116,13 +113,14 @@ describe('Ghost Deployer Extension', function() {
 
   it('creates a ghost service', function() {
     var charm = makeCharm();
+    ghostDeployer.fire = utils.makeStubFunction();
     ghostDeployer.deployService(charm);
     var services = ghostDeployer.db.services;
     assert.strictEqual(services.ghostService.calledOnce(), true);
     var args = services.ghostService.lastArguments();
     assert.lengthOf(args, 1);
     assert.deepEqual(args[0], charm);
-    var fire = ghostDeployer.get('subApps').charmbrowser.fire;
+    var fire = ghostDeployer.fire;
     assert.equal(fire.calledOnce(), true);
     var fireArgs = fire.lastArguments();
     assert.equal(fireArgs[0], 'changeState');
@@ -200,25 +198,6 @@ describe('Ghost Deployer Extension', function() {
       pending: false
     });
     assert.equal(topo.annotateBoxPosition.calledOnce(), true);
-  });
-
-  it('fires serviceDeployed in the deploy handler', function() {
-    var ghostService = new Y.Model({
-      id: 'ghostid',
-      name: 'django'
-    });
-    var topo = ghostDeployer.views.environment.instance.topo;
-    topo.annotateBoxPosition = utils.makeStubFunction();
-    topo.service_boxes.ghostid = {clientId: 'ghostid'};
-    var stubFire = ghostDeployer.get('subApps').charmbrowser.fire;
-    ghostDeployer._deployCallbackHandler(ghostService, {});
-    assert.deepEqual(stubFire.lastArguments(), [
-      'serviceDeployed',
-      {
-        clientId: 'ghostid',
-        serviceName: 'django'
-      }
-    ], 'Event not fired.');
   });
 
   it('notifies add_unit success', function() {

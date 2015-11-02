@@ -2289,7 +2289,6 @@ describe('test_model.js', function() {
       it('updates local config if fields are not dirty', function() {
         django.set('config', {debug: 'foo'});
         django.updateConfig({debug: 'bar'});
-        assert.deepEqual(django.get('_conflictedFields'), []);
         assert.deepEqual(django.get('config'), {debug: 'bar'});
         assert.deepEqual(django.get('environmentConfig'), {debug: 'bar'});
       });

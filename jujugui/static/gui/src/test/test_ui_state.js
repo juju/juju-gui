@@ -48,48 +48,6 @@ describe('UI State object', function() {
     state.destroy();
   });
 
-  describe('Filter for State object', function() {
-    var Y, ns, state;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'juju-app-state',
-          function(Y) {
-            ns = Y.namespace('juju.models');
-            done();
-          });
-    });
-
-    beforeEach(function() {
-      state = new ns.UIState();
-    });
-
-    afterEach(function(done) {
-      state.after('destroy', function() { done(); });
-      state.destroy();
-    });
-
-    it('clears the filter when generating new urls', function() {
-      state.filter.setAttrs({
-        categories: 'cat',
-        provider: 'prov',
-        series: 'ser',
-        text: 'tex',
-        type: 'typ'
-      });
-      var change = {
-        sectionA: {
-          component: 'charmbrowser',
-          metadata: {}}};
-      state.generateUrl(change);
-      assert.deepEqual(state.filter.get('categories'), []);
-      assert.deepEqual(state.filter.get('provider'), []);
-      assert.deepEqual(state.filter.get('series'), []);
-      assert.deepEqual(state.filter.get('text'), '');
-      assert.deepEqual(state.filter.get('type'), []);
-    });
-  });
-
   describe('_stripViewmode', function() {
     var paths = {
       'sidebar': '',

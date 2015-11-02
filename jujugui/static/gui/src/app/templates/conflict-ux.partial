@@ -1,9 +1,0 @@
-{{#if isBool}}
-    <span class="hidden resolver boolean">
-    <span class="config-field conflicted-env" id="input-{{name}}-env"></span>
-    </span>
-{{else}}
-    <div class="hidden resolver">
-    <div class="config-field conflicted-env" id="input-{{name}}-env"></div>
-    </div>
-{{/if}}
