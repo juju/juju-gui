@@ -231,6 +231,39 @@ describe('UnitList', () => {
     });
   });
 
+  it('navigates to the remote service unit when a list item is clicked', () => {
+    // A subordinate shows the remote service unit.
+    var units = [{
+      displayName: 'wordpress/5',
+      id: 'wordpress/5'
+    }];
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          changeState={changeState}
+          serviceId="nrpe"
+          unitStatus={null}
+          units={units} />);
+    output.props.children[1].props.children[1].props.action({
+      currentTarget: {
+        getAttribute: function() {
+          return 'wordpress/5';
+        }
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'wordpress',
+          unit: '5',
+          activeComponent: 'unit'
+        }
+      }
+    });
+  });
+
   it('displays a remove button', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList

@@ -121,12 +121,16 @@ YUI.add('inspector-component', function() {
               serviceId + '/' + unitId);
           var unitStatus = null;
           var previousComponent;
+          var id;
           if (previousMetadata) {
             var units = previousMetadata.units;
             previousComponent = previousMetadata.activeComponent;
             // A unit status of 'true' is provided when there is no status, but
             // we don't want to pass that on as the status value.
             unitStatus = units === true ? null : units;
+            id = previousMetadata.id;
+          } else {
+            id = serviceId;
           }
           state.activeChild = {
             title: unit.displayName,
@@ -143,7 +147,7 @@ YUI.add('inspector-component', function() {
               sectionA: {
                 component: 'inspector',
                 metadata: {
-                  id: serviceId,
+                  id: id,
                   activeComponent: previousComponent || 'units',
                   unit: null,
                   unitStatus: unitStatus

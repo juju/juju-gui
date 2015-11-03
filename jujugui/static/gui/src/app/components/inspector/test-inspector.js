@@ -189,7 +189,8 @@ describe('Inspector', function() {
       sectionA: {
         metadata: {
           activeComponent: 'units',
-          units: 'error'
+          units: 'error',
+          id: 'demo'
         }}};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
@@ -245,6 +246,54 @@ describe('Inspector', function() {
           component: 'inspector',
           metadata: {
             id: 'demo',
+            activeComponent: 'units',
+            unit: null,
+            unitStatus: null
+          }}});
+  });
+
+  it('goes back to the previous service from unit details', function() {
+    // Subordinates show the services unit that it's placed on so viewing
+    // that unit will take you to another services inspector. This test
+    // makes sure that if the previous service was different then 'back'
+    // takes to you to that service.
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({getById: function() {
+      return 'unit';
+    }});
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'unit',
+          unit: '5'
+        }}};
+    var appPreviousState = {
+      sectionA: {
+        metadata: {
+          id: 'previousService',
+          units: true
+        }}};
+    var output = jsTestUtils.shallowRender(
+        <juju.components.Inspector
+          service={service}
+          destroyUnits={destroyUnits}
+          changeState={changeState}
+          appPreviousState={appPreviousState}
+          appState={appState}>
+        </juju.components.Inspector>);
+    output.props.children[0].props.backCallback();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: 'previousService',
             activeComponent: 'units',
             unit: null,
             unitStatus: null

@@ -83,13 +83,15 @@ YUI.add('unit-list', function() {
     */
     _unitItemAction: function(e) {
       var unitStatus = this.props.unitStatus;
-      var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
+      var unitParts = e.currentTarget.getAttribute('data-id').split('/');
       this.props.changeState({
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: this.props.serviceId,
-            unit: unitId,
+            // This is done in parts like this because subordinate units show
+            // the service unit that it's placed on, not the subordinate itself.
+            id: unitParts[0], // Service Id
+            unit: unitParts[1], // Unit Id
             activeComponent: 'unit'
           }
         }

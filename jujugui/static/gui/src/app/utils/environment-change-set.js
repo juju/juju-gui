@@ -425,16 +425,20 @@ YUI.add('environment-change-set', function(Y) {
         // When working with ghost services we are passed a modelId which points
         // to the proper model. So we fetch that model.
         var model = modelList.getById(command.options.modelId);
-        // Depending on the modellist this model may be an object from a
-        // lazymodellist or a Y.Model from a regular model list.
-        if (!(model instanceof Y.Model)) {
-          // We need to revive the model if it's an Object so that other
-          // parts of the application can listen for the change event.
-          model = modelList.revive(model);
-        }
-        model.set('commitStatus', status);
-        if (typeof modelList.free === 'function') {
-          modelList.free(model);
+        // If the modelList was stubbed in tests, ensure that we have an actual
+        // model to work with.
+        if (model) {
+          // Depending on the modellist this model may be an object from a
+          // lazymodellist or a Y.Model from a regular model list.
+          if (!(model instanceof Y.Model)) {
+            // We need to revive the model if it's an Object so that other
+            // parts of the application can listen for the change event.
+            model = modelList.revive(model);
+          }
+          model.set('commitStatus', status);
+          if (typeof modelList.free === 'function') {
+            modelList.free(model);
+          }
         }
       }
     },
@@ -673,6 +677,7 @@ YUI.add('environment-change-set', function(Y) {
       // Remove the associated relations
       db.relations.remove(relations);
       db.services.remove(model);
+      model.updateSubordinateUnits(db);
       model.destroy();
       this._removeExistingRecord(service);
     },
@@ -858,6 +863,11 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       });
+      var db = this.get('db');
+      // Reduce duplicated effort by only updating one service; if the other is
+      // subordinate, this method will catch that.
+      var service = db.services.getServiceByName(args[0][0]);
+      service.updateSubordinateUnits(db);
       var parent = [serviceA, serviceB];
       var command = {
         method: '_add_relation',
@@ -961,7 +971,10 @@ YUI.add('environment-change-set', function(Y) {
             this._removeExistingRecord(key);
             // Remove the unit from the units DB. Even the ghost units are
             // stored in the DB.
-            db.removeUnits(units.getById(unitName));
+            var unit = units.getById(unitName);
+            db.removeUnits(unit);
+            db.services.getServiceByName(unit.service)
+              .updateSubordinateUnits(db);
           }
         }
       }, this);
@@ -975,6 +988,11 @@ YUI.add('environment-change-set', function(Y) {
         args[0].forEach(function(unit) {
           units.getById(unit).deleted = true;
         });
+        // XXX We would like to be able to update subordinate units here, but
+        // as this doesn't actually remove them from the database, the unit
+        // count will not be updated.  A future branch will address the fact
+        // that the service which owns the unit does not see an update here.
+        // Makyo 2015-10-14
       }
       return record;
     },
@@ -1186,6 +1204,8 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       };
+      var service = db.services.getServiceByName(args[0]);
+      service.updateSubordinateUnits(db);
       return this._createNewRecord('addUnits', command, parent);
     },
 
