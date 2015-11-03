@@ -79,7 +79,7 @@ describe('topology bundle module', function() {
     .then(function(bundle) {
           // The size of the element should reflect the passed in params
           var selection = d3.select(container.getDOMNode());
-          var svg = selection.select('svg');
+          var svg = selection.selectAll('svg');
           assert.equal(svg.attr('width'), 640);
           assert.equal(svg.attr('height'), 480);
 

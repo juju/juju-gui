@@ -59,4 +59,6 @@ YUI.add('deployment-summary-change-item', function() {
     }
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'svg-icon'
+]});

@@ -73,25 +73,6 @@
             &:hover {
                 background-color: $charm-panel-orange;
             }
-            .sprite {
-                margin-right: 10px;
-
-                &.hover {
-                    display: none;
-                }
-                &.normal {
-                    display: inline-block;
-                }
-            }
-        }
-        .open .menu-link,
-        .menu-link:hover {
-            .sprite.hover {
-                display: inline-block;
-            }
-            .sprite.normal {
-                display: none;
-            }
         }
     }
 }

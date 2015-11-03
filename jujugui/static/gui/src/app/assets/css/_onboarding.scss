@@ -24,14 +24,9 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: $navbar-height;
+      height: $navbar-height - 21px;
       z-index: 10000;
-
-      i {
-        position: relative;
-        top: 15px;
-        left: 20px;
-      }
+      padding: 21px 0 0 8px;
     }
 
     #onboarding-message {

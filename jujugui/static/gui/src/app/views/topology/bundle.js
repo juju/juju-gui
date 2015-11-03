@@ -196,6 +196,7 @@ YUI.add('juju-view-bundle', function(Y) {
       @method updateServiceNodes
      */
     updateServiceNodes: function(node) {
+      console.log(node);
       if (node.empty()) {
         return;
       }

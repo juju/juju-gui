@@ -47,8 +47,10 @@
                     border-bottom: 1px solid $machine-view-border-colour;
                     line-height: 40px;
 
-                    .sprite {
+                    .svg-icon {
+                        display: inline-block;
                         margin-right: 7px;
+                        vertical-align: middle;
                     }
                 }
                 .unit-list {
