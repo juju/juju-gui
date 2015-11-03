@@ -189,7 +189,8 @@ describe('Inspector', function() {
       sectionA: {
         metadata: {
           activeComponent: 'units',
-          units: 'error'
+          units: 'error',
+          id: 'demo'
         }}};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
