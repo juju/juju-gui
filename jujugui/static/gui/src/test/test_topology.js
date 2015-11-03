@@ -27,7 +27,6 @@ describe('topology', function() {
                                'd3-components',
                                'juju-tests-utils',
                                'juju-tests-factory',
-                               'juju-view-bundle',
                                'node',
                                'node-event-simulate'],
     function(Y) {
@@ -110,41 +109,6 @@ describe('topology', function() {
        // Verify that we have built the default scene.
        Y.Lang.isValue(topo.vis).should.equal(true);
      });
-
-  it('should be able to create a bundle display topology', function(done) {
-    container.destroy(true);
-    container = utils.makeContainer(this);
-
-    utils.promiseImport(
-        'data/wp-deployer.yaml',
-        'wordpress-prod',
-        factory.makeFakeBackend()
-    ).then(function(resolve) {
-      // Init the topo with the db at this point and ...
-      var fakebackend = resolve.backend;
-      var bundle = new views.BundleTopology({
-        container: container,
-        size: [320, 240],
-        db: fakebackend.db,
-        store: fakebackend.get('store'),
-        charmstore: {
-          getIconPath: function() {}
-        }}).render();
-
-      // The size of the element should reflect the passed in params
-      var svg = d3.select(container.getDOMNode()).select('svg');
-      assert.equal(svg.attr('width'), 320);
-      assert.equal(svg.attr('height'), 240);
-
-      // We should have the two rendered services
-      assert.equal(container.all('.service').size(), 2);
-      // and the one relation between them
-      assert.equal(container.all('.relation').size(), 1);
-
-      bundle.destroy();
-      done();
-    }).then(undefined, done);
-  });
 
   describe('servicePointOutside', function() {
     var padding = 200;
