@@ -5,11 +5,9 @@ GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 OLD_TEMPLATES_FILE := $(GUIBUILD)/app/templates.js
 NEW_TEMPLATES_FILE := $(GUIBUILD)/app/components/templates.js
-SPRITE_FILE := $(GUIBUILD)/app/assets/sprites.png
 SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
 SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
-SPRITE_CSS_FILE := $(GUIBUILD)/app/assets/sprites.css
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 JS_ASSETS := $(GUISRC)/app/assets/javascripts
@@ -79,7 +77,7 @@ sysdeps:
 	sudo apt-get install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
-	sudo apt-get install -y imagemagick nodejs python-virtualenv g++ inotify-tools
+	sudo apt-get install -y nodejs python-virtualenv g++ inotify-tools
 
 .PHONY: src
 src: $(GUISRC)
@@ -242,9 +240,6 @@ $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 .phony: css
 css: $(CSS_FILE) $(STATIC_CSS_FILES)
 
-$(SPRITE_FILE): $(NODE_MODULES)
-	$(NODE_MODULES)/grunt/bin/grunt spritegen
-
 $(SVG_SPRITE_FILE): $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 
@@ -254,10 +249,10 @@ $(STATIC_IMAGES):
 	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
 
 .PHONY: images
-images: $(SPRITE_FILE) $(STATIC_IMAGES) $(SVG_SPRITE_FILE)
+images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
 
 .PHONY: watch
 watch:
