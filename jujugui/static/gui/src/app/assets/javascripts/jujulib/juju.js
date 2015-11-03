@@ -50,17 +50,22 @@ var module = module;
    * @param failure {function} A callback to be called on failure. Takes
    *     an xhr object as its only parameter.
   */
-  environment.prototype._makeRequest = function(path, method, params, success, failure) {
+  environment.prototype._makeRequest = function(
+      path, method, params, callback) {
+    var success = function(xhr) {
+      var data = JSON.parse(xhr.target.responseText);
+      callback(null, data);
+    };
+    var failure = function(xhr) {
+      var data = JSON.parse(xhr.target.responseText);
+      var error = data.Message || data.message;
+      callback(error, data);
+    };
     if (method === 'GET') {
-      this.bakery.sendGetRequest(path, function(xhr) {
-        var data = JSON.parse(xhr.target.responseText);
-        success(data);
-      }, failure);
+      this.bakery.sendGetRequest(path, success, failure);
     } else if (method === 'POST') {
-      this.bakery.sendPostRequest(path, JSON.stringify(params), function(xhr) {
-        var data = JSON.parse(xhr.target.responseText);
-        success(data);
-      }, failure);
+      this.bakery.sendPostRequest(
+          path, JSON.stringify(params), success, failure);
     }
   };
 
@@ -74,10 +79,14 @@ var module = module;
    * @param failure {function} A callback to be called on failure. Should
    *     take an error message as its one parameter.
    */
-  environment.prototype.listEnvironments = function(success, failure) {
-    this._makeRequest(this.jemUrl + '/env', 'GET', null, function(data) {
-      success(data.environments);
-    }, failure);
+  environment.prototype.listEnvironments = function(callback) {
+    var _listEnvironments = function(error, data) {
+      if (error === null) {
+        data = data.environments;
+      } 
+      callback(error, data);
+    }
+    this._makeRequest(this.jemUrl + '/env', 'GET', null, _listEnvironments);
   };
 
   /**
@@ -90,10 +99,14 @@ var module = module;
    * @param failure {function} A callback to be called on failure. Should
    *     take an error message as its one parameter.
    */
-  environment.prototype.listServers = function(success, failure) {
-    this._makeRequest(this.jemUrl + '/server', 'GET', null, function(data) {
-      success(data['state-servers']);
-    }, failure);
+  environment.prototype.listServers = function(callback) {
+    var _listServers = function(error, data) {
+      if (error === null) {
+        data = data['state-servers'];
+      } 
+      callback(error, data);
+    }
+    this._makeRequest(this.jemUrl + '/server', 'GET', null, _listServers);
   };
   /**
    * Provides the data for a particular environment.
@@ -106,9 +119,10 @@ var module = module;
    * @param failure {function} A callback to be called on failure. Should
    *     take an error message as its one parameter.
    */
-  environment.prototype.getEnvironment = function (envOwnerName, envName, success, failure) {
+  environment.prototype.getEnvironment = function (
+      envOwnerName, envName, callback) {
     var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
-    this._makeRequest(url, 'GET', null, success, failure);
+    this._makeRequest(url, 'GET', null, callback);
   };
 
   /**
@@ -128,8 +142,7 @@ var module = module;
    *     take an error message as its one parameter.
    */
   environment.prototype.newEnvironment = function (
-      envOwnerName, envName, baseTemplate, stateServer, password,
-      success, failure) {
+      envOwnerName, envName, baseTemplate, stateServer, password, callback) {
     var body = {
       name: envName,
       password: password,
@@ -137,7 +150,7 @@ var module = module;
       'state-server': stateServer
     };
     var url = [this.jemUrl, 'env', envOwnerName].join('/');
-    this._makeRequest(url, 'POST', body, success, failure);
+    this._makeRequest(url, 'POST', body, callback);
   };
 
   /**

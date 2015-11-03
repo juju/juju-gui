@@ -50,10 +50,10 @@ YUI.add('env-switcher', function() {
       var jem = this.props.jem;
       if (jem) {
         jem.listEnvironments(
-          this.updateEnvListCallback.bind(this, callback), this.jemFailHandler);
+          this.updateEnvListCallback.bind(this, callback));
       } else {
         this.props.env.listEnvs(
-            'user-admin', this.updateEnvListCallback.bind(this, null));
+            'user-admin', this.updateEnvListCallback.bind(this, null, null));
       }
     },
 
@@ -65,9 +65,10 @@ YUI.add('env-switcher', function() {
         updated.
       @param {Object} data The data from the listEnvs call.
     */
-    updateEnvListCallback: function(callback, data) {
-      if (data.err) {
-        console.log(data.err);
+    updateEnvListCallback: function(callback, error, data) {
+      var err = data.err || error;
+      if (err) {
+        console.log(err);
       } else {
         // data.envs is only populated in the JES environments, when using JEM
         // the environments are in the top level 'data' object.
@@ -76,18 +77,6 @@ YUI.add('env-switcher', function() {
           callback();
         }
       }
-    },
-
-    /**
-      Because the JEM api uses a different success and failure callback this
-      method simply logs out the error. We'll want to revisit this to
-      properly handle errors.
-
-      @method jemFailHandler
-      @param {Object} err The error message.
-    */
-    jemFailHandler: function(err) {
-      console.log(err);
     },
 
     /**
@@ -138,24 +127,28 @@ YUI.add('env-switcher', function() {
       // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
       // and template selection in the GUI, this code should be updated to not
       // select template based on state server.
-      var srvCb = function(servers) {
-        if (servers && servers.length > 0 && servers[0].path) {
-          var serverName = servers[0].path;
-          var baseTemplate = serverName;
-          jem.newEnvironment(
-            envOwnerName, envName, baseTemplate, serverName, password,
-            this.createEnvCallback, this.jemFailHandler);
+      var srvCb = function(error, servers) {
+        if (error) {
+          console.log(error);
         } else {
-          this.jemFailHandler(
-            'Cannot create a new environment: No state servers found.');
+          if (servers && servers.length > 0 && servers[0].path) {
+            var serverName = servers[0].path;
+            var baseTemplate = serverName;
+            jem.newEnvironment(
+              envOwnerName, envName, baseTemplate, serverName, password,
+              this.createEnvCallback.bind(this));
+          } else {
+            console.log(
+              'Cannot create a new environment: No state servers found.');
+          }
         }
       };
 
       if (jem) {
-        jem.listServers(srvCb.bind(this), this.jemFailure);
+        jem.listServers(srvCb.bind(this));
       } else {
         this.props.env.createEnv(
-            envName, 'user-admin', this.createEnvCallback);
+            envName, 'user-admin', this.createEnvCallback.bind(this, null));
       }
     },
 
@@ -165,9 +158,10 @@ YUI.add('env-switcher', function() {
       @method createEnvCallback
       @param {Object} data The data from the create env callback.
     */
-    createEnvCallback: function(data) {
-      if (data.err) {
-        console.log(data.err);
+    createEnvCallback: function(error, data) {
+      var err = data.err || error;
+      if (err) {
+        console.log(err);
       } else {
         this.updateEnvList(this.switchEnv.bind(this, data.uuid));
       }
