@@ -42,9 +42,9 @@ describe('DeploymentSummaryChangeItem', function() {
     assert.deepEqual(output,
       <li className="deployment-summary-change-item">
         <span className="deployment-summary-change-item__change">
-          <span className="deployment-summary-change-item__icon">
-            <i className="sprite my-icon"></i>
-          </span>
+          <juju.components.SvgIcon name="my-icon"
+            className="deployment-summary-change-item__icon"
+            size="16" />
           Django was added
         </span>
         <span className="deployment-summary-change-item__time">

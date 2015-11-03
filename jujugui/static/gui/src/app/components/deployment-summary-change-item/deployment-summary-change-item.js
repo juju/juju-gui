@@ -35,10 +35,10 @@ YUI.add('deployment-summary-change-item', function() {
       if (icon.indexOf('.svg') > -1) {
         node = <img src={icon} alt="" className={className} />;
       } else {
-        var spriteClassName = 'sprite ' + icon;
-        node = <span className={className}>
-            <i className={spriteClassName}></i>
-          </span>;
+        node = (
+          <juju.components.SvgIcon name={icon}
+            className={className}
+            size="16" />);
       }
       return node;
     },
