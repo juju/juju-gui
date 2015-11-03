@@ -56,6 +56,17 @@ describe('SvgIcon', function() {
         </svg>);
   });
 
+  it('can set a default width and height', function() {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.SvgIcon
+          name="icon-name" />);
+    assert.deepEqual(output,
+        <svg className="svg-icon" viewBox='0 0 16 16'
+          style={{width: '16px', height: '16px'}}>
+          <use xlinkHref="#icon-name" />
+        </svg>);
+  });
+
   it('can set a class', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.SvgIcon

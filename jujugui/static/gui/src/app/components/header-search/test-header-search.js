@@ -60,8 +60,7 @@ describe('HeaderSearch', function() {
     assert.deepEqual(output.props.children[2],
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
-        onClick={output.props.children[2].props.onClick}
-        ref="closeButton">
+        onClick={output.props.children[2].props.onClick}>
         <juju.components.SvgIcon name="close_16"
           size="16" />
       </span>);
@@ -74,12 +73,11 @@ describe('HeaderSearch', function() {
     getAppState.withArgs(
       'current', 'sectionC', 'metadata').returns(undefined);
     var changeState = sinon.stub();
-    var output = testUtils.renderIntoDocument(
+    var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />);
-    var close = output.refs.closeButton;
-    testUtils.Simulate.click(close);
+    output.props.children[2].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -87,7 +85,6 @@ describe('HeaderSearch', function() {
         metadata: null
       }
     });
-    assert.equal(output.state.active, false);
   });
 
   it('becomes active when the input is focused', function() {

@@ -238,8 +238,7 @@ YUI.add('header-search', function() {
           </span>
           <span tabIndex="0" role="button"
             className={this._closeClasses()}
-            onClick={this._handleClose}
-            ref="closeButton">
+            onClick={this._handleClose}>
             <juju.components.SvgIcon name="close_16"
               size="16" />
           </span>

@@ -22,6 +22,28 @@ YUI.add('svg-icon', function() {
 
   juju.components.SvgIcon = React.createClass({
 
+    getInitialState: function() {
+      return this._generateDimensions(this.props);
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState(this._generateDimensions(nextProps));
+    },
+
+    /**
+      Generate the width and height based on the supplied props.
+
+      @param {Object} props The component props.
+      @returns {Object} The object of dimensions.
+    */
+    _generateDimensions: function(props) {
+      var size = props.size || this.props.size || 16;
+      return {
+        width: props.width || this.props.width || size,
+        height: props.height || this.props.height || size
+      };
+    },
+
     /**
       Generates the classes for the icon based on the supplied props.
 
@@ -43,12 +65,9 @@ YUI.add('svg-icon', function() {
       @returns {Object} The object of styles.
     */
     _generateStyles: function() {
-      var size = this.props.size;
-      var width = this.props.width ? this.props.width : size;
-      var height = this.props.height ? this.props.height : size;
       return {
-        width: width + 'px',
-        height: height + 'px'
+        width: this.state.width + 'px',
+        height: this.state.height + 'px'
       };
     },
 
@@ -59,10 +78,7 @@ YUI.add('svg-icon', function() {
       @returns {String} The viewbox.
     */
     _generateViewbox: function() {
-      var size = this.props.size;
-      var width = this.props.width ? this.props.width : size;
-      var height = this.props.height ? this.props.height : size;
-      return '0 0 ' + width + ' ' + height;
+      return '0 0 ' + this.state.width + ' ' + this.state.height;
     },
 
     render: function() {
