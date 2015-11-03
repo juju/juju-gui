@@ -66,6 +66,7 @@ describe('Inspector', function() {
   });
 
   it('displays the unit list when the app state calls for it', function() {
+    var envResolved = sinon.stub();
     var changeStateStub = sinon.stub();
     var destroyUnits = sinon.stub();
     var appPreviousState = sinon.stub();
@@ -88,6 +89,7 @@ describe('Inspector', function() {
           service={service}
           appState={appState}
           destroyUnits={destroyUnits}
+          envResolved={envResolved}
           appPreviousState={appPreviousState}
           changeState={changeStateStub}>
         </juju.components.Inspector>);
@@ -98,6 +100,7 @@ describe('Inspector', function() {
           serviceId="demo"
           unitStatus="error"
           units={[]}
+          envResolved={envResolved}
           destroyUnits={destroyUnits}
           changeState={changeStateStub} />);
   });
