@@ -834,6 +834,7 @@ YUI.add('juju-gui', function(Y) {
             service={service}
             charm={charm}
             setConfig={this.env.set_config.bind(this.env)}
+            envResolved={this.env.resolved.bind(this.env)}
             getRelationDataForService={utils.getRelationDataForService.bind(
                 this, this.db, service)}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(

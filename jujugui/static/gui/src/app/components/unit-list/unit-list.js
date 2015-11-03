@@ -98,20 +98,28 @@ YUI.add('unit-list', function() {
     },
 
     /**
-      Remove the selected units.
+      Update the selected units with the supplied action.
 
-      @method _handleRemoveUnits
+      @method _handleUpdateUnits
+      @param {String} action The action to apply to the units.
     */
-    _handleRemoveUnits: function() {
+    _handleUpdateUnits: function(action) {
       var units = [];
       var refs = this.refs;
+      var envResolved = this.props.envResolved;
       Object.keys(refs).forEach(function (ref) {
         var isInstance = ref.split('-')[0] === 'UnitListItem';
         if (isInstance && refs[ref].state.checked) {
-          units.push(ref.slice(ref.indexOf('-') + 1));
+          var unitName = ref.slice(ref.indexOf('-') + 1);
+          units.push(unitName);
+          if (action === 'resolve') {
+            envResolved(unitName, null, true);
+          }
         }
       });
-      this.props.destroyUnits(units);
+      if (action === 'remove') {
+        this.props.destroyUnits(units);
+      }
       this._selectAllUnits(null, false);
     },
 
@@ -200,11 +208,27 @@ YUI.add('unit-list', function() {
       return components;
     },
 
-    render: function() {
-      var buttons = [{
+    /**
+      Generate the buttons for the status.
+
+      @returns {Array} The list of buttons
+    */
+    _generateButtons: function() {
+      var buttons = [];
+      if (this.props.unitStatus === 'error') {
+        buttons.push({
+          title: 'Resolve & retry',
+          action: this._handleUpdateUnits.bind(this, 'resolve')
+        });
+      }
+      buttons.push({
         title: 'Remove',
-        action: this._handleRemoveUnits
-      }];
+        action: this._handleUpdateUnits.bind(this, 'remove')
+      });
+      return buttons;
+    },
+
+    render: function() {
       return (
         <div className="unit-list">
           <div className={this._generateActionsClasses()}>
@@ -216,7 +240,7 @@ YUI.add('unit-list', function() {
             {this._generateListGroups()}
           </ul>
           <juju.components.ButtonRow
-            buttons={buttons} />
+            buttons={this._generateButtons()} />
         </div>
       );
     }
