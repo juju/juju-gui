@@ -85,6 +85,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   </head>
 
   <body>
+      <div class="hidden">
+        ## Include the svg sprite image inside the body.
+        <%include file="../static/gui/build/app/assets/stack/svg/sprite.css.svg" />
+      </div>
       <!-- This <img> tag is here just to force early loading of the background
         image so it displays more quickly.  This makes a large improvement to
         the way the app looks while loading on a slow connection. -->

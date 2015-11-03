@@ -6,6 +6,9 @@ GUIBUILD := jujugui/static/gui/build
 OLD_TEMPLATES_FILE := $(GUIBUILD)/app/templates.js
 NEW_TEMPLATES_FILE := $(GUIBUILD)/app/components/templates.js
 SPRITE_FILE := $(GUIBUILD)/app/assets/sprites.png
+SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
+SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
+SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
 SPRITE_CSS_FILE := $(GUIBUILD)/app/assets/sprites.css
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
@@ -242,16 +245,19 @@ css: $(CSS_FILE) $(STATIC_CSS_FILES)
 $(SPRITE_FILE): $(NODE_MODULES)
 	$(NODE_MODULES)/grunt/bin/grunt spritegen
 
+$(SVG_SPRITE_FILE): $(NODE_MODULES)
+	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
+
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
 	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
 
 .PHONY: images
-images: $(SPRITE_FILE) $(STATIC_IMAGES)
+images: $(SPRITE_FILE) $(STATIC_IMAGES) $(SVG_SPRITE_FILE)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(SPRITE_FILE) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
 
 .PHONY: watch
 watch:
