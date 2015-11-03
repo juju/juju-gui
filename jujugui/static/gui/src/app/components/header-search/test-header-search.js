@@ -25,33 +25,11 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderSearch', function() {
-  var icons;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('header-search', function() { done(); });
   });
-
-  beforeEach(function() {
-    stubIcons();
-  });
-
-  afterEach(function() {
-    // Make sure we reset the icons after every test even if it fails
-    // so that we don't cause cascading failures.
-    resetIcons();
-  });
-
-  function stubIcons() {
-    icons = juju.components.HeaderSearch.icons;
-    juju.components.HeaderSearch.prototype.icons = {};
-  }
-
-  function resetIcons() {
-    if (icons !== null) {
-      juju.components.HeaderSearch.prototype.icons = icons;
-    }
-  }
 
   it('sets the active class if there is search metadata', function() {
     var getAppState = sinon.stub();
@@ -83,8 +61,10 @@ describe('HeaderSearch', function() {
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
         onClick={output.props.children[2].props.onClick}
-        dangerouslySetInnerHTML={{__html: undefined}}
-        ref="closeButton" />);
+        ref="closeButton">
+        <juju.components.SvgIcon name="close_16"
+          size="16" />
+      </span>);
   });
 
   it('changes state when the close button is clicked', function() {

@@ -225,5 +225,6 @@ YUI.add('unit-list', function() {
 
 }, '0.1.0', { requires: [
   'button-row',
-  'unit-list-item'
+  'unit-list-item',
+  'overview-action'
 ]});

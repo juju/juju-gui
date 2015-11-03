@@ -52,13 +52,14 @@ describe('OverviewAction', function() {
   });
 
   it('sets the provided icon', function() {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
         <juju.components.OverviewAction
-          icon="<svg>Icon</svg>" />);
-    var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.children[0].props.dangerouslySetInnerHTML.__html,
-        '<svg>Icon</svg>');
+          icon="action-icon" />);
+    assert.deepEqual(output.props.children[0],
+        <span className="overview-action__icon">
+          <juju.components.SvgIcon name="action-icon"
+            size="16" />
+        </span>);
   });
 
   it('sets the link', function() {

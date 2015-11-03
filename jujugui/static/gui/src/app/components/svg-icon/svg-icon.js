@@ -67,7 +67,8 @@ YUI.add('svg-icon', function() {
 
     render: function() {
       return (
-        <svg className={this._generateClasses()} viewBox={this._generateViewbox()}
+        <svg className={this._generateClasses()}
+          viewBox={this._generateViewbox()}
           style={this._generateStyles()}>
           <use xlinkHref={'#' + this.props.name} />
         </svg>
