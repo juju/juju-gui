@@ -56,7 +56,7 @@ Handlebars.registerHelper('fullSeries', function(series) {
     trusty: 'Trusty 14.04',
     utopic: 'Utopic 14.10',
     vivid: 'Vivid 15.04',
-    wily: 'Wily 15.10',
+    wily: 'Wily 15.10'
   };
   return names[series] || series;
 });
