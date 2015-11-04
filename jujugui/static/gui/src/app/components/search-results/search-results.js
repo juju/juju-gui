@@ -39,8 +39,8 @@ YUI.add('search-results', function(Y) {
       function seriesKey(series) {
         // XXX kadams54, 2015-05-21: This series mapping needs to be updated
         // with each release, at least until we can figure out a better way.
-        // XXX urosj, 2015-11-04: We need to support all series, not just 
-        // Ubuntu ones. 
+        // XXX urosj, 2015-11-04: We need to support all series, not just
+        // Ubuntu ones.
         return {
           precise: 12.04,
           trusty:  14.04,
@@ -231,8 +231,6 @@ YUI.add('search-results', function(Y) {
       };
       switch (state.activeComponent) {
         case 'loading':
-          var generateChangeDescription = nextProps.generateChangeDescription ||
-              this.props.generateChangeDescription;
           state.activeChild = {
             component:
               <div className="twelve-col initial-load-container last-col">
