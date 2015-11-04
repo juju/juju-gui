@@ -750,26 +750,20 @@ YUI.add('juju-models', function(Y) {
       @returns {String} The name for the service.
     */
     _generateServiceName: function(charmName, charmId) {
-      var highestId = 0;
-      this.each(function(service) {
+      // The first shouldn't get a count, but subsquent names should.
+      if (this.size() === 0) {
+        return charmName;
+      }
+      var highestId = Math.max.apply(Math, this.map(function(service) {
         // Only check the count for matching charms.
         if (service.get('charm') === charmId) {
           var count = parseInt(service.get('name').replace(
               charmName + '-', ''));
-          if (count > highestId) {
-            highestId = count;
-          } else {
-            highestId = 1;
-          }
+          // The first service that is created won't have a count.
+          return count || 1;
         }
-      }, this);
-      var count = '';
-      // The first shouldn't get a count, but subsquent names should.
-      if (highestId > 0) {
-        highestId += 1;
-        count = '-' + highestId;
-      }
-      return charmName + count;
+      }));
+      return charmName + '-' + (highestId + 1);
     },
 
     /**
