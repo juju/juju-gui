@@ -106,6 +106,7 @@ describe('Inspector', function() {
     var setConfig = sinon.stub();
     var charm = 'charm';
     var getStub = sinon.stub();
+    var changeState = sinon.stub();
     var appPreviousState = sinon.stub();
     var service = {
       get: getStub
@@ -119,6 +120,7 @@ describe('Inspector', function() {
         <juju.components.Inspector
           appState={appState}
           service={service}
+          changeState={changeState}
           charm={charm}
           appPreviousState={appPreviousState}
           setConfig={setConfig} /> );
@@ -127,6 +129,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.Configuration
           service={service}
+          changeState={changeState}
           charm={charm}
           setConfig={setConfig} />);
   });
