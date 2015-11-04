@@ -24,32 +24,10 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorRelationsItem', function() {
-  var icons;
-
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-relations-item', function() { done(); });
   });
-
-  beforeEach(function() {
-    icons = null;
-    stubIcons();
-  });
-
-  afterEach(function() {
-    resetIcons();
-  });
-
-  function stubIcons() {
-    icons = juju.components.InspectorRelationsItem.prototype.icons;
-    juju.components.InspectorRelationsItem.prototype.icons = {};
-  }
-
-  function resetIcons() {
-    if (icons !== null) {
-      juju.components.InspectorRelationsItem.prototype.icons = icons;
-    }
-  }
 
   it('can render the relation', function() {
     var relation = {
@@ -72,7 +50,8 @@ describe('InspectorRelationsItem', function() {
           role="button" tabIndex="0"
           onClick={output.props.children[0].props.onClick}>
           <span className="inspector-relations-item__status">
-            <span dangerouslySetInnerHTML={{__html: undefined}} />
+            <juju.components.SvgIcon name="unit-running"
+              size="16" />
           </span>
           django
         </span>

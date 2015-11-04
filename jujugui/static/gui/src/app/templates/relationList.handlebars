@@ -5,9 +5,12 @@
             <li class="relation-container {{#if hasRelationError}}error{{else}}running{{/if}}" data-relationid="{{id}}">
                 <span data-endpoint="{{sourceId}}" class="inspect-relation endpoint{{#if sourceHasError}} error{{/if}}">{{getRealServiceName sourceId .}}</span> -
                 <span data-endpoint="{{targetId}}" class="inspect-relation endpoint{{#if targetHasError}} error{{/if}}">{{getRealServiceName targetId .}}</span>
-                <span class="relation-remove sprite-hover link">
-                    <i class="sprite delete_16 normal"></i>
-                    <i class="sprite delete_hover_16 hover"></i>
+                <span class="relation-remove link">
+                    <svg class="svg-icon"
+                        viewBox="0 0 16 16"
+                        style="width:16px; height:16px;">
+                        <use xlink:href="#delete_16" />
+                    </svg>
                 </span>
             </li>
         {{/each}}

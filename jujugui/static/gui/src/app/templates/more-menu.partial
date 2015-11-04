@@ -1,6 +1,9 @@
 <span class="more-menu">
-  <span class="open-menu link sprite-hover" tabindex="0" role="button">
-    <i class="sprite contextual_menu_16 normal"></i>
-    <i class="sprite contextual_menu_hover_16 hover"></i>
+  <span class="open-menu link" tabindex="0" role="button">
+     <svg class="svg-icon"
+         viewBox="0 0 16 16"
+         style="width:16px; height:16px;">
+         <use xlink:href="#contextual-menu-16" />
+     </svg>
   </span>
 </span>

@@ -265,11 +265,6 @@ strong {
     text-align: right;
 }
 
-i.sprite {
-    display: inline-block;
-    vertical-align: middle;
-}
-
 ul.menu li,
 div.inline {
   float: left;
@@ -521,10 +516,6 @@ th {
         position: absolute;
         top: 25px;
         right: 20px;
-
-        .sprite {
-            vertical-align: top;
-        }
     }
     ul {
         margin: 0;
@@ -544,10 +535,6 @@ th {
               color: $text-colour;
             }
             &.add-relation {
-                .sprite {
-                    margin-left: -25px;
-                    margin-right: 5px;
-                }
                 .disabled {
                     color: red;
                 }

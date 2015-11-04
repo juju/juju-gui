@@ -38,16 +38,6 @@ def app(request):
     }
 
 
-@view_config(
-    route_name='jujugui.sprites',
-    http_cache=3600 * 24 * 365)
-def sprites(request):
-    static_path = os.path.join(os.path.dirname(__file__), 'static')
-    asset_path = os.path.join(static_path, 'gui', 'build', 'app', 'assets')
-    sprite_file = os.path.join(asset_path, 'sprites.png')
-    return FileResponse(sprite_file, request=request, content_type='image/png')
-
-
 @view_config(route_name='jujugui.ui')
 def juju_ui(request):
     requested_file = request.matchdict.get('file')

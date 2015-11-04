@@ -20,7 +20,6 @@ def gui(config):
     # several separated by "/".
     config.add_route('jujugui.ui', '/{prefix:.*}juju-ui/{file:.*}')
     config.add_route('jujugui.config', '/config.js')
-    config.add_route('jujugui.sprites', '/app/assets/sprites.png')
     # XXX jcsackett 2015-05-20 As soon as we have a means of getting a version
     # or other indicator from the juju-gui we want to add that as a combo
     # cache buster.

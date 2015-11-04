@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('ServiceOverview', function() {
-  var icons, fakeService;
+  var fakeService;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -37,28 +37,7 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    // Set icons to null so we can check if they were stored
-    // here in the afterEach.
-    icons = null;
-    stubIcons();
   });
-
-  afterEach(function() {
-    // Make sure we reset the icons after every test even if it fails
-    // so that we don't cause cascading failures.
-    resetIcons();
-  });
-
-  function stubIcons() {
-    icons = juju.components.ServiceOverview.prototype.icons;
-    juju.components.ServiceOverview.prototype.icons = {};
-  }
-
-  function resetIcons() {
-    if (icons !== null) {
-      juju.components.ServiceOverview.prototype.icons = icons;
-    }
-  }
 
   function getUnitStatusCounts(error=0, pending=0, uncommitted=0) {
     return sinon.stub().returns({
@@ -84,7 +63,7 @@ describe('ServiceOverview', function() {
             service={service}/>);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
-        icon={undefined}
+        icon="units"
         key="Units"
         title="Units"
         value={2}
@@ -110,7 +89,7 @@ describe('ServiceOverview', function() {
             service={service}/>);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
-        icon={undefined}
+        icon="units"
         key="Units"
         title="Units"
         value={0}
@@ -253,7 +232,7 @@ describe('ServiceOverview', function() {
         key="Configure"
         title="Configure"
         value={undefined}
-        icon={undefined}
+        icon="configure"
         action={output.props.children[0].props.children[1].props.action}
         valueType={undefined}
         linkAction={undefined}
@@ -278,7 +257,7 @@ describe('ServiceOverview', function() {
         key="Relations"
         title="Relations"
         value={undefined}
-        icon={undefined}
+        icon="relations"
         action={output.props.children[0].props.children[2].props.action}
         valueType={undefined}
         linkAction={undefined}
@@ -306,7 +285,7 @@ describe('ServiceOverview', function() {
         key="Expose"
         title="Expose"
         value="On"
-        icon={undefined}
+        icon="expose"
         action={output.props.children[0].props.children[3].props.action}
         valueType={undefined}
         linkAction={undefined}
@@ -336,7 +315,7 @@ describe('ServiceOverview', function() {
         title="Change version"
         linkAction={output.props.children[0].props.children[4].props.linkAction}
         linkTitle="cs:demo"
-        icon={undefined}
+        icon="change-version"
         action={output.props.children[0].props.children[4].props.action}
         valueType={undefined}
         value={undefined} />);

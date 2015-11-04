@@ -53,7 +53,8 @@ YUI.add('deployment-summary', function() {
               <span className="deployment-summary__close"
                 tabIndex="0" role="button"
                 onClick={this.props.closeButtonAction}>
-                <i className="sprite close_16"></i>
+                <juju.components.SvgIcon name="close_16"
+                  size="16" />
               </span>
               <h2 className="deployment-summary__title">
                 Deployment summary
@@ -87,5 +88,6 @@ YUI.add('deployment-summary', function() {
 }, '0.1.0', { requires: [
   'deployment-summary-change-item',
   'generic-button',
-  'panel-component'
+  'panel-component',
+  'svg-icon'
 ]});

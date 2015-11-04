@@ -134,21 +134,6 @@
     }
 }
 
-.sprite-hover {
-    &:focus,
-    &:hover {
-        .sprite.hover {
-            display: inline-block;
-        }
-        .sprite.normal {
-            display: none;
-        }
-    }
-    .sprite.hover {
-        display: none;
-    }
-}
-
 .display-flex {
     display: -webkit-box;
     display: -ms-flexbox;

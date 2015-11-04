@@ -66,15 +66,32 @@ YUI.add('overview-action', function() {
       this.props.linkAction();
     },
 
+    /**
+      Call the supplied link action
+
+      @method _handleLinkClick
+      @param {Object} e The click event.
+    */
+    _generateIcon: function(e) {
+      var icon = this.props.icon;
+      if (!icon) {
+        return;
+      }
+      return (
+        <span className="overview-action__icon">
+          <juju.components.SvgIcon name={icon}
+            size="16" />
+        </span>
+      );
+    },
+
     render: function() {
-      var iconClass = this.baseClass + '__icon';
       var titleClass = this.baseClass + '__title';
       return (
         <li className={this.baseClass}
             onClick={this.props.action}
             title={this.props.title} tabIndex="0" role="button">
-          <span dangerouslySetInnerHTML={{__html: this.props.icon}}
-            className={iconClass} />
+          {this._generateIcon()}
           <span className={titleClass}>
             {this.props.title}
           </span>
@@ -91,4 +108,6 @@ YUI.add('overview-action', function() {
 
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'svg-icon'
+]});
