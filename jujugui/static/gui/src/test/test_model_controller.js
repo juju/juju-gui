@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Model Controller Promises', function() {
   var aEach, cleanups, conn, db, env, environment, factory, getService,
-      load, modelController, serviceError, utils, yui, Y;
+      load, modelController, serviceError, utils, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use(
@@ -166,10 +166,10 @@ describe('Model Controller Promises', function() {
 
   it('will return a promise with a stored loaded service', function(done) {
     // This tests the first resolve path
-    var serviceId = 'wordpress',
-        service = db.services.add({
-          id: serviceId,
-          loaded: true});
+    var serviceId = 'wordpress';
+    db.services.add({
+      id: serviceId,
+      loaded: true});
     var promise = modelController.getService(serviceId);
     assert(yui.Promise.isPromise(promise), true);
     assert(!!db.services.getById(serviceId), true);

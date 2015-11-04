@@ -21,10 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Go Juju environment utilities', function() {
-    var environments, Y;
+    var environments;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+      YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
         environments = Y.namespace('juju.environments');
         done();
       });
@@ -1734,7 +1734,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully adds a relation', function() {
-      var endpoints, relationId, result;
+      var endpoints, result;
       var jujuEndpoints = {};
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];

@@ -19,9 +19,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application console', function() {
-  var Y, consoleManager;
+  var consoleManager;
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-views',
+    YUI(GlobalConfig).use(['juju-views',
                                'juju-view-utils',
                                'juju-tests-utils'],
     function(Y) {
@@ -59,4 +59,3 @@ describe('application console', function() {
 
 
 });
-

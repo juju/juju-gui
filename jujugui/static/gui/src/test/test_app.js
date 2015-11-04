@@ -52,7 +52,7 @@ function injectData(app, data) {
 (function() {
 
   describe('Application basics', function() {
-    var Y, app, container, utils, juju, env, conn;
+    var Y, app, container, utils, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -466,7 +466,7 @@ function injectData(app, data) {
 
 
 describe('File drag over notification system', function() {
-  var Y, app, container, testUtils, juju, env, conn;
+  var Y, app, container, testUtils, juju;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -708,7 +708,7 @@ describe('File drag over notification system', function() {
 (function() {
 
   describe('Application authentication', function() {
-    var FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
+    var LOGIN_VIEW_NAME;
     var conn, container, destroyMe, ecs, env, juju, utils, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
@@ -717,7 +717,6 @@ describe('File drag over notification system', function() {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
-        FAKE_VIEW_NAME = 'FakeView';
         LOGIN_VIEW_NAME = 'LoginView';
         done();
       });
@@ -1151,7 +1150,6 @@ describe('File drag over notification system', function() {
           }),
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
-          dispatch_called = false,
           login_called = false,
           noop = function() {return this;};
       app.showView(new Y.View());
@@ -1171,13 +1169,7 @@ describe('File drag over notification system', function() {
           reset_called = true;
         }
       };
-      app.dispatch = function() {
-        // We want to verify that we are called after the value is set, so
-        // check_user_credentials can look at this value reliably.
-        if (env.get('connected')) {
-          dispatch_called = true;
-        }
-      };
+      app.dispatch = function() {};
       env.login = function() {
         login_called = true;
       };
@@ -1185,7 +1177,6 @@ describe('File drag over notification system', function() {
       conn.open();
       // We need to fake the connection event.
       reset_called.should.equal(true);
-      //dispatch_called.should.equal(true);
       login_called.should.equal(true);
 
       // Trigger a second time and verify.
@@ -1195,7 +1186,6 @@ describe('File drag over notification system', function() {
       conn.open();
       reset_called.should.equal(true);
       env.close();
-      //dispatch_called.should.equal(true);
       app.destroy();
     });
 
@@ -1205,11 +1195,10 @@ describe('File drag over notification system', function() {
 (function() {
 
   describe('Application sandbox mode', function() {
-    var Y, app, container, utils;
+    var Y, app, container;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        utils = Y.namespace('juju-tests.utils');
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
         done();
       });
     });

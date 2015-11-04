@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology', function() {
-  var NS, TestModule, container, d3, db, factory, modA, models, state, topo,
+  var NS, TestModule, container, d3, db, factory, models, state, topo,
       utils, views, Y;
 
   before(function(done) {

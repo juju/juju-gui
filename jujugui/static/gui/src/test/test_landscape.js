@@ -20,10 +20,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Landscape integration', function() {
 
-  var views, models, db, landscape, Y;
+  var views, models, db, landscape;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
+    YUI(GlobalConfig).use(['node',
       'juju-landscape',
       'juju-models',
       'juju-views'], function(Y) {

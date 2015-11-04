@@ -1181,8 +1181,8 @@ describe('Environment Change Set', function() {
           id: '756482$/3',
           number: '3'
         };
-        var stubFinder = testUtils.makeStubMethod(db.units, 'getById', unit);
-        var stubUpdateUnitId = testUtils.makeStubMethod(db, 'updateUnitId', {
+        testUtils.makeStubMethod(db.units, 'getById', unit);
+        testUtils.makeStubMethod(db, 'updateUnitId', {
           id: 'my-service/3'
         });
         var key = ecs.lazyAddUnits(args, {modelId: '1'});

@@ -20,18 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('user dropdown view', function() {
 
-  var userView, views, models, utils, viewNode, Y;
+  var userView, views, utils, viewNode;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
-      'juju-models',
+    YUI(GlobalConfig).use(['node',
       'juju-views',
       'juju-tests-utils',
       'node-event-simulate',
       'user-dropdown'], function(Y) {
 
       views = Y.namespace('juju.views');
-      models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
 
       done();

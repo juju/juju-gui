@@ -254,8 +254,7 @@ describe('test_model.js', function() {
       });
 
       it('fires a single change event for all machines', function(done) {
-        var counter = 0,
-            machineCount = db.machines.size();
+        var counter = 0;
         db.machines.on('*:change', function(e) {
           counter += 1;
         });
@@ -639,7 +638,6 @@ describe('test_model.js', function() {
     it('RelationList.has_relations.. should return true if rel found.',
        function() {
          var db = new models.Database(),
-         service = new models.Service({id: 'mysql', exposed: false}),
          rel0 = new models.Relation({
            id: 'relation-0',
            endpoints: [
@@ -1359,7 +1357,7 @@ describe('test_model.js', function() {
   });
 
   describe('Charm load', function() {
-    var Y, models, conn, env, app, container, data, juju;
+    var Y, models, conn, env, container, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
@@ -1498,7 +1496,7 @@ describe('test_model.js', function() {
   });
 
   describe('Charm test', function() {
-    var data, instance, models, origData, relatedData, utils, Y;
+    var data, instance, models, origData, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -1510,8 +1508,6 @@ describe('test_model.js', function() {
         utils = Y.namespace('juju-tests.utils');
 
         origData = utils.loadFixture('data/browsercharm.json', true);
-        // relatedData is never mutated so it can be used directly.
-        relatedData = utils.loadFixture('data/related.json', true).result;
         done();
       });
     });
@@ -1621,15 +1617,13 @@ describe('test_model.js', function() {
   });
 
   describe('database import/export', function() {
-    var Y, models, utils;
+    var Y, models;
     var db;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models',
-        'juju-tests-utils',
         'juju-charm-models'],
       function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         models = Y.namespace('juju.models');
         done();
       });
@@ -2353,11 +2347,11 @@ describe('test_model.js', function() {
   });
 
   describe('db.charms.addFromCharmData', function() {
-    var db, metadata, models, options, Y;
+    var db, metadata, models, options;
     var requirements = ['juju-models'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         done();
       });
@@ -2460,11 +2454,11 @@ describe('test_model.js', function() {
   });
 
   describe('validateCharmMetadata', function() {
-    var models, Y;
+    var models;
     var requirements = ['juju-charm-models'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         done();
       });

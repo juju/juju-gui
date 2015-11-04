@@ -224,10 +224,10 @@ describe('notifications', function() {
 
 
 describe('changing notifications to words', function() {
-  var Y, juju;
+  var juju;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
+    YUI(GlobalConfig).use(
         ['juju-notification-controller'],
         function(Y) {
           juju = Y.namespace('juju');
@@ -244,10 +244,10 @@ describe('changing notifications to words', function() {
 });
 
 describe('relation notifications', function() {
-  var Y, juju;
+  var juju;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
+    YUI(GlobalConfig).use(
         ['juju-notification-controller'],
         function(Y) {
           juju = Y.namespace('juju');

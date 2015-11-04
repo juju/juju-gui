@@ -123,7 +123,7 @@ describe('Namespaced Routing', function() {
   it('should be able to cleanly combine urls preserving untouched namespaces',
      function() {
        var router = juju.Router('charmbrowser');
-       var url, parts;
+       var url;
        url = router.combine('/foo/bar', '/:inspector:/');
        url.should.equal('/foo/bar/');
        url = router.combine('/foo/bar', '/:inspector:/foo/');
@@ -247,11 +247,10 @@ describe('Namespaced Routing', function() {
 });
 
 describe('Juju Gui Routing', function() {
-  var Y, juju, app;
+  var Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
-      juju = Y.namespace('juju');
       done();
     });
 

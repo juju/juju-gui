@@ -20,9 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
   describe('juju-views-utils', function() {
-    var views, Y;
+    var views;
     before(function(done) {
-      Y = YUI(GlobalConfig).use(
+      YUI(GlobalConfig).use(
           'juju-view-utils', 'node-event-simulate',
           function(Y) {
             views = Y.namespace('juju.views');
@@ -299,10 +299,10 @@ describe('utilities', function() {
 (function() {
   describe('form validation', function() {
 
-    var utils, Y;
+    var utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-view-utils',
+      YUI(GlobalConfig).use('juju-view-utils',
 
           function(Y) {
             utils = Y.namespace('juju.views.utils');
@@ -448,10 +448,10 @@ describe('utilities', function() {
 (function() {
   describe('service state simplification', function() {
 
-    var simplifyState, Y;
+    var simplifyState;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         simplifyState = Y.namespace('juju.views.utils').simplifyState;
         done();
       });
@@ -492,10 +492,10 @@ describe('utilities', function() {
 (function() {
 
   describe('utils.getSeries', function() {
-    var utils, Y;
+    var utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -719,10 +719,10 @@ describe('utilities', function() {
 (function() {
   describe('utils.isSubordinateRelation', function() {
 
-    var utils, Y;
+    var utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -787,10 +787,10 @@ describe('utilities', function() {
 
 (function() {
   describe('utils.ensureTrailingSlash', function() {
-    var utils, Y;
+    var utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
+      YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -809,11 +809,11 @@ describe('utilities', function() {
   });
 
   describe('utils.getLandscapeURL', function() {
-    var environment, models, service, unit, utils, Y;
+    var environment, models, service, unit, utils;
     var requirements = ['juju-models', 'juju-view-utils'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         utils = Y.namespace('juju.views.utils');
         var db = new models.Database();
@@ -911,14 +911,14 @@ describe('utilities', function() {
   });
 
   describe('getIconPath', function() {
-    var utils, Y;
+    var utils;
 
     before(function(done) {
       window.juju_config = {
         charmstoreURL: 'local/',
         apiPath: 'v4'
       };
-      Y = YUI(GlobalConfig).use('juju-view-utils',
+      YUI(GlobalConfig).use('juju-view-utils',
           function(Y) {
             utils = Y.namespace('juju.views.utils');
             done();

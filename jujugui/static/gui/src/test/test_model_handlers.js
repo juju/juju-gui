@@ -21,12 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Juju delta handlers', function() {
-    var db, models, handlers, testUtils, Y;
+    var db, models, handlers, testUtils;
     var requirements = [
       'juju-models', 'juju-delta-handlers', 'juju-tests-utils'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         handlers = models.handlers;
         testUtils = Y.namespace('juju-tests.utils');

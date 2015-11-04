@@ -20,10 +20,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('help dropdown view', function() {
 
-  var db, envAnno, helpView, views, landscape, models, utils, viewNode, Y;
+  var db, envAnno, helpView, views, landscape, models, utils, viewNode;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
+    YUI(GlobalConfig).use(['node',
       'juju-landscape',
       'juju-models',
       'juju-views',

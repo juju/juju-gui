@@ -20,14 +20,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine view panel extension', function() {
-  var container, db, env, models, utils, View, view, Y;
+  var container, db, env, models, utils, View, view;
   var requirements = [
     'event-simulate', 'juju-models', 'juju-tests-utils', 'juju-views',
     'machine-view-panel-extension', 'node', 'node-event-simulate'
   ];
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+    YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
       db = {

@@ -75,10 +75,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Base Environment module', function() {
     var requires = ['juju-env-base'];
-    var Y, environments, juju;
+    var environments, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use(requires, function(Y) {
         juju = Y.namespace('juju');
         environments = juju.environments;
         done();

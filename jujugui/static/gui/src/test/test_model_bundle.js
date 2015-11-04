@@ -38,7 +38,7 @@ describe('Bundle initialization', function() {
 });
 
 describe('The bundle model', function() {
-  var charmstore, data, expected, instance, models, origData, relatedData,
+  var charmstore, data, expected, instance, models, origData,
       utils, Y;
 
   before(function(done) {

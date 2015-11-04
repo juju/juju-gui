@@ -19,10 +19,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology utils', function() {
-  var Y, utils;
+  var utils;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['array-extras', 'juju-topology-utils'],
+    YUI(GlobalConfig).use(['array-extras', 'juju-topology-utils'],
         function(Y) {
           utils = Y.namespace('juju.topology.utils');
           done();
