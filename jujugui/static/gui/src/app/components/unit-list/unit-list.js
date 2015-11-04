@@ -23,18 +23,6 @@ YUI.add('unit-list', function() {
   juju.components.UnitList = React.createClass({
 
     /**
-      Get the current state of the inspector.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      // Setting a default state object.
-      return {
-        selectAll: {}
-      };
-    },
-    /**
       Fires changeState to update the UI based on the component clicked.
 
       @method _navigate
@@ -60,18 +48,15 @@ YUI.add('unit-list', function() {
         checked.
     */
     _selectAllUnits: function(group, checked) {
-      var selectAll = this.state.selectAll;
       if (checked === undefined) {
-        checked = !selectAll[group];
+        checked = false;
       }
-      if (group === null) {
-        Object.keys(selectAll).forEach(function(key) {
-          selectAll[key] = checked;
+      var groups = this._generateGroups();
+      groups[group].units.forEach((unit) => {
+        this.refs['UnitListItem-' + unit.id].setState({
+          checked: checked
         });
-      } else {
-        selectAll[group] = checked;
-      }
-      this.setState({selectAll: selectAll});
+      });
     },
 
     /**
@@ -124,27 +109,24 @@ YUI.add('unit-list', function() {
     */
     _generateUnitList: function(group) {
       var key = group.key;
-      var checked = this.state.selectAll[key] || false;
-      var components = [
+      var unitList = [
         <juju.components.UnitListItem
           key={key}
           label={group.label}
-          checked={checked}
           className='select-all'
           whenChanged={this._selectAllUnits.bind(this, key)}/>
       ];
       group.units.forEach((unit) => {
         var ref = 'UnitListItem-' + unit.id;
-        components.push(
+        unitList.push(
           <juju.components.UnitListItem
             key={unit.displayName}
             ref={ref}
             label={unit.displayName}
             action={this._unitItemAction}
-            checked={checked}
             unitId={unit.id} />);
       });
-      return components;
+      return unitList;
     },
 
     /**
@@ -163,14 +145,14 @@ YUI.add('unit-list', function() {
     },
 
     /**
-      Generate the groups of units.
+      Generate the groups of units for the service.
 
-      @returns {Object} The list components
+      @method _generateGroups
+      @returns {Object} The groups of units for the service.
     */
-    _generateListGroups: function() {
+    _generateGroups: function() {
       var units = this.props.units;
-      var components = [];
-      var groups = [];
+      var groups = {};
       if (this.props.unitStatus === 'error') {
         var errors = {};
         units.forEach(function(unit) {
@@ -181,20 +163,34 @@ YUI.add('unit-list', function() {
           errors[agentState].push(unit);
         });
         Object.keys(errors).forEach(function (error, i) {
-          groups.push({
+          var key = 'select-all-' + i;
+          groups[key] = {
             label: error,
             units: errors[error],
-            key: 'select-all-' + i
-          });
+            key: key
+          };
         });
       } else {
-        groups.push({
+        var key = 'select-all';
+        groups[key] = {
           label: 'Select all units',
           units: units,
-          key: 'select-all'
-        });
+          key: key
+        };
       }
-      groups.forEach(function(group) {
+      return groups;
+    },
+
+    /**
+      Generate the groups of units.
+
+      @returns {Object} The list components
+    */
+    _generateListGroups: function() {
+      var components = [];
+      var groups = this._generateGroups();
+      Object.keys(groups).forEach(function(key) {
+        var group = groups[key];
         components = components.concat(this._generateUnitList(group));
       }, this);
       return components;

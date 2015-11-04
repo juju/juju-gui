@@ -57,7 +57,7 @@ YUI.add('unit-list-item', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        checked: this.props.checked
+        checked: false
       };
     },
 
@@ -87,10 +87,6 @@ YUI.add('unit-list-item', function() {
     */
     _stopBubble: function(e) {
       e.stopPropagation();
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      this.setState({checked: nextProps.checked});
     },
 
     render: function() {
