@@ -160,6 +160,7 @@ YUI.add('juju-env-go', function(Y) {
     */
     series: [
       'precise', 'quantal', 'raring', 'saucy', 'trusty', 'utopic', 'vivid',
+      'wily', 'win10', 'centos7', 
       'win2012hvr2', 'win2012hv', 'win2012r2', 'win2012', 'win7', 'win8',
       'win81'],
 
