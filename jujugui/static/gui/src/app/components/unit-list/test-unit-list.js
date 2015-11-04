@@ -351,7 +351,6 @@ describe('UnitList', () => {
   });
 
   it('can resolve the selected units', function() {
-    var destroyUnits = sinon.stub();
     var changeState = sinon.stub();
     var envResolved = sinon.stub();
     var units = [{
