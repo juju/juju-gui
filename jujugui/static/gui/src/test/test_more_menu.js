@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('more menu widget', function() {
-  var container, handle, instance, utils, Y;
+  var container, instance, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(

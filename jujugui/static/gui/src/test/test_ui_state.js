@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('UI State object', function() {
-  var Y, ns, state, request, testUtils;
+  var Y, ns, state, testUtils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -35,12 +35,6 @@ describe('UI State object', function() {
 
   beforeEach(function() {
     state = new ns.UIState();
-    // Setup an empty request mock
-    request = {
-      path: '',
-      params: {},
-      query: ''
-    };
   });
 
   afterEach(function(done) {
@@ -773,7 +767,7 @@ describe('UI State object', function() {
       this._cleanups.push(saveStub.reset);
       Object.keys(urls).forEach(function(key) {
         var req = buildRequest(key),
-            hash, oldHash;
+            hash;
         if (req.hash) {
           hash = req.hash;
           delete req.hash;

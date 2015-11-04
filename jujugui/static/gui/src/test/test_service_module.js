@@ -19,11 +19,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('service module annotations', function() {
-  var db, juju, models, utils, viewContainer, views, Y, serviceModule;
+  var db, models, utils, viewContainer, views, serviceModule;
   var called, location;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
+    YUI(GlobalConfig).use([
       'juju-gui',
       'juju-models',
       'juju-tests-utils',
@@ -32,7 +32,6 @@ describe('service module annotations', function() {
       'node',
       'node-event-simulate'],
     function(Y) {
-      juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
@@ -104,7 +103,7 @@ describe('service module annotations', function() {
 // Aug 21 2015 - Jeff - These tests fail spuriously in phantomjs. Skipping
 // until we can revisit and dedicate time to tracking down the issue.
 describe.skip('service module events', function() {
-  var db, charm, fakeStore, juju, models, serviceModule, topo, utils,
+  var db, charm, fakeStore, models, serviceModule, topo, utils,
       view, viewContainer, views, Y;
 
   before(function(done) {
@@ -119,7 +118,6 @@ describe.skip('service module events', function() {
       'juju-topology-service',
       'node-event-simulate'],
     function(Y) {
-      juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
       utils = Y.namespace('juju-tests.utils');
@@ -650,7 +648,7 @@ describe.skip('service module events', function() {
 
   describe('_checkForExistingService', function() {
     var dbObj, deployCharm, contentsObj, envObj, fileObj, getServicesStub,
-        jsYamlMock, showInspector, topoFireStub, topoObj, notificationParams;
+        jsYamlMock, showInspector, topoFireStub, topoObj;
 
     beforeEach(function() {
       fileObj = { name: 'foo' };
@@ -785,12 +783,12 @@ describe.skip('service module events', function() {
 });
 
 describe('canvasDropHandler', function() {
-  var Y, views, utils, models, serviceModule;
+  var views, utils, models, serviceModule;
 
   // Requiring this much setup (before() and beforeEach() to call a single
   // method on a single object is obscene.
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
+    YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
       'juju-view-environment'],
@@ -910,10 +908,10 @@ describe('_canvasDropHandler', function() {
 });
 
 describe('updateElementVisibility', function() {
-  var Y, views, utils, models, serviceModule;
+  var views, utils, models, serviceModule;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
+    YUI(GlobalConfig).use([
       'juju-models',
       'juju-tests-utils',
       'juju-view-environment'],

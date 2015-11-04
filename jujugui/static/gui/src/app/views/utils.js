@@ -28,7 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-view-utils', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
   /**
@@ -1403,7 +1402,7 @@ YUI.add('juju-view-utils', function(Y) {
    */
   Y.Handlebars.registerHelper('debugger', function(value) {
     /*jshint debug:true */
-    debugger;
+    debugger; //eslint-disable-line no-debugger
     /*jshint debug:false */
   });
 

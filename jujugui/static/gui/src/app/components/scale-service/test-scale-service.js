@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}};
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 
 chai.config.includeStack = true;
@@ -47,7 +47,6 @@ describe('ScaleService', function() {
       <juju.components.ScaleService
         serviceId="123" />);
 
-    var domNode = ReactDOM.findDOMNode(output);
     var autoToggle = output.refs.autoPlaceUnitsToggle;
     var constraints = output.refs.constraintsContainer;
     assert.isTrue(constraints.classList.contains('hidden'));

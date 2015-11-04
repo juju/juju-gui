@@ -29,7 +29,6 @@ YUI.add('juju-view-bundle', function(Y) {
 
   var juju = Y.namespace('juju'),
       views = Y.namespace('juju.views'),
-      utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
       d3 = Y.namespace('d3'),
       components = Y.namespace('d3-components'),
@@ -271,9 +270,7 @@ YUI.add('juju-view-bundle', function(Y) {
       // positioning of text down along the service block.
       var service_height = 224,
               name_size = 22,
-              charm_label_size = 16,
-              name_padding = 26,
-              charm_label_padding = 150;
+              name_padding = 26;
 
       node.select('.name')
         .attr({'style': function(d) {
@@ -484,7 +481,6 @@ YUI.add('juju-view-bundle', function(Y) {
     'd3',
     'd3-components',
     'juju-models',
-    'juju-topology',
-    'juju-view-utils'
+    'juju-topology'
   ]
 });

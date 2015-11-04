@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine token view', function() {
-  var container, machine, utils, views, Y;
+  var container, machine, utils, views;
   var requirements = [
     'event-simulate',
     'juju-models',
@@ -32,7 +32,7 @@ describe('machine token view', function() {
   ];
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+    YUI(GlobalConfig).use(requirements, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       done();

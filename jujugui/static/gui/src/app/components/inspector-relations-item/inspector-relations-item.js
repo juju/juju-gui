@@ -52,7 +52,6 @@ YUI.add('inspector-relations-item', function() {
 
     render: function() {
       var relation = this.props.relation;
-      var service = relation.far.service;
       return (
         <li className="inspector-relations-item">
           <span className="inspector-relations-item__service"

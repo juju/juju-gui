@@ -79,7 +79,6 @@ YUI.add('entity-content', function() {
 
     render: function() {
       var entityModel = this.props.entityModel;
-      var entity = entityModel.toEntity();
       return (
         <div className="row entity-content">
           <div className="inner-wrapper">

@@ -20,10 +20,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('service scale up view', function() {
-  var Y, container, models, utils, views, view, View;
+  var container, models, utils, views, view, View;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['service-scale-up-view',
+    YUI(GlobalConfig).use(['service-scale-up-view',
                                'juju-models',
                                'juju-views',
                                'juju-tests-utils',

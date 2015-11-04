@@ -1193,7 +1193,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can unexpose a service', function(done) {
       function unexposeService(rec) {
         var service_name = 'wordpress',
-            data = Y.JSON.parse(rec.data),
             command = {
               Type: 'Client',
               Request: 'ServiceUnexpose',

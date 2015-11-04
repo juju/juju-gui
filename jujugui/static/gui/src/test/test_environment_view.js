@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('juju environment view', function() {
-    var view, views, models, Y, container, service, d3, db, conn,
-        juju, charm, ecs, env, testUtils, fakeStore, charmConfig;
+    var view, views, models, Y, container, d3, db, conn,
+        juju, charm, ecs, env, testUtils, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -235,8 +235,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.connect();
         conn.open();
         fakeStore = new Y.juju.charmstore.APIv4({});
-        charmConfig = testUtils.loadFixture(
-            'data/mediawiki-api-response.json', true);
         done();
       });
     });
@@ -286,22 +284,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     function getParentId(view) {
       return view.topo ? view.topo._yuid : '';
-    }
-
-    function setUpInspector() {
-      var charmId = 'precise/mediawiki-14';
-      charmConfig.id = charmId;
-      var charm = new models.Charm(charmConfig);
-      db.charms.add(charm);
-      var serviceAttrs = {
-        id: 'mediawiki',
-        charm: charmId,
-        exposed: false
-      };
-      service = new models.Service(serviceAttrs);
-      view.createTopology();
-      view.inspector = view.createServiceInspector(service,
-          {databinding: {interval: 0}});
     }
 
     it('should display help text when canvas is empty', function() {
@@ -1030,8 +1012,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            charmstore: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
-             add_rel = container.one('.relation-button__link'),
-             after_evt;
+             add_rel = container.one('.relation-button__link');
          var service = d3.select(serviceNode.getDOMNode()).datum();
          var endpoints = {},
              serviceName = serviceNode.getAttribute('data-name'),
@@ -1352,7 +1333,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          getParentId(view)) +
               ' .rel-indicator'),
          menu,
-         dialog_btn,
          panel;
 
          relation.simulate('click');
@@ -1488,10 +1468,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('view model support infrastructure', function() {
-    var Y, views, models, module, service, testUtils, viewUtils;
+    var views, models, module, service, testUtils, viewUtils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(
+      YUI(GlobalConfig).use(
           ['juju-views', 'juju-models', 'charmstore-api', 'juju-tests-utils',
           'juju-view-utils'],
           function(Y) {

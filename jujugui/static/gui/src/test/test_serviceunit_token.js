@@ -19,10 +19,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Service unit token', function() {
-  var container, utils, models, views, view, id, title, Y;
+  var container, utils, models, views, view, title;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-serviceunit-token',
+    YUI(GlobalConfig).use(['juju-serviceunit-token',
                                'juju-models',
                                'juju-tests-utils',
                                'node-event-simulate'], function(Y) {
@@ -41,7 +41,6 @@ describe('Service unit token', function() {
     };
     var units = new models.ServiceUnitList();
     units.add([unit]);
-    id = 'test/0';
     title = 'test';
     view = new views.ServiceUnitToken({
       container: container,

@@ -817,8 +817,7 @@ YUI.add('environment-change-set', function(Y) {
         }
       };
 
-      var config = args[1],
-          serviceConfig = args[3];
+      var config = args[1];
       var service = this.get('db').services.getById(ghostServiceName);
       // Only the modified options are sent to the API backend. With the
       // new React configuration system the modified values is determined

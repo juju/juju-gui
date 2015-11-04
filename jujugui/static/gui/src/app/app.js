@@ -27,7 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // Create a global for debug console access to YUI context.
-var yui;
+var yui; // eslint-disable-line no-unused-vars
 
 YUI.add('juju-gui', function(Y) {
 
@@ -40,7 +40,7 @@ YUI.add('juju-gui', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       bundleNotifications = juju.BundleNotifications;
 
-  var components = window.juju.components;
+  var components = window.juju.components; // eslint-disable-line no-unused-vars
 
   /**
    * The main app class.

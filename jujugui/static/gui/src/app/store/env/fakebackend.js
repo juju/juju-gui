@@ -1059,7 +1059,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @param {Array} unitNames a list of unit names to be removed.
     */
     removeUnits: function(unitNames) {
-      var service, removedUnit,
+      var service,
           warning, error;
 
       // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove

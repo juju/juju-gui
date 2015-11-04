@@ -276,10 +276,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('createContainer', function() {
     var requirements = [
       'juju-fakebackend-simulator', 'juju-tests-factory', 'juju-tests-utils'];
-    var createContainer, fakeBackend, testFactory, testUtils, Y;
+    var createContainer, fakeBackend, testFactory, testUtils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         createContainer = Y.namespace('juju.environments').createContainer;
         testFactory = Y.namespace('juju-tests.factory');
         testUtils = Y.namespace('juju-tests.utils');

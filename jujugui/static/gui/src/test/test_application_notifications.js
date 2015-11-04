@@ -24,7 +24,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // state. This  is a similar case to databinding and could be refactored to use
 // that. These tests must be refactored.
 describe.skip('juju application notifications', function() {
-  var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
+  var _setTimeout, db, ERR_EV, juju, models, NO_OP,
       viewContainer, views, Y, willError, nsRouter;
 
   before(function(done) {

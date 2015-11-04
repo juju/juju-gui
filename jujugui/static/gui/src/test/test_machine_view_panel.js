@@ -1590,10 +1590,7 @@ describe('machine view panel view', function() {
       //   'should re-render token when machine is updated'
       view.render();
       var id = 999,
-          machineModel = machines.item(0),
-          selector = '.machines .token',
-          item = container.one(
-              selector + '[data-id="' + machineModel.id + '"]');
+          machineModel = machines.item(0);
       var unselect = utils.makeStubMethod(view, '_unselectIfHidden');
       this._cleanups.push(unselect.reset);
       var selectToken = utils.makeStubMethod(view, '_selectMachineToken');

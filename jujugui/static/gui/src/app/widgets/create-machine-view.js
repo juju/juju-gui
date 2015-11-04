@@ -27,7 +27,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('create-machine-view', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets'),
       utils = views.utils,
       Templates = views.Templates;
 

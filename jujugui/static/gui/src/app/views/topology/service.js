@@ -28,8 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-topology-service', function(Y) {
   var d3 = Y.namespace('d3'),
       components = Y.namespace('d3-components'),
-      bundleImportHelpers = Y.namespace('juju').BundleHelpers,
-      localCharmHelpers = Y.namespace('juju').localCharmHelpers,
       models = Y.namespace('juju.models'),
       topoUtils = Y.namespace('juju.topology.utils'),
       utils = Y.namespace('juju.views.utils'),
@@ -74,10 +72,7 @@ YUI.add('juju-topology-service', function(Y) {
       return;
     }
     var self = this,
-        topo = this.get('component'),
-        service_scale = this.service_scale,
-        service_scale_width = this.service_scale_width,
-        service_scale_height = this.service_scale_height;
+        topo = this.get('component');
 
     // Apply Position Annotations
     // This is done after the services_boxes

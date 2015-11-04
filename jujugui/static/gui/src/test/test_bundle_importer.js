@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bundle Importer', function() {
-  var bundleImporter, BundleImporter, deploy, db, env, fakebackend,
+  var bundleImporter, BundleImporter, db, env, fakebackend,
       utils, yui;
 
   before(function(done) {

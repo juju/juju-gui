@@ -28,8 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      utils = Y.namespace('juju.views.utils'),
-      models = Y.namespace('juju.models'),
       Templates = views.Templates;
 
   /**
@@ -78,8 +76,7 @@ YUI.add('juju-view-environment', function(Y) {
     render: function() {
       var container = this.get('container'),
           topo = this.topo,
-          db = this.get('db'),
-          self = this;
+          db = this.get('db');
 
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
@@ -201,10 +198,8 @@ YUI.add('juju-view-environment', function(Y) {
     'base-build',
     'event-tracker',
     'handlebars-base',
-    'juju-models',
     'juju-templates',
     'juju-topology',
-    'juju-view-utils',
     'node',
     'view'
   ]

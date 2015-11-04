@@ -243,7 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('readCharmEntries', function() {
-      var callback, entries, textWriterMock;
+      var callback, entries;
 
       // Create and return a mock entry object.
       var makeEntry = function() {

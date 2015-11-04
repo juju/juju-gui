@@ -1736,7 +1736,7 @@ YUI.add('juju-models', function(Y) {
         // If the user adds then removes an endpoint before the deltas return
         // then the db's will be out of sync so this check is necessary.
         if (endpoints) {
-          var service, serviceRelations;
+          var service;
           endpoints.forEach(function(endpoint) {
             service = db.services.getById(endpoint[0]);
             // The tests don't always add services so we check if they exist

@@ -41,8 +41,7 @@ describe('Relation endpoints logic', function() {
       models = Y.namespace('juju.models');
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
-      var _renderComponents = utils.makeStubMethod(
-          Y.juju.App.prototype, '_renderComponents');
+      utils.makeStubMethod(Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
@@ -171,15 +170,14 @@ describe('Relation endpoints logic', function() {
 
 
 describe('Endpoints map', function() {
-  var Y, juju, models, controller, data, EndpointsController, charm;
+  var models, controller, EndpointsController, charm;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models',
+    YUI(GlobalConfig).use(['juju-models',
                                'juju-tests-utils',
                                'juju-endpoints-controller',
                                'juju-controllers'],
     function(Y) {
-      juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       EndpointsController = Y.namespace('juju.EndpointsController');
       done();
@@ -329,12 +327,11 @@ describe('Endpoints map', function() {
 });
 
 describe('Endpoints map handlers', function() {
-  var app, conn, controller, destroyMe, ecs, _renderDeployerBarView,
-      env, factory, juju, models, utils, Y;
+  var app, conn, controller, destroyMe, ecs,
+      env, factory, juju, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
-                               'juju-models',
                                'juju-tests-utils',
                                'juju-tests-factory',
                                'juju-endpoints-controller',
@@ -344,9 +341,7 @@ describe('Endpoints map handlers', function() {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
-      models = Y.namespace('juju.models');
-      var _renderComponents = utils.makeStubMethod(
-          Y.juju.App.prototype, '_renderComponents');
+      utils.makeStubMethod(Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
@@ -536,11 +531,10 @@ describe('Endpoints map handlers', function() {
 
 
 describe('Service config handlers', function() {
-  var Y, juju, utils, models, app, conn, env, controller, destroyMe;
+  var Y, juju, utils, app, conn, env, controller, destroyMe;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
-                               'juju-models',
                                'juju-tests-utils',
                                'juju-endpoints-controller',
                                'juju-controllers',
@@ -549,10 +543,8 @@ describe('Service config handlers', function() {
     function(Y) {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
-      models = Y.namespace('juju.models');
 
-      var _renderComponents = utils.makeStubMethod(
-          Y.juju.App.prototype, '_renderComponents');
+      utils.makeStubMethod(Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });

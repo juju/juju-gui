@@ -20,18 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('container token view', function() {
-  var Y, container, machine, models, utils, views, view, View;
+  var container, machine, utils, views, view, View;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['container-token',
-                               'juju-models',
+    YUI(GlobalConfig).use(['container-token',
                                'juju-views',
                                'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
 
-      models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       View = views.ContainerToken;

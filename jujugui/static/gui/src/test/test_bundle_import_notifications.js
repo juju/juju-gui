@@ -21,14 +21,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('bundle-import-notifications', function() {
-    var db, env, ns, utils, Y;
+    var db, env, ns;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'bundle-import-notifications', 'juju-tests-utils',
+      YUI(GlobalConfig).use(
+          'bundle-import-notifications',
           function(Y) {
             ns = Y.namespace('juju');
-            utils = Y.namespace('juju-tests').utils;
             done();
           });
     });
@@ -126,12 +125,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('bundle helpers watchAll', function() {
-    var bundleNotifications, conn, db, env, juju, testUtils, Y;
+    var bundleNotifications, conn, db, env, juju, testUtils;
     var requirements = [
       'bundle-import-notifications', 'juju-tests-utils'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         juju = Y.namespace('juju');
         bundleNotifications = juju.BundleNotifications;
         testUtils = Y.namespace('juju-tests.utils');
@@ -285,11 +284,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('bundle helpers _notifyDeploymentChange', function() {
-    var bundleNotifications, db, testUtils, Y;
+    var bundleNotifications, db, testUtils;
     var requirements = ['bundle-import-notifications', 'juju-tests-utils'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         bundleNotifications = Y.namespace('juju').BundleNotifications;
         testUtils = Y.namespace('juju-tests.utils');
         done();

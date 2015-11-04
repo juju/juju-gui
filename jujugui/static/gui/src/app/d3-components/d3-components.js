@@ -205,11 +205,8 @@ YUI.add('d3-components', function(Y) {
       var self = this,
           modEvents = this.events[modName],
           module = this.modules[modName],
-          owns = Y.Object.owns,
           container = this.get('container'),
-          subscriptions = [],
-          handlers,
-          handler;
+          subscriptions = [];
 
       function _bindEvent(name, handler, container, selector, context) {
         // Adapt between d3 events and YUI delegates.
@@ -319,7 +316,6 @@ YUI.add('d3-components', function(Y) {
       // d3 selection and an 'on' binding.
       var self = this,
           modEvents = this.events[modName],
-          owns = Y.Object.owns,
           module;
 
       if (this.get('interactive') === false) { return; }
@@ -388,15 +384,12 @@ YUI.add('d3-components', function(Y) {
      *
      **/
     _unbindD3Events: function(modName) {
-      var modEvents = this.events[modName],
-          owns = Y.Object.owns,
-          module;
+      var modEvents = this.events[modName];
 
       if (!modEvents || !modEvents.d3) {
         return;
       }
       modEvents = modEvents.d3;
-      module = this.modules[modName];
 
       Y.each(modEvents, function(handlers, selector) {
         Y.each(handlers, function(handler, trigger) {

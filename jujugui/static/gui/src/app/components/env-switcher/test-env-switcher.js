@@ -18,8 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}};
-var testUtils = React.addons.TestUtils;
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -46,7 +45,6 @@ describe('EnvSwitcher', function() {
   });
 
   it('open the list on click', function() {
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
     var env = {
       listEnvs: sinon.stub()
     };
@@ -74,7 +72,6 @@ describe('EnvSwitcher', function() {
   });
 
   it('fetches a list of environments on mount (JEM)', function() {
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
     var listEnvs = sinon.stub();
     var jem = {
       listEnvironments: listEnvs
@@ -93,7 +90,6 @@ describe('EnvSwitcher', function() {
   });
 
   it('fetches a list of environments on mount (JES)', function() {
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
     var listEnvs = sinon.stub();
     var env = {
       listEnvs: listEnvs
@@ -112,7 +108,6 @@ describe('EnvSwitcher', function() {
   });
 
   it('fetches the env list when opening', function() {
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
     var env = {
       listEnvs: sinon.stub()
     };

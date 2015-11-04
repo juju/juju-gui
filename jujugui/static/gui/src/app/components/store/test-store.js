@@ -18,14 +18,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}};
-var testUtils = React.addons.TestUtils;
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Store', function() {
-  var charms, tags;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.

@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('pan zoom module', function() {
-  var db, juju, models, utils, view, viewContainer, views, Y, pz, topo, vis;
+  var db, models, utils, view, viewContainer, views, Y, pz, topo, vis;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -29,7 +29,6 @@ describe('pan zoom module', function() {
       'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
-      juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
       utils = Y.namespace('juju-tests.utils');

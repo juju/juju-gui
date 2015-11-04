@@ -13,3 +13,5 @@ rules:
   quotes: [2, "single"]
   strict: [2, "global"]
   no-underscore-dangle: 0
+  no-debugger: 1
+  no-unused-vars: [2, {args: "none"}]
