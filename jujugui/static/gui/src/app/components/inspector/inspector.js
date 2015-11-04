@@ -105,6 +105,7 @@ YUI.add('inspector-component', function() {
                 serviceId={serviceId}
                 unitStatus={unitStatus}
                 units={units}
+                envResolved={this.props.envResolved}
                 destroyUnits={this.props.destroyUnits}
                 changeState={this.props.changeState} />,
             backState: {

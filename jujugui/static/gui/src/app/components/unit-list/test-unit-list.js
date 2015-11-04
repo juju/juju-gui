@@ -131,7 +131,7 @@ describe('UnitList', () => {
         title="Scale service"/>);
   });
 
-  it('hides the actions when view a status list', () => {
+  it('hides the actions when viewing a status list', () => {
     var units = [{
       displayName: 'mysql/0'
     }];
@@ -264,17 +264,38 @@ describe('UnitList', () => {
     });
   });
 
-  it('displays a remove button', function() {
+  it('only displays a remove button for a non-error list', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           units={[]} />);
+    var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Remove',
-      action: output.props.children[2].props.buttons[0].action
+      action: buttonItems[0].action
     }];
     assert.deepEqual(output.props.children[2],
       <juju.components.ButtonRow
         buttons={buttons} />);
+    assert.equal(buttonItems.length, 1);
+  });
+
+  it('displays a Resolve & retry button for an error list', function() {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          unitStatus='error'
+          units={[]} />);
+    var buttonItems = output.props.children[2].props.buttons;
+    var buttons = [{
+      title: 'Resolve & retry',
+      action: buttonItems[0].action
+    }, {
+      title: 'Remove',
+      action: buttonItems[1].action
+    }];
+    assert.deepEqual(output.props.children[2],
+      <juju.components.ButtonRow
+        buttons={buttons} />);
+    assert.equal(buttonItems.length, 2);
   });
 
   it('can remove the selected units', function() {
@@ -327,5 +348,37 @@ describe('UnitList', () => {
         output, 'generic-button');
     testUtils.Simulate.click(button);
     assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
+  });
+
+  it('can resolve the selected units', function() {
+    var changeState = sinon.stub();
+    var envResolved = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      id: 'mysql/2'
+    }];
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          unitStatus='error'
+          envResolved={envResolved}
+          changeState={changeState}
+          serviceId="service1"
+          units={units} />);
+    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
+    output.refs['UnitListItem-' + units[1].id].setState({checked: true});
+    var button = testUtils.scryRenderedDOMComponentsWithClass(
+        output, 'generic-button')[0];
+    testUtils.Simulate.click(button);
+    assert.equal(envResolved.callCount, 2);
+    assert.deepEqual(envResolved.args[0][0], units[0].id);
+    assert.deepEqual(envResolved.args[1][0], units[1].id);
   });
 });
