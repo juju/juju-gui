@@ -588,7 +588,7 @@ YUI.add('bundle-importer', function(Y) {
       this.env.add_unit.apply(this.env, record.args);
       // If the unit does not specify a machine, create a new machine.
       if (record.args[2] === null) {
-        var machine = this._execute_addMachines({
+        this._execute_addMachines({
           args: [{}],
           id: record.id
         }, function(machine) {

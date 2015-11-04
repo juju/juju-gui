@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju_config = {
+var juju_config = { // eslint-disable-line no-unused-vars
   // These are blacklisted config items not passed into subapps mounted into
   // the main App.
   serverRouting: false,

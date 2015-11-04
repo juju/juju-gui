@@ -18,8 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}};
-var testUtils = React.addons.TestUtils;
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('EntityContentReadme', function() {
   var mockEntity;

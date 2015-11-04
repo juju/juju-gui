@@ -272,8 +272,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
 
       run: function(context) {
         var width = context.width,
-            height = context.height,
-            center = context.center;
+            height = context.height;
 
         var axis = RAND(0.5) && 'x' || 'y';
 

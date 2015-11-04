@@ -157,8 +157,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       }
       var id = this.get('id'),
-          parts = parseCharmId(id),
-          self = this;
+          parts = parseCharmId(id);
       if (!parts) {
         throw 'Developers must initialize charms with a well-formed id.';
       }

@@ -406,12 +406,10 @@ YUI.add('juju-topology-relation', function(Y) {
                 .getConnectorPair(relation.target);
       var s = connectors[0];
       var t = connectors[1];
-      var length = relation.source._distance(s, t);
       var link = d3.select(this).select('line');
       var connector1 = d3.select(this).select('.connector1');
       var connector2 = d3.select(this).select('.connector2');
       var relationIcon = d3.select(this).select('.rel-indicator');
-      var imageSize = 20;
       var sRadius = (relation.source.w / 2) - 4;
       var tRadius = (relation.target.w / 2) - 4;
 
@@ -698,7 +696,7 @@ YUI.add('juju-topology-relation', function(Y) {
         var relation = db.relations.getById(relationId);
         // Because we keep a copy of the relation models on each service we
         // also need to remove the relation from those models.
-        var service, serviceRelations;
+        var service;
         relation.get('endpoints').forEach(function(endpoint) {
           // Some of the tests pass fake data with invalid endpoints
           // this check just makes sure it doesn't blow up.

@@ -31,7 +31,6 @@ YUI.add('juju-env-go', function(Y) {
   var PING_INTERVAL = 10;
 
   var environments = Y.namespace('juju.environments');
-  var utils = Y.namespace('juju.views.utils');
 
   /**
     Return a normalized name from an endpoint object.

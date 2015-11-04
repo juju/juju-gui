@@ -73,7 +73,6 @@ YUI.add('env-list', function() {
       @method createNewEnv
     */
     createNewEnv: function() {
-      var name = this.state.envName;
       this.props.createNewEnv(this.state.envName);
     },
 

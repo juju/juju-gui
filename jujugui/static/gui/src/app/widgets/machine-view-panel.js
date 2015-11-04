@@ -1514,8 +1514,7 @@ YUI.add('machine-view-panel', function(Y) {
         _renderUnplacedUnits: function() {
           var unitTokens = this.get('unitTokens'),
               unitIds = Object.keys(unitTokens),
-              nodeContainer = this.get('container').one('.unplaced .items'),
-              plural = unitIds.length !== 1 ? 's' : '';
+              nodeContainer = this.get('container').one('.unplaced .items');
 
           this._renderAllPlacedMessage(unitIds);
 

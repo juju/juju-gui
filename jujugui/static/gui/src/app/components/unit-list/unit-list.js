@@ -82,7 +82,6 @@ YUI.add('unit-list', function() {
       @param {Object} e The click event.
     */
     _unitItemAction: function(e) {
-      var unitStatus = this.props.unitStatus;
       var unitParts = e.currentTarget.getAttribute('data-id').split('/');
       this.props.changeState({
         sectionA: {

@@ -43,7 +43,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
 
   function trim(s, char) { return _trim(s, char, true, true); }
   function rtrim(s, char) { return _trim(s, char, false, true); }
-  function ltrim(s, char) { return _trim(s, char, true, false); }
+  function ltrim(s, char) { return _trim(s, char, true, false); } // eslint-disable-line
 
   /**
    * Return a sorted array of namespace, url pairs.

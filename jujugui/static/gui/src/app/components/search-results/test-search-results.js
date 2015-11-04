@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}};
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 
 chai.config.includeStack = true;
@@ -379,7 +379,6 @@ describe('SearchResults', function() {
       };
       var mockModel = {};
       mockModel.toEntity = sinon.stub().returns(result);
-      var mockData = [mockModel];
       var charmstoreSearch = sinon.stub().returns({abort: abort});
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults

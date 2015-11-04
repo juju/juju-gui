@@ -230,13 +230,10 @@ YUI.add('juju-app-state', function(Y) {
       var newState = Y.mix(
           Y.clone(this.get('current')), change, true, null, 0, true);
       var component,
-          flash,
           id,
           metadata,
           sectionState,
-          genUrl = '',
           hash = '',
-          search = false,
           urlParts = [];
       var queryValues = {};
       // Loop through each section in the state to generate the urls.
