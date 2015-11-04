@@ -224,18 +224,23 @@ svg {
     stroke-width: 0;
     overflow: hidden;
 }
+
 li {
     line-height: 18px;
 }
+
 h2 {
     line-height: 36px;
 }
+
 h4 {
     font-size: 14px;
 }
+
 h4, h5, h6 {
     line-height: 18px;
 }
+
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
     font-family: inherit;
@@ -243,53 +248,66 @@ h1, h2, h3, h4, h5, h6 {
     color: inherit;
     text-rendering: optimizelegibility;
 }
+
 ul {
     padding: 0;
 }
+
 label {
     display: block;
 }
+
 strong {
     font-weight: 400;
 }
+
 .align-right {
     text-align: right;
 }
+
 i.sprite {
     display: inline-block;
     vertical-align: middle;
 }
+
 ul.menu li,
 div.inline {
   float: left;
 }
+
 ul.menu {
     margin: 0;
     padding: 0;
     list-style: none;
 }
+
 .alert {
     letter-spacing: normal;
 }
+
 .clearall {
     clear: both;
 }
+
 .hidden {
     display: none;
     visibility: hidden;
 }
+
 pre {
     margin-bottom: 10px;
     padding: 5px;
     background-color: #fdf6f2;
     border: none;
 }
+
 pre,
 code {
     font-family: $font-family-mono;
     font-size: 14px;
     color: $cool-grey;
 }
+
 th {
     font-weight: 300;
 }

@@ -23,7 +23,21 @@ YUI.add('inspector-config', function() {
   juju.components.Configuration = React.createClass({
 
     _importConfig: function() {},
-    _resetValues: function() {},
+
+    /**
+      Handle cancelling the changes and returning to the inspector overview.
+
+      @method _handleCancelChanges
+    */
+    _handleCancelChanges: function() {
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.service.get('id'),
+            activeComponent: undefined
+          }}});
+    },
 
     /**
       Callback handler for clicking the Save config button.
@@ -151,7 +165,7 @@ YUI.add('inspector-config', function() {
       }];
       var actionButtons = [{
         title: 'Cancel',
-        action: this._resetValues
+        action: this._handleCancelChanges
       }, {
         title: 'Save changes',
         type: 'confirm',

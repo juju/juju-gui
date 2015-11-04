@@ -132,4 +132,29 @@ describe('Configuration', function() {
     assert.strictEqual(setConfig.args[0][3], null);
   });
 
+  it('can handle cancelling the changes', function() {
+    var charm = {
+      get: function() {
+        return null;
+      }};
+    var service = {
+      get: sinon.stub().returns('mysql')
+    };
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        service={service}
+        changeState={changeState}
+        charm={charm} />);
+    output.props.children[1].props.buttons[0].action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'mysql',
+          activeComponent: undefined
+        }}});
+  });
+
 });
