@@ -13,3 +13,4 @@ rules:
   quotes: [2, "single"]
   strict: [2, "global"]
   no-underscore-dangle: 0
+  no-debugger: 1

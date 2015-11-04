@@ -1403,7 +1403,7 @@ YUI.add('juju-view-utils', function(Y) {
    */
   Y.Handlebars.registerHelper('debugger', function(value) {
     /*jshint debug:true */
-    debugger;
+    debugger; //eslint-disable-line no-debugger
     /*jshint debug:false */
   });
 
