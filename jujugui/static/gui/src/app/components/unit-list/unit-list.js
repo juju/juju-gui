@@ -48,15 +48,25 @@ YUI.add('unit-list', function() {
         checked.
     */
     _selectAllUnits: function(group, checked) {
+      var setChecked = (key, groups) => {
+        groups[key].units.forEach((unit) => {
+          this.refs['UnitListItem-' + unit.id].setState({
+            checked: checked
+          });
+        });
+      };
       if (checked === undefined) {
         checked = false;
       }
       var groups = this._generateGroups();
-      groups[group].units.forEach((unit) => {
-        this.refs['UnitListItem-' + unit.id].setState({
-          checked: checked
-        });
-      });
+      if (group === null) {
+        for (var key in groups) {
+          setChecked(key, groups);
+        }
+      } else {
+        setChecked(group, groups);
+      }
+
     },
 
     /**
@@ -112,6 +122,7 @@ YUI.add('unit-list', function() {
       var unitList = [
         <juju.components.UnitListItem
           key={key}
+          ref={key}
           label={group.label}
           className='select-all'
           whenChanged={this._selectAllUnits.bind(this, key)}/>
@@ -220,6 +231,7 @@ YUI.add('unit-list', function() {
   });
 
 }, '0.1.0', { requires: [
+  'overview-action',
   'button-row',
   'unit-list-item'
 ]});

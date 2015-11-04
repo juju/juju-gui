@@ -117,42 +117,6 @@ describe('UnitListItem', () => {
     assert.equal(whenChanged.args[0][0], true);
   });
 
-  it('updates the checked status based on updating props', () => {
-    var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.UnitListItem
-          key="unique"
-          checked={false}
-          label="unit-name"
-          unitId="apache/2"
-        />, true);
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children.props.children[0],
-      <input
-        type="checkbox"
-        id="unit-name-unit"
-        onClick={output.props.children.props.children[0].props.onClick}
-        onChange={output.props.children.props.children[0].props.onChange}
-        checked={false} />);
-
-    shallowRenderer.render(<juju.components.UnitListItem
-      key="unique"
-      checked={true}
-      label="unit-name"
-      unitId="apache/2"
-    />);
-
-    output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children.props.children[0],
-      <input
-        type="checkbox"
-        id="unit-name-unit"
-        onClick={output.props.children.props.children[0].props.onClick}
-        onChange={output.props.children.props.children[0].props.onChange}
-        checked={true} />);
-  });
-
   it('does not bubble the click event when clicking a checkbox', () => {
     var actionStub = sinon.stub();
     // Need to render the full component here as shallowRenderer does not yet
