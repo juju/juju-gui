@@ -316,7 +316,7 @@ lint: $(FLAKE8)
 
 .PHONY: lint-js
 lint-js: $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/eslint $(GUISRC)
+	$(NODE_MODULES)/.bin/eslint --rulesdir eslint-rules/ $(GUISRC)
 
 .PHONY: test
 test: $(PYTEST)
