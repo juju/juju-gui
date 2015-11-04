@@ -50,8 +50,7 @@ var module = module;
    * @param failure {function} A callback to be called on failure. Takes
    *     an xhr object as its only parameter.
   */
-  environment.prototype._makeRequest = function(
-      path, method, params, callback) {
+  environment.prototype._makeRequest = function(path, method, params, callback) {
     var success = function(xhr) {
       var data = JSON.parse(xhr.target.responseText);
       callback(null, data);

@@ -66,16 +66,17 @@ YUI.add('env-switcher', function() {
       @param {Object} data The data from the listEnvs call.
     */
     updateEnvListCallback: function(callback, error, data) {
+      // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
         console.log(err);
-      } else {
-        // data.envs is only populated in the JES environments, when using JEM
-        // the environments are in the top level 'data' object.
-        this.setState({envList: data.envs || data});
-        if (callback) {
-          callback();
-        }
+        return;
+      }
+      // data.envs is only populated in the JES environments, when using JEM
+      // the environments are in the top level 'data' object.
+      this.setState({envList: data.envs || data});
+      if (callback) {
+        callback();
       }
     },
 
@@ -130,17 +131,17 @@ YUI.add('env-switcher', function() {
       var srvCb = function(error, servers) {
         if (error) {
           console.log(error);
+          return;
+        }
+        if (servers && servers.length > 0 && servers[0].path) {
+          var serverName = servers[0].path;
+          var baseTemplate = serverName;
+          jem.newEnvironment(
+            envOwnerName, envName, baseTemplate, serverName, password,
+            this.createEnvCallback.bind(this));
         } else {
-          if (servers && servers.length > 0 && servers[0].path) {
-            var serverName = servers[0].path;
-            var baseTemplate = serverName;
-            jem.newEnvironment(
-              envOwnerName, envName, baseTemplate, serverName, password,
-              this.createEnvCallback.bind(this));
-          } else {
-            console.log(
-              'Cannot create a new environment: No state servers found.');
-          }
+          console.log(
+            'Cannot create a new environment: No state servers found.');
         }
       };
 
@@ -159,12 +160,13 @@ YUI.add('env-switcher', function() {
       @param {Object} data The data from the create env callback.
     */
     createEnvCallback: function(error, data) {
+      // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
         console.log(err);
-      } else {
-        this.updateEnvList(this.switchEnv.bind(this, data.uuid));
+        return;
       }
+      this.updateEnvList(this.switchEnv.bind(this, data.uuid));
     },
 
     /**
