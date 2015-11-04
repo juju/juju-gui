@@ -15,3 +15,4 @@ rules:
   no-underscore-dangle: 0
   no-debugger: 1
   no-unused-vars: [2, {args: "none"}]
+  indent: [2, 2, {VariableDeclarator: 2}]
