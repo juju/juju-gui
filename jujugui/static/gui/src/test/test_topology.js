@@ -19,23 +19,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology', function() {
-  var NS, TestModule, container, d3, db, factory, models, state, topo,
+  var NS, TestModule, container, db, models, state, topo,
       utils, views, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology',
                                'd3-components',
                                'juju-tests-utils',
-                               'juju-tests-factory',
                                'node',
                                'node-event-simulate'],
     function(Y) {
       NS = Y.namespace('d3-components');
-      d3 = Y.namespace('d3');
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
-      factory = Y.namespace('juju-tests.factory');
 
       TestModule = Y.Base.create('TestModule', NS.Module, [], {
         events: {
