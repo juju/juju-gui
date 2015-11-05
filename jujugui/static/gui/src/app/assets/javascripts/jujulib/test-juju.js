@@ -31,11 +31,11 @@ describe('jujulib', function() {
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.listEnvironments(function(data) {
+      env.listEnvironments(function(error, data) {
+        if (error) {
+          assert.fail('error found when there should not be one.');
+        }
         assert.deepEqual(data, ['foo']);
-        done();
-      }, function() {
-        assert.fail('failure callback should not have been called.');
         done();
       });
     });
@@ -44,15 +44,17 @@ describe('jujulib', function() {
       var err = 'bad wolf';
       var bakery = {
         sendGetRequest: function(path, success, failure) {
-          failure(err);
+          var xhr = _makeXHRRequest({Message: err});
+          failure(xhr);
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.listEnvironments(function(data) {
-        assert.fail('success callback should not have been called.');
-        done();
-      }, function(error) {
-        assert.equal(error, err);
+      env.listEnvironments(function(error, data) {
+        if (error) {
+          assert.equal(error, err);
+        } else {
+          assert.fail('callback should have failed.');
+        }
         done();
       });
     });
@@ -65,11 +67,11 @@ describe('jujulib', function() {
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.listServers(function(data) {
+      env.listServers(function(error, data) {
+        if (error) {
+          assert.fail('error found when there should not be one.');
+        }
         assert.deepEqual(data, ['foo']);
-        done();
-      }, function() {
-        assert.fail('failure callback should not have been called.');
         done();
       });
     });
@@ -78,15 +80,17 @@ describe('jujulib', function() {
       var err = 'bad wolf';
       var bakery = {
         sendGetRequest: function(path, success, failure) {
-          failure(err);
+          var xhr = _makeXHRRequest({Message: err});
+          failure(xhr);
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.listEnvironments(function(data) {
-        assert.fail('success callback should not have been called.');
-        done();
-      }, function(error) {
-        assert.equal(error, err);
+      env.listServers(function(error, data) {
+        if (error) {
+          assert.equal(error, err);
+        } else {
+          assert.fail('callback should have failed.');
+        }
         done();
       });
     });
@@ -100,10 +104,13 @@ describe('jujulib', function() {
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.getEnvironment('rose', 'fnord', function(data) {
+      env.getEnvironment('rose', 'fnord', function(error, data) {
+        if (error) {
+          assert.fail('error found when there should not be one.');
+        }
         assert.deepEqual(data, {uuid: 'foo'});
         done();
-      }, function() {});
+      });
     });
 
     it('handles errors getting environment data', function(done) {
@@ -111,14 +118,17 @@ describe('jujulib', function() {
       var bakery = {
         sendGetRequest: function(path, success, failure) {
           assert.equal(path, 'http://example.com/v1/env/rose/fnord')
-          failure(err);
+          var xhr = _makeXHRRequest({Message: err});
+          failure(xhr);
         }
       };
       env = new window.jujulib.environment('http://example.com', bakery);
-      env.getEnvironment('rose', 'fnord', function(data) {
-        assert.fail('success callback should not have been called');
-      }, function(error) {
-        assert.equal(error, err);
+      env.getEnvironment('rose', 'fnord', function(error, data) {
+        if (error) {
+          assert.equal(error, err);
+        } else {
+          assert.fail('callback should have failed');
+        }
         done();
       });
     });
@@ -141,10 +151,10 @@ describe('jujulib', function() {
 
       env = new window.jujulib.environment('http://example.com', bakery);
       env.newEnvironment('rose', 'fnord', 'rose/template', 'foo', 'password',
-        function(data) {
-          done();
-        }, function(error) {
-          assert.fail('Failure callback should not have been called.');
+        function(error, data) {
+          if (error) {
+            assert.fail('error found when there should not be one.');
+          }
           done();
         }
       );
@@ -155,17 +165,19 @@ describe('jujulib', function() {
       var bakery = {
         sendPostRequest: function(path, data, success, failure) {
           assert.equal(path, 'http://example.com/v1/env/rose');
-          failure(err);
+          var xhr = _makeXHRRequest({Message: err});
+          failure(xhr);
         },
       };
 
       env = new window.jujulib.environment('http://example.com', bakery);
       env.newEnvironment('rose', 'fnord', 'rose/template', 'foo', 'password',
-        function(data) {
-          done();
-          assert.fail('Success callback should not have been called.');
-        }, function(error) {
-          assert.equal(error, err)
+        function(error, data) {
+          if (error) {
+            assert.equal(error, err)
+          } else {
+            assert.fail('callback should have failed');
+          }
           done();
         }
       );

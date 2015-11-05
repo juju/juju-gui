@@ -85,7 +85,7 @@ describe('EnvSwitcher', function() {
     var envData = {
       env: 'env'
     };
-    listEnvs.args[0][0](envData);
+    listEnvs.args[0][0](null, envData);
     assert.deepEqual(instance.state.envList, envData);
   });
 
@@ -152,7 +152,7 @@ describe('EnvSwitcher', function() {
         app={app} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
-    listEnvs.args[0][0](envs);
+    listEnvs.args[0][0](null, envs);
     instance.handleEnvClick({
       currentTarget: {
         getAttribute: () => 'abc123'
@@ -180,7 +180,7 @@ describe('EnvSwitcher', function() {
     var listSrv = sinon.stub();
     var newEnv = sinon.stub();
 
-    listSrv.callsArgWith(0, [{path: 'admin/foo'}]);
+    listSrv.callsArgWith(0, null, [{path: 'admin/foo'}]);
 
     var jem = {
       listEnvironments: listEnvs,
@@ -197,7 +197,7 @@ describe('EnvSwitcher', function() {
         app={app} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
-    listEnvs.args[0][0](envs);
+    listEnvs.args[0][0](null, envs);
     // Previous code is to set up the state of the component.
     instance.createNewEnv(envName);
     assert.equal(newEnv.callCount, 1);
@@ -212,12 +212,12 @@ describe('EnvSwitcher', function() {
     assert.closeTo(newEnv.args[0][4].length, 31, 2);
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {uuid: '123abc'};
-    newEnv.args[0][5](createdEnv);
+    newEnv.args[0][5](null, createdEnv);
     // After creating an env it should re-list them.
     assert.equal(listEnvs.callCount, 2);
     // Then switch to the new one.
     envs.push(createdEnv);
-    listEnvs.args[1][0](envs);
+    listEnvs.args[1][0](null, envs);
     assert.equal(switchEnv.callCount, 1);
   }
 

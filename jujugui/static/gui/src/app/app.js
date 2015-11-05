@@ -991,7 +991,11 @@ YUI.add('juju-gui', function(Y) {
           serviceName: 'jem'
         });
         this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
-        this.jem.listEnvironments(function(envList) {
+        this.jem.listEnvironments((error, envList) => {
+          if (error) {
+            console.log('Environment listing failure: ' + error);
+            return;
+          }
           // XXX This picks the first environment but we'll want to default to
           // sandbox mode then allow the user to choose an env.
           var envData = envList[0];
@@ -1016,9 +1020,6 @@ YUI.add('juju-gui', function(Y) {
                         wssData[1] + '/' +
                         envData.uuid;
           callback.call(this, socketUrl, envData.user, envData.password);
-        }.bind(this), function(error) {
-          console.log('Environment listing failure.');
-          console.log(error);
         });
         return;
       }

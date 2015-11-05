@@ -50,10 +50,10 @@ YUI.add('env-switcher', function() {
       var jem = this.props.jem;
       if (jem) {
         jem.listEnvironments(
-          this.updateEnvListCallback.bind(this, callback), this.jemFailHandler);
+          this.updateEnvListCallback.bind(this, callback));
       } else {
         this.props.env.listEnvs(
-            'user-admin', this.updateEnvListCallback.bind(this, null));
+            'user-admin', this.updateEnvListCallback.bind(this, null, null));
       }
     },
 
@@ -65,29 +65,19 @@ YUI.add('env-switcher', function() {
         updated.
       @param {Object} data The data from the listEnvs call.
     */
-    updateEnvListCallback: function(callback, data) {
-      if (data.err) {
-        console.log(data.err);
-      } else {
-        // data.envs is only populated in the JES environments, when using JEM
-        // the environments are in the top level 'data' object.
-        this.setState({envList: data.envs || data});
-        if (callback) {
-          callback();
-        }
+    updateEnvListCallback: function(callback, error, data) {
+      // We need to coerce error types returned by JES vs JEM into one error.
+      var err = data.err || error;
+      if (err) {
+        console.log(err);
+        return;
       }
-    },
-
-    /**
-      Because the JEM api uses a different success and failure callback this
-      method simply logs out the error. We'll want to revisit this to
-      properly handle errors.
-
-      @method jemFailHandler
-      @param {Object} err The error message.
-    */
-    jemFailHandler: function(err) {
-      console.log(err);
+      // data.envs is only populated in the JES environments, when using JEM
+      // the environments are in the top level 'data' object.
+      this.setState({envList: data.envs || data});
+      if (callback) {
+        callback();
+      }
     },
 
     /**
@@ -138,24 +128,28 @@ YUI.add('env-switcher', function() {
       // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
       // and template selection in the GUI, this code should be updated to not
       // select template based on state server.
-      var srvCb = function(servers) {
+      var srvCb = function(error, servers) {
+        if (error) {
+          console.log(error);
+          return;
+        }
         if (servers && servers.length > 0 && servers[0].path) {
           var serverName = servers[0].path;
           var baseTemplate = serverName;
           jem.newEnvironment(
             envOwnerName, envName, baseTemplate, serverName, password,
-            this.createEnvCallback, this.jemFailHandler);
+            this.createEnvCallback.bind(this));
         } else {
-          this.jemFailHandler(
+          console.log(
             'Cannot create a new environment: No state servers found.');
         }
       };
 
       if (jem) {
-        jem.listServers(srvCb.bind(this), this.jemFailure);
+        jem.listServers(srvCb.bind(this));
       } else {
         this.props.env.createEnv(
-            envName, 'user-admin', this.createEnvCallback);
+            envName, 'user-admin', this.createEnvCallback.bind(this, null));
       }
     },
 
@@ -165,12 +159,14 @@ YUI.add('env-switcher', function() {
       @method createEnvCallback
       @param {Object} data The data from the create env callback.
     */
-    createEnvCallback: function(data) {
-      if (data.err) {
-        console.log(data.err);
-      } else {
-        this.updateEnvList(this.switchEnv.bind(this, data.uuid));
+    createEnvCallback: function(error, data) {
+      // We need to coerce error types returned by JES vs JEM into one error.
+      var err = data.err || error;
+      if (err) {
+        console.log(err);
+        return;
       }
+      this.updateEnvList(this.switchEnv.bind(this, data.uuid));
     },
 
     /**
