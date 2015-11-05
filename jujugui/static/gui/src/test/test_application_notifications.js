@@ -114,7 +114,7 @@ describe.skip('juju application notifications', function() {
 
   it('should show notification for "add_unit" and "remove_units" exceptions' +
      ' (service view)', function() {
-       var view = new views.service(
+    var view = new views.service(
        { container: viewContainer,
          getModelURL: function() {
            return 'my url';
@@ -138,84 +138,83 @@ describe.skip('juju application notifications', function() {
          },
          querystring: {}}).render();
 
-       db.units.get_units_for_service = function() {
-         return [{
-           id: 1
-         }];
-       };
+    db.units.get_units_for_service = function() {
+      return [{
+        id: 1
+      }];
+    };
 
-       // It triggers the "add unit" logic
-       view._modifyUnits(3);
-       assert.equal(1, db.notifications.size());
+    // It triggers the "add unit" logic
+    view._modifyUnits(3);
+    assert.equal(1, db.notifications.size());
 
-       // It triggers the "remove unit" logic
-       view._modifyUnits(1);
-       assert.equal(2, db.notifications.size());
-     });
+    // It triggers the "remove unit" logic
+    view._modifyUnits(1);
+    assert.equal(2, db.notifications.size());
+  });
 
   it('should show notification for "remove_units" and "resolved" exceptions' +
-      ' (unit view)', function()
-     {
-       var view = new views.unit(
-       { container: viewContainer,
-         getModelURL: function() {return 'my url';},
-         db: db,
-         env: {
-           remove_units: function(param, callback) {
-             callback(
-             { err: true,
-               unit_names: ['aaa']});
-           },
-           resolved: willError
-         },
-         unit: {},
-         querystring: {}
-       });
+      ' (unit view)', function() {
+    var view = new views.unit({
+      container: viewContainer,
+      getModelURL: function() {return 'my url';},
+      db: db,
+      env: {
+        remove_units: function(param, callback) {
+          callback(
+          { err: true,
+          unit_names: ['aaa']});
+        },
+        resolved: willError
+      },
+      unit: {},
+      querystring: {}
+    });
 
-        // Used by "unit.js" inside the "render" function
-        db.services.getById = function() {
-          // Mock service
-          return {
-            get: function(key) {
-              if (key === 'loaded') {
-                return true;
-              }
-              return null;
-            }
-          };
-        };
+    // Used by "unit.js" inside the "render" function
+    db.services.getById = function() {
+      // Mock service
+      return {
+        get: function(key) {
+          if (key === 'loaded') {
+            return true;
+          }
+          return null;
+        }
+      };
+    };
 
-        view.render();
+    view.render();
 
-        view.confirmRemoved({
-          preventDefault: NO_OP
-        });
+    view.confirmRemoved({
+      preventDefault: NO_OP
+    });
 
-        view.remove_panel.footerNode.one('.btn-danger').simulate('click');
-        view.remove_panel.destroy();
+    view.remove_panel.footerNode.one('.btn-danger').simulate('click');
+    view.remove_panel.destroy();
 
-        assert.equal(1, db.notifications.size());
+    assert.equal(1, db.notifications.size());
 
         // Fake relation
-        db.relations.getById = function() {
-          return {name: ''};
-        };
+    db.relations.getById = function() {
+      return {name: ''};
+    };
 
-        view.retryRelation({
-          preventDefault: NO_OP,
+    view.retryRelation({
+      preventDefault: NO_OP,
 
           // This is a mock object of the relation button
-          target: {
-            ancestor: function() {
-              return {get: NO_OP};
-            },
-            get: NO_OP,
-            set: NO_OP
-          }
-        });
+      target: {
+        ancestor: function() {
+          return {get: NO_OP};
+        },
+        get: NO_OP,
+        set: NO_OP
+      }
+    });
 
-        assert.equal(2, db.notifications.size());
-      });
+    assert.equal(2, db.notifications.size());
+  });
 
   it('should add a notification for "addRelation" exceptions (env view)',
       function() {
@@ -278,7 +277,7 @@ describe.skip('juju application notifications', function() {
   it('should show notification for "get_service" exceptions' +
       ' (service constraints view)', function() {
 
-        var view = new views.service_constraints(
+    var view = new views.service_constraints(
             { model:
              { getAttrs: NO_OP,
                get: function(key) {
@@ -292,146 +291,146 @@ describe.skip('juju application notifications', function() {
               env: {set_constraints: willError},
               container: viewContainer}).render();
 
-        view.updateConstraints();
+    view.updateConstraints();
 
-        assert.equal(1, db.notifications.size());
-      });
+    assert.equal(1, db.notifications.size());
+  });
 
   it('should show notification for "get_service", "expose" and "unexpose"' +
       ' exceptions (service config view)', function() {
 
-        var view = new views.service_config(
-       { db: db,
-         env: {
-           set_config: willError,
-           expose: willError,
-           unexpose: willError
-         },
-         getModelURL: NO_OP,
-         model: {
-           getAttrs: NO_OP,
-           get: function(key) {
-             if ('loaded' === key) {
-               return true;
-             }
-             if ('config' === key) {
-               return {};
-             }
-             return null;
-           }},
-         container: viewContainer});
+    var view = new views.service_config({
+      db: db,
+      env: {
+        set_config: willError,
+        expose: willError,
+        unexpose: willError
+      },
+      getModelURL: NO_OP,
+      model: {
+        getAttrs: NO_OP,
+        get: function(key) {
+          if ('loaded' === key) {
+            return true;
+          }
+          if ('config' === key) {
+            return {};
+          }
+          return null;
+        }},
+      container: viewContainer});
 
-        db.services.getById = NO_OP;
-        db.charms.getById = function() {
-          return {
-            getAttrs: function() {
-              return {};
-            },
-            get: function(key) {
-              if ('config' === key) {
-                return {};
-              }
-              return null;
-            }
-          };
-        };
-        view.render();
+    db.services.getById = NO_OP;
+    db.charms.getById = function() {
+      return {
+        getAttrs: function() {
+          return {};
+        },
+        get: function(key) {
+          if ('config' === key) {
+            return {};
+          }
+          return null;
+        }
+      };
+    };
+    view.render();
 
-        view.saveConfig();
-        assert.equal(1, db.notifications.size());
+    view.saveConfig();
+    assert.equal(1, db.notifications.size());
 
-        view.exposeService();
-        assert.equal(2, db.notifications.size());
+    view.exposeService();
+    assert.equal(2, db.notifications.size());
 
-        view.unexposeService();
-        assert.equal(3, db.notifications.size());
-      });
+    view.unexposeService();
+    assert.equal(3, db.notifications.size());
+  });
 
   it('should show notification for "remove_relation"' +
       ' exceptions (service relations view)', function() {
 
-        var view = new views.service_relations(
-       { db: db,
-         env: {remove_relation: willError},
-         getModelURL: NO_OP,
-         container: viewContainer});
+    var view = new views.service_relations({
+      db: db,
+      env: {remove_relation: willError},
+      getModelURL: NO_OP,
+      container: viewContainer});
 
-        db.relations.getById = function() {
-          return {
-            get: function(key) {
-              if ('endpoints' === key) {
-                return [
+    db.relations.getById = function() {
+      return {
+        get: function(key) {
+          if ('endpoints' === key) {
+            return [
                   [{}, {name: ''}]
-                ];
-              }
-              return null;
-            }
-          };
-        };
-
-        view.render();
-
-        view.confirmRemoved({
-          preventDefault: NO_OP,
-
-          // This is a mock object of the relation button
-          target: {
-            ancestor: NO_OP,
-            get: NO_OP
+            ];
           }
-        });
-        view.remove_panel.footerNode.one('.btn-danger').simulate('click');
-        view.remove_panel.destroy();
+          return null;
+        }
+      };
+    };
 
-        assert.equal(1, db.notifications.size());
-      });
+    view.render();
+
+    view.confirmRemoved({
+      preventDefault: NO_OP,
+
+      // This is a mock object of the relation button
+      target: {
+        ancestor: NO_OP,
+        get: NO_OP
+      }
+    });
+    view.remove_panel.footerNode.one('.btn-danger').simulate('click');
+    view.remove_panel.destroy();
+
+    assert.equal(1, db.notifications.size());
+  });
 
   it('should show notification for "deploy" exceptions (charm view)',
       function() {
         var notified = false,
-       db = {
-         notifications: {
-           add: function() {
-             // This method should be called just once.
-             assert.isFalse(notified);
-             notified = true;
-           }
-         }
-       },
-       charm = {},
-       container = {
-         all: function() {
-           return {each: NO_OP};
-         },
-         one: function() {
-           return {get: NO_OP};
-         }
-       },
-       env = {deploy: willError},
-       mockView = {
-         fire: NO_OP,
-         _deployCallback: function() {
-           // Executing the "views.charm.prototype._deployCallback"
-           // function instead. The "views.charm.prototype._deployCallback"
-           // is the one that will trigger the notification process.
-           views.charm.prototype._deployCallback.apply(this, arguments);
-         },
-         get: function(key) {
-           if ('charm' === key) {
-             return charm;
-           }
-           if ('container' === key) {
-             return container;
-           }
-           if ('db' === key) {
-             return db;
-           }
-           if ('env' === key) {
-             return env;
-           }
-           return null;
-         }
-       };
+            db = {
+              notifications: {
+                add: function() {
+                  // This method should be called just once.
+                  assert.isFalse(notified);
+                  notified = true;
+                }
+              }
+            },
+            charm = {},
+            container = {
+              all: function() {
+                return {each: NO_OP};
+              },
+              one: function() {
+                return {get: NO_OP};
+              }
+            },
+            env = {deploy: willError},
+            mockView = {
+              fire: NO_OP,
+              _deployCallback: function() {
+                // Executing the "views.charm.prototype._deployCallback"
+                // function instead. The "views.charm.prototype._deployCallback"
+                // is the one that will trigger the notification process.
+                views.charm.prototype._deployCallback.apply(this, arguments);
+              },
+              get: function(key) {
+                if ('charm' === key) {
+                  return charm;
+                }
+                if ('container' === key) {
+                  return container;
+                }
+                if ('db' === key) {
+                  return db;
+                }
+                if ('env' === key) {
+                  return env;
+                }
+                return null;
+              }
+            };
 
         views.charm.prototype.on_charm_deploy.call(mockView, ERR_EV);
         assert.isTrue(notified);
@@ -439,50 +438,50 @@ describe.skip('juju application notifications', function() {
 
   it('should show errors for no unit, one unit and multiple ' +
       'units (service view)', function() {
-        //_removeUnitCallback
-        var mockView =
-            { get: function(key) {
-              return {
-           getModelURL: NO_OP,
-           db:
-           { fire: NO_OP,
-             notifications:
-             { add: function(notification) {
-               messages.push(notification.get('message'));
-               titles.push(notification.get('title'));
-             }}}}[key];
-       }},
-       messages = [],
-       titles = [],
-       baseView = new views.serviceBase({});
+    //_removeUnitCallback
+    var mockView ={
+          get: function(key) {
+            return {
+              getModelURL: NO_OP,
+              db: {
+                fire: NO_OP,
+                notifications: {
+                  add: function(notification) {
+                    messages.push(notification.get('message'));
+                    titles.push(notification.get('title'));
+                  }}}}[key];
+          }},
+        messages = [],
+        titles = [],
+        baseView = new views.serviceBase({});
 
-        baseView._removeUnitCallback.apply(mockView, [{
-          err: true,
-          unit_names: null
-        }]);
+    baseView._removeUnitCallback.apply(mockView, [{
+      err: true,
+      unit_names: null
+    }]);
 
-        baseView._removeUnitCallback.apply(mockView, [{
-          err: true,
-          unit_names: []
-        }]);
+    baseView._removeUnitCallback.apply(mockView, [{
+      err: true,
+      unit_names: []
+    }]);
 
-        baseView._removeUnitCallback.apply(mockView, [{
-          err: true,
-          unit_names: ['a']
-        }]);
+    baseView._removeUnitCallback.apply(mockView, [{
+      err: true,
+      unit_names: ['a']
+    }]);
 
-        baseView._removeUnitCallback.apply(mockView, [{
-          err: true,
-          unit_names: ['b', 'c']
-        }]);
+    baseView._removeUnitCallback.apply(mockView, [{
+      err: true,
+      unit_names: ['b', 'c']
+    }]);
 
-        function assertTrace(expected, trace) {
-          assert.equal(expected.join(';'), trace.join(';'));
-        }
+    function assertTrace(expected, trace) {
+      assert.equal(expected.join(';'), trace.join(';'));
+    }
 
-        assertTrace(['Error removing unit', 'Error removing unit',
+    assertTrace(['Error removing unit', 'Error removing unit',
           'Error removing unit', 'Error removing units'], titles);
-        assertTrace(['', '', 'Unit name: a', 'Unit names: b, c'], messages);
-      });
+    assertTrace(['', '', 'Unit name: a', 'Unit names: b, c'], messages);
+  });
 
 });

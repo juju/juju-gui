@@ -23,15 +23,13 @@ describe('Entity Extension', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-        'juju-models',
-        'juju-tests-utils'
-      ],
-      function(Y) {
-        models = Y.namespace('juju.models');
-        utils = Y.namespace('juju-tests.utils');
-        done();
-      }
-    );
+      'juju-models',
+      'juju-tests-utils'
+    ], function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      done();
+    });
   });
 
   beforeEach(function() {

@@ -240,12 +240,12 @@ YUI.add('juju-topology-service', function(Y) {
     // positioning of text down along the service block.
     var service_height = 224,
         name_size = 22,
-                    charm_label_size = 16,
-                    name_padding = 26,
-                    charm_label_padding = 150;
+        charm_label_size = 16,
+        name_padding = 26,
+        charm_label_padding = 150;
 
     node.select('.name')
-                    .attr({'style': function(d) {
+        .attr({'style': function(d) {
           // Programmatically size the font.
           // Number derived from service assets:
           // font-size 22px when asset is 224px.
@@ -266,22 +266,22 @@ YUI.add('juju-topology-service', function(Y) {
           return self.truncateServiceName(d);
         });
 
-    node.select('.charm-label')
-                    .attr({'style': function(d) {
-          // Programmatically size the font.
-          // Number derived from service assets:
-          // font-size 16px when asset is 224px.
-          return 'font-size:' + d.h *
-              (charm_label_size / service_height) + 'px';
-        },
-        'x': function(d) { return d.w / 2;},
-        'y': function(d) {
-          // Number derived from service assets:
-          // padding-top: 118px when asset is 224px.
-          return d.h * (charm_label_padding / service_height) - d.h *
+    node.select('.charm-label').attr({
+      'style': function(d) {
+        // Programmatically size the font.
+        // Number derived from service assets:
+        // font-size 16px when asset is 224px.
+        return 'font-size:' + d.h *
+            (charm_label_size / service_height) + 'px';
+      },
+      'x': function(d) { return d.w / 2;},
+      'y': function(d) {
+        // Number derived from service assets:
+        // padding-top: 118px when asset is 224px.
+        return d.h * (charm_label_padding / service_height) - d.h *
               (charm_label_size / service_height) / 2;
-        }
-        });
+      }
+    });
 
     // Show whether or not the service is exposed using an indicator.
     var exposed = node.filter(function(d) {
@@ -978,7 +978,7 @@ YUI.add('juju-topology-service', function(Y) {
      */
     clearStateHandler: function() {
       var container = this.get('container'),
-              topo = this.get('component');
+          topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
       topo.vis.selectAll('.is-selected').classed('is-selected', false);
     },
@@ -1220,13 +1220,13 @@ YUI.add('juju-topology-service', function(Y) {
             // In the case where a model has been removed from the database
             // and update runs before exit, boundingBox.model will be empty;
             // these can automatically be ignored.
-            if (boundingBox.model) {
-              var annotations = boundingBox.model.get('annotations');
-              return ((!Y.Lang.isNumber(boundingBox.x) &&
+        if (boundingBox.model) {
+          var annotations = boundingBox.model.get('annotations');
+          return ((!Y.Lang.isNumber(boundingBox.x) &&
                   !(annotations && annotations['gui-x'])));
-            }
-            return false;
-          });
+        }
+        return false;
+      });
 
       if (new_service_boxes.length > 0) {
         // If the there is only one new service and it's pending (as in, it was
@@ -1308,10 +1308,10 @@ YUI.add('juju-topology-service', function(Y) {
       node
       .enter().append('g')
       .attr({
-            'pointer-events': 'all', // IE needs this.
-            'class': function(d) {
-              return (d.subordinate ? 'subordinate ' : '') + 'service';
-            }})
+        'pointer-events': 'all', // IE needs this.
+        'class': function(d) {
+          return (d.subordinate ? 'subordinate ' : '') + 'service';
+        }})
         .call(this.dragBehavior)
         .call(self.createServiceNode, self)
         .attr('transform', function(d) { return d.translateStr; });
@@ -1322,8 +1322,8 @@ YUI.add('juju-topology-service', function(Y) {
       // Remove old nodes.
       node.exit()
         .each(function(d) {
-            delete topo.service_boxes[d.id];
-          })
+          delete topo.service_boxes[d.id];
+        })
         .remove();
 
       this.updateElementVisibility();
@@ -1351,7 +1351,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     findCentroid: function(vertices) {
       var topo = this.get('component'),
-              centroid = topoUtils.centroid(vertices);
+          centroid = topoUtils.centroid(vertices);
       topo.fire('panToPoint', {point: centroid});
     },
 
@@ -1428,7 +1428,7 @@ YUI.add('juju-topology-service', function(Y) {
         })
         .attr('stroke-width', 1)
         .attr('stroke', '#888888');
-        relationButton.append('circle')
+      relationButton.append('circle')
         .attr({
           'cx': 0,
           'cy': 34,
@@ -1453,11 +1453,11 @@ YUI.add('juju-topology-service', function(Y) {
       relationButton.append('image')
         .classed('relation-button__image', true)
         .attr({
-           'xlink:href': 'juju-ui/assets/svgs/build-relation_16.svg',
-           width: 16,
-           height: 16,
-           transform: 'translate(-8, -8)'
-         });
+          'xlink:href': 'juju-ui/assets/svgs/build-relation_16.svg',
+          width: 16,
+          height: 16,
+          transform: 'translate(-8, -8)'
+        });
 
 
       node.append('circle')
@@ -1514,16 +1514,16 @@ YUI.add('juju-topology-service', function(Y) {
       node.append('image')
        .classed('service-icon', true)
        .attr({
-          'xlink:href': function(d) {
-            return d.icon;
-          },
-          width: 96,
-          height: 96,
-          transform: function(d) {
-            return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
-          },
-          'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
-        });
+         'xlink:href': function(d) {
+           return d.icon;
+         },
+         width: 96,
+         height: 96,
+         transform: function(d) {
+           return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
+         },
+         'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
+       });
 
       // Manually attach the touchstart event (see method for details)
       node.each(function(data) {
@@ -1700,8 +1700,8 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       return topo.vis.selectAll('.service')
         .filter(function(d) {
-            return serviceNames.indexOf(d.id) > -1;
-          });
+          return serviceNames.indexOf(d.id) > -1;
+        });
     },
 
     /**

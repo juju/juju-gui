@@ -67,13 +67,13 @@ describe('MidPoint', function() {
 
   it('renders a list of charms', function() {
     juju.components.MidPoint.prototype.charms = [{
-        id: 'trusty/mariadb',
-        icon: 'icon.svg',
-        name: 'Mariadb'
-      }, {
-        id: 'trusty/mongodb',
-        icon: 'icon.svg',
-        name: 'Mongodb'
+      id: 'trusty/mariadb',
+      icon: 'icon.svg',
+      name: 'Mariadb'
+    }, {
+      id: 'trusty/mongodb',
+      icon: 'icon.svg',
+      name: 'Mongodb'
     }];
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint />);
@@ -118,10 +118,10 @@ describe('MidPoint', function() {
 
   it('calls to show the charm details when clicking on a charm', function() {
     juju.components.MidPoint.prototype.charms = [{
-        id: 'trusty/mariadb',
-        icon: 'icon.svg',
-        name: 'Mariadb'
-      }];
+      id: 'trusty/mariadb',
+      icon: 'icon.svg',
+      name: 'Mariadb'
+    }];
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint
@@ -147,11 +147,11 @@ describe('MidPoint', function() {
 
   it('renders a list of tags', function() {
     juju.components.MidPoint.prototype.tags = [{
-        count: 5,
-        name: 'databases'
-      }, {
-        count: 30,
-        name: 'ops'
+      count: 5,
+      name: 'databases'
+    }, {
+      count: 30,
+      name: 'ops'
     }];
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint />);

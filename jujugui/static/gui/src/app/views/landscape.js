@@ -77,8 +77,8 @@ YUI.add('juju-landscape', function(Y) {
       //
       // Iterate each landscape annotation.
       Y.each([
-              'landscape-security-upgrades',
-              'landscape-needs-reboot'],
+        'landscape-security-upgrades',
+        'landscape-needs-reboot'],
       function(annotationName) {
         // Iterate each service, we do this so we can rollup
         // when no unit in the services set has the annotation.

@@ -313,10 +313,10 @@ describe('UI State object', function() {
 
       it('adds the hash to the state if provided', function() {
         assert.deepEqual(
-            state._parseCharmUrl('precise/mysql-38', 'foo'),
-            {
-              id: 'precise/mysql-38',
-              hash: 'foo' });
+          state._parseCharmUrl('precise/mysql-38', 'foo'),
+          {
+            id: 'precise/mysql-38',
+            hash: 'foo' });
       });
 
       it('does not parse "login" or "logout" as charms', function() {
@@ -974,11 +974,9 @@ describe('UI State object', function() {
         },
         sectionB: {}
       }
-    },
-
-    // inspector/local urls get data from the state's flash object, as well as
-    // the url. The flash attr on metadata is from this state flash object.
-    {
+    }, {
+      // inspector/local urls get data from the state's flash object, as well as
+      // the url. The flash attr on metadata is from this state flash object.
       '/inspector/local/new/': {
         sectionA: {
           component: 'inspector',

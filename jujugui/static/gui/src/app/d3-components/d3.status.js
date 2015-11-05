@@ -184,20 +184,20 @@ YUI.add('d3-statusbar', function(Y) {
       .enter()
       .insert('rect', 'text')
       .each(function(d) {
-            var node = d3.select(this);
-            node.classed(d.key, true);
-          })
+        var node = d3.select(this);
+        node.classed(d.key, true);
+      })
       .attr({
-            height: self.options.height
-          });
+        height: self.options.height
+      });
 
       rects
       .transition()
       .duration(self.options.transitionTime)
       .attr({
-            width: function(d, i) { return self.scale(d.percent);},
-            x: function(d, i) { return self.scale(d.start);}
-          });
+        width: function(d, i) { return self.scale(d.percent);},
+        x: function(d, i) { return self.scale(d.start);}
+      });
 
       rects
       .exit()
@@ -216,14 +216,14 @@ YUI.add('d3-statusbar', function(Y) {
         .text(function(d) { return utils.humanizeNumber(d.count);})
         .classed('label', true)
         .style({
-              'font-size': self.options.fontSize
-            })
+          'font-size': self.options.fontSize
+        })
         .transition()
         .duration(self.options.transitionTime)
         .attr({
-              x: function(d) {return self.scale(d.start) + 2;},
-              y: self.options.fontSize - 1
-            });
+          x: function(d) {return self.scale(d.start) + 2;},
+          y: self.options.fontSize - 1
+        });
 
         labels
         .exit().remove();

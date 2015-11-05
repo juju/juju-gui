@@ -526,18 +526,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Status: 'pending',
           StatusInfo: 'info',
           Addresses: [
-            {
-              NetworkName: '',
-              NetworkScope: 'public',
-              Type: 'hostname',
-              Value: 'example.com'
-            },
-            {
-              NetworkName: '',
-              NetworkScope: 'local-cloud',
-              Type: 'ipv4',
-              Value: '10.0.0.1'
-            }
+              {
+                NetworkName: '',
+                NetworkScope: 'public',
+                Type: 'hostname',
+                Value: 'example.com'
+              },
+              {
+                NetworkName: '',
+                NetworkScope: 'local-cloud',
+                Type: 'ipv4',
+                Value: '10.0.0.1'
+              }
           ],
           HardwareCharacteristics: {
             Arch: 'amd64',
@@ -892,28 +892,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('correctly returns a list of endpoints', function() {
         var endpoints = [
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 1,
-              Name: 'reverseproxy',
-              Optional: false,
-              Role: 'requirer',
-              Scope: 'global'
+            {
+              Relation: {
+                Interface: 'http',
+                Limit: 1,
+                Name: 'reverseproxy',
+                Optional: false,
+                Role: 'requirer',
+                Scope: 'global'
+              },
+              ServiceName: 'haproxy'
             },
-            ServiceName: 'haproxy'
-          },
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 0,
-              Name: 'website',
-              Optional: false,
-              Role: 'provider',
-              Scope: 'global'
-            },
-            ServiceName: 'wordpress'
-          }
+            {
+              Relation: {
+                Interface: 'http',
+                Limit: 0,
+                Name: 'website',
+                Optional: false,
+                Role: 'provider',
+                Scope: 'global'
+              },
+              ServiceName: 'wordpress'
+            }
         ];
         var expected = [
           ['haproxy', {role: 'requirer', name: 'reverseproxy'}],

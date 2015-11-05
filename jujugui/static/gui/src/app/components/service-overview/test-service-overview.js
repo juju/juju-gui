@@ -144,7 +144,7 @@ describe('ServiceOverview', function() {
               {agent_state: 'uncommitted'},
               {agent_state: 'started'},
               {}
-              ];
+            ];
           }
         };
       }};
@@ -379,7 +379,7 @@ describe('ServiceOverview', function() {
     var buttons = [{
       title: 'Destroy',
       action: output.props.children[1].props.buttons[0].action
-      }];
+    }];
     assert.deepEqual(output.props.children[1],
       <juju.components.ButtonRow
         buttons={buttons} />);
@@ -390,17 +390,14 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService} />);
-    var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm',
-          action: output.props.children[2].props.buttons[1].action
-          }
-        ];
+    var buttons = [{
+      title: 'Cancel',
+      action: output.props.children[2].props.buttons[0].action
+    }, {
+      title: 'Confirm',
+      type: 'confirm',
+      action: output.props.children[2].props.buttons[1].action
+    }];
     var confirmMessage = 'Are you sure you want to destroy the service? ' +
         'This cannot be undone.';
     assert.deepEqual(output.props.children[2],
@@ -418,17 +415,14 @@ describe('ServiceOverview', function() {
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService} />, true);
     var output = shallowRenderer.getRenderOutput();
-      var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm',
-          action: output.props.children[2].props.buttons[1].action
-          }
-        ];
+    var buttons = [{
+      title: 'Cancel',
+      action: output.props.children[2].props.buttons[0].action
+    }, {
+      title: 'Confirm',
+      type: 'confirm',
+      action: output.props.children[2].props.buttons[1].action
+    }];
     // Fire the click action.
     output.props.children[1].props.buttons[0].action();
     shallowRenderer.render(
@@ -451,17 +445,14 @@ describe('ServiceOverview', function() {
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService} />, true);
     var output = shallowRenderer.getRenderOutput();
-      var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm',
-          action: output.props.children[2].props.buttons[1].action
-          }
-        ];
+    var buttons = [{
+      title: 'Cancel',
+      action: output.props.children[2].props.buttons[0].action
+    },{
+      title: 'Confirm',
+      type: 'confirm',
+      action: output.props.children[2].props.buttons[1].action
+    }];
     // Open the confirmation.
     output.props.children[1].props.buttons[0].action();
     // close the confirmation.
@@ -492,17 +483,14 @@ describe('ServiceOverview', function() {
         changeState={changeState}
         service={fakeService} />, true);
     var output = shallowRenderer.getRenderOutput();
-      var buttons = [
-        {
-          title: 'Cancel',
-          action: output.props.children[2].props.buttons[0].action
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm',
-          action: output.props.children[2].props.buttons[1].action
-          }
-        ];
+    var buttons = [{
+      title: 'Cancel',
+      action: output.props.children[2].props.buttons[0].action
+    }, {
+      title: 'Confirm',
+      type: 'confirm',
+      action: output.props.children[2].props.buttons[1].action
+    }];
     // Open the confirmation.
     output.props.children[1].props.buttons[0].action();
     // Simulate the confirm click.

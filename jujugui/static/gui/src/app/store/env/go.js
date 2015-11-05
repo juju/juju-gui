@@ -159,7 +159,7 @@ YUI.add('juju-env-go', function(Y) {
     */
     series: [
       'precise', 'quantal', 'raring', 'saucy', 'trusty', 'utopic', 'vivid',
-      'wily', 'win10', 'centos7', 
+      'wily', 'win10', 'centos7',
       'win2012hvr2', 'win2012hv', 'win2012r2', 'win2012', 'win7', 'win8',
       'win81'],
 
@@ -225,18 +225,18 @@ YUI.add('juju-env-go', function(Y) {
      */
     _watchAll: function() {
       this._send_rpc(
-          {
-            Type: 'Client',
-            Request: 'WatchAll'
-          },
-          function(data) {
-            if (data.Error) {
-              console.log('aiiiiie!'); // retry and eventually alert user XXX
-            } else {
-              this._allWatcherId = data.Response.AllWatcherId;
-              this._next();
-            }
+        {
+          Type: 'Client',
+          Request: 'WatchAll'
+        },
+        function(data) {
+          if (data.Error) {
+            console.log('aiiiiie!'); // retry and eventually alert user XXX
+          } else {
+            this._allWatcherId = data.Response.AllWatcherId;
+            this._next();
           }
+        }
       );
     },
 

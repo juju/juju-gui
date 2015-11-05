@@ -24,55 +24,55 @@ YUI.add('mid-point', function() {
     mixins: [OnClickOutside],
 
     charms: [{
-        id: 'trusty/mariadb',
-        icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mariadb/icon.svg', // eslint-disable-line max-len
-        name: 'Mariadb'
-      }, {
-        id: 'trusty/hadoop',
-        icon: 'https://api.jujucharms.com/charmstore/v4/trusty/hadoop/icon.svg', // eslint-disable-line max-len
-        name: 'Hadoop'
-      }, {
-        id: 'trusty/wordpress',
-        icon: 'https://api.jujucharms.com/charmstore/v4/trusty/wordpress/icon.svg', // eslint-disable-line max-len
-        name: 'Wordpress'
-      }, {
-        id: 'trusty/ceph',
-        icon: 'https://api.jujucharms.com/charmstore/v4/trusty/ceph/icon.svg', // eslint-disable-line max-len
-        name: 'Ceph'
-      }, {
-        id: 'trusty/redis',
-        icon: 'https://api.jujucharms.com/charmstore/v4/trusty/redis/icon.svg', // eslint-disable-line max-len
-        name: 'Redis'
-      }, {
-        id: 'trusty/mongodb',
-        icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mongodb/icon.svg', // eslint-disable-line max-len
-        name: 'Mongodb'
+      id: 'trusty/mariadb',
+      icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mariadb/icon.svg', // eslint-disable-line max-len
+      name: 'Mariadb'
+    }, {
+      id: 'trusty/hadoop',
+      icon: 'https://api.jujucharms.com/charmstore/v4/trusty/hadoop/icon.svg', // eslint-disable-line max-len
+      name: 'Hadoop'
+    }, {
+      id: 'trusty/wordpress',
+      icon: 'https://api.jujucharms.com/charmstore/v4/trusty/wordpress/icon.svg', // eslint-disable-line max-len
+      name: 'Wordpress'
+    }, {
+      id: 'trusty/ceph',
+      icon: 'https://api.jujucharms.com/charmstore/v4/trusty/ceph/icon.svg', // eslint-disable-line max-len
+      name: 'Ceph'
+    }, {
+      id: 'trusty/redis',
+      icon: 'https://api.jujucharms.com/charmstore/v4/trusty/redis/icon.svg', // eslint-disable-line max-len
+      name: 'Redis'
+    }, {
+      id: 'trusty/mongodb',
+      icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mongodb/icon.svg', // eslint-disable-line max-len
+      name: 'Mongodb'
     }],
 
     tags: [{
-        name: 'databases',
-        count: 71
-      }, {
-        name: 'app-servers',
-        count: 75
-      }, {
-        name: 'file-servers',
-        count: 48
-      }, {
-        name: 'monitoring',
-        count: 48
-      }, {
-        name: 'ops',
-        count: 22
-      }, {
-        name: 'openstack',
-        count: 108
-      }, {
-        name: 'applications',
-        count: 248
-      }, {
-        name: 'misc',
-        count: 279
+      name: 'databases',
+      count: 71
+    }, {
+      name: 'app-servers',
+      count: 75
+    }, {
+      name: 'file-servers',
+      count: 48
+    }, {
+      name: 'monitoring',
+      count: 48
+    }, {
+      name: 'ops',
+      count: 22
+    }, {
+      name: 'openstack',
+      count: 108
+    }, {
+      name: 'applications',
+      count: 248
+    }, {
+      name: 'misc',
+      count: 279
     }],
 
     /**

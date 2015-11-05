@@ -297,8 +297,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var unitsInError = service.get('units')
         .some(function(unit) {
-            return (/error/).test(unit.agent_state);
-          });
+          return (/error/).test(unit.agent_state);
+        });
       if (unitsInError && !force) {
         return callback({error: 'Cannot set charm on a service with units in ' +
               'error without the force flag.'});
@@ -1577,9 +1577,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (relationName) {
         var relation = this.db.relations.get_relations_for_service(
             service).filter(function(rel) {
-          return (rel.endpoints[0].name === relationName ||
+              return (rel.endpoints[0].name === relationName ||
                   rel.endpoints[1].name === relationName);
-        });
+            });
         if (relation.length === 0) {
           return {error: 'Relation ' + relationName +
                 ' not found for ' + unitName};
@@ -1847,40 +1847,40 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       Y.batch.apply(this, servicePromises)
-      .then(function(serviceDeployResult) {
-            // Expose, if requested.
-            serviceDeployResult.forEach(function(sdr) {
-              var serviceId = sdr.service.get('id');
-              var serviceData = ingestedData.services[serviceId];
-              if (serviceData.expose) {
-                self.expose(serviceId);
-              }
-            });
-
-            // Create requested relations.
-            ingestedData.relations.forEach(function(relationData) {
-              var relResult = self.addRelations(
-                  relationData[0], relationData[1], true);
-              // If the bungle provides a list of endpoints to relate to a
-              // single endpoint then we need to add each relation to the
-              // result list.
-              if (!Y.Lang.isArray(relResult)) {
-                relResult = [relResult];
-              }
-              relResult.forEach(function(result) {
-                self.changes.relations[result.relation.get('id')] = [
-                  result.relation, true];
-              });
-            });
-          })
-      .then(function() {
-            deployStatus.Status = 'completed';
-            callback({DeploymentId: self._deploymentId});
-          }, function(err) {
-            deployStatus.Status = 'failed';
-            console.log(err, err.stack);
-            callback({Error: err.error});
+        .then(function(serviceDeployResult) {
+          // Expose, if requested.
+          serviceDeployResult.forEach(function(sdr) {
+            var serviceId = sdr.service.get('id');
+            var serviceData = ingestedData.services[serviceId];
+            if (serviceData.expose) {
+              self.expose(serviceId);
+            }
           });
+
+          // Create requested relations.
+          ingestedData.relations.forEach(function(relationData) {
+            var relResult = self.addRelations(
+                    relationData[0], relationData[1], true);
+            // If the bungle provides a list of endpoints to relate to a
+            // single endpoint then we need to add each relation to the
+            // result list.
+            if (!Y.Lang.isArray(relResult)) {
+              relResult = [relResult];
+            }
+            relResult.forEach(function(result) {
+              self.changes.relations[result.relation.get('id')] = [
+                result.relation, true];
+            });
+          });
+        })
+        .then(function() {
+          deployStatus.Status = 'completed';
+          callback({DeploymentId: self._deploymentId});
+        }, function(err) {
+          deployStatus.Status = 'failed';
+          console.log(err, err.stack);
+          callback({Error: err.error});
+        });
     },
 
     /**

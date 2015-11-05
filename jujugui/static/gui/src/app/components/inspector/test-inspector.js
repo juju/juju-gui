@@ -209,14 +209,14 @@ describe('Inspector', function() {
     output.props.children[0].props.backCallback();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
-            id: 'demo',
-            activeComponent: 'units',
-            unit: null,
-            unitStatus: 'error'
-          }}});
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'demo',
+          activeComponent: 'units',
+          unit: null,
+          unitStatus: 'error'
+        }}});
   });
 
   it('defaults to go back from the unit details to the all list', function() {
@@ -248,14 +248,14 @@ describe('Inspector', function() {
     output.props.children[0].props.backCallback();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
-            id: 'demo',
-            activeComponent: 'units',
-            unit: null,
-            unitStatus: null
-          }}});
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'demo',
+          activeComponent: 'units',
+          unit: null,
+          unitStatus: null
+        }}});
   });
 
   it('goes back to the previous service from unit details', function() {
@@ -296,14 +296,14 @@ describe('Inspector', function() {
     output.props.children[0].props.backCallback();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
-            id: 'previousService',
-            activeComponent: 'units',
-            unit: null,
-            unitStatus: null
-          }}});
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'previousService',
+          activeComponent: 'units',
+          unit: null,
+          unitStatus: null
+        }}});
   });
 
   it('displays the Scale Service when the app state calls for it', function() {

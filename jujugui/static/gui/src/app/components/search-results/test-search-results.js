@@ -156,26 +156,23 @@ describe('SearchResults', function() {
       var actual = searchResults.collapseSeries(entities),
           first = entities[0],
           last = entities[2];
-      var expected = [
-        {
-          id: 'trusty/' + first.name,
-          name: first.name,
-          owner: first.owner,
-          type: first.type,
-          downloads: 0,
-          url: '',
-          series: [{name: 'trusty', url: ''}, {name: 'precise', url: ''}]
-        },
-        {
-          id: 'vivid/' + last.name,
-          name: last.name,
-          owner: last.owner,
-          type: last.type,
-          downloads: 0,
-          url: '',
-          series: [{name: 'vivid', url: ''}]
-        }
-      ];
+      var expected = [{
+        id: 'trusty/' + first.name,
+        name: first.name,
+        owner: first.owner,
+        type: first.type,
+        downloads: 0,
+        url: '',
+        series: [{name: 'trusty', url: ''}, {name: 'precise', url: ''}]
+      }, {
+        id: 'vivid/' + last.name,
+        name: last.name,
+        owner: last.owner,
+        type: last.type,
+        downloads: 0,
+        url: '',
+        series: [{name: 'vivid', url: ''}]
+      }];
       assert.deepEqual(actual, expected);
     });
 
@@ -249,28 +246,25 @@ describe('SearchResults', function() {
     it('properly handles a successful search', function() {
       var query = 'spinach';
       searchResults.props = {query: query};
-      var results = [
-        {
-          name: 'spinach',
-          displayName: 'spinach',
-          url: 'http://example.com/spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: true,
-          id: 'spinach',
-          type: 'charm'
-        },
-        {
-          name: 'red spinach',
-          displayName: 'red spinach',
-          url: 'http://example.com/red-spinach',
-          downloads: 1000,
-          owner: 'test-owner',
-          promulgated: false,
-          id: 'red-spinach',
-          type: 'charm'
-        }
-      ];
+      var results = [{
+        name: 'spinach',
+        displayName: 'spinach',
+        url: 'http://example.com/spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'spinach',
+        type: 'charm'
+      }, {
+        name: 'red spinach',
+        displayName: 'red spinach',
+        url: 'http://example.com/red-spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: false,
+        id: 'red-spinach',
+        type: 'charm'
+      }];
       var rawResults = results.map(function(obj) {
         var m = {};
         m.toEntity = sinon.stub().returns(obj);
@@ -386,18 +380,16 @@ describe('SearchResults', function() {
     it('sets the correct ids for entities', function() {
       var query = 'spinach';
       searchResults.props = {query: query};
-      var results = [
-        {
-          name: 'mysql',
-          displayName: 'mysql',
-          url: 'http://example.com/mysql',
-          downloads: 1000,
-          owner: 'charmers',
-          promulgated: true,
-          id: 'mysql',
-          type: 'charm'
-        }
-      ];
+      var results = [{
+        name: 'mysql',
+        displayName: 'mysql',
+        url: 'http://example.com/mysql',
+        downloads: 1000,
+        owner: 'charmers',
+        promulgated: true,
+        id: 'mysql',
+        type: 'charm'
+      }];
       var rawResults = results.map(function(obj) {
         var m = {};
         m.toEntity = sinon.stub().returns(obj);

@@ -237,7 +237,7 @@ YUI.add('search-results', function(Y) {
                 <juju.components.Spinner />
               </div>
           };
-        break;
+          break;
         case 'search-results':
           var html = this.template(this.state.data);
           state.activeChild = {
@@ -245,7 +245,7 @@ YUI.add('search-results', function(Y) {
               dangerouslySetInnerHTML={{__html: html}}>
             </div>
           };
-        break;
+          break;
       }
       return state;
     },

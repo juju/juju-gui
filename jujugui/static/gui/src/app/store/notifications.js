@@ -183,11 +183,11 @@ YUI.add('juju-notification-controller', function(Y) {
 
           delta_evt.data.result.forEach(function(change) {
             var change_type = change[0],
-                    change_op = change[1],
-                    change_data = change[2],
-                    notify_data = {isDelta: true},
-                    rule = rules[change_type],
-                    model;
+                change_op = change[1],
+                change_data = change[2],
+                notify_data = {isDelta: true},
+                rule = rules[change_type],
+                model;
 
             /*
              * Data ingestion rules

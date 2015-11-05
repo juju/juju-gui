@@ -40,7 +40,7 @@ YUI.add('entity-extension', function(Y) {
      */
     ownerFromId: function() {
       var id = this.get('id'),
-        owner = id.split('/')[0];
+          owner = id.split('/')[0];
       if (owner.indexOf('~') === 0) {
         return owner.replace('~', '');
       } else {
@@ -57,17 +57,17 @@ YUI.add('entity-extension', function(Y) {
       var attrs = this.getAttrs(),
           type = attrs.entityType;
       var entity = {
-          description: attrs.description,
-          displayName: attrs.name.replace('-', ' '),
-          downloads: attrs.downloads,
-          id: attrs.id,
-          name: attrs.name,
-          owner: attrs.owner || this.ownerFromId(),
-          promulgated: attrs.is_approved,
-          revisions: attrs.revisions,
-          special: attrs.special,  // XXX Not currently implemented.
-          type: type,
-          url: attrs.url
+        description: attrs.description,
+        displayName: attrs.name.replace('-', ' '),
+        downloads: attrs.downloads,
+        id: attrs.id,
+        name: attrs.name,
+        owner: attrs.owner || this.ownerFromId(),
+        promulgated: attrs.is_approved,
+        revisions: attrs.revisions,
+        special: attrs.special,  // XXX Not currently implemented.
+        type: type,
+        url: attrs.url
       };
       if (type === 'bundle') {
         entity.iconPath = '/juju-ui/assets/images/non-sprites/bundle.svg';

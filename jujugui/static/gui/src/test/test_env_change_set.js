@@ -1202,7 +1202,7 @@ describe('Environment Change Set', function() {
                            'service name not set properly');
         assert.equal(command.options.modelId, 'my-service/3',
                      'options model id not updated');
-       assert.equal(stubUpdateSubordinates.calledOnce(), true);
+        assert.equal(stubUpdateSubordinates.calledOnce(), true);
       });
 
     });

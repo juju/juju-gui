@@ -26,10 +26,10 @@ describe('Autodeploy Extension', function() {
     var requires = ['base', 'base-build', 'autodeploy-extension',
       'juju-tests-utils'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
-          juju = Y.namespace('juju');
-          utils = Y.namespace('juju-tests.utils');
-          done();
-        });
+      juju = Y.namespace('juju');
+      utils = Y.namespace('juju-tests.utils');
+      done();
+    });
   });
 
   beforeEach(function() {

@@ -40,5 +40,5 @@ YUI.add('store', function() {
   });
 
 }, '0.1.0', { requires: [
-    'mid-point'
+  'mid-point'
 ]});

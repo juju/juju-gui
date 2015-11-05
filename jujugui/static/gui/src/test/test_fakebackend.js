@@ -335,13 +335,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to exist.
       fakebackend.promiseDeploy('cs:precise/puppetmaster-4')
       .then(function(result) {
-            var service = fakebackend.db.services.getById('puppetmaster');
-            assert.isObject(
-                service,
-                'Null returend when a service was expected.');
-            assert.strictEqual(service, result.service);
-            done();
-          });
+        var service = fakebackend.db.services.getById('puppetmaster');
+        assert.isObject(
+          service,
+          'Null returend when a service was expected.');
+        assert.strictEqual(service, result.service);
+        done();
+      });
     });
 
     it('deploys multiple units.', function() {
@@ -1078,8 +1078,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fails if a service is in error without force.', function() {
       fakebackend.db.services.getById('wordpress').get('units')
       .each(function(unit) {
-            unit.agent_state = 'error';
-          });
+        unit.agent_state = 'error';
+      });
       fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-18', false,
           callback);
       assert.equal(result.error, 'Cannot set charm on a service with units ' +
@@ -1356,16 +1356,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // at the end of each promise chain with the error.
       utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
       .then(function() {
-            utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
+        utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
             .then(function(resolve) {
-                  assert.equal(resolve.result.error,
+              assert.equal(resolve.result.error,
                       'wordpress is already present in the database.' +
                       ' Change service name and try again.');
-                  assert.equal(resolve.backend.db.services.size(), 2,
+              assert.equal(resolve.backend.db.services.size(), 2,
                       'There should only be two services in the database');
-                  done();
-                }).then(null, done);
-          }).then(null, done);
+              done();
+            }).then(null, done);
+      }).then(null, done);
     });
 
     it('should provide status of imports', function(done) {
@@ -1426,13 +1426,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       fakebackend.promiseImport(data, 'c')
         .then(function() {
-            // Insure that we inherit the debug options from 'b'
-            var mysql = fakebackend.db.services.getById('mysql');
-            assert.isNotNull(mysql);
-            var config = mysql.get('config');
-            assert.equal(config['block-size'], 5);
-            done();
-          });
+          // Insure that we inherit the debug options from 'b'
+          var mysql = fakebackend.db.services.getById('mysql');
+          assert.isNotNull(mysql);
+          var config = mysql.get('config');
+          assert.equal(config['block-size'], 5);
+          done();
+        });
     });
 
     it('properly builds relations on import', function(done) {
@@ -2222,22 +2222,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.promiseDeploy(charms[0])
       .then(fakebackend.promiseDeploy(charms[1]))
       .then(function() {
-            relation.push(true);
-            var result = fakebackend.addRelation.apply(fakebackend, relation);
-            assert.equal(result.error, undefined);
-            assert.equal(result.relationId, 'relation-0');
-            assert.equal(typeof result.relation, 'object');
-            // Check those elements we care about.
-            assert.equal(result.endpoints[0][0], mock.endpoints[0][0]);
-            assert.equal(result.endpoints[0][1].name,
-                         mock.endpoints[0][1].name);
-            assert.equal(result.endpoints[1][0], mock.endpoints[1][0]);
-            assert.equal(result.endpoints[1][1].name,
-                         mock.endpoints[1][1].name);
-            assert.equal(result.scope, mock.scope);
-            assert.equal(result.type, mock.type);
-            done();
-          }).then(undefined, done);
+        relation.push(true);
+        var result = fakebackend.addRelation.apply(fakebackend, relation);
+        assert.equal(result.error, undefined);
+        assert.equal(result.relationId, 'relation-0');
+        assert.equal(typeof result.relation, 'object');
+        // Check those elements we care about.
+        assert.equal(result.endpoints[0][0], mock.endpoints[0][0]);
+        assert.equal(result.endpoints[0][1].name,
+                     mock.endpoints[0][1].name);
+        assert.equal(result.endpoints[1][0], mock.endpoints[1][0]);
+        assert.equal(result.endpoints[1][1].name,
+                     mock.endpoints[1][1].name);
+        assert.equal(result.scope, mock.scope);
+        assert.equal(result.type, mock.type);
+        done();
+      }).then(undefined, done);
     }
 
     it('rejects unauthenticated calls', function() {
@@ -2254,15 +2254,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('requires relationships to be explicit if more than one ' +
         'shared interface', function(done) {
-          fakebackend.deploy('cs:mediawiki', function() {
-            fakebackend.deploy('cs:mysql', function() {
-              var result = fakebackend.addRelation('mediawiki', 'mysql');
-              assert.equal(result.error,
+      fakebackend.deploy('cs:mediawiki', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('mediawiki', 'mysql');
+          assert.equal(result.error,
                   'Ambiguous relationship is not allowed.');
-              done();
-            });
-          });
+          done();
         });
+      });
+    });
 
     it('throws an error if there are no shared interfaces', function(done) {
       fakebackend.deploy('cs:hadoop', function() {
@@ -2308,7 +2308,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can create a relation with a double explicit interface and a ' +
         'subordinate charm', function(done) {
-          createRelation(
+      createRelation(
               ['cs:wordpress', 'cs:puppet'],
               ['wordpress:juju-info', 'puppet:juju-info'],
               { type: 'juju-info', scope: 'container',
@@ -2316,19 +2316,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     [['puppet', {name: 'juju-info'}],
                       ['wordpress', {name: 'juju-info'}]]},
               done);
-        });
+    });
 
     it('can create a relation with a double explicit interface and a ' +
         'subordinate charm (reverse)', function(done) {
-          createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['puppet:juju-info', 'wordpress:juju-info'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
-        });
+      createRelation(
+        ['cs:wordpress', 'cs:puppet'],
+        ['puppet:juju-info', 'wordpress:juju-info'],
+        { type: 'juju-info', scope: 'container',
+          endpoints:
+            [['puppet', {name: 'juju-info'}],
+              ['wordpress', {name: 'juju-info'}]]},
+        done);
+    });
 
     it('can create a relation with a single explicit interface',
         function(done) {
@@ -2366,62 +2366,62 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can create a relation with a single explicit interface (other,' +
         ' reverse)', function(done) {
-          createRelation(
-              ['cs:wordpress', 'cs:mysql'],
-              ['mysql:db', 'wordpress'],
-              { type: 'mysql', scope: 'global',
-                endpoints:
-                    [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
-              done);
-        });
+      createRelation(
+        ['cs:wordpress', 'cs:mysql'],
+        ['mysql:db', 'wordpress'],
+        { type: 'mysql', scope: 'global',
+          endpoints:
+              [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+        done);
+    });
 
     it('can create a relation with a single explicit interface and a' +
         ' subordinate charm', function(done) {
-          createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['puppet:juju-info', 'wordpress'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
-        });
+      createRelation(
+        ['cs:wordpress', 'cs:puppet'],
+        ['puppet:juju-info', 'wordpress'],
+        { type: 'juju-info', scope: 'container',
+          endpoints:
+              [['puppet', {name: 'juju-info'}],
+                ['wordpress', {name: 'juju-info'}]]},
+        done);
+    });
 
     it('can create a relation with a single explicit interface and a ' +
         'subordinate charm (other)', function(done) {
-          createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['wordpress', 'puppet:juju-info'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
-        });
+      createRelation(
+        ['cs:wordpress', 'cs:puppet'],
+        ['wordpress', 'puppet:juju-info'],
+        { type: 'juju-info', scope: 'container',
+          endpoints:
+              [['puppet', {name: 'juju-info'}],
+                ['wordpress', {name: 'juju-info'}]]},
+        done);
+    });
 
     it('can create a relation with a single explicit interface and a ' +
         'subordinate charm (reverse)', function(done) {
-          createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['puppet', 'wordpress:juju-info'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
-        });
+      createRelation(
+        ['cs:wordpress', 'cs:puppet'],
+        ['puppet', 'wordpress:juju-info'],
+        { type: 'juju-info', scope: 'container',
+          endpoints:
+              [['puppet', {name: 'juju-info'}],
+                ['wordpress', {name: 'juju-info'}]]},
+        done);
+    });
 
     it('can create a relation with a single explicit interface and a ' +
         'subordinate charm (reverse)', function(done) {
-          createRelation(
-              ['cs:wordpress', 'cs:puppet'],
-              ['wordpress:juju-info', 'puppet'],
-              { type: 'juju-info', scope: 'container',
-                endpoints:
-                    [['puppet', {name: 'juju-info'}],
-                      ['wordpress', {name: 'juju-info'}]]},
-              done);
-        });
+      createRelation(
+        ['cs:wordpress', 'cs:puppet'],
+        ['wordpress:juju-info', 'puppet'],
+        { type: 'juju-info', scope: 'container',
+          endpoints:
+              [['puppet', {name: 'juju-info'}],
+                ['wordpress', {name: 'juju-info'}]]},
+        done);
+    });
 
     it('can create a relation with an inferred interface', function(done) {
       createRelation(

@@ -59,9 +59,9 @@ describe('Bakery', function() {
   it('can be configured to use a custom visit method', function() {
     var newVisitMethod = function() {};
     bakery = new Y.juju.environments.web.Bakery({
-        webhandler: new Y.juju.environments.web.WebHandler(),
-        serviceName: 'test',
-        visitMethod: newVisitMethod
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      serviceName: 'test',
+      visitMethod: newVisitMethod
     });
     assert.equal(bakery.visitMethod, newVisitMethod);
   });
