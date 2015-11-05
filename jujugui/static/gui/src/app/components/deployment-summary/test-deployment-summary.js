@@ -34,21 +34,21 @@ describe('DeploymentSummary', function() {
     var closeButtonAction = sinon.stub();
     var deployButtonAction = sinon.stub();
     var changeDescriptions = [{
-        icon: 'my-icon.svg',
-        description: 'Django was added',
-        time: '10:12 am'
-      }, {
-        icon: 'another-icon.svg',
-        description: 'Apache2 was added',
-        time: '10:13 am'
+      icon: 'my-icon.svg',
+      description: 'Django was added',
+      time: '10:12 am'
+    }, {
+      icon: 'another-icon.svg',
+      description: 'Apache2 was added',
+      time: '10:13 am'
     }];
     var changeItems = [
-    <juju.components.DeploymentSummaryChangeItem
-      key={0}
-      change={changeDescriptions[0]} />,
-    <juju.components.DeploymentSummaryChangeItem
-      key={1}
-      change={changeDescriptions[1]} />];
+      <juju.components.DeploymentSummaryChangeItem
+        key={0}
+        change={changeDescriptions[0]} />,
+      <juju.components.DeploymentSummaryChangeItem
+        key={1}
+        change={changeDescriptions[1]} />];
     var className = 'deployment-summary-change-item ' +
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(

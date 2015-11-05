@@ -56,7 +56,7 @@ YUI.add('charmbrowser-component', function() {
                 outsideClickClose={true}
                 storeOpen={false} />
           };
-        break;
+          break;
         case 'store':
           state.activeChild = {
             panelInstanceName: 'white-box',
@@ -65,7 +65,7 @@ YUI.add('charmbrowser-component', function() {
                 charmstoreSearch={this.props.charmstoreSearch}
                 changeState={this.props.changeState} />
           };
-        break;
+          break;
         case 'search-results':
           state.activeChild = {
             panelInstanceName: 'white-box',
@@ -76,7 +76,7 @@ YUI.add('charmbrowser-component', function() {
                 query={metadata.search}
                 tags={metadata.tags} />
           };
-        break;
+          break;
         case 'entity-details':
           state.activeChild = {
             panelInstanceName: 'white-box',
@@ -93,7 +93,7 @@ YUI.add('charmbrowser-component', function() {
                 id={metadata.id}
                 pluralize={utils.pluralize} />
           };
-        break;
+          break;
       }
       return state;
     },

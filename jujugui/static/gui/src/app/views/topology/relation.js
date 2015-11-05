@@ -304,19 +304,18 @@ YUI.add('juju-topology-relation', function(Y) {
                    relation.target.id === service.id;
               }
           ), function(relation) {
-            // Select only the pertinent relation groups.
-            var rel_group = topo.vis.select(
-                '#' + utils.generateSafeDOMId(relation.id, parentId));
-            var connectors = relation.source
-                      .getConnectorPair(relation.target);
-            var s = connectors[0];
-            var t = connectors[1];
-            rel_group.select('line')
-                  .attr('x1', s[0])
-                  .attr('y1', s[1])
-                  .attr('x2', t[0])
-                  .attr('y2', t[1]);
-          });
+        // Select only the pertinent relation groups.
+        var rel_group = topo.vis.select(
+            '#' + utils.generateSafeDOMId(relation.id, parentId));
+        var connectors = relation.source.getConnectorPair(relation.target);
+        var s = connectors[0];
+        var t = connectors[1];
+        rel_group.select('line')
+                 .attr('x1', s[0])
+                 .attr('y1', s[1])
+                 .attr('x2', t[0])
+                 .attr('y2', t[1]);
+      });
     },
 
     drawRelationGroup: function() {
@@ -336,15 +335,15 @@ YUI.add('juju-topology-relation', function(Y) {
       // elements involved.
       var enter = g.enter()
         .insert('g', 'g.service')
-              .attr('id', function(d) {
-            return utils.generateSafeDOMId(d.id, parentId);
-          })
+        .attr('id', function(d) {
+          return utils.generateSafeDOMId(d.id, parentId);
+        })
         .classed('rel-group', true);
       enter.append('svg:line', 'g.service')
-              .attr('class', function(d) {
-            // Style relation lines differently depending on status.
-            return 'relation ' + d.aggregatedStatus;
-          });
+           .attr('class', function(d) {
+             // Style relation lines differently depending on status.
+             return 'relation ' + d.aggregatedStatus;
+           });
 
       // The knob connecting the relation line with the FROM service block
       enter.append('circle')
@@ -368,18 +367,18 @@ YUI.add('juju-topology-relation', function(Y) {
                 // Style relation connector differently depending on status.
                 return 'connector2 ' + d.aggregatedStatus;
               }
-          });
+            });
       enter.append('g')
         .classed('rel-indicator', true)
         .append('image')
         .attr({
-            'width': imageSize,
-            'height': imageSize,
-            'x': imageSize / -2,
-            'y': imageSize / -2,
-            'rx': imageSize / 2,
-            'ry': imageSize / 2
-          });
+          'width': imageSize,
+          'height': imageSize,
+          'x': imageSize / -2,
+          'y': imageSize / -2,
+          'rx': imageSize / 2,
+          'ry': imageSize / 2
+        });
       enter.append('text')
         .append('tspan')
         .text(function(d) {return d.display_name; });
@@ -394,10 +393,10 @@ YUI.add('juju-topology-relation', function(Y) {
       })
         .selectAll('image')
         .attr('xlink:href', function(d) {
-            return (
-                'juju-ui/assets/svgs/relation-icon-' +
-                d.aggregatedStatus + '.svg');
-          });
+          return (
+              'juju-ui/assets/svgs/relation-icon-' +
+              d.aggregatedStatus + '.svg');
+        });
       return g;
     },
 
@@ -419,9 +418,9 @@ YUI.add('juju-topology-relation', function(Y) {
                 .attr('x2', t[0])
                 .attr('y2', t[1])
                 .attr('class', function(d) {
-            // Style relation lines differently depending on status.
-            return 'relation ' + relation.aggregatedStatus;
-          });
+                  // Style relation lines differently depending on status.
+                  return 'relation ' + relation.aggregatedStatus;
+                });
 
       // Calculate the angle in radians from both service block
       var deg = Math.atan2(s[1] - t[1], s[0] - t[0]);
@@ -448,8 +447,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
       relationIcon.attr('transform', function(d) {
         return 'translate(' + [
-            Math.max(dot1[0], dot2[0]) - Math.abs(((dot1[0] - dot2[0])) / 2),
-            Math.max(dot1[1], dot2[1]) - Math.abs(((dot1[1] - dot2[1])) / 2)
+          Math.max(dot1[0], dot2[0]) - Math.abs(((dot1[0] - dot2[0])) / 2),
+          Math.max(dot1[1], dot2[1]) - Math.abs(((dot1[1] - dot2[1])) / 2)
         ] + ')';
       });
 
@@ -464,8 +463,8 @@ YUI.add('juju-topology-relation', function(Y) {
       vis.selectAll('.service.subordinate')
         .selectAll('.sub-rel-block tspan')
         .text(function(d) {
-            return self.subordinateRelationsForService(d).length;
-          });
+          return self.subordinateRelationsForService(d).length;
+        });
     },
 
     draglineClicked: function(d, self) {
@@ -627,7 +626,7 @@ YUI.add('juju-topology-relation', function(Y) {
         // Draw the relation line from the connector point nearest the
         // cursor to the cursor itself.
         var connectors = this.cursorBox.getConnectorPair(d),
-                s = connectors[1];
+            s = connectors[1];
         this.dragline.attr('x1', s[0])
               .attr('y1', s[1])
               .attr('x2', d3.event.x)
@@ -802,11 +801,11 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       var selection = topo.vis.selectAll('.rel-group')
         .filter(function(d) {
-            return (serviceNames.indexOf(d.source.id) > -1 ||
-                serviceNames.indexOf(d.target.id) > -1) &&
-                (d.target.hide === false && d.source.hide === false) &&
-                (d.target.fade === false && d.source.fade === false);
-          });
+          return (serviceNames.indexOf(d.source.id) > -1 ||
+              serviceNames.indexOf(d.target.id) > -1) &&
+              (d.target.hide === false && d.source.hide === false) &&
+              (d.target.fade === false && d.source.fade === false);
+        });
       selection.classed(topoUtils.getVisibilityClasses('show'));
     },
 
@@ -824,9 +823,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = this.get('component');
       var selection = topo.vis.selectAll('.rel-group')
         .filter(function(d) {
-            return serviceNames.indexOf(d.source.id) > -1 ||
+          return serviceNames.indexOf(d.source.id) > -1 ||
                 serviceNames.indexOf(d.target.id) > -1;
-          });
+        });
       selection.classed(topoUtils.getVisibilityClasses('fade'));
     },
 
@@ -845,9 +844,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = this.get('component');
       var selection = topo.vis.selectAll('.rel-group')
         .filter(function(d) {
-            return serviceNames.indexOf(d.source.id) > -1 ||
-                serviceNames.indexOf(d.target.id) > -1;
-          });
+          return serviceNames.indexOf(d.source.id) > -1 ||
+              serviceNames.indexOf(d.target.id) > -1;
+        });
       selection.classed(topoUtils.getVisibilityClasses('hide'));
     },
 

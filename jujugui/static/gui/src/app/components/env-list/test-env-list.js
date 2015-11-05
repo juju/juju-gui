@@ -40,18 +40,18 @@ describe('EnvList', function() {
       <juju.components.EnvList
         envs={envs} />);
     assert.deepEqual(output.props.children[0].props.children, [
-          <li className="env-list__environment"
-            data-id={envs[0].uuid}
-            onClick={undefined}
-            key={envs[0].uuid}>
-            {envs[0].name}
-          </li>,
-          <li className="env-list__environment"
-            data-id={envs[1].uuid}
-            onClick={undefined}
-            key={envs[1].uuid}>
-            {envs[1].path}
-          </li>]);
+      <li className="env-list__environment"
+        data-id={envs[0].uuid}
+        onClick={undefined}
+        key={envs[0].uuid}>
+        {envs[0].name}
+      </li>,
+      <li className="env-list__environment"
+        data-id={envs[1].uuid}
+        onClick={undefined}
+        key={envs[1].uuid}>
+        {envs[1].path}
+      </li>]);
   });
 
   it('clicking an env calls the handleEnvClick prop', function() {

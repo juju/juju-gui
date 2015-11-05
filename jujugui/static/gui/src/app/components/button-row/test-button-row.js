@@ -32,13 +32,11 @@ describe('ButtonRow', function() {
 
   it('generates a button', function() {
     var callbackStub = sinon.stub();
-    var buttons = [
-        {
-          title: 'My button',
-          type: 'submit',
-          action: callbackStub
-          }
-        ];
+    var buttons = [{
+      title: 'My button',
+      type: 'submit',
+      action: callbackStub
+    }];
     var output = jsTestUtils.shallowRender(
       <juju.components.ButtonRow
         buttons={buttons} />);
@@ -52,18 +50,15 @@ describe('ButtonRow', function() {
 
   it('sets a class when generating multiple buttons', function() {
     var callbackStub = sinon.stub();
-    var buttons = [
-        {
-          title: 'My button',
-          type: 'submit',
-          action: callbackStub
-          },
-        {
-          title: 'Another button',
-          type: 'submit',
-          action: callbackStub
-          }
-        ];
+    var buttons = [{
+      title: 'My button',
+      type: 'submit',
+      action: callbackStub
+    }, {
+      title: 'Another button',
+      type: 'submit',
+      action: callbackStub
+    }];
     var output = jsTestUtils.shallowRender(
       <juju.components.ButtonRow
         buttons={buttons} />);
@@ -78,7 +73,7 @@ describe('ButtonRow', function() {
         key="Another button"
         action={callbackStub}
         type="submit" />
-      ];
+    ];
     assert.deepEqual(output,
       <div className="button-row button-row--multiple">
         {children}

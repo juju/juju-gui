@@ -29,10 +29,10 @@ YUI.add('env-list', function() {
     },
 
     getInitialState: function() {
-        return {
-          envs: this.props.envs,
-          envName: '',
-        };
+      return {
+        envs: this.props.envs,
+        envName: '',
+      };
     },
 
     componentWillReceiveProps: function(nextProps) {

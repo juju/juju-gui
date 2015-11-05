@@ -89,7 +89,7 @@ YUI.add('inspector-component', function() {
                 component: component || 'services',
                 metadata: newMetadata || null
               }}};
-        break;
+          break;
         case 'units':
           var unitStatus = metadata.units;
           // A unit status of 'true' is provided when there is no status, but
@@ -115,7 +115,7 @@ YUI.add('inspector-component', function() {
                   id: serviceId,
                   activeComponent: undefined
                 }}}};
-        break;
+          break;
         case 'unit':
           var unitId = metadata.unit;
           var unit = service.get('units').getById(
@@ -153,7 +153,7 @@ YUI.add('inspector-component', function() {
                   unit: null,
                   unitStatus: unitStatus
                 }}}};
-        break;
+          break;
         case 'scale':
           state.activeChild = {
             title: 'Scale',
@@ -170,7 +170,7 @@ YUI.add('inspector-component', function() {
                   id: serviceId,
                   activeComponent: 'units'
                 }}}};
-        break;
+          break;
         case 'config':
           state.activeChild = {
             title: 'Configure',
@@ -187,7 +187,7 @@ YUI.add('inspector-component', function() {
                   id: serviceId,
                   activeComponent: undefined
                 }}}};
-        break;
+          break;
         case 'expose':
           state.activeChild = {
             title: 'Expose',
@@ -205,7 +205,7 @@ YUI.add('inspector-component', function() {
                   id: serviceId,
                   activeComponent: undefined
                 }}}};
-        break;
+          break;
         case 'relations':
           state.activeChild = {
             title: 'Relations',
@@ -221,7 +221,7 @@ YUI.add('inspector-component', function() {
                   id: serviceId,
                   activeComponent: undefined
                 }}}};
-        break;
+          break;
         case 'change-version':
           state.activeChild = {
             title: 'Change version',
@@ -240,7 +240,7 @@ YUI.add('inspector-component', function() {
                   id: serviceId,
                   activeComponent: undefined
                 }}}};
-        break;
+          break;
       }
       return state;
     },

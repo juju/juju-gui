@@ -1163,14 +1163,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         {containerType: 'lxc', parentId: '1'}
       ], null, {immediate: true});
       var expectedMachineParams = [
-        {Jobs: [machineJobs.HOST_UNITS]},
-        {Jobs: [machineJobs.MANAGE_ENVIRON], Series: 'precise'},
-        {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'kvm'},
-        {
-          Jobs: [machineJobs.HOST_UNITS],
-          ContainerType: 'lxc',
-          ParentId: '1'
-        }
+          {Jobs: [machineJobs.HOST_UNITS]},
+          {Jobs: [machineJobs.MANAGE_ENVIRON], Series: 'precise'},
+          {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'kvm'},
+          {
+            Jobs: [machineJobs.HOST_UNITS],
+            ContainerType: 'lxc',
+            ParentId: '1'
+          }
       ];
       var expectedMsg = {
         RequestId: 1,
@@ -1349,18 +1349,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'key2': 'value2'
       });
       var expected = [
-        {
-          Type: 'Client',
-          Request: 'SetAnnotations',
-          RequestId: 1,
-          Params: {
-            Tag: 'service-apache',
-            Pairs: {
-              key1: 'value1',
-              key2: 'value2'
+          {
+            Type: 'Client',
+            Request: 'SetAnnotations',
+            RequestId: 1,
+            Params: {
+              Tag: 'service-apache',
+              Pairs: {
+                key1: 'value1',
+                key2: 'value2'
+              }
             }
           }
-        }
       ];
       assert.deepEqual(expected, conn.messages);
     });
@@ -2571,17 +2571,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.err, undefined);
         assert.deepEqual([
           {
-              name: 'env1',
-              owner: 'user-who',
-              uuid: 'unique1',
-              lastConnection: 'today'
-            },
-            {
-              name: 'env2',
-              owner: 'user-rose',
-              uuid: 'unique2',
-              lastConnection: 'yesterday'
-            }
+            name: 'env1',
+            owner: 'user-who',
+            uuid: 'unique1',
+            lastConnection: 'today'
+          },
+          {
+            name: 'env2',
+            owner: 'user-rose',
+            uuid: 'unique2',
+            lastConnection: 'yesterday'
+          }
         ], data.envs);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {

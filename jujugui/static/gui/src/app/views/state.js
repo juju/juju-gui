@@ -83,7 +83,7 @@ YUI.add('juju-app-state', function(Y) {
       this.set('previous', Y.clone(this.get('current'))); // clones the object.
       this.set('current', state);
       if (dispatch) {
-          this.dispatch(state);
+        this.dispatch(state);
       }
       return state;
     },
@@ -208,7 +208,7 @@ YUI.add('juju-app-state', function(Y) {
     _emptySection: function(section) {
       var dispatcher = this.get('dispatchers')[section];
       if (dispatcher && dispatcher.empty) {
-          dispatcher.empty();
+        dispatcher.empty();
       }
     },
 

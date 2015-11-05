@@ -57,56 +57,55 @@ describe('notifications', function() {
 
   it('must be able to make notification and lists of notifications',
      function() {
-        var note1 = new models.Notification({
-         title: 'test1',
-         message: 'Hello'
-        }),
-            note2 = new models.Notification({
-         title: 'test2',
-         message: 'I said goodnight!'
-            }),
-            notifications = new models.NotificationList();
+       var note1 = new models.Notification({
+             title: 'test1',
+             message: 'Hello'
+           }),
+           note2 = new models.Notification({
+             title: 'test2',
+             message: 'I said goodnight!'
+           }),
+           notifications = new models.NotificationList();
 
-        notifications.add([note1, note2]);
-        notifications.size().should.equal(2);
+       notifications.add([note1, note2]);
+       notifications.size().should.equal(2);
 
         // timestamp should be generated once
-        var ts = note1.get('timestamp');
-        note1.get('timestamp').should.equal(ts);
+       var ts = note1.get('timestamp');
+       note1.get('timestamp').should.equal(ts);
         // force an update so we can test ordering
         // fast execution can result in same timestamp
-        note2.set('timestamp', ts + 1);
-        note2.get('timestamp').should.be.above(ts);
+       note2.set('timestamp', ts + 1);
+       note2.get('timestamp').should.be.above(ts);
 
         // defaults as expected
-        note1.get('level').should.equal('info');
-        note2.get('level').should.equal('info');
+       note1.get('level').should.equal('info');
+       note2.get('level').should.equal('info');
         // the sort order on the list should be by
         // timestamp
-        notifications.get('title').should.eql(['test2', 'test1']);
+       notifications.get('title').should.eql(['test2', 'test1']);
      });
 
-  it('must be able to render its view with sample data',
-      function() {
-        /* jshint -W031 */
-        new models.Notification({
-          title: 'test1', message: 'Hello'});
-        new models.Notification({
-          title: 'test2', message: 'I said goodnight!'});
-        /* jshint +W031 */
-        var notifications = new models.NotificationList(),
-            container = Y.Node.create('<div id="test">'),
-            env = new juju.environments.GoEnvironment(),
-            view = new views.NotificationsView({
-                    container: container,
-                    notifications: notifications,
-                    env: env,
-                    nsRouter: nsRouter});
-        view.render();
-        // Verify the expected elements appear in the view
-        container.one('.dropdown').should.not.equal(undefined);
-        container.destroy();
-     });
+  it('must be able to render its view with sample data', function() {
+    /* jshint -W031 */
+    new models.Notification({
+      title: 'test1', message: 'Hello'});
+    new models.Notification({
+      title: 'test2', message: 'I said goodnight!'});
+    /* jshint +W031 */
+    var notifications = new models.NotificationList(),
+        container = Y.Node.create('<div id="test">'),
+        env = new juju.environments.GoEnvironment(),
+        view = new views.NotificationsView({
+          container: container,
+          notifications: notifications,
+          env: env,
+          nsRouter: nsRouter});
+    view.render();
+    // Verify the expected elements appear in the view
+    container.one('.dropdown').should.not.equal(undefined);
+    container.destroy();
+  });
 
   it('should be marked populated when an error is notified', function() {
     var notifications = new models.NotificationList();
@@ -128,20 +127,20 @@ describe('notifications', function() {
   it('must be able to limit the size of notification events',
      function() {
        var note1 = new models.Notification({
-         title: 'test1',
-         message: 'Hello'
-       }),
+             title: 'test1',
+             message: 'Hello'
+           }),
            note2 = new models.Notification({
-         title: 'test2',
-         message: 'I said goodnight!'
-       }),
+             title: 'test2',
+             message: 'I said goodnight!'
+           }),
            note3 = new models.Notification({
-         title: 'test3',
-         message: 'Never remember'
-       }),
+             title: 'test3',
+             message: 'Never remember'
+           }),
            notifications = new models.NotificationList({
-         max_size: 2
-       });
+             max_size: 2
+           });
 
        notifications.add([note1, note2]);
        notifications.size().should.equal(2);
@@ -153,26 +152,24 @@ describe('notifications', function() {
        notifications.get('title').should.eql(['test3', 'test2']);
      });
 
-  it('must be able to get notifications for a given model',
-     function() {
-       var m = new models.Service({id: 'mediawiki'}),
-           note1 = new models.Notification({
-         title: 'test1',
-         message: 'Hello',
-         modelId: m
-       }),
-           note2 = new models.Notification({
-         title: 'test2',
-         message: 'I said goodnight!'
-       }),
-           notifications = new models.NotificationList();
+  it('must be able to get notifications for a given model', function() {
+    var m = new models.Service({id: 'mediawiki'}),
+        note1 = new models.Notification({
+          title: 'test1',
+          message: 'Hello',
+          modelId: m
+        }),
+        note2 = new models.Notification({
+          title: 'test2',
+          message: 'I said goodnight!'
+        }),
+        notifications = new models.NotificationList();
 
-       notifications.add([note1, note2]);
-       notifications.size().should.equal(2);
-       notifications.getNotificationsForModel(m).should.eql(
+    notifications.add([note1, note2]);
+    notifications.size().should.equal(2);
+    notifications.getNotificationsForModel(m).should.eql(
        [note1]);
-
-     });
+  });
 
   it('must be able to evict irrelevant notices', function() {
     var container = Y.Node.create(

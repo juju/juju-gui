@@ -812,8 +812,8 @@ YUI.add('juju-view-utils', function(Y) {
         } else {
           return {
             center: [
-                this.x + (this.w / 2),
-                this.y + (this.h / 2)
+              this.x + (this.w / 2),
+              this.y + (this.h / 2)
             ]
           };
         }

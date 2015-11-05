@@ -60,7 +60,7 @@ YUI.add('deployment-component', function() {
               generateChangeDescription={generateChangeDescription}
               currentChangeSet={currentChangeSet} />
           };
-        break;
+          break;
         case 'deployment-summary':
           var changeDescriptions = nextProps.changeDescriptions ||
               this.props.changeDescriptions;
@@ -71,7 +71,7 @@ YUI.add('deployment-component', function() {
               changeDescriptions={changeDescriptions}
               currentChangeSet={currentChangeSet} />
           };
-        break;
+          break;
       }
       return state;
     },
@@ -158,5 +158,5 @@ YUI.add('deployment-component', function() {
   requires: [
     'deployment-bar',
     'deployment-summary'
-    ]
+  ]
 });

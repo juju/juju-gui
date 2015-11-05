@@ -160,8 +160,8 @@ YUI.add('inspector-config', function() {
 
     render: function() {
       var importButton = [{
-          title: 'Import config file',
-          action: this._importConfig
+        title: 'Import config file',
+        action: this._importConfig
       }];
       var actionButtons = [{
         title: 'Cancel',

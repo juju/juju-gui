@@ -72,14 +72,14 @@ YUI.add('inspector-relations', function() {
                   </div>
                 </div>
           };
-        break;
+          break;
         case 'relations':
           state.activeChild = {
             component: <ul className="inspector-relations__list">
                   {this._generateRelations(relations)}
                 </ul>
           };
-        break;
+          break;
       }
       return state;
     },

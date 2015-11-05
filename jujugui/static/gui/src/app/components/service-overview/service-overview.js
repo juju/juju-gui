@@ -45,10 +45,10 @@ YUI.add('service-overview', function() {
       var title = e.currentTarget.getAttribute('title');
       var activeAction;
       this.state.actions.some((action) => {
-          if (action.title === title) {
-            activeAction = action;
-            return true;
-          }
+        if (action.title === title) {
+          activeAction = action;
+          return true;
+        }
       });
       this.props.changeState(activeAction.state);
     },
@@ -88,18 +88,18 @@ YUI.add('service-overview', function() {
       var statusCounts = this.props.getUnitStatusCounts(units);
       statusCounts.all = {size: units.length};
       var statuses = [{
-          title: 'Units',
-          key: 'all',
-          icon: 'units'
-        }, {
-          title: 'Errors',
-          key: 'error'
-        }, {
-          title: 'Pending',
-          key: 'pending'
-        }, {
-          title: 'Uncommitted',
-          key: 'uncommitted'
+        title: 'Units',
+        key: 'all',
+        icon: 'units'
+      }, {
+        title: 'Errors',
+        key: 'error'
+      }, {
+        title: 'Pending',
+        key: 'pending'
+      }, {
+        title: 'Uncommitted',
+        key: 'uncommitted'
       }];
       statuses.forEach(function(status) {
         var key = status.key;
@@ -126,32 +126,31 @@ YUI.add('service-overview', function() {
       }, this);
 
       actions.push({
-          title: 'Configure',
-          icon: 'configure',
-          action: this._navigate,
-          state: {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
-                id: service.get('id'),
-                activeComponent: 'config'
-              }
+        title: 'Configure',
+        icon: 'configure',
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: service.get('id'),
+              activeComponent: 'config'
             }
           }
-        },
-        {
-          title: 'Relations',
-          icon: 'relations',
-          action: this._navigate,
-          state: {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
-                id: serviceId,
-                activeComponent: 'relations'
-              }
+        }
+      }, {
+        title: 'Relations',
+        icon: 'relations',
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: serviceId,
+              activeComponent: 'relations'
             }
           }
+        }
       });
       if (!service.get('pending')) {
         actions.push({
@@ -252,20 +251,17 @@ YUI.add('service-overview', function() {
       var buttons = [{
         title: 'Destroy',
         action: this._showConfirmation
-        }];
+      }];
       var confirmMessage = 'Are you sure you want to destroy the service? ' +
         'This cannot be undone.';
-      var confirmButtons = [
-        {
-          title: 'Cancel',
-          action: this._hideConfirmation
-          },
-        {
-          title: 'Confirm',
-          type: 'confirm',
-          action: this._destroyService
-          }
-        ];
+      var confirmButtons = [{
+        title: 'Cancel',
+        action: this._hideConfirmation
+      }, {
+        title: 'Confirm',
+        type: 'confirm',
+        action: this._destroyService
+      }];
       return (
         <div className="service-overview">
           <ul className="service-overview__actions">

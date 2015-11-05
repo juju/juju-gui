@@ -48,74 +48,74 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }], [
           'relationInfo',
           'add',
-          {
-            Key: 'wordpress:loadbalancer',
-            Id: 0,
-            Endpoints: [
-              {
-                ServiceName: 'wordpress',
-                Relation: {
-                  Name: 'loadbalancer',
-                  Role: 'peer',
-                  Interface: 'reversenginx',
-                  Scope: 'global'
-                }
-              }
-            ]
-          }
+            {
+              Key: 'wordpress:loadbalancer',
+              Id: 0,
+              Endpoints: [
+                  {
+                    ServiceName: 'wordpress',
+                    Relation: {
+                      Name: 'loadbalancer',
+                      Role: 'peer',
+                      Interface: 'reversenginx',
+                      Scope: 'global'
+                    }
+                  }
+              ]
+            }
         ], [
           'relationInfo',
           'add',
-          {
-            Key: 'puppet:juju-info wordpress:juju-info',
-            Id: 1,
-            Endpoints: [
-              {
-                ServiceName: 'puppet',
-                Relation: {
-                  Name: 'juju-info',
-                  Role: 'requirer',
-                  Interface: 'juju-info',
-                  Scope: 'container'
-                }
-              },
-              {
-                ServiceName: 'wordpress',
-                Relation: {
-                  Name: 'juju-info',
-                  Role: 'provider',
-                  Interface: 'juju-info',
-                  Scope: 'container'
-                }
-              }
-            ]
-          }
+            {
+              Key: 'puppet:juju-info wordpress:juju-info',
+              Id: 1,
+              Endpoints: [
+                  {
+                    ServiceName: 'puppet',
+                    Relation: {
+                      Name: 'juju-info',
+                      Role: 'requirer',
+                      Interface: 'juju-info',
+                      Scope: 'container'
+                    }
+                  },
+                  {
+                    ServiceName: 'wordpress',
+                    Relation: {
+                      Name: 'juju-info',
+                      Role: 'provider',
+                      Interface: 'juju-info',
+                      Scope: 'container'
+                    }
+                  }
+              ]
+            }
         ], [
           'relationInfo',
           'add',
-          {
-            Key: 'mysql:db wordpress:db',
-            Id: 2,
-            Endpoints: [
-              {
-                ServiceName: 'mysql',
-                Relation: {
-                  Name: 'db',
-                  Role: 'server',
-                  Interface: 'mysql',
-                  Scope: 'global'
-                }
-              }, {
-                ServiceName: 'wordpress',
-                Relation: {
-                  Name: 'db',
-                  Role: 'client',
-                  Interface: 'mysql',
-                  Scope: 'global'
-                }
-              }
-            ]
-          }
+            {
+              Key: 'mysql:db wordpress:db',
+              Id: 2,
+              Endpoints: [
+                  {
+                    ServiceName: 'mysql',
+                    Relation: {
+                      Name: 'db',
+                      Role: 'server',
+                      Interface: 'mysql',
+                      Scope: 'global'
+                    }
+                  }, {
+                    ServiceName: 'wordpress',
+                    Relation: {
+                      Name: 'db',
+                      Role: 'client',
+                      Interface: 'mysql',
+                      Scope: 'global'
+                    }
+                  }
+              ]
+            }
         ],
 
 
@@ -146,13 +146,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }], [
           'annotationInfo',
           'change',
-          {
-            Tag: 'service-wordpress',
-            Annotations: {
-              'gui-x': 100,
-              'gui-y': 200
+            {
+              Tag: 'service-wordpress',
+              Annotations: {
+                'gui-x': 100,
+                'gui-y': 200
+              }
             }
-          }
         ]
       ]
     };
@@ -161,59 +161,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // testing. Note that this uses the gojuju style relation ideas for
     // additional compatibility.
     var additionalRelations = { 'result': [
-      [
-        'relationInfo',
-        'add',
-        {
-          Key: 'mysql:db mediawiki:db',
-          Id: 5,
-          Endpoints: [
+        [
+          'relationInfo',
+          'add',
             {
-              ServiceName: 'mysql',
-              Relation: {
-                Name: 'db',
-                Role: 'server',
-                Interface: 'mysql',
-                Scope: 'global'
-              }
-            }, {
-              ServiceName: 'mediawiki',
-              Relation: {
-                Name: 'db',
-                Role: 'client',
-                Interface: 'mysql',
-                Scope: 'global'
-              }
+              Key: 'mysql:db mediawiki:db',
+              Id: 5,
+              Endpoints: [
+                  {
+                    ServiceName: 'mysql',
+                    Relation: {
+                      Name: 'db',
+                      Role: 'server',
+                      Interface: 'mysql',
+                      Scope: 'global'
+                    }
+                  }, {
+                    ServiceName: 'mediawiki',
+                    Relation: {
+                      Name: 'db',
+                      Role: 'client',
+                      Interface: 'mysql',
+                      Scope: 'global'
+                    }
+                  }
+              ]
             }
-          ]
-        }
-      ], [
-        'relationInfo',
-        'add',
-        {
-          Key: 'mysql:db-slave mediawiki:db-slave',
-          Id: 6,
-          Endpoints: [
+        ], [
+          'relationInfo',
+          'add',
             {
-              ServiceName: 'mysql',
-              Relation: {
-                Name: 'db-slave',
-                Role: 'server',
-                Interface: 'mysql',
-                Scope: 'global'
-              }
-            }, {
-              ServiceName: 'mediawiki',
-              Relation: {
-                Name: 'db-slave',
-                Role: 'client',
-                Interface: 'mysql',
-                Scope: 'global'
-              }
+              Key: 'mysql:db-slave mediawiki:db-slave',
+              Id: 6,
+              Endpoints: [
+                  {
+                    ServiceName: 'mysql',
+                    Relation: {
+                      Name: 'db-slave',
+                      Role: 'server',
+                      Interface: 'mysql',
+                      Scope: 'global'
+                    }
+                  }, {
+                    ServiceName: 'mediawiki',
+                    Relation: {
+                      Name: 'db-slave',
+                      Role: 'client',
+                      Interface: 'mysql',
+                      Scope: 'global'
+                    }
+                  }
+              ]
             }
-          ]
-        }
-      ]
+        ]
     ]};
 
     before(function(done) {
@@ -465,56 +465,56 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'CharmURL': 'cs:precise/puppet-2',
             'Name': 'puppet2'
           }],
-          [
-            'relationInfo',
-            'add',
-            {
-              Key: 'wordpress:juju-info puppet2:juju-info',
-              Id: 7,
-              Endpoints: [
+            [
+              'relationInfo',
+              'add',
                 {
-                  ServiceName: 'puppet2',
-                  Relation: {
-                    Name: 'juju-info', Role: 'requirer',
-                    Interface: 'juju-info', Scope: 'container'
-                  }
-                }, {
-                  ServiceName: 'wordpress',
-                  Relation: {
-                    Name: 'juju-info', Role: 'provider',
-                    Interface: 'juju-info', Scope: 'container'
-                  }
+                  Key: 'wordpress:juju-info puppet2:juju-info',
+                  Id: 7,
+                  Endpoints: [
+                      {
+                        ServiceName: 'puppet2',
+                        Relation: {
+                          Name: 'juju-info', Role: 'requirer',
+                          Interface: 'juju-info', Scope: 'container'
+                        }
+                      }, {
+                        ServiceName: 'wordpress',
+                        Relation: {
+                          Name: 'juju-info', Role: 'provider',
+                          Interface: 'juju-info', Scope: 'container'
+                        }
+                      }
+                  ]
                 }
-              ]
-            }
-          ]
+            ]
         ]
       };
       var addRelation = {
         result: [
-          [
-            'relationInfo',
-            'add',
-            {
-              Key: '',
-              Id: 8,
-              Endpoints: [
+            [
+              'relationInfo',
+              'add',
                 {
-                  ServiceName: 'mediawiki',
-                  Relation: {
-                    Name: 'juju-info', Role: 'provider',
-                    Interface: 'juju-info', Scope: 'container'
-                  }
-                }, {
-                  ServiceName: 'puppet',
-                  Relation: {
-                    Name: 'juju-info', Role: 'requirer',
-                    Interface: 'juju-info', Scope: 'container'
-                  }
+                  Key: '',
+                  Id: 8,
+                  Endpoints: [
+                      {
+                        ServiceName: 'mediawiki',
+                        Relation: {
+                          Name: 'juju-info', Role: 'provider',
+                          Interface: 'juju-info', Scope: 'container'
+                        }
+                      }, {
+                        ServiceName: 'puppet',
+                        Relation: {
+                          Name: 'juju-info', Role: 'requirer',
+                          Interface: 'juju-info', Scope: 'container'
+                        }
+                      }
+                  ]
                 }
-              ]
-            }
-          ]
+            ]
         ]
       };
 
@@ -643,36 +643,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             charmstore: fakeStore
           }).render();
           var tmp_data = {
-           result: [
-             ['machine', 'add', {
-               'agent-state': 'running',
-               'instance-state': 'running',
-               'id': 1,
-               'instance-id': 'local',
-               'dns-name': 'localhost'
-             }],
-             ['machine', 'add', {
-               'agent-state': 'running',
-               'instance-state': 'running',
-               'id': 2,
-               'instance-id': 'local',
-               'dns-name': 'localhost'
-             }],
-             ['unit', 'add', {
-               'machine': 1,
-               'agent-state': 'started',
-               'public-address': '192.168.122.114',
-               'id': 'wordpress/1'
-             }],
-             ['unit', 'add', {
-               'machine': 2,
-               'agent-state': 'started',
-               'public-address': '192.168.122.114',
-               'id': 'wordpress/2'
-             }]
-           ],
-           op: 'delta'
-         };
+            result: [
+              ['machine', 'add', {
+                'agent-state': 'running',
+                'instance-state': 'running',
+                'id': 1,
+                'instance-id': 'local',
+                'dns-name': 'localhost'
+              }],
+              ['machine', 'add', {
+                'agent-state': 'running',
+                'instance-state': 'running',
+                'id': 2,
+                'instance-id': 'local',
+                'dns-name': 'localhost'
+              }],
+              ['unit', 'add', {
+                'machine': 1,
+                'agent-state': 'started',
+                'public-address': '192.168.122.114',
+                'id': 'wordpress/1'
+              }],
+              ['unit', 'add', {
+                'machine': 2,
+                'agent-state': 'started',
+                'public-address': '192.168.122.114',
+                'id': 'wordpress/2'
+              }]
+            ],
+            op: 'delta'
+          };
 
           function floor(o) {
             return Math.floor(parseFloat(o.toString()));
@@ -715,38 +715,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must be able to place new services properly', function() {
       var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        charmstore: fakeStore
-      }),
+            container: container,
+            db: db,
+            env: env,
+            charmstore: fakeStore
+          }),
           tmp_data = {
             result: [
-              [
-                'serviceInfo',
-                'add',
-                {
-                  Subordinate: true,
-                  CharmURL: 'cs:precise/puppet-2',
-                  Name: 'puppet2'
-                }
-              ], [
-                'serviceInfo',
-                'add',
-                {
-                  CharmURL: 'cs:precise/mysql-26',
-                  Name: 'mysql2'
-                }
-              ], [
-                'unitInfo',
-                'add',
-                {
-                  MachineId: 0,
-                  Status: 'started',
-                  PublicAddress: '192.168.122.222',
-                  Name: 'mysql2/0'
-                }
-              ]
+                [
+                  'serviceInfo',
+                  'add',
+                    {
+                      Subordinate: true,
+                      CharmURL: 'cs:precise/puppet-2',
+                      Name: 'puppet2'
+                    }
+                ], [
+                  'serviceInfo',
+                  'add',
+                    {
+                      CharmURL: 'cs:precise/mysql-26',
+                      Name: 'mysql2'
+                    }
+                ], [
+                  'unitInfo',
+                  'add',
+                    {
+                      MachineId: 0,
+                      Status: 'started',
+                      PublicAddress: '192.168.122.222',
+                      Name: 'mysql2/0'
+                    }
+                ]
             ]
           },
           properTransform = /translate\(\d+\.?\d*[, ]\d+\.?\d*\)/;
@@ -777,15 +777,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must not stack new services from delta', function() {
       var tmp_data = {
         result: [
-          [
-            'serviceInfo',
-            'add',
-            {
-              Subordinate: false,
-              CharmURL: 'cs:precise/wordpress-6',
-              Name: 'wordpressa'
-            }
-          ]
+            [
+              'serviceInfo',
+              'add',
+                {
+                  Subordinate: false,
+                  CharmURL: 'cs:precise/wordpress-6',
+                  Name: 'wordpressa'
+                }
+            ]
         ]
       };
       db.reset();
@@ -808,17 +808,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must be able to use position annotations', function(done) {
       var tmp_data = {
         result: [
-          [
-            'annotationInfo',
-            'change',
-            {
-              'Tag': 'service-wordpress',
-              'Annotations': {
-                'gui-x': 374.1,
-                'gui-y': 211.2
-              }
-            }
-          ]
+            [
+              'annotationInfo',
+              'change',
+                {
+                  'Tag': 'service-wordpress',
+                  'Annotations': {
+                    'gui-x': 374.1,
+                    'gui-y': 211.2
+                  }
+                }
+            ]
         ]
       };
       // IE uses a space delimiter, not a comma.
@@ -1019,14 +1019,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
              nextServiceName = serviceNode.next().getAttribute('data-name');
          endpoints[nextServiceName] = [
            [{
-              service: serviceName,
-              name: 'relName',
-              type: 'relType'
-            }, {
-              service: nextServiceName,
-              name: 'relName',
-              type: 'relType'
-            }]];
+             service: serviceName,
+             name: 'relName',
+             type: 'relType'
+           }, {
+             service: nextServiceName,
+             name: 'relName',
+             type: 'relType'
+           }]];
          // Add a mock charm for the service.
          var charm = { id: service.charm, loaded: false };
          var charm2 = { id: 'cs:precise/mediawiki-3', loaded: false };
@@ -1109,7 +1109,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
          getParentId(view)) +
               ' .rel-indicator'),
-         menu;
+             menu;
 
          relation.simulate('click');
          menu = container.one('#relation-menu');
@@ -1178,14 +1178,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var reduceData = function() {
         return view.topo.vis.selectAll('.rel-indicator image')
           .data().map(function(datum) {
-              return datum.aggregatedStatus;
-            });
+            return datum.aggregatedStatus;
+          });
       };
       var reduceImages = function() {
         return view.topo.vis.selectAll('.rel-indicator image')[0]
           .map(function(image) {
-              return d3.select(image).attr('href');
-            });
+            return d3.select(image).attr('href');
+          });
       };
       assert.deepEqual(reduceData(), ['subordinate', 'healthy']);
       assert.deepEqual(reduceImages(), [
@@ -1319,33 +1319,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must not allow removing a subordinate relation between services',
         function() {
-         view = new views.environment({
-           container: container,
-           db: db,
-           env: env,
-           charmstore: fakeStore
-         }).render();
+          view = new views.environment({
+            container: container,
+            db: db,
+            env: env,
+            charmstore: fakeStore
+          }).render();
 
          // Get a subordinate relation.
-         var relation = container.one(
+          var relation = container.one(
               '#' + views.utils.generateSafeDOMId(
                   'puppet:juju-info wordpress:juju-info',
          getParentId(view)) +
               ' .rel-indicator'),
-         menu,
-         panel;
+              menu,
+              panel;
 
-         relation.simulate('click');
-         menu = container.one('#relation-menu');
-         menu.one('.relation-remove').simulate('click');
-         panel = Y.one('#rmsubrelation-modal-panel');
+          relation.simulate('click');
+          menu = container.one('#relation-menu');
+          menu.one('.relation-remove').simulate('click');
+          panel = Y.one('#rmsubrelation-modal-panel');
 
          // There should only be a cancel button on the warning dialog.
-         panel.all('button').size().should.equal(1);
+          panel.all('button').size().should.equal(1);
 
          // Clicking cancel will hide the dialog.
-         panel.one('button').simulate('click');
-         panel.all('button').size().should.equal(0);
+          panel.one('button').simulate('click');
+          panel.all('button').size().should.equal(0);
         });
 
     it('should stop creating a relation if the background is clicked',
@@ -1497,7 +1497,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        function() {
 
          var b1 = views.BoundingBox(module, service),
-         b2 = views.BoundingBox(module, service);
+             b2 = views.BoundingBox(module, service);
 
          // raw property access
          b1.x = 0; b1.y = 0;
@@ -1528,7 +1528,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       function() {
 
         var b1 = views.BoundingBox(module, service),
-        b2 = views.BoundingBox(module, service);
+            b2 = views.BoundingBox(module, service);
 
         // raw property access
         b1.x = 0; b1.y = 0;

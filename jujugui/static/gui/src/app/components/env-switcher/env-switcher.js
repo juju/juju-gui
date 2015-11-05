@@ -29,10 +29,10 @@ YUI.add('env-switcher', function() {
     },
 
     getInitialState: function() {
-        return {
-          showEnvList: false,
-          envList: []
-        };
+      return {
+        showEnvList: false,
+        envList: []
+      };
     },
 
     componentDidMount: function() {

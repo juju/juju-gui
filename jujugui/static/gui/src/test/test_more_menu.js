@@ -26,9 +26,9 @@ describe('more menu widget', function() {
         ['more-menu',
           'juju-tests-utils',
           'node-event-simulate'], function(Y) {
-          utils = Y.namespace('juju-tests.utils');
-          done();
-        });
+      utils = Y.namespace('juju-tests.utils');
+      done();
+    });
   });
 
   beforeEach(function() {

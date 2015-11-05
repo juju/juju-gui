@@ -247,12 +247,12 @@ YUI.add('bundle-importer', function(Y) {
         /*jshint -W083*/
         var prereq = this._collectRequires(records, record, [])
           .every(function(recordId) {
-              // Loop through the changeSet to see if the required record is
-              // in the changeSet already.
-              return changeSet.some(function(record) {
-                return record.id === recordId ? true : false;
-              });
+            // Loop through the changeSet to see if the required record is
+            // in the changeSet already.
+            return changeSet.some(function(record) {
+              return record.id === recordId ? true : false;
             });
+          });
         // If all prerequisites have been added to the list.
         if (prereq) {
           // Make sure we don't have any duplicate records.
