@@ -103,21 +103,7 @@ YUI.add('entity-header', function() {
     },
 
     render: function() {
-      var entity = this.props.entityModel.toEntity(),
-          tags = entity.tags || [],
-          revisions = entity.revisions || [];
-      tags = tags.map(function(tag) {
-        return (
-          <li key={tag} className="tag-list__item">
-            <a
-              data-id={tag}
-              onClick={this._handleTagClick}
-              ref="tagListItem">
-              {tag}
-            </a>
-          </li>
-        );
-      }, this);
+      var entity = this.props.entityModel.toEntity();
       var ownerUrl = 'https://launchpad.net/~' + entity.owner;
       var series = entity.series ?
         <li className="entity-header__series">{entity.series}</li> :
@@ -136,38 +122,27 @@ YUI.add('entity-header', function() {
                     ref="entityHeaderTitle">
                     {entity.displayName}
                   </h1>
-                  <p className="entity-header__by">
-                    By <a
-                          href={ownerUrl}
-                          target="_blank"
-                          ref="entityHeaderBy">{entity.owner}</a>
-                  </p>
                   <ul className="bullets inline">
-                    <li className="revisions-item">
-                      <a href="#revisions" className="revisions-link">
-                        {revisions.length}
-                        {' '}
-                        {this.props.pluralize('revision', revisions.length)}
-                      </a>
+                    <li className="entity-header__by">
+                      By <a href={ownerUrl} target="_blank"
+                            ref="entityHeaderBy">{entity.owner}</a>
+                    </li>
+                    <li className="entity-header__deploys">
+                      <span
+                        className="entity-header__deploys-count"
+                        ref="bundleDeploysCount">
+                        {entity.downloads}
+                      </span>
+                      {' '}
+                      {this.props.pluralize('deploy', entity.downloads)}
                     </li>
                     {series}
                   </ul>
                 </div>
-                <ul className="tag-list">{tags}</ul>
               </div>
               <div className="four-col last-col no-margin-bottom">
-                <ul className="no-bullets bundle-stats">
-                  <li className="bundle-stats__deploys">
-                    <span
-                      className="bundle-stats__deploys-count"
-                      ref="bundleDeploysCount">
-                      {entity.downloads}
-                    </span>
-                    {' '}
-                    {this.props.pluralize('deploy', entity.downloads)}
-                  </li>
-                </ul>
                 <juju.components.GenericButton
+                  ref="deployButton"
                   action={this._handleDeployClick}
                   type="confirm"
                   title="Add to canvas" />
@@ -180,5 +155,7 @@ YUI.add('entity-header', function() {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'generic-button'
+  ]
 });

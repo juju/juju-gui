@@ -57,6 +57,7 @@ describe('EntityHeader', function() {
                  'rendered downloads does not match entity downloads');
   });
 
+  /* Test will need to be moved to test-entity-content.js
   it('dispatches to search when a tag is clicked', function() {
     var tag = 'database';
     var changeState = sinon.spy();
@@ -83,21 +84,18 @@ describe('EntityHeader', function() {
       }
     }, 'App state not set properly.');
   });
+  */
 
   it('displays an add to canvas button', function() {
-    var output = jsTestUtils.shallowRender(
+    var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
         pluralize={sinon.spy()} />);
-    var deployButton = output.props.children.props.children.props.children[1]
-                             .props.children[1];
-    assert.deepEqual(deployButton,
-      <juju.components.GenericButton
-        action={deployButton.props.action}
-        type="confirm"
-        title="Add to canvas" />);
+    var deployButton = output.refs.deployButton;
+    assert.equal(deployButton.props.type, 'confirm');
+    assert.equal(deployButton.props.title, 'Add to canvas');
   });
 
   it('adds a charm when the add button is clicked', function() {
@@ -105,7 +103,7 @@ describe('EntityHeader', function() {
     var changeState = sinon.stub();
     var importBundleYAML = sinon.stub();
     var getBundleYAML = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -113,8 +111,7 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={mockEntity}
         pluralize={sinon.stub()} />);
-    var deployButton = output.props.children.props.children.props.children[1]
-                             .props.children[1];
+    var deployButton = output.refs.deployButton;
     // Simulate a click.
     deployButton.props.action();
     assert.equal(deployService.callCount, 1);
@@ -134,7 +131,7 @@ describe('EntityHeader', function() {
     var getBundleYAML = sinon.stub().callsArgWith(1, 'mock yaml');
     var importBundleYAML = sinon.stub();
     var entity = jsTestUtils.makeEntity(true);
-    var output = jsTestUtils.shallowRender(
+    var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -142,8 +139,7 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={entity}
         pluralize={sinon.stub()} />);
-    var deployButton = output.props.children.props.children.props.children[1]
-                             .props.children[1];
+    var deployButton = output.refs.deployButton;
     // Simulate a click.
     deployButton.props.action();
     assert.equal(getBundleYAML.callCount, 1);
