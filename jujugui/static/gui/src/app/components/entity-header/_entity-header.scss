@@ -34,6 +34,7 @@
         margin-top: 24px;
         font-size: 18px;
         overflow: hidden;
+
         li {
             &:after {
                 color: $warm-grey;
@@ -41,6 +42,7 @@
                 vertical-align: middle;
                 margin: 0 5px;
             }
+
             &:last-child:after {
                 display: none;
             }
