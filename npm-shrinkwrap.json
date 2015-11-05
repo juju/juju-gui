@@ -1231,6 +1231,49 @@
       "from": "https://registry.npmjs.org/classnames/-/classnames-2.1.3.tgz",
       "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.1.3.tgz"
     },
+    "clipboard": {
+      "version": "1.5.3",
+      "from": "clipboard@",
+      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.5.3.tgz",
+      "dependencies": {
+        "good-listener": {
+          "version": "1.1.2",
+          "from": "good-listener@^1.1.2",
+          "resolved": "https://registry.npmjs.org/good-listener/-/good-listener-1.1.2.tgz",
+          "dependencies": {
+            "delegate": {
+              "version": "2.0.2",
+              "from": "delegate@^2.0.2",
+              "resolved": "https://registry.npmjs.org/delegate/-/delegate-2.0.2.tgz",
+              "dependencies": {
+                "closest": {
+                  "version": "0.0.1",
+                  "from": "closest@0.0.1",
+                  "resolved": "https://registry.npmjs.org/closest/-/closest-0.0.1.tgz",
+                  "dependencies": {
+                    "matches-selector": {
+                      "version": "0.0.1",
+                      "from": "matches-selector@0.0.1",
+                      "resolved": "https://registry.npmjs.org/matches-selector/-/matches-selector-0.0.1.tgz"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "select": {
+          "version": "1.0.4",
+          "from": "select@^1.0.4",
+          "resolved": "https://registry.npmjs.org/select/-/select-1.0.4.tgz"
+        },
+        "tiny-emitter": {
+          "version": "1.0.1",
+          "from": "tiny-emitter@^1.0.0",
+          "resolved": "https://registry.npmjs.org/tiny-emitter/-/tiny-emitter-1.0.1.tgz"
+        }
+      }
+    },
     "cryptojs": {
       "version": "2.5.3",
       "from": "https://registry.npmjs.org/cryptojs/-/cryptojs-2.5.3.tgz",
