@@ -115,30 +115,28 @@ YUI.add('entity-header', function() {
               <div className="eight-col no-margin-bottom">
                 <img src={entity.iconPath} alt={entity.displayName}
                      width="96" className="entity-header__icon"/>
-                <div className="entity-header__details">
-                  <h1
-                    className="entity-header__title"
-                    itemProp="name"
-                    ref="entityHeaderTitle">
-                    {entity.displayName}
-                  </h1>
-                  <ul className="bullets inline">
-                    <li className="entity-header__by">
-                      By <a href={ownerUrl} target="_blank"
-                            ref="entityHeaderBy">{entity.owner}</a>
-                    </li>
-                    <li className="entity-header__deploys">
-                      <span
-                        className="entity-header__deploys-count"
-                        ref="bundleDeploysCount">
-                        {entity.downloads}
-                      </span>
-                      {' '}
-                      {this.props.pluralize('deploy', entity.downloads)}
-                    </li>
-                    {series}
-                  </ul>
-                </div>
+                <h1
+                  className="entity-header__title"
+                  itemProp="name"
+                  ref="entityHeaderTitle">
+                  {entity.displayName}
+                </h1>
+                <ul className="bullets inline">
+                  <li className="entity-header__by">
+                    By <a href={ownerUrl} target="_blank"
+                          ref="entityHeaderBy">{entity.owner}</a>
+                  </li>
+                  <li className="entity-header__deploys">
+                    <span
+                      className="entity-header__deploys-count"
+                      ref="bundleDeploysCount">
+                      {entity.downloads}
+                    </span>
+                    {' '}
+                    {this.props.pluralize('deploy', entity.downloads)}
+                  </li>
+                  {series}
+                </ul>
               </div>
               <div className="four-col last-col no-margin-bottom">
                 <juju.components.GenericButton
