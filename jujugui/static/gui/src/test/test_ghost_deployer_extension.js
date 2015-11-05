@@ -93,7 +93,7 @@ describe('Ghost Deployer Extension', function() {
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
     var args = ghostDeployer.env.deploy.lastArguments();
     assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
-    assert.strictEqual(args[1], 'django'); // Service name.
+    assert.strictEqual(args[1], 'ghost-service-id'); // Service name.
     assert.deepEqual(args[2], {}); // Config.
     assert.strictEqual(args[4], 0); // Number of units.
     assert.deepEqual(args[5], {}); // Constraints.
@@ -149,7 +149,7 @@ describe('Ghost Deployer Extension', function() {
     assert.lengthOf(args, 1);
     var expectedUnit = {
       id: 'ghost-service-id/0',
-      displayName: charm.get('name') + '/0',
+      displayName: 'ghost-service-id/0',
       charmUrl: charm.get('id'),
       subordinate: charm.get('is_subordinate')
     };
