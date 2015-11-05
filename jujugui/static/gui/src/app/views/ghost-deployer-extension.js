@@ -60,7 +60,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         config[k] = v['default'];
       });
       ghostService.set('config', config);
-      var serviceName = charm.get('name');
+      var serviceName = ghostService.get('name');
       var charmId = charm.get('id');
       var constraints = {};
       this.env.deploy(
