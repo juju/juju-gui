@@ -46,24 +46,22 @@ describe('UnitList', () => {
     ];
     assert.deepEqual(children, [
       <juju.components.UnitListItem
+        ref="select-all"
         key="select-all"
         className="select-all"
         label="Select all units"
-        checked={false}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
-        checked={false}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
         action={children[2].props.action}
-        checked={false}
         unitId="mysql/1" />
     ]);
   });
@@ -89,30 +87,28 @@ describe('UnitList', () => {
     ];
     assert.deepEqual(children, [
       <juju.components.UnitListItem
+        ref="select-all-0"
         key="select-all-0"
         className="select-all"
         label="hook failed: install"
-        checked={false}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
-        checked={false}
         unitId="mysql/0" />,
       <juju.components.UnitListItem
+        ref="select-all-1"
         key="select-all-1"
         className="select-all"
         label="hook failed: config-changed"
-        checked={false}
         whenChanged={children[2].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
         action={children[3].props.action}
-        checked={false}
         unitId="mysql/1" />
     ]);
   });
@@ -156,47 +152,18 @@ describe('UnitList', () => {
       displayName: 'mysql/1',
       id: 'mysql/1'
     }];
-    var shallowRenderer = jsTestUtils.shallowRender(
-        <juju.components.UnitList
-          units={units} />, true);
-    var output = shallowRenderer.getRenderOutput();
-    var selectAll = output.props.children[1].props.children[0];
-
-    // Trigger the select callback;
-    selectAll.props.whenChanged(true);
-    // re-render the component
-    shallowRenderer.render(
-        <juju.components.UnitList
-          units={units} />);
-    output = shallowRenderer.getRenderOutput();
-
-    var children = output.props.children[1].props.children;
-    var refs = [
-      'UnitListItem-' + units[0].id,
-      'UnitListItem-' + units[1].id
-    ];
-    assert.deepEqual(children, [
-      <juju.components.UnitListItem
-        key="select-all"
-        className="select-all"
-        label="Select all units"
-        checked={true}
-        whenChanged={children[0].props.whenChanged}/>,
-      <juju.components.UnitListItem
-        key={units[0].displayName}
-        ref={refs[0]}
-        label={units[0].displayName}
-        action={output.props.children[1].props.children[1].props.action}
-        checked={true}
-        unitId="mysql/0" />,
-      <juju.components.UnitListItem
-        key={units[1].displayName}
-        ref={refs[1]}
-        label={units[1].displayName}
-        action={output.props.children[1].props.children[2].props.action}
-        checked={true}
-        unitId="mysql/1" />
-    ]);
+    // shallowRenderer doesn't support state so need to render it.
+    var component = testUtils.renderIntoDocument(
+      <juju.components.UnitList units={units} />);
+    var refs = component.refs;
+    // We want to make sure that they are not checked first.
+    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
+    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
+    // Activate the select all toggle.
+    refs['select-all'].props.whenChanged(true);
+    // Now check that they are all checked.
+    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: true});
+    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: true});
   });
 
   it('navigates to the unit when a list item is clicked', function() {
