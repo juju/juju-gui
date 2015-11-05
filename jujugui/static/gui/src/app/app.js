@@ -47,14 +47,15 @@ YUI.add('juju-gui', function(Y) {
    *
    * @class App
    */
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [
-                                                  Y.juju.NSRouter,
-                                                  widgets.AutodeployExtension,
-                                                  Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer,
-                                                  Y.juju.MachineViewPanel,
-                                                  Y.Event.EventTracker], {
-
+  var extensions = [
+    Y.juju.NSRouter,
+    widgets.AutodeployExtension,
+    Y.juju.Cookies,
+    Y.juju.GhostDeployer,
+    Y.juju.MachineViewPanel,
+    Y.Event.EventTracker
+  ];
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, extensions, {
     /*
       Extension properties
     */
@@ -277,9 +278,9 @@ YUI.add('juju-gui', function(Y) {
             Y.one('body')
               .all('[data-timestamp]')
               .each(function(node) {
-                  node.setHTML(views.humanizeTimestamp(
-                      node.getAttribute('data-timestamp')));
-                });
+                node.setHTML(views.humanizeTimestamp(
+                  node.getAttribute('data-timestamp')));
+              });
           }, [], true);}
       }
     },

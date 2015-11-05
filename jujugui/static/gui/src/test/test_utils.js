@@ -67,40 +67,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           views.utils.generateHash(relationId + 'topo1'));
     });
 
-    it('should create a confirmation panel',
-       function() {
-          var confirmed = false;
-          var panel = views.createModalPanel(
-              'Description',
-              '#main',
-              'Action Label',
-              function() {confirmed = true;}
-         );
-          panel.show();
-          var panel_node = panel.get('boundingBox'),
-              button = panel_node.all('.button').item(0);
-          button.getHTML().should.equal('Action Label');
-          button.simulate('click');
-          confirmed.should.equal(true);
-          panel.destroy();
-       });
+    it('should create a confirmation panel', function() {
+      var confirmed = false;
+      var panel = views.createModalPanel(
+          'Description',
+          '#main',
+          'Action Label',
+          function() {confirmed = true;}
+     );
+      panel.show();
+      var panel_node = panel.get('boundingBox'),
+          button = panel_node.all('.button').item(0);
+      button.getHTML().should.equal('Action Label');
+      button.simulate('click');
+      confirmed.should.equal(true);
+      panel.destroy();
+    });
 
-    it('should hide the panel when the Cancel button is clicked',
-       function() {
-          var confirmed = false;
-          var panel = views.createModalPanel(
-              'Description',
-              '#main',
-              'Action Label',
-              function() {confirmed = true;});
-          panel.show();
-          var panel_node = panel.get('boundingBox'),
-              button = panel_node.all('.button').item(1);
-          button.getHTML().should.equal('Cancel');
-          button.simulate('click');
-          confirmed.should.equal(false);
-          panel.destroy();
-       });
+    it('should hide the panel when the Cancel button is clicked', function() {
+      var confirmed = false;
+      var panel = views.createModalPanel(
+          'Description',
+          '#main',
+          'Action Label',
+          function() {confirmed = true;});
+      panel.show();
+      var panel_node = panel.get('boundingBox'),
+          button = panel_node.all('.button').item(1);
+      button.getHTML().should.equal('Cancel');
+      button.simulate('click');
+      confirmed.should.equal(false);
+      panel.destroy();
+    });
 
     it('should allow you to reset the buttons', function() {
       var confirmed = false;
@@ -115,7 +113,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       panel.get('buttons').footer.length.should.equal(2);
       panel.show();
       var panel_node = panel.get('boundingBox'),
-              button = panel_node.all('.button').item(0);
+          button = panel_node.all('.button').item(0);
       button.getHTML().should.equal('Second Action Label');
       button.simulate('click');
       confirmed.should.equal(true);
