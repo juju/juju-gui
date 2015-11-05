@@ -1184,12 +1184,12 @@ YUI.add('juju-env-sandbox', function(Y) {
       // deployed via charm and in sandbox mode.
       var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
       ws.onopen = this._changeSetWsOnOpen.bind(this, ws, data);
-      ws.onmessage = this._changeSetWsOnMessage.bind(this, data, client);
+      ws.onmessage = this._changeSetWsOnMessage.bind(this, ws, data, client);
       // Because it's possible (and likely) that a user will drop a charm while
       // the GUI is not deployed with a reference to the bundle lib we need to
       // bail and throw an error after trying a few times. We try a few times
       // in the event of a poor connection.
-      ws.onerror = this._changeSetWsOnError.bind(this, data, client);
+      ws.onerror = this._changeSetWsOnError.bind(this, ws, data, client);
     },
 
     /**
@@ -1209,7 +1209,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       Websocket on open handler.
 
       @method _changeSetWsOnOpen
-      @param {Object} ws Reference to the websocket instance.
+      @param {Object} ws Reference to the reconnecting WebSocket instance.
       @param {Object} data The contents of the API arguments.
     */
     _changeSetWsOnOpen: function(ws, data) {
@@ -1221,15 +1221,16 @@ YUI.add('juju-env-sandbox', function(Y) {
       connect to the charm or bundle lib.
 
       @method _changeSetWsOnError
+      @param {Object} ws Reference to the reconnecting WebSocket instance.
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} response The websocket response.
     */
-    _changeSetWsOnError: function(data, client, response) {
+    _changeSetWsOnError: function(ws, data, client, response) {
       this.wsFailureCount += 1;
       if (this.wsFailureCount === 3) {
         // Disconnect and bail if we have had three failures.
-        response.currentTarget.close();
+        ws.close();
         this._basicReceive(data, client, {
           error: 'Unable to connect to bundle processor.'
         });
@@ -1240,11 +1241,12 @@ YUI.add('juju-env-sandbox', function(Y) {
       Websocket on message handler.
 
       @method _changeSetWsOnMessage
+      @param {Object} ws Reference to the reconnecting WebSocket instance.
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} response The websocket response.
     */
-    _changeSetWsOnMessage: function(data, client, response) {
+    _changeSetWsOnMessage: function(ws, data, client, response) {
       var responseData = JSON.parse(response.data);
       if (responseData.Error === 'not implemented (sandbox mode)') {
         // We requested an endpoint not implemented by the GUI server in
@@ -1259,7 +1261,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         ErrorCode: responseData.ErrorCode,
         Response: responseData.Response
       });
-      response.currentTarget.close();
+      ws.close();
     }
 
   });

@@ -1447,12 +1447,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('handleChangeSetGetChanges', function() {
-      var count, data, sendStub, ReconnectingWebSocket, websockets;
+      var count, data, closeStub, sendStub, ReconnectingWebSocket, websockets;
 
       beforeEach(function() {
         websockets = [];
         count = 0;
         ReconnectingWebSocket = Y.ReconnectingWebSocket;
+        closeStub = utils.makeStubFunction();
         sendStub = utils.makeStubFunction();
         Y.ReconnectingWebSocket = function(socketUrl) {
           this.id = count;
@@ -1461,6 +1462,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Store the generated instances of this object.
           websockets.push(this);
           this.send = sendStub;
+          this.close = closeStub;
         };
         data = {
           Type: 'ChangeSet',
@@ -1492,18 +1494,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('returns with error if websocket cannot connect', function(done) {
-        var close = utils.makeStubFunction();
         // We allow it to try to connect three times before closing the
         // connection and returning with an error.
         websockets[0].onerror();
         websockets[0].onerror();
-        websockets[0].onerror({
-          currentTarget: {
-            close: close
-          }
-        });
+        websockets[0].onerror();
         assert.equal(juju.wsFailureCount, 3, 'failure count not 3');
-        assert.equal(close.callCount(), 1, 'close not called');
+        assert.equal(closeStub.callCount(), 1, 'close not called');
         client.onmessage = function(response) {
           assert.equal(
               response.data,
@@ -1514,18 +1511,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('returns with data if websocket is successful', function(done) {
-        var close = utils.makeStubFunction();
-        websockets[0].onmessage({
-          data: '{"Response":"record set data"}',
-          currentTarget: {
-            close: close
-          }
-        });
+        websockets[0].onmessage({data: '{"Response":"record set data"}'});
         client.onmessage = function(response) {
           assert.deepEqual(
               response,
               { data: '{"Response":"record set data"}'});
-          assert.equal(close.callCount(), 1, 'close not called');
+          assert.equal(closeStub.callCount(), 1, 'close not called');
           done();
         };
       });
