@@ -449,7 +449,6 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelButtonClicked: function(data, context) {
       var topo = context.get('component');
       var box = topo.get('active_service');
-      var origin = topo.get('active_context');
       var container = context.get('container');
       var addRelationNode = container.one('.add-relation');
 

@@ -68,7 +68,7 @@ describe('topology relation module', function() {
   it('fires \'addRelationStart\' event when making a relation', function() {
     var flags = {
       hideServiceMenu: 0,
-      addRelationDragStart: 0,
+      addRelationDragStart: 0
     };
     var topo = {
       fire: function(e) {
