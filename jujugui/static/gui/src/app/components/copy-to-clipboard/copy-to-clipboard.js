@@ -21,6 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('copy-to-clipboard', function() {
 
   juju.components.CopyToClipboard = React.createClass({
+    BLOCK: 'copy-to-clipboard',
+
+    clipboard: null,
+
     /* Define and validate the properites available on this component. */
     propTypes: {
       value: React.PropTypes.string,
@@ -32,14 +36,23 @@ YUI.add('copy-to-clipboard', function() {
       }
     },
 
+    componentDidMount: function() {
+      this.clipboard = new Clipboard('.' + this.BLOCK + '__btn', {
+        target: function(trigger) {
+          return trigger.previousElementSibling;
+        }
+      });
+    },
+
     render: function() {
       return (
-        <div className="copy-to-clipboard">
-          <input className="copy-to-clipboard__input"
+        <div className={this.BLOCK}>
+          <input className={this.BLOCK + '__input'}
+                 ref="copyToClipboardInput"
                  readOnly="true"
                  value={this.props.value}/>
-          <button className="copy-to-clipboard__btn"
-                  data-clipboard-target=".copy-to-clipboard__input">
+          <button className={this.BLOCK + '__btn'}
+                  ref="copyToClipboardBtn">
             <img src="assets/clippy.svg" alt="Copy to clipboard"/>
           </button>
         </div>

@@ -30,8 +30,36 @@ describe('CopyToClipboard', function() {
     YUI().use('copy-to-clipboard', function() { done(); });
   });
 
-  it('renders an entity properly', function() {
+  it('renders a user-provided value properly', function() {
+    var value = 'foobar';
     var output = testUtils.renderIntoDocument(
-        <juju.components.CopyToClipboard />);
+        <juju.components.CopyToClipboard value={value}/>);
+    assert.ok(output.refs.copyToClipboardInput, 'Copy field is missing');
+    assert.ok(output.refs.copyToClipboardBtn, 'Copy button is missing');
+    assert.equal(output.refs.copyToClipboardInput.value, value,
+                 'Value is not set properly for input');
   });
+
+  it('renders the default value properly', function() {
+    var output = testUtils.renderIntoDocument(
+        <juju.components.CopyToClipboard/>);
+    assert.ok(output.refs.copyToClipboardInput, 'Copy field is missing');
+    assert.ok(output.refs.copyToClipboardBtn, 'Copy button is missing');
+    assert.equal(output.refs.copyToClipboardInput.value, '',
+                 'Value is not set properly for input');
+  });
+
+  /*
+  it('successfully copies to the clipboard', function() {
+    var component = testUtils.renderIntoDocument(
+        <juju.components.CopyToClipboard/>);
+    var btn = component.refs.copyToClipboardBtn;
+    var clipboard = component.clipboard;
+    sinon.spy(clipboard, 'listenClick');
+    testUtils.Simulate.click(btn);
+    assert.ok(clipboard.listenClick.calledOnce,
+              'Click listener was not invoked.');
+    clipboard.listenClick.restore();
+  });
+  */
 });
