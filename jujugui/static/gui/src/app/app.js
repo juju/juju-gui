@@ -413,7 +413,7 @@ YUI.add('juju-gui', function(Y) {
       // Create a client side database to store state.
       this.db = new models.Database();
       // Creates and sets up a new instance of the charmstore.
-      this._setupCharmstore(Y.juju.charmstore.APIv4);
+      this._setupCharmstore(window.jujulib.charmstore);
 
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
@@ -1069,10 +1069,13 @@ YUI.add('juju-gui', function(Y) {
           charmstoreURL = jujuConfig.charmstoreURL;
           apiPath = jujuConfig.apiPath;
         }
-        this.set('charmstore', new Charmstore({
-          charmstoreURL: charmstoreURL,
-          apiPath: apiPath
-        }));
+        var bakery = new Y.juju.environments.web.Bakery({
+          webhandler: new Y.juju.environments.web.WebHandler(),
+          interactive: this.get('interactiveLogin'),
+          setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
+          serviceName: 'charmstore'
+        });
+        this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
       }
     },
 
@@ -2107,7 +2110,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'bundle-importer',
     'bundle-import-notifications',
-    'charmstore-api',
     'event-tracker',
     'node',
     'model',

@@ -82,7 +82,7 @@ var module = module;
     var _listEnvironments = function(error, data) {
       if (error === null) {
         data = data.environments;
-      } 
+      }
       callback(error, data);
     }
     this._makeRequest(this.jemUrl + '/env', 'GET', null, _listEnvironments);
@@ -102,7 +102,7 @@ var module = module;
     var _listServers = function(error, data) {
       if (error === null) {
         data = data['state-servers'];
-      } 
+      }
       callback(error, data);
     }
     this._makeRequest(this.jemUrl + '/server', 'GET', null, _listServers);
@@ -151,13 +151,13 @@ var module = module;
     var url = [this.jemUrl, 'env', envOwnerName].join('/');
     this._makeRequest(url, 'POST', body, callback);
   };
-  
+
 
   //TODO: cleanup docs through here!
   function charmstore(url, apiVersion, bakery) {
     this.url = url;
     this.version = apiVersion;
-    
+
     //TODO: where charmstore is used, create bakery with cookie path set, e.g.
     // setCookiePath: this.url + this.version + '/set-auth-cookie'
     this.bakery = bakery;
@@ -421,7 +421,7 @@ var module = module;
       var qs = '';
       var keys = Object.keys(filters);
       if (keys.length > 0) {
-        keys.forEach((key, i) => {
+        keys.forEach(function(key, i) {
           var value = filters[key];
           if (i > 0) {
             qs += '&';
@@ -431,8 +431,8 @@ var module = module;
             qs += '=' + value;
           }
         });
-      } 
-      qs = qs + 
+      }
+      qs = qs +
           '&limit=' + (limit || 30) + '&' +
           'include=charm-metadata&' +
           'include=charm-config&' +
@@ -444,7 +444,6 @@ var module = module;
           path,
           this._transformQueryResults.bind(this, successCallback),
           failureCallback);
-    },
     },
 
     /**
