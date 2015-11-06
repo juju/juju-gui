@@ -2,7 +2,7 @@
   "author": "Juju Developers",
   "name": "juju-gui",
   "description": "Juju GUI build dependencies",
-  "version": "1.8.999",
+  "version": "1.8.1000",
   "homepage": "http://launchpad.net/juju-gui",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "graceful-fs": "1.1.x",
     "handlebars": "^4.0.2",
     "jasmine-core": "^2.3.4",
-    "js-macaroon": "0.0.8",
+    "js-macaroon": "1.0.1",
     "jshint": "2.1.9",
     "karma": "^0.13.9",
     "karma-chai-sinon": "^0.1.5",
