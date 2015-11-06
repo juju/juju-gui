@@ -463,14 +463,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // Remove the service menu.
       topo.fire('hideServiceMenu');
       // Signify that a relation is being drawn.
-      topo.fire('addRelationStart');
-
-      // Create the dragline and position its endpoints properly.
-      context.addRelationDragStart({service: box});
-      context.mousemove.call(
-          container.one('.topology g').getDOMNode(),
-          null, context);
-      context.addRelationStart(box, context, origin);
+      topo.fire('addRelationDragStart', {service: box});
     },
 
     /*
@@ -549,13 +542,12 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     snapOutOfService: function() {
+      this.clearRelationSettings();
+      this.get('component').buildingRelation = true;
       // Do not fire if we aren't looking for a relation endpoint.
       if (!this.get('potential_drop_point_rect')) {
         return;
       }
-
-      this.set('potential_drop_point_service', null);
-      this.set('potential_drop_point_rect', null);
 
       if (this.dragline) {
         this.dragline.attr('class',
@@ -700,6 +692,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * @return {undefined} side effects only.
      */
     clearState: function() {
+      this.clearRelationSettings();
       this.cancelRelationBuild();
       this.set('relationMenuActive', false);
       this.set('relationMenuRelation', undefined);
@@ -725,6 +718,21 @@ YUI.add('juju-topology-relation', function(Y) {
       vis.selectAll('.service').classed('selectable-service', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
+
+    },
+
+    /**
+      Clear sigils and variables used when creating a relation.
+
+      @method clearRelationSettings
+    */
+    clearRelationSettings: function() {
+      var topo = this.get('component');
+      topo.buildlingRelation = false;
+      this.clickAddRelation = null;
+      this.draglineOverService = false;
+      this.set('potential_drop_point_service', undefined);
+      this.set('potential_drop_point_rect', undefined);
     },
 
     /**
@@ -1065,6 +1073,7 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationEnd: function(endpoints, module) {
       // Redisplay all services
       module.cancelRelationBuild();
+      module.clearRelationSettings();
       // Get the vis, and links, build the new relation.
       var topo = module.get('component');
       var env = topo.get('env');

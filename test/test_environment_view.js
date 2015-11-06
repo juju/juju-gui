@@ -1147,16 +1147,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                .size()
                .should.equal(1);
 
-         // Ensure that mousemove was fired and the dragline moved.
-         var x2 = parseInt(view.topo.vis.select('.dragline').attr('x2'), 10);
-         var y2 = parseInt(view.topo.vis.select('.dragline').attr('y2'), 10);
-         container.one('.topology rect:first-child')
-           .simulate('mousemove', { clientX: -1, clientY: -1 });
-         parseInt(view.topo.vis.select('.dragline').attr('x2'), 10)
-           .should.equal(x2 - 1);
-         parseInt(view.topo.vis.select('.dragline').attr('y2'), 10)
-           .should.equal(y2 - 1);
-
          // Start the process of adding a relation.
          module.ambiguousAddRelationCheck(
              d3.select(serviceNode.next().getDOMNode()).datum(),

@@ -655,7 +655,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (box.pending || box.containsPoint(mouse_coords, topo.zoom)) {
+      if (box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       var rect = Y.one(this).one('.service-border');
