@@ -1007,17 +1007,24 @@ YUI.add('environment-change-set', function(Y) {
     */
     lazyExpose: function(args) {
       var db = this.get('db');
+      var originalId = '';
       var parent = [];
       // Search for and add the service to parent.
       Y.Object.each(this.changeSet, function(value, key) {
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
+            originalId = args[0];
             args[0] = value.command.args[1];
           }
         }
       });
-      db.services.getById(args[0]).set('exposed', true);
+      var service = db.services.getById(args[0]);
+      if (service === null) {
+        service = db.services.getById(originalId);
+      }
+      service.set('exposed', true);
+
       return this._createNewRecord('expose', {
         method: '_expose',
         args: args

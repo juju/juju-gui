@@ -282,8 +282,8 @@ describe('Bundle Importer', function() {
       var order = [
         'addCharm-0', 'deploy-1', 'setAnnotations-2',
         'addCharm-3', 'deploy-4', 'setAnnotations-5',
-        'addCharm-6', 'deploy-7', 'deploy-99', 'setAnnotations-8',
-        'addMachines-9', 'addMachines-10',
+        'addCharm-6', 'deploy-7', 'expose-8', 'deploy-99', 'setAnnotations-9',
+        'addMachines-10', 'addMachines-11',
         'addRelation-11', 'addRelation-12',
         'addUnit-13', 'addMachines-16',
         'addUnit-14', 'addMachines-17',
@@ -360,6 +360,11 @@ describe('Bundle Importer', function() {
         assert.equal(
             db.relations.item(1).get('id'),
             'pending-$deploy-4:db$deploy-7:db');
+        // Expose
+        assert.equal(db.services.item(0).get('exposed'), false);
+        assert.equal(db.services.item(1).get('exposed'), false);
+        assert.equal(db.services.item(2).get('exposed'), true);
+        assert.equal(db.services.item(3).get('exposed'), false);
         done();
       });
       bundleImporter.importBundleDryRun(data);

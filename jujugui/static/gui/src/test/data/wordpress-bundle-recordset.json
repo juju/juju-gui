@@ -93,6 +93,16 @@
         "method": "deploy"
     },
     {
+        "id": "expose-8",
+        "method": "expose",
+        "args": [
+            "$deploy-7"
+          ],
+        "requires": [
+            "deploy-7"
+        ]
+    },
+    {
         "args": [
             "cs:precise/mysql-51",
             "mysql-slave",
@@ -116,7 +126,7 @@
         "requires": [
             "deploy-7"
         ],
-        "id": "setAnnotations-8",
+        "id": "setAnnotations-9",
         "method": "setAnnotations"
     },
     {
@@ -127,7 +137,7 @@
             }
         ],
         "requires": [],
-        "id": "addMachines-9",
+        "id": "addMachines-10",
         "method": "addMachines"
     },
     {
@@ -138,7 +148,7 @@
             }
         ],
         "requires": [],
-        "id": "addMachines-10",
+        "id": "addMachines-11",
         "method": "addMachines"
     },
     {
@@ -168,11 +178,11 @@
     {
         "args": [
             "$deploy-1",
-            "$addMachines-10"
+            "$addMachines-11"
         ],
         "requires": [
             "deploy-1",
-            "addMachines-10"
+            "addMachines-11"
         ],
         "id": "addUnit-13",
         "method": "addUnit"
@@ -206,11 +216,11 @@
         "args": [
             {
                 "containerType": "lxc",
-                "parentId": "$addMachines-9"
+                "parentId": "$addMachines-10"
             }
         ],
         "requires": [
-            "addMachines-9"
+            "addMachines-10"
         ],
         "id": "addMachines-17",
         "method": "addMachines"
