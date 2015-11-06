@@ -1,1 +1,0 @@
-{{#if badge}}<a href="{{badge.link}}"><i class="sprite {{badge.sprite}}"></i></a>{{/if}}

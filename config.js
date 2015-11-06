@@ -3,17 +3,18 @@ var config = {
     'port': 8888,
     'public_hostname': 'localhost',
     'template_dirs': [
-      __dirname + '/app/templates/',
-      __dirname + '/app/subapps/browser/templates/'
+      __dirname + '/jujugui/static/gui/src/app/templates/'
+    ],
+    'view_dirs': [
+      __dirname + '/jujugui/static/gui/src/lib/views/',
+      __dirname + '/jujugui/static/gui/src/lib/views/browser'
     ],
     'scss_dirs': [
       // Must have the top level path first.
-      __dirname + '/app/assets/css/',
-      __dirname + '/app/assets/css/browser',
-      __dirname + '/app/assets/css/inspector',
-      __dirname + '/app/assets/css/machine-view'
+      __dirname + '/jujugui/static/gui/src/app/assets/css/',
+      __dirname + '/jujugui/static/gui/src/app/assets/css/machine-view'
     ],
-    'public_dir': __dirname + '/app'
+    'public_dir': __dirname + '/jujugui/static/gui/build/app'
   }
 };
 

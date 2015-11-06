@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
+ * We aggregate and minimize the JavaScript sources in order to improve the
+ * load speed of the application.
+ *
+ * We don't want to use the YUI combo loader feature because we want to be able
+ * to run from only static files and we want to be able to run behind a
+ * firewall without access to the internet.
+ *
+ * The final product will provide three JavaScript files: one for the YUI
+ * dependencies, one for our custom JavaScript code and one for third party
+ * JavaScript like D3.
+ *
+ * Known issues:
+ * (1) If we set "bootstrap=false" in the GlobalConfig object, YUI disables the
+ *     loader object. It means it will not even try to download modules. We
+ *     cannot  do it because the loader also manages the "use" property which
+ *     defines aliases for some of your modules ('juju-views' and
+ *     'juju-controllers').
+ * (2) During development, we've noticed that some of the YUI modules weren't
+ *     included in the list of YUI files (lang/datatype-date-format_en-US,
+ *     parallel, app-transitions-native, gallery-markdown, loader-base). For
+ *     some reason, the loader does not resolve the names of the files for
+ *     these modules. We need to add them manually in this file.
+ */
+
+'use strict';
+
+require('yui').YUI().use(['yui'], function(Y) {
+  var merge = require('../lib/merge-files.js');
+  var syspath = require('path');
+
+  // First we find all of the paths to our custom Javascript in the app
+  // directory.  We need to tell the function to ignore the "assets" directory
+  // and the debug version of the modules file. I need to use
+  // "syspath.join(process.cwd(), ...)" or else I have... "Error: Cannot find
+  // module 'app/config.js'" from node's internal module.js file.
+  // config-[prod|debug].js should also be passed in the ignore list: these
+  // files are included in index.html separately as part of charm
+  // configuration, and should not also be included in the minification.
+  var paths = merge.readdir(syspath.join(process.cwd(), 'app'),
+    [syspath.join(process.cwd(), 'app/assets'),
+     syspath.join(process.cwd(), 'app/modules-debug.js'),
+     syspath.join(process.cwd(), 'app/config-prod.js'),
+     syspath.join(process.cwd(), 'app/config-debug.js')]);
+
+  // templates.js is a generated file. It is not part of the app directory.
+  paths.push(syspath.join(process.cwd(), 'build-shared/juju-ui/templates.js'));
+
+  merge.combineJs(paths, 'build-shared/juju-ui/assets/modules.js');
+
+  // Get the paths to the YUI modules that we use.
+  var reqs = merge.loadRequires(paths);
+
+  // For some reason the loader does not get these requirements.
+  // (Known issue #2)
+  reqs.push('lang/datatype-date-format_en-US');
+  reqs.push('parallel');
+  reqs.push('app-transitions-native');
+  reqs.push('gallery-markdown');
+  reqs.push('gallery-timer');
+  reqs.push('loader-base');
+
+  // Get all of the YUI files and their dependencies
+  var filesToLoad = merge.getYUIFiles(reqs);
+
+  // Merge third-party files to the filesToLoad list
+  filesToLoad.js.push.apply(filesToLoad.js, [
+    'app/assets/javascripts/app-cookies-extension.js',
+    'app/assets/javascripts/bundle-import-notifications.js',
+    'app/assets/javascripts/local-charm-import-helpers.js',
+    'app/assets/javascripts/view-dropdown-extension.js',
+    'app/assets/javascripts/machine-view-panel-extension.js',
+    'app/assets/javascripts/d3-components.js',
+    'app/assets/javascripts/d3.min.js',
+    'app/assets/javascripts/d3.status.js',
+    'app/assets/javascripts/event-tracker.js',
+    'app/assets/javascripts/FileSaver.js',
+    'app/assets/javascripts/gallery-markdown.js',
+    'app/assets/javascripts/gallery-timer.js',
+    'app/assets/javascripts/js-yaml.min.js',
+    'app/assets/javascripts/ns-routing-app-extension.js',
+    'app/assets/javascripts/prettify.js',
+    'app/assets/javascripts/reconnecting-websocket.js',
+    'app/assets/javascripts/zip.js',
+    'app/assets/javascripts/inflate.js',
+    'app/assets/javascripts/deflate.js',
+    'app/assets/javascripts/zip-utils.js',
+    'app/assets/javascripts/yui-patches.js'
+  ]);
+
+  merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
+
+  // We're not including the pre-discovered CSS files so we can only include
+  // the CSS files we want.
+  var cssFiles = [];
+  cssFiles.push('app/assets/stylesheets/normalize.css');
+  cssFiles.push('app/assets/stylesheets/prettify.css');
+  cssFiles.push('app/assets/stylesheets/cssgrids-responsive-min.css');
+
+  // Manually include YUI CSS files so we can just include the core files,
+  // don't get any yui3-skin-sam classes and ignore file we don't need.
+  cssFiles.push(
+    'node_modules/yui/app-transitions-css/app-transitions-css-min.css');
+  cssFiles.push('node_modules/yui/panel/assets/panel-core.css');
+  cssFiles.push('node_modules/yui/widget-base/assets/widget-base-core.css');
+  cssFiles.push('node_modules/yui/widget-stack/assets/widget-stack-core.css');
+
+  merge.combineCSS(cssFiles,
+    'build-shared/juju-ui/assets/combined-css/all-static.css');
+});

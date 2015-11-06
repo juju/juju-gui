@@ -1,0 +1,67 @@
+.entity-header {
+    @extend %shadow-header;
+    margin-bottom: 0;
+    padding-top: 40px;
+    background-color: $white;
+    color: $cool-grey;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.35);
+    overflow: hidden;
+
+    &.dark {
+        color: $white;
+
+        .entity-header__title,
+        a:link,
+        a:visited {
+            color: $white;
+        }
+    }
+
+    .row-hero {
+        overflow: hidden;
+    }
+
+    .inner-wrapper {
+      overflow: visible;
+    }
+
+    ul.bullets {
+        li {
+            &:after {
+                color: $warm-grey;
+                content: "\2022";
+                vertical-align: middle;
+                margin: 0 5px;
+            }
+            &:last-child:after {
+                display: none;
+            }
+        }
+    }
+
+    &__icon {
+        @include create-border-radius(14px);
+        height: 96px;
+        width: 96px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 20px 0 0;
+    }
+
+    &__title {
+        line-height: 96px;
+        display: inline-block;
+        margin-bottom: 0;
+        color: $cool-grey;
+        font-size: 2.8125em;
+        text-transform: capitalize;
+    }
+
+    &__deploys {
+        text-transform: capitalize;
+    }
+
+    &__series {
+        text-transform: capitalize;
+    }
+}

@@ -1,0 +1,11 @@
+#environment-switcher {
+    position: relative;
+    display: inline-block;
+}
+
+.env-switcher {
+
+    &--toggle {
+      cursor: pointer;
+    }
+}
