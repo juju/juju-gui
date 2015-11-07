@@ -588,7 +588,12 @@ YUI.add('juju-topology-relation', function(Y) {
       // hovering over a potential drop-point.
       if (!this.get('potential_drop_point_service') &&
           !this.draglineOverService) {
-        // Create a BoundingBox for our cursor.
+        // Create a BoundingBox for our cursor. If one doesn't exist, events
+        // bubbled improperly, and we didn't have addRelationDragStart called
+        // first; so ensure that is called.
+        if (!this.cursorBox) {
+          this.addRelationDragStart(evt);
+        }
         this.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
 
         // Draw the relation line from the connector point nearest the
