@@ -219,7 +219,8 @@ describe('topology relation module', function() {
     var topo = {
       get: function() {
         return env;
-      }
+      },
+      fire: function() {}
     };
     var fauxView = {
       get: function(name) {
