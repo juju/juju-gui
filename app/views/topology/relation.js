@@ -640,6 +640,7 @@ YUI.add('juju-topology-relation', function(Y) {
     removeRelation: function(relation, view, confirmButton) {
       var topo = this.get('component');
       var env = topo.get('env');
+      topo.fire('clearState');
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
       var relationElement = view.get('container')
