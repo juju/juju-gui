@@ -542,16 +542,13 @@ YUI.add('juju-topology-relation', function(Y) {
 
     snapOutOfService: function() {
       this.clearRelationSettings();
-      this.get('component').buildingRelation = true;
-      // Do not fire if we aren't looking for a relation endpoint.
-      if (!this.get('potential_drop_point_rect')) {
-        return;
-      }
 
       if (this.dragline) {
         this.dragline.attr('class',
             'relation pending-relation dragline dragging');
         this.draglineOverService = false;
+        this.clickAddRelation = true;
+        this.get('component').buildingRelation = true;
       }
     },
 
@@ -584,10 +581,14 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationDrag: function(evt) {
       var d = evt.box;
 
+      if (!d || !this.dragline) {
+        this.clearRelationSettings();
+        return;
+      }
+
       // Rubberband our potential relation line if we're not currently
       // hovering over a potential drop-point.
-      if (!this.get('potential_drop_point_service') &&
-          !this.draglineOverService) {
+      if (!this.draglineOverService) {
         // Create a BoundingBox for our cursor. If one doesn't exist, events
         // bubbled improperly, and we didn't have addRelationDragStart called
         // first; so ensure that is called.
@@ -733,7 +734,7 @@ YUI.add('juju-topology-relation', function(Y) {
     */
     clearRelationSettings: function() {
       var topo = this.get('component');
-      topo.buildlingRelation = false;
+      topo.buildingRelation = false;
       this.clickAddRelation = null;
       this.draglineOverService = false;
       this.set('potential_drop_point_service', undefined);
