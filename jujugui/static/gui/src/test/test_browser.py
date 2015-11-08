@@ -19,8 +19,6 @@ from __future__ import print_function
 import os
 import unittest
 
-from selenium.common import exceptions
-
 import browser
 
 
@@ -75,15 +73,6 @@ class TestAuthentication(browser.TestCase):
         self.handle_login()
         # Check the initial URL.
         self.wait_for_path(path, error='Not in the initial path.')
-
-        # Check the onboarding box if it's available.
-        try:
-            onboarding = self.driver.find_element_by_css_selector(
-                '.onboarding-close')
-            if onboarding:
-                onboarding.click()
-        except exceptions.NoSuchElementException:
-            pass
 
         self.assertTrue(self.is_authenticated(), 'initial state')
         # Logout.

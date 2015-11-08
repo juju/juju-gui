@@ -135,7 +135,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </div>
 
-      <div id="onboarding"></div>
       <div id="charmbrowser-container"></div>
       <div id="deployment-container"></div>
       <div id="env-size-display-container"></div>
