@@ -584,6 +584,10 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationDrag: function(evt) {
       var d = evt.box;
 
+      if (!d) {
+        return;
+      }
+
       // Rubberband our potential relation line if we're not currently
       // hovering over a potential drop-point.
       if (!this.get('potential_drop_point_service') &&
