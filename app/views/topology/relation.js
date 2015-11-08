@@ -542,13 +542,13 @@ YUI.add('juju-topology-relation', function(Y) {
 
     snapOutOfService: function() {
       this.clearRelationSettings();
-      this.get('component').buildingRelation = true;
-      this.clickAddRelation = true;
 
       if (this.dragline) {
         this.dragline.attr('class',
             'relation pending-relation dragline dragging');
         this.draglineOverService = false;
+        this.clickAddRelation = true;
+        this.get('component').buildingRelation = true;
       }
     },
 
