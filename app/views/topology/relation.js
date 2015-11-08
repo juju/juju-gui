@@ -543,10 +543,7 @@ YUI.add('juju-topology-relation', function(Y) {
     snapOutOfService: function() {
       this.clearRelationSettings();
       this.get('component').buildingRelation = true;
-      // Do not fire if we aren't looking for a relation endpoint.
-      if (!this.get('potential_drop_point_rect')) {
-        return;
-      }
+      this.clickAddRelation = true;
 
       if (this.dragline) {
         this.dragline.attr('class',
@@ -591,8 +588,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Rubberband our potential relation line if we're not currently
       // hovering over a potential drop-point.
-      if (!this.get('potential_drop_point_service') &&
-          !this.draglineOverService) {
+      if (!this.draglineOverService) {
         // Create a BoundingBox for our cursor. If one doesn't exist, events
         // bubbled improperly, and we didn't have addRelationDragStart called
         // first; so ensure that is called.
