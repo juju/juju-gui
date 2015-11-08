@@ -132,12 +132,22 @@ describe('Ghost Deployer Extension', function() {
 
   it('increments the name for duplicate ghost services', function() {
     var charm = makeCharm();
+    var mysql = {
+      id: 'cs:trusty/mysql',
+      name: 'mysql',
+      package_name: 'mysql',
+      is_subordinate: false
+    };
     ghostDeployer.db.services = new Y.juju.models.ServiceList();
-    ghostDeployer.db.services.ghostService(charm);
-    ghostDeployer.db.services.ghostService(charm);
     var services = ghostDeployer.db.services;
+    services.ghostService(charm);
+    services.ghostService(charm);
+    services.ghostService(new Y.Model(mysql));
+    services.ghostService(new Y.Model(mysql));
     assert.equal(services.item(0).get('name'), 'django');
     assert.equal(services.item(1).get('name'), 'django-2');
+    assert.equal(services.item(2).get('name'), 'mysql');
+    assert.equal(services.item(3).get('name'), 'mysql-2');
   });
 
   it('can create a ghost unit', function() {
