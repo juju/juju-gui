@@ -584,7 +584,8 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationDrag: function(evt) {
       var d = evt.box;
 
-      if (!d) {
+      if (!d || !this.dragline) {
+        this.clearRelationSettings();
         return;
       }
 
@@ -737,7 +738,7 @@ YUI.add('juju-topology-relation', function(Y) {
     */
     clearRelationSettings: function() {
       var topo = this.get('component');
-      topo.buildlingRelation = false;
+      topo.buildingRelation = false;
       this.clickAddRelation = null;
       this.draglineOverService = false;
       this.set('potential_drop_point_service', undefined);

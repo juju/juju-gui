@@ -1126,8 +1126,12 @@ YUI.add('juju-topology-service', function(Y) {
       var selection = d3.select(this);
 
       if (topo.buildingRelation) {
-        topo.fire('addRelationDrag', { box: box });
-        return;
+        if (box) {
+          topo.fire('addRelationDrag', { box: box });
+          return;
+        } else {
+          topo.buildingRelation = false;
+        }
       }
       if (self.longClickTimer) {
         self.longClickTimer.cancel();
