@@ -155,7 +155,7 @@ YUI.add('service-overview', function() {
       actions.push({
         title: 'Expose',
         value: service.get('exposed') ? 'On' : 'Off',
-        icon: 'expose',
+        icon: 'exposed_16',
         action: this._navigate,
         state: {
           sectionA: {

@@ -285,7 +285,7 @@ describe('ServiceOverview', function() {
         key="Expose"
         title="Expose"
         value="On"
-        icon="expose"
+        icon="exposed_16"
         action={output.props.children[0].props.children[3].props.action}
         valueType={undefined}
         linkAction={undefined}
