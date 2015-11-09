@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 1.4.6:
     - (FIX) Fix relationline following.
 - 1.4.5:
