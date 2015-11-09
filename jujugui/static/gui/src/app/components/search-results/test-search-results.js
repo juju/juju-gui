@@ -59,6 +59,33 @@ describe('SearchResults', function() {
         </div>);
     });
 
+    it('can display a message if there are no results', function() {
+      var charmstoreSearch = sinon.stub().callsArgWith(1, []);
+      var shallowRenderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            query="nothing here"
+            charmstoreSearch={charmstoreSearch} />, true);
+      shallowRenderer.getMountedInstance().componentDidMount();
+      var output = shallowRenderer.getRenderOutput();
+      assert.deepEqual(output,
+        <div className="search-results search-results--floating">
+          <div className="twelve-col no-results-container last-col">
+            <h1 className="row-title">
+              Your search for <strong>nothing here</strong>
+              {' '}
+              returned 0 results
+            </h1>
+            <p>
+              Try a more specific or different query, try other keywords or
+              learn how to
+              <a href="http://jujucharms.com/docs/authors-charm-writing">
+                create your own solution
+              </a>.
+            </p>
+          </div>
+        </div>);
+    });
+
     it('loads search results', function() {
       var query = 'spinach';
       var result = {

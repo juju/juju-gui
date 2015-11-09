@@ -119,6 +119,7 @@ YUI.add('search-results', function(Y) {
       var results = rawResults.map(function(model) {
         return model.toEntity();
       }, this);
+      var activeComponent;
       results = this.collapseSeries(results);
       // Split the results into promulgated and normal.
       var promulgatedResults = [],
@@ -132,10 +133,14 @@ YUI.add('search-results', function(Y) {
           normalResults.push(obj);
         }
       });
+      if (results.length === 0) {
+        activeComponent = 'no-results';
+      } else {
+        activeComponent = 'search-results';
+      }
       var data = {
         standalone: false,
         text: this.props.query,
-        hasResults: results.length > 0,
         solutionsCount: results.length,
         normalResultsCount: normalResults.length,
         normalResults: normalResults,
@@ -145,7 +150,7 @@ YUI.add('search-results', function(Y) {
       // These need to be set separately, seemingly due to a React quirk.
       this.setState({waitingForSearch: false});
       this.setState({data: data});
-      this._changeActiveComponent('search-results');
+      this._changeActiveComponent(activeComponent);
     },
 
     /**
@@ -241,9 +246,33 @@ YUI.add('search-results', function(Y) {
         case 'search-results':
           var html = this.template(this.state.data);
           state.activeChild = {
-            component: <div onClick={this._handleTemplateClicks}
-              dangerouslySetInnerHTML={{__html: html}}>
-            </div>
+            component:
+              <div className="row no-padding-top">
+                <div className="inner-wrapper list-block">
+                  <div onClick={this._handleTemplateClicks}
+                    dangerouslySetInnerHTML={{__html: html}}>
+                  </div>
+                </div>
+              </div>
+          };
+          break;
+        case 'no-results':
+          state.activeChild = {
+            component:
+              <div className="twelve-col no-results-container last-col">
+                <h1 className="row-title">
+                  Your search for <strong>{this.state.data.text}</strong>
+                  {' '}
+                  returned 0 results
+                </h1>
+                <p>
+                  Try a more specific or different query, try other keywords or
+                  learn how to
+                  <a href="http://jujucharms.com/docs/authors-charm-writing">
+                    create your own solution
+                  </a>.
+                </p>
+              </div>
           };
           break;
       }
