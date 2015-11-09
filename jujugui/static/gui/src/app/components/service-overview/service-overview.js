@@ -152,22 +152,22 @@ YUI.add('service-overview', function() {
           }
         }
       });
-      if (!service.get('pending')) {
-        actions.push({
-          title: 'Expose',
-          value: service.get('exposed') ? 'On' : 'Off',
-          icon: 'expose',
-          action: this._navigate,
-          state: {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
-                id: serviceId,
-                activeComponent: 'expose'
-              }
+      actions.push({
+        title: 'Expose',
+        value: service.get('exposed') ? 'On' : 'Off',
+        icon: 'expose',
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: serviceId,
+              activeComponent: 'expose'
             }
           }
-        });
+        }
+      });
+      if (!service.get('pending')) {
         var charmId = service.get('charm');
         actions.push({
           title: 'Change version',
