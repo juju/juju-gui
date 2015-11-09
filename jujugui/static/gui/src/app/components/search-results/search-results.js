@@ -166,11 +166,11 @@ YUI.add('search-results', function(Y) {
       @param {String} query The text to search for.
       @param {String} tags The tags to limit the search by.
     */
-    searchRequest: function(query, tags) {
+    searchRequest: function(query, tags, type) {
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
       this.searchXhr = this.props.charmstoreSearch(
-        {text: query, tags: tags},
+        {text: query, tags: tags, type: type},
         this.searchSuccess,
         this.searchFailure,
         150
@@ -200,7 +200,7 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
-      this.searchRequest(this.props.query, this.props.tags);
+      this.searchRequest(this.props.query, this.props.tags, this.props.type);
     },
 
     componentWillUnmount: function() {
@@ -209,7 +209,7 @@ YUI.add('search-results', function(Y) {
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(nextProps.query, this.props.tags);
+        this.searchRequest(nextProps.query, this.props.tags, this.props.type);
       }
     },
 
