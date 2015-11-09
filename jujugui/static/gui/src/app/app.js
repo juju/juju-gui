@@ -1997,7 +1997,7 @@ YUI.add('juju-gui', function(Y) {
         throughout the application.
 
         @attribute charmstore
-        @type {Y.juju.charmstore.APIv4}
+        @type {jujulib.charmstore}
         @default undefined
       */
       charmstore: {},
