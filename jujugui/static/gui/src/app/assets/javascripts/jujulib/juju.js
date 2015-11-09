@@ -153,11 +153,31 @@ var module = module;
   };
 
 
-  //TODO: cleanup docs through here!
+  /**
+   * Charmstore object for jujulib.
+   *
+   * Provides access to the charmstore API.
+   */
+
+  /**
+   * Initializer
+   *
+   * @function charmstore
+   * @param url {String} The URL, including scheme and port, of the charmstore
+   * @param apiVersion {String} The api version, e.g. v4
+   * @param bakery {Object} A bakery object for communicating with the charmstore instance.
+   * @param processEnity {function} A function to massage entity data into the
+   *    desired form (e.g. turning it into juju gui model objects.
+   * @returns {Object} A client object for making charmstore API calls.
+   */
   function charmstore(url, apiVersion, bakery, processEntity) {
     this.url = url;
     this.version = apiVersion;
     this.bakery = bakery;
+
+    // XXX jcsackett 2015-11-09 Methods that return entity data should
+    // accept an additional modifier function as a callback, but for now
+    // we've made it an attribute of the charmstore.
     this.processEntity = processEntity;
   }
 
@@ -219,7 +239,6 @@ var module = module;
       var models = [];
       data.forEach(function(entity) {
         var entityData = this._processEntityQueryData(entity);
-        // TODO: this needs XXX about better pass in method.
         if (this.processEntity !== undefined) {
           entityData = this.processEntity(entityData);
         }
@@ -232,7 +251,7 @@ var module = module;
       Recursively converts all keys to lowercase when assigning them to the
       supplied host object.
 
-      @method lowerCaseKeys
+      @method _lowerCaseKeys
       @param {Object} obj The source object with the uppercase keys.
       @param {Object} host The host object in which the keys will be assigned.
       @param {Integer} exclude Exclude a particular level from lowercasing when

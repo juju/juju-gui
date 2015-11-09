@@ -16,7 +16,6 @@ describe('jujulib charmstore', function() {
     charmstore = null;
   });
 
-
   it('can be instantiated with the proper config values', function() {
     assert.equal(charmstore.url, 'local/');
     assert.equal(charmstore.version, 'v4');
