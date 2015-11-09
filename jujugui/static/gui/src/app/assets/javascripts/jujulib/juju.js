@@ -154,13 +154,14 @@ var module = module;
 
 
   //TODO: cleanup docs through here!
-  function charmstore(url, apiVersion, bakery) {
+  function charmstore(url, apiVersion, bakery, processEntity) {
     this.url = url;
     this.version = apiVersion;
 
     //TODO: where charmstore is used, create bakery with cookie path set, e.g.
     // setCookiePath: this.url + this.version + '/set-auth-cookie'
     this.bakery = bakery;
+    this.processEntity = processEntity;
   }
 
   charmstore.prototype = {
@@ -221,7 +222,7 @@ var module = module;
       var models = [];
       data.forEach(function(entity) {
         var entityData = this._processEntityQueryData(entity);
-        // TODO this needs to accept a processing step
+        entityData = this.processEntity(entityData);
         models.push(entityData);
       }, this);
       successCallback(models);
@@ -534,7 +535,7 @@ var module = module;
    * The jujulib object, returned by this library.
    */
   var jujulib = {
-    charmstore: function() {},
+    charmstore: charmstore,
     environment: environment,
     identity: function() {}
   };

@@ -1075,7 +1075,16 @@ YUI.add('juju-gui', function(Y) {
           setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
           serviceName: 'charmstore'
         });
-        this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
+        var processEntity = function(entity) {
+          if (entity.entityType === 'charm') {
+            return new Y.juju.models.Charm(entity);
+          } else {
+            return new Y.juju.models.Bundle(entity);
+          }
+        };
+        this.set(
+            'charmstore',
+            new Charmstore(charmstoreURL, apiPath, bakery, processEntity));
       }
     },
 
@@ -2058,20 +2067,21 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'changes-utils',
-    'juju-charm-models',
-    'ns-routing-app-extension',
-    'juju-models',
     'juju-app-state',
-    'juju-notification-controller',
+    'juju-charm-models',
+    'juju-bundle-models',
     'juju-endpoints-controller',
-    'juju-env-fakebackend',
-    'juju-fakebackend-simulator',
+    'juju-env-bakery',
     'juju-env-base',
+    'juju-env-fakebackend',
     'juju-env-go',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
-    'juju-charm-models',
+    'juju-fakebackend-simulator',
+    'juju-models',
+    'juju-notification-controller',
+    'ns-routing-app-extension',
     // React components
     'charmbrowser-component',
     'deployment-component',
