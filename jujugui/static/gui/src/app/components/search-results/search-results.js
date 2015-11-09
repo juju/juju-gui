@@ -233,6 +233,8 @@ YUI.add('search-results', function(Y) {
       var state = {
         activeComponent: nextProps.activeComponent || 'loading'
       };
+      var currentType = nextProps.type !== undefined ?
+          nextProps.type : this.props.type;
       switch (state.activeComponent) {
         case 'loading':
           state.activeChild = {
@@ -251,13 +253,9 @@ YUI.add('search-results', function(Y) {
                 <div className="inner-wrapper list-block">
                   {this._generateResultsMessage(data.text, data.solutionsCount)}
                   <div className="list-block__filters">
-                    <nav className="six-col list-block__type">
-                      <ul>
-                        <li className="selected" tabIndex="0" role="button">All</li>
-                        <li className="selected" tabIndex="0" role="button">Charms</li>
-                        <li className="selected" tabIndex="0" role="button">Bundles</li>
-                      </ul>
-                    </nav>
+                    <juju.components.SearchResultsTypeFilter
+                      changeState={this.props.changeState}
+                      currentType={currentType} />
                     <div className="six-col last-col">
                       <div className="list-block__filters--selects">
                         <form>
@@ -338,7 +336,7 @@ YUI.add('search-results', function(Y) {
       if (text) {
         return (
           <div className="twelve-col list-block__title no-margin-bottom">
-            Your search for &lsquo;{text}&rsquo; returned {solutionsCount}
+            Your search for &lsquo;{text}&rsquo; returned {solutionsCount}{' '}
             results.
           </div>
         );
@@ -403,5 +401,6 @@ YUI.add('search-results', function(Y) {
   });
 
 }, '0.1.0', {requires: [
-  'loading-spinner'
+  'loading-spinner',
+  'search-results-type-filter'
 ]});
