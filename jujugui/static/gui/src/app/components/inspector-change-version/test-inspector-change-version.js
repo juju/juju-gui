@@ -90,7 +90,7 @@ describe('InspectorChangeVersion', function() {
         </div>
         <ul className="inspector-change-version__versions">
           <li className="inspector-change-version__none">
-            No other versions.
+            No other versions found.
           </li>
         </ul>
       </div>);
@@ -142,12 +142,12 @@ describe('InspectorChangeVersion', function() {
       </div>);
   });
 
-  it('can display a message if there is a failure', function() {
+  it('can display a message if there is a get versions failure', function() {
     var changeState = sinon.stub();
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(2);
+    var getAvailableVersions = sinon.stub().callsArg(2);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
           changeState={changeState}
@@ -170,7 +170,7 @@ describe('InspectorChangeVersion', function() {
         </div>
         <ul className="inspector-change-version__versions">
           <li className="inspector-change-version__none">
-            No other versions.
+            No other versions found.
           </li>
         </ul>
       </div>);
@@ -263,6 +263,62 @@ describe('InspectorChangeVersion', function() {
     output.props.children[1].props.children[0].props.buttonAction();
     assert.equal(serviceSet.callCount, 1);
     assert.equal(serviceSet.args[0][1], 'cs:django-4');
+  });
+
+  it('adds a notification if it can not set a charm', function() {
+    var addNotification = sinon.stub();
+    var changeState = sinon.stub();
+    var serviceSet = sinon.stub();
+    var service = {
+      get: sinon.stub().returns('django'),
+      set: serviceSet
+    };
+    var setCharm = sinon.stub().callsArgWith(3, {err: 'error'});
+    var getCharm = sinon.stub().callsArgWith(1);
+    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+      'cs:django-4', 'cs:django-5', 'cs:django-6'
+    ]);
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersion
+          changeState={changeState}
+          charmId="cs:django-5"
+          service={service}
+          addNotification={addNotification}
+          setCharm={setCharm}
+          getCharm={getCharm}
+          getAvailableVersions={getAvailableVersions} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[1].props.children[0].props.buttonAction();
+    assert.equal(addNotification.callCount, 1);
+  });
+
+  it('adds a notification if it can not get a charm', function() {
+    var addNotification = sinon.stub();
+    var changeState = sinon.stub();
+    var serviceSet = sinon.stub();
+    var service = {
+      get: sinon.stub().returns('django'),
+      set: serviceSet
+    };
+    var setCharm = sinon.stub().callsArgWith(3, {});
+    var getCharm = sinon.stub().callsArgWith(1, {err: 'error'});
+    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+      'cs:django-4', 'cs:django-5', 'cs:django-6'
+    ]);
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersion
+          changeState={changeState}
+          charmId="cs:django-5"
+          service={service}
+          addNotification={addNotification}
+          setCharm={setCharm}
+          getCharm={getCharm}
+          getAvailableVersions={getAvailableVersions} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[1].props.children[0].props.buttonAction();
+    assert.equal(addNotification.callCount, 1);
   });
 
   it('will abort the request when unmounting', function() {

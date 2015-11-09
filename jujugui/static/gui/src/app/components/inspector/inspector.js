@@ -228,6 +228,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorChangeVersion
                 changeState={this.props.changeState}
+                addNotification={this.props.addNotification}
                 charmId={service.get('charm')}
                 service={service}
                 setCharm={this.props.setCharm}

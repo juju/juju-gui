@@ -86,7 +86,7 @@ YUI.add('inspector-change-version', function() {
     */
     _setCharmCallback: function(charmId, data) {
       if (data.err) {
-        // XXX: Handle errors for upgrading the service version.
+        this._addFailureNotification(charmId, data.err);
         return;
       }
       this.props.getCharm(charmId, this._getCharmCallback.bind(this, charmId));
@@ -99,10 +99,25 @@ YUI.add('inspector-change-version', function() {
     */
     _getCharmCallback: function(charmId, data) {
       if (data.err) {
-        // XXX: Handle errors for upgrading the service version.
+        this._addFailureNotification(charmId, data.err);
         return;
       }
       this.props.service.set('charm', charmId);
+    },
+
+    /**
+      Add a notification for an upgrade failure.
+
+      @method _addFailureNotification
+      @param {String} charmId The charm id.
+      @param {Object} error The upgrade error.
+    */
+    _addFailureNotification: function(charmId, error) {
+      this.props.addNotification({
+        title: 'Charm upgrade failed',
+        message: 'The charm ' + charmId + ' failed to upgrade:' + error,
+        level: 'error'
+      });
     },
 
     /**
