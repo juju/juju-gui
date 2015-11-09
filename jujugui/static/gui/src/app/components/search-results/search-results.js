@@ -171,10 +171,16 @@ YUI.add('search-results', function(Y) {
       @param {String} tags The tags to limit the search by.
     */
     searchRequest: function(query, tags, type) {
+      var filters = {text: query, tags: tags};
+      // Don't add the type property unless required otherwise the API will
+      // filter by charm.
+      if (type) {
+        filters.type = type;
+      }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
       this.searchXhr = this.props.charmstoreSearch(
-        {text: query, tags: tags, type: type},
+        filters,
         this.searchSuccess,
         this.searchFailure,
         150
@@ -194,7 +200,7 @@ YUI.add('search-results', function(Y) {
       }
       var nextQuery = JSON.stringify(nextProps.query),
           currentQuery = JSON.stringify(this.state.data.text);
-      return nextQuery !== currentQuery;
+      return nextQuery !== currentQuery || nextProps.type !== this.props.type;
     },
 
     getInitialState: function() {
@@ -213,7 +219,7 @@ YUI.add('search-results', function(Y) {
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(nextProps.query, this.props.tags, this.props.type);
+        this.searchRequest(nextProps.query, nextProps.tags, nextProps.type);
       }
     },
 
