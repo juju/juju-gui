@@ -20,7 +20,8 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.4.6:
+    - (FIX) Fix relationline following.
 - 1.4.5:
     - (FIX) Refer to charm series as "OS series" rather than "Ubuntu series".
 - 1.4.4:
@@ -58,7 +59,7 @@
       Inspector cleanup - fixed-width health bar, and change version button
       hidden for uncommitted services.
     - Reference jujucharms.com instead of juju.ubuntu.com throughout.
-    - (FIX) Restore v3 bundle functionality for drag-and-drop. 
+    - (FIX) Restore v3 bundle functionality for drag-and-drop.
     - (FIX) Config options were being discarded in uncommitted bundles.
     - >
       (FIX) Fall back to most recent charm when no revno is specified in a
