@@ -339,6 +339,21 @@ YUI.add('bundle-importer', function(Y) {
     },
 
     /**
+      Executes the expose method call.
+
+      @method _execute_expose
+      @param {Object} record The expose record to execute.
+      @param {Function} next The method to call to trigger the executor to
+        move on to the next record.
+    */
+    _execute_expose: function(record, next) {
+      // Grab the actual record Id
+      var serviceId = record[record.args[0].replace(/^\$/, '')].get('id');
+      this.env.expose(serviceId, null, {});
+      next();
+    },
+
+    /**
       Executes the addMachines method call.
 
       @method _execute_addMachines
