@@ -16,6 +16,7 @@ g.service {
       &.show-count {
          fill: rgba(0,0,0,1);
       }
+
       &.hide-count {
          fill: rgba(0,0,0,0);
       }
@@ -57,6 +58,7 @@ g.service {
       &.active {
          visibility: visible;
       }
+
       image {
          cursor: pointer;
       }
