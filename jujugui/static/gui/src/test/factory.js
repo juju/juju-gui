@@ -46,7 +46,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
 
     makeFakeCharmstore: function() {
       var charms = this._fetchCharmData();
-      var fakeCharmstore = new Y.juju.charmstore.APIv4({
+      var fakeCharmstore = new window.jujulib.charmstore({
         charmstoreURL: 'local/',
         apiPath: 'v4'
       });

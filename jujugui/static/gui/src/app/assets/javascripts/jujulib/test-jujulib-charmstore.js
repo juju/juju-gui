@@ -1,71 +1,33 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2015 Canonical Ltd. */
 
 'use strict';
 
-describe('Charmstore API v4', function() {
-  var APIv4, charmstore, utils, Y;
-
-  before(function(done) {
-    var modules = ['charmstore-api', 'juju-tests-utils'];
-    Y = YUI(GlobalConfig).use(modules, function(Y) {
-      APIv4 = Y.juju.charmstore.APIv4;
-      utils = Y['juju-tests'].utils;
-      done();
-    });
-  });
+describe('jujulib charmstore', function() {
+  var charmstore;
 
   beforeEach(function() {
-    charmstore = new APIv4({
-      env: {
-        getLocalCharmFileUrl: utils.makeStubFunction('localcharmpath')
-      },
-      charmstoreURL: 'local/',
-      apiPath: 'v4'
-    });
+    var bakery = {
+      sendGetRequest: sinon.stub()
+    }
+    charmstore = new window.jujulib.charmstore('local/', 'v4', bakery);
   });
 
   afterEach(function() {
     charmstore = null;
   });
 
+
   it('can be instantiated with the proper config values', function() {
-    assert.equal(charmstore.charmstoreURL, 'local/');
-    assert.equal(charmstore.apiPath, 'v4');
-    assert.equal(
-        charmstore.bakery instanceof Y.juju.environments.web.Bakery,
-        true);
+    assert.equal(charmstore.url, 'local/');
+    assert.equal(charmstore.version, 'v4');
   });
 
   describe('_makeRequest', function() {
 
     it('calls the requestHandler to make a GET request', function() {
-      var getRequest = utils.makeStubMethod(
-          charmstore.bakery, 'sendGetRequest');
-      this._cleanups.concat([
-        getRequest.reset
-      ]);
       charmstore._makeRequest('path', 'success', 'failure');
-      assert.equal(getRequest.callCount(), 1);
-      var getArgs = getRequest.lastArguments();
-      assert.equal(getArgs[0], 'path');
-      assert.strictEqual(getArgs[1], 'success');
-      assert.strictEqual(getArgs[2], 'failure');
+      assert.equal(charmstore.bakery.sendGetRequest.callCount, 1);
+      charmstore.bakery.sendGetRequest.calledWith('path', 'success', 'failure');
     });
   });
 
@@ -97,31 +59,36 @@ describe('Charmstore API v4', function() {
     var response = { target: { responseText: responseText } };
 
     beforeEach(function() {
-      success = utils.makeStubFunction();
+      success = sinon.stub();
     });
 
     afterEach(function() {
-      assert.equal(success.callCount(), 1);
+      assert.equal(success.callCount, 1);
     });
 
     it('calls to process query response data for each record', function() {
-      var process = utils.makeStubMethod(
-          charmstore, '_processEntityQueryData', {});
-      this._cleanups.push(process.reset);
+      var process = sinon.stub(charmstore, '_processEntityQueryData');
       charmstore._transformQueryResults(success, response);
-      assert.equal(process.callCount(), 4);
+      assert.equal(process.callCount, 4);
     });
 
-    it('can generate a charm and bundle model', function() {
+    it('can use a processing function to massage data', function() {
       charmstore._processEntityQueryData = function(entity) {
         return entity;
       };
+      charmstore.processEntity = function (data) {
+        if (data.entityType === 'charm') {
+          return "It's a charm.";  
+        } else {
+          return "It's a bundle."; 
+        }
+      }
       charmstore._transformQueryResults(success, response);
-      var models = success.lastArguments()[0];
-      assert.equal(models[0] instanceof Y.juju.models.Charm, true);
-      assert.equal(models[1] instanceof Y.juju.models.Charm, true);
-      assert.equal(models[2] instanceof Y.juju.models.Charm, true);
-      assert.equal(models[3] instanceof Y.juju.models.Bundle, true);
+      var models = success.lastCall.args[0];
+      assert.equal(models[0], "It's a charm.");
+      assert.equal(models[1], "It's a charm.");
+      assert.equal(models[2], "It's a charm.");
+      assert.equal(models[3], "It's a bundle.");
     });
   });
 
@@ -282,18 +249,14 @@ describe('Charmstore API v4', function() {
     var generatePath, makeRequest;
 
     beforeEach(function() {
-      generatePath = utils.makeStubMethod(charmstore, '_generatePath', 'path');
-      makeRequest = utils.makeStubMethod(charmstore, '_makeRequest');
-      this._cleanups.concat([
-        generatePath.reset,
-        makeRequest.reset
-      ]);
+      generatePath = sinon.stub(charmstore, '_generatePath').returns('path');
+      makeRequest = sinon.stub(charmstore, '_makeRequest');
     });
 
-    it('accepts custom filters & calls to generate an apiv4 path', function() {
+    it('accepts custom filters & calls to generate an api path', function() {
       charmstore.search({ text: 'foo' });
-      assert.equal(generatePath.callCount(), 1, 'generatePath not called');
-      assert.deepEqual(generatePath.lastArguments(), [
+      assert.equal(generatePath.callCount, 1, 'generatePath not called');
+      assert.deepEqual(generatePath.lastCall.args, [
         'search',
         'text=foo&' +
             'limit=30&' +
@@ -304,10 +267,10 @@ describe('Charmstore API v4', function() {
             'include=stats']);
     });
 
-    it('accepts a custom limit when generating an apiv4 path', function() {
+    it('accepts a custom limit when generating an api path', function() {
       charmstore.search({ text: 'foo' }, null, null, 99);
-      assert.equal(generatePath.callCount(), 1, 'generatePath not called');
-      assert.deepEqual(generatePath.lastArguments(), [
+      assert.equal(generatePath.callCount, 1, 'generatePath not called');
+      assert.deepEqual(generatePath.lastCall.args, [
         'search',
         'text=foo&' +
             'limit=99&' +
@@ -318,19 +281,17 @@ describe('Charmstore API v4', function() {
             'include=stats']);
     });
 
-    it('calls to make a valid charmstore v4 request', function() {
-      var transform = utils.makeStubMethod(
-          charmstore, '_transformQueryResults');
-      this._cleanups.push(transform.reset);
+    it('calls to make a valid charmstore request', function() {
+      var transform = sinon.stub(charmstore, '_transformQueryResults');
       charmstore.search({}, 'success', 'failure');
-      assert.equal(makeRequest.callCount(), 1, 'makeRequest not called');
-      var makeRequestArgs = makeRequest.lastArguments();
+      assert.equal(makeRequest.callCount, 1, 'makeRequest not called');
+      var makeRequestArgs = makeRequest.lastCall.args;
       assert.equal(makeRequestArgs[0], 'path');
       assert.equal(typeof makeRequestArgs[1], 'function');
       assert.equal(makeRequestArgs[2], 'failure');
       // Call the success handler to make sure it's passed the success handler.
       makeRequestArgs[1]();
-      assert.equal(transform.lastArguments()[0], 'success');
+      assert.equal(transform.lastCall.args[0], 'success');
     });
   });
 
@@ -345,35 +306,35 @@ describe('Charmstore API v4', function() {
     var success, failure;
 
     beforeEach(function() {
-      success = utils.makeStubFunction();
-      failure = utils.makeStubFunction();
+      success = sinon.stub();
+      failure = sinon.stub();
     });
 
     it('calls to get the bundle entity', function() {
-      var getEntity = utils.makeStubMethod(charmstore, 'getEntity');
-      var response = utils.makeStubMethod(charmstore, '_getBundleYAMLResponse');
+      var getEntity = sinon.stub(charmstore, 'getEntity');
+      var response = sinon.stub(charmstore, '_getBundleYAMLResponse');
       var bundleId = 'bundle/elasticsearch';
       charmstore.getBundleYAML(bundleId, success, failure);
-      var getEntityArgs = getEntity.lastArguments();
-      assert.equal(getEntity.callCount(), 1);
+      var getEntityArgs = getEntity.lastCall.args;
+      assert.equal(getEntity.callCount, 1);
       assert.equal(getEntityArgs[0], bundleId);
       getEntityArgs[1](); // Should be a bound copy of _getBundleYAMLResponse.
       // We need to make sure it's bound with the proper callbacks.
-      var responseArgs = response.lastArguments();
+      var responseArgs = response.lastCall.args;
       responseArgs[0](); // Should be the success callback.
-      assert.equal(success.callCount(), 1);
+      assert.equal(success.callCount, 1);
       responseArgs[1](); // Should be the failure callback.
-      assert.equal(failure.callCount(), 1);
+      assert.equal(failure.callCount, 1);
       getEntityArgs[2](); // Should be the failure callback.
-      assert.equal(failure.callCount(), 2);
+      assert.equal(failure.callCount, 2);
     });
 
     it('_getBundleYAMLResponse fetches yaml file contents', function() {
-      var getStub = utils.makeStubFunction('deployer file');
-      var makeRequest = utils.makeStubMethod(charmstore, '_makeRequest');
+      var getStub = sinon.stub().returns('deployer file');
+      var makeRequest = sinon.stub(charmstore, '_makeRequest');
       charmstore._getBundleYAMLResponse(success, failure, [{ get: getStub }]);
-      assert.equal(getStub.callCount(), 1);
-      var requestArgs = makeRequest.lastArguments();
+      assert.equal(getStub.callCount, 1);
+      var requestArgs = makeRequest.lastCall.args;
       assert.equal(requestArgs[0], 'deployer file');
       // Should be the anon success callback handler.
       requestArgs[1]({
@@ -381,10 +342,10 @@ describe('Charmstore API v4', function() {
           responseText: 'yaml'
         }
       });
-      assert.equal(success.callCount(), 1);
-      assert.equal(success.lastArguments()[0], 'yaml');
+      assert.equal(success.callCount, 1);
+      assert.equal(success.lastCall.args[0], 'yaml');
       requestArgs[2](); // Should be the failure handler.
-      assert.equal(failure.callCount(), 1);
+      assert.equal(failure.callCount, 1);
     });
   });
 
@@ -392,13 +353,12 @@ describe('Charmstore API v4', function() {
     var request;
 
     beforeEach(function() {
-      request = utils.makeStubMethod(charmstore, '_makeRequest');
-      this._cleanups.push(request.reset);
+      request = sinon.stub(charmstore, '_makeRequest');
     });
 
     it('makes a request to fetch the ids', function() {
       charmstore.getAvailableVersions('cs:precise/ghost-5');
-      assert.equal(request.callCount(), 1);
+      assert.equal(request.callCount, 1);
     });
 
     it('calls the success handler with a list of charm ids', function(done) {
@@ -411,7 +371,7 @@ describe('Charmstore API v4', function() {
         assert.fail('Failure callback should not be called');
       };
       charmstore.getAvailableVersions('cs:precise/ghost-5', success, failure);
-      var requestArgs = request.lastArguments();
+      var requestArgs = request.lastCall.args;
       // The path should not have cs: in it.
       assert.equal(requestArgs[0], 'local/v4/precise/ghost-5/expand-id');
       // Call the makeRequest success handler simulating a response object;
@@ -429,7 +389,7 @@ describe('Charmstore API v4', function() {
       };
       charmstore.getAvailableVersions('cs:precise/ghost-5', success, failure);
       // Call the makeRequest success handler simulating a response object;
-      request.lastArguments()[1](
+      request.lastCall.args[1](
           {currentTarget: { responseText: '[notvalidjson]'}});
     });
   });
