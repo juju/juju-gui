@@ -139,7 +139,6 @@ YUI.add('search-results', function(Y) {
         activeComponent = 'search-results';
       }
       var data = {
-        standalone: false,
         text: this.props.query,
         solutionsCount: results.length,
         normalResultsCount: normalResults.length,
@@ -244,13 +243,49 @@ YUI.add('search-results', function(Y) {
           };
           break;
         case 'search-results':
-          var html = this.template(this.state.data);
+          var data = this.state.data;
+          var html = this.template(data);
           state.activeChild = {
             component:
               <div className="row no-padding-top">
                 <div className="inner-wrapper list-block">
-                  <div onClick={this._handleTemplateClicks}
-                    dangerouslySetInnerHTML={{__html: html}}>
+                  {this._generateResultsMessage(data.text, data.solutionsCount)}
+                  <div className="list-block__filters">
+                    <nav className="six-col list-block__type">
+                      <ul>
+                        <li className="selected" tabIndex="0" role="button">All</li>
+                        <li className="selected" tabIndex="0" role="button">Charms</li>
+                        <li className="selected" tabIndex="0" role="button">Bundles</li>
+                      </ul>
+                    </nav>
+                    <div className="six-col last-col">
+                      <div className="list-block__filters--selects">
+                        <form>
+                          <div className="list-block__sort">
+                            Sort by:
+                            <select>
+                              <option value="-downloads">Most popular</option>
+                              <option value="downloads">Least popular</option>
+                              <option value="name">Name (a-z)</option>
+                              <option value="-name">Name (z-a)</option>
+                              <option value="owner">Author (a-z)</option>
+                              <option value="-owner">Author (z-a)</option>
+                            </select>
+                          </div>
+                          <div className="list-block__series">
+                            Series:
+                            <select>
+                              <option>None</option>
+                            </select>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="entity-search-results">
+                    <div onClick={this._handleTemplateClicks}
+                      dangerouslySetInnerHTML={{__html: html}}>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -268,6 +303,7 @@ YUI.add('search-results', function(Y) {
                 <p>
                   Try a more specific or different query, try other keywords or
                   learn how to
+                  {' '}
                   <a href="http://jujucharms.com/docs/authors-charm-writing">
                     create your own solution
                   </a>.
@@ -289,6 +325,25 @@ YUI.add('search-results', function(Y) {
       var nextProps = this.state;
       nextProps.activeComponent = newComponent;
       this.setState(this.generateState(nextProps));
+    },
+
+    /**
+      Display a search results message if there is search text.
+
+      @method _generateResultsMessage
+      @param {String} text The search text.
+      @param {Integer} solutionsCount The number of search results.
+    */
+    _generateResultsMessage: function(text, solutionsCount) {
+      if (text) {
+        return (
+          <div className="twelve-col list-block__title no-margin-bottom">
+            Your search for &lsquo;{text}&rsquo; returned {solutionsCount}
+            results.
+          </div>
+        );
+      }
+      return;
     },
 
     /**
