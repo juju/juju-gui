@@ -124,9 +124,9 @@ YUI.add('inspector-change-version', function() {
     */
     _getVersionsSuccess: function(versions) {
       var components = [];
-      if (versions.length === 1) {
+      if (!versions || versions.length === 1) {
         components = <li className="inspector-change-version__none">
-              No other versions.
+              No other versions found.
             </li>;
       } else {
         var currentVersion = this._getVersionNumber(this.props.charmId);
@@ -169,7 +169,9 @@ YUI.add('inspector-change-version', function() {
       @method _getVersionsFailure
     */
     _getVersionsFailure: function() {
-      // XXX: handle getting versions failure.
+      // Call the success method without any versions so that the "no versions"
+      // message is displayed.
+      this._getVersionsSuccess();
     },
 
     /**

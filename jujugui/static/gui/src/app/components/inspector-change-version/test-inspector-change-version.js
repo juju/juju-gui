@@ -142,6 +142,40 @@ describe('InspectorChangeVersion', function() {
       </div>);
   });
 
+  it('can display a message if there is a failure', function() {
+    var changeState = sinon.stub();
+    var service = sinon.stub();
+    var setCharm = sinon.stub();
+    var getCharm = sinon.stub();
+    var getAvailableVersions = sinon.stub().callsArgWith(2);
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersion
+          changeState={changeState}
+          charmId="cs:django"
+          service={service}
+          setCharm={setCharm}
+          getCharm={getCharm}
+          getAvailableVersions={getAvailableVersions} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output,
+      <div className="inspector-change-version">
+        <div className="inspector-change-version__current">
+          Current version:
+          <div className="inspector-change-version__current-version"
+            role="button" tabIndex="0"
+            onClick={output.props.children[0].props.children[1].props.onClick}>
+            cs:django
+          </div>
+        </div>
+        <ul className="inspector-change-version__versions">
+          <li className="inspector-change-version__none">
+            No other versions.
+          </li>
+        </ul>
+      </div>);
+  });
+
   it('can navigate to the current charm version details', function() {
     var changeState = sinon.stub();
     var service = sinon.stub();
