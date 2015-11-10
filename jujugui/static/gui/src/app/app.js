@@ -413,7 +413,7 @@ YUI.add('juju-gui', function(Y) {
       // Create a client side database to store state.
       this.db = new models.Database();
       // Creates and sets up a new instance of the charmstore.
-      this._setupCharmstore(Y.juju.charmstore.APIv4);
+      this._setupCharmstore(window.jujulib.charmstore);
 
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
@@ -1069,10 +1069,22 @@ YUI.add('juju-gui', function(Y) {
           charmstoreURL = jujuConfig.charmstoreURL;
           apiPath = jujuConfig.apiPath;
         }
-        this.set('charmstore', new Charmstore({
-          charmstoreURL: charmstoreURL,
-          apiPath: apiPath
-        }));
+        var bakery = new Y.juju.environments.web.Bakery({
+          webhandler: new Y.juju.environments.web.WebHandler(),
+          interactive: this.get('interactiveLogin'),
+          setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
+          serviceName: 'charmstore'
+        });
+        var processEntity = function(entity) {
+          if (entity.entityType === 'charm') {
+            return new Y.juju.models.Charm(entity);
+          } else {
+            return new Y.juju.models.Bundle(entity);
+          }
+        };
+        this.set(
+            'charmstore',
+            new Charmstore(charmstoreURL, apiPath, bakery, processEntity));
       }
     },
 
@@ -1985,7 +1997,7 @@ YUI.add('juju-gui', function(Y) {
         throughout the application.
 
         @attribute charmstore
-        @type {Y.juju.charmstore.APIv4}
+        @type {jujulib.charmstore}
         @default undefined
       */
       charmstore: {},
@@ -2055,20 +2067,21 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'changes-utils',
-    'juju-charm-models',
-    'ns-routing-app-extension',
-    'juju-models',
     'juju-app-state',
-    'juju-notification-controller',
+    'juju-charm-models',
+    'juju-bundle-models',
     'juju-endpoints-controller',
-    'juju-env-fakebackend',
-    'juju-fakebackend-simulator',
+    'juju-env-bakery',
     'juju-env-base',
+    'juju-env-fakebackend',
     'juju-env-go',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
-    'juju-charm-models',
+    'juju-fakebackend-simulator',
+    'juju-models',
+    'juju-notification-controller',
+    'ns-routing-app-extension',
     // React components
     'charmbrowser-component',
     'deployment-component',
@@ -2107,7 +2120,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'bundle-importer',
     'bundle-import-notifications',
-    'charmstore-api',
     'event-tracker',
     'node',
     'model',

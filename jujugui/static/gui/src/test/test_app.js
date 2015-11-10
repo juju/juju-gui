@@ -450,11 +450,11 @@ function injectData(app, data) {
         }, this);
         // The charmstore attribute is undefined by default
         assert.equal(typeof app.get('charmstore'), 'object');
-        assert.equal(app.get('charmstore').charmstoreURL, 'charmurl');
-        assert.equal(app.get('charmstore').apiPath, 'v4');
+        assert.equal(app.get('charmstore').url, 'charmurl');
+        assert.equal(app.get('charmstore').version, 'v4');
         window.juju_config.charmstoreURL = 'it broke';
         assert.equal(
-            app.get('charmstore').charmstoreURL,
+            app.get('charmstore').url,
             'charmurl',
             'It should only ever create a single instance of the charmstore');
       });
@@ -1222,7 +1222,7 @@ describe('File drag over notification system', function() {
             user: 'admin',
             password: 'admin',
             jujuCoreVersion: '1.21.1.1-trusty-amd64',
-            charmstorestore: new Y.juju.charmstore.APIv4({}),
+            charmstorestore: new window.jujulib.charmstore(),
             sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api'
           });
       app.showView(new Y.View());
@@ -1241,7 +1241,7 @@ describe('File drag over notification system', function() {
         viewContainer: container,
         sandbox: true,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
-        charmstore: new Y.juju.charmstore.APIv4({})
+        charmstore: new window.jujulib.charmstore()
       });
       app.showView(new Y.View());
       var webHandler = app.env.get('webHandler');

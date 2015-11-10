@@ -50,9 +50,7 @@ describe('The bundle model', function() {
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
-      charmstore = new Y.juju.charmstore.APIv4({
-        charmstoreURL: 'local/'
-      });
+      charmstore = new window.jujulib.charmstore('local/');
       origData = charmstore._processEntityQueryData(
           utils.loadFixture('data/apiv4-bundle.json', true));
       done();

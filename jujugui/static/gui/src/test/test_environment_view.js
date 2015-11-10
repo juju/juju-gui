@@ -234,7 +234,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
         env.connect();
         conn.open();
-        fakeStore = new Y.juju.charmstore.APIv4({});
+        fakeStore = new window.jujulib.charmstore();
         done();
       });
     });

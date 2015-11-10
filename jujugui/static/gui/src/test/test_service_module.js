@@ -126,7 +126,7 @@ describe.skip('service module events', function() {
   });
 
   beforeEach(function(done) {
-    fakeStore = new Y.juju.charmstore.APIv4({});
+    fakeStore = new window.jujulib.charmstore();
     fakeStore.getIconPath = function() {
       return 'charm icon url';
     };
