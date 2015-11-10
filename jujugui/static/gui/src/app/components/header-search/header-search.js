@@ -32,7 +32,7 @@ YUI.add('header-search', function() {
       var component = this.props.getAppState(
         'current', 'sectionC', 'component');
       var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
-      var active = !!component;
+      var active = !!component && component !== 'profile';
 
       return {
         query: metadata && metadata.search,

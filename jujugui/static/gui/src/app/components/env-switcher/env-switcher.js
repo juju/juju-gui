@@ -193,6 +193,20 @@ YUI.add('env-switcher', function() {
     },
 
     /**
+      Calls changestate to show the user profile.
+
+      @method showUserProfile
+    */
+    showUserProfile: function() {
+      this.props.changeState({
+        sectionC: {
+          component: 'profile',
+          metadata: {}
+        }
+      });
+    },
+
+    /**
       Returns the environment list components if the showEnvList state property
       is truthy.
 
@@ -204,6 +218,7 @@ YUI.add('env-switcher', function() {
         return <juju.components.EnvList
           handleEnvClick={this.handleEnvClick}
           createNewEnv={this.createNewEnv}
+          showUserProfile={this.showUserProfile}
           envs={this.state.envList} />;
       }
       return '';
