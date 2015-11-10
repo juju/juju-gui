@@ -24,15 +24,10 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResultsTypeFilter', function() {
-  var FilterItem;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('search-results-type-filter', function() { done(); });
-  });
-
-  beforeEach(function() {
-    FilterItem = juju.components.SearchResultsTypeFilter.prototype.FilterItem;
   });
 
   it('can render a type filter', function() {

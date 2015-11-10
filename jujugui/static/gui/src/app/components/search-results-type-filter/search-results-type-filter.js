@@ -44,17 +44,17 @@ YUI.add('search-results-type-filter', function(Y) {
       var components = [];
       var currentType = this.props.currentType;
       var items = [{
-          label: 'All',
-          selected: !currentType,
-          action: null
-        }, {
-          label: 'Charms',
-          selected: currentType === 'charm',
-          action: 'charm'
-        }, {
-          label: 'Bundles',
-          selected: currentType === 'bundle',
-          action: 'bundle'
+        label: 'All',
+        selected: !currentType,
+        action: null
+      }, {
+        label: 'Charms',
+        selected: currentType === 'charm',
+        action: 'charm'
+      }, {
+        label: 'Bundles',
+        selected: currentType === 'bundle',
+        action: 'bundle'
       }];
       items.forEach(function(item) {
         components.push(
