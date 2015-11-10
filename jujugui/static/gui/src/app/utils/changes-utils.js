@@ -106,11 +106,16 @@ YUI.add('changes-utils', function(Y) {
               ' been removed from ' + units[0].split('/')[0];
           break;
         case '_expose':
-          changeItem.icon = 'changes-service-exposed';
-          changeItem.description = change.command.args[0] + ' exposed';
+          var name = change.command.args[0];
+          if (name.indexOf('$') > -1) {
+            var ghostService = services.getById(name);
+            name = ghostService.get('name');
+          }
+          changeItem.icon = 'exposed_16';
+          changeItem.description = name + ' exposed';
           break;
         case '_unexpose':
-          changeItem.icon = 'changes-service-unexposed';
+          changeItem.icon = 'exposed_16';
           changeItem.description = change.command.args[0] + ' unexposed';
           break;
         case '_add_relation':
@@ -155,7 +160,7 @@ YUI.add('changes-utils', function(Y) {
               cfgServ.get('displayName').match(removeBrackets)[1] + '.';
           break;
         default:
-          changeItem.icon = 'changes-service-exposed';
+          changeItem.icon = 'changes-unknown';
           changeItem.description = 'An unknown change has been made ' +
               'to this enviroment via the CLI.';
           break;

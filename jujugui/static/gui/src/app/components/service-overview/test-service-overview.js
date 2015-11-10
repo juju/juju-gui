@@ -285,7 +285,7 @@ describe('ServiceOverview', function() {
         key="Expose"
         title="Expose"
         value="On"
-        icon="expose"
+        icon="exposed_16"
         action={output.props.children[0].props.children[3].props.action}
         valueType={undefined}
         linkAction={undefined}
@@ -353,7 +353,7 @@ describe('ServiceOverview', function() {
     });
   });
 
-  it('does not show Expose or Change version if uncommitted', function() {
+  it('does not show Change version if uncommitted', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(true);
@@ -368,7 +368,7 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}/>);
-    assert.equal(output.props.children[0].props.children.length, 3);
+    assert.equal(output.props.children[0].props.children.length, 4);
   });
 
   it('renders the delete button', function() {

@@ -196,7 +196,7 @@ describe('ChangesUtils', function() {
         }
       }
     }, {
-      icon: 'changes-service-exposed',
+      icon: 'changes-unknown',
       msg: 'An unknown change has been made to this enviroment via the CLI.',
       change: {
         command: {
