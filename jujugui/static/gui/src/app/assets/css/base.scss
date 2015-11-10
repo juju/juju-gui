@@ -313,16 +313,20 @@ th {
     position: relative;
     width: 100%;
 }
+
 #main {
     overflow: hidden;
 }
+
 #canvas {
     position: relative;
 }
+
 .zoom-plane {
     fill-opacity: 0;
     cursor: move;
 }
+
 /*
  * The keyboard shorcut panel
  */

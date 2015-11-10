@@ -401,6 +401,7 @@ describe('Inspector', function() {
   });
 
   it('displays Change versions when the app state calls for it', function() {
+    var addNotification = sinon.stub();
     var changeState = sinon.stub();
     var service = sinon.stub();
     var setCharm = sinon.stub();
@@ -420,6 +421,7 @@ describe('Inspector', function() {
         }}};
     var output = jsTestUtils.shallowRender(
       <juju.components.Inspector
+        addNotification={addNotification}
         changeState={changeState}
         setCharm={setCharm}
         getCharm={getCharm}
@@ -430,6 +432,7 @@ describe('Inspector', function() {
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <juju.components.InspectorChangeVersion
+        addNotification={addNotification}
         changeState={changeState}
         charmId="cs:demo"
         service={service}

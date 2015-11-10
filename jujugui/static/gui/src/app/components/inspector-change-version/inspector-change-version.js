@@ -86,7 +86,7 @@ YUI.add('inspector-change-version', function() {
     */
     _setCharmCallback: function(charmId, data) {
       if (data.err) {
-        // XXX: Handle errors for upgrading the service version.
+        this._addFailureNotification(charmId, data.err);
         return;
       }
       this.props.getCharm(charmId, this._getCharmCallback.bind(this, charmId));
@@ -99,10 +99,25 @@ YUI.add('inspector-change-version', function() {
     */
     _getCharmCallback: function(charmId, data) {
       if (data.err) {
-        // XXX: Handle errors for upgrading the service version.
+        this._addFailureNotification(charmId, data.err);
         return;
       }
       this.props.service.set('charm', charmId);
+    },
+
+    /**
+      Add a notification for an upgrade failure.
+
+      @method _addFailureNotification
+      @param {String} charmId The charm id.
+      @param {Object} error The upgrade error.
+    */
+    _addFailureNotification: function(charmId, error) {
+      this.props.addNotification({
+        title: 'Charm upgrade failed',
+        message: 'The charm ' + charmId + ' failed to upgrade:' + error,
+        level: 'error'
+      });
     },
 
     /**
@@ -124,9 +139,9 @@ YUI.add('inspector-change-version', function() {
     */
     _getVersionsSuccess: function(versions) {
       var components = [];
-      if (versions.length === 1) {
+      if (!versions || versions.length === 1) {
         components = <li className="inspector-change-version__none">
-              No other versions.
+              No other versions found.
             </li>;
       } else {
         var currentVersion = this._getVersionNumber(this.props.charmId);
@@ -169,7 +184,9 @@ YUI.add('inspector-change-version', function() {
       @method _getVersionsFailure
     */
     _getVersionsFailure: function() {
-      // XXX: handle getting versions failure.
+      // Call the success method without any versions so that the "no versions"
+      // message is displayed.
+      this._getVersionsSuccess();
     },
 
     /**

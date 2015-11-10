@@ -834,6 +834,7 @@ YUI.add('juju-gui', function(Y) {
           <components.Inspector
             service={service}
             charm={charm}
+            addNotification={this.db.notifications.add.bind(this)}
             setConfig={this.env.set_config.bind(this.env)}
             envResolved={this.env.resolved.bind(this.env)}
             getRelationDataForService={utils.getRelationDataForService.bind(
