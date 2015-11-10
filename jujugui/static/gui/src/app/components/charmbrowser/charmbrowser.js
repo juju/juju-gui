@@ -74,6 +74,7 @@ YUI.add('charmbrowser-component', function() {
                 changeState={this.props.changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
                 query={metadata.search}
+                type={metadata.type}
                 tags={metadata.tags} />
           };
           break;

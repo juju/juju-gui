@@ -19,7 +19,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -59,6 +58,34 @@ describe('SearchResults', function() {
         </div>);
     });
 
+    it('can display a message if there are no results', function() {
+      var charmstoreSearch = sinon.stub().callsArgWith(1, []);
+      var shallowRenderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            query="nothing here"
+            charmstoreSearch={charmstoreSearch} />, true);
+      shallowRenderer.getMountedInstance().componentDidMount();
+      var output = shallowRenderer.getRenderOutput();
+      assert.deepEqual(output,
+        <div className="search-results search-results--floating">
+          <div className="twelve-col no-results-container last-col">
+            <h1 className="row-title">
+              Your search for <strong>nothing here</strong>
+              {' '}
+              returned 0 results
+            </h1>
+            <p>
+              Try a more specific or different query, try other keywords or
+              learn how to
+              {' '}
+              <a href="http://jujucharms.com/docs/authors-charm-writing">
+                create your own solution
+              </a>.
+            </p>
+          </div>
+        </div>);
+    });
+
     it('loads search results', function() {
       var query = 'spinach';
       var result = {
@@ -76,16 +103,19 @@ describe('SearchResults', function() {
       var mockData = [mockModel];
       var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
 
-      var output = testUtils.renderIntoDocument(
+      var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query={query}
-            charmstoreSearch={charmstoreSearch} />);
+            charmstoreSearch={charmstoreSearch} />, true);
+      var instance = shallowRenderer.getMountedInstance();
+      instance.componentDidMount();
+      shallowRenderer.getRenderOutput();
 
       assert.isTrue(charmstoreSearch.calledOnce,
                     'search function not called');
       assert.isTrue(mockModel.toEntity.callCount == mockData.length,
                     'all models not converted to plain old objects');
-      var data = output.state.data;
+      var data = instance.state.data;
       assert.equal(data.text, query,
                    'search text not set to the query');
       assert.equal(data.solutionsCount, mockData.length,
@@ -116,7 +146,9 @@ describe('SearchResults', function() {
             charmstoreSearch={charmstoreSearch} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
-      output.props.children.props.onClick({
+      var resultsContainer = output.props.children.props.children.props
+          .children[2].props.children;
+      resultsContainer.props.onClick({
         preventDefault: sinon.stub(),
         target: {
           className: 'list-block__entity-link',
@@ -244,6 +276,8 @@ describe('SearchResults', function() {
     });
 
     it('properly handles a successful search', function() {
+      var _changeActiveComponent = searchResults._changeActiveComponent;
+      searchResults._changeActiveComponent = sinon.stub();
       var query = 'spinach';
       searchResults.props = {query: query};
       var results = [{
@@ -271,9 +305,7 @@ describe('SearchResults', function() {
         return m;
       });
       var expected = {
-        standalone: false,
         text: 'spinach',
-        hasResults: true,
         solutionsCount: 2,
         normalResultsCount: 1,
         normalResults: [results[1]],
@@ -288,6 +320,7 @@ describe('SearchResults', function() {
                        'waitingForSearch flag still set');
       assert.deepEqual(spy.getCall(1).args[0], {data: expected},
                        'search data returned is incorrect');
+      searchResults._changeActiveComponent = _changeActiveComponent;
     });
 
     it('passes the right data to the search', function() {
@@ -378,8 +411,9 @@ describe('SearchResults', function() {
     });
 
     it('sets the correct ids for entities', function() {
-      var query = 'spinach';
-      searchResults.props = {query: query};
+      var _changeActiveComponent = searchResults._changeActiveComponent;
+      searchResults._changeActiveComponent = sinon.stub();
+      searchResults.props = {query: 'mysql'};
       var results = [{
         name: 'mysql',
         displayName: 'mysql',
@@ -396,11 +430,12 @@ describe('SearchResults', function() {
         return m;
       });
       searchResults.collapseSeries = sinon.stub().returns(results);
-      var setState = sinon.spy();
+      var setState = sinon.stub();
       searchResults.setState = setState;
       searchResults.searchSuccess(rawResults);
       var result = setState.getCall(1).args[0].data.promulgatedResults[0];
       assert.deepEqual(result.storeId, '~charmers/mysql');
+      searchResults._changeActiveComponent = _changeActiveComponent;
     });
   });
 });

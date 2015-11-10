@@ -119,6 +119,7 @@ YUI.add('search-results', function(Y) {
       var results = rawResults.map(function(model) {
         return model.toEntity();
       }, this);
+      var activeComponent;
       results = this.collapseSeries(results);
       // Split the results into promulgated and normal.
       var promulgatedResults = [],
@@ -132,10 +133,13 @@ YUI.add('search-results', function(Y) {
           normalResults.push(obj);
         }
       });
+      if (results.length === 0) {
+        activeComponent = 'no-results';
+      } else {
+        activeComponent = 'search-results';
+      }
       var data = {
-        standalone: false,
         text: this.props.query,
-        hasResults: results.length > 0,
         solutionsCount: results.length,
         normalResultsCount: normalResults.length,
         normalResults: normalResults,
@@ -145,7 +149,7 @@ YUI.add('search-results', function(Y) {
       // These need to be set separately, seemingly due to a React quirk.
       this.setState({waitingForSearch: false});
       this.setState({data: data});
-      this._changeActiveComponent('search-results');
+      this._changeActiveComponent(activeComponent);
     },
 
     /**
@@ -166,11 +170,17 @@ YUI.add('search-results', function(Y) {
       @param {String} query The text to search for.
       @param {String} tags The tags to limit the search by.
     */
-    searchRequest: function(query, tags) {
+    searchRequest: function(query, tags, type) {
+      var filters = {text: query, tags: tags};
+      // Don't add the type property unless required otherwise the API will
+      // filter by charm.
+      if (type) {
+        filters.type = type;
+      }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
       this.searchXhr = this.props.charmstoreSearch(
-        {text: query, tags: tags},
+        filters,
         this.searchSuccess,
         this.searchFailure,
         150
@@ -190,7 +200,7 @@ YUI.add('search-results', function(Y) {
       }
       var nextQuery = JSON.stringify(nextProps.query),
           currentQuery = JSON.stringify(this.state.data.text);
-      return nextQuery !== currentQuery;
+      return nextQuery !== currentQuery || nextProps.type !== this.props.type;
     },
 
     getInitialState: function() {
@@ -200,7 +210,7 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
-      this.searchRequest(this.props.query, this.props.tags);
+      this.searchRequest(this.props.query, this.props.tags, this.props.type);
     },
 
     componentWillUnmount: function() {
@@ -209,7 +219,7 @@ YUI.add('search-results', function(Y) {
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(nextProps.query, this.props.tags);
+        this.searchRequest(nextProps.query, nextProps.tags, nextProps.type);
       }
     },
 
@@ -229,6 +239,8 @@ YUI.add('search-results', function(Y) {
       var state = {
         activeComponent: nextProps.activeComponent || 'loading'
       };
+      var currentType = nextProps.type !== undefined ?
+          nextProps.type : this.props.type;
       switch (state.activeComponent) {
         case 'loading':
           state.activeChild = {
@@ -239,11 +251,68 @@ YUI.add('search-results', function(Y) {
           };
           break;
         case 'search-results':
-          var html = this.template(this.state.data);
+          var data = this.state.data;
+          var html = this.template(data);
           state.activeChild = {
-            component: <div onClick={this._handleTemplateClicks}
-              dangerouslySetInnerHTML={{__html: html}}>
-            </div>
+            component:
+              <div className="row no-padding-top">
+                <div className="inner-wrapper list-block">
+                  {this._generateResultsMessage(data.text, data.solutionsCount)}
+                  <div className="list-block__filters">
+                    <juju.components.SearchResultsTypeFilter
+                      changeState={this.props.changeState}
+                      currentType={currentType} />
+                    <div className="six-col last-col">
+                      <div className="list-block__filters--selects">
+                        <form>
+                          <div className="list-block__sort">
+                            Sort by:
+                            <select>
+                              <option value="-downloads">Most popular</option>
+                              <option value="downloads">Least popular</option>
+                              <option value="name">Name (a-z)</option>
+                              <option value="-name">Name (z-a)</option>
+                              <option value="owner">Author (a-z)</option>
+                              <option value="-owner">Author (z-a)</option>
+                            </select>
+                          </div>
+                          <div className="list-block__series">
+                            Series:
+                            <select>
+                              <option>None</option>
+                            </select>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="entity-search-results">
+                    <div onClick={this._handleTemplateClicks}
+                      dangerouslySetInnerHTML={{__html: html}}>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          };
+          break;
+        case 'no-results':
+          state.activeChild = {
+            component:
+              <div className="twelve-col no-results-container last-col">
+                <h1 className="row-title">
+                  Your search for <strong>{this.state.data.text}</strong>
+                  {' '}
+                  returned 0 results
+                </h1>
+                <p>
+                  Try a more specific or different query, try other keywords or
+                  learn how to
+                  {' '}
+                  <a href="http://jujucharms.com/docs/authors-charm-writing">
+                    create your own solution
+                  </a>.
+                </p>
+              </div>
           };
           break;
       }
@@ -260,6 +329,25 @@ YUI.add('search-results', function(Y) {
       var nextProps = this.state;
       nextProps.activeComponent = newComponent;
       this.setState(this.generateState(nextProps));
+    },
+
+    /**
+      Display a search results message if there is search text.
+
+      @method _generateResultsMessage
+      @param {String} text The search text.
+      @param {Integer} solutionsCount The number of search results.
+    */
+    _generateResultsMessage: function(text, solutionsCount) {
+      if (text) {
+        return (
+          <div className="twelve-col list-block__title no-margin-bottom">
+            Your search for &lsquo;{text}&rsquo; returned {solutionsCount}{' '}
+            results.
+          </div>
+        );
+      }
+      return;
     },
 
     /**
@@ -319,5 +407,6 @@ YUI.add('search-results', function(Y) {
   });
 
 }, '0.1.0', {requires: [
-  'loading-spinner'
+  'loading-spinner',
+  'search-results-type-filter'
 ]});
