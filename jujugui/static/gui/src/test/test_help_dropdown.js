@@ -63,7 +63,7 @@ describe('help dropdown view', function() {
     var container = helpView.get('container');
     assert.equal(
         container.one('.landscape-url').hasClass('hidden'), true);
-    assert.equal(container.all('li').size(), 4);
+    assert.equal(container.all('li').size(), 3);
   });
 
   it('should display the Landscape menu item', function() {
@@ -79,20 +79,5 @@ describe('help dropdown view', function() {
     assert.equal(
         viewNode.one('.landscape-url a').get('href'),
         'http://landscape.example.com/computers/criteria/environment:test/');
-  });
-
-  it('can start the onboarding visualization', function(done) {
-    helpView = new views.HelpDropdownView({
-      container: viewNode,
-      env: db.environment
-    });
-    helpView.on('navigate', function(e) {
-      assert.equal(e.url, '/');
-      assert.equal(localStorage.getItem('force-onboarding'), 'true');
-      done();
-    });
-    helpView.render();
-    var ob = helpView.get('container').one('.start-onboarding');
-    ob.simulate('click');
   });
 });

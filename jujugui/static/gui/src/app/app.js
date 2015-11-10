@@ -681,7 +681,6 @@ YUI.add('juju-gui', function(Y) {
         }
         this.dispatch();
         this._renderHelpDropdownView();
-        this.renderOnboarding();
         if (!window.juju_config || !window.juju_config.hideLoginButton) {
           // We only want to show the user dropdown view if the gui isn't in
           // demo mode.
@@ -1240,11 +1239,6 @@ YUI.add('juju-gui', function(Y) {
         container: Y.one('#help-dropdown'),
         env: this.db.environment
       }).render();
-      // See `renderOnboarding()` in browser.js and `_startOnboarding()`
-      // in help-dropdown.js for why this is done like this.
-      this.helpDropdown.on('navigate', function(e) {
-        this.navigate(e.url);
-      }, this);
     },
 
     /**
@@ -1256,26 +1250,6 @@ YUI.add('juju-gui', function(Y) {
       this.userDropdown = new views.UserDropdownView({
         container: Y.one('#user-dropdown')
       }).render();
-    },
-
-    /**
-      Create a 'welcome' message walkthrough for new users.
-
-      @method renderOnboarding
-    */
-    renderOnboarding: function() {
-      if (!this._onboarding) {
-        this._onboarding = new Y.juju.views.OnboardingView({
-          'container': '#onboarding'
-        });
-      }
-      if (localStorage.getItem('force-onboarding')) {
-        localStorage.setItem('force-onboarding', '');
-        this._onboarding.reset();
-      }
-      if (!this._onboarding.get('seen')) {
-        this._onboarding.render();
-      }
     },
 
     /**
@@ -1370,9 +1344,6 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this.machineViewPanel) {
         this.machineViewPanel.destroy();
-      }
-      if (this._onboarding) {
-        this._onboarding.destroy();
       }
       if (this.userDropdown) {
         this.userDropdown.destroy();
@@ -2109,7 +2080,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-topology',
     'juju-view-environment',
     'juju-view-login',
-    'juju-view-onboarding',
     'juju-landscape',
     // end juju-views group
     'autodeploy-extension',

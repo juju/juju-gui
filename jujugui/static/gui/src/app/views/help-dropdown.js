@@ -41,29 +41,6 @@ YUI.add('help-dropdown', function(Y) {
       ], {
         template: Templates['help-dropdown'],
 
-        events: {
-          '.start-onboarding': {
-            click: '_startOnboarding'
-          }
-        },
-
-        /**
-         * Start the onboarding tutorial.
-         *
-         * @method _startOnboarding
-         * @param {Event} ev the click event from the control.
-         * @private
-         */
-        _startOnboarding: function(ev) {
-          ev.halt();
-          // Added by the view-dropdown-extension.js
-          this.__close(); // Closes itself
-          // Because we need the app to be in the root mode when
-          // the user views the onboarding we navigate to it.
-          localStorage.setItem('force-onboarding', true);
-          this.fire('navigate', { url: '/' });
-        },
-
         /**
          * Show the Landscape URL if available.
          *
