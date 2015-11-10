@@ -22,8 +22,65 @@ YUI.add('user-profile', function() {
 
   juju.components.UserProfile = React.createClass({
 
-    render: () => {}
+    getInitialState: function() {
+      return {
+        environments: []
+      };
+    },
+
+    componentWillMount: function() {
+      this._fetchEnvironments();
+    },
+
+    /**
+      Makes a request of JEM or JES to fetch the users availble environments.
+
+      @method _fetchEnvironments
+    */
+    _fetchEnvironments:  function() {
+      var props = this.props;
+      var jem = props.jem;
+      if (jem) {
+        jem.listEnvironments(this._fetchEnvironmentsCallback.bind(this));
+      } else {
+        props.listEnvs(
+          'user-admin', this._fetchEnvironmentsCallback.bind(this, null));
+      }
+    },
+
+    /**
+      Callback for the JEM and JES list environments call.
+    */
+    _fetchEnvironmentsCallback: function (error, data) {
+      // We need to coerce error types returned by JES vs JEM into one error.
+      var err = data.err || error;
+      if (err) {
+        console.log(err);
+        return;
+      }
+      // data.envs is only populated in the JES environments, when using JEM
+      // the environments are in the top level 'data' object.
+      this.setState({envList: data.envs || data});
+    },
+
+    render: function() {
+      return (
+        <juju.components.Panel
+          instanceName="user-profile"
+          visible={true}>
+          <juju.components.UserProfileHeader />
+          <juju.components.UserProfileList
+            title="Models"
+            data={this.state.environments} />
+        </juju.components.Panel>
+      );
+    }
 
   });
 
+}, '', {
+  requires: [
+    'user-profile-header',
+    'user-profile-list'
+  ]
 });
