@@ -35,20 +35,37 @@ YUI.add('search-results-type-filter', function(Y) {
     },
 
     /**
-      A filter item stateless component
+      Generate a list of filter items.
 
-      @method FilterItem
-      @param {Object} props The component props.
-      @returns {Object} The stateless component.
+      @method _generateFilterItems
+      @returns {Object} The components.
     */
-    FilterItem: function(props) {
-      return (
-        <li className={this._generateClasses(props.selected)}
-            onClick={props.action}
-            tabIndex="0" role="button">
-          {props.label}
-        </li>
-      );
+    _generateFilterItems: function(label, selected, action) {
+      var components = [];
+      var currentType = this.props.currentType;
+      var items = [{
+          label: 'All',
+          selected: !currentType,
+          action: null
+        }, {
+          label: 'Charms',
+          selected: currentType === 'charm',
+          action: 'charm'
+        }, {
+          label: 'Bundles',
+          selected: currentType === 'bundle',
+          action: 'bundle'
+      }];
+      items.forEach(function(item) {
+        components.push(
+          <li className={this._generateClasses(item.selected)}
+              onClick={this._handleFilterClick.bind(this, item.action)}
+              key={item.label}
+              tabIndex="0" role="button">
+            {item.label}
+          </li>);
+      }, this);
+      return components;
     },
 
     /**
@@ -70,25 +87,10 @@ YUI.add('search-results-type-filter', function(Y) {
     },
 
     render: function() {
-      var currentType = this.props.currentType;
       return (
         <nav className="six-col list-block__type">
           <ul>
-            <this.FilterItem
-              key="all"
-              label="All"
-              selected={!currentType}
-              action={this._handleFilterClick.bind(this, null)} />
-            <this.FilterItem
-              key="charms"
-              label="Charms"
-              selected={currentType === 'charm'}
-              action={this._handleFilterClick.bind(this, 'charm')} />
-            <this.FilterItem
-              key="bundles"
-              label="Bundles"
-              selected={currentType === 'bundle'}
-              action={this._handleFilterClick.bind(this, 'bundle')} />
+            {this._generateFilterItems()}
           </ul>
         </nav>
       );

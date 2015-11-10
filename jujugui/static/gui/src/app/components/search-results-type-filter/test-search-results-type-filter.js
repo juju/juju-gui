@@ -44,21 +44,24 @@ describe('SearchResultsTypeFilter', function() {
     assert.deepEqual(output,
       <nav className="six-col list-block__type">
         <ul>
-          <FilterItem
-            key="all"
-            label="All"
-            selected={true}
-            action={output.props.children.props.children[0].props.action} />
-          <FilterItem
-            key="charms"
-            label="Charms"
-            selected={false}
-            action={output.props.children.props.children[1].props.action} />
-          <FilterItem
-            key="bundles"
-            label="Bundles"
-            selected={false}
-            action={output.props.children.props.children[2].props.action} />
+          <li className="selected"
+              onClick={output.props.children.props.children[0].props.onClick}
+              key="All"
+              tabIndex="0" role="button">
+            All
+          </li>
+          <li className=""
+              onClick={output.props.children.props.children[1].props.onClick}
+              key="Charms"
+              tabIndex="0" role="button">
+            Charms
+          </li>
+          <li className=""
+              onClick={output.props.children.props.children[2].props.onClick}
+              key="Bundles"
+              tabIndex="0" role="button">
+            Bundles
+          </li>
         </ul>
       </nav>);
   });
@@ -72,21 +75,24 @@ describe('SearchResultsTypeFilter', function() {
     assert.deepEqual(output,
       <nav className="six-col list-block__type">
         <ul>
-          <FilterItem
-            key="all"
-            label="All"
-            selected={false}
-            action={output.props.children.props.children[0].props.action} />
-          <FilterItem
-            key="charms"
-            label="Charms"
-            selected={false}
-            action={output.props.children.props.children[1].props.action} />
-          <FilterItem
-            key="bundles"
-            label="Bundles"
-            selected={true}
-            action={output.props.children.props.children[2].props.action} />
+          <li className=""
+              onClick={output.props.children.props.children[0].props.onClick}
+              key="All"
+              tabIndex="0" role="button">
+            All
+          </li>
+          <li className=""
+              onClick={output.props.children.props.children[1].props.onClick}
+              key="Charms"
+              tabIndex="0" role="button">
+            Charms
+          </li>
+          <li className="selected"
+              onClick={output.props.children.props.children[2].props.onClick}
+              key="Bundles"
+              tabIndex="0" role="button">
+            Bundles
+          </li>
         </ul>
       </nav>);
   });
@@ -97,7 +103,7 @@ describe('SearchResultsTypeFilter', function() {
       <juju.components.SearchResultsTypeFilter
         changeState={changeState}
         currentType='bundle' />);
-    output.props.children.props.children[1].props.action();
+    output.props.children.props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -107,38 +113,6 @@ describe('SearchResultsTypeFilter', function() {
           type: 'charm'
         }
       }
-    });
-  });
-
-  describe('FilterItem', function() {
-    it('can render a filter item', function() {
-      var action = sinon.spy();
-      var output = jsTestUtils.shallowRender(
-        <FilterItem
-          label="All"
-          selected={false}
-          action={action} />);
-      assert.deepEqual(output,
-        <li className=""
-            onClick={action}
-            tabIndex="0" role="button">
-          All
-        </li>);
-    });
-
-    it('can render a selected filter item', function() {
-      var action = sinon.spy();
-      var output = jsTestUtils.shallowRender(
-        <FilterItem
-          label="All"
-          selected={true}
-          action={action} />);
-      assert.deepEqual(output,
-        <li className="selected"
-            onClick={action}
-            tabIndex="0" role="button">
-          All
-        </li>);
     });
   });
 });
