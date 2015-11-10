@@ -22,8 +22,10 @@ YUI.add('user-profile-header', function() {
 
   juju.components.UserProfileHeader = React.createClass({
 
-    render: () => {}
+    render: function () {
+      return (<div className="user-profile-header"></div>);
+    }
 
   });
 
-});
+}, '', { requires: []});
