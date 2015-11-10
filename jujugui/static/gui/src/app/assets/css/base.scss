@@ -340,89 +340,6 @@ th {
         }
     }
 }
-/*
- * Intro text that appears on the canvas if there are no deployed services.
- */
-.environment-help {
-    text-align: center;
-    /* This is absolute so that it does not push the svg down when it is
-       visible.  That's important for animations hiding and showing this help,
-       and if we want the help to appear when a service is present (such as the
-       GUI itself). */
-    position: absolute;
-    overflow: hidden;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-
-    &__content {
-        height: 450px;
-        width: 789px;
-        padding-right: $environment-header-height;
-        margin: 0 auto;
-    }
-
-    &__tooltip {
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        line-height: normal;
-        font-size: 18px;
-        width: 260px;
-        background: #fff;
-        margin: 20px auto;
-        padding: 12px 25px;
-        color: #757575;
-        position: relative;
-        left: -20px;
-        top: 35px;
-        box-sizing: border-box;
-
-        &:after {
-            content: "";
-            background: #fff;
-            width: 10px;
-            height: 10px;
-            border-right: 2px solid #eee;
-            border-bottom: 2px solid #eee;
-            -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
-            position: absolute;
-            bottom: -8px;
-            left: calc(50% - 8px);
-        }
-    }
-
-    &__image {
-        stroke-width: 1;
-        width: 789px;
-        height: 386px;
-    }
-
-    @at-root {
-        .state-sidebar-hidden .environment-help__content {
-            // When the sidebar is hidden center the onboarding to the full width.
-            padding-left: 0;
-        }
-    }
-
-    &.shrink {
-        z-index: 100;
-        height: auto;
-        width: auto;
-        left: 50%;
-        top: 40%;
-
-        .environment-help__tooltip,
-        .environment-help__image {
-            display: none;
-        }
-
-        .environment-help__content {
-            width: auto;
-            height: auto;
-        }
-    }
-}
-
 
 .plus-service {
     cursor: pointer;
@@ -946,6 +863,7 @@ g.unit {
 
 /** Canvas **/
 @import "canvas/service";
+@import "canvas/onboarding";
 
 /** Pull in the Vanilla grid **/
 @include vf-grid;
