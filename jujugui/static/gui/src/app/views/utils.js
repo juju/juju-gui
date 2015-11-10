@@ -1696,7 +1696,7 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Calculate the number of units per status.
+    Calculate the number of unplaced units.
 
     @method getUnplacedUnitCount
     @param {Array} units An array of units.
