@@ -458,6 +458,10 @@ YUI.add('juju-app-state', function(Y) {
           state.sectionA = this._addToSection({
             component: 'services'
           });
+        } else if (part.indexOf('profile') === 0) {
+          state.sectionC = this._addToSection({
+            component: 'profile'
+          });
         } else if (part.length > 0) {
           // If it's not an inspector or machine and it's more than 0 characters
           // then it's a charm url.
