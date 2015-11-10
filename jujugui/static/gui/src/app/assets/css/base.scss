@@ -144,80 +144,60 @@ input[type="password"] {
     border-radius: $border-radius;
 }
 
-/*
-  Taken from:
-  http://code.stephenmorley.org/html-and-css/styling-checkboxes-and-radio-buttons/
-  The :not(old) selector just prevents unsupported browsers from getting these
-  styles. They'll just fall back to the normal rendering on radio buttons.
-*/
-input[type="radio"]:not(old) {
-  width: 2em;
-  margin: 0;
-  padding: 0;
-  font-size: 1em;
-  opacity: 0;
-}
-
-input[type="radio"]:not(old) + label {
-  display: inline-block;
-  margin-left: -2em;
-  line-height: 1.5em;
-}
-
-input[type="radio"]:not(old) + label > .outer {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin: 4px 0.5em 4px 0.25em;
-  border: 1px solid rgb(192,192,192);
-  border-radius: 7px;
-  background: #ebecee;
-  vertical-align: bottom;
-}
-
-input[type="radio"]:not(old):checked + label > .outer {
-  background: $charm-panel-orange;
-  border-color: $charm-panel-orange;
-}
-
-input[type="radio"]:not(old):checked + label > .outer > .inner {
-  display: block;
-  width: 6px;
-  height: 6px;
-  margin: 3px;
-  border-radius: 3px;
-  background: white;
-}
-
+input[type="radio"],
 input[type="checkbox"] {
-  $size: 14px;
-  width: $size;
-  height: $size;
-  background-color: $white;
-  border: 1px solid $mid-grey;
-  border-radius: $border-radius;
-  box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
-  color: $white;
-  text-align: center;
-  overflow: hidden;
-  -webkit-appearance: button;
-
-  &:after {
-    content: '';
-    display: none;
+    $size: 14px;
     width: $size;
     height: $size;
-    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
-  }
+    background-color: $white;
+    border: 1px solid $mid-grey;
+    box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+    color: $white;
+    text-align: center;
+    overflow: hidden;
+    -webkit-appearance: button;
 
-  &:checked {
-    background-color: $success;
-    border: none;
+    &:checked {
+        background-color: $success;
+        border: none;
+    }
+
+    &:after {
+      content: '';
+      display: none;
+      width: $size;
+      height: $size;
+    }
+
+    &:checked:after {
+      display: inline-block;
+    }
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+  vertical-align: middle;
+
+  &:after {
+    $size: 6px;
+    width: $size;
+    height: $size;
+    margin-bottom: 5px;
+    border-radius: 50%;
+    background-color: #fff;
   }
 
   &:checked:after {
     display: inline-block;
   }
+}
+
+input[type="checkbox"] {
+    border-radius: $border-radius;
+
+    &:after {
+        background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
+    }
 }
 
 svg {

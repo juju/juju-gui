@@ -23,6 +23,49 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     /**
+      A component for the placement form.
+
+      @method _generatePlacementControl
+      @returns {Object} The placement component.
+    */
+    _generatePlacementControl: function() {
+      var unplacedCount = 1;
+      var plural = unplacedCount === 1 ? '' : 's';
+      //localStorage.getItem('auto-place-default')
+      if (unplacedCount === 0) {
+        return;
+      }
+      return (
+        <div className="deployment-summary__placement">
+          You have {unplacedCount} unplaced unit{plural}, do you want to:
+          {' '}
+          <form>
+            <input type="radio" ref="leave"
+                id="leave-unplaced" name="placement"
+                className="deployment-summary__placement-radio" />
+            {' '}
+            <label htmlFor="leave-unplaced"
+                className="deployment-summary__placement-label">
+              Leave unplaced
+            </label>
+            <input type="radio" ref="place"
+                id="automatically-place" name="placement"
+                className="deployment-summary__placement-radio" />
+            {' '}
+            <label htmlFor="automatically-place"
+              className="deployment-summary__placement-label">
+              Automatically place
+            </label>
+          </form>
+          {' '}
+          <span className="link" tabIndex="0" role="button">
+            View machines
+          </span>
+        </div>
+      );
+    },
+
+    /**
       Generate the list of change items.
 
       @method _generateChangeItems
@@ -59,6 +102,7 @@ YUI.add('deployment-summary', function() {
               <h2 className="deployment-summary__title">
                 Deployment summary
               </h2>
+              {this._generatePlacementControl()}
             </div>
             <div className="deployment-summary__content">
               <ul className="deployment-summary__list">

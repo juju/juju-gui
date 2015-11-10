@@ -18,6 +18,29 @@
         font-size: 1.375em;
     }
 
+    &__placement {
+        margin-top: 20px;
+        padding: 20px 20px 0 20px;
+        border-top: 1px solid $light-mid-grey;
+
+        form,
+        &-label {
+            display: inline-block;
+        }
+
+        &-radio {
+            margin: 0 5px 0 10px;
+        }
+
+        &-label {
+            margin-right: 10px;
+        }
+
+        .link {
+            margin-left: 10px;
+        }
+    }
+
     &__content {
         @extend %collapse-children;
         padding: 0 20px 5px 20px;
