@@ -750,10 +750,6 @@ YUI.add('juju-models', function(Y) {
       @returns {String} The name for the service.
     */
     _generateServiceName: function(charmName, charmId) {
-      // The first shouldn't get a count, but subsquent names should.
-      if (this.size() === 0) {
-        return charmName;
-      }
       var highestId = Math.max.apply(Math, this.map(function(service) {
         // Only check the count for matching charms.
         if (service.get('charm') === charmId) {
@@ -762,7 +758,13 @@ YUI.add('juju-models', function(Y) {
           // The first service that is created won't have a count.
           return count || 1;
         }
+        return 0;
       }));
+      // The first service for a charm shouldn't get a count, but subsequent
+      // services should.
+      if (highestId < 1 || isNaN(highestId) || highestId === null) {
+        return charmName;
+      }
       return charmName + '-' + (highestId + 1);
     },
 
