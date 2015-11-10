@@ -142,8 +142,10 @@ describe('Deployment', function() {
           deployButtonAction={output.props.children.props.deployButtonAction}
           closeButtonAction={output.props.children.props.closeButtonAction}
           changeDescriptions={changeDescriptions}
-          handleViewMachinesClick={output.props.children.props.handleViewMachinesClick}
-          handlePlacementChange={output.props.children.props.handlePlacementChange}
+          handleViewMachinesClick={
+              output.props.children.props.handleViewMachinesClick}
+          handlePlacementChange={
+              output.props.children.props.handlePlacementChange}
           autoPlace={false}
           getUnplacedUnitCount={getUnplacedUnitCount} />
       </div>);
