@@ -10,6 +10,7 @@ SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
+FAVICON := $(GUIBUILD)/app/favicon.ico
 JS_ASSETS := $(GUISRC)/app/assets/javascripts
 SCSS_FILE := $(GUISRC)/app/assets/css/base.scss
 CSS_FILE := $(GUIBUILD)/app/assets/juju-gui.css
@@ -248,11 +249,14 @@ $(STATIC_IMAGES):
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
 	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
 
+$(FAVICON):
+	cp $(GUISRC)/app/favicon.ico $(GUIBUILD)/app/favicon.ico
+
 .PHONY: images
-images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE)
+images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
 
 .PHONY: watch
 watch:
