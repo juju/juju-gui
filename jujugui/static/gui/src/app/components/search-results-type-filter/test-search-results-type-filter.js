@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResultsTypeFilter', function() {
+  var FilterItem;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('search-results-type-filter', function() { done(); });
+  });
+
+  beforeEach(function() {
+    FilterItem = juju.components.SearchResultsTypeFilter.prototype.FilterItem;
   });
 
   it('can render a type filter', function() {
@@ -39,17 +44,17 @@ describe('SearchResultsTypeFilter', function() {
     assert.deepEqual(output,
       <nav className="six-col list-block__type">
         <ul>
-          <juju.components.SearchResultsTypeFilterItem
+          <FilterItem
             key="all"
             label="All"
             selected={true}
             action={output.props.children.props.children[0].props.action} />
-          <juju.components.SearchResultsTypeFilterItem
+          <FilterItem
             key="charms"
             label="Charms"
             selected={false}
             action={output.props.children.props.children[1].props.action} />
-          <juju.components.SearchResultsTypeFilterItem
+          <FilterItem
             key="bundles"
             label="Bundles"
             selected={false}
@@ -67,17 +72,17 @@ describe('SearchResultsTypeFilter', function() {
     assert.deepEqual(output,
       <nav className="six-col list-block__type">
         <ul>
-          <juju.components.SearchResultsTypeFilterItem
+          <FilterItem
             key="all"
             label="All"
             selected={false}
             action={output.props.children.props.children[0].props.action} />
-          <juju.components.SearchResultsTypeFilterItem
+          <FilterItem
             key="charms"
             label="Charms"
             selected={false}
             action={output.props.children.props.children[1].props.action} />
-          <juju.components.SearchResultsTypeFilterItem
+          <FilterItem
             key="bundles"
             label="Bundles"
             selected={true}
@@ -102,6 +107,38 @@ describe('SearchResultsTypeFilter', function() {
           type: 'charm'
         }
       }
+    });
+  });
+
+  describe('FilterItem', function() {
+    it('can render a filter item', function() {
+      var action = sinon.spy();
+      var output = jsTestUtils.shallowRender(
+        <FilterItem
+          label="All"
+          selected={false}
+          action={action} />);
+      assert.deepEqual(output,
+        <li className=""
+            onClick={action}
+            tabIndex="0" role="button">
+          All
+        </li>);
+    });
+
+    it('can render a selected filter item', function() {
+      var action = sinon.spy();
+      var output = jsTestUtils.shallowRender(
+        <FilterItem
+          label="All"
+          selected={true}
+          action={action} />);
+      assert.deepEqual(output,
+        <li className="selected"
+            onClick={action}
+            tabIndex="0" role="button">
+          All
+        </li>);
     });
   });
 });

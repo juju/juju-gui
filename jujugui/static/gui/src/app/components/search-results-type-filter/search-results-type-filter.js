@@ -21,6 +21,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results-type-filter', function(Y) {
 
   juju.components.SearchResultsTypeFilter = React.createClass({
+    /**
+      Generate the base classes from the props.
+
+      @method _generateClasses
+      @param {Boolean} selected Whether the filter is selected.
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function(selected) {
+      return classNames(
+        {selected: selected}
+      );
+    },
+
+    /**
+      A filter item stateless component
+
+      @method FilterItem
+      @param {Object} props The component props.
+      @returns {Object} The stateless component.
+    */
+    FilterItem: function(props) {
+      return (
+        <li className={this._generateClasses(props.selected)}
+            onClick={props.action}
+            tabIndex="0" role="button">
+          {props.label}
+        </li>
+      );
+    },
 
     /**
       Filter the search results by the provided type.
@@ -45,17 +74,17 @@ YUI.add('search-results-type-filter', function(Y) {
       return (
         <nav className="six-col list-block__type">
           <ul>
-            <juju.components.SearchResultsTypeFilterItem
+            <this.FilterItem
               key="all"
               label="All"
               selected={!currentType}
               action={this._handleFilterClick.bind(this, null)} />
-            <juju.components.SearchResultsTypeFilterItem
+            <this.FilterItem
               key="charms"
               label="Charms"
               selected={currentType === 'charm'}
               action={this._handleFilterClick.bind(this, 'charm')} />
-            <juju.components.SearchResultsTypeFilterItem
+            <this.FilterItem
               key="bundles"
               label="Bundles"
               selected={currentType === 'bundle'}
@@ -66,6 +95,4 @@ YUI.add('search-results-type-filter', function(Y) {
     }
   });
 
-}, '0.1.0', {requires: [
-  'search-results-type-filter-item'
-]});
+}, '0.1.0', {requires: []});
