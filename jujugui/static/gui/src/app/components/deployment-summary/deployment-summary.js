@@ -38,7 +38,7 @@ YUI.add('deployment-summary', function() {
       var handlePlacementChange = this.props.handlePlacementChange;
       return (
         <div className="deployment-summary__placement">
-          You have {unplacedCount} unplaced unit{plural}, do you want to:
+          You have {unplacedCount.toString()} unplaced unit{plural}, do you want to:
           {' '}
           <form>
             <input type="radio"

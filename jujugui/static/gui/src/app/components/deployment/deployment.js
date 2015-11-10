@@ -165,7 +165,7 @@ YUI.add('deployment-component', function() {
       @method handlePlacementChange
       @param {Object} e The click event.
     */
-  handlePlacementChange: function(e) {
+    handlePlacementChange: function(e) {
       this.setState({
         autoPlace: e.currentTarget.getAttribute('data-placement') === 'placed'
       });
