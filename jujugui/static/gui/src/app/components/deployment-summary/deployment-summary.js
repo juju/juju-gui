@@ -29,18 +29,22 @@ YUI.add('deployment-summary', function() {
       @returns {Object} The placement component.
     */
     _generatePlacementControl: function() {
-      var unplacedCount = 1;
+      var unplacedCount = this.props.getUnplacedUnitCount();
       var plural = unplacedCount === 1 ? '' : 's';
-      //localStorage.getItem('auto-place-default')
       if (unplacedCount === 0) {
-        return;
+        return '';
       }
+      var autoPlace = this.props.autoPlace;
+      var handlePlacementChange = this.props.handlePlacementChange;
       return (
         <div className="deployment-summary__placement">
           You have {unplacedCount} unplaced unit{plural}, do you want to:
           {' '}
           <form>
-            <input type="radio" ref="leave"
+            <input type="radio"
+                defaultChecked={!autoPlace}
+                onChange={handlePlacementChange}
+                data-placement="unplaced"
                 id="leave-unplaced" name="placement"
                 className="deployment-summary__placement-radio" />
             {' '}
@@ -48,7 +52,10 @@ YUI.add('deployment-summary', function() {
                 className="deployment-summary__placement-label">
               Leave unplaced
             </label>
-            <input type="radio" ref="place"
+            <input type="radio"
+                defaultChecked={autoPlace}
+                onChange={handlePlacementChange}
+                data-placement="placed"
                 id="automatically-place" name="placement"
                 className="deployment-summary__placement-radio" />
             {' '}
@@ -58,7 +65,8 @@ YUI.add('deployment-summary', function() {
             </label>
           </form>
           {' '}
-          <span className="link" tabIndex="0" role="button">
+          <span className="link" tabIndex="0" role="button"
+            onClick={this.props.handleViewMachinesClick}>
             View machines
           </span>
         </div>

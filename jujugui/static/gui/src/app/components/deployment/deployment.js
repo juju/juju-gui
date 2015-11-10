@@ -32,6 +32,7 @@ YUI.add('deployment-component', function() {
       // Setting a default state object.
       var state = this.generateState(this.props);
       state.hasCommits = false;
+      state.autoPlace = !!localStorage.getItem('auto-place-default');
       return state;
     },
 
@@ -69,7 +70,10 @@ YUI.add('deployment-component', function() {
               deployButtonAction={this._summaryDeployAction}
               closeButtonAction={this._summaryCloseAction}
               changeDescriptions={changeDescriptions}
-              currentChangeSet={currentChangeSet} />
+              handleViewMachinesClick={this.handleViewMachinesClick}
+              handlePlacementChange={this.handlePlacementChange}
+              autoPlace={this.state.autoPlace}
+              getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
           };
           break;
       }
@@ -117,6 +121,9 @@ YUI.add('deployment-component', function() {
       @method _summaryDeployAction
     */
     _summaryDeployAction: function() {
+      if (this.state.autoPlace) {
+        this.props.autoPlaceUnits();
+      }
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
       this.setState({hasCommits: true});
@@ -130,6 +137,33 @@ YUI.add('deployment-component', function() {
     */
     _summaryCloseAction: function() {
       this._changeActiveComponent('deployment-bar');
+    },
+
+    /**
+      Handle navigating to the machine view.
+
+      @method handleViewMachinesClick
+    */
+    handleViewMachinesClick: function() {
+      this.props.changeState({
+        sectionB: {
+          component: 'machine',
+          metadata: {}
+        }
+      });
+      this._changeActiveComponent('deployment-bar');
+    },
+
+    /**
+      Handle changes to the placement radio buttons.
+
+      @method handlePlacementChange
+      @param {Object} e The click event.
+    */
+  handlePlacementChange: function(e) {
+      this.setState({
+        autoPlace: e.currentTarget.getAttribute('data-placement') === 'placed'
+      });
     },
 
     /**

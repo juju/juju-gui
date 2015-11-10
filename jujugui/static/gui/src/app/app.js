@@ -761,15 +761,20 @@ YUI.add('juju-gui', function(Y) {
       var ecs = env.get('ecs');
       var services = this.db.services;
       var units = this.db.units;
+      var utils = views.utils;
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
       ReactDOM.render(
         <window.juju.components.Deployment
+          changeState={this.changeState.bind(this)}
           services={services.toArray()}
           ecsCommit={ecs.commit.bind(ecs, env)}
           changeDescriptions={changeDescriptions}
+          getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this,
+              this.db.units)}
+          autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           generateChangeDescription={
               changesUtils.generateChangeDescription.bind(
                   changesUtils, services, units)}

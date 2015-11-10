@@ -1669,7 +1669,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-
     Calculate the number of units per status.
 
     @method getUnitStatusCounts
@@ -1694,6 +1693,17 @@ YUI.add('juju-view-utils', function(Y) {
       unitStatuses[agentState].size += 1;
     });
     return unitStatuses;
+  };
+
+  /**
+    Calculate the number of units per status.
+
+    @method getUnplacedUnitCount
+    @param {Array} units An array of units.
+    @returns {Object} The number of unplaced units.
+  */
+  utils.getUnplacedUnitCount = function(units) {
+    return units.filterByMachine(null).length;
   };
 
   /**
