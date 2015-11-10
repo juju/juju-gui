@@ -128,11 +128,13 @@ describe('Deployment', function() {
 
   it('can display the deployment summary', function() {
     var currentChangeSet = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
     var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
+        getUnplacedUnitCount={getUnplacedUnitCount}
         activeComponent="deployment-summary" />);
     assert.deepEqual(output,
       <div className="deployment-view">
@@ -140,7 +142,10 @@ describe('Deployment', function() {
           deployButtonAction={output.props.children.props.deployButtonAction}
           closeButtonAction={output.props.children.props.closeButtonAction}
           changeDescriptions={changeDescriptions}
-          currentChangeSet={currentChangeSet} />
+          handleViewMachinesClick={output.props.children.props.handleViewMachinesClick}
+          handlePlacementChange={output.props.children.props.handlePlacementChange}
+          autoPlace={false}
+          getUnplacedUnitCount={getUnplacedUnitCount} />
       </div>);
   });
 

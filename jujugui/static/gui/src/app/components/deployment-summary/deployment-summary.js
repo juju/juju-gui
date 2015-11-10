@@ -32,7 +32,7 @@ YUI.add('deployment-summary', function() {
       var unplacedCount = this.props.getUnplacedUnitCount();
       var plural = unplacedCount === 1 ? '' : 's';
       if (unplacedCount === 0) {
-        return '';
+        return;
       }
       var autoPlace = this.props.autoPlace;
       var handlePlacementChange = this.props.handlePlacementChange;

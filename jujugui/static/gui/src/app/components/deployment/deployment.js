@@ -30,10 +30,11 @@ YUI.add('deployment-component', function() {
     */
     getInitialState: function() {
       // Setting a default state object.
-      var state = this.generateState(this.props);
-      state.hasCommits = false;
-      state.autoPlace = !!localStorage.getItem('auto-place-default');
-      return state;
+      var state = {
+        hasCommits: false,
+        autoPlace: !!localStorage.getItem('auto-place-default')
+      };
+      return this.generateState(this.props, state);
     },
 
     /**
@@ -41,15 +42,19 @@ YUI.add('deployment-component', function() {
 
       @method generateState
       @param {Object} nextProps The props which were sent to the component.
+      @param {Object} state The existing create state.
       @return {Object} A generated state object which can be passed to setState.
     */
-    generateState: function(nextProps) {
-      var state = {
-        activeComponent: nextProps.activeComponent || 'deployment-bar'
-      };
+    generateState: function(nextProps, state) {
+      if (!state) {
+        state = {};
+      }
+      state.activeComponent = nextProps.activeComponent || 'deployment-bar';
       var hasCommits = this.state ? this.state.hasCommits : false;
       var currentChangeSet = nextProps.currentChangeSet ||
           this.props.currentChangeSet;
+      var autoPlace = state.autoPlace !== undefined ?
+          state.autoPlace : this.state.autoPlace;
       switch (state.activeComponent) {
         case 'deployment-bar':
           var generateChangeDescription = nextProps.generateChangeDescription ||
@@ -72,7 +77,7 @@ YUI.add('deployment-component', function() {
               changeDescriptions={changeDescriptions}
               handleViewMachinesClick={this.handleViewMachinesClick}
               handlePlacementChange={this.handlePlacementChange}
-              autoPlace={this.state.autoPlace}
+              autoPlace={autoPlace}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
           };
           break;

@@ -31,6 +31,7 @@ describe('DeploymentSummary', function() {
   });
 
   it('can display a list of changes', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(0);
     var closeButtonAction = sinon.stub();
     var deployButtonAction = sinon.stub();
     var changeDescriptions = [{
@@ -53,6 +54,7 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
         deployButtonAction={deployButtonAction}
         closeButtonAction={closeButtonAction} />);
@@ -71,6 +73,7 @@ describe('DeploymentSummary', function() {
             <h2 className="deployment-summary__title">
               Deployment summary
             </h2>
+            {undefined}
           </div>
           <div className="deployment-summary__content">
             <ul className="deployment-summary__list">
