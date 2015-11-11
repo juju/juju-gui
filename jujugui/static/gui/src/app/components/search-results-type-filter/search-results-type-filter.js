@@ -40,7 +40,7 @@ YUI.add('search-results-type-filter', function(Y) {
       @method _generateFilterItems
       @returns {Object} The components.
     */
-    _generateFilterItems: function(label, selected, action) {
+    _generateFilterItems: function() {
       var components = [];
       var currentType = this.props.currentType;
       var items = [{
@@ -72,7 +72,7 @@ YUI.add('search-results-type-filter', function(Y) {
       Filter the search results by the provided type.
 
       @method _handleFilterClick
-      @param {Sring} type The bound type.
+      @param {String} type The bound type.
     */
     _handleFilterClick: function(type) {
       this.props.changeState({

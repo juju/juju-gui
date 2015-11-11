@@ -266,6 +266,9 @@ YUI.add('juju-app-state', function(Y) {
             if (metadata.type) {
               queryValues.type = metadata.type;
             }
+            if (metadata.sort) {
+              queryValues.sort = metadata.sort;
+            }
           }
           if (activeComponent === 'mid-point') {
             queryValues.midpoint = '';
@@ -483,6 +486,9 @@ YUI.add('juju-app-state', function(Y) {
           }
           if (query.type) {
             metadata.type = query.type;
+          }
+          if (query.sort) {
+            metadata.sort = query.sort;
           }
           state.sectionC = {
             component: 'charmbrowser',

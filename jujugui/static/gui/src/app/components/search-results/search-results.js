@@ -169,13 +169,17 @@ YUI.add('search-results', function(Y) {
       @method searchRequest
       @param {String} query The text to search for.
       @param {String} tags The tags to limit the search by.
+      @param {String} sort The sort method.
     */
-    searchRequest: function(query, tags, type) {
+    searchRequest: function(query, tags, type, sort) {
       var filters = {text: query, tags: tags};
       // Don't add the type property unless required otherwise the API will
       // filter by charm.
       if (type) {
         filters.type = type;
+      }
+      if (sort) {
+        filters.sort = sort;
       }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
@@ -200,7 +204,10 @@ YUI.add('search-results', function(Y) {
       }
       var nextQuery = JSON.stringify(nextProps.query),
           currentQuery = JSON.stringify(this.state.data.text);
-      return nextQuery !== currentQuery || nextProps.type !== this.props.type;
+      return nextQuery !== currentQuery ||
+          nextProps.type !== this.props.type ||
+          nextProps.tags !== this.props.tags ||
+          nextProps.sort !== this.props.sort;
     },
 
     getInitialState: function() {
@@ -210,7 +217,9 @@ YUI.add('search-results', function(Y) {
     },
 
     componentDidMount: function() {
-      this.searchRequest(this.props.query, this.props.tags, this.props.type);
+      this.searchRequest(
+          this.props.query, this.props.tags, this.props.type,
+          this.props.sort);
     },
 
     componentWillUnmount: function() {
@@ -219,7 +228,8 @@ YUI.add('search-results', function(Y) {
 
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
-        this.searchRequest(nextProps.query, nextProps.tags, nextProps.type);
+        this.searchRequest(nextProps.query, nextProps.tags, nextProps.type,
+          nextProps.sort);
       }
     },
 
@@ -265,17 +275,9 @@ YUI.add('search-results', function(Y) {
                     <div className="six-col last-col">
                       <div className="list-block__filters--selects">
                         <form>
-                          <div className="list-block__sort">
-                            Sort by:
-                            <select>
-                              <option value="-downloads">Most popular</option>
-                              <option value="downloads">Least popular</option>
-                              <option value="name">Name (a-z)</option>
-                              <option value="-name">Name (z-a)</option>
-                              <option value="owner">Author (a-z)</option>
-                              <option value="-owner">Author (z-a)</option>
-                            </select>
-                          </div>
+                          <juju.components.SearchResultsSort
+                            changeState={this.props.changeState}
+                            currentSort={nextProps.sort || this.props.sort} />
                           <div className="list-block__series">
                             Series:
                             <select>
@@ -408,5 +410,6 @@ YUI.add('search-results', function(Y) {
 
 }, '0.1.0', {requires: [
   'loading-spinner',
+  'search-results-sort',
   'search-results-type-filter'
 ]});

@@ -687,6 +687,38 @@ describe('UI State object', function() {
           }
         }
       },
+      '/machine/3/?search=hadoop&sort=-name': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            sort: '-name'
+          }
+        }
+      },
+      '/machine/3/?search&sort=-name': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: '',
+            sort: '-name'
+          }
+        }
+      },
       // Multi section urls.
       '/inspector/apache2/machine/3/lxc-0': {
         sectionA: {
@@ -1135,6 +1167,38 @@ describe('UI State object', function() {
             activeComponent: 'search-results',
             search: null,
             type: 'charm'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search=hadoop&sort=-name': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            sort: '-name'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search&sort=-name': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            sort: '-name'
           }
         }
       }
