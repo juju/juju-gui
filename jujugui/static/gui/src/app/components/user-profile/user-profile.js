@@ -24,7 +24,7 @@ YUI.add('user-profile', function() {
 
     getInitialState: function() {
       return {
-        environments: []
+        envList: []
       };
     },
 
@@ -71,7 +71,8 @@ YUI.add('user-profile', function() {
           <juju.components.UserProfileHeader />
           <juju.components.UserProfileList
             title="Models"
-            data={this.state.environments} />
+            data={this.state.envList}
+            uuidKey="uuid"/>
         </juju.components.Panel>
       );
     }

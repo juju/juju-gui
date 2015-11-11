@@ -5,6 +5,7 @@ ecmaFeatures:
   jsx: true
   defaultParams: true
   arrowFunctions: true
+  templateStrings: true
   objectLiteralShorthandProperties: false
 rules:
   max-len: [2, 80, 2]
