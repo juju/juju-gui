@@ -67,7 +67,7 @@ describe('topology relation module', function() {
 
   it('fires \'addRelationStart\' event when making a relation', function() {
     var flags = {
-      addRelationStart: 0
+      addRelationDragStart: 0
     };
     var topo = {
       fire: function(e) {
@@ -107,7 +107,7 @@ describe('topology relation module', function() {
     };
     view.addRelButtonClicked(null, context);
     assert.deepEqual(flags, {
-      addRelationStart: 1
+      addRelationDragStart: 1
     });
   });
 
@@ -217,7 +217,8 @@ describe('topology relation module', function() {
     var topo = {
       get: function() {
         return env;
-      }
+      },
+      fire: function() {}
     };
     var fauxView = {
       get: function(name) {

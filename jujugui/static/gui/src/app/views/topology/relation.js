@@ -477,7 +477,6 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelButtonClicked: function(data, context) {
       var topo = context.get('component');
       var box = topo.get('active_service');
-      var origin = topo.get('active_context');
       var container = context.get('container');
       var addRelationNode = container.one('.add-relation');
 
@@ -489,14 +488,7 @@ YUI.add('juju-topology-relation', function(Y) {
       }
 
       // Signify that a relation is being drawn.
-      topo.fire('addRelationStart');
-
-      // Create the dragline and position its endpoints properly.
-      context.addRelationDragStart({service: box});
-      context.mousemove.call(
-          container.one('.topology g').getDOMNode(),
-          null, context);
-      context.addRelationStart(box, context, origin);
+      topo.fire('addRelationDragStart', {service: box});
     },
 
     /*
@@ -572,18 +564,14 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     snapOutOfService: function() {
-      // Do not fire if we aren't looking for a relation endpoint.
-      if (!this.get('potential_drop_point_rect')) {
-        return;
-      }
-
-      this.set('potential_drop_point_service', null);
-      this.set('potential_drop_point_rect', null);
+      this.clearRelationSettings();
 
       if (this.dragline) {
         this.dragline.attr('class',
             'relation pending-relation dragline dragging');
         this.draglineOverService = false;
+        this.clickAddRelation = true;
+        this.get('component').buildingRelation = true;
       }
     },
 
@@ -616,11 +604,20 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationDrag: function(evt) {
       var d = evt.box;
 
+      if (!d || !this.dragline) {
+        this.clearRelationSettings();
+        return;
+      }
+
       // Rubberband our potential relation line if we're not currently
       // hovering over a potential drop-point.
-      if (!this.get('potential_drop_point_service') &&
-          !this.draglineOverService) {
-        // Create a BoundingBox for our cursor.
+      if (!this.draglineOverService) {
+        // Create a BoundingBox for our cursor. If one doesn't exist, events
+        // bubbled improperly, and we didn't have addRelationDragStart called
+        // first; so ensure that is called.
+        if (!this.cursorBox) {
+          this.addRelationDragStart(evt);
+        }
         this.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
 
         // Draw the relation line from the connector point nearest the
@@ -667,6 +664,7 @@ YUI.add('juju-topology-relation', function(Y) {
     removeRelation: function(relation, view, confirmButton) {
       var topo = this.get('component');
       var env = topo.get('env');
+      topo.fire('clearState');
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
       var relationElement = view.get('container')
@@ -723,6 +721,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * @return {undefined} side effects only.
      */
     clearState: function() {
+      this.clearRelationSettings();
       this.cancelRelationBuild();
       this.set('relationMenuActive', false);
       this.set('relationMenuRelation', undefined);
@@ -748,6 +747,21 @@ YUI.add('juju-topology-relation', function(Y) {
       vis.selectAll('.plus-service').classed('fade', false);
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
+
+    },
+
+    /**
+      Clear sigils and variables used when creating a relation.
+
+      @method clearRelationSettings
+    */
+    clearRelationSettings: function() {
+      var topo = this.get('component');
+      topo.buildingRelation = false;
+      this.clickAddRelation = null;
+      this.draglineOverService = false;
+      this.set('potential_drop_point_service', undefined);
+      this.set('potential_drop_point_rect', undefined);
     },
 
     /**
@@ -1088,6 +1102,7 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationEnd: function(endpoints, module) {
       // Redisplay all services
       module.cancelRelationBuild();
+      module.clearRelationSettings();
       // Get the vis, and links, build the new relation.
       var topo = module.get('component');
       var env = topo.get('env');

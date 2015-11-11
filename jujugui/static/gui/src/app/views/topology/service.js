@@ -641,7 +641,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
-      if (box.pending || box.containsPoint(mouse_coords, topo.zoom)) {
+      if (box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       var rect = Y.one(this).one('.service-border');
@@ -1112,8 +1112,12 @@ YUI.add('juju-topology-service', function(Y) {
       var selection = d3.select(this);
 
       if (topo.buildingRelation) {
-        topo.fire('addRelationDrag', { box: box });
-        return;
+        if (box) {
+          topo.fire('addRelationDrag', { box: box });
+          return;
+        } else {
+          topo.buildingRelation = false;
+        }
       }
       if (self.longClickTimer) {
         self.longClickTimer.cancel();
