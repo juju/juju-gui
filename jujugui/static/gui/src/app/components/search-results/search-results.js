@@ -22,7 +22,6 @@ YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
     searchXhr: null,
-    template: Handlebars.templates['search-results-tmpl.hbs'],
     // XXX kadams54, 2015-05-21: This series mapping needs to be updated
     // with each release, at least until we can figure out a better way.
     // XXX urosj, 2015-11-04: We need to support all series, not just
@@ -264,7 +263,6 @@ YUI.add('search-results', function(Y) {
           break;
         case 'search-results':
           var data = this.state.data;
-          var html = this.template(data);
           var sortItems = [{
             label: 'Default',
             value: ''
@@ -329,9 +327,12 @@ YUI.add('search-results', function(Y) {
                     </div>
                   </div>
                   <div className="entity-search-results">
-                    <div onClick={this._handleTemplateClicks}
-                      dangerouslySetInnerHTML={{__html: html}}>
-                    </div>
+                    {this._generateResultsList(
+                      data.promulgatedResultsCount,
+                      data.promulgatedResults, true)}
+                    {this._generateResultsList(
+                      data.normalResultsCount,
+                      data.normalResults, false)}
                   </div>
                 </div>
               </div>
@@ -393,41 +394,7 @@ YUI.add('search-results', function(Y) {
     },
 
     /**
-      Handle any clicks inside the template and route them to the correct
-      handler.
-
-      @method _handleTemplateClicks
-      @param {Object} e The click event
-    */
-    _handleTemplateClicks: function(e) {
-      e.preventDefault();
-      var target = e.target;
-      var className = target.className;
-      if (className.indexOf('list-block__entity-link') > -1) {
-        this._handleEntityClick(target);
-      }
-    },
-
-    /**
-      Show the entity details when clicked.
-
-      @method _handleEntityClick
-      @param {Object} target The element that was clicked
-    */
-    _handleEntityClick: function(target) {
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: target.getAttribute('data-id')
-          }
-        }
-      });
-    },
-
-    /**
-      Generate the base classes from on the props.
+      Generate the base classes from the props.
 
       @method _generateClasses
       @returns {String} The collection of class names.
@@ -436,6 +403,52 @@ YUI.add('search-results', function(Y) {
       return classNames(
         'search-results',
         this.props.inline ? '' : 'search-results--floating'
+      );
+    },
+
+    /**
+      Generate the classes for a results list.
+
+      @method _generateListClasses
+      @param {Boolean} promulgated Whether to add the promulgated class.
+      @returns {String} The collection of class names.
+    */
+    _generateListClasses: function(promulgated) {
+      return classNames(
+        'list-block__list',
+        {promulgated: promulgated}
+      );
+    },
+
+    /**
+      Generate the base classes from on the props.
+
+      @method _generateClasses
+      @param {Integer} count The number of results.
+      @param {Array} results The list of results.
+      @param {Boolean} promulgated Whether to show a promulgated list.
+      @returns {String} The collection of class names.
+    */
+    _generateResultsList: function(count, results, promulgated) {
+      var title = promulgated ? 'Community recommended' : 'Recommended';
+      var items = [];
+      var changeState = this.props.changeState;
+      results.forEach(function(item) {
+        items.push(
+          <juju.components.SearchResultsItem
+            changeState={changeState}
+            key={item.storeId}
+            item={item} />);
+      });
+      return (
+        <div>
+          <h4>
+            {title} <span className="count">({count})</span>
+          </h4>
+          <ul className={this._generateListClasses(promulgated)}>
+            {items}
+          </ul>
+        </div>
       );
     },
 
@@ -450,6 +463,7 @@ YUI.add('search-results', function(Y) {
 
 }, '0.1.0', {requires: [
   'loading-spinner',
+  'search-results-item',
   'search-results-select-filter',
   'search-results-type-filter'
 ]});
