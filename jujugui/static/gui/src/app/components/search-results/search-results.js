@@ -296,7 +296,7 @@ YUI.add('search-results', function(Y) {
               label: series.charAt(0).toUpperCase() + series.slice(1) +
                   ' ' + this.SERIES[series],
               value: series
-            }
+            };
           }, this);
           seriesItems = seriesItems.concat(seriesMap);
           state.activeChild = {
