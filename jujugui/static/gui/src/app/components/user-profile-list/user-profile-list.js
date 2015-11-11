@@ -107,10 +107,14 @@ YUI.add('user-profile-list', function() {
     },
 
     render: function () {
-      var title = `${this.props.title} (${this.props.data.length})`;
       return (
         <div className="user-profile-list">
-          <div className="user-profile__header">{title}</div>
+          <div className="user-profile-list__header">
+            {this.props.title}
+            <span className="user-profile-list__size">
+              {' '} ({this.props.data.length})
+            </span>
+          </div>
           {this.displayData()}
         </div>);
     }

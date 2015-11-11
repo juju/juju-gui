@@ -1,0 +1,43 @@
+.user-profile-list {
+
+    padding: 40px;
+
+    &__header {
+        padding-bottom: 20px;
+        font-size: 1.375em;
+    }
+
+    &__size {
+        color: $light-mid-grey;
+    }
+
+    &__header-row {
+        display: flex;
+        list-style: none;
+        margin-bottom: 13px;
+    }
+
+    &__header-row :first-child {
+        padding-left: 15px;
+    }
+
+    &__header-row &__line-item {
+      text-transform: capitalize;
+    }
+
+    &__item-row {
+        display: flex;
+        border-top: 1px solid $light-mid-grey;
+        list-style: none;
+        padding: 13px 0;
+    }
+
+    &__item-row :first-child {
+        padding-left: 15px;
+    }
+
+    &__line-item {
+      flex: 1;
+      flex-direction: column;
+    }
+}
