@@ -60,10 +60,13 @@ YUI.add('user-profile-list', function() {
       var rows = [];
       this.props.data.forEach((item) => {
         var rowItems = this._generateRowItems(item);
+        var key = item[this.props.uuidKey];
         rows.push(
           <li
             className="user-profile-list__item-row"
-            key={item[this.props.uuidKey]}>
+            key={key}
+            data-uuid={key}
+            onClick={this._switchEnv}>
             {rowItems}
           </li>);
       });
@@ -104,6 +107,16 @@ YUI.add('user-profile-list', function() {
           {this._generateHeaders()}
           {this._generateRows()}
         </ul>);
+    },
+
+    /**
+      Calls to switch the env to the one the user clicked on.
+
+      @method _switchEnv
+      @param {Object} e The click event.
+    */
+    _switchEnv: function(e) {
+      this.props.switchEnv(e.currentTarget.getAttribute('data-uuid'));
     },
 
     render: function () {

@@ -63,6 +63,30 @@ YUI.add('user-profile', function() {
       this.setState({envList: data.envs || data});
     },
 
+    /**
+      Take the supplied UUID, fetch the username and password then call the
+      passed in switchEnv method.
+
+      @method switchEnv
+      @param {String} uuid The env UUID.
+    */
+    switchEnv: function(uuid) {
+      var username = '';
+      var password = '';
+      var found = this.state.envList.some((env) => {
+        if (env.uuid === uuid) {
+          username = env.user;
+          password = env.password;
+          return true;
+        }
+      });
+      if (!found) {
+        console.log('No user credentials for env: ', uuid);
+      }
+      this.props.switchEnv(uuid, username, password);
+      this.close();
+    },
+
     close: function() {
       this.props.changeState({
         sectionC: {
@@ -87,7 +111,8 @@ YUI.add('user-profile', function() {
           <juju.components.UserProfileList
             title="Models"
             data={this.state.envList}
-            uuidKey="uuid"/>
+            uuidKey="uuid"
+            switchEnv={this.switchEnv}/>
         </juju.components.Panel>
       );
     }

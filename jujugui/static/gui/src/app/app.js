@@ -726,7 +726,8 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.UserProfile
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
-          changeState={this.changeState.bind(this)} />,
+          changeState={this.changeState.bind(this)}
+          switchEnv={this.switchEnv.bind(this)} />,
         document.getElementById('charmbrowser-container'));
     },
 
