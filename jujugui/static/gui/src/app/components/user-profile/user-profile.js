@@ -63,11 +63,26 @@ YUI.add('user-profile', function() {
       this.setState({envList: data.envs || data});
     },
 
+    close: function() {
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: null
+        }
+      });
+    },
+
     render: function() {
       return (
         <juju.components.Panel
           instanceName="user-profile"
           visible={true}>
+          <span className="user-profile__close"
+            tabIndex="0" role="button"
+            onClick={this.close}>
+            <juju.components.SvgIcon name="close_16"
+              size="16" />
+          </span>
           <juju.components.UserProfileHeader />
           <juju.components.UserProfileList
             title="Models"
