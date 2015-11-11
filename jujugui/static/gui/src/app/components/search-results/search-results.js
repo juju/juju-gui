@@ -23,6 +23,17 @@ YUI.add('search-results', function(Y) {
   juju.components.SearchResults = React.createClass({
     searchXhr: null,
     template: Handlebars.templates['search-results-tmpl.hbs'],
+    // XXX kadams54, 2015-05-21: This series mapping needs to be updated
+    // with each release, at least until we can figure out a better way.
+    // XXX urosj, 2015-11-04: We need to support all series, not just
+    // Ubuntu ones.
+    SERIES: {
+      precise: 12.04,
+      trusty: 14.04,
+      utopic: 14.10,
+      vivid: 15.04,
+      wily: 15.10
+    },
 
      /**
       If it's the same charm but for different series, collapse into one
@@ -35,27 +46,13 @@ YUI.add('search-results', function(Y) {
       @param {Array} entities The entities in their uncollapsed state.
      */
     collapseSeries: function(entities) {
-
-      function seriesKey(series) {
-        // XXX kadams54, 2015-05-21: This series mapping needs to be updated
-        // with each release, at least until we can figure out a better way.
-        // XXX urosj, 2015-11-04: We need to support all series, not just
-        // Ubuntu ones.
-        return {
-          precise: 12.04,
-          trusty:  14.04,
-          utopic:  14.10,
-          vivid:   15.04,
-          wily:    15.10
-        }[series.name];
-      }
-
       function entityKey(entity) {
         return [entity.name, entity.owner, entity.type, entity.promulgated];
       }
 
       var collapsedEntities = {},
-          orderedKeys = [];
+          orderedKeys = [],
+          self = this;
       for (var i = 0, l = entities.length; i < l; i++) {
         var entity = entities[i],
             key = entityKey(entity),
@@ -71,11 +68,11 @@ YUI.add('search-results', function(Y) {
           collapsed.series.push(value);
           // Ensure that the most recent series is first.
           collapsed.series.sort(function(a, b) {
-            var k1 = seriesKey(a),
-                k2 = seriesKey(b);
+            var k1 = self.SERIES[a.name],
+                k2 = self.SERIES[b.name];
             // We want a reverse sort, so...
             return k2 - k1;
-          });
+          }, self);
           // De-dupe the series array.
           collapsed.series = collapsed.series.filter(function(s, pos, arry) {
             return !pos || s.name != arry[pos - 1].name;
@@ -170,8 +167,9 @@ YUI.add('search-results', function(Y) {
       @param {String} query The text to search for.
       @param {String} tags The tags to limit the search by.
       @param {String} sort The sort method.
+      @param {String} series The series to filter by.
     */
-    searchRequest: function(query, tags, type, sort) {
+    searchRequest: function(query, tags, type, sort, series) {
       var filters = {text: query, tags: tags};
       // Don't add the type property unless required otherwise the API will
       // filter by charm.
@@ -180,6 +178,9 @@ YUI.add('search-results', function(Y) {
       }
       if (sort) {
         filters.sort = sort;
+      }
+      if (series) {
+        filters.series = series;
       }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
@@ -207,6 +208,7 @@ YUI.add('search-results', function(Y) {
       return nextQuery !== currentQuery ||
           nextProps.type !== this.props.type ||
           nextProps.tags !== this.props.tags ||
+          nextProps.series !== this.props.series ||
           nextProps.sort !== this.props.sort;
     },
 
@@ -219,7 +221,7 @@ YUI.add('search-results', function(Y) {
     componentDidMount: function() {
       this.searchRequest(
           this.props.query, this.props.tags, this.props.type,
-          this.props.sort);
+          this.props.sort, this.props.series);
     },
 
     componentWillUnmount: function() {
@@ -229,7 +231,7 @@ YUI.add('search-results', function(Y) {
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
         this.searchRequest(nextProps.query, nextProps.tags, nextProps.type,
-          nextProps.sort);
+          nextProps.sort, nextProps.series);
       }
     },
 
@@ -263,6 +265,40 @@ YUI.add('search-results', function(Y) {
         case 'search-results':
           var data = this.state.data;
           var html = this.template(data);
+          var sortItems = [{
+            label: 'Default',
+            value: ''
+          }, {
+            label: 'Most popular',
+            value: '-downloads'
+          }, {
+            label: 'Least popular',
+            value: 'downloads'
+          }, {
+            label: 'Name (a-z)',
+            value: 'name'
+          }, {
+            label: 'Name (z-a)',
+            value: '-name'
+          }, {
+            label: 'Author (a-z)',
+            value: 'owner'
+          }, {
+            label: 'Author (z-a)',
+            value: '-owner'
+          }];
+          var seriesItems = [{
+            label: 'All',
+            value: ''
+          }];
+          var seriesMap = Object.keys(this.SERIES).map(function(series) {
+            return {
+              label: series.charAt(0).toUpperCase() + series.slice(1) +
+                  ' ' + this.SERIES[series],
+              value: series
+            }
+          }, this);
+          seriesItems = seriesItems.concat(seriesMap);
           state.activeChild = {
             component:
               <div className="row no-padding-top">
@@ -275,15 +311,19 @@ YUI.add('search-results', function(Y) {
                     <div className="six-col last-col">
                       <div className="list-block__filters--selects">
                         <form>
-                          <juju.components.SearchResultsSort
+                          <juju.components.SearchResultsSelectFilter
                             changeState={this.props.changeState}
-                            currentSort={nextProps.sort || this.props.sort} />
-                          <div className="list-block__series">
-                            Series:
-                            <select>
-                              <option>None</option>
-                            </select>
-                          </div>
+                            label="Sort by"
+                            filter='sort'
+                            items={sortItems}
+                            currentValue={nextProps.sort || this.props.sort} />
+                          <juju.components.SearchResultsSelectFilter
+                            changeState={this.props.changeState}
+                            label="Series"
+                            filter='series'
+                            items={seriesItems}
+                            currentValue={
+                                nextProps.series || this.props.series} />
                         </form>
                       </div>
                     </div>
@@ -410,6 +450,6 @@ YUI.add('search-results', function(Y) {
 
 }, '0.1.0', {requires: [
   'loading-spinner',
-  'search-results-sort',
+  'search-results-select-filter',
   'search-results-type-filter'
 ]});

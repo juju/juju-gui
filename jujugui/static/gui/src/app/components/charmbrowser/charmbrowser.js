@@ -76,6 +76,7 @@ YUI.add('charmbrowser-component', function() {
                 query={metadata.search}
                 type={metadata.type}
                 sort={metadata.sort}
+                series={metadata.series}
                 tags={metadata.tags} />
           };
           break;

@@ -18,41 +18,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('search-results-sort', function(Y) {
+YUI.add('search-results-select-filter', function(Y) {
 
-  juju.components.SearchResultsSort = React.createClass({
+  juju.components.SearchResultsSelectFilter = React.createClass({
 
     /**
-      Generate a list of sort items.
+      Generate a list of items.
 
-      @method _generateSortItems
+      @method _generateItems
       @returns {Object} The components.
     */
-    _generateSortItems: function() {
+    _generateItems: function() {
       var components = [];
-      var items = [{
-        label: 'Default',
-        value: ''
-      }, {
-        label: 'Most popular',
-        value: '-downloads'
-      }, {
-        label: 'Least popular',
-        value: 'downloads'
-      }, {
-        label: 'Name (a-z)',
-        value: 'name'
-      }, {
-        label: 'Name (z-a)',
-        value: '-name'
-      }, {
-        label: 'Author (a-z)',
-        value: 'owner'
-      }, {
-        label: 'Author (z-a)',
-        value: '-owner'
-      }];
-      items.forEach(function(item) {
+      this.props.items.forEach(function(item) {
         components.push(
           <option value={item.value}
             key={item.value}>
@@ -63,30 +41,32 @@ YUI.add('search-results-sort', function(Y) {
     },
 
     /**
-      Change the state when the sort changes.
+      Change the state when the value changes.
 
-      @method _handleSortChange
+      @method _handleChange
       @param {Object} e The change event.
     */
-    _handleSortChange: function(e) {
+    _handleChange: function(e) {
+      var metadata = {
+        activeComponent: 'search-results',
+      };
+      metadata[this.props.filter] = e.currentTarget.value;
       this.props.changeState({
         sectionC: {
           component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            sort: e.currentTarget.value
-          }
+          metadata: metadata
         }
       });
     },
 
     render: function() {
+      var className = 'list-block__' + this.props.filter;
       return (
-        <div className="list-block__sort">
-          Sort by:
-          <select onChange={this._handleSortChange}
-            defaultValue={this.props.currentSort}>
-            {this._generateSortItems()}
+        <div className={className}>
+          {this.props.label}:
+          <select onChange={this._handleChange}
+            defaultValue={this.props.currentValue}>
+            {this._generateItems()}
           </select>
         </div>
       );

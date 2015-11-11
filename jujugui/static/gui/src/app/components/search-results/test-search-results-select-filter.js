@@ -23,66 +23,86 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('SearchResultsSort', function() {
+describe('SearchResultsSelectFilter', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('search-results-sort', function() { done(); });
+    YUI().use('search-results-select-filter', function() { done(); });
   });
 
-  it('can render a sort control', function() {
+  it('can render a select filter', function() {
     var changeState = sinon.stub();
+    var sortItems = [{
+      label: 'Most popular',
+      value: '-downloads'
+    }, {
+      label: 'Least popular',
+      value: 'downloads'
+    }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.SearchResultsSort
+      <juju.components.SearchResultsSelectFilter
         changeState={changeState}
-        currentSort={null} />);
+        label="Sort by"
+        filter='sort'
+        items={sortItems}
+        currentValue={null} />);
     assert.deepEqual(output,
       <div className="list-block__sort">
-        Sort by:
-        <select onChange={output.props.children[1].props.onChange}
+        {"Sort by"}:
+        <select onChange={output.props.children[2].props.onChange}
           defaultValue={null}>
-            <option value="" key="">Default</option>
             <option value="-downloads" key="-downloads">Most popular</option>
             <option value="downloads" key="downloads">Least popular</option>
-            <option value="name" key="name">Name (a-z)</option>
-            <option value="-name" key="-name">Name (z-a)</option>
-            <option value="owner" key="owner">Author (a-z)</option>
-            <option value="-owner" key="-owner">Author (z-a)</option>
         </select>
       </div>);
   });
 
-  it('select a sort option', function() {
+  it('can select an option', function() {
     var changeState = sinon.stub();
+    var sortItems = [{
+      label: 'Most popular',
+      value: '-downloads'
+    }, {
+      label: 'Least popular',
+      value: 'downloads'
+    }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.SearchResultsSort
+      <juju.components.SearchResultsSelectFilter
         changeState={changeState}
-        currentSort="-name" />);
+        label="Sort by"
+        filter='sort'
+        items={sortItems}
+        currentValue="downloads" />);
     assert.deepEqual(output,
       <div className="list-block__sort">
-        Sort by:
-        <select onChange={output.props.children[1].props.onChange}
-          defaultValue="-name">
-            <option value="" key="">Default</option>
+        {"Sort by"}:
+        <select onChange={output.props.children[2].props.onChange}
+          defaultValue="downloads">
             <option value="-downloads" key="-downloads">Most popular</option>
             <option value="downloads" key="downloads">Least popular</option>
-            <option value="name" key="name">Name (a-z)</option>
-            <option value="-name" key="-name">Name (z-a)</option>
-            <option value="owner" key="owner">Author (a-z)</option>
-            <option value="-owner" key="-owner">Author (z-a)</option>
         </select>
       </div>);
   });
 
   it('can change the search state', function() {
     var changeState = sinon.stub();
+    var sortItems = [{
+      label: 'Most popular',
+      value: '-downloads'
+    }, {
+      label: 'Least popular',
+      value: 'downloads'
+    }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.SearchResultsSort
+      <juju.components.SearchResultsSelectFilter
         changeState={changeState}
-        currentSort={null} />);
-    output.props.children[1].props.onChange({
+        label="Sort by"
+        filter='sort'
+        items={sortItems}
+        currentValue={null} />);
+    output.props.children[2].props.onChange({
       currentTarget: {
-        value: 'owner'
+        value: 'downloads'
       }
     });
     assert.equal(changeState.callCount, 1);
@@ -91,7 +111,7 @@ describe('SearchResultsSort', function() {
         component: 'charmbrowser',
         metadata: {
           activeComponent: 'search-results',
-          sort: 'owner'
+          sort: 'downloads'
         }
       }
     });
