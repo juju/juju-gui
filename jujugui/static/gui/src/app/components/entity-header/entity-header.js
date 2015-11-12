@@ -30,25 +30,6 @@ YUI.add('entity-header', function() {
     },
 
     /**
-      Show the search results for a tag when clicked.
-
-      @method _handleTagClick
-      @param {Object} e The click event
-    */
-    _handleTagClick: function(e) {
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: null,
-            tags: e.target.getAttribute('data-id')
-          }
-        }
-      });
-    },
-
-    /**
       Add a service for this charm to the canvas.
 
       @method _handleDeployClick
@@ -139,6 +120,8 @@ YUI.add('entity-header', function() {
                 </ul>
               </div>
               <div className="four-col last-col no-margin-bottom">
+                <juju.components.CopyToClipboard
+                  value={'juju deploy ' + entity.id} />
                 <juju.components.GenericButton
                   ref="deployButton"
                   action={this._handleDeployClick}
@@ -154,6 +137,7 @@ YUI.add('entity-header', function() {
 
 }, '0.1.0', {
   requires: [
+    'copy-to-clipboard',
     'generic-button'
   ]
 });

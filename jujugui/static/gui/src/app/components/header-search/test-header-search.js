@@ -100,9 +100,6 @@ describe('HeaderSearch', function() {
     assert.isTrue(
         output.refs.headerSearchContainer
                    .classList.contains('header-search--active'));
-
-    var input = output.refs.searchInput;
-    assert.equal(input.style.getPropertyValue('width'), '160px');
   });
 
   it('navigates to the store when the Store button is clicked', function() {

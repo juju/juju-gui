@@ -37,7 +37,7 @@ if [ -n "$1" ]; then
   xdg-open $TEST_PATH
   fg %1
 else
-  $MOCHA_PHANTOMJS -p $PHANTOMJS -t 40000 $TEST_PATH
+  $MOCHA_PHANTOMJS -C -p $PHANTOMJS -t 40000 $TEST_PATH
   STATUS=$?
   kill %1
   exit $STATUS
