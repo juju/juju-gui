@@ -72,7 +72,7 @@ YUI.add('search-results', function(Y) {
                 k2 = self.SERIES[b.name];
             // We want a reverse sort, so...
             return k2 - k1;
-          }, self);
+          });
           // De-dupe the series array.
           collapsed.series = collapsed.series.filter(function(s, pos, arry) {
             return !pos || s.name != arry[pos - 1].name;
@@ -291,13 +291,13 @@ YUI.add('search-results', function(Y) {
             label: 'All',
             value: ''
           }];
-          var seriesMap = Object.keys(this.SERIES).map(function(series) {
+          var seriesMap = Object.keys(this.SERIES).map((series) => {
             return {
               label: series.charAt(0).toUpperCase() + series.slice(1) +
                   ' ' + this.SERIES[series],
               value: series
             };
-          }, this);
+          });
           seriesItems = seriesItems.concat(seriesMap);
           state.activeChild = {
             component:
