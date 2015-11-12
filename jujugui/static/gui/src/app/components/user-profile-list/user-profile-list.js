@@ -25,7 +25,8 @@ YUI.add('user-profile-list', function() {
     propTypes: {
       title: React.PropTypes.string.isRequired,
       data: React.PropTypes.array.isRequired,
-      uuidKey: React.PropTypes.string.isRequired
+      uuidKey: React.PropTypes.string.isRequired,
+      switchEnv: React.PropTypes.func.isRequired
     },
 
     /**
@@ -58,6 +59,7 @@ YUI.add('user-profile-list', function() {
     */
     _generateRows: function() {
       var rows = [];
+      rows.push(this._generateHeaders());
       this.props.data.forEach((item) => {
         var rowItems = this._generateRowItems(item);
         var key = item[this.props.uuidKey];
@@ -104,7 +106,6 @@ YUI.add('user-profile-list', function() {
       // If we have data then dynamically generate the columns and rows
       return (
         <ul>
-          {this._generateHeaders()}
           {this._generateRows()}
         </ul>);
     },
