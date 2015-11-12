@@ -53,6 +53,8 @@ YUI.add('deployment-component', function() {
       var hasCommits = this.state ? this.state.hasCommits : false;
       var currentChangeSet = nextProps.currentChangeSet ||
           this.props.currentChangeSet;
+      // We want the value of state.autoPlace if it has been defined, even if
+      // the value is false, so check that it is not undefined.
       var autoPlace = state.autoPlace !== undefined ?
           state.autoPlace : this.state.autoPlace;
       switch (state.activeComponent) {
