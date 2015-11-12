@@ -211,20 +211,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         }
       }
       return response;
-    },
-
-    stubCharmIconPath: function() {
-      var helperNS = Y.namespace('Handlebars.helpers');
-      Y.Handlebars.registerHelper(
-          'charmIconPath',
-          function(charmID, file) {
-            return '/path/to/charm/' + file;
-          });
-
-      // Return a cleanup function to undo this change.
-      return function() {
-        helperNS.charmIconPath = undefined;
-      };
     }
   };
 
