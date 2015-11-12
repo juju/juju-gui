@@ -68,6 +68,7 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvList
         handleEnvClick={instance.handleEnvClick}
         createNewEnv={instance.createNewEnv}
+        showUserProfile={instance.showUserProfile}
         envs={[]}/>);
   });
 
@@ -209,7 +210,7 @@ describe('EnvSwitcher', function() {
     assert.equal(newEnv.args[0][1], envName || 'new-env-1');
     assert.equal(newEnv.args[0][2], 'admin/foo');
     assert.equal(newEnv.args[0][3], 'admin/foo');
-    assert.closeTo(newEnv.args[0][4].length, 31, 4);
+    assert.closeTo(newEnv.args[0][4].length, 31, 6);
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {uuid: '123abc'};
     newEnv.args[0][5](null, createdEnv);
@@ -230,7 +231,7 @@ describe('EnvSwitcher', function() {
   });
 
   it('can call to create a new env (JES)', function() {
-    // To create a new environment you click a button in a sub component. this
+    // To create a new environment you click a button in a sub component. This
     // excersizes the method that gets passed down.
     var envs = [{
       uuid: 'abc123',
@@ -258,6 +259,24 @@ describe('EnvSwitcher', function() {
     // Because the callbacks are identical for JEM and JES we do not need
     // to test that it switches envs past this point as long as the previous
     // test passes.
+  });
+
+  it('can call to change the state to the profile', function() {
+    // To view the user profile you click a button in a sub component. This
+    // excersizes the method that gets passed down.
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvSwitcher
+        changeState={changeState} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.showUserProfile();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'profile',
+        metadata: {}
+      }
+    });
   });
 
 });
