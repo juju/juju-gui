@@ -34,12 +34,12 @@ describe('DeploymentSummaryPlacement', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var handlePlacementChange = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSummaryPlacement
-        autoPlace={false}
-        handlePlacementChange={handlePlacementChange}
-        handleViewMachinesClick={handleViewMachinesClick}
-        getUnplacedUnitCount={getUnplacedUnitCount} />);
+    var output = juju.components.DeploymentSummaryPlacement({
+      autoPlace: false,
+      handlePlacementChange: handlePlacementChange,
+      handleViewMachinesClick: handleViewMachinesClick,
+      getUnplacedUnitCount: getUnplacedUnitCount
+    });
     assert.deepEqual(output,
       <div className="deployment-summary__placement">
         You have {'1'} unplaced unit{''}, do you want to:
