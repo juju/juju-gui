@@ -75,7 +75,7 @@ YUI.add('search-results-item', function(Y) {
         return <span>&nbsp;</span>;
       }
       series.forEach(function(item) {
-        var name = item.name
+        var name = item.name;
         components.push(
           <li className="tag-list--item"
             key={name}

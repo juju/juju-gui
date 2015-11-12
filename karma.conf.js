@@ -30,9 +30,6 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
 
-      'jujugui/static/gui/build/app/assets/javascripts/handlebars.runtime.js',
-
-      'jujugui/static/gui/src/app/components/**/*.hbs',
       'jujugui/static/gui/src/app/components/**/*.js'
     ],
 
@@ -47,7 +44,6 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'jujugui/static/gui/src/app/components/**/*.js': ['babel'],
-      'jujugui/static/gui/src/app/components/**/*.hbs': ['handlebars']
     },
 
 
@@ -58,16 +54,6 @@ module.exports = function(config) {
       },
       sourceFileName: function (file) {
         return file.originalPath;
-      }
-    },
-
-
-    handlebarsPreprocessor: {
-      templateName: function(filepath) {
-        return filepath.replace(/^.*\/([^\/]+\.hbs)$/, '$1');
-      },
-      transformPath: function(path) {
-        return path.replace(/\.hbs$/, '.js').replace(/\/src\//, '/build/');
       }
     },
 
