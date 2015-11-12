@@ -107,21 +107,15 @@ YUI.add('search-results-item', function(Y) {
       services.forEach(function(service) {
         var src = service.iconPath ||
             'juju-ui/assets/images/non-sprites/charm_160.svg';
-        // TODO: figure out how to get the service id.
         components.push(
           <li className="list-icons__item"
             key={service.displayName}
             role="button" tabIndex="0"
+            title={service.displayName}
             onClick={this._handleItemClick.bind(this, service.id)}>
-            <p>
-              <span className="tip">
-                <img src={src}
-                  className="list-icons__image"
-                  alt={service.displayName} />
-                <span className="tip-content"
-                  data-tooltip={service.displayName}></span>
-              </span>
-            </p>
+            <img src={src}
+              className="list-icons__image"
+              alt={service.displayName} />
           </li>
         );
       }, this);
@@ -149,7 +143,6 @@ YUI.add('search-results-item', function(Y) {
       @param {Object} e The click event.
     */
     _handleItemClick: function(id, e) {
-      console.log(id);
       e.stopPropagation();
       this.props.changeState({
         sectionC: {
@@ -196,7 +189,6 @@ YUI.add('search-results-item', function(Y) {
           component: 'charmbrowser',
           metadata: {
             activeComponent: 'search-results',
-            search: null,
             series: series
           }
         }
@@ -206,7 +198,7 @@ YUI.add('search-results-item', function(Y) {
     render: function() {
       var item = this.props.item;
       return (
-        <li className="list-block__list--item {item.type}"
+        <li className={'list-block__list--item ' + item.type}
             tabIndex="0" role="button"
             onClick={this._handleItemClick.bind(this, item.storeId)}>
           <div className="four-col charm-name__column">
@@ -228,16 +220,14 @@ YUI.add('search-results-item', function(Y) {
           </div>
           <div className="one-col deploys__column list-block__column">
             <p className="cell">
-              <span className="tip">
-                <span>{item.downloads}</span>
-                <span className="tip-content"
-                  data-tooltip={item.downloads + ' deploys'}></span>
+              <span title={item.downloads + ' deploys'}>
+                {item.downloads}
               </span>
             </p>
           </div>
           <div className="two-col owner__column list-block__column last-col">
             <p className="cell">
-              {item.owner || 'No owner'}
+              {item.owner}
             </p>
           </div>
         </li>
