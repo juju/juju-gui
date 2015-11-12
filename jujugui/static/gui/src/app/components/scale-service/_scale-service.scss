@@ -25,14 +25,11 @@
     &--selector {
 
       & &__radio {
-          opacity: 1;
-          margin: 10px 0px 6px 15px;
+          margin: 6px 10px 10px 15px;
+      }
 
-          &+label {
-              color: $cool-grey;
-              margin: 0;
-              margin-left: 0;
-          }
+      label {
+          display: inline-block;
       }
 
       div:last-of-type {

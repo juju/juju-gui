@@ -59,6 +59,11 @@ YUI.add('deployment-summary', function() {
               <h2 className="deployment-summary__title">
                 Deployment summary
               </h2>
+              <juju.components.DeploymentSummaryPlacement
+                handleViewMachinesClick={this.props.handleViewMachinesClick}
+                handlePlacementChange={this.props.handlePlacementChange}
+                autoPlace={this.props.autoPlace}
+                getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
             </div>
             <div className="deployment-summary__content">
               <ul className="deployment-summary__list">
@@ -87,6 +92,7 @@ YUI.add('deployment-summary', function() {
 
 }, '0.1.0', { requires: [
   'deployment-summary-change-item',
+  'deployment-summary-placement',
   'generic-button',
   'panel-component',
   'svg-icon'

@@ -128,11 +128,13 @@ describe('Deployment', function() {
 
   it('can display the deployment summary', function() {
     var currentChangeSet = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
     var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
+        getUnplacedUnitCount={getUnplacedUnitCount}
         activeComponent="deployment-summary" />);
     assert.deepEqual(output,
       <div className="deployment-view">
@@ -140,7 +142,12 @@ describe('Deployment', function() {
           deployButtonAction={output.props.children.props.deployButtonAction}
           closeButtonAction={output.props.children.props.closeButtonAction}
           changeDescriptions={changeDescriptions}
-          currentChangeSet={currentChangeSet} />
+          handleViewMachinesClick={
+              output.props.children.props.handleViewMachinesClick}
+          handlePlacementChange={
+              output.props.children.props.handlePlacementChange}
+          autoPlace={false}
+          getUnplacedUnitCount={getUnplacedUnitCount} />
       </div>);
   });
 
@@ -173,5 +180,79 @@ describe('Deployment', function() {
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={newChangeSet} />
       </div>);
+  });
+
+  it('can commit to ecs changes', function() {
+    var ecsCommit = sinon.stub();
+    var autoPlaceUnits = sinon.stub();
+    var currentChangeSet = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var changeDescriptions = {};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        ecsCommit={ecsCommit}
+        autoPlaceUnits={autoPlaceUnits}
+        currentChangeSet={currentChangeSet}
+        changeDescriptions={changeDescriptions}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        activeComponent="deployment-summary" />);
+    output.props.children.props.deployButtonAction();
+    assert.equal(ecsCommit.callCount, 1);
+    assert.equal(autoPlaceUnits.callCount, 0);
+  });
+
+  it('can automatically place units on commit', function() {
+    var ecsCommit = sinon.stub();
+    var autoPlaceUnits = sinon.stub();
+    var currentChangeSet = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var changeDescriptions = {};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        ecsCommit={ecsCommit}
+        autoPlaceUnits={autoPlaceUnits}
+        currentChangeSet={currentChangeSet}
+        changeDescriptions={changeDescriptions}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        activeComponent="deployment-summary" />);
+    output.props.children.props.handlePlacementChange({
+      currentTarget: {
+        getAttribute: sinon.stub().returns('placed')
+      }
+    });
+    output.props.children.props.deployButtonAction();
+    assert.equal(autoPlaceUnits.callCount, 1);
+  });
+
+  it('can handle navigating to the machine view', function() {
+    var ecsCommit = sinon.stub();
+    var changeState = sinon.stub();
+    var autoPlaceUnits = sinon.stub();
+    var currentChangeSet = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var generateChangeDescription = sinon.stub();
+    var changeDescriptions = {};
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        ecsCommit={ecsCommit}
+        changeState={changeState}
+        autoPlaceUnits={autoPlaceUnits}
+        currentChangeSet={currentChangeSet}
+        changeDescriptions={changeDescriptions}
+        generateChangeDescription={generateChangeDescription}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        activeComponent="deployment-summary" />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children.props.handleViewMachinesClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionB: {
+        component: 'machine',
+        metadata: {}
+      }
+    });
+    // The deployment summary should have been closed.
+    assert.equal(instance.state.activeComponent, 'deployment-bar');
   });
 });

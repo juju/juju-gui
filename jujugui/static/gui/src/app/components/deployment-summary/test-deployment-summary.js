@@ -31,6 +31,9 @@ describe('DeploymentSummary', function() {
   });
 
   it('can display a list of changes', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var handleViewMachinesClick = sinon.stub();
+    var handlePlacementChange = sinon.stub();
     var closeButtonAction = sinon.stub();
     var deployButtonAction = sinon.stub();
     var changeDescriptions = [{
@@ -53,8 +56,12 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
         deployButtonAction={deployButtonAction}
+        handleViewMachinesClick={handleViewMachinesClick}
+        handlePlacementChange={handlePlacementChange}
+        autoPlace={false}
         closeButtonAction={closeButtonAction} />);
     assert.deepEqual(output,
       <juju.components.Panel
@@ -71,6 +78,11 @@ describe('DeploymentSummary', function() {
             <h2 className="deployment-summary__title">
               Deployment summary
             </h2>
+            <juju.components.DeploymentSummaryPlacement
+              handleViewMachinesClick={handleViewMachinesClick}
+              handlePlacementChange={handlePlacementChange}
+              autoPlace={false}
+              getUnplacedUnitCount={getUnplacedUnitCount} />
           </div>
           <div className="deployment-summary__content">
             <ul className="deployment-summary__list">

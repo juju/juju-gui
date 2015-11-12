@@ -144,80 +144,60 @@ input[type="password"] {
     border-radius: $border-radius;
 }
 
-/*
-  Taken from:
-  http://code.stephenmorley.org/html-and-css/styling-checkboxes-and-radio-buttons/
-  The :not(old) selector just prevents unsupported browsers from getting these
-  styles. They'll just fall back to the normal rendering on radio buttons.
-*/
-input[type="radio"]:not(old) {
-  width: 2em;
-  margin: 0;
-  padding: 0;
-  font-size: 1em;
-  opacity: 0;
-}
-
-input[type="radio"]:not(old) + label {
-  display: inline-block;
-  margin-left: -2em;
-  line-height: 1.5em;
-}
-
-input[type="radio"]:not(old) + label > .outer {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin: 4px 0.5em 4px 0.25em;
-  border: 1px solid rgb(192,192,192);
-  border-radius: 7px;
-  background: #ebecee;
-  vertical-align: bottom;
-}
-
-input[type="radio"]:not(old):checked + label > .outer {
-  background: $charm-panel-orange;
-  border-color: $charm-panel-orange;
-}
-
-input[type="radio"]:not(old):checked + label > .outer > .inner {
-  display: block;
-  width: 6px;
-  height: 6px;
-  margin: 3px;
-  border-radius: 3px;
-  background: white;
-}
-
+input[type="radio"],
 input[type="checkbox"] {
-  $size: 14px;
-  width: $size;
-  height: $size;
-  background-color: $white;
-  border: 1px solid $mid-grey;
-  border-radius: $border-radius;
-  box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
-  color: $white;
-  text-align: center;
-  overflow: hidden;
-  -webkit-appearance: button;
-
-  &:after {
-    content: '';
-    display: none;
+    $size: 14px;
     width: $size;
     height: $size;
-    background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
-  }
+    background-color: $white;
+    border: 1px solid $mid-grey;
+    box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+    color: $white;
+    text-align: center;
+    overflow: hidden;
+    -webkit-appearance: button;
 
-  &:checked {
-    background-color: $success;
-    border: none;
+    &:checked {
+        background-color: $success;
+        border: none;
+    }
+
+    &:after {
+      content: '';
+      display: none;
+      width: $size;
+      height: $size;
+    }
+
+    &:checked:after {
+      display: inline-block;
+    }
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+  vertical-align: middle;
+
+  &:after {
+    $size: 6px;
+    width: $size;
+    height: $size;
+    margin-bottom: 5px;
+    border-radius: 50%;
+    background-color: #fff;
   }
 
   &:checked:after {
     display: inline-block;
   }
+}
+
+input[type="checkbox"] {
+    border-radius: $border-radius;
+
+    &:after {
+        background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
+    }
 }
 
 svg {
@@ -360,89 +340,6 @@ th {
         }
     }
 }
-/*
- * Intro text that appears on the canvas if there are no deployed services.
- */
-.environment-help {
-    text-align: center;
-    /* This is absolute so that it does not push the svg down when it is
-       visible.  That's important for animations hiding and showing this help,
-       and if we want the help to appear when a service is present (such as the
-       GUI itself). */
-    position: absolute;
-    overflow: hidden;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-
-    &__content {
-        height: 450px;
-        width: 789px;
-        padding-right: $environment-header-height;
-        margin: 0 auto;
-    }
-
-    &__tooltip {
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        line-height: normal;
-        font-size: 18px;
-        width: 260px;
-        background: #fff;
-        margin: 20px auto;
-        padding: 12px 25px;
-        color: #757575;
-        position: relative;
-        left: -20px;
-        top: 35px;
-        box-sizing: border-box;
-
-        &:after {
-            content: "";
-            background: #fff;
-            width: 10px;
-            height: 10px;
-            border-right: 2px solid #eee;
-            border-bottom: 2px solid #eee;
-            -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
-            position: absolute;
-            bottom: -8px;
-            left: calc(50% - 8px);
-        }
-    }
-
-    &__image {
-        stroke-width: 1;
-        width: 789px;
-        height: 386px;
-    }
-
-    @at-root {
-        .state-sidebar-hidden .environment-help__content {
-            // When the sidebar is hidden center the onboarding to the full width.
-            padding-left: 0;
-        }
-    }
-
-    &.shrink {
-        z-index: 100;
-        height: auto;
-        width: auto;
-        left: 50%;
-        top: 40%;
-
-        .environment-help__tooltip,
-        .environment-help__image {
-            display: none;
-        }
-
-        .environment-help__content {
-            width: auto;
-            height: auto;
-        }
-    }
-}
-
 
 .plus-service {
     cursor: pointer;
@@ -966,6 +863,7 @@ g.unit {
 
 /** Canvas **/
 @import "canvas/service";
+@import "canvas/onboarding";
 
 /** Pull in the Vanilla grid **/
 @include vf-grid;
