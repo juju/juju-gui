@@ -177,6 +177,18 @@ describe('utilities', function() {
     assert.equal(utils.getUnplacedUnitCount(db.units), 2);
   });
 
+  it('can calculate the number of unplaced units for zero', function() {
+    var db = new models.Database();
+    db.services.add({
+      id: 'django'
+    });
+    db.addUnits([{
+      id: 'django/43',
+      machine: '15'
+    }]);
+    assert.equal(utils.getUnplacedUnitCount(db.units), 0);
+  });
+
   describe('isPythonRelation', function() {
     var isPythonRelation;
 

@@ -23,57 +23,6 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     /**
-      A component for the placement form.
-
-      @method _generatePlacementControl
-      @returns {Object} The placement component.
-    */
-    _generatePlacementControl: function() {
-      var unplacedCount = this.props.getUnplacedUnitCount();
-      var plural = unplacedCount === 1 ? '' : 's';
-      if (unplacedCount === 0) {
-        return;
-      }
-      var autoPlace = this.props.autoPlace;
-      var handlePlacementChange = this.props.handlePlacementChange;
-      return (
-        <div className="deployment-summary__placement">
-          You have {unplacedCount.toString()} unplaced unit{plural}, do you want
-          to:{' '}
-          <form>
-            <input type="radio"
-                defaultChecked={!autoPlace}
-                onChange={handlePlacementChange}
-                data-placement="unplaced"
-                id="leave-unplaced" name="placement"
-                className="deployment-summary__placement-radio" />
-            {' '}
-            <label htmlFor="leave-unplaced"
-                className="deployment-summary__placement-label">
-              Leave unplaced
-            </label>
-            <input type="radio"
-                defaultChecked={autoPlace}
-                onChange={handlePlacementChange}
-                data-placement="placed"
-                id="automatically-place" name="placement"
-                className="deployment-summary__placement-radio" />
-            {' '}
-            <label htmlFor="automatically-place"
-              className="deployment-summary__placement-label">
-              Automatically place
-            </label>
-          </form>
-          {' '}
-          <span className="link" tabIndex="0" role="button"
-            onClick={this.props.handleViewMachinesClick}>
-            View machines
-          </span>
-        </div>
-      );
-    },
-
-    /**
       Generate the list of change items.
 
       @method _generateChangeItems
@@ -110,7 +59,11 @@ YUI.add('deployment-summary', function() {
               <h2 className="deployment-summary__title">
                 Deployment summary
               </h2>
-              {this._generatePlacementControl()}
+              <juju.components.DeploymentSummaryPlacement
+                handleViewMachinesClick={this.props.handleViewMachinesClick}
+                handlePlacementChange={this.props.handlePlacementChange}
+                autoPlace={this.props.autoPlace}
+                getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
             </div>
             <div className="deployment-summary__content">
               <ul className="deployment-summary__list">
@@ -139,6 +92,7 @@ YUI.add('deployment-summary', function() {
 
 }, '0.1.0', { requires: [
   'deployment-summary-change-item',
+  'deployment-summary-placement',
   'generic-button',
   'panel-component',
   'svg-icon'

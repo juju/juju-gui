@@ -32,76 +32,8 @@ describe('DeploymentSummary', function() {
 
   it('can display a list of changes', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
-    var closeButtonAction = sinon.stub();
-    var deployButtonAction = sinon.stub();
-    var changeDescriptions = [{
-      icon: 'my-icon.svg',
-      description: 'Django was added',
-      time: '10:12 am'
-    }, {
-      icon: 'another-icon.svg',
-      description: 'Apache2 was added',
-      time: '10:13 am'
-    }];
-    var changeItems = [
-      <juju.components.DeploymentSummaryChangeItem
-        key={0}
-        change={changeDescriptions[0]} />,
-      <juju.components.DeploymentSummaryChangeItem
-        key={1}
-        change={changeDescriptions[1]} />];
-    var className = 'deployment-summary-change-item ' +
-        'deployment-summary__list-header';
-    var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSummary
-        getUnplacedUnitCount={getUnplacedUnitCount}
-        changeDescriptions={changeDescriptions}
-        deployButtonAction={deployButtonAction}
-        closeButtonAction={closeButtonAction} />);
-    assert.deepEqual(output,
-      <juju.components.Panel
-        instanceName="deployment-summary-panel"
-        visible={true}>
-        <div className="deployment-summary">
-          <div className="deployment-summary__header">
-            <span className="deployment-summary__close"
-              tabIndex="0" role="button"
-              onClick={closeButtonAction}>
-              <juju.components.SvgIcon name="close_16"
-                size="16" />
-            </span>
-            <h2 className="deployment-summary__title">
-              Deployment summary
-            </h2>
-            {undefined}
-          </div>
-          <div className="deployment-summary__content">
-            <ul className="deployment-summary__list">
-              <li className={className}>
-                <span className="deployment-summary-change-item__change">
-                  Change
-                </span>
-                <span className="deployment-summary-change-item__time">
-                  Time
-                </span>
-              </li>
-              {changeItems}
-            </ul>
-          </div>
-          <div className="deployment-summary__footer">
-            <juju.components.GenericButton
-              action={deployButtonAction}
-              type="confirm"
-              title="Deploy" />
-          </div>
-        </div>
-      </juju.components.Panel>);
-  });
-
-  it('can display a placement control', function() {
-    var getUnplacedUnitCount = sinon.stub().returns(1);
-    var handlePlacementChange = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
+    var handlePlacementChange = sinon.stub();
     var closeButtonAction = sinon.stub();
     var deployButtonAction = sinon.stub();
     var changeDescriptions = [{
@@ -124,12 +56,12 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        autoPlace={true}
-        handlePlacementChange={handlePlacementChange}
-        handleViewMachinesClick={handleViewMachinesClick}
         getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
         deployButtonAction={deployButtonAction}
+        handleViewMachinesClick={handleViewMachinesClick}
+        handlePlacementChange={handlePlacementChange}
+        autoPlace={false}
         closeButtonAction={closeButtonAction} />);
     assert.deepEqual(output,
       <juju.components.Panel
@@ -146,39 +78,11 @@ describe('DeploymentSummary', function() {
             <h2 className="deployment-summary__title">
               Deployment summary
             </h2>
-            <div className="deployment-summary__placement">
-              You have {'1'} unplaced unit{''}, do you want to:
-              {' '}
-              <form>
-                <input type="radio"
-                    defaultChecked={false}
-                    onChange={handlePlacementChange}
-                    data-placement="unplaced"
-                    id="leave-unplaced" name="placement"
-                    className="deployment-summary__placement-radio" />
-                {' '}
-                <label htmlFor="leave-unplaced"
-                    className="deployment-summary__placement-label">
-                  Leave unplaced
-                </label>
-                <input type="radio"
-                    defaultChecked={true}
-                    onChange={handlePlacementChange}
-                    data-placement="placed"
-                    id="automatically-place" name="placement"
-                    className="deployment-summary__placement-radio" />
-                {' '}
-                <label htmlFor="automatically-place"
-                  className="deployment-summary__placement-label">
-                  Automatically place
-                </label>
-              </form>
-              {' '}
-              <span className="link" tabIndex="0" role="button"
-                onClick={handleViewMachinesClick}>
-                View machines
-              </span>
-            </div>
+            <juju.components.DeploymentSummaryPlacement
+              handleViewMachinesClick={handleViewMachinesClick}
+              handlePlacementChange={handlePlacementChange}
+              autoPlace={false}
+              getUnplacedUnitCount={getUnplacedUnitCount} />
           </div>
           <div className="deployment-summary__content">
             <ul className="deployment-summary__list">

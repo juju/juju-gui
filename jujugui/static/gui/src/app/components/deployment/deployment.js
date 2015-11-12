@@ -42,7 +42,7 @@ YUI.add('deployment-component', function() {
 
       @method generateState
       @param {Object} nextProps The props which were sent to the component.
-      @param {Object} state The existing create state.
+      @param {Object} state The provided state properties.
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps, state) {

@@ -1700,7 +1700,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method getUnplacedUnitCount
     @param {Array} units An array of units.
-    @returns {Object} The number of unplaced units.
+    @returns {Integer} The number of unplaced units.
   */
   utils.getUnplacedUnitCount = function(units) {
     return units.filterByMachine(null).length;
