@@ -368,7 +368,12 @@ YUI.add('search-results', function(Y) {
                   {' '}
                   <a href="http://jujucharms.com/store">
                     http://jujucharms.com
-                  </a>.
+                  </a>
+                  {' '}or go{' '}
+                  <span className="link"
+                    onClick={this._handleBack}>
+                    back
+                  </span>.
                 </p>
               </div>
           };
@@ -440,6 +445,15 @@ YUI.add('search-results', function(Y) {
           }
         }
       });
+    },
+
+    /**
+      Handle navigating back.
+
+      @method _handleBack
+    */
+    _handleBack: function() {
+      window.history.back();
     },
 
     /**

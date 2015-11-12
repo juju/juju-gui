@@ -77,7 +77,11 @@ YUI.add('entity-details', function() {
             component:
               <p className="error">
                 There was a problem while loading the entity details.
-                You could try searching for another charm or bundle.
+                You could try searching for another charm or bundle or go{' '}
+                <span className="link"
+                  onClick={this._handleBack}>
+                  back
+                </span>.
               </p>
           };
           break;
@@ -153,6 +157,15 @@ YUI.add('entity-details', function() {
       return <juju.components.EntityContentDiagram
         getDiagramURL={this.props.getDiagramURL}
         id={entityModel.get('id')} />;
+    },
+
+    /**
+      Handle navigating back.
+
+      @method _handleBack
+    */
+    _handleBack: function() {
+      window.history.back();
     },
 
     /**

@@ -124,7 +124,11 @@ describe('EntityDetails', function() {
       <div className="entity-details">
         <p className="error">
           There was a problem while loading the entity details.
-          You could try searching for another charm or bundle.
+          You could try searching for another charm or bundle or go{' '}
+          <span className="link"
+            onClick={output.props.children.props.children[2].props.onClick}>
+            back
+          </span>.
         </p>
       </div>);
     assert.deepEqual(output, expected);

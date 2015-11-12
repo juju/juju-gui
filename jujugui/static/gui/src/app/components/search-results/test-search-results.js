@@ -94,6 +94,7 @@ describe('SearchResults', function() {
             charmstoreSearch={charmstoreSearch} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
+      var backLink = output.props.children.props.children[1].props.children[6];
       assert.deepEqual(output,
         <div className="search-results search-results--floating">
           <div className="twelve-col no-results-container last-col">
@@ -105,7 +106,12 @@ describe('SearchResults', function() {
               {' '}
               <a href="http://jujucharms.com/store">
                 http://jujucharms.com
-              </a>.
+              </a>
+              {' '}or go{' '}
+              <span className="link"
+                onClick={backLink.props.onClick}>
+                back
+              </span>.
             </p>
           </div>
         </div>);
