@@ -124,6 +124,47 @@ describe('SearchResults', function() {
 
     it('can render the search results', function() {
       var changeState = sinon.spy();
+      var sortItems = [{
+        label: 'Default',
+        value: ''
+      }, {
+        label: 'Most popular',
+        value: '-downloads'
+      }, {
+        label: 'Least popular',
+        value: 'downloads'
+      }, {
+        label: 'Name (a-z)',
+        value: 'name'
+      }, {
+        label: 'Name (z-a)',
+        value: '-name'
+      }, {
+        label: 'Author (a-z)',
+        value: 'owner'
+      }, {
+        label: 'Author (z-a)',
+        value: '-owner'
+      }];
+      var seriesItems = [{
+        label: 'All',
+        value: ''
+      }, {
+        label: 'Precise 12.04',
+        value: 'precise'
+      }, {
+        label: 'Trusty 14.04',
+        value: 'trusty'
+      }, {
+        label: 'Utopic 14.10',
+        value: 'utopic'
+      }, {
+        label: 'Vivid 15.04',
+        value: 'vivid'
+      }, {
+        label: 'Wily 15.10',
+        value: 'wily'
+      }];
       var results = [{
         name: 'mysql-one',
         displayName: 'mysql-one',
@@ -179,6 +220,8 @@ describe('SearchResults', function() {
           <juju.components.SearchResults
             query="mysql"
             type="charm"
+            sort="-name"
+            series="wily"
             changeState={changeState}
             charmstoreSearch={charmstoreSearch} />, true);
       var instance = shallowRenderer.getMountedInstance();
@@ -199,23 +242,18 @@ describe('SearchResults', function() {
                 <div className="six-col last-col">
                   <div className="list-block__filters--selects">
                     <form>
-                      <div className="list-block__sort">
-                        Sort by:
-                        <select>
-                          <option value="-downloads">Most popular</option>
-                          <option value="downloads">Least popular</option>
-                          <option value="name">Name (a-z)</option>
-                          <option value="-name">Name (z-a)</option>
-                          <option value="owner">Author (a-z)</option>
-                          <option value="-owner">Author (z-a)</option>
-                        </select>
-                      </div>
-                      <div className="list-block__series">
-                        Series:
-                        <select>
-                          <option>None</option>
-                        </select>
-                      </div>
+                      <juju.components.SearchResultsSelectFilter
+                        changeState={changeState}
+                        label="Sort by"
+                        filter='sort'
+                        items={sortItems}
+                        currentValue="-name" />
+                      <juju.components.SearchResultsSelectFilter
+                        changeState={changeState}
+                        label="Series"
+                        filter='series'
+                        items={seriesItems}
+                        currentValue="wily" />
                     </form>
                   </div>
                 </div>

@@ -292,7 +292,7 @@ YUI.add('search-results', function(Y) {
           var seriesMap = Object.keys(this.SERIES).map((series) => {
             return {
               label: series.charAt(0).toUpperCase() + series.slice(1) +
-                  ' ' + this.SERIES[series],
+                  ' ' + this.SERIES[series].toFixed(2),
               value: series
             };
           });
