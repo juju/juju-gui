@@ -27,10 +27,9 @@ var module = module;
    *     e.g. '/env'
    * @param method {String} The type of http method to use, e.g. GET or POST.
    * @param params {Object} Optional data object to sent with e.g. POST commands.
-   * @param success {function} A callback to be called on success. Takes
-   *     an xhr object as its only parameter.
-   * @param failure {function} A callback to be called on failure. Takes
-   *     an xhr object as its only parameter.
+   * @params callback {Function} A callback to handle errors or accept the data
+   *     from the request. Must accept an error message or null as its first
+   *     parameter and the response data as its second.
   */
   var _makeRequest = function(bakery, path, method, params, callback) {
     var success = function(xhr) {
@@ -73,11 +72,9 @@ var module = module;
    * Lists the available environments on the JEM.
    *
    * @public listEnvironments
-   * @param success {function} A callback to be called on success. Should
-   *     take an array of objects containing Juju environment data as its
-   *     one parameter.
-   * @param failure {function} A callback to be called on failure. Should
-   *     take an error message as its one parameter.
+   * @params callback {Function} A callback to handle errors or accept the data
+   *     from the request. Must accept an error message or null as its first
+   *     parameter and the response data as its second.
    */
   environment.prototype.listEnvironments = function(callback) {
     var _listEnvironments = function(error, data) {
@@ -94,11 +91,9 @@ var module = module;
    * Lists the available state servers on the JEM.
    *
    * @public listServers
-   * @param success {function} A callback to be called on success. Should
-   *     take an array of objects containing Juju environment data as its
-   *     one parameter.
-   * @param failure {function} A callback to be called on failure. Should
-   *     take an error message as its one parameter.
+   * @params callback {Function} A callback to handle errors or accept the data
+   *     from the request. Must accept an error message or null as its first
+   *     parameter and the response data as its second.
    */
   environment.prototype.listServers = function(callback) {
     var _listServers = function(error, data) {
@@ -116,10 +111,9 @@ var module = module;
    * @public getEnvironment
    * @param envOwnerName {String} The user name of the given environment's owner.
    * @param envName {String} The name of the given environment.
-   * @param success {function} A callback to be called on success. Should
-   *     take an object with environment data as its one parameter.
-   * @param failure {function} A callback to be called on failure. Should
-   *     take an error message as its one parameter.
+   * @params callback {Function} A callback to handle errors or accept the data
+   *     from the request. Must accept an error message or null as its first
+   *     parameter and the response data as its second.
    */
   environment.prototype.getEnvironment = function (
       envOwnerName, envName, callback) {
@@ -138,10 +132,9 @@ var module = module;
    * @param stateServer {String} The entityPath name of the state server to
    *     create the environment with.
    * @param password {String} The password for the new environment.
-   * @param success {function} An optional callback to be called on success.
-   *     Should receive a 200 OK response as its only object.
-   * @param failure {function} A callback to be called on failure. Should
-   *     take an error message as its one parameter.
+   * @params callback {Function} A callback to handle errors or accept the data
+   *     from the request. Must accept an error message or null as its first
+   *     parameter and the response data as its second.
    */
   environment.prototype.newEnvironment = function (
       envOwnerName, envName, baseTemplate, stateServer, password, callback) {
