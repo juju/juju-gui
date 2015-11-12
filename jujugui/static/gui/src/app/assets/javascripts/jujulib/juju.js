@@ -19,6 +19,37 @@ var module = module;
   'use strict';
 
   /**
+   * Utility function for making requests via the bakery.
+   *
+   * _makeRequest
+   * @param bakery {Object} The bakery object to use.
+   * @param path {String} The JEM endpoint to make the request from,
+   *     e.g. '/env'
+   * @param method {String} The type of http method to use, e.g. GET or POST.
+   * @param params {Object} Optional data object to sent with e.g. POST commands.
+   * @param success {function} A callback to be called on success. Takes
+   *     an xhr object as its only parameter.
+   * @param failure {function} A callback to be called on failure. Takes
+   *     an xhr object as its only parameter.
+  */
+  var _makeRequest = function(bakery, path, method, params, callback) {
+    var success = function(xhr) {
+      var data = JSON.parse(xhr.target.responseText);
+      callback(null, data);
+    };
+    var failure = function(xhr) {
+      var data = JSON.parse(xhr.target.responseText);
+      var error = data.Message || data.message;
+      callback(error, data);
+    };
+    if (method === 'GET') {
+      bakery.sendGetRequest(path, success, failure);
+    } else if (method === 'POST') {
+      bakery.sendPostRequest(path, JSON.stringify(params), success, failure);
+    }
+  };
+
+  /**
    * Environment object for jujulib.
    *
    * Provides access to the JEM API.
@@ -37,36 +68,6 @@ var module = module;
     this.bakery = bakery;
   };
 
-  /**
-   * Wrapper for making requests via the bakery.
-   *
-   * @private _makeRequest
-   * @param path {String} The JEM endpoint to make the request from,
-   *     e.g. '/env'
-   * @param method {String} The type of http method to use, e.g. GET or POST.
-   * @param params {Object} Optional data object to sent with e.g. POST commands.
-   * @param success {function} A callback to be called on success. Takes
-   *     an xhr object as its only parameter.
-   * @param failure {function} A callback to be called on failure. Takes
-   *     an xhr object as its only parameter.
-  */
-  environment.prototype._makeRequest = function(path, method, params, callback) {
-    var success = function(xhr) {
-      var data = JSON.parse(xhr.target.responseText);
-      callback(null, data);
-    };
-    var failure = function(xhr) {
-      var data = JSON.parse(xhr.target.responseText);
-      var error = data.Message || data.message;
-      callback(error, data);
-    };
-    if (method === 'GET') {
-      this.bakery.sendGetRequest(path, success, failure);
-    } else if (method === 'POST') {
-      this.bakery.sendPostRequest(
-          path, JSON.stringify(params), success, failure);
-    }
-  };
 
   /**
    * Lists the available environments on the JEM.
@@ -84,8 +85,9 @@ var module = module;
         data = data.environments;
       }
       callback(error, data);
-    }
-    this._makeRequest(this.jemUrl + '/env', 'GET', null, _listEnvironments);
+    };
+    _makeRequest(
+        this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
   };
 
   /**
@@ -104,8 +106,9 @@ var module = module;
         data = data['state-servers'];
       }
       callback(error, data);
-    }
-    this._makeRequest(this.jemUrl + '/server', 'GET', null, _listServers);
+    };
+    _makeRequest(
+        this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
   };
   /**
    * Provides the data for a particular environment.
@@ -121,7 +124,7 @@ var module = module;
   environment.prototype.getEnvironment = function (
       envOwnerName, envName, callback) {
     var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
-    this._makeRequest(url, 'GET', null, callback);
+    _makeRequest(this.bakery, url, 'GET', null, callback);
   };
 
   /**
@@ -149,7 +152,7 @@ var module = module;
       'state-server': stateServer
     };
     var url = [this.jemUrl, 'env', envOwnerName].join('/');
-    this._makeRequest(url, 'POST', body, callback);
+    _makeRequest(this.bakery, url, 'POST', body, callback);
   };
 
 
