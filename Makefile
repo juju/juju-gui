@@ -165,7 +165,7 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	\
 	var NoopInternalChildren = function (children) {\
 	  if (Array.isArray(children)) {\
-	    return children.map(NoopInternalChild);\
+	    return children.map(NoopInternalChildren);\
 	  } else if (children === Object(children)) {\
 	    return NoopInternalChild(children);\
 	  }\
@@ -173,11 +173,6 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	};\
 	\
 	var NoopInternalChild = function (child) {\
-	  if (child === null || child === undefined) { return; }\
-	  if (typeof child === "string") { return child; }\
-	  if (Array.isArray(child)) {\
-	    return child.map(NoopInternalChild);\
-	  }\
 	  var props = child.props && child.props.children ? assign({}, child.props, {\
 	    children: NoopInternalChildren(child.props.children)\
 	  }) : child.props;\
