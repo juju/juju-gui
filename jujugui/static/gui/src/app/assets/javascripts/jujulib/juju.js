@@ -8,6 +8,8 @@ licensing for the GUI.
 
 var module = module;
 
+//TODO fix docstrings to have the same format as the rest of the gui.
+//TODO fix docstring layout in charmstore bits to match the rest of this file.
 /**
  * jujulib provides API access for microservices used by juju.
  *
@@ -30,10 +32,14 @@ var module = module;
    * @params callback {Function} A callback to handle errors or accept the data
    *     from the request. Must accept an error message or null as its first
    *     parameter and the response data as its second.
+   * @params parse {Boolean} Whether or not to parse the response as JSON.
   */
-  var _makeRequest = function(bakery, path, method, params, callback) {
+  var _makeRequest = function(bakery, path, method, params, callback, parse) {
     var success = function(xhr) {
-      var data = JSON.parse(xhr.target.responseText);
+      var data = xhr.target.responseText;
+      if (parse !== false) {
+        data = JSON.parse(data);
+      }
       callback(null, data);
     };
     var failure = function(xhr) {
@@ -179,26 +185,6 @@ var module = module;
 
   charmstore.prototype = {
     /**
-      Takes the path supplied by the caller and makes a request to the
-      requestHandler instance.
-
-      @method _makeRequest
-      @param {String} The path to make the api request to.
-      @param {Function} successCallback Called when the api request completes
-        successfully.
-      @param {Function} failureCallback Called when the api request fails
-        with a response of >= 400.
-      @return {Object} The asynchronous request instance.
-    */
-    _makeRequest: function(path, successCallback, failureCallback) {
-      return this.bakery.sendGetRequest(
-        path,
-        successCallback,
-        failureCallback
-      );
-    },
-
-    /**
       Generates a path to the charmstore apiv4 based on the query and endpoint
       params passed in.
 
@@ -227,20 +213,23 @@ var module = module;
         successfully.
       @param {Object} response Thre XHR response object.
     */
-    _transformQueryResults: function(successCallback, response) {
-      var data = JSON.parse(response.target.responseText);
-      // If there is a single charm or bundle being requested then we need
-      // to wrap it in an array so we can use the same map code.
-      data = data.Results ? data.Results : [data];
-      var models = [];
-      data.forEach(function(entity) {
-        var entityData = this._processEntityQueryData(entity);
-        if (this.processEntity !== undefined) {
-          entityData = this.processEntity(entityData);
-        }
-        models.push(entityData);
-      }, this);
-      successCallback(models);
+    _transformQueryResults: function(callback, error, data) {
+      if (error !== null) {
+        callback(error, data);
+      } else {
+        // If there is a single charm or bundle being requested then we need
+        // to wrap it in an array so we can use the same map code.
+        data = data.Results ? data.Results : [data];
+        var models = [];
+        data.forEach(function(entity) {
+          var entityData = this._processEntityQueryData(entity);
+          if (this.processEntity !== undefined) {
+            entityData = this.processEntity(entityData);
+          }
+          models.push(entityData);
+        }, this);
+        callback(error, models);
+      }
     },
 
     /**
@@ -386,18 +375,16 @@ var module = module;
       @method getFile
       @param {String} entityId The id of the charm or bundle's file we want.
       @param {String} filename The path/name of the file to fetch.
-      @param {Function} successCallback Called when the api request completes
-        successfully.
-      @param {Function} failureCallback Called when the api request fails
-        with a response of >= 400.
-      @return {Object} The asynchronous request instance.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
     */
-    getFile: function(entityId, filename, successCallback, failureCallback) {
+    getFile: function(entityId, filename, callback) {
       entityId = entityId.replace('cs:', '');
-      return this._makeRequest(
+      return _makeRequest(
+          this.bakery,
           this._generatePath(entityId, null, '/archive/' + filename),
-          successCallback,
-          failureCallback);
+          callback);
     },
 
     /**
@@ -417,20 +404,18 @@ var module = module;
 
       @method getEntity
       @param {String} entityId The id of the charm or bundle to fetch.
-      @param {Function} successCallback Called when the api request completes
-        successfully.
-      @param {Function} failureCallback Called when the api request fails
-        with a response of >= 400.
-      @return {Object} The asynchronous request instance.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
     */
-    getEntity: function(entityId, successCallback, failureCallback) {
+    getEntity: function(entityId, callback) {
       var filters = 'include=bundle-metadata&include=charm-metadata' +
                     '&include=charm-config&include=manifest&include=stats' +
                     '&include=charm-related&include=extra-info';
-      return this._makeRequest(
+      return _makeRequest(
+          this.bakery,
           this._generatePath(entityId, filters, '/meta/any'),
-          this._transformQueryResults.bind(this, successCallback),
-          failureCallback);
+          this._transformQueryResults.bind(this, callback));
     },
 
     /**
@@ -439,15 +424,13 @@ var module = module;
 
       @method search
       @param {Object} filters The additional filters to use to make the
-        search request such as { text: 'apache' }.
-      @param {Function} successCallback Called when the api request completes
-        successfully.
-      @param {Function} failureCallback Called when the api request fails
-        with a response of >= 400.
+          search request such as { text: 'apache' }.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
       @param {Integer} limit The number of results to get.
-      @return {Object} The asynchronous request instance.
     */
-    search: function(filters, successCallback, failureCallback, limit) {
+    search: function(filters, callback, limit) {
       var qs = '';
       var keys = Object.keys(filters);
       if (keys.length > 0) {
@@ -470,10 +453,10 @@ var module = module;
           'include=extra-info&' +
           'include=stats';
       var path = this._generatePath('search', qs);
-      return this._makeRequest(
+      return _makeRequest(
+          this.bakery,
           path,
-          this._transformQueryResults.bind(this, successCallback),
-          failureCallback);
+          this._transformQueryResults.bind(this, callback));
     },
 
     /**
@@ -482,32 +465,28 @@ var module = module;
 
       @method getBundleYAML
       @param {String} id Bundle id in apiv4 format.
-      @param {Function} successCallback The success callback.
-      @param {Function} failureCallback The failure callback.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
     */
-    getBundleYAML: function(id, successCallback, failureCallback) {
+    getBundleYAML: function(id, callback) {
       this.getEntity(
-          id, this._getBundleYAMLResponse.bind(
-              this, successCallback, failureCallback), failureCallback);
+          id, this._getBundleYAMLResponse.bind(this, callback));
     },
 
     /**
       getEntity success response handler which grabs the deployerFileUrl from
-      the recieved bundle details and requests the YAML.
+      the received bundle details and requests the YAML.
 
       @method _getBundleYAMLResponse
-      @param {Function} successCallback The success callback.
-      @param {Function} failureCallback The failure callback.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
       @param {Array} bundle An array containing the requested bundle model.
-      @return {Object} The asynchronous request instance.
     */
-    _getBundleYAMLResponse: function(successCallback, failureCallback, bundle) {
-      return this._makeRequest(
-          bundle[0].get('deployerFileUrl'),
-          function(resp) {
-            successCallback(resp.currentTarget.responseText);
-          },
-          failureCallback);
+    _getBundleYAMLResponse: function(callback, error, bundle) {
+      return _makeRequest(
+          this.bakery, bundle[0].get('deployerFileUrl'), callback, false);
     },
 
     /**
@@ -515,18 +494,17 @@ var module = module;
 
       @method getAvailableVersions
       @param {String} charmId The charm id to fetch all of the versions for.
-      @param {Function} successCallback The success callback.
-      @param {Function} failureCallback The failure callback.
-      @return {Object} The asynchronous request instance.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
     */
-    getAvailableVersions: function(charmId, successCallback, failureCallback) {
+    getAvailableVersions: function(charmId, callback) {
       charmId = charmId.replace('cs:', '');
       var series = charmId.split('/')[0];
-      return this._makeRequest(
+      return _makeRequest(
+          this.bakery,
           this._generatePath(charmId, null, '/expand-id'),
-          this._processAvailableVersions.bind(
-              this, series, successCallback, failureCallback),
-          failureCallback);
+          this._processAvailableVersions.bind(this, series, callback));
     },
 
     /**
@@ -536,26 +514,24 @@ var module = module;
 
       @method _processAvailableVersions
       @param {String} series The series of the charm requested.
-      @param {Function} success Reference to the success handler.
-      @param {Function} failure Reference to the failure handler.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
       @param {Object} response The response object from the request.
     */
-    _processAvailableVersions: function(series, success, failure, response) {
-      var list = response.currentTarget.responseText;
-      try {
-        list = JSON.parse(list);
-      } catch (e) {
-        failure(e);
-        return;
+    _processAvailableVersions: function(series, callback, error, data) {
+      if (error !== null) {
+        callback(error, data); 
+      } else {
+        var truncatedList = [];
+        data.forEach(function(item) {
+          var id = item.Id;
+          if (id.indexOf(series) > -1) {
+            truncatedList.push(id);
+          }
+        });
+        callback(null, truncatedList);
       }
-      var truncatedList = [];
-      list.forEach(function(item) {
-        var id = item.Id;
-        if (id.indexOf(series) > -1) {
-          truncatedList.push(id);
-        }
-      });
-      success(truncatedList);
     }
   };
 
