@@ -156,8 +156,7 @@ YUI.add('search-results', function(Y) {
       @param {Object} response The failure response.
     */
     searchFailure: function(response) {
-      // XXX: Implement error handling.
-      console.error('Search request failed.');
+      this._changeActiveComponent('error');
     },
 
     /**
@@ -352,6 +351,23 @@ YUI.add('search-results', function(Y) {
                   {' '}
                   <a href="http://jujucharms.com/docs/authors-charm-writing">
                     create your own solution
+                  </a>.
+                </p>
+              </div>
+          };
+          break;
+        case 'error':
+          state.activeChild = {
+            component:
+              <div className="twelve-col no-results-container last-col">
+                <h1 className="row-title">
+                  Something went wrong
+                </h1>
+                <p>
+                  For some reason the search failed. You could try searching at
+                  {' '}
+                  <a href="http://jujucharms.com/store">
+                    http://jujucharms.com
                   </a>.
                 </p>
               </div>

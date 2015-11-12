@@ -33,6 +33,71 @@ YUI.add('entity-details', function() {
     },
 
     /**
+      Generates the state for the search results.
+
+      @method generateState
+      @param {Object} nextProps The props which were sent to the component.
+      @return {Object} A generated state object which can be passed to setState.
+    */
+    generateState: function(nextProps) {
+      var state = {
+        activeComponent: nextProps.activeComponent || 'loading'
+      };
+      switch (state.activeComponent) {
+        case 'loading':
+          state.activeChild = {
+            component:
+              <div>
+                <juju.components.Spinner />
+              </div>
+          };
+          break;
+        case 'entity-details':
+          var entityModel = this.state.entityModel;
+          state.activeChild = {
+            component:
+              <div>
+                <juju.components.EntityHeader
+                  entityModel={entityModel}
+                  importBundleYAML={this.props.importBundleYAML}
+                  getBundleYAML={this.props.getBundleYAML}
+                  changeState={this.props.changeState}
+                  deployService={this.props.deployService}
+                  pluralize={this.props.pluralize} />
+                {this._generateDiagram(entityModel)}
+                <juju.components.EntityContent
+                  getFile={this.props.getFile}
+                  renderMarkdown={this.props.renderMarkdown}
+                  entityModel={entityModel} />
+              </div>
+          };
+          break;
+        case 'error':
+          state.activeChild = {
+            component:
+              <p className="error">
+                There was a problem while loading the entity details.
+                You could try searching for another charm or bundle.
+              </p>
+          };
+          break;
+      }
+      return state;
+    },
+
+    /**
+      Change the state to reflect the chosen component.
+
+      @method _changeActiveComponent
+      @param {String} newComponent The component to switch to.
+    */
+    _changeActiveComponent: function(newComponent) {
+      var nextProps = this.state;
+      nextProps.activeComponent = newComponent;
+      this.setState(this.generateState(nextProps));
+    },
+
+    /**
       Callback for when an entity has been successfully fetched. Though the
       data passed in is an Array of models, only the first model is used.
 
@@ -42,6 +107,7 @@ YUI.add('entity-details', function() {
     fetchSuccess: function(models) {
       if (models.length > 0) {
         this.setState({entityModel: models[0]});
+        this._changeActiveComponent('entity-details');
       }
     },
 
@@ -52,14 +118,13 @@ YUI.add('entity-details', function() {
       @param {Object} response The failure response.
     */
     fetchFailure: function(response) {
-      // XXX Implement error handling.
-      console.error('Fetching the entity failed.');
+      this._changeActiveComponent('error');
     },
 
     getInitialState: function() {
-      return {
-        entityModel: null,
-      };
+      var state = this.generateState(this.props);
+      state.entityModel = null;
+      return state;
     },
 
     componentDidMount: function() {
@@ -90,34 +155,30 @@ YUI.add('entity-details', function() {
         id={entityModel.get('id')} />;
     },
 
-    render: function() {
-      var entityModel = this.state.entityModel,
-          output;
-      if (!entityModel) {
-        output = (
-          <div className="entity-details">
-            <juju.components.Spinner/>
-          </div>
-        );
-      } else {
-        output = (
-          <div className={'entity-details ' + entityModel.get('entityType')}>
-            <juju.components.EntityHeader
-              entityModel={entityModel}
-              importBundleYAML={this.props.importBundleYAML}
-              getBundleYAML={this.props.getBundleYAML}
-              changeState={this.props.changeState}
-              deployService={this.props.deployService}
-              pluralize={this.props.pluralize} />
-            {this._generateDiagram(entityModel)}
-            <juju.components.EntityContent
-              getFile={this.props.getFile}
-              renderMarkdown={this.props.renderMarkdown}
-              entityModel={entityModel} />
-          </div>
-        );
+    /**
+      Generate the base classes from the props.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      var classes = {};
+      var entityModel = this.state.entityModel;
+      if (entityModel) {
+        classes[entityModel.get('entityType')] = true;
       }
-      return output;
+      return classNames(
+        'entity-details',
+        classes
+      );
+    },
+
+    render: function() {
+      return (
+        <div className={this._generateClasses()}>
+          {this.state.activeChild.component}
+        </div>
+      );;
     }
   });
 
