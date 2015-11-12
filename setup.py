@@ -13,7 +13,7 @@ requires = [
 
 
 setup(name='jujugui',
-      version='1.8.1000',
+      version='1.8.1001',
       description='jujugui',
       classifiers=[
           "Programming Language :: Python",
