@@ -92,6 +92,7 @@ YUI.add('env-list', function() {
         action: this.createNewEnv
       }, {
         title: 'More',
+        type: 'show-profile',
         action: this.showProfile
       }];
 

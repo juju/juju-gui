@@ -77,10 +77,26 @@ describe('EnvList', function() {
     testUtils.Simulate.change(component.refs.envName);
 
     testUtils.Simulate.click(
-        ReactDOM.findDOMNode(component).querySelector('.generic-button'));
+        ReactDOM.findDOMNode(component)
+                .querySelector('.generic-button--type-confirm'));
 
     assert.equal(createNewEnv.callCount, 1);
     assert.equal(createNewEnv.args[0][0], 'new env name');
+  });
+
+  it('showProfile call is made when clicking on buttonRow button', function() {
+    var showUserProfile = sinon.stub();
+    var envs = [{ uuid: 'abc123', name: 'the name' }];
+    var component = testUtils.renderIntoDocument(
+      <juju.components.EnvList
+        envs={envs}
+        showUserProfile={showUserProfile} />);
+
+    testUtils.Simulate.click(
+        ReactDOM.findDOMNode(component)
+                .querySelector('.generic-button--type-show-profile'));
+
+    assert.equal(showUserProfile.callCount, 1);
   });
 
 });
