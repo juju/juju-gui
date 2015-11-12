@@ -329,12 +329,27 @@ describe('SearchResults', function() {
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
       searchResults.props = {charmstoreSearch: searchSpy};
-      searchResults.searchRequest(query);
+      searchResults.searchRequest(query, 'ops');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
                        'waitingForSearch flag is not set');
       assert.deepEqual(searchSpy.getCall(0).args[0],
-                       {text: query, tags: undefined},
+                       {text: query, tags: 'ops'},
                        'query not passed in correctly');
+    });
+
+    it('passes the optional parameters to the search', function() {
+      var query = 'spinach';
+      searchResults.setState = sinon.spy();
+      var stateSpy = searchResults.setState;
+      var searchSpy = sinon.spy();
+      searchResults.props = {charmstoreSearch: searchSpy};
+      searchResults.searchRequest(query, 'ops', 'bundle', '-name');
+      assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
+                       'waitingForSearch flag is not set');
+      assert.deepEqual(
+          searchSpy.getCall(0).args[0],
+          {text: query, tags: 'ops', type: 'bundle', sort: '-name'},
+          'query not passed in correctly');
     });
 
     it('decides to search when the query changes', function() {

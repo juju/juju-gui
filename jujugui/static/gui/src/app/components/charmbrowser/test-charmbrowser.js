@@ -38,7 +38,11 @@ describe('Charmbrowser', function() {
       sectionC: {
         metadata: {
           activeComponent: 'search-results',
-          search: query
+          search: query,
+          tags: 'ops',
+          sort: '-name',
+          type: 'bundle',
+          series: 'wily'
         }
       }};
     var changeState = sinon.stub();
@@ -55,8 +59,10 @@ describe('Charmbrowser', function() {
           <juju.components.SearchResults
             changeState={changeState}
             query={query}
-            tags={undefined}
-            type={undefined}
+            tags="ops"
+            sort="-name"
+            type="bundle"
+            series="wily"
             charmstoreSearch={charmstoreSearch} />
         </juju.components.Panel>);
   });
