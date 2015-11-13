@@ -342,24 +342,20 @@ YUI.add('juju-env-fakebackend', function(Y) {
       } else {
         this.get('charmstore').getEntity(
             charmIdParts.storeId,
-            function(charm) {
-              this._saveCharmModel(charm[0]);
-              if (callbacks.success) {
-                callbacks.success(charm[0]);
+            function(error, charm) {
+              if (error) {
+                console.warn('error loading charm: ', e);
+                if (callbacks.failure) {
+                  callbacks.failure(
+                      {error: 'Error interacting with the charmstore API.'});
+                }
+              } else {
+                this._saveCharmModel(charm[0]);
+                if (callbacks.success) {
+                  callbacks.success(charm[0]);
+                }
               }
-            }.bind(this),
-            // Inform the caller of an error using the charm store.
-            function(e) {
-              // This is most likely an IOError stemming from an
-              // invalid charm pointing to a bad URL and a read of a
-              // 404 giving an error at this level. IOError isn't user
-              // facing so we log the warning.
-              console.warn('error loading charm: ', e);
-              if (callbacks.failure) {
-                callbacks.failure(
-                    {error: 'Error interacting with the charmstore API.'});
-              }
-            });
+            }.bind(this));
       }
     },
 

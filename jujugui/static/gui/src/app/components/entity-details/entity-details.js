@@ -20,110 +20,105 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('entity-details', function() {
 
-  juju.components.EntityDetails = React.createClass({
-    detailsXhr: null,
+juju.components.EntityDetails = React.createClass({
+  detailsXhr: null,
 
-    /* Define and validate the properites available on this component. */
-    propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      deployService: React.PropTypes.func.isRequired,
-      getEntity: React.PropTypes.func.isRequired,
-      id: React.PropTypes.string.isRequired,
-      pluralize: React.PropTypes.func.isRequired
-    },
+  /* Define and validate the properites available on this component. */
+  propTypes: {
+    changeState: React.PropTypes.func.isRequired,
+    deployService: React.PropTypes.func.isRequired,
+    getEntity: React.PropTypes.func.isRequired,
+    id: React.PropTypes.string.isRequired,
+    pluralize: React.PropTypes.func.isRequired
+  },
 
-    /**
-      Generates the state for the search results.
+  /**
+    Generates the state for the search results.
 
-      @method generateState
-      @param {Object} nextProps The props which were sent to the component.
-      @return {Object} A generated state object which can be passed to setState.
-    */
-    generateState: function(nextProps) {
-      var state = {
-        activeComponent: nextProps.activeComponent || 'loading'
-      };
-      switch (state.activeComponent) {
-        case 'loading':
-          state.activeChild = {
-            component:
-              <div>
-                <juju.components.Spinner />
-              </div>
-          };
-          break;
-        case 'entity-details':
-          var entityModel = this.state.entityModel;
-          state.activeChild = {
-            component:
-              <div>
-                <juju.components.EntityHeader
-                  entityModel={entityModel}
-                  importBundleYAML={this.props.importBundleYAML}
-                  getBundleYAML={this.props.getBundleYAML}
-                  changeState={this.props.changeState}
-                  deployService={this.props.deployService}
-                  pluralize={this.props.pluralize} />
-                {this._generateDiagram(entityModel)}
-                <juju.components.EntityContent
-                  getFile={this.props.getFile}
-                  renderMarkdown={this.props.renderMarkdown}
-                  entityModel={entityModel} />
-              </div>
-          };
-          break;
-        case 'error':
-          state.activeChild = {
-            component:
-              <p className="error">
-                There was a problem while loading the entity details.
-                You could try searching for another charm or bundle or go{' '}
-                <span className="link"
-                  onClick={this._handleBack}>
-                  back
-                </span>.
-              </p>
-          };
-          break;
-      }
-      return state;
-    },
+    @method generateState
+    @param {Object} nextProps The props which were sent to the component.
+    @return {Object} A generated state object which can be passed to setState.
+  */
+  generateState: function(nextProps) {
+    var state = {
+      activeComponent: nextProps.activeComponent || 'loading'
+    };
+    switch (state.activeComponent) {
+      case 'loading':
+        state.activeChild = {
+          component:
+            <div>
+              <juju.components.Spinner />
+            </div>
+        };
+        break;
+      case 'entity-details':
+        var entityModel = this.state.entityModel;
+        state.activeChild = {
+          component:
+            <div>
+              <juju.components.EntityHeader
+                entityModel={entityModel}
+                importBundleYAML={this.props.importBundleYAML}
+                getBundleYAML={this.props.getBundleYAML}
+                changeState={this.props.changeState}
+                deployService={this.props.deployService}
+                pluralize={this.props.pluralize} />
+              {this._generateDiagram(entityModel)}
+              <juju.components.EntityContent
+                getFile={this.props.getFile}
+                renderMarkdown={this.props.renderMarkdown}
+                entityModel={entityModel} />
+            </div>
+        };
+        break;
+      case 'error':
+        state.activeChild = {
+          component:
+            <p className="error">
+              There was a problem while loading the entity details.
+              You could try searching for another charm or bundle or go{' '}
+              <span className="link"
+                onClick={this._handleBack}>
+                back
+              </span>.
+            </p>
+        };
+        break;
+    }
+    return state;
+  },
 
-    /**
-      Change the state to reflect the chosen component.
+  /**
+    Change the state to reflect the chosen component.
 
-      @method _changeActiveComponent
-      @param {String} newComponent The component to switch to.
-    */
-    _changeActiveComponent: function(newComponent) {
-      var nextProps = this.state;
-      nextProps.activeComponent = newComponent;
-      this.setState(this.generateState(nextProps));
-    },
+    @method _changeActiveComponent
+    @param {String} newComponent The component to switch to.
+  */
+  _changeActiveComponent: function(newComponent) {
+    var nextProps = this.state;
+    nextProps.activeComponent = newComponent;
+    this.setState(this.generateState(nextProps));
+  },
 
-    /**
-      Callback for when an entity has been successfully fetched. Though the
-      data passed in is an Array of models, only the first model is used.
+  /**
+    Callback for when an entity has been successfully fetched. Though the
+    data passed in is an Array of models, only the first model is used.
 
-      @method fetchSuccess
-      @param {Array} models A list of the entity models found.
-    */
-    fetchSuccess: function(models) {
-      if (models.length > 0) {
-        this.setState({entityModel: models[0]});
-        this._changeActiveComponent('entity-details');
-      }
-    },
-
-    /**
-      Callback for when an error occurs while fetching an entity.
-
-      @method fetchFailure
-      @param {Object} response The failure response.
-    */
-    fetchFailure: function(response) {
-      this._changeActiveComponent('error');
-    },
+    @method fetchSuccess
+    @param {String} error An error message, or null if there's no error.
+    @param {Array} models A list of the entity models found.
+  */
+  fetchCallback: function(error, models) {
+    if (error) {
+      console.error('Fetching the entity failed.');
+      return;
+    }
+    if (models.length > 0) {
+      this.setState({entityModel: models[0]});
+      this._changeActiveComponent('entity-details');
+    }
+  },
 
     getInitialState: function() {
       var state = this.generateState(this.props);
@@ -132,11 +127,7 @@ YUI.add('entity-details', function() {
     },
 
     componentDidMount: function() {
-      this.detailsXhr = this.props.getEntity(
-        this.props.id,
-        this.fetchSuccess,
-        this.fetchFailure
-      );
+      this.detailsXhr = this.props.getEntity(this.props.id, this.fetchCallback);
     },
 
     componentWillUnmount: function() {

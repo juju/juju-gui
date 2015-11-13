@@ -384,7 +384,8 @@ var module = module;
       return _makeRequest(
           this.bakery,
           this._generatePath(entityId, null, '/archive/' + filename),
-          callback);
+          callback,
+          false);
     },
 
     /**

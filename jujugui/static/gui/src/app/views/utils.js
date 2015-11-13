@@ -1444,36 +1444,38 @@ YUI.add('juju-view-utils', function(Y) {
     // start, for charmers bundles, or after the username, for namespaced
     // bundles. ex) bundle/swift & ~jorge/bundle/swift
     if (entityId.indexOf('bundle/') > -1) {
-      charmstore.getBundleYAML(
-          entityId,
-          function(bundleYAML) {
-            this.bundleImporter.importBundleYAML(bundleYAML);
-          }.bind(this),
-          failureNotification.bind(this));
+      charmstore.getBundleYAML(entityId, function(error, bundleYAML) {
+        if (error) {
+          failureNotification(error);
+        } else {
+          this.bundleImporter.importBundleYAML(bundleYAML);
+        }
+      }.bind(this));
     } else {
       // If it's not a bundle then it's a charm.
-      charmstore.getEntity(
-          entityId.replace('cs:', ''),
-          function(charm) {
-            charm = charm[0];
-            var config = {},
-                options = charm.get('options');
-            Object.keys(options).forEach(function(key) {
-              config[key] = options[key]['default'];
-            });
-            // We call the env deploy method directly because we don't want
-            // the ghost inspector to open.
-            this.env.deploy(
-                charm.get('id'),
-                charm.get('name'),
-                config,
-                undefined, //config file content
-                1, // number of units
-                {}, //constraints
-                null); // toMachine
-            this.fire('autoplaceAndCommitAll');
-          }.bind(this),
-          failureNotification.bind(this));
+      charmstore.getEntity(entityId.replace('cs:', ''), function(error, charm) {
+        if (error) {
+          failureNotification(error);   
+        } else {
+          charm = charm[0];
+          var config = {},
+              options = charm.get('options');
+          Object.keys(options).forEach(function(key) {
+            config[key] = options[key]['default'];
+          });
+          // We call the env deploy method directly because we don't want
+          // the ghost inspector to open.
+          this.env.deploy(
+              charm.get('id'),
+              charm.get('name'),
+              config,
+              undefined, //config file content
+              1, // number of units
+              {}, //constraints
+              null); // toMachine
+          this.fire('autoplaceAndCommitAll');
+        }
+      }.bind(this));
     }
     // Because deploy-target is an action and not a state we need to clear
     // it out of the state as soon as we are done with it so that we can

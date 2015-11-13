@@ -962,7 +962,11 @@ YUI.add('juju-topology-service', function(Y) {
           var charmstore = topo.get('charmstore');
           charmstore.getBundleYAML(
               entityData.id.replace('cs:', ''),
-              function(bundleYAML) {
+              function(error, bundleYAML) {
+                if (error) {
+                  console.error(error);
+                  return;
+                }
                 topo.get('bundleImporter').importBundleYAML(bundleYAML);
               }.bind(this));
         }

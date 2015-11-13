@@ -128,16 +128,22 @@ YUI.add('inspector-change-version', function() {
     */
     _getVersions: function(charmId) {
       this.setState({loading: true});
-      this.versionsXhr = this.props.getAvailableVersions(charmId,
-          this._getVersionsSuccess, this._getVersionsFailure);
+      this.versionsXhr = this.props.getAvailableVersions(
+          charmId, this._getVersionsCallback);
     },
 
     /**
       Update the state with the returned versions.
 
       @method _getVersionsSuccess
+      @param {String} error The error message, if any. Null if no error.
+      @param {Array} versions The available versions.
     */
-    _getVersionsSuccess: function(versions) {
+    _getVersionsSuccess: function(error, versions) {
+      if (error) {
+        console.error(error);
+        versions = null;
+      }
       var components = [];
       if (!versions || versions.length === 1) {
         components = <li className="inspector-change-version__none">
@@ -176,17 +182,6 @@ YUI.add('inspector-change-version', function() {
     _getVersionNumber: function(charmId) {
       var parts = charmId.split('-');
       return parseInt(parts[parts.length - 1]);
-    },
-
-    /**
-      Handle failures in getting versions.
-
-      @method _getVersionsFailure
-    */
-    _getVersionsFailure: function() {
-      // Call the success method without any versions so that the "no versions"
-      // message is displayed.
-      this._getVersionsSuccess();
     },
 
     /**
