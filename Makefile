@@ -49,22 +49,23 @@ STATIC_CSS_FILES = \
 
 .PHONY: help
 help:
+	@echo "bumpversion - bump version."
+	@echo "  By default bumps patch level. 'VPART=[major|minor|patch] make bumpversion' to specify."
 	@echo "check - run tests and check lint."
 	@echo "clean - remove build and python artifacts"
-	@echo "clean-gui - clean the built gui js code"
 	@echo "clean-downloadcache - remove the downloadcache"
-	@echo "dist - bump version and package."
-	@echo "  By default bumps patch level. 'VPART=[major|minor|patch] make dist' to specify."
+	@echo "clean-gui - clean the built gui js code"
 	@echo "deps - install the dependencies"
+	@echo "dist - create package."
 	@echo "gui - build the gui files"
 	@echo "lint - check python style with flake8"
 	@echo "lint-js - check javascript style with eslint"
 	@echo "run - run the development server"
-	@echo "test - run python tests with the default Python"
-	@echo "test-js-phantom - run older js tests in terminal"
-	@echo "test-js-karma - run newer js tests in terminal; primarily for CI build"
 	@echo "start-karma - run Karma for development js testing"
+	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
+	@echo "test-js-karma - run newer js tests in terminal; primarily for CI build"
+	@echo "test-js-phantom - run older js tests in terminal"
 	@echo "update-downloadcache - update the download cache"
 
 
@@ -347,9 +348,12 @@ ci-check: clean-downloadcache deps fast-babel check test-selenium
 ###########
 # Packaging
 ###########
+.PHONY: bumpversion
+bumpversion: test-deps
+	bin/bumpversion $(VPART)
+
 .PHONY: dist
 dist: gui test-deps
-	bin/bumpversion $(VPART)
 	python setup.py sdist
 
 #######
