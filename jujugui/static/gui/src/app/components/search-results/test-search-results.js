@@ -92,7 +92,7 @@ describe('SearchResults', function() {
           <juju.components.SearchResults
             query="nothing here"
             charmstoreSearch={charmstoreSearch} />, true);
-      var instance = shallowRenderer.getMountedInstance()
+      var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
