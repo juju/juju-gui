@@ -1,10 +1,8 @@
 .entity-header {
-    @extend %shadow-header;
     margin-bottom: 0;
     padding: 80px 0;
     background-color: $white;
     color: $cool-grey;
-    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.35);
     overflow: hidden;
 
     &.dark {

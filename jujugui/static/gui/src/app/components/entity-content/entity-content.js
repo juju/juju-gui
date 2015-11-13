@@ -52,12 +52,17 @@ YUI.add('entity-content', function() {
           );
         }, this);
         return (
-          <div className="entity-content__configuration" id="configuration">
-            <h3>Configuration</h3>
-            <dl>
-              {optionsList}
-            </dl>
-          </div>);
+          <div className="row entity-content__configuration" id="configuration">
+            <div className="inner-wrapper">
+              <div className="twelve-col">
+                <h2 className="entity-content__header">Configuration</h2>
+                <dl>
+                  {optionsList}
+                </dl>
+              </div>
+            </div>
+          </div>
+        );
       }
     },
 
@@ -70,27 +75,37 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        return <div className="entity-content__description">
-            <h2>Description</h2>
-            <p>{entityModel.get('description')}</p>
-          </div>;
+        return (
+          <div className="row entity-content__description">
+            <div className="inner-wrapper">
+              <div className="twelve-col">
+                <p>{entityModel.get('description')}</p>
+              </div>
+            </div>
+          </div>
+        );
       }
     },
 
     render: function() {
       var entityModel = this.props.entityModel;
       return (
-        <div className="row entity-content">
-          <div className="inner-wrapper">
-            <main className="seven-col append-one">
-              {this._generateDescription(entityModel)}
-              <juju.components.EntityContentReadme
-                entityModel={entityModel}
-                renderMarkdown={this.props.renderMarkdown}
-                getFile={this.props.getFile} />
-              {this._generateOptionsList(entityModel)}
-            </main>
+        <div className="entity-content">
+          {this._generateDescription(entityModel)}
+          <div className="row">
+            <div className="inner-wrapper">
+              <div className="seven-col append-one">
+                <juju.components.EntityContentReadme
+                  entityModel={entityModel}
+                  renderMarkdown={this.props.renderMarkdown}
+                  getFile={this.props.getFile} />
+              </div>
+              <div className="four-col">
+                <p>Placeholder for project information.</p>
+              </div>
+            </div>
           </div>
+          {this._generateOptionsList(entityModel)}
         </div>
       );
     }

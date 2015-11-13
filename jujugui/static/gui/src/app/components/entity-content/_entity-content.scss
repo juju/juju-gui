@@ -1,4 +1,52 @@
 .entity-content {
     clear: both;
-    padding-top: 30px;
+
+    .row {
+        overflow: auto;
+        padding: 40px 0;
+
+
+        &:nth-child(odd) {
+            background-color: $light-grey;
+        }
+
+        .inner-wrapper > div {
+            margin: 0;
+        }
+    }
+
+    &__header {
+        margin: 1.6em 0;
+    }
+
+    &__description {
+        font-size: 20px;
+    }
+
+    &__readme-content {
+        h1, h2, h3 {
+            margin: 1.6em 0;
+        }
+        h4, h5, h6 {
+            margin: 0.8em 0;
+        }
+        h1 {
+            font-size: 1.4em;
+        }
+        h2 {
+            font-size: 1.3em;
+        }
+        h3 {
+            font-size: 1.2em;
+        }
+        h4 {
+            font-size: 1.1em;
+        }
+        h5, h6 {
+            font-size: 1em;
+        }
+        li {
+            margin-left: 3em;
+        }
+    }
 }
