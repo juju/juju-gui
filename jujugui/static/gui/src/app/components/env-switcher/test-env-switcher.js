@@ -210,7 +210,7 @@ describe('EnvSwitcher', function() {
     assert.equal(newEnv.args[0][1], envName || 'new-env-1');
     assert.equal(newEnv.args[0][2], 'admin/foo');
     assert.equal(newEnv.args[0][3], 'admin/foo');
-    assert.closeTo(newEnv.args[0][4].length, 31, 6);
+    assert.equal(newEnv.args[0][4].length > 10, true);
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {uuid: '123abc'};
     newEnv.args[0][5](null, createdEnv);

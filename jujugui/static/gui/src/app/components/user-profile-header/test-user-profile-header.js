@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('UnitList', () => {
+describe('UserProfileHeader', () => {
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.

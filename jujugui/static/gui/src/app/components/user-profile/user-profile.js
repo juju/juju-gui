@@ -22,6 +22,13 @@ YUI.add('user-profile', function() {
 
   juju.components.UserProfile = React.createClass({
 
+    propTypes: {
+      jem: React.PropTypes.object,
+      listEnvs: React.PropTypes.func,
+      switchEnv: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired
+    },
+
     getInitialState: function() {
       return {
         envList: []
@@ -41,7 +48,7 @@ YUI.add('user-profile', function() {
       var props = this.props;
       var jem = props.jem;
       if (jem) {
-        jem.listEnvironments(this._fetchEnvironmentsCallback.bind(this));
+        jem.listEnvironments(this._fetchEnvironmentsCallback);
       } else {
         props.listEnvs(
           'user-admin', this._fetchEnvironmentsCallback.bind(this, null));
@@ -123,6 +130,7 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
+    'panel-component',
     'user-profile-header',
     'user-profile-list'
   ]
