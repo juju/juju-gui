@@ -92,9 +92,9 @@ describe('SearchResults', function() {
           <juju.components.SearchResults
             query="nothing here"
             charmstoreSearch={charmstoreSearch} />, true);
-      shallowRenderer.getMountedInstance().componentDidMount();
+      var instance = shallowRenderer.getMountedInstance()
+      instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
-      var backLink = output.props.children.props.children[1].props.children[6];
       assert.deepEqual(output,
         <div className="search-results search-results--floating">
           <div className="twelve-col no-results-container last-col">
@@ -109,7 +109,7 @@ describe('SearchResults', function() {
               </a>
               {' '}or go{' '}
               <span className="link"
-                onClick={backLink.props.onClick}>
+                onClick={instance._handleBack}>
                 back
               </span>.
             </p>

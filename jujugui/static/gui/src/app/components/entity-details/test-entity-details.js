@@ -118,7 +118,8 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
+    var instance = shallowRenderer.getMountedInstance();
+    instance.componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     var expected = (
       <div className="entity-details">
@@ -126,7 +127,7 @@ describe('EntityDetails', function() {
           There was a problem while loading the entity details.
           You could try searching for another charm or bundle or go{' '}
           <span className="link"
-            onClick={output.props.children.props.children[2].props.onClick}>
+            onClick={instance._handleBack}>
             back
           </span>.
         </p>
