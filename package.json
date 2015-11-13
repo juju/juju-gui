@@ -20,7 +20,6 @@
     "expect.js": "0.1.2",
     "express": "3.x",
     "graceful-fs": "1.1.x",
-    "handlebars": "^4.0.2",
     "jasmine-core": "^2.3.4",
     "js-macaroon": "1.0.1",
     "jshint": "2.1.9",
@@ -47,7 +46,6 @@
     "yuidocjs": "0.3.x"
   },
   "devDependencies": {
-    "karma-babel-preprocessor": "^5.2.2",
-    "karma-handlebars-preprocessor": "^0.3.0"
+    "karma-babel-preprocessor": "^5.2.2"
   }
 }

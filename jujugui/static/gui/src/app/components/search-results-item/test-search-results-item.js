@@ -153,11 +153,11 @@ describe('SearchResultsItem', function() {
             <span className="special-flag"></span>
           </h3>
           <ul className="tag-list">
-            <span>&nbsp;</span>
+            <span>{' '}</span>
           </ul>
         </div>
         <div className="two-col series__column">
-          <span>&nbsp;</span>
+          <span>{' '}</span>
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
@@ -227,11 +227,11 @@ describe('SearchResultsItem', function() {
             <span className="special-flag"></span>
           </h3>
           <ul className="tag-list">
-            <span>&nbsp;</span>
+            <span>{' '}</span>
           </ul>
         </div>
         <div className="two-col series__column">
-          <span>&nbsp;</span>
+          <span>{' '}</span>
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
@@ -337,6 +337,7 @@ describe('SearchResultsItem', function() {
         component: 'charmbrowser',
         metadata: {
           activeComponent: 'search-results',
+          search: null,
           tags: 'tag1'
         }
       }
@@ -373,8 +374,8 @@ describe('SearchResultsItem', function() {
       sectionC: {
         component: 'charmbrowser',
         metadata: {
-          activeComponent: 'search-results',
-          series: 'vivid'
+          activeComponent: 'entity-details',
+          id: 'vivid/mysql'
         }
       }
     });

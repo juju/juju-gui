@@ -28,8 +28,7 @@ YUI.add('search-results-item', function(Y) {
       @returns {String} The generated elements.
     */
     _generateSpecialFlag: function() {
-      var special = this.props.item.special;
-      if (!special) {
+      if (!this.props.item.special) {
         return;
       }
       return (
@@ -47,7 +46,7 @@ YUI.add('search-results-item', function(Y) {
       var components = [];
       var tags = this.props.item.tags || [];
       if (tags.length === 0) {
-        return <span>&nbsp;</span>;
+        return <span>{' '}</span>;
       }
       tags.forEach(function(tag) {
         components.push(
@@ -69,18 +68,20 @@ YUI.add('search-results-item', function(Y) {
       @returns {String} The generated elements.
     */
     _generateSeriesList: function() {
-      var series = this.props.item.series;
+      var item = this.props.item;
+      var series = item.series;
       var components = [];
       if (series.length === 0) {
-        return <span>&nbsp;</span>;
+        return <span>{' '}</span>;
       }
-      series.forEach(function(item) {
-        var name = item.name;
+      series.forEach(function(seriesItem) {
+        var name = seriesItem.name;
+        var id = name + '/' + item.name;
         components.push(
           <li className="tag-list--item"
             key={name}
             role="button" tabIndex="0"
-            onClick={this._handleSeriesClick.bind(this, name)}>
+            onClick={this._handleItemClick.bind(this, id)}>
             {name}
           </li>
         );
@@ -99,11 +100,8 @@ YUI.add('search-results-item', function(Y) {
       @returns {String} The generated elements.
     */
     _generateIconList: function() {
-      var services = this.props.item.services || [];
+      var services = this.props.item.services || [this.props.item];
       var components = [];
-      if (services.length === 0) {
-        services.push(this.props.item);
-      }
       services.forEach(function(service) {
         var src = service.iconPath ||
             'juju-ui/assets/images/non-sprites/charm_160.svg';
@@ -169,27 +167,8 @@ YUI.add('search-results-item', function(Y) {
           component: 'charmbrowser',
           metadata: {
             activeComponent: 'search-results',
+            search: null,
             tags: tag
-          }
-        }
-      });
-    },
-
-    /**
-      Filter by the given series.
-
-      @method _handleSeriesClick
-      @param {String} series The series name.
-      @param {Object} e The click event.
-    */
-    _handleSeriesClick: function(series, e) {
-      e.stopPropagation();
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            series: series
           }
         }
       });
