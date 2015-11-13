@@ -86,6 +86,37 @@ describe('SearchResults', function() {
         </div>);
     });
 
+    it('can display a message if there is a loading error', function() {
+      var charmstoreSearch = sinon.stub().callsArg(2);
+      var shallowRenderer = jsTestUtils.shallowRender(
+          <juju.components.SearchResults
+            query="nothing here"
+            charmstoreSearch={charmstoreSearch} />, true);
+      var instance = shallowRenderer.getMountedInstance();
+      instance.componentDidMount();
+      var output = shallowRenderer.getRenderOutput();
+      assert.deepEqual(output,
+        <div className="search-results search-results--floating">
+          <div className="twelve-col no-results-container last-col">
+            <h1 className="row-title">
+              Something went wrong
+            </h1>
+            <p>
+              For some reason the search failed. You could try searching at
+              {' '}
+              <a href="http://jujucharms.com/store">
+                http://jujucharms.com
+              </a>
+              {' '}or go{' '}
+              <span className="link"
+                onClick={instance._handleBack}>
+                back
+              </span>.
+            </p>
+          </div>
+        </div>);
+    });
+
     it('loads search results', function() {
       var query = 'spinach';
       var result = {

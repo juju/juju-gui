@@ -79,18 +79,58 @@ describe('EntityDetails', function() {
                  'getEntity not called with the entity ID');
     var expected = (
       <div className={'entity-details charm'}>
-        <juju.components.EntityHeader
-          entityModel={mockEntity}
+        <div>
+          <juju.components.EntityHeader
+            entityModel={mockEntity}
+            importBundleYAML={importBundleYAML}
+            getBundleYAML={getBundleYAML}
+            changeState={changeState}
+            deployService={deployService}
+            pluralize={pluralize} />
+          {undefined}
+          <juju.components.EntityContent
+            getFile={getFile}
+            renderMarkdown={renderMarkdown}
+            entityModel={mockEntity} />
+          </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a message if there is a loading error', function() {
+    var id = mockEntity.get('id');
+    var getEntity = sinon.stub().callsArgWith(2, [mockEntity]);
+    var deployService = sinon.spy();
+    var changeState = sinon.spy();
+    var importBundleYAML = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    var pluralize = sinon.spy();
+    var getFile = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.EntityDetails
+          deployService={deployService}
+          changeState={changeState}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
-          changeState={changeState}
-          deployService={deployService}
-          pluralize={pluralize} />
-        {undefined}
-        <juju.components.EntityContent
+          getEntity={getEntity}
           getFile={getFile}
           renderMarkdown={renderMarkdown}
-          entityModel={mockEntity} />
+          id={id}
+          pluralize={pluralize} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    var expected = (
+      <div className="entity-details">
+        <p className="error">
+          There was a problem while loading the entity details.
+          You could try searching for another charm or bundle or go{' '}
+          <span className="link"
+            onClick={instance._handleBack}>
+            back
+          </span>.
+        </p>
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -127,20 +167,22 @@ describe('EntityDetails', function() {
                  'getEntity not called with the entity ID');
     var expected = (
       <div className={'entity-details bundle'}>
-        <juju.components.EntityHeader
-          entityModel={mockEntity}
-          importBundleYAML={importBundleYAML}
-          getBundleYAML={getBundleYAML}
-          changeState={changeState}
-          deployService={deployService}
-          pluralize={pluralize} />
-        <juju.components.EntityContentDiagram
-          getDiagramURL={getDiagramURL}
-          id={id} />
-        <juju.components.EntityContent
-          getFile={getFile}
-          renderMarkdown={renderMarkdown}
-          entityModel={mockEntity} />
+        <div>
+          <juju.components.EntityHeader
+            entityModel={mockEntity}
+            importBundleYAML={importBundleYAML}
+            getBundleYAML={getBundleYAML}
+            changeState={changeState}
+            deployService={deployService}
+            pluralize={pluralize} />
+          <juju.components.EntityContentDiagram
+            getDiagramURL={getDiagramURL}
+            id={id} />
+          <juju.components.EntityContent
+            getFile={getFile}
+            renderMarkdown={renderMarkdown}
+            entityModel={mockEntity} />
+          </div>
       </div>);
     assert.deepEqual(output, expected);
   });
