@@ -4,7 +4,6 @@ PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 OLD_TEMPLATES_FILE := $(GUIBUILD)/app/templates.js
-NEW_TEMPLATES_FILE := $(GUIBUILD)/app/components/templates.js
 SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
 SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
@@ -42,7 +41,6 @@ RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/as
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
 OLD_TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
-NEW_TEMPLATE_FILES := $(shell find $(GUISRC)/app/components -type f -name "*.hbs")
 SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
 STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
@@ -108,7 +106,7 @@ venv: $(PY)
 $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
-$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(OLD_TEMPLATES_FILE) $(NEW_TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
+$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(OLD_TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
 
@@ -224,13 +222,8 @@ $(OLD_TEMPLATES_FILE): $(NODE_MODULES) $(OLD_TEMPLATE_FILES)
 	scripts/generateTemplates
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(OLD_TEMPLATES_FILE) -o $(basename $(OLD_TEMPLATES_FILE))-min.js
 
-$(NEW_TEMPLATES_FILE): $(NODE_MODULES) $(NEW_TEMPLATE_FILES)
-	mkdir -p $(GUIBUILD)/app/assets
-	$(NODE_MODULES)/.bin/handlebars $(NEW_TEMPLATE_FILES) -f $(NEW_TEMPLATES_FILE)
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NEW_TEMPLATES_FILE) -o $(basename $(NEW_TEMPLATES_FILE))-min.js
-
 .PHONY: template
-template: $(OLD_TEMPLATES_FILE) $(NEW_TEMPLATES_FILE)
+template: $(OLD_TEMPLATES_FILE)
 
 $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets

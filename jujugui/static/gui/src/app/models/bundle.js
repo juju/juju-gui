@@ -106,6 +106,7 @@ YUI.add('juju-bundle-models', function(Y) {
         var service = services[name],
             id = service.charm.replace(/^cs:/, '');
         parsedServices.push({
+          id: id,
           iconPath: utils.getIconPath(id, false),
           url: '',  // XXX implement once determined how to handle links
           displayName: name.replace('-', ' ')
