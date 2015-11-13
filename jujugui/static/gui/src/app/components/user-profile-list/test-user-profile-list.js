@@ -132,6 +132,63 @@ describe('UnitList', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('respects key whitelist if supplied', function() {
+    var data = [{
+      uuid: 'abc123',
+      ship: 'tardis',
+      pilot: 'the dr'
+    }];
+    var count = 1;
+    var switchEnv = sinon.stub();
+    var whitelist = ['uuid', 'ship'];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileList
+        title="TestList"
+        data={data}
+        uuidKey="uuid"
+        switchEnv={switchEnv}
+        whitelist={whitelist}/>, true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    var expected = (
+      <div className="user-profile-list">
+        <div className="user-profile-list__header">
+          TestList
+          <span className="user-profile-list__size">
+            {' '} ({count})
+          </span>
+        </div>
+        <ul>
+          <li
+            className="user-profile-list__header-row"
+            key="TestList-header-row">
+            <div
+              className="user-profile-list__line-item" key="abc123-uuid">
+              uuid
+            </div>
+            <div
+              className="user-profile-list__line-item" key="abc123-ship">
+              ship
+            </div>
+          </li>
+          <li
+            className="user-profile-list__item-row"
+            key={data[0].uuid}
+            data-uuid={data[0].uuid}
+            onClick={instance._switchEnv}>
+            <div className="user-profile-list__line-item" key="abc123-uuid">
+              {data[0].uuid}
+            </div>
+            <div className="user-profile-list__line-item" key="abc123-ship">
+              {data[0].ship}
+            </div>
+          </li>
+        </ul>
+      </div>);
+
+    assert.deepEqual(output, expected);
+  });
+
   it('calls to switch envs when clicking on row', function() {
     var data = [{
       uuid: 'abc123',

@@ -97,6 +97,7 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
+      var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -112,7 +113,8 @@ YUI.add('user-profile', function() {
             title="Models"
             data={this.state.envList}
             uuidKey="uuid"
-            switchEnv={this.switchEnv}/>
+            switchEnv={this.switchEnv}
+            whitelist={whitelist}/>
         </juju.components.Panel>
       );
     }

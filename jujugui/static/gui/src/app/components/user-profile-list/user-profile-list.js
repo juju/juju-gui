@@ -26,7 +26,8 @@ YUI.add('user-profile-list', function() {
       title: React.PropTypes.string.isRequired,
       data: React.PropTypes.array.isRequired,
       uuidKey: React.PropTypes.string.isRequired,
-      switchEnv: React.PropTypes.func.isRequired
+      switchEnv: React.PropTypes.func.isRequired,
+      whitelist: React.PropTypes.array
     },
 
     /**
@@ -40,6 +41,10 @@ YUI.add('user-profile-list', function() {
     _generateRowItems: function(item, showKeys) {
       var items = [];
       Object.keys(item).forEach((key) => {
+        if (this.props.whitelist) {
+          var valid = this.props.whitelist.some(whiteKey => key === whiteKey);
+          if (!valid) { return; }
+        }
         var value = showKeys ? key : item[key];
         var key = `${item[this.props.uuidKey]}-${key}`;
         items.push(
