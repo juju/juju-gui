@@ -74,9 +74,10 @@ help:
 .PHONY: sysdeps
 sysdeps:
 	sudo apt-get install -y software-properties-common
-	sudo add-apt-repository -y ppa:yellow/ppa
+	sudo ./scripts/nodesource_setup_5.x
 	sudo apt-get update
 	sudo apt-get install -y nodejs python-virtualenv g++ inotify-tools
+	sudo npm install -g npm@2.14.11
 
 .PHONY: src
 src: $(GUISRC)
