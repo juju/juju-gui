@@ -57,12 +57,11 @@ describe('Relation endpoints logic', function() {
     db = app.db;
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     app.destroy();
     db.destroy();
     env.close();
     env.destroy();
-    done();
   });
 
   function loadDelta(relations) {
@@ -189,10 +188,9 @@ describe('Endpoints map', function() {
     charm = new models.Charm({id: 'cs:precise/wordpress-2'});
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     controller.destroy();
     charm.destroy();
-    done();
   });
 
   it('should add a service to the map', function() {

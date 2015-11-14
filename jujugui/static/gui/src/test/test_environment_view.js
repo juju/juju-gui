@@ -239,10 +239,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    after(function(done)  {
+    after(function()  {
       env.close();
       env.destroy();
-      done();
     });
 
     beforeEach(function() {
@@ -270,7 +269,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    afterEach(function(done) {
+    afterEach(function() {
       db.reset();
       db.destroy();
       charm.destroy();
@@ -279,7 +278,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       if (!view.get('destroyed')) {
         view.destroy({remove: true});
       }
-      done();
     });
 
     function getParentId(view) {

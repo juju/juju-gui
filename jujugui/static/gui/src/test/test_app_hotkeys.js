@@ -52,11 +52,8 @@ describe('application hotkeys', function() {
     app.render();
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     container.remove(true);
-    app.after('destroy', function() {
-      done();
-    });
     app.destroy({remove: true});
   });
 
