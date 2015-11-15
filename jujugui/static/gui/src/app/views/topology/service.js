@@ -862,8 +862,6 @@ YUI.add('juju-topology-service', function(Y) {
       var charmName = jsyaml.safeLoad(contents.metadata).name;
       var services = db.services.getServicesFromCharmName(charmName);
 
-      topo.fire('destroyServiceInspector');
-
       if (services.length > 0) {
         this._showUpgradeOrNewInspector(services, file, env, db);
       } else {
@@ -981,16 +979,6 @@ YUI.add('juju-topology-service', function(Y) {
           topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
       topo.vis.selectAll('.is-selected').classed('is-selected', false);
-    },
-
-    /**
-      Destroys the service inspector when it's service topo destroy
-      button is clicked.
-
-      @method destroyServiceInspector
-    */
-    destroyServiceInspector: function() {
-      this.get('component').fire('destroyServiceInspector');
     },
 
     /**

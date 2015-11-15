@@ -672,7 +672,6 @@ describe.skip('service module events', function() {
       assert.equal(jsYamlMock.calledOnce(), true);
       assert.equal(getServicesStub.calledOnce(), true);
       assert.equal(topoFireStub.calledOnce(), true);
-      assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
     }
 
     it('calls to show the upgrade or new inspector', function() {

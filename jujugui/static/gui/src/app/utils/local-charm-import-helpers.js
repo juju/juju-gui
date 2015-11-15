@@ -24,21 +24,6 @@ YUI.add('local-charm-import-helpers', function(Y) {
   ns.localCharmHelpers = {
 
     /**
-      Public method entry to deploy local charm.
-
-      Calls the _requestSeries() method to request the series to deploy their
-      local charm to.
-
-      @method deployLocalCharm
-      @param {Object} file The file object from the browser.
-      @param {Object} env Reference to the environment.
-      @param {Object} db Reference to the database.
-    */
-    deployLocalCharm: function(file, env, db) {
-      ns.localCharmHelpers._requestSeries(file, env, db);
-    },
-
-    /**
       Public method to upgrade a collection of services from a local charm.
 
       @method upgradeServiceUsingLocalCharm
@@ -49,7 +34,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
     */
     upgradeServiceUsingLocalCharm: function(services, file, env, db) {
       var series = services[0].get('charm').match(/[^:]*(?=\/)/)[0];
-      ns.localCharmHelpers.uploadLocalCharm(series, file, env, db, {
+      ns.localCharmHelpers.uploadLocalCharm(env, db, series, file, {
         services: services
       });
     },
@@ -59,14 +44,14 @@ YUI.add('local-charm-import-helpers', function(Y) {
       method in the environment.
 
       @method uploadLocalCharm
-      @param {String} series the series to deploy the charm to.
-      @param {Object} file The file object from the browser.
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
+      @param {String} series the series to deploy the charm to.
+      @param {Object} file The file object from the browser.
       @param {Object} options a collection of options to pass to the
         uploadLocalCharm callbacks.
     */
-    uploadLocalCharm: function(series, file, env, db, options) {
+    uploadLocalCharm: function(env, db, series, file, options) {
       var helper = ns.localCharmHelpers;
       series = series || env.get('defaultSeries');
       env.uploadLocalCharm(
@@ -74,23 +59,6 @@ YUI.add('local-charm-import-helpers', function(Y) {
           series,
           helper._uploadLocalCharmProgress,
           helper._uploadLocalCharmLoad.bind(null, file, env, db, options));
-    },
-
-    /**
-      Requests the series to deploy their local charm to by rendering an
-      inspector with the requestSeries viewlet
-
-      @method _requestSeries
-      @param {Object} file The file object from the browser.
-      @param {Object} env Reference to the environment.
-      @param {Object} db Reference to the database.
-    */
-    _requestSeries: function(file, env, db) {
-      new Y.juju.views.RequestSeriesInspector({
-        file: file,
-        env: env,
-        db: db
-      }).render();
     },
 
     /**

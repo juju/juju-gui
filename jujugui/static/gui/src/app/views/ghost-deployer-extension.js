@@ -104,7 +104,10 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this.fire('changeState', {
         sectionA: {
           component: 'inspector',
-          metadata: { id: ghostService.get('id') }
+          metadata: {
+            id: ghostService.get('id'),
+            localType: null
+          }
         }});
     },
 

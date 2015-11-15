@@ -669,10 +669,6 @@ YUI.add('juju-gui', function(Y) {
         Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
       }, this);
 
-      // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
-      // the inspector shortly this can be removed.
-      this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
-
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
         if (this.get('socket_url') || this.get('sandbox')) {
@@ -827,29 +823,19 @@ YUI.add('juju-gui', function(Y) {
         how to render.
     */
     _renderInspector: function(metadata) {
+      var state = this.state;
+      var utils = views.utils;
+      var charmstore = this.get('charmstore');
+      var inspector;
       var service = this.db.services.getById(metadata.id);
+      var localType = metadata.localType;
       // If the url was provided with a service id which isn't in the localType
       // db then change state back to the added services list. This usually
       // happens if the user tries to visit the inspector of a ghost service
       // id which no longer exists.
-      if (service === null) {
-        this.changeState({
-          sectionA: {
-            component: 'services',
-            metadata: null
-          }
-        });
-        return;
-      }
-      var charm = app.db.charms.getById(service.get('charm'));
-      var state = this.state;
-      var utils = views.utils;
-      var charmstore = this.get('charmstore');
-      ReactDOM.render(
-        <components.Panel
-          instanceName="inspector-panel"
-          visible={true}
-          metadata={metadata}>
+      if (service) {
+        var charm = app.db.charms.getById(service.get('charm'));
+        inspector = (
           <components.Inspector
             service={service}
             charm={charm}
@@ -877,6 +863,34 @@ YUI.add('juju-gui', function(Y) {
             getUnitStatusCounts={utils.getUnitStatusCounts}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
+        );
+      } else if (localType && metadata.flash && metadata.flash.file) {
+        var localCharmHelpers = juju.localCharmHelpers;
+        inspector = (
+          <components.LocalInspector
+            file={metadata.flash.file}
+            localType={localType}
+            services={this.db.services}
+            uploadLocalCharm={
+                localCharmHelpers.uploadLocalCharm.bind(
+                this, this.env, this.db)}
+            changeState={this.changeState.bind(this)} />
+        );
+      } else {
+        this.changeState({
+          sectionA: {
+            component: 'services',
+            metadata: null
+          }
+        });
+        return;
+      }
+      ReactDOM.render(
+        <components.Panel
+          instanceName="inspector-panel"
+          visible={true}
+          metadata={metadata}>
+          {inspector}
         </components.Panel>,
         document.getElementById('inspector-container'));
     },
@@ -2085,10 +2099,11 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-component',
     'env-size-display',
+    'env-switcher',
     'header-search',
     'inspector-component',
+    'local-inspector',
     'panel-component',
-    'env-switcher',
     'user-profile',
     // juju-views group
     'd3-components',
