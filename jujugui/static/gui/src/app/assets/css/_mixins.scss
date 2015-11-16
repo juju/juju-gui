@@ -180,7 +180,6 @@
 @mixin notification($background) {
     $size: 24px;
     box-sizing: border-box;
-    float: right;
     min-width: $size;
     height: $size;
     padding: 0 7px;

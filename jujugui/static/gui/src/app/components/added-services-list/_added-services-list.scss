@@ -48,6 +48,15 @@
         color: $warm-grey;
     }
 
+    &__visibility-toggle {
+        vertical-align: middle;
+        padding: 0 10px;
+    }
+
+    &__status-block {
+        float: right;
+    }
+
     &__status {
         &--error {
             @include notification($error);
