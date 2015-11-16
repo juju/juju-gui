@@ -76,11 +76,24 @@ YUI.add('env-list', function() {
       this.props.createNewEnv(this.state.envName);
     },
 
+    /**
+      Calls the showUserProfile prop.
+
+      @method showProfile
+    */
+    showProfile: function() {
+      this.props.showUserProfile();
+    },
+
     render: function() {
       var actionButtons = [{
         title: 'New',
         type: 'confirm',
         action: this.createNewEnv
+      }, {
+        title: 'More',
+        type: 'show-profile',
+        action: this.showProfile
       }];
 
       return (

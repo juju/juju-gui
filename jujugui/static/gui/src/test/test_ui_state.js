@@ -784,6 +784,13 @@ describe('UI State object', function() {
           }
         }, sectionC: {}
       },
+      '/profile': {
+        sectionA: {},
+        sectionB: {},
+        sectionC: {
+          component: 'profile'
+        }
+      },
       // Invalid urls with overriding components
       '/inspector?search=hadoop': {
         sectionA: {

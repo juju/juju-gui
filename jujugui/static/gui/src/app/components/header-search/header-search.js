@@ -29,16 +29,25 @@ YUI.add('header-search', function() {
       @returns {String} The current state.
     */
     getInitialState: function() {
-      var component = this.props.getAppState(
-        'current', 'sectionC', 'component');
       var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
-      var active = !!component;
-
+      var active = this._activeForComponent();
       return {
         query: metadata && metadata.search,
         active: active,
         inputStyles: this._generateInputStyles(active)
       };
+    },
+
+    /**
+      Based on the active component in sectionC this will return true or false
+      if this component is to be in its active state.
+
+      @method _activeForComponent
+    */
+    _activeForComponent: function() {
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      return !!component && component !== 'profile';
     },
 
     /**
@@ -50,9 +59,7 @@ YUI.add('header-search', function() {
       // Need to check if there is a change to sectionC and if it has been
       // cleared (mid-point/search results have been closed) then we also need
       // to deactivate the search box.
-      var component = this.props.getAppState(
-        'current', 'sectionC', 'component');
-      if (component) {
+      if (this._activeForComponent()) {
         this._openSearch();
       } else {
         this._closeSearch();

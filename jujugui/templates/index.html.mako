@@ -197,7 +197,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </header>
         <div id="content">
             <div id="shortcut-help" style="display:none"></div>
-            <div id="subapp-browser"></div>
             <div id="main">
             </div> <!-- /container -->
         </div>

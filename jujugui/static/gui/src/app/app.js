@@ -717,6 +717,21 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the user profile component.
+
+      @method _renderUserProfile
+    */
+    _renderUserProfile: function() {
+      ReactDOM.render(
+        <window.juju.components.UserProfile
+          jem={this.jem}
+          listEnvs={this.env.listEnvs.bind(this.env)}
+          changeState={this.changeState.bind(this)}
+          switchEnv={this.switchEnv.bind(this)} />,
+        document.getElementById('charmbrowser-container'));
+    },
+
+    /**
       Renders the Environment Size Display component to the page in the
       designated element.
 
@@ -899,6 +914,11 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
+    /**
+      Renders the environment switcher
+
+      @method _renderEnvSwitcher
+    */
     _renderEnvSwitcher: function() {
       ReactDOM.render(
         <components.EnvSwitcher
@@ -906,6 +926,7 @@ YUI.add('juju-gui', function(Y) {
           env={this.env}
           jem={this.jem}
           envList={this.get('environmentList')}
+          changeState={this.changeState.bind(this)}
           authDetails={this.get('auth')} />,
         document.getElementById('environment-switcher'));
     },
@@ -958,6 +979,7 @@ YUI.add('juju-gui', function(Y) {
         empty: this.emptySectionB.bind(this)
       };
       dispatchers.sectionC = {
+        profile: this._renderUserProfile.bind(this),
         charmbrowser: this._renderCharmbrowser.bind(this),
         empty: this._emptySectionC.bind(this)
       };
@@ -2067,6 +2089,7 @@ YUI.add('juju-gui', function(Y) {
     'inspector-component',
     'panel-component',
     'env-switcher',
+    'user-profile',
     // juju-views group
     'd3-components',
     'container-token',
