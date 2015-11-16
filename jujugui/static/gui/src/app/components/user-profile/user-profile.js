@@ -57,6 +57,10 @@ YUI.add('user-profile', function() {
 
     /**
       Callback for the JEM and JES list environments call.
+
+      @method _fetchEnvironments
+      @param {String} error The error from the request, or null.
+      @param {Object} data The data from the request.
     */
     _fetchEnvironmentsCallback: function (error, data) {
       // We need to coerce error types returned by JES vs JEM into one error.
@@ -130,6 +134,7 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
+    'svg-icon',
     'panel-component',
     'user-profile-header',
     'user-profile-list'
