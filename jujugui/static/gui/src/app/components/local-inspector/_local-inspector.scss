@@ -6,4 +6,18 @@
     &__size {
         color: $mid-grey;
     }
+
+    &__list {
+        list-style: none;
+        margin: 0;
+
+        input {
+            margin-right: 15px;
+            vertical-align: middle;
+        }
+
+        label {
+            padding: 8px 0;
+        }
+    }
 }

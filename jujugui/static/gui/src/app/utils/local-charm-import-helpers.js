@@ -27,12 +27,12 @@ YUI.add('local-charm-import-helpers', function(Y) {
       Public method to upgrade a collection of services from a local charm.
 
       @method upgradeServiceUsingLocalCharm
-      @param {Array} services an array of services to upgrade.
-      @param {Object} file the file object from the browser.
       @param {Object} env reference to the environment.
       @param {Object} db reference to the database.
+      @param {Array} services an array of services to upgrade.
+      @param {Object} file the file object from the browser.
     */
-    upgradeServiceUsingLocalCharm: function(services, file, env, db) {
+    upgradeServiceUsingLocalCharm: function(env, db, services, file) {
       var series = services[0].get('charm').match(/[^:]*(?=\/)/)[0];
       ns.localCharmHelpers.uploadLocalCharm(env, db, series, file, {
         services: services

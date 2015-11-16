@@ -874,6 +874,9 @@ YUI.add('juju-gui', function(Y) {
             uploadLocalCharm={
                 localCharmHelpers.uploadLocalCharm.bind(
                 this, this.env, this.db)}
+            upgradeServiceUsingLocalCharm={
+                localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
+                this, this.env, this.db)}
             changeState={this.changeState.bind(this)} />
         );
       } else {

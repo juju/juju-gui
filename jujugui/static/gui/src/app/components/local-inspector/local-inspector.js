@@ -50,78 +50,69 @@ YUI.add('local-inspector', function() {
     },
 
     /**
-      Generates the state for the inspector based on the app state.
+      Generates the state for the local inspector based on the app state.
 
       @method generateState
       @param {Object} nextProps The props which were sent to the component.
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
-      var state = {
+      return {
         activeComponent: nextProps.activeComponent || nextProps.localType ||
           this.props.localType
       };
-      switch (state.activeComponent) {
+    },
+
+    /**
+      Generates the active component based on the state.
+
+      @method _generateComponent
+      @param {Object} activeComponent The component to display.
+      @return {Object} A generated component.
+    */
+    _generateComponent: function(activeComponent) {
+      var component;
+      switch (activeComponent) {
         case 'new':
           var file = this.props.file;
           var size = (file.size / 1024).toFixed(2);
-          state.activeChild = {
-            component: (
-              <div>
-                <p>
-                  File: {file.name}{' '}
-                  <span className="local-inspector__size">
-                    ({size}kb)
-                  </span>
-                </p>
-                <p>Deploy with series:</p>
-                <select ref="series" defaultValue="trusty">
-                  <option value="precise">precise</option>
-                  <option value="quantal">quantal</option>
-                  <option value="raring">raring</option>
-                  <option value="saucy">saucy</option>
-                  <option value="trusty">trusty</option>
-                  <option value="utopic">utopic</option>
-                  <option value="vivid">vivid</option>
-                  <option value="win2012hvr2">win2012hvr2</option>
-                  <option value="win2012hv">win2012hv</option>
-                  <option value="win2012r2">win2012r2</option>
-                  <option value="win2012">win2012</option>
-                  <option value="win7">win7</option>
-                  <option value="win8">win8</option>
-                  <option value="win81">win81</option>
-                </select>
-              </div>
-            ),
-            buttons: [{
-              title: 'Cancel',
-              action: this._backCallback
-            }, {
-              title: 'Upload',
-              action: this._handleUpload,
-              type: 'confirm'
-            }]
-          };
+          component = (
+            <div>
+              <p>
+                File: {file.name}{' '}
+                <span className="local-inspector__size">
+                  ({size}kb)
+                </span>
+              </p>
+              <p>Deploy with series:</p>
+              <select ref="series" defaultValue="trusty">
+                <option value="precise">precise</option>
+                <option value="quantal">quantal</option>
+                <option value="raring">raring</option>
+                <option value="saucy">saucy</option>
+                <option value="trusty">trusty</option>
+                <option value="utopic">utopic</option>
+                <option value="vivid">vivid</option>
+                <option value="win2012hvr2">win2012hvr2</option>
+                <option value="win2012hv">win2012hv</option>
+                <option value="win2012r2">win2012r2</option>
+                <option value="win2012">win2012</option>
+                <option value="win7">win7</option>
+                <option value="win8">win8</option>
+                <option value="win81">win81</option>
+              </select>
+            </div>
+          );
           break;
         case 'update':
-          state.activeChild = {
-            component: (
-              <ul>
-                {this._generateServiceList()}
-              </ul>
-            ),
-            buttons: [{
-              title: 'Cancel',
-              action: this._backCallback
-            }, {
-              title: 'Upgrade',
-              action: this._handleUpload,
-              type: 'confirm'
-            }]
-          };
+          component = (
+            <ul className="local-inspector__list">
+              {this._generateServiceList()}
+            </ul>
+          );
           break;
       }
-      return state;
+      return component;
     },
 
     /**
@@ -140,7 +131,7 @@ YUI.add('local-inspector', function() {
         items.push(
           <li key={serviceId}>
             <label>
-              <input type="radio" name={serviceId}
+              <input type="checkbox" data-id={serviceId}
                 ref={'service-' + serviceId} />
               {service.get('name')}
             </label>
@@ -153,9 +144,9 @@ YUI.add('local-inspector', function() {
     /**
       Handle closing the local inspector.
 
-      @method _backCallback
+      @method _close
     */
-    _backCallback: function() {
+    _close: function() {
       this.props.changeState({
         sectionA: {
           component: 'services',
@@ -172,27 +163,92 @@ YUI.add('local-inspector', function() {
       this.props.uploadLocalCharm(this.refs.series.value, this.props.file);
     },
 
+    /**
+      Handle updating services.
+
+      @method _handleUpdate
+    */
+    _handleUpdate: function() {
+      var refs = this.refs;
+      var services = this.props.services;
+      var selectedServices = Object.keys(refs).filter((ref) => {
+        var input = refs[ref];
+        if (ref.split('-')[0] === 'service' && input.checked) {
+          return true;
+        }
+        return false;
+      });
+      if (selectedServices.length > 0) {
+        var serviceList = selectedServices.map((serviceId) => {
+          return services.getById(serviceId.split('-')[1]);
+        });
+        this.props.upgradeServiceUsingLocalCharm(serviceList, this.props.file);
+        this._close();
+      }
+    },
+
+    /**
+      Handle uploading the charm.
+
+      @method _handleUpload
+      @param {Object} activeComponent The component to display.
+      @returns {Array} A list of buttons.
+    */
+    _generateButtons: function(activeComponent) {
+      var buttons = [{
+        title: 'Cancel',
+        action: this._close
+      }];
+      switch (activeComponent) {
+        case 'new':
+          buttons.push({
+            title: 'Upload',
+            action: this._handleUpload,
+            type: 'confirm'
+          });
+          break;
+        case 'update':
+          buttons.push({
+            title: 'Upgrade',
+            action: this._handleUpdate,
+            type: 'confirm'
+          });
+          break;
+      }
+      return buttons;
+    },
+
     render: function() {
+      var localType = this.props.localType;
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
-            backCallback={this._backCallback}
+            backCallback={this._close}
             title="Local charm" />
           <div className="inspector-content local-inspector__section">
-            <label>
-              <input type="radio" name="action" defaultChecked={true}
-                onChange={this._changeActiveComponent.bind(this, 'new')} />
-              Deploy new charm
-            </label>
-            <label>
-              <input type="radio" name="action"
-                onChange={this._changeActiveComponent.bind(this, 'update')} />
-              Upgrade existing charm(s)
-            </label>
-            {this.state.activeChild.component}
+            <ul className="local-inspector__list">
+              <li>
+                <label>
+                  <input type="radio" name="action"
+                    defaultChecked={localType === 'new'}
+                    onChange={this._changeActiveComponent.bind(this, 'new')} />
+                  Deploy new charm
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="radio" name="action"
+                    defaultChecked={localType === 'update'}
+                    onChange={
+                      this._changeActiveComponent.bind(this, 'update')} />
+                  Upgrade existing charm(s)
+                </label>
+              </li>
+            </ul>
+            {this._generateComponent(this.state.activeComponent)}
           </div>
           <juju.components.ButtonRow
-            buttons={this.state.activeChild.buttons} />
+            buttons={this._generateButtons(this.state.activeComponent)} />
         </div>
       );
     }
