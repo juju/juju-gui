@@ -23,43 +23,131 @@ YUI.add('local-inspector', function() {
   juju.components.LocalInspector = React.createClass({
 
     /**
-      Generate the update controls.
+      Get the current state of the local inspector.
 
-      @method _generateUpdate
+      @method getInitialState
+      @returns {String} The current state.
     */
-    _generateUpdate: function() {
-      if (this.props.localType !== 'update') {
-        return;
+    getInitialState: function() {
+      // Setting a default state object.
+      return this.generateState(this.props);
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState(this.generateState(nextProps));
+    },
+
+    /**
+      Change the state to reflect the chosen component.
+
+      @method _changeActiveComponent
+      @param {String} newComponent The component to switch to.
+    */
+    _changeActiveComponent: function(newComponent) {
+      var nextProps = this.state;
+      nextProps.activeComponent = newComponent;
+      this.setState(this.generateState(nextProps));
+    },
+
+    /**
+      Generates the state for the inspector based on the app state.
+
+      @method generateState
+      @param {Object} nextProps The props which were sent to the component.
+      @return {Object} A generated state object which can be passed to setState.
+    */
+    generateState: function(nextProps) {
+      var state = {
+        activeComponent: nextProps.activeComponent || nextProps.localType ||
+          this.props.localType
+      };
+      switch (state.activeComponent) {
+        case 'new':
+          var file = this.props.file;
+          var size = (file.size / 1024).toFixed(2);
+          state.activeChild = {
+            component: (
+              <div>
+                <p>
+                  File: {file.name}{' '}
+                  <span className="local-inspector__size">
+                    ({size}kb)
+                  </span>
+                </p>
+                <p>Deploy with series:</p>
+                <select ref="series" defaultValue="trusty">
+                  <option value="precise">precise</option>
+                  <option value="quantal">quantal</option>
+                  <option value="raring">raring</option>
+                  <option value="saucy">saucy</option>
+                  <option value="trusty">trusty</option>
+                  <option value="utopic">utopic</option>
+                  <option value="vivid">vivid</option>
+                  <option value="win2012hvr2">win2012hvr2</option>
+                  <option value="win2012hv">win2012hv</option>
+                  <option value="win2012r2">win2012r2</option>
+                  <option value="win2012">win2012</option>
+                  <option value="win7">win7</option>
+                  <option value="win8">win8</option>
+                  <option value="win81">win81</option>
+                </select>
+              </div>
+            ),
+            buttons: [{
+              title: 'Cancel',
+              action: this._backCallback
+            }, {
+              title: 'Upload',
+              action: this._handleUpload,
+              type: 'confirm'
+            }]
+          };
+          break;
+        case 'update':
+          state.activeChild = {
+            component: (
+              <ul>
+                {this._generateServiceList()}
+              </ul>
+            ),
+            buttons: [{
+              title: 'Cancel',
+              action: this._backCallback
+            }, {
+              title: 'Upgrade',
+              action: this._handleUpload,
+              type: 'confirm'
+            }]
+          };
+          break;
       }
-      var buttons = [{
-        title: 'Cancel',
-        action: this._backCallback
-      }, {
-        title: 'Upgrade',
-        action: this._handleUpload,
-        type: 'confirm'
-      }];
+      return state;
+    },
+
+    /**
+      Generate a list of services
+
+      @method _generateServiceList
+    */
+    _generateServiceList: function() {
       var services = this.props.services.toArray();
+      if (services.length === 0) {
+        return <li>No existing services</li>;
+      }
       var items = [];
       services.forEach(function(service) {
+        var serviceId = service.get('id');
         items.push(
-          <li key={service.get('id')}>
-            {service.get('name')}
+          <li key={serviceId}>
+            <label>
+              <input type="radio" name={serviceId}
+                ref={'service-' + serviceId} />
+              {service.get('name')}
+            </label>
           </li>
         );
       });
-      return (
-        <div>
-          <div className="inspector-content local-inspector__section">
-            <h3>Upgrade services</h3>
-          </div>
-          <ul>
-            {items}
-          </ul>
-          <juju.components.ButtonRow
-            buttons={buttons} />
-        </div>
-      );
+      return items;
     },
 
     /**
@@ -85,53 +173,26 @@ YUI.add('local-inspector', function() {
     },
 
     render: function() {
-      // var file = this.props.file;
-      var file = {
-        name: 'archive.zip',
-        size: '75009'
-      };
-      var size = (file.size / 1024).toFixed(2);
-      var buttons = [{
-        title: 'Cancel',
-        action: this._backCallback
-      }, {
-        title: 'Upload',
-        action: this._handleUpload,
-        type: 'confirm'
-      }];
       return (
         <div className="inspector-view">
           <juju.components.InspectorHeader
             backCallback={this._backCallback}
-            title="Deploy local charm" />
+            title="Local charm" />
           <div className="inspector-content local-inspector__section">
-            <p>
-              File: {file.name}{' '}
-              <span className="local-inspector__size">
-                ({size}kb)
-              </span>
-            </p>
-            <p>Deploy with series:</p>
-            <select ref="series" defaultValue="trusty">
-              <option value="precise">precise</option>
-              <option value="quantal">quantal</option>
-              <option value="raring">raring</option>
-              <option value="saucy">saucy</option>
-              <option value="trusty">trusty</option>
-              <option value="utopic">utopic</option>
-              <option value="vivid">vivid</option>
-              <option value="win2012hvr2">win2012hvr2</option>
-              <option value="win2012hv">win2012hv</option>
-              <option value="win2012r2">win2012r2</option>
-              <option value="win2012">win2012</option>
-              <option value="win7">win7</option>
-              <option value="win8">win8</option>
-              <option value="win81">win81</option>
-            </select>
+            <label>
+              <input type="radio" name="action" defaultChecked={true}
+                onChange={this._changeActiveComponent.bind(this, 'new')} />
+              Deploy new charm
+            </label>
+            <label>
+              <input type="radio" name="action"
+                onChange={this._changeActiveComponent.bind(this, 'update')} />
+              Upgrade existing charm(s)
+            </label>
+            {this.state.activeChild.component}
           </div>
           <juju.components.ButtonRow
-            buttons={buttons} />
-          {this._generateUpdate()}
+            buttons={this.state.activeChild.buttons} />
         </div>
       );
     }
