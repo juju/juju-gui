@@ -22,6 +22,13 @@ YUI.add('added-services-list-item', function() {
 
   juju.components.AddedServicesListItem = React.createClass({
 
+    getInitialState: function() {
+      return {
+        focus: false,
+        highlight: false
+      };
+    },
+
     /**
       Parses the supplied unit data to return the status color and number
       to display.
@@ -83,10 +90,39 @@ YUI.add('added-services-list-item', function() {
       this.props.changeState(state);
     },
 
+    /**
+      Toggles the focus attribute on the service
+
+      @method _toggleFocus
+      @param {Object} e The click event.
+    */
+    _toggleFocus: function(e) {
+      // We need to stop the propagation so that the click event doesn't
+      // bubble up to the list item and navigate away.
+      e.stopPropagation();
+      this.setState({focus: !this.state.focus});
+    },
+
+    /**
+      Toggles the highlight attribute on the service
+
+      @method _toggleHighlight
+      @param {Object} e The click event.
+    */
+    _toggleHighlight: function(e) {
+      // We need to stop the propagation so that the click event doesn't
+      // bubble up to the list item and navigate away.
+      e.stopPropagation();
+      this.setState({highlight: !this.state.highlight});
+    },
+
     render: function() {
+      var state = this.state;
       var service = this.props.service.getAttrs();
       var statusData = this._getPriorityUnits(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
+      var focusIcon = state.focus ? 'focused_16' : 'unfocused_16';
+      var highlightIcon = state.highlight ? 'highlight_16' : 'unhighlight_16';
       return (
         <li className="inspector-view__list-item"
             data-serviceid={service.id}
@@ -101,11 +137,27 @@ YUI.add('added-services-list-item', function() {
           <span className="inspector-view__item-name">
             {service.name}
           </span>
-          {statusIndicator}
+          <span className="inspector-view__status-block">
+            <span
+              className="inspector-view__visibility-toggle"
+              onClick={this._toggleFocus}>
+              <juju.components.SvgIcon name={focusIcon} size="16"/>
+            </span>
+            <span
+              className="inspector-view__visibility-toggle"
+              onClick={this._toggleHighlight}>
+              <juju.components.SvgIcon name={highlightIcon} size="16"/>
+            </span>
+            {statusIndicator}
+          </span>
         </li>
       );
     }
 
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', {
+  requires: [
+    'svg-icon'
+  ]
+});
