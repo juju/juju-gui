@@ -202,4 +202,157 @@ describe('LocalInspector', function() {
       </div>);
     assert.deepEqual(output, expected);
   });
+
+  it('can switch between views', function() {
+    var file = {
+      name: 'apache2.zip',
+      size: '2048'
+    };
+    var serviceStubs = [
+      {get: sinon.stub()},
+      {get: sinon.stub()}
+    ];
+    serviceStubs[0].get.withArgs('id').returns('apache2-2');
+    serviceStubs[0].get.withArgs('name').returns('apache2');
+    serviceStubs[1].get.withArgs('id').returns('mysql-1');
+    serviceStubs[1].get.withArgs('name').returns('mysql');
+    var services = {toArray: sinon.stub().returns(serviceStubs)};
+    var uploadLocalCharm = sinon.spy();
+    var upgradeServiceUsingLocalCharm = sinon.spy();
+    var changeState = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.LocalInspector
+        file={file}
+        localType="new"
+        services={services}
+        uploadLocalCharm={uploadLocalCharm}
+        upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
+        changeState={changeState} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    var options = output.props.children[1].props.children[0].props.children;
+    options[1].props.children.props.children[0].props.onChange();
+    output = shallowRenderer.getRenderOutput();
+    var expected = (
+      <div className="inspector-view">
+        {output.props.children[0]}
+        <div className="inspector-content local-inspector__section">
+          {output.props.children[1].props.children[0]}
+          <ul className="local-inspector__list">
+            <li key="apache2-2">
+              <label>
+                <input type="checkbox" data-id="apache2-2"
+                  ref="service-apache2-2" />
+                apache2
+              </label>
+            </li>
+            <li key="mysql-1">
+              <label>
+                <input type="checkbox" data-id="mysql-1"
+                  ref="service-mysql-1" />
+                mysql
+              </label>
+            </li>
+          </ul>
+        </div>
+        {output.props.children[2]}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can handle deploying a new charm', function() {
+    var file = {
+      name: 'apache2.zip',
+      size: '2048'
+    };
+    var services = {toArray: sinon.stub().returns([])};
+    var uploadLocalCharm = sinon.spy();
+    var upgradeServiceUsingLocalCharm = sinon.spy();
+    var changeState = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.LocalInspector
+        file={file}
+        localType="new"
+        services={services}
+        uploadLocalCharm={uploadLocalCharm}
+        upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
+        changeState={changeState} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    var output = shallowRenderer.getRenderOutput();
+    instance.refs = {series: {value: 'wily'}};
+    output.props.children[2].props.buttons[1].action();
+    assert.equal(uploadLocalCharm.callCount, 1);
+    assert.equal(uploadLocalCharm.args[0][0], 'wily');
+    assert.equal(uploadLocalCharm.args[0][1], file);
+  });
+
+  it('can handle updating charms', function() {
+    var file = {
+      name: 'apache2.zip',
+      size: '2048'
+    };
+    var getById = sinon.stub();
+    getById.withArgs('mysql').returns({id: 'mysql'});
+    getById.withArgs('apache2').returns({id: 'apache2'});
+    var services = {
+      toArray: sinon.stub().returns([]),
+      getById: getById
+    };
+    var uploadLocalCharm = sinon.spy();
+    var upgradeServiceUsingLocalCharm = sinon.spy();
+    var changeState = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.LocalInspector
+        file={file}
+        localType="update"
+        services={services}
+        uploadLocalCharm={uploadLocalCharm}
+        upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
+        changeState={changeState} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    var output = shallowRenderer.getRenderOutput();
+    instance.refs = {
+      'service-mysql': {checked: true},
+      'service-django': {checked: false},
+      'service-apache2': {checked: true}
+    };
+    output.props.children[2].props.buttons[1].action();
+    assert.equal(upgradeServiceUsingLocalCharm.callCount, 1);
+    assert.deepEqual(upgradeServiceUsingLocalCharm.args[0][0],
+      [{id: 'mysql'}, {id: 'apache2'}]);
+    assert.equal(upgradeServiceUsingLocalCharm.args[0][1], file);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'services',
+        metadata: null
+      }});
+  });
+
+  it('can cancel the upload', function() {
+    var file = {
+      name: 'apache2.zip',
+      size: '2048'
+    };
+    var services = {
+      toArray: sinon.stub().returns([])};
+    var uploadLocalCharm = sinon.spy();
+    var upgradeServiceUsingLocalCharm = sinon.spy();
+    var changeState = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.LocalInspector
+        file={file}
+        localType="new"
+        services={services}
+        uploadLocalCharm={uploadLocalCharm}
+        upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
+        changeState={changeState} />, true);
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[2].props.buttons[0].action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'services',
+        metadata: null
+      }});
+  });
 });
