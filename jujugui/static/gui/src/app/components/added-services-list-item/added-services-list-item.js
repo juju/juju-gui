@@ -24,6 +24,7 @@ YUI.add('added-services-list-item', function() {
 
     propTypes: {
       focusService: React.PropTypes.func.isRequired,
+      unfocusService: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired
@@ -107,12 +108,16 @@ YUI.add('added-services-list-item', function() {
       // We need to stop the propagation so that the click event doesn't
       // bubble up to the list item and navigate away.
       e.stopPropagation();
+      var props = this.props;
       var focus = !this.state.focus;
       this.setState({focus: focus});
+      var serviceId = props.service.get('id');
       if (focus) {
         this.setState({highlight: false});
+        props.focusService(serviceId);
+      } else {
+        props.unfocusService(serviceId);
       }
-      this.props.focusService(this.props.service.get('id'));
     },
 
     /**

@@ -45,6 +45,7 @@ YUI.add('added-services-list', function() {
               changeState={this.props.changeState}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
               focusService={this.focusService}
+              unfocusService={this.unfocusService}
               service={service} />);
       });
       return items;
@@ -67,6 +68,26 @@ YUI.add('added-services-list', function() {
         model.set('hide', true);
       });
       props.setMVVisibility(serviceId, true);
+    },
+
+    /**
+      Executes the appropriate methods on the db to unfocus the specified
+      service icon.
+
+      @method unfocusService
+      @param {String} serviceId The id for the service to unfocus.
+    */
+    unfocusService: function(serviceId) {
+      var props = this.props;
+      var service = props.services.getById(serviceId);
+      service.set('highlight', false);
+      props.updateUnitFlags(service, 'highlight');
+      // Unrelated services need to be unfaded.
+      var unrelated = props.findUnrelatedServices(service);
+      unrelated.each(function(model) {
+        model.set('hide', false);
+      });
+      props.setMVVisibility(serviceId, false);
     },
 
     render: function() {
