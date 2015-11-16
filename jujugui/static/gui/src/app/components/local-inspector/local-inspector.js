@@ -21,6 +21,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('local-inspector', function() {
 
   juju.components.LocalInspector = React.createClass({
+    SERIES: [
+      'precise',
+      'quantal',
+      'raring',
+      'saucy',
+      'trusty',
+      'utopic',
+      'vivid',
+      'win2012hvr2',
+      'win2012hv',
+      'win2012r2',
+      'win2012',
+      'win7',
+      'win8',
+      'win81',
+    ],
 
     /**
       Get the current state of the local inspector.
@@ -76,6 +92,9 @@ YUI.add('local-inspector', function() {
         case 'new':
           var file = this.props.file;
           var size = (file.size / 1024).toFixed(2);
+          var seriesOptions = this.SERIES.map((series) => {
+            return <option value={series} key={series}>{series}</option>;
+          });
           component = (
             <div>
               <p>
@@ -86,20 +105,7 @@ YUI.add('local-inspector', function() {
               </p>
               <p>Deploy with series:</p>
               <select ref="series" defaultValue="trusty">
-                <option value="precise">precise</option>
-                <option value="quantal">quantal</option>
-                <option value="raring">raring</option>
-                <option value="saucy">saucy</option>
-                <option value="trusty">trusty</option>
-                <option value="utopic">utopic</option>
-                <option value="vivid">vivid</option>
-                <option value="win2012hvr2">win2012hvr2</option>
-                <option value="win2012hv">win2012hv</option>
-                <option value="win2012r2">win2012r2</option>
-                <option value="win2012">win2012</option>
-                <option value="win7">win7</option>
-                <option value="win8">win8</option>
-                <option value="win81">win81</option>
+                {seriesOptions}
               </select>
             </div>
           );
