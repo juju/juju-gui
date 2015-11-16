@@ -22,9 +22,18 @@ YUI.add('added-services-list', function() {
 
   juju.components.AddedServicesList = React.createClass({
 
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      getUnitStatusCounts: React.PropTypes.func.isRequired,
+      services: React.PropTypes.object.isRequired,
+      updateUnitFlags: React.PropTypes.func.isRequired,
+      findUnrelatedServices: React.PropTypes.func.isRequired,
+      setMVVisibility: React.PropTypes.func.isRequired
+    },
+
     generateItemList: function(services) {
       var items = [];
-      services.forEach((service) => {
+      services.each((service) => {
         items.push(
             <juju.components.AddedServicesListItem
               // We use the 'name' instead of the 'id' here because when a
@@ -35,9 +44,29 @@ YUI.add('added-services-list', function() {
               key={service.get('name')}
               changeState={this.props.changeState}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
+              focusService={this.focusService}
               service={service} />);
       });
       return items;
+    },
+
+    /**
+      Executes the appropriate methods on the db to focus the specified
+      service icon.
+
+      @method focusService
+      @param {String} serviceId The id for the service to focus.
+    */
+    focusService: function(serviceId) {
+      var props = this.props;
+      var service = props.services.getById(serviceId);
+      service.set('highlight', true);
+      props.updateUnitFlags(service, 'highlight');
+      var unrelated = props.findUnrelatedServices(service);
+      unrelated.each(function(model) {
+        model.set('hide', true);
+      });
+      props.setMVVisibility(serviceId, true);
     },
 
     render: function() {

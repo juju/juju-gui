@@ -22,6 +22,13 @@ YUI.add('added-services-list-item', function() {
 
   juju.components.AddedServicesListItem = React.createClass({
 
+    propTypes: {
+      focusService: React.PropTypes.func.isRequired,
+      getUnitStatusCounts: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired
+    },
+
     getInitialState: function() {
       return {
         focus: false,
@@ -100,7 +107,12 @@ YUI.add('added-services-list-item', function() {
       // We need to stop the propagation so that the click event doesn't
       // bubble up to the list item and navigate away.
       e.stopPropagation();
-      this.setState({focus: !this.state.focus});
+      var focus = !this.state.focus;
+      this.setState({focus: focus});
+      if (focus) {
+        this.setState({highlight: false});
+      }
+      this.props.focusService(this.props.service.get('id'));
     },
 
     /**
