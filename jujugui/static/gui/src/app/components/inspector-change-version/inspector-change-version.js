@@ -139,7 +139,7 @@ YUI.add('inspector-change-version', function() {
       @param {String} error The error message, if any. Null if no error.
       @param {Array} versions The available versions.
     */
-    _getVersionsSuccess: function(error, versions) {
+    _getVersionsCallback: function(error, versions) {
       if (error) {
         console.error(error);
         versions = null;

@@ -53,25 +53,31 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
           return new Y.juju.models.Bundle(entity);
         }
       };
-      var fakeCharmstore = new window.jujulib.charmstore(
-          'local/', 'v4', {}, processEntity);
-      // We need to stub out the _makeRequest method so that we can simulate
-      // api responses from the server.
-      fakeCharmstore._makeRequest = function(path, success, failure) {
-        // Remove the includes and the charmstore path.
-        path = path.split('/meta/any')[0].replace('local/v4/', '');
-        // Get just the charm name
-        path = path.split('/')[1].split('-');
-        if (path.length > 1) {
-          path = path.slice(0, -1);
-        }
-        path = path.join('-');
-        if (charms[path]) {
-          success({ target: { responseText: charms[path]}});
-        } else {
-          failure(new Error('Unable to load charm ' + path));
+      var fakeBakery = {
+        sendGetRequest: function(path, success, failure) {
+          // Remove the includes and the charmstore path.
+          path = path.split('/meta/any')[0].replace('local/v4/', '');
+          // Get just the charm name
+          path = path.split('/')[1].split('-');
+          if (path.length > 1) {
+            path = path.slice(0, -1);
+          }
+          path = path.join('-');
+          var xhr = { target: { responseText: null}};
+          if (charms[path]) {
+            xhr.target.responseText = charms[path];
+            success(xhr);
+          } else {
+            xhr.target.responseText = JSON.stringify(
+                {message: 'Unable to load charm ' + path});
+            failure(xhr);
+          }
         }
       };
+      var fakeCharmstore = new window.jujulib.charmstore(
+          'local/', 'v4', fakeBakery, processEntity);
+      // We need to stub out the _makeRequest method so that we can simulate
+      // api responses from the server.
       return fakeCharmstore;
     },
 

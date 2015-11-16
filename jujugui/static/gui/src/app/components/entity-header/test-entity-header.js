@@ -99,7 +99,7 @@ describe('EntityHeader', function() {
   it('adds a bundle when the add button is clicked', function() {
     var deployService = sinon.stub();
     var changeState = sinon.stub();
-    var getBundleYAML = sinon.stub().callsArgWith(1, 'mock yaml');
+    var getBundleYAML = sinon.stub().callsArgWith(1, null, 'mock yaml');
     var importBundleYAML = sinon.stub();
     var entity = jsTestUtils.makeEntity(true);
     var output = testUtils.renderIntoDocument(

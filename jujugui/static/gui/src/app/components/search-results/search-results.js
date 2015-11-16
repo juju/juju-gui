@@ -114,6 +114,7 @@ YUI.add('search-results', function(Y) {
     searchCallback: function(error, rawResults) {
       // Parse the raw results.
       if (error) {
+        this._changeActiveComponent('error');
         console.log('Search request failed.');
         return;
       }

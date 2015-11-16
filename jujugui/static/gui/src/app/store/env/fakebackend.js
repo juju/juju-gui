@@ -344,7 +344,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             charmIdParts.storeId,
             function(error, charm) {
               if (error) {
-                console.warn('error loading charm: ', e);
+                console.warn('error loading charm: ', error);
                 if (callbacks.failure) {
                   callbacks.failure(
                       {error: 'Error interacting with the charmstore API.'});

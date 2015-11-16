@@ -370,8 +370,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('reports when the API is inaccessible.', function() {
-      fakebackend.get('charmstore').getEntity = function(id, success, failure) {
-        failure({boo: 'hiss'});
+      fakebackend.get('charmstore').getEntity = function(id, cb) {
+        cb('hiss', {});
       };
       fakebackend.deploy('cs:precise/wordpress-27', callback);
       assert.equal(result.error, 'Error interacting with the charmstore API.');

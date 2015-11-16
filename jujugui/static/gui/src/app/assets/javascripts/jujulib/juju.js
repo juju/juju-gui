@@ -8,39 +8,43 @@ licensing for the GUI.
 
 var module = module;
 
-//TODO fix docstrings to have the same format as the rest of the gui.
-//TODO fix docstring layout in charmstore bits to match the rest of this file.
 /**
- * jujulib provides API access for microservices used by juju.
- *
- * jujulib provies access to the APIs for the Juju Environment
- * Manager (JEM), the juju charmstore, and the juju identity
- * manager (IdM).
+   jujulib provides API access for microservices used by juju.
+
+   jujulib provies access to the APIs for the Juju Environment
+   Manager (JEM), the juju charmstore, and the juju identity
+   manager (IdM).
  */
 (function (exports) {
   'use strict';
 
   /**
-   * Utility function for making requests via the bakery.
-   *
-   * _makeRequest
-   * @param bakery {Object} The bakery object to use.
-   * @param path {String} The JEM endpoint to make the request from,
-   *     e.g. '/env'
-   * @param method {String} The type of http method to use, e.g. GET or POST.
-   * @param params {Object} Optional data object to sent with e.g. POST commands.
-   * @params callback {Function} A callback to handle errors or accept the data
-   *     from the request. Must accept an error message or null as its first
-   *     parameter and the response data as its second.
-   * @params parse {Boolean} Whether or not to parse the response as JSON.
+     Utility function for making requests via the bakery.
+
+     _makeRequest
+     @param bakery {Object} The bakery object to use.
+     @param path {String} The JEM endpoint to make the request from,
+         e.g. '/env'
+     @param method {String} The type of http method to use, e.g. GET or POST.
+     @param params {Object} Optional data object to sent with e.g. POST commands.
+     @params callback {Function} A callback to handle errors or accept the data
+         from the request. Must accept an error message or null as its first
+         parameter and the response data as its second.
+     @params parse {Boolean} Whether or not to parse the response as JSON.
   */
   var _makeRequest = function(bakery, path, method, params, callback, parse) {
     var success = function(xhr) {
-      var data = xhr.target.responseText;
+      var data = xhr.target.responseText,
+          error = null;
+
       if (parse !== false) {
-        data = JSON.parse(data);
+        try {
+          data = JSON.parse(data);
+        } catch(e) {
+          error = e;
+        }
       }
-      callback(null, data);
+      callback(error, data);
     };
     var failure = function(xhr) {
       var data = JSON.parse(xhr.target.responseText);
@@ -48,25 +52,26 @@ var module = module;
       callback(error, data);
     };
     if (method === 'GET') {
-      bakery.sendGetRequest(path, success, failure);
+      return bakery.sendGetRequest(path, success, failure);
     } else if (method === 'POST') {
-      bakery.sendPostRequest(path, JSON.stringify(params), success, failure);
+      return bakery.sendPostRequest(
+          path, JSON.stringify(params), success, failure);
     }
   };
 
   /**
-   * Environment object for jujulib.
-   *
-   * Provides access to the JEM API.
+     Environment object for jujulib.
+
+     Provides access to the JEM API.
    */
 
   /**
-   * Initializer
-   *
-   * @function environment
-   * @param url {String} The URL, including scheme and port, of the JEM instance.
-   * @param bakery {Object} A bakery object for communicating with the JEM instance.
-   * @returns {Object} A client object for making JEM API calls.
+     Initializer
+
+     @function environment
+     @param url {String} The URL, including scheme and port, of the JEM instance.
+     @param bakery {Object} A bakery object for communicating with the JEM instance.
+     @returns {Object} A client object for making JEM API calls.
    */
   function environment(url, bakery) {
     this.jemUrl = url + '/v1';
@@ -75,12 +80,12 @@ var module = module;
 
 
   /**
-   * Lists the available environments on the JEM.
-   *
-   * @public listEnvironments
-   * @params callback {Function} A callback to handle errors or accept the data
-   *     from the request. Must accept an error message or null as its first
-   *     parameter and the response data as its second.
+     Lists the available environments on the JEM.
+
+     @public listEnvironments
+     @params callback {Function} A callback to handle errors or accept the data
+         from the request. Must accept an error message or null as its first
+         parameter and the response data as its second.
    */
   environment.prototype.listEnvironments = function(callback) {
     var _listEnvironments = function(error, data) {
@@ -94,12 +99,12 @@ var module = module;
   };
 
   /**
-   * Lists the available state servers on the JEM.
-   *
-   * @public listServers
-   * @params callback {Function} A callback to handle errors or accept the data
-   *     from the request. Must accept an error message or null as its first
-   *     parameter and the response data as its second.
+     Lists the available state servers on the JEM.
+
+     @public listServers
+     @params callback {Function} A callback to handle errors or accept the data
+         from the request. Must accept an error message or null as its first
+         parameter and the response data as its second.
    */
   environment.prototype.listServers = function(callback) {
     var _listServers = function(error, data) {
@@ -112,14 +117,14 @@ var module = module;
         this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
   };
   /**
-   * Provides the data for a particular environment.
-   *
-   * @public getEnvironment
-   * @param envOwnerName {String} The user name of the given environment's owner.
-   * @param envName {String} The name of the given environment.
-   * @params callback {Function} A callback to handle errors or accept the data
-   *     from the request. Must accept an error message or null as its first
-   *     parameter and the response data as its second.
+     Provides the data for a particular environment.
+
+     @public getEnvironment
+     @param envOwnerName {String} The user name of the given environment's owner.
+     @param envName {String} The name of the given environment.
+     @params callback {Function} A callback to handle errors or accept the data
+         from the request. Must accept an error message or null as its first
+         parameter and the response data as its second.
    */
   environment.prototype.getEnvironment = function (
       envOwnerName, envName, callback) {
@@ -128,19 +133,19 @@ var module = module;
   };
 
   /**
-   * Create a new environment.
-   *
-   * @public newEnvironment
-   * @param envOwnerName {String} The name of the given environment's owner.
-   * @param envName {String} The name of the given environment.
-   * @param baseTemplate {String} The name of the config template to be used
-   *     for creating the environment.
-   * @param stateServer {String} The entityPath name of the state server to
-   *     create the environment with.
-   * @param password {String} The password for the new environment.
-   * @params callback {Function} A callback to handle errors or accept the data
-   *     from the request. Must accept an error message or null as its first
-   *     parameter and the response data as its second.
+     Create a new environment.
+
+     @public newEnvironment
+     @param envOwnerName {String} The name of the given environment's owner.
+     @param envName {String} The name of the given environment.
+     @param baseTemplate {String} The name of the config template to be used
+         for creating the environment.
+     @param stateServer {String} The entityPath name of the state server to
+         create the environment with.
+     @param password {String} The password for the new environment.
+     @params callback {Function} A callback to handle errors or accept the data
+         from the request. Must accept an error message or null as its first
+         parameter and the response data as its second.
    */
   environment.prototype.newEnvironment = function (
       envOwnerName, envName, baseTemplate, stateServer, password, callback) {
@@ -156,21 +161,22 @@ var module = module;
 
 
   /**
-   * Charmstore object for jujulib.
-   *
-   * Provides access to the charmstore API.
+     Charmstore object for jujulib.
+
+     Provides access to the charmstore API.
    */
 
   /**
-   * Initializer
-   *
-   * @function charmstore
-   * @param url {String} The URL, including scheme and port, of the charmstore
-   * @param apiVersion {String} The api version, e.g. v4
-   * @param bakery {Object} A bakery object for communicating with the charmstore instance.
-   * @param processEnity {function} A function to massage entity data into the
-   *    desired form (e.g. turning it into juju gui model objects.
-   * @returns {Object} A client object for making charmstore API calls.
+     Initializer
+
+     @function charmstore
+     @param url {String} The URL, including scheme and port, of the charmstore
+     @param apiVersion {String} The api version, e.g. v4
+     @param bakery {Object} A bakery object for communicating with the
+         charmstore instance.
+     @param processEnity {function} A function to massage entity data into the
+        desired form (e.g. turning it into juju gui model objects.
+     @returns {Object} A client object for making charmstore API calls.
    */
   function charmstore(url, apiVersion, bakery, processEntity) {
     this.url = url;
@@ -189,10 +195,10 @@ var module = module;
       params passed in.
 
       @method _generatePath
-      @param {String} endpoint The endpoint to call at the charmstore.
-      @param {Object} query The query parameters that are required for the
+      @param endpoint {String} The endpoint to call at the charmstore.
+      @param query {Object} The query parameters that are required for the
         request.
-      @param {Boolean} extension Any extension to add to the endpoint
+      @param extension {Boolean} Any extension to add to the endpoint
         such as /meta/any or /archive.
       @return {String} A charmstore url based on the query and endpoint params
         passed in.
@@ -209,9 +215,10 @@ var module = module;
       Transforms the results from a charmstore query into model objects.
 
       @method _transformQueryResults
-      @param {Function} successCallback Called when the api request completes
+      @param callback {Function} Called when the api request completes
         successfully.
-      @param {Object} response Thre XHR response object.
+      @param error {String} An error message or null if no error.
+      @param data {Object} The parsed response data.
     */
     _transformQueryResults: function(callback, error, data) {
       if (error !== null) {
@@ -237,9 +244,9 @@ var module = module;
       supplied host object.
 
       @method _lowerCaseKeys
-      @param {Object} obj The source object with the uppercase keys.
-      @param {Object} host The host object in which the keys will be assigned.
-      @param {Integer} exclude Exclude a particular level from lowercasing when
+      @param obj  {Object}The source object with the uppercase keys.
+      @param host {Object} The host object in which the keys will be assigned.
+      @param exclude {Integer} Exclude a particular level from lowercasing when
         recursing; uses a 0-based index, so if 0 is specified, the keys at the
         first level of recursion will not be lowercased. If 3 is specified, the
         keys at the fourth level of recursion will not be lowercased.
@@ -298,7 +305,7 @@ var module = module;
       returns something that we use to instantiate new charm and bundle models.
 
       @method _processEntityQueryData
-      @param {Object} data The entities data from the charmstore search api.
+      @param data {Object} The entities data from the charmstore search api.
       @return {Object} The processed data structure.
     */
     _processEntityQueryData: function(data) {
@@ -373,8 +380,8 @@ var module = module;
       Fetch an individual file from the specified bundle or charm.
 
       @method getFile
-      @param {String} entityId The id of the charm or bundle's file we want.
-      @param {String} filename The path/name of the file to fetch.
+      @param entityId {String} The id of the charm or bundle's file we want.
+      @param filename {String} The path/name of the file to fetch.
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
@@ -384,6 +391,8 @@ var module = module;
       return _makeRequest(
           this.bakery,
           this._generatePath(entityId, null, '/archive/' + filename),
+          'GET',
+          null,
           callback,
           false);
     },
@@ -392,7 +401,7 @@ var module = module;
       Get the URL for a  bundle diagram.
 
       @method getDiagramURL
-      @param {String} entityId The id of the charm or bundle's file we want.
+      @param entityId {String} The id of the charm or bundle's file we want.
     */
     getDiagramURL: function(entityId) {
       entityId = entityId.replace('cs:', '');
@@ -404,7 +413,7 @@ var module = module;
       be a charm or bundle.
 
       @method getEntity
-      @param {String} entityId The id of the charm or bundle to fetch.
+      @param entityId {String} The id of the charm or bundle to fetch.
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
@@ -416,6 +425,8 @@ var module = module;
       return _makeRequest(
           this.bakery,
           this._generatePath(entityId, filters, '/meta/any'),
+          'GET',
+          null,
           this._transformQueryResults.bind(this, callback));
     },
 
@@ -424,12 +435,12 @@ var module = module;
       results to the supplied callback.
 
       @method search
-      @param {Object} filters The additional filters to use to make the
+      @param filters {Object} The additional filters to use to make the
           search request such as { text: 'apache' }.
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
-      @param {Integer} limit The number of results to get.
+      @param limit {Integer} The number of results to get.
     */
     search: function(filters, callback, limit) {
       var qs = '';
@@ -457,6 +468,8 @@ var module = module;
       return _makeRequest(
           this.bakery,
           path,
+          'GET',
+          null,
           this._transformQueryResults.bind(this, callback));
     },
 
@@ -465,7 +478,7 @@ var module = module;
       deploying a bundle via the deployer.
 
       @method getBundleYAML
-      @param {String} id Bundle id in apiv4 format.
+      @param id {String} Bundle id in apiv4 format.
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
@@ -483,18 +496,20 @@ var module = module;
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
-      @param {Array} bundle An array containing the requested bundle model.
+      @param error {String} An error message or null if no error.
+      @param bundle {Array} An array containing the requested bundle model.
     */
     _getBundleYAMLResponse: function(callback, error, bundle) {
       return _makeRequest(
-          this.bakery, bundle[0].get('deployerFileUrl'), callback, false);
+          this.bakery, bundle[0].get('deployerFileUrl'), 'GET',
+          null, callback, false);
     },
 
     /**
       Gets the list of available versions of the supplied charm id.
 
       @method getAvailableVersions
-      @param {String} charmId The charm id to fetch all of the versions for.
+      @param charmId {String} The charm id to fetch all of the versions for.
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
@@ -505,6 +520,8 @@ var module = module;
       return _makeRequest(
           this.bakery,
           this._generatePath(charmId, null, '/expand-id'),
+          'GET',
+          null,
           this._processAvailableVersions.bind(this, series, callback));
     },
 
@@ -514,15 +531,16 @@ var module = module;
       ids which are not for the existing series.
 
       @method _processAvailableVersions
-      @param {String} series The series of the charm requested.
+      @param series {String} The series of the charm requested.
       @params callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
-      @param {Object} response The response object from the request.
+      @param error {String} An error message or null if no error.
+      @param data {Object} The response from the request.
     */
     _processAvailableVersions: function(series, callback, error, data) {
       if (error !== null) {
-        callback(error, data); 
+        callback(error, data);
       } else {
         var truncatedList = [];
         data.forEach(function(item) {
@@ -538,7 +556,7 @@ var module = module;
 
 
   /**
-   * The jujulib object, returned by this library.
+     The jujulib object, returned by this library.
    */
   var jujulib = {
     charmstore: charmstore,

@@ -54,7 +54,7 @@ YUI.add('entity-content-readme', function() {
       var entityModel = this.props.entityModel;
       var readmeFile = this._getReadmeFile(entityModel);
       if (!readmeFile) {
-        this._getReadmeFailure();
+        this._getReadmeCallback('No readme file.');
       } else {
         var id = entityModel.get('id');
         this.readmeXhr = this.props.getFile(
@@ -89,12 +89,12 @@ YUI.add('entity-content-readme', function() {
       @param {String} error The error message from the charmstore, if any.
       @param {Object} data The returned data for the readme.
     */
-    _getReadmeCallback: function(error, response) {
+    _getReadmeCallback: function(error, data) {
       if (error) {
         console.error(error); 
         this.setState({readme: 'No readme.'});
       } else {
-        var readme = response.target.responseText;
+        var readme = data;
         this.setState({readme: this.props.renderMarkdown(readme)});
       }
     },

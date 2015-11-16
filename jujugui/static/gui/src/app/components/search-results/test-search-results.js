@@ -59,7 +59,7 @@ describe('SearchResults', function() {
     });
 
     it('can display a message if there are no results', function() {
-      var charmstoreSearch = sinon.stub().callsArgWith(1, []);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, null, []);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query="nothing here"
@@ -87,7 +87,7 @@ describe('SearchResults', function() {
     });
 
     it('can display a message if there is a loading error', function() {
-      var charmstoreSearch = sinon.stub().callsArg(2);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, 'bad wolf', []);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query="nothing here"
@@ -132,7 +132,7 @@ describe('SearchResults', function() {
       var mockModel = {};
       mockModel.toEntity = sinon.stub().returns(result);
       var mockData = [mockModel];
-      var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
 
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
@@ -246,7 +246,7 @@ describe('SearchResults', function() {
       }, {
         toEntity: sinon.stub().returns(results[3])
       }];
-      var charmstoreSearch = sinon.stub().callsArgWith(1, mockData);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query="mysql"
@@ -474,7 +474,7 @@ describe('SearchResults', function() {
       };
       searchResults.collapseSeries = sinon.stub().returns(results);
       searchResults.setState = sinon.spy();
-      searchResults.searchSuccess(rawResults);
+      searchResults.searchCallback(null, rawResults);
       var spy = searchResults.setState;
       assert.deepEqual(spy.getCall(0).args[0], {waitingForSearch: false},
                        'waitingForSearch flag still set');
@@ -607,7 +607,7 @@ describe('SearchResults', function() {
       searchResults.collapseSeries = sinon.stub().returns(results);
       var setState = sinon.stub();
       searchResults.setState = setState;
-      searchResults.searchSuccess(rawResults);
+      searchResults.searchCallback(null, rawResults);
       var result = setState.getCall(1).args[0].data.promulgatedResults[0];
       assert.deepEqual(result.storeId, '~charmers/mysql');
       searchResults._changeActiveComponent = _changeActiveComponent;

@@ -67,7 +67,7 @@ describe('InspectorChangeVersion', function() {
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, ['cs:django']);
+    var getAvailableVersions = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
           changeState={changeState}
@@ -76,6 +76,7 @@ describe('InspectorChangeVersion', function() {
           setCharm={setCharm}
           getCharm={getCharm}
           getAvailableVersions={getAvailableVersions} />, true);
+    getAvailableVersions.callsArgWith(1, null, ['cs:django']);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
@@ -101,7 +102,7 @@ describe('InspectorChangeVersion', function() {
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
@@ -147,7 +148,7 @@ describe('InspectorChangeVersion', function() {
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArg(2);
+    var getAvailableVersions = sinon.stub().callsArg(1, 'bad wolf', []);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
           changeState={changeState}
@@ -181,7 +182,7 @@ describe('InspectorChangeVersion', function() {
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
@@ -212,7 +213,7 @@ describe('InspectorChangeVersion', function() {
     var service = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
@@ -247,7 +248,7 @@ describe('InspectorChangeVersion', function() {
     };
     var setCharm = sinon.stub().callsArgWith(3, 'cs:django-4');
     var getCharm = sinon.stub().callsArgWith(1, 'cs:django-4');
-    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
@@ -275,7 +276,7 @@ describe('InspectorChangeVersion', function() {
     };
     var setCharm = sinon.stub().callsArgWith(3, {err: 'error'});
     var getCharm = sinon.stub().callsArgWith(1);
-    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
@@ -303,7 +304,7 @@ describe('InspectorChangeVersion', function() {
     };
     var setCharm = sinon.stub().callsArgWith(3, {});
     var getCharm = sinon.stub().callsArgWith(1, {err: 'error'});
-    var getAvailableVersions = sinon.stub().callsArgWith(1, [
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
