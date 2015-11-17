@@ -11,7 +11,8 @@
         }
 
         .inner-wrapper > div {
-            margin: 0;
+            margin-top: 0;
+            margin-bottom: 0;
         }
     }
 
@@ -21,6 +22,21 @@
 
     &__description {
         font-size: 20px;
+    }
+
+    &__metadata {
+        font-size: 16px;
+        font-weight: 100;
+
+        h4 {
+            border-bottom: 1px solid $light-mid-grey;
+            padding-bottom: 1em;
+        }
+
+        li {
+            list-style: none;
+            margin-bottom: 0.8em;
+        }
     }
 
     &__readme-content {

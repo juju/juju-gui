@@ -25,7 +25,8 @@ YUI.add('entity-content', function() {
     propTypes: {
       entityModel: React.PropTypes.object.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
-      getFile: React.PropTypes.func.isRequired
+      getFile: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired
     },
 
     /**
@@ -67,6 +68,45 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Generate the list of tags.
+
+      @method _generateTags
+      @param {Object} entityModel The entity model.
+      @return {Object} The tag markup.
+    */
+    _generateList: function(list, handler) {
+      return list.map(function(item) {
+        return (
+          <li key={item}>
+            <a data-id={item} onClick={handler}>
+              {item}
+            </a>
+          </li>
+        )
+      });
+    },
+
+    /**
+      Handle clicks on tags.
+
+      @method _handleTagClick
+      @param {Object} e The event.
+    */
+    _handleTagClick: function(e) {
+      e.stopPropagation();
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            tags: e.target.getAttribute('data-id')
+          }
+        }
+      });
+    },
+
+    /**
       Generate the description if it is a charm.
 
       @method _generateDescription
@@ -75,11 +115,24 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
+        // Have to convert {0: 'database'} to ['database'].
+        var tags = [],
+            entityTags = entityModel.get('tags'),
+            index;
+        for (index in entityTags) {
+          tags.push(entityTags[index]);
+        }
         return (
           <div className="row entity-content__description">
             <div className="inner-wrapper">
               <div className="twelve-col">
                 <p>{entityModel.get('description')}</p>
+              </div>
+              <div className="four-col entity-content__metadata last-col">
+                <h4>Tags</h4>
+                <ul>
+                  {this._generateList(tags, this._handleTagClick)}
+                </ul>
               </div>
             </div>
           </div>

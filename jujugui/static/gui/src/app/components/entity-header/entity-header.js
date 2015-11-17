@@ -64,13 +64,13 @@ YUI.add('entity-header', function() {
     /**
       Callback for getting the bundle YAML.
 
-      @method _closeEntityDetails
+      @method _getBundleYAMLSuccess
       @param {String} error The error, if any. Null if no error.
       @param {String} yaml The yaml for the bundle
     */
     _getBundleYAMLCallback: function(error, yaml) {
       if (error) {
-        console.error(error); 
+        console.error(error);
       }
       this.props.importBundleYAML(yaml);
       this._closeEntityDetails();
