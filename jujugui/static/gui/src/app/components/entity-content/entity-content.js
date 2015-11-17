@@ -53,7 +53,7 @@ YUI.add('entity-content', function() {
           );
         }, this);
         return (
-          <div className="row entity-content__configuration" id="configuration">
+          <div id="configuration" className="row entity-content__configuration">
             <div className="inner-wrapper">
               <div className="twelve-col">
                 <h2 className="entity-content__header">Configuration</h2>
@@ -68,11 +68,12 @@ YUI.add('entity-content', function() {
     },
 
     /**
-      Generate the list of tags.
+      Generates an HTML list from the supplied array.
 
-      @method _generateTags
-      @param {Object} entityModel The entity model.
-      @return {Object} The tag markup.
+      @method _generateList
+      @param {Array} list The list of objects to markup.
+      @param {Function} handler The click handler for each item.
+      @return {Array} The list markup.
     */
     _generateList: function(list, handler) {
       return list.map(function(item) {
@@ -82,7 +83,7 @@ YUI.add('entity-content', function() {
               {item}
             </a>
           </li>
-        )
+        );
       });
     },
 
@@ -154,7 +155,7 @@ YUI.add('entity-content', function() {
                   getFile={this.props.getFile} />
               </div>
               <div className="four-col">
-                <p>Placeholder for project information.</p>
+                <p>{' ' /* Placeholder for project information */}</p>
               </div>
             </div>
           </div>
