@@ -75,4 +75,17 @@ describe('DeploymentSummaryPlacement', function() {
         </span>
       </div>);
   });
+
+  it('does not display if there are no services', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var handlePlacementChange = sinon.stub();
+    var handleViewMachinesClick = sinon.stub();
+    var output = juju.components.DeploymentSummaryPlacement({
+      autoPlace: false,
+      handlePlacementChange: handlePlacementChange,
+      handleViewMachinesClick: handleViewMachinesClick,
+      getUnplacedUnitCount: getUnplacedUnitCount
+    });
+    assert.deepEqual(output, <div></div>);
+  });
 });

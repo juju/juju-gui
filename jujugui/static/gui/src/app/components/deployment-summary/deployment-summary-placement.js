@@ -23,7 +23,7 @@ YUI.add('deployment-summary-placement', function() {
   juju.components.DeploymentSummaryPlacement = function(props) {
     var unplacedCount = props.getUnplacedUnitCount();
     if (unplacedCount === 0) {
-      return;
+      return <div></div>;
     }
     var plural = unplacedCount === 1 ? '' : 's';
     var autoPlace = props.autoPlace;
