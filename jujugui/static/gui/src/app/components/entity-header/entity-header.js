@@ -76,12 +76,41 @@ YUI.add('entity-header', function() {
       this._closeEntityDetails();
     },
 
+    /**
+      Builds a URL that links to the standalone Juju store, for sharing
+      purposes.
+
+      @method _getStoreURL
+      @param {Object} entity The entity being linked to
+    */
+    _getStoreURL: function(entity) {
+      var url = ['https://jujucharms.com'];
+      if (entity.id.indexOf('~') >= 0) {
+        url.push('u');
+        url.push(entity.owner);
+      }
+      url.push(entity.name);
+      url.push(entity.series);
+      url.push(entity.revision);
+      return encodeURIComponent(url.join('/'));
+    },
+
     render: function() {
       var entity = this.props.entityModel.toEntity();
       var ownerUrl = 'https://launchpad.net/~' + entity.owner;
       var series = entity.series ?
         <li className="entity-header__series">{entity.series}</li> :
         '';
+      var twitterUrl = [
+        'https://twitter.com/intent/tweet?text=',
+        entity.displayName,
+        '%20charm&via=ubuntu_cloud&url=',
+        this._getStoreURL(entity)
+      ].join('');
+      var googlePlusUrl = [
+        'https://plus.google.com/share?url=',
+        this._getStoreURL(entity)
+      ].join('');
       return (
         <div className="row-hero">
           <header className="twelve-col entity-header">
@@ -110,6 +139,24 @@ YUI.add('entity-header', function() {
                     {this.props.pluralize('deploy', entity.downloads)}
                   </li>
                   {series}
+                </ul>
+                <ul className="entity-header__social-list">
+                  <li>
+                    <a id="item-twitter"
+                      target="_blank"
+                      href={twitterUrl}
+                      className="entity-header__social-item--twitter">
+                      Share on Twitter
+                    </a>
+                  </li>
+                  <li>
+                    <a id="item-googleplus"
+                       target="_blank"
+                       href={googlePlusUrl}
+                       className="entity-header__social-item--google-plus">
+                       Share on Google Plus
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div className="four-col last-col no-margin-bottom">
