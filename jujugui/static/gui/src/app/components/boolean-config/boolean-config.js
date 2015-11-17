@@ -23,18 +23,28 @@ YUI.add('boolean-config', function() {
   juju.components.BooleanConfig = React.createClass({
 
     getInitialState: function() {
-      var config = this.props.config;
+      return { value: this._cleanConfig(this.props.config) };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({ value: this._cleanConfig(nextProps.config) });
+    },
+
+    /**
+      Handles cleaning the config from the props.
+
+      @method _cleanConfig
+      @param {Multiple} The config property.
+      @returns {Boolean} The config as a boolean.
+    */
+    _cleanConfig: function(config) {
       // If the type of the value is a boolean but we have to stringify all
       // values when sending them to juju-core so this value could be a string
       // representation of a boolean value.
       if (typeof config === 'string') {
         config = config.toLowerCase() === 'true' ? true : false;
       }
-      return { value: config };
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      // TODO: Get this working for bools
+      return config;
     },
 
     /**

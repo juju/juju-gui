@@ -31,14 +31,21 @@ YUI.add('inspector-config', function() {
       return {
         // Have to clone the config so we don't update it via reference.
         serviceConfig: JSON.parse(JSON.stringify(
-          this.props.service.get('config')))
+          this.props.service.get('config'))),
+        forceUpdate: false
       };
     },
 
     shouldComponentUpdate: function(nextProps, nextState) {
       // If the service has changed then the component should update with the
       // new props.
-      return nextProps.service.get('id') !== this.props.service.get('id');
+      var forceUpdate = this.state.forceUpdate;
+      if (forceUpdate) {
+        // Reset the force update flag so it only happens once.
+        this.setState({forceUpdate: false});
+      }
+      return forceUpdate ||
+        nextProps.service.get('id') !== this.props.service.get('id');
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -68,6 +75,7 @@ YUI.add('inspector-config', function() {
           serviceConfig[key] = newConfig[key];
         }
       });
+      this.setState({forceUpdate: true});
       this.setState({serviceConfig: serviceConfig});
     },
 
