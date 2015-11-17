@@ -179,6 +179,7 @@ YUI.add('inspector-component', function() {
                 service={service}
                 charm={nextProps.charm}
                 changeState={this.props.changeState}
+                getYAMLConfig={this.props.getYAMLConfig}
                 setConfig={nextProps.setConfig} />,
             backState: {
               sectionA: {

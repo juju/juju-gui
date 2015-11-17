@@ -22,7 +22,33 @@ YUI.add('inspector-config', function() {
 
   juju.components.Configuration = React.createClass({
 
-    _importConfig: function() {},
+    /**
+      Handle applying the uploaded config.
+
+      @method _applyConfig
+      @param {Object} config The config to apply.
+    */
+    _applyConfig: function(config) {
+      console.log(config);
+    },
+
+    /**
+      Handle uploading the config file.
+
+      @method _openFileDialog
+    */
+    _importConfig: function() {
+      this.props.getYAMLConfig(this.refs.file.files[0], this._applyConfig);
+    },
+
+    /**
+      Handle opening the file dialog from the hidden file input.
+
+      @method _openFileDialog
+    */
+    _openFileDialog: function() {
+      this.refs.file.click();
+    },
 
     /**
       Handle cancelling the changes and returning to the inspector overview.
@@ -161,7 +187,7 @@ YUI.add('inspector-config', function() {
     render: function() {
       var importButton = [{
         title: 'Import config file',
-        action: this._importConfig
+        action: this._openFileDialog
       }];
       var actionButtons = [{
         title: 'Cancel',
@@ -175,6 +201,8 @@ YUI.add('inspector-config', function() {
       return (
         <div className="inspector-config">
          <div className="inspector-config__fields">
+            <input type="file" ref="file" className="hidden"
+              onChange={this._importConfig} />
             <juju.components.ButtonRow buttons={importButton} />
             {this._generateConfigElements()}
           </div>
