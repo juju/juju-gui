@@ -264,22 +264,9 @@ var module = module;
           newKey = key.toLowerCase();
         }
         // Create shallow copies of objects for the copy.
-        var copy;
-        // XXX jcsackett 2015-11-09: Previously we used Y.merge to make shallow
-        // copies. As a side effect, arrays were munged into weird objects.
-        // Unfortunately the GUI relies on this side effect. When we can update
-        // the gui to not expect this behavior we can just use the statement in
-        // the else block of this if statement.
-        if (Array.isArray(obj[key])) {
-          copy = {};
-          obj[key].forEach(function(val ,i) {
-            copy[i] = val;
-          });
-        } else {
-          copy =
-              (typeof obj[key] === 'object' && obj[key] !== null) ?
-                  JSON.parse(JSON.stringify(obj[key])) : obj[key];
-        }
+        var copy =
+            (typeof obj[key] === 'object' && obj[key] !== null) ?
+                JSON.parse(JSON.stringify(obj[key])) : obj[key];
         host[newKey] = copy;
         if (typeof obj[key] === 'object' && obj[key] !== null) {
           // Decrement exclude by one if it exists.

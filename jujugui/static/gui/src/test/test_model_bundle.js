@@ -117,10 +117,10 @@ describe('The bundle model', function() {
   it('must have a relations getter', function() {
     instance = new models.Bundle(data);
     expected = [
-      {'0': 'mongos:mongos', '1': 'shard3:database'},
-      {'0': 'mongos:mongos-cfg', '1': 'configsvr:configsvr'},
-      {'0': 'mongos:mongos', '1': 'shard1:database'},
-      {'0': 'mongos:mongos', '1': 'shard2:database'}
+      ['mongos:mongos', 'shard3:database'],
+      ['mongos:mongos-cfg', 'configsvr:configsvr'],
+      ['mongos:mongos', 'shard1:database'],
+      ['mongos:mongos', 'shard2:database']
     ];
     var results = instance.get('relations');
     assert.deepEqual(results, expected);
