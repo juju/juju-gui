@@ -33,6 +33,10 @@ YUI.add('boolean-config', function() {
       return { value: config };
     },
 
+    componentWillReceiveProps: function(nextProps) {
+      // TODO: Get this working for bools
+    },
+
     /**
       Handles the checkbox change action.
 
