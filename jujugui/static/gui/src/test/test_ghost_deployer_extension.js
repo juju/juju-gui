@@ -127,7 +127,10 @@ describe('Ghost Deployer Extension', function() {
     assert.deepEqual(fireArgs[1], {
       sectionA: {
         component: 'inspector',
-        metadata: { id: 'ghost-service-id' }}});
+        metadata: {
+          id: 'ghost-service-id',
+          localType: null
+        }}});
   });
 
   it('increments the name for duplicate ghost services', function() {
