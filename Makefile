@@ -75,9 +75,10 @@ help:
 .PHONY: sysdeps
 sysdeps:
 	sudo apt-get install -y software-properties-common
-	sudo add-apt-repository -y ppa:yellow/ppa
+	sudo ./scripts/nodesource_setup_5.x
 	sudo apt-get update
 	sudo apt-get install -y nodejs python-virtualenv g++ inotify-tools
+	sudo npm install -g npm@2.14.11
 
 .PHONY: src
 src: $(GUISRC)
@@ -136,7 +137,6 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
 		-not -name "*d3-wrapper*" \
-		-not -name "*unscaled-pack*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
@@ -209,7 +209,7 @@ $(BUILT_D3):
 	  node_modules/d3/src/svg/line.js \
 	  node_modules/d3/src/svg/arc.js \
 	  node_modules/d3/src/event/drag.js \
-	  $(GUISRC)/app/assets/javascripts/unscaled-pack.js \
+		node_modules/d3/src/layout/pack.js \
 	  $(GUISRC)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
 	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3-min.js
 
