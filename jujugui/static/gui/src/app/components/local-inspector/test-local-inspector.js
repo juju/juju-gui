@@ -67,13 +67,17 @@ describe('LocalInspector', function() {
       action: instance._handleUpload,
       type: 'confirm'
     }];
-    var options = output.props.children[1].props.children[0].props.children;
+    var options = output.props.children[1].props.children[1].props.children;
     var expected = (
-      <div className="inspector-view">
+      <div className="inspector-view local-inspector">
         <juju.components.InspectorHeader
           backCallback={instance._close}
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
+          <div className="local-inspector__file">
+            <p>File: {"apache2.zip"}</p>
+            <p>Size: {"2.00"}kb</p>
+          </div>
           <ul className="local-inspector__list">
             <li>
               <label>
@@ -82,7 +86,7 @@ describe('LocalInspector', function() {
                   onChange={
                     options[0].props.children.props.children[0]
                       .props.onChange} />
-                Deploy new charm
+                Deploy local
               </label>
             </li>
             <li>
@@ -92,19 +96,14 @@ describe('LocalInspector', function() {
                   onChange={
                     options[1].props.children.props.children[0]
                       .props.onChange} />
-                Upgrade existing charm(s)
+                Upgrade local
               </label>
             </li>
           </ul>
           <div>
-            <p>
-              File: {"apache2.zip"}{' '}
-              <span className="local-inspector__size">
-                ({"2.00"}kb)
-              </span>
-            </p>
-            <p>Deploy with series:</p>
-            <select ref="series" defaultValue="trusty">
+            <p>Choose a series to deploy this charm</p>
+            <select ref="series" defaultValue="trusty"
+              className="local-inspector__series">
               <option value="vivid" key="vivid">vivid</option>
               <option value="wily" key="wily">wily</option>
             </select>
@@ -147,17 +146,21 @@ describe('LocalInspector', function() {
       title: 'Cancel',
       action: instance._close
     }, {
-      title: 'Upgrade',
+      title: 'Upload',
       action: instance._handleUpdate,
       type: 'confirm'
     }];
-    var options = output.props.children[1].props.children[0].props.children;
+    var options = output.props.children[1].props.children[1].props.children;
     var expected = (
-      <div className="inspector-view">
+      <div className="inspector-view local-inspector">
         <juju.components.InspectorHeader
           backCallback={instance._close}
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
+          <div className="local-inspector__file">
+            <p>File: {"apache2.zip"}</p>
+            <p>Size: {"2.00"}kb</p>
+          </div>
           <ul className="local-inspector__list">
             <li>
               <label>
@@ -166,7 +169,7 @@ describe('LocalInspector', function() {
                   onChange={
                     options[0].props.children.props.children[0]
                       .props.onChange} />
-                Deploy new charm
+                Deploy local
               </label>
             </li>
             <li>
@@ -176,7 +179,7 @@ describe('LocalInspector', function() {
                   onChange={
                     options[1].props.children.props.children[0]
                       .props.onChange} />
-                Upgrade existing charm(s)
+                Upgrade local
               </label>
             </li>
           </ul>
@@ -229,14 +232,15 @@ describe('LocalInspector', function() {
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
         changeState={changeState} />, true);
     var output = shallowRenderer.getRenderOutput();
-    var options = output.props.children[1].props.children[0].props.children;
+    var options = output.props.children[1].props.children[1].props.children;
     options[1].props.children.props.children[0].props.onChange();
     output = shallowRenderer.getRenderOutput();
     var expected = (
-      <div className="inspector-view">
+      <div className="inspector-view local-inspector">
         {output.props.children[0]}
         <div className="inspector-content local-inspector__section">
           {output.props.children[1].props.children[0]}
+          {output.props.children[1].props.children[1]}
           <ul className="local-inspector__list">
             <li key="apache2-2">
               <label>

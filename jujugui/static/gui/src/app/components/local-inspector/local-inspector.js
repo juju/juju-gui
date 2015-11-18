@@ -90,21 +90,14 @@ YUI.add('local-inspector', function() {
       var component;
       switch (activeComponent) {
         case 'new':
-          var file = this.props.file;
-          var size = (file.size / 1024).toFixed(2);
           var seriesOptions = this.SERIES.map((series) => {
             return <option value={series} key={series}>{series}</option>;
           });
           component = (
             <div>
-              <p>
-                File: {file.name}{' '}
-                <span className="local-inspector__size">
-                  ({size}kb)
-                </span>
-              </p>
-              <p>Deploy with series:</p>
-              <select ref="series" defaultValue="trusty">
+              <p>Choose a series to deploy this charm</p>
+              <select ref="series" defaultValue="trusty"
+                className="local-inspector__series">
                 {seriesOptions}
               </select>
             </div>
@@ -193,52 +186,36 @@ YUI.add('local-inspector', function() {
       }
     },
 
-    /**
-      Handle uploading the charm.
-
-      @method _handleUpload
-      @param {Object} activeComponent The component to display.
-      @returns {Array} A list of buttons.
-    */
-    _generateButtons: function(activeComponent) {
+    render: function() {
+      var localType = this.props.localType;
+      var file = this.props.file;
+      var size = (file.size / 1024).toFixed(2);
       var buttons = [{
         title: 'Cancel',
         action: this._close
+      }, {
+        title: 'Upload',
+        action: this.state.activeComponent === 'new' ?
+          this._handleUpload : this._handleUpdate,
+        type: 'confirm'
       }];
-      switch (activeComponent) {
-        case 'new':
-          buttons.push({
-            title: 'Upload',
-            action: this._handleUpload,
-            type: 'confirm'
-          });
-          break;
-        case 'update':
-          buttons.push({
-            title: 'Upgrade',
-            action: this._handleUpdate,
-            type: 'confirm'
-          });
-          break;
-      }
-      return buttons;
-    },
-
-    render: function() {
-      var localType = this.props.localType;
       return (
-        <div className="inspector-view">
+        <div className="inspector-view local-inspector">
           <juju.components.InspectorHeader
             backCallback={this._close}
             title="Local charm" />
           <div className="inspector-content local-inspector__section">
+            <div className="local-inspector__file">
+              <p>File: {file.name}</p>
+              <p>Size: {size}kb</p>
+            </div>
             <ul className="local-inspector__list">
               <li>
                 <label>
                   <input type="radio" name="action"
                     defaultChecked={localType === 'new'}
                     onChange={this._changeActiveComponent.bind(this, 'new')} />
-                  Deploy new charm
+                  Deploy local
                 </label>
               </li>
               <li>
@@ -247,14 +224,14 @@ YUI.add('local-inspector', function() {
                     defaultChecked={localType === 'update'}
                     onChange={
                       this._changeActiveComponent.bind(this, 'update')} />
-                  Upgrade existing charm(s)
+                  Upgrade local
                 </label>
               </li>
             </ul>
             {this._generateComponent(this.state.activeComponent)}
           </div>
           <juju.components.ButtonRow
-            buttons={this._generateButtons(this.state.activeComponent)} />
+            buttons={buttons} />
         </div>
       );
     }

@@ -3,13 +3,13 @@
         padding: 0 20px 10px 20px;
     }
 
-    &__size {
-        color: $mid-grey;
+    p {
+        margin-bottom: 0;
     }
 
     &__list {
         list-style: none;
-        margin: 0;
+        margin: 15px 0 0 0;
 
         input {
             margin-right: 15px;
@@ -19,5 +19,9 @@
         label {
             padding: 8px 0;
         }
+    }
+
+    &__series {
+        margin-top: 20px;
     }
 }
