@@ -1766,7 +1766,6 @@ YUI.add('juju-topology-service', function(Y) {
     'd3-statusbar',
     'juju-templates',
     'juju-models',
-    'local-charm-import-helpers',
     'zip-utils'
   ]
 });
