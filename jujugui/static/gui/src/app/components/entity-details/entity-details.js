@@ -106,23 +106,19 @@ YUI.add('entity-details', function() {
       data passed in is an Array of models, only the first model is used.
 
       @method fetchSuccess
+      @param {String} error An error message, or null if there's no error.
       @param {Array} models A list of the entity models found.
     */
-    fetchSuccess: function(models) {
+    fetchCallback: function(error, models) {
+      if (error) {
+        this._changeActiveComponent('error');
+        console.error('Fetching the entity failed.');
+        return;
+      }
       if (models.length > 0) {
         this.setState({entityModel: models[0]});
         this._changeActiveComponent('entity-details');
       }
-    },
-
-    /**
-      Callback for when an error occurs while fetching an entity.
-
-      @method fetchFailure
-      @param {Object} response The failure response.
-    */
-    fetchFailure: function(response) {
-      this._changeActiveComponent('error');
     },
 
     getInitialState: function() {
@@ -132,11 +128,7 @@ YUI.add('entity-details', function() {
     },
 
     componentDidMount: function() {
-      this.detailsXhr = this.props.getEntity(
-        this.props.id,
-        this.fetchSuccess,
-        this.fetchFailure
-      );
+      this.detailsXhr = this.props.getEntity(this.props.id, this.fetchCallback);
     },
 
     componentWillUnmount: function() {

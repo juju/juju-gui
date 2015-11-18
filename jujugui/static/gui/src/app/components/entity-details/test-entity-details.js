@@ -52,7 +52,7 @@ describe('EntityDetails', function() {
 
   it('fetches an entity properly', function() {
     var id = mockEntity.get('id');
-    var getEntity = sinon.stub().callsArgWith(1, [mockEntity]);
+    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();
@@ -99,7 +99,7 @@ describe('EntityDetails', function() {
 
   it('can display a message if there is a loading error', function() {
     var id = mockEntity.get('id');
-    var getEntity = sinon.stub().callsArgWith(2, [mockEntity]);
+    var getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();
@@ -138,7 +138,7 @@ describe('EntityDetails', function() {
   it('can display a bundle diagram', function() {
     var mockEntity = jsTestUtils.makeEntity(true);
     var id = mockEntity.get('id');
-    var getEntity = sinon.stub().callsArgWith(1, [mockEntity]);
+    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();

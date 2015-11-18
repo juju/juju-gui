@@ -43,8 +43,7 @@ YUI.add('entity-header', function() {
         this._closeEntityDetails();
       } else {
         var id = entity.id.replace('cs:', '');
-        this.props.getBundleYAML(id, this._getBundleYAMLSuccess,
-            this._getBundleYAMLFailure);
+        this.props.getBundleYAML(id, this._getBundleYAMLCallback);
       }
     },
 
@@ -63,24 +62,18 @@ YUI.add('entity-header', function() {
     },
 
     /**
-      Callback for successfully getting the bundle YAML.
+      Callback for getting the bundle YAML.
 
       @method _closeEntityDetails
+      @param {String} error The error, if any. Null if no error.
       @param {String} yaml The yaml for the bundle
     */
-    _getBundleYAMLSuccess: function(yaml) {
+    _getBundleYAMLCallback: function(error, yaml) {
+      if (error) {
+        console.error(error); 
+      }
       this.props.importBundleYAML(yaml);
       this._closeEntityDetails();
-    },
-
-    /**
-      Callback for failing to get the bundle YAML.
-
-      @method _closeEntityDetails
-      @param {String} yaml The yaml for the bundle
-    */
-    _getBundleYAMLFailure: function() {
-      //XXX: Need to figure out what to do if there's a failure.
     },
 
     render: function() {

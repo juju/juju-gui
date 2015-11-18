@@ -38,9 +38,7 @@ describe('EntityContentReadme', function() {
 
   it('can display a readme', function() {
     var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
-    var getFile = sinon.stub().callsArgWith(2, {target: {
-      responseText: 'mock markdown'
-    }});
+    var getFile = sinon.stub().callsArgWith(2, null, 'mock markdown');
     var mockEntity = jsTestUtils.makeEntity(false, ['Readme.md']);
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme
@@ -96,7 +94,7 @@ describe('EntityContentReadme', function() {
 
   it('displays a message if there is an error getting the file', function() {
     var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
-    var getFile = sinon.stub().callsArg(3);
+    var getFile = sinon.stub().callsArgWith(2, 'No file');
     var mockEntity = jsTestUtils.makeEntity(false, ['Readme.md']);
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityContentReadme

@@ -107,11 +107,17 @@ YUI.add('search-results', function(Y) {
     /**
       Handle successful searches by updating internal state with the results.
 
-      @method searchSuccess
+      @method searchCallback
+      @param {String} error An error message, or null if no error.
       @param {Array} rawResults The entity models returned by the search.
     */
-    searchSuccess: function(rawResults) {
+    searchCallback: function(error, rawResults) {
       // Parse the raw results.
+      if (error) {
+        this._changeActiveComponent('error');
+        console.log('Search request failed.');
+        return;
+      }
       var results = rawResults.map(function(model) {
         return model.toEntity();
       }, this);
@@ -149,16 +155,6 @@ YUI.add('search-results', function(Y) {
     },
 
     /**
-      Handle failed searches by displaying appropriate error notification.
-
-      @method searchFailure
-      @param {Object} response The failure response.
-    */
-    searchFailure: function(response) {
-      this._changeActiveComponent('error');
-    },
-
-    /**
       Search the charmstore with the given filters.
 
       @method searchRequest
@@ -184,8 +180,7 @@ YUI.add('search-results', function(Y) {
       this.setState({ waitingForSearch: true });
       this.searchXhr = this.props.charmstoreSearch(
         filters,
-        this.searchSuccess,
-        this.searchFailure,
+        this.searchCallback,
         150
       );
     },
