@@ -30,8 +30,7 @@ YUI.add('inspector-config', function() {
     getInitialState: function() {
       return {
         // Have to clone the config so we don't update it via reference.
-        serviceConfig: JSON.parse(JSON.stringify(
-          this.props.service.get('config'))),
+        serviceConfig: this._clone(this.props.service.get('config')),
         forceUpdate: false
       };
     },
@@ -51,9 +50,19 @@ YUI.add('inspector-config', function() {
     componentWillReceiveProps: function(nextProps) {
       this.setState({
         // Have to clone the config so we don't update it via reference.
-        serviceConfig: JSON.parse(JSON.stringify(
-          nextProps.service.get('config')))
+        serviceConfig: this._clone(nextProps.service.get('config'))
       });
+    },
+
+    /**
+      Clone an object.
+
+      @method _clone
+      @param {Object} obj The object to clone.
+      @returns {Object} the cloned object.
+    */
+    _clone: function(obj) {
+      return JSON.parse(JSON.stringify(obj));
     },
 
     /**
@@ -86,6 +95,8 @@ YUI.add('inspector-config', function() {
     */
     _importConfig: function() {
       this.props.getYAMLConfig(this.refs.file.files[0], this._applyConfig);
+      // Reset the form so the file can be uploaded again
+      this.refs['file-form'].reset();
     },
 
     /**
@@ -185,10 +196,10 @@ YUI.add('inspector-config', function() {
       Generates the list of elements to render for the config UI.
 
       @method _generateConfigElements
-      @param {Object} serviceConfig The current service config.
       @returns {Array} An array of React components.
     */
-    _generateConfigElements: function(serviceConfig) {
+    _generateConfigElements: function() {
+      var serviceConfig = this.state.serviceConfig;
       var charmOptions = this.props.charm.get('options');
       // Some charms don't have any options, in this case, just return.
       if (!charmOptions) {
@@ -243,10 +254,12 @@ YUI.add('inspector-config', function() {
       return (
         <div className="inspector-config">
           <div className="inspector-config__fields">
-            <input type="file" ref="file" className="hidden"
-              onChange={this._importConfig} />
+            <form ref="file-form">
+              <input type="file" ref="file" className="hidden"
+                onChange={this._importConfig} />
+            </form>
             <juju.components.ButtonRow buttons={importButton} />
-            {this._generateConfigElements(this.state.serviceConfig)}
+            {this._generateConfigElements()}
           </div>
           <juju.components.ButtonRow buttons={actionButtons} />
         </div>

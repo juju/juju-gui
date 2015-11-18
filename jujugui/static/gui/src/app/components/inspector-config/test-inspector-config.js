@@ -190,6 +190,7 @@ describe('Configuration', function() {
       get: sinon.stub().returns('mysql')
     };
     var getYAMLConfig = sinon.stub();
+    var formReset = sinon.stub();
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
@@ -198,12 +199,16 @@ describe('Configuration', function() {
         changeState={changeState}
         charm={charm} />, true);
     var instance = shallowRenderer.getMountedInstance();
-    instance.refs = {file: {files: ['apache2.yaml']}};
+    instance.refs = {
+      file: {files: ['apache2.yaml']},
+      'file-form': {reset: formReset}
+    };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[0].props.onChange();
+    output.props.children[0].props.children[0].props.children.props.onChange();
     assert.equal(getYAMLConfig.callCount, 1);
     assert.equal(getYAMLConfig.args[0][0], 'apache2.yaml');
     assert.equal(getYAMLConfig.args[0][1], instance._applyConfig);
+    assert.equal(formReset.callCount, 1);
   });
 
   it('can apply the uploaded config', function() {
@@ -232,9 +237,12 @@ describe('Configuration', function() {
         changeState={changeState}
         charm={charm} />, true);
     var instance = shallowRenderer.getMountedInstance();
-    instance.refs = {file: {files: ['apache2.yaml']}};
+    instance.refs = {
+      file: {files: ['apache2.yaml']},
+      'file-form': {reset: sinon.stub()}
+    };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[0].props.onChange();
+    output.props.children[0].props.children[0].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0].props.children[2], [
       <juju.components.StringConfig
@@ -277,12 +285,15 @@ describe('Configuration', function() {
         changeState={changeState}
         charm={charm} />, true);
     var instance = shallowRenderer.getMountedInstance();
-    instance.refs = {file: {files: ['apache2.yaml']}};
+    instance.refs = {
+      file: {files: ['apache2.yaml']},
+      'file-form': {reset: sinon.stub()}
+    };
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
       instance.state.serviceConfig,
       {option1: 'string body value', option2: true});
-    output.props.children[0].props.children[0].props.onChange();
+    output.props.children[0].props.children[0].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
       instance.state.serviceConfig,
