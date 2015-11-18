@@ -7,6 +7,7 @@ bin/
 build-debug
 build-prod
 build-shared
+build/
 classnames.js
 dist
 docs/_build/doctrees
