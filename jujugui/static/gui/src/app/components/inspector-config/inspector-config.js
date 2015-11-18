@@ -242,7 +242,7 @@ YUI.add('inspector-config', function() {
 
       return (
         <div className="inspector-config">
-         <div className="inspector-config__fields">
+          <div className="inspector-config__fields">
             <input type="file" ref="file" className="hidden"
               onChange={this._importConfig} />
             <juju.components.ButtonRow buttons={importButton} />

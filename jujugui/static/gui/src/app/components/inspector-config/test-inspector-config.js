@@ -53,7 +53,7 @@ describe('Configuration', function() {
         charm={charm}
         setConfig={setConfig} />);
 
-    assert.deepEqual(output.props.children[0].props.children[1], [
+    assert.deepEqual(output.props.children[0].props.children[2], [
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
@@ -74,10 +74,12 @@ describe('Configuration', function() {
         // Return the charm options.
         return null;
       }};
+    var service = {get: sinon.stub().returns({})};
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        service={service}
         charm={charm} />);
-    assert.deepEqual(output.props.children[0].props.children[1],
+    assert.deepEqual(output.props.children[0].props.children[2],
       <div className="inspector-config--no-config">
         No configuration options.
       </div>);
@@ -157,4 +159,133 @@ describe('Configuration', function() {
         }}});
   });
 
+  it('can open the file dialog when the button is clicked', function() {
+    var charm = {
+      get: function() {
+        return null;
+      }};
+    var service = {
+      get: sinon.stub().returns('mysql')
+    };
+    var fileClick = sinon.stub();
+    var changeState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        service={service}
+        changeState={changeState}
+        charm={charm} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {file: {click: fileClick}};
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.children[1].props.buttons[0].action();
+    assert.equal(fileClick.callCount, 1);
+  });
+
+  it('can get a YAML file when a file is selected', function() {
+    var charm = {
+      get: function() {
+        return null;
+      }};
+    var service = {
+      get: sinon.stub().returns('mysql')
+    };
+    var getYAMLConfig = sinon.stub();
+    var changeState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        service={service}
+        getYAMLConfig={getYAMLConfig}
+        changeState={changeState}
+        charm={charm} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {file: {files: ['apache2.yaml']}};
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onChange();
+    assert.equal(getYAMLConfig.callCount, 1);
+    assert.equal(getYAMLConfig.args[0][0], 'apache2.yaml');
+    assert.equal(getYAMLConfig.args[0][1], instance._applyConfig);
+  });
+
+  it('can apply the uploaded config', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var option1key = 'string body value';
+    var option2key = true;
+    var charmGet = sinon.stub();
+    charmGet.withArgs('name').returns('apache2');
+    charmGet.withArgs('options').returns(
+      {option1: option1, option2: option2});
+    var serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('apache2');
+    serviceGet.withArgs('config').returns(
+      {option1: option1key, option2: option2key});
+    var charm = {get: charmGet};
+    var service = {get: serviceGet};
+    var getYAMLConfig = sinon.stub().callsArgWith(1, {
+      apache2: {option1: 'my apache2', option2: false}
+    });
+    var changeState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        service={service}
+        getYAMLConfig={getYAMLConfig}
+        changeState={changeState}
+        charm={charm} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {file: {files: ['apache2.yaml']}};
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onChange();
+    output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0].props.children[2], [
+      <juju.components.StringConfig
+        key="Config-option1"
+        ref="Config-option1"
+        option={option1}
+        config="my apache2" />,
+      <juju.components.BooleanConfig
+        key="Config-option2"
+        ref="Config-option2"
+        label="option2:"
+        option={option2}
+        config={false} />
+    ]);
+  });
+
+  it('does not try to apply the config for the wrong charm', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var option1key = 'string body value';
+    var option2key = true;
+    var charmGet = sinon.stub();
+    charmGet.withArgs('name').returns('apache2');
+    charmGet.withArgs('options').returns(
+      {option1: option1, option2: option2});
+    var serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('apache2');
+    serviceGet.withArgs('config').returns(
+      {option1: option1key, option2: option2key});
+    var charm = {get: charmGet};
+    var service = {get: serviceGet};
+    var getYAMLConfig = sinon.stub().callsArgWith(1, {
+      postgresql: {option1: 'my apache2', option2: false}
+    });
+    var changeState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        service={service}
+        getYAMLConfig={getYAMLConfig}
+        changeState={changeState}
+        charm={charm} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {file: {files: ['apache2.yaml']}};
+    var output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(
+      instance.state.serviceConfig,
+      {option1: 'string body value', option2: true});
+    output.props.children[0].props.children[0].props.onChange();
+    output = shallowRenderer.getRenderOutput();
+    assert.deepEqual(
+      instance.state.serviceConfig,
+      {option1: 'string body value', option2: true});
+  });
 });

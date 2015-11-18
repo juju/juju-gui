@@ -57,4 +57,22 @@ describe('StringConfig', function() {
       </div>);
   });
 
+  it('can update when new config is provided', function() {
+    var option = {
+      key: 'testconfig',
+      type: 'text',
+      description: 'test config for strings'
+    };
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config="initial"
+        option={option} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    assert.equal(instance.state.value, 'initial');
+    shallowRenderer.render(
+      <juju.components.StringConfig
+        config="updated"
+        option={option} />);
+    assert.equal(instance.state.value, 'updated');
+  });
 });
