@@ -1993,7 +1993,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @param {String} series The Ubuntu series for this charm.
       @param {Function} callback A function to be called to return the charm
         information back to the original caller (see _uploadLocalCharm in
-        app/assets/javascripts/local-charm-import-helpers).
+        local-charm-import-helpers.js).
       @param {Function} errback A function to be called to notify an error
         occurred during the process. The errback callable receives an error
         message.
