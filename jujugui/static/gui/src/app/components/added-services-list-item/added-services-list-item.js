@@ -33,10 +33,17 @@ YUI.add('added-services-list-item', function() {
     },
 
     getInitialState: function() {
+      var service = this.props.service;
       return {
-        focus: false,
-        fade: false
+        focus: service.get('highlight') || false,
+        fade: service.get('fade') || false
       };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      var service = this.props.service;
+      this.setState({focus: service.get('highlight')});
+      this.setState({fade: service.get('fade')});
     },
 
     /**
