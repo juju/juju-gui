@@ -66,6 +66,7 @@ YUI.add('entity-details', function() {
                   pluralize={this.props.pluralize} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
+                  changeState={this.props.changeState}
                   getFile={this.props.getFile}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel} />

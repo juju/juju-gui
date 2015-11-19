@@ -89,11 +89,13 @@ describe('EntityDetails', function() {
             pluralize={pluralize} />
           {undefined}
           <juju.components.EntityContent
+            changeState={changeState}
             getFile={getFile}
             renderMarkdown={renderMarkdown}
             entityModel={mockEntity} />
           </div>
-      </div>);
+      </div>
+    );
     assert.deepEqual(output, expected);
   });
 
@@ -179,6 +181,7 @@ describe('EntityDetails', function() {
             getDiagramURL={getDiagramURL}
             id={id} />
           <juju.components.EntityContent
+            changeState={changeState}
             getFile={getFile}
             renderMarkdown={renderMarkdown}
             entityModel={mockEntity} />

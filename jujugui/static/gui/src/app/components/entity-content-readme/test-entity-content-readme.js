@@ -53,9 +53,10 @@ describe('EntityContentReadme', function() {
     assert.equal(renderMarkdown.callCount, 1);
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
     assert.deepEqual(output,
-      <div className="entity-content_readme">
-        <h2 id="readme">Readme</h2>
-        <div className="entity-content_readme-content"
+      <div className="entity-content__readme">
+        <h2 className="entity-content__header" id="readme">Readme</h2>
+        <div className="entity-content__readme-content"
+          ref="content"
           dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}} />
       </div>);
   });
@@ -77,41 +78,29 @@ describe('EntityContentReadme', function() {
   });
 
   it('can display a message if there is no readme file', function() {
-    var shallowRenderer = jsTestUtils.shallowRender(
+    var component = testUtils.renderIntoDocument(
       <juju.components.EntityContentReadme
         renderMarkdown={sinon.spy()}
         getFile={sinon.spy()}
-        entityModel={mockEntity} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output,
-      <div className="entity-content_readme">
-        <h2 id="readme">Readme</h2>
-        <div className="entity-content_readme-content"
-          dangerouslySetInnerHTML={{__html: 'No readme.'}} />
-      </div>);
+        entityModel={mockEntity} />
+    );
+    assert.equal(component.refs['content'].textContent, 'No readme.');
   });
 
   it('displays a message if there is an error getting the file', function() {
     var renderMarkdown = sinon.stub().returns('<p>Readme</p>');
     var getFile = sinon.stub().callsArgWith(2, 'No file');
     var mockEntity = jsTestUtils.makeEntity(false, ['Readme.md']);
-    var shallowRenderer = jsTestUtils.shallowRender(
+    var component = testUtils.renderIntoDocument(
       <juju.components.EntityContentReadme
         renderMarkdown={renderMarkdown}
         getFile={getFile}
-        entityModel={mockEntity} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
+        entityModel={mockEntity} />
+    );
     assert.equal(getFile.callCount, 1);
     assert.equal(getFile.args[0][0], 'cs:django');
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 0);
-    assert.deepEqual(output,
-      <div className="entity-content_readme">
-        <h2 id="readme">Readme</h2>
-        <div className="entity-content_readme-content"
-          dangerouslySetInnerHTML={{__html: 'No readme.'}} />
-      </div>);
+    assert.equal(component.refs['content'].textContent, 'No readme.');
   });
 });

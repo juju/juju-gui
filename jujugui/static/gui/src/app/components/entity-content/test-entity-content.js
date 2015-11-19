@@ -23,6 +23,14 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
+function _generateTagItem(tag, fn) {
+  return [
+    <li key={tag}>
+      <a data-id={tag} onClick={fn}>{tag}</a>
+    </li>
+  ];
+}
+
 describe('EntityContent', function() {
   var mockEntity;
 
@@ -42,37 +50,59 @@ describe('EntityContent', function() {
   it('can display a charm', function() {
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          changeState={sinon.spy()}
           entityModel={mockEntity}
           getFile={getFile}
-          renderMarkdown={renderMarkdown} />);
+          renderMarkdown={renderMarkdown} />
+    , true);
     var option1 = {
-      name: 'username',
       description: 'Your username',
       type: 'string',
-      default: 'spinach'
+      default: 'spinach',
+      name: 'username'
     };
     var option2 = {
-      name: 'password',
       description: 'Your password',
       type: 'string',
-      default: 'abc123'
+      default: 'abc123',
+      name: 'password'
     };
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
-      <div className="row entity-content">
-        <div className="inner-wrapper">
-          <main className="seven-col append-one">
-            <div className="entity-content__description">
-              <h2>Description</h2>
+      <div className="entity-content">
+        <div className="row entity-content__description">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
               <p>Django framework.</p>
             </div>
-            <juju.components.EntityContentReadme
-              entityModel={mockEntity}
-              renderMarkdown={renderMarkdown}
-              getFile={getFile} />
-            <div className="entity-content__configuration" id="configuration">
-              <h3>Configuration</h3>
+            <div className="four-col entity-content__metadata last-col">
+              <h4>Tags</h4>
+              <ul>
+                {_generateTagItem('database', instance._handleTagClick)}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="row">
+          <div className="inner-wrapper">
+            <div className="seven-col append-one">
+              <juju.components.EntityContentReadme
+                entityModel={mockEntity}
+                renderMarkdown={renderMarkdown}
+                getFile={getFile} />
+            </div>
+            <div className="four-col">
+              <p>{' '}</p>
+            </div>
+          </div>
+        </div>
+        <div id="configuration" className="row entity-content__configuration">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <h2 className="entity-content__header">Configuration</h2>
               <dl>
                 <juju.components.EntityContentConfigOption
                   key={option1.name}
@@ -82,9 +112,10 @@ describe('EntityContent', function() {
                   option={option2} />
               </dl>
             </div>
-          </main>
+          </div>
         </div>
-      </div>);
+      </div>
+    );
     assert.deepEqual(output, expected);
   });
 
@@ -92,27 +123,47 @@ describe('EntityContent', function() {
     mockEntity.set('options', null);
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
-    var output = jsTestUtils.shallowRender(
-        <juju.components.EntityContent
-          entityModel={mockEntity}
-          getFile={getFile}
-          renderMarkdown={renderMarkdown} />);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        changeState={sinon.spy()}
+        entityModel={mockEntity}
+        getFile={getFile}
+        renderMarkdown={renderMarkdown} />
+    , true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
-      <div className="row entity-content">
-        <div className="inner-wrapper">
-          <main className="seven-col append-one">
-            <div className="entity-content__description">
-              <h2>Description</h2>
+      <div className="entity-content">
+        <div className="row entity-content__description">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
               <p>Django framework.</p>
             </div>
-            <juju.components.EntityContentReadme
-              entityModel={mockEntity}
-              renderMarkdown={renderMarkdown}
-              getFile={getFile} />
-            {undefined}
-          </main>
+            <div className="four-col entity-content__metadata last-col">
+              <h4>Tags</h4>
+              <ul>
+                {_generateTagItem('database', instance._handleTagClick)}
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>);
+        <div className="row">
+          <div className="inner-wrapper">
+            <div className="seven-col append-one">
+              <juju.components.EntityContentReadme
+                entityModel={mockEntity}
+                renderMarkdown={renderMarkdown}
+                getFile={getFile} />
+            </div>
+            <div className="four-col">
+              <p>{' '}</p>
+            </div>
+          </div>
+        </div>
+        {undefined}
+      </div>
+    );
+    debugger;
     assert.deepEqual(output, expected);
   });
 
@@ -122,22 +173,29 @@ describe('EntityContent', function() {
     var mockEntity = jsTestUtils.makeEntity(true);
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          changeState={sinon.spy()}
           entityModel={mockEntity}
           getFile={getFile}
           renderMarkdown={renderMarkdown} />);
     var expected = (
-      <div className="row entity-content">
-        <div className="inner-wrapper">
-          <main className="seven-col append-one">
-            {undefined}
-            <juju.components.EntityContentReadme
-              entityModel={mockEntity}
-              renderMarkdown={renderMarkdown}
-              getFile={getFile} />
-            {undefined}
-          </main>
+      <div className="entity-content">
+        {undefined}
+        <div className="row">
+          <div className="inner-wrapper">
+            <div className="seven-col append-one">
+              <juju.components.EntityContentReadme
+                entityModel={mockEntity}
+                renderMarkdown={renderMarkdown}
+                getFile={getFile} />
+            </div>
+            <div className="four-col">
+              <p>{' '}</p>
+            </div>
+          </div>
         </div>
-      </div>);
+        {undefined}
+      </div>
+    );
     assert.deepEqual(output, expected);
   });
 });

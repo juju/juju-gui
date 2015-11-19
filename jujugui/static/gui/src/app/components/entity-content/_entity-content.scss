@@ -1,4 +1,78 @@
 .entity-content {
     clear: both;
-    padding-top: 30px;
+
+    .row {
+        overflow: auto;
+        padding: 80px 0;
+
+        &:nth-child(odd) {
+            background-color: $light-grey;
+        }
+
+        .inner-wrapper > div {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+
+    &__header {
+        margin: 0 0 1.6em 0;
+    }
+
+    &__description {
+        font-size: 22px;
+
+        p {
+            margin: 0 0 80px 0;
+        }
+    }
+
+    &__metadata {
+        font-size: 16px;
+        font-weight: 100;
+
+        h4 {
+            border-bottom: 1px solid $light-mid-grey;
+            padding-bottom: 1em;
+        }
+
+        li {
+            list-style: none;
+            margin-bottom: 0.8em;
+        }
+    }
+
+    &__readme-content {
+        h1, h2, h3 {
+            margin: 1.6em 0;
+        }
+
+        h4, h5, h6 {
+            margin: 0.8em 0;
+        }
+
+        h1 {
+            font-size: 1.4em;
+        }
+
+        h2 {
+            font-size: 1.3em;
+        }
+
+        h3 {
+            font-size: 1.2em;
+        }
+
+        h4 {
+            font-size: 1.1em;
+        }
+
+        h5, h6 {
+            font-size: 1em;
+        }
+
+        li {
+            margin-left: 3em;
+        }
+    }
 }

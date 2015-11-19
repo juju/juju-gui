@@ -25,7 +25,8 @@ YUI.add('entity-content', function() {
     propTypes: {
       entityModel: React.PropTypes.object.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
-      getFile: React.PropTypes.func.isRequired
+      getFile: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired
     },
 
     /**
@@ -52,13 +53,58 @@ YUI.add('entity-content', function() {
           );
         }, this);
         return (
-          <div className="entity-content__configuration" id="configuration">
-            <h3>Configuration</h3>
-            <dl>
-              {optionsList}
-            </dl>
-          </div>);
+          <div id="configuration" className="row entity-content__configuration">
+            <div className="inner-wrapper">
+              <div className="twelve-col">
+                <h2 className="entity-content__header">Configuration</h2>
+                <dl>
+                  {optionsList}
+                </dl>
+              </div>
+            </div>
+          </div>
+        );
       }
+    },
+
+    /**
+      Generates an HTML list from the supplied array.
+
+      @method _generateList
+      @param {Array} list The list of objects to markup.
+      @param {Function} handler The click handler for each item.
+      @return {Array} The list markup.
+    */
+    _generateList: function(list, handler) {
+      return list.map(function(item) {
+        return (
+          <li key={item}>
+            <a data-id={item} onClick={handler}>
+              {item}
+            </a>
+          </li>
+        );
+      });
+    },
+
+    /**
+      Handle clicks on tags.
+
+      @method _handleTagClick
+      @param {Object} e The event.
+    */
+    _handleTagClick: function(e) {
+      e.stopPropagation();
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            tags: e.target.getAttribute('data-id')
+          }
+        }
+      });
     },
 
     /**
@@ -70,27 +116,50 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        return <div className="entity-content__description">
-            <h2>Description</h2>
-            <p>{entityModel.get('description')}</p>
-          </div>;
+        // Have to convert {0: 'database'} to ['database'].
+        var tags = [],
+            entityTags = entityModel.get('tags'),
+            index;
+        for (index in entityTags) {
+          tags.push(entityTags[index]);
+        }
+        return (
+          <div className="row entity-content__description">
+            <div className="inner-wrapper">
+              <div className="twelve-col">
+                <p>{entityModel.get('description')}</p>
+              </div>
+              <div className="four-col entity-content__metadata last-col">
+                <h4>Tags</h4>
+                <ul>
+                  {this._generateList(tags, this._handleTagClick)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        );
       }
     },
 
     render: function() {
       var entityModel = this.props.entityModel;
       return (
-        <div className="row entity-content">
-          <div className="inner-wrapper">
-            <main className="seven-col append-one">
-              {this._generateDescription(entityModel)}
-              <juju.components.EntityContentReadme
-                entityModel={entityModel}
-                renderMarkdown={this.props.renderMarkdown}
-                getFile={this.props.getFile} />
-              {this._generateOptionsList(entityModel)}
-            </main>
+        <div className="entity-content">
+          {this._generateDescription(entityModel)}
+          <div className="row">
+            <div className="inner-wrapper">
+              <div className="seven-col append-one">
+                <juju.components.EntityContentReadme
+                  entityModel={entityModel}
+                  renderMarkdown={this.props.renderMarkdown}
+                  getFile={this.props.getFile} />
+              </div>
+              <div className="four-col">
+                <p>{' ' /* Placeholder for project information */}</p>
+              </div>
+            </div>
           </div>
+          {this._generateOptionsList(entityModel)}
         </div>
       );
     }

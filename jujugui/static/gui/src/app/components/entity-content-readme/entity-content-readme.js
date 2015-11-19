@@ -101,9 +101,9 @@ YUI.add('entity-content-readme', function() {
 
     render: function() {
       return (
-        <div className="entity-content_readme">
-          <h2 id="readme">Readme</h2>
-          <div className="entity-content_readme-content"
+        <div className="entity-content__readme">
+          <h2 className="entity-content__header" id="readme">Readme</h2>
+          <div ref="content" className="entity-content__readme-content"
             dangerouslySetInnerHTML={{__html: this.state.readme}} />
         </div>
       );
