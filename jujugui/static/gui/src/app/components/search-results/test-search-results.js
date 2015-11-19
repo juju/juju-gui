@@ -24,10 +24,18 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('SearchResults', function() {
+  var series;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
     YUI().use('search-results', function() { done(); });
+  });
+
+  beforeEach(function() {
+    series = {
+      vivid: {name: 'Vivid Vervet 15.04'},
+      wily: {name: 'Wily Werewolf 15.10'}
+    };
   });
 
   describe('functional tests', function() {
@@ -137,6 +145,7 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query={query}
+            seriesList={series}
             charmstoreSearch={charmstoreSearch} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
@@ -181,19 +190,10 @@ describe('SearchResults', function() {
         label: 'All',
         value: ''
       }, {
-        label: 'Precise 12.04',
-        value: 'precise'
-      }, {
-        label: 'Trusty 14.04',
-        value: 'trusty'
-      }, {
-        label: 'Utopic 14.10',
-        value: 'utopic'
-      }, {
-        label: 'Vivid 15.04',
+        label: 'Vivid Vervet 15.04',
         value: 'vivid'
       }, {
-        label: 'Wily 15.10',
+        label: 'Wily Werewolf 15.10',
         value: 'wily'
       }];
       var results = [{
@@ -253,6 +253,7 @@ describe('SearchResults', function() {
             type="charm"
             sort="-name"
             series="wily"
+            seriesList={series}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch} />, true);
       var instance = shallowRenderer.getMountedInstance();

@@ -22,17 +22,6 @@ YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
     searchXhr: null,
-    // XXX kadams54, 2015-05-21: This series mapping needs to be updated
-    // with each release, at least until we can figure out a better way.
-    // XXX urosj, 2015-11-04: We need to support all series, not just
-    // Ubuntu ones.
-    SERIES: {
-      precise: 12.04,
-      trusty: 14.04,
-      utopic: 14.10,
-      vivid: 15.04,
-      wily: 15.10
-    },
 
      /**
       If it's the same charm but for different series, collapse into one
@@ -50,8 +39,7 @@ YUI.add('search-results', function(Y) {
       }
 
       var collapsedEntities = {},
-          orderedKeys = [],
-          self = this;
+          orderedKeys = [];
       for (var i = 0, l = entities.length; i < l; i++) {
         var entity = entities[i],
             key = entityKey(entity),
@@ -67,10 +55,14 @@ YUI.add('search-results', function(Y) {
           collapsed.series.push(value);
           // Ensure that the most recent series is first.
           collapsed.series.sort(function(a, b) {
-            var k1 = self.SERIES[a.name],
-                k2 = self.SERIES[b.name];
             // We want a reverse sort, so...
-            return k2 - k1;
+            if (a.name < b.name) {
+              return 1;
+            } else if (a.name > b.name) {
+              return -1;
+            } else {
+              return 0;
+            }
           });
           // De-dupe the series array.
           collapsed.series = collapsed.series.filter(function(s, pos, arry) {
@@ -283,11 +275,11 @@ YUI.add('search-results', function(Y) {
             label: 'All',
             value: ''
           }];
-          var seriesMap = Object.keys(this.SERIES).map((series) => {
+          var series = this.props.seriesList;
+          var seriesMap = Object.keys(series).map((key) => {
             return {
-              label: series.charAt(0).toUpperCase() + series.slice(1) +
-                  ' ' + this.SERIES[series].toFixed(2),
-              value: series
+              label: series[key].name,
+              value: key
             };
           });
           seriesItems = seriesItems.concat(seriesMap);

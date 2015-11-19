@@ -871,6 +871,7 @@ YUI.add('juju-gui', function(Y) {
             file={metadata.flash.file}
             localType={localType}
             services={this.db.services}
+            series={utils.getSeriesList()}
             uploadLocalCharm={
                 localCharmHelpers.uploadLocalCharm.bind(
                 this, this.env, this.db)}
@@ -912,6 +913,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <components.Charmbrowser
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
           getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}

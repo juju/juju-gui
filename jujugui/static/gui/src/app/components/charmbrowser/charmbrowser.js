@@ -74,6 +74,7 @@ YUI.add('charmbrowser-component', function() {
                 changeState={this.props.changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
                 query={metadata.search}
+                seriesList={this.props.series}
                 type={metadata.type}
                 sort={metadata.sort}
                 series={metadata.series}
