@@ -2655,7 +2655,7 @@ YUI.add('juju-models', function(Y) {
         return related;
       }
       return this.services.filter({asList: true}, function(s) {
-        return related.indexOf(s.get('name') === 1);
+        return related.indexOf(s.get('name')) > -1;
       });
     },
 
