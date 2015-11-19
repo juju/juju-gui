@@ -810,6 +810,7 @@ YUI.add('juju-gui', function(Y) {
           <components.AddedServicesList
             services={db.services}
             updateUnitFlags={db.updateUnitFlags.bind(db)}
+            findRelatedServices={db.findRelatedServices.bind(db)}
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}
             setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}

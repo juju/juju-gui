@@ -46,6 +46,7 @@ YUI.add('added-services-list', function() {
               getUnitStatusCounts={this.props.getUnitStatusCounts}
               focusService={this.focusService}
               unfocusService={this.unfocusService}
+              ref={'AddedServicesListItem-' + service.get('id')}
               service={service} />);
       });
       return items;
@@ -61,13 +62,28 @@ YUI.add('added-services-list', function() {
     focusService: function(serviceId) {
       var props = this.props;
       var service = props.services.getById(serviceId);
-      service.set('highlight', true);
+      service.setAttrs({
+        highlight: true,
+        hide: false
+      });
       props.updateUnitFlags(service, 'highlight');
+      // find related services and update them
+      var related = props.findRelatedServices(service);
+      related.each(function(model) {
+        model.set('hide', false);
+      });
       var unrelated = props.findUnrelatedServices(service);
       unrelated.each(function(model) {
         model.set('hide', true);
       });
+      // Turn off any highlights on any services but the passed in id.
+      this.props.services.each(function(model) {
+        if (model.get('id') !== service.get('id')) {
+          model.set('highlight', false);
+        }
+      });
       props.setMVVisibility(serviceId, true);
+      this.disableFocusStateOnChildren(serviceId);
     },
 
     /**
@@ -88,6 +104,25 @@ YUI.add('added-services-list', function() {
         model.set('hide', false);
       });
       props.setMVVisibility(serviceId, false);
+    },
+
+    /**
+      Sets the focus state on the added-services-list-item components to
+      false skipping the one matching the serviceId provided.
+
+      @method disableFocusStateOnChildren
+      @param {String} serviceId The service Id for the list item to skip.
+    */
+    disableFocusStateOnChildren: function(serviceId) {
+      Object.keys(this.refs).forEach((key) => {
+        // Only modify the refs for the components matching this ref.
+        if (key.indexOf('AddedServicesListItem-') === 0) {
+          // Skip the component for the provided serviceId.
+          if (serviceId && key !== 'AddedServicesListItem-' + serviceId) {
+            this.refs[key].setState({focus: false});
+          }
+        }
+      });
     },
 
     render: function() {

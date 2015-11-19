@@ -2631,16 +2631,18 @@ YUI.add('juju-models', function(Y) {
 
     /**
       Returns a list of the deployed (both uncommitted and committed) services
-      that are not related to the provided service.
+      that are related to the provided service.
 
-      @method findUnrelatedServices
+      @method findRelatedServices
       @param {Object} service The origin service.
-      @return {Y.ModelList} A ModelList of the unrelated services.
+      @param {Boolean} asArray If you want the results returned as an array of
+        service names or a model list.
+      @return {Y.ModelList|Array} A ModelList of related services or an array
+        of service names.
     */
-    findUnrelatedServices: function(service) {
+    findRelatedServices: function(service, asArray) {
       var relationData = utils.getRelationDataForService(this, service);
-      var related = [service.get('name')],  // Add own name to related list.
-          unrelated;
+      var related = [service.get('name')];  // Add own name to related list.
       // Compile the list of related services.
       relationData.forEach(function(relation) {
         // Some relations (e.g., peer relations) may not have the far endpoint
@@ -2649,8 +2651,26 @@ YUI.add('juju-models', function(Y) {
           related.push(relation.far.service);
         }
       });
+      if (asArray) {
+        return related;
+      }
+      return this.services.filter({asList: true}, function(s) {
+        return related.indexOf(s.get('name') === 1);
+      });
+    },
+
+    /**
+      Returns a list of the deployed (both uncommitted and committed) services
+      that are not related to the provided service.
+
+      @method findUnrelatedServices
+      @param {Object} service The origin service.
+      @return {Y.ModelList} A ModelList of the unrelated services.
+    */
+    findUnrelatedServices: function(service) {
+      var related = this.findRelatedServices(service, true);
       // Find the unrelated by filtering out the related.
-      unrelated = this.services.filter({asList: true}, function(s) {
+      var unrelated = this.services.filter({asList: true}, function(s) {
         return related.indexOf(s.get('name')) === -1;
       });
       return unrelated;
