@@ -133,6 +133,9 @@ YUI.add('inspector-component', function() {
           } else {
             id = serviceId;
           }
+          if (!unit) {
+            break;
+          }
           state.activeChild = {
             title: unit.displayName,
             headerType: unit.agent_state || 'uncommitted',
