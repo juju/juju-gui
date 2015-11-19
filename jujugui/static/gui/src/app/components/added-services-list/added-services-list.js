@@ -46,6 +46,8 @@ YUI.add('added-services-list', function() {
               getUnitStatusCounts={this.props.getUnitStatusCounts}
               focusService={this.focusService}
               unfocusService={this.unfocusService}
+              fadeService={this.fadeService}
+              unfadeService={this.unfadeService}
               ref={'AddedServicesListItem-' + service.get('id')}
               service={service} />);
       });
@@ -104,6 +106,28 @@ YUI.add('added-services-list', function() {
         model.set('hide', false);
       });
       props.setMVVisibility(serviceId, false);
+    },
+
+    /**
+      Sets the fade attribute on the supplied service id to true.
+
+      @method fadeService
+      @param {String} serviceId The service Id to fade.
+    */
+    fadeService: function(serviceId) {
+      var service = this.props.services.getById(serviceId);
+      service.set('fade', true);
+    },
+
+    /**
+      Sets the fade attribute on the supplied service id to false.
+
+      @method unfadeService
+      @param {String} serviceId The service Id to unfade.
+    */
+    unfadeService: function(serviceId) {
+      var service = this.props.services.getById(serviceId);
+      service.set('fade', false);
     },
 
     /**

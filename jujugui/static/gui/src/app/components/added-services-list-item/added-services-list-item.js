@@ -25,6 +25,8 @@ YUI.add('added-services-list-item', function() {
     propTypes: {
       focusService: React.PropTypes.func.isRequired,
       unfocusService: React.PropTypes.func.isRequired,
+      fadeService: React.PropTypes.func.isRequired,
+      unfadeService: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired
@@ -33,7 +35,7 @@ YUI.add('added-services-list-item', function() {
     getInitialState: function() {
       return {
         focus: false,
-        highlight: false
+        fade: false
       };
     },
 
@@ -113,7 +115,7 @@ YUI.add('added-services-list-item', function() {
       this.setState({focus: focus});
       var serviceId = props.service.get('id');
       if (focus) {
-        this.setState({highlight: false});
+        this.setState({fade: false});
         props.focusService(serviceId);
       } else {
         props.unfocusService(serviceId);
@@ -130,7 +132,16 @@ YUI.add('added-services-list-item', function() {
       // We need to stop the propagation so that the click event doesn't
       // bubble up to the list item and navigate away.
       e.stopPropagation();
-      this.setState({highlight: !this.state.highlight});
+      var props = this.props;
+      var fade = !this.state.fade;
+      this.setState({fade: fade});
+      var serviceId = props.service.get('id');
+      if (fade) {
+        this.setState({focus: false});
+        props.fadeService(serviceId);
+      } else {
+        props.unfadeService(serviceId);
+      }
     },
 
     render: function() {
@@ -139,7 +150,7 @@ YUI.add('added-services-list-item', function() {
       var statusData = this._getPriorityUnits(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
       var focusIcon = state.focus ? 'focused_16' : 'unfocused_16';
-      var highlightIcon = state.highlight ? 'show_16' : 'hide_16';
+      var highlightIcon = state.fade ? 'hide_16' : 'show_16';
       return (
         <li className="inspector-view__list-item"
             data-serviceid={service.id}
