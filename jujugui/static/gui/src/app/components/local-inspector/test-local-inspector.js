@@ -32,12 +32,10 @@ describe('LocalInspector', function() {
   });
 
   beforeEach(function() {
-    series = juju.components.LocalInspector.prototype.SERIES;
-    juju.components.LocalInspector.prototype.SERIES = ['vivid', 'wily'];
-  });
-
-  afterEach(function() {
-    juju.components.LocalInspector.prototype.SERIES = series;
+    series = {
+      vivid: {name: 'Vivid Vervet 15.04'},
+      wily: {name: 'Wily Werewolf 15.10'}
+    };
   });
 
   it('can display the new service view', function() {
@@ -52,6 +50,7 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
         file={file}
+        series={series}
         localType="new"
         services={services}
         uploadLocalCharm={uploadLocalCharm}
@@ -104,8 +103,8 @@ describe('LocalInspector', function() {
             <p>Choose a series to deploy this charm</p>
             <select ref="series" defaultValue="trusty"
               className="local-inspector__series">
-              <option value="vivid" key="vivid">vivid</option>
-              <option value="wily" key="wily">wily</option>
+              <option value="vivid" key="vivid">Vivid Vervet 15.04</option>
+              <option value="wily" key="wily">Wily Werewolf 15.10</option>
             </select>
           </div>
         </div>
@@ -135,6 +134,7 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
         file={file}
+        series={series}
         localType="update"
         services={services}
         uploadLocalCharm={uploadLocalCharm}
@@ -226,6 +226,7 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
         file={file}
+        series={series}
         localType="new"
         services={services}
         uploadLocalCharm={uploadLocalCharm}
@@ -275,6 +276,7 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
         file={file}
+        series={series}
         localType="new"
         services={services}
         uploadLocalCharm={uploadLocalCharm}
@@ -307,6 +309,7 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
         file={file}
+        series={series}
         localType="update"
         services={services}
         uploadLocalCharm={uploadLocalCharm}
@@ -345,6 +348,7 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
         file={file}
+        series={series}
         localType="new"
         services={services}
         uploadLocalCharm={uploadLocalCharm}

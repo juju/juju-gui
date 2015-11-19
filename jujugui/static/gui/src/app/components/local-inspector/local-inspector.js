@@ -21,23 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('local-inspector', function() {
 
   juju.components.LocalInspector = React.createClass({
-    SERIES: [
-      'precise',
-      'quantal',
-      'raring',
-      'saucy',
-      'trusty',
-      'utopic',
-      'vivid',
-      'win2012hvr2',
-      'win2012hv',
-      'win2012r2',
-      'win2012',
-      'win7',
-      'win8',
-      'win81',
-    ],
-
     /**
       Get the current state of the local inspector.
 
@@ -90,8 +73,12 @@ YUI.add('local-inspector', function() {
       var component;
       switch (activeComponent) {
         case 'new':
-          var seriesOptions = this.SERIES.map((series) => {
-            return <option value={series} key={series}>{series}</option>;
+          var series = this.props.series;
+          var seriesOptions = Object.keys(series).map((key) => {
+            return (
+              <option value={key} key={key}>
+                {series[key].name}
+              </option>);
           });
           component = (
             <div>

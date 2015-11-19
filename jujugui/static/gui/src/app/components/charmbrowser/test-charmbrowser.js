@@ -45,12 +45,14 @@ describe('Charmbrowser', function() {
           series: 'wily'
         }
       }};
+    var series = sinon.stub();
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         changeState={changeState}
+        series={series}
         charmstoreSearch={charmstoreSearch} />);
     assert.deepEqual(output,
         <juju.components.Panel
@@ -58,6 +60,7 @@ describe('Charmbrowser', function() {
           visible={true}>
           <juju.components.SearchResults
             changeState={changeState}
+            seriesList={series}
             query={query}
             tags="ops"
             sort="-name"

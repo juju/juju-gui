@@ -31,6 +31,7 @@ YUI.add('juju-env-go', function(Y) {
   var PING_INTERVAL = 10;
 
   var environments = Y.namespace('juju.environments');
+  var utils = Y.namespace('juju.views.utils');
 
   /**
     Return a normalized name from an endpoint object.
@@ -157,11 +158,7 @@ YUI.add('juju-env-go', function(Y) {
         To be updated as necessary.
       @type {Array}
     */
-    series: [
-      'precise', 'quantal', 'raring', 'saucy', 'trusty', 'utopic', 'vivid',
-      'wily', 'win10', 'centos7',
-      'win2012hvr2', 'win2012hv', 'win2012r2', 'win2012', 'win7', 'win8',
-      'win81'],
+    series: Object.keys(utils.getSeriesList()),
 
     /**
      * Go environment constructor.
@@ -2563,6 +2560,7 @@ YUI.add('juju-env-go', function(Y) {
     'base',
     'json-parse',
     'json-stringify',
-    'juju-env-base'
+    'juju-env-base',
+    'juju-view-utils'
   ]
 });

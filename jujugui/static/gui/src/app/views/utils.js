@@ -36,6 +36,39 @@ YUI.add('juju-view-utils', function(Y) {
     @class utils
   */
 
+
+  /**
+     Get a list of all the supported series.
+
+     @method getSeriesList
+     @return {Object} A collection of series.
+   */
+  utils.getSeriesList = function() {
+    // For a list of supported series in Juju see:
+    // https://github.com/juju/charmstore/blob/v5-unstable/internal/
+    // series/series.go#L37
+    return {
+      oneiric: {name: 'Oneiric Ocelot 11.10'},
+      precise: {name: 'Precise Pangolin 12.04 LTS'},
+      quantal: {name: 'Quantal Quetzal 12.10'},
+      raring: {name: 'Raring Ringtail 13.04'},
+      saucy: {name: 'Saucy Salamander 13.10'},
+      trusty: {name: 'Trusty Tahr 14.04 LTS'},
+      utopic: {name: 'Utopic Unicorn 14.10'},
+      vivid: {name: 'Vivid Vervet 15.04'},
+      wily: {name: 'Wily Werewolf 15.10'},
+      centos7: {name: 'CentOS 7'},
+      win2012hvr2: {name: 'Windows Server 2012 R2 Hyper-V'},
+      win2012hv: {name: 'Windows Server 2012 Hyper-V'},
+      win2012r2: {name: 'Windows Server 2012 R2'},
+      win2012: {name: 'Windows Server 2012'},
+      win7: {name: 'Windows 7'},
+      win8: {name: 'Windows 8'},
+      win81: {name: 'Windows 8.1'},
+      win10: {name: 'Windows 10'}
+    };
+  };
+
   /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
@@ -1481,7 +1514,7 @@ YUI.add('juju-view-utils', function(Y) {
       // If it's not a bundle then it's a charm.
       charmstore.getEntity(entityId.replace('cs:', ''), function(error, charm) {
         if (error) {
-          failureNotification(error);   
+          failureNotification(error);
         } else {
           charm = charm[0];
           var config = {},
