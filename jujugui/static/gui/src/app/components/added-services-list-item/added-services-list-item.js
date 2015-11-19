@@ -175,11 +175,13 @@ YUI.add('added-services-list-item', function() {
           <span className="inspector-view__status-block">
             <span
               className="inspector-view__visibility-toggle"
+              ref="focusVisibilityIcon"
               onClick={this._toggleFocus}>
               <juju.components.SvgIcon name={focusIcon} size="16"/>
             </span>
             <span
               className="inspector-view__visibility-toggle"
+              ref="fadeVisibilityIcon"
               onClick={this._toggleHighlight}>
               <juju.components.SvgIcon name={highlightIcon} size="16"/>
             </span>
