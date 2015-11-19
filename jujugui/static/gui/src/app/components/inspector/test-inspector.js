@@ -175,9 +175,12 @@ describe('Inspector', function() {
   });
 
   it('handles the unit being removed while viewing the unit', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
+      getById: sinon.stub().returns(null),
       filterByStatus: sinon.stub().returns([])
     });
     var service = {
@@ -186,41 +189,19 @@ describe('Inspector', function() {
     var appState = {
       sectionA: {
         metadata: {
-          activeComponent: 'units',
-          units: 'error'
-        }}};
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Inspector
-        service={service}
-        appState={appState}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        appPreviousState={sinon.stub()}
-        changeState={sinon.stub()} />, true);
-    var instance = shallowRenderer.getMountedInstance();
-    assert.equal(instance.state.activeChild.title, 'Units');
-    getStub.withArgs('units').returns({getById: function() {
-      return;
-    }});
-    service = {
-      get: getStub
-    };
-    appState = {
-      sectionA: {
-        metadata: {
           activeComponent: 'unit',
           unit: '5'
         }}};
-    shallowRenderer.render(
+    var appPreviousState = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Inspector
         service={service}
-        appState={appState}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        appPreviousState={sinon.stub()}
-        changeState={sinon.stub()} />);
-    // The displayed component should not have been updated.
-    assert.equal(instance.state.activeChild.title, 'Units');
+        destroyUnits={destroyUnits}
+        changeState={changeState}
+        appPreviousState={appPreviousState}
+        appState={appState} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    assert.equal(instance.state.activeComponent, 'units');
   });
 
   it('can go back from the unit details to a status list', function() {
