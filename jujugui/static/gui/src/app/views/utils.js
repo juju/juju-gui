@@ -48,6 +48,7 @@ YUI.add('juju-view-utils', function(Y) {
     // https://github.com/juju/charmstore/blob/v5-unstable/internal/
     // series/series.go#L37
     return {
+      oneiric: {name: 'Oneiric Ocelot 11.10'},
       precise: {name: 'Precise Pangolin 12.04 LTS'},
       quantal: {name: 'Quantal Quetzal 12.10'},
       raring: {name: 'Raring Ringtail 13.04'},
