@@ -139,7 +139,7 @@ YUI.add('added-services-list-item', function() {
       var statusData = this._getPriorityUnits(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
       var focusIcon = state.focus ? 'focused_16' : 'unfocused_16';
-      var highlightIcon = state.highlight ? 'highlight_16' : 'unhighlight_16';
+      var highlightIcon = state.highlight ? 'show_16' : 'hide_16';
       return (
         <li className="inspector-view__list-item"
             data-serviceid={service.id}
