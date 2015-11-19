@@ -853,6 +853,7 @@ YUI.add('juju-gui', function(Y) {
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
             clearState={utils.clearState.bind(
                 this, this.views.environment.instance.topo)}
+            getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
             unexposeService={this.env.unexpose.bind(this.env)}

@@ -186,4 +186,24 @@ describe('BooleanConfig', function() {
     });
     assert.equal(onChange.callCount, 1);
   });
+
+  it('can update when new config is provided', function() {
+    var option = {
+      key: 'testcheck',
+      description: 'it is a test config option',
+    };
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.BooleanConfig
+        config={true}
+        label="Test"
+        option={option} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    assert.isTrue(instance.state.value);
+    shallowRenderer.render(
+      <juju.components.BooleanConfig
+        config={false}
+        label="Test"
+        option={option} />);
+    assert.isFalse(instance.state.value);
+  });
 });

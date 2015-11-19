@@ -110,6 +110,7 @@ describe('Inspector', function() {
     var charm = 'charm';
     var getStub = sinon.stub();
     var changeState = sinon.stub();
+    var getYAMLConfig = sinon.stub();
     var appPreviousState = sinon.stub();
     var service = {
       get: getStub
@@ -124,6 +125,7 @@ describe('Inspector', function() {
           appState={appState}
           service={service}
           changeState={changeState}
+          getYAMLConfig={getYAMLConfig}
           charm={charm}
           appPreviousState={appPreviousState}
           setConfig={setConfig} /> );
@@ -133,6 +135,7 @@ describe('Inspector', function() {
         <juju.components.Configuration
           service={service}
           changeState={changeState}
+          getYAMLConfig={getYAMLConfig}
           charm={charm}
           setConfig={setConfig} />);
   });

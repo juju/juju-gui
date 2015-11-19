@@ -21,8 +21,92 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-config', function() {
 
   juju.components.Configuration = React.createClass({
+    /**
+      Set the intial state.
 
-    _importConfig: function() {},
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      return {
+        // Have to clone the config so we don't update it via reference.
+        serviceConfig: this._clone(this.props.service.get('config')),
+        forceUpdate: false
+      };
+    },
+
+    shouldComponentUpdate: function(nextProps, nextState) {
+      // If the service has changed then the component should update with the
+      // new props.
+      var forceUpdate = this.state.forceUpdate;
+      if (forceUpdate) {
+        // Reset the force update flag so it only happens once.
+        this.setState({forceUpdate: false});
+      }
+      return forceUpdate ||
+        nextProps.service.get('id') !== this.props.service.get('id');
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({
+        // Have to clone the config so we don't update it via reference.
+        serviceConfig: this._clone(nextProps.service.get('config'))
+      });
+    },
+
+    /**
+      Clone an object.
+
+      @method _clone
+      @param {Object} obj The object to clone.
+      @returns {Object} the cloned object.
+    */
+    _clone: function(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    },
+
+    /**
+      Handle applying the uploaded config.
+
+      @method _applyConfig
+      @param {Object} config The config to apply.
+    */
+    _applyConfig: function(config) {
+      var charmName = this.props.charm.get('name');
+      // The provided YAML must be for the current charm.
+      var newConfig = config[charmName];
+      if (!newConfig) {
+        return;
+      }
+      var serviceConfig = this.state.serviceConfig;
+      Object.keys(newConfig).forEach((key) => {
+        if (serviceConfig[key]) {
+          serviceConfig[key] = newConfig[key];
+        }
+      });
+      this.setState({forceUpdate: true});
+      this.setState({serviceConfig: serviceConfig});
+    },
+
+    /**
+      Handle uploading the config file.
+
+      @method _openFileDialog
+    */
+    _importConfig: function() {
+      this.props.getYAMLConfig(this.refs.file.files[0], this._applyConfig);
+      // Reset the form so the file can be uploaded again
+      this.refs['file-form'].reset();
+    },
+
+    /**
+      Handle opening the file dialog from the hidden file input.
+
+      @method _openFileDialog
+    */
+    _openFileDialog: function() {
+      this.refs.file.click();
+    },
 
     /**
       Handle cancelling the changes and returning to the inspector overview.
@@ -48,16 +132,11 @@ YUI.add('inspector-config', function() {
       var refs = this.refs;
       var configValues = {};
       Object.keys(refs).forEach((ref) => {
+        var activeRef = refs[ref];
         // Just in case we ever have any sub components which have refs
         // and aren't a configuration component.
-        var isConfig = ref.split('-')[0] === 'Config';
-        var activeRef = refs[ref];
-        if (isConfig) {
-          var value;
-          if (activeRef.state) {
-            value = activeRef.state.value;
-          }
-          configValues[activeRef.props.option.key] = value;
+        if (ref.split('-')[0] === 'Config') {
+          configValues[activeRef.props.option.key] = activeRef.state.value;
         }
       });
       var changedConfig = this._getChangedValues(configValues);
@@ -120,6 +199,7 @@ YUI.add('inspector-config', function() {
       @returns {Array} An array of React components.
     */
     _generateConfigElements: function() {
+      var serviceConfig = this.state.serviceConfig;
       var charmOptions = this.props.charm.get('options');
       // Some charms don't have any options, in this case, just return.
       if (!charmOptions) {
@@ -128,7 +208,6 @@ YUI.add('inspector-config', function() {
             No configuration options.
           </div>);
       }
-      var serviceConfig = this.props.service.get('config');
       var configElements = [];
 
       Object.keys(charmOptions).forEach((key) => {
@@ -161,7 +240,7 @@ YUI.add('inspector-config', function() {
     render: function() {
       var importButton = [{
         title: 'Import config file',
-        action: this._importConfig
+        action: this._openFileDialog
       }];
       var actionButtons = [{
         title: 'Cancel',
@@ -174,7 +253,11 @@ YUI.add('inspector-config', function() {
 
       return (
         <div className="inspector-config">
-         <div className="inspector-config__fields">
+          <div className="inspector-config__fields">
+            <form ref="file-form">
+              <input type="file" ref="file" className="hidden"
+                onChange={this._importConfig} />
+            </form>
             <juju.components.ButtonRow buttons={importButton} />
             {this._generateConfigElements()}
           </div>

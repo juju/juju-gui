@@ -1202,6 +1202,32 @@ YUI.add('juju-view-utils', function(Y) {
   },
 
   /**
+    Get the config for a service from a YAML file.
+
+    @method _onYAMLConfigLoaded
+    @param {String} filename The config YAML file.
+    @param {Function} callback The function to call when the file loads.
+    @param {Object} e The load event.
+  */
+  utils._onYAMLConfigLoaded = function(filename, callback, e) {
+    var config = jsyaml.safeLoad(e.target.result);
+    callback(config);
+  },
+
+  /**
+    Get the config for a service from a YAML file.
+
+    @method getYAMLConfig
+    @param {Object} file The config YAML file.
+    @param {Function} callback The function to call when the file loads.
+  */
+  utils.getYAMLConfig = function(file, callback) {
+    var reader = new FileReader();
+    reader.onload = utils._onYAMLConfigLoaded.bind(utils, file.name, callback);
+    reader.readAsText(file);
+  },
+
+  /**
     Determines the category type for the unit status list of the inspector.
 
     @method determineCategoryType
