@@ -146,7 +146,7 @@ YUI.add('juju-topology-service', function(Y) {
       });
     node.select('.service-icon')
       .attr('transform', function(d) {
-        return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)'
+        return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)';
       });
     node.select('.relation-button')
       .attr('transform', function(d) {
