@@ -4,6 +4,8 @@
 include HACKING.rst
 include MANIFEST.in
 include *.ini
+include requirements.txt
+include test-requirements.txt
 
 recursive-include jujugui/static *
 recursive-include jujugui/templates *
@@ -11,3 +13,4 @@ recursive-include jujugui/templates *
 recursive-exclude jujugui/static/gui/src *
 recursive-exclude jujugui/tests *
 recursive-exclude test *
+
