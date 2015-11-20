@@ -177,6 +177,66 @@ describe('Inspector', function() {
           unit="unit" />);
   });
 
+  it('handles the unit being removed while viewing the unit', function() {
+    var changeState = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({
+      filterByStatus: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'units',
+          units: 'error'
+        }}};
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        service={service}
+        appState={appState}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
+        appPreviousState={sinon.stub()}
+        changeState={changeState} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    assert.equal(instance.state.activeComponent, 'units');
+    getStub.withArgs('units').returns({getById: function() {
+      return;
+    }});
+    service = {
+      get: getStub
+    };
+    appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'unit',
+          unit: '5'
+        }}};
+    shallowRenderer.render(
+      <juju.components.Inspector
+        service={service}
+        appState={appState}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
+        appPreviousState={sinon.stub()}
+        changeState={sinon.stub()} />);
+    // The displayed component should not have been updated.
+    assert.equal(instance.state.activeComponent, 'units');
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'demo',
+          activeComponent: 'units',
+          unit: null,
+          unitStatus: null
+        }}});
+  });
+
   it('can go back from the unit details to a status list', function() {
     var destroyUnits = sinon.stub();
     var changeState = sinon.stub();

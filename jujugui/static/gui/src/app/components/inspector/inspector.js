@@ -119,7 +119,7 @@ YUI.add('inspector-component', function() {
         case 'unit':
           var unitId = metadata.unit;
           var unit = service.get('units').getById(
-              serviceId + '/' + unitId);
+                serviceId + '/' + unitId);
           var unitStatus = null;
           var previousComponent;
           var id;
@@ -132,6 +132,19 @@ YUI.add('inspector-component', function() {
             id = previousMetadata.id;
           } else {
             id = serviceId;
+          }
+          // If the unit doesn't exist then show the list of units.
+          if (!unit) {
+            this.props.changeState({
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: id,
+                  activeComponent: 'units',
+                  unit: null,
+                  unitStatus: unitStatus
+                }}});
+            return {};
           }
           state.activeChild = {
             title: unit.displayName,
