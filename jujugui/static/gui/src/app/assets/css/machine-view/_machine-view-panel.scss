@@ -1,14 +1,23 @@
 .machine-view-panel {
-    @extend %floating-panel;
-    @extend .display-flex;
-    box-sizing: border-box;
+    @include fadeIn(.1s);
+    background-color: $canvas-background;
     position: absolute;
+    top: $navbar-height;
+    bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 600;
-    top: $navbar-height + $panel-space;
-    bottom: $deployer-bar-height + $panel-space;
-    left: $left-panel-width + ($panel-space * 2);
-    right: 10px;
-    padding: 0;
+
+    &__content {
+        @extend .display-flex;
+        box-sizing: border-box;
+        position: absolute;
+        top: 10px;
+        bottom: $deployer-bar-height;
+        left: $left-panel-width + 40px;
+        right: 20px;
+        padding: 0;
+    }
 
     input[type="text"] {
         // Using a variable here because commas aren't allowed in mixin args.
