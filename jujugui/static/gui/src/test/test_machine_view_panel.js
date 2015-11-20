@@ -99,6 +99,7 @@ describe('machine view panel view', function() {
     view = new View({
       container: container,
       db: {
+        fire: utils.makeStubFunction(),
         machines: machines,
         notifications: notifications,
         services: services,

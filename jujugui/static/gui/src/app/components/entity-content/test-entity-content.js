@@ -163,7 +163,6 @@ describe('EntityContent', function() {
         {undefined}
       </div>
     );
-    debugger;
     assert.deepEqual(output, expected);
   });
 
