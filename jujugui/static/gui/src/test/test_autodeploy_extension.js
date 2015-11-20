@@ -42,6 +42,7 @@ describe('Autodeploy Extension', function() {
       setAttrs: setAttrsStub
     });
     widget.set('db', {
+      fire: utils.makeStubFunction(),
       machines: {
         updateModelId: utils.makeStubFunction(),
         revive: reviveStub,
@@ -103,6 +104,20 @@ describe('Autodeploy Extension', function() {
                  'machine not added');
     assert.deepEqual(addStub.lastArguments()[2], {modelId: id},
                      'incorrect machine ID');
+  });
+
+  it('fires a db update when a machine is created', function() {
+    var db = widget.get('db'),
+        env = widget.get('env');
+    var addGhostStub = utils.makeStubMethod(db.machines, 'addGhost', {id: '0'});
+    var fireStub = utils.makeStubMethod(db, 'fire');
+    var addStub = utils.makeStubMethod(env, 'addMachines');
+    this._cleanups.push(addGhostStub.reset);
+    this._cleanups.push(fireStub.reset);
+    this._cleanups.push(addStub.reset);
+    widget._createMachine();
+    assert.equal(db.fire.calledOnce(), true);
+    assert.equal(db.fire.lastArguments()[0], 'update');
   });
 
   it('handles response errors when creating new machines', function() {

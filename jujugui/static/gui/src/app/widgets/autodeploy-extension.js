@@ -75,6 +75,7 @@ YUI.add('autodeploy-extension', function(Y) {
         parentId: parentId,
         constraints: constraints || {}
       }], callback, {modelId: machine.id});
+      db.fire('update');
       return machine;
     },
 
