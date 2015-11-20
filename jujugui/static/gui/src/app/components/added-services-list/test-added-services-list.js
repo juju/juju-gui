@@ -270,6 +270,65 @@ describe('AddedServicesList', () => {
     assert.equal(setMVVisibility.callCount, 1);
   });
 
-  it('performs the necessary work to fade a service');
-  it('performs the necessary work to unfade a service');
+  it('performs the necessary work to fade a service', () => {
+    var serviceSet = sinon.stub();
+    var services = {
+      each: (cb) => {
+        cb({
+          get: () => 'trusty/wordpress',
+          set: serviceSet
+        });
+      },
+      getById: () => {
+        return {
+          set: serviceSet
+        };
+      }};
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.AddedServicesList
+          updateUnitFlags={sinon.stub()}
+          findRelatedServices={sinon.stub()}
+          findUnrelatedServices={sinon.stub()}
+          setMVVisibility={sinon.stub()}
+          changeState={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          services={services}/>, true);
+
+    var instance = renderer.getMountedInstance();
+    // Call the fade Service method which would be passed down to the children.
+    instance.fadeService('trusty/wordpress');
+    assert.equal(serviceSet.callCount, 1);
+    assert.deepEqual(serviceSet.args[0], ['fade', true]);
+  });
+
+  it('performs the necessary work to unfade a service', () => {
+    var serviceSet = sinon.stub();
+    var services = {
+      each: (cb) => {
+        cb({
+          get: () => 'trusty/wordpress',
+          set: serviceSet
+        });
+      },
+      getById: () => {
+        return {
+          set: serviceSet
+        };
+      }};
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.AddedServicesList
+          updateUnitFlags={sinon.stub()}
+          findRelatedServices={sinon.stub()}
+          findUnrelatedServices={sinon.stub()}
+          setMVVisibility={sinon.stub()}
+          changeState={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          services={services}/>, true);
+
+    var instance = renderer.getMountedInstance();
+    // Call the fade Service method which would be passed down to the children.
+    instance.unfadeService('trusty/wordpress');
+    assert.equal(serviceSet.callCount, 1);
+    assert.deepEqual(serviceSet.args[0], ['fade', false]);
+  });
 });
