@@ -30,6 +30,7 @@
         border: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .column {
         @extend %customize-scrollbar;
         @extend .display-flex;
@@ -41,16 +42,19 @@
             .content {
                 border-top: none;
             }
+
             .units {
                 &.state-placed .all-placed,
                 &.state-units .unit-list,
                 &.state-add .add-services {
                     display: block;
                 }
+
                 .unit-list,
                 .onboarding {
                     display: none;
                 }
+
                 .onboarding {
                     padding: 10px 20px;
                     border-bottom: 1px solid $machine-view-border-colour;
@@ -62,6 +66,7 @@
                         vertical-align: middle;
                     }
                 }
+
                 .unit-list {
                     margin: 10px;
                     padding: 10px;
@@ -80,6 +85,7 @@
                 }
             }
         }
+
         &.machines {
             .content {
                 // Allow the token borders to overlap the column borders
@@ -99,6 +105,7 @@
                 }
             }
         }
+
         &.containers {
             .content {
                 // Allow the token borders to overlap the column borders
@@ -107,6 +114,7 @@
                 padding-left: 1px;
             }
         }
+
         .head {
             flex: 0 0 auto;
             position: relative;
@@ -117,17 +125,21 @@
             a {
                 float: right;
             }
+
             .title,
             .labels {
                 display: inline-block;
                 font-size: 16px;
             }
+
             .label:after {
                 content: ', ';
             }
+
             .label:last-child:after {
                 content: '';
             }
+
             .drop {
                 @extend .type4;
 
@@ -135,6 +147,7 @@
                     margin-top: -13px;
                 }
             }
+
             .more-menu {
                 display: block;
                 position: absolute;
@@ -147,6 +160,7 @@
                 }
             }
         }
+
         .content {
             flex: 1 1 auto;
             overflow-x: hidden;
@@ -159,6 +173,7 @@
             }
         }
     }
+
     .droppable {
         .drop {
             display: block;
@@ -171,6 +186,7 @@
             }
         }
     }
+
     .drop {
         display: none;
         position: absolute;
@@ -189,9 +205,11 @@
             margin-top: -13px;
         }
     }
+
     .token .drop span {
         display: none;
     }
+
     .drop-hover .token .drop {
         background-color: rgba(250, 250, 250, 0.85);
         border-color: #b2b2b2;
@@ -200,16 +218,19 @@
             display: inline-block;
         }
     }
+
     .machine-view-panel-header {
         .drop {
             background-color: #fff;
             border-color: #b2b2b2;
         }
+
         &.drop-hover .drop {
             background-color: #f8f8f8;
         }
     }
 }
+
 body.state-sidebar-hidden .machine-view-panel {
     left: 0;
 }
