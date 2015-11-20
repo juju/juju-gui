@@ -18,7 +18,7 @@ tests_require = [str(req.req) for req in test_requirements
                 if req.name not in ignore_requirements]
 
 setup(name='jujugui',
-      version='1.8.1000',
+      version='1.9.0',
       description='jujugui',
       classifiers=[
           "Programming Language :: Python",
