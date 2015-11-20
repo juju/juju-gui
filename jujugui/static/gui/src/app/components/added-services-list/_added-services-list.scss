@@ -24,6 +24,10 @@
         &:active,
         &:hover {
             background-color: $light-grey;
+
+        }
+        &:hover .inspector-view__visibility-toggle {
+            visibility: visible;
         }
     }
 
@@ -38,7 +42,7 @@
     &__item-name {
         overflow: hidden;
         display: inline-block;
-        max-width: 165px;
+        max-width: 110px;
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: text-bottom;
@@ -49,6 +53,7 @@
     }
 
     &__visibility-toggle {
+        visibility: hidden;
         vertical-align: middle;
         padding: 0 15px 0 0;
     }
