@@ -36,7 +36,11 @@
         @extend .display-flex;
         @include flex-direction(column);
         flex: 1 1 33.333%;
-        border-right: 1px solid $machine-view-border-colour;
+        border-right: 1px dotted $mid-grey;
+
+        &:last-child {
+            border-right: none;
+        }
 
         &.unplaced {
             .content {
@@ -57,7 +61,7 @@
 
                 .onboarding {
                     padding: 10px 20px;
-                    border-bottom: 1px solid $machine-view-border-colour;
+                    border-bottom: 1px dotted $mid-grey;
                     line-height: 40px;
 
                     .svg-icon {
@@ -165,7 +169,7 @@
             flex: 1 1 auto;
             overflow-x: hidden;
             overflow-y: auto;
-            border-top: 1px solid $machine-view-border-colour;
+            border-top: 1px dotted $mid-grey;
 
             ul.items {
                 margin: 0;
