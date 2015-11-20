@@ -27,6 +27,7 @@ YUI.add('added-services-list', function() {
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       services: React.PropTypes.object.isRequired,
       updateUnitFlags: React.PropTypes.func.isRequired,
+      findRelatedServices: React.PropTypes.func.isRequired,
       findUnrelatedServices: React.PropTypes.func.isRequired,
       setMVVisibility: React.PropTypes.func.isRequired
     },
