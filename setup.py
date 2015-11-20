@@ -1,15 +1,15 @@
 import os
 
+from pip.download import PipSession
+from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
+pip_session = PipSession()
+requirements = parse_requirements("requirements.txt", session=pip_session)
+test_requirements = parse_requirements("test-requirements.txt",
+                                       session=pip_session)
 
 here = os.path.abspath(os.path.dirname(__file__))
-requires = [
-    'pyramid',
-    'pyramid_mako',
-    'waitress',
-    'convoy',
-]
 
 
 setup(name='jujugui',
@@ -26,8 +26,8 @@ setup(name='jujugui',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      install_requires=requires,
-      tests_require=requires,
+      install_requires=[str(req.req) for req in requirements],
+      tests_require=[str(req.req) for req in test_requirements],
       test_suite="jujugui",
       entry_points="""\
       [paste.app_factory]

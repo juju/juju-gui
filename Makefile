@@ -349,7 +349,7 @@ bumpversion: test-deps
 
 .PHONY: dist
 dist: gui test-deps
-	python setup.py sdist
+	python setup.py sdist --formats=bztar
 
 #######
 # CLEAN
