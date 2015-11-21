@@ -136,7 +136,6 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
 		-not -name "*d3-wrapper*" \
-		-not -name "*unscaled-pack*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
@@ -209,7 +208,7 @@ $(BUILT_D3):
 	  node_modules/d3/src/svg/line.js \
 	  node_modules/d3/src/svg/arc.js \
 	  node_modules/d3/src/event/drag.js \
-	  $(GUISRC)/app/assets/javascripts/unscaled-pack.js \
+	  node_modules/d3/src/layout/pack.js \
 	  $(GUISRC)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
 	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3-min.js
 
