@@ -17,6 +17,7 @@ BUILT_JS_ASSETS := $(GUIBUILD)/app/assets/javascripts
 JUJUGUI := lib/python*/site-packages/jujugui.egg-link
 FLAKE8 := bin/flake8
 PYRAMID := lib/python2.7/site-packages/pyramid
+PYTESTPKG := lib/python2.7/site-packages/pytest.py
 NODE_MODULES := node_modules
 MODULES := $(GUIBUILD)/modules.js
 MODULESMIN := $(GUIBUILD)/modules-min.js
@@ -277,22 +278,22 @@ update-downloadcache: $(CACHE)
 # DEPS
 ######
 # Use the pyramid install dir as our indicator that dependencies are installed.
-$(PYRAMID): $(PY) $(CACHE)
+$(PYRAMID): $(PY) $(CACHE) requirements.txt
 	$(call PIP,requirements.txt)
+	@touch $(PYRAMID)
 
 .PHONY: deps
-deps: $(PY) $(CACHE)
-	$(call PIP,requirements.txt)
+deps: $(PYRAMID)
 
 # Use the pytest binary as our indicator that the test dependencies are installed.
-$(PYTEST): $(PY) $(CACHE)
+$(PYTEST): $(PY) $(CACHE) test-requirements.txt
 	$(call PIP,test-requirements.txt)
+	@touch $(PYTEST)
 
 $(FLAKE8): $(PYTEST)
 
 .PHONY: test-deps
-test-deps: $(PY)
-	$(call PIP,test-requirements.txt)
+test-deps: $(PYTEST)
 
 $(SELENIUM): $(PY)
 	@# Because shelltoolbox requires ez_setup already installed before being
@@ -349,7 +350,7 @@ bumpversion: test-deps
 
 .PHONY: dist
 dist: gui test-deps
-	python setup.py sdist
+	python setup.py sdist --formats=bztar
 
 #######
 # CLEAN
