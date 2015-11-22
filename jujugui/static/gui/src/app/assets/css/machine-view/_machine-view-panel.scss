@@ -20,7 +20,6 @@
     }
 
     .column {
-        @extend %customize-scrollbar;
         @extend .display-flex;
         @include flex-direction(column);
         flex: 1 1 33.333%;
@@ -55,7 +54,6 @@
 
                 .onboarding {
                     padding: 10px;
-                    border-bottom: 1px dotted $mid-grey;
                     line-height: 40px;
 
                     .svg-icon {
@@ -76,13 +74,21 @@
         }
 
         &.machines {
+            padding-left: 0;
+            padding-right: 0;
+
+            .head {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
             .content {
                 // Allow the token borders to overlap the column borders
                 // that would otherwise be hidden by overflow: hidden.
                 margin-left: -1px;
                 margin-right: -1px;
-                padding-left: 1px;
-                padding-right: 1px;
+                padding-left: 21px;
+                padding-right: 21px;
 
                 .onboarding {
                     padding: 20px 10px;
@@ -109,6 +115,7 @@
             position: relative;
             height: 49px;
             padding: 0 10px;
+            border-bottom: 1px dotted $mid-grey;
             line-height: 48px;
 
             a {
@@ -130,8 +137,6 @@
             }
 
             .drop {
-                @extend .type4;
-
                 span {
                     margin-top: -13px;
                 }
@@ -154,7 +159,6 @@
             flex: 1 1 auto;
             overflow-x: hidden;
             overflow-y: auto;
-            border-top: 1px dotted $mid-grey;
 
             ul.items {
                 margin: 0;
@@ -179,19 +183,20 @@
     .drop {
         display: none;
         position: absolute;
-        top: -1px;
-        bottom: -1px;
-        left: -1px;
-        right: -1px;
-        border: 1px dashed #fff;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        color: $ubuntu-orange;
+        line-height: 25px;
         text-align: center;
+
 
         span {
             position: absolute;
             top: 50%;
             left: 0;
             right: 0;
-            margin-top: -13px;
         }
     }
 
@@ -200,8 +205,8 @@
     }
 
     .drop-hover .token .drop {
-        background-color: rgba(250, 250, 250, 0.85);
-        border-color: #b2b2b2;
+        background-color: rgba(250, 250, 250, 0.9);
+        border-color: $mid-grey;
 
         span {
             display: inline-block;
@@ -210,12 +215,14 @@
 
     .machine-view-panel-header {
         .drop {
-            background-color: #fff;
-            border-color: #b2b2b2;
+            background-color: $canvas-background;
+            border-width: 1px 1px 0 1px;
+            border-style: dotted;
+            border-color: $mid-grey;
         }
 
         &.drop-hover .drop {
-            background-color: #f8f8f8;
+            background-color: #fff;
         }
     }
 }

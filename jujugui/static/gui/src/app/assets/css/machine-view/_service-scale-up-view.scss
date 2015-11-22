@@ -3,14 +3,17 @@
         .action-block .button.closed {
             display: none;
         }
+
         .action-block .button.opened,
         .service-list {
             display: block;
         }
     }
+
     .title {
         font-size: 16px;
     }
+
     .action-block {
         @extend .border-box;
         height: 50px;
@@ -23,6 +26,7 @@
                 opacity: 1;
             }
         }
+
         .button {
             @extend %button-orange;
             transition: opacity 0.3s;
@@ -39,12 +43,14 @@
             }
         }
     }
+
     .service-list {
         display: none;
 
         ul {
             margin: 0;
         }
+
         li {
             padding: 10px 20px;
             border-bottom: 1px dotted $mid-grey;
@@ -56,10 +62,12 @@
                 height: 20px;
                 margin-right: 10px;
             }
+
             .icon,
             .service-name {
                 vertical-align: middle;
             }
+
             .service-units {
                 display: inline-block;
                 float: right;
@@ -70,6 +78,7 @@
                 text-align: right;
             }
         }
+
         .actions {
             padding: 10px 20px 0 0;
             text-align: right;

@@ -5,12 +5,15 @@
                 background-color: #ddd;
             }
         }
+
         &.hidden {
             display: none;
         }
+
         .title {
             margin-right: 10px;
         }
+
         .service-icons, .service-icons-faded {
             margin-top: 2px;
             list-style: none;
@@ -18,18 +21,21 @@
             .unit {
                 position: relative;
                 min-height: 20px;
-                margin: 0 -20px;
+                margin: 0 -10px;
                 padding: 5px 20px;
 
                 &.uncommitted .unit-uncommitted {
                     display: inline-block;
                 }
+
                 &.deleted .removed {
                     display: inline;
                 }
+
                 &.hide {
                     display: none;
                 }
+
                 &:hover {
                     background-color: #eee;
 
@@ -37,20 +43,25 @@
                         display: block;
                     }
                 }
+
                 &:last-child {
                     margin-bottom: 0;
                 }
+
                 .unit-uncommitted {
                     display: none;
                 }
+
                 img {
                     vertical-align: middle;
                     float: left;
                     margin: 0 7px 0 0;
                 }
+
                 .name {
                     display: block;
                 }
+
                 .more-menu {
                     display: block;
                     top: 4px;
@@ -67,12 +78,15 @@
                 display: inline-block;
                 padding: 0;
                 margin: 0;
+
                 .more-menu {
                     display: none;
                 }
+
                 img {
                   margin: 0;
                 }
+
                 .name {
                     display: none;
                 }
