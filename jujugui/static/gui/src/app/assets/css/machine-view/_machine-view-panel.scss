@@ -19,26 +19,20 @@
         padding: 0;
     }
 
-    input[type="text"] {
-        // Using a variable here because commas aren't allowed in mixin args.
-        $box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.4);
-        @include create-box-shadow($box-shadow);
-        @include create-border-radius($border-radius);
-        margin: 0;
-        padding: 7px 10px;
-        background:  #eee;
-        border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
     .column {
         @extend %customize-scrollbar;
         @extend .display-flex;
         @include flex-direction(column);
         flex: 1 1 33.333%;
         border-right: 1px dotted $mid-grey;
+        padding: 0 20px;
+
+        &:first-child {
+            padding-left: 0;
+        }
 
         &:last-child {
+            padding-right: 0;
             border-right: none;
         }
 
@@ -60,7 +54,7 @@
                 }
 
                 .onboarding {
-                    padding: 10px 20px;
+                    padding: 10px;
                     border-bottom: 1px dotted $mid-grey;
                     line-height: 40px;
 
@@ -72,19 +66,10 @@
                 }
 
                 .unit-list {
-                    margin: 10px;
-                    padding: 10px;
-                    background-color: #eee;
+                    padding: 20px 10px;
 
                     .auto-place {
-                        @include create-border-radius($border-radius);
-                        display: inline-block;
-                        height: 40px;
                         margin-right: 7px;
-                        padding: 0 20px;
-                        background-color: #fff;
-                        border: 1px solid #dcdcdc;
-                        line-height: 40px;
                     }
                 }
             }
@@ -100,7 +85,7 @@
                 padding-right: 1px;
 
                 .onboarding {
-                    padding: 20px;
+                    padding: 20px 10px;
 
                     ul {
                         padding-left: 30px;
@@ -123,7 +108,7 @@
             flex: 0 0 auto;
             position: relative;
             height: 49px;
-            padding: 0 20px;
+            padding: 0 10px;
             line-height: 48px;
 
             a {

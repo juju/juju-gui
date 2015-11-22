@@ -1,11 +1,9 @@
 .machine-view-panel .serviceunit-token {
+    @extend %floating-panel;
     position: relative;
     min-height: 38px;
     margin: 10px 0 0 0;
     padding: 0 10px;
-    background-color: #fff;
-    border: 1px dotted $mid-grey;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
     line-height: 38px;
 
     // States
@@ -102,7 +100,7 @@
     }
     .more-menu {
         position: absolute;
-        right: 5px;
+        right: 10px;
         cursor: default;
     }
     .more-menu,

@@ -15,7 +15,7 @@
         @extend .border-box;
         height: 50px;
         border-bottom: 1px dotted $mid-grey;
-        padding: 20px;
+        padding: 20px 10px;
         line-height: 10px;
 
         &.enabled {
