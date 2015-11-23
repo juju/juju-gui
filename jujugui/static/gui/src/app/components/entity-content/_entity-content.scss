@@ -75,4 +75,13 @@
             margin-left: 3em;
         }
     }
+
+    .section {
+        padding: 20px;
+        border: 1px solid $light-mid-grey;
+
+        &__title {
+            margin-bottom: 20px;
+        }
+    }
 }

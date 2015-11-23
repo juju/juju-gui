@@ -70,7 +70,8 @@ YUI.add('entity-details', function() {
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
                   renderMarkdown={this.props.renderMarkdown}
-                  entityModel={entityModel} />
+                  entityModel={entityModel}
+                  pluralize={this.props.pluralize} />
               </div>
           };
           break;

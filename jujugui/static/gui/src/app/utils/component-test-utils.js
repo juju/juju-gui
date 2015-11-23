@@ -132,9 +132,11 @@ var jsTestUtils = {
     if (isBundle) {
       pojo = {
         name: 'django-cluster',
+        full_name: 'django-cluster',
         description: 'HA Django cluster.',
         displayName: 'django cluster',
         url: 'http://example.com/django-cluster',
+        code_source: {location: 'lp:django-cluster/code'},
         downloads: 1000,
         owner: 'test-owner',
         promulgated: true,
@@ -149,9 +151,11 @@ var jsTestUtils = {
     } else {
       pojo = {
         name: 'django',
+        full_name: 'trusty/django',
         description: 'Django framework.',
         displayName: 'django',
         url: 'http://example.com/django',
+        code_source: {location: 'lp:django/code'},
         downloads: 1000,
         owner: 'test-owner',
         promulgated: true,
