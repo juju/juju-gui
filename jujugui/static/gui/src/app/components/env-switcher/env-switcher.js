@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('env-switcher', function() {
 
   juju.components.EnvSwitcher = React.createClass({
+    mixins: [OnClickOutside],
 
     propTypes: {
       jem: React.PropTypes.object,
@@ -40,6 +41,17 @@ YUI.add('env-switcher', function() {
 
     componentDidMount: function() {
       this.updateEnvList();
+    },
+
+    /**
+      Close the switcher when there is a click outside of the component.
+      Called by the OnClickOutside mixin.
+
+      @method handleClickOutside
+      @param {Object} e The click event
+    */
+    handleClickOutside: function(e) {
+      this.setState({showEnvList: false});
     },
 
     /**
