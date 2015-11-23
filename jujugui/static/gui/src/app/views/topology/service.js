@@ -1244,7 +1244,7 @@ YUI.add('juju-topology-service', function(Y) {
           // Set the centroid to the new service's position
           topo.fire('panToPoint', {point: coords});
         } else {
-          d3.layout.unscaledPack()
+          d3.layout.pack()
           // Set the size of the visualization to the size of the
           // viewport (unscaledPack discards this, but it is
           // convention).
