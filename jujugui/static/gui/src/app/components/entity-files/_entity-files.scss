@@ -2,12 +2,13 @@
     ul {
         margin: 0;
     }
+
     li {
         list-style: none;
         line-height: 1.6;
     }
 
-    .section__list-item {
+    &__file {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

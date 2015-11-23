@@ -30,8 +30,8 @@ YUI.add('entity-files', function() {
     render: function() {
       var entityModel = this.props.entityModel;
       var files = entityModel.get('files');
-      var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/' +
-                       `${entityModel.get('full_name')}/archive`;
+      var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
+      var archiveUrl = `${apiUrl}/${entityModel.get('full_name')}/archive`;
       var codeUrl = entityModel.get('code_source').location;
       var codeLink;
       if (codeUrl) {
@@ -39,7 +39,6 @@ YUI.add('entity-files', function() {
         codeLink = (
           <li>
             <a target="_blank"
-              className="section__actions--launchpad"
               href={codeUrl}>
               View code
             </a>
@@ -62,7 +61,7 @@ YUI.add('entity-files', function() {
         );
         */
         return (
-          <li key={file} className="section__list-item">
+          <li key={file} className="entity-files__file">
             {file}
           </li>
         );
@@ -72,17 +71,16 @@ YUI.add('entity-files', function() {
           <h3 className="section__title">
             {files.length + ' ' + this.props.pluralize('file', files.length)}
           </h3>
-          <ul className="section__links">
+          <ul className="entity-files__links">
             {codeLink}
             <li>
               <a target="_blank"
-                className="section__actions--archive-url"
                 href={archiveUrl}>
                 Download .zip
               </a>
             </li>
           </ul>
-          <ul className="section__list">
+          <ul className="entity-files__files">
             {fileItems}
           </ul>
         </div>
