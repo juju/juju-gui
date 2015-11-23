@@ -37,6 +37,7 @@ describe('AddedServicesList', () => {
 
     var changeState = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
+    var hoverService = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.AddedServicesList
           updateUnitFlags={sinon.stub()}
@@ -44,6 +45,7 @@ describe('AddedServicesList', () => {
           findUnrelatedServices={sinon.stub()}
           setMVVisibility={sinon.stub()}
           changeState={changeState}
+          hoverService={hoverService}
           getUnitStatusCounts={getUnitStatusCounts}
           services={services}/>, true);
 
@@ -62,6 +64,7 @@ describe('AddedServicesList', () => {
             fadeService={instance.fadeService}
             unfadeService={instance.unfadeService}
             ref={'AddedServicesListItem-' + allServices[0].get()}
+            hoverService={hoverService}
             service={allServices[0]} />
           <juju.components.AddedServicesListItem
             key={allServices[1].get()}
@@ -72,6 +75,7 @@ describe('AddedServicesList', () => {
             fadeService={instance.fadeService}
             unfadeService={instance.unfadeService}
             ref={'AddedServicesListItem-' + allServices[1].get()}
+            hoverService={hoverService}
             service={allServices[1]} />
           <juju.components.AddedServicesListItem
             key={allServices[2].get()}
@@ -82,6 +86,7 @@ describe('AddedServicesList', () => {
             fadeService={instance.fadeService}
             unfadeService={instance.unfadeService}
             ref={'AddedServicesListItem-' + allServices[2].get()}
+            hoverService={hoverService}
             service={allServices[2]} />
         </ul>
       </div>);
