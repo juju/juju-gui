@@ -488,9 +488,8 @@ var module = module;
       @param bundle {Array} An array containing the requested bundle model.
     */
     _getBundleYAMLResponse: function(callback, error, bundle) {
-      debugger;
       return _makeRequest(
-          this.bakery, bundle[0].get('deployerFileUrl'), 'GET',
+          this.bakery, bundle[0].deployerFileUrl, 'GET',
           null, callback, false);
     },
 
