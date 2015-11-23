@@ -151,6 +151,13 @@ YUI.add('added-services-list-item', function() {
       }
     },
 
+    _generateClassName: function() {
+      return classNames(
+        'inspector-view__list-item',
+        this.state.focus || this.state.fade ? 'visibility-toggled' : false
+      );
+    },
+
     render: function() {
       var state = this.state;
       var service = this.props.service.getAttrs();
@@ -159,7 +166,7 @@ YUI.add('added-services-list-item', function() {
       var focusIcon = state.focus ? 'focused_16' : 'unfocused_16';
       var highlightIcon = state.fade ? 'hide_16' : 'show_16';
       return (
-        <li className="inspector-view__list-item"
+        <li className={this._generateClassName()}
             data-serviceid={service.id}
             onClick={this._onClickHandler}
             tabIndex="0"

@@ -552,6 +552,11 @@ describe('AddedServicesListItem', function() {
         getUnitStatusCounts={sinon.stub()}
         service={service} />);
 
+    // Check that the container has the proper classes when no visibility
+    // toggle is active.
+    assert.equal(
+      ReactDOM.findDOMNode(instance).classList,
+      'inspector-view__list-item');
     // Toggle focus on.
     assert.equal(instance.state.fade, false);
     testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);
@@ -559,6 +564,11 @@ describe('AddedServicesListItem', function() {
     assert.equal(fadeService.callCount, 1);
     assert.equal(unfadeService.callCount, 0);
     assert.equal(fadeService.args[0][0], 'wordpress');
+    // Check that the container has the proper classes when a visibility
+    // toggle is active.
+    assert.equal(
+      ReactDOM.findDOMNode(instance).classList,
+      'inspector-view__list-item visibility-toggled');
 
     // Toggle focus off.
     testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);

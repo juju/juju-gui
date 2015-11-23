@@ -26,6 +26,9 @@
             background-color: $light-grey;
 
         }
+        &.visibility-toggled .inspector-view__visibility-toggle {
+          visibility: visible;
+        }
         &:hover .inspector-view__visibility-toggle {
             visibility: visible;
         }
