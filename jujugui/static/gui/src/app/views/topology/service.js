@@ -586,6 +586,40 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Deselect all tokens.
+
+      @method deselectNodes
+    */
+    deselectNodes: function() {
+      var topo = this.get('component');
+      topo.vis.selectAll('.is-selected').classed('is-selected', false);
+    },
+
+    /**
+      Select the token for the provided element.
+
+      @method selectNode
+      @param {Object} node The service node to select.
+    */
+    selectNode: function(node) {
+      this.deselectNodes();
+      node.classList.add('is-selected');
+    },
+
+    /**
+      Select the token for the provided service.
+
+      @method selectService
+      @param {String} id The service id.
+    */
+    selectService: function(id) {
+      var node = this.getServiceNode(id);
+      if (node) {
+        this.selectNode(node);
+      }
+    },
+
+    /**
       Handles the click or tap on the service svg elements.
 
       It is executed under the context of the clicked/tapped DOM element
@@ -631,8 +665,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Remove is-selected class from all services and add to the currently
       // clicked service.
       if (box.node) {
-        topo.vis.selectAll('.is-selected').classed('is-selected', false);
-        box.node.classList.add('is-selected');
+        self.selectNode(box.node);
       }
 
       // Fire the action named in the following scheme:

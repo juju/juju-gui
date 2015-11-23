@@ -803,6 +803,10 @@ YUI.add('juju-gui', function(Y) {
     _renderAddedServices: function(services) {
       var utils = views.utils;
       var db = this.db;
+      var services = this.db.services.toArray();
+      var topo = this.views.environment.instance.topo;
+      // Deselect the active service token.
+      topo.modules.ServiceModule.deselectNodes();
       ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
@@ -829,6 +833,7 @@ YUI.add('juju-gui', function(Y) {
     _renderInspector: function(metadata) {
       var state = this.state;
       var utils = views.utils;
+      var topo = this.views.environment.instance.topo;
       var charmstore = this.get('charmstore');
       var inspector;
       var service = this.db.services.getById(metadata.id);
@@ -838,6 +843,8 @@ YUI.add('juju-gui', function(Y) {
       // happens if the user tries to visit the inspector of a ghost service
       // id which no longer exists.
       if (service) {
+        // Select the service token.
+        topo.modules.ServiceModule.selectService(service.get('id'));
         var charm = app.db.charms.getById(service.get('charm'));
         inspector = (
           <components.Inspector
@@ -855,8 +862,7 @@ YUI.add('juju-gui', function(Y) {
             destroyService={utils.destroyService.bind(
                 this, this.db, this.env, service)}
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
-            clearState={utils.clearState.bind(
-                this, this.views.environment.instance.topo)}
+            clearState={utils.clearState.bind(this, topo)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
