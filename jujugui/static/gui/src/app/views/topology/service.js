@@ -84,6 +84,9 @@ YUI.add('juju-topology-service', function(Y) {
           annotations = service.get('annotations'),
           x, y;
 
+      // Set widths and heights.
+      d.subordinate ? d.w = d.h = 130 : d.w = d.h = 190;
+
       // If there are no annotations or the service is being dragged
       if (!annotations || d.inDrag) {
         return;
@@ -123,12 +126,32 @@ YUI.add('juju-topology-service', function(Y) {
     // Size the node for drawing.
     node.attr({
       'width': function(box) {
-        box.subordinate ? box.w = 130 : box.w = 190; return box.w;
+        return box.w;
       },
       'height': function(box) {
-        box.subordinate ? box.h = 130 : box.h = 190; return box.h;
+        return box.h;
       }
     });
+    node.select('.service-block')
+      .attr({
+        'cx': function(d) { return d.subordinate ? 65 : 95; },
+        'cy': function(d) { return d.subordinate ? 65 : 95; },
+        'r': function(d) { return d.subordinate ? 60 : 90; }
+      });
+    node.select('.service-block__halo')
+      .attr({
+        'cx': function(d) { return d.subordinate ? 65 : 95; },
+        'cy': function(d) { return d.subordinate ? 65 : 95; },
+        'r': function(d) { return d.subordinate ? 80 : 110; }
+      });
+    node.select('.service-icon')
+      .attr('transform', function(d) {
+        return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)';
+      });
+    node.select('.relation-button')
+      .attr('transform', function(d) {
+        return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
+      });
 
     var rerenderRelations = false;
     node.select('.service-block').each(function(d) {
@@ -190,9 +213,9 @@ YUI.add('juju-topology-service', function(Y) {
 
     // Draw a subordinate relation indicator.
     var subRelationIndicator = node.filter(function(d) {
-      return d.subordinate &&
-          d3.select(this)
-          .select('.sub-rel-block').empty();
+      return d3.select(this)
+        .select('.sub-rel-block').empty() &&
+        d.subordinate;
     })
         .insert('g', ':first-child')
         .attr('class', 'sub-rel-block')

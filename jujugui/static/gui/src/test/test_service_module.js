@@ -99,6 +99,54 @@ describe('service module annotations', function() {
      });
 });
 
+describe('service updates', function() {
+  var db, models, utils, viewContainer, views, serviceModule;
+
+  before(function(done) {
+    YUI(GlobalConfig).use([
+      'juju-gui',
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views',
+      'juju-view-environment',
+      'node',
+      'node-event-simulate'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    viewContainer = utils.makeContainer(this);
+    db = new models.Database();
+    var view = new views.environment(
+        { container: viewContainer,
+          db: db,
+          env: {
+            update_annotations: function() {}
+          }});
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+  });
+
+  it('should resize when subordinate status changes', function() {
+    db.services.add({
+      id: 'foo',
+      subordinate: false
+    });
+    serviceModule.update();
+    var service = serviceModule.get('component').vis.select('.service');
+    assert.equal(service.select('.service-block').attr('cx'), 95);
+    db.services.item(0).set('subordinate', true);
+    serviceModule.update();
+    assert.equal(service.select('.service-block').attr('cx'), 65);
+  });
+});
+
 
 // Aug 21 2015 - Jeff - These tests fail spuriously in phantomjs. Skipping
 // until we can revisit and dedicate time to tracking down the issue.
