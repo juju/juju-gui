@@ -46,13 +46,6 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
 
     makeFakeCharmstore: function() {
       var charms = this._fetchCharmData();
-      var processEntity = function(entity) {
-        if (entity.entityType === 'charm') {
-          return new Y.juju.models.Charm(entity);
-        } else {
-          return new Y.juju.models.Bundle(entity);
-        }
-      };
       var fakeBakery = {
         sendGetRequest: function(path, success, failure) {
           // Remove the includes and the charmstore path.
@@ -75,7 +68,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
         }
       };
       var fakeCharmstore = new window.jujulib.charmstore(
-          'local/', 'v4', fakeBakery, processEntity);
+          'local/', 'v4', fakeBakery);
       // We need to stub out the _makeRequest method so that we can simulate
       // api responses from the server.
       return fakeCharmstore;

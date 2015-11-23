@@ -28,7 +28,7 @@ describe('EntityDetails', function() {
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
-    YUI().use('entity-details', function() { done(); });
+    YUI().use('entity-details', 'jujulib-utils', function() { done(); });
   });
 
   beforeEach(function() {
@@ -53,6 +53,7 @@ describe('EntityDetails', function() {
   it('fetches an entity properly', function() {
     var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    var makeEntityModel = sinon.stub().returns(mockEntity);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();
@@ -70,7 +71,8 @@ describe('EntityDetails', function() {
           getFile={getFile}
           renderMarkdown={renderMarkdown}
           id={id}
-          pluralize={pluralize} />, true);
+          pluralize={pluralize}
+          makeEntityModel={makeEntityModel} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
@@ -141,6 +143,7 @@ describe('EntityDetails', function() {
     var mockEntity = jsTestUtils.makeEntity(true);
     var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    var makeEntityModel = sinon.stub().returns(mockEntity);
     var deployService = sinon.spy();
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();
@@ -160,7 +163,8 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
           id={id}
-          pluralize={pluralize} />, true);
+          pluralize={pluralize}
+          makeEntityModel={makeEntityModel} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,

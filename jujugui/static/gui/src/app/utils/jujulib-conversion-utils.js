@@ -34,13 +34,14 @@ YUI.add('jujulib-utils', function(Y) {
     @param {Object} entity Entity data from e.g. jujulib.
     @returns {Object} A charm or Bundle juju GUI model.
    */
-  juju.processEntityData = function(entity) {
+  juju.makeEntityModel = function(entity) {
     if (entity.entityType === 'charm') {
       return new Y.juju.models.Charm(entity);
     } else {
       return new Y.juju.models.Bundle(entity);
     }
   };
+
 }, '', {
   requires: [
     'juju-charm-models',

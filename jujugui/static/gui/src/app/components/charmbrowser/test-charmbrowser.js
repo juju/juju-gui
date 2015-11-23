@@ -48,9 +48,11 @@ describe('Charmbrowser', function() {
     var series = sinon.stub();
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
+    var makeEntityModel = sinon.spy();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
+        makeEntityModel={makeEntityModel}
         changeState={changeState}
         series={series}
         charmstoreSearch={charmstoreSearch} />);
@@ -61,6 +63,7 @@ describe('Charmbrowser', function() {
           <juju.components.SearchResults
             changeState={changeState}
             seriesList={series}
+            makeEntityModel={makeEntityModel}
             query={query}
             tags="ops"
             sort="-name"
@@ -102,16 +105,19 @@ describe('Charmbrowser', function() {
       }};
     var charmstoreSearch = sinon.stub();
     var changeState = sinon.stub();
+    var makeEntityModel = sinon.spy();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         charmstoreSearch={charmstoreSearch}
+        makeEntityModel={makeEntityModel}
         changeState={changeState} />);
     assert.deepEqual(output,
         <juju.components.Panel
           instanceName="white-box"
           visible={true}>
           <juju.components.Store
+            makeEntityModel={makeEntityModel}
             charmstoreSearch={charmstoreSearch}
             changeState={changeState} />
         </juju.components.Panel>);
@@ -127,6 +133,7 @@ describe('Charmbrowser', function() {
         }
       }};
     var getEntity = sinon.spy();
+    var makeEntityModel = sinon.spy();
     var changeState = sinon.spy();
     var deployService = sinon.spy();
     var importBundleYAML = sinon.spy();
@@ -146,6 +153,7 @@ describe('Charmbrowser', function() {
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
+        makeEntityModel={makeEntityModel}
         getFile={getFile}
         renderMarkdown={renderMarkdown}
         utils={utils} />);
@@ -158,6 +166,7 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             getEntity={getEntity}
+            makeEntityModel={makeEntityModel}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
             renderMarkdown={renderMarkdown}

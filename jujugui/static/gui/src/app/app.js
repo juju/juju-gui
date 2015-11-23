@@ -925,7 +925,8 @@ YUI.add('juju-gui', function(Y) {
           deployService={this.deployService.bind(this)}
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
-          utils={utils} />,
+          utils={utils}
+          makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
     },
 
@@ -1122,16 +1123,7 @@ YUI.add('juju-gui', function(Y) {
           setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
           serviceName: 'charmstore'
         });
-        var processEntity = function(entity) {
-          if (entity.entityType === 'charm') {
-            return new Y.juju.models.Charm(entity);
-          } else {
-            return new Y.juju.models.Bundle(entity);
-          }
-        };
-        this.set(
-            'charmstore',
-            new Charmstore(charmstoreURL, apiPath, bakery, processEntity));
+        this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
       }
     },
 
@@ -2100,6 +2092,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-fakebackend-simulator',
     'juju-models',
     'juju-notification-controller',
+    'jujulib-utils',
     'ns-routing-app-extension',
     // React components
     'charmbrowser-component',

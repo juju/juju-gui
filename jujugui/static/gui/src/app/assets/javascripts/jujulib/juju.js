@@ -97,7 +97,7 @@ var module = module;
       };
       _makeRequest(
           this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
-    };
+    },
 
     /**
        Lists the available state servers on the JEM.
@@ -116,7 +116,7 @@ var module = module;
       };
       _makeRequest(
           this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
-    };
+    },
     /**
        Provides the data for a particular environment.
 
@@ -131,7 +131,7 @@ var module = module;
         envOwnerName, envName, callback) {
       var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
       _makeRequest(this.bakery, url, 'GET', null, callback);
-    };
+    },
 
     /**
        Create a new environment.
@@ -158,7 +158,7 @@ var module = module;
       };
       var url = [this.jemUrl, 'env', envOwnerName].join('/');
       _makeRequest(this.bakery, url, 'POST', body, callback);
-    };
+    }
   };
 
   /**
@@ -488,6 +488,7 @@ var module = module;
       @param bundle {Array} An array containing the requested bundle model.
     */
     _getBundleYAMLResponse: function(callback, error, bundle) {
+      debugger;
       return _makeRequest(
           this.bakery, bundle[0].get('deployerFileUrl'), 'GET',
           null, callback, false);

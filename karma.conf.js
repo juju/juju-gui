@@ -30,7 +30,9 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
 
-      'jujugui/static/gui/src/app/components/**/*.js'
+      'jujugui/static/gui/src/app/components/**/*.js',
+
+      'jujugui/static/gui/build/app/utils/jujulib-conversion-utils.js'
     ],
 
 
