@@ -43,8 +43,12 @@ describe('EntityFiles', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityFiles
         entityModel={mockEntity}
-        pluralize={sinon.spy()} />
+        pluralize={sinon.stub().returns('file')} />
     );
+    var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/trusty/django/archive';  // eslint-disable-line max-len
+    var fileItems = [
+      <li key="foo.zip" className="section__list-item">foo.zip</li>
+    ];
     var expected = (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
@@ -61,17 +65,17 @@ describe('EntityFiles', function() {
           <li>
             <a target="_blank"
               className="section__actions--archive-url"
-              href="https://api.jujucharms.com/charmstore/v4/trusty/django/archive">  // eslint-disable-line max-len
+              href={archiveUrl}>
               Download .zip
             </a>
           </li>
         </ul>
         <ul className="section__list">
-          <li key="foo.zip" className="section__list-item">
-            foo.zip
-          </li>
+          {fileItems}
         </ul>
       </div>
     );
+    jsTestUtils.compare(output, expected);
+    assert.deepEqual(output, expected);
   });
 });

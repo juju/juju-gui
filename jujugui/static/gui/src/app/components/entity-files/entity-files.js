@@ -32,7 +32,6 @@ YUI.add('entity-files', function() {
       var files = entityModel.get('files');
       var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/' +
                        `${entityModel.get('full_name')}/archive`;
-      debugger;
       var codeUrl = entityModel.get('code_source').location;
       var codeLink;
       if (codeUrl) {
