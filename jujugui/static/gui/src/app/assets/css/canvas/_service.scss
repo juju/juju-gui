@@ -107,6 +107,7 @@ g.service {
       transition: all .3s;
    }
 
+   &.hover,
    &:hover {
 
       .service-block__halo {

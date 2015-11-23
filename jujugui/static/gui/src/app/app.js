@@ -805,8 +805,9 @@ YUI.add('juju-gui', function(Y) {
       var db = this.db;
       var services = this.db.services.toArray();
       var topo = this.views.environment.instance.topo;
+      var ServiceModule = topo.modules.ServiceModule;
       // Deselect the active service token.
-      topo.modules.ServiceModule.deselectNodes();
+      ServiceModule.deselectNodes();
       ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
@@ -818,6 +819,7 @@ YUI.add('juju-gui', function(Y) {
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}
             setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
+            hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));

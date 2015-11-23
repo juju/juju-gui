@@ -50,6 +50,7 @@ YUI.add('added-services-list', function() {
               fadeService={this.fadeService}
               unfadeService={this.unfadeService}
               ref={'AddedServicesListItem-' + service.get('id')}
+              hoverService={this.props.hoverService}
               service={service} />);
       });
       return items;

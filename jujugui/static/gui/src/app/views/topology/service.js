@@ -586,6 +586,24 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Show the service as hovered.
+
+      @method hoverService
+      @param {String} id The service id.
+      @param {Boolean} hover Whether the state is hovered or not.
+    */
+    hoverService: function(id, hover) {
+      var node = this.getServiceNode(id);
+      if (node) {
+        if (hover) {
+          utils.addSVGClass(node, 'hover');
+        } else {
+          utils.removeSVGClass(node, 'hover');
+        }
+      }
+    },
+
+    /**
       Deselect all tokens.
 
       @method deselectNodes
