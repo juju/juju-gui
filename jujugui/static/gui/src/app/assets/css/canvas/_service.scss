@@ -148,6 +148,7 @@ g.service {
          transform: translate(65px, 30px);
       }
 
+      &.hover,
       &:hover {
          .service-block__halo {
             r: 80;

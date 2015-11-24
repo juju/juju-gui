@@ -594,11 +594,12 @@ YUI.add('juju-topology-service', function(Y) {
     */
     hoverService: function(id, hover) {
       var node = this.getServiceNode(id);
+      var topo = this.get('component');
       if (node) {
         if (hover) {
           utils.addSVGClass(node, 'hover');
         } else {
-          utils.removeSVGClass(node, 'hover');
+          topo.vis.selectAll('.hover').classed('hover', false);
         }
       }
     },
@@ -621,7 +622,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     selectNode: function(node) {
       this.deselectNodes();
-      node.classList.add('is-selected');
+      utils.addSVGClass(node, 'is-selected');
     },
 
     /**
