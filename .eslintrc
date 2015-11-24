@@ -1,6 +1,8 @@
 env:
   browser: true
   node: true
+plugins:
+  - react
 ecmaFeatures:
   jsx: true
   defaultParams: true
@@ -18,3 +20,5 @@ rules:
   no-unused-vars: [2, {args: "none"}]
   indent: [2, 2, {SwitchCase: 1, VariableDeclarator: 2}]
   no-single-tests: 1
+  react/jsx-key: 1
+  react/jsx-no-duplicate-props: 1

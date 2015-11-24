@@ -69,7 +69,6 @@ YUI.add('juju-view-utils', function(Y) {
     };
   };
 
-  /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
 
@@ -86,7 +85,6 @@ YUI.add('juju-view-utils', function(Y) {
         0
     );
   };
-  /*jshint bitwise: true*/
   utils.generateHash = generateHash;
 
   /**
@@ -1460,9 +1458,7 @@ YUI.add('juju-view-utils', function(Y) {
    *
    */
   Y.Handlebars.registerHelper('debugger', function(value) {
-    /*jshint debug:true */
     debugger; //eslint-disable-line no-debugger
-    /*jshint debug:false */
   });
 
   /**

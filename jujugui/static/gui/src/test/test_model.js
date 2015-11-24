@@ -68,9 +68,7 @@ describe('test_model.js', function() {
 
     it('must reject bad charm ids.', function() {
       try {
-        /* jshint -W031 */
         new models.Charm({id: 'foobar'});
-        /* jshint +W031 */
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(
@@ -81,9 +79,7 @@ describe('test_model.js', function() {
 
     it('must reject missing charm ids at initialization.', function() {
       try {
-        /* jshint -W031 */
         new models.Charm();
-        /* jshint +W031 */
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(
