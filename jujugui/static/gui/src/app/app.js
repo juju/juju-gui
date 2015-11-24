@@ -802,13 +802,17 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderAddedServices: function(services) {
       var utils = views.utils;
-      var services = this.db.services.toArray();
+      var db = this.db;
       ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
-          visible={services.length > 0}>
+          visible={db.services.size() > 0}>
           <components.AddedServicesList
-            services={services}
+            services={db.services}
+            updateUnitFlags={db.updateUnitFlags.bind(db)}
+            findRelatedServices={db.findRelatedServices.bind(db)}
+            findUnrelatedServices={db.findUnrelatedServices.bind(db)}
+            setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,

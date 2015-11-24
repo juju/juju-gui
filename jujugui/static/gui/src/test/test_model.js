@@ -165,6 +165,29 @@ describe('test_model.js', function() {
       assert.equal(unit.urlName, 'mysql2-0');
     });
 
+    it('finds related services', function() {
+      var db = new models.Database(),
+          service = new models.Service({name: 'mysql'});
+      db.services.add([
+        {id: 'mysql', name: 'mysql'},
+        {id: 'wordpress', name: 'wordpress'},
+        {id: 'haproxy', name: 'haproxy'}
+      ]);
+      var relations = [
+        {far: {service: 'wordpress'}}
+      ];
+      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
+                                      relations);
+      this._cleanups.push(stub.reset);
+      var related = db.findRelatedServices(service);
+      related.each(function(s) {
+        console.log(s.getAttrs());
+      });
+      assert.equal(related.size(), 2);
+      assert.equal(related.item(0).get('name'), 'mysql');
+      assert.equal(related.item(1).get('name'), 'wordpress');
+    });
+
     it('finds unrelated services', function() {
       var db = new models.Database(),
           service = new models.Service({name: 'mysql'});

@@ -22,6 +22,30 @@ YUI.add('added-services-list-item', function() {
 
   juju.components.AddedServicesListItem = React.createClass({
 
+    propTypes: {
+      focusService: React.PropTypes.func.isRequired,
+      unfocusService: React.PropTypes.func.isRequired,
+      fadeService: React.PropTypes.func.isRequired,
+      unfadeService: React.PropTypes.func.isRequired,
+      getUnitStatusCounts: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      var service = this.props.service;
+      return {
+        focus: service.get('highlight') || false,
+        fade: service.get('fade') || false
+      };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      var service = this.props.service;
+      this.setState({focus: service.get('highlight')});
+      this.setState({fade: service.get('fade')});
+    },
+
     /**
       Parses the supplied unit data to return the status color and number
       to display.
@@ -83,12 +107,66 @@ YUI.add('added-services-list-item', function() {
       this.props.changeState(state);
     },
 
+    /**
+      Toggles the focus attribute on the service
+
+      @method _toggleFocus
+      @param {Object} e The click event.
+    */
+    _toggleFocus: function(e) {
+      // We need to stop the propagation so that the click event doesn't
+      // bubble up to the list item and navigate away.
+      e.stopPropagation();
+      var props = this.props;
+      var focus = !this.state.focus;
+      this.setState({focus: focus});
+      var serviceId = props.service.get('id');
+      if (focus) {
+        this.setState({fade: false});
+        props.focusService(serviceId);
+      } else {
+        props.unfocusService(serviceId);
+      }
+    },
+
+    /**
+      Toggles the highlight attribute on the service
+
+      @method _toggleHighlight
+      @param {Object} e The click event.
+    */
+    _toggleHighlight: function(e) {
+      // We need to stop the propagation so that the click event doesn't
+      // bubble up to the list item and navigate away.
+      e.stopPropagation();
+      var props = this.props;
+      var fade = !this.state.fade;
+      this.setState({fade: fade});
+      var serviceId = props.service.get('id');
+      if (fade) {
+        this.setState({focus: false});
+        props.fadeService(serviceId);
+      } else {
+        props.unfadeService(serviceId);
+      }
+    },
+
+    _generateClassName: function() {
+      return classNames(
+        'inspector-view__list-item',
+        this.state.focus || this.state.fade ? 'visibility-toggled' : false
+      );
+    },
+
     render: function() {
+      var state = this.state;
       var service = this.props.service.getAttrs();
       var statusData = this._getPriorityUnits(service.units.toArray());
       var statusIndicator = this._renderStatusIndicator(statusData);
+      var focusIcon = state.focus ? 'focused_16' : 'unfocused_16';
+      var highlightIcon = state.fade ? 'hide_16' : 'show_16';
       return (
-        <li className="inspector-view__list-item"
+        <li className={this._generateClassName()}
             data-serviceid={service.id}
             onClick={this._onClickHandler}
             tabIndex="0"
@@ -101,11 +179,29 @@ YUI.add('added-services-list-item', function() {
           <span className="inspector-view__item-name">
             {service.name}
           </span>
-          {statusIndicator}
+          <span className="inspector-view__status-block">
+            <span
+              className="inspector-view__visibility-toggle"
+              ref="focusVisibilityIcon"
+              onClick={this._toggleFocus}>
+              <juju.components.SvgIcon name={focusIcon} size="16"/>
+            </span>
+            <span
+              className="inspector-view__visibility-toggle"
+              ref="fadeVisibilityIcon"
+              onClick={this._toggleHighlight}>
+              <juju.components.SvgIcon name={highlightIcon} size="16"/>
+            </span>
+            {statusIndicator}
+          </span>
         </li>
       );
     }
 
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', {
+  requires: [
+    'svg-icon'
+  ]
+});

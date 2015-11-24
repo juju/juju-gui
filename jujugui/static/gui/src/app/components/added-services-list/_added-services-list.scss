@@ -25,6 +25,19 @@
         &:hover {
             background-color: $light-grey;
         }
+        &:hover .inspector-view__item-name {
+            max-width: 105px;
+        }
+        &.visibility-toggled .inspector-view__item-name {
+            max-width: 105px;
+        }
+        &.visibility-toggled .inspector-view__visibility-toggle {
+            display: inline-block;
+
+        }
+        &:hover .inspector-view__visibility-toggle {
+            display: inline-block;
+        }
     }
 
     &__item-icon {
@@ -46,6 +59,16 @@
 
     &__item-count {
         color: $warm-grey;
+    }
+
+    &__visibility-toggle {
+        display: none;
+        vertical-align: middle;
+        padding: 0 15px 0 0;
+    }
+
+    &__status-block {
+        float: right;
     }
 
     &__status {
