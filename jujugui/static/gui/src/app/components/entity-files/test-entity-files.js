@@ -98,6 +98,6 @@ describe('EntityFiles', function() {
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
     );
-    assert.notOk(output.refs.codeLink);
+    assert.equal(output.refs.codeLink, undefined);
   });
 });

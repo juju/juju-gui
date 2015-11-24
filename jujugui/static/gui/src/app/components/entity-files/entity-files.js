@@ -82,14 +82,13 @@ YUI.add('entity-files', function() {
       var files = entityModel.get('files');
       var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
       var archiveUrl = `${apiUrl}/${entityModel.get('full_name')}/archive`;
-      var codeSource = entityModel.get('code_source');
       return (
         <div className="entity-files section" id="files">
           <h3 className="section__title">
             {files.length + ' ' + this.props.pluralize('file', files.length)}
           </h3>
           <ul className="entity-files__links">
-            {this._generateCodeLink(codeSource)}
+            {this._generateCodeLink(entityModel.get('code_source'))}
             <li className="entity-files__link">
               <a target="_blank"
                 href={archiveUrl}>
