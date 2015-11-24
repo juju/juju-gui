@@ -26,7 +26,8 @@ YUI.add('entity-content', function() {
       entityModel: React.PropTypes.object.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      pluralize: React.PropTypes.func.isRequired
     },
 
     /**
@@ -155,7 +156,9 @@ YUI.add('entity-content', function() {
                   getFile={this.props.getFile} />
               </div>
               <div className="four-col">
-                <p>{' ' /* Placeholder for project information */}</p>
+                <juju.components.EntityFiles
+                  entityModel={entityModel}
+                  pluralize={this.props.pluralize} />
               </div>
             </div>
           </div>
@@ -168,6 +171,7 @@ YUI.add('entity-content', function() {
 }, '0.1.0', {
   requires: [
     'entity-content-config-option',
-    'entity-content-readme'
+    'entity-content-readme',
+    'entity-files'
   ]
 });

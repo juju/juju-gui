@@ -75,4 +75,15 @@
             margin-left: 3em;
         }
     }
+
+    .section {
+        padding: 30px 20px;
+        border: 1px solid $light-mid-grey;
+        border-radius: 2px;
+
+        &__title {
+            font-size: 1.33em;
+            margin-bottom: 20px;
+        }
+    }
 }
