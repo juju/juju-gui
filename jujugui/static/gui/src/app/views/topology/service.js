@@ -622,6 +622,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     selectNode: function(node) {
       this.deselectNodes();
+      // Use addSVGClass to support IE.
       utils.addSVGClass(node, 'is-selected');
     },
 
