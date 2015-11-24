@@ -47,35 +47,57 @@ describe('EntityFiles', function() {
     );
     var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/trusty/django/archive';  // eslint-disable-line max-len
     var fileItems = [
-      <li key="foo.zip" className="section__list-item">foo.zip</li>
+      <li key="foo.zip" className="entity-files__file">
+        <a href={archiveUrl + '/foo.zip'} target="_blank">
+          foo.zip
+        </a>
+      </li>
     ];
     var expected = (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
           1 file
         </h3>
-        <ul className="section__links">
+        <ul className="entity-files__links">
           <li>
-            <a target="_blank"
-              className="section__actions--launchpad"
+            <a ref="codeLink"
+              target="_blank"
               href="https://code.launchpad.net/django/code">
               View code
             </a>
           </li>
           <li>
             <a target="_blank"
-              className="section__actions--archive-url"
               href={archiveUrl}>
               Download .zip
             </a>
           </li>
         </ul>
-        <ul className="section__list">
+        <ul ref="files" className="entity-files__files">
           {fileItems}
         </ul>
       </div>
     );
-    jsTestUtils.compare(output, expected);
     assert.deepEqual(output, expected);
+  });
+
+  it('renders for an empty/null list of files', function() {
+    mockEntity.set('files', []);
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityFiles
+        entityModel={mockEntity}
+        pluralize={sinon.spy()} />
+    );
+    assert.equal(output.refs.files.children.length, 0);
+  });
+
+  it('excludes the code link when url is not present', function() {
+    mockEntity.set('code_source', null);
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityFiles
+        entityModel={mockEntity}
+        pluralize={sinon.spy()} />
+    );
+    assert.notOk(output.refs.codeLink);
   });
 });

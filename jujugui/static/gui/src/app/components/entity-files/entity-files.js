@@ -27,18 +27,23 @@ YUI.add('entity-files', function() {
       pluralize: React.PropTypes.func.isRequired
     },
 
-    render: function() {
-      var entityModel = this.props.entityModel;
-      var files = entityModel.get('files');
-      var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
-      var archiveUrl = `${apiUrl}/${entityModel.get('full_name')}/archive`;
-      var codeUrl = entityModel.get('code_source').location;
+    /**
+      If able, generates a link to the entity's source code.
+
+      @method _generateCodeLink
+      @param {Object} codeSource metadata about the entity's source code.
+      @return {Object} The markup for the link to the code.
+    */
+    _generateCodeLink: function(codeSource) {
+      codeSource = codeSource || {};
+      var codeUrl = codeSource.location;
       var codeLink;
       if (codeUrl) {
         codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
         codeLink = (
           <li>
-            <a target="_blank"
+            <a ref="codeLink"
+              target="_blank"
               href={codeUrl}>
               View code
             </a>
@@ -47,32 +52,44 @@ YUI.add('entity-files', function() {
       } else {
         codeLink = '';
       }
+      return codeLink;
+    },
+
+    /**
+      Create a list of linked files.
+
+      @method _generateFileItems
+      @param {Array} files An array of file names (Strings).
+      @param {String} url The base URL for where the files are stored.
+      @return {Array} The markup for the linked files.
+    */
+    _generateFileItems: function(files, url) {
       var fileItems = files.map(function(file) {
-        /*
-        XXX Verify whether or not these should be links. Mock seems to
-        show them as unlinked.
-        var fileLink = `${archiveUrl}/${file}`;
+        var fileLink = `${url}/${file}`;
         return (
-          <li key={file} className="section__list-item">
+          <li key={file} className="entity-files__file">
             <a href={fileLink} target="_blank">
               {file}
             </a>
           </li>
         );
-        */
-        return (
-          <li key={file} className="entity-files__file">
-            {file}
-          </li>
-        );
       });
+      return fileItems;
+    },
+
+    render: function() {
+      var entityModel = this.props.entityModel;
+      var files = entityModel.get('files');
+      var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
+      var archiveUrl = `${apiUrl}/${entityModel.get('full_name')}/archive`;
+      var codeSource = entityModel.get('code_source');
       return (
         <div className="entity-files section" id="files">
           <h3 className="section__title">
             {files.length + ' ' + this.props.pluralize('file', files.length)}
           </h3>
           <ul className="entity-files__links">
-            {codeLink}
+            {this._generateCodeLink(codeSource)}
             <li>
               <a target="_blank"
                 href={archiveUrl}>
@@ -80,8 +97,8 @@ YUI.add('entity-files', function() {
               </a>
             </li>
           </ul>
-          <ul className="entity-files__files">
-            {fileItems}
+          <ul ref="files" className="entity-files__files">
+            {this._generateFileItems(files, archiveUrl)}
           </ul>
         </div>
       );
