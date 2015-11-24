@@ -59,14 +59,14 @@ describe('EntityFiles', function() {
           1 file
         </h3>
         <ul className="entity-files__links">
-          <li>
+          <li className="entity-files__link">
             <a ref="codeLink"
               target="_blank"
               href="https://code.launchpad.net/django/code">
               View code
             </a>
           </li>
-          <li>
+          <li className="entity-files__link">
             <a target="_blank"
               href={archiveUrl}>
               Download .zip

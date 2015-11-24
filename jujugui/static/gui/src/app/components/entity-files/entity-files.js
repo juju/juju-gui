@@ -41,7 +41,7 @@ YUI.add('entity-files', function() {
       if (codeUrl) {
         codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
         codeLink = (
-          <li>
+          <li className="entity-files__link">
             <a ref="codeLink"
               target="_blank"
               href={codeUrl}>
@@ -90,7 +90,7 @@ YUI.add('entity-files', function() {
           </h3>
           <ul className="entity-files__links">
             {this._generateCodeLink(codeSource)}
-            <li>
+            <li className="entity-files__link">
               <a target="_blank"
                 href={archiveUrl}>
                 Download .zip

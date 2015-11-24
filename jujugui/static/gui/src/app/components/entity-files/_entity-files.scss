@@ -1,14 +1,14 @@
 .entity-files {
-    ul {
+    &__links, &__files {
         margin: 0;
     }
 
-    li {
+    &__link, &__file {
         list-style: none;
         line-height: 1.6;
     }
 
-    &__links {
+    &__link {
         a:hover {
             text-decoration: underline;
         }
