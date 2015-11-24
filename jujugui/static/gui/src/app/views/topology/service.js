@@ -648,7 +648,6 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
 
-      // Do not fire unless we're within the service box.
       var topo = context.get('component');
       topo.fire('snapToService', { service: box, rect: rect });
     },
