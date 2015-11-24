@@ -79,86 +79,87 @@ var module = module;
   };
 
 
-  /**
-     Lists the available environments on the JEM.
+  environment.prototype = {
+    /**
+       Lists the available environments on the JEM.
 
-     @public listEnvironments
-     @params callback {Function} A callback to handle errors or accept the data
-         from the request. Must accept an error message or null as its first
-         parameter and the response data as its second.
-   */
-  environment.prototype.listEnvironments = function(callback) {
-    var _listEnvironments = function(error, data) {
-      if (error === null) {
-        data = data.environments;
-      }
-      callback(error, data);
-    };
-    _makeRequest(
-        this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
+       @public listEnvironments
+       @params callback {Function} A callback to handle errors or accept the data
+           from the request. Must accept an error message or null as its first
+           parameter and the response data as its second.
+     */
+    listEnvironments: function(callback) {
+      var _listEnvironments = function(error, data) {
+        if (error === null) {
+          data = data.environments;
+        }
+        callback(error, data);
+      };
+      _makeRequest(
+          this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
+    },
+
+    /**
+       Lists the available state servers on the JEM.
+
+       @public listServers
+       @params callback {Function} A callback to handle errors or accept the data
+           from the request. Must accept an error message or null as its first
+           parameter and the response data as its second.
+     */
+    listServers: function(callback) {
+      var _listServers = function(error, data) {
+        if (error === null) {
+          data = data['state-servers'];
+        }
+        callback(error, data);
+      };
+      _makeRequest(
+          this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
+    },
+    /**
+       Provides the data for a particular environment.
+
+       @public getEnvironment
+       @param envOwnerName {String} The user name of the given environment's owner.
+       @param envName {String} The name of the given environment.
+       @params callback {Function} A callback to handle errors or accept the data
+           from the request. Must accept an error message or null as its first
+           parameter and the response data as its second.
+     */
+    getEnvironment: function (
+        envOwnerName, envName, callback) {
+      var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
+      _makeRequest(this.bakery, url, 'GET', null, callback);
+    },
+
+    /**
+       Create a new environment.
+
+       @public newEnvironment
+       @param envOwnerName {String} The name of the given environment's owner.
+       @param envName {String} The name of the given environment.
+       @param baseTemplate {String} The name of the config template to be used
+           for creating the environment.
+       @param stateServer {String} The entityPath name of the state server to
+           create the environment with.
+       @param password {String} The password for the new environment.
+       @params callback {Function} A callback to handle errors or accept the data
+           from the request. Must accept an error message or null as its first
+           parameter and the response data as its second.
+     */
+    newEnvironment: function (
+        envOwnerName, envName, baseTemplate, stateServer, password, callback) {
+      var body = {
+        name: envName,
+        password: password,
+        templates: [baseTemplate],
+        'state-server': stateServer
+      };
+      var url = [this.jemUrl, 'env', envOwnerName].join('/');
+      _makeRequest(this.bakery, url, 'POST', body, callback);
+    }
   };
-
-  /**
-     Lists the available state servers on the JEM.
-
-     @public listServers
-     @params callback {Function} A callback to handle errors or accept the data
-         from the request. Must accept an error message or null as its first
-         parameter and the response data as its second.
-   */
-  environment.prototype.listServers = function(callback) {
-    var _listServers = function(error, data) {
-      if (error === null) {
-        data = data['state-servers'];
-      }
-      callback(error, data);
-    };
-    _makeRequest(
-        this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
-  };
-  /**
-     Provides the data for a particular environment.
-
-     @public getEnvironment
-     @param envOwnerName {String} The user name of the given environment's owner.
-     @param envName {String} The name of the given environment.
-     @params callback {Function} A callback to handle errors or accept the data
-         from the request. Must accept an error message or null as its first
-         parameter and the response data as its second.
-   */
-  environment.prototype.getEnvironment = function (
-      envOwnerName, envName, callback) {
-    var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
-    _makeRequest(this.bakery, url, 'GET', null, callback);
-  };
-
-  /**
-     Create a new environment.
-
-     @public newEnvironment
-     @param envOwnerName {String} The name of the given environment's owner.
-     @param envName {String} The name of the given environment.
-     @param baseTemplate {String} The name of the config template to be used
-         for creating the environment.
-     @param stateServer {String} The entityPath name of the state server to
-         create the environment with.
-     @param password {String} The password for the new environment.
-     @params callback {Function} A callback to handle errors or accept the data
-         from the request. Must accept an error message or null as its first
-         parameter and the response data as its second.
-   */
-  environment.prototype.newEnvironment = function (
-      envOwnerName, envName, baseTemplate, stateServer, password, callback) {
-    var body = {
-      name: envName,
-      password: password,
-      templates: [baseTemplate],
-      'state-server': stateServer
-    };
-    var url = [this.jemUrl, 'env', envOwnerName].join('/');
-    _makeRequest(this.bakery, url, 'POST', body, callback);
-  };
-
 
   /**
      Charmstore object for jujulib.
@@ -488,7 +489,7 @@ var module = module;
     */
     _getBundleYAMLResponse: function(callback, error, bundle) {
       return _makeRequest(
-          this.bakery, bundle[0].get('deployerFileUrl'), 'GET',
+          this.bakery, bundle[0].deployerFileUrl, 'GET',
           null, callback, false);
     },
 

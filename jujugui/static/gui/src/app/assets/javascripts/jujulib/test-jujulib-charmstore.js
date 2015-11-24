@@ -314,9 +314,8 @@ describe('jujulib charmstore', function() {
     });
 
     it('_getBundleYAMLResponse fetches yaml file contents', function() {
-      var getStub = sinon.stub().returns('deployer file');
-      charmstore._getBundleYAMLResponse(cb, null, [{ get: getStub }]);
-      assert.equal(getStub.callCount, 1);
+      charmstore._getBundleYAMLResponse(
+          cb, null, [{ deployerFileUrl: 'deployer file' }]);
       var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
       assert.equal(requestArgs[0], 'deployer file');
       // Should be the anon success callback handler.

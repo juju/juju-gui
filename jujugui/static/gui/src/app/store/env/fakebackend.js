@@ -350,9 +350,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
                       {error: 'Error interacting with the charmstore API.'});
                 }
               } else {
-                this._saveCharmModel(charm[0]);
+                var charm = Y.juju.makeEntityModel(charm[0]);
+                this._saveCharmModel(charm);
                 if (callbacks.success) {
-                  callbacks.success(charm[0]);
+                  callbacks.success(charm);
                 }
               }
             }.bind(this));
@@ -2155,6 +2156,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     'juju-models',
     'promise',
     'zip-utils',
+    'jujulib-utils',
     'juju-view-utils'
   ]
 });

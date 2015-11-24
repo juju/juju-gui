@@ -110,7 +110,8 @@ YUI.add('search-results', function(Y) {
         console.log('Search request failed.');
         return;
       }
-      var results = rawResults.map(function(model) {
+      var results = rawResults.map(function(result) {
+        var model = this.props.makeEntityModel(result);
         return model.toEntity();
       }, this);
       var activeComponent;

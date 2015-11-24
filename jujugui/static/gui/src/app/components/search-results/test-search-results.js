@@ -140,13 +140,15 @@ describe('SearchResults', function() {
       var mockModel = {};
       mockModel.toEntity = sinon.stub().returns(result);
       var mockData = [mockModel];
+      var makeEntityModel = sinon.stub().returns(mockModel);
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
 
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query={query}
             seriesList={series}
-            charmstoreSearch={charmstoreSearch} />, true);
+            charmstoreSearch={charmstoreSearch}
+            makeEntityModel={makeEntityModel} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       shallowRenderer.getRenderOutput();
@@ -247,6 +249,7 @@ describe('SearchResults', function() {
         toEntity: sinon.stub().returns(results[3])
       }];
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
+      var makeEntityModel = sinon.stub().returnsArg(0);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query="mysql"
@@ -255,7 +258,8 @@ describe('SearchResults', function() {
             series="wily"
             seriesList={series}
             changeState={changeState}
-            charmstoreSearch={charmstoreSearch} />, true);
+            charmstoreSearch={charmstoreSearch}
+            makeEntityModel={makeEntityModel} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -440,7 +444,10 @@ describe('SearchResults', function() {
       var _changeActiveComponent = searchResults._changeActiveComponent;
       searchResults._changeActiveComponent = sinon.stub();
       var query = 'spinach';
-      searchResults.props = {query: query};
+      searchResults.props = {
+        query: query,
+        makeEntityModel: sinon.stub().returnsArg(0)
+      };
       var results = [{
         name: 'spinach',
         displayName: 'spinach',
@@ -589,7 +596,10 @@ describe('SearchResults', function() {
     it('sets the correct ids for entities', function() {
       var _changeActiveComponent = searchResults._changeActiveComponent;
       searchResults._changeActiveComponent = sinon.stub();
-      searchResults.props = {query: 'mysql'};
+      searchResults.props = {
+        query: 'mysql',
+        makeEntityModel: sinon.stub().returnsArg(0)
+      };
       var results = [{
         name: 'mysql',
         displayName: 'mysql',
