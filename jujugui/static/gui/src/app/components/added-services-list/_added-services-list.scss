@@ -24,13 +24,19 @@
         &:active,
         &:hover {
             background-color: $light-grey;
-
+        }
+        &:hover .inspector-view__item-name {
+            max-width: 105px;
+        }
+        &.visibility-toggled .inspector-view__item-name {
+            max-width: 105px;
         }
         &.visibility-toggled .inspector-view__visibility-toggle {
-          visibility: visible;
+            display: inline-block;
+
         }
         &:hover .inspector-view__visibility-toggle {
-            visibility: visible;
+            display: inline-block;
         }
     }
 
@@ -45,7 +51,7 @@
     &__item-name {
         overflow: hidden;
         display: inline-block;
-        max-width: 110px;
+        max-width: 165px;
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: text-bottom;
@@ -56,7 +62,7 @@
     }
 
     &__visibility-toggle {
-        visibility: hidden;
+        display: none;
         vertical-align: middle;
         padding: 0 15px 0 0;
     }
