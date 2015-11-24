@@ -798,14 +798,16 @@ YUI.add('juju-gui', function(Y) {
       element.
 
       @method _renderAddedServices
-      @param {Array} services Array of service models.
+      @param {String} serviceId An id for a service.
     */
-    _renderAddedServices: function(services) {
+    _renderAddedServices: function(serviceId) {
       var utils = views.utils;
       var db = this.db;
-      var services = this.db.services.toArray();
       var topo = this.views.environment.instance.topo;
       var ServiceModule = topo.modules.ServiceModule;
+      topo.on('hoverService', function(service) {
+        this._renderAddedServices(service.id);
+      }, this);
       // Deselect the active service token.
       ServiceModule.deselectNodes();
       ReactDOM.render(
@@ -814,6 +816,7 @@ YUI.add('juju-gui', function(Y) {
           visible={db.services.size() > 0}>
           <components.AddedServicesList
             services={db.services}
+            serviceId={serviceId}
             updateUnitFlags={db.updateUnitFlags.bind(db)}
             findRelatedServices={db.findRelatedServices.bind(db)}
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}

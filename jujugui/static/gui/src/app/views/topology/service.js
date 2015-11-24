@@ -695,18 +695,19 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceMouseEnter: function(box, context) {
+      var topo = context.get('component');
+      topo.fire('hoverService', {id: box.id});
       var rect = Y.one(this);
       if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
-
-      var topo = context.get('component');
       topo.fire('snapToService', { service: box, rect: rect });
     },
 
     serviceMouseLeave: function(box, context) {
-      // Do not fire if we're within the service box.
       var topo = context.get('component');
+      topo.fire('hoverService', {id: null});
+      // Do not fire if we're within the service box.
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
       if (box.containsPoint(mouse_coords, topo.zoom)) {

@@ -154,7 +154,10 @@ YUI.add('added-services-list-item', function() {
     _generateClassName: function() {
       return classNames(
         'inspector-view__list-item',
-        this.state.focus || this.state.fade ? 'visibility-toggled' : false
+        {
+          'visibility-toggled': this.state.focus || this.state.fade,
+          hover: this.props.hovered
+        }
       );
     },
 
