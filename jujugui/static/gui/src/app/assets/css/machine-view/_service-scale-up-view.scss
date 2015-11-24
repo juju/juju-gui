@@ -68,6 +68,14 @@
                 vertical-align: middle;
             }
 
+            .service-name {
+                display: inline-block;
+                max-width: 60%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
             .service-units {
                 display: inline-block;
                 float: right;

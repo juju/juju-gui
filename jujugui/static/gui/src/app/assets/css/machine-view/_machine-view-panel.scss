@@ -22,7 +22,7 @@
     .column {
         @extend .display-flex;
         @include flex-direction(column);
-        flex: 1 1 33.333%;
+        flex: 1 0 33.333%;
         border-right: 1px dotted $mid-grey;
         padding: 0 20px;
 
@@ -65,6 +65,7 @@
 
                 .unit-list {
                     padding: 20px 10px;
+                    overflow: visible;
 
                     .auto-place {
                         margin-right: 7px;
