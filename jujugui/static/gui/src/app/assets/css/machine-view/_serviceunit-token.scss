@@ -1,11 +1,9 @@
 .machine-view-panel .serviceunit-token {
+    @extend %floating-panel;
     position: relative;
     min-height: 38px;
     margin: 10px 0 0 0;
     padding: 0 10px;
-    background-color: #fff;
-    border: 1px solid $machine-view-border-colour;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
     line-height: 38px;
 
     // States
@@ -15,15 +13,18 @@
         .more-menu {
             display: block;
         }
+
         .title {
             display: inline;
         }
     }
+
     &.state-select-machine {
         .machines {
             display: block;
         }
     }
+
     &.state-new-machine {
         .machines,
         .actions,
@@ -31,6 +32,7 @@
             display: block;
         }
     }
+
     &.state-kvm,
     &.state-select-container {
         .machines,
@@ -39,18 +41,22 @@
             display: block;
         }
     }
+
     &.state-kvm {
         .constraints-form {
             display: block;
         }
     }
+
     &:last-child {
         margin-bottom: 10px;
     }
+
     input[type="text"],
     select {
         width: 100%;
     }
+
     input[type="text"] {
         @extend .border-box;
         margin-bottom: 6px;
@@ -59,6 +65,7 @@
             margin-bottom: 0;
         }
     }
+
     form label {
         position: relative;
         float: right;
@@ -70,10 +77,12 @@
             margin-top: -34px;
         }
     }
+
     .unplaced-unit {
         .details {
             display: none;
         }
+
         .unit-icon {
             margin-right: 7px;
 
@@ -84,27 +93,32 @@
             }
         }
     }
+
     .machines {
         position: absolute;
         top: 0;
         left: 38px;
         right: 10px;
     }
+
     .actions {
         text-align: right;
 
         span {
             cursor: pointer;
         }
+
         .primary-action {
             color: $charm-panel-orange;
         }
     }
+
     .more-menu {
         position: absolute;
-        right: 5px;
+        right: 10px;
         cursor: default;
     }
+
     .more-menu,
     .title,
     .containers,
