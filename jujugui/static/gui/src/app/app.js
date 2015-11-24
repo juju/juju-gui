@@ -82,11 +82,6 @@ YUI.add('juju-gui', function(Y) {
       environment: {
         type: 'juju.views.environment',
         preserve: true
-      },
-
-      notifications: {
-        type: 'juju.views.NotificationsView',
-        preserve: true
       }
     },
 
@@ -536,12 +531,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.changesUtils = window.juju.utils.ChangesUtils;
 
-      // Create notifications controller
-      this.notifications = new juju.NotificationController({
-        app: this,
-        env: this.env,
-        notifications: this.db.notifications});
-
       this.on('*:navigateTo', function(e) {
         this.navigate(e.url);
       }, this);
@@ -567,10 +556,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.onDelta, this.db);
-
-      // Feed delta changes to the notifications system.
-      this.env.on('delta', this.notifications.generate_notices,
-          this.notifications);
 
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
@@ -1424,8 +1409,7 @@ YUI.add('juju-gui', function(Y) {
         this._simulator.stop();
       }
       Y.each(
-          [this.env, this.db, this.notifications,
-           this.endpointsController],
+          [this.env, this.db, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
               o.detachAll();
@@ -1533,28 +1517,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     // Persistent Views
-
-    /**
-     * `notifications` is a preserved view that remains rendered on all main
-     * views.  We manually create an instance of this view and insert it into
-     * the App's view metadata.
-     *
-     * @method show_notifications_view
-     */
-    show_notifications_view: function(req, res, next) {
-      var view = this.getViewInfo('notifications'),
-          instance = view.instance;
-      if (!instance) {
-        view.instance = new views.NotificationsView(
-            {container: Y.one('#notifications'),
-              env: this.env,
-              notifications: this.db.notifications,
-              nsRouter: this.nsRouter
-            });
-        view.instance.render();
-      }
-      next();
-    },
 
     /**
      * Ensure that the current user has authenticated.
@@ -2093,7 +2055,6 @@ YUI.add('juju-gui', function(Y) {
           // Called on each request.
           { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Authorization
@@ -2121,7 +2082,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-fakebackend-simulator',
     'juju-models',
-    'juju-notification-controller',
     'jujulib-utils',
     'ns-routing-app-extension',
     // React components
@@ -2138,7 +2098,6 @@ YUI.add('juju-gui', function(Y) {
     'd3-components',
     'container-token',
     'juju-templates',
-    'juju-notifications',
     'help-dropdown',
     'user-dropdown',
     'create-machine-view',

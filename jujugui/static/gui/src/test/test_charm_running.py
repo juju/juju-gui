@@ -114,43 +114,6 @@ class DeployTestMixin(object):
             error='Service {} not deployed.'.format(service_name))
 
 
-class TestNotifications(browser.TestCase, DeployTestMixin):
-
-    def setUp(self):
-        super(TestNotifications, self).setUp()
-        self.load()
-        self.handle_browser_warning()
-        self.handle_login()
-
-    def get_notifications(self):
-        """Return the contents of currently displayed notifications."""
-        notifier_box = self.wait_for_css_selector('.notifier-box')
-        notifications = notifier_box.find_elements_by_xpath('./*')
-        return [notification.text for notification in notifications]
-
-    def test_initial(self):
-        # No error notifications are displayed when the page is loaded.
-        notifications = self.get_notifications()
-        self.assertEqual(0, len(notifications))
-
-    def test_error(self):
-        # An error notification is created when attempting to deploy a service
-        # with an already used name.
-        # The service name is arbitrary, and connected to the charm name only
-        # by default/convention. Since charms are deployed using the default
-        # name, it is safe to reuse one of the service names here.
-        self.deploy('mysql')
-        service = self.get_service_names().pop()
-        self.deploy(service)
-        notifications = self.get_notifications()
-        self.assertEqual(1, len(notifications))
-        expected = (
-            'Attempting to deploy service {}\n'
-            'A service with that name already exists.'
-        ).format(service)
-        self.assertEqual(expected, notifications[0])
-
-
 class TestStaging(browser.TestCase, DeployTestMixin):
 
     def test_charm_deploy(self):

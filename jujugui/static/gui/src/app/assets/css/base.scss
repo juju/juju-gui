@@ -667,64 +667,6 @@ g.unit {
 }
 
 /*
- * Notifier widget.
- * Contains notifications that appear from the header.
- */
-.notifier-box {
-    position: absolute;
-    top: $navbar-height;
-    left: 40%;
-    margin: -2px 0 0 -125px;
-    z-index: 9999;
-
-    &.bundle {
-        margin: -5px 0 0 227px;
-    }
-
-    .yui3-notifier-content {
-        $box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        @include create-border-radius($border-radius);
-        @include create-box-shadow($box-shadow);
-        position: realtive;
-        width: 250px;
-        margin-top: 5px;
-        padding: 7px 10px;
-        background-color: #fff;
-        color: $cool-grey;
-        font-size: 12px;
-
-        &.bottom-arrow {
-            width: 177px;
-        }
-
-        &:first-child {
-            margin-top: 0;
-
-            &:before {
-                content: '';
-                position: absolute;
-                display: block;
-                top: -5px;
-                left: 50%;
-                width: 10px;
-                height: 10px;
-                margin-left: -6px;
-                background-color: #fff;
-                -webkit-transform: rotate(45deg);
-                transform: rotate(45deg);
-            }
-            &.bottom-arrow:before {
-                top: inherit;
-                bottom: -5px;
-            }
-        }
-        div:last-child {
-          color: #aaa;
-        }
-    }
-}
-
-/*
  * This panel is displayed when deleting relations.
  */
 .yui3-panel {
