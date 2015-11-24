@@ -221,7 +221,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       isBrowserSupported = function(agent) {
-        // Latest Chrome, Firefox, Safari, IE10, IE11 are supported
+        // Latest Chrome, Firefox, Safari, IE10, IE11 are supported.
         var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
         return isIE11 || (/Chrome|Firefox|Safari|MSIE\ 10/.test(agent));
       };
