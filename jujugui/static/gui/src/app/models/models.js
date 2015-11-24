@@ -555,7 +555,6 @@ YUI.add('juju-models', function(Y) {
               var nameParts = urlParts[urlParts.length - 1].split('-');
               var possibleVersion = nameParts[nameParts.length - 1];
               // Expected === and instead saw ==
-              /* jshint -W116 */
               if (possibleVersion == parseInt(possibleVersion, 10)) {
                 // The charmUrl contains the version so we can drop that and
                 // reconstruct the name.
@@ -714,7 +713,6 @@ YUI.add('juju-models', function(Y) {
         // will never clash with the randomly generated ghost id's in the GUI.
         randomId = Math.floor(Math.random() * 100000000) + '$';
         // Don't make functions within a loop
-        /* jshint -W083 */
         invalid = this.some(function(service) {
           if (service.get('id') === randomId) {
             return true;

@@ -587,14 +587,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must resize the service health graph properly when units are added',
         function() {
-          /* jshint -W031 */
           new views.environment({
             container: container,
             db: db,
             env: env,
             charmstore: fakeStore
           });
-          /* jshint +W031 */
           var tmp_data = {
             result: [
               ['machine', 'add', {

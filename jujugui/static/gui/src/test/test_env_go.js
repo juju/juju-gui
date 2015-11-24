@@ -986,9 +986,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with a config file', function() {
-      /*jshint multistr:true */
       var config_raw = 'tuning-level: \nexpert-mojo';
-      /*jshint multistr:false */
       var expected = {
         Type: 'Client',
         Request: 'ServiceDeploy',
@@ -1625,9 +1623,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set a service config from a file', function() {
-      /*jshint multistr:true */
       var data = 'tuning-level: \nexpert-mojo';
-      /*jshint multistr:false */
       env.set_config('mysql', null, data, null, null, {immediate: true});
       msg = conn.last_message();
       var expected = {

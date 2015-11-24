@@ -39,7 +39,6 @@ YUI().use(['yui'], function(Y) {
 
   // Combine one or more CSS files.
   function combineCSS(files, outputFile) {
-    /* jshint -W031 */
     new compressor.minify({
       type: 'sqwish',
       fileIn: files,
