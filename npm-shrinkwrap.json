@@ -2280,7 +2280,7 @@
     },
     "eslint-plugin-react": {
       "version": "3.10.0",
-      "from": "eslint-plugin-react@",
+      "from": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-3.10.0.tgz",
       "resolved": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-3.10.0.tgz"
     },
     "expect.js": {
@@ -2758,47 +2758,6 @@
               }
             }
           }
-        }
-      }
-    },
-    "jshint": {
-      "version": "2.1.9",
-      "from": "https://registry.npmjs.org/jshint/-/jshint-2.1.9.tgz",
-      "resolved": "https://registry.npmjs.org/jshint/-/jshint-2.1.9.tgz",
-      "dependencies": {
-        "shelljs": {
-          "version": "0.1.4",
-          "from": "https://registry.npmjs.org/shelljs/-/shelljs-0.1.4.tgz",
-          "resolved": "https://registry.npmjs.org/shelljs/-/shelljs-0.1.4.tgz"
-        },
-        "underscore": {
-          "version": "1.4.4",
-          "from": "https://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz",
-          "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz"
-        },
-        "cli": {
-          "version": "0.4.5",
-          "from": "https://registry.npmjs.org/cli/-/cli-0.4.5.tgz",
-          "resolved": "https://registry.npmjs.org/cli/-/cli-0.4.5.tgz",
-          "dependencies": {
-            "glob": {
-              "version": "3.2.9",
-              "from": "https://registry.npmjs.org/glob/-/glob-3.2.9.tgz",
-              "resolved": "https://registry.npmjs.org/glob/-/glob-3.2.9.tgz",
-              "dependencies": {
-                "inherits": {
-                  "version": "2.0.1",
-                  "from": "https://registry.npmjs.org/inherits/-/inherits-2.0.1.tgz",
-                  "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.1.tgz"
-                }
-              }
-            }
-          }
-        },
-        "console-browserify": {
-          "version": "0.1.6",
-          "from": "https://registry.npmjs.org/console-browserify/-/console-browserify-0.1.6.tgz",
-          "resolved": "https://registry.npmjs.org/console-browserify/-/console-browserify-0.1.6.tgz"
         }
       }
     },
