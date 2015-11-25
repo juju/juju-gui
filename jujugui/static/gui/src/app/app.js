@@ -805,7 +805,12 @@ YUI.add('juju-gui', function(Y) {
       var db = this.db;
       var topo = this.views.environment.instance.topo;
       var ServiceModule = topo.modules.ServiceModule;
-      topo.on('hoverService', function(service) {
+      // Set up a handler for syncing the service token hover. This needs to be
+      // attached only when the component is visible.
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
+      this.hoverService = topo.on('hoverService', function(service) {
         this._renderAddedServices(service.id);
       }, this);
       // Deselect the active service token.
@@ -945,6 +950,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
+    _emptySectionA: function() {
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
+    },
+
     _emptySectionC: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
@@ -1008,7 +1019,8 @@ YUI.add('juju-gui', function(Y) {
       var dispatchers = this.state.get('dispatchers');
       dispatchers.sectionA = {
         services: this._renderAddedServices.bind(this),
-        inspector: this._renderInspector.bind(this)
+        inspector: this._renderInspector.bind(this),
+        empty: this._emptySectionA.bind(this)
       };
       dispatchers.sectionB = {
         machine: this._renderMachineView.bind(this),
