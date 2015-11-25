@@ -172,4 +172,23 @@ describe('InspectorExpose', function() {
     assert.equal(unexposeService.callCount, 1);
     assert.deepEqual(unexposeService.args[0][0], 'demo');
   });
+
+  it('can display a notification if there is an error', function() {
+    var changeState = sinon.stub();
+    var exposeService = sinon.stub().callsArgWith(1, {err: 'error'});
+    var addNotification = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('exposed').returns(false);
+    var service = {get: getStub};
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorExpose
+          changeState={changeState}
+          exposeService={exposeService}
+          addNotification={addNotification}
+          service={service} />);
+    output.props.children[0].props.children.props.onChange();
+    assert.equal(addNotification.callCount, 1);
+    assert.equal(addNotification.args[0][0].title, 'Exposing charm failed');
+  });
 });

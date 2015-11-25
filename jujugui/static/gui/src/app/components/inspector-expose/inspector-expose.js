@@ -100,9 +100,13 @@ YUI.add('inspector-expose', function() {
       @param {object} e The expose event
     */
     _exposeServiceCallback: function(e) {
-      // XXX: Need to implement expose error handling.
       if (e.err) {
         console.error(e.err);
+        this.props.addNotification({
+          title: 'Exposing charm failed',
+          message: 'The charm failed to expose:' + e.err,
+          level: 'error'
+        });
       }
     },
 
