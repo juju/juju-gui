@@ -641,6 +641,7 @@ YUI.add('juju-gui', function(Y) {
       this.db.relations.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
+      this.db.notifications.after('add', this._renderNotifications, this);
 
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
@@ -744,6 +745,22 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)} />,
         document.getElementById('header-search-container'));
+    },
+
+    /**
+      Renders the notification component to the page in the designated element.
+
+      @method _renderNotifications
+    */
+    _renderNotifications: function(e) {
+      var notification = null;
+      if (e && e.details) {
+        notification = e.details[0].model.getAttrs();
+      }
+      ReactDOM.render(
+        <window.juju.components.NotificationList
+          notification={notification}/>,
+        document.getElementById('notifications-container'));
     },
 
     /**
@@ -1852,6 +1869,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       this._renderComponents();
+      this._renderNotifications();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -2092,6 +2110,7 @@ YUI.add('juju-gui', function(Y) {
     'header-search',
     'inspector-component',
     'local-inspector',
+    'notification-list',
     'panel-component',
     'user-profile',
     // juju-views group
