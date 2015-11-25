@@ -790,16 +790,12 @@ YUI.add('juju-view-utils', function(Y) {
       configurable: true,
       value: function(point, transform) {
         transform = transform || {
-          scale: function() { return 1; },
-          translate: function() { return [0, 0]; }
+          scale: function() { return 1; }
         };
-        var tr = transform.translate(),
-            s = transform.scale();
+        var s = transform.scale();
 
-        return (point[0] >= this.x * s + tr[0] &&
-                point[0] <= this.x * s + this.w * s + tr[0] &&
-                point[1] >= this.y * s + tr[1] &&
-                point[1] <= this.y * s + this.h * s + tr[1]);
+        return Math.pow((this.x * s - point[0]), 2) +
+               Math.pow((this.y * s - point[1]), 2) <= this.w;
       }
     },
 
