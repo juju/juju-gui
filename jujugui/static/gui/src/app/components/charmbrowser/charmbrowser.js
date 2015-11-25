@@ -89,6 +89,7 @@ YUI.add('charmbrowser-component', function() {
             component:
               <juju.components.EntityDetails
                 changeState={this.props.changeState}
+                addNotification={this.props.addNotification}
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}

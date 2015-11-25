@@ -61,6 +61,7 @@ describe('EntityDetails', function() {
     var pluralize = sinon.spy();
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
+    var addNotification = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           deployService={deployService}
@@ -72,6 +73,7 @@ describe('EntityDetails', function() {
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
+          addNotification={addNotification}
           makeEntityModel={makeEntityModel} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
@@ -87,6 +89,7 @@ describe('EntityDetails', function() {
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             changeState={changeState}
+            addNotification={addNotification}
             deployService={deployService}
             pluralize={pluralize} />
           {undefined}
@@ -153,6 +156,7 @@ describe('EntityDetails', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
+    var addNotification = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           deployService={deployService}
@@ -165,6 +169,7 @@ describe('EntityDetails', function() {
           getDiagramURL={getDiagramURL}
           id={id}
           pluralize={pluralize}
+          addNotification={addNotification}
           makeEntityModel={makeEntityModel} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
@@ -181,6 +186,7 @@ describe('EntityDetails', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             deployService={deployService}
+            addNotification={addNotification}
             pluralize={pluralize} />
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}

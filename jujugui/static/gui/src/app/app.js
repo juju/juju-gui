@@ -930,6 +930,7 @@ YUI.add('juju-gui', function(Y) {
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
           utils={utils}
+          addNotification={this.db.notifications.add.bind(this)}
           makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
     },

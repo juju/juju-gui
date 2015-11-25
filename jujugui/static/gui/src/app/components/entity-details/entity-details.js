@@ -60,6 +60,7 @@ YUI.add('entity-details', function() {
               <div>
                 <juju.components.EntityHeader
                   entityModel={entityModel}
+                  addNotification={this.props.addNotification}
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
                   changeState={this.props.changeState}

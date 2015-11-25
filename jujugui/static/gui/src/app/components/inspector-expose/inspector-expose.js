@@ -104,7 +104,8 @@ YUI.add('inspector-expose', function() {
         console.error(e.err);
         this.props.addNotification({
           title: 'Exposing charm failed',
-          message: 'The charm failed to expose:' + e.err,
+          message: 'The service' + this.props.service.get('name') +
+            ' failed to expose:' + e.err,
           level: 'error'
         });
       }
