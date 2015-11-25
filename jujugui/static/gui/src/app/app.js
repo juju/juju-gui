@@ -798,9 +798,9 @@ YUI.add('juju-gui', function(Y) {
       element.
 
       @method _renderAddedServices
-      @param {String} serviceId An id for a service.
+      @param {String} hoveredId An id for a service.
     */
-    _renderAddedServices: function(serviceId) {
+    _renderAddedServices: function(hoveredId) {
       var utils = views.utils;
       var db = this.db;
       var topo = this.views.environment.instance.topo;
@@ -821,7 +821,7 @@ YUI.add('juju-gui', function(Y) {
           visible={db.services.size() > 0}>
           <components.AddedServicesList
             services={db.services}
-            serviceId={serviceId}
+            hoveredId={hoveredId}
             updateUnitFlags={db.updateUnitFlags.bind(db)}
             findRelatedServices={db.findRelatedServices.bind(db)}
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}

@@ -43,7 +43,7 @@ YUI.add('added-services-list', function() {
               // to treat them as the same record instead of re-rendering
               // when they key changes.
               key={service.get('name')}
-              hovered={service.get('id') === this.props.serviceId}
+              hovered={service.get('id') === this.props.hoveredId}
               changeState={this.props.changeState}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
               focusService={this.focusService}
