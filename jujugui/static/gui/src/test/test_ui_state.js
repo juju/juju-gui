@@ -751,6 +751,70 @@ describe('UI State object', function() {
           }
         }
       },
+      '/machine/3/?search=hadoop&provides=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            provides: 'http'
+          }
+        }
+      },
+      '/machine/3/?search&provides=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: '',
+            provides: 'http'
+          }
+        }
+      },
+      '/machine/3/?search=hadoop&requires=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            requires: 'http'
+          }
+        }
+      },
+      '/machine/3/?search&requires=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: '',
+            requires: 'http'
+          }
+        }
+      },
       // Multi section urls.
       '/inspector/apache2/machine/3/lxc-0': {
         sectionA: {
@@ -1270,6 +1334,70 @@ describe('UI State object', function() {
             activeComponent: 'search-results',
             search: null,
             series: 'wily'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search=hadoop&provides=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            provides: 'http'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search&provides=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            provides: 'http'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search=hadoop&requires=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            requires: 'http'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search&requires=http': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            requires: 'http'
           }
         }
       }

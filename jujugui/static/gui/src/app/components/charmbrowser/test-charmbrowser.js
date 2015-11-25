@@ -42,7 +42,9 @@ describe('Charmbrowser', function() {
           tags: 'ops',
           sort: '-name',
           type: 'bundle',
-          series: 'wily'
+          series: 'wily',
+          provides: 'http',
+          requires: 'cache'
         }
       }};
     var series = sinon.stub();
@@ -69,6 +71,8 @@ describe('Charmbrowser', function() {
             sort="-name"
             type="bundle"
             series="wily"
+            provides="http"
+            requires="cache"
             charmstoreSearch={charmstoreSearch} />
         </juju.components.Panel>);
   });

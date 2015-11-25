@@ -56,11 +56,11 @@ YUI.add('entity-content-relations', function() {
     _generateRelations: function() {
       var components = [];
       var relations = this.props.relations;
-      var provides = Object.keys(relations.provides).map(function(key) {
-        return relations.provides[key];
-      });
       var requires = Object.keys(relations.requires).map(function(key) {
         return relations.requires[key];
+      });
+      var provides = Object.keys(relations.provides).map(function(key) {
+        return relations.provides[key];
       });
       var relationsList = provides.concat(requires);
       relationsList.forEach(function(relation) {
@@ -81,8 +81,7 @@ YUI.add('entity-content-relations', function() {
 
     render: function() {
       return (
-        <div className="section"
-          id="relations">
+        <div className="section" id="relations">
           <h3 className="section__title">
             Relations
           </h3>

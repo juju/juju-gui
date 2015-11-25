@@ -47,7 +47,7 @@ describe('EntityFiles', function() {
     );
     var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/trusty/django/archive';  // eslint-disable-line max-len
     var fileItems = [
-      <li key="foo.zip" className="entity-files__file">
+      <li key="foo.zip" className="entity-files__file section__list-item">
         <a href={archiveUrl + '/foo.zip'} target="_blank">
           foo.zip
         </a>
@@ -58,22 +58,22 @@ describe('EntityFiles', function() {
         <h3 className="section__title">
           1 file
         </h3>
-        <ul className="entity-files__links">
-          <li className="entity-files__link">
+        <ul className="section__list">
+          <li className="entity-files__link section__list-item">
             <a ref="codeLink"
               target="_blank"
               href="https://code.launchpad.net/django/code">
               View code
             </a>
           </li>
-          <li className="entity-files__link">
+          <li className="entity-files__link section__list-item">
             <a target="_blank"
               href={archiveUrl}>
               Download .zip
             </a>
           </li>
         </ul>
-        <ul ref="files" className="entity-files__files">
+        <ul ref="files" className="section__list">
           {fileItems}
         </ul>
       </div>

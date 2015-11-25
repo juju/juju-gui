@@ -89,7 +89,7 @@ YUI.add('entity-files', function() {
           </h3>
           <ul className="section__list">
             {this._generateCodeLink(entityModel.get('code_source'))}
-            <li className="entity-files__link">
+            <li className="entity-files__link section__list-item">
               <a target="_blank"
                 href={archiveUrl}>
                 Download .zip
