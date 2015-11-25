@@ -176,6 +176,20 @@ var jsTestUtils = {
             type: 'string',
             default: 'abc123'
           }
+        },
+        relations: {
+          provides: {
+            http: {
+              name: 'http',
+              interface: 'http'
+            }
+          },
+          requires: {
+            cache: {
+              name: 'cache',
+              interface: 'cache'
+            }
+          }
         }
       };
     }

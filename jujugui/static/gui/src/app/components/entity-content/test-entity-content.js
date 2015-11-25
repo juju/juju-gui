@@ -50,10 +50,11 @@ describe('EntityContent', function() {
   it('can display a charm', function() {
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
+    var changeState = sinon.spy();
     var pluralize = sinon.spy();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
-          changeState={sinon.spy()}
+          changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
           pluralize={pluralize}
@@ -97,6 +98,11 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              <juju.components.EntityContentRelations
+                changeState={changeState}
+                relations={mockEntity.get('relations')} />
+            </div>
+            <div className="four-col">
               <juju.components.EntityFiles
                 entityModel={mockEntity}
                 pluralize={pluralize} />
@@ -128,9 +134,10 @@ describe('EntityContent', function() {
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
     var pluralize = sinon.spy();
+    var changeState = sinon.spy();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
-        changeState={sinon.spy()}
+        changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
         pluralize={pluralize}
@@ -162,6 +169,11 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              <juju.components.EntityContentRelations
+                changeState={changeState}
+                relations={mockEntity.get('relations')} />
+            </div>
+            <div className="four-col">
               <juju.components.EntityFiles
                 entityModel={mockEntity}
                 pluralize={pluralize} />
@@ -177,11 +189,12 @@ describe('EntityContent', function() {
   it('can display a bundle', function() {
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
+    var changeState = sinon.spy();
     var pluralize = sinon.spy();
     var mockEntity = jsTestUtils.makeEntity(true);
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
-          changeState={sinon.spy()}
+          changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
           pluralize={pluralize}
@@ -196,6 +209,11 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 renderMarkdown={renderMarkdown}
                 getFile={getFile} />
+            </div>
+            <div className="four-col">
+              <juju.components.EntityContentRelations
+                changeState={changeState}
+                relations={mockEntity.get('relations')} />
             </div>
             <div className="four-col">
               <juju.components.EntityFiles

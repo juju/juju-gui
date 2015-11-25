@@ -156,7 +156,8 @@ YUI.add('search-results', function(Y) {
       @param {String} sort The sort method.
       @param {String} series The series to filter by.
     */
-    searchRequest: function(query, tags, type, sort, series) {
+    searchRequest: function(query, tags, type, sort, series, provides,
+                            requires) {
       var filters = {text: query, tags: tags};
       // Don't add the type property unless required otherwise the API will
       // filter by charm.
@@ -168,6 +169,12 @@ YUI.add('search-results', function(Y) {
       }
       if (series) {
         filters.series = series;
+      }
+      if (provides) {
+        filters.provides = provides;
+      }
+      if (requires) {
+        filters.requires = requires;
       }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
@@ -207,7 +214,8 @@ YUI.add('search-results', function(Y) {
     componentDidMount: function() {
       this.searchRequest(
           this.props.query, this.props.tags, this.props.type,
-          this.props.sort, this.props.series);
+          this.props.sort, this.props.series, this.props.provides,
+          this.props.requires);
     },
 
     componentWillUnmount: function() {
@@ -217,7 +225,8 @@ YUI.add('search-results', function(Y) {
     componentWillReceiveProps: function(nextProps) {
       if (this.shouldSearch(nextProps)) {
         this.searchRequest(nextProps.query, nextProps.tags, nextProps.type,
-          nextProps.sort, nextProps.series);
+          nextProps.sort, nextProps.series, nextProps.provides,
+          nextProps.requires);
       }
     },
 

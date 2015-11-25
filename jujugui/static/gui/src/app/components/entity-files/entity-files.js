@@ -41,7 +41,7 @@ YUI.add('entity-files', function() {
       if (codeUrl) {
         codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
         codeLink = (
-          <li className="entity-files__link">
+          <li className="entity-files__link section__list-item">
             <a ref="codeLink"
               target="_blank"
               href={codeUrl}>
@@ -67,7 +67,7 @@ YUI.add('entity-files', function() {
       var fileItems = files.map(function(file) {
         var fileLink = `${url}/${file}`;
         return (
-          <li key={file} className="entity-files__file">
+          <li key={file} className="entity-files__file section__list-item">
             <a href={fileLink} target="_blank">
               {file}
             </a>
@@ -87,16 +87,16 @@ YUI.add('entity-files', function() {
           <h3 className="section__title">
             {files.length + ' ' + this.props.pluralize('file', files.length)}
           </h3>
-          <ul className="entity-files__links">
+          <ul className="section__list">
             {this._generateCodeLink(entityModel.get('code_source'))}
-            <li className="entity-files__link">
+            <li className="entity-files__link section__list-item">
               <a target="_blank"
                 href={archiveUrl}>
                 Download .zip
               </a>
             </li>
           </ul>
-          <ul ref="files" className="entity-files__files">
+          <ul ref="files" className="section__list">
             {this._generateFileItems(files, archiveUrl)}
           </ul>
         </div>
