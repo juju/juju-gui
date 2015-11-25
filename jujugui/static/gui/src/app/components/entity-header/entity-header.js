@@ -71,6 +71,13 @@ YUI.add('entity-header', function() {
     _getBundleYAMLCallback: function(error, yaml) {
       if (error) {
         console.error(error);
+        this.props.addNotification({
+          title: 'Bundle failed to deploy',
+          message: 'The bundle ' + this.props.entityModel.get('name') +
+            ' failed to deploy:' + error,
+          level: 'error'
+        });
+        return;
       }
       this.props.importBundleYAML(yaml);
       this._closeEntityDetails();

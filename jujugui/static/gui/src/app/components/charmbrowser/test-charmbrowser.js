@@ -145,6 +145,7 @@ describe('Charmbrowser', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
+    var addNotification = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -160,6 +161,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         getFile={getFile}
         renderMarkdown={renderMarkdown}
+        addNotification={addNotification}
         utils={utils} />);
     assert.deepEqual(output,
         <juju.components.Panel
@@ -176,6 +178,7 @@ describe('Charmbrowser', function() {
             renderMarkdown={renderMarkdown}
             deployService={deployService}
             id={id}
+            addNotification={addNotification}
             pluralize={utils.pluralize} />
         </juju.components.Panel>);
   });
