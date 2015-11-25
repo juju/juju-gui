@@ -50,7 +50,7 @@ describe('EntityContentRelations', function() {
         <h3 className="section__title">
           Relations
         </h3>
-        <ul className="section__list">
+        <ul className="section__list" ref="list">
           <li className="link section__list-item"
             role="button"
             tabIndex="0"
@@ -70,13 +70,28 @@ describe('EntityContentRelations', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can navigate to a relation', function() {
+  it('handles null relations with aplomb', function() {
+    var provides = mockEntity.get('relations').provides;
+    mockEntity.set('relations', {
+      requires: null,
+      provides: provides
+    });
     var changeState = sinon.spy();
-    var output = jsTestUtils.shallowRender(
+    var output = testUtils.renderIntoDocument(
       <juju.components.EntityContentRelations
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
-    output.props.children[1].props.children[0].props.onClick();
+    var expectedLength = Object.keys(provides).length;
+    assert.equal(output.refs.list.props.children.length, expectedLength);
+  });
+
+  it('can navigate to a relation', function() {
+    var changeState = sinon.spy();
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityContentRelations
+        changeState={changeState}
+        relations={mockEntity.get('relations')} />);
+    output.refs.list.props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {

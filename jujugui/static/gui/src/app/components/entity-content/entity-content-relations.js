@@ -56,12 +56,18 @@ YUI.add('entity-content-relations', function() {
     _generateRelations: function() {
       var components = [];
       var relations = this.props.relations;
-      var requires = Object.keys(relations.requires).map(function(key) {
-        return relations.requires[key];
-      });
-      var provides = Object.keys(relations.provides).map(function(key) {
-        return relations.provides[key];
-      });
+      var requires = [];
+      if (relations.requires) {
+        requires = Object.keys(relations.requires).map(function(key) {
+          return relations.requires[key];
+        });
+      }
+      var provides = [];
+      if (relations.provides) {
+        provides = Object.keys(relations.provides).map(function(key) {
+          return relations.provides[key];
+        });
+      }
       var relationsList = provides.concat(requires);
       relationsList.forEach(function(relation) {
         var type = this.role === 'requirer' ? 'requires' : 'provides';
@@ -85,7 +91,7 @@ YUI.add('entity-content-relations', function() {
           <h3 className="section__title">
             Relations
           </h3>
-          <ul className="section__list">
+          <ul className="section__list" ref="list">
             {this._generateRelations()}
           </ul>
         </div>
