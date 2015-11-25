@@ -806,14 +806,17 @@ YUI.add('juju-gui', function(Y) {
       var topo = this.views.environment.instance.topo;
       var ServiceModule = topo.modules.ServiceModule;
       // Set up a handler for syncing the service token hover. This needs to be
-      // attached only when the component is visible.
+      // attached only when the component is visible otherwise the added
+      // services component will try to render if the user hovers a service
+      // when they have the service details open.
       if (this.hoverService) {
         this.hoverService.detach();
       }
       this.hoverService = topo.on('hoverService', function(service) {
         this._renderAddedServices(service.id);
       }, this);
-      // Deselect the active service token.
+      // Deselect the active service token. This needs to happen so that when a
+      // user closes the service details the service token deactivates.
       ServiceModule.deselectNodes();
       ReactDOM.render(
         <components.Panel
