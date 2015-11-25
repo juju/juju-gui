@@ -34,10 +34,26 @@ YUI.add('notification-list-item', function() {
         'notification-list-item--' + type);
     },
 
+    /**
+      Hides this component and it will be cleaned up by its parent when the
+      timer runs out.
+
+      @method _hide
+    */
+    _hide: function() {
+      ReactDOM.findDOMNode(this).style.opacity = 0;
+    },
+
     render: function() {
       return (
         <li className={this.generateClasses()}>
-          {this.props.content}
+          <span>{this.props.content}</span>
+          <span tabIndex="0" role="button"
+            className="notification-list-item__hide"
+            onClick={this._hide}>
+            <juju.components.SvgIcon name="close_16"
+              size="16" />
+          </span>
         </li>);
     }
 
