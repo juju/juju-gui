@@ -1,13 +1,4 @@
 .entity-files {
-    &__links, &__files {
-        margin: 0;
-    }
-
-    &__link, &__file {
-        list-style: none;
-        line-height: 1.6;
-    }
-
     &__link {
         a:hover {
             text-decoration: underline;
@@ -18,6 +9,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
         a {
             text-decoration: none;
             color: $cool-grey;

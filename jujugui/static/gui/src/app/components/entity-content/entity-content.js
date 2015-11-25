@@ -156,6 +156,11 @@ YUI.add('entity-content', function() {
                   getFile={this.props.getFile} />
               </div>
               <div className="four-col">
+                <juju.components.EntityContentRelations
+                  changeState={this.props.changeState}
+                  relations={this.props.entityModel.get('relations')} />
+              </div>
+              <div className="four-col">
                 <juju.components.EntityFiles
                   entityModel={entityModel}
                   pluralize={this.props.pluralize} />
@@ -172,6 +177,7 @@ YUI.add('entity-content', function() {
   requires: [
     'entity-content-config-option',
     'entity-content-readme',
+    'entity-content-relations',
     'entity-files'
   ]
 });

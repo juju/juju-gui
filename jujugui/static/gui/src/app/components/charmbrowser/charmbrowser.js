@@ -80,6 +80,8 @@ YUI.add('charmbrowser-component', function() {
                 type={metadata.type}
                 sort={metadata.sort}
                 series={metadata.series}
+                provides={metadata.provides}
+                requires={metadata.requires}
                 tags={metadata.tags} />
           };
           break;
