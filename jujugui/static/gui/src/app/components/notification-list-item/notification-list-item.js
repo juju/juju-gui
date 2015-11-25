@@ -28,9 +28,10 @@ YUI.add('notification-list-item', function() {
     },
 
     generateClasses: function() {
+      var type = this.props.type || 'info';
       return classNames(
         'notification-list-item',
-        'notification-list-item--' + this.props.type);
+        'notification-list-item--' + type);
     },
 
     render: function() {

@@ -58,7 +58,7 @@ YUI.add('notification-list', function() {
           <juju.components.NotificationListItem
             key={key}
             content={notifications[key].content}
-            type={notifications[key].level} />);
+            type={notifications[key].type} />);
       });
       return elements;
     },
