@@ -70,6 +70,8 @@ describe('AddedServicesListItem', function() {
       <li className="inspector-view__list-item"
           data-serviceid="demo"
           onClick={output.props.onClick}
+          onMouseEnter={output.props.onMouseEnter}
+          onMouseLeave={output.props.onMouseLeave}
           tabIndex="0"
           role="button">
         <img src="icon.gif" className="inspector-view__item-icon" />
@@ -152,6 +154,8 @@ describe('AddedServicesListItem', function() {
         <li className="inspector-view__list-item"
             data-serviceid="demo"
             onClick={output.props.onClick}
+            onMouseEnter={output.props.onMouseEnter}
+            onMouseLeave={output.props.onMouseLeave}
             tabIndex="0"
             role="button">
           <img src="icon.gif" className="inspector-view__item-icon" />
@@ -210,6 +214,8 @@ describe('AddedServicesListItem', function() {
         <li className="inspector-view__list-item"
             data-serviceid="demo"
             onClick={output.props.onClick}
+            onMouseEnter={output.props.onMouseEnter}
+            onMouseLeave={output.props.onMouseLeave}
             tabIndex="0"
             role="button">
           <img src="icon.gif" className="inspector-view__item-icon" />
@@ -266,6 +272,8 @@ describe('AddedServicesListItem', function() {
         <li className="inspector-view__list-item"
             data-serviceid="demo"
             onClick={output.props.onClick}
+            onMouseEnter={output.props.onMouseEnter}
+            onMouseLeave={output.props.onMouseLeave}
             tabIndex="0"
             role="button">
           <img src="icon.gif" className="inspector-view__item-icon" />
@@ -322,6 +330,8 @@ describe('AddedServicesListItem', function() {
         <li className="inspector-view__list-item"
             data-serviceid="demo"
             onClick={output.props.onClick}
+            onMouseEnter={output.props.onMouseEnter}
+            onMouseLeave={output.props.onMouseLeave}
             tabIndex="0"
             role="button">
           <img src="icon.gif" className="inspector-view__item-icon" />
@@ -578,4 +588,53 @@ describe('AddedServicesListItem', function() {
     assert.equal(fadeService.args[0][0], 'wordpress');
   });
 
+  it('calls the hoverService callable on mouse enter', function() {
+    var service = {
+      get: sinon.stub().returns('apache2'),
+      getAttrs: function() {
+        return {
+          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
+          units: {
+            toArray: function() {
+              return [];
+            }}};
+      }};
+    var changeStub = sinon.stub();
+    var hoverService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.AddedServicesListItem
+          changeState={changeStub}
+          hoverService={hoverService}
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service} />);
+    output.props.onMouseEnter();
+    assert.equal(hoverService.callCount, 1);
+    assert.equal(hoverService.args[0][0], 'apache2');
+    assert.isTrue(hoverService.args[0][1]);
+  });
+
+  it('calls the hoverService callable on mouse leave', function() {
+    var service = {
+      get: sinon.stub().returns('apache2'),
+      getAttrs: function() {
+        return {
+          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
+          units: {
+            toArray: function() {
+              return [];
+            }}};
+      }};
+    var changeStub = sinon.stub();
+    var hoverService = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.AddedServicesListItem
+          changeState={changeStub}
+          hoverService={hoverService}
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service} />);
+    output.props.onMouseLeave();
+    assert.equal(hoverService.callCount, 1);
+    assert.equal(hoverService.args[0][0], 'apache2');
+    assert.isFalse(hoverService.args[0][1]);
+  });
 });

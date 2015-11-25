@@ -154,8 +154,31 @@ YUI.add('added-services-list-item', function() {
     _generateClassName: function() {
       return classNames(
         'inspector-view__list-item',
-        this.state.focus || this.state.fade ? 'visibility-toggled' : false
+        {
+          'visibility-toggled': this.state.focus || this.state.fade,
+          hover: this.props.hovered
+        }
       );
+    },
+
+    /**
+      Handle highlighting a service token when the item is hovered.
+
+      @method _onMouseEnter
+      @param {Object} e The mouse event.
+    */
+    _onMouseEnter: function(e) {
+      this.props.hoverService(this.props.service.get('id'), true);
+    },
+
+    /**
+      Handle unhighlighting a service token when the item is no longer hovered.
+
+      @method _onMouseLeave
+      @param {Object} e The mouse event.
+    */
+    _onMouseLeave: function(e) {
+      this.props.hoverService(this.props.service.get('id'), false);
     },
 
     render: function() {
@@ -169,6 +192,8 @@ YUI.add('added-services-list-item', function() {
         <li className={this._generateClassName()}
             data-serviceid={service.id}
             onClick={this._onClickHandler}
+            onMouseEnter={this._onMouseEnter}
+            onMouseLeave={this._onMouseLeave}
             tabIndex="0"
             role="button">
           <img src={service.icon} className="inspector-view__item-icon" />

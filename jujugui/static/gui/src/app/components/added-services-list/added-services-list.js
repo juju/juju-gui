@@ -43,6 +43,7 @@ YUI.add('added-services-list', function() {
               // to treat them as the same record instead of re-rendering
               // when they key changes.
               key={service.get('name')}
+              hovered={service.get('id') === this.props.hoveredId}
               changeState={this.props.changeState}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
               focusService={this.focusService}
@@ -50,6 +51,7 @@ YUI.add('added-services-list', function() {
               fadeService={this.fadeService}
               unfadeService={this.unfadeService}
               ref={'AddedServicesListItem-' + service.get('id')}
+              hoverService={this.props.hoverService}
               service={service} />);
       });
       return items;

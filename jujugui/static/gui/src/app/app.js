@@ -798,22 +798,39 @@ YUI.add('juju-gui', function(Y) {
       element.
 
       @method _renderAddedServices
-      @param {Array} services Array of service models.
+      @param {String} hoveredId An id for a service.
     */
-    _renderAddedServices: function(services) {
+    _renderAddedServices: function(hoveredId) {
       var utils = views.utils;
       var db = this.db;
+      var topo = this.views.environment.instance.topo;
+      var ServiceModule = topo.modules.ServiceModule;
+      // Set up a handler for syncing the service token hover. This needs to be
+      // attached only when the component is visible otherwise the added
+      // services component will try to render if the user hovers a service
+      // when they have the service details open.
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
+      this.hoverService = topo.on('hoverService', function(service) {
+        this._renderAddedServices(service.id);
+      }, this);
+      // Deselect the active service token. This needs to happen so that when a
+      // user closes the service details the service token deactivates.
+      ServiceModule.deselectNodes();
       ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
           visible={db.services.size() > 0}>
           <components.AddedServicesList
             services={db.services}
+            hoveredId={hoveredId}
             updateUnitFlags={db.updateUnitFlags.bind(db)}
             findRelatedServices={db.findRelatedServices.bind(db)}
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}
             setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
+            hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
@@ -829,6 +846,7 @@ YUI.add('juju-gui', function(Y) {
     _renderInspector: function(metadata) {
       var state = this.state;
       var utils = views.utils;
+      var topo = this.views.environment.instance.topo;
       var charmstore = this.get('charmstore');
       var inspector;
       var service = this.db.services.getById(metadata.id);
@@ -838,6 +856,8 @@ YUI.add('juju-gui', function(Y) {
       // happens if the user tries to visit the inspector of a ghost service
       // id which no longer exists.
       if (service) {
+        // Select the service token.
+        topo.modules.ServiceModule.selectService(service.get('id'));
         var charm = app.db.charms.getById(service.get('charm'));
         inspector = (
           <components.Inspector
@@ -855,8 +875,7 @@ YUI.add('juju-gui', function(Y) {
             destroyService={utils.destroyService.bind(
                 this, this.db, this.env, service)}
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
-            clearState={utils.clearState.bind(
-                this, this.views.environment.instance.topo)}
+            clearState={utils.clearState.bind(this, topo)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
@@ -934,6 +953,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
+    _emptySectionA: function() {
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
+    },
+
     _emptySectionC: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
@@ -997,7 +1022,8 @@ YUI.add('juju-gui', function(Y) {
       var dispatchers = this.state.get('dispatchers');
       dispatchers.sectionA = {
         services: this._renderAddedServices.bind(this),
-        inspector: this._renderInspector.bind(this)
+        inspector: this._renderInspector.bind(this),
+        empty: this._emptySectionA.bind(this)
       };
       dispatchers.sectionB = {
         machine: this._renderMachineView.bind(this),
