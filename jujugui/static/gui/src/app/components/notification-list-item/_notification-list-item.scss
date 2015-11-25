@@ -1,0 +1,22 @@
+.notification-list-item {
+  @extend %floating-panel;
+  @extend %stagger-fade-in;
+  box-sizing: border-box;
+  min-width: $left-panel-width;
+  height: $environment-header-height;
+  padding: 0 20px;
+  color: $text-colour;
+  line-height: $environment-header-height;
+  margin-top: 10px;
+
+  &--error {
+    background-color: $error;
+    color: $white;
+  }
+
+  &__hide {
+    vertical-align: middle;
+    padding-left: 15px;
+    cursor: pointer;
+  }
+}

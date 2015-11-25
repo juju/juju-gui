@@ -220,12 +220,11 @@ describe('Ghost Deployer Extension', function() {
     var notifications = ghostDeployer.db.notifications;
     assert.strictEqual(notifications.add.calledOnce(), true);
     var notification = notifications.add.lastArguments()[0];
-    assert.strictEqual(
-        notification.get('title'), 'Error adding unit django/42');
-    assert.strictEqual(
-        notification.get('message'),
+    assert.equal(notification.title, 'Error adding unit django/42');
+    assert.equal(
+        notification.message,
         'Could not add the requested unit. Server responded with: bad wolf');
-    assert.strictEqual(notification.get('level'), 'error');
+    assert.equal(notification.level, 'error');
   });
 
   it('notifies add_unit failures', function() {
@@ -235,11 +234,11 @@ describe('Ghost Deployer Extension', function() {
     var notifications = ghostDeployer.db.notifications;
     assert.strictEqual(notifications.add.calledOnce(), true);
     var notification = notifications.add.lastArguments()[0];
-    assert.strictEqual(notification.get('title'), 'Added unit django/42');
-    assert.strictEqual(
-        notification.get('message'),
+    assert.equal(notification.title, 'Added unit django/42');
+    assert.equal(
+        notification.message,
         'Successfully created the requested unit.');
-    assert.strictEqual(notification.get('level'), 'info');
+    assert.equal(notification.level, 'info');
   });
 
   it('removes the ghost unit on add_unit success', function() {

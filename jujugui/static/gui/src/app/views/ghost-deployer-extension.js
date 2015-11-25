@@ -138,26 +138,23 @@ YUI.add('ghost-deployer-extension', function(Y) {
     */
     _deployCallbackHandler: function(ghostService, evt) {
       var db = this.db;
-      var models = Y.juju.models;
       var serviceName = ghostService.get('name');
 
       if (evt.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error deploying ' + serviceName,
-              message: 'Could not deploy the requested service. Server ' +
-                  'responded with: ' + evt.err,
-              level: 'error'
-            }));
+        db.notifications.add({
+          title: 'Error deploying ' + serviceName,
+          message: 'Could not deploy the requested service. Server ' +
+              'responded with: ' + evt.err,
+          level: 'error'
+        });
         return;
       }
 
-      db.notifications.add(
-          new models.Notification({
-            title: 'Deployed ' + serviceName,
-            message: 'Successfully deployed the requested service.',
-            level: 'info'
-          }));
+      db.notifications.add({
+        title: 'Deployed ' + serviceName,
+        message: 'Successfully deployed the requested service.',
+        level: 'info'
+      });
 
       // Transition the ghost viewModel to the new service. It's alive!
       var ghostId = ghostService.get('id');
@@ -192,26 +189,22 @@ YUI.add('ghost-deployer-extension', function(Y) {
     */
     _addUnitCallback: function(ghostUnit, evt) {
       var db = this.db;
-      var models = Y.juju.models;
       if (evt.err) {
         // Add a notification and exit if the API call failed.
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error adding unit ' + ghostUnit.displayName,
-              message: 'Could not add the requested unit. Server ' +
-                  'responded with: ' + evt.err,
-              level: 'error'
-            }));
+        db.notifications.add({
+          title: 'Error adding unit ' + ghostUnit.displayName,
+          message: 'Could not add the requested unit. Server ' +
+              'responded with: ' + evt.err,
+          level: 'error'
+        });
         return;
       }
       // Notify the unit has been successfully created.
-      db.notifications.add(
-          new models.Notification({
-            title: 'Added unit ' + ghostUnit.displayName,
-            message: 'Successfully created the requested unit.',
-            level: 'info'
-          })
-      );
+      db.notifications.add({
+        title: 'Added unit ' + ghostUnit.displayName,
+        message: 'Successfully created the requested unit.',
+        level: 'info'
+      });
       // Remove the ghost unit: the real unit will be re-added by the
       // mega-watcher handlers.
       ghostUnit.service = evt.service_name;
