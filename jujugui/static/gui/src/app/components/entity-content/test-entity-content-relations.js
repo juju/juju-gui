@@ -46,7 +46,7 @@ describe('EntityContentRelations', function() {
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
     var expected = (
-      <div className="section" id="relations">
+      <div className="section entity-relations" id="relations">
         <h3 className="section__title">
           Relations
         </h3>

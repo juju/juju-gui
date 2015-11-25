@@ -87,7 +87,7 @@ YUI.add('entity-content-relations', function() {
 
     render: function() {
       return (
-        <div className="section" id="relations">
+        <div className="section entity-relations" id="relations">
           <h3 className="section__title">
             Relations
           </h3>
