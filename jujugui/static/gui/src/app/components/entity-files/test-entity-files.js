@@ -32,7 +32,7 @@ describe('EntityFiles', function() {
   });
 
   beforeEach(function() {
-    mockEntity = jsTestUtils.makeEntity(false, ['foo.zip']);
+    mockEntity = jsTestUtils.makeEntity(false, ['foo.zip', 'bar/foo.txt']);
   });
 
   afterEach(function() {
@@ -40,23 +40,43 @@ describe('EntityFiles', function() {
   });
 
   it('renders a list of files', function() {
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityFiles
         entityModel={mockEntity}
-        pluralize={sinon.stub().returns('file')} />
-    );
+        pluralize={sinon.stub().returns('files')} />
+    , true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
     var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/trusty/django/archive';  // eslint-disable-line max-len
     var fileItems = [
-      <li key="foo.zip" className="entity-files__file section__list-item">
-        <a href={archiveUrl + '/foo.zip'} target="_blank">
+      <li key="foo.zip" className="entity-files__file">
+        <a href={archiveUrl + '/foo.zip'} title="foo.zip" target="_blank">
           foo.zip
         </a>
-      </li>
+      </li>,
+      <li key="bar"
+        className="entity-files__directory collapsed"
+        tabIndex="0"
+        role="button"
+        onClick={instance._onDirectoryClick}>
+        /bar
+        <ul className="entity-files__listing">
+          {[
+            <li key="bar/foo.txt" className="entity-files__file">
+              <a href={archiveUrl + '/bar/foo.txt'}
+                title="foo.txt"
+                target="_blank">
+                foo.txt
+              </a>
+            </li>
+          ]}
+        </ul>
+      </li>,
     ];
     var expected = (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
-          1 file
+          2 files
         </h3>
         <ul className="section__list">
           <li className="entity-files__link section__list-item">
@@ -73,7 +93,7 @@ describe('EntityFiles', function() {
             </a>
           </li>
         </ul>
-        <ul ref="files" className="section__list">
+        <ul ref="files" className="section__list entity-files__listing">
           {fileItems}
         </ul>
       </div>
@@ -99,5 +119,31 @@ describe('EntityFiles', function() {
         pluralize={sinon.spy()} />
     );
     assert.equal(output.refs.codeLink, undefined);
+  });
+
+  it('properly builds a tree structure from file paths', function() {
+    // Since there's recursion logic in this function, test it
+    // directly for easier debugging.
+    var component = new juju.components.EntityFiles();
+    var files = [
+      '/foo/bar/baz.zip',
+      '/foo/bar/slo.tar.gz',
+      '/foo/da.txt',
+      '/a.txt',
+      '/b.txt'
+    ];
+    var expectedTree = {
+      'foo': {
+        'bar': {
+          'baz.zip': null,
+          'slo.tar.gz': null
+        },
+        'da.txt': null
+      },
+      'a.txt': null,
+      'b.txt': null
+    };
+    var actualTree = component._buildFiletree(files);
+    assert.deepEqual(actualTree, expectedTree);
   });
 });
