@@ -26,13 +26,27 @@ YUI.add('notification-list', function() {
       // This cannot be required because on initial render if you pass in
       // undefined or null for a notification it throws an error
       // https://github.com/facebook/react/issues/3163
-      notification: React.PropTypes.object
+      notification: React.PropTypes.object,
+      timeout: React.PropTypes.number
     },
 
     getInitialState: function() {
+      var notifications = {};
+      var n = this.props.notification;
+      if (n) {
+        notifications[n.timestamp] = this._processNotification(n);
+      }
       return {
-        notifications: {}
+        notifications: notifications
       };
+    },
+
+    _processNotification: function(notification) {
+      var structured = {
+        content: notification.description,
+        type: notification.level
+      };
+      return structured;
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -43,10 +57,8 @@ YUI.add('notification-list', function() {
         return;
       }
       var notifications = this.state.notifications;
-      notifications[notification.timestamp] = {
-        content: notification.description,
-        type: notification.level
-      };
+      notifications[notification.timestamp] =
+        this._processNotification(notification);
       this.setState({notifications: notifications});
     },
 
@@ -62,6 +74,7 @@ YUI.add('notification-list', function() {
             ref={'NotificationListItem' + key}
             removeNotification={this._removeNotification}
             content={notifications[key].content}
+            timeout={this.props.timeout}
             type={type} />);
         if (type !== 'error') {
           // If it's not an error message then it needs to auto destroy.
@@ -70,7 +83,7 @@ YUI.add('notification-list', function() {
             if (item) {
               this.refs['NotificationListItem' + key].hide();
             }
-          }, 3000);
+          }, this.props.timeout || 3000);
         }
       });
       return elements;

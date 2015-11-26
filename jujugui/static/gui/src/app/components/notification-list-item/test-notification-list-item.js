@@ -69,7 +69,7 @@ describe('NotificationListItem', function() {
 
   it('updates class and calls to remove itself after hiding', (done) => {
     var timestamp = '123456';
-    var timeout = 0;
+    var timeout = 1;
     var removeNotification = function(ts) {
       assert.equal(ts, timestamp);
       done();
