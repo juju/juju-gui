@@ -25,7 +25,7 @@ YUI.add('notification-list-item', function() {
     propTypes: {
       removeNotification: React.PropTypes.func.isRequired,
       timestamp: React.PropTypes.string.isRequired,
-      content: React.PropTypes.string.isRequired,
+      message: React.PropTypes.string.isRequired,
       type: React.PropTypes.string,
       timeout: React.PropTypes.number
     },
@@ -72,7 +72,7 @@ YUI.add('notification-list-item', function() {
     render: function() {
       return (
         <li className={this.generateClasses()} onClick={this.hide}>
-          <span>{this.props.content}</span>
+          <span>{this.props.message}</span>
           <span tabIndex="0" role="button"
             className="notification-list-item__hide">
             <juju.components.SvgIcon name="close_16"

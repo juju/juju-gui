@@ -33,7 +33,7 @@ describe('NotificationList', function() {
   it('renders a list based on the notification passed in', () => {
     var notification = {
       timestamp: '12345',
-      description: 'notification content',
+      message: 'notification message',
       level: 'info'
     };
     var output = jsTestUtils.shallowRender(
@@ -46,7 +46,7 @@ describe('NotificationList', function() {
         timestamp={notification.timestamp}
         ref={'NotificationListItem' + notification.timestamp}
         removeNotification={children.props.children[0].props.removeNotification}
-        content={notification.description}
+        message={notification.message}
         timeout={undefined}
         type={notification.level} />];
     var expected = (
@@ -71,7 +71,7 @@ describe('NotificationList', function() {
     assert.deepEqual(output.props.children[0], undefined);
     var notification = {
       timestamp: '12345',
-      description: 'notification content',
+      message: 'notification message',
       level: 'info'
     };
     renderer.render(
@@ -83,7 +83,7 @@ describe('NotificationList', function() {
     assert.deepEqual(instance.state, {
       notifications: {
         12345: {
-          content: 'notification content',
+          message: 'notification message',
           type: 'info'
         }
       }
@@ -93,7 +93,7 @@ describe('NotificationList', function() {
   it('times out non error messages', (done) => {
     var notification = {
       timestamp: '12345',
-      description: 'notification content',
+      message: 'notification message',
       level: 'info'
     };
     var timeout = 1;
@@ -115,7 +115,7 @@ describe('NotificationList', function() {
   it('does not time out error messages', () => {
     var notification = {
       timestamp: '12345',
-      description: 'notification content',
+      message: 'notification message',
       level: 'error'
     };
     var timeout = 1;

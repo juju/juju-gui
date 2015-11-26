@@ -31,12 +31,12 @@ describe('NotificationListItem', function() {
   });
 
   it('renders a notification list item', () => {
-    var content = 'notification message';
+    var message = 'notification message';
     var classes = 'notification-list-item notification-list-item--info ' +
       'notification-list-item--visible';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationListItem
-        content={content}
+        message={message}
         removeNotification={sinon.stub()}
         timestamp="123"
         type="info"/>, true);
@@ -45,7 +45,7 @@ describe('NotificationListItem', function() {
     var expected = (
       <li className={classes}
         onClick={instance.hide}>
-        <span>{content}</span>
+        <span>{message}</span>
         <span tabIndex="0" role="button"
           className="notification-list-item__hide">
           <juju.components.SvgIcon name="close_16"
@@ -60,7 +60,7 @@ describe('NotificationListItem', function() {
       'notification-list-item--visible';
     var output = jsTestUtils.shallowRender(
       <juju.components.NotificationListItem
-        content="content"
+        message="message"
         removeNotification={sinon.stub()}
         timestamp="123"
         type="error"/>);
@@ -76,7 +76,7 @@ describe('NotificationListItem', function() {
     };
     var component = testUtils.renderIntoDocument(
       <juju.components.NotificationListItem
-        content="content"
+        message="message"
         removeNotification={removeNotification}
         timestamp={timestamp}
         // Used to shorten the test time by setting the setTimeouts to 0.

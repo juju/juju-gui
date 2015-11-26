@@ -41,9 +41,17 @@ YUI.add('notification-list', function() {
       };
     },
 
+    /**
+      This simply maps the notification values to a simple object to avoid
+      passing around all of the extra cruft in the YUI model. This can be
+      removed when we update the model system.
+
+      @method _processNotification
+      @param {Object} notification The notification to show.
+    */
     _processNotification: function(notification) {
       var structured = {
-        content: notification.description,
+        message: notification.message,
         type: notification.level
       };
       return structured;
@@ -73,7 +81,7 @@ YUI.add('notification-list', function() {
             timestamp={key}
             ref={'NotificationListItem' + key}
             removeNotification={this._removeNotification}
-            content={notifications[key].content}
+            message={notifications[key].message}
             timeout={this.props.timeout}
             type={type} />);
         if (type !== 'error') {
