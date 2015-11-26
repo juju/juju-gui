@@ -18,5 +18,14 @@
     vertical-align: middle;
     padding-left: 15px;
     cursor: pointer;
+
+    .svg-icon {
+        transition: stroke 0.3s;
+        stroke: $white;
+
+        &:hover {
+            stroke: rgba(255, 255, 255, 0.6);
+        }
+    }
   }
 }

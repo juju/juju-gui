@@ -1,4 +1,5 @@
 @import "../../components/added-services-list/added-services-list";
+@import "../../components/boolean-config/boolean-config";
 @import "../../components/button-row/button-row";
 @import "../../components/charmbrowser/charmbrowser";
 @import "../../components/copy-to-clipboard/copy-to-clipboard";
@@ -8,6 +9,7 @@
 @import "../../components/deployment-summary-change-item/deployment-summary-change-item";
 @import "../../components/env-size-display/env-size-display";
 @import "../../components/env-list/env-list";
+@import "../../components/env-switcher/env-switcher";
 @import "../../components/entity-content/entity-content";
 @import "../../components/entity-content-config-option/entity-content-config-option";
 @import "../../components/entity-content-diagram/entity-content-diagram";
@@ -43,6 +45,5 @@
 @import "../../components/user-profile/user-profile";
 @import "../../components/user-profile-list/user-profile-list";
 @import "../../components/scale-service/scale-service";
-@import "../../components/env-switcher/env-switcher";
 @import "../../components/string-config/string-config";
-@import "../../components/boolean-config/boolean-config";
+@import "../../components/svg-icon/svg-icon";
