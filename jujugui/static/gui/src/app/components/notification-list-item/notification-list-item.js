@@ -29,17 +29,8 @@ YUI.add('notification-list-item', function() {
 
     getInitialState: function() {
       return {
-        visible: false,
-        close: false
+        visible: true
       };
-    },
-
-    componentDidMount: function() {
-      // This setTimeout is a hack so that the css transition for fade-in
-      // gets picked up.
-      setTimeout(() => {
-        this.setState({visible: true});
-      });
     },
 
     /**
@@ -56,10 +47,7 @@ YUI.add('notification-list-item', function() {
         'notification-list-item--' + type,
         {
           'notification-list-item--visible': visible,
-          'notification-list-item--hidden': !visible,
-          // Close is a separate class because we only want the height
-          // animation on close.
-          'notification-list-item--close': this.state.close
+          'notification-list-item--hidden': !visible
         });
     },
 
@@ -70,10 +58,7 @@ YUI.add('notification-list-item', function() {
       @method hide
     */
     hide: function() {
-      this.setState({
-        visible: false,
-        close: true
-      });
+      this.setState({visible: false});
       setTimeout(() => {
         // Wait 0.5s before telling the parent to clean up so that the animation
         // has time to complete.
