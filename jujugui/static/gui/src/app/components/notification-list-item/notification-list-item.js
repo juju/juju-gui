@@ -23,8 +23,11 @@ YUI.add('notification-list-item', function() {
   juju.components.NotificationListItem = React.createClass({
 
     propTypes: {
+      removeNotification: React.PropTypes.func.isRequired,
+      timestamp: React.PropTypes.string.isRequired,
       content: React.PropTypes.string.isRequired,
-      type: React.PropTypes.string
+      type: React.PropTypes.string,
+      timeout: React.PropTypes.number
     },
 
     getInitialState: function() {
@@ -63,7 +66,7 @@ YUI.add('notification-list-item', function() {
         // Wait 0.5s before telling the parent to clean up so that the animation
         // has time to complete.
         this.props.removeNotification(this.props.timestamp);
-      }, 500);
+      }, this.props.timeout || 500);
     },
 
     render: function() {
@@ -81,5 +84,7 @@ YUI.add('notification-list-item', function() {
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'svg-icon'
+  ]
 });
