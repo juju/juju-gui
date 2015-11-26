@@ -43,6 +43,8 @@ BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
 OLD_TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
 SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
+FONT_FILES := $(shell find $(GUISRC)/app/assets/fonts -type f -name "*.woff" -or -name "*.woff2")
+STATIC_FONT_FILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(FONT_FILES))
 STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
 	$(GUIBUILD)/app/assets/stylesheets/prettify.css \
@@ -225,6 +227,10 @@ $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
 	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
 
+$(STATIC_FONT_FILES): $(FONT_FILES)
+	mkdir -p $(GUIBUILD)/app/assets/fonts
+	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
+
 $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 	mkdir -p $(GUIBUILD)/app/assets/css
 	bin/sassc -s compressed $(SCSS_FILE) $@
@@ -247,7 +253,7 @@ $(FAVICON):
 images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(HANDLEBARS_ASSETS)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(HANDLEBARS_ASSETS) $(STATIC_FONT_FILES)
 
 .PHONY: watch
 watch:
