@@ -1,31 +1,38 @@
 .notification-list-item {
-  @extend %floating-panel;
-  @extend %stagger-fade-in;
-  box-sizing: border-box;
-  min-width: $left-panel-width;
-  height: $environment-header-height;
-  padding: 0 20px;
-  color: $text-colour;
-  line-height: $environment-header-height;
-  margin-top: 10px;
-
-  &--error {
-    background-color: $error;
-    color: $white;
-  }
-
-  &__hide {
-    vertical-align: middle;
-    padding-left: 15px;
+    @extend %floating-panel;
+    @extend %stagger-fade-in;
+    box-sizing: border-box;
+    min-width: $left-panel-width;
+    height: $environment-header-height;
+    padding: 0 20px;
+    color: $text-colour;
+    line-height: $environment-header-height;
+    margin-top: 10px;
     cursor: pointer;
 
-    .svg-icon {
-        transition: stroke 0.3s;
-        stroke: $white;
+    &--error {
+        background-color: $error;
+        color: $white;
+        .notification-list-item__hide .svg-icon {
+            stroke: $white;
 
-        &:hover {
-            stroke: rgba(255, 255, 255, 0.6);
+            &:hover {
+                stroke: rgba(255, 255, 255, 0.6);
+            }
         }
     }
-  }
+
+    &__hide {
+        vertical-align: middle;
+        padding-left: 15px;
+    }
+
+    &__hide .svg-icon {
+        transition: stroke 0.3s;
+        stroke: $text-colour;
+
+        &:hover {
+            stroke: rgba(51, 51, 51, 0.6);
+        }
+    }
 }
