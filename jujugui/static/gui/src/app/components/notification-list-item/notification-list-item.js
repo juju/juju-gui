@@ -27,26 +27,63 @@ YUI.add('notification-list-item', function() {
       type: React.PropTypes.string
     },
 
-    generateClasses: function() {
-      var type = this.props.type || 'info';
-      return classNames(
-        'notification-list-item',
-        'notification-list-item--' + type);
+    getInitialState: function() {
+      return {
+        visible: false,
+        close: false
+      };
+    },
+
+    componentDidMount: function() {
+      // This setTimeout is a hack so that the css transition for fade-in
+      // gets picked up.
+      setTimeout(() => {
+        this.setState({visible: true});
+      });
     },
 
     /**
-      Hides this component and it will be cleaned up by its parent when the
-      timer runs out.
+      Generates the container classes based on the message type and visisible
+      state.
 
-      @method _hide
+      @method generateClasses
     */
-    _hide: function() {
-      ReactDOM.findDOMNode(this).style.opacity = 0;
+    generateClasses: function() {
+      var type = this.props.type || 'info';
+      var visible = this.state.visible;
+      return classNames(
+        'notification-list-item',
+        'notification-list-item--' + type,
+        {
+          'notification-list-item--visible': visible,
+          'notification-list-item--hidden': !visible,
+          // Close is a separate class because we only want the height
+          // animation on close.
+          'notification-list-item--close': this.state.close
+        });
+    },
+
+    /**
+      Hides this component and remove it from its parent. The parent will
+      auto remove non error components after a duration.
+
+      @method hide
+    */
+    hide: function() {
+      this.setState({
+        visible: false,
+        close: true
+      });
+      setTimeout(() => {
+        // Wait 0.5s before telling the parent to clean up so that the animation
+        // has time to complete.
+        this.props.removeNotification(this.props.timestamp);
+      }, 500);
     },
 
     render: function() {
       return (
-        <li className={this.generateClasses()} onClick={this._hide}>
+        <li className={this.generateClasses()} onClick={this.hide}>
           <span>{this.props.content}</span>
           <span tabIndex="0" role="button"
             className="notification-list-item__hide">

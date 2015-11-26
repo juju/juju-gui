@@ -54,13 +54,32 @@ YUI.add('notification-list', function() {
       var notifications = this.state.notifications;
       var elements = [];
       Object.keys(notifications).forEach((key) => {
+        var type = notifications[key].type;
         elements.push(
           <juju.components.NotificationListItem
             key={key}
+            timestamp={key}
+            ref={'NotificationListItem' + key}
+            removeNotification={this._removeNotification}
             content={notifications[key].content}
-            type={notifications[key].type} />);
+            type={type} />);
+        if (type !== 'error') {
+          // If it's not an error message then it needs to auto destroy.
+          setTimeout(() => {
+            var item = this.refs['NotificationListItem' + key];
+            if (item) {
+              this.refs['NotificationListItem' + key].hide();
+            }
+          }, 3000);
+        }
       });
       return elements;
+    },
+
+    _removeNotification: function(timestamp) {
+      var notifications = this.state.notifications;
+      delete notifications[timestamp];
+      this.setState({notifications: notifications});
     },
 
     render: function() {

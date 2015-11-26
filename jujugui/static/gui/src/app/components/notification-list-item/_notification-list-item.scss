@@ -1,6 +1,5 @@
 .notification-list-item {
     @extend %floating-panel;
-    @extend %stagger-fade-in;
     box-sizing: border-box;
     min-width: $left-panel-width;
     height: $environment-header-height;
@@ -9,6 +8,7 @@
     line-height: $environment-header-height;
     margin-top: 10px;
     cursor: pointer;
+    transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease;
 
     &--error {
         background-color: $error;
@@ -22,9 +22,24 @@
         }
     }
 
+    &--visible {
+        opacity: 1;
+    }
+
+    &--hidden {
+        opacity: 0;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    &--close {
+        height: 0;
+    }
+
     &__hide {
-        vertical-align: middle;
+        line-height: 46px;
         padding-left: 15px;
+        float: right;
     }
 
     &__hide .svg-icon {
