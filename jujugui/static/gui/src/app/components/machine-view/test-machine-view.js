@@ -207,27 +207,6 @@ describe('MachineView', function() {
         units={units}
         services={services}
         machines={machines} />);
-    var expected = (
-      <div className="machine-view__column-content">
-        <div>
-          <div className="machine-view__auto-place">
-            <button onClick={autoPlaceUnits}>
-              Auto place
-            </button>
-            or manually place
-          </div>
-          <ul className="machine-view__list">
-            <juju.components.MachineViewUnplacedUnit
-              key="django/0"
-              icon="django.svg"
-              unit={unitList[0]} />
-            <juju.components.MachineViewUnplacedUnit
-              key="django/1"
-              icon="django.svg"
-              unit={unitList[1]} />
-          </ul>
-        </div>
-      </div>);
     output.props.children.props.children[0].props.children[1]
       .props.children.props.children[0].props.children[0].props.onClick();
     assert.equal(autoPlaceUnits.callCount, 1);
