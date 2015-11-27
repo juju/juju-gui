@@ -175,6 +175,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div> <!-- /container -->
         </div>
         <div id="notifications-container"></div>
+        <div id="login-container"></div>
     </div>
     <script id="app-startup">
       // Global to store all of the shared application data.

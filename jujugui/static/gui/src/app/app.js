@@ -703,7 +703,14 @@ YUI.add('juju-gui', function(Y) {
 
       @method _renderLogin
     */
-    _renderLogin: function() {},
+    _renderLogin: function() {
+      this.hideMask();
+      ReactDOM.render(
+        <window.juju.components.Login
+          setCredentials={this.env.setCredentials.bind(this.env)}
+          login={this.env.login.bind(this.env)}/>,
+        document.getElementById('login-container'));
+    },
 
     /**
       Renders the user profile component.
@@ -2139,6 +2146,7 @@ YUI.add('juju-gui', function(Y) {
     'inspector-component',
     'local-inspector',
     'machine-view',
+    'login-component',
     'notification-list',
     'panel-component',
     'user-profile',
