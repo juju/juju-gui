@@ -1539,7 +1539,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var b = views.BoundingBox(module, service);
       b.pos = {x: 100, y: 100, w: 50, h: 50};
 
-      b.containsPoint([100, 100]).should.equal(true);
+      b.containsPoint([125, 125]).should.equal(true);
       b.containsPoint([25, 25]).should.equal(false);
     });
 
