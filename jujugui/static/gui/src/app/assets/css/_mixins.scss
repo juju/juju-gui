@@ -109,19 +109,6 @@
     }
 }
 
-.display-flex {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-}
-
-@mixin flex-direction($direction) {
-    -webkit-flex-direction: $direction;
-    -webkit-box-orient: vertical;
-    -ms-flex-direction: $direction;
-    flex-direction: $direction;
-}
-
 .uncommitted-circle {
     vertical-align: bottom;
     margin-left: 1px;
