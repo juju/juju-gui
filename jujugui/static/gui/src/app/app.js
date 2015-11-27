@@ -699,6 +699,13 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the login component.
+
+      @method _renderLogin
+    */
+    _renderLogin: function() {},
+
+    /**
       Renders the user profile component.
 
       @method _renderUserProfile
@@ -1052,6 +1059,7 @@ YUI.add('juju-gui', function(Y) {
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {
+        login: this._renderLogin.bind(this),
         deployTarget: views.utils.deployTargetDispatcher.bind(this)
       };
       this.state.set('dispatchers', dispatchers);
@@ -1575,13 +1583,18 @@ YUI.add('juju-gui', function(Y) {
       if (noCredentials) {
         this.set('loggedIn', false);
         // If there are no stored credentials redirect to the login page
-        if (!req || req.path !== '/login/') {
-          // Set the original requested path in the event the user has
-          // to log in before continuing.
-          this.redirectPath = this.get('currentUrl');
-          this.navigate('/login/', { overrideAllNamespaces: true });
-          return;
+        var component = this.state.getState('current', 'app', 'component');
+        if (!component && component !== 'login') {
+          this.state.dispatch({
+            app: {
+              component: 'login',
+              metadata: {
+                redirectPath: this.get('currentUrl')
+              }
+            }
+          });
         }
+        return;
       } else if (!this.get('loggedIn')) {
         return;
       }
