@@ -1513,15 +1513,15 @@ YUI.add('juju-view-utils', function(Y) {
         } else {
           charm = charm[0];
           var config = {},
-              options = charm.get('options');
+              options = charm.get ? charm.get('options') : charm.options;
           Object.keys(options).forEach(function(key) {
             config[key] = options[key]['default'];
           });
           // We call the env deploy method directly because we don't want
           // the ghost inspector to open.
           this.env.deploy(
-              charm.get('id'),
-              charm.get('name'),
+              charm.get ? charm.get('id') : charm.id,
+              charm.get ? charm.get('name') : charm.name,
               config,
               undefined, //config file content
               1, // number of units
