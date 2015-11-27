@@ -18,12 +18,12 @@
     }
 
     &__column {
+        @extend %scroll-children;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         flex: 1 0 33.333%;
         border-right: 1px dotted $mid-grey;
-        padding: 0 20px;
 
         &:first-child {
             padding-left: 0;
@@ -33,5 +33,25 @@
             padding-right: 0;
             border-right: none;
         }
+
+        &-content {
+            @extend %collapse-children;
+            padding: 20px;
+        }
+
+        &-onboarding {
+            padding: 0 10px;
+
+            .svg-icon {
+                margin-right: 7px;
+                vertical-align: top;
+            }
+        }
+    }
+
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0 10px;
     }
 }
