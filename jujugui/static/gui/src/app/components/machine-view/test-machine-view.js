@@ -31,9 +31,17 @@ describe('MachineView', function() {
     var machines = {
       filterByParent: sinon.stub().returns([1, 2, 3])
     };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
+        units={units}
+        services={services}
         machines={machines} />);
     var expected = (
       <div className="machine-view">
@@ -41,6 +49,13 @@ describe('MachineView', function() {
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
               title="New units" />
+            <div className="machine-view__column-content">
+              <div className="machine-view__column-onboarding">
+                <juju.components.SvgIcon name="add_16"
+                  size="16" />
+                Add services to get started
+              </div>
+            </div>
           </div>
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
@@ -53,5 +68,104 @@ describe('MachineView', function() {
         </div>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can display onboarding if there are no services', function() {
+    var machines = {
+      filterByParent: sinon.stub().returns([1, 2, 3])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var expected = (
+      <div className="machine-view__column-content">
+        <div className="machine-view__column-onboarding">
+          <juju.components.SvgIcon name="add_16"
+            size="16" />
+          Add services to get started
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
+  });
+
+  it('can display onboarding if there are no unplaced units', function() {
+    var machines = {
+      filterByParent: sinon.stub().returns([1, 2, 3])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(1)
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var expected = (
+      <div className="machine-view__column-content">
+        <div className="machine-view__column-onboarding">
+          <juju.components.SvgIcon name="task-done_16"
+            size="16" />
+          You have placed all of your units
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
+  });
+
+  it('can display a list of unplaced units', function() {
+    var machines = {
+      filterByParent: sinon.stub().returns([1, 2, 3])
+    };
+    var unitList = [{
+      id: 'django/0',
+      service: 'django'
+    }, {
+      id: 'django/1',
+      service: 'django'
+    }];
+    var units = {
+      filterByMachine: sinon.stub().returns(unitList)
+    };
+    var services = {
+      size: sinon.stub().returns(1),
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('django.svg')
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var expected = (
+      <div className="machine-view__column-content">
+        <ul className="machine-view__list">
+        <juju.components.MachineViewUnplacedUnit
+          key="django/0"
+          icon="django.svg"
+          unit={unitList[0]} />
+        <juju.components.MachineViewUnplacedUnit
+          key="django/1"
+          icon="django.svg"
+          unit={unitList[1]} />
+        </ul>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
   });
 });
