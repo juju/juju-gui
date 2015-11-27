@@ -32,9 +32,9 @@ YUI.add('notification-list', function() {
 
     getInitialState: function() {
       var notifications = {};
-      var n = this.props.notification;
-      if (n) {
-        notifications[n.timestamp] = this._processNotification(n);
+      var note = this.props.notification;
+      if (note) {
+        notifications[note.timestamp] = this._processNotification(note);
       }
       return {
         notifications: notifications
@@ -105,11 +105,9 @@ YUI.add('notification-list', function() {
 
     render: function() {
       return (
-        <div className="notification-list">
-          <ul>
-            {this._generateNotifications()}
-          </ul>
-        </div>);
+        <ul className="notification-list">
+          {this._generateNotifications()}
+        </ul>);
     }
 
   });

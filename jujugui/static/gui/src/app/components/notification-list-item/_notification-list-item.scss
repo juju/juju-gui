@@ -12,6 +12,7 @@
     &--error {
         background-color: $error;
         color: $white;
+
         .notification-list-item__hide .svg-icon {
             stroke: $white;
 
@@ -24,10 +25,10 @@
     &--visible {
         opacity: 1;
         animation-duration: 0.6s;
-        animation-name: fadeInNLI;
+        animation-name: fadeInNotificationListItem;
         animation-fill-mode: forwards;
 
-        @keyframes fadeInNLI {
+        @keyframes fadeInNotificationListItem {
             0% {
                 height: 0;
                 opacity: 0;
@@ -47,10 +48,10 @@
     &--hidden {
         overflow: hidden;
         animation-duration: 0.6s;
-        animation-name: fadeOutNLI;
+        animation-name: fadeOutNotificationListItem;
         animation-fill-mode: forwards;
 
-        @keyframes fadeOutNLI {
+        @keyframes fadeOutNotificationListItem {
             0% {
                 height: $environment-header-height;
                 opacity: 1;

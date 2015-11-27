@@ -40,9 +40,9 @@ YUI.add('notification-list-item', function() {
       Generates the container classes based on the message type and visisible
       state.
 
-      @method generateClasses
+      @method _generateClasses
     */
-    generateClasses: function() {
+    _generateClasses: function() {
       var type = this.props.type || 'info';
       var visible = this.state.visible;
       return classNames(
@@ -71,7 +71,7 @@ YUI.add('notification-list-item', function() {
 
     render: function() {
       return (
-        <li className={this.generateClasses()} onClick={this.hide}>
+        <li className={this._generateClasses()} onClick={this.hide}>
           <span>{this.props.message}</span>
           <span tabIndex="0" role="button"
             className="notification-list-item__hide">

@@ -45,14 +45,11 @@ describe('NotificationList', function() {
         key={notification.timestamp}
         timestamp={notification.timestamp}
         ref={'NotificationListItem' + notification.timestamp}
-        removeNotification={children.props.children[0].props.removeNotification}
+        removeNotification={children[0].props.removeNotification}
         message={notification.message}
         timeout={undefined}
         type={notification.level} />];
-    var expected = (
-      <div className="notification-list">
-        <ul>{items}</ul>
-      </div>);
+    var expected = (<ul className="notification-list">{items}</ul>);
     assert.deepEqual(output, expected);
   });
 
