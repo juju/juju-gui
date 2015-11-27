@@ -1010,6 +1010,7 @@ YUI.add('juju-gui', function(Y) {
         var db = this.db;
         ReactDOM.render(
           <components.MachineView
+            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
             environmentName={db.environment.get('name')}
             machines={db.machines}
             services={db.services}

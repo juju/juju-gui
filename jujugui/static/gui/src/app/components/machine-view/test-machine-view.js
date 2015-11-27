@@ -127,6 +127,7 @@ describe('MachineView', function() {
   });
 
   it('can display a list of unplaced units', function() {
+    var autoPlaceUnits = sinon.stub();
     var machines = {
       filterByParent: sinon.stub().returns([1, 2, 3])
     };
@@ -148,24 +149,87 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        autoPlaceUnits={autoPlaceUnits}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     var expected = (
       <div className="machine-view__column-content">
-        <ul className="machine-view__list">
-        <juju.components.MachineViewUnplacedUnit
-          key="django/0"
-          icon="django.svg"
-          unit={unitList[0]} />
-        <juju.components.MachineViewUnplacedUnit
-          key="django/1"
-          icon="django.svg"
-          unit={unitList[1]} />
-        </ul>
+        <div>
+          <div className="machine-view__auto-place">
+            <button onClick={autoPlaceUnits}>
+              Auto place
+            </button>
+            or manually place
+          </div>
+          <ul className="machine-view__list">
+            <juju.components.MachineViewUnplacedUnit
+              key="django/0"
+              icon="django.svg"
+              unit={unitList[0]} />
+            <juju.components.MachineViewUnplacedUnit
+              key="django/1"
+              icon="django.svg"
+              unit={unitList[1]} />
+          </ul>
+        </div>
       </div>);
     assert.deepEqual(
       output.props.children.props.children[0].props.children[1], expected);
+  });
+
+  it('can auto place units', function() {
+    var autoPlaceUnits = sinon.stub();
+    var machines = {
+      filterByParent: sinon.stub().returns([1, 2, 3])
+    };
+    var unitList = [{
+      id: 'django/0',
+      service: 'django'
+    }, {
+      id: 'django/1',
+      service: 'django'
+    }];
+    var units = {
+      filterByMachine: sinon.stub().returns(unitList)
+    };
+    var services = {
+      size: sinon.stub().returns(1),
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('django.svg')
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        autoPlaceUnits={autoPlaceUnits}
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var expected = (
+      <div className="machine-view__column-content">
+        <div>
+          <div className="machine-view__auto-place">
+            <button onClick={autoPlaceUnits}>
+              Auto place
+            </button>
+            or manually place
+          </div>
+          <ul className="machine-view__list">
+            <juju.components.MachineViewUnplacedUnit
+              key="django/0"
+              icon="django.svg"
+              unit={unitList[0]} />
+            <juju.components.MachineViewUnplacedUnit
+              key="django/1"
+              icon="django.svg"
+              unit={unitList[1]} />
+          </ul>
+        </div>
+      </div>);
+    output.props.children.props.children[0].props.children[1]
+      .props.children.props.children[0].props.children[0].props.onClick();
+    assert.equal(autoPlaceUnits.callCount, 1);
   });
 });

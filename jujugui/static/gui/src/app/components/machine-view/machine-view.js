@@ -59,13 +59,21 @@ YUI.add('machine-view', function() {
         components.push(
           <juju.components.MachineViewUnplacedUnit
             key={unit.id}
-            icon={service.get('icon')}
+            icon={service.get('icon') || ''}
             unit={unit} />);
       });
       return (
-        <ul className="machine-view__list">
-          {components}
-        </ul>);
+        <div>
+          <div className="machine-view__auto-place">
+            <button onClick={this.props.autoPlaceUnits}>
+              Auto place
+            </button>
+            or manually place
+          </div>
+          <ul className="machine-view__list">
+            {components}
+          </ul>
+        </div>);
     },
 
     /**

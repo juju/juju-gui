@@ -38,6 +38,7 @@
     box-sizing: border-box;
 }
 
+button,
 .button {
     @extend %button;
 
