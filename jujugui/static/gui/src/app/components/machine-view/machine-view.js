@@ -65,9 +65,7 @@ YUI.add('machine-view', function() {
         </div>
       );
     }
-
   });
-
 }, '0.1.0', {
   requires: [
     'machine-view-header'

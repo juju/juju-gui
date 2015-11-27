@@ -32,9 +32,7 @@ YUI.add('machine-view-header', function() {
         </div>
       );
     }
-
   });
-
 }, '0.1.0', {
   requires: [
   ]
