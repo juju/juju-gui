@@ -37,8 +37,7 @@ describe('UI State object', function() {
     state = new ns.UIState();
   });
 
-  afterEach(function(done) {
-    state.after('destroy', function() { done(); });
+  afterEach(function() {
     state.destroy();
   });
 
