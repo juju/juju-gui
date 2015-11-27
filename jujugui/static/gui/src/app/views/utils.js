@@ -1687,15 +1687,13 @@ YUI.add('juju-view-utils', function(Y) {
   utils._destroyServiceCallback = function(service, db, callback, evt) {
     if (evt.err) {
       // If something bad happend we need to alert the user.
-      db.notifications.add(
-          new Y.juju.models.Notification({
-            title: 'Error destroying service',
-            message: 'Service name: ' + evt.service_name,
-            level: 'error',
-            link: undefined,
-            modelId: service
-          })
-      );
+      db.notifications.add({
+        title: 'Error destroying service',
+        message: 'Service name: ' + evt.service_name,
+        level: 'error',
+        link: undefined,
+        modelId: service
+      });
     } else {
       // Remove the relations from the database (they will be removed from
       // the state server by Juju, so we don't need to interact with env).

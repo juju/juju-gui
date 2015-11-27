@@ -1107,14 +1107,13 @@ describe('utilities', function() {
       var db = {
         notifications: {
           add: function(notification) {
-            var attrs = notification.getAttrs();
             // The notification has the required attributes.
-            assert.isTrue(attrs.hasOwnProperty('title'));
-            assert.isTrue(attrs.hasOwnProperty('message'));
+            assert.isOk(notification.title);
+            assert.isOk(notification.message);
             // The service name is mentioned in the error message.
-            assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
-            assert.equal(attrs.level, 'error');
-            assert.deepEqual(attrs.modelId, ['service', 'mediawiki']);
+            assert.notEqual(notification.message.indexOf(SERVICE_NAME, -1));
+            assert.equal(notification.level, 'error');
+            assert.deepEqual(notification.modelId, ['service', 'mediawiki']);
             notificationAdded = true;
           }
         }

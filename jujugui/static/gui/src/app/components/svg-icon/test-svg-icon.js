@@ -38,7 +38,7 @@ describe('SvgIcon', function() {
     assert.deepEqual(output,
         <svg className="svg-icon" viewBox='0 0 24 24'
           style={{width: '24px', height: '24px'}}>
-          <use xlinkHref="#icon-name" />
+          <use xlinkHref="#icon-name"/>
         </svg>);
   });
 
@@ -51,7 +51,7 @@ describe('SvgIcon', function() {
     assert.deepEqual(output,
         <svg className="svg-icon" viewBox='0 0 24 44'
           style={{width: '24px', height: '44px'}}>
-          <use xlinkHref="#icon-name" />
+          <use xlinkHref="#icon-name"/>
         </svg>);
   });
 
@@ -62,7 +62,7 @@ describe('SvgIcon', function() {
     assert.deepEqual(output,
         <svg className="svg-icon" viewBox='0 0 16 16'
           style={{width: '16px', height: '16px'}}>
-          <use xlinkHref="#icon-name" />
+          <use xlinkHref="#icon-name"/>
         </svg>);
   });
 
@@ -75,7 +75,7 @@ describe('SvgIcon', function() {
     assert.deepEqual(output,
         <svg className="svg-icon extra-class" viewBox='0 0 24 24'
           style={{width: '24px', height: '24px'}}>
-          <use xlinkHref="#icon-name" />
+          <use xlinkHref="#icon-name"/>
         </svg>);
   });
 });
