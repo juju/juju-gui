@@ -65,19 +65,4 @@
             padding: 0;
         }
     }
-
-    .user-dropdown {
-        display: block;
-        margin-right: 20px;
-
-        &.hidden {
-            display: none;
-        }
-
-        .menu-link {
-            &:hover {
-                background-color: $charm-panel-orange;
-            }
-        }
-    }
 }
