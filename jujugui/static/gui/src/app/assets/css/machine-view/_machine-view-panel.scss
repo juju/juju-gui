@@ -9,7 +9,7 @@
     z-index: 600;
 
     &__content {
-        @extend .display-flex;
+        display: flex;
         box-sizing: border-box;
         position: absolute;
         top: 10px;
@@ -20,8 +20,9 @@
     }
 
     .column {
-        @extend .display-flex;
-        @include flex-direction(column);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
         flex: 1 0 33.333%;
         border-right: 1px dotted $mid-grey;
         padding: 0 20px;

@@ -961,6 +961,20 @@ YUI.add('juju-gui', function(Y) {
         this.hoverService.detach();
       }
     },
+    /**
+      Empties out the sectionB UI making sure to properly clean up.
+
+      @method emptySectionB
+    */
+    emptySectionB: function() {
+      if (window.flags && window.flags.mv) {
+        ReactDOM.unmountComponentAtNode(
+          document.getElementById('machine-view'));
+      } else if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+        this.machineViewPanel = null;
+      }
+    },
 
     _emptySectionC: function() {
       ReactDOM.unmountComponentAtNode(
@@ -992,18 +1006,18 @@ YUI.add('juju-gui', function(Y) {
         view.
     */
     _renderMachineView: function(metadata) {
-      this._renderMachineViewPanelView(this.db, this.env);
-    },
-
-    /**
-      Empties out the sectionB UI making sure to properly clean up.
-
-      @method emptySectionB
-    */
-    emptySectionB: function() {
-      if (this.machineViewPanel) {
-        this.machineViewPanel.destroy();
-        this.machineViewPanel = null;
+      if (window.flags && window.flags.mv) {
+        var db = this.db;
+        ReactDOM.render(
+          <components.MachineView
+            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            environmentName={db.environment.get('name')}
+            machines={db.machines}
+            services={db.services}
+            units={db.units} />,
+          document.getElementById('machine-view'));
+      } else {
+        this._renderMachineViewPanelView(this.db, this.env);
       }
     },
 
@@ -2111,6 +2125,7 @@ YUI.add('juju-gui', function(Y) {
     'header-search',
     'inspector-component',
     'local-inspector',
+    'machine-view',
     'notification-list',
     'panel-component',
     'user-profile',
