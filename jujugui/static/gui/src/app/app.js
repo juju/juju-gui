@@ -198,18 +198,6 @@ YUI.add('juju-gui', function(Y) {
         help: 'Center the Environment overview',
         label: 'Shift + 0'
       },
-      'C-S-h': {
-        callback: function(e) {
-          this._toggleSidebar();
-        },
-        help: 'Show or hide the sidebar',
-        label: 'Control + Shift + h'
-      },
-      'C-A-h': {
-        callback: function(e) {
-          this._toggleSidebar();
-        }
-      },
       'esc': {
         fire: 'clearState',
         callback: function() {
@@ -1323,15 +1311,6 @@ YUI.add('juju-gui', function(Y) {
     _autoplaceAndCommitAll: function() {
       this._autoPlaceUnits();
       this.env.get('ecs').commit(this.env);
-    },
-
-    /**
-     * Toggle the visibility of the sidebar.
-     *
-     * @method _toggleSidebar
-     */
-    _toggleSidebar: function() {
-      Y.one('body').toggleClass('state-sidebar-hidden');
     },
 
     /**
