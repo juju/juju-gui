@@ -1625,7 +1625,7 @@ YUI.add('juju-gui', function(Y) {
         // Start observing bundle deployments.
         bundleNotifications.watchAll(this.env, this.db);
       } else {
-        this.showLogin();
+        this._renderLogin();
       }
     },
 

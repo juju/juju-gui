@@ -815,13 +815,14 @@ describe('File drag over notification system', function() {
 
     it('displays the login view if credentials are not valid', function(done) {
       var app = makeApp(true, this); // Create a connected app.
+      var loginStub = utils.makeStubMethod(app, '_renderLogin');
       app.after('ready', function() {
         app.env.login();
         // Mimic a login failed response assuming login is the first request.
         conn.msg({RequestId: 1, Error: 'Invalid user or password'});
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
-        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        assert.equal(loginStub.callCount(), 1);
         done();
       });
     });
