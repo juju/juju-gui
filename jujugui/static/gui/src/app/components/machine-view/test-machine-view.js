@@ -29,7 +29,7 @@ describe('MachineView', function() {
 
   it('can render', function() {
     var machines = {
-      filterByParent: sinon.stub().returns([1, 2, 3])
+      filterByParent: sinon.stub().returns([])
     };
     var units = {
       filterByMachine: sinon.stub().returns([])
@@ -57,9 +57,25 @@ describe('MachineView', function() {
               </div>
             </div>
           </div>
-          <div className="machine-view__column">
+          <div className="machine-view__column machine-view__column--overlap">
             <juju.components.MachineViewHeader
-              title="My Env (3)" />
+              title="My Env (0)" />
+            <div className="machine-view__column-content">
+              <div className="machine-view__column-onboarding">
+                Use machine view to:
+                <ul>
+                  <li>Create machines</li>
+                  <li>Create containers</li>
+                  <li>Customise placement</li>
+                  <li>Scale up your environment</li>
+                  <li>Manually place new units</li>
+                  <li>Collocate services</li>
+                </ul>
+                <span className="link" role="button" tabIndex="0">
+                  Add machine
+                </span>
+              </div>
+            </div>
           </div>
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
@@ -210,5 +226,165 @@ describe('MachineView', function() {
     output.props.children.props.children[0].props.children[1]
       .props.children.props.children[0].props.children[0].props.onClick();
     assert.equal(autoPlaceUnits.callCount, 1);
+  });
+
+  it('can display onboarding if there are no machines', function() {
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var expected = (
+      <div className="machine-view__column-content">
+        <div className="machine-view__column-onboarding">
+          Use machine view to:
+          <ul>
+            <li>Create machines</li>
+            <li>Create containers</li>
+            <li>Customise placement</li>
+            <li>Scale up your environment</li>
+            <li>Manually place new units</li>
+            <li>Collocate services</li>
+          </ul>
+          <span className="link" role="button" tabIndex="0">
+            Add machine
+          </span>
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1], expected);
+  });
+
+  it('can display onboarding if there is one machine', function() {
+    var machineList = [{
+      id: 'new0'
+    }];
+    var machines = {
+      filterByParent: sinon.stub().returns(machineList)
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var content = output.props.children.props.children[1].props.children[1];
+    var machineUl = content.props.children.props.children[1];
+    var expected = (
+      <div className="machine-view__column-content">
+        <div>
+          <div className="machine-view__column-onboarding">
+            Drag and drop unplaced units onto your machines and containers to
+            customise your deployment.
+          </div>
+          <ul className="machine-view__list">
+            {[<juju.components.MachineViewMachine
+              key="new0"
+              machine={machineList[0]}
+              selected={false}
+              selectMachine={machineUl.props.children[0].props.selectMachine}
+              services={services}
+              type="machine"
+              units={units} />]}
+          </ul>
+        </div>
+      </div>);
+    assert.deepEqual(content, expected);
+  });
+
+  it('can display a list of machines', function() {
+    var machineList = [{
+      id: 'new0'
+    }, {
+      id: 'new1'
+    }];
+    var machines = {
+      filterByParent: sinon.stub().returns(machineList)
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var content = output.props.children.props.children[1].props.children[1];
+    var machineUl = content.props.children.props.children[1];
+    var expected = (
+      <div className="machine-view__column-content">
+        <div>
+          {undefined}
+          <ul className="machine-view__list">
+            <juju.components.MachineViewMachine
+              key="new0"
+              machine={machineList[0]}
+              selected={false}
+              selectMachine={machineUl.props.children[0].props.selectMachine}
+              services={services}
+              type="machine"
+              units={units} />
+            <juju.components.MachineViewMachine
+              key="new1"
+              machine={machineList[1]}
+              selected={false}
+              selectMachine={machineUl.props.children[1].props.selectMachine}
+              services={services}
+              type="machine"
+              units={units} />
+          </ul>
+        </div>
+      </div>);
+    assert.deepEqual(content, expected);
+  });
+
+  it('can select a machine', function() {
+    var machineList = [{
+      id: 'new0'
+    }, {
+      id: 'new1'
+    }];
+    var machines = {
+      filterByParent: sinon.stub().returns(machineList)
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    assert.equal(instance.state.selectedMachine, null);
+    var output = renderer.getRenderOutput();
+    var content = output.props.children.props.children[1].props.children[1];
+    var machineUl = content.props.children.props.children[1];
+    machineUl.props.children[0].props.selectMachine();
+    assert.equal(instance.state.selectedMachine, 'new0');
   });
 });

@@ -52,7 +52,7 @@ YUI.add('machine-view-machine', function() {
       return (
         <div>
           {unitCount} unit{plural}, {hardware.cpuCores}x{cpu}GHz,{' '}
-          {mem}GB, {disk}GB
+          {mem.toFixed(2)}GB, {disk.toFixed(2)}GB
         </div>);
     },
 
@@ -90,7 +90,7 @@ YUI.add('machine-view-machine', function() {
       var classes = {
         'machine-view__machine--selected': this.props.selected,
       };
-      classes['machine-view__machine--' + this.props.type];
+      classes['machine-view__machine--' + this.props.type] = true;
       return classNames(
         'machine-view__machine',
         classes
