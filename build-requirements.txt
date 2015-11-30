@@ -1,0 +1,2 @@
+bumpversion==0.5.3
+libsass==0.8.2

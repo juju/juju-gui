@@ -34,7 +34,7 @@ CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
 WHEEL_CACHE := file:///$(CACHE)/wheels/generic
 LSB_WHEEL_CACHE := file:///$(CACHE)/wheels/$(shell lsb_release -c -s)
-
+COLLECTED_REQUIREMENTS := collected-requirements
 PIP = bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(LSB_WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r $(1)
 VPART ?= patch
 
@@ -273,12 +273,25 @@ clean-downloadcache:
 update-downloadcache: $(CACHE)
 	cd $(CACHE) && git pull origin master || true
 
+.PHONY: collect-requirements
+collect-requirements:
+	-@rm -rf $(COLLECTED_REQUIREMENTS)
+	@mkdir $(COLLECTED_REQUIREMENTS)
+	bin/pip install -d $(COLLECTED_REQUIREMENTS) --no-compile --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r requirements.txt
+	# Arch-specific wheels cannot be used.
+	-@rm -rf $(COLLECTED_REQUIREMENTS)/zope.interface*
+	-@rm -rf $(COLLECTED_REQUIREMENTS)/MarkupSafe*
+	-@cp $(CACHE)/python/zope.interface* $(COLLECTED_REQUIREMENTS)
+	-@cp $(CACHE)/python/MarkupSafe* $(COLLECTED_REQUIREMENTS)
+
+
 ######
 # DEPS
 ######
 # Use the pyramid install dir as our indicator that dependencies are installed.
-$(PYRAMID): $(PY) $(CACHE) requirements.txt
+$(PYRAMID): $(PY) $(CACHE) requirements.txt build-requirements.txt
 	$(call PIP,requirements.txt)
+	$(call PIP,build-requirements.txt)
 	@touch $(PYRAMID)
 
 .PHONY: deps
@@ -348,7 +361,7 @@ bumpversion: test-deps
 	bin/bumpversion $(VPART)
 
 .PHONY: dist
-dist: gui test-deps
+dist: gui test-deps collected-requirements
 	python setup.py sdist --formats=bztar
 
 #######
