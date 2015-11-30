@@ -21,7 +21,6 @@
         cursor: pointer;
 
         &.hover,
-        &:focus,
         &:active,
         &:hover {
             background-color: $light-grey;
