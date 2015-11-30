@@ -99,10 +99,11 @@ var jsTestUtils = {
     @method compare
     @param {Object} a The source object.
     @param {Object} b The expected object.
+    @param {Boolean} showFn Whether you want to show the functions.
   */
-  compare: function compare(a, b) {
-    var stringA = jsTestUtils.superStringify(a);
-    var stringB = jsTestUtils.superStringify(b);
+  compare: function compare(a, b, showFn) {
+    var stringA = jsTestUtils.superStringify(a, showFn);
+    var stringB = jsTestUtils.superStringify(b, showFn);
 
     var diff = JsDiff.diffLines(stringA, stringB);
     diff.forEach(function (part) {
