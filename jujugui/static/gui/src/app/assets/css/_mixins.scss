@@ -96,16 +96,16 @@ button,
     }
 }
 
-%customize-scrollbar {
+@mixin customize-scrollbar($background) {
     ::-webkit-scrollbar {
         width: 10px;
     }
     ::-webkit-scrollbar-track {
-        background-color: $white;
+        background-color: $background;
     }
     ::-webkit-scrollbar-thumb {
         background-color: #d4d4d4;
-        border: 1px solid $white;
+        border: 1px solid $background;
         border-radius: 5px;
     }
 }

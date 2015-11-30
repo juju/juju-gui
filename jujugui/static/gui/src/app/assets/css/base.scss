@@ -111,7 +111,7 @@ textarea {
 }
 
 body {
-    @extend %customize-scrollbar;
+    @include customize-scrollbar($white);
     overflow: hidden;
     height: 100%;
     margin-top: $navbar-height;

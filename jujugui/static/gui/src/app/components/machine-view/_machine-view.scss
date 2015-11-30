@@ -1,4 +1,5 @@
 .machine-view {
+    @include customize-scrollbar($canvas-background);
     @include fadeIn(.1s);
     position: absolute;
     top: $navbar-height;
