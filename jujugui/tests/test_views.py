@@ -83,7 +83,6 @@ class ConfigTests(ViewTestCase):
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['consoleEnabled'])
-        self.assertIs(False, config['hideLoginButton'])
         self.assertEqual('', config['jujuCoreVersion'])
         self.assertIs(False, config['sandbox'])
         self.assertEqual('', config['user'])
@@ -113,7 +112,6 @@ class ConfigTests(ViewTestCase):
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['sandbox'])
         # The hideLoginButton, user and password values reflect sandbox status.
-        self.assertIs(True, config['hideLoginButton'])
         self.assertEqual('admin', config['user'])
         self.assertEqual('password', config['password'])
 
