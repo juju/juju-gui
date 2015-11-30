@@ -1,4 +1,5 @@
 .machine-view {
+    @include customize-scrollbar($canvas-background);
     @include fadeIn(.1s);
     position: absolute;
     top: $navbar-height;
@@ -23,15 +24,22 @@
         display: flex;
         flex-direction: column;
         flex: 1 0 33.333%;
-        border-right: 1px dotted $mid-grey;
+        border-left: 1px dotted $mid-grey;
 
         &:first-child {
             padding-left: 0;
+            border-left: none;
         }
 
         &:last-child {
             padding-right: 0;
-            border-right: none;
+        }
+
+        &--overlap {
+            z-index: 1;
+            // Overlap the right border so that the selected machine token
+            // can overlay the column border.
+            margin-right: -1px;
         }
 
         &-content {
@@ -40,11 +48,16 @@
         }
 
         &-onboarding {
-            padding: 0 10px;
+            padding: 0 10px 20px 10px;
 
             .svg-icon {
                 margin-right: 7px;
                 vertical-align: top;
+            }
+
+            ul {
+                padding-left: 10px;
+                list-style-position: inside;
             }
         }
     }
