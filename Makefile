@@ -28,7 +28,6 @@ D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
 REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
-HANDLEBARS_ASSETS := $(BUILT_JS_ASSETS)/handlebars.runtime.js $(BUILT_JS_ASSETS)/handlebars.runtime.min.js
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_CACHE := file:///$(CACHE)/python
@@ -81,6 +80,10 @@ sysdeps:
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
 	sudo apt-get install -y nodejs python-virtualenv g++ inotify-tools
+	# The yellow/ppa doesn't contain this version of npm, it will be pulled
+	# from npm instead. The next step will be to update node which will include
+	# the more recent npm version.
+	sudo npm install -g npm@2.14.13
 
 .PHONY: src
 src: $(GUISRC)
