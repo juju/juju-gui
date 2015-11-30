@@ -1,0 +1,65 @@
+.machine-view {
+    @include fadeIn(.1s);
+    position: absolute;
+    top: $navbar-height;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $canvas-background;
+    z-index: 600;
+
+    &__content {
+        display: flex;
+        position: absolute;
+        top: 10px;
+        bottom: $deployer-bar-height;
+        left: $left-panel-width + 20px;
+        right: 20px;
+    }
+
+    &__column {
+        @extend %scroll-children;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 33.333%;
+        border-right: 1px dotted $mid-grey;
+
+        &:first-child {
+            padding-left: 0;
+        }
+
+        &:last-child {
+            padding-right: 0;
+            border-right: none;
+        }
+
+        &-content {
+            @extend %collapse-children;
+            padding: 20px;
+        }
+
+        &-onboarding {
+            padding: 0 10px;
+
+            .svg-icon {
+                margin-right: 7px;
+                vertical-align: top;
+            }
+        }
+    }
+
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__auto-place {
+        margin-bottom: 20px;
+
+        button {
+            margin-right: 10px;
+        }
+    }
+}

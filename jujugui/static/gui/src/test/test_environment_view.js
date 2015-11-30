@@ -270,7 +270,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    afterEach(function(done) {
+    afterEach(function() {
       db.reset();
       db.destroy();
       charm.destroy();
@@ -279,7 +279,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       if (!view.get('destroyed')) {
         view.destroy({remove: true});
       }
-      done();
     });
 
     function getParentId(view) {
@@ -587,14 +586,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must resize the service health graph properly when units are added',
         function() {
-          /* jshint -W031 */
           new views.environment({
             container: container,
             db: db,
             env: env,
             charmstore: fakeStore
           });
-          /* jshint +W031 */
           var tmp_data = {
             result: [
               ['machine', 'add', {

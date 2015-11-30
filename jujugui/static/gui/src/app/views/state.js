@@ -272,6 +272,12 @@ YUI.add('juju-app-state', function(Y) {
             if (metadata.series) {
               queryValues.series = metadata.series;
             }
+            if (metadata.provides) {
+              queryValues.provides = metadata.provides;
+            }
+            if (metadata.requires) {
+              queryValues.requires = metadata.requires;
+            }
           }
           if (activeComponent === 'mid-point') {
             queryValues.midpoint = '';
@@ -499,6 +505,12 @@ YUI.add('juju-app-state', function(Y) {
           }
           if (query.series) {
             metadata.series = query.series;
+          }
+          if (query.provides) {
+            metadata.provides = query.provides;
+          }
+          if (query.requires) {
+            metadata.requires = query.requires;
           }
           state.sectionC = {
             component: 'charmbrowser',

@@ -63,7 +63,8 @@ YUI.add('charmbrowser-component', function() {
             component:
               <juju.components.Store
                 charmstoreSearch={this.props.charmstoreSearch}
-                changeState={this.props.changeState} />
+                changeState={this.props.changeState}
+                makeEntityModel={this.props.makeEntityModel} />
           };
           break;
         case 'search-results':
@@ -73,11 +74,14 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.SearchResults
                 changeState={this.props.changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
+                makeEntityModel={this.props.makeEntityModel}
                 query={metadata.search}
                 seriesList={this.props.series}
                 type={metadata.type}
                 sort={metadata.sort}
                 series={metadata.series}
+                provides={metadata.provides}
+                requires={metadata.requires}
                 tags={metadata.tags} />
           };
           break;
@@ -87,6 +91,7 @@ YUI.add('charmbrowser-component', function() {
             component:
               <juju.components.EntityDetails
                 changeState={this.props.changeState}
+                addNotification={this.props.addNotification}
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
@@ -95,7 +100,8 @@ YUI.add('charmbrowser-component', function() {
                 getFile={this.props.getFile}
                 renderMarkdown={this.props.renderMarkdown}
                 id={metadata.id}
-                pluralize={utils.pluralize} />
+                pluralize={utils.pluralize}
+                makeEntityModel={this.props.makeEntityModel} />
           };
           break;
       }

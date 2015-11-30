@@ -1,59 +1,59 @@
-$light-button: #cbcbcb;
-
 .service-scale-up-view {
     &.opened {
         .action-block .button.closed {
             display: none;
         }
+
         .action-block .button.opened,
         .service-list {
             display: block;
         }
     }
+
     .title {
         font-size: 16px;
     }
+
     .action-block {
         @extend .border-box;
         height: 50px;
-        border-bottom: 1px solid $machine-view-border-colour;
-        padding: 20px;
+        border-bottom: 1px dotted $mid-grey;
+        padding: 20px 10px;
         line-height: 10px;
 
         &.enabled {
             .button {
-                background-color: $charm-panel-orange;
-                cursor: pointer;
+                opacity: 1;
             }
         }
+
         .button {
+            @extend %button-orange;
+            transition: opacity 0.3s;
             float: right;
-            height: 30px;
-            width: 30px;
+            height: 24px;
+            width: 24px;
             margin: -10px 0;
-            padding: 7px;
-            background-color: #f8dad0;
-            box-shadow: none;
-            cursor: default;
+            padding: 4px;
+            opacity: 0.5;
 
             &.opened {
-                // Using a variable here because commas aren't allowed in mixin args.
-                $box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-                @include create-box-shadow($box-shadow);
-                background-color: $light-button;
+                background-color: $mid-grey;
                 display: none;
             }
         }
     }
+
     .service-list {
         display: none;
 
         ul {
             margin: 0;
         }
+
         li {
             padding: 10px 20px;
-            border-bottom: 1px solid $machine-view-border-colour;
+            border-bottom: 1px dotted $mid-grey;
             line-height: 24px;
 
             .icon {
@@ -62,28 +62,37 @@ $light-button: #cbcbcb;
                 height: 20px;
                 margin-right: 10px;
             }
+
             .icon,
             .service-name {
                 vertical-align: middle;
             }
+
+            .service-name {
+                display: inline-block;
+                max-width: 60%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
             .service-units {
                 display: inline-block;
                 float: right;
-                width: 30px;
+                width: 35px;
                 margin: 0;
                 padding-top: 4px;
                 padding-bottom: 4px;
                 text-align: right;
             }
         }
+
         .actions {
             padding: 10px 20px 0 0;
             text-align: right;
 
             .button.cancel {
                 margin-right: 7px;
-                background-color: $light-button;
-                color: $text-colour;
             }
         }
     }

@@ -107,6 +107,7 @@ g.service {
       transition: all .3s;
    }
 
+   &.hover,
    &:hover {
 
       .service-block__halo {
@@ -147,6 +148,7 @@ g.service {
          transform: translate(65px, 30px);
       }
 
+      &.hover,
       &:hover {
          .service-block__halo {
             r: 80;

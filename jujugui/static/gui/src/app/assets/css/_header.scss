@@ -10,14 +10,14 @@
     width: 100%;
     height: $navbar-height;
 
-    .header-banner__link,
-    .header-banner__link--breadcrumb {
+    &__link,
+    &__link--breadcrumb {
         @extend .border-box;
         color: $text-colour;
         display: block;
     }
 
-    .header-banner__link--breadcrumb {
+    &__link--breadcrumb {
         color: $charm-panel-orange;
         font-size: 23px;
 
@@ -36,6 +36,11 @@
             top: 1px;
             color: #cdcdcd;
         }
+    }
+
+    &__logo {
+        position: relative;
+        top: -1px;
     }
 
     .environment-name {

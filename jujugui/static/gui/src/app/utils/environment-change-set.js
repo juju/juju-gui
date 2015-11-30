@@ -198,7 +198,6 @@ YUI.add('environment-change-set', function(Y) {
         callback = function() {};
         index += 1;
       }
-      /* jshint -W040 */
       // Possible strict violation.
       var self = this;
       /**
@@ -312,7 +311,7 @@ YUI.add('environment-change-set', function(Y) {
 
       // Now build the other levels of the hierarchy as long as there are still
       // commands in the change set. Functions defined outside of loop for
-      // runtime efficiency (jshint W083).
+      // runtime efficiency.
       while (this.placedCount < keys.length) {
         hierarchy.push([]);
         Y.Object.each(keyToLevelMap, Y.bind(this._placeIfNeeded, this,

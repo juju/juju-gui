@@ -84,6 +84,9 @@ YUI.add('juju-topology-service', function(Y) {
           annotations = service.get('annotations'),
           x, y;
 
+      // Set widths and heights.
+      d.subordinate ? d.w = d.h = 130 : d.w = d.h = 190;
+
       // If there are no annotations or the service is being dragged
       if (!annotations || d.inDrag) {
         return;
@@ -123,12 +126,32 @@ YUI.add('juju-topology-service', function(Y) {
     // Size the node for drawing.
     node.attr({
       'width': function(box) {
-        box.subordinate ? box.w = 130 : box.w = 190; return box.w;
+        return box.w;
       },
       'height': function(box) {
-        box.subordinate ? box.h = 130 : box.h = 190; return box.h;
+        return box.h;
       }
     });
+    node.select('.service-block')
+      .attr({
+        'cx': function(d) { return d.subordinate ? 65 : 95; },
+        'cy': function(d) { return d.subordinate ? 65 : 95; },
+        'r': function(d) { return d.subordinate ? 60 : 90; }
+      });
+    node.select('.service-block__halo')
+      .attr({
+        'cx': function(d) { return d.subordinate ? 65 : 95; },
+        'cy': function(d) { return d.subordinate ? 65 : 95; },
+        'r': function(d) { return d.subordinate ? 80 : 110; }
+      });
+    node.select('.service-icon')
+      .attr('transform', function(d) {
+        return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)';
+      });
+    node.select('.relation-button')
+      .attr('transform', function(d) {
+        return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
+      });
 
     var rerenderRelations = false;
     node.select('.service-block').each(function(d) {
@@ -190,9 +213,9 @@ YUI.add('juju-topology-service', function(Y) {
 
     // Draw a subordinate relation indicator.
     var subRelationIndicator = node.filter(function(d) {
-      return d.subordinate &&
-          d3.select(this)
-          .select('.sub-rel-block').empty();
+      return d3.select(this)
+        .select('.sub-rel-block').empty() &&
+        d.subordinate;
     })
         .insert('g', ':first-child')
         .attr('class', 'sub-rel-block')
@@ -563,6 +586,59 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Show the service as hovered.
+
+      @method hoverService
+      @param {String} id The service id.
+      @param {Boolean} hover Whether the state is hovered or not.
+    */
+    hoverService: function(id, hover) {
+      var node = this.getServiceNode(id);
+      var topo = this.get('component');
+      if (node) {
+        if (hover) {
+          utils.addSVGClass(node, 'hover');
+        } else {
+          topo.vis.selectAll('.hover').classed('hover', false);
+        }
+      }
+    },
+
+    /**
+      Deselect all tokens.
+
+      @method deselectNodes
+    */
+    deselectNodes: function() {
+      var topo = this.get('component');
+      topo.vis.selectAll('.is-selected').classed('is-selected', false);
+    },
+
+    /**
+      Select the token for the provided element.
+
+      @method selectNode
+      @param {Object} node The service node to select.
+    */
+    selectNode: function(node) {
+      this.deselectNodes();
+      utils.addSVGClass(node, 'is-selected');
+    },
+
+    /**
+      Select the token for the provided service.
+
+      @method selectService
+      @param {String} id The service id.
+    */
+    selectService: function(id) {
+      var node = this.getServiceNode(id);
+      if (node) {
+        this.selectNode(node);
+      }
+    },
+
+    /**
       Handles the click or tap on the service svg elements.
 
       It is executed under the context of the clicked/tapped DOM element
@@ -608,8 +684,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Remove is-selected class from all services and add to the currently
       // clicked service.
       if (box.node) {
-        topo.vis.selectAll('.is-selected').classed('is-selected', false);
-        box.node.classList.add('is-selected');
+        self.selectNode(box.node);
       }
 
       // Fire the action named in the following scheme:
@@ -620,25 +695,19 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceMouseEnter: function(box, context) {
+      var topo = context.get('component');
+      topo.fire('hoverService', {id: box.id});
       var rect = Y.one(this);
       if (!utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
-
-      // Do not fire unless we're within the service box.
-      var topo = context.get('component');
-      var container = context.get('container');
-      var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
-      if (!box.containsPoint(mouse_coords, topo.zoom)) {
-        return;
-      }
-
       topo.fire('snapToService', { service: box, rect: rect });
     },
 
     serviceMouseLeave: function(box, context) {
-      // Do not fire if we're within the service box.
       var topo = context.get('component');
+      topo.fire('hoverService', {id: null});
+      // Do not fire if we're within the service box.
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
       if (box.containsPoint(mouse_coords, topo.zoom)) {
@@ -659,9 +728,6 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     serviceMouseMove: function(box, context) {
-      if (box.pending) {
-        return;
-      }
       var topo = context.get('component');
       topo.fire('mouseMove');
     },

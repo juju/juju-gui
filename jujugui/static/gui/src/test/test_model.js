@@ -68,9 +68,7 @@ describe('test_model.js', function() {
 
     it('must reject bad charm ids.', function() {
       try {
-        /* jshint -W031 */
         new models.Charm({id: 'foobar'});
-        /* jshint +W031 */
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(
@@ -81,9 +79,7 @@ describe('test_model.js', function() {
 
     it('must reject missing charm ids at initialization.', function() {
       try {
-        /* jshint -W031 */
         new models.Charm();
-        /* jshint +W031 */
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(
@@ -167,6 +163,29 @@ describe('test_model.js', function() {
       assert.equal(unit.service, 'mysql2');
       assert.equal(unit.id, 'mysql2/0');
       assert.equal(unit.urlName, 'mysql2-0');
+    });
+
+    it('finds related services', function() {
+      var db = new models.Database(),
+          service = new models.Service({name: 'mysql'});
+      db.services.add([
+        {id: 'mysql', name: 'mysql'},
+        {id: 'wordpress', name: 'wordpress'},
+        {id: 'haproxy', name: 'haproxy'}
+      ]);
+      var relations = [
+        {far: {service: 'wordpress'}}
+      ];
+      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
+                                      relations);
+      this._cleanups.push(stub.reset);
+      var related = db.findRelatedServices(service);
+      related.each(function(s) {
+        console.log(s.getAttrs());
+      });
+      assert.equal(related.size(), 2);
+      assert.equal(related.item(0).get('name'), 'mysql');
+      assert.equal(related.item(1).get('name'), 'wordpress');
     });
 
     it('finds unrelated services', function() {

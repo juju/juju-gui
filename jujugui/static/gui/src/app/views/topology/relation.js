@@ -680,13 +680,11 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = this.get('component'),
           db = topo.get('db');
       if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error deleting relation',
-              message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
-              level: 'error'
-            })
-        );
+        db.notifications.add({
+          title: 'Error deleting relation',
+          message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
+          level: 'error'
+        });
         utils.removeSVGClass(this.relationElement,
             'to-remove pending-relation');
       } else {
@@ -1173,14 +1171,12 @@ YUI.add('juju-topology-relation', function(Y) {
       vis.select('#' + utils.generateSafeDOMId(relation_id, topo._yuid))
         .remove();
       if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error adding relation',
-              message: 'Relation ' + ev.endpoint_a +
-                  ' to ' + ev.endpoint_b + ': ' + ev.err,
-              level: 'error'
-            })
-        );
+        db.notifications.add({
+          title: 'Error adding relation',
+          message: 'Relation ' + ev.endpoint_a +
+              ' to ' + ev.endpoint_b + ': ' + ev.err,
+          level: 'error'
+        });
       } else {
         // Create a relation in the database between the two services.
         var result = ev.result;

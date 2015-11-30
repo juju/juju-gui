@@ -82,13 +82,12 @@ function injectData(app, data) {
 
     });
 
-    afterEach(function(done) {
+    afterEach(function() {
       // Reset the flags.
       window.flags = {};
       app.after('destroy', function() {
         container.remove(true);
         sessionStorage.setItem('credentials', null);
-        done();
       });
 
       app.destroy();
@@ -488,11 +487,10 @@ describe('File drag over notification system', function() {
         .hide();
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     app.after('destroy', function() {
       container.remove(true);
       sessionStorage.setItem('credentials', null);
-      done();
     });
 
     app.destroy();
@@ -737,12 +735,11 @@ describe('File drag over notification system', function() {
       done();
     });
 
-    afterEach(function(done) {
+    afterEach(function() {
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();
       });
-      done();
     });
 
     // Create and return a new app. If connect is True, also connect the env.

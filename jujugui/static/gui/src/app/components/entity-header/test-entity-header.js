@@ -118,4 +118,28 @@ describe('EntityHeader', function() {
     assert.equal(importBundleYAML.callCount, 1);
     assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
   });
+
+  it('displays a notification if there is a bundle deploy error', function() {
+    var deployService = sinon.stub();
+    var changeState = sinon.stub();
+    var getBundleYAML = sinon.stub().callsArgWith(1, 'error');
+    var importBundleYAML = sinon.stub();
+    var addNotification = sinon.stub();
+    var entity = jsTestUtils.makeEntity(true);
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityHeader
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        deployService={deployService}
+        changeState={changeState}
+        entityModel={entity}
+        addNotification={addNotification}
+        pluralize={sinon.stub()} />);
+    var deployButton = output.refs.deployButton;
+    // Simulate a click.
+    deployButton.props.action();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(
+      addNotification.args[0][0].title, 'Bundle failed to deploy');
+  });
 });

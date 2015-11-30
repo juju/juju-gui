@@ -69,7 +69,6 @@ YUI.add('juju-view-utils', function(Y) {
     };
   };
 
-  /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
 
@@ -86,7 +85,6 @@ YUI.add('juju-view-utils', function(Y) {
         0
     );
   };
-  /*jshint bitwise: true*/
   utils.generateHash = generateHash;
 
   /**
@@ -792,16 +790,15 @@ YUI.add('juju-view-utils', function(Y) {
       configurable: true,
       value: function(point, transform) {
         transform = transform || {
-          scale: function() { return 1; },
-          translate: function() { return [0, 0]; }
+          translate: function() { return [0, 0]; },
+          scale: function() { return 1; }
         };
         var tr = transform.translate(),
             s = transform.scale();
 
-        return (point[0] >= this.x * s + tr[0] &&
-                point[0] <= this.x * s + this.w * s + tr[0] &&
-                point[1] >= this.y * s + tr[1] &&
-                point[1] <= this.y * s + this.h * s + tr[1]);
+        return Math.pow(((point[0] - tr[0]) / s - (this.x + this.w / 2)), 2) +
+               Math.pow(((point[1] - tr[1]) / s - (this.y + this.w / 2)), 2) <=
+               Math.pow(this.w / 2, 2);
       }
     },
 
@@ -1460,9 +1457,7 @@ YUI.add('juju-view-utils', function(Y) {
    *
    */
   Y.Handlebars.registerHelper('debugger', function(value) {
-    /*jshint debug:true */
     debugger; //eslint-disable-line no-debugger
-    /*jshint debug:false */
   });
 
   /**
@@ -1695,15 +1690,13 @@ YUI.add('juju-view-utils', function(Y) {
   utils._destroyServiceCallback = function(service, db, callback, evt) {
     if (evt.err) {
       // If something bad happend we need to alert the user.
-      db.notifications.add(
-          new Y.juju.models.Notification({
-            title: 'Error destroying service',
-            message: 'Service name: ' + evt.service_name,
-            level: 'error',
-            link: undefined,
-            modelId: service
-          })
-      );
+      db.notifications.add({
+        title: 'Error destroying service',
+        message: 'Service name: ' + evt.service_name,
+        level: 'error',
+        link: undefined,
+        modelId: service
+      });
     } else {
       // Remove the relations from the database (they will be removed from
       // the state server by Juju, so we don't need to interact with env).

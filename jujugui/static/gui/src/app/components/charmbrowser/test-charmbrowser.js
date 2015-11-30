@@ -42,15 +42,19 @@ describe('Charmbrowser', function() {
           tags: 'ops',
           sort: '-name',
           type: 'bundle',
-          series: 'wily'
+          series: 'wily',
+          provides: 'http',
+          requires: 'cache'
         }
       }};
     var series = sinon.stub();
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
+    var makeEntityModel = sinon.spy();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
+        makeEntityModel={makeEntityModel}
         changeState={changeState}
         series={series}
         charmstoreSearch={charmstoreSearch} />);
@@ -61,11 +65,14 @@ describe('Charmbrowser', function() {
           <juju.components.SearchResults
             changeState={changeState}
             seriesList={series}
+            makeEntityModel={makeEntityModel}
             query={query}
             tags="ops"
             sort="-name"
             type="bundle"
             series="wily"
+            provides="http"
+            requires="cache"
             charmstoreSearch={charmstoreSearch} />
         </juju.components.Panel>);
   });
@@ -102,16 +109,19 @@ describe('Charmbrowser', function() {
       }};
     var charmstoreSearch = sinon.stub();
     var changeState = sinon.stub();
+    var makeEntityModel = sinon.spy();
     var output = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         charmstoreSearch={charmstoreSearch}
+        makeEntityModel={makeEntityModel}
         changeState={changeState} />);
     assert.deepEqual(output,
         <juju.components.Panel
           instanceName="white-box"
           visible={true}>
           <juju.components.Store
+            makeEntityModel={makeEntityModel}
             charmstoreSearch={charmstoreSearch}
             changeState={changeState} />
         </juju.components.Panel>);
@@ -127,6 +137,7 @@ describe('Charmbrowser', function() {
         }
       }};
     var getEntity = sinon.spy();
+    var makeEntityModel = sinon.spy();
     var changeState = sinon.spy();
     var deployService = sinon.spy();
     var importBundleYAML = sinon.spy();
@@ -134,6 +145,7 @@ describe('Charmbrowser', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
+    var addNotification = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -146,8 +158,10 @@ describe('Charmbrowser', function() {
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
+        makeEntityModel={makeEntityModel}
         getFile={getFile}
         renderMarkdown={renderMarkdown}
+        addNotification={addNotification}
         utils={utils} />);
     assert.deepEqual(output,
         <juju.components.Panel
@@ -158,11 +172,13 @@ describe('Charmbrowser', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             getEntity={getEntity}
+            makeEntityModel={makeEntityModel}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
             renderMarkdown={renderMarkdown}
             deployService={deployService}
             id={id}
+            addNotification={addNotification}
             pluralize={utils.pluralize} />
         </juju.components.Panel>);
   });

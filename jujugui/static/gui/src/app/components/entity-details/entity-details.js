@@ -29,7 +29,8 @@ YUI.add('entity-details', function() {
       deployService: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
-      pluralize: React.PropTypes.func.isRequired
+      pluralize: React.PropTypes.func.isRequired,
+      makeEntityModel: React.PropTypes.func.isRequired
     },
 
     /**
@@ -59,6 +60,7 @@ YUI.add('entity-details', function() {
               <div>
                 <juju.components.EntityHeader
                   entityModel={entityModel}
+                  addNotification={this.props.addNotification}
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
                   changeState={this.props.changeState}
@@ -69,7 +71,8 @@ YUI.add('entity-details', function() {
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
                   renderMarkdown={this.props.renderMarkdown}
-                  entityModel={entityModel} />
+                  entityModel={entityModel}
+                  pluralize={this.props.pluralize} />
               </div>
           };
           break;
@@ -110,14 +113,16 @@ YUI.add('entity-details', function() {
       @param {String} error An error message, or null if there's no error.
       @param {Array} models A list of the entity models found.
     */
-    fetchCallback: function(error, models) {
+    fetchCallback: function(error, data) {
       if (error) {
         this._changeActiveComponent('error');
         console.error('Fetching the entity failed.');
         return;
       }
-      if (models.length > 0) {
-        this.setState({entityModel: models[0]});
+      if (data.length > 0) {
+        var data = data[0];
+        var model = this.props.makeEntityModel(data);
+        this.setState({entityModel: model});
         this._changeActiveComponent('entity-details');
       }
     },
@@ -129,7 +134,8 @@ YUI.add('entity-details', function() {
     },
 
     componentDidMount: function() {
-      this.detailsXhr = this.props.getEntity(this.props.id, this.fetchCallback);
+      this.detailsXhr = this.props.getEntity(
+          this.props.id, this.fetchCallback);
     },
 
     componentWillUnmount: function() {
@@ -193,6 +199,7 @@ YUI.add('entity-details', function() {
     'entity-header',
     'entity-content',
     'entity-content-diagram',
+    'jujulib-utils',
     'loading-spinner'
   ]
 });

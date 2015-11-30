@@ -398,6 +398,7 @@ describe('Inspector', function() {
   });
 
   it('displays Expose when the app state calls for it', function() {
+    var addNotification = sinon.stub();
     var changeState = sinon.stub();
     var exposeService = sinon.stub();
     var unexposeService = sinon.stub();
@@ -417,6 +418,7 @@ describe('Inspector', function() {
         }}};
     var output = jsTestUtils.shallowRender(
       <juju.components.Inspector
+        addNotification={addNotification}
         changeState={changeState}
         exposeService={exposeService}
         unexposeService={unexposeService}
@@ -426,6 +428,7 @@ describe('Inspector', function() {
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorExpose
+          addNotification={addNotification}
           changeState={changeState}
           exposeService={exposeService}
           unexposeService={unexposeService}

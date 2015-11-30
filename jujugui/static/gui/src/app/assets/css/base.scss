@@ -66,7 +66,6 @@ $ubuntu-orange: #dd4814;
 $charm-panel-orange: #dd4814;
 $charm-panel-background-color: #eeeeee;
 $label-color: #292929;
-$machine-view-border-colour: #d9d9d9;
 $navbar-border-dark: #191514;
 $navbar-border-light: #2d2928;
 $success: #38b44a;
@@ -517,7 +516,7 @@ th {
         stroke: rgb(167, 167, 167);
     }
     &.healthy {
-        stroke: #38B44A;
+        stroke: rgb(167, 167, 167);
     }
     &.pending {
         stroke: $uncommitted;
@@ -549,7 +548,7 @@ th {
         fill: rgb(167, 167, 167);
     }
     &.healthy {
-        fill: #38B44A;
+        fill: rgb(167, 167, 167);
     }
     &.pending {
         fill: $uncommitted;
@@ -665,64 +664,6 @@ g.unit {
   .uncommitted {
     fill: $uncommitted;
   }
-}
-
-/*
- * Notifier widget.
- * Contains notifications that appear from the header.
- */
-.notifier-box {
-    position: absolute;
-    top: $navbar-height;
-    left: 40%;
-    margin: -2px 0 0 -125px;
-    z-index: 9999;
-
-    &.bundle {
-        margin: -5px 0 0 227px;
-    }
-
-    .yui3-notifier-content {
-        $box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        @include create-border-radius($border-radius);
-        @include create-box-shadow($box-shadow);
-        position: realtive;
-        width: 250px;
-        margin-top: 5px;
-        padding: 7px 10px;
-        background-color: #fff;
-        color: $cool-grey;
-        font-size: 12px;
-
-        &.bottom-arrow {
-            width: 177px;
-        }
-
-        &:first-child {
-            margin-top: 0;
-
-            &:before {
-                content: '';
-                position: absolute;
-                display: block;
-                top: -5px;
-                left: 50%;
-                width: 10px;
-                height: 10px;
-                margin-left: -6px;
-                background-color: #fff;
-                -webkit-transform: rotate(45deg);
-                transform: rotate(45deg);
-            }
-            &.bottom-arrow:before {
-                top: inherit;
-                bottom: -5px;
-            }
-        }
-        div:last-child {
-          color: #aaa;
-        }
-    }
 }
 
 /*

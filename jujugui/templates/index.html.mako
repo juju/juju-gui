@@ -41,33 +41,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          below.
     -->
     <script src="${config_url}"></script>
-    <script type="text/javascript">
-    // Normally we get the fonts from the Google CDN.  If the config sets
-    // "cachedFonts" to true, we use the local, cached fonts instead.  The CDN
-    // is generally faster, but if a user is in a closed network, trying to
-    // reach the CDN will slow the application down [1], and the cachedFonts
-    // are the only thing that will work.
-    // [1] https://bugs.launchpad.net/juju-gui/+bug/1274955
-    (function() {
-      var link  = document.createElement('link');
-      link.rel  = 'stylesheet';
-      link.type = 'text/css';
-      if (juju_config.cachedFonts) {
-        link.href = 'juju-ui/assets/fonts/fontface.css';
-      } else {
-        // If you change this, make sure you make a corresponding update to
-        // the cached fonts (app/assets/fonts/*).  Read more details here:
-        // https://bugs.launchpad.net/juju-gui/+bug/1274955/comments/4
-        link.href = (
-          'https://fonts.googleapis.com/css?family=' +
-          'Ubuntu+Mono:400,700|' +
-          'Ubuntu:300,400,500,300italic,400italic,500italic');
-      }
-      link.media = 'all';
-      var head  = document.getElementsByTagName('head')[0];
-      head.appendChild(link);
-    })();
-    </script>
     <link rel="shortcut icon" href="juju-ui/favicon.ico">
     <link rel="stylesheet" href="${convoy_url}?app/assets/stylesheets/normalize.css&app/assets/stylesheets/prettify.css&app/assets/stylesheets/cssgrids-responsive-min.css&app/assets/javascripts/yui/app-transitions-css/app-transitions-css-min.css&app/assets/javascripts/yui/panel/assets/panel-core.css&app/assets/javascripts/yui/widget-base/assets/widget-base-core.css&app/assets/javascripts/yui/widget-stack/assets/widget-stack-core.css&app/assets/juju-gui.css">
 
@@ -141,6 +114,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="inspector-container"></div>
       <div id="white-box-container"></div>
       <div id="machine-view-panel"></div>
+      <div id="machine-view"></div>
 
       <div class="cookie-policy" style="display:none;">
         <div class="wrapper">
@@ -200,6 +174,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div id="main">
             </div> <!-- /container -->
         </div>
+        <div id="notifications-container"></div>
     </div>
     <script id="app-startup">
       // Global to store all of the shared application data.

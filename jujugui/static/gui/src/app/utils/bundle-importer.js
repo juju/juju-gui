@@ -244,7 +244,6 @@ YUI.add('bundle-importer', function(Y) {
           changeSet.push(record);
           continue;
         }
-        /*jshint -W083*/
         var prereq = this._collectRequires(records, record, [])
           .every(function(recordId) {
             // Loop through the changeSet to see if the required record is

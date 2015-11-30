@@ -144,7 +144,6 @@ YUI.add('changes-utils', function(Y) {
               ' been added.';
           break;
         case '_destroyMachines':
-          /*jshint -W004*/
           var machineType = change.command.args[0][0].indexOf('/') !== -1 ?
               'container' : 'machine';
           changeItem.icon = 'changes-' + machineType + '-destroyed';

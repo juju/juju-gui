@@ -75,4 +75,33 @@
             margin-left: 3em;
         }
     }
+
+    .section {
+        margin-bottom: 20px;
+        padding: 30px 20px;
+        border: 1px solid $light-mid-grey;
+        border-radius: 2px;
+
+        &__title {
+            font-size: 1.33em;
+            margin-bottom: 20px;
+        }
+
+        &__list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            &-item {
+                line-height: 1.8;
+            }
+        }
+    }
+
+    .entity-relations {
+        .section__list-item {
+            text-indent: -1.5em;
+            padding-left: 1.5em;
+        }
+    }
 }

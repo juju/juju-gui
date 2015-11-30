@@ -1,10 +1,5 @@
 .machine-view-panel .create-machine-view {
     margin: 10px;
-    padding: 0 10px;
-    background-color: #eee;
-    border-width: 1px 0;
-    border-style: solid;
-    border-color: $machine-view-border-colour;
     line-height: 38px;
 
     &.state-containers {
@@ -12,25 +7,30 @@
             display: block;
         }
     }
+
     &.state-constraints {
         .constraints-form {
             display: block;
         }
     }
+
     &.state-container-constraints {
         .containers,
         .constraints-form {
             display: block;
         }
     }
+
     .constraints-form,
     .containers {
         display: none;
     }
+
     input[type="text"],
     select {
         width: 100%;
     }
+
     input[type="text"] {
         @extend .border-box;
         margin-bottom: 6px;
@@ -40,6 +40,7 @@
             margin-bottom: 0;
         }
     }
+
     form label {
         position: relative;
         float: right;
@@ -51,17 +52,20 @@
             margin-top: -33px;
         }
     }
+
     .actions {
         text-align: right;
 
         span {
             cursor: pointer;
         }
+
         .primary-action {
             color: $charm-panel-orange;
         }
     }
 }
+
 /* This style applies to create-machine-view, serviceunit-token, and scale-up */
 .constraints-form fieldset {
     border: none;

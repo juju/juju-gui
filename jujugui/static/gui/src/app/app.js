@@ -82,11 +82,6 @@ YUI.add('juju-gui', function(Y) {
       environment: {
         type: 'juju.views.environment',
         preserve: true
-      },
-
-      notifications: {
-        type: 'juju.views.NotificationsView',
-        preserve: true
       }
     },
 
@@ -536,12 +531,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.changesUtils = window.juju.utils.ChangesUtils;
 
-      // Create notifications controller
-      this.notifications = new juju.NotificationController({
-        app: this,
-        env: this.env,
-        notifications: this.db.notifications});
-
       this.on('*:navigateTo', function(e) {
         this.navigate(e.url);
       }, this);
@@ -567,10 +556,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.onDelta, this.db);
-
-      // Feed delta changes to the notifications system.
-      this.env.on('delta', this.notifications.generate_notices,
-          this.notifications);
 
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
@@ -656,6 +641,7 @@ YUI.add('juju-gui', function(Y) {
       this.db.relations.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
+      this.db.notifications.after('add', this._renderNotifications, this);
 
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
@@ -762,6 +748,22 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the notification component to the page in the designated element.
+
+      @method _renderNotifications
+    */
+    _renderNotifications: function(e) {
+      var notification = null;
+      if (e && e.details) {
+        notification = e.details[0].model.getAttrs();
+      }
+      ReactDOM.render(
+        <window.juju.components.NotificationList
+          notification={notification}/>,
+        document.getElementById('notifications-container'));
+    },
+
+    /**
       Renders the Deployment component to the page in the
       designated element.
 
@@ -798,18 +800,39 @@ YUI.add('juju-gui', function(Y) {
       element.
 
       @method _renderAddedServices
-      @param {Array} services Array of service models.
+      @param {String} hoveredId An id for a service.
     */
-    _renderAddedServices: function(services) {
+    _renderAddedServices: function(hoveredId) {
       var utils = views.utils;
-      var services = this.db.services.toArray();
+      var db = this.db;
+      var topo = this.views.environment.instance.topo;
+      var ServiceModule = topo.modules.ServiceModule;
+      // Set up a handler for syncing the service token hover. This needs to be
+      // attached only when the component is visible otherwise the added
+      // services component will try to render if the user hovers a service
+      // when they have the service details open.
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
+      this.hoverService = topo.on('hoverService', function(service) {
+        this._renderAddedServices(service.id);
+      }, this);
+      // Deselect the active service token. This needs to happen so that when a
+      // user closes the service details the service token deactivates.
+      ServiceModule.deselectNodes();
       ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
-          visible={services.length > 0}>
+          visible={db.services.size() > 0}>
           <components.AddedServicesList
-            services={services}
+            services={db.services}
+            hoveredId={hoveredId}
+            updateUnitFlags={db.updateUnitFlags.bind(db)}
+            findRelatedServices={db.findRelatedServices.bind(db)}
+            findUnrelatedServices={db.findUnrelatedServices.bind(db)}
+            setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
+            hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
@@ -825,6 +848,7 @@ YUI.add('juju-gui', function(Y) {
     _renderInspector: function(metadata) {
       var state = this.state;
       var utils = views.utils;
+      var topo = this.views.environment.instance.topo;
       var charmstore = this.get('charmstore');
       var inspector;
       var service = this.db.services.getById(metadata.id);
@@ -834,6 +858,8 @@ YUI.add('juju-gui', function(Y) {
       // happens if the user tries to visit the inspector of a ghost service
       // id which no longer exists.
       if (service) {
+        // Select the service token.
+        topo.modules.ServiceModule.selectService(service.get('id'));
         var charm = app.db.charms.getById(service.get('charm'));
         inspector = (
           <components.Inspector
@@ -851,8 +877,7 @@ YUI.add('juju-gui', function(Y) {
             destroyService={utils.destroyService.bind(
                 this, this.db, this.env, service)}
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
-            clearState={utils.clearState.bind(
-                this, this.views.environment.instance.topo)}
+            clearState={utils.clearState.bind(this, topo)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
@@ -925,8 +950,30 @@ YUI.add('juju-gui', function(Y) {
           deployService={this.deployService.bind(this)}
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
-          utils={utils} />,
+          utils={utils}
+          addNotification={this.db.notifications.add.bind(this)}
+          makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
+    },
+
+    _emptySectionA: function() {
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
+    },
+    /**
+      Empties out the sectionB UI making sure to properly clean up.
+
+      @method emptySectionB
+    */
+    emptySectionB: function() {
+      if (window.flags && window.flags.mv) {
+        ReactDOM.unmountComponentAtNode(
+          document.getElementById('machine-view'));
+      } else if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+        this.machineViewPanel = null;
+      }
     },
 
     _emptySectionC: function() {
@@ -959,18 +1006,18 @@ YUI.add('juju-gui', function(Y) {
         view.
     */
     _renderMachineView: function(metadata) {
-      this._renderMachineViewPanelView(this.db, this.env);
-    },
-
-    /**
-      Empties out the sectionB UI making sure to properly clean up.
-
-      @method emptySectionB
-    */
-    emptySectionB: function() {
-      if (this.machineViewPanel) {
-        this.machineViewPanel.destroy();
-        this.machineViewPanel = null;
+      if (window.flags && window.flags.mv) {
+        var db = this.db;
+        ReactDOM.render(
+          <components.MachineView
+            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            environmentName={db.environment.get('name')}
+            machines={db.machines}
+            services={db.services}
+            units={db.units} />,
+          document.getElementById('machine-view'));
+      } else {
+        this._renderMachineViewPanelView(this.db, this.env);
       }
     },
 
@@ -992,7 +1039,8 @@ YUI.add('juju-gui', function(Y) {
       var dispatchers = this.state.get('dispatchers');
       dispatchers.sectionA = {
         services: this._renderAddedServices.bind(this),
-        inspector: this._renderInspector.bind(this)
+        inspector: this._renderInspector.bind(this),
+        empty: this._emptySectionA.bind(this)
       };
       dispatchers.sectionB = {
         machine: this._renderMachineView.bind(this),
@@ -1122,16 +1170,7 @@ YUI.add('juju-gui', function(Y) {
           setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
           serviceName: 'charmstore'
         });
-        var processEntity = function(entity) {
-          if (entity.entityType === 'charm') {
-            return new Y.juju.models.Charm(entity);
-          } else {
-            return new Y.juju.models.Bundle(entity);
-          }
-        };
-        this.set(
-            'charmstore',
-            new Charmstore(charmstoreURL, apiPath, bakery, processEntity));
+        this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
       }
     },
 
@@ -1402,8 +1441,7 @@ YUI.add('juju-gui', function(Y) {
         this._simulator.stop();
       }
       Y.each(
-          [this.env, this.db, this.notifications,
-           this.endpointsController],
+          [this.env, this.db, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
               o.detachAll();
@@ -1511,28 +1549,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     // Persistent Views
-
-    /**
-     * `notifications` is a preserved view that remains rendered on all main
-     * views.  We manually create an instance of this view and insert it into
-     * the App's view metadata.
-     *
-     * @method show_notifications_view
-     */
-    show_notifications_view: function(req, res, next) {
-      var view = this.getViewInfo('notifications'),
-          instance = view.instance;
-      if (!instance) {
-        view.instance = new views.NotificationsView(
-            {container: Y.one('#notifications'),
-              env: this.env,
-              notifications: this.db.notifications,
-              nsRouter: this.nsRouter
-            });
-        view.instance.render();
-      }
-      next();
-    },
 
     /**
      * Ensure that the current user has authenticated.
@@ -1868,6 +1884,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       this._renderComponents();
+      this._renderNotifications();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -2071,7 +2088,6 @@ YUI.add('juju-gui', function(Y) {
           // Called on each request.
           { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Authorization
@@ -2099,7 +2115,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-web-sandbox',
     'juju-fakebackend-simulator',
     'juju-models',
-    'juju-notification-controller',
+    'jujulib-utils',
     'ns-routing-app-extension',
     // React components
     'charmbrowser-component',
@@ -2109,13 +2125,14 @@ YUI.add('juju-gui', function(Y) {
     'header-search',
     'inspector-component',
     'local-inspector',
+    'machine-view',
+    'notification-list',
     'panel-component',
     'user-profile',
     // juju-views group
     'd3-components',
     'container-token',
     'juju-templates',
-    'juju-notifications',
     'help-dropdown',
     'user-dropdown',
     'create-machine-view',
