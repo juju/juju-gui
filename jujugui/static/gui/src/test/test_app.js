@@ -672,7 +672,6 @@ describe('File drag over notification system', function() {
 (function() {
 
   describe('Application authentication', function() {
-    var LOGIN_VIEW_NAME;
     var conn, container, destroyMe, ecs, env, juju, utils, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
@@ -681,7 +680,6 @@ describe('File drag over notification system', function() {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
-        LOGIN_VIEW_NAME = 'LoginView';
         done();
       });
     });
