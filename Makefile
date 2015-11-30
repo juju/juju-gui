@@ -333,7 +333,7 @@ lint-js: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/eslint --rulesdir eslint-rules/ $(GUISRC)
 
 .PHONY: test
-test: $(PYTEST)
+test: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: test-js-phantom
