@@ -1,5 +1,3 @@
-import os
-
 from pip.download import PipSession
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
@@ -8,14 +6,9 @@ pip_session = PipSession()
 requirements = parse_requirements("requirements.txt", session=pip_session)
 test_requirements = parse_requirements("test-requirements.txt",
                                        session=pip_session)
-ignore_requirements = (
-    'libsass',
-    )
 
-install_requires = [str(req.req) for req in requirements
-                    if req.name not in ignore_requirements]
-tests_require = [str(req.req) for req in test_requirements
-                if req.name not in ignore_requirements]
+install_requires = [str(req.req) for req in requirements]
+tests_require = [str(req.req) for req in test_requirements]
 
 setup(name='jujugui',
       version='1.9.0',
