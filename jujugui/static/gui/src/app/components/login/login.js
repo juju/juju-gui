@@ -41,10 +41,11 @@ YUI.add('login-component', function() {
       return (
         <div className="login">
           <form
+            ref="form"
             onSubmit={this._handleSubmit}>
-          <input type="text" name="username" ref="username"/>
-          <input type="password" name="password" ref="password"/>
-          <input type="submit"/>
+            <input type="text" name="username" ref="username"/>
+            <input type="password" name="password" ref="password"/>
+            <input type="submit"/>
           </form>
         </div>
       );
