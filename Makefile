@@ -367,7 +367,7 @@ bumpversion: test-deps
 	bin/bumpversion $(VPART)
 
 .PHONY: dist
-dist: gui test-deps collected-requirements
+dist: gui test-deps collect-requirements
 	python setup.py sdist --formats=bztar
 
 #######
