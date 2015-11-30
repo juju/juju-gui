@@ -7,7 +7,7 @@
 .panel-component.inspector-panel {
     position: static;
     background-color: transparent;
-    border-radius: none;
+    border-radius: 0;
     box-shadow: none;
 }
 
@@ -16,7 +16,7 @@
     z-index: 1000;
     top: $navbar-height;
     right: 0;
-    border-radius: none;
+    border-radius: 0;
 }
 
 .panel-component.white-box {
