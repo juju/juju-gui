@@ -516,7 +516,7 @@ th {
         stroke: rgb(167, 167, 167);
     }
     &.healthy {
-        stroke: #38B44A;
+        stroke: rgb(167, 167, 167);
     }
     &.pending {
         stroke: $uncommitted;
@@ -548,7 +548,7 @@ th {
         fill: rgb(167, 167, 167);
     }
     &.healthy {
-        fill: #38B44A;
+        fill: rgb(167, 167, 167);
     }
     &.pending {
         fill: $uncommitted;
