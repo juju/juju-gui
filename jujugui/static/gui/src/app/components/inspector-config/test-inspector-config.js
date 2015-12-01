@@ -42,7 +42,10 @@ describe('Configuration', function() {
         return { option1: option1, option2: option2 };
       }};
     var service = {
-      get: function() {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        }
         // Return the config options
         return { option1: option1key, option2: option2key };
       }};
@@ -53,7 +56,7 @@ describe('Configuration', function() {
         charm={charm}
         setConfig={setConfig} />);
 
-    assert.deepEqual(output.props.children[0].props.children[2], [
+    assert.deepEqual(output.props.children[0].props.children[3], [
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
@@ -74,12 +77,19 @@ describe('Configuration', function() {
         // Return the charm options.
         return null;
       }};
-    var service = {get: sinon.stub().returns({})};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        }
+        return {};
+      }
+    };
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
         service={service}
         charm={charm} />);
-    assert.deepEqual(output.props.children[0].props.children[2],
+    assert.deepEqual(output.props.children[0].props.children[3],
       <div className="inspector-config--no-config">
         No configuration options.
       </div>);
@@ -103,11 +113,13 @@ describe('Configuration', function() {
       get: serviceGet
     };
     var setConfig = sinon.stub();
+    var changeState = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
         service={service}
         charm={charm}
-        setConfig={setConfig} />);
+        setConfig={setConfig}
+        changeState={changeState}/>);
 
     var domNode = ReactDOM.findDOMNode(component);
 
@@ -132,6 +144,67 @@ describe('Configuration', function() {
       { option1: 'new value', option2: false });
     assert.strictEqual(setConfig.args[0][2], null);
     assert.strictEqual(setConfig.args[0][3], null);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'cs:trusty/ghost',
+          activeComponent: undefined
+        }}});
+  });
+
+  it('can change the service name for ghost services', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var charm = {
+      get: sinon.stub().returns({ option1: option1, option2: option2 })
+    };
+    var service = {
+      get: function(val) {
+        if (val === 'id') { return 'abc123$'; }
+        if (val === 'name') { return 'servicename'; }
+        return {};
+      },
+      set: sinon.stub()
+    };
+    var component = testUtils.renderIntoDocument(
+      <juju.components.Configuration
+        service={service}
+        charm={charm}
+        changeState={sinon.stub()} />);
+    assert.equal(component.refs.ServiceName.props.config, 'servicename');
+
+    var domNode = ReactDOM.findDOMNode(component);
+    var name = domNode.querySelector('.string-config--value');
+
+    name.innerText = 'newservicename';
+    testUtils.Simulate.input(name);
+
+    var save = domNode.querySelector('.generic-button--type-confirm');
+    testUtils.Simulate.click(save);
+
+    assert.equal(service.set.callCount, 1);
+    assert.deepEqual(service.set.args[0], ['name', 'newservicename']);
+  });
+
+  it('not able to change the service name on deployed services', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var charm = {
+      get: sinon.stub().returns({ option1: option1, option2: option2 })
+    };
+    var service = {
+      get: function(val) {
+        if (val === 'id') { return 'abc123'; }
+        return {};
+      }
+    };
+    var component = testUtils.renderIntoDocument(
+      <juju.components.Configuration
+        service={service}
+        charm={charm} />);
+    assert.equal(component.refs.ServiceName, undefined);
   });
 
   it('can handle cancelling the changes', function() {
@@ -177,7 +250,8 @@ describe('Configuration', function() {
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {file: {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[1].props.buttons[0].action();
+    var children = output.props.children[0];
+    children.props.children[2].props.children.props.buttons[0].action();
     assert.equal(fileClick.callCount, 1);
   });
 
@@ -204,7 +278,7 @@ describe('Configuration', function() {
       'file-form': {reset: formReset}
     };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[0].props.children.props.onChange();
+    output.props.children[0].props.children[1].props.children.props.onChange();
     assert.equal(getYAMLConfig.callCount, 1);
     assert.equal(getYAMLConfig.args[0][0], 'apache2.yaml');
     assert.equal(getYAMLConfig.args[0][1], instance._applyConfig);
@@ -242,9 +316,9 @@ describe('Configuration', function() {
       'file-form': {reset: sinon.stub()}
     };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[0].props.children.props.onChange();
+    output.props.children[0].props.children[1].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0].props.children[2], [
+    assert.deepEqual(output.props.children[0].props.children[3], [
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
@@ -293,7 +367,7 @@ describe('Configuration', function() {
     assert.deepEqual(
       instance.state.serviceConfig,
       {option1: 'string body value', option2: true});
-    output.props.children[0].props.children[0].props.children.props.onChange();
+    output.props.children[0].props.children[1].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
       instance.state.serviceConfig,

@@ -274,7 +274,7 @@ YUI.add('inspector-config', function() {
       }];
       var actionButtons = [{
         title: 'Cancel',
-        action: this._handleCancelChanges
+        action: this._showInspectorIndex
       }, {
         title: 'Save changes',
         type: 'confirm',

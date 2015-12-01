@@ -41,9 +41,10 @@ describe('StringConfig', function() {
       <juju.components.StringConfig
         config={config}
         option={option} />);
-    assert.deepEqual(output,
+    var typeString = ` (${option.type})`;
+    var expected = (
       <div className="string-config">
-        <span>{option.key} ({option.type})</span>
+        <span>{option.key}{typeString}</span>
         <div
           className="string-config--value"
           contentEditable="true"
@@ -55,6 +56,8 @@ describe('StringConfig', function() {
           {option.description}
         </span>
       </div>);
+
+    assert.deepEqual(output, expected);
   });
 
   it('can update when new config is provided', function() {
@@ -74,5 +77,18 @@ describe('StringConfig', function() {
         config="updated"
         option={option} />);
     assert.equal(instance.state.value, 'updated');
+  });
+
+  it('does not show a type if none is provided', function() {
+    var option = {
+      key: 'testconfig',
+      description: 'test config for strings'
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config="initial"
+        option={option} />);
+    assert.deepEqual(
+      output.props.children[0].props.children, ['testconfig', '']);
   });
 });
