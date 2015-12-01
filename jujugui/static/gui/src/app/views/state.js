@@ -437,7 +437,7 @@ YUI.add('juju-app-state', function(Y) {
       @return {Object} The section delimited state object.
     */
     _buildSections: function(paths, query, hash) {
-      var state = { sectionA: {}, sectionB: {}, sectionC: {} };
+      var state = { app: {}, sectionA: {}, sectionB: {}, sectionC: {} };
       // Loop through each part and dispatch each part to the appropriate url
       // parse method.
       paths.forEach(function(part) {

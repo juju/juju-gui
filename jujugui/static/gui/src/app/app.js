@@ -676,9 +676,10 @@ YUI.add('juju-gui', function(Y) {
       @method _renderLogin
     */
     _renderLogin: function() {
-      this.hideMask();
+      document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
+          envName={this.db.environment.get('name') || 'Sandbox'}
           setCredentials={this.env.setCredentials.bind(this.env)}
           login={this.env.login.bind(this.env)}/>,
         document.getElementById('login-container'));
@@ -942,6 +943,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
+    _emptySectionApp: function() {
+      console.log('empty')
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('login-container'));
+    },
+
     _emptySectionA: function() {
       if (this.hoverService) {
         this.hoverService.detach();
@@ -1039,7 +1046,8 @@ YUI.add('juju-gui', function(Y) {
       };
       dispatchers.app = {
         login: this._renderLogin.bind(this),
-        deployTarget: views.utils.deployTargetDispatcher.bind(this)
+        deployTarget: views.utils.deployTargetDispatcher.bind(this),
+        empty: this._emptySectionApp.bind(this)
       };
       this.state.set('dispatchers', dispatchers);
       this.on('*:changeState', this._changeState, this);
@@ -1576,6 +1584,7 @@ YUI.add('juju-gui', function(Y) {
       if (e.data.result) {
         // The login was a success.
         this.hideMask();
+        this._emptySectionApp();
         var redirectPath = this.popLoginRedirectPath();
         this.set('loggedIn', true);
         // Handle token authentication.
@@ -2073,7 +2082,6 @@ YUI.add('juju-gui', function(Y) {
     'service-scale-up-view',
     'juju-topology',
     'juju-view-environment',
-    'juju-view-login',
     'juju-landscape',
     // end juju-views group
     'autodeploy-extension',

@@ -28,7 +28,9 @@ YUI.add('login-component', function() {
     },
 
     _handleSubmit: function(e) {
-      e.preventDefault();
+      if (e && e.preventDefault){
+        e.preventDefault();
+      }
       var props = this.props;
       props.setCredentials({
         user: this.refs.username.value,
@@ -40,18 +42,65 @@ YUI.add('login-component', function() {
     render: function() {
       return (
         <div className="login">
-          <form
-            ref="form"
-            onSubmit={this._handleSubmit}>
-            <input type="text" name="username" ref="username"/>
-            <input type="password" name="password" ref="password"/>
-            <input type="submit"/>
-          </form>
+          <div className="login__logo">
+            <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+          </div>
+          <div className="login__full-form">
+            <div className="login__env-name">{this.props.envName}</div>
+            <form
+              className="login__form"
+              ref="form"
+              onSubmit={this._handleSubmit}>
+              <label
+                className="login__label">
+                Username
+                <input
+                  className="login__input"
+                  type="text"
+                  name="username"
+                  ref="username" />
+              </label>
+              <label
+                className="login__label">
+                Password
+                <input
+                  className="login__input"
+                  type="password"
+                  name="password"
+                  ref="password" />
+              </label>
+              <juju.components.GenericButton
+                action={this._handleSubmit}
+                type="confirm"
+                title="Login" />
+            </form>
+          </div>
+          <div className="login__message">
+            The password for newer Juju clients can be found by locating the
+            Juju environment file placed in ~/.juju/environments/ with the
+            same name as the current environment.  For example, if you have
+            an environment named "production", then the file is named
+            ~/.juju/environments/production.jenv.  Look for the "password"
+            field in the file, or if that is empty, for the "admin-secret".
+            Remove the quotes from the value, and use this to log in.
+            Note that using juju-quickstart can automate logging in,
+            as well as other parts of installing and starting Juju.
+            <div>
+              <a
+                href="https://jujucharms.com"
+                target="_blank">
+                jujucharms.com
+              </a>
+            </div>
+          </div>
         </div>
       );
     }
   });
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'svg-icon',
+    'generic-button'
+  ]
 });
