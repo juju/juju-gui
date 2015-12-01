@@ -1030,9 +1030,6 @@ YUI.add('juju-gui', function(Y) {
     */
     _setupUIState: function(sandbox, baseUrl) {
       this.state = new models.UIState({
-        // Disallow routing to inspectors if we are in sandbox mode; the
-        // model to be inspected will not be available.
-        allowInspector: !sandbox,
         baseUrl: baseUrl || '',
         dispatchers: {}
       });
