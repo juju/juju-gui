@@ -151,8 +151,7 @@
         }
 
         .tag-list--item {
-            font-size: 1em;
-            margin: 0;
+            margin: 0 10px 0 0;
             color: $warm-grey;
             display: inline-block;
             text-transform: lowercase;
@@ -163,14 +162,22 @@
                 position: relative;
                 z-index: 4;
             }
+
             a:after {
                 content: ',';
             }
+
             &:last-child a:after {
                 content: '';
             }
+
             &.tag-list--no-comma a:after {
                 content: '';
+            }
+
+            &-spacer {
+                width: 10px;
+                height: 10px;
             }
         }
 

@@ -38,7 +38,8 @@ describe('EnvSwitcher', function() {
         <div
           className="env-switcher--toggle"
           onClick={output.props.children[0].props.onClick}>
-          ▼
+          <juju.components.SvgIcon name="chevron_down_16"
+            size="16" />
         </div>
         {''}
       </div>);

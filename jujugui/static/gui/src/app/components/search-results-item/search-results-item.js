@@ -72,7 +72,7 @@ YUI.add('search-results-item', function(Y) {
       var series = item.series;
       var components = [];
       if (series.length === 0) {
-        return <span>{' '}</span>;
+        return <div className="tag-list--item-spacer">{' '}</div>;
       }
       series.forEach(function(seriesItem) {
         var name = seriesItem.name;

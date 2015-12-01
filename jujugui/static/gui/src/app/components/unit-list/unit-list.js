@@ -241,6 +241,7 @@ YUI.add('unit-list', function() {
           <div className={this._generateActionsClasses()}>
             <juju.components.OverviewAction
               action={this._navigate}
+              icon="plus_box_16"
               title="Scale service" />
           </div>
           <ul className="unit-list__units">

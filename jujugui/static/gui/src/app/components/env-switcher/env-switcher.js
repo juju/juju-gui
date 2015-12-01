@@ -230,7 +230,8 @@ YUI.add('env-switcher', function() {
           <div
             className="env-switcher--toggle"
             onClick={this.toggleEnvList}>
-            ▼
+            <juju.components.SvgIcon name="chevron_down_16"
+              size="16" />
           </div>
           {this.environmentList()}
         </div>
@@ -239,5 +240,6 @@ YUI.add('env-switcher', function() {
   });
 
 }, '0.1.0', { requires: [
-  'env-list'
+  'env-list',
+  'svg-icon'
 ] });

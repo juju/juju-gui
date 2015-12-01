@@ -56,7 +56,7 @@ button,
     border-radius: $border-radius;
     color: $charm-panel-orange;
     text-align: center;
-    cursor: default;
+    cursor: pointer;
 
     &:active,
     &:focus,
@@ -143,6 +143,7 @@ button,
 @mixin notification($background) {
     $size: 24px;
     box-sizing: border-box;
+    display: inline-block;
     min-width: $size;
     height: $size;
     padding: 0 7px;

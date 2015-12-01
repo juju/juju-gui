@@ -4,8 +4,12 @@
 }
 
 .env-switcher {
-
     &--toggle {
-      cursor: pointer;
+        cursor: pointer;
+
+        .svg-icon {
+            margin-left: 10px;
+            vertical-align: text-top;
+        }
     }
 }
