@@ -23,7 +23,8 @@ YUI.add('machine-view-machine', function() {
   juju.components.MachineViewMachine = React.createClass({
     propTypes: {
       machine: React.PropTypes.object.isRequired,
-      selected: React.PropTypes.bool.isRequired,
+      selected: React.PropTypes.bool,
+      selectMachine: React.PropTypes.func,
       services: React.PropTypes.object.isRequired,
       type: React.PropTypes.string.isRequired,
       units: React.PropTypes.object.isRequired
@@ -37,11 +38,14 @@ YUI.add('machine-view-machine', function() {
       @returns {Object} the machine hardware elements.
     */
     _generateHardware: function(unitCount) {
+      if (this.props.type === 'container') {
+        return;
+      }
       var machine = this.props.machine;
       var hardware = machine.hardware;
       if (!hardware) {
         return (
-          <div>
+          <div className="machine-view__machine-hardware">
             Hardware details not available
           </div>);
       }
@@ -50,7 +54,7 @@ YUI.add('machine-view-machine', function() {
       var mem = hardware.mem / 1024;
       var plural = unitCount === 1 ? '' : 's';
       return (
-        <div>
+        <div className="machine-view__machine-hardware">
           {unitCount} unit{plural}, {hardware.cpuCores}x{cpu}GHz,{' '}
           {mem.toFixed(2)}GB, {disk.toFixed(2)}GB
         </div>);
@@ -69,15 +73,33 @@ YUI.add('machine-view-machine', function() {
       }
       var components = [];
       units.forEach((unit) => {
+        var title;
+        if (this.props.type === 'container') {
+          title = <span>{unit.displayName}</span>;
+        }
         var service = this.props.services.getById(unit.service);
         components.push(
-          <img
-            alt={unit.displayName}
-            key={unit.id}
-            src={service.get('icon')}
-            title={unit.displayName} />);
+          <li key={unit.id}>
+            <img
+              alt={unit.displayName}
+              src={service.get('icon')}
+              title={unit.displayName} />
+            {title}
+          </li>);
       });
       return components;
+    },
+
+    /**
+      Handle selecting a machine.
+
+      @method _handleSelectMachine
+    */
+    _handleSelectMachine: function() {
+      var selectMachine = this.props.selectMachine;
+      if (selectMachine) {
+        selectMachine(this.props.machine.id);
+      }
     },
 
     /**
@@ -102,18 +124,16 @@ YUI.add('machine-view-machine', function() {
       var units = this.props.units.filterByMachine(machine.id);
       return (
         <div className={this._generateClasses()}
-          onClick={this.props.selectMachine}
+          onClick={this._handleSelectMachine}
           role="button"
           tabIndex="0">
           <div className="machine-view__machine-name">
             {this.props.machine.displayName}
           </div>
-          <div className="machine-view__machine-hardware">
-            {this._generateHardware(units.length)}
-          </div>
-          <div className="machine-view__machine-units">
+          {this._generateHardware(units.length)}
+          <ul className="machine-view__machine-units">
             {this._generateUnits(units)}
-          </div>
+          </ul>
         </div>
       );
     }

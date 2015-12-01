@@ -35,7 +35,43 @@ YUI.add('machine-view', function() {
       @returns {String} The intial state.
     */
     getInitialState: function() {
-      return {selectedMachine: null};
+      return {selectedMachine: this._getFirstMachineId(this.props.machines)};
+    },
+
+    /**
+      Called when the component is supplied with new props.
+
+      @method componentWillReceiveProps
+      @param {Object} The new props.
+    */
+    componentWillReceiveProps: function(nextProps) {
+      var selectedMachine = this.state.selectedMachine;
+      if (selectedMachine) {
+        // Check that the machine still exists in the db (in case the machine
+        // has been deployed and has been given a new id).
+        if (!this.props.machines.getById(selectedMachine)) {
+          selectedMachine = null;
+        }
+      }
+      if (!selectedMachine) {
+        selectedMachine = this._getFirstMachineId(nextProps.machines);
+      }
+      this.setState({selectedMachine: selectedMachine});
+    },
+
+    /**
+      Get the id of the first machine.
+
+      @method _getFirstMachine
+      @param {Object} machines The list of machines.
+      @returns {String} The id of the first machine
+    */
+    _getFirstMachineId: function(machines) {
+      var machineList = machines.filterByParent();
+      if (machineList.length === 0) {
+        return;
+      }
+      return machineList[0].id;
     },
 
     /**
@@ -135,7 +171,7 @@ YUI.add('machine-view', function() {
             key={machine.id}
             machine={machine}
             selected={this.state.selectedMachine === machine.id}
-            selectMachine={this.selectMachine.bind(this, machine.id)}
+            selectMachine={this.selectMachine}
             services={this.props.services}
             type="machine"
             units={this.props.units} />);
@@ -143,6 +179,40 @@ YUI.add('machine-view', function() {
       return (
         <div>
           {onboarding}
+          <ul className="machine-view__list">
+            {components}
+          </ul>
+        </div>);
+    },
+
+    /**
+      Display a list of containers for the selected machine.
+
+      @method _generateContainers
+      @returns {Object} A list of machines or onboarding.
+    */
+    _generateContainers: function() {
+      var selectedMachine = this.state.selectedMachine;
+      if (!selectedMachine) {
+        return;
+      }
+      var containers = this.props.machines.filterByParent(selectedMachine);
+      containers.unshift({
+        id: selectedMachine,
+        displayName: 'Root container'
+      });
+      var components = [];
+      containers.forEach((container) => {
+        components.push(
+          <juju.components.MachineViewMachine
+            key={container.id}
+            machine={container}
+            services={this.props.services}
+            type="container"
+            units={this.props.units} />);
+      });
+      return (
+        <div>
           <ul className="machine-view__list">
             {components}
           </ul>
@@ -167,7 +237,19 @@ YUI.add('machine-view', function() {
       @returns {String} the container header title.
     */
     _generateContainersTitle: function() {
-      return '0 containers, 0 units';
+      var selectedMachine = this.state.selectedMachine;
+      var containerCount = 0;
+      var unitCount = 0;
+      if (selectedMachine) {
+        var containers = this.props.machines.filterByParent(selectedMachine);
+        var units = this.props.units.filterByMachine(selectedMachine);
+        containerCount = containers.length;
+        unitCount = units.length;
+      }
+      var containerPlural = containerCount === 1 ? '' : 's';
+      var unitPlural = unitCount === 1 ? '' : 's';
+      return `${containerCount} container${containerPlural},
+        ${unitCount} unit${unitPlural}`;
     },
 
     render: function() {
@@ -191,6 +273,9 @@ YUI.add('machine-view', function() {
             <div className="machine-view__column">
               <juju.components.MachineViewHeader
                 title={this._generateContainersTitle()} />
+              <div className="machine-view__column-content">
+                {this._generateContainers()}
+              </div>
             </div>
           </div>
         </div>
