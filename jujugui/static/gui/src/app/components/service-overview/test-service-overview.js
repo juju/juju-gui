@@ -60,7 +60,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts()}
-            service={service}/>);
+            service={service}
+            serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -86,7 +87,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts()}
-            service={service}/>);
+            service={service}
+            serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -114,7 +116,8 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts()}
             changeState={changeState}
-            service={service} />);
+            service={service}
+            serviceRelations={[1]} />);
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
     output.props.children[0].props.children[0].props.action({
@@ -151,7 +154,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts(0, 0, 2)}
-            service={service}/>);
+            service={service}
+            serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
@@ -176,7 +180,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts(0, 1, 0)}
-            service={service}/>);
+            service={service}
+            serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
@@ -201,7 +206,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts(1, 0, 0)}
-            service={service}/>);
+            service={service}
+            serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
@@ -226,7 +232,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             getUnitStatusCounts={getUnitStatusCounts()}
-            service={service}/>);
+            service={service}
+            serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Configure"
@@ -239,7 +246,7 @@ describe('ServiceOverview', function() {
         linkTitle={undefined} />);
   });
 
-  it('shows the relations action', function() {
+  it('shows the relations action if there are relations', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
@@ -251,7 +258,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service}/>);
+          service={service}
+          serviceRelations={[1, 2, 3]} />);
     assert.deepEqual(output.props.children[0].props.children[2],
       <juju.components.OverviewAction
         key="Relations"
@@ -279,7 +287,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service}/>);
+          service={service}
+          serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[3],
       <juju.components.OverviewAction
         key="Expose"
@@ -308,7 +317,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service}/>);
+          service={service}
+          serviceRelations={[1]} />);
     assert.deepEqual(output.props.children[0].props.children[4],
       <juju.components.OverviewAction
         key="Change version"
@@ -339,7 +349,8 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           changeState={changeState}
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service} />);
+          service={service}
+          serviceRelations={[1]} />);
     output.props.children[0].props.children[4].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -367,7 +378,27 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service}/>);
+          service={service}
+          serviceRelations={[1, 2, 3]} />);
+    assert.equal(output.props.children[0].props.children.length, 4);
+  });
+
+  it('does not show relations if there are none', function() {
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      get: getStub
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          getUnitStatusCounts={getUnitStatusCounts()}
+          service={service}
+          serviceRelations={[]} />);
     assert.equal(output.props.children[0].props.children.length, 4);
   });
 
@@ -375,7 +406,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     var buttons = [{
       title: 'Destroy',
       action: output.props.children[1].props.buttons[0].action
@@ -389,7 +421,8 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     var buttons = [{
       title: 'Cancel',
       action: output.props.children[2].props.buttons[0].action
@@ -413,7 +446,8 @@ describe('ServiceOverview', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />, true);
+        service={fakeService}
+        serviceRelations={[]} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
@@ -428,7 +462,8 @@ describe('ServiceOverview', function() {
     shallowRenderer.render(
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -443,7 +478,8 @@ describe('ServiceOverview', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />, true);
+        service={fakeService}
+        serviceRelations={[]} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
@@ -460,7 +496,8 @@ describe('ServiceOverview', function() {
     shallowRenderer.render(
       <juju.components.ServiceOverview
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -481,7 +518,8 @@ describe('ServiceOverview', function() {
         getUnitStatusCounts={getUnitStatusCounts()}
         clearState={clearState}
         changeState={changeState}
-        service={fakeService} />, true);
+        service={fakeService}
+        serviceRelations={[]} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
@@ -501,7 +539,8 @@ describe('ServiceOverview', function() {
         clearState={clearState}
         changeState={changeState}
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -520,7 +559,8 @@ describe('ServiceOverview', function() {
         clearState={clearState}
         changeState={changeState}
         getUnitStatusCounts={getUnitStatusCounts()}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     // Simulate the confirm click.
     output.props.children[2].props.buttons[1].action();
     assert.equal(destroyService.callCount, 1);
@@ -536,7 +576,8 @@ describe('ServiceOverview', function() {
         getUnitStatusCounts={getUnitStatusCounts()}
         clearState={clearState}
         changeState={changeState}
-        service={fakeService} />);
+        service={fakeService}
+        serviceRelations={[]} />);
     // Simulate the confirm click.
     output.props.children[2].props.buttons[1].action();
     assert.equal(clearState.callCount, 1);

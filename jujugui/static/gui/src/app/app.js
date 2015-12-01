@@ -859,8 +859,7 @@ YUI.add('juju-gui', function(Y) {
             addNotification={this.db.notifications.add.bind(this)}
             setConfig={this.env.set_config.bind(this.env)}
             envResolved={this.env.resolved.bind(this.env)}
-            getRelationDataForService={utils.getRelationDataForService.bind(
-                this, this.db, service)}
+            serviceRelations={utils.getRelationDataForService(this.db, service)}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(

@@ -45,6 +45,7 @@ describe('Inspector', function() {
     var destroyService = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
     var appPreviousState = sinon.stub();
+    var serviceRelations = sinon.stub();
     shallowRenderer.render(
         <juju.components.Inspector
           service={service}
@@ -52,7 +53,8 @@ describe('Inspector', function() {
           getUnitStatusCounts={getUnitStatusCounts}
           clearState={clearState}
           appPreviousState={appPreviousState}
-          appState={appState}>
+          appState={appState}
+          serviceRelations={serviceRelations}>
         </juju.components.Inspector>);
 
     var output = shallowRenderer.getRenderOutput();
@@ -62,7 +64,8 @@ describe('Inspector', function() {
           destroyService={destroyService}
           getUnitStatusCounts={getUnitStatusCounts}
           clearState={clearState}
-          service={service} />);
+          service={service}
+          serviceRelations={serviceRelations} />);
   });
 
   it('displays the unit list when the app state calls for it', function() {
@@ -438,7 +441,6 @@ describe('Inspector', function() {
 
   it('displays Relations when the app state calls for it', function() {
     var changeState = sinon.stub();
-    var getRelationDataForService = sinon.stub();
     var service = sinon.stub();
     var appPreviousState = sinon.stub();
     var getStub = sinon.stub();
@@ -451,19 +453,20 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'relations',
         }}};
+    var serviceRelations = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Inspector
         changeState={changeState}
         service={service}
-        getRelationDataForService={getRelationDataForService}
         appPreviousState={appPreviousState}
-        appState={appState} />);
+        appState={appState}
+        serviceRelations={serviceRelations} />);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorRelations
           changeState={changeState}
-          getRelationDataForService={getRelationDataForService}
-          service={service} />);
+          service={service}
+          serviceRelations={serviceRelations} />);
   });
 
   it('displays Change versions when the app state calls for it', function() {

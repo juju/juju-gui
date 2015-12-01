@@ -30,50 +30,16 @@ describe('InspectorRelations', function() {
     YUI().use('inspector-relations', function() { done(); });
   });
 
-  it('can render the onboarding', function() {
-    var getRelationDataForService = sinon.stub();
-    getRelationDataForService.returns([]);
-    var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorRelations
-          getRelationDataForService={getRelationDataForService} />);
-    assert.deepEqual(output,
-        <div className="inspector-relations">
-          <div className="inspector-relations__onboarding">
-            <p className="inspector-relations__onboarding-description">
-              This service doesn&rsquo;t have any relations. Build
-              relationships between services and find out about them here.
-            </p>
-            <div className="inspector-relations-item">
-              <span className="inspector-relations-item__details">
-                <p className="inspector-relations-item__property">
-                  Interface: mysql
-                </p>
-                <p className="inspector-relations-item__property">
-                  Name: slave
-                </p>
-                <p className="inspector-relations-item__property">
-                  Role: client
-                </p>
-                <p className="inspector-relations-item__property">
-                  Scope: global
-                </p>
-              </span>
-            </div>
-          </div>
-        </div>);
-  });
-
   it('can render the relations list', function() {
     var changeState = sinon.stub();
     var relations = [
       {id: 'mysql'},
       {id: 'postgresql'}
     ];
-    var getRelationDataForService = sinon.stub().returns(relations);
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
           changeState={changeState}
-          getRelationDataForService={getRelationDataForService} />);
+          serviceRelations={relations} />);
     assert.deepEqual(output,
         <div className="inspector-relations">
           <ul className="inspector-relations__list">
