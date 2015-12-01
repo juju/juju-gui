@@ -23,6 +23,7 @@ YUI.add('login-component', function() {
   juju.components.Login = React.createClass({
 
     propTypes: {
+      envName: React.PropTypes.string.isRequired,
       setCredentials: React.PropTypes.func.isRequired,
       login: React.PropTypes.func.isRequired
     },
