@@ -109,11 +109,11 @@ YUI.add('inspector-config', function() {
     },
 
     /**
-      Handle cancelling the changes and returning to the inspector overview.
+      Return to the inspector overview.
 
-      @method _handleCancelChanges
+      @method _showInspectorIndex
     */
-    _handleCancelChanges: function() {
+    _showInspectorIndex: function() {
       this.props.changeState({
         sectionA: {
           component: 'inspector',
@@ -139,12 +139,18 @@ YUI.add('inspector-config', function() {
           configValues[activeRef.props.option.key] = activeRef.state.value;
         }
       });
+      // The service name component is only shown if it's a ghost service.
+      var serviceName = this.refs.ServiceName;
+      if (serviceName) {
+        this.props.service.set('name', serviceName.state.value);
+      }
       var changedConfig = this._getChangedValues(configValues);
       // If there are no changed values then don't set the config.
       var size = Object.keys(changedConfig).length;
       if (size > 0) {
         this._setConfig(changedConfig);
       }
+      this._showInspectorIndex();
     },
 
     /**
@@ -237,6 +243,30 @@ YUI.add('inspector-config', function() {
       return configElements;
     },
 
+    /**
+      If this is a ghost service then show the ability to customize the
+      service name.
+
+      @method _customizeServiceName
+      @return {Object} The input to render or not.
+    */
+    _customizeServiceName: function() {
+      var id = this.props.service.get('id');
+      // If it contains a $ at the end it's a ghost service so we allow them
+      // to change the name.
+      if (id.match(/\$$/)) {
+        return (<juju.components.StringConfig
+          ref="ServiceName"
+          option={{
+            key: 'Service name',
+            description: 'Specify a custom service name. The service' +
+              ' name cannot be changed once it has been deployed.'
+          }}
+          config={this.props.service.get('name')}/>);
+      }
+      return;
+    },
+
     render: function() {
       var importButton = [{
         title: 'Import config file',
@@ -254,11 +284,14 @@ YUI.add('inspector-config', function() {
       return (
         <div className="inspector-config">
           <div className="inspector-config__fields">
+            {this._customizeServiceName()}
             <form ref="file-form">
               <input type="file" ref="file" className="hidden"
                 onChange={this._importConfig} />
             </form>
-            <juju.components.ButtonRow buttons={importButton} />
+            <div className="inspector-config__config-file">
+              <juju.components.ButtonRow buttons={importButton} />
+            </div>
             {this._generateConfigElements()}
           </div>
           <juju.components.ButtonRow buttons={actionButtons} />

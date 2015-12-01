@@ -42,9 +42,11 @@ YUI.add('string-config', function() {
     },
 
     render: function() {
+      var type = this.props.option.type;
+      var typeString = type ? ` (${type})` : '';
       return (
         <div className="string-config">
-          <span>{this.props.option.key} ({this.props.option.type})</span>
+          <span>{this.props.option.key}{typeString}</span>
           <div
             className="string-config--value"
             contentEditable="true"
