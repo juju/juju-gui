@@ -25,6 +25,7 @@ YUI.add('env-switcher', function() {
     propTypes: {
       jem: React.PropTypes.object,
       env: React.PropTypes.object,
+      environmentName: React.PropTypes.string,
       app: React.PropTypes.object
     },
 
@@ -230,7 +231,11 @@ YUI.add('env-switcher', function() {
           <div
             className="env-switcher--toggle"
             onClick={this.toggleEnvList}>
-            ▼
+            <span className="environment-name">
+              {this.props.environmentName}
+            </span>
+            <juju.components.SvgIcon name="chevron_down_16"
+              size="16" />
           </div>
           {this.environmentList()}
         </div>
@@ -239,5 +244,6 @@ YUI.add('env-switcher', function() {
   });
 
 }, '0.1.0', { requires: [
-  'env-list'
+  'env-list',
+  'svg-icon'
 ] });

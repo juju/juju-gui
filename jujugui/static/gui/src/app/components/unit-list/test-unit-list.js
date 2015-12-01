@@ -124,6 +124,7 @@ describe('UnitList', () => {
     assert.deepEqual(child,
       <juju.components.OverviewAction
         action={child.props.action}
+        icon="plus_box_16"
         title="Scale service"/>);
   });
 
@@ -140,6 +141,7 @@ describe('UnitList', () => {
       <div className="unit-list__actions hidden">
         <juju.components.OverviewAction
           action={child.props.children.props.action}
+          icon="plus_box_16"
           title="Scale service"/>
       </div>);
   });

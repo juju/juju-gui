@@ -57,10 +57,10 @@ describe('HeaderSearch', function() {
         getAppState={getAppState}
         changeState={changeState}
         active={false} />);
-    assert.deepEqual(output.props.children[2],
+    assert.deepEqual(output.props.children[1],
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
-        onClick={output.props.children[2].props.onClick}>
+        onClick={output.props.children[1].props.onClick}>
         <juju.components.SvgIcon name="close_16"
           size="16" />
       </span>);
@@ -77,7 +77,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />);
-    output.props.children[2].props.onClick();
+    output.props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -109,7 +109,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />);
-    output.props.children[1].props.onClick();
+    output.props.children[2].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {

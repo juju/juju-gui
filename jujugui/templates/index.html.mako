@@ -145,7 +145,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               </a>
             </li>
             <li class="header-banner__list-item">
-              <span id="environment-name" class="environment-name" draggable="true"></span>
               <div id="environment-switcher"></div>
             </li>
           </ul>

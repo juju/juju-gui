@@ -157,7 +157,7 @@ describe('SearchResultsItem', function() {
           </ul>
         </div>
         <div className="two-col series__column">
-          <span>{' '}</span>
+          <div className="tag-list--item-spacer">{' '}</div>
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
@@ -231,7 +231,7 @@ describe('SearchResultsItem', function() {
           </ul>
         </div>
         <div className="two-col series__column">
-          <span>{' '}</span>
+          <div className="tag-list--item-spacer">{' '}</div>
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">

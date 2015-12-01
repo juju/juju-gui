@@ -83,7 +83,8 @@ YUI.add('inspector-component', function() {
               clearState={this.props.clearState}
               changeState={this.props.changeState}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
-              service={service} />,
+              service={service}
+              serviceRelations={this.props.serviceRelations} />,
             backState: {
               sectionA: {
                 component: component || 'services',
@@ -227,7 +228,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorRelations
                 service={service}
-                getRelationDataForService={this.props.getRelationDataForService}
+                serviceRelations={this.props.serviceRelations}
                 changeState={this.props.changeState} />,
             backState: {
               sectionA: {
