@@ -74,11 +74,7 @@ function injectData(app, data) {
       container = Y.one('#main')
         .appendChild(Y.Node.create('<div/>'))
           .set('id', 'test-container')
-          .addClass('container')
-          .append(Y.Node.create('<span/>')
-            .set('id', 'environment-name')
-            .addClass('environment-name'))
-          .hide();
+          .addClass('container');
 
     });
 
@@ -164,79 +160,6 @@ function injectData(app, data) {
       var container = app.get('container');
       container.getAttribute('id').should.equal('test-container');
       container.getAttribute('class').should.include('container');
-    });
-
-    it('should display the configured environment name', function() {
-      var environment_name = 'This is the environment name.  Deal with it.';
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: {
-            send: function() {},
-            close: function() {}
-          },
-          ecs: new juju.EnvironmentChangeSet()
-        }),
-        environment_name: environment_name
-      }, this);
-      assert.equal(
-          container.one('#environment-name').get('text'),
-          environment_name);
-    });
-
-    it('should show a generic environment name if none configured',
-       function() {
-         constructAppInstance({
-           env: new juju.environments.GoEnvironment({
-             conn: {
-               send: function() {},
-               close: function() {}
-             },
-             ecs: new juju.EnvironmentChangeSet()
-           })
-         }, this);
-         assert.equal(
-         container.one('#environment-name').get('text'),
-         'Environment');
-       });
-
-    it('should show a the environment name if one is configured', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: {
-            send: function() {},
-            close: function() {}
-          },
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      var name = 'sandbox';
-      assert.equal(
-          'Environment',
-          container.one('.environment-name').get('text'));
-      app.env.set('environmentName', name);
-      assert.equal(container.one('.environment-name').get('text'), 'sandbox');
-    });
-
-    it('should show the environment name override when requested', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: {
-            send: function() {},
-            close: function() {}
-          },
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      var name = 'sandbox';
-      localStorage.setItem('environmentName', 'not sandbox');
-      assert.equal(
-          'Environment',
-          container.one('.environment-name').get('text'));
-      app.env.set('environmentName', name);
-      assert.equal(
-          container.one('.environment-name').get('text'),
-          'not sandbox');
-      localStorage.removeItem('environmentName');
     });
 
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
@@ -481,10 +404,7 @@ describe('File drag over notification system', function() {
     container = Y.one('#main')
       .appendChild(Y.Node.create('<div/>'))
         .set('id', 'test-container')
-        .addClass('container')
-        .append(Y.Node.create('<span/>')
-          .set('id', 'environment-name'))
-        .hide();
+        .addClass('container');
   });
 
   afterEach(function() {

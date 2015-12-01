@@ -32,12 +32,16 @@ describe('EnvSwitcher', function() {
 
   it('renders the closed switcher component', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher />);
+      <juju.components.EnvSwitcher
+        environmentName="MyEnv" />);
     assert.deepEqual(output,
       <div className="env-switcher">
         <div
           className="env-switcher--toggle"
           onClick={output.props.children[0].props.onClick}>
+          <span className="environment-name">
+            MyEnv
+          </span>
           <juju.components.SvgIcon name="chevron_down_16"
             size="16" />
         </div>

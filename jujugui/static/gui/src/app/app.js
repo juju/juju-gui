@@ -416,15 +416,6 @@ YUI.add('juju-gui', function(Y) {
         charmstore: this.get('charmstore')
       });
 
-      // Update the on-screen environment name provided in the configuration,
-      // or a default if none is configured.
-      var environment_name = this.get('environment_name') || 'Environment',
-          environment_node = Y.one('#environment-name');
-
-      // Some tests do not fully populate the DOM, so we check to be sure.
-      if (Y.Lang.isValue(environment_node)) {
-        environment_node.set('text', environment_name);
-      }
       var environments = Y.namespace('juju.environments');
       var state = new environments.FakeBackend({
         charmstore: this.get('charmstore')
@@ -991,6 +982,7 @@ YUI.add('juju-gui', function(Y) {
         <components.EnvSwitcher
           app={this}
           env={this.env}
+          environmentName={this.db.environment.get('name')}
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
@@ -1819,7 +1811,6 @@ YUI.add('juju-gui', function(Y) {
         environmentName = localStorage.getItem('environmentName');
       }
       this.db.environment.set('name', environmentName);
-      Y.all('.environment-name').set('text', environmentName);
     },
 
     /**

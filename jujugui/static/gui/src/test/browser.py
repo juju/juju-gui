@@ -285,7 +285,7 @@ class TestCase(unittest.TestCase):
         # IE is very sensitive to asking for javascript before it is
         # ready, so we look at a related document element instead.
         def environment_name(driver):
-            els = driver.find_elements_by_css_selector('#environment-name')
+            els = driver.find_elements_by_css_selector('.environment-name')
             if els:
                 return els[0].text
         return self.wait_for(environment_name, error=error, timeout=timeout)
