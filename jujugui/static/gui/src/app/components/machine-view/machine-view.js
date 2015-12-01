@@ -212,11 +212,9 @@ YUI.add('machine-view', function() {
             units={this.props.units} />);
       });
       return (
-        <div>
-          <ul className="machine-view__list">
-            {components}
-          </ul>
-        </div>);
+        <ul className="machine-view__list">
+          {components}
+        </ul>);
     },
 
     /**
@@ -248,8 +246,8 @@ YUI.add('machine-view', function() {
       }
       var containerPlural = containerCount === 1 ? '' : 's';
       var unitPlural = unitCount === 1 ? '' : 's';
-      return `${containerCount} container${containerPlural},
-        ${unitCount} unit${unitPlural}`;
+      return `${containerCount} container${containerPlural}, ` +
+        `${unitCount} unit${unitPlural}`;
     },
 
     render: function() {

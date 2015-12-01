@@ -27,7 +27,7 @@ describe('MachineViewMachine', function() {
     YUI().use('machine-view-machine', function() { done(); });
   });
 
-  it('can render', function() {
+  it('can render a machine', function() {
     var selectMachine = sinon.stub();
     var machine = {
       displayName: 'new0',
@@ -52,44 +52,48 @@ describe('MachineViewMachine', function() {
         get: sinon.stub().returns('icon.svg')
       })
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachine
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
         services={services}
         type="machine"
-        units={units}/>);
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__machine machine-view__machine--machine"
-        onClick={selectMachine}
+        onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
         <div className="machine-view__machine-name">
           new0
         </div>
         <div className="machine-view__machine-hardware">
-          <div>
-            {2} unit{"s"}, {2}x{2}GHz,{' '}{"4.00"}GB, {"2.00"}GB
-          </div>
+          {2} unit{"s"}, {2}x{2}GHz,{' '}{"4.00"}GB, {"2.00"}GB
         </div>
-        <div className="machine-view__machine-units">
-        <img
-          alt="wordpress/0"
-          key="wordpress/0"
-          src="icon.svg"
-          title="wordpress/0" />
-        <img
-          alt="wordpress/1"
-          key="wordpress/1"
-          src="icon.svg"
-          title="wordpress/1" />
-        </div>
+        <ul className="machine-view__machine-units">
+          <li key="wordpress/0">
+            <img
+              alt="wordpress/0"
+              src="icon.svg"
+              title="wordpress/0" />
+            {undefined}
+          </li>
+          <li key="wordpress/1">
+            <img
+              alt="wordpress/1"
+              src="icon.svg"
+              title="wordpress/1" />
+            {undefined}
+          </li>
+        </ul>
       </div>);
     assert.deepEqual(output, expected);
   });
 
-  it('can with no hardware', function() {
+  it('can render a machine with no hardware', function() {
     var selectMachine = sinon.stub();
     var machine = {
       displayName: 'new0'
@@ -118,10 +122,63 @@ describe('MachineViewMachine', function() {
         units={units}/>);
     var expected = (
       <div className="machine-view__machine-hardware">
-        <div>
-          Hardware details not available
-        </div>
+        Hardware details not available
       </div>);
     assert.deepEqual(output.props.children[1], expected);
+  });
+
+  it('can render a container', function() {
+    var machine = {
+      displayName: 'new0/lxc/0',
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var services = {
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('icon.svg')
+      })
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        services={services}
+        type="container"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__machine machine-view__machine--container"
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        <div className="machine-view__machine-name">
+          new0/lxc/0
+        </div>
+        {undefined}
+        <ul className="machine-view__machine-units">
+          <li key="wordpress/0">
+            <img
+              alt="wordpress/0"
+              src="icon.svg"
+              title="wordpress/0" />
+            wordpress/0
+          </li>
+          <li key="wordpress/1">
+            <img
+              alt="wordpress/1"
+              src="icon.svg"
+              title="wordpress/1" />
+            wordpress/1
+          </li>
+        </ul>
+      </div>);
+    assert.deepEqual(output, expected);
   });
 });

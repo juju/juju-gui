@@ -75,7 +75,7 @@ YUI.add('machine-view-machine', function() {
       units.forEach((unit) => {
         var title;
         if (this.props.type === 'container') {
-          title = <span>{unit.displayName}</span>;
+          title = unit.displayName;
         }
         var service = this.props.services.getById(unit.service);
         components.push(
