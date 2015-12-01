@@ -313,40 +313,6 @@ function injectData(app, data) {
           'message').indexOf('ctrl+-') !== -1);
     });
 
-    it('renders the user dropdown', function(done) {
-      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app.after('ready', function() {
-        assert.isObject(app.userDropdown);
-        assert.equal(container.one('#user-dropdown').hasClass(
-            'dropdown-menu'), true);
-        done();
-      });
-    });
-
-    it('does not render user dropdown with hideLoginButton', function(done) {
-      window.juju_config = { hideLoginButton: true };
-      container.appendChild(Y.Node.create('<div id="user-dropdown"></div>'));
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app.after('ready', function() {
-        assert.isNotObject(app.userDropdown);
-        assert.equal(container.one('#user-dropdown').hasClass(
-            'dropdown-menu'), false);
-        delete window.juju_config.hideLoginButton;
-        done();
-      });
-    });
-
     describe('MAAS support', function() {
       var env, maasNode;
 
@@ -706,7 +672,6 @@ describe('File drag over notification system', function() {
 (function() {
 
   describe('Application authentication', function() {
-    var LOGIN_VIEW_NAME;
     var conn, container, destroyMe, ecs, env, juju, utils, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
@@ -715,7 +680,6 @@ describe('File drag over notification system', function() {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
-        LOGIN_VIEW_NAME = 'LoginView';
         done();
       });
     });
@@ -849,13 +813,14 @@ describe('File drag over notification system', function() {
 
     it('displays the login view if credentials are not valid', function(done) {
       var app = makeApp(true, this); // Create a connected app.
+      var loginStub = utils.makeStubMethod(app, '_renderLogin');
       app.after('ready', function() {
         app.env.login();
         // Mimic a login failed response assuming login is the first request.
         conn.msg({RequestId: 1, Error: 'Invalid user or password'});
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
-        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        assert.equal(loginStub.callCount(), 1);
         done();
       });
     });

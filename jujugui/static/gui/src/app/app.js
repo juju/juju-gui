@@ -74,11 +74,6 @@ YUI.add('juju-gui', function(Y) {
      * @attribute views
      */
     views: {
-      login: {
-        type: 'juju.views.login',
-        preserve: false
-      },
-
       environment: {
         type: 'juju.views.environment',
         preserve: true
@@ -202,18 +197,6 @@ YUI.add('juju-gui', function(Y) {
         fire: 'panToCenter',
         help: 'Center the Environment overview',
         label: 'Shift + 0'
-      },
-      'C-S-h': {
-        callback: function(e) {
-          this._toggleSidebar();
-        },
-        help: 'Show or hide the sidebar',
-        label: 'Control + Shift + h'
-      },
-      'C-A-h': {
-        callback: function(e) {
-          this._toggleSidebar();
-        }
       },
       'esc': {
         fire: 'clearState',
@@ -626,11 +609,6 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
-      Y.one('.header-banner').delegate('click', function(e) {
-        e.halt();
-        this.logout();
-      }, '.logout-trigger', this);
-
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
@@ -662,12 +640,6 @@ YUI.add('juju-gui', function(Y) {
           this.env.connect();
         }
         this.dispatch();
-        this._renderHelpDropdownView();
-        if (!window.juju_config || !window.juju_config.hideLoginButton) {
-          // We only want to show the user dropdown view if the gui isn't in
-          // demo mode.
-          this._renderUserDropdownView();
-        }
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
 
@@ -696,6 +668,21 @@ YUI.add('juju-gui', function(Y) {
     */
     changeState: function(state) {
       this.fire('changeState', state);
+    },
+
+    /**
+      Renders the login component.
+
+      @method _renderLogin
+    */
+    _renderLogin: function() {
+      document.getElementById('loading-message').style.display = 'none';
+      ReactDOM.render(
+        <window.juju.components.Login
+          envName={this.db.environment.get('name') || 'Sandbox'}
+          setCredentials={this.env.setCredentials.bind(this.env)}
+          login={this.env.login.bind(this.env)}/>,
+        document.getElementById('login-container'));
     },
 
     /**
@@ -956,6 +943,11 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
+    _emptySectionApp: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('login-container'));
+    },
+
     _emptySectionA: function() {
       if (this.hoverService) {
         this.hoverService.detach();
@@ -1049,7 +1041,9 @@ YUI.add('juju-gui', function(Y) {
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {
-        deployTarget: views.utils.deployTargetDispatcher.bind(this)
+        login: this._renderLogin.bind(this),
+        deployTarget: views.utils.deployTargetDispatcher.bind(this),
+        empty: this._emptySectionApp.bind(this)
       };
       this.state.set('dispatchers', dispatchers);
       this.on('*:changeState', this._changeState, this);
@@ -1313,29 +1307,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Handles rendering the help dropdown view on application load.
-     *
-     * @method _renderHelpDropdownView
-     */
-    _renderHelpDropdownView: function() {
-      this.helpDropdown = new views.HelpDropdownView({
-        container: Y.one('#help-dropdown'),
-        env: this.db.environment
-      }).render();
-    },
-
-    /**
-     * Handles rendering the user dropdown view on application load.
-     *
-     * @method _renderUserDropdownView
-     */
-    _renderUserDropdownView: function() {
-      this.userDropdown = new views.UserDropdownView({
-        container: Y.one('#user-dropdown')
-      }).render();
-    },
-
-    /**
       When the user provides a charm id in the deploy-target query param we want
       to auto deploy that charm.
 
@@ -1344,15 +1315,6 @@ YUI.add('juju-gui', function(Y) {
     _autoplaceAndCommitAll: function() {
       this._autoPlaceUnits();
       this.env.get('ecs').commit(this.env);
-    },
-
-    /**
-     * Toggle the visibility of the sidebar.
-     *
-     * @method _toggleSidebar
-     */
-    _toggleSidebar: function() {
-      Y.one('body').toggleClass('state-sidebar-hidden');
     },
 
     /**
@@ -1422,14 +1384,8 @@ YUI.add('juju-gui', function(Y) {
       if (this.zoomMessageHandler) {
         this.zoomMessageHandler.detach();
       }
-      if (this.helpDropdown) {
-        this.helpDropdown.destroy();
-      }
       if (this.machineViewPanel) {
         this.machineViewPanel.destroy();
-      }
-      if (this.userDropdown) {
-        this.userDropdown.destroy();
       }
       if (this._keybindings) {
         this._keybindings.detach();
@@ -1470,13 +1426,6 @@ YUI.add('juju-gui', function(Y) {
      * @method on_database_changed
      */
     on_database_changed: function(evt) {
-      // Database changed event is fired when the user logs-in but we deal with
-      // that case manually so we don't need to dispatch the whole application.
-      // This whole handler can be removed once we go to model bound views.
-      if (window.location.pathname.match(/login/)) {
-        return;
-      }
-
       // This timeout helps to reduce the number of needless dispatches from
       // upwards of 8 to 2. At least until we can move to the model bound views.
       if (this.dbChangedTimer) {
@@ -1504,24 +1453,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     // Route handlers
-
-    /**
-     * Show the login screen.
-     *
-     * @method showLogin
-     * @return {undefined} Nothing.
-     */
-    showLogin: function() {
-      this.showView('login', {
-        env: this.env,
-        help_text: this.get('login_help')
-      });
-      var passwordField = this.get('container').one('input[type=password]');
-      // The password field may not be present in testing context.
-      if (passwordField) {
-        passwordField.focus();
-      }
-    },
 
     /**
      * Log the current user out and show the login screen again.
@@ -1572,13 +1503,18 @@ YUI.add('juju-gui', function(Y) {
       if (noCredentials) {
         this.set('loggedIn', false);
         // If there are no stored credentials redirect to the login page
-        if (!req || req.path !== '/login/') {
-          // Set the original requested path in the event the user has
-          // to log in before continuing.
-          this.redirectPath = this.get('currentUrl');
-          this.navigate('/login/', { overrideAllNamespaces: true });
-          return;
+        var component = this.state.getState('current', 'app', 'component');
+        if (!component && component !== 'login') {
+          this.state.dispatch({
+            app: {
+              component: 'login',
+              metadata: {
+                redirectPath: this.get('currentUrl')
+              }
+            }
+          });
         }
+        return;
       } else if (!this.get('loggedIn')) {
         return;
       }
@@ -1644,6 +1580,7 @@ YUI.add('juju-gui', function(Y) {
       if (e.data.result) {
         // The login was a success.
         this.hideMask();
+        this._emptySectionApp();
         var redirectPath = this.popLoginRedirectPath();
         this.set('loggedIn', true);
         // Handle token authentication.
@@ -1693,7 +1630,7 @@ YUI.add('juju-gui', function(Y) {
         // Start observing bundle deployments.
         bundleNotifications.watchAll(this.env, this.db);
       } else {
-        this.showLogin();
+        this._renderLogin();
       }
     },
 
@@ -2123,6 +2060,7 @@ YUI.add('juju-gui', function(Y) {
     'inspector-component',
     'local-inspector',
     'machine-view',
+    'login-component',
     'notification-list',
     'panel-component',
     'user-profile',
@@ -2130,8 +2068,6 @@ YUI.add('juju-gui', function(Y) {
     'd3-components',
     'container-token',
     'juju-templates',
-    'help-dropdown',
-    'user-dropdown',
     'create-machine-view',
     'machine-token',
     'juju-serviceunit-token',
@@ -2142,7 +2078,6 @@ YUI.add('juju-gui', function(Y) {
     'service-scale-up-view',
     'juju-topology',
     'juju-view-environment',
-    'juju-view-login',
     'juju-landscape',
     // end juju-views group
     'autodeploy-extension',

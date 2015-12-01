@@ -364,8 +364,7 @@ YUI.add('juju-env-base', function(Y) {
              * @return {Boolean} Whether or not user and password are set.
              */
             get: function() {
-              return Y.Lang.isValue(this.user) &&
-                  Y.Lang.isValue(this.password);
+              return !!this.user && !!this.password;
             }
           }
         });

@@ -55,13 +55,6 @@
         height: 386px;
     }
 
-    @at-root {
-        .state-sidebar-hidden .environment-help__content {
-            // When the sidebar is hidden center the onboarding to the full width.
-            padding-left: 0;
-        }
-    }
-
     &.shrink {
         z-index: 100;
         height: auto;

@@ -106,6 +106,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
           </div>
         </div>
+        <div id="login-container"></div>
       </div>
 
       <div id="charmbrowser-container"></div>
@@ -149,21 +150,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             </li>
           </ul>
           <ul class="header-banner__list--right">
-            <li class="user-dropdown header-banner__list-item">
-              <span id="user-dropdown hidden"></span>
-            </li>
             <li id="maas-server" style="display:none" class="header-banner__list-item">
               <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
-            </li>
-            <li id="get-started" class="hidden header-banner__list-item">
-              <a href="http://jujucharms.com" class="header-banner__link" target="_blank">
-                Get started
-              </a>
-            </li>
-            <li class="header-banner__list-item hidden">
-              <a href="/login/" class="header-banner__link">
-                Sign in
-              </a>
             </li>
             <li id="header-search-container"
                 class="header-banner__list-item header-banner__list-item--no-padding"></li>
@@ -220,14 +208,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .getElementById('loading-message').style.display = 'none';
       };
 
-      hideLoginButton = function(userDropdown, hideLoginButton) {
-        if (hideLoginButton) {
-          userDropdown.classList.add('hidden');
-        } else {
-          userDropdown.classList.remove('hidden');
-        }
-      };
-
       continueWithCurrentBrowser = function() {
         hideBrowserWarning();
         displayLoadingMessage();
@@ -239,9 +219,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       startTheApp = function() {
         // This function will be redefined when all the app's JavaScript is
         // loaded.  We want to keep trying until that happens.
-
-        // Tell jslint that we really do want to evaluate a string:
-        /*jslint evil: true */
         window.setTimeout('startTheApp()', 100);
       };
 
@@ -388,11 +365,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 'body')[0].className += ' flag-' + flag;
           }
         }
-
-        // This config property is passed in to allow for testing.
-        var userDropdown = getDocument().getElementsByClassName(
-            'user-dropdown')[0];
-        hideLoginButton(userDropdown, juju_config.hideLoginButton);
 
         var GlobalConfig = {
           combine: true,

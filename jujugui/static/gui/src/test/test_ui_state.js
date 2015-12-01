@@ -121,7 +121,7 @@ describe('UI State object', function() {
         state.dispatch(newState);
         // It shouldn't empty the section if the component didn't change.
         assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 4);
+        assert.equal(dispatchSectionStub.callCount(), 2);
       });
 
       it('leaves sections when components don\'t change', function() {
@@ -138,7 +138,7 @@ describe('UI State object', function() {
         // bit of an integration test.
         state.dispatch(newState);
         assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 4);
+        assert.equal(dispatchSectionStub.callCount(), 2);
       });
     });
 
@@ -853,6 +853,14 @@ describe('UI State object', function() {
         sectionC: {
           component: 'profile'
         }
+      },
+      'login': {
+        app: {
+          component: 'login'
+        },
+        sectionA: {},
+        sectionB: {},
+        sectionC: {}
       },
       // Invalid urls with overriding components
       '/inspector?search=hadoop': {

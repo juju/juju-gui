@@ -104,22 +104,6 @@ def config(request):
         # Set the GA_key to enable Google Analytics usage and calls.
         # Also implies using cookies.
         'GA_key': settings['jujugui.ga_key'],
-        'login_help': (
-            'The password for newer Juju clients can be found by locating the '
-            'Juju environment file placed in ~/.juju/environments/ with the '
-            'same name as the current environment.  For example, if you have '
-            'an environment named "production", then the file is named '
-            '~/.juju/environments/production.jenv.  Look for the "password" '
-            'field in the file, or if that is empty, for the "admin-secret".  '
-            'Remove the quotes from the value, and use this to log in.  The '
-            'password for older Juju clients (< 1.16) is in '
-            '~/.juju/environments.yaml, and listed as the admin-secret for '
-            'the environment you are using.  Note that using juju-quickstart '
-            '(https:#launchpad.net/juju-quickstart) can automate logging in, '
-            'as well as other parts of installing and starting Juju.'),
-        # Shows the user dropdown view which contains the login button and
-        # hides the get started link.
-        'hideLoginButton': sandbox_enabled,
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': '',
     }

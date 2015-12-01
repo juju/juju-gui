@@ -108,7 +108,9 @@ YUI.add('juju-app-state', function(Y) {
         if (this.hasChanged(section, 'component')) {
           this._emptySection(section);
         }
-        this._dispatchSection(section, state[section]);
+        if (state[section]) {
+          this._dispatchSection(section, state[section]);
+        }
       }, this);
       // Reset flash, because we don't want arbitrary potentially large objects
       // (e.g. files from local charm upload) hanging out.
@@ -140,12 +142,16 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state App's state object.
     */
     _dispatchApp: function(state) {
+      var component = state.component;
       var dispatchers = this.get('dispatchers');
-      if (Y.Lang.isObject(state)) {
-        Object.keys(state).forEach(function(key) {
-          dispatchers.app[key](state[key]);
-        });
+      if (!component) {
+        // If there is no component then there might be a deploy-target.
+        if (state.deployTarget) {
+          dispatchers.app.deployTarget(state.deployTarget);
+        }
+        return;
       }
+      dispatchers.app[component](state.metadata);
     },
 
     /**
@@ -450,6 +456,10 @@ YUI.add('juju-app-state', function(Y) {
         } else if (part.indexOf('services') === 0) {
           state.sectionA = this._addToSection({
             component: 'services'
+          });
+        } else if (part.indexOf('login') === 0) {
+          state.app = this._addToSection({
+            component: 'login'
           });
         } else if (part.indexOf('profile') === 0) {
           state.sectionC = this._addToSection({
