@@ -235,6 +235,12 @@ YUI.add('header-search', function() {
               ref="searchInput"/>
           </form>
           <span tabIndex="0" role="button"
+            className={this._closeClasses()}
+            onClick={this._handleClose}>
+            <juju.components.SvgIcon name="close_16"
+              size="16" />
+          </span>
+          <span tabIndex="0" role="button"
             onClick={this._handleStoreClick}
             className="header-search__store">
             <span className="header-search__store-icon">
@@ -242,12 +248,6 @@ YUI.add('header-search', function() {
                 size="20" />
             </span>
             Store
-          </span>
-          <span tabIndex="0" role="button"
-            className={this._closeClasses()}
-            onClick={this._handleClose}>
-            <juju.components.SvgIcon name="close_16"
-              size="16" />
           </span>
         </div>
       );
