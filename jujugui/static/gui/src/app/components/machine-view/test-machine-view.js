@@ -80,6 +80,9 @@ describe('MachineView', function() {
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
               title="0 containers, 0 units" />
+            <div className="machine-view__column-content">
+              {undefined}
+            </div>
           </div>
         </div>
       </div>);
@@ -269,23 +272,24 @@ describe('MachineView', function() {
     var machineList = [{
       id: 'new0'
     }];
-    var machines = {
-      filterByParent: sinon.stub().returns(machineList)
-    };
+    var filterByParent = sinon.stub();
+    filterByParent.returns(machineList);
+    filterByParent.withArgs('new0').returns([]);
+    var machines = {filterByParent: filterByParent};
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
         units={units}
         services={services}
-        machines={machines} />);
-    var content = output.props.children.props.children[1].props.children[1];
-    var machineUl = content.props.children.props.children[1];
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
         <div>
@@ -297,15 +301,16 @@ describe('MachineView', function() {
             {[<juju.components.MachineViewMachine
               key="new0"
               machine={machineList[0]}
-              selected={false}
-              selectMachine={machineUl.props.children[0].props.selectMachine}
+              selected={true}
+              selectMachine={instance.selectMachine}
               services={services}
               type="machine"
               units={units} />]}
           </ul>
         </div>
       </div>);
-    assert.deepEqual(content, expected);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1], expected);
   });
 
   it('can display a list of machines', function() {
@@ -314,23 +319,24 @@ describe('MachineView', function() {
     }, {
       id: 'new1'
     }];
-    var machines = {
-      filterByParent: sinon.stub().returns(machineList)
-    };
+    var filterByParent = sinon.stub();
+    filterByParent.returns(machineList);
+    filterByParent.withArgs('new0').returns([]);
+    var machines = {filterByParent: filterByParent};
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
         units={units}
         services={services}
-        machines={machines} />);
-    var content = output.props.children.props.children[1].props.children[1];
-    var machineUl = content.props.children.props.children[1];
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
         <div>
@@ -339,8 +345,8 @@ describe('MachineView', function() {
             <juju.components.MachineViewMachine
               key="new0"
               machine={machineList[0]}
-              selected={false}
-              selectMachine={machineUl.props.children[0].props.selectMachine}
+              selected={true}
+              selectMachine={instance.selectMachine}
               services={services}
               type="machine"
               units={units} />
@@ -348,14 +354,15 @@ describe('MachineView', function() {
               key="new1"
               machine={machineList[1]}
               selected={false}
-              selectMachine={machineUl.props.children[1].props.selectMachine}
+              selectMachine={instance.selectMachine}
               services={services}
               type="machine"
               units={units} />
           </ul>
         </div>
       </div>);
-    assert.deepEqual(content, expected);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1], expected);
   });
 
   it('can select a machine', function() {
@@ -380,11 +387,53 @@ describe('MachineView', function() {
         services={services}
         machines={machines} />, true);
     var instance = renderer.getMountedInstance();
-    assert.equal(instance.state.selectedMachine, null);
-    var output = renderer.getRenderOutput();
-    var content = output.props.children.props.children[1].props.children[1];
-    var machineUl = content.props.children.props.children[1];
-    machineUl.props.children[0].props.selectMachine();
     assert.equal(instance.state.selectedMachine, 'new0');
+    instance.selectMachine('new1');
+    assert.equal(instance.state.selectedMachine, 'new1');
+  });
+
+  it('can display a list of containers', function() {
+    var machineList = [{
+      id: 'new0'
+    }, {
+      id: 'new1'
+    }];
+    var filterByParent = sinon.stub();
+    filterByParent.returns(machineList);
+    filterByParent.withArgs('new0').returns([{
+      id: 'new0/lxc/0'
+    }]);
+    var machines = {filterByParent: filterByParent};
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />);
+    var expected = (
+      <div className="machine-view__column-content">
+        <ul className="machine-view__list">
+          <juju.components.MachineViewMachine
+            key="new0"
+            machine={{id: 'new0', displayName: 'Root container'}}
+            services={services}
+            type="container"
+            units={units} />
+          <juju.components.MachineViewMachine
+            key="new0/lxc/0"
+            machine={{id: 'new0/lxc/0'}}
+            services={services}
+            type="container"
+            units={units} />
+        </ul>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[2].props.children[1], expected);
   });
 });
