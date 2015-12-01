@@ -9,6 +9,7 @@
     &__warning {
         @extend %fade-in;
         margin: 5px 20px 20px;
+        line-height: 1.6;
     }
 
     &__units {

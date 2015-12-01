@@ -1,13 +1,14 @@
 .notification-list-item {
     @extend %floating-panel;
+    position: relative;
     box-sizing: border-box;
     min-width: $left-panel-width;
-    padding: 0 20px;
+    padding: 8px 60px 8px 20px;
     color: $text-colour;
-    line-height: $environment-header-height;
     margin-top: 10px;
     cursor: pointer;
     opacity: 0;
+    line-height: 1.6;
 
     &--error {
         background-color: $error;
@@ -71,9 +72,10 @@
     }
 
     &__hide {
-        line-height: 46px;
-        padding-left: 15px;
-        float: right;
+        display: block;
+        position: absolute;
+        top: 10px;
+        right: 20px;
     }
 
     &__hide .svg-icon {
