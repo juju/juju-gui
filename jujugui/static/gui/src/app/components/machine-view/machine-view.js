@@ -47,8 +47,10 @@ YUI.add('machine-view', function() {
     componentWillReceiveProps: function(nextProps) {
       var selectedMachine = this.state.selectedMachine;
       if (selectedMachine) {
-        // Check that the machine still exists in the db (in case the machine
-        // has been deployed and has been given a new id).
+        // If the currently selected machine gets deployed the id will be
+        // invalid as it will have been assigned a new id, so check that the
+        // the machine for the selected id still exists and if not reset it
+        // so the first machine gets selected.
         if (!this.props.machines.getById(selectedMachine)) {
           selectedMachine = null;
         }
