@@ -474,8 +474,7 @@ YUI.add('juju-app-state', function(Y) {
           state.app = this._addToSection({
             component: 'login'
           });
-        }
-        else if (part.indexOf('profile') === 0) {
+        } else if (part.indexOf('profile') === 0) {
           state.sectionC = this._addToSection({
             component: 'profile'
           });

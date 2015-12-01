@@ -944,7 +944,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _emptySectionApp: function() {
-      console.log('empty')
       ReactDOM.unmountComponentAtNode(
         document.getElementById('login-container'));
     },

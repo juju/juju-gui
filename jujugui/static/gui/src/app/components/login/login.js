@@ -28,6 +28,13 @@ YUI.add('login-component', function() {
       login: React.PropTypes.func.isRequired
     },
 
+    /**
+      Handles the form submit by calling the set credentials and login
+      methods with the appropriate values.
+
+      @method _handleSubmit
+      @param {Object} e The submit event.
+    */
     _handleSubmit: function(e) {
       if (e && e.preventDefault){
         e.preventDefault();
