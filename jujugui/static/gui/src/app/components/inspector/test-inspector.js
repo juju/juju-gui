@@ -33,20 +33,22 @@ describe('Inspector', function() {
 
   it('displays the service overview for the "inspector" state', function() {
     var service = {
-      get: function() {
+      get: function(val) {
+        if (val === 'id') {
+          return 'apache2';
+        }
         return {name: 'demo'};
       }};
     var appState = {
       sectionA: {
         metadata: {}
       }};
-    var shallowRenderer = testUtils.createRenderer();
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
     var appPreviousState = sinon.stub();
     var serviceRelations = sinon.stub();
-    shallowRenderer.render(
+    var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
           service={service}
           destroyService={destroyService}
@@ -54,11 +56,8 @@ describe('Inspector', function() {
           clearState={clearState}
           appPreviousState={appPreviousState}
           appState={appState}
-          serviceRelations={serviceRelations}>
-        </juju.components.Inspector>);
-
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1].props.children,
+          serviceRelations={serviceRelations} />);
+    var expected = (
         <juju.components.ServiceOverview
           changeState={undefined}
           destroyService={destroyService}
@@ -66,6 +65,7 @@ describe('Inspector', function() {
           clearState={clearState}
           service={service}
           serviceRelations={serviceRelations} />);
+    assert.deepEqual(output.props.children[1].props.children, expected);
   });
 
   it('displays the unit list when the app state calls for it', function() {
@@ -522,7 +522,10 @@ describe('Inspector', function() {
   it('passes changeState callable to header component', function() {
     var appPreviousState = sinon.stub();
     var service = {
-      get: function() {
+      get: function(val) {
+        if (val === 'id') {
+          return 'apache2';
+        }
         return {name: 'demo'};
       }};
     var appState = {
@@ -556,7 +559,10 @@ describe('Inspector', function() {
           id: 'service2'
         }}};
     var service = {
-      get: function() {
+      get: function(val) {
+        if (val === 'id') {
+          return 'apache2';
+        }
         return {name: 'demo'};
       }};
     var appState = {
@@ -678,5 +684,59 @@ describe('Inspector', function() {
         activeComponent="units"
         type="error"
         title="Units"/>);
+  });
+
+  it('displays the service overview when switching services', function() {
+    var appPreviousState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'relations',
+          id: 'service2'
+        }}};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'apache2';
+        }
+        return {name: 'demo'};
+      }};
+    var appState = {
+      sectionA: {
+        metadata: {}
+      }};
+    var changeStub = sinon.stub();
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+        <juju.components.Inspector
+          changeState={changeStub}
+          appState={appState}
+          appPreviousState={appPreviousState}
+          service={service} />);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(changeStub.callCount, 0);
+    service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'django';
+        }
+        return {name: 'demo'};
+      }};
+    shallowRenderer.render(
+        <juju.components.Inspector
+          changeState={changeStub}
+          appState={appState}
+          appPreviousState={appPreviousState}
+          service={service} />);
+    output = shallowRenderer.getRenderOutput();
+    assert.equal(changeStub.callCount, 1);
+    assert.deepEqual(changeStub.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'django',
+          activeComponent: undefined,
+          unit: null,
+          unitStatus: null
+        }}});
   });
 });
