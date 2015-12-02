@@ -46,7 +46,7 @@ YUI.add('deployment-summary', function() {
           'deployment-summary__list-header';
       return (
         <juju.components.Panel
-          instanceName="deployment-summary-panel"
+          instanceName="white-box"
           visible={true}>
           <div className="deployment-summary">
             <div className="deployment-summary__header">
