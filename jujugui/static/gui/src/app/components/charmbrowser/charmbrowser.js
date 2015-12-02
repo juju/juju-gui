@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('charmbrowser-component', function() {
 
   juju.components.Charmbrowser = React.createClass({
-
     /**
       Get the current state of the charmbrowser.
 
@@ -31,6 +30,20 @@ YUI.add('charmbrowser-component', function() {
     getInitialState: function() {
       // Setting a default state object.
       return this.generateState(this.props);
+    },
+
+    /**
+      Closes the charmbrowser.
+
+      @method _close
+    */
+    _close: function() {
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: null
+        }
+      });
     },
 
     /**
@@ -111,6 +124,7 @@ YUI.add('charmbrowser-component', function() {
     render: function() {
       return (
         <juju.components.Panel
+          clickAction={this._close}
           instanceName="white-box"
           visible={true}>
           <div className="charmbrowser">

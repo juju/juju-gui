@@ -65,7 +65,7 @@ describe('DeploymentSummary', function() {
         closeButtonAction={closeButtonAction} />);
     assert.deepEqual(output,
       <juju.components.Panel
-        instanceName="deployment-summary-panel"
+        instanceName="white-box"
         visible={true}>
         <div className="deployment-summary">
           <div className="deployment-summary__header">

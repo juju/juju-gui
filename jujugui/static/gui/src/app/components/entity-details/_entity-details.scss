@@ -1,5 +1,4 @@
 .entity-details {
-    @extend %fullscreen-panel;
 
     p {
       line-height: 1.6;
@@ -19,5 +18,9 @@
 
     .error {
         margin: 40px;
+    }
+
+    .spinner-loading {
+        margin: 25vh 45vw;
     }
 }

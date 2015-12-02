@@ -41,10 +41,37 @@ YUI.add('panel-component', function() {
       );
     },
 
+    /**
+      Call a click action if it exists.
+
+      @method _handleClick
+    */
+    _handleClick: function() {
+      var clickAction = this.props.clickAction;
+      if (clickAction) {
+        clickAction();
+      }
+    },
+
+    /**
+      Don't bubble the click event to the parent.
+
+      @method _stopBubble
+      @param {Object} The click event.
+    */
+    _stopBubble: function(e) {
+      if (this.props.clickAction) {
+        e.stopPropagation();
+      }
+    },
+
     render: function() {
       return (
-        <div className={this._genClasses()}>
-          {this.props.children}
+        <div className={this._genClasses()}
+          onClick={this._handleClick}>
+          <div onClick={this._stopBubble}>
+            {this.props.children}
+          </div>
         </div>
       );
     }
