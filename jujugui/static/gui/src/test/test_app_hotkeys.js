@@ -66,7 +66,7 @@ describe('application hotkeys', function() {
     assert.equal(help.getStyle('display'), 'block',
                  'Shortcut help not displayed');
     // Is the "S-?" label displayed in the help?
-    var bindings = help.all('td.binding'),
+    var bindings = help.all('.two-col'),
         found = false;
     bindings.each(function(node) {
       var text = node.getDOMNode().textContent;
