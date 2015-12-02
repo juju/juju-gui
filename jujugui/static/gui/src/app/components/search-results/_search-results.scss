@@ -214,37 +214,12 @@
         }
 
         .series__column,
-        .deploys__column,
         .owner__column {
             margin-bottom: 0;
             float: left;
 
             @media only screen and (max-width : 768px) {
                 width: auto;
-            }
-        }
-        .deploys__column {
-            top: -3px;
-            font-size: 0.875em;
-
-            p:after {
-                color: $warm-grey;
-                content: "\00b7";
-                font-size: 40px;
-                line-height: 0;
-                margin: 0;
-                position: relative;
-                top: 7px;
-            }
-
-            @media only screen and (min-width : 768px) {
-                font-size: 1em;
-                top: 9px;
-
-                p:after {
-                    content: '';
-                    margin: 0;
-                }
             }
         }
 

@@ -90,8 +90,7 @@ describe('EntityDetails', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             addNotification={addNotification}
-            deployService={deployService}
-            pluralize={pluralize} />
+            deployService={deployService} />
           {undefined}
           <juju.components.EntityContent
             changeState={changeState}
@@ -186,8 +185,7 @@ describe('EntityDetails', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             deployService={deployService}
-            addNotification={addNotification}
-            pluralize={pluralize} />
+            addNotification={addNotification} />
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}
             id={id} />
