@@ -210,11 +210,7 @@ describe('EntityContent', function() {
                 renderMarkdown={renderMarkdown}
                 getFile={getFile} />
             </div>
-            <div className="four-col">
-              <juju.components.EntityContentRelations
-                changeState={changeState}
-                relations={mockEntity.get('relations')} />
-            </div>
+            {undefined}
             <div className="four-col">
               <juju.components.EntityFiles
                 entityModel={mockEntity}
