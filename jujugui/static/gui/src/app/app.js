@@ -843,7 +843,8 @@ YUI.add('juju-gui', function(Y) {
           <components.Inspector
             service={service}
             charm={charm}
-            addNotification={this.db.notifications.add.bind(this)}
+            addNotification=
+              {this.db.notifications.add.bind(this.db.notifications)}
             setConfig={this.env.set_config.bind(this.env)}
             envResolved={this.env.resolved.bind(this.env)}
             serviceRelations={utils.getRelationDataForService(this.db, service)}
@@ -866,6 +867,8 @@ YUI.add('juju-gui', function(Y) {
             getUnitStatusCounts={utils.getUnitStatusCounts}
             updateServiceUnitsDisplayname=
               {this.db.updateServiceUnitsDisplayname.bind(this.db)}
+            getServiceByName=
+              {this.db.services.getServiceByName.bind(this.db.services)}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
         );

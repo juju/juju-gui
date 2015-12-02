@@ -144,7 +144,19 @@ YUI.add('inspector-config', function() {
       var props = this.props;
       if (serviceName) {
         var service = props.service;
-        service.set('name', serviceName.state.value);
+        var nameValue = serviceName.state.value;
+        var serviceExists = props.getServiceByName(nameValue);
+        // We want to allow them to set it to itself.
+        if (service.get('name') !== nameValue && serviceExists !== null) {
+          // The service already exists so bail out.
+          props.addNotification({
+            title: 'Invalid service name',
+            message: `A service with the name "${nameValue}" already exists.`,
+            level: 'error'
+          });
+          return;
+        }
+        service.set('name', nameValue);
         props.updateServiceUnitsDisplayname(service.get('id'));
       }
       var changedConfig = this._getChangedValues(configValues);

@@ -169,11 +169,13 @@ describe('Configuration', function() {
       set: sinon.stub()
     };
     var updateUnit = sinon.stub();
+    var getServiceByName = sinon.stub().returns(null);
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
         service={service}
         charm={charm}
         changeState={sinon.stub()}
+        getServiceByName={getServiceByName}
         updateServiceUnitsDisplayname={updateUnit}/>);
     assert.equal(component.refs.ServiceName.props.config, 'servicename');
 
@@ -188,9 +190,55 @@ describe('Configuration', function() {
 
     assert.equal(service.set.callCount, 1);
     assert.deepEqual(service.set.args[0], ['name', 'newservicename']);
-
+    // Calls to update then unit names.
     assert.equal(updateUnit.callCount, 1);
     assert.equal(updateUnit.args[0][0], 'abc123$');
+    // Calls to check to see if a service exists.
+    assert.equal(getServiceByName.callCount, 1);
+    assert.equal(getServiceByName.args[0][0], 'newservicename');
+  });
+
+  it('stops setting changes if service name already exists', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var charm = {
+      get: sinon.stub().returns({ option1: option1, option2: option2 })
+    };
+    var service = {
+      get: function(val) {
+        if (val === 'id') { return 'abc123$'; }
+        if (val === 'name') { return 'servicename'; }
+        return {};
+      },
+      set: sinon.stub()
+    };
+    var updateUnit = sinon.stub();
+    var getServiceByName = sinon.stub().returns(true);
+    var addNotification = sinon.stub();
+    var component = testUtils.renderIntoDocument(
+      <juju.components.Configuration
+        service={service}
+        charm={charm}
+        changeState={sinon.stub()}
+        getServiceByName={getServiceByName}
+        addNotification={addNotification}
+        updateServiceUnitsDisplayname={updateUnit}/>);
+
+    var domNode = ReactDOM.findDOMNode(component);
+    var name = domNode.querySelector('.string-config--value');
+
+    name.innerText = 'newservicename';
+    testUtils.Simulate.input(name);
+
+    var save = domNode.querySelector('.generic-button--type-confirm');
+    testUtils.Simulate.click(save);
+
+    // Make sure it emits a notification if the name exists.
+    assert.equal(addNotification.callCount, 1);
+    // Make sure the service name and config wasn't updated.
+    assert.equal(service.set.callCount, 0);
+    // Make sure that the unit names weren't updated.
+    assert.equal(updateUnit.callCount, 0);
   });
 
   it('not able to change the service name on deployed services', function() {

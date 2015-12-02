@@ -144,7 +144,7 @@ describe('test_model.js', function() {
       tester('fade');
     });
 
-    it.only('can update a units displayName', function(done) {
+    it('can update a units displayName', function(done) {
       var db = new models.Database();
       db.services.add([
         {id: 'mysql', name: 'mysql'}
