@@ -11,7 +11,7 @@
 
     &:hover,
     &.active {
-        & > .more-menu {
+        & > .mv-more-menu {
             display: block;
             top: 10px;
         }
@@ -39,7 +39,7 @@
         @extend .uncommitted-circle;
     }
 
-    .more-menu {
+    .mv-more-menu {
         position: absolute;
         right: 10px;
 
@@ -49,7 +49,7 @@
         }
     }
 
-    .more-menu,
+    .mv-more-menu,
     .removed,
     .token-uncommitted {
         display: none;

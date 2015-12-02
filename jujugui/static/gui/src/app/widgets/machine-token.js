@@ -76,7 +76,7 @@ YUI.add('machine-token', function(Y) {
             this._moreMenu.setItemDisabled('Destroy', true);
           }
           if (!this._moreMenu.get('rendered')) {
-            this._moreMenu.render(this.get('container').one('.more-menu'));
+            this._moreMenu.render(this.get('container').one('.mv-more-menu'));
           }
           this._moreMenu.showMenu(e);
           return this._moreMenu;
@@ -294,7 +294,7 @@ YUI.add('machine-token', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
-    'more-menu',
+    'mv-more-menu',
     'mv-drop-target-view-extension'
   ]
 });

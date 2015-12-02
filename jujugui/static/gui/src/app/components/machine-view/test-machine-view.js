@@ -59,6 +59,9 @@ describe('MachineView', function() {
           </div>
           <div className="machine-view__column machine-view__column--overlap">
             <juju.components.MachineViewHeader
+              menuItems={[{
+                label: 'Add machine'
+              }]}
               title="My Env (0)" />
             <div className="machine-view__column-content">
               <div className="machine-view__column-onboarding">

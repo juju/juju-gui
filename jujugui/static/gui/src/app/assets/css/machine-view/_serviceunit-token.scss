@@ -10,7 +10,7 @@
     &.state-initial {
         cursor: move;
 
-        .more-menu {
+        .mv-more-menu {
             display: block;
         }
 
@@ -113,13 +113,13 @@
         }
     }
 
-    .more-menu {
+    .mv-more-menu {
         position: absolute;
         right: 10px;
         cursor: default;
     }
 
-    .more-menu,
+    .mv-more-menu,
     .title,
     .containers,
     .constraints-form,

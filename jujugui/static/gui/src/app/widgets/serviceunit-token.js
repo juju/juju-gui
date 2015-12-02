@@ -89,7 +89,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
         this._initMoreMenu();
       }
       if (!this._moreMenu.get('rendered')) {
-        this._moreMenu.render(this.get('container').one('.more-menu'));
+        this._moreMenu.render(this.get('container').one('.mv-more-menu'));
       }
       this._moreMenu.showMenu(e);
       return this._moreMenu;
@@ -460,7 +460,7 @@ YUI.add('juju-serviceunit-token', function(Y) {
     'base',
     'view',
     'event-tracker',
-    'more-menu',
+    'mv-more-menu',
     'node',
     'juju-templates',
     'juju-view-utils',

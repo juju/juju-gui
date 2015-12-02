@@ -253,6 +253,9 @@ YUI.add('machine-view', function() {
     },
 
     render: function() {
+      var machineMenuItems = [{
+        label: 'Add machine'
+      }];
       return (
         <div className="machine-view">
           <div className="machine-view__content">
@@ -265,6 +268,7 @@ YUI.add('machine-view', function() {
             </div>
             <div className="machine-view__column machine-view__column--overlap">
               <juju.components.MachineViewHeader
+                menuItems={machineMenuItems}
                 title={this._generateMachinesTitle()} />
               <div className="machine-view__column-content">
                 {this._generateMachines()}

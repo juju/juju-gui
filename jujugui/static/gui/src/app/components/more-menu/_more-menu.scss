@@ -1,0 +1,45 @@
+.more-menu {
+    position: relative;
+
+    &__toggle {
+        cursor: pointer;
+    }
+
+    &__menu {
+        $width: 150px;
+        @extend %floating-panel;
+        position: absolute;
+        right: -10px;
+        width: $width;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        &:before {
+            @include diamond($white);
+            top: -6px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            border-width: 1px 0 0 1px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        &-item {
+            position: relative;
+            // The items need to be above the diamond.
+            z-index: 1;
+            padding: 7px 20px;
+
+            &:hover {
+                background-color: $light-grey;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.machine-view__header .more-menu {
+    float: right;
+}

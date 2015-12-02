@@ -65,7 +65,7 @@ YUI.add('container-token', function(Y) {
             this._moreMenu.setItemDisabled('Destroy', true);
           }
           if (!this._moreMenu.get('rendered')) {
-            this._moreMenu.render(this.get('container').one('.more-menu'));
+            this._moreMenu.render(this.get('container').one('.mv-more-menu'));
           }
           this._moreMenu.showMenu(e);
           return this._moreMenu;
@@ -85,7 +85,7 @@ YUI.add('container-token', function(Y) {
           }
           if (!moreMenu.get('rendered')) {
             moreMenu.render(this.get('container').one(
-                '.unit[data-id="' + id + '"] .more-menu'));
+                '.unit[data-id="' + id + '"] .mv-more-menu'));
           }
           moreMenu.showMenu(e);
           return moreMenu;
@@ -294,7 +294,7 @@ YUI.add('container-token', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
-    'more-menu',
+    'mv-more-menu',
     'mv-drop-target-view-extension'
   ]
 });

@@ -23,7 +23,7 @@ describe('more menu widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['more-menu',
+        ['mv-more-menu',
           'juju-tests-utils',
           'node-event-simulate'], function(Y) {
       utils = Y.namespace('juju-tests.utils');
