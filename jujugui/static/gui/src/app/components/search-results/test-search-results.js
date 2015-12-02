@@ -45,20 +45,6 @@ describe('SearchResults', function() {
           <juju.components.SearchResults
             query={query} />);
       assert.deepEqual(output,
-        <div className="search-results search-results--floating">
-          <div className="twelve-col initial-load-container last-col">
-            <juju.components.Spinner />
-          </div>
-        </div>);
-    });
-
-    it('does not have the floating class if it is inline', function() {
-      var query = 'spinach';
-      var output = jsTestUtils.shallowRender(
-          <juju.components.SearchResults
-            inline={true}
-            query={query} />);
-      assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
             <juju.components.Spinner />
@@ -75,7 +61,7 @@ describe('SearchResults', function() {
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
-        <div className="search-results search-results--floating">
+        <div className="search-results">
           <div className="twelve-col no-results-container last-col">
             <h1 className="row-title">
               Your search for <strong>nothing here</strong>
@@ -104,7 +90,7 @@ describe('SearchResults', function() {
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
-        <div className="search-results search-results--floating">
+        <div className="search-results">
           <div className="twelve-col no-results-container last-col">
             <h1 className="row-title">
               Something went wrong
@@ -264,7 +250,7 @@ describe('SearchResults', function() {
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
-        <div className="search-results search-results--floating">
+        <div className="search-results">
           <div className="row no-padding-top">
             <div className="inner-wrapper list-block">
               <div className="twelve-col list-block__title no-margin-bottom">

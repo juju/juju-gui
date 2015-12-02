@@ -53,6 +53,22 @@ YUI.add('inspector-component', function() {
       var service = nextProps.service;
       var serviceId = service.get('id');
       var metadata = nextProps.appState.sectionA.metadata;
+      var lastId = this.props.service.get('id');
+      if (lastId && serviceId !== lastId) {
+        // If we've switched to a new service then return to the service
+        // overview. All metadata properties need to be cleared to prevent
+        // displaying a particular sub-view.
+        this.props.changeState({
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: serviceId,
+              activeComponent: undefined,
+              unit: null,
+              unitStatus: null
+            }}});
+        return {};
+      }
       var state = {
         activeComponent: metadata.activeComponent
       };

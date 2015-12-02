@@ -69,7 +69,7 @@ $label-color: #292929;
 $navbar-border-dark: #191514;
 $navbar-border-light: #2d2928;
 $success: #38b44a;
-$text-colour: #333;
+$text-colour: $cool-grey;
 $text-entry-color: #6d6e70;
 $pending: #eaa818;
 $uncommitted: #19b6ee;
@@ -98,9 +98,10 @@ $z-indexed-elements: search-results-list-block__tags,
                      env-size-display,
                      inspector-view,
                      deployment-bar-panel,
-                     mid-point-panel,
                      cookie-policy,
-                     header-banner,
+                     header-banner-breadcrumbs,
+                     white-box,
+                     header-banner-search,
                      user-profile,
                      deployment-summary-panel,
                      more-menu,

@@ -5,16 +5,17 @@
 
 .header-banner {
     position: absolute;
-    z-index: index($z-indexed-elements, header-banner);
     top: 0;
     width: auto;
     height: $navbar-height;
 
     &--right {
+      z-index: index($z-indexed-elements, header-banner-search);
       right: 0;
     }
 
     &--left {
+      z-index: index($z-indexed-elements, header-banner-breadcrumbs);
       left: 0;
     }
 

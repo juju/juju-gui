@@ -25,8 +25,7 @@ YUI.add('entity-header', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
-      entityModel: React.PropTypes.object.isRequired,
-      pluralize: React.PropTypes.func.isRequired
+      entityModel: React.PropTypes.object.isRequired
     },
 
     /**
@@ -135,15 +134,6 @@ YUI.add('entity-header', function() {
                   <li className="entity-header__by">
                     By <a href={ownerUrl} target="_blank"
                           ref="entityHeaderBy">{entity.owner}</a>
-                  </li>
-                  <li className="entity-header__deploys">
-                    <span
-                      className="entity-header__deploys-count"
-                      ref="bundleDeploysCount">
-                      {entity.downloads}
-                    </span>
-                    {' '}
-                    {this.props.pluralize('deploy', entity.downloads)}
                   </li>
                   {series}
                 </ul>

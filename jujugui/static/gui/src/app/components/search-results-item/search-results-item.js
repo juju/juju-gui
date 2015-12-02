@@ -197,13 +197,6 @@ YUI.add('search-results-item', function(Y) {
               {this._generateIconList()}
             </ul>
           </div>
-          <div className="one-col deploys__column list-block__column">
-            <p className="cell">
-              <span title={item.downloads + ' deploys'}>
-                {item.downloads}
-              </span>
-            </p>
-          </div>
           <div className="two-col owner__column list-block__column last-col">
             <p className="cell">
               {item.owner}

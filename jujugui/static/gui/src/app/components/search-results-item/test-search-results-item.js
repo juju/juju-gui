@@ -107,13 +107,6 @@ describe('SearchResultsItem', function() {
             </li>]}
           </ul>
         </div>
-        <div className="one-col deploys__column list-block__column">
-          <p className="cell">
-            <span title="1000 deploys">
-              {1000}
-            </span>
-          </p>
-        </div>
         <div className="two-col owner__column list-block__column last-col">
           <p className="cell">
             test-owner
@@ -171,13 +164,6 @@ describe('SearchResultsItem', function() {
                 alt="mysql" />
             </li>]}
           </ul>
-        </div>
-        <div className="one-col deploys__column list-block__column">
-          <p className="cell">
-            <span title="1000 deploys">
-              {1000}
-            </span>
-          </p>
         </div>
         <div className="two-col owner__column list-block__column last-col">
           <p className="cell">
@@ -254,13 +240,6 @@ describe('SearchResultsItem', function() {
                 alt="apache2" />
             </li>
           </ul>
-        </div>
-        <div className="one-col deploys__column list-block__column">
-          <p className="cell">
-            <span title="1000 deploys">
-              {1000}
-            </span>
-          </p>
         </div>
         <div className="two-col owner__column list-block__column last-col">
           <p className="cell">

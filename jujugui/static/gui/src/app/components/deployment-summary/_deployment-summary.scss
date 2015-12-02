@@ -1,7 +1,13 @@
 .deployment-summary {
+    @extend %floating-panel;
     @extend %scroll-children;
     // Expand this container to take the full parent height.
     flex: 2;
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: 30px;
+    right: 30px;
 
     &__header {
         padding: 40px 20px 20px;

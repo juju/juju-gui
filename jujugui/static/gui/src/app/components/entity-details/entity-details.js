@@ -64,8 +64,7 @@ YUI.add('entity-details', function() {
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
                   changeState={this.props.changeState}
-                  deployService={this.props.deployService}
-                  pluralize={this.props.pluralize} />
+                  deployService={this.props.deployService} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
                   changeState={this.props.changeState}

@@ -115,7 +115,7 @@ YUI.add('juju-gui', function(Y) {
         label: 'Alt + s'
       },
       '/': {
-        target: '#charm-search-field',
+        target: '.header-search__input',
         focus: true,
         help: 'Select the charm Search'
       },
@@ -288,13 +288,18 @@ YUI.add('juju-gui', function(Y) {
         // React. So try and use the native tagName property first, if That
         // fails then fall back to getDOMNode().
         var tagName = evt.target.tagName;
+        var contentEditable = evt.target.contentEditable;
         if (!tagName) {
           tagName = evt.target.getDOMNode().tagName;
+        }
+        if (!contentEditable) {
+          contentEditable = evt.target.getDOMNode().contentEditable;
         }
         // Target filtering, we want to listen on window
         // but not honor hotkeys when focused on
         // text oriented input fields
-        if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1) {
+        if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 ||
+            contentEditable === 'true') {
           return;
         }
         var symbolic = [];

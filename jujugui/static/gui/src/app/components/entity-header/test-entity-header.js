@@ -45,16 +45,13 @@ describe('EntityHeader', function() {
         <juju.components.EntityHeader
           deployService={sinon.spy()}
           changeState={sinon.spy()}
-          entityModel={mockEntity}
-          pluralize={sinon.spy()} />);
+          entityModel={mockEntity} />);
 
     var entity = output.props.entityModel.toEntity();
     assert.equal(entity.displayName, output.refs.entityHeaderTitle.textContent,
                  'rendered name does not match entity name');
     assert.equal(entity.owner, output.refs.entityHeaderBy.textContent,
                  'rendered owner does not match entity owner');
-    assert.equal(entity.downloads, output.refs.bundleDeploysCount.textContent,
-                 'rendered downloads does not match entity downloads');
   });
 
   it('displays an add to canvas button', function() {
@@ -62,8 +59,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         entityModel={mockEntity}
         changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        pluralize={sinon.spy()} />);
+        deployService={sinon.spy()} />);
     var deployButton = output.refs.deployButton;
     assert.equal(deployButton.props.type, 'confirm');
     assert.equal(deployButton.props.title, 'Add to canvas');
@@ -80,8 +76,7 @@ describe('EntityHeader', function() {
         getBundleYAML={getBundleYAML}
         deployService={deployService}
         changeState={changeState}
-        entityModel={mockEntity}
-        pluralize={sinon.stub()} />);
+        entityModel={mockEntity} />);
     var deployButton = output.refs.deployButton;
     // Simulate a click.
     deployButton.props.action();
@@ -108,8 +103,7 @@ describe('EntityHeader', function() {
         getBundleYAML={getBundleYAML}
         deployService={deployService}
         changeState={changeState}
-        entityModel={entity}
-        pluralize={sinon.stub()} />);
+        entityModel={entity} />);
     var deployButton = output.refs.deployButton;
     // Simulate a click.
     deployButton.props.action();
@@ -133,8 +127,7 @@ describe('EntityHeader', function() {
         deployService={deployService}
         changeState={changeState}
         entityModel={entity}
-        addNotification={addNotification}
-        pluralize={sinon.stub()} />);
+        addNotification={addNotification} />);
     var deployButton = output.refs.deployButton;
     // Simulate a click.
     deployButton.props.action();
