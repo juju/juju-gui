@@ -13,7 +13,7 @@ fi
 bin/pserve test.ini test_port=$PORT & echo $! > $SERVE_PID
 
 MOCHA_PHANTOMJS="node_modules/.bin/mocha-phantomjs"
-PHANTOMJS="node_modules/.bin/phantomjs"
+PHANTOMJS="node_modules/mocha-phantomjs/node_modules/phantomjs/bin/phantomjs"
 
 finished () {
   echo "Shutting down server."
