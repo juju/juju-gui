@@ -288,11 +288,11 @@ update-downloadcache: $(CACHE)
 	cd $(CACHE) && git pull origin master || true
 
 .PHONY: collect-requirements
-collect-requirements:
+collect-requirements: deps
 	-@rm -rf $(COLLECTED_REQUIREMENTS)
 	@mkdir $(COLLECTED_REQUIREMENTS)
 	bin/pip install -d $(COLLECTED_REQUIREMENTS) --no-compile --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r requirements.txt
-	# Arch-specific wheels cannot be used.
+	@# Arch-specific wheels cannot be used.
 	-@rm -rf $(COLLECTED_REQUIREMENTS)/zope.interface*
 	-@rm -rf $(COLLECTED_REQUIREMENTS)/MarkupSafe*
 	-@cp $(CACHE)/python/zope.interface* $(COLLECTED_REQUIREMENTS)
@@ -375,7 +375,7 @@ bumpversion: test-deps
 	bin/bumpversion $(VPART)
 
 .PHONY: dist
-dist: gui test-deps collect-requirements
+dist: clean-all gui test-deps collect-requirements
 	python setup.py sdist --formats=bztar
 
 #######
