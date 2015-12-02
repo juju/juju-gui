@@ -2,7 +2,7 @@
     @extend %floating-panel;
     box-sizing: border-box;
     position: absolute;
-    z-index: 601;
+    z-index: index($z-indexed-elements, env-size-display);
     top: $navbar-height + $panel-space;
     left: $panel-space;
     width: $left-panel-width;

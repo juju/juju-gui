@@ -171,6 +171,10 @@ YUI.add('juju-gui', function(Y) {
               // Force the GUI to reload so the settings take effect.
               window.location.reload();
             });
+
+            target.one('.close').on('click', function(ev) {
+              Y.one('#shortcut-help').hide();
+            });
           }
         },
         help: 'Display this help',

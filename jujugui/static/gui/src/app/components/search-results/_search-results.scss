@@ -69,7 +69,7 @@
             .list-icons li,
             .list-block__tags li {
                 position: relative;
-                z-index: 4;
+                z-index: index($z-indexed-elements, search-results-list-block__tags);
             }
         }
 
@@ -132,12 +132,12 @@
                 margin: 0;
                 line-height: 1.6;
                 position: relative;
-                z-index: 10;
+                z-index: index($z-indexed-elements, search-results-cell);
 
                 @media only screen and (min-width: 769px) {
                     &:hover {
                         display: table;
-                        z-index: 200;
+                        z-index: index($z-indexed-elements, search-results-cell--hover);
                     }
                 }
             }
@@ -160,7 +160,7 @@
             a:visited {
                 color: $warm-grey;
                 position: relative;
-                z-index: 4;
+                z-index: index($z-indexed-elements, search-results-list-block__tags-links);
             }
 
             a:after {

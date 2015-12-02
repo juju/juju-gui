@@ -3,7 +3,7 @@
     @extend %scroll-children;
     $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + 30px;
     position: absolute;
-    z-index: 601;
+    z-index: index($z-indexed-elements, inspector-view);
     top: $environment-header-height + ($panel-space * 2) + $navbar-height;
     left: $panel-space;
     width: $left-panel-width;

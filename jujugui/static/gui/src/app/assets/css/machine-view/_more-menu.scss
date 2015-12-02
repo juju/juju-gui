@@ -6,7 +6,7 @@
         .menu:before {
             display: block;
             position: absolute;
-            z-index: 1000;
+            z-index: index($z-indexed-elements, more-menu);
             background-color: #fff;
             border: 1px solid #bbb;
         }

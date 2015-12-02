@@ -20,7 +20,7 @@
     &--handle {
         border-radius: $border-radius;
         position: absolute;
-        z-index: 501;
+        z-index: index($z-indexed-elements, boolean-config--handle);
         left: 0;
         height: 24px;
         width: 24px;
@@ -59,12 +59,12 @@
             background-repeat: no-repeat;
         }
         &:before {
-            z-index: 502;
+            z-index: index($z-indexed-elements, boolean-config--label);
             background-image:
                 url(juju-ui/assets/images/toggle-off.png);
         }
         &:after {
-            z-index: 502;
+            z-index: index($z-indexed-elements, boolean-config--label);
             left: 29px;
             background-image:
                 url(juju-ui/assets/images/toggle-on-inactive.png);

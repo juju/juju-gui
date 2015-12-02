@@ -62,9 +62,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ## Include the svg sprite image inside the body.
         <%include file="../static/gui/build/app/assets/stack/svg/sprite.css.svg" />
       </div>
-      <!-- This <img> tag is here just to force early loading of the background
-        image so it displays more quickly.  This makes a large improvement to
-        the way the app looks while loading on a slow connection. -->
+
+      <header class="header-banner">
+        <ul id="browser-nav" class="header-banner__list">
+          <li id="nav-brand-env" class="header-banner__list-item">
+            <a class="header-banner__link" href="/">
+              <svg class="svg-icon header-banner__logo"
+                viewBox="0 0 75 30"
+                style="width:75px; height:30px;">
+                <use xlink:href="#juju-logo" />
+              </svg>
+            </a>
+          </li>
+          <li id="user-name" class="header-banner__list-item">
+            <a class="header-banner__link--breadcrumb" href="#">
+              anonymous
+            </a>
+          </li>
+          <li class="header-banner__list-item">
+            <div id="environment-switcher"></div>
+          </li>
+        </ul>
+        <ul class="header-banner__list--right">
+          <li id="maas-server" style="display:none" class="header-banner__list-item">
+            <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
+          </li>
+          <li id="header-search-container"
+              class="header-banner__list-item header-banner__list-item--no-padding"></li>
+        </ul>
+      </header>
       <div id="full-screen-mask">
         <div id="browser-warning" class="centered-column"
             style="display:none;">
@@ -128,34 +154,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </div>
       <div id="viewport">
-        <header class="header-banner">
-          <ul id="browser-nav" class="header-banner__list">
-            <li id="nav-brand-env" class="header-banner__list-item">
-              <a class="header-banner__link" href="/">
-                <svg class="svg-icon header-banner__logo"
-                  viewBox="0 0 75 30"
-                  style="width:75px; height:30px;">
-                  <use xlink:href="#juju-logo" />
-                </svg>
-              </a>
-            </li>
-            <li id="user-name" class="header-banner__list-item">
-              <a class="header-banner__link--breadcrumb" href="#">
-                anonymous
-              </a>
-            </li>
-            <li class="header-banner__list-item">
-              <div id="environment-switcher"></div>
-            </li>
-          </ul>
-          <ul class="header-banner__list--right">
-            <li id="maas-server" style="display:none" class="header-banner__list-item">
-              <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
-            </li>
-            <li id="header-search-container"
-                class="header-banner__list-item header-banner__list-item--no-padding"></li>
-          </ul>
-        </header>
         <div id="content">
             <div id="shortcut-help" style="display:none"></div>
             <div id="main">

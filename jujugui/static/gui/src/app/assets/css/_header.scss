@@ -5,7 +5,7 @@
 
 .header-banner {
     position: absolute;
-    z-index: 900;
+    z-index: index($z-indexed-elements, header-banner);
     top: 0;
     left: 0;
     width: 100%;
