@@ -101,9 +101,14 @@ $(NODE_MODULES):
 server: gui
 	bin/pserve --reload development.ini
 
+.PHONY: qa-server
+qa-server: gui
+	bin/pserve qa.ini
+
 .PHONY: run
 run: gui
 	$(MAKE) -j2 server watch
+
 
 #########
 # INSTALL
@@ -141,7 +146,7 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
-		-not -name "*d3-wrapper*" \
+		-not -name "*d3-wrapper*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
