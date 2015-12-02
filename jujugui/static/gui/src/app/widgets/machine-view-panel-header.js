@@ -67,7 +67,7 @@ YUI.add('machine-view-panel-header', function(Y) {
         */
         showMoreMenu: function(e) {
           if (!this._moreMenu.get('rendered')) {
-            this._moreMenu.render(this.get('container').one('.more-menu'));
+            this._moreMenu.render(this.get('container').one('.mv-more-menu'));
           }
           this._moreMenu.showMenu(e);
           return this._moreMenu;
@@ -320,7 +320,7 @@ YUI.add('machine-view-panel-header', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
-    'more-menu',
+    'mv-more-menu',
     'mv-drop-target-view-extension'
   ]
 });

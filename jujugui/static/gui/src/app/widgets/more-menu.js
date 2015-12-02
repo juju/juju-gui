@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
    @namespace juju
    @module widgets
  */
-YUI.add('more-menu', function(Y) {
+YUI.add('mv-more-menu', function(Y) {
   var views = Y.namespace('juju.views'),
       ns = Y.namespace('juju.widgets');
   /**

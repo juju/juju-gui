@@ -22,18 +22,37 @@ YUI.add('machine-view-header', function() {
 
   juju.components.MachineViewHeader = React.createClass({
     propTypes: {
+      menuItems: React.PropTypes.array,
       title: React.PropTypes.string.isRequired
+    },
+
+    /**
+      Generate a menu for the supplied controls.
+
+      @method _generateMenu
+      @returns {Object} A more menu component
+    */
+    _generateMenu: function() {
+      var menuItems = this.props.menuItems;
+      if (!menuItems) {
+        return;
+      }
+      return (
+        <juju.components.MoreMenu
+          items={menuItems} />);
     },
 
     render: function() {
       return (
         <div className="machine-view__header">
           {this.props.title}
+          {this._generateMenu()}
         </div>
       );
     }
   });
 }, '0.1.0', {
   requires: [
+    'more-menu'
   ]
 });

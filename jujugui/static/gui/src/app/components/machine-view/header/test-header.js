@@ -34,6 +34,22 @@ describe('MachineViewHeader', function() {
     var expected = (
         <div className="machine-view__header">
           Sandbox
+          {undefined}
+        </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render with a menu', function() {
+    var menuItems = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewHeader
+        menuItems={menuItems}
+        title="Sandbox" />);
+    var expected = (
+        <div className="machine-view__header">
+          Sandbox
+          <juju.components.MoreMenu
+            items={menuItems} />
         </div>);
     assert.deepEqual(output, expected);
   });

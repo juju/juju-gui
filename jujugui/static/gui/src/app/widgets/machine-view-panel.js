@@ -63,19 +63,19 @@ YUI.add('machine-view-panel', function(Y) {
           '.column.unplaced .auto-place': {
             click: '_autoPlaceUnits'
           },
-          '.unplaced-unit .more-menu .open-menu': {
+          '.unplaced-unit .mv-more-menu .open-menu': {
             click: '_unplacedUnitMoreMenuClick'
           },
-          '.machine-token .more-menu .open-menu': {
+          '.machine-token .mv-more-menu .open-menu': {
             click: '_tokenMoreMenuClick'
           },
-          '.container-token .token > .more-menu .open-menu': {
+          '.container-token .token > .mv-more-menu .open-menu': {
             click: '_tokenMoreMenuClick'
           },
-          '.container-token .unit .more-menu .open-menu': {
+          '.container-token .unit .mv-more-menu .open-menu': {
             click: '_containerUnitMoreMenuClick'
           },
-          '.head .more-menu .open-menu': {
+          '.head .mv-more-menu .open-menu': {
             click: '_headerMoreMenuClick'
           }
         },
