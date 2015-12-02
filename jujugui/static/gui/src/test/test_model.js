@@ -144,6 +144,29 @@ describe('test_model.js', function() {
       tester('fade');
     });
 
+    it.only('can update a units displayName', function(done) {
+      var db = new models.Database();
+      db.services.add([
+        {id: 'mysql', name: 'mysql'}
+      ]);
+      db.addUnits([
+        {id: 'mysql/0'}
+      ]);
+      var service = db.services.getById('mysql');
+      service.set('name', 'notmysql');
+      db.on('update', function() {
+        // Make sure it fires update so that the GUI can re-render;
+        // Check that both the service and master unit gets get updated.
+        assert.equal(service.get('units').item(0).displayName, 'notmysql/0');
+        assert.equal(db.units.item(0).displayName, 'notmysql/0');
+        done();
+      });
+      db.updateServiceUnitsDisplayname('mysql');
+      // Check that both the service and master unit gets get updated.
+      assert.equal(service.get('units').item(0).displayName, 'notmysql/0');
+      assert.equal(db.units.item(0).displayName, 'notmysql/0');
+    });
+
     it('can update a unit id', function() {
       var db = new models.Database();
       db.services.add([

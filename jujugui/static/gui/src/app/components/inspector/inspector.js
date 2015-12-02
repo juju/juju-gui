@@ -194,6 +194,8 @@ YUI.add('inspector-component', function() {
                 charm={nextProps.charm}
                 changeState={this.props.changeState}
                 getYAMLConfig={this.props.getYAMLConfig}
+                updateServiceUnitsDisplayname=
+                  {this.props.updateServiceUnitsDisplayname}
                 setConfig={nextProps.setConfig} />,
             backState: {
               sectionA: {

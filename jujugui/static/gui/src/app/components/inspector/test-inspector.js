@@ -115,6 +115,7 @@ describe('Inspector', function() {
     var changeState = sinon.stub();
     var getYAMLConfig = sinon.stub();
     var appPreviousState = sinon.stub();
+    var updateServiceUnitsDisplayname = sinon.stub();
     var service = {
       get: getStub
     };
@@ -131,6 +132,7 @@ describe('Inspector', function() {
           getYAMLConfig={getYAMLConfig}
           charm={charm}
           appPreviousState={appPreviousState}
+          updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}
           setConfig={setConfig} /> );
 
     var children = output.props.children[1].props.children;
@@ -140,7 +142,8 @@ describe('Inspector', function() {
           changeState={changeState}
           getYAMLConfig={getYAMLConfig}
           charm={charm}
-          setConfig={setConfig} />);
+          setConfig={setConfig}
+          updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}/>);
   });
 
   it('displays the unit details when the app state calls for it', function() {

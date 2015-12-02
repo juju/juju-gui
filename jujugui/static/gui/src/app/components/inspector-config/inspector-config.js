@@ -141,8 +141,11 @@ YUI.add('inspector-config', function() {
       });
       // The service name component is only shown if it's a ghost service.
       var serviceName = this.refs.ServiceName;
+      var props = this.props;
       if (serviceName) {
-        this.props.service.set('name', serviceName.state.value);
+        var service = props.service;
+        service.set('name', serviceName.state.value);
+        props.updateServiceUnitsDisplayname(service.get('id'));
       }
       var changedConfig = this._getChangedValues(configValues);
       // If there are no changed values then don't set the config.

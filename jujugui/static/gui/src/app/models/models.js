@@ -2598,6 +2598,24 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Updates a units display name to match the display name of the service.
+      This is used after updating the service name.
+
+      @method updateServiceUnitsDisplayname
+      @param {String} serviceId
+    */
+    updateServiceUnitsDisplayname: function(serviceId) {
+      var service = this.services.getById(serviceId);
+      var serviceName = service.get('name');
+      var serviceUnits = service.get('units');
+      serviceUnits.each((unit) => {
+        unit.displayName = `${serviceName}/${unit.number}`;
+      });
+      // Fire an update event to trigger the UI update.
+      this.fire('update');
+    },
+
+    /**
       Update the map for a unit id on a service.
 
       @method updateUnitId

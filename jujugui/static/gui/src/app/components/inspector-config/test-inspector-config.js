@@ -168,11 +168,13 @@ describe('Configuration', function() {
       },
       set: sinon.stub()
     };
+    var updateUnit = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
         service={service}
         charm={charm}
-        changeState={sinon.stub()} />);
+        changeState={sinon.stub()}
+        updateServiceUnitsDisplayname={updateUnit}/>);
     assert.equal(component.refs.ServiceName.props.config, 'servicename');
 
     var domNode = ReactDOM.findDOMNode(component);
@@ -186,6 +188,9 @@ describe('Configuration', function() {
 
     assert.equal(service.set.callCount, 1);
     assert.deepEqual(service.set.args[0], ['name', 'newservicename']);
+
+    assert.equal(updateUnit.callCount, 1);
+    assert.equal(updateUnit.args[0][0], 'abc123$');
   });
 
   it('not able to change the service name on deployed services', function() {

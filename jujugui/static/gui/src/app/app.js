@@ -864,6 +864,8 @@ YUI.add('juju-gui', function(Y) {
             setCharm={this.env.setCharm.bind(this.env)}
             getCharm={this.env.get_charm.bind(this.env)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
+            updateServiceUnitsDisplayname=
+              {this.db.updateServiceUnitsDisplayname.bind(this.db)}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
         );
