@@ -412,19 +412,6 @@ YUI.add('search-results', function(Y) {
     },
 
     /**
-      Generate the base classes from the props.
-
-      @method _generateClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      return classNames(
-        'search-results',
-        this.props.inline ? '' : 'search-results--floating'
-      );
-    },
-
-    /**
       Generate the classes for a results list.
 
       @method _generateListClasses
@@ -450,7 +437,7 @@ YUI.add('search-results', function(Y) {
     /**
       Generate the base classes from on the props.
 
-      @method _generateClasses
+      @method _generateResultsList
       @param {Integer} count The number of results.
       @param {Array} results The list of results.
       @param {Boolean} promulgated Whether to show a promulgated list.
@@ -481,7 +468,7 @@ YUI.add('search-results', function(Y) {
 
     render: function() {
       return (
-        <div className={this._generateClasses()}>
+        <div className="search-results">
           {this.state.activeChild.component}
         </div>
       );

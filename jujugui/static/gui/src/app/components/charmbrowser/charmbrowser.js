@@ -49,7 +49,6 @@ YUI.add('charmbrowser-component', function() {
       switch (state.activeComponent) {
         case 'mid-point':
           state.activeChild = {
-            panelInstanceName: 'mid-point-panel',
             component:
               <juju.components.MidPoint
                 changeState={this.props.changeState}
@@ -59,7 +58,6 @@ YUI.add('charmbrowser-component', function() {
           break;
         case 'store':
           state.activeChild = {
-            panelInstanceName: 'white-box',
             component:
               <juju.components.Store
                 charmstoreSearch={this.props.charmstoreSearch}
@@ -69,7 +67,6 @@ YUI.add('charmbrowser-component', function() {
           break;
         case 'search-results':
           state.activeChild = {
-            panelInstanceName: 'white-box',
             component:
               <juju.components.SearchResults
                 changeState={this.props.changeState}
@@ -87,7 +84,6 @@ YUI.add('charmbrowser-component', function() {
           break;
         case 'entity-details':
           state.activeChild = {
-            panelInstanceName: 'white-box',
             component:
               <juju.components.EntityDetails
                 changeState={this.props.changeState}
@@ -115,9 +111,11 @@ YUI.add('charmbrowser-component', function() {
     render: function() {
       return (
         <juju.components.Panel
-          instanceName={this.state.activeChild.panelInstanceName}
+          instanceName="white-box"
           visible={true}>
-          {this.state.activeChild.component}
+          <div className="charmbrowser">
+            {this.state.activeChild.component}
+          </div>
         </juju.components.Panel>
       );
     }

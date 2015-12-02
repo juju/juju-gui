@@ -7,10 +7,6 @@
 }
 
 .search-results {
-    &--floating {
-        @extend %fullscreen-panel;
-    }
-
     .inner-wrapper {
         max-width: none;
     }

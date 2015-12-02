@@ -1,0 +1,11 @@
+.charmbrowser {
+    @extend %floating-panel;
+    $bottom-space: $deployer-bar-height + $panel-space;
+    position: absolute;
+    top: $navbar-height;
+    left: $panel-space;
+    right: 0;
+    max-height: calc(100% - #{$bottom-space});
+    overflow-x: hidden;
+    overflow-y: auto;
+}

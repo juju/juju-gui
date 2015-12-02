@@ -62,18 +62,20 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           visible={true}>
-          <juju.components.SearchResults
-            changeState={changeState}
-            seriesList={series}
-            makeEntityModel={makeEntityModel}
-            query={query}
-            tags="ops"
-            sort="-name"
-            type="bundle"
-            series="wily"
-            provides="http"
-            requires="cache"
-            charmstoreSearch={charmstoreSearch} />
+          <div className="charmbrowser">
+            <juju.components.SearchResults
+              changeState={changeState}
+              seriesList={series}
+              makeEntityModel={makeEntityModel}
+              query={query}
+              tags="ops"
+              sort="-name"
+              type="bundle"
+              series="wily"
+              provides="http"
+              requires="cache"
+              charmstoreSearch={charmstoreSearch} />
+            </div>
         </juju.components.Panel>);
   });
 
@@ -91,12 +93,14 @@ describe('Charmbrowser', function() {
         changeState={changeState} />);
     assert.deepEqual(output,
         <juju.components.Panel
-          instanceName="mid-point-panel"
+          instanceName="white-box"
           visible={true}>
-          <juju.components.MidPoint
-            outsideClickClose={true}
-            storeOpen={false}
-            changeState={changeState} />
+          <div className="charmbrowser">
+            <juju.components.MidPoint
+              outsideClickClose={true}
+              storeOpen={false}
+              changeState={changeState} />
+          </div>
         </juju.components.Panel>);
   });
 
@@ -120,10 +124,12 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           visible={true}>
-          <juju.components.Store
-            makeEntityModel={makeEntityModel}
-            charmstoreSearch={charmstoreSearch}
-            changeState={changeState} />
+          <div className="charmbrowser">
+            <juju.components.Store
+              makeEntityModel={makeEntityModel}
+              charmstoreSearch={charmstoreSearch}
+              changeState={changeState} />
+          </div>
         </juju.components.Panel>);
   });
 
@@ -167,19 +173,21 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           visible={true}>
-          <juju.components.EntityDetails
-            importBundleYAML={importBundleYAML}
-            getBundleYAML={getBundleYAML}
-            changeState={changeState}
-            getEntity={getEntity}
-            makeEntityModel={makeEntityModel}
-            getDiagramURL={getDiagramURL}
-            getFile={getFile}
-            renderMarkdown={renderMarkdown}
-            deployService={deployService}
-            id={id}
-            addNotification={addNotification}
-            pluralize={utils.pluralize} />
+          <div className="charmbrowser">
+            <juju.components.EntityDetails
+              importBundleYAML={importBundleYAML}
+              getBundleYAML={getBundleYAML}
+              changeState={changeState}
+              getEntity={getEntity}
+              makeEntityModel={makeEntityModel}
+              getDiagramURL={getDiagramURL}
+              getFile={getFile}
+              renderMarkdown={renderMarkdown}
+              deployService={deployService}
+              id={id}
+              addNotification={addNotification}
+              pluralize={utils.pluralize} />
+          </div>
         </juju.components.Panel>);
   });
 });

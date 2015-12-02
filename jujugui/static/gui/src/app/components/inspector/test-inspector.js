@@ -712,7 +712,7 @@ describe('Inspector', function() {
           appState={appState}
           appPreviousState={appPreviousState}
           service={service} />);
-    var output = shallowRenderer.getRenderOutput();
+    shallowRenderer.getRenderOutput();
     assert.equal(changeStub.callCount, 0);
     service = {
       get: function(val) {
@@ -727,7 +727,7 @@ describe('Inspector', function() {
           appState={appState}
           appPreviousState={appPreviousState}
           service={service} />);
-    output = shallowRenderer.getRenderOutput();
+    shallowRenderer.getRenderOutput();
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
       sectionA: {

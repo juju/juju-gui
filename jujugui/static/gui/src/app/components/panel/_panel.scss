@@ -11,23 +11,15 @@
     z-index: index($z-indexed-elements, inspector-panel);
 }
 
-.panel-component.white-box,
-.panel-component.mid-point-panel {
-    z-index: index($z-indexed-elements, mid-point-panel);
-    top: $navbar-height;
-    right: 0;
-    border-radius: 0;
-}
-
 .panel-component.white-box {
+    z-index: index($z-indexed-elements, mid-point-panel);
+    top: 0;
     bottom: 0;
     left: 0;
+    right: 0;
     background-color: rgba(255, 255, 255, 0.3);
+    border-radius: none;
     box-shadow: none;
-}
-
-.panel-component.mid-point-panel {
-    left: $panel-space;
 }
 
 .panel-component.deployment-bar-panel {
