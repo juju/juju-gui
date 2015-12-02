@@ -1,5 +1,5 @@
 .user-profile {
-    z-index: 1000;
+    z-index: index($z-indexed-elements, user-profile);
     top: $navbar-height;
     bottom: 0;
     right: 0;

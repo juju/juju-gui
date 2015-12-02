@@ -1354,8 +1354,7 @@ YUI.add('juju-view-utils', function(Y) {
         result = {height: minheight || 0, width: minwidth || 0};
     if (containerHeight && navbar && viewport) {
       result.height = containerHeight -
-          (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0) -
-          navbar.get('offsetHeight') - 1;
+          (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
 
       result.width = Math.floor(parseFloat(
           viewport.getComputedStyle('width')));

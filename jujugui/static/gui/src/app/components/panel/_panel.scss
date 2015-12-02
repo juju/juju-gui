@@ -1,22 +1,22 @@
 .panel-component {
     @extend %floating-panel;
     position: absolute;
-    z-index: 601;
 }
 
 .panel-component.inspector-panel {
     position: static;
     background-color: transparent;
-    border-radius: none;
+    border-radius: 0;
     box-shadow: none;
+    z-index: index($z-indexed-elements, inspector-panel);
 }
 
 .panel-component.white-box,
 .panel-component.mid-point-panel {
-    z-index: 1000;
+    z-index: index($z-indexed-elements, mid-point-panel);
     top: $navbar-height;
     right: 0;
-    border-radius: none;
+    border-radius: 0;
 }
 
 .panel-component.white-box {
@@ -33,11 +33,12 @@
 .panel-component.deployment-bar-panel {
     right: 20px;
     bottom: 30px;
+    z-index: index($z-indexed-elements, deployment-bar-panel);
 }
 
 .panel-component.deployment-summary-panel {
     @extend %scroll-children;
-    z-index: 1000;
+    z-index: index($z-indexed-elements, deployment-summary-panel);
     top: 20px;
     bottom: 20px;
     left: 30px;

@@ -1,5 +1,5 @@
 .cookie-policy {
-    z-index: 702;
+    z-index: index($z-indexed-elements, cookie-policy);
     position: fixed;
     bottom: 0;
     width: 100%;

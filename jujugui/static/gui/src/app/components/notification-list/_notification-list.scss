@@ -2,6 +2,6 @@
     position: absolute;
     bottom: $panel-space;
     left: $panel-space;
-    z-index: 601;
     max-width: 50%;
+    z-index: index($z-indexed-elements, notification-list);
 }

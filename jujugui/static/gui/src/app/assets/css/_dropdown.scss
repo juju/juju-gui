@@ -24,7 +24,7 @@
     .dropdown {
         display: none;
         position: absolute;
-        z-index: 1000;
+        z-index: index($z-indexed-elements, dropdown);
         top: $navbar-height;
         left: 0;
         width: 290px;

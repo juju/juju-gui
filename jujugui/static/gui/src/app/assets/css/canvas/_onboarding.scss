@@ -56,7 +56,7 @@
     }
 
     &.shrink {
-        z-index: 100;
+        z-index: index($z-indexed-elements, environment-help-shrink);
         height: auto;
         width: auto;
         left: 50%;

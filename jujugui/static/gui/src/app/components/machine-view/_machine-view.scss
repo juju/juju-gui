@@ -7,7 +7,7 @@
     left: 0;
     right: 0;
     background-color: $canvas-background;
-    z-index: 600;
+    z-index: index($z-indexed-elements, machine-view);
 
     &__content {
         display: flex;

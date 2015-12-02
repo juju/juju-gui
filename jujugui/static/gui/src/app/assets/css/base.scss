@@ -84,6 +84,33 @@ $left-panel-width: 290px;
 $navbar-height: 60px;
 $panel-space: 10px;
 
+// z-indexing
+$z-indexed-elements: search-results-list-block__tags,
+                     search-results-list-block__tags-links,
+                     search-results-cell,
+                     search-results-cell--hover,
+                     environment-help-shrink,
+                     boolean-config--handle,
+                     boolean-config--label,
+                     machine-view-panel,
+                     machine-view,
+                     notification-list,
+                     env-size-display,
+                     inspector-view,
+                     deployment-bar-panel,
+                     mid-point-panel,
+                     cookie-policy,
+                     header-banner,
+                     user-profile,
+                     deployment-summary-panel,
+                     more-menu,
+                     shortcut-help,
+                     header-search--active,
+                     dropdown,
+                     full-screen-mask,
+                     centered-column;
+
+
 // Imports need to be after vars.
 @import "animations";
 @import "typography";
@@ -290,7 +317,10 @@ th {
 /* Layout, widgets etc. */
 
 #content {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
     width: 100%;
 }
 
@@ -311,33 +341,41 @@ th {
  * The keyboard shorcut panel
  */
 #shortcut-help {
-    @include create-box-shadow(0 0 4px 0 rgba(0, 0, 0, 0.5));
+    box-shadow: (0 1px 4.85px .15px rgba( 0, 0, 0, .2));
     position: absolute;
     left: 4%;
     right: 4%;
     top: 8%;
     bottom: 8%;
-    opacity: 0.85;
-    z-index: 1000;
-    padding: 20px;
-    background-color: black;
+    z-index: index($z-indexed-elements, shortcut-help);
+    background-color: $white;
     border-radius: $border-radius;
-    color: #fff;
+    overflow: scroll;
 
-    .left {
-        float: left;
-        width: 45%;
+    .bordered {
+        border-bottom: 1px solid $light-mid-grey;
+        padding: 20px;
     }
 
-    table {
-        margin-top: 20px;
+    .content {
+        padding: 20px;
 
-        th {
-            text-align: left;
+        div[class$="col"] {
+            margin-bottom: 10px;
         }
-        td {
-            padding: 5px 20px;
-        }
+    }
+
+    .no-margin-bottom {
+        margin-bottom: 0;
+    }
+
+    .close {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
     }
 }
 
@@ -726,8 +764,8 @@ g.unit {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10000;
     background-color: $light-grey;
+    z-index: index($z-indexed-elements, full-screen-mask);
 }
 
 /*
@@ -736,7 +774,7 @@ g.unit {
  */
 .centered-column {
     display: block;
-    z-index: 10001;
+    z-index: index($z-indexed-elements, centered-column);
     position: absolute;
     top: 80px;
     left: 50%;
