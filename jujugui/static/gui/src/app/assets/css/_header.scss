@@ -7,9 +7,16 @@
     position: absolute;
     z-index: index($z-indexed-elements, header-banner);
     top: 0;
-    left: 0;
-    width: 100%;
+    width: auto;
     height: $navbar-height;
+
+    &--right {
+      right: 0;
+    }
+
+    &--left {
+      left: 0;
+    }
 
     &__link,
     &__link--breadcrumb {
@@ -66,4 +73,6 @@
             padding: 0;
         }
     }
+
+
 }

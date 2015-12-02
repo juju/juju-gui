@@ -63,7 +63,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         <%include file="../static/gui/build/app/assets/stack/svg/sprite.css.svg" />
       </div>
 
-      <header class="header-banner">
+      <div class="header-banner header-banner--left">
         <ul id="browser-nav" class="header-banner__list">
           <li id="nav-brand-env" class="header-banner__list-item">
             <a class="header-banner__link" href="/">
@@ -83,6 +83,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div id="environment-switcher"></div>
           </li>
         </ul>
+      </div>
+
+      <div class="header-banner header-banner--right">
         <ul class="header-banner__list--right">
           <li id="maas-server" style="display:none" class="header-banner__list-item">
             <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
@@ -90,7 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           <li id="header-search-container"
               class="header-banner__list-item header-banner__list-item--no-padding"></li>
         </ul>
-      </header>
+      </div>
       <div id="full-screen-mask">
         <div id="browser-warning" class="centered-column"
             style="display:none;">
