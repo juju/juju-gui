@@ -120,11 +120,13 @@ describe('Charmbrowser', function() {
     var charmstoreSearch = sinon.stub();
     var changeState = sinon.stub();
     var makeEntityModel = sinon.spy();
+    var seriesList = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         charmstoreSearch={charmstoreSearch}
         makeEntityModel={makeEntityModel}
+        series={seriesList}
         changeState={changeState} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -137,6 +139,7 @@ describe('Charmbrowser', function() {
             <juju.components.Store
               makeEntityModel={makeEntityModel}
               charmstoreSearch={charmstoreSearch}
+              seriesList={seriesList}
               changeState={changeState} />
           </div>
         </juju.components.Panel>);

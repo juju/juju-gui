@@ -75,6 +75,7 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.Store
                 charmstoreSearch={this.props.charmstoreSearch}
                 changeState={this.props.changeState}
+                seriesList={this.props.series}
                 makeEntityModel={this.props.makeEntityModel} />
           };
           break;

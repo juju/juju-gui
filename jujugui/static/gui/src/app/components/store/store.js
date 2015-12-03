@@ -32,6 +32,8 @@ YUI.add('store', function() {
           <juju.components.SearchResults
             changeState={this.props.changeState}
             charmstoreSearch={this.props.charmstoreSearch}
+            makeEntityModel={this.props.makeEntityModel}
+            seriesList={this.props.seriesList}
             inline={true}
             query="" />
         </div>
