@@ -161,6 +161,39 @@ YUI.add('juju-env-go', function(Y) {
     series: Object.keys(utils.getSeriesList()),
 
     /**
+      An object mapping facade names to the corresponding versions used by the
+      GUI API client. When a facade is not specified, it is assumed that
+      version 0 is used (for instance the "Client" facade uses version 0).
+
+      @property facadeVersions
+      @type {Object}
+    */
+    facadeVersions: {
+      EnvironmentManager: 1,
+      Service: 2,
+    },
+
+    /**
+      Some default facades are always assumed to be present, even in old
+      versions of Juju not returning facades on login. Base client, watcher and
+      pinger facades are part of this list. Also facades historically
+      implemented by the GUI server are included.
+
+      @property defaultFacades
+      @type {Object}
+    */
+    defaultFacades: {
+      // Default Juju API facades.
+      AllWatcher: [0],
+      Client: [0],
+      Pinger: [0],
+      // Custom GUI server types.
+      ChangeSet: [0],
+      Deployer: [0],
+      GUIToken: [0]
+    },
+
+    /**
      * Go environment constructor.
      *
      * @method initializer
@@ -201,6 +234,15 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     _send_rpc: function(op, callback) {
+      var facade = op.Type;
+      // The facades info is only available after logging in (as the facades
+      // are sent as part of the login response). For this reason, do not
+      // check if the "Admin" facade is supported, but just assume it is,
+      // otherwise even logging in ("Admin.Login") would be impossible.
+      if (facade !== 'Admin' && !this.facadeSupported(facade)) {
+        console.error('operation not supported by API server:', op);
+        return;
+      }
       var tid = this._counter += 1;
       if (callback) {
         this._txn_callbacks[tid] = callback;
@@ -208,6 +250,10 @@ YUI.add('juju-env-go', function(Y) {
       op.RequestId = tid;
       if (!op.Params) {
         op.Params = {};
+      }
+      var version = this.facadeVersions[facade] || 0;
+      if (version !== 0) {
+        op.Version = version;
       }
       var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
@@ -414,20 +460,17 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Return the last supported version number for the given API facade name.
+      Reports whether the given facade is supported by current API server.
 
-      @method supportedFacade
-      @param {String} name The facade name (for instance "Environment").
-      @return {Integer} The version number (for instance 0 or 1), or null if
-        the facade is not supported.
+      @method facadeSupported
+      @param {String} name The facade name (for instance "Service").
+      @return {Boolean} True if the facade is supported, False otherwise.
     */
-    supportedFacade: function(name) {
+    facadeSupported: function(name) {
       var facades = this.get('facades') || {};
-      var versions = facades[name];
-      if (!versions) {
-        return null;
-      };
-      return versions[versions.length-1];
+      var versions = facades[name] || this.defaultFacades[name] || [];
+      var version = this.facadeVersions[name] || 0;
+      return versions.indexOf(version) > -1;
     },
 
     /**
@@ -859,6 +902,69 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Calls the environment's _addCharm method or creates a new addCharm record
+      in the ECS queue.
+
+      Parameters match the parameters for the _addCharm method below.
+      The only new parameter is the last one (ECS options).
+
+      @method addCharm
+    */
+    addCharm: function(url, macaroon, callback, options) {
+      var ecs = this.get('ecs');
+      var args = ecs._getArgs(arguments);
+      if (options && options.immediate) {
+        // Call the _addCharm method right away bypassing the queue.
+        this._addCharm.apply(this, args);
+      } else {
+        // XXX frankban: ecs._lazyAddCharm is not yet implemented.
+        ecs._lazyAddCharm(arguments);
+      }
+    },
+
+    /**
+      Add a charm to the Juju state server.
+
+      @method _addCharm
+      @param {String} url The URL of the charm. It must include the revision.
+      @param {Object} macaroon The optional JSON encoded delegatable macaroon
+        to use in order to authorize access to a non-public charm. This is only
+        required when adding non-public charms.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. The callback is called passing an object like
+        the following:
+          {
+            err: 'optional error',
+            url: 'provided charm URL'
+          }
+      @return {undefined} Sends a message to the server only.
+    */
+    _addCharm: function(url, macaroon, callback) {
+      // Define the API callback.
+      var handleAddCharm = function(userCallback, url, data) {
+        if (!userCallback) {
+          console.log('data returned by addCharm API call:', data);
+          return;
+        }
+        userCallback({err: data.Error, url: url});
+      }.bind(this, callback, url);
+
+      // Build the API call parameters.
+      var request = {
+        Type: 'Client',
+        Request: 'AddCharm',
+        Params: {URL: url}
+      };
+      if (macaroon) {
+        request.Request = 'AddCharmWithAuthorization';
+        request.Params.CharmStoreMacaroon = macaroon;
+      }
+
+      // Perform the API call.
+      this._send_rpc(request, handleAddCharm);
+    },
+
+    /**
       Calls the environment's _deploy method or creates a new deploy record in
       the ECS queue.
 
@@ -905,7 +1011,7 @@ YUI.add('juju-env-go', function(Y) {
     */
     _deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
         constraints, toMachine, callback) {
-      var version = this.supportedFacade('Service');
+      var serviceFacadeSupported = this.facadeSupported('Service');
 
       // Define the API callback.
       var handleDeploy = function(userCallback, serviceName, charmUrl, data) {
@@ -913,7 +1019,7 @@ YUI.add('juju-env-go', function(Y) {
           console.log('data returned by deploy API call:', data);
           return;
         }
-        if (version !== null) {
+        if (serviceFacadeSupported) {
           data = data.Response.Results[0];
         }
         userCallback({
@@ -946,11 +1052,10 @@ YUI.add('juju-env-go', function(Y) {
       };
 
       // Perform the API call.
-      if (version !== null) {
+      if (serviceFacadeSupported) {
         this._send_rpc({
           Type: 'Service',
           Request: 'ServicesDeploy',
-          Version: version,
           Params: {Services: [serviceParams]}
         }, handleDeploy);
         return;
@@ -2336,16 +2441,6 @@ YUI.add('juju-env-go', function(Y) {
       }, handle.bind(self, callback));
     },
 
-    // EnvironmentManager facade API endpoints.
-    // XXX frankban: facade management should be improved. We should store
-    // the list of facades and their corresponding available versions upon
-    // login, and then activate/deactivate the ability to perform specific
-    // API calls based on the server capabilities. Also, facades could help
-    // namespacing client functions, so that we don't store all the API calls
-    // inside a common namespace, resulting in a more organized code. Perhaps
-    // this can be done as part of creating an external JavaScript API library.
-    environmentManagerFacadeVersion: 1,
-
     /**
       Create an environment within this system, using the given name.
 
@@ -2376,7 +2471,6 @@ YUI.add('juju-env-go', function(Y) {
       // configuration skeleton for this provider.
       this._send_rpc({
         Type: 'EnvironmentManager',
-        Version: this.environmentManagerFacadeVersion,
         Request: 'ConfigSkeleton',
       }, data => {
         if (data.Error) {
@@ -2430,7 +2524,6 @@ YUI.add('juju-env-go', function(Y) {
           // are ready to create the new environment in this system.
           this._send_rpc({
             Type: 'EnvironmentManager',
-            Version: this.environmentManagerFacadeVersion,
             Request: 'CreateEnvironment',
             Params: {OwnerTag: userTag, Config: config}
           }, intermediateCallback);
@@ -2489,7 +2582,6 @@ YUI.add('juju-env-go', function(Y) {
       }
       this._send_rpc({
         Type: 'EnvironmentManager',
-        Version: this.environmentManagerFacadeVersion,
         Request: 'ListEnvironments',
         Params: {Tag: userTag}
       }, intermediateCallback);

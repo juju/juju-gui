@@ -174,7 +174,8 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
   sandboxModule.Facades = [
-    {Name: 'Service', Versions: [2]}
+    {Name: 'Service', Versions: [2]},
+    {Name: 'EnvironmentManager', Versions: [1]}
   ];
 
   /**
@@ -710,6 +711,34 @@ YUI.add('juju-env-sandbox', function(Y) {
         response.Error = result.error;
       }
       client.receive(response);
+    },
+
+    /**
+    Handle Client.AddCharm messages.
+
+    @method handleClientAddCharm
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientAddCharm: function(data, client, state) {
+      // In sandbox mode there is no need for adding a charm before simulating
+      // its deployment.
+      client.receive({RequestId: data.RequestId, Response: {}});
+    },
+
+    /**
+    Handle Client.AddCharmWithAuthorization messages.
+
+    @method handleClientAddCharmWithAuthorization
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientAddCharmWithAuthorization: function(data, client, state) {
+      this.handleClientAddCharm(data, client, state);
     },
 
     /**
