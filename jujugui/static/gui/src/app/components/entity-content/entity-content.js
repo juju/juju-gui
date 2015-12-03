@@ -142,6 +142,23 @@ YUI.add('entity-content', function() {
       }
     },
 
+    /**
+      We only show the relations when it's a charm, but not a bundle.
+
+      @method _showEntityRelations
+    */
+    _showEntityRelations: function() {
+      var entityModel = this.props.entityModel;
+      if (entityModel.get('entityType') === 'charm') {
+        return (
+          <div className="four-col">
+            <juju.components.EntityContentRelations
+              changeState={this.props.changeState}
+              relations={entityModel.get('relations')} />
+          </div>);
+      }
+    },
+
     render: function() {
       var entityModel = this.props.entityModel;
       return (
@@ -155,11 +172,7 @@ YUI.add('entity-content', function() {
                   renderMarkdown={this.props.renderMarkdown}
                   getFile={this.props.getFile} />
               </div>
-              <div className="four-col">
-                <juju.components.EntityContentRelations
-                  changeState={this.props.changeState}
-                  relations={this.props.entityModel.get('relations')} />
-              </div>
+              {this._showEntityRelations()}
               <div className="four-col">
                 <juju.components.EntityFiles
                   entityModel={entityModel}
