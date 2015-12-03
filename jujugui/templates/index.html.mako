@@ -161,6 +161,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div id="shortcut-help" style="display:none"></div>
             <div id="main">
             </div> <!-- /container -->
+            <div id="drag-over-notification-container"></div>
         </div>
         <div id="notifications-container"></div>
     </div>
