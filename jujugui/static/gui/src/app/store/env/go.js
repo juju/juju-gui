@@ -382,7 +382,13 @@ YUI.add('juju-env-go', function(Y) {
           this.setCredentials({
             user: response.AuthTag, password: response.Password});
         }
-        // If login succeeded retrieve the environment info.
+        // If login succeeded store the facades and retrieve environment info.
+        var facadeList = response.Facades || [];
+        var facades = facadeList.reduce(function(previous, current) {
+          previous[current.Name] = current.Versions;
+          return previous;
+        }, {});
+        this.set('facades', facades);
         this.environmentInfo();
         this._watchAll();
         // Start pinging the server.
@@ -405,6 +411,23 @@ YUI.add('juju-env-go', function(Y) {
           'login',
           {data: {result: this.userIsAuthenticated,
                   fromToken: fromToken}});
+    },
+
+    /**
+      Return the last supported version number for the given API facade name.
+
+      @method supportedFacade
+      @param {String} name The facade name (for instance "Environment").
+      @return {Integer} The version number (for instance 0 or 1), or null if
+        the facade is not supported.
+    */
+    supportedFacade: function(name) {
+      var facades = this.get('facades') || {};
+      var versions = facades[name];
+      if (!versions) {
+        return null;
+      };
+      return versions[versions.length-1];
     },
 
     /**
@@ -882,12 +905,25 @@ YUI.add('juju-env-go', function(Y) {
     */
     _deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
         constraints, toMachine, callback) {
-      var intermediateCallback = null;
-      if (callback) {
-        intermediateCallback = Y.bind(
-            this._handleDeploy, this, callback, serviceName, charmUrl);
-      }
+      var version = this.supportedFacade('Service');
 
+      // Define the API callback.
+      var handleDeploy = function(userCallback, serviceName, charmUrl, data) {
+        if (!userCallback) {
+          console.log('data returned by deploy API call:', data);
+          return;
+        }
+        if (version !== null) {
+          data = data.Response.Results[0];
+        }
+        userCallback({
+          err: data.Error,
+          service_name: serviceName,
+          charm_url: charmUrl
+        });
+      }.bind(this, callback, serviceName, charmUrl);
+
+      // Build the API call parameters.
       if (constraints) {
         // If the constraints is a function (this arg position used to be a
         // callback) then log it out to the console to fix it.
@@ -899,46 +935,33 @@ YUI.add('juju-env-go', function(Y) {
       } else {
         constraints = {};
       }
-
-      this._send_rpc(
-          { Type: 'Client',
-            Request: 'ServiceDeploy',
-            Params: {
-              ServiceName: serviceName,
-              Config: stringifyObjectValues(config),
-              ConfigYAML: configRaw,
-              Constraints: constraints,
-              CharmUrl: charmUrl,
-              NumUnits: numUnits,
-              ToMachineSpec: toMachine
-            }
-          },
-          intermediateCallback
-      );
-    },
-
-    /**
-      Transform the data returned from juju-core 'deploy' into that suitable
-      for the user callback.
-
-      @method _handleDeploy
-      @param {Function} userCallback The callback originally submitted by the
-      call site.
-      @param {String} serviceName The name of the service.  Passed in since
-        it is not part of the response.
-      @param {String} charmUrl The URL of the charm.  Passed in since
-        it is not part of the response.
-      @param {Object} data The response returned by the server.
-      @return {undefined} Nothing.
-     */
-    _handleDeploy: function(userCallback, serviceName, charmUrl, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: serviceName,
-        charm_url: charmUrl
+      var serviceParams = {
+        ServiceName: serviceName,
+        Config: stringifyObjectValues(config),
+        ConfigYAML: configRaw,
+        Constraints: constraints,
+        CharmUrl: charmUrl,
+        NumUnits: numUnits,
+        ToMachineSpec: toMachine
       };
-      // Call the original user callback.
-      userCallback(transformedData);
+
+      // Perform the API call.
+      if (version !== null) {
+        this._send_rpc({
+          Type: 'Service',
+          Request: 'ServicesDeploy',
+          Version: version,
+          Params: {Services: [serviceParams]}
+        }, handleDeploy);
+        return;
+      };
+
+      // Fall back to legacy deployment.
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: serviceParams
+      }, handleDeploy);
     },
 
     /*

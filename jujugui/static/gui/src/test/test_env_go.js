@@ -942,6 +942,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service', function() {
+      env.set('facades', {'Service': [2]});
+      env.deploy('precise/mysql', null, null, null, null, null, null, null,
+          {immediate: true});
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Service',
+        Request: 'ServicesDeploy',
+        Version: 2,
+        Params: {Services: [{
+          ServiceName: null,
+          ConfigYAML: null,
+          Config: {},
+          Constraints: {},
+          CharmUrl: 'precise/mysql',
+          NumUnits: null,
+          ToMachineSpec: null
+        }]},
+        RequestId: 1
+      };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('successfully deploys a service (legacy API)', function() {
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});
       msg = conn.last_message();
@@ -963,11 +986,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with a config object', function() {
+      env.set('facades', {'Service': [2]});
       var config = {debug: true, logo: 'example.com/mylogo.png'};
       var expected = {
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: {
+        Type: 'Service',
+        Request: 'ServicesDeploy',
+        Version: 2,
+        Params: {Services: [{
           ServiceName: null,
           // Configuration values are sent as strings.
           Config: {debug: 'true', logo: 'example.com/mylogo.png'},
@@ -976,7 +1001,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           CharmUrl: 'precise/mediawiki',
           NumUnits: null,
           ToMachineSpec: null
-        },
+        }]},
         RequestId: 1
       };
       env.deploy('precise/mediawiki', null, config, null, null, null, null,
@@ -986,11 +1011,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with a config file', function() {
+      env.set('facades', {'Service': [2]});
       var config_raw = 'tuning-level: \nexpert-mojo';
       var expected = {
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: {
+        Type: 'Service',
+        Request: 'ServicesDeploy',
+        Version: 2,
+        Params: {Services: [{
           ServiceName: null,
           Config: {},
           Constraints: {},
@@ -998,7 +1025,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           CharmUrl: 'precise/mysql',
           NumUnits: null,
           ToMachineSpec: null
-        },
+        }]},
         RequestId: 1
       };
       env.deploy('precise/mysql', null, null, config_raw, null, null, null,
@@ -1008,6 +1035,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with constraints', function() {
+      env.set('facades', {'Service': [2]});
       var constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
@@ -1019,7 +1047,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy('precise/mediawiki', null, null, null, 1, constraints, null,
           null, {immediate: true});
       msg = conn.last_message();
-      assert.deepEqual(msg.Params.Constraints, {
+      assert.deepEqual(msg.Params.Services[0].Constraints, {
         'cpu-cores': 1,
         'cpu-power': 0,
         mem: 512,
@@ -1030,10 +1058,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service to a specific machine', function() {
+      env.set('facades', {'Service': [2]});
       var expectedMessage = {
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: {
+        Type: 'Service',
+        Request: 'ServicesDeploy',
+        Version: 2,
+        Params: {Services: [{
           ServiceName: null,
           ConfigYAML: null,
           Config: {},
@@ -1041,7 +1071,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           CharmUrl: 'precise/mediawiki',
           NumUnits: 1,
           ToMachineSpec: '42'
-        },
+        }]},
         RequestId: 1
       };
       env.deploy('precise/mediawiki', null, null, null, 1, null, '42', null,
@@ -1050,6 +1080,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service storing charm data', function() {
+      env.set('facades', {'Service': [2]});
+      var charm_url;
+      var err;
+      var service_name;
+      env.deploy(
+          'precise/mysql', 'mysql', null, null, null, null, null,
+          function(data) {
+            charm_url = data.charm_url;
+            err = data.err;
+            service_name = data.service_name;
+          }, {immediate: true});
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {Results: [{}]}
+      });
+      assert.equal(charm_url, 'precise/mysql');
+      assert.isUndefined(err);
+      assert.equal(service_name, 'mysql');
+    });
+
+    it('successfully deploys a service storing legacy charm data', function() {
       var charm_url;
       var err;
       var service_name;
@@ -1071,6 +1123,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failed service deploy', function() {
+      env.set('facades', {'Service': [2]});
+      var err;
+      env.deploy(
+          'precise/mysql', 'mysql', null, null, null, null, null,
+          function(data) {
+            err = data.err;
+          }, {immediate: true});
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {Results: [{Error: 'service "mysql" not found'}]}
+      });
+      assert.equal(err, 'service "mysql" not found');
+    });
+
+    it('handles failed service deploy (legacy API)', function() {
       var err;
       env.deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,

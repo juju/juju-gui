@@ -49,6 +49,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
+      env.set('facades', {'Service': [2]});
     });
 
     afterEach(function() {
@@ -145,6 +146,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Add in the error indicator so the deepEqual is comparing apples to
         // apples.
         data.Error = false;
+        data.Response = {Facades: sandboxModule.Facades};
         assert.deepEqual(Y.JSON.parse(received.data), data);
         assert.isTrue(state.get('authenticated'));
         done();
@@ -386,17 +388,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it('can deploy.', function(done) {
+    it('can deploy', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
       var data = {
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: {
+        Type: 'Service',
+        Request: 'ServicesDeploy',
+        Version: 2,
+        Params: {Services: [{
           CharmUrl: 'cs:precise/wordpress-27',
           ServiceName: 'kumquat',
           ConfigYAML: 'engine: apache',
           NumUnits: 2
-        },
+        }]},
         RequestId: 42
       };
       client.onmessage = function(received) {
