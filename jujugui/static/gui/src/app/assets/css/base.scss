@@ -73,9 +73,9 @@ $canvas-background: $light-grey;
 $hover-background: #f7f7f7;
 $text-colour: $cool-grey;
 
-
 // Spacing.
 $base: 16;
+$base-line-height: 21px;
 $border-radius: 2px;
 $bws-header-height: 81px;
 $deployer-bar-height: 90px;
@@ -83,6 +83,9 @@ $environment-header-height: 40px;
 $left-panel-width: 290px;
 $navbar-height: 60px;
 $panel-space: 10px;
+
+// Font sizes:
+$font-size-small: 14px;
 
 // z-indexing
 $z-indexed-elements: search-results-list-block__tags,
@@ -107,7 +110,6 @@ $z-indexed-elements: search-results-list-block__tags,
                      more-menu,
                      shortcut-help,
                      header-search--active,
-                     dropdown,
                      full-screen-mask,
                      centered-column;
 
@@ -146,7 +148,7 @@ body {
     background-color: $canvas-background;
     color: $text-colour;
     font-size: 16px;
-    line-height: 18px;
+    line-height: $base-line-height;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -234,7 +236,7 @@ svg {
 }
 
 li {
-    line-height: 18px;
+    line-height: $base-line-height;
 }
 
 h2 {
@@ -246,7 +248,7 @@ h4 {
 }
 
 h4, h5, h6 {
-    line-height: 18px;
+    line-height: $base-line-height;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -813,7 +815,6 @@ g.unit {
             @extend .button;
         }
         .header {
-            @extend .type9;
             margin: 0 0 20px -20px;
             padding: 10px 20px;
             background-color: #ddd;
@@ -826,7 +827,6 @@ g.unit {
             text-align: center;
         }
         .form-error {
-            @extend .type9;
             margin-bottom: 20px;
             color: red;
         }
@@ -846,7 +846,6 @@ g.unit {
 @import "machine-view/machine-view-token-base";
 @import "machine-view/more-menu";
 @import "machine-view/service-scale-up-view";
-@import "dropdown";
 @import "header";
 
 /** Cookies **/
