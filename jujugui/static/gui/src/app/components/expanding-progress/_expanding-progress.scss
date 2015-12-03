@@ -1,7 +1,7 @@
 $expanding-progress-height: 10px;
 
 #drag-over-notification-container {
-  margin-top: -$expanding-progress-height;
+    margin-top: -$expanding-progress-height;
 }
 
 .expanding-progress {
@@ -12,7 +12,7 @@ $expanding-progress-height: 10px;
     transition: width 0.7s;
 
     &.expanding-progress--active {
-      width: 100%;
+        width: 100%;
     }
 
 }

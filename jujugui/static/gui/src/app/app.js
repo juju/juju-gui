@@ -1025,6 +1025,7 @@ YUI.add('juju-gui', function(Y) {
       @method _renderDragOverNotification
     */
     _renderDragOverNotification: function() {
+      this.views.environment.instance.fadeHelpIndicator(true);
       ReactDOM.render(
         <components.ExpandingProgress />,
         document.getElementById('drag-over-notification-container'));
@@ -1195,9 +1196,10 @@ YUI.add('juju-gui', function(Y) {
     /**
       Hide the drag notifications.
 
-      @method hideDragNotifications
+      @method _hideDragNotifications
     */
-    hideDragNotifications: function() {
+    _hideDragNotifications: function() {
+      this.views.environment.instance.fadeHelpIndicator(false);
       ReactDOM.unmountComponentAtNode(
         document.getElementById('drag-over-notification-container'));
     },
@@ -1236,7 +1238,7 @@ YUI.add('juju-gui', function(Y) {
       }
       if (action === 'start') {
         this._dragLeaveTimer = setTimeout(() => {
-          this.hideDragNotifications();
+          this._hideDragNotifications();
         }, 100);
       }
     },
