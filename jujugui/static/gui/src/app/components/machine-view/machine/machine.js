@@ -22,6 +22,7 @@ YUI.add('machine-view-machine', function() {
 
   juju.components.MachineViewMachine = React.createClass({
     propTypes: {
+      destroyMachines: React.PropTypes.func.isRequired,
       machine: React.PropTypes.object.isRequired,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,

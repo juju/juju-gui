@@ -67,6 +67,11 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
+        <juju.components.MoreMenu
+          items={[{
+            label: 'Destroy',
+            action: instance._destroyMachine
+          }]} />
         <div className="machine-view__machine-name">
           new0
         </div>
@@ -124,7 +129,7 @@ describe('MachineViewMachine', function() {
       <div className="machine-view__machine-hardware">
         Hardware details not available
       </div>);
-    assert.deepEqual(output.props.children[1], expected);
+    assert.deepEqual(output.props.children[2], expected);
   });
 
   it('can render a container', function() {
@@ -158,6 +163,11 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
+        <juju.components.MoreMenu
+          items={[{
+            label: 'Destroy',
+            action: instance._destroyMachine
+          }]} />
         <div className="machine-view__machine-name">
           new0/lxc/0
         </div>
@@ -180,5 +190,40 @@ describe('MachineViewMachine', function() {
         </ul>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can destroy a machine', function() {
+    var destroyMachines = sinon.stub();
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      id: 'new0'
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var services = {
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('icon.svg')
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        destroyMachines={destroyMachines}
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>);
+    output.props.children[0].props.items[0].action();
+    assert.equal(destroyMachines.callCount, 1);
+    assert.deepEqual(destroyMachines.args[0][0], ['new0']);
   });
 });

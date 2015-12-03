@@ -285,8 +285,10 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
+    var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
         services={services}
@@ -302,6 +304,7 @@ describe('MachineView', function() {
           </div>
           <ul className="machine-view__list">
             {[<juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -332,8 +335,10 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
+    var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
         services={services}
@@ -346,6 +351,7 @@ describe('MachineView', function() {
           {undefined}
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -354,6 +360,7 @@ describe('MachineView', function() {
               type="machine"
               units={units} />
             <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
               key="new1"
               machine={machineList[1]}
               selected={false}
@@ -413,8 +420,10 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
+    var destroyMachines = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
         services={services}
@@ -423,12 +432,14 @@ describe('MachineView', function() {
       <div className="machine-view__column-content">
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
             key="new0"
-            machine={{id: 'new0', displayName: 'Root container'}}
+            machine={{id: 'new0', displayName: 'Root container', root: true}}
             services={services}
             type="container"
             units={units} />
           <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
             services={services}
