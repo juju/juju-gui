@@ -627,10 +627,11 @@ YUI.add('juju-gui', function(Y) {
         this.deployService(charm, ghostAttributes);
       }, this);
 
+      this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
       // These are manually detached in the destructor.
       ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
         document.addEventListener(
-          eventName, this._appDragOverHandler.bind(this));
+          eventName, this._boundAppDragOverHandler);
       });
 
       // We are now ready to connect the environment and bootstrap the app.
@@ -1196,9 +1197,9 @@ YUI.add('juju-gui', function(Y) {
     /**
       Hide the drag notifications.
 
-      @method _hideDragNotifications
+      @method _hideDragOverNotification
     */
-    _hideDragNotifications: function() {
+    _hideDragOverNotification: function() {
       this.views.environment.instance.fadeHelpIndicator(false);
       ReactDOM.unmountComponentAtNode(
         document.getElementById('drag-over-notification-container'));
@@ -1235,10 +1236,11 @@ YUI.add('juju-gui', function(Y) {
     _dragleaveTimerControl: function(action) {
       if (this._dragLeaveTimer) {
         window.clearTimeout(this._dragLeaveTimer);
+        this._dragLeaveTimer = null;
       }
       if (action === 'start') {
         this._dragLeaveTimer = setTimeout(() => {
-          this._hideDragNotifications();
+          this._hideDragOverNotification();
         }, 100);
       }
     },
@@ -1385,10 +1387,9 @@ YUI.add('juju-gui', function(Y) {
             }
           }
       );
-      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
-        Y.config.doc.removeEventListener(
-            eventName, this._boundAppDragOverHandler);
-      }, this);
+      ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
+        document.removeEventListener(eventName, this._boundAppDragOverHandler);
+      });
     },
 
     /**
