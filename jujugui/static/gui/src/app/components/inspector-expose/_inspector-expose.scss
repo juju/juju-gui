@@ -1,6 +1,5 @@
 .inspector-expose {
     @extend %scroll-children;
-    line-height: 18px;
 
     &__control {
         @extend %fade-in;
@@ -9,7 +8,7 @@
     &__warning {
         @extend %fade-in;
         margin: 5px 20px 20px;
-        line-height: 1.6;
+        font-size: $font-size-small;
     }
 
     &__units {

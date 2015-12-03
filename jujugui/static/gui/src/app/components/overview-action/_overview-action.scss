@@ -6,7 +6,7 @@
     &:focus,
     &:active,
     &:hover {
-        background-color: $light-grey;
+        background-color: $hover-background;
 
         .overview-action__icon {
           circle,

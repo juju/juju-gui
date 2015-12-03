@@ -23,7 +23,7 @@
         &.hover,
         &:active,
         &:hover {
-            background-color: $light-grey;
+            background-color: $hover-background;
         }
         &:hover .inspector-view__item-name {
             max-width: 105px;

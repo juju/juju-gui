@@ -55,8 +55,11 @@ describe('DeploymentBar', function() {
         visible={true}>
         <juju.components.DeploymentBarNotification
           change={null} />
-        <juju.components.DeploymentBarChangeCount
-          count={2} />
+        <juju.components.GenericButton
+          action={deployButtonAction}
+          type="blue"
+          disabled={false}
+          title={2} />
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
