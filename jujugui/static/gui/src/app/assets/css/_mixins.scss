@@ -81,6 +81,21 @@ button,
     }
 }
 
+%button-blue {
+    @extend %button;
+    border: none;
+    background-color: $uncommitted;
+    color: $white;
+
+    &:active,
+    &:focus,
+    &:hover {
+        $colour: darken($uncommitted, 10%);
+        background-color: $colour;
+        border-color: $colour;
+    }
+}
+
 %button-disabled {
     @extend %button;
     $colour: $mid-grey;
