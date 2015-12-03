@@ -50,7 +50,6 @@ for indentation.
 $font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
-/* Define common colors. */
 /* Shades of grey */
 $white: #fff;
 $light-grey: #f5f5f5;
@@ -60,19 +59,20 @@ $warm-grey: #888;
 $dark-grey: #9fa7aa;
 $cool-grey: #333;
 
-$canvas-background: $light-grey;
+// Status colours.
 $error: #df382c;
-$ubuntu-orange: #dd4814;
-$charm-panel-orange: #dd4814;
-$charm-panel-background-color: #eeeeee;
-$label-color: #292929;
-$navbar-border-dark: #191514;
-$navbar-border-light: #2d2928;
-$success: #38b44a;
-$text-colour: $cool-grey;
-$text-entry-color: #6d6e70;
 $pending: #eaa818;
+$success: #38b44a;
 $uncommitted: #19b6ee;
+
+// Brand colours.
+$ubuntu-orange: #dd4814;
+
+// Other colous.
+$canvas-background: $light-grey;
+$hover-background: #f7f7f7;
+$text-colour: $cool-grey;
+
 
 // Spacing.
 $base: 16;
@@ -155,7 +155,7 @@ body {
 a,
 a:hover {
     cursor: pointer;
-    color: $charm-panel-orange;
+    color: $ubuntu-orange;
     text-decoration: none;
 }
 
