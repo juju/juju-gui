@@ -173,6 +173,9 @@ YUI.add('juju-env-sandbox', function(Y) {
   });
 
   sandboxModule.ClientConnection = ClientConnection;
+  sandboxModule.Facades = [
+    {Name: 'Service', Versions: [2]}
+  ];
 
   /**
   A sandbox Juju environment using the Go API.
@@ -274,6 +277,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleAdminLogin: function(data, client, state) {
       data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
+      data.Response = {Facades: sandboxModule.Facades};
       client.receive(data);
     },
 
@@ -709,26 +713,33 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ServiceDeploy messages
+    Handle Service.ServicesDeploy messages.
 
-    @method handleClientServiceDeploy
+    @method handleServiceServicesDeploy
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientServiceDeploy: function(data, client, state) {
-      var callback = Y.bind(function(result) {
-        this._basicReceive(data, client, result);
-      }, this);
-
-      state.deploy(data.Params.CharmUrl, callback, {
-        name: data.Params.ServiceName,
-        config: data.Params.Config,
-        configYAML: data.Params.ConfigYAML,
-        constraints: data.Params.Constraints,
-        unitCount: data.Params.NumUnits,
-        toMachine: data.Params.ToMachineSpec
+    handleServiceServicesDeploy: function(data, client, state) {
+      var callback = function(result) {
+        var res = {};
+        if (result.error) {
+          res.Error = result.error;
+        }
+        client.receive({
+          RequestId: data.RequestId,
+          Response: {Results: [res]}
+        });
+      };
+      var params = data.Params.Services[0];
+      state.deploy(params.CharmUrl, callback, {
+        name: params.ServiceName,
+        config: params.Config,
+        configYAML: params.ConfigYAML,
+        constraints: params.Constraints,
+        unitCount: params.NumUnits,
+        toMachine: params.ToMachineSpec
       });
     },
 
