@@ -22,6 +22,10 @@
     box-shadow: none;
 }
 
+.deployment-view .panel-component.white-box {
+    z-index: index($z-indexed-elements, deployment-summary-panel);
+}
+
 .panel-component.deployment-bar-panel {
     right: 20px;
     bottom: 30px;
