@@ -91,6 +91,15 @@ YUI.add('machine-view-machine', function() {
     },
 
     /**
+      Handle destroying a machine.
+
+      @method _destroyMachine
+    */
+    _destroyMachine: function() {
+      this.props.destroyMachines([this.props.machine.id]);
+    },
+
+    /**
       Handle selecting a machine.
 
       @method _handleSelectMachine
@@ -111,6 +120,7 @@ YUI.add('machine-view-machine', function() {
     _generateClasses: function() {
       var classes = {
         'machine-view__machine--selected': this.props.selected,
+        'machine-view__machine--root': this.props.machine.root
       };
       classes['machine-view__machine--' + this.props.type] = true;
       return classNames(
@@ -122,11 +132,17 @@ YUI.add('machine-view-machine', function() {
     render: function() {
       var machine = this.props.machine;
       var units = this.props.units.filterByMachine(machine.id);
+      var menuItems = [{
+        label: 'Destroy',
+        action: this._destroyMachine
+      }];
       return (
         <div className={this._generateClasses()}
           onClick={this._handleSelectMachine}
           role="button"
           tabIndex="0">
+          <juju.components.MoreMenu
+            items={menuItems} />
           <div className="machine-view__machine-name">
             {this.props.machine.displayName}
           </div>
@@ -140,5 +156,6 @@ YUI.add('machine-view-machine', function() {
   });
 }, '0.1.0', {
   requires: [
+    'more-menu'
   ]
 });
