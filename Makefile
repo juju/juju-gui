@@ -1,4 +1,4 @@
-# Makefile to help automate tasks
+# Makefile to help automate tasks.
 PY := bin/python
 PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
