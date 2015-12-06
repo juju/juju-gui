@@ -20,6 +20,14 @@
         margin: 0 auto;
     }
 
+    &__drop-message {
+        font-size: 32px;
+        position: relative;
+        top: 230px;
+        color: $warm-grey;
+        opacity: 0;
+    }
+
     &__tooltip {
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         line-height: normal;
@@ -33,6 +41,7 @@
         left: -20px;
         top: 35px;
         box-sizing: border-box;
+        transition: opacity 0.3s;
 
         &:after {
             content: "";
@@ -53,6 +62,7 @@
         stroke-width: 1;
         width: 789px;
         height: 386px;
+        transition: opacity 0.3s;
     }
 
     &.shrink {

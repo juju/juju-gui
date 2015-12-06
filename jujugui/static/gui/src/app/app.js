@@ -629,9 +629,10 @@ YUI.add('juju-gui', function(Y) {
 
       this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
       // These are manually detached in the destructor.
-      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
-        Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
-      }, this);
+      ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
+        document.addEventListener(
+          eventName, this._boundAppDragOverHandler);
+      });
 
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
@@ -1019,6 +1020,19 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the mask and animations for the drag over notification for when
+      a user drags a yaml file or zip file over the canvas.
+
+      @method _renderDragOverNotification
+    */
+    _renderDragOverNotification: function() {
+      this.views.environment.instance.fadeHelpIndicator(true);
+      ReactDOM.render(
+        <components.ExpandingProgress />,
+        document.getElementById('drag-over-notification-container'));
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -1181,37 +1195,14 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Show the appropriate drag notification type.
-
-      Currently a noop until we get drop a notifications UI from UX.
-
-      @method showDragNotification
-      @param {String} fileType The type of file to show the notification for.
-    */
-    showDragNotification: function(fileType) {
-      // Because Chrome is the only browser that reliably supports parsing for
-      // a file type, if we don't know what the file type is we assume that
-      // the user just knows what they are doing and render all the drop targets
-      if (fileType === 'zip' || fileType === '') {
-        return;
-      }
-    },
-
-    /**
       Hide the drag notifications.
 
-      @method hideDragNotifications
+      @method _hideDragOverNotification
     */
-    hideDragNotifications: function() {
-      // Check to see if there are any active drop notifications
-      if (this.dragNotifications.length > 0) {
-        this.dragNotifications.forEach(function(notification) {
-          notification.mask.remove(true);
-          notification.handlers.forEach(function(handler) {
-            handler.detach();
-          });
-        });
-      }
+    _hideDragOverNotification: function() {
+      this.views.environment.instance.fadeHelpIndicator(false);
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('drag-over-notification-container'));
     },
 
     /**
@@ -1224,21 +1215,14 @@ YUI.add('juju-gui', function(Y) {
     */
     _appDragOverHandler: function(e) {
       e.preventDefault(); // required to allow items to be dropped
-      var fileType = this._determineFileType(e.dataTransfer);
-      if (fileType === false) {
+      if (!this._determineFileType(e.dataTransfer)) {
         return; // Ignore if it's not a supported type
       }
-      var type = e.type;
-      if (type === 'dragenter') {
-        this.showDragNotification(fileType);
-        return;
+      if (e.type === 'dragenter') {
+        this._renderDragOverNotification();
       }
-      if (type === 'dragleave') {
-        this._dragleaveTimerControl('start');
-      }
-      if (type === 'dragover') {
-        this._dragleaveTimerControl('stop');
-      }
+      // Possible values for type are 'dragover' and 'dragleave'.
+      this._dragleaveTimerControl(e.type === 'dragover' ? 'stop' : 'start');
     },
 
     /**
@@ -1250,18 +1234,14 @@ YUI.add('juju-gui', function(Y) {
       @param {String} action The action that should be taken on the timer.
     */
     _dragleaveTimerControl: function(action) {
-      if (action === 'start') {
-        if (this._dragLeaveTimer) {
-          this._dragLeaveTimer.cancel();
-        }
-        this._dragLeaveTimer = Y.later(100, this, function() {
-          this.hideDragNotifications();
-        });
+      if (this._dragLeaveTimer) {
+        window.clearTimeout(this._dragLeaveTimer);
+        this._dragLeaveTimer = null;
       }
-      if (action === 'stop') {
-        if (this._dragLeaveTimer) {
-          this._dragLeaveTimer.cancel();
-        }
+      if (action === 'start') {
+        this._dragLeaveTimer = setTimeout(() => {
+          this._hideDragOverNotification();
+        }, 100);
       }
     },
 
@@ -1407,10 +1387,9 @@ YUI.add('juju-gui', function(Y) {
             }
           }
       );
-      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
-        Y.config.doc.removeEventListener(
-            eventName, this._boundAppDragOverHandler);
-      }, this);
+      ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
+        document.removeEventListener(eventName, this._boundAppDragOverHandler);
+      });
     },
 
     /**
@@ -2060,6 +2039,7 @@ YUI.add('juju-gui', function(Y) {
     'deployment-component',
     'env-size-display',
     'env-switcher',
+    'expanding-progress',
     'header-search',
     'inspector-component',
     'local-inspector',

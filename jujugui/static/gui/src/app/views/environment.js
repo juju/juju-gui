@@ -153,6 +153,30 @@ YUI.add('juju-view-environment', function(Y) {
         }
       }
     },
+
+    /**
+      fades in or out the help indicator.
+
+      @method fadeHelpIndicator
+      @param {Boolean} fade Whether it should fade it in or out.
+    */
+    fadeHelpIndicator: function(fade) {
+      var container = this.get('container');
+      var helpImg = container.one('.environment-help__image');
+      var tooltip = container.one('.environment-help__tooltip');
+      var dragMessage = container.one('.environment-help__drop-message');
+      if (helpImg) {
+        if (fade) {
+          helpImg.setStyle('opacity', 0.5);
+          tooltip.setStyle('opacity', 0);
+          dragMessage.setStyle('opacity', 1);
+        } else {
+          helpImg.setStyle('opacity', 1);
+          tooltip.setStyle('opacity', 1);
+          dragMessage.setStyle('opacity', 0);
+        }
+      }
+    },
     /**
      * Render callback handler, triggered from app when the view renders.
      *
