@@ -65,52 +65,6 @@ describe('topology relation module', function() {
     assert.equal(firedEventName, 'clearState');
   });
 
-  it('fires \'addRelationStart\' event when making a relation', function() {
-    var flags = {
-      addRelationDragStart: 0
-    };
-    var topo = {
-      fire: function(e) {
-        flags[e] = 1;
-      },
-      // stubs
-      get: function(val) {
-        if (val === 'container') {
-          return {
-            one: function() {
-              return {
-                hasClass: function() { return false; }
-              };
-            }
-          };
-        }
-      }
-    };
-    // stubs
-    var context = {
-      get: function(val) {
-        if (val === 'component') { return topo; }
-        if (val === 'container') {
-          return {
-            one: function() {
-              return {
-                hasClass: function() { return false; },
-                getDOMNode: function() { return; }
-              };
-            }
-          };
-        }
-      },
-      addRelationDragStart: function() { return; },
-      mousemove: function() { return; },
-      addRelationStart: function() { return; }
-    };
-    view.addRelButtonClicked(null, context);
-    assert.deepEqual(flags, {
-      addRelationDragStart: 1
-    });
-  });
-
   it('fires \'addRelationEnd\' event when done making a relation', function() {
     var counter = 0;
     var topo = {
@@ -383,7 +337,7 @@ describe('topology relation module', function() {
     // Ensure the given relation includes the expected fields.
     var assertRelation = function(relation) {
       assert.strictEqual(
-          relation.get('relation_id'), 'pending-service1service2');
+          relation.get('relation_id'), 'pending-service1service2dbdb');
       assert.strictEqual(relation.get('display_name'), 'pending');
       assert.deepEqual(relation.get('endpoints'), endpoints);
       assert.strictEqual(relation.get('pending'), true);

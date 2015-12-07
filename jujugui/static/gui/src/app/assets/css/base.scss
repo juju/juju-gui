@@ -484,12 +484,6 @@ th {
               color: $text-colour;
             }
 
-            &.add-relation {
-                .disabled {
-                    color: red;
-                }
-            }
-
             &:last-child {
                 border-bottom: none;
             }
@@ -513,10 +507,6 @@ th {
         li {
             border-top: 1px solid #e9e9e9;
         }
-    }
-
-    &#service-menu ul li {
-        padding-left: 36px;
     }
 }
 
