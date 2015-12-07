@@ -71,6 +71,9 @@ YUI.add('machine-view-add-machine', function() {
       }];
       return (
         <div className="add-machine">
+          <h4 className="add-machine__title">
+            Define constraints
+          </h4>
           <juju.components.Constraints
             valuesChanged={this._updateConstraints} />
           <juju.components.ButtonRow buttons={buttons} />

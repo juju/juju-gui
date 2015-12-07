@@ -46,6 +46,9 @@ describe('MachineViewAddMachine', function() {
     }];
     var expected = (
       <div className="add-machine">
+        <h4 className="add-machine__title">
+          Define constraints
+        </h4>
         <juju.components.Constraints
           valuesChanged={instance._updateConstraints} />
         <juju.components.ButtonRow buttons={buttons} />
@@ -61,7 +64,7 @@ describe('MachineViewAddMachine', function() {
         close={close}
         createMachine={createMachine} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.buttons[0].action();
+    output.props.children[2].props.buttons[0].action();
     assert.equal(close.callCount, 1);
   });
 
@@ -73,7 +76,7 @@ describe('MachineViewAddMachine', function() {
         close={close}
         createMachine={createMachine} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.buttons[0].action();
+    output.props.children[2].props.buttons[0].action();
     assert.equal(close.callCount, 1);
   });
 
@@ -86,7 +89,7 @@ describe('MachineViewAddMachine', function() {
         createMachine={createMachine} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.buttons[1].action();
+    output.props.children[2].props.buttons[1].action();
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], null);
     assert.equal(createMachine.args[0][1], null);

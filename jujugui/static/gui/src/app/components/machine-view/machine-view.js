@@ -147,7 +147,10 @@ YUI.add('machine-view', function() {
     _generateMachines: function() {
       var machines = this.props.machines.filterByParent();
       var onboarding;
-      if (machines.length === 0) {
+      if (this.state.showAddMachines) {
+        return;
+      }
+      else if (machines.length === 0) {
         return (
           <div className="machine-view__column-onboarding">
             Use machine view to:

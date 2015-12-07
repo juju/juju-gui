@@ -412,12 +412,14 @@ describe('MachineView', function() {
     instance._addMachine();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.MachineViewAddMachine
-        close={instance._closeAddMachine}
-        createMachine={createMachine} />);
+      <div className="machine-view__column-content">
+        <juju.components.MachineViewAddMachine
+          close={instance._closeAddMachine}
+          createMachine={createMachine} />
+        {undefined}
+      </div>);
     assert.deepEqual(
-      output.props.children.props.children[1].props.children[1]
-      .props.children[0], expected);
+      output.props.children.props.children[1].props.children[1], expected);
   });
 
   it('can select a machine', function() {
