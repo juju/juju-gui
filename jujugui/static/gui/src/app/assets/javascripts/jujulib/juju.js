@@ -409,7 +409,7 @@ var module = module;
     getEntity: function(entityId, callback) {
       var filters = 'include=bundle-metadata&include=charm-metadata' +
                     '&include=charm-config&include=manifest&include=stats' +
-                    '&include=charm-related&include=extra-info';
+                    '&include=charm-related&include=extra-info&include=tags';
       return _makeRequest(
           this.bakery,
           this._generatePath(entityId, filters, '/meta/any'),
@@ -451,6 +451,7 @@ var module = module;
           'include=charm-config&' +
           'include=bundle-metadata&' +
           'include=extra-info&' +
+          'include=tags&' +
           'include=stats';
       var path = this._generatePath('search', qs);
       return _makeRequest(
