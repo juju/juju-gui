@@ -1139,12 +1139,13 @@ YUI.add('juju-topology-relation', function(Y) {
       // Set up the relation data.
       var endpoint1 = endpoints[0][0],
           endpoint2 = endpoints[1][0];
-      var relation_id = 'pending-' + endpoint1 + endpoint2;
+      var idBlock = `${endpoint1}${endpoint2}`;
+      var interfaceBlock = `${endpoints[0][1].name}${endpoints[1][1].name}`;
       var endpointData = utils.parseEndpointStrings(db, [endpoint1, endpoint2]);
       var match = utils.findEndpointMatch(endpointData);
       // Add the relation to the database.
       var relation = db.relations.add({
-        relation_id: relation_id,
+        relation_id: `pending-${idBlock}${interfaceBlock}`,
         'interface': match['interface'],
         endpoints: endpoints,
         pending: true,
