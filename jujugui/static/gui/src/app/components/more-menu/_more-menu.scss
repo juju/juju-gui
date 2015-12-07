@@ -43,3 +43,23 @@
 .machine-view__header .more-menu {
     float: right;
 }
+
+.machine-view__machine {
+    .more-menu {
+        display: none;
+        float: right;
+
+        &__menu {
+            top: 25px;
+        }
+    }
+
+    &--selected,
+    &:hover {
+        &:not(.machine-view__machine--root) {
+            .more-menu {
+                display: block;
+            }
+        }
+    }
+}

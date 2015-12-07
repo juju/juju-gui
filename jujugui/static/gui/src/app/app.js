@@ -613,6 +613,9 @@ YUI.add('juju-gui', function(Y) {
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
       // at a distance and strange failures.
+      this.db.machines.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
       this.db.services.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
@@ -1009,6 +1012,7 @@ YUI.add('juju-gui', function(Y) {
         ReactDOM.render(
           <components.MachineView
             autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            destroyMachines={this.env.destroyMachines.bind(this.env)}
             environmentName={db.environment.get('name')}
             machines={db.machines}
             services={db.services}

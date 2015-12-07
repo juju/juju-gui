@@ -170,6 +170,7 @@ YUI.add('machine-view', function() {
       machines.forEach((machine) => {
         components.push(
           <juju.components.MachineViewMachine
+            destroyMachines={this.props.destroyMachines}
             key={machine.id}
             machine={machine}
             selected={this.state.selectedMachine === machine.id}
@@ -200,13 +201,15 @@ YUI.add('machine-view', function() {
       }
       var containers = this.props.machines.filterByParent(selectedMachine);
       containers.unshift({
+        displayName: 'Root container',
         id: selectedMachine,
-        displayName: 'Root container'
+        root: true
       });
       var components = [];
       containers.forEach((container) => {
         components.push(
           <juju.components.MachineViewMachine
+            destroyMachines={this.props.destroyMachines}
             key={container.id}
             machine={container}
             services={this.props.services}
