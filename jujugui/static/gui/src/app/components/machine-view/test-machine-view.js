@@ -37,12 +37,14 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
         units={units}
         services={services}
-        machines={machines} />);
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view">
         <div className="machine-view__content">
@@ -60,10 +62,12 @@ describe('MachineView', function() {
           <div className="machine-view__column machine-view__column--overlap">
             <juju.components.MachineViewHeader
               menuItems={[{
-                label: 'Add machine'
+                label: 'Add machine',
+                action: instance._addMachine
               }]}
               title="My Env (0)" />
             <div className="machine-view__column-content">
+              {undefined}
               <div className="machine-view__column-onboarding">
                 Use machine view to:
                 <ul>
@@ -74,7 +78,10 @@ describe('MachineView', function() {
                   <li>Manually place new units</li>
                   <li>Collocate services</li>
                 </ul>
-                <span className="link" role="button" tabIndex="0">
+                <span className="link"
+                  onClick={instance._addMachine}
+                  role="button"
+                  tabIndex="0">
                   Add machine
                 </span>
               </div>
@@ -244,14 +251,17 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
         units={units}
         services={services}
-        machines={machines} />);
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div className="machine-view__column-onboarding">
           Use machine view to:
           <ul>
@@ -262,7 +272,10 @@ describe('MachineView', function() {
             <li>Manually place new units</li>
             <li>Collocate services</li>
           </ul>
-          <span className="link" role="button" tabIndex="0">
+          <span className="link"
+            onClick={instance._addMachine}
+            role="button"
+            tabIndex="0">
             Add machine
           </span>
         </div>
@@ -297,6 +310,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div>
           <div className="machine-view__column-onboarding">
             Drag and drop unplaced units onto your machines and containers to
@@ -347,6 +361,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div>
           {undefined}
           <ul className="machine-view__list">
@@ -373,6 +388,36 @@ describe('MachineView', function() {
       </div>);
     assert.deepEqual(
       output.props.children.props.children[1].props.children[1], expected);
+  });
+
+  it('can display a form for adding a machine', function() {
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        createMachine={createMachine}
+        environmentName="My Env"
+        machines={machines}
+        services={services}
+        units={units} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._addMachine();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.MachineViewAddMachine
+        close={instance._closeAddMachine}
+        createMachine={createMachine} />);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1]
+      .props.children[0], expected);
   });
 
   it('can select a machine', function() {
