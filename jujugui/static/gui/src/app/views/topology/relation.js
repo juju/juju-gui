@@ -71,14 +71,6 @@ YUI.add('juju-topology-relation', function(Y) {
            */
           click: {callback: 'draglineClicked'}
         },
-        '.add-relation': {
-          /**
-           * The user clicked on the "Build Relation" menu item.
-           *
-           * @method events.scene.add-relation.click
-           */
-          click: {callback: 'addRelButtonClicked'}
-        },
         '.zoom-plane': {
           mousemove: {callback: 'mousemove'}
         }
@@ -474,33 +466,6 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.fire('clearState');
     },
 
-    addRelButtonClicked: function(data, context) {
-      var topo = context.get('component');
-      var box = topo.get('active_service');
-      var container = context.get('container');
-      var addRelationNode = container.one('.add-relation');
-
-      // If the link is disabled, which can happen if the charm is not yet
-      // loaded and we don't know the endpoints, then don't allow clicking on
-      // it.
-      if (addRelationNode.hasClass('disabled')) {
-        return;
-      }
-
-      // Signify that a relation is being drawn.
-      topo.fire('addRelationDragStart', {service: box});
-    },
-
-    /*
-     * Event handler for the add relation button.
-     */
-    addRelation: function(evt) {
-      var curr_action = this.get('currentServiceClickAction');
-      if (curr_action === 'show_service') {
-        this.set('currentServiceClickAction', 'addRelationStart');
-      } // Otherwise do nothing.
-    },
-
     /**
      * If the mouse moves and we are adding a relation, then the dragline
      * needs to be updated.
@@ -646,7 +611,6 @@ YUI.add('juju-topology-relation', function(Y) {
       } else {
         // TODO clean up, abstract
         self.cancelRelationBuild();
-        self.addRelation(); // Will clear the state.
       }
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');

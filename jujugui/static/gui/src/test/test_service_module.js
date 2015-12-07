@@ -210,31 +210,6 @@ describe.skip('service module events', function() {
     view.destroy();
   });
 
-  it('should show the service menu', function() {
-    var box = topo.service_boxes.haproxy;
-    var menu = viewContainer.one('#service-menu');
-
-    assert.equal(menu.hasClass('active'), false);
-    serviceModule.showServiceMenu(box);
-    assert.equal(menu.hasClass('active'), true);
-    // Check no-op.
-    serviceModule.showServiceMenu(box);
-    assert.equal(menu.hasClass('active'), true);
-  });
-
-  it('should hide the service menu',
-     function() {
-       var box = topo.service_boxes.haproxy;
-       var menu = viewContainer.one('#service-menu');
-       serviceModule.showServiceMenu(box);
-       assert.equal(menu.hasClass('active'), true);
-       serviceModule.hideServiceMenu();
-       assert.equal(menu.hasClass('active'), true);
-       // Check no-op.
-       serviceModule.hideServiceMenu();
-       assert.equal(menu.hasClass('active'), true);
-     });
-
   it('should notify modules when service type is changed', function(done) {
     topo.on('rerenderRelations', function() {
       done();
@@ -252,32 +227,6 @@ describe.skip('service module events', function() {
     var menuStub = utils.makeStubMethod(serviceModule, 'showServiceMenu');
     this._cleanups.push(menuStub.reset);
     serviceModule.showServiceDetails({id: 'test'}, topo);
-  });
-
-  // Click the provided service so that the service menu is shown.
-  // Return the service menu.
-  var clickService = function(service) {
-    // Monkeypatch to avoid the click event handler bailing out early.
-    topo.service_boxes.haproxy.containsPoint = function() {
-      return true;
-    };
-    // Click the service.
-    service.simulate('click');
-    return viewContainer.one('#service-menu');
-  };
-
-  it('should handle touch/click events properly', function() {
-    var service = viewContainer.one('.service');
-    var menu = viewContainer.one('#service-menu');
-    assert.equal(menu.hasClass('active'), true);
-    serviceModule._touchstartServiceTap({
-      currentTarget: service,
-      touches: [{PageX: 0, PageY: 0}]
-    }, topo);
-    // Touch events should also fire click events, which will be ignored.
-    // Fire one manually here.
-    clickService(service);
-    assert.equal(menu.hasClass('active'), true);
   });
 
   it('must not process service clicks after a dragend', function() {
