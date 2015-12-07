@@ -77,19 +77,24 @@ describe('ScaleService', function() {
     // Open the constraints and set their values.
     testUtils.Simulate.change(output.refs.autoPlaceUnitsToggle);
 
-    var cpu = output.refs.cpuConstraintInput;
+    var constraintsContainer = output.refs.constraintsContainer;
+    var cpu = constraintsContainer.querySelector(
+      'input[name="cpu-constraint"]');
     cpu.value = 'c p u';
     testUtils.Simulate.change(cpu);
 
-    var cores = output.refs.coresConstraintInput;
+    var cores = constraintsContainer.querySelector(
+      'input[name="cores-constraint"]');
     cores.value = 'c o r e s';
     testUtils.Simulate.change(cores);
 
-    var ram = output.refs.ramConstraintInput;
+    var ram = constraintsContainer.querySelector(
+      'input[name="mem-constraint"]');
     ram.value = 'r a m';
     testUtils.Simulate.change(ram);
 
-    var disk  = output.refs.diskConstraintInput;
+    var disk  = constraintsContainer.querySelector(
+      'input[name="disk-constraint"]');
     disk.value = 'd i s k';
     testUtils.Simulate.change(disk);
 
