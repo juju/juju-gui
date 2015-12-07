@@ -33,7 +33,7 @@ describe('Constraints', function() {
 
   it('calls the provided method when the component is mounted', function() {
     var valuesChanged = sinon.stub();
-    var output = testUtils.renderIntoDocument(
+    testUtils.renderIntoDocument(
       <juju.components.Constraints
         valuesChanged={valuesChanged} />);
     assert.equal(valuesChanged.callCount, 1);

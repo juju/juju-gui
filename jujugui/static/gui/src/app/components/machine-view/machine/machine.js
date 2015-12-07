@@ -113,7 +113,7 @@ YUI.add('machine-view-machine', function() {
     },
 
     /**
-      Generate the classes machine.
+      Generate the classes for the machine.
 
       @method _generateClasses
       @returns {String} The collection of class names.

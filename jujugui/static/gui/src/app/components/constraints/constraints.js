@@ -21,6 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('constraints', function() {
 
   juju.components.Constraints = React.createClass({
+    propTypes: {
+      valuesChanged: React.PropTypes.func.isRequired
+    },
 
     /**
       Called when the component is first mounted.
