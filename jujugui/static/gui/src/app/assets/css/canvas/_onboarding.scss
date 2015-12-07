@@ -39,7 +39,7 @@
         color: #757575;
         position: relative;
         left: -20px;
-        top: 35px;
+        top: 110px;
         box-sizing: border-box;
         transition: opacity 0.3s;
 
@@ -66,11 +66,7 @@
     }
 
     &.shrink {
-        z-index: index($z-indexed-elements, environment-help-shrink);
-        height: auto;
-        width: auto;
-        left: 50%;
-        top: 40%;
+        display: none;
 
         .environment-help__tooltip,
         .environment-help__image {
