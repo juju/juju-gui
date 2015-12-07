@@ -1,0 +1,8 @@
+.button-row {
+    @extend %fade-in;
+    padding: 10px;
+}
+
+.env-list-panel .button-row {
+  padding: 0;
+}

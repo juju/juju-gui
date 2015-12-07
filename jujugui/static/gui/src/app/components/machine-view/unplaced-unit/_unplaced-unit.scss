@@ -1,0 +1,12 @@
+.machine-view__unplaced-unit {
+    @extend %floating-panel;
+    margin-bottom: 10px;
+    padding: 10px;
+
+    &-icon {
+        width: 24px;
+        height: 24px;
+        margin: -2px 7px -2px 0;
+        vertical-align: text-top;
+    }
+}

@@ -1,0 +1,81 @@
+.mid-point {
+    padding: 30px 20px 20px 20px;
+
+    &__title {
+        margin-bottom: 20px;
+        font-size: 22px;
+    }
+
+    &__charm-list {
+        display: flex;
+        margin: 0;
+        list-style: none;
+    }
+
+    &__charm {
+        flex: 1 1 auto;
+        cursor: pointer;
+        margin-right: 20px;
+        padding: 20px;
+        border: 1px solid $mid-grey;
+        text-align: center;
+
+        &:active,
+        &:focus,
+        &:hover {
+            background-color: $light-grey;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    &__charm-icon {
+        $size: 60px;
+        width: $size;
+        height: $size;
+        margin-bottom: 20px;
+    }
+
+    &__charm-name {
+        display: block;
+        text-align: center;
+    }
+
+    &__footer-row {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    &__tag-list {
+        float: left;
+        margin: 10px 0 0 0;
+        list-style: none;
+    }
+
+    &__tag {
+        display: inline-block;
+        cursor: pointer;
+
+        &:after {
+            content: ',';
+            margin-right: 4px;
+            color: $warm_grey;
+        }
+
+        &:last-child:after {
+            content: '';
+            margin-right: 0;
+        }
+    }
+
+    &__tag-count {
+        margin-left: 4px;
+        color: $warm_grey;
+    }
+
+    &__store-button {
+        @extend %button;
+    }
+}

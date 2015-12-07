@@ -1,0 +1,14 @@
+.user-profile {
+    z-index: index($z-indexed-elements, user-profile);
+    top: $navbar-height;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+    }
+}

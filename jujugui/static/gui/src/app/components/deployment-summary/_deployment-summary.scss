@@ -1,0 +1,66 @@
+.deployment-summary {
+    @extend %floating-panel;
+    @extend %scroll-children;
+    // Expand this container to take the full parent height.
+    flex: 2;
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: 30px;
+    right: 30px;
+
+    &__header {
+        padding: 40px 20px 20px;
+    }
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+    }
+
+    &__title {
+        font-size: 1.375em;
+    }
+
+    &__placement {
+        margin-top: 20px;
+        padding: 20px 20px 0 20px;
+        border-top: 1px solid $light-mid-grey;
+
+        form,
+        &-label {
+            display: inline-block;
+        }
+
+        &-radio {
+            margin: 0 5px 0 10px;
+        }
+
+        &-label {
+            margin-right: 10px;
+        }
+
+        .link {
+            margin-left: 10px;
+        }
+    }
+
+    &__content {
+        @extend %collapse-children;
+        padding: 0 20px 5px 20px;
+    }
+
+    &__list {
+        margin: 0;
+        border-top: 1px solid $light-mid-grey;
+        list-style: none;
+    }
+
+    &__footer {
+        padding: 20px;
+        border-top: 1px solid $light-mid-grey;
+        text-align: right;
+    }
+}

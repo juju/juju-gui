@@ -1,0 +1,62 @@
+.login {
+  margin: 80px auto 0;
+  max-width: 65%;
+
+  &__logo {
+    text-align: center;
+  }
+
+  &__full-form {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 50%;
+  }
+
+  &__form {
+    padding: 20px;
+    background-color: white;
+    width: 300px;
+    margin: 0px 20px 0 auto;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
+
+    .generic-button {
+      width: 100%;
+    }
+  }
+
+  &__label {
+    clear: both;
+    color: $warm-grey;
+    vertical-align: middle;
+    line-height: 40px;
+    margin-bottom: 20px;
+  }
+
+  &__env-name {
+    font-size: 23px;
+    border-bottom: 1px solid $mid-grey;
+    background-color: white;
+    padding: 20px;
+    width: 300px;
+    margin: 50px 20px 0 auto;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  &__input[type=text],
+  &__input[type=password] {
+    display: block;
+    float: right;
+    padding: 10px;
+  }
+
+  &__message {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 50%;
+    text-align: left;
+    color: $warm-grey;
+    font-size: 13px;
+    line-height: 28px;
+  }
+
+}

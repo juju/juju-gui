@@ -1,0 +1,20 @@
+<div class="menu">
+    <ul>
+        {{#relationslist endpoints}}
+        <li
+            data-startservice="{{start.service}}"
+            data-startname="{{start.name}}"
+            data-endservice="{{end.service}}"
+            data-endname="{{end.name}}">
+            {{start.displayName}}:{{start.name}} &rarr; {{end.displayName}}:{{end.name}}
+        </li>
+        {{/relationslist}}
+    </ul>
+    <div class="cancel link" role="button" tabindex="0">
+        <svg class="svg-icon header-banner__logo"
+            viewBox="0 0 16 16"
+            style="width:16px; height:16px;">
+            <use xlink:href="#close_16" />
+        </svg>
+    </div>
+</div>

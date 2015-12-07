@@ -1,0 +1,87 @@
+.inspector-view {
+    @extend %floating-panel;
+    @extend %scroll-children;
+    $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + 30px;
+    position: absolute;
+    z-index: index($z-indexed-elements, inspector-view);
+    top: $environment-header-height + ($panel-space * 2) + $navbar-height;
+    left: $panel-space;
+    width: $left-panel-width;
+    max-height: calc(100% - #{$extra-space});
+
+    &__list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    &__list-item {
+        @extend %stagger-fade-in;
+        padding: 10px 20px;
+        cursor: pointer;
+
+        &.hover,
+        &:active,
+        &:hover {
+            background-color: $light-grey;
+        }
+        &:hover .inspector-view__item-name {
+            max-width: 105px;
+        }
+        &.visibility-toggled .inspector-view__item-name {
+            max-width: 105px;
+        }
+        &.visibility-toggled .inspector-view__visibility-toggle {
+            display: inline-block;
+
+        }
+        &:hover .inspector-view__visibility-toggle {
+            display: inline-block;
+        }
+    }
+
+    &__item-icon {
+        $size: 24px;
+        width: $size;
+        height: $size;
+        margin-right: 16px;
+        vertical-align: middle;
+    }
+
+    &__item-name {
+        overflow: hidden;
+        display: inline-block;
+        max-width: 165px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: text-bottom;
+    }
+
+    &__item-count {
+        color: $warm-grey;
+    }
+
+    &__visibility-toggle {
+        display: none;
+        vertical-align: middle;
+        padding: 0 15px 0 0;
+    }
+
+    &__status-block {
+        float: right;
+    }
+
+    &__status {
+        &--error {
+            @include notification($error);
+        }
+
+        &--pending {
+            @include notification($pending);
+        }
+
+        &--uncommitted {
+            @include notification($uncommitted);
+        }
+    }
+}

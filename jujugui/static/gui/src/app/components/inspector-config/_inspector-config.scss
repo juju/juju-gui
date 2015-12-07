@@ -1,0 +1,15 @@
+.inspector-config {
+    @extend %scroll-children;
+
+    &__fields {
+        @extend %collapse-children;
+    }
+
+    &--no-config {
+      margin: 10px 20px 14px 20px;
+    }
+
+    &__config-file {
+        margin: 0px 10px 0px 10px;
+    }
+}

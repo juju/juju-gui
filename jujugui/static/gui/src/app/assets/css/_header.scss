@@ -1,0 +1,79 @@
+
+/*
+ * The main header above the canvas
+ */
+
+.header-banner {
+    position: absolute;
+    top: 0;
+    width: auto;
+    height: $navbar-height;
+
+    &--right {
+      z-index: index($z-indexed-elements, header-banner-search);
+      right: 0;
+    }
+
+    &--left {
+      z-index: index($z-indexed-elements, header-banner-breadcrumbs);
+      left: 0;
+    }
+
+    &__link,
+    &__link--breadcrumb {
+        @extend .border-box;
+        color: $text-colour;
+        display: block;
+    }
+
+    &__link--breadcrumb {
+        color: $charm-panel-orange;
+        font-size: 23px;
+
+        &:before {
+            content: '/';
+            position: relative;
+            left: -5px;
+            top: 1px;
+            color: #cdcdcd;
+        }
+
+        &:after {
+            content: '/';
+            position: relative;
+            right: -5px;
+            top: 1px;
+            color: #cdcdcd;
+        }
+    }
+
+    &__logo {
+        position: relative;
+        top: -1px;
+    }
+
+    .environment-name {
+        color: $text-colour;
+        font-size: 23px;
+    }
+
+    .header-banner__list {
+        @extend %list-style;
+
+        &--right {
+            @extend %list-style;
+            float: right;
+        }
+    }
+
+    .header-banner__list-item {
+        float: left;
+        padding: 21px 8px;
+
+        &--no-padding {
+            padding: 0;
+        }
+    }
+
+
+}

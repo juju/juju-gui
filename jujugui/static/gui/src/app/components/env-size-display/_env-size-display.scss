@@ -1,0 +1,30 @@
+.env-size-display {
+    @extend %floating-panel;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: index($z-indexed-elements, env-size-display);
+    top: $navbar-height + $panel-space;
+    left: $panel-space;
+    width: $left-panel-width;
+    height: $environment-header-height;
+    padding: 0 20px;
+    color: $text-colour;
+    line-height: $environment-header-height;
+
+    ul {
+        margin: 0;
+        list-style: none;
+
+        li {
+            display: inline;
+
+            &.active a {
+                color: $text-colour;
+            }
+        }
+
+        .spacer {
+            margin: 0 5px;
+        }
+    }
+}

@@ -1,0 +1,62 @@
+.generic-button {
+    @extend %button;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    &--type-confirm {
+        @extend %button-orange;
+    }
+
+    &--disabled {
+        @extend %button-disabled;
+    }
+}
+
+.button-row {
+    .generic-button {
+        width: 100%;
+    }
+
+    &--multiple .generic-button {
+        width: calc(50% - 5px);
+
+        &:first-child {
+            margin-right: 10px;
+        }
+    }
+}
+
+.deployment-bar-panel .generic-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.deployment-summary .generic-button {
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.entity-details .generic-button {
+    width: 100%;
+}
+
+.inspector-config .generic-button {
+    padding: 10px 10px;
+}
+
+.inspector-current-version__item {
+    .generic-button {
+        display: none;
+        float: right;
+        margin-top: -3px;
+        padding: 5px 10px;
+    }
+
+    &:focus,
+    &:active,
+    &:hover {
+        .generic-button {
+            display: block;
+        }
+    }
+}

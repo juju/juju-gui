@@ -1,0 +1,213 @@
+g.service {
+   @extend .visibility-classes;
+   fill: none;
+   stroke: none;
+
+   .service-block {
+      transition: all .3s;
+   }
+
+   .unit-count {
+      stroke-width: 0;
+      text-anchor: middle;
+      dominant-baseline: central;
+      fill: rgba(0,0,0,0);
+
+      &.show-count {
+         fill: rgba(0,0,0,1);
+      }
+
+      &.hide-count {
+         fill: rgba(0,0,0,0);
+      }
+   }
+
+   .sub-rel-count {
+      text-anchor: middle;
+      dominant_baseline: central;
+      fill: $warm-grey;
+      font-size: 18px;
+
+      &.active {
+         font-style: italic;
+         font-weight: bold;
+         fill: #3333cc;
+      }
+   }
+
+   .relation-button {
+      transition: transform .3s;
+      transform: translate(95px, 30px);
+
+      &__link {
+         cursor: pointer;
+
+         &:hover {
+            fill: $white;
+         }
+      }
+
+      &__image {
+         pointer-events: none;
+      }
+   }
+
+   .service-control-panel {
+      visibility: hidden;
+
+      &.active {
+         visibility: visible;
+      }
+
+      image {
+         cursor: pointer;
+      }
+   }
+
+   &.highlight {
+      .service-block {
+         fill: #fff;
+      }
+   }
+
+   &.is-erroring {
+      .service-block {
+         stroke: #ed3146;
+         stroke-width: 3;
+      }
+   }
+
+   &.is-pending {
+      .service-block {
+         stroke: #f99b0f;
+         stroke-width: 3;
+      }
+   }
+
+   &.is-running {
+      .service-block {
+         stroke: #888888;
+         stroke-width: 1;
+      }
+   }
+
+   &.is-exposed {
+      .service-block {
+         stroke-width: 4;
+      }
+   }
+
+   .service-block__halo {
+      transition: all .3s;
+      opacity: 0;
+      r: 90;
+   }
+
+   .service-block {
+      transition: all .3s;
+   }
+
+   &.hover,
+   &:hover {
+
+      .service-block__halo {
+         opacity: 1;
+         r: 110;
+         stroke-width: 1;
+         stroke: #19b6ee;
+      }
+
+      &.is-erroring .service-block__halo {
+         stroke: #ed3146;
+      }
+
+      &.is-pending .service-block__halo {
+         stroke: #f99b0f;
+      }
+
+      &.is-running .service-block__halo {
+         stroke: #888888;
+      }
+
+      .service-block {
+         fill: $white;
+      }
+
+      .relation-button {
+         transform: translate(95px, -30px);
+      }
+   }
+
+   &.subordinate {
+      .service-block__halo {
+         r: 60;
+         stroke: #888888;
+      }
+
+      .relation-button {
+         transform: translate(65px, 30px);
+      }
+
+      &.hover,
+      &:hover {
+         .service-block__halo {
+            r: 80;
+         }
+
+         .relation-button {
+            transform: translate(65px, -30px);
+         }
+      }
+   }
+
+   &.is-selected {
+      .service-block__halo {
+         -webkit-animation: serviceBlockHaloSelected 1s alternate;
+         animation: serviceBlockHaloSelected 1s alternate;
+         opacity: .3;
+         r: 110;
+         stroke-width: 0;
+         fill: #19b6ee;
+      }
+
+      .relation-button {
+         transform: translate(95px, -30px);
+      }
+
+      &.is-erroring .service-block__halo {
+         fill: #ed3146;
+      }
+
+      &.is-pending .service-block__halo {
+         fill: #f99b0f;
+      }
+
+      &.is-running .service-block__halo {
+         fill: #888888;
+      }
+
+      &.subordinate {
+         .service-block__halo {
+            r: 80;
+            fill: #888888;
+         }
+
+         .relation-button {
+            transform: translate(65px, -30px);
+         }
+      }
+
+      .service-block {
+         fill: $white;
+      }
+
+      @-webkit-keyframes serviceBlockHaloSelected {
+         0% { opacity: 0 }
+         100% { opacity: .3 }
+      }
+      @keyframes serviceBlockHaloSelected {
+         0% { opacity: 0 }
+         100% { opacity: .3 }
+      }
+   }
+}

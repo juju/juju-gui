@@ -1,0 +1,54 @@
+.scale-service {
+
+    &__input {
+        margin: 20px 20px 10px 20px;
+        height: 28px;
+        width: 230px;
+    }
+
+    &--units {
+        position: relative;
+
+        &__input {
+            background-color: transparent;
+            margin-bottom: 13px;
+        }
+
+        &__span {
+            position: absolute;
+            right: 25px;
+            top: 30px;
+            color: $warm-grey;
+        }
+    }
+
+    &--selector {
+
+      & &__radio {
+          margin: 6px 10px 10px 15px;
+      }
+
+      label {
+          display: inline-block;
+      }
+
+      div:last-of-type {
+          margin-bottom: 30px;
+      }
+
+    }
+
+    &--constraints {
+
+        &__input {
+            margin-top: 5px;
+        }
+
+        label {
+            margin-left: 30px;
+            font-size: .875em;
+            margin-bottom: 1px;
+            color: $cool-grey;
+        }
+    }
+}

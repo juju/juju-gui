@@ -1,0 +1,26 @@
+.entity-details {
+
+    p {
+      line-height: 1.6;
+    }
+
+    .inline {
+        margin-left: 0;
+        overflow: auto;
+
+        li {
+            display: inline;
+            list-style: none;
+            margin-left: 0;
+            float: left;
+        }
+    }
+
+    .error {
+        margin: 40px;
+    }
+
+    .spinner-loading {
+        margin: 25vh 45vw;
+    }
+}

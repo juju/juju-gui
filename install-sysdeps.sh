@@ -3,7 +3,7 @@
 # Take care to only use 'sudo' when required.
 sudo add-apt-repository -y ppa:yellow/ppa
 sudo apt-get update
-sudo apt-get install -y nodejs imagemagick python-sphinx python-yaml \
+sudo apt-get install -y nodejs python-sphinx python-yaml \
   python-tz python-virtualenv python-shelltoolbox python-tornado \
   python-gflags g++ xvfb git firefox
 

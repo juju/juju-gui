@@ -1,0 +1,9 @@
+<span class="mv-more-menu">
+  <span class="open-menu link" tabindex="0" role="button">
+     <svg class="svg-icon"
+         viewBox="0 0 16 16"
+         style="width:16px; height:16px;">
+         <use xlink:href="#contextual-menu-16" />
+     </svg>
+  </span>
+</span>

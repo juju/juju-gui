@@ -1,0 +1,38 @@
+.machine-view__machine {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid $mid-grey;
+    border-radius: 2px;
+
+    &--selected {
+        margin-right: -20px;
+        border-style: dashed;
+        border-right: 1px solid $canvas-background;
+    }
+
+    &--machine {
+        cursor: pointer;
+
+        .machine-view__machine {
+            &-units {
+                display: inline-block;
+            }
+        }
+    }
+
+    &-name {
+        margin-bottom: 7px;
+    }
+
+    &-units {
+        margin-top: 7px;
+        list-style: none;
+
+        img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    }
+}

@@ -1,0 +1,130 @@
+.machine-view-panel .serviceunit-token {
+    @extend %floating-panel;
+    position: relative;
+    min-height: 38px;
+    margin: 10px 0 0 0;
+    padding: 0 10px;
+    line-height: 38px;
+
+    // States
+    &.state-initial {
+        cursor: move;
+
+        .mv-more-menu {
+            display: block;
+        }
+
+        .title {
+            display: inline;
+        }
+    }
+
+    &.state-select-machine {
+        .machines {
+            display: block;
+        }
+    }
+
+    &.state-new-machine {
+        .machines,
+        .actions,
+        .constraints-form {
+            display: block;
+        }
+    }
+
+    &.state-kvm,
+    &.state-select-container {
+        .machines,
+        .actions,
+        .containers {
+            display: block;
+        }
+    }
+
+    &.state-kvm {
+        .constraints-form {
+            display: block;
+        }
+    }
+
+    &:last-child {
+        margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    select {
+        width: 100%;
+    }
+
+    input[type="text"] {
+        @extend .border-box;
+        margin-bottom: 6px;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+    }
+
+    form label {
+        position: relative;
+        float: right;
+        margin: -37px 10px 0 0;
+        color: #c6c1bb;
+        line-height: 30px;
+
+        &:last-of-type {
+            margin-top: -34px;
+        }
+    }
+
+    .unplaced-unit {
+        .details {
+            display: none;
+        }
+
+        .unit-icon {
+            margin-right: 7px;
+
+            img {
+                width: 20px;
+                height: 20px;
+                vertical-align: -5px;
+            }
+        }
+    }
+
+    .machines {
+        position: absolute;
+        top: 0;
+        left: 38px;
+        right: 10px;
+    }
+
+    .actions {
+        text-align: right;
+
+        span {
+            cursor: pointer;
+        }
+
+        .primary-action {
+            color: $charm-panel-orange;
+        }
+    }
+
+    .mv-more-menu {
+        position: absolute;
+        right: 10px;
+        cursor: default;
+    }
+
+    .mv-more-menu,
+    .title,
+    .containers,
+    .constraints-form,
+    .actions,
+    .machines {
+        display: none;
+    }
+}

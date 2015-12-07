@@ -1,0 +1,176 @@
+@mixin create-border-radius($radius) {
+    -moz-border-radius: $radius;
+    -webkit-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin create-box-shadow($arguments...) {
+    -moz-box-shadow: $arguments;
+    -webkit-box-shadow: $arguments;
+    box-shadow: $arguments;
+}
+
+@mixin create-linear-gradient($gradient-start, $gradient-end) {
+    background-image: -ms-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from($gradient-start), to($gradient-end));
+    background-image: -webkit-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: -o-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: -moz-linear-gradient(top, $gradient-start, $gradient-end);
+    background-image: linear-gradient(top, $gradient-start, $gradient-end);
+    background-repeat: repeat-x;
+}
+
+/*
+ * Rotation transform.  Call with numerical value and units, e.g.
+ * .rotate(-90deg);
+ */
+@mixin rotate($angle) {
+    -webkit-transform: rotate($angle);
+    -moz-transform: rotate($angle);
+    -ms-transform: rotate($angle);
+    -o-transform: rotate($angle);
+    transform: rotate($angle);
+}
+
+.border-box {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+button,
+.button {
+    @extend %button;
+
+    &.orange {
+        @extend %button-orange;
+    }
+}
+
+%button {
+    transition: background-color .3s;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: $white;
+    border: 1px solid $mid-grey;
+    border-radius: $border-radius;
+    color: $charm-panel-orange;
+    text-align: center;
+    cursor: pointer;
+
+    &:active,
+    &:focus,
+    &:hover {
+        background-color: $light-grey;
+    }
+}
+
+%button-orange {
+    @extend %button;
+    border: none;
+    background-color: $ubuntu-orange;
+    color: $white;
+
+    &:active,
+    &:focus,
+    &:hover {
+        $colour: darken($ubuntu-orange, 10%);
+        background-color: $colour;
+        border-color: $colour;
+    }
+}
+
+%button-disabled {
+    @extend %button;
+    $colour: $mid-grey;
+    border: none;
+    background-color: $colour;
+    color: $white;
+    cursor: default;
+
+    &:active,
+    &:focus,
+    &:hover {
+        background-color: $colour;
+        border-color: $colour;
+    }
+}
+
+@mixin customize-scrollbar($background) {
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background-color: $background;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #d4d4d4;
+        border: 1px solid $background;
+        border-radius: 5px;
+    }
+}
+
+.uncommitted-circle {
+    vertical-align: bottom;
+    margin-left: 1px;
+    color: $uncommitted;
+    font-size: 32px;
+    line-height: 0px;
+}
+
+@mixin diamond($color: inherit) {
+  @include rotate(45deg);
+  content: '';
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  display: block;
+  background-color: $color;
+}
+
+%bws-list {
+  overflow-y: auto;
+  max-height: 350px;
+  border-top: 1px solid $mid-grey;
+}
+
+%floating-panel {
+    background-color: $white;
+    border-radius: $border-radius;
+    box-shadow: 0 1px 4.85px .15px rgba(0, 0, 0, 0.2);
+}
+
+@mixin notification($background) {
+    $size: 24px;
+    box-sizing: border-box;
+    display: inline-block;
+    min-width: $size;
+    height: $size;
+    padding: 0 7px;
+    background-color: $background;
+    border-radius: $size / 2;
+    color: $white;
+    line-height: $size;
+    text-align: center;
+}
+
+%list-style {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+%scroll-children {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+%collapse-children {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

@@ -1,0 +1,16 @@
+# Copyright 2015 Canonical Ltd.  This software is licensed under the
+# GNU Affero General Public License version 3 (see the file LICENSE).
+
+include HACKING.rst
+include MANIFEST.in
+include *.ini
+include requirements.txt
+include test-requirements.txt
+
+recursive-include jujugui/static *
+recursive-include jujugui/templates *
+
+recursive-exclude jujugui/static/gui/src *
+recursive-exclude jujugui/tests *
+recursive-exclude test *
+

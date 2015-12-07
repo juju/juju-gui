@@ -1,0 +1,33 @@
+.deployment-summary-change-item {
+    padding: 8px 20px;
+    border-bottom: 1px solid $light-mid-grey;
+
+
+    &.deployment-summary__list-header {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    &__change,
+    &__time {
+        display: inline-block;
+    }
+
+    &__change {
+        width: 66.666%;
+    }
+
+    &__time {
+        width: 33.333%;
+    }
+
+    &__icon {
+        $size: 24px;
+        display: inline-block;
+        width: $size;
+        height: $size;
+        margin-right: 10px;
+        vertical-align: middle;
+        text-align: center;
+    }
+}

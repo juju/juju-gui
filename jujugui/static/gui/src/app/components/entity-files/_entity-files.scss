@@ -1,0 +1,18 @@
+.entity-files {
+    &__link {
+        a:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__file {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        a {
+            text-decoration: none;
+            color: $cool-grey;
+        }
+    }
+}
