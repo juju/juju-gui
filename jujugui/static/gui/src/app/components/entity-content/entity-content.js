@@ -89,6 +89,32 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Generate the list of Tags if available.
+
+      @method _generateTags
+      @return {Array} The tags markup.
+    */
+    _generateTags: function() {
+      // Have to convert {0: 'database'} to ['database'].
+      var tags = [],
+          entityTags = this.props.entityModel.get('tags'),
+          index;
+      if (!entityTags) {
+        return;
+      }
+      for (index in entityTags) {
+        tags.push(entityTags[index]);
+      }
+      return (
+        <div className="four-col entity-content__metadata last-col">
+          <h4>Tags</h4>
+          <ul>
+            {this._generateList(tags, this._handleTagClick)}
+          </ul>
+        </div>);
+    },
+
+    /**
       Handle clicks on tags.
 
       @method _handleTagClick
@@ -117,25 +143,13 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        // Have to convert {0: 'database'} to ['database'].
-        var tags = [],
-            entityTags = entityModel.get('tags'),
-            index;
-        for (index in entityTags) {
-          tags.push(entityTags[index]);
-        }
         return (
           <div className="row entity-content__description">
             <div className="inner-wrapper">
               <div className="twelve-col">
                 <p>{entityModel.get('description')}</p>
               </div>
-              <div className="four-col entity-content__metadata last-col">
-                <h4>Tags</h4>
-                <ul>
-                  {this._generateList(tags, this._handleTagClick)}
-                </ul>
-              </div>
+              {this._generateTags()}
             </div>
           </div>
         );
