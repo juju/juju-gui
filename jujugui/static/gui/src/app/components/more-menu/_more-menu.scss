@@ -49,6 +49,10 @@
         display: none;
         float: right;
 
+        &--active {
+            display: block;
+        }
+
         &__menu {
             top: 25px;
         }

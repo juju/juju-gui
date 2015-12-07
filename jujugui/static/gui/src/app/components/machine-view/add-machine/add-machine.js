@@ -23,7 +23,8 @@ YUI.add('machine-view-add-machine', function() {
   juju.components.MachineViewAddMachine = React.createClass({
     propTypes: {
       close: React.PropTypes.func.isRequired,
-      createMachine: React.PropTypes.func.isRequired
+      createMachine: React.PropTypes.func.isRequired,
+      parentId: React.PropTypes.string
     },
 
     /**
@@ -34,7 +35,8 @@ YUI.add('machine-view-add-machine', function() {
     */
     getInitialState: function() {
       return {
-        constraints: null
+        constraints: null,
+        containerType: null
       };
     },
 
@@ -54,10 +56,67 @@ YUI.add('machine-view-add-machine', function() {
       @method _createMachine
     */
     _createMachine: function() {
+      // Don't try and create a container if the container type has not been
+      // selected.
+      if (this.props.parentId && !this.state.containerType) {
+        return;
+      }
       this.props.createMachine(
-        null, null, this.state.constraints);
+        this.state.containerType, this.props.parentId, this.state.constraints);
       this.props.close();
 
+    },
+
+    /**
+      Generate the constraints form.
+
+      @method _generateConstraints
+    */
+    _generateConstraints: function() {
+      // Show the constraints if we're creating a machine or we're creating a
+      // LXC container.
+      if (this.props.parentId && this.state.containerType !== 'kvm') {
+        return;
+      }
+      return (
+        <div className="add-machine__constraints">
+          <h4 className="add-machine__title">
+            Define constraints
+          </h4>
+          <juju.components.Constraints
+            valuesChanged={this._updateConstraints} />
+        </div>);
+    },
+
+    /**
+      Generate the container type form.
+
+      @method _generateContainerType
+      @param {Object} e The change event.
+    */
+    _updateContainerType: function(e) {
+      this.setState({containerType: e.currentTarget.value});
+    },
+
+    /**
+      Generate the container type form.
+
+      @method _generateContainerType
+    */
+    _generateContainerType: function() {
+      if (!this.props.parentId) {
+        return;
+      }
+      return (
+        <select className="add-machine__container-type"
+          defaultValue=""
+          onChange={this._updateContainerType}>
+          <option disabled={true} value="">
+            Choose container type...
+          </option>
+          <option value="lxc">LXC</option>
+          <option value="kvm">KVM</option>
+        </select>);
     },
 
     render: function() {
@@ -71,11 +130,8 @@ YUI.add('machine-view-add-machine', function() {
       }];
       return (
         <div className="add-machine">
-          <h4 className="add-machine__title">
-            Define constraints
-          </h4>
-          <juju.components.Constraints
-            valuesChanged={this._updateConstraints} />
+          {this._generateContainerType()}
+          {this._generateConstraints()}
           <juju.components.ButtonRow buttons={buttons} />
         </div>
       );

@@ -38,7 +38,7 @@ YUI.add('machine-view', function() {
     getInitialState: function() {
       return {
         selectedMachine: this._getFirstMachineId(this.props.machines),
-        showAddMachines: false
+        showAddMachine: false
       };
     },
 
@@ -147,7 +147,7 @@ YUI.add('machine-view', function() {
     _generateMachines: function() {
       var machines = this.props.machines.filterByParent();
       var onboarding;
-      if (this.state.showAddMachines) {
+      if (this.state.showAddMachine) {
         return;
       }
       else if (machines.length === 0) {
@@ -238,7 +238,7 @@ YUI.add('machine-view', function() {
       @method _addMachine
     */
     _addMachine: function() {
-      this.setState({showAddMachines: true});
+      this.setState({showAddMachine: true});
     },
 
     /**
@@ -247,7 +247,7 @@ YUI.add('machine-view', function() {
       @method _closeAddMachine
     */
     _closeAddMachine: function() {
-      this.setState({showAddMachines: false});
+      this.setState({showAddMachine: false});
     },
 
     /**
@@ -256,13 +256,49 @@ YUI.add('machine-view', function() {
       @method _generateAddMachine
     */
     _generateAddMachine: function() {
-      if (!this.state.showAddMachines) {
+      if (!this.state.showAddMachine) {
         return;
       }
       return (
         <juju.components.MachineViewAddMachine
           close={this._closeAddMachine}
           createMachine={this.props.createMachine} />);
+    },
+
+    /**
+      Handle showing the UI for adding a container.
+
+      @method _addContainer
+    */
+    _addContainer: function() {
+      if (this.state.selectedMachine) {
+        this.setState({showAddContainer: true});
+      }
+    },
+
+    /**
+      Handle closing the UI for adding a container.
+
+      @method _closeAddContainer
+    */
+    _closeAddContainer: function() {
+      this.setState({showAddContainer: false});
+    },
+
+    /**
+      Generate the UI for adding a container.
+
+      @method _generateAddContainer
+    */
+    _generateAddContainer: function() {
+      if (!this.state.showAddContainer) {
+        return;
+      }
+      return (
+        <juju.components.MachineViewAddMachine
+          close={this._closeAddContainer}
+          createMachine={this.props.createMachine}
+          parentId={this.state.selectedMachine} />);
     },
 
     /**
@@ -303,6 +339,10 @@ YUI.add('machine-view', function() {
         label: 'Add machine',
         action: this._addMachine
       }];
+      var containerMenuItems = [{
+        label: 'Add container',
+        action: this._addContainer
+      }];
       return (
         <div className="machine-view">
           <div className="machine-view__content">
@@ -324,8 +364,10 @@ YUI.add('machine-view', function() {
             </div>
             <div className="machine-view__column">
               <juju.components.MachineViewHeader
+                menuItems={containerMenuItems}
                 title={this._generateContainersTitle()} />
               <div className="machine-view__column-content">
+                {this._generateAddContainer()}
                 {this._generateContainers()}
               </div>
             </div>
