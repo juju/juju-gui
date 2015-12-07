@@ -373,7 +373,7 @@ ci-check: clean-downloadcache deps fast-babel check
 # Packaging
 ###########
 .PHONY: bumpversion
-bumpversion: test-deps
+bumpversion: deps
 	bin/bumpversion $(VPART)
 
 .PHONY: dist
