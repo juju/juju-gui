@@ -22,6 +22,7 @@ YUI.add('machine-view', function() {
 
   juju.components.MachineView = React.createClass({
     propTypes: {
+      createMachine: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
       machines: React.PropTypes.object.isRequired,
       services: React.PropTypes.object.isRequired,
@@ -35,7 +36,10 @@ YUI.add('machine-view', function() {
       @returns {String} The intial state.
     */
     getInitialState: function() {
-      return {selectedMachine: this._getFirstMachineId(this.props.machines)};
+      return {
+        selectedMachine: this._getFirstMachineId(this.props.machines),
+        showAddMachines: false
+      };
     },
 
     /**
@@ -143,7 +147,10 @@ YUI.add('machine-view', function() {
     _generateMachines: function() {
       var machines = this.props.machines.filterByParent();
       var onboarding;
-      if (machines.length === 0) {
+      if (this.state.showAddMachines) {
+        return;
+      }
+      else if (machines.length === 0) {
         return (
           <div className="machine-view__column-onboarding">
             Use machine view to:
@@ -155,7 +162,10 @@ YUI.add('machine-view', function() {
               <li>Manually place new units</li>
               <li>Collocate services</li>
             </ul>
-            <span className="link" role="button" tabIndex="0">
+            <span className="link"
+              onClick={this._addMachine}
+              role="button"
+              tabIndex="0">
               Add machine
             </span>
           </div>);
@@ -223,6 +233,39 @@ YUI.add('machine-view', function() {
     },
 
     /**
+      Handle showing the UI for adding a machine.
+
+      @method _addMachine
+    */
+    _addMachine: function() {
+      this.setState({showAddMachines: true});
+    },
+
+    /**
+      Handle closing the UI for adding a machine.
+
+      @method _closeAddMachine
+    */
+    _closeAddMachine: function() {
+      this.setState({showAddMachines: false});
+    },
+
+    /**
+      Generate the UI for adding a machine.
+
+      @method _generateAddMachine
+    */
+    _generateAddMachine: function() {
+      if (!this.state.showAddMachines) {
+        return;
+      }
+      return (
+        <juju.components.MachineViewAddMachine
+          close={this._closeAddMachine}
+          createMachine={this.props.createMachine} />);
+    },
+
+    /**
       Generate the title for the machine column header.
 
       @method _generateMachinesTitle
@@ -257,7 +300,8 @@ YUI.add('machine-view', function() {
 
     render: function() {
       var machineMenuItems = [{
-        label: 'Add machine'
+        label: 'Add machine',
+        action: this._addMachine
       }];
       return (
         <div className="machine-view">
@@ -274,6 +318,7 @@ YUI.add('machine-view', function() {
                 menuItems={machineMenuItems}
                 title={this._generateMachinesTitle()} />
               <div className="machine-view__column-content">
+                {this._generateAddMachine()}
                 {this._generateMachines()}
               </div>
             </div>
@@ -291,6 +336,7 @@ YUI.add('machine-view', function() {
   });
 }, '0.1.0', {
   requires: [
+    'machine-view-add-machine',
     'machine-view-header',
     'machine-view-machine',
     'machine-view-unplaced-unit',

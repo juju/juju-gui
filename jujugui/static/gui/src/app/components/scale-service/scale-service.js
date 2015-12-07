@@ -24,8 +24,19 @@ YUI.add('scale-service', function() {
 
     getInitialState: function() {
       return {
+        constraints: null,
         constraintsVisibility: false
       };
+    },
+
+    /**
+      Update the state with the new constraints values.
+
+      @method _updateConstraints
+      @param {Object} constraints The new constraints values.
+    */
+    _updateConstraints: function(constraints) {
+      this.setState({constraints: constraints});
     },
 
     /**
@@ -92,11 +103,12 @@ YUI.add('scale-service', function() {
           component: 'machine'
         };
       } else {
+        var constraints = this.state.constraints;
         this.props.createMachinesPlaceUnits(numUnits, {
-          'cpu-power': this.state['cpu-constraint'],
-          'cpu-cores': this.state['cores-constraint'],
-          'mem': this.state['ram-constraint'],
-          'root-disk': this.state['disk-constraint']
+          'cpu-power': constraints.cpu,
+          'cpu-cores': constraints.cores,
+          'mem': constraints.mem,
+          'root-disk': constraints.disk
         });
       }
       this.props.changeState(appState);
@@ -112,7 +124,7 @@ YUI.add('scale-service', function() {
         <div className="scale-service">
           <div className="scale-service--units">
             <input
-              className="scale-service__input scale-service--units__input"
+              className="scale-service--units__input"
               type="text"
               name="num-units"
               onChange={this._updateState}
@@ -140,34 +152,8 @@ YUI.add('scale-service', function() {
             </div>
           </div>
           <div className={this._generateClasses()} ref="constraintsContainer">
-            <label htmlFor="cpu-constraint">CPU (GHZ)</label>
-            <input type="text"
-              className="scale-service__input scale-service--constraints__input"
-              id="cpu-constraint"
-              name="cpu-constraint"
-              onChange={this._updateState}
-              ref="cpuConstraintInput"/>
-            <label htmlFor="cores-constraint">Cores</label>
-            <input type="text"
-              className="scale-service__input scale-service--constraints__input"
-              id="cores-constraint"
-              name="cores-constraint"
-              onChange={this._updateState}
-              ref="coresConstraintInput"/>
-            <label htmlFor="ram-constraint">Ram (MB)</label>
-            <input type="text"
-              className="scale-service__input scale-service--constraints__input"
-              id="ram-constraint"
-              name="ram-constraint"
-              onChange={this._updateState}
-              ref="ramConstraintInput"/>
-            <label htmlFor="disk-constraint">Disk (MB)</label>
-            <input type="text"
-              className="scale-service__input scale-service--constraints__input"
-              id="disk-constraint"
-              name="disk-constraint"
-              onChange={this._updateState}
-              ref="diskConstraintInput"/>
+            <juju.components.Constraints
+              valuesChanged={this._updateConstraints} />
           </div>
           <juju.components.ButtonRow buttons={buttons} />
         </div>
@@ -176,5 +162,6 @@ YUI.add('scale-service', function() {
   });
 
 }, '0.1.0', { requires: [
-  'button-row'
+  'button-row',
+  'constraints'
 ] });

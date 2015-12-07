@@ -1012,6 +1012,7 @@ YUI.add('juju-gui', function(Y) {
         ReactDOM.render(
           <components.MachineView
             autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            createMachine={this._createMachine.bind(this)}
             destroyMachines={this.env.destroyMachines.bind(this.env)}
             environmentName={db.environment.get('name')}
             machines={db.machines}

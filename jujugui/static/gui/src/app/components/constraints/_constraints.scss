@@ -1,0 +1,13 @@
+.constraints {
+    &__label {
+        margin-left: 20px;
+        font-size: .875em;
+        margin-bottom: 1px;
+    }
+
+    &__input {
+        margin: 5px 10px 10px 10px;
+        height: 28px;
+        width: calc(100% - 40px);
+    }
+}
