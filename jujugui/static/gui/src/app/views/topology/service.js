@@ -594,7 +594,6 @@ YUI.add('juju-topology-service', function(Y) {
     */
     hoverService: function(id, hover) {
       var node = this.getServiceNode(id);
-      var topo = this.get('component');
       if (node) {
         if (hover) {
           utils.addSVGClass(node, 'hover');
