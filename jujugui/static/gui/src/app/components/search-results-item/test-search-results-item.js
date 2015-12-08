@@ -52,13 +52,12 @@ describe('SearchResultsItem', function() {
           key={item.storeId}
           item={item} />);
     var tags = output.props.children[0].props.children[1].props.children;
-    var series = output.props.children[1].props.children.props.children;
-    var icons = output.props.children[2].props.children.props.children;
+    var icons = output.props.children[1].props.children.props.children;
     assert.deepEqual(output,
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
-        <div className="four-col charm-name__column">
+        <div className="six-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
             <span className="special-flag"></span>
@@ -78,22 +77,6 @@ describe('SearchResultsItem', function() {
             </li>
           </ul>
         </div>
-        <div className="two-col series__column">
-          <ul className="tag-list tag-list--spaced">
-            <li className="tag-list--item"
-              key="vivid"
-              role="button" tabIndex="0"
-              onClick={series[0].props.onClick}>
-              vivid
-            </li>
-            <li className="tag-list--item"
-              key="wily"
-              role="button" tabIndex="0"
-              onClick={series[1].props.onClick}>
-              wily
-            </li>
-          </ul>
-        </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
             {[<li className="list-icons__item"
@@ -107,7 +90,8 @@ describe('SearchResultsItem', function() {
             </li>]}
           </ul>
         </div>
-        <div className="two-col owner__column list-block__column last-col">
+        <div className={
+          'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
             test-owner
           </p>
@@ -135,12 +119,12 @@ describe('SearchResultsItem', function() {
           changeState={changeState}
           key={item.storeId}
           item={item} />);
-    var icons = output.props.children[2].props.children.props.children;
+    var icons = output.props.children[1].props.children.props.children;
     assert.deepEqual(output,
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
-        <div className="four-col charm-name__column">
+        <div className="six-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
             <span className="special-flag"></span>
@@ -148,9 +132,6 @@ describe('SearchResultsItem', function() {
           <ul className="tag-list">
             <span>{' '}</span>
           </ul>
-        </div>
-        <div className="two-col series__column">
-          <div className="tag-list--item-spacer">{' '}</div>
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
@@ -165,7 +146,8 @@ describe('SearchResultsItem', function() {
             </li>]}
           </ul>
         </div>
-        <div className="two-col owner__column list-block__column last-col">
+        <div className={
+          'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
             test-owner
           </p>
@@ -202,12 +184,12 @@ describe('SearchResultsItem', function() {
           changeState={changeState}
           key={item.storeId}
           item={item} />);
-    var icons = output.props.children[2].props.children.props.children;
+    var icons = output.props.children[1].props.children.props.children;
     assert.deepEqual(output,
       <li className="list-block__list--item bundle"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
-        <div className="four-col charm-name__column">
+        <div className="six-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
             <span className="special-flag"></span>
@@ -215,9 +197,6 @@ describe('SearchResultsItem', function() {
           <ul className="tag-list">
             <span>{' '}</span>
           </ul>
-        </div>
-        <div className="two-col series__column">
-          <div className="tag-list--item-spacer">{' '}</div>
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
@@ -241,7 +220,8 @@ describe('SearchResultsItem', function() {
             </li>
           </ul>
         </div>
-        <div className="two-col owner__column list-block__column last-col">
+        <div className={
+          'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
             test-owner
           </p>
@@ -318,43 +298,6 @@ describe('SearchResultsItem', function() {
           activeComponent: 'search-results',
           search: null,
           tags: 'tag1'
-        }
-      }
-    });
-  });
-
-  it('can handle clicking on a series', function() {
-    var changeState = sinon.stub();
-    var stopPropagation = sinon.stub();
-    var item = {
-      name: 'mysql',
-      displayName: 'mysql',
-      special: true,
-      url: 'http://example.com/mysql',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: 'mysql',
-      storeId: '~test-owner/mysql',
-      type: 'charm',
-      tags: ['tag1', 'tag2'],
-      series: [{name: 'vivid'}, {name: 'wily'}]
-    };
-    var output = jsTestUtils.shallowRender(
-        <juju.components.SearchResultsItem
-          changeState={changeState}
-          key={item.storeId}
-          item={item} />);
-    output.props.children[1].props.children.props.children[0]
-        .props.onClick({stopPropagation: stopPropagation});
-    assert.equal(changeState.callCount, 1);
-    assert.equal(stopPropagation.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'vivid/mysql'
         }
       }
     });

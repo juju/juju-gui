@@ -62,38 +62,6 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
-      Generate the elements for the series list.
-
-      @method _generateSeriesList
-      @returns {String} The generated elements.
-    */
-    _generateSeriesList: function() {
-      var item = this.props.item;
-      var series = item.series;
-      var components = [];
-      if (series.length === 0) {
-        return <div className="tag-list--item-spacer">{' '}</div>;
-      }
-      series.forEach(function(seriesItem) {
-        var name = seriesItem.name;
-        var id = name + '/' + item.name;
-        components.push(
-          <li className="tag-list--item"
-            key={name}
-            role="button" tabIndex="0"
-            onClick={this._handleItemClick.bind(this, id)}>
-            {name}
-          </li>
-        );
-      }, this);
-      return (
-        <ul className="tag-list tag-list--spaced">
-          {components}
-        </ul>
-      );
-    },
-
-    /**
       Generate the elements for the icon list.
 
       @method _generateIconList
@@ -180,7 +148,7 @@ YUI.add('search-results-item', function(Y) {
         <li className={'list-block__list--item ' + item.type}
             tabIndex="0" role="button"
             onClick={this._handleItemClick.bind(this, item.storeId)}>
-          <div className="four-col charm-name__column">
+          <div className="six-col charm-name__column">
             <h3 className="list-block__list--item-title">
               {item.displayName}
               {this._generateSpecialFlag()}
@@ -189,15 +157,13 @@ YUI.add('search-results-item', function(Y) {
               {this._generateTagList()}
             </ul>
           </div>
-          <div className="two-col series__column">
-            {this._generateSeriesList()}
-          </div>
           <div className="three-col charm-logos__column list-block__column">
             <ul className="list-icons clearfix">
               {this._generateIconList()}
             </ul>
           </div>
-          <div className="two-col owner__column list-block__column last-col">
+          <div className={
+            'prepend-one two-col owner__column list-block__column last-col'}>
             <p className="cell">
               {item.owner}
             </p>
