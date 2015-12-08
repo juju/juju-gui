@@ -122,7 +122,7 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
-      Filter by the given tag.
+      Show search results for the given tag.
 
       @method _handleTagClick
       @param {String} tag The tag name.
@@ -137,6 +137,27 @@ YUI.add('search-results-item', function(Y) {
             activeComponent: 'search-results',
             search: null,
             tags: tag
+          }
+        }
+      });
+    },
+
+    /**
+      Show search results for the given owner.
+
+      @method _handleOwnerClick
+      @param {String} owner The owner's name.
+      @param {Object} e The click event.
+    */
+    _handleOwnerClick: function(owner, e) {
+      e.stopPropagation();
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            owner: owner
           }
         }
       });
@@ -165,7 +186,14 @@ YUI.add('search-results-item', function(Y) {
           <div className={
             'prepend-one two-col owner__column list-block__column last-col'}>
             <p className="cell">
-              {item.owner}
+              By
+              <span className="link"
+                onClick={this._handleOwnerClick.bind(this, item.owner)}
+                role="button"
+                tabIndex="0">
+                {' '}
+                {item.owner}
+              </span>
             </p>
           </div>
         </li>

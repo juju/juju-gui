@@ -53,6 +53,7 @@ describe('SearchResultsItem', function() {
           item={item} />);
     var tags = output.props.children[0].props.children[1].props.children;
     var icons = output.props.children[1].props.children.props.children;
+    var owner = output.props.children[2].props.children.props.children[1];
     assert.deepEqual(output,
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
@@ -93,7 +94,14 @@ describe('SearchResultsItem', function() {
         <div className={
           'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
-            test-owner
+            By
+            <span className="link"
+              onClick={owner.props.onClick}
+              role="button"
+              tabIndex="0">
+              {' '}
+              {item.owner}
+            </span>
           </p>
         </div>
       </li>);
@@ -120,6 +128,7 @@ describe('SearchResultsItem', function() {
           key={item.storeId}
           item={item} />);
     var icons = output.props.children[1].props.children.props.children;
+    var owner = output.props.children[2].props.children.props.children[1];
     assert.deepEqual(output,
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
@@ -149,7 +158,14 @@ describe('SearchResultsItem', function() {
         <div className={
           'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
-            test-owner
+            By
+            <span className="link"
+              onClick={owner.props.onClick}
+              role="button"
+              tabIndex="0">
+              {' '}
+              {item.owner}
+            </span>
           </p>
         </div>
       </li>);
@@ -185,6 +201,7 @@ describe('SearchResultsItem', function() {
           key={item.storeId}
           item={item} />);
     var icons = output.props.children[1].props.children.props.children;
+    var owner = output.props.children[2].props.children.props.children[1];
     assert.deepEqual(output,
       <li className="list-block__list--item bundle"
           tabIndex="0" role="button"
@@ -223,7 +240,14 @@ describe('SearchResultsItem', function() {
         <div className={
           'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
-            test-owner
+            By
+            <span className="link"
+              onClick={owner.props.onClick}
+              role="button"
+              tabIndex="0">
+              {' '}
+              {item.owner}
+            </span>
           </p>
         </div>
       </li>);
@@ -298,6 +322,44 @@ describe('SearchResultsItem', function() {
           activeComponent: 'search-results',
           search: null,
           tags: 'tag1'
+        }
+      }
+    });
+  });
+
+  it('can handle clicking on an owner', function() {
+    var changeState = sinon.stub();
+    var stopPropagation = sinon.stub();
+    var item = {
+      name: 'mysql',
+      displayName: 'mysql',
+      special: true,
+      url: 'http://example.com/mysql',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: true,
+      id: 'mysql',
+      storeId: '~test-owner/mysql',
+      type: 'charm',
+      tags: ['tag1', 'tag2'],
+      series: [{name: 'vivid'}, {name: 'wily'}]
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          changeState={changeState}
+          key={item.storeId}
+          item={item} />);
+    output.props.children[2].props.children.props.children[1]
+        .props.onClick({stopPropagation: stopPropagation});
+    assert.equal(changeState.callCount, 1);
+    assert.equal(stopPropagation.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'search-results',
+          search: null,
+          owner: 'test-owner'
         }
       }
     });
