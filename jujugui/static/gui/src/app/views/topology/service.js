@@ -370,7 +370,7 @@ YUI.add('juju-topology-service', function(Y) {
         },
         // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
-          click: 'canvasClick'
+          mouseup: 'canvasClick'
         }
       },
       d3: {
@@ -768,7 +768,11 @@ YUI.add('juju-topology-service', function(Y) {
      */
     canvasClick: function(box, self) {
       var topo = self.get('component');
-      topo.fire('clearState');
+      // Don't clear the canvas state if the click event was from dragging the
+      // canvas around.
+      if (!topo.zoomed) {
+        topo.fire('clearState');
+      }
     },
 
     /**
