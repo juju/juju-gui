@@ -28,6 +28,60 @@ YUI.add('entity-files', function() {
     },
 
     /**
+      Expand a directory when clicked.
+
+      @method _onDirectoryClick
+      @param {Object} e the event object.
+    */
+    _onDirectoryClick: function(e) {
+      e.stopPropagation();
+      var target = e.currentTarget;
+      var isCollapsed = target.className.indexOf('collapsed') > 0;
+      target.className = classNames(
+        'entity-files__directory',
+        {'collapsed': !isCollapsed}
+      );
+    },
+
+    /**
+      Recursively build a tree structure representing the entity's file.
+
+      @method _buildFiletree
+      @param {Array} files the list of file paths.
+      @returns {Object} filetree the corresponding tree structure.
+    */
+    _buildFiletree: function(files) {
+      /**
+        Recursive helper adds a single path to an existing file tree.
+
+        @method _buildFiletree
+        @param {Object} node current node in the tree structure.
+        @param {Array} segments remaining file paths to parse.
+      */
+      function extendTree(node, segments) {
+        var segment = segments.shift();
+        // Skip the root node, signified by an empty string.
+        if (segment === '') {
+          segment = segments.shift();
+        }
+        if (segments.length) {
+          if (!node[segment]) {
+            node[segment] = {};
+          };
+          extendTree(node[segment], segments);
+        } else {
+          node[segment] = null;
+        }
+      }
+
+      var filetree = {};
+      files.forEach(function(file) {
+        extendTree(filetree, file.split('/'));
+      });
+      return filetree;
+    },
+
+    /**
       If able, generates a link to the entity's source code.
 
       @method _generateCodeLink
@@ -64,17 +118,58 @@ YUI.add('entity-files', function() {
       @return {Array} The markup for the linked files.
     */
     _generateFileItems: function(files, url) {
-      var fileItems = files.map(function(file) {
-        var fileLink = `${url}/${file}`;
-        return (
-          <li key={file} className="entity-files__file section__list-item">
-            <a href={fileLink} target="_blank">
-              {file}
-            </a>
-          </li>
-        );
+      var filetree = this._buildFiletree(files);
+
+      /**
+        Recursively create a nested list.
+
+        @method buildList
+        @param {String} path The current path.
+        @param {Array} children All child files and directories located under
+        the current path.
+        @return {Array} The nested markup for the list of files.
+      */
+      function buildList(path, children) {
+        var fileName = path.split('/').pop();
+        if (children === null) {
+          var fileLink = `${url}/${path}`;
+          return (
+            <li key={path} className="entity-files__file">
+              <a href={fileLink} title={fileName} target="_blank">
+                {fileName}
+              </a>
+            </li>
+          );
+        } else {
+          var childItems = [];
+          // Note that this logic covers everything *but* the root node; see
+          // the corresponding comment below.
+          Object.keys(children).forEach(child => {
+            childItems.push(buildList.call(this, `${path}/${child}`,
+                                           children[child]));
+          });
+          return (
+            <li key={path}
+              className="entity-files__directory collapsed"
+              tabIndex="0"
+              role="button"
+              onClick={this._onDirectoryClick}>
+              {'/' + fileName}
+              <ul className="entity-files__listing">
+                {childItems}
+              </ul>
+            </li>
+          );
+        }
+      }
+
+      // Need to handle the root node separate from the recursive logic.
+      // The loop that covers everything *but* the root node is above.
+      var markup = [];
+      Object.keys(filetree).forEach(file => {
+        markup.push(buildList.call(this, file, filetree[file]));
       });
-      return fileItems;
+      return markup;
     },
 
     render: function() {
@@ -96,7 +191,7 @@ YUI.add('entity-files', function() {
               </a>
             </li>
           </ul>
-          <ul ref="files" className="section__list">
+          <ul ref="files" className="section__list entity-files__listing">
             {this._generateFileItems(files, archiveUrl)}
           </ul>
         </div>
