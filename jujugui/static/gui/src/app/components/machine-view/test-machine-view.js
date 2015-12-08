@@ -89,8 +89,13 @@ describe('MachineView', function() {
           </div>
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
+              menuItems={[{
+                label: 'Add container',
+                action: instance._addContainer
+              }]}
               title="0 containers, 0 units" />
             <div className="machine-view__column-content">
+              {undefined}
               {undefined}
             </div>
           </div>
@@ -477,11 +482,65 @@ describe('MachineView', function() {
         machines={machines} />);
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
             key="new0"
             machine={{id: 'new0', displayName: 'Root container', root: true}}
+            services={services}
+            type="container"
+            units={units} />
+          <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
+            key="new0/lxc/0"
+            machine={{id: 'new0/lxc/0'}}
+            services={services}
+            type="container"
+            units={units} />
+        </ul>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[2].props.children[1], expected);
+  });
+
+  it('can display a form for adding a container', function() {
+    var machines = {filterByParent: function(arg) {
+      if (arg == 'new0') {
+        return [{id: 'new0/lxc/0'}];
+      }
+      return [{id: 'new0'}];
+    }};
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var destroyMachines = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        createMachine={createMachine}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._addContainer();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        <juju.components.MachineViewAddMachine
+          close={instance._closeAddContainer}
+          createMachine={createMachine}
+          parentId="new0" />
+        <ul className="machine-view__list">
+          <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
+            key="new0"
+            machine={{displayName: 'Root container', id: 'new0', root: true}}
             services={services}
             type="container"
             units={units} />
