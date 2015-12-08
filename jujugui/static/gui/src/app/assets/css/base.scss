@@ -517,32 +517,47 @@ th {
         display: inline;
     }
 }
+
 #relation-menu {
+    $icon-size: 16px;
+    $height: 30px;
+    $gutter: 10px;
+
     .relation-container {
         cursor: inherit;
-        padding-left: 30px;
-        padding-right: 0;
-        line-height: 30px;
+        padding: 0 0 0 (($gutter * 2) + $icon-size);
+        line-height: $height;
         background-repeat: no-repeat;
-        background-position: 10px 11px;
+        background-position: $gutter (($height - $icon-size) / 2);
         background-image: url("juju-ui/assets/images/unit_running_16.png");
+
         &.error {
             background-image: url("juju-ui/assets/images/error_16.png");
         }
+
         .endpoint.error {
             color: red;
         }
+
         &:hover {
             background-color: inherit;
         }
     }
+
     .triangle {
         bottom: -3px;
         border-width: 3px 5px 0 5px;
     }
+
     .relation-remove {
-        margin: 0 10px;
+        line-height: normal;
+        margin: (($height - $icon-size) / 2) $gutter;
+        display: block;
+        float: right;
+        height: $icon-size;
+        width: $icon-size;
     }
+
     .inspect-relation {
         cursor: pointer;
     }
