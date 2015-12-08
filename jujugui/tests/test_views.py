@@ -2,6 +2,7 @@
 # GNU Affero General Public License version 3 (see the file LICENSE).
 
 import json
+import pkg_resources
 import unittest
 
 from pyramid import testing
@@ -55,6 +56,15 @@ class AppTests(ViewTestCase):
         self.request.matchdict['uuid'] = 'env-uuid'
         context = views.app(self.request)
         self.assertEqual(expected_context, context)
+
+
+class VersionTest(ViewTestCase):
+
+    def test_version(self):
+        expected_version = pkg_resources.get_distribution('jujugui').version
+        jujugui.make_application(self.config)
+        version = views.version(self.request).get('version')
+        self.assertEqual(expected_version, version)
 
 
 class ConfigTests(ViewTestCase):

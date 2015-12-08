@@ -5,6 +5,7 @@ import os
 
 from convoy.combo import combo_app
 from pyramid.wsgi import wsgiapp2
+from pyramid.renderers import JSON
 
 from jujugui import options
 
@@ -20,6 +21,7 @@ def gui(config):
     # several separated by "/".
     config.add_route('jujugui.ui', '/{prefix:.*}juju-ui/{file:.*}')
     config.add_route('jujugui.config', '/config.js')
+    config.add_route('jujugui.version', '/version')
     # XXX jcsackett 2015-05-20 As soon as we have a means of getting a version
     # or other indicator from the juju-gui we want to add that as a combo
     # cache buster.
@@ -30,6 +32,7 @@ def gui(config):
     config.add_view(wsgiapp2(application), route_name='jujugui.convoy')
     config.add_route('jujugui.app', '/*state')
     config.include('pyramid_mako')
+    config.add_renderer('prettyjson', JSON(indent=4))
     config.scan('jujugui.views')
 
 
