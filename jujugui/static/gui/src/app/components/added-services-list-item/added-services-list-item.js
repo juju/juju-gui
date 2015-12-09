@@ -29,6 +29,7 @@ YUI.add('added-services-list-item', function() {
       unfadeService: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      panToService: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired
     },
 
@@ -98,6 +99,7 @@ YUI.add('added-services-list-item', function() {
       @param {Object} e The click event.
     */
     _onClickHandler: function(e) {
+      this.props.panToService(this.props.service.get('id'));
       var state = {
         sectionA: {
           component: 'inspector',

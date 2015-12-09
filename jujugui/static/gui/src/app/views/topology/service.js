@@ -647,6 +647,20 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Center the viewport on the service token.
+
+      @method panToService
+      @param {String} id The service id.
+    */
+    panToService: function(id) {
+      var node = this.getServiceNode(id);
+      if (node) {
+        var box = d3.select(node).datum();
+        this.get('component').fire('panToPoint', {point: [box.x, box.y]});
+      }
+    },
+
+    /**
       Handles the click or tap on the service svg elements.
 
       It is executed under the context of the clicked/tapped DOM element
