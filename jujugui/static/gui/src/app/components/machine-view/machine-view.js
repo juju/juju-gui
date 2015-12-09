@@ -84,6 +84,16 @@ YUI.add('machine-view', function() {
     },
 
     /**
+      Handle removing a unit.
+
+      @method _removeUnit
+      @param id The unit id.
+    */
+    _removeUnit: function(id) {
+      this.props.removeUnits([id]);
+    },
+
+    /**
       Display a list of unplaced units or onboarding.
 
       @method _generateUnplacedUnits
@@ -115,6 +125,7 @@ YUI.add('machine-view', function() {
           <juju.components.MachineViewUnplacedUnit
             key={unit.id}
             icon={service.get('icon') || ''}
+            removeUnit={this._removeUnit}
             unit={unit} />);
       });
       return (
@@ -225,7 +236,7 @@ YUI.add('machine-view', function() {
             destroyMachines={this.props.destroyMachines}
             key={container.id}
             machine={container}
-            removeUnits={this.props.removeUnits}
+            removeUnit={this._removeUnit}
             services={this.props.services}
             type="container"
             units={this.props.units} />);

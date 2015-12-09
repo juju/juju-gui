@@ -24,7 +24,7 @@ YUI.add('machine-view-machine', function() {
     propTypes: {
       destroyMachines: React.PropTypes.func.isRequired,
       machine: React.PropTypes.object.isRequired,
-      removeUnits: React.PropTypes.func,
+      removeUnit: React.PropTypes.func,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
       services: React.PropTypes.object.isRequired,
@@ -80,7 +80,7 @@ YUI.add('machine-view-machine', function() {
         if (this.props.type === 'container') {
           var menuItems = [{
             label: 'Destroy',
-            action: this._removeUnit.bind(this, unit.id)
+            action: this.props.removeUnit.bind(null, unit.id)
           }];
           menu = (
             <juju.components.MoreMenu
@@ -109,16 +109,6 @@ YUI.add('machine-view-machine', function() {
     */
     _destroyMachine: function() {
       this.props.destroyMachines([this.props.machine.id]);
-    },
-
-    /**
-      Handle removing a unit.
-
-      @method _removeUnit
-      @param id The unit id.
-    */
-    _removeUnit: function(id) {
-      this.props.removeUnits([id]);
     },
 
     /**
