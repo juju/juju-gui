@@ -154,9 +154,11 @@ describe('MachineViewMachine', function() {
         get: sinon.stub().returns('icon.svg')
       })
     };
+    var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachine
         machine={machine}
+        removeUnit={removeUnit}
         services={services}
         type="container"
         units={units}/>, true);
@@ -262,18 +264,18 @@ describe('MachineViewMachine', function() {
         get: sinon.stub().returns('icon.svg')
       })
     };
-    var removeUnits = sinon.stub();
+    var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachine
         machine={machine}
         services={services}
         type="container"
-        removeUnits={removeUnits}
+        removeUnit={removeUnit}
         units={units}/>, true);
     var output = renderer.getRenderOutput();
     var units = output.props.children[3].props.children;
     units[1].props.children[2].props.items[0].action();
-    assert.equal(removeUnits.callCount, 1);
-    assert.deepEqual(removeUnits.args[0][0], ['wordpress/1']);
+    assert.equal(removeUnit.callCount, 1);
+    assert.equal(removeUnit.args[0][0], 'wordpress/1');
   });
 });
