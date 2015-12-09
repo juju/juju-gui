@@ -473,11 +473,13 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var destroyMachines = sinon.stub();
+    var removeUnits = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
+        removeUnits={removeUnits}
         services={services}
         machines={machines} />);
     var expected = (
@@ -488,6 +490,7 @@ describe('MachineView', function() {
             destroyMachines={destroyMachines}
             key="new0"
             machine={{id: 'new0', displayName: 'Root container', root: true}}
+            removeUnits={removeUnits}
             services={services}
             type="container"
             units={units} />
@@ -495,6 +498,7 @@ describe('MachineView', function() {
             destroyMachines={destroyMachines}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
+            removeUnits={removeUnits}
             services={services}
             type="container"
             units={units} />
@@ -519,12 +523,14 @@ describe('MachineView', function() {
     };
     var createMachine = sinon.stub();
     var destroyMachines = sinon.stub();
+    var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
+        removeUnits={removeUnits}
         services={services}
         machines={machines} />, true);
     var instance = renderer.getMountedInstance();
@@ -541,6 +547,7 @@ describe('MachineView', function() {
             destroyMachines={destroyMachines}
             key="new0"
             machine={{displayName: 'Root container', id: 'new0', root: true}}
+            removeUnits={removeUnits}
             services={services}
             type="container"
             units={units} />
@@ -548,6 +555,7 @@ describe('MachineView', function() {
             destroyMachines={destroyMachines}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
+            removeUnits={removeUnits}
             services={services}
             type="container"
             units={units} />
