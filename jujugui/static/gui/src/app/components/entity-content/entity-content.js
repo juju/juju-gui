@@ -106,7 +106,7 @@ YUI.add('entity-content', function() {
         tags.push(entityTags[index]);
       }
       return (
-        <div className="four-col entity-content__metadata last-col">
+        <div className="four-col entity-content__metadata">
           <h4>Tags</h4>
           <ul>
             {this._generateList(tags, this._handleTagClick)}
@@ -143,6 +143,8 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
+        var bugLink = `https://bugs.launchpad.net/charms/+source/` +
+          `${entityModel.get('name')}`;
         return (
           <div className="row entity-content__description">
             <div className="inner-wrapper">
@@ -150,6 +152,16 @@ YUI.add('entity-content', function() {
                 <p>{entityModel.get('description')}</p>
               </div>
               {this._generateTags()}
+              <div className="four-col entity-content__metadata last-col">
+                <h4>More information</h4>
+                <ul>
+                  <li>
+                    <a href={bugLink} target="_blank">
+                      Bugs
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         );

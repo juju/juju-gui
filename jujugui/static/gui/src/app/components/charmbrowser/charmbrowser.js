@@ -93,6 +93,7 @@ YUI.add('charmbrowser-component', function() {
                 series={metadata.series}
                 provides={metadata.provides}
                 requires={metadata.requires}
+                owner={metadata.owner}
                 tags={metadata.tags} />
           };
           break;

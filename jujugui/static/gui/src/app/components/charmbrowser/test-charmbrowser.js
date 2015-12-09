@@ -44,7 +44,8 @@ describe('Charmbrowser', function() {
           type: 'bundle',
           series: 'wily',
           provides: 'http',
-          requires: 'cache'
+          requires: 'cache',
+          owner: 'charmers'
         }
       }};
     var series = sinon.stub();
@@ -77,6 +78,7 @@ describe('Charmbrowser', function() {
               series="wily"
               provides="http"
               requires="cache"
+              owner="charmers"
               charmstoreSearch={charmstoreSearch} />
             </div>
         </juju.components.Panel>);

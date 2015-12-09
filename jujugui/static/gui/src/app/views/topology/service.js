@@ -370,7 +370,7 @@ YUI.add('juju-topology-service', function(Y) {
         },
         // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
-          click: 'canvasClick'
+          mouseup: 'canvasClick'
         }
       },
       d3: {
@@ -594,14 +594,22 @@ YUI.add('juju-topology-service', function(Y) {
     */
     hoverService: function(id, hover) {
       var node = this.getServiceNode(id);
-      var topo = this.get('component');
       if (node) {
         if (hover) {
           utils.addSVGClass(node, 'hover');
         } else {
-          topo.vis.selectAll('.hover').classed('hover', false);
+          this.unhoverServices();
         }
       }
+    },
+
+    /**
+      Clear all hovers on services.
+
+      @method unhoverServices
+    */
+    unhoverServices: function() {
+      this.get('component').vis.selectAll('.hover').classed('hover', false);
     },
 
     /**
@@ -707,14 +715,13 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseLeave: function(box, context) {
       var topo = context.get('component');
       topo.fire('hoverService', {id: null});
+      context.unhoverServices();
       // Do not fire if we're within the service box.
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
       if (box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
-      var rect = Y.one(this).one('.service-border');
-      utils.removeSVGClass(rect, 'hover');
 
       topo.fire('snapOutOfService');
     },
@@ -761,7 +768,11 @@ YUI.add('juju-topology-service', function(Y) {
      */
     canvasClick: function(box, self) {
       var topo = self.get('component');
-      topo.fire('clearState');
+      // Don't clear the canvas state if the click event was from dragging the
+      // canvas around.
+      if (!topo.zoomed) {
+        topo.fire('clearState');
+      }
     },
 
     /**
@@ -1049,6 +1060,13 @@ YUI.add('juju-topology-service', function(Y) {
           topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
       topo.vis.selectAll('.is-selected').classed('is-selected', false);
+      this.unhoverServices();
+      topo.fire('changeState', {
+        sectionA: {
+          component: 'services',
+          metadata: null
+        }
+      });
     },
 
     /**

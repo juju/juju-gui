@@ -105,8 +105,7 @@ YUI.add('entity-header', function() {
       var entity = this.props.entityModel.toEntity();
       var ownerUrl = 'https://launchpad.net/~' + entity.owner;
       var series = entity.series ?
-        <li className="entity-header__series">{entity.series}</li> :
-        '';
+        <li className="entity-header__series">{entity.series}</li> : null;
       var twitterUrl = [
         'https://twitter.com/intent/tweet?text=',
         entity.displayName,
