@@ -66,27 +66,6 @@ describe('HeaderSearch', function() {
       </span>);
   });
 
-  it('changes state when the close button is clicked', function() {
-    var getAppState = sinon.stub();
-    getAppState.withArgs(
-      'current', 'sectionC', 'component').returns('charmbrowser');
-    getAppState.withArgs(
-      'current', 'sectionC', 'metadata').returns(undefined);
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />);
-    output.props.children[1].props.onClick();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: null,
-        metadata: null
-      }
-    });
-  });
-
   it('becomes active when the input is focused', function() {
     var getAppState = sinon.stub();
     var changeState = sinon.stub();

@@ -140,10 +140,13 @@ YUI.add('header-search', function() {
 
       @method _closeSearch
     */
-    _closeSearch: function() {
+    _closeSearch: function(active) {
+      if (active === undefined) {
+        active = false;
+      }
       this.setState({
         query: undefined,
-        active: false,
+        active: active,
         inputStyles: this._generateInputStyles(false)
       });
     },
@@ -199,13 +202,7 @@ YUI.add('header-search', function() {
       @method _handleClose
     */
     _handleClose: function() {
-      this._closeSearch();
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
-      });
+      this._closeSearch(true);
     },
 
     /**
