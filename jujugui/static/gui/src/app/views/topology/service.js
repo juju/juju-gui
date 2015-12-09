@@ -225,7 +225,6 @@ YUI.add('juju-topology-service', function(Y) {
           return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
         });
 
-
     subRelationIndicator.append('line')
       .attr({
         'x1': 0,
