@@ -28,17 +28,37 @@ describe('MachineViewUnplacedUnit', function() {
   });
 
   it('can render', function() {
+    var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7'};
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewUnplacedUnit
         icon="icon.svg"
+        removeUnit={removeUnit}
         unit={unit} />);
     var expected = (
       <li className="machine-view__unplaced-unit">
         <img src="icon.svg" alt="django/7"
           className="machine-view__unplaced-unit-icon" />
         django/7
+        <juju.components.MoreMenu
+          items={[{
+            label: 'Destroy',
+            action: output.props.children[2].props.items[0].action
+          }]} />
       </li>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can remove a unit', function() {
+    var removeUnit = sinon.stub();
+    var unit = {displayName: 'django/7', id: 'django/7'};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewUnplacedUnit
+        icon="icon.svg"
+        removeUnit={removeUnit}
+        unit={unit} />);
+    output.props.children[2].props.items[0].action();
+    assert.equal(removeUnit.callCount, 1);
+    assert.equal(removeUnit.args[0][0], 'django/7');
   });
 });

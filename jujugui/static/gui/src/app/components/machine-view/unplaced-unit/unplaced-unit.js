@@ -23,21 +23,29 @@ YUI.add('machine-view-unplaced-unit', function() {
   juju.components.MachineViewUnplacedUnit = React.createClass({
     propTypes: {
       icon: React.PropTypes.string.isRequired,
+      removeUnit: React.PropTypes.func.isRequired,
       unit: React.PropTypes.object.isRequired
     },
 
     render: function() {
       var unit = this.props.unit;
+      var menuItems = [{
+        label: 'Destroy',
+        action: this.props.removeUnit.bind(null, unit.id)
+      }];
       return (
         <li className="machine-view__unplaced-unit">
           <img src={this.props.icon} alt={unit.displayName}
             className="machine-view__unplaced-unit-icon" />
           {unit.displayName}
+          <juju.components.MoreMenu
+            items={menuItems} />
         </li>
       );
     }
   });
 }, '0.1.0', {
   requires: [
+    'more-menu'
   ]
 });

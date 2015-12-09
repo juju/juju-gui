@@ -6,6 +6,7 @@
 
     &--selected {
         margin-right: -20px;
+        padding-right: 30px;
         border-style: dashed;
         border-right: 1px solid $canvas-background;
     }
