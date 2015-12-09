@@ -85,6 +85,16 @@ YUI.add('juju-topology', function(Y) {
       return;
     },
 
+    /**
+      Pass the mouse wheel event to the canvas.
+
+      @method handleZoom
+    */
+    handleZoom: function() {
+      this.zoomPlane[0][0].dispatchEvent(
+        new WheelEvent(d3.event.type, d3.event));
+    },
+
     renderOnce: function() {
       var svg,
           vis,
@@ -161,7 +171,9 @@ YUI.add('juju-topology', function(Y) {
               }
             }
           });
-        });
+          // Pass the wheel events to the canvas so that it can be zoomed.
+        }).on('mousewheel.zoom', this.handleZoom.bind(this))
+          .on('wheel.zoom', this.handleZoom.bind(this));
         var plusDrag = d3.behavior.drag()
           .on('drag', function(d) {
             var plus = d3.select(this);

@@ -1269,6 +1269,9 @@ YUI.add('juju-topology-service', function(Y) {
       // Generate a node for each service, draw it as a rect with
       // labels for service and charm.
       var node = this.node;
+      // Pass the wheel events to the canvas so that it can be zoomed.
+      node.on('mousewheel.zoom', topo.handleZoom.bind(topo))
+        .on('wheel.zoom', topo.handleZoom.bind(topo));
 
       // Rerun the pack layout.
       // Pack doesn't honor existing positions and will re-layout the
