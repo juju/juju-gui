@@ -306,9 +306,10 @@ YUI.add('bundle-importer', function(Y) {
           level: 'important'
         });
         this._dryRunIndex = -1;
+        var collectedServices = this._collectedServices;
         this._collectedServices = [];
         this.db.fire('bundleImportComplete', {
-          services: this._collectedServices
+          services: collectedServices
         });
         return;
       }
