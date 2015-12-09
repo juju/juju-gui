@@ -24,6 +24,7 @@ YUI.add('machine-view-machine', function() {
     propTypes: {
       destroyMachines: React.PropTypes.func.isRequired,
       machine: React.PropTypes.object.isRequired,
+      removeUnits: React.PropTypes.func,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
       services: React.PropTypes.object.isRequired,
@@ -74,18 +75,28 @@ YUI.add('machine-view-machine', function() {
       }
       var components = [];
       units.forEach((unit) => {
+        var menu;
         var title;
         if (this.props.type === 'container') {
+          var menuItems = [{
+            label: 'Destroy',
+            action: this._removeUnit.bind(this, unit.id)
+          }];
+          menu = (
+            <juju.components.MoreMenu
+              items={menuItems} />);
           title = unit.displayName;
         }
         var service = this.props.services.getById(unit.service);
         components.push(
-          <li key={unit.id}>
+          <li className="machine-view__machine-unit"
+            key={unit.id}>
             <img
               alt={unit.displayName}
               src={service.get('icon')}
               title={unit.displayName} />
             {title}
+            {menu}
           </li>);
       });
       return components;
@@ -98,6 +109,16 @@ YUI.add('machine-view-machine', function() {
     */
     _destroyMachine: function() {
       this.props.destroyMachines([this.props.machine.id]);
+    },
+
+    /**
+      Handle removing a unit.
+
+      @method _removeUnit
+      @param id The unit id.
+    */
+    _removeUnit: function(id) {
+      this.props.removeUnits([id]);
     },
 
     /**

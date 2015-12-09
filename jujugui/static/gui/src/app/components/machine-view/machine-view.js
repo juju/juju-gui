@@ -22,9 +22,12 @@ YUI.add('machine-view', function() {
 
   juju.components.MachineView = React.createClass({
     propTypes: {
+      autoPlaceUnits: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
+      destroyMachines: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
       machines: React.PropTypes.object.isRequired,
+      removeUnits: React.PropTypes.func.isRequired,
       services: React.PropTypes.object.isRequired,
       units: React.PropTypes.object.isRequired
     },
@@ -222,6 +225,7 @@ YUI.add('machine-view', function() {
             destroyMachines={this.props.destroyMachines}
             key={container.id}
             machine={container}
+            removeUnits={this.props.removeUnits}
             services={this.props.services}
             type="container"
             units={this.props.units} />);

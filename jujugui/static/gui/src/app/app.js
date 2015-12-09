@@ -1016,6 +1016,7 @@ YUI.add('juju-gui', function(Y) {
             destroyMachines={this.env.destroyMachines.bind(this.env)}
             environmentName={db.environment.get('name')}
             machines={db.machines}
+            removeUnits={this.env.remove_units.bind(this.env)}
             services={db.services}
             units={db.units} />,
           document.getElementById('machine-view'));
