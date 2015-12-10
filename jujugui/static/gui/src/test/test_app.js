@@ -1056,6 +1056,136 @@ describe('File drag over notification system', function() {
     });
 
   });
+  describe('switchEnv', function() {
+    var Y, app, container;
+    var _generateMockedApp = function(sandbox, socketUrl) {
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        sandbox: sandbox,
+        consoleEnabled: true,
+        user: 'admin',
+        password: 'admin',
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        charmstorestore: new window.jujulib.charmstore(),
+        sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api'
+      });
+      var fake_ws = {
+        onclose: function() { this.oncloseCalled = true; },
+        oncloseCalled: false
+      };
+      var fake_ecs = {
+        clear: function() { this.clearCalled = true; },
+        clearCalled: false
+      }; 
+      var fake_env = {
+        ecs: fake_ecs,
+        ws: fake_ws,
+        closeCalled: false,
+        socketUrl: socketUrl || 'wss://example.com/ws',
+        setUser: 'not-called',
+        setPassword: 'not-called',
+        close: function() { this.closeCalled = true; },
+        get: function(key) {
+          if (key === 'socket_url') {
+            return this.socketUrl; 
+          }
+          if (key === 'ecs') {
+            return this.ecs;
+          }
+        },
+        set: function(key, val) {
+          if (key === 'socket_url') {
+            this.socketUrl = val;
+          } 
+        },
+        setCredentials: function(obj) {
+          this.setUser = obj.user;
+          this.setPassword = obj.password;
+        }
+      };
+      var fake_db = {
+        resetCalled: false,
+        fireSignal: null,
+        reset: function() { this.resetCalled = true; },
+        fire: function(signal) { this.fireSignal = signal; }
+      };
+      app.env = fake_env;
+      app.db = fake_db;
+      return app;
+    }; 
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+    });
+
+    afterEach(function() {
+      if (app) {
+        app.destroy({remove: true});
+      }
+    });
+
+    it('does not switch envs in sandbox', function() {
+      app = _generateMockedApp(true);
+      app.switchEnv();
+      assert.isFalse(
+          app.env.closeCalled,
+          'switchEnv did not return before closing the env.');
+    });
+
+    it('clears and resets the env, db, and ecs on change', function() {
+      app = _generateMockedApp(false);
+      window.juju_config = {embedded: false};
+      app.switchEnv('uuid', 'user', 'password');
+      assert.isTrue(app.env.ecs.clearCalled, 'ecs was not cleared.');
+      assert.isTrue(app.env.closeCalled, 'env was not closed.');
+      assert.isTrue(app.db.resetCalled, 'db was not reset.');
+      assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
+    });
+
+    it('determines socket_url based on embedded state', function() {
+      app = _generateMockedApp(false);
+      window.juju_config = {embedded: false};
+      app.switchEnv('uuid');
+      assert.equal(
+          app.env.socketUrl,
+          'wss://example.com/ws/environment/uuid/api',
+          'socket url not correctly set.');
+      window.juju_config = {embedded: true};
+      app.env.set('socket_url', 'juju/api/example.com/17070/uuid');
+      app.switchEnv('new-uuid');
+      assert.equal(
+          app.env.socketUrl,
+          'juju/api/example.com/17070/new-uuid',
+          'socket url not correctly set.');
+    });
+      
+    it('sets credentials based on existence of jem', function() {
+      app = _generateMockedApp(false);
+      app.jem = false;
+      app.switchEnv('uuid');
+      assert.equal(
+          app.env.setUser, 'not-called',
+          'Credentials should not have been set.');
+      assert.equal(
+          app.env.setPassword, 'not-called',
+          'Credentials should not have been set.');
+      app.jem = true;
+      app.switchEnv('uuid', 'new-username', 'new-password');
+      assert.equal(
+          app.env.setUser, 'new-username',
+          'Credentials should have been set.');
+      assert.equal(
+          app.env.setPassword, 'new-password',
+          'Credentials should have been set.');
+    });
+  });
 })();
 
 (function() {
@@ -1192,5 +1322,6 @@ describe('File drag over notification system', function() {
     });
 
   });
+
 
 })();
