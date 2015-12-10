@@ -1550,7 +1550,6 @@ YUI.add('juju-topology-service', function(Y) {
           transform: 'translate(-8, -8)'
         });
 
-
       node.append('circle')
         .attr({
           cx: function(d) {
