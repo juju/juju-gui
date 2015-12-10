@@ -191,7 +191,32 @@ var jsTestUtils = {
               interface: 'cache'
             }
           }
-        }
+        },
+        revisions: [{
+          authors: [{
+            email: 'charles.butler@canonical.com',
+            name: 'Charles Butler'
+          }],
+          date: '2015-06-16T17:09:35Z',
+          message: 'Fix the django 1.8 with postgresql test.',
+          revno: 40
+        }, {
+          authors: [{
+            email: 'tim.van.steenburgh@canonical.com',
+            name: 'Tim Van Steenburgh'
+          }],
+          date: '2015-06-12T14:02:06Z',
+          message: 'Remove charmhelpers.contrib (not used)',
+          revno: 39
+        }, {
+          authors: [{
+            email: 'charles.butler@canonical.com',
+            name: 'Charles Butler'
+          }],
+          date: '2015-05-22T19:35:18Z',
+          message: 'Run migrate if django is modern enough.',
+          revno: 38
+        }]
       };
     }
     var mockEntity = {};
