@@ -824,6 +824,7 @@ YUI.add('juju-gui', function(Y) {
             setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
+            panToService={ServiceModule.panToService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));

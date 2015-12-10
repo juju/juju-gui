@@ -38,6 +38,7 @@ describe('AddedServicesList', () => {
     var changeState = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
     var hoverService = sinon.stub();
+    var panToService = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.AddedServicesList
           updateUnitFlags={sinon.stub()}
@@ -48,6 +49,7 @@ describe('AddedServicesList', () => {
           hoverService={hoverService}
           hoveredId="mysql"
           getUnitStatusCounts={getUnitStatusCounts}
+          panToService={panToService}
           services={services}/>, true);
 
     var output = renderer.getRenderOutput();
@@ -67,6 +69,7 @@ describe('AddedServicesList', () => {
             hovered={false}
             ref={'AddedServicesListItem-' + allServices[0].get()}
             hoverService={hoverService}
+            panToService={panToService}
             service={allServices[0]} />
           <juju.components.AddedServicesListItem
             key={allServices[1].get()}
@@ -79,6 +82,7 @@ describe('AddedServicesList', () => {
             hovered={false}
             ref={'AddedServicesListItem-' + allServices[1].get()}
             hoverService={hoverService}
+            panToService={panToService}
             service={allServices[1]} />
           <juju.components.AddedServicesListItem
             key={allServices[2].get()}
@@ -91,6 +95,7 @@ describe('AddedServicesList', () => {
             hovered={false}
             ref={'AddedServicesListItem-' + allServices[2].get()}
             hoverService={hoverService}
+            panToService={panToService}
             service={allServices[2]} />
         </ul>
       </div>);

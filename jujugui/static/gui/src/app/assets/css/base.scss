@@ -570,18 +570,23 @@ th {
     &.error {
         stroke: $error;
     }
+
     &.subordinate {
         stroke: rgb(167, 167, 167);
     }
+
     &.healthy {
         stroke: rgb(167, 167, 167);
     }
+
     &.pending {
         stroke: $uncommitted;
     }
+
     &.pending-healthy, &.pending-error {
         stroke: $uncommitted;
     }
+
     &.pending-relation {
         stroke: #faaf40;
 
@@ -589,13 +594,16 @@ th {
             stroke: #fa6a40
         }
     }
+
     &.unused {
         visibility: hidden;
     }
+
     &.subordinate-relation {
         stroke: #3333cc;
     }
 }
+
 .connector1,
 .connector2 {
 
