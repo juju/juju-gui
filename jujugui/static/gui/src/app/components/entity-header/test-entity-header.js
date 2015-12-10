@@ -163,7 +163,8 @@ describe('EntityHeader', function() {
     assert.deepEqual(
       output,
         <div className="row-hero"
-          ref="headerWrapper">
+          ref="headerWrapper"
+          style={{height: '99px'}}>
           <header className="entity-header entity-header--sticky">
             {output.props.children.props.children}
           </header>

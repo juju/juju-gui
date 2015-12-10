@@ -117,6 +117,20 @@ YUI.add('entity-header', function() {
     },
 
     /**
+      Generate the styles for the header wrapper.
+
+      @method _generateWrapperStyles
+    */
+    _generateWrapperStyles: function() {
+      if (this.state.headerHeight > 0) {
+        // Set the height of the wrapper so that it doesn't collapse when the
+        // header becomes sticky.
+        return {height: this.state.headerHeight + 'px'};
+      }
+      return {};
+    },
+
+    /**
       Generate the classes for the component.
 
       @method _generateClasses
@@ -146,8 +160,11 @@ YUI.add('entity-header', function() {
         'https://plus.google.com/share?url=',
         this._getStoreURL(entity)
       ].join('');
+
       return (
-        <div className="row-hero" ref="headerWrapper">
+        <div className="row-hero"
+          ref="headerWrapper"
+          style={this._generateWrapperStyles()}>
           <header className={this._generateClasses()}>
             <div className="inner-wrapper">
               <div className="eight-col no-margin-bottom">
