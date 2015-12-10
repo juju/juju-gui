@@ -107,6 +107,7 @@ def config(request):
         'GA_key': settings['jujugui.ga_key'],
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': '',
+        'embedded': settings['jujugui.embedded'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 
