@@ -635,12 +635,13 @@ th {
         visibility: visible;
     }
     &.fade {
-        visibility: visible;
-        stroke-opacity: .2;
-
-        .service-icon {
-            opacity: .2;
-        }
+        /*
+          Put visibility on a delay so it gets hidden after the opacity is
+          finished transitioning.
+        */
+        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
+        opacity: 0;
+        visibility: hidden;
     }
     &.hide {
         /*
