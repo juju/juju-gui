@@ -70,6 +70,7 @@ describe('EntityDetails', function() {
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
+          headerSticky={true}
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
@@ -90,7 +91,8 @@ describe('EntityDetails', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             addNotification={addNotification}
-            deployService={deployService} />
+            deployService={deployService}
+            sticky={true} />
           {undefined}
           <juju.components.EntityContent
             changeState={changeState}
@@ -164,6 +166,7 @@ describe('EntityDetails', function() {
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
+          headerSticky={true}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
           id={id}
@@ -185,7 +188,8 @@ describe('EntityDetails', function() {
             getBundleYAML={getBundleYAML}
             changeState={changeState}
             deployService={deployService}
-            addNotification={addNotification} />
+            addNotification={addNotification}
+            sticky={true} />
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}
             id={id} />

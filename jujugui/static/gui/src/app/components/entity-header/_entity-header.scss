@@ -15,6 +15,58 @@
         }
     }
 
+    &--sticky {
+        @extend %fade-in;
+        position: fixed;
+        z-index: index($z-indexed-elements, entity-sticky-header);
+        top: $navbar-height;
+        left: $panel-space;
+        right: 0;
+        height: 100px;
+        padding: 20px 0;
+        background-color: white;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        border-top-left-radius: $border-radius;
+
+        .entity-header {
+            $icon-size: 26px;
+
+            &__icon {
+                width: $icon-size;
+                height: $icon-size;
+                margin-right: 10px;
+                border-radius: 2px;
+            }
+
+            &__title {
+                font-size: 20px;
+                line-height: $icon-size;
+            }
+
+            &__properties {
+                margin-top: 12px;
+            }
+
+            &__social-list {
+                display: none;
+            }
+        }
+
+        .copy-to-clipboard {
+            display: none;
+        }
+
+        .generic-button {
+            margin-top: 10px;
+        }
+    }
+
+    &__wrapper {
+        // The wrapper has to have a height so that when the header
+        // becomes sticky it doesn't collapse.
+        height: 380px;
+    }
+
     .no-margin-bottom {
         margin-bottom: 0;
     }
@@ -27,7 +79,7 @@
       overflow: visible;
     }
 
-    ul.bullets {
+    &__properties {
         margin-bottom: 0;
         margin-top: 24px;
         font-size: 18px;

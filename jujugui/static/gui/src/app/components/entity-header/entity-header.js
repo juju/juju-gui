@@ -25,7 +25,8 @@ YUI.add('entity-header', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
-      entityModel: React.PropTypes.object.isRequired
+      entityModel: React.PropTypes.object.isRequired,
+      sticky: React.PropTypes.bool
     },
 
     /**
@@ -101,6 +102,21 @@ YUI.add('entity-header', function() {
       return encodeURIComponent(url.join('/'));
     },
 
+    /**
+      Generate the classes for the component.
+
+      @method _generateClasses
+    */
+    _generateClasses: function() {
+      return classNames(
+        'twelve-col',
+        'entity-header',
+        {
+          'entity-header--sticky': this.props.sticky
+        }
+      );
+    },
+
     render: function() {
       var entity = this.props.entityModel.toEntity();
       var ownerUrl = 'https://launchpad.net/~' + entity.owner;
@@ -117,8 +133,8 @@ YUI.add('entity-header', function() {
         this._getStoreURL(entity)
       ].join('');
       return (
-        <div className="row-hero">
-          <header className="twelve-col entity-header">
+        <div className="row-hero entity-header__wrapper">
+          <header className={this._generateClasses()}>
             <div className="inner-wrapper">
               <div className="eight-col no-margin-bottom">
                 <img src={entity.iconPath} alt={entity.displayName}
@@ -129,7 +145,7 @@ YUI.add('entity-header', function() {
                   ref="entityHeaderTitle">
                   {entity.displayName}
                 </h1>
-                <ul className="bullets inline">
+                <ul className="bullets inline entity-header__properties">
                   <li className="entity-header__by">
                     By <a href={ownerUrl} target="_blank"
                           ref="entityHeaderBy">{entity.owner}</a>

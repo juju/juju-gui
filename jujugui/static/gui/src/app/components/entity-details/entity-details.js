@@ -28,6 +28,7 @@ YUI.add('entity-details', function() {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
+      headerSticky: React.PropTypes.bool,
       id: React.PropTypes.string.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired
@@ -41,22 +42,30 @@ YUI.add('entity-details', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
-      var state = {
+      return {
         activeComponent: nextProps.activeComponent || 'loading'
       };
-      switch (state.activeComponent) {
+    },
+
+    /**
+      Generate the content based on the state.
+
+      @method _generateContent
+      @return {Object} The child components for the content.
+    */
+    _generateContent: function() {
+      var activeChild;
+      switch (this.state.activeComponent) {
         case 'loading':
-          state.activeChild = {
-            component:
+          activeChild = (
               <div>
                 <juju.components.Spinner />
               </div>
-          };
+          );
           break;
         case 'entity-details':
           var entityModel = this.state.entityModel;
-          state.activeChild = {
-            component:
+          activeChild = (
               <div>
                 <juju.components.EntityHeader
                   entityModel={entityModel}
@@ -64,7 +73,8 @@ YUI.add('entity-details', function() {
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
                   changeState={this.props.changeState}
-                  deployService={this.props.deployService} />
+                  deployService={this.props.deployService}
+                  sticky={this.props.headerSticky} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
                   changeState={this.props.changeState}
@@ -73,11 +83,10 @@ YUI.add('entity-details', function() {
                   entityModel={entityModel}
                   pluralize={this.props.pluralize} />
               </div>
-          };
+          );
           break;
         case 'error':
-          state.activeChild = {
-            component:
+          activeChild = (
               <p className="error">
                 There was a problem while loading the entity details.
                 You could try searching for another charm or bundle or go{' '}
@@ -86,10 +95,10 @@ YUI.add('entity-details', function() {
                   back
                 </span>.
               </p>
-          };
+          );
           break;
       }
-      return state;
+      return activeChild;
     },
 
     /**
@@ -187,7 +196,7 @@ YUI.add('entity-details', function() {
     render: function() {
       return (
         <div className={this._generateClasses()}>
-          {this.state.activeChild.component}
+          {this._generateContent()}
         </div>
       );;
     }

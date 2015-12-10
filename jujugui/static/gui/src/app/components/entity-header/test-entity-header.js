@@ -135,4 +135,29 @@ describe('EntityHeader', function() {
     assert.deepEqual(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
   });
+
+  it('can display as sticky', function() {
+    var deployService = sinon.stub();
+    var changeState = sinon.stub();
+    var getBundleYAML = sinon.stub().callsArgWith(1, 'error');
+    var importBundleYAML = sinon.stub();
+    var addNotification = sinon.stub();
+    var entity = jsTestUtils.makeEntity(true);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        deployService={deployService}
+        changeState={changeState}
+        entityModel={entity}
+        addNotification={addNotification}
+        sticky={true} />);
+    assert.deepEqual(
+      output,
+        <div className="row-hero entity-header__wrapper">
+          <header className="twelve-col entity-header entity-header--sticky">
+            {output.props.children.props.children}
+          </header>
+        </div>);
+  });
 });
