@@ -1,32 +1,41 @@
 .entity-header {
+    $sticky-height: 100px;
     margin-bottom: 0;
     padding: 80px 0;
     background-color: $white;
     color: $cool-grey;
     overflow: hidden;
 
-    &.dark {
-        color: $white;
+    @keyframes slideIn {
+        0% {
+            height: 0;
+        }
 
-        .entity-header__title,
-        a:link,
-        a:visited {
-            color: $white;
+        100% {
+            height: $sticky-height;
         }
     }
 
     &--sticky {
-        @extend %fade-in;
         position: fixed;
         z-index: index($z-indexed-elements, entity-sticky-header);
         top: $navbar-height;
         left: $panel-space;
         right: 0;
-        height: 100px;
-        padding: 20px 0;
+        height: $sticky-height;
+        padding: 0;
         background-color: white;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid #d4d4d4;
         border-top-left-radius: $border-radius;
+        animation: slideIn .5s;
+
+        .inner-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 0;
+        }
 
         .entity-header {
             $icon-size: 26px;
@@ -44,7 +53,7 @@
             }
 
             &__properties {
-                margin-top: 12px;
+                margin-top: 14px;
             }
 
             &__social-list {
