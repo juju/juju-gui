@@ -70,12 +70,6 @@
         }
     }
 
-    &__wrapper {
-        // The wrapper has to have a height so that when the header
-        // becomes sticky it doesn't collapse.
-        height: 380px;
-    }
-
     .no-margin-bottom {
         margin-bottom: 0;
     }

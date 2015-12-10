@@ -30,7 +30,7 @@ YUI.add('charmbrowser-component', function() {
     getInitialState: function() {
       // Setting a default state object.
       var state = this.generateState(this.props);
-      state.headerSticky = false;
+      state.scrollPosition = 0;
       return state;
     },
 
@@ -43,18 +43,13 @@ YUI.add('charmbrowser-component', function() {
     },
 
     /**
-      Check the scroll position and set the header to sticky.
+      Set the scroll position state.
 
       @method _onScroll
       @param {Object} e The scroll event
     */
     _onScroll: function(e) {
-      var scrollTop = e.target.scrollTop;
-      if (scrollTop > 280 && !this.state.headerSticky) {
-        this.setState({headerSticky: true});
-      } else if (scrollTop <= 280 && this.state.headerSticky) {
-        this.setState({headerSticky: false});
-      }
+      this.setState({scrollPosition: e.target.scrollTop});
     },
 
     /**
@@ -140,7 +135,7 @@ YUI.add('charmbrowser-component', function() {
                 getDiagramURL={this.props.getDiagramURL}
                 deployService={this.props.deployService}
                 getFile={this.props.getFile}
-                headerSticky={this.state.headerSticky}
+                scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
                 id={metadata.id}
                 pluralize={utils.pluralize}

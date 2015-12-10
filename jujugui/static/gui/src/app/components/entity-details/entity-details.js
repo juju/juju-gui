@@ -28,9 +28,9 @@ YUI.add('entity-details', function() {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
-      headerSticky: React.PropTypes.bool,
       id: React.PropTypes.string.isRequired,
       pluralize: React.PropTypes.func.isRequired,
+      scrollPosition: React.PropTypes.number.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired
     },
 
@@ -74,7 +74,7 @@ YUI.add('entity-details', function() {
                   getBundleYAML={this.props.getBundleYAML}
                   changeState={this.props.changeState}
                   deployService={this.props.deployService}
-                  sticky={this.props.headerSticky} />
+                  scrollPosition={this.props.scrollPosition} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
                   changeState={this.props.changeState}

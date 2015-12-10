@@ -26,7 +26,21 @@ YUI.add('entity-header', function() {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
-      sticky: React.PropTypes.bool
+      scrollPosition: React.PropTypes.number.isRequired
+    },
+
+    /**
+      Generate the initial state of the component.
+
+      @method getInitialState
+      @returns {String} The intial state.
+    */
+    getInitialState: function() {
+      return {headerHeight: 0};
+    },
+
+    componentDidMount: function() {
+      this.setState({headerHeight: this.refs.headerWrapper.clientHeight});
     },
 
     /**
@@ -109,10 +123,10 @@ YUI.add('entity-header', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'twelve-col',
         'entity-header',
         {
-          'entity-header--sticky': this.props.sticky
+          'entity-header--sticky':
+            this.props.scrollPosition > this.state.headerHeight
         }
       );
     },
@@ -133,7 +147,7 @@ YUI.add('entity-header', function() {
         this._getStoreURL(entity)
       ].join('');
       return (
-        <div className="row-hero entity-header__wrapper">
+        <div className="row-hero" ref="headerWrapper">
           <header className={this._generateClasses()}>
             <div className="inner-wrapper">
               <div className="eight-col no-margin-bottom">

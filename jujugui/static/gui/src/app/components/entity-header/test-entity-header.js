@@ -143,7 +143,7 @@ describe('EntityHeader', function() {
     var importBundleYAML = sinon.stub();
     var addNotification = sinon.stub();
     var entity = jsTestUtils.makeEntity(true);
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -151,11 +151,20 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={entity}
         addNotification={addNotification}
-        sticky={true} />);
+        scrollPosition={100} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      headerWrapper: {
+        clientHeight: 99
+      }
+    };
+    instance.componentDidMount();
+    var output = renderer.getRenderOutput();
     assert.deepEqual(
       output,
-        <div className="row-hero entity-header__wrapper">
-          <header className="twelve-col entity-header entity-header--sticky">
+        <div className="row-hero"
+          ref="headerWrapper">
+          <header className="entity-header entity-header--sticky">
             {output.props.children.props.children}
           </header>
         </div>);

@@ -201,7 +201,7 @@ describe('Charmbrowser', function() {
               getBundleYAML={getBundleYAML}
               changeState={changeState}
               getEntity={getEntity}
-              headerSticky={false}
+              scrollPosition={0}
               makeEntityModel={makeEntityModel}
               getDiagramURL={getDiagramURL}
               getFile={getFile}
