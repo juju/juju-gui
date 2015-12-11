@@ -802,7 +802,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.topo.service_boxes.wordpressb.center);
     });
 
-    it('must be able to use position annotations', function(done) {
+    it.only('must be able to use position annotations', function() {
       var tmp_data = {
         result: [
             [
@@ -845,13 +845,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(service.x, service.model.get('annotations')['gui-x']);
       assert.equal(service.y, service.model.get('annotations')['gui-y']);
 
-      // A positioned service will never be auto-positioned. It will also
-      // center the canvas on itself.
-      view.topo.on('panToPoint', function() {
-        // Once we reach here, the view has been updated and the canvas panned
-        // to the newly added/annotated service.
-        done();
-      });
       tmp_data = {
         result: [
           [
