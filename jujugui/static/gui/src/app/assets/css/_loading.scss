@@ -1,8 +1,17 @@
-
 /*
  * This is used for the initial page before displaying the canvas
  * e.g. connecting to Juju and browser not supported screens
  */
+#full-screen-mask {
+    display: block;
+    position: absolute;
+    z-index: index($z-indexed-elements, full-screen-mask);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $canvas-background;
+}
 .centered-column {
     display: block;
     z-index: index($z-indexed-elements, centered-column);

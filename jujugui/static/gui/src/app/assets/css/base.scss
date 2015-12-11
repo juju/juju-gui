@@ -783,16 +783,6 @@ g.unit {
 .service-view+.viewlet-manager {
     overflow-y: auto;
 }
-#full-screen-mask {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: $light-grey;
-    z-index: index($z-indexed-elements, full-screen-mask);
-}
 
 /** Widgets **/
 @import "machine-view/serviceunit-token";
