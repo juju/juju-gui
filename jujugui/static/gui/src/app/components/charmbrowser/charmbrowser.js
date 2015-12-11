@@ -29,7 +29,27 @@ YUI.add('charmbrowser-component', function() {
     */
     getInitialState: function() {
       // Setting a default state object.
-      return this.generateState(this.props);
+      var state = this.generateState(this.props);
+      state.scrollPosition = 0;
+      return state;
+    },
+
+    componentDidMount: function() {
+      this.refs.charmbrowser.addEventListener('scroll', this._onScroll);
+    },
+
+    componentWillUnmount: function() {
+      this.refs.charmbrowser.removeEventListener('scroll', this._onScroll);
+    },
+
+    /**
+      Set the scroll position state.
+
+      @method _onScroll
+      @param {Object} e The scroll event
+    */
+    _onScroll: function(e) {
+      this.setState({scrollPosition: e.target.scrollTop});
     },
 
     /**
@@ -54,34 +74,41 @@ YUI.add('charmbrowser-component', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
-      var metadata = nextProps.appState.sectionC.metadata;
-      var utils = this.props.utils;
-      var state = {
-        activeComponent: metadata.activeComponent
+      return {
+        activeComponent: nextProps.appState.sectionC.metadata.activeComponent
       };
-      switch (state.activeComponent) {
+    },
+
+    /**
+      Generate the content based on the state.
+
+      @method _generateContent
+      @return {Object} The child components for the content.
+    */
+    _generateContent: function() {
+      var activeChild;
+      var metadata = this.props.appState.sectionC.metadata;
+      var utils = this.props.utils;
+      switch (this.state.activeComponent) {
         case 'mid-point':
-          state.activeChild = {
-            component:
+          activeChild = (
               <juju.components.MidPoint
                 changeState={this.props.changeState}
                 outsideClickClose={true}
                 storeOpen={false} />
-          };
+          );
           break;
         case 'store':
-          state.activeChild = {
-            component:
+          activeChild = (
               <juju.components.Store
                 charmstoreSearch={this.props.charmstoreSearch}
                 changeState={this.props.changeState}
                 seriesList={this.props.series}
                 makeEntityModel={this.props.makeEntityModel} />
-          };
+          );
           break;
         case 'search-results':
-          state.activeChild = {
-            component:
+          activeChild = (
               <juju.components.SearchResults
                 changeState={this.props.changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
@@ -95,11 +122,10 @@ YUI.add('charmbrowser-component', function() {
                 requires={metadata.requires}
                 owner={metadata.owner}
                 tags={metadata.tags} />
-          };
+          );
           break;
         case 'entity-details':
-          state.activeChild = {
-            component:
+          activeChild = (
               <juju.components.EntityDetails
                 changeState={this.props.changeState}
                 addNotification={this.props.addNotification}
@@ -109,14 +135,15 @@ YUI.add('charmbrowser-component', function() {
                 getDiagramURL={this.props.getDiagramURL}
                 deployService={this.props.deployService}
                 getFile={this.props.getFile}
+                scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
                 id={metadata.id}
                 pluralize={utils.pluralize}
                 makeEntityModel={this.props.makeEntityModel} />
-          };
+          );
           break;
       }
-      return state;
+      return activeChild;
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -129,8 +156,9 @@ YUI.add('charmbrowser-component', function() {
           clickAction={this._close}
           instanceName="white-box"
           visible={true}>
-          <div className="charmbrowser">
-            {this.state.activeChild.component}
+          <div className="charmbrowser"
+            ref="charmbrowser">
+            {this._generateContent()}
           </div>
         </juju.components.Panel>
       );

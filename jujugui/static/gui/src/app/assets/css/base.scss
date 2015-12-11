@@ -103,6 +103,7 @@ $z-indexed-elements: search-results-list-block__tags,
                      cookie-policy,
                      header-banner-breadcrumbs,
                      white-box,
+                     entity-sticky-header,
                      header-banner-search,
                      user-profile,
                      deployment-summary-panel,
@@ -610,18 +611,23 @@ th {
     &.error {
         fill: $error;
     }
+
     &.subordinate {
         fill: rgb(167, 167, 167);
     }
+
     &.healthy {
         fill: rgb(167, 167, 167);
     }
+
     &.pending {
         fill: $uncommitted;
     }
+
     &.pending-healthy, &.pending-error {
         fill: $uncommitted;
     }
+
     &.pending-relation {
         fill: #faaf40;
 
@@ -629,13 +635,16 @@ th {
             fill: #fa6a40
         }
     }
+
     &.unused {
         visibility: hidden;
     }
+
     &.subordinate-relation {
         fill: #3333cc;
     }
 }
+
 .visibility-classes {
     transition: opacity 0.4s ease;
     &.show {

@@ -68,8 +68,25 @@
             font-size: 1em;
         }
 
+        ul {
+            list-style-position: inside;
+        }
+
         li {
-            margin-left: 3em;
+            line-height: 1.6;
+        }
+
+        pre {
+            padding: 10px 15px;
+            background-color: $cool_grey;
+            border: none;
+            border-radius: 2px;
+            color: $mid_grey;
+
+            code {
+                margin-bottom: 0;
+                color: $mid_grey;
+            }
         }
     }
 
