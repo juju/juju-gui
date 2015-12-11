@@ -37,12 +37,14 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
         units={units}
         services={services}
-        machines={machines} />);
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view">
         <div className="machine-view__content">
@@ -60,10 +62,12 @@ describe('MachineView', function() {
           <div className="machine-view__column machine-view__column--overlap">
             <juju.components.MachineViewHeader
               menuItems={[{
-                label: 'Add machine'
+                label: 'Add machine',
+                action: instance._addMachine
               }]}
               title="My Env (0)" />
             <div className="machine-view__column-content">
+              {undefined}
               <div className="machine-view__column-onboarding">
                 Use machine view to:
                 <ul>
@@ -74,7 +78,10 @@ describe('MachineView', function() {
                   <li>Manually place new units</li>
                   <li>Collocate services</li>
                 </ul>
-                <span className="link" role="button" tabIndex="0">
+                <span className="link"
+                  onClick={instance._addMachine}
+                  role="button"
+                  tabIndex="0">
                   Add machine
                 </span>
               </div>
@@ -82,8 +89,13 @@ describe('MachineView', function() {
           </div>
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
+              menuItems={[{
+                label: 'Add container',
+                action: instance._addContainer
+              }]}
               title="0 containers, 0 units" />
             <div className="machine-view__column-content">
+              {undefined}
               {undefined}
             </div>
           </div>
@@ -150,6 +162,7 @@ describe('MachineView', function() {
 
   it('can display a list of unplaced units', function() {
     var autoPlaceUnits = sinon.stub();
+    var removeUnits = sinon.stub();
     var machines = {
       filterByParent: sinon.stub().returns([1, 2, 3])
     };
@@ -169,13 +182,16 @@ describe('MachineView', function() {
         get: sinon.stub().returns('django.svg')
       })
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         autoPlaceUnits={autoPlaceUnits}
         environmentName="My Env"
         units={units}
+        removeUnits={removeUnits}
         services={services}
-        machines={machines} />);
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
         <div>
@@ -189,10 +205,12 @@ describe('MachineView', function() {
             <juju.components.MachineViewUnplacedUnit
               key="django/0"
               icon="django.svg"
+              removeUnit={instance._removeUnit}
               unit={unitList[0]} />
             <juju.components.MachineViewUnplacedUnit
               key="django/1"
               icon="django.svg"
+              removeUnit={instance._removeUnit}
               unit={unitList[1]} />
           </ul>
         </div>
@@ -244,14 +262,17 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
         environmentName="My Env"
         units={units}
         services={services}
-        machines={machines} />);
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div className="machine-view__column-onboarding">
           Use machine view to:
           <ul>
@@ -262,7 +283,10 @@ describe('MachineView', function() {
             <li>Manually place new units</li>
             <li>Collocate services</li>
           </ul>
-          <span className="link" role="button" tabIndex="0">
+          <span className="link"
+            onClick={instance._addMachine}
+            role="button"
+            tabIndex="0">
             Add machine
           </span>
         </div>
@@ -285,8 +309,10 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
+    var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
         services={services}
@@ -295,6 +321,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div>
           <div className="machine-view__column-onboarding">
             Drag and drop unplaced units onto your machines and containers to
@@ -302,6 +329,7 @@ describe('MachineView', function() {
           </div>
           <ul className="machine-view__list">
             {[<juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -332,8 +360,10 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
+    var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
         services={services}
@@ -342,10 +372,12 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div>
           {undefined}
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -354,6 +386,7 @@ describe('MachineView', function() {
               type="machine"
               units={units} />
             <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
               key="new1"
               machine={machineList[1]}
               selected={false}
@@ -363,6 +396,38 @@ describe('MachineView', function() {
               units={units} />
           </ul>
         </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1], expected);
+  });
+
+  it('can display a form for adding a machine', function() {
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        createMachine={createMachine}
+        environmentName="My Env"
+        machines={machines}
+        services={services}
+        units={units} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._addMachine();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        <juju.components.MachineViewAddMachine
+          close={instance._closeAddMachine}
+          createMachine={createMachine} />
+        {undefined}
       </div>);
     assert.deepEqual(
       output.props.children.props.children[1].props.children[1], expected);
@@ -413,24 +478,35 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
-    var output = jsTestUtils.shallowRender(
+    var destroyMachines = sinon.stub();
+    var removeUnits = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
+        removeUnits={removeUnits}
         services={services}
-        machines={machines} />);
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
             key="new0"
-            machine={{id: 'new0', displayName: 'Root container'}}
+            machine={{id: 'new0', displayName: 'Root container', root: true}}
+            removeUnit={instance._removeUnit}
             services={services}
             type="container"
             units={units} />
           <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
+            removeUnit={instance._removeUnit}
             services={services}
             type="container"
             units={units} />
@@ -438,5 +514,93 @@ describe('MachineView', function() {
       </div>);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[1], expected);
+  });
+
+  it('can display a form for adding a container', function() {
+    var machines = {filterByParent: function(arg) {
+      if (arg == 'new0') {
+        return [{id: 'new0/lxc/0'}];
+      }
+      return [{id: 'new0'}];
+    }};
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var destroyMachines = sinon.stub();
+    var removeUnits = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        createMachine={createMachine}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        removeUnits={removeUnits}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._addContainer();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        <juju.components.MachineViewAddMachine
+          close={instance._closeAddContainer}
+          createMachine={createMachine}
+          parentId="new0" />
+        <ul className="machine-view__list">
+          <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
+            key="new0"
+            machine={{displayName: 'Root container', id: 'new0', root: true}}
+            removeUnit={instance._removeUnit}
+            services={services}
+            type="container"
+            units={units} />
+          <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
+            key="new0/lxc/0"
+            machine={{id: 'new0/lxc/0'}}
+            removeUnit={instance._removeUnit}
+            services={services}
+            type="container"
+            units={units} />
+        </ul>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[2].props.children[1], expected);
+  });
+
+  it('can remove a unit', function() {
+    var machines = {filterByParent: function(arg) {
+      if (arg == 'new0') {
+        return [{id: 'new0/lxc/0'}];
+      }
+      return [{id: 'new0'}];
+    }};
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var destroyMachines = sinon.stub();
+    var removeUnits = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        createMachine={createMachine}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        removeUnits={removeUnits}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._removeUnit('wordpress/8');
+    assert.equal(removeUnits.callCount, 1);
+    assert.deepEqual(removeUnits.args[0][0], ['wordpress/8']);
   });
 });

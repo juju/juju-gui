@@ -38,6 +38,13 @@ YUI.add('bundle-import-notifications', function(Y) {
     watchAll: function(env, db) {
       env.deployerStatus(function(response) {
         if (response.err) {
+          // This is expected in the cases the GUI is not served by the GUI
+          // server, in which case the deployer method is not implemented.
+          if (response.err.indexOf('not implemented') > -1) {
+            console.log(
+              'GUI server bundle endpoints not supported: ' + response.err);
+            return;
+          }
           db.notifications.add({
             title: 'Unable to retrieve bundle deployment statuses',
             message: 'Failure retrieving bundles status: ' + response.err,

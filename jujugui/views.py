@@ -4,6 +4,7 @@
 import json
 import logging
 import os
+import pkg_resources
 
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import FileResponse
@@ -106,5 +107,12 @@ def config(request):
         'GA_key': settings['jujugui.ga_key'],
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': '',
+        'embedded': settings['jujugui.embedded'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
+
+
+@view_config(route_name='jujugui.version', renderer='prettyjson')
+def version(request):
+    version = pkg_resources.get_distribution('jujugui').version
+    return {'version': version}

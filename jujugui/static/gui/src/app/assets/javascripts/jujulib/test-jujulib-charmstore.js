@@ -67,9 +67,9 @@ describe('jujulib charmstore', function() {
       };
       charmstore.processEntity = function (data) {
         if (data.entityType === 'charm') {
-          return "It's a charm.";  
+          return "It's a charm.";
         } else {
-          return "It's a bundle."; 
+          return "It's a bundle.";
         }
       }
       charmstore._transformQueryResults(cb, null, data);
@@ -252,6 +252,7 @@ describe('jujulib charmstore', function() {
             'include=charm-config&' +
             'include=bundle-metadata&' +
             'include=extra-info&' +
+            'include=tags&' +
             'include=stats']);
     });
 
@@ -266,6 +267,7 @@ describe('jujulib charmstore', function() {
             'include=charm-config&' +
             'include=bundle-metadata&' +
             'include=extra-info&' +
+            'include=tags&' +
             'include=stats']);
     });
 

@@ -77,8 +77,11 @@ YUI.add('deployment-bar', function() {
           visible={true}>
           <juju.components.DeploymentBarNotification
             change={this.state.latestChangeDescription} />
-          <juju.components.DeploymentBarChangeCount
-            count={changeCount} />
+          <juju.components.GenericButton
+            action={this.props.deployButtonAction}
+            type="blue"
+            disabled={changeCount === 0}
+            title={changeCount} />
           <juju.components.GenericButton
             action={this.props.deployButtonAction}
             type="confirm"
@@ -90,7 +93,6 @@ YUI.add('deployment-bar', function() {
   });
 
 }, '0.1.0', { requires: [
-  'deployment-bar-change-count',
   'deployment-bar-notification',
   'panel-component'
 ]});

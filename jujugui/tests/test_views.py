@@ -2,6 +2,7 @@
 # GNU Affero General Public License version 3 (see the file LICENSE).
 
 import json
+import pkg_resources
 import unittest
 
 from pyramid import testing
@@ -57,6 +58,15 @@ class AppTests(ViewTestCase):
         self.assertEqual(expected_context, context)
 
 
+class VersionTest(ViewTestCase):
+
+    def test_version(self):
+        expected_version = pkg_resources.get_distribution('jujugui').version
+        jujugui.make_application(self.config)
+        version = views.version(self.request).get('version')
+        self.assertEqual(expected_version, version)
+
+
 class ConfigTests(ViewTestCase):
 
     def check_response(self, response):
@@ -90,6 +100,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
         self.assertIsNone(config['socket_path'])
+        self.assertIs(False, config['embedded'])
 
     def test_customized_options(self):
         self.update_settings({
@@ -100,6 +111,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.socket_path': '/api/address',
             'jujugui.user': 'who',
             'jujugui.password': 'secret',
+            'jujugui.embedded': 'true',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -114,6 +126,7 @@ class ConfigTests(ViewTestCase):
         # The hideLoginButton, user and password values reflect sandbox status.
         self.assertEqual('admin', config['user'])
         self.assertEqual('password', config['password'])
+        self.assertIs(True, config['embedded'])
 
     def test_standalone(self):
         jujugui.make_application(self.config)

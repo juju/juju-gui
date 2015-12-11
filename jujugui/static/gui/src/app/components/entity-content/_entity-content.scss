@@ -8,11 +8,6 @@
         &:nth-child(odd) {
             background-color: $light-grey;
         }
-
-        .inner-wrapper > div {
-            margin-top: 0;
-            margin-bottom: 0;
-        }
     }
 
     &__header {
@@ -22,12 +17,14 @@
     &__description {
         font-size: 22px;
 
+        .twelve-col,
         p {
-            margin: 0 0 80px 0;
+            margin: 0;
         }
     }
 
     &__metadata {
+        margin: 80px 0 0 0;
         font-size: 16px;
         font-weight: 100;
 
@@ -71,8 +68,25 @@
             font-size: 1em;
         }
 
+        ul {
+            list-style-position: inside;
+        }
+
         li {
-            margin-left: 3em;
+            line-height: 1.6;
+        }
+
+        pre {
+            padding: 10px 15px;
+            background-color: $cool_grey;
+            border: none;
+            border-radius: 2px;
+            color: $mid_grey;
+
+            code {
+                margin-bottom: 0;
+                color: $mid_grey;
+            }
         }
     }
 

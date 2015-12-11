@@ -33,7 +33,7 @@
             padding: 7px 20px;
 
             &:hover {
-                background-color: $light-grey;
+                background-color: $hover-background;
                 cursor: pointer;
             }
         }
@@ -42,4 +42,32 @@
 
 .machine-view__header .more-menu {
     float: right;
+}
+
+.machine-view__machine {
+    .more-menu {
+        display: none;
+        float: right;
+
+        &--active {
+            display: block;
+        }
+
+        &__menu {
+            top: 25px;
+        }
+    }
+
+    &-unit:hover,
+    &--selected:not(.machine-view__machine--root),
+    &:hover:not(.machine-view__machine--root) {
+        .more-menu {
+            display: block;
+        }
+    }
+}
+.machine-view__unplaced-unit {
+    .more-menu {
+        float: right;
+    }
 }

@@ -1,0 +1,19 @@
+.add-machine {
+    &__title {
+        margin: 0 10px 20px 10px;
+        font-size: $base + px;
+    }
+
+    &__container-type {
+        margin: 0 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+    &__constraints {
+        margin-top: 10px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}

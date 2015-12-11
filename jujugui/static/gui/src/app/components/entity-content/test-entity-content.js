@@ -81,10 +81,22 @@ describe('EntityContent', function() {
             <div className="twelve-col">
               <p>Django framework.</p>
             </div>
-            <div className="four-col entity-content__metadata last-col">
+            <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
               <ul>
                 {_generateTagItem('database', instance._handleTagClick)}
+              </ul>
+            </div>
+            <div className="four-col entity-content__metadata last-col">
+              <h4>More information</h4>
+              <ul>
+                <li>
+                  <a
+                    href="https://bugs.launchpad.net/charms/+source/django"
+                    target="_blank">
+                    Bugs
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -152,10 +164,22 @@ describe('EntityContent', function() {
             <div className="twelve-col">
               <p>Django framework.</p>
             </div>
-            <div className="four-col entity-content__metadata last-col">
+            <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
               <ul>
                 {_generateTagItem('database', instance._handleTagClick)}
+              </ul>
+            </div>
+            <div className="four-col entity-content__metadata last-col">
+              <h4>More information</h4>
+              <ul>
+                <li>
+                  <a
+                    href="https://bugs.launchpad.net/charms/+source/django"
+                    target="_blank">
+                    Bugs
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -210,11 +234,7 @@ describe('EntityContent', function() {
                 renderMarkdown={renderMarkdown}
                 getFile={getFile} />
             </div>
-            <div className="four-col">
-              <juju.components.EntityContentRelations
-                changeState={changeState}
-                relations={mockEntity.get('relations')} />
-            </div>
+            {undefined}
             <div className="four-col">
               <juju.components.EntityFiles
                 entityModel={mockEntity}

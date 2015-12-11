@@ -85,6 +85,16 @@ YUI.add('juju-topology', function(Y) {
       return;
     },
 
+    /**
+      Pass the mouse wheel event to the canvas.
+
+      @method handleZoom
+    */
+    handleZoom: function() {
+      this.zoomPlane[0][0].dispatchEvent(
+        new WheelEvent(d3.event.type, d3.event));
+    },
+
     renderOnce: function() {
       var svg,
           vis,
@@ -161,7 +171,9 @@ YUI.add('juju-topology', function(Y) {
               }
             }
           });
-        });
+          // Pass the wheel events to the canvas so that it can be zoomed.
+        }).on('mousewheel.zoom', this.handleZoom.bind(this))
+          .on('wheel.zoom', this.handleZoom.bind(this));
         var plusDrag = d3.behavior.drag()
           .on('drag', function(d) {
             var plus = d3.select(this);
@@ -205,7 +217,15 @@ YUI.add('juju-topology', function(Y) {
       this.zoom.x(this.xScale)
                .y(this.yScale)
                .scaleExtent([this.options.minZoom, this.options.maxZoom])
-               .on('zoom', function(evt) {self.fire('zoom', d3.event);});
+               .on('zoom', function(evt) {
+                 self.fire('zoom', d3.event);
+                 // If the canvas has actually been moved then set the flag.
+                 self.zoomed = true;
+               })
+               .on('zoomend', function(evt) {
+                 // Reset the flag for checking if the canvas has been moved.
+                 self.zoomed = false;
+               });
     },
 
     /*
@@ -322,7 +342,9 @@ YUI.add('juju-topology', function(Y) {
           if (!this.zoom) {return [0, 0]; }
           return this.zoom.translate();},
         setter: function(v) {this.zoom.translate(v);}
-      }
+      },
+
+      zoomed: {value: false}
     }
 
   });

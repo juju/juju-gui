@@ -54,14 +54,15 @@ button,
     background-color: $white;
     border: 1px solid $mid-grey;
     border-radius: $border-radius;
-    color: $charm-panel-orange;
+    color: $ubuntu-orange;
+    line-height: $base-line-height;
     text-align: center;
     cursor: pointer;
 
     &:active,
     &:focus,
     &:hover {
-        background-color: $light-grey;
+        background-color: $hover-background;
     }
 }
 
@@ -75,6 +76,21 @@ button,
     &:focus,
     &:hover {
         $colour: darken($ubuntu-orange, 10%);
+        background-color: $colour;
+        border-color: $colour;
+    }
+}
+
+%button-blue {
+    @extend %button;
+    border: none;
+    background-color: $uncommitted;
+    color: $white;
+
+    &:active,
+    &:focus,
+    &:hover {
+        $colour: darken($uncommitted, 10%);
         background-color: $colour;
         border-color: $colour;
     }

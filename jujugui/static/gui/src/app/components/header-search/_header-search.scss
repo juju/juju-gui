@@ -4,6 +4,27 @@
     color: $warm-grey;
     transition: background-color .3s;
 
+    &--entity-details,
+    &--store {
+        .header-search {
+            &__store {
+                color: $ubuntu-orange;
+            }
+
+            &__store-icon .svg-icon {
+                fill: $ubuntu-orange;
+            }
+        }
+    }
+
+    &--search-active {
+        .header-search {
+            &__store-label {
+                display: none;
+            }
+        }
+    }
+
     &__form {
         display: inline-block;
     }
@@ -16,7 +37,7 @@
     }
 
     &__input {
-        width: 140px;
+        width: 70px;
         background-color: transparent;
         border: none;
         transition: width .3s;
@@ -24,10 +45,24 @@
 
     &__store {
         cursor: pointer;
+        transition: color .3s;
+
+        &:hover {
+            color: $ubuntu-orange;
+
+            .svg-icon {
+                fill: $ubuntu-orange
+            }
+        }
     }
 
     &__store-icon {
         margin-right: 10px;
+
+        .svg-icon {
+            transition: fill 0.3s;
+            fill: $warm-grey;
+        }
     }
 
     &__close {

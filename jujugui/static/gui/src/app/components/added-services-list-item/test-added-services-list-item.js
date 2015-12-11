@@ -372,6 +372,7 @@ describe('AddedServicesListItem', function() {
         return false;
       }};
     var changeStub = sinon.stub();
+    var panToService = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.AddedServicesListItem
@@ -381,6 +382,7 @@ describe('AddedServicesListItem', function() {
           unfadeService={sinon.stub()}
           changeState={changeStub}
           getUnitStatusCounts={getUnitStatusCounts()}
+          panToService={panToService}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.onClick({
@@ -388,6 +390,7 @@ describe('AddedServicesListItem', function() {
         getAttribute: () => 'serviceId'
       }
     });
+    assert.equal(panToService.callCount, 1);
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
       sectionA: {

@@ -2757,13 +2757,7 @@ YUI.add('juju-models', function(Y) {
 
       var changedMachines = [];
       this.machines.each(function(machine) {
-        var units = machine.units;
-        if (!units) {
-          // If the machine view hasn't been opened yet then there won't be a
-          // units collection on the machines. So we need to get the 'real'
-          // unit list.
-          units = this.units.filterByMachine(machine.id, true);
-        }
+        var units = this.units.filterByMachine(machine.id, true);
         var keepVisible = this._highlightedServices.some(
             function(highlightedService) {
               return units.some(function(unit) {

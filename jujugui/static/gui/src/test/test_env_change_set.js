@@ -915,6 +915,10 @@ describe('Environment Change Set', function() {
             getById: function(arg) {
               assert.deepEqual(arg, args[0]);
               return machineObj;
+            }},
+          units: {
+            filterByMachine: function() {
+              return [];
             }}
         });
         var key = ecs._lazyDestroyMachines(args);
@@ -937,9 +941,14 @@ describe('Environment Change Set', function() {
         var stubRemove = testUtils.makeStubFunction();
         ecs.get('db').machines = {
           getById: function() {
-            return { units: []};
+            return {};
           },
           remove: stubRemove
+        };
+        ecs.get('db').units = {
+          filterByMachine: function() {
+            return [];
+          }
         };
         ecs.lazyAddMachines([[{}], function() {}], {modelId: 'baz'});
         ecs._lazyDestroyMachines([['baz'], function() {}]);
@@ -976,6 +985,9 @@ describe('Environment Change Set', function() {
           getById: function() {},
           remove: stubRemove
         };
+        ecs.get('db').units = {
+          filterByMachine: function() {}
+        };
         ecs.changeSet = {
           'addUnits-000': {
             command: {
@@ -1004,44 +1016,19 @@ describe('Environment Change Set', function() {
         var unit = { machine: 'foo'};
         db.machines = {
           getById: function() {
-            return { units: [unit] };
+            return {};
           }
         };
         db.units = {
           revive: function() { return { set: stubSet }; },
-          free: function() {}
+          free: function() {},
+          filterByMachine: function() {
+            return [unit];
+          }
         };
         ecs._lazyDestroyMachines([['baz'], function() {}]);
         assert.deepEqual(unit, {});
         assert.deepEqual(stubSet.lastArguments(), ['machine', null]);
-      });
-
-      it('removes uncommitted units from the parent machine', function() {
-        var stubSet = testUtils.makeStubFunction();
-        var db = ecs.get('db');
-        var unit = { machine: 'foo'};
-        var machine = {
-          parentId: 1,
-          units: [unit]
-        };
-        var parentMachine = {
-          units: [unit]
-        };
-        db.machines = {
-          getById: function(key) {
-            if (key === 1) {
-              return parentMachine;
-            } else {
-              return machine;
-            }
-          }
-        };
-        db.units = {
-          revive: function() { return { set: stubSet }; },
-          free: function() {}
-        };
-        ecs._lazyDestroyMachines([['baz'], function() {}]);
-        assert.deepEqual(parentMachine.units, []);
       });
     });
 

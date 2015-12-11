@@ -89,6 +89,32 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Generate the list of Tags if available.
+
+      @method _generateTags
+      @return {Array} The tags markup.
+    */
+    _generateTags: function() {
+      // Have to convert {0: 'database'} to ['database'].
+      var tags = [],
+          entityTags = this.props.entityModel.get('tags'),
+          index;
+      if (!entityTags) {
+        return;
+      }
+      for (index in entityTags) {
+        tags.push(entityTags[index]);
+      }
+      return (
+        <div className="four-col entity-content__metadata">
+          <h4>Tags</h4>
+          <ul>
+            {this._generateList(tags, this._handleTagClick)}
+          </ul>
+        </div>);
+    },
+
+    /**
       Handle clicks on tags.
 
       @method _handleTagClick
@@ -117,28 +143,45 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        // Have to convert {0: 'database'} to ['database'].
-        var tags = [],
-            entityTags = entityModel.get('tags'),
-            index;
-        for (index in entityTags) {
-          tags.push(entityTags[index]);
-        }
+        var bugLink = `https://bugs.launchpad.net/charms/+source/` +
+          `${entityModel.get('name')}`;
         return (
           <div className="row entity-content__description">
             <div className="inner-wrapper">
               <div className="twelve-col">
                 <p>{entityModel.get('description')}</p>
               </div>
+              {this._generateTags()}
               <div className="four-col entity-content__metadata last-col">
-                <h4>Tags</h4>
+                <h4>More information</h4>
                 <ul>
-                  {this._generateList(tags, this._handleTagClick)}
+                  <li>
+                    <a href={bugLink} target="_blank">
+                      Bugs
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         );
+      }
+    },
+
+    /**
+      We only show the relations when it's a charm, but not a bundle.
+
+      @method _showEntityRelations
+    */
+    _showEntityRelations: function() {
+      var entityModel = this.props.entityModel;
+      if (entityModel.get('entityType') === 'charm') {
+        return (
+          <div className="four-col">
+            <juju.components.EntityContentRelations
+              changeState={this.props.changeState}
+              relations={entityModel.get('relations')} />
+          </div>);
       }
     },
 
@@ -155,11 +198,7 @@ YUI.add('entity-content', function() {
                   renderMarkdown={this.props.renderMarkdown}
                   getFile={this.props.getFile} />
               </div>
-              <div className="four-col">
-                <juju.components.EntityContentRelations
-                  changeState={this.props.changeState}
-                  relations={this.props.entityModel.get('relations')} />
-              </div>
+              {this._showEntityRelations()}
               <div className="four-col">
                 <juju.components.EntityFiles
                   entityModel={entityModel}

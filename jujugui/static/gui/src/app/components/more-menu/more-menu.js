@@ -96,9 +96,24 @@ YUI.add('more-menu', function() {
         </ul>);
     },
 
+    /**
+      Generate the classes for the menu.
+
+      @method _generateClasses
+      @returns {Object} The collection of classes.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'more-menu',
+        {
+          'more-menu--active': this.state.menuOpen
+        }
+      );
+    },
+
     render: function() {
       return (
-        <div className="more-menu">
+        <div className={this._generateClasses()}>
           <span className="more-menu__toggle"
             onClick={this._handleToggleMenu}
             role="button"

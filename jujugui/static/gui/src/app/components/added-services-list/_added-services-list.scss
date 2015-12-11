@@ -23,20 +23,22 @@
         &.hover,
         &:active,
         &:hover {
-            background-color: $light-grey;
+            background-color: $hover-background;
         }
-        &:hover .inspector-view__item-name {
-            max-width: 105px;
-        }
-        &.visibility-toggled .inspector-view__item-name {
-            max-width: 105px;
-        }
-        &.visibility-toggled .inspector-view__visibility-toggle {
-            display: inline-block;
 
-        }
-        &:hover .inspector-view__visibility-toggle {
-            display: inline-block;
+        &.visibility-toggled,
+        &:hover {
+            .inspector-view__item-name {
+                max-width: 105px;
+            }
+
+            .inspector-view__visibility-toggle {
+                opacity: .6;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
         }
     }
 
@@ -49,6 +51,8 @@
     }
 
     &__item-name {
+        position: relative;
+        top: 2px;
         overflow: hidden;
         display: inline-block;
         max-width: 165px;
@@ -58,16 +62,21 @@
     }
 
     &__item-count {
+        position: relative;
+        top: 1px;
         color: $warm-grey;
     }
 
     &__visibility-toggle {
-        display: none;
+        transition: opacity .3s;
+        opacity: 0;
         vertical-align: middle;
         padding: 0 15px 0 0;
     }
 
     &__status-block {
+        position: relative;
+        top: 2px;
         float: right;
     }
 

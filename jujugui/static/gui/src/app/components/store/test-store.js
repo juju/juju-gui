@@ -33,9 +33,13 @@ describe('Store', function() {
   it('can render correctly', function() {
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
+    var makeEntityModel = sinon.stub();
+    var seriesList = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
         charmstoreSearch={charmstoreSearch}
+        makeEntityModel={makeEntityModel}
+        seriesList={seriesList}
         changeState={changeState} />);
     assert.deepEqual(output,
       <div className="store">
@@ -46,6 +50,8 @@ describe('Store', function() {
         <juju.components.SearchResults
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
+          makeEntityModel={makeEntityModel}
+          seriesList={seriesList}
           inline={true}
           query="" />
       </div>);

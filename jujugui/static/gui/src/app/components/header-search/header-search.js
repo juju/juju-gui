@@ -34,7 +34,7 @@ YUI.add('header-search', function() {
       return {
         query: metadata && metadata.search,
         active: active,
-        inputStyles: this._generateInputStyles(active)
+        inputStyles: this._generateInputStyles()
       };
     },
 
@@ -73,10 +73,18 @@ YUI.add('header-search', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
+      var classes = {
+        'header-search--active': this.state.active,
+        'header-search--search-active': !!this.state.inputStyles.width
+      };
+      if (metadata && metadata.activeComponent) {
+        classes['header-search--' + metadata.activeComponent] = true;
+      }
       return classNames(
         'header-search',
         'ignore-react-onclickoutside',
-        this.state.active ? 'header-search--active' : ''
+         classes
       );
     },
 
@@ -101,8 +109,8 @@ YUI.add('header-search', function() {
       @method _handleSearchFocus
     */
     _handleSearchFocus: function() {
+      this._openSearch(true);
       if (!this.state.active && !this.state.query) {
-        this._openSearch();
         this.props.changeState({
           sectionC: {
             component: 'charmbrowser',
@@ -118,11 +126,12 @@ YUI.add('header-search', function() {
       Open the search box.
 
       @method _openSearch
+      @param {Boolean} inputOpen Whether the input should be open.
     */
-    _openSearch: function() {
+    _openSearch: function(inputOpen) {
       this.setState({
         active: true,
-        inputStyles: this._generateInputStyles(true)
+        inputStyles: this._generateInputStyles(inputOpen)
       });
     },
 
@@ -131,10 +140,13 @@ YUI.add('header-search', function() {
 
       @method _closeSearch
     */
-    _closeSearch: function() {
+    _closeSearch: function(active) {
+      if (active === undefined) {
+        active = false;
+      }
       this.setState({
         query: undefined,
-        active: false,
+        active: active,
         inputStyles: this._generateInputStyles(false)
       });
     },
@@ -147,6 +159,17 @@ YUI.add('header-search', function() {
       @returns {Object} The object of styles
     */
     _generateInputStyles: function(active) {
+      if (active === undefined) {
+        var metadata = this.props.getAppState(
+          'current', 'sectionC', 'metadata');
+        if (metadata) {
+          var activeComponent = metadata.activeComponent;
+          if (activeComponent === 'mid-point' ||
+              activeComponent === 'search-results') {
+            active = true;
+          }
+        }
+      }
       var styles = {};
       if (active) {
         styles.width = (window.innerWidth * 0.40) + 'px';
@@ -179,13 +202,7 @@ YUI.add('header-search', function() {
       @method _handleClose
     */
     _handleClose: function() {
-      this._closeSearch();
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
-      });
+      this._closeSearch(true);
     },
 
     /**
@@ -205,6 +222,7 @@ YUI.add('header-search', function() {
       @param {Object} e The click event
     */
     _handleStoreClick: function(e) {
+      this.setState({query: ''});
       this.props.changeState({
         sectionC: {
           component: 'charmbrowser',
@@ -227,7 +245,7 @@ YUI.add('header-search', function() {
             </button>
             <input type="search" name="query"
               className="header-search__input"
-              placeholder="Search the store"
+              placeholder="Search"
               value={this.state.query}
               onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
@@ -247,7 +265,9 @@ YUI.add('header-search', function() {
               <juju.components.SvgIcon name="store_22"
                 size="20" />
             </span>
-            Store
+            <span className="header-search__store-label">
+              Store
+            </span>
           </span>
         </div>
       );

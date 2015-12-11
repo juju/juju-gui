@@ -225,7 +225,6 @@ YUI.add('juju-topology-service', function(Y) {
           return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
         });
 
-
     subRelationIndicator.append('line')
       .attr({
         'x1': 0,
@@ -370,7 +369,7 @@ YUI.add('juju-topology-service', function(Y) {
         },
         // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
-          click: 'canvasClick'
+          mouseup: 'canvasClick'
         }
       },
       d3: {
@@ -594,14 +593,22 @@ YUI.add('juju-topology-service', function(Y) {
     */
     hoverService: function(id, hover) {
       var node = this.getServiceNode(id);
-      var topo = this.get('component');
       if (node) {
         if (hover) {
           utils.addSVGClass(node, 'hover');
         } else {
-          topo.vis.selectAll('.hover').classed('hover', false);
+          this.unhoverServices();
         }
       }
+    },
+
+    /**
+      Clear all hovers on services.
+
+      @method unhoverServices
+    */
+    unhoverServices: function() {
+      this.get('component').vis.selectAll('.hover').classed('hover', false);
     },
 
     /**
@@ -635,6 +642,20 @@ YUI.add('juju-topology-service', function(Y) {
       var node = this.getServiceNode(id);
       if (node) {
         this.selectNode(node);
+      }
+    },
+
+    /**
+      Center the viewport on the service token.
+
+      @method panToService
+      @param {String} id The service id.
+    */
+    panToService: function(id) {
+      var node = this.getServiceNode(id);
+      if (node) {
+        var box = d3.select(node).datum();
+        this.get('component').fire('panToPoint', {point: [box.x, box.y]});
       }
     },
 
@@ -707,14 +728,13 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseLeave: function(box, context) {
       var topo = context.get('component');
       topo.fire('hoverService', {id: null});
+      context.unhoverServices();
       // Do not fire if we're within the service box.
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('.the-canvas').getDOMNode());
       if (box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
-      var rect = Y.one(this).one('.service-border');
-      utils.removeSVGClass(rect, 'hover');
 
       topo.fire('snapOutOfService');
     },
@@ -761,7 +781,11 @@ YUI.add('juju-topology-service', function(Y) {
      */
     canvasClick: function(box, self) {
       var topo = self.get('component');
-      topo.fire('clearState');
+      // Don't clear the canvas state if the click event was from dragging the
+      // canvas around.
+      if (!topo.zoomed) {
+        topo.fire('clearState');
+      }
     },
 
     /**
@@ -1049,6 +1073,13 @@ YUI.add('juju-topology-service', function(Y) {
           topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
       topo.vis.selectAll('.is-selected').classed('is-selected', false);
+      this.unhoverServices();
+      topo.fire('changeState', {
+        sectionA: {
+          component: 'services',
+          metadata: null
+        }
+      });
     },
 
     /**
@@ -1251,6 +1282,9 @@ YUI.add('juju-topology-service', function(Y) {
       // Generate a node for each service, draw it as a rect with
       // labels for service and charm.
       var node = this.node;
+      // Pass the wheel events to the canvas so that it can be zoomed.
+      node.on('mousewheel.zoom', topo.handleZoom.bind(topo))
+        .on('wheel.zoom', topo.handleZoom.bind(topo));
 
       // Rerun the pack layout.
       // Pack doesn't honor existing positions and will re-layout the
@@ -1359,11 +1393,6 @@ YUI.add('juju-topology-service', function(Y) {
             }
           });
         }
-      }
-      // Find the centroid of our hull of services and inform the
-      // topology.
-      if (vertices.length) {
-        this.findCentroid(vertices);
       }
 
       // enter
@@ -1520,7 +1549,6 @@ YUI.add('juju-topology-service', function(Y) {
           height: 16,
           transform: 'translate(-8, -8)'
         });
-
 
       node.append('circle')
         .attr({

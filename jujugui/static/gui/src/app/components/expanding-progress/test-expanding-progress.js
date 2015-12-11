@@ -20,35 +20,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
-
-describe('DeploymentBarChangeCount', function() {
+describe('ExpandingProgress', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-bar-change-count', function() { done(); });
+    YUI().use('expanding-progress', function() { done(); });
   });
 
-  it('is disabled if the count is zero', function() {
+  it('renders properly', () => {
     var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBarChangeCount
-        count="0" />);
-    assert.deepEqual(output,
-      <div className="deployment-bar__change-count">
-        0
-      </div>);
+      <juju.components.ExpandingProgress />);
+    var expected = (
+      <div className="expanding-progress"></div>);
+    assert.deepEqual(output, expected);
   });
 
-  it('is active if the count is greater than zero', function() {
-    var className = 'deployment-bar__change-count ' +
-        'deployment-bar__change-count--active';
-    var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentBarChangeCount
-        count="4" />);
-    assert.deepEqual(output,
-      <div className={className}>
-        4
-      </div>);
+  it('adds the active class after mounted', (done) => {
+    var component = testUtils.renderIntoDocument(
+      <juju.components.ExpandingProgress />);
+    // The class is set asynchronously so loop over the value and continue When
+    // it changes.
+    setTimeout(() => {
+      if (component.state.active) {
+        assert.equal(component.state.active, true);
+        done();
+      }
+    });
   });
+
 });

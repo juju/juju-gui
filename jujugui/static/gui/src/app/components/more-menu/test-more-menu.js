@@ -70,7 +70,7 @@ describe('MoreMenu', function() {
     instance._handleToggleMenu();
     var output = renderer.getRenderOutput();
     var expected = (
-        <div className="more-menu">
+        <div className="more-menu more-menu--active">
           <span className="more-menu__toggle"
             onClick={instance._handleToggleMenu}
             role="button"

@@ -50,7 +50,6 @@ for indentation.
 $font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
-/* Define common colors. */
 /* Shades of grey */
 $white: #fff;
 $light-grey: #f5f5f5;
@@ -60,22 +59,23 @@ $warm-grey: #888;
 $dark-grey: #9fa7aa;
 $cool-grey: #333;
 
-$canvas-background: $light-grey;
+// Status colours.
 $error: #df382c;
-$ubuntu-orange: #dd4814;
-$charm-panel-orange: #dd4814;
-$charm-panel-background-color: #eeeeee;
-$label-color: #292929;
-$navbar-border-dark: #191514;
-$navbar-border-light: #2d2928;
-$success: #38b44a;
-$text-colour: $cool-grey;
-$text-entry-color: #6d6e70;
 $pending: #eaa818;
+$success: #38b44a;
 $uncommitted: #19b6ee;
+
+// Brand colours.
+$ubuntu-orange: #dd4814;
+
+// Other colous.
+$canvas-background: $light-grey;
+$hover-background: #f7f7f7;
+$text-colour: $cool-grey;
 
 // Spacing.
 $base: 16;
+$base-line-height: 21px;
 $border-radius: 2px;
 $bws-header-height: 81px;
 $deployer-bar-height: 90px;
@@ -84,12 +84,14 @@ $left-panel-width: 290px;
 $navbar-height: 60px;
 $panel-space: 10px;
 
+// Font sizes:
+$font-size-small: 14px;
+
 // z-indexing
 $z-indexed-elements: search-results-list-block__tags,
                      search-results-list-block__tags-links,
                      search-results-cell,
                      search-results-cell--hover,
-                     environment-help-shrink,
                      boolean-config--handle,
                      boolean-config--label,
                      machine-view-panel,
@@ -101,13 +103,13 @@ $z-indexed-elements: search-results-list-block__tags,
                      cookie-policy,
                      header-banner-breadcrumbs,
                      white-box,
+                     entity-sticky-header,
                      header-banner-search,
                      user-profile,
                      deployment-summary-panel,
                      more-menu,
                      shortcut-help,
                      header-search--active,
-                     dropdown,
                      full-screen-mask,
                      centered-column;
 
@@ -136,6 +138,7 @@ select,
 textarea {
     font-family: $font-family;
     font-weight: 300;
+    color: $text-colour;
 }
 
 body {
@@ -146,7 +149,7 @@ body {
     background-color: $canvas-background;
     color: $text-colour;
     font-size: 16px;
-    line-height: 18px;
+    line-height: $base-line-height;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -155,7 +158,7 @@ body {
 a,
 a:hover {
     cursor: pointer;
-    color: $charm-panel-orange;
+    color: $ubuntu-orange;
     text-decoration: none;
 }
 
@@ -234,7 +237,7 @@ svg {
 }
 
 li {
-    line-height: 18px;
+    line-height: $base-line-height;
 }
 
 h2 {
@@ -246,7 +249,7 @@ h4 {
 }
 
 h4, h5, h6 {
-    line-height: 18px;
+    line-height: $base-line-height;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -482,12 +485,6 @@ th {
               color: $text-colour;
             }
 
-            &.add-relation {
-                .disabled {
-                    color: red;
-                }
-            }
-
             &:last-child {
                 border-bottom: none;
             }
@@ -512,10 +509,6 @@ th {
             border-top: 1px solid #e9e9e9;
         }
     }
-
-    &#service-menu ul li {
-        padding-left: 36px;
-    }
 }
 
 .subordinate-rel-group {
@@ -525,32 +518,47 @@ th {
         display: inline;
     }
 }
+
 #relation-menu {
+    $icon-size: 16px;
+    $height: 30px;
+    $gutter: 10px;
+
     .relation-container {
         cursor: inherit;
-        padding-left: 30px;
-        padding-right: 0;
-        line-height: 30px;
+        padding: 0 0 0 (($gutter * 2) + $icon-size);
+        line-height: $height;
         background-repeat: no-repeat;
-        background-position: 10px 11px;
+        background-position: $gutter (($height - $icon-size) / 2);
         background-image: url("juju-ui/assets/images/unit_running_16.png");
+
         &.error {
             background-image: url("juju-ui/assets/images/error_16.png");
         }
+
         .endpoint.error {
             color: red;
         }
+
         &:hover {
             background-color: inherit;
         }
     }
+
     .triangle {
         bottom: -3px;
         border-width: 3px 5px 0 5px;
     }
+
     .relation-remove {
-        margin: 0 10px;
+        line-height: normal;
+        margin: (($height - $icon-size) / 2) $gutter;
+        display: block;
+        float: right;
+        height: $icon-size;
+        width: $icon-size;
     }
+
     .inspect-relation {
         cursor: pointer;
     }
@@ -563,18 +571,23 @@ th {
     &.error {
         stroke: $error;
     }
+
     &.subordinate {
         stroke: rgb(167, 167, 167);
     }
+
     &.healthy {
         stroke: rgb(167, 167, 167);
     }
+
     &.pending {
         stroke: $uncommitted;
     }
+
     &.pending-healthy, &.pending-error {
         stroke: $uncommitted;
     }
+
     &.pending-relation {
         stroke: #faaf40;
 
@@ -582,31 +595,39 @@ th {
             stroke: #fa6a40
         }
     }
+
     &.unused {
         visibility: hidden;
     }
+
     &.subordinate-relation {
         stroke: #3333cc;
     }
 }
+
 .connector1,
 .connector2 {
 
     &.error {
         fill: $error;
     }
+
     &.subordinate {
         fill: rgb(167, 167, 167);
     }
+
     &.healthy {
         fill: rgb(167, 167, 167);
     }
+
     &.pending {
         fill: $uncommitted;
     }
+
     &.pending-healthy, &.pending-error {
         fill: $uncommitted;
     }
+
     &.pending-relation {
         fill: #faaf40;
 
@@ -614,13 +635,16 @@ th {
             fill: #fa6a40
         }
     }
+
     &.unused {
         visibility: hidden;
     }
+
     &.subordinate-relation {
         fill: #3333cc;
     }
 }
+
 .visibility-classes {
     transition: opacity 0.4s ease;
     &.show {
@@ -628,12 +652,13 @@ th {
         visibility: visible;
     }
     &.fade {
-        visibility: visible;
-        stroke-opacity: .2;
-
-        .service-icon {
-            opacity: .2;
-        }
+        /*
+          Put visibility on a delay so it gets hidden after the opacity is
+          finished transitioning.
+        */
+        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
+        opacity: 0;
+        visibility: hidden;
     }
     &.hide {
         /*
@@ -813,7 +838,6 @@ g.unit {
             @extend .button;
         }
         .header {
-            @extend .type9;
             margin: 0 0 20px -20px;
             padding: 10px 20px;
             background-color: #ddd;
@@ -826,7 +850,6 @@ g.unit {
             text-align: center;
         }
         .form-error {
-            @extend .type9;
             margin-bottom: 20px;
             color: red;
         }
@@ -846,7 +869,6 @@ g.unit {
 @import "machine-view/machine-view-token-base";
 @import "machine-view/more-menu";
 @import "machine-view/service-scale-up-view";
-@import "dropdown";
 @import "header";
 
 /** Cookies **/

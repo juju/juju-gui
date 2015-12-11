@@ -29,6 +29,7 @@ YUI.add('added-services-list', function() {
       updateUnitFlags: React.PropTypes.func.isRequired,
       findRelatedServices: React.PropTypes.func.isRequired,
       findUnrelatedServices: React.PropTypes.func.isRequired,
+      panToService: React.PropTypes.func.isRequired,
       setMVVisibility: React.PropTypes.func.isRequired
     },
 
@@ -52,6 +53,7 @@ YUI.add('added-services-list', function() {
               unfadeService={this.unfadeService}
               ref={'AddedServicesListItem-' + service.get('id')}
               hoverService={this.props.hoverService}
+              panToService={this.props.panToService}
               service={service} />);
       });
       return items;

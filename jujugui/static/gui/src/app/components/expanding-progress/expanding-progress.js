@@ -18,31 +18,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-bar-change-count', function() {
+YUI.add('expanding-progress', function() {
 
-  juju.components.DeploymentBarChangeCount = React.createClass({
+  juju.components.ExpandingProgress = React.createClass({
 
-    /**
-      Returns the classes for the button based on the provided props.
-      @method _generateClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      return classNames(
-        'deployment-bar__change-count',
-        {
-          'deployment-bar__change-count--active': this.props.count > 0
-        }
-      );
+    getInitialState: function() {
+      return {active: false};
+    },
+
+    componentDidMount: function() {
+      // componentDidMount appears to actually fire before the element is in
+      // the DOM so this class gets triggered too early causing the css
+      // transitions to not be applied. This setTimeout hack makes sure that
+      // it is done after it's in the DOM.
+      setTimeout(() => {
+        this.setState({active: true});
+      });
     },
 
     render: function() {
+      var classes = classNames('expanding-progress', {
+        'expanding-progress--active' : this.state.active
+      });
       return (
-          <div className={this._generateClasses()}>
-            {this.props.count}
-          </div>
+        <div className={classes}></div>
       );
     }
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', {
+  requires: []
+});

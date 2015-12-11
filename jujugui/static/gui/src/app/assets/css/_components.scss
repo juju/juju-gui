@@ -2,8 +2,8 @@
 @import "../../components/boolean-config/boolean-config";
 @import "../../components/button-row/button-row";
 @import "../../components/charmbrowser/charmbrowser";
+@import "../../components/constraints/constraints";
 @import "../../components/copy-to-clipboard/copy-to-clipboard";
-@import "../../components/deployment-bar-change-count/deployment-bar-change-count";
 @import "../../components/deployment-bar-notification/deployment-bar-notification";
 @import "../../components/deployment-summary/deployment-summary";
 @import "../../components/deployment-summary-change-item/deployment-summary-change-item";
@@ -17,6 +17,7 @@
 @import "../../components/entity-details/entity-details";
 @import "../../components/entity-files/entity-files";
 @import "../../components/entity-header/entity-header";
+@import "../../components/expanding-progress/expanding-progress";
 @import "../../components/generic-button/generic-button";
 @import "../../components/header-search/header-search";
 @import "../../components/inspector/inspector";
@@ -31,6 +32,7 @@
 @import "../../components/inspector-relations-item/inspector-relations-item";
 @import "../../components/local-inspector/local-inspector";
 @import "../../components/login/login";
+@import "../../components/machine-view/add-machine/add-machine";
 @import "../../components/machine-view/machine-view";
 @import "../../components/machine-view/machine/machine";
 @import "../../components/machine-view/header/header";

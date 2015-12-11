@@ -711,7 +711,8 @@ YUI.add('environment-change-set', function(Y) {
       var db = this.get('db');
       var machine = db.machines.getById(command.args[0]);
       var removedUnits = [];
-      machine.units.forEach(function(unit) {
+      var units = db.units.filterByMachine(machine.id);
+      units.forEach(function(unit) {
         if (!unit.agent_state) {
           // Remove the unit's machine, making it an unplaced unit.
           delete unit.machine;

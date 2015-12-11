@@ -44,7 +44,8 @@ describe('Charmbrowser', function() {
           type: 'bundle',
           series: 'wily',
           provides: 'http',
-          requires: 'cache'
+          requires: 'cache',
+          owner: 'charmers'
         }
       }};
     var series = sinon.stub();
@@ -60,12 +61,13 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    assert.deepEqual(output,
+    var expected = (
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
           visible={true}>
-          <div className="charmbrowser">
+          <div className="charmbrowser"
+            ref="charmbrowser">
             <juju.components.SearchResults
               changeState={changeState}
               seriesList={series}
@@ -77,9 +79,11 @@ describe('Charmbrowser', function() {
               series="wily"
               provides="http"
               requires="cache"
+              owner="charmers"
               charmstoreSearch={charmstoreSearch} />
             </div>
         </juju.components.Panel>);
+    assert.deepEqual(output, expected);
   });
 
   it('displays the mid-point when the app state calls for it', function() {
@@ -101,7 +105,8 @@ describe('Charmbrowser', function() {
           instanceName="white-box"
           clickAction={instance._close}
           visible={true}>
-          <div className="charmbrowser">
+          <div className="charmbrowser"
+            ref="charmbrowser">
             <juju.components.MidPoint
               outsideClickClose={true}
               storeOpen={false}
@@ -120,11 +125,13 @@ describe('Charmbrowser', function() {
     var charmstoreSearch = sinon.stub();
     var changeState = sinon.stub();
     var makeEntityModel = sinon.spy();
+    var seriesList = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         charmstoreSearch={charmstoreSearch}
         makeEntityModel={makeEntityModel}
+        series={seriesList}
         changeState={changeState} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -133,10 +140,12 @@ describe('Charmbrowser', function() {
           instanceName="white-box"
           clickAction={instance._close}
           visible={true}>
-          <div className="charmbrowser">
+          <div className="charmbrowser"
+            ref="charmbrowser">
             <juju.components.Store
               makeEntityModel={makeEntityModel}
               charmstoreSearch={charmstoreSearch}
+              seriesList={seriesList}
               changeState={changeState} />
           </div>
         </juju.components.Panel>);
@@ -185,12 +194,14 @@ describe('Charmbrowser', function() {
           instanceName="white-box"
           clickAction={instance._close}
           visible={true}>
-          <div className="charmbrowser">
+          <div className="charmbrowser"
+            ref="charmbrowser">
             <juju.components.EntityDetails
               importBundleYAML={importBundleYAML}
               getBundleYAML={getBundleYAML}
               changeState={changeState}
               getEntity={getEntity}
+              scrollPosition={0}
               makeEntityModel={makeEntityModel}
               getDiagramURL={getDiagramURL}
               getFile={getFile}

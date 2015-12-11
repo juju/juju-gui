@@ -814,6 +814,38 @@ describe('UI State object', function() {
           }
         }
       },
+      '/machine/3/?search=hadoop&owner=charmers': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            owner: 'charmers'
+          }
+        }
+      },
+      '/machine/3/?search&owner=charmers': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3'
+          }
+        }, sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: '',
+            owner: 'charmers'
+          }
+        }
+      },
       // Multi section urls.
       '/inspector/apache2/machine/3/lxc-0': {
         sectionA: {
@@ -1391,6 +1423,38 @@ describe('UI State object', function() {
             activeComponent: 'search-results',
             search: null,
             requires: 'http'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search=hadoop&owner=charmers': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'hadoop',
+            owner: 'charmers'
+          }
+        }
+      }
+    }, {
+      '/machine/3?search&owner=charmers': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine',
+          metadata: { id: '3' }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: null,
+            owner: 'charmers'
           }
         }
       }

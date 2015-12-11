@@ -4,6 +4,12 @@
     border-bottom: 1px solid $mid-grey;
     cursor: pointer;
 
+    &:focus,
+    &:active,
+    &:hover {
+        background-color: $hover-background;
+    }
+
     &:last-child {
         border: none;
     }
@@ -13,6 +19,7 @@
 
         &:last-child {
             margin-bottom: 0;
+            font-size: $font-size-small;
         }
     }
 }

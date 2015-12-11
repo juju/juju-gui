@@ -406,11 +406,9 @@ describe('File drag over notification system', function() {
 
   describe('drag event attach and detach', function() {
     it('binds the drag handlers', function() {
-      var stub = testUtils.makeStubMethod(Y.config.doc, 'addEventListener');
+      var stub = testUtils.makeStubMethod(document, 'addEventListener');
+      this._cleanups.push(stub.reset);
       constructAppInstance({}, this);
-      // This function doesn't exist until the appDragOverHandler
-      // function is bound to the app.
-      assert.isFunction(app._boundAppDragOverHandler);
       assert.equal(stub.callCount(), 3);
       var args = stub.allArguments();
       assert.equal(args[0][0], 'dragenter');
@@ -419,11 +417,11 @@ describe('File drag over notification system', function() {
       assert.isFunction(args[1][1]);
       assert.equal(args[2][0], 'dragleave');
       assert.isFunction(args[2][1]);
-      stub.reset();
     });
 
     it('removes the drag handlers', function(done) {
-      var stub = testUtils.makeStubMethod(Y.config.doc, 'removeEventListener');
+      var stub = testUtils.makeStubMethod(document, 'removeEventListener');
+      this._cleanups.push(stub.reset);
       constructAppInstance({}, this);
 
       app.after('destroy', function() {
@@ -435,7 +433,6 @@ describe('File drag over notification system', function() {
         assert.isFunction(args[1][1]);
         assert.equal(args[2][0], 'dragleave');
         assert.isFunction(args[2][1]);
-        stub.reset();
         done();
       });
       app.destroy();
@@ -496,41 +493,56 @@ describe('File drag over notification system', function() {
   });
 
   describe('UI notifications', function() {
-    beforeEach(function() {
-      constructAppInstance({}, this);
+    it('_renderDragOverNotification renders drop UI', function() {
+      var fade = testUtils.makeStubFunction();
+      var reactdom = testUtils.makeStubMethod(ReactDOM, 'render');
+      this._cleanups.push(reactdom.reset);
+      app._renderDragOverNotification.call({
+        views: {
+          environment: {
+            instance: {
+              fadeHelpIndicator: fade
+            }}}
+      });
+      assert.equal(fade.callCount(), 1);
+      assert.equal(fade.lastArguments()[0], true);
+      assert.equal(reactdom.callCount(), 1);
     });
 
-    it('showDragNotification: is a function', function() {
-      assert.isFunction(app.showDragNotification);
-    });
-
-    it('hideDragNotification: removes masks and detaches events', function() {
-      var removeStub = testUtils.makeStubFunction();
-      var detachStub = testUtils.makeStubFunction();
-      app.dragNotifications = [{
-        mask: {
-          remove: removeStub
-        },
-        handlers: [{ detach: detachStub }]
-      }];
-      app.hideDragNotifications();
-      assert.equal(removeStub.calledOnce(), true, 'removeStub not called once');
-      assert.equal(removeStub.lastArguments()[0], true);
-      assert.equal(detachStub.calledOnce(), true);
+    it('_hideDragOverNotification hides drop UI', function() {
+      var fade = testUtils.makeStubFunction();
+      var reactdom = testUtils.makeStubMethod(
+        ReactDOM, 'unmountComponentAtNode');
+      this._cleanups.push(reactdom.reset);
+      app._hideDragOverNotification.call({
+        views: {
+          environment: {
+            instance: {
+              fadeHelpIndicator: fade
+            }}}
+      });
+      assert.equal(fade.callCount(), 1);
+      assert.equal(fade.lastArguments()[0], false);
+      assert.equal(reactdom.callCount(), 1);
     });
   });
 
   it('dispatches drag events properly: _appDragOverHanlder', function() {
-    var determineFileTypeStub, showNotificationStub, dragTimerControlStub;
+    var determineFileTypeStub, renderDragOverStub, dragTimerControlStub;
 
     constructAppInstance({}, this);
 
     determineFileTypeStub = testUtils.makeStubMethod(
         app, '_determineFileType', 'zip');
-    showNotificationStub = testUtils.makeStubMethod(
-        app, 'showDragNotification');
+    renderDragOverStub = testUtils.makeStubMethod(
+        app, '_renderDragOverNotification');
     dragTimerControlStub = testUtils.makeStubMethod(
         app, '_dragleaveTimerControl');
+    this._cleanups.concat([
+      determineFileTypeStub.reset,
+      renderDragOverStub.reset,
+      dragTimerControlStub
+    ]);
 
     var noop = function() {};
     var ev1 = { dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
@@ -542,48 +554,20 @@ describe('File drag over notification system', function() {
     app._appDragOverHandler(ev3);
 
     assert.equal(determineFileTypeStub.callCount(), 3);
-    assert.equal(showNotificationStub.calledOnce(), true);
-    assert.equal(showNotificationStub.lastArguments()[0], 'zip');
-    assert.equal(dragTimerControlStub.callCount(), 2);
+    assert.equal(renderDragOverStub.calledOnce(), true);
+    assert.equal(dragTimerControlStub.callCount(), 3);
     var args = dragTimerControlStub.allArguments();
     assert.equal(args[0][0], 'start');
-    assert.equal(args[1][0], 'stop');
-
-    determineFileTypeStub.reset();
-    showNotificationStub.reset();
-    dragTimerControlStub.reset();
+    assert.equal(args[1][0], 'start');
+    assert.equal(args[2][0], 'stop');
   });
 
   it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
-    var laterStub, hideDragNotificationStub, dragCancelStub;
-    constructAppInstance({}, this);
-
-    var dragTimer = {};
-    dragCancelStub = testUtils.makeStubMethod(dragTimer, 'cancel');
-
-    laterStub = testUtils.makeStubMethod(Y, 'later', dragTimer);
-    hideDragNotificationStub = testUtils.makeStubMethod(
-        app, 'hideDragNotifications');
-
+    var app = constructAppInstance({}, this);
     app._dragleaveTimerControl('start');
-    assert.equal(laterStub.calledOnce(), true);
-    var args = laterStub.lastArguments();
-    assert.equal(args[0], 100);
-    assert.equal(args[1] instanceof Y.juju.App, true);
-    assert.isFunction(args[2]);
-    args[2].call(app); // Call the callback passed to later;
-    // The callback should call this method
-    assert.equal(hideDragNotificationStub.calledOnce(), true);
-    // Calling with start again should cancel the timer and create a new one
-    app._dragleaveTimerControl('start');
-    assert.equal(dragCancelStub.calledOnce(), true);
-    assert.equal(laterStub.callCount(), 2);
-    // Calling with stop should cancel the timer
+    assert.equal(app._dragLeaveTimer !== undefined, true);
     app._dragleaveTimerControl('stop');
-    assert.equal(dragCancelStub.callCount(), 2);
-
-    laterStub.reset();
-    hideDragNotificationStub.reset();
+    assert.equal(app._dragLeaveTimer === null, true);
   });
 
 });
@@ -1072,6 +1056,136 @@ describe('File drag over notification system', function() {
     });
 
   });
+  describe('switchEnv', function() {
+    var Y, app, container;
+    var _generateMockedApp = function(sandbox, socketUrl) {
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        sandbox: sandbox,
+        consoleEnabled: true,
+        user: 'admin',
+        password: 'admin',
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        charmstorestore: new window.jujulib.charmstore(),
+        sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api'
+      });
+      var fake_ws = {
+        onclose: function() { this.oncloseCalled = true; },
+        oncloseCalled: false
+      };
+      var fake_ecs = {
+        clear: function() { this.clearCalled = true; },
+        clearCalled: false
+      }; 
+      var fake_env = {
+        ecs: fake_ecs,
+        ws: fake_ws,
+        closeCalled: false,
+        socketUrl: socketUrl || 'wss://example.com/ws',
+        setUser: 'not-called',
+        setPassword: 'not-called',
+        close: function() { this.closeCalled = true; },
+        get: function(key) {
+          if (key === 'socket_url') {
+            return this.socketUrl; 
+          }
+          if (key === 'ecs') {
+            return this.ecs;
+          }
+        },
+        set: function(key, val) {
+          if (key === 'socket_url') {
+            this.socketUrl = val;
+          } 
+        },
+        setCredentials: function(obj) {
+          this.setUser = obj.user;
+          this.setPassword = obj.password;
+        }
+      };
+      var fake_db = {
+        resetCalled: false,
+        fireSignal: null,
+        reset: function() { this.resetCalled = true; },
+        fire: function(signal) { this.fireSignal = signal; }
+      };
+      app.env = fake_env;
+      app.db = fake_db;
+      return app;
+    }; 
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+    });
+
+    afterEach(function() {
+      if (app) {
+        app.destroy({remove: true});
+      }
+    });
+
+    it('does not switch envs in sandbox', function() {
+      app = _generateMockedApp(true);
+      app.switchEnv();
+      assert.isFalse(
+          app.env.closeCalled,
+          'switchEnv did not return before closing the env.');
+    });
+
+    it('clears and resets the env, db, and ecs on change', function() {
+      app = _generateMockedApp(false);
+      window.juju_config = {embedded: false};
+      app.switchEnv('uuid', 'user', 'password');
+      assert.isTrue(app.env.ecs.clearCalled, 'ecs was not cleared.');
+      assert.isTrue(app.env.closeCalled, 'env was not closed.');
+      assert.isTrue(app.db.resetCalled, 'db was not reset.');
+      assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
+    });
+
+    it('determines socket_url based on embedded state', function() {
+      app = _generateMockedApp(false);
+      window.juju_config = {embedded: false};
+      app.switchEnv('uuid');
+      assert.equal(
+          app.env.socketUrl,
+          'wss://example.com/ws/environment/uuid/api',
+          'socket url not correctly set.');
+      window.juju_config = {embedded: true};
+      app.env.set('socket_url', 'juju/api/example.com/17070/uuid');
+      app.switchEnv('new-uuid');
+      assert.equal(
+          app.env.socketUrl,
+          'juju/api/example.com/17070/new-uuid',
+          'socket url not correctly set.');
+    });
+      
+    it('sets credentials based on existence of jem', function() {
+      app = _generateMockedApp(false);
+      app.jem = false;
+      app.switchEnv('uuid');
+      assert.equal(
+          app.env.setUser, 'not-called',
+          'Credentials should not have been set.');
+      assert.equal(
+          app.env.setPassword, 'not-called',
+          'Credentials should not have been set.');
+      app.jem = true;
+      app.switchEnv('uuid', 'new-username', 'new-password');
+      assert.equal(
+          app.env.setUser, 'new-username',
+          'Credentials should have been set.');
+      assert.equal(
+          app.env.setPassword, 'new-password',
+          'Credentials should have been set.');
+    });
+  });
 })();
 
 (function() {
@@ -1208,5 +1322,6 @@ describe('File drag over notification system', function() {
     });
 
   });
+
 
 })();

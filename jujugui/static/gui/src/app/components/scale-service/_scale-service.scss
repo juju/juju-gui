@@ -1,17 +1,12 @@
 .scale-service {
-
-    &__input {
-        margin: 20px 20px 10px 20px;
-        height: 28px;
-        width: 230px;
-    }
-
     &--units {
         position: relative;
 
         &__input {
+            margin: 20px 20px 13px 20px;
+            height: 28px;
+            width: 230px;
             background-color: transparent;
-            margin-bottom: 13px;
         }
 
         &__span {
@@ -25,7 +20,7 @@
     &--selector {
 
       & &__radio {
-          margin: 6px 10px 10px 15px;
+          margin: 6px 10px 10px 20px;
       }
 
       label {
@@ -33,22 +28,12 @@
       }
 
       div:last-of-type {
-          margin-bottom: 30px;
+          margin-bottom: 20px;
       }
 
     }
 
     &--constraints {
-
-        &__input {
-            margin-top: 5px;
-        }
-
-        label {
-            margin-left: 30px;
-            font-size: .875em;
-            margin-bottom: 1px;
-            color: $cool-grey;
-        }
+        padding: 0 10px;
     }
 }

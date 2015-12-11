@@ -76,12 +76,7 @@ YUI.add('entity-extension', function(Y) {
       } else {
         entity.iconPath = utils.getIconPath(attrs.id, false);
         entity.series = attrs.series;
-        entity.tags = [];
-        var categories = attrs.categories,
-            idx;
-        for (idx in categories) {
-          entity.tags.push(categories[idx]);
-        }
+        entity.tags = attrs.tags || [];
       }
       return entity;
     }

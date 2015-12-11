@@ -67,7 +67,7 @@ describe('Entity Extension', function() {
     var attrs = {
       entityType: 'charm',
       series: 'trusty',
-      categories: {0: 'database', 1: 'application'},
+      tags: ['database', 'application'],
     };
     var iconPath = '/' + entityModel.get('id') + '/icon.svg';
     utils.makeStubMethod(utils, 'getIconPath', iconPath);

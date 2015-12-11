@@ -25,7 +25,22 @@ YUI.add('entity-header', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
-      entityModel: React.PropTypes.object.isRequired
+      entityModel: React.PropTypes.object.isRequired,
+      scrollPosition: React.PropTypes.number.isRequired
+    },
+
+    /**
+      Generate the initial state of the component.
+
+      @method getInitialState
+      @returns {String} The intial state.
+    */
+    getInitialState: function() {
+      return {headerHeight: 0};
+    },
+
+    componentDidMount: function() {
+      this.setState({headerHeight: this.refs.headerWrapper.clientHeight});
     },
 
     /**
@@ -101,12 +116,40 @@ YUI.add('entity-header', function() {
       return encodeURIComponent(url.join('/'));
     },
 
+    /**
+      Generate the styles for the header wrapper.
+
+      @method _generateWrapperStyles
+    */
+    _generateWrapperStyles: function() {
+      if (this.state.headerHeight > 0) {
+        // Set the height of the wrapper so that it doesn't collapse when the
+        // header becomes sticky.
+        return {height: this.state.headerHeight + 'px'};
+      }
+      return {};
+    },
+
+    /**
+      Generate the classes for the component.
+
+      @method _generateClasses
+    */
+    _generateClasses: function() {
+      return classNames(
+        'entity-header',
+        {
+          'entity-header--sticky':
+            this.props.scrollPosition > this.state.headerHeight
+        }
+      );
+    },
+
     render: function() {
       var entity = this.props.entityModel.toEntity();
       var ownerUrl = 'https://launchpad.net/~' + entity.owner;
       var series = entity.series ?
-        <li className="entity-header__series">{entity.series}</li> :
-        '';
+        <li className="entity-header__series">{entity.series}</li> : null;
       var twitterUrl = [
         'https://twitter.com/intent/tweet?text=',
         entity.displayName,
@@ -117,9 +160,12 @@ YUI.add('entity-header', function() {
         'https://plus.google.com/share?url=',
         this._getStoreURL(entity)
       ].join('');
+
       return (
-        <div className="row-hero">
-          <header className="twelve-col entity-header">
+        <div className="row-hero"
+          ref="headerWrapper"
+          style={this._generateWrapperStyles()}>
+          <header className={this._generateClasses()}>
             <div className="inner-wrapper">
               <div className="eight-col no-margin-bottom">
                 <img src={entity.iconPath} alt={entity.displayName}
@@ -130,7 +176,7 @@ YUI.add('entity-header', function() {
                   ref="entityHeaderTitle">
                   {entity.displayName}
                 </h1>
-                <ul className="bullets inline">
+                <ul className="bullets inline entity-header__properties">
                   <li className="entity-header__by">
                     By <a href={ownerUrl} target="_blank"
                           ref="entityHeaderBy">{entity.owner}</a>

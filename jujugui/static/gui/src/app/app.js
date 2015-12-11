@@ -613,6 +613,9 @@ YUI.add('juju-gui', function(Y) {
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
       // at a distance and strange failures.
+      this.db.machines.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
       this.db.services.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
@@ -629,9 +632,10 @@ YUI.add('juju-gui', function(Y) {
 
       this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
       // These are manually detached in the destructor.
-      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
-        Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
-      }, this);
+      ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
+        document.addEventListener(
+          eventName, this._boundAppDragOverHandler);
+      });
 
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
@@ -820,6 +824,7 @@ YUI.add('juju-gui', function(Y) {
             setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
+            panToService={ServiceModule.panToService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
         </components.Panel>,
         document.getElementById('inspector-container'));
@@ -1008,14 +1013,30 @@ YUI.add('juju-gui', function(Y) {
         ReactDOM.render(
           <components.MachineView
             autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            createMachine={this._createMachine.bind(this)}
+            destroyMachines={this.env.destroyMachines.bind(this.env)}
             environmentName={db.environment.get('name')}
             machines={db.machines}
+            removeUnits={this.env.remove_units.bind(this.env)}
             services={db.services}
             units={db.units} />,
           document.getElementById('machine-view'));
       } else {
         this._renderMachineViewPanelView(this.db, this.env);
       }
+    },
+
+    /**
+      Renders the mask and animations for the drag over notification for when
+      a user drags a yaml file or zip file over the canvas.
+
+      @method _renderDragOverNotification
+    */
+    _renderDragOverNotification: function() {
+      this.views.environment.instance.fadeHelpIndicator(true);
+      ReactDOM.render(
+        <components.ExpandingProgress />,
+        document.getElementById('drag-over-notification-container'));
     },
 
     /**
@@ -1181,37 +1202,14 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Show the appropriate drag notification type.
-
-      Currently a noop until we get drop a notifications UI from UX.
-
-      @method showDragNotification
-      @param {String} fileType The type of file to show the notification for.
-    */
-    showDragNotification: function(fileType) {
-      // Because Chrome is the only browser that reliably supports parsing for
-      // a file type, if we don't know what the file type is we assume that
-      // the user just knows what they are doing and render all the drop targets
-      if (fileType === 'zip' || fileType === '') {
-        return;
-      }
-    },
-
-    /**
       Hide the drag notifications.
 
-      @method hideDragNotifications
+      @method _hideDragOverNotification
     */
-    hideDragNotifications: function() {
-      // Check to see if there are any active drop notifications
-      if (this.dragNotifications.length > 0) {
-        this.dragNotifications.forEach(function(notification) {
-          notification.mask.remove(true);
-          notification.handlers.forEach(function(handler) {
-            handler.detach();
-          });
-        });
-      }
+    _hideDragOverNotification: function() {
+      this.views.environment.instance.fadeHelpIndicator(false);
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('drag-over-notification-container'));
     },
 
     /**
@@ -1224,21 +1222,14 @@ YUI.add('juju-gui', function(Y) {
     */
     _appDragOverHandler: function(e) {
       e.preventDefault(); // required to allow items to be dropped
-      var fileType = this._determineFileType(e.dataTransfer);
-      if (fileType === false) {
+      if (!this._determineFileType(e.dataTransfer)) {
         return; // Ignore if it's not a supported type
       }
-      var type = e.type;
-      if (type === 'dragenter') {
-        this.showDragNotification(fileType);
-        return;
+      if (e.type === 'dragenter') {
+        this._renderDragOverNotification();
       }
-      if (type === 'dragleave') {
-        this._dragleaveTimerControl('start');
-      }
-      if (type === 'dragover') {
-        this._dragleaveTimerControl('stop');
-      }
+      // Possible values for type are 'dragover' and 'dragleave'.
+      this._dragleaveTimerControl(e.type === 'dragover' ? 'stop' : 'start');
     },
 
     /**
@@ -1250,18 +1241,14 @@ YUI.add('juju-gui', function(Y) {
       @param {String} action The action that should be taken on the timer.
     */
     _dragleaveTimerControl: function(action) {
-      if (action === 'start') {
-        if (this._dragLeaveTimer) {
-          this._dragLeaveTimer.cancel();
-        }
-        this._dragLeaveTimer = Y.later(100, this, function() {
-          this.hideDragNotifications();
-        });
+      if (this._dragLeaveTimer) {
+        window.clearTimeout(this._dragLeaveTimer);
+        this._dragLeaveTimer = null;
       }
-      if (action === 'stop') {
-        if (this._dragLeaveTimer) {
-          this._dragLeaveTimer.cancel();
-        }
+      if (action === 'start') {
+        this._dragLeaveTimer = setTimeout(() => {
+          this._hideDragOverNotification();
+        }, 100);
       }
     },
 
@@ -1407,10 +1394,9 @@ YUI.add('juju-gui', function(Y) {
             }
           }
       );
-      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
-        Y.config.doc.removeEventListener(
-            eventName, this._boundAppDragOverHandler);
-      }, this);
+      ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
+        document.removeEventListener(eventName, this._boundAppDragOverHandler);
+      });
     },
 
     /**
@@ -1652,12 +1638,14 @@ YUI.add('juju-gui', function(Y) {
         console.log('switching environments is not supported in sandbox');
         return;
       }
-      // Set the credentials so the GUI will automatically log in when we
-      // switch the environments.
-      this.env.setCredentials({
-        user: username,
-        password: password
-      });
+      if (this.jem) {
+        // We only set the credentials if we're using JEM. GUI will
+        // automatically log in when we switch the environments.
+        this.env.setCredentials({
+          user: username,
+          password: password
+        });
+      };
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(
@@ -1668,13 +1656,19 @@ YUI.add('juju-gui', function(Y) {
           'anonymous';
       }
 
+      // XXX jcsackett 2015-12-11 This is fine for now, but ultimately we want
+      // to take a better approach using a configurable socket_url template. See
+      // this comment:
+      // https://github.com/juju/juju-gui/pull/1065#discussion_r47335565
       var socketUrl = this.env.get('socket_url');
-      // XXX frankban: this is not generic, and very specific for how the
-      // socket URL is composed in the GUI embedded in OpenStack. Therefore,
-      // the logic here for calculating the new socket URL for the given UUID
-      // must be considered temporary demo code.
-      var baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
-      var newSocketUrl = baseUrl + '/' + uuid;
+      var newSocketUrl, baseUrl;
+      if (window.juju_config.embedded) {
+        baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
+        newSocketUrl = baseUrl + '/' + uuid;
+      } else {
+        baseUrl = socketUrl.substring(0, socketUrl.indexOf('/ws')) + '/ws';
+        newSocketUrl = baseUrl + '/environment/' + uuid + '/api';
+      }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', newSocketUrl);
       // Clear uncommitted state.
@@ -2060,6 +2054,7 @@ YUI.add('juju-gui', function(Y) {
     'deployment-component',
     'env-size-display',
     'env-switcher',
+    'expanding-progress',
     'header-search',
     'inspector-component',
     'local-inspector',

@@ -93,6 +93,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn, user: 'user', password: 'password', ecs: ecs
       });
       env.connect();
+      var facades = Object.keys(env.facadeVersions).reduce(function(pre, cur) {
+        pre[cur] = [env.facadeVersions[cur]];
+        return pre;
+      }, {});
+      env.set('facades', facades);
       this._cleanups.push(env.close.bind(env));
       cleanups = [];
     });
@@ -112,6 +117,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.juju.environments.GoEnvironment.handleLogin = oldHandleLogin;
       });
     };
+
+    describe('facadeSupported', function() {
+
+      beforeEach(function() {
+        env.set('facades', {'Test': [0, 1]});
+      });
+
+      it('returns true if the facade is supported', function() {
+        env.facadeVersions = {'Test': 1};
+        assert.strictEqual(env.facadeSupported('Test'), true);
+      });
+
+      it('returns true if a default facade is supported', function() {
+        assert.strictEqual(env.facadeSupported('Client'), true);
+      });
+
+      it('returns false if a facade is not supported', function() {
+        assert.strictEqual(env.facadeSupported('BadWolf'), false);
+      });
+
+      it('returns false if a facade version is not supported', function() {
+        env.facadeVersions = {'Test': 2};
+        assert.strictEqual(env.facadeSupported('Test'), false);
+      });
+
+      it('returns false if a default version is not supported', function() {
+        env.facadeVersions = {'Client': -1};
+        assert.strictEqual(env.facadeSupported('Client'), false);
+      });
+
+      it('returns true if a facade is supported (legacy Juju)', function() {
+        env.set('facades', undefined);
+        assert.strictEqual(env.facadeSupported('AllWatcher'), true);
+      });
+
+      it('returns true if a facade is supported (empty facades)', function() {
+        env.set('facades', {});
+        assert.strictEqual(env.facadeSupported('Pinger'), true);
+      });
+
+    });
 
     describe('prepareConstraints', function() {
 
@@ -941,15 +987,64 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(service_name, 'mysql');
     });
 
+    it('successfully adds a charm', function() {
+      var err, url;
+      env.addCharm('wily/django-42', null, function(data) {
+        err = data.err;
+        url = data.url;
+      }, {immediate: true});
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'AddCharm',
+        Params: {URL: 'wily/django-42'},
+        RequestId: 1
+      };
+      assert.deepEqual(expectedMessage, conn.last_message());
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+      assert.strictEqual(url, 'wily/django-42');
+      assert.strictEqual(err, undefined);
+    });
+
+    it('successfully adds a charm with a macaroon', function() {
+      var err, url;
+      env.addCharm('trusty/django-0', 'MACAROON', function(data) {
+        err = data.err;
+        url = data.url;
+      }, {immediate: true});
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'AddCharmWithAuthorization',
+        Params: {CharmStoreMacaroon: 'MACAROON', URL: 'trusty/django-0'},
+        RequestId: 1
+      };
+      assert.deepEqual(expectedMessage, conn.last_message());
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+      assert.strictEqual(url, 'trusty/django-0');
+      assert.strictEqual(err, undefined);
+    });
+
+    it('handles failed addCharm calls', function() {
+      var err, url;
+      env.addCharm('wily/django-42', null, function(data) {
+        err = data.err;
+        url = data.url;
+      }, {immediate: true});
+      // Mimic response.
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      assert.strictEqual(url, 'wily/django-42');
+      assert.strictEqual(err, 'bad wolf');
+    });
+
     it('successfully deploys a service', function() {
-      env.set('facades', {'Service': [2]});
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});
       msg = conn.last_message();
       var expected = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: 2,
+        Version: env.facadeVersions['Service'],
         Params: {Services: [{
           ServiceName: null,
           ConfigYAML: null,
@@ -965,6 +1060,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service (legacy API)', function() {
+      env.set('facades', env.defaultFacades);
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});
       msg = conn.last_message();
@@ -986,12 +1082,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with a config object', function() {
-      env.set('facades', {'Service': [2]});
       var config = {debug: true, logo: 'example.com/mylogo.png'};
       var expected = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: 2,
+        Version: env.facadeVersions['Service'],
         Params: {Services: [{
           ServiceName: null,
           // Configuration values are sent as strings.
@@ -1011,12 +1106,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with a config file', function() {
-      env.set('facades', {'Service': [2]});
       var config_raw = 'tuning-level: \nexpert-mojo';
       var expected = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: 2,
+        Version: env.facadeVersions['Service'],
         Params: {Services: [{
           ServiceName: null,
           Config: {},
@@ -1035,7 +1129,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with constraints', function() {
-      env.set('facades', {'Service': [2]});
       var constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
@@ -1058,11 +1151,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service to a specific machine', function() {
-      env.set('facades', {'Service': [2]});
       var expectedMessage = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: 2,
+        Version: env.facadeVersions['Service'],
         Params: {Services: [{
           ServiceName: null,
           ConfigYAML: null,
@@ -1080,7 +1172,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service storing charm data', function() {
-      env.set('facades', {'Service': [2]});
       var charm_url;
       var err;
       var service_name;
@@ -1102,6 +1193,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service storing legacy charm data', function() {
+      env.set('facades', env.defaultFacades);
       var charm_url;
       var err;
       var service_name;
@@ -1123,7 +1215,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failed service deploy', function() {
-      env.set('facades', {'Service': [2]});
       var err;
       env.deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
@@ -1139,6 +1230,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failed service deploy (legacy API)', function() {
+      env.set('facades', env.defaultFacades);
       var err;
       env.deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
@@ -2088,7 +2180,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('provides for a missing Params', function() {
       // If no "Params" are provided in an RPC call an empty one is added.
-      var op = {};
+      var op = {Type: 'Client'};
       env._send_rpc(op);
       assert.deepEqual(op.Params, {});
     });
@@ -2369,7 +2461,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[0], {
           Type: 'EnvironmentManager',
-          Version: env.environmentManagerFacadeVersion,
+          Version: env.facadeVersions['EnvironmentManager'],
           Request: 'ConfigSkeleton',
           Params: {},
           RequestId: 1
@@ -2382,7 +2474,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.environmentManagerFacadeVersion,
+          Version: env.facadeVersions['EnvironmentManager'],
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2427,7 +2519,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.environmentManagerFacadeVersion,
+          Version: env.facadeVersions['EnvironmentManager'],
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2473,7 +2565,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.environmentManagerFacadeVersion,
+          Version: env.facadeVersions['EnvironmentManager'],
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2524,7 +2616,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.environmentManagerFacadeVersion,
+          Version: env.facadeVersions['EnvironmentManager'],
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2650,7 +2742,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'EnvironmentManager',
-          Version: env.environmentManagerFacadeVersion,
+          Version: env.facadeVersions['EnvironmentManager'],
           Request: 'ListEnvironments',
           Params: {Tag: 'user-who'},
           RequestId: 1
