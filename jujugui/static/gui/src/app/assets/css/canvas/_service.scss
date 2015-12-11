@@ -114,6 +114,10 @@ g.service {
          opacity: 1;
          r: 110;
          stroke-width: 1;
+      }
+
+      &.is-uncommitted .service-block__halo,
+      .service-block__halo {
          stroke: #19b6ee;
       }
 
