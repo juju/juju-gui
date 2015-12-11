@@ -802,7 +802,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.topo.service_boxes.wordpressb.center);
     });
 
-    it.only('must be able to use position annotations', function() {
+    it('must be able to use position annotations', function() {
       var tmp_data = {
         result: [
             [
