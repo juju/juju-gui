@@ -1638,12 +1638,14 @@ YUI.add('juju-gui', function(Y) {
         console.log('switching environments is not supported in sandbox');
         return;
       }
-      // Set the credentials so the GUI will automatically log in when we
-      // switch the environments.
-      this.env.setCredentials({
-        user: username,
-        password: password
-      });
+      if (this.jem) {
+        // We only set the credentials if we're using JEM. GUI will
+        // automatically log in when we switch the environments.
+        this.env.setCredentials({
+          user: username,
+          password: password
+        });
+      };
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(
@@ -1654,13 +1656,19 @@ YUI.add('juju-gui', function(Y) {
           'anonymous';
       }
 
+      // XXX jcsackett 2015-12-11 This is fine for now, but ultimately we want
+      // to take a better approach using a configurable socket_url template. See
+      // this comment:
+      // https://github.com/juju/juju-gui/pull/1065#discussion_r47335565
       var socketUrl = this.env.get('socket_url');
-      // XXX frankban: this is not generic, and very specific for how the
-      // socket URL is composed in the GUI embedded in OpenStack. Therefore,
-      // the logic here for calculating the new socket URL for the given UUID
-      // must be considered temporary demo code.
-      var baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
-      var newSocketUrl = baseUrl + '/' + uuid;
+      var newSocketUrl, baseUrl;
+      if (window.juju_config.embedded) {
+        baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
+        newSocketUrl = baseUrl + '/' + uuid;
+      } else {
+        baseUrl = socketUrl.substring(0, socketUrl.indexOf('/ws')) + '/ws';
+        newSocketUrl = baseUrl + '/environment/' + uuid + '/api';
+      }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', newSocketUrl);
       // Clear uncommitted state.

@@ -54,7 +54,8 @@ YUI.add('env-switcher', function() {
           this.updateEnvListCallback.bind(this, callback));
       } else {
         this.props.env.listEnvs(
-            'user-admin', this.updateEnvListCallback.bind(this, null, null));
+            'user-admin',
+            this.updateEnvListCallback.bind(this, callback, null));
       }
     },
 

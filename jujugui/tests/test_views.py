@@ -100,6 +100,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
         self.assertIsNone(config['socket_path'])
+        self.assertIs(False, config['embedded'])
 
     def test_customized_options(self):
         self.update_settings({
@@ -110,6 +111,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.socket_path': '/api/address',
             'jujugui.user': 'who',
             'jujugui.password': 'secret',
+            'jujugui.embedded': 'true',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -124,6 +126,7 @@ class ConfigTests(ViewTestCase):
         # The hideLoginButton, user and password values reflect sandbox status.
         self.assertEqual('admin', config['user'])
         self.assertEqual('password', config['password'])
+        self.assertIs(True, config['embedded'])
 
     def test_standalone(self):
         jujugui.make_application(self.config)
