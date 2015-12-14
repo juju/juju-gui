@@ -161,10 +161,24 @@ describe('AddedServicesList', () => {
     var instance = renderer.getMountedInstance();
     // Because shallowRenderer doesn't support refs this fakes a refs property
     // on the instance which is needed for the final step in the focus process.
+    function generateListItem() {
+      var mockService = {
+        attrs: {},
+
+        get: function(key) {
+          return this.attrs[key];
+        },
+
+        set: function(key, value) {
+          this.attrs[key] = value;
+        }
+      };
+      return {props: {service: mockService}};
+    }
     instance.refs = {
-      'AddedServicesListItem-trusty/wordpress': {setState: sinon.stub()},
-      'AddedServicesListItem-trusty/apache': {setState: sinon.stub()},
-      'AddedServicesListItem-trusty/mysql': {setState: sinon.stub()}
+      'AddedServicesListItem-trusty/wordpress': generateListItem(),
+      'AddedServicesListItem-trusty/apache': generateListItem(),
+      'AddedServicesListItem-trusty/mysql': generateListItem()
     };
     // Call the focus method that was passed down into the list item.
     instance.focusService('trusty/wordpress');
@@ -191,21 +205,6 @@ describe('AddedServicesList', () => {
     assert.deepEqual(allServices[2].set.args[0], ['highlight', false]);
     // It then has to set the proper values for the machine view visibility.
     assert.equal(setMVVisibility.callCount, 1);
-    // Now we have to disable the focus state on all of the added services
-    // list items that the user didn't interact with.
-    var refs = instance.refs;
-    assert.equal(
-      refs['AddedServicesListItem-trusty/wordpress'].setState.callCount, 0);
-    assert.equal(
-      refs['AddedServicesListItem-trusty/apache'].setState.callCount, 1);
-    assert.deepEqual(
-      refs['AddedServicesListItem-trusty/apache'].setState.args[0],
-      [{focus: false}]);
-    assert.equal(
-      refs['AddedServicesListItem-trusty/mysql'].setState.callCount, 1);
-    assert.deepEqual(
-      refs['AddedServicesListItem-trusty/mysql'].setState.args[0],
-      [{focus: false}]);
   });
 
   it('performs the necessary work to unfocus a service', () => {

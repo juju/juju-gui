@@ -148,7 +148,7 @@ YUI.add('added-services-list', function() {
         if (key.indexOf('AddedServicesListItem-') === 0) {
           // Skip the component for the provided serviceId.
           if (serviceId && key !== 'AddedServicesListItem-' + serviceId) {
-            this.refs[key].setState({focus: false});
+            this.refs[key].props.service.set('highlight', false);
           }
         }
       });

@@ -25,10 +25,42 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('AddedServicesListItem', function() {
+  var mockService;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('added-services-list-item', function() { done(); });
+  });
+
+  beforeEach(function() {
+    mockService = {
+      attrs: {
+        id: 'wordpress',
+        icon: 'icon.gif',
+        unit_count: '2',
+        name: 'demo',
+        units: {
+          toArray: function() {
+            return [
+              {agent_state: 'uncommitted'},
+              {agent_state: 'pending'}
+            ];
+          }
+        }
+      },
+
+      getAttrs: function() {
+        return this.attrs;
+      },
+
+      get: function(key) {
+        return this.attrs[key];
+      },
+
+      set: function(key, value) {
+        this.attrs[key] = value;
+      }
+    };
   });
 
   function getUnitStatusCounts(error=0, pending=0, uncommitted=0, started=0) {
@@ -41,18 +73,9 @@ describe('AddedServicesListItem', function() {
   }
 
   it('renders the icon, count, visibility toggles and display name', () => {
-    var service = {
-      getAttrs: function() {
-        return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
-          units: {
-            toArray: function() {
-              return [];
-            }}};
-      },
-      get: function() {
-        return false;
-      }};
+    mockService.set('highlight', false);
+    mockService.set('fade', false);
+
     var renderer = jsTestUtils.shallowRender(
         <juju.components.AddedServicesListItem
           focusService={sinon.stub()}
@@ -61,21 +84,21 @@ describe('AddedServicesListItem', function() {
           unfadeService={sinon.stub()}
           changeState={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service} />, true);
+          service={mockService} />, true);
 
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
 
     var expected = (
       <li className="inspector-view__list-item"
-          data-serviceid="demo"
+          data-serviceid="wordpress"
           onClick={output.props.onClick}
           onMouseEnter={output.props.onMouseEnter}
           onMouseLeave={output.props.onMouseLeave}
           tabIndex="0"
           role="button">
         <img src="icon.gif" className="inspector-view__item-icon" />
-        <span className="inspector-view__item-count">5</span>
+        <span className="inspector-view__item-count">2</span>
         {' '}
         <span className="inspector-view__item-name">
           demo
@@ -401,18 +424,9 @@ describe('AddedServicesListItem', function() {
   });
 
   it('correctly sets the visibility icons status on render', () => {
-    var service = {
-      getAttrs: function() {
-        return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
-          units: {
-            toArray: function() {
-              return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
-            }}};
-      },
-      get: function() {
-        return true;
-      }};
+    mockService.set('highlight', true);
+    mockService.set('fade', false);
+
     var renderer = jsTestUtils.shallowRender(
       <juju.components.AddedServicesListItem
         focusService={sinon.stub()}
@@ -421,11 +435,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
-        service={service} />, true);
-
-    var instance = renderer.getMountedInstance();
-    assert.equal(instance.state.focus, true);
-    assert.equal(instance.state.fade, true);
+        service={mockService} />, true);
 
     // This is ugly but we have to check that the proper name prop was passed
     // to the SvgIcon component.
@@ -435,22 +445,13 @@ describe('AddedServicesListItem', function() {
       <juju.components.SvgIcon name="focused_16" size="16"/>);
     assert.deepEqual(
       output.props.children[4].props.children[1].props.children,
-      <juju.components.SvgIcon name="hide_16" size="16"/>);
+      <juju.components.SvgIcon name="show_16" size="16"/>);
   });
 
   it('correctly sets the visibility icons status on re-render', () => {
-    var service = {
-      getAttrs: function() {
-        return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
-          units: {
-            toArray: function() {
-              return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
-            }}};
-      },
-      get: function() {
-        return true;
-      }};
+    mockService.set('highlight', true);
+    mockService.set('fade', false);
+
     var renderer = jsTestUtils.shallowRender(
       <juju.components.AddedServicesListItem
         focusService={sinon.stub()}
@@ -459,11 +460,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
-        service={service} />, true);
-
-    var instance = renderer.getMountedInstance();
-    assert.equal(instance.state.focus, true);
-    assert.equal(instance.state.fade, true);
+        service={mockService} />, true);
 
     // This is ugly but we have to check that the proper name prop was passed
     // to the SvgIcon component.
@@ -473,7 +470,7 @@ describe('AddedServicesListItem', function() {
       <juju.components.SvgIcon name="focused_16" size="16"/>);
     assert.deepEqual(
       output.props.children[4].props.children[1].props.children,
-      <juju.components.SvgIcon name="hide_16" size="16"/>);
+      <juju.components.SvgIcon name="show_16" size="16"/>);
     // Re-render to trigger the componentWillReceiveProps.
     renderer.render(
       <juju.components.AddedServicesListItem
@@ -483,34 +480,20 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
-        service={service} />);
+        service={mockService} />);
     var output = renderer.getRenderOutput();
     assert.deepEqual(
       output.props.children[4].props.children[0].props.children,
       <juju.components.SvgIcon name="focused_16" size="16"/>);
     assert.deepEqual(
       output.props.children[4].props.children[1].props.children,
-      <juju.components.SvgIcon name="hide_16" size="16"/>);
+      <juju.components.SvgIcon name="show_16" size="16"/>);
   });
 
   it('toggles the focus icon and calls the correct prop on click', () => {
-    var service = {
-      getAttrs: function() {
-        return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
-          units: {
-            toArray: function() {
-              return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
-            }}};
-      },
-      get: function(key) {
-        if (key === 'id') {
-          return 'wordpress';
-        }
-        return false;
-      }};
     var focusService = sinon.stub();
     var unfocusService = sinon.stub();
+    mockService.set('highlight', false);
     var instance = testUtils.renderIntoDocument(
       <juju.components.AddedServicesListItem
         focusService={focusService}
@@ -519,42 +502,27 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
-        service={service} />);
+        service={mockService} />);
 
     // Toggle focus on.
-    assert.equal(instance.state.focus, false);
+    var service = instance.props.service;
     testUtils.Simulate.click(instance.refs.focusVisibilityIcon);
-    assert.equal(instance.state.focus, true);
     assert.equal(focusService.callCount, 1);
     assert.equal(unfocusService.callCount, 0);
     assert.equal(focusService.args[0][0], 'wordpress');
 
     // Toggle focus off.
+    mockService.set('highlight', true);
     testUtils.Simulate.click(instance.refs.focusVisibilityIcon);
-    assert.equal(instance.state.focus, false);
     assert.equal(focusService.callCount, 1);
     assert.equal(unfocusService.callCount, 1);
     assert.equal(focusService.args[0][0], 'wordpress');
   });
 
-  it('toggles the highlight icon and calls the correct prop on click', () => {
-    var service = {
-      getAttrs: function() {
-        return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
-          units: {
-            toArray: function() {
-              return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
-            }}};
-      },
-      get: function(key) {
-        if (key === 'id') {
-          return 'wordpress';
-        }
-        return false;
-      }};
+  it('toggles the fade icon and calls the correct prop on click', () => {
     var fadeService = sinon.stub();
     var unfadeService = sinon.stub();
+    mockService.set('fade', false);
     var instance = testUtils.renderIntoDocument(
       <juju.components.AddedServicesListItem
         focusService={sinon.stub()}
@@ -563,29 +531,18 @@ describe('AddedServicesListItem', function() {
         unfadeService={unfadeService}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
-        service={service} />);
+        service={mockService} />);
 
-    // Check that the container has the proper classes when no visibility
-    // toggle is active.
-    assert.equal(
-      ReactDOM.findDOMNode(instance).classList,
-      'inspector-view__list-item');
     // Toggle focus on.
-    assert.equal(instance.state.fade, false);
+    var service = instance.props.service;
     testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);
-    assert.equal(instance.state.fade, true);
     assert.equal(fadeService.callCount, 1);
     assert.equal(unfadeService.callCount, 0);
     assert.equal(fadeService.args[0][0], 'wordpress');
-    // Check that the container has the proper classes when a visibility
-    // toggle is active.
-    assert.equal(
-      ReactDOM.findDOMNode(instance).classList,
-      'inspector-view__list-item visibility-toggled');
 
     // Toggle focus off.
+    mockService.set('fade', true);
     testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);
-    assert.equal(instance.state.fade, false);
     assert.equal(fadeService.callCount, 1);
     assert.equal(unfadeService.callCount, 1);
     assert.equal(fadeService.args[0][0], 'wordpress');
