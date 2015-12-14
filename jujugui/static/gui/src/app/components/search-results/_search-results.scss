@@ -6,6 +6,12 @@
     }
 }
 
+%dropdown-styling {
+    -webkit-appearance: none;
+    background: transparent;
+    padding: 5px;
+}
+
 .search-results {
     .inner-wrapper {
         max-width: none;
@@ -276,6 +282,7 @@
             font-size: 16px;
 
             select {
+                @extend %dropdown-styling;
                 $margin: (40px - $base) / 2;
                 width: auto;
                 margin: $margin 0 $margin 5px;
