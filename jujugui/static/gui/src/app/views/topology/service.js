@@ -1072,11 +1072,15 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
           topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
-      topo.vis.selectAll('.is-selected').classed('is-selected', false);
+      this.deselectNodes();
       this.unhoverServices();
       topo.fire('changeState', {
         sectionA: {
           component: 'services',
+          metadata: null
+        },
+        sectionC: {
+          component: null,
           metadata: null
         }
       });
