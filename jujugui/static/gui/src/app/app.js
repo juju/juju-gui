@@ -289,28 +289,35 @@ YUI.add('juju-gui', function(Y) {
         // fails then fall back to getDOMNode().
         var tagName = evt.target.tagName;
         var contentEditable = evt.target.contentEditable;
+        var currentKey;
+        if (code_map[evt.keyCode]) {
+          currentKey = code_map[evt.which];
+        } else {
+          currentKey = String.fromCharCode(evt.which).toLowerCase();
+        }
         if (!tagName) {
           tagName = evt.target.getDOMNode().tagName;
         }
         if (!contentEditable) {
           contentEditable = evt.target.getDOMNode().contentEditable;
         }
-        // Target filtering, we want to listen on window
-        // but not honor hotkeys when focused on
-        // text oriented input fields
-        if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 ||
-            contentEditable === 'true') {
+        // Don't ignore esc in the search box.
+        if (currentKey === 'esc' &&
+            evt.target.className === 'header-search__input') {
+          // Remove the focus from the search box.
+          evt.target.blur();
+          // Target filtering, we want to listen on window
+          // but not honor hotkeys when focused on
+          // text oriented input fields.
+        } else if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 ||
+                   contentEditable === 'true') {
           return;
         }
         var symbolic = [];
         if (evt.ctrlKey) { symbolic.push('C');}
         if (evt.altKey) { symbolic.push('A');}
         if (evt.shiftKey) { symbolic.push('S');}
-        if (code_map[evt.keyCode]) {
-          symbolic.push(code_map[evt.which]);
-        } else {
-          symbolic.push(String.fromCharCode(evt.which).toLowerCase());
-        }
+        symbolic.push(currentKey);
         var trigger = symbolic.join('-');
         var spec = this.keybindings[trigger];
         if (spec) {
