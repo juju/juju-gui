@@ -158,6 +158,7 @@ YUI.add('juju-topology-service', function(Y) {
       var curr_node = d3.select(this),
           parent_node = d3.select(this.parentNode),
           is_pending = false,
+          is_uncommitted = false,
           is_erroring = false;
 
       if (d.subordinate) {
@@ -181,6 +182,8 @@ YUI.add('juju-topology-service', function(Y) {
             is_pending = true;
           } else if (unit.agent_state === 'error') {
             is_erroring = true;
+          } else if (!unit.agent_state) {
+            is_uncommitted = true;
           }
         });
 
@@ -188,14 +191,22 @@ YUI.add('juju-topology-service', function(Y) {
         if (is_erroring) {
           parent_node.classed('is-erroring', true)
             .classed('is-pending', false)
+            .classed('is-uncommitted', false)
             .classed('is-running', false);
         } else if (is_pending) {
           parent_node.classed('is-pending', true)
             .classed('is-erroring', false)
+            .classed('is-uncommitted', false)
+            .classed('is-running', false);
+        } else if (is_uncommitted) {
+          parent_node.classed('is-uncommitted', true)
+            .classed('is-erroring', false)
+            .classed('is-pending', false)
             .classed('is-running', false);
         } else {
           parent_node.classed('is-running', true)
             .classed('is-erroring', false)
+            .classed('is-uncommitted', false)
             .classed('is-pending', false);
         }
         rerenderRelations = true;

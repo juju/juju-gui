@@ -60,7 +60,8 @@ YUI.add('added-services-list-item', function() {
       var status;
       for (var key in unitStatuses) {
         status = unitStatuses[key];
-        if (status.priority < top.priority && status.size > 0) {
+        if (key !== 'started' && status.priority < top.priority &&
+            status.size > 0) {
           top = {
             key: key,
             priority: status.priority,
