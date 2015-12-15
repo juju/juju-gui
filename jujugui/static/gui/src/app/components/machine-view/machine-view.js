@@ -41,7 +41,8 @@ YUI.add('machine-view', function() {
     getInitialState: function() {
       return {
         selectedMachine: this._getFirstMachineId(this.props.machines),
-        showAddMachine: false
+        showAddMachine: false,
+        showConstraints: true
       };
     },
 
@@ -192,14 +193,17 @@ YUI.add('machine-view', function() {
       }
       var components = [];
       machines.forEach((machine) => {
+        var selectedMachine = this.state.selectedMachine;
         components.push(
           <juju.components.MachineViewMachine
             destroyMachines={this.props.destroyMachines}
             key={machine.id}
             machine={machine}
-            selected={this.state.selectedMachine === machine.id}
+            selected={selectedMachine === machine.id}
             selectMachine={this.selectMachine}
             services={this.props.services}
+            showConstraints={
+              this.state.showConstraints || machine.id === selectedMachine}
             type="machine"
             units={this.props.units} />);
       });
@@ -334,6 +338,15 @@ YUI.add('machine-view', function() {
     },
 
     /**
+      Toggle the visibililty of the constraints on machines.
+
+      @method _toggleConstraints
+    */
+    _toggleConstraints: function() {
+      this.setState({showConstraints: !this.state.showConstraints});
+    },
+
+    /**
       Generate the title for the container column header.
 
       @method _generateContainersTitle
@@ -359,6 +372,10 @@ YUI.add('machine-view', function() {
       var machineMenuItems = [{
         label: 'Add machine',
         action: this._addMachine
+      }, {
+        label: this.state.showConstraints ?
+          'Hide constraints' : 'Show constaints',
+        action: this._toggleConstraints
       }];
       var containerMenuItems = [{
         label: 'Add container',

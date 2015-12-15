@@ -6,11 +6,10 @@
     }
 
     &__menu {
-        $width: 150px;
         @extend %floating-panel;
         position: absolute;
+        z-index: index($z-indexed-elements, more-menu);
         right: -10px;
-        width: $width;
         list-style: none;
         margin: 0;
         padding: 0;
@@ -31,6 +30,7 @@
             // The items need to be above the diamond.
             z-index: 1;
             padding: 7px 20px;
+            white-space: nowrap;
 
             &:hover {
                 background-color: $hover-background;

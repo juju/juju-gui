@@ -64,6 +64,9 @@ describe('MachineView', function() {
               menuItems={[{
                 label: 'Add machine',
                 action: instance._addMachine
+              }, {
+                label: 'Hide constraints',
+                action: instance._toggleConstraints
               }]}
               title="My Env (0)" />
             <div className="machine-view__column-content">
@@ -338,6 +341,7 @@ describe('MachineView', function() {
               selected={true}
               selectMachine={instance.selectMachine}
               services={services}
+              showConstraints={true}
               type="machine"
               units={units} />]}
           </ul>
@@ -389,6 +393,7 @@ describe('MachineView', function() {
               selected={true}
               selectMachine={instance.selectMachine}
               services={services}
+              showConstraints={true}
               type="machine"
               units={units} />
             <juju.components.MachineViewMachine
@@ -398,6 +403,70 @@ describe('MachineView', function() {
               selected={false}
               selectMachine={instance.selectMachine}
               services={services}
+              showConstraints={true}
+              type="machine"
+              units={units} />
+          </ul>
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1], expected);
+  });
+
+  it('can toggle constraints on machines', function() {
+    var machineList = [{
+      id: 'new0'
+    }, {
+      id: 'new1'
+    }];
+    var filterByParent = sinon.stub();
+    filterByParent.returns(machineList);
+    filterByParent.withArgs('new0').returns([]);
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var destroyMachines = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._toggleConstraints();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        {undefined}
+        <div>
+          {undefined}
+          <ul className="machine-view__list">
+            <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
+              key="new0"
+              machine={machineList[0]}
+              selected={true}
+              selectMachine={instance.selectMachine}
+              services={services}
+              showConstraints={true}
+              type="machine"
+              units={units} />
+            <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
+              key="new1"
+              machine={machineList[1]}
+              selected={false}
+              selectMachine={instance.selectMachine}
+              services={services}
+              showConstraints={false}
               type="machine"
               units={units} />
           </ul>

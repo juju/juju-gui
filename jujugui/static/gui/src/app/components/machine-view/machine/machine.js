@@ -27,6 +27,7 @@ YUI.add('machine-view-machine', function() {
       removeUnit: React.PropTypes.func,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
+      showConstraints: React.PropTypes.bool,
       services: React.PropTypes.object.isRequired,
       type: React.PropTypes.string.isRequired,
       units: React.PropTypes.object.isRequired
@@ -40,7 +41,7 @@ YUI.add('machine-view-machine', function() {
       @returns {Object} the machine hardware elements.
     */
     _generateHardware: function(unitCount) {
-      if (this.props.type === 'container') {
+      if (this.props.type === 'container' || !this.props.showConstraints) {
         return;
       }
       var machine = this.props.machine;
@@ -101,7 +102,10 @@ YUI.add('machine-view-machine', function() {
             {menu}
           </li>);
       });
-      return components;
+      return (
+        <ul className="machine-view__machine-units">
+          {components}
+        </ul>);
     },
 
     /**
@@ -181,9 +185,7 @@ YUI.add('machine-view-machine', function() {
             {this.props.machine.displayName}
           </div>
           {this._generateHardware(units.length)}
-          <ul className="machine-view__machine-units">
-            {this._generateUnits(units)}
-          </ul>
+          {this._generateUnits(units)}
         </div>
       );
     }
