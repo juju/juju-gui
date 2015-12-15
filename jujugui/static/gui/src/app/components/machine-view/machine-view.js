@@ -224,7 +224,12 @@ YUI.add('machine-view', function() {
         return;
       }
       var containers = this.props.machines.filterByParent(selectedMachine);
+      var machine = this.props.machines.getById(selectedMachine);
+      if (!machine) {
+        return;
+      }
       containers.unshift({
+        commitStatus: machine.commitStatus,
         displayName: 'Root container',
         id: selectedMachine,
         root: true

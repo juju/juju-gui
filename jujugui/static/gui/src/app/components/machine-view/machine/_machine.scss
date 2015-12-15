@@ -4,11 +4,16 @@
     border: 1px solid $mid-grey;
     border-radius: 2px;
 
+    &--selected.machine-view__machine--uncommitted,
     &--selected {
         margin-right: -20px;
         padding-right: 30px;
         border-style: dashed;
         border-right: 1px solid $canvas-background;
+    }
+
+    &--uncommitted {
+        border-color: $uncommitted;
     }
 
     &--machine {

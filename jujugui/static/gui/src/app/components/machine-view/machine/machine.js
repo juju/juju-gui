@@ -130,9 +130,12 @@ YUI.add('machine-view-machine', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      var machine = this.props.machine;
       var classes = {
         'machine-view__machine--selected': this.props.selected,
-        'machine-view__machine--root': this.props.machine.root
+        'machine-view__machine--uncommitted': machine.deleted ||
+          machine.commitStatus === 'uncommitted',
+        'machine-view__machine--root': machine.root
       };
       classes['machine-view__machine--' + this.props.type] = true;
       return classNames(
