@@ -9,6 +9,7 @@
 %dropdown-styling {
     @include create-box-shadow(inset 0 1px 2px 0 rgba(0,0,0,0.12));
     -webkit-appearance: none;
+    -moz-appearance: none;
     background: transparent;
     box-sizing: border-box;
     background-image: url("juju-ui/assets/svgs/chevron_down_16.svg");
