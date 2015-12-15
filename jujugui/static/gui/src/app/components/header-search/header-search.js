@@ -185,6 +185,13 @@ YUI.add('header-search', function() {
     */
     _handleSubmit: function(e) {
       e.preventDefault();
+      // If the search box is not open then instead of submitting the form the
+      // search box should be opened.
+      if (!this.state.inputStyles.width) {
+        this._openSearch(true);
+        this.refs.searchInput.focus();
+        return;
+      }
       this.props.changeState({
         sectionC: {
           component: 'charmbrowser',

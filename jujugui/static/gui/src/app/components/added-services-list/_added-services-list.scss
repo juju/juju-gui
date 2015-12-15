@@ -47,6 +47,7 @@
         width: $size;
         height: $size;
         margin-right: 16px;
+        border-radius: $size / 2;
         vertical-align: middle;
     }
 
@@ -55,7 +56,7 @@
         top: 2px;
         overflow: hidden;
         display: inline-block;
-        max-width: 165px;
+        max-width: 155px;
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: text-bottom;
@@ -75,8 +76,9 @@
     }
 
     &__status-block {
-        position: relative;
-        top: 2px;
+        position: absolute;
+        top: 11px;
+        right: 20px;
         float: right;
     }
 

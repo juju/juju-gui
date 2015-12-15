@@ -49,7 +49,9 @@ YUI.add('charmbrowser-component', function() {
       @param {Object} e The scroll event
     */
     _onScroll: function(e) {
-      this.setState({scrollPosition: e.target.scrollTop});
+      if (this.state.activeComponent === 'entity-details') {
+        this.setState({scrollPosition: e.target.scrollTop});
+      }
     },
 
     /**
