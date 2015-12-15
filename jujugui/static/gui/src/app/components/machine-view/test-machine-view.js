@@ -512,6 +512,7 @@ describe('MachineView', function() {
             key="new0"
             machine={{
               commitStatus: 'committed',
+              deleted: undefined,
               displayName: 'Root container',
               id: 'new0',
               root: true
@@ -580,6 +581,7 @@ describe('MachineView', function() {
             key="new0"
             machine={{
               commitStatus: 'committed',
+              deleted: undefined,
               displayName: 'Root container',
               id: 'new0',
               root: true

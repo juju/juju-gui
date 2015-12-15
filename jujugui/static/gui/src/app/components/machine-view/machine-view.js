@@ -230,6 +230,7 @@ YUI.add('machine-view', function() {
       }
       containers.unshift({
         commitStatus: machine.commitStatus,
+        deleted: machine.deleted,
         displayName: 'Root container',
         id: selectedMachine,
         root: true

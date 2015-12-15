@@ -726,7 +726,7 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       if (machine.parentId) {
         // Remove the removed units from the parent machines unit list.
-        var parentMachine = this.get('db').machines.getById(machine.parentId);
+        var parentMachine = db.machines.getById(machine.parentId);
         removedUnits.forEach(function(unit) {
           var idx = parentMachine.units.indexOf(unit);
           parentMachine.units.splice(idx, 1);
@@ -736,7 +736,9 @@ YUI.add('environment-change-set', function(Y) {
       if (existingMachine) {
         this._destroyQueuedMachine(existingMachine);
       } else {
-        machine.deleted = true;
+        var machineModel = db.machines.revive(machine);
+        machineModel.set('deleted', true);
+        db.units.free(machineModel);
         return this._createNewRecord('destroyMachines', command, []);
       }
     },
