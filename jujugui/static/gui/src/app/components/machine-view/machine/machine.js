@@ -89,12 +89,14 @@ YUI.add('machine-view-machine', function() {
         }
         var service = this.props.services.getById(unit.service);
         components.push(
-          <li className="machine-view__machine-unit"
+          <li className={this._generateUnitClasses(unit)}
             key={unit.id}>
-            <img
-              alt={unit.displayName}
-              src={service.get('icon')}
-              title={unit.displayName} />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt={unit.displayName}
+                src={service.get('icon')}
+                title={unit.displayName} />
+            </span>
             {title}
             {menu}
           </li>);
@@ -141,6 +143,23 @@ YUI.add('machine-view-machine', function() {
       return classNames(
         'machine-view__machine',
         classes
+      );
+    },
+
+    /**
+      Generate the classes for a unit.
+
+      @method _generateUnitClasses
+      @param {Object} unit The unit to generate classes for.
+      @returns {String} The collection of class names.
+    */
+    _generateUnitClasses: function(unit) {
+      return classNames(
+        'machine-view__machine-unit',
+        {
+          'machine-view__machine-unit--uncommitted':
+            unit.deleted || !unit.agent_state
+        }
       );
     },
 

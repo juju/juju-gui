@@ -738,7 +738,7 @@ YUI.add('environment-change-set', function(Y) {
       } else {
         var machineModel = db.machines.revive(machine);
         machineModel.set('deleted', true);
-        db.units.free(machineModel);
+        db.machines.free(machineModel);
         return this._createNewRecord('destroyMachines', command, []);
       }
     },
@@ -987,7 +987,11 @@ YUI.add('environment-change-set', function(Y) {
           args: args
         });
         args[0].forEach(function(unit) {
-          units.getById(unit).deleted = true;
+          var unit = units.getById(unit);
+          var unitModel = units.revive(unit);
+          unitModel.set('deleted', true);
+          units.free(unitModel);
+          db.fire('update');
         });
         // XXX We would like to be able to update subordinate units here, but
         // as this doesn't actually remove them from the database, the unit
