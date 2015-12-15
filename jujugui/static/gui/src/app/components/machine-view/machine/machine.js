@@ -27,7 +27,7 @@ YUI.add('machine-view-machine', function() {
       removeUnit: React.PropTypes.func,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
-      showConstraints: React.PropTypes.bool.isRequired,
+      showConstraints: React.PropTypes.bool,
       services: React.PropTypes.object.isRequired,
       type: React.PropTypes.string.isRequired,
       units: React.PropTypes.object.isRequired
