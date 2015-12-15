@@ -102,7 +102,10 @@ YUI.add('machine-view-machine', function() {
             {menu}
           </li>);
       });
-      return components;
+      return (
+        <ul className="machine-view__machine-units">
+          {components}
+        </ul>);
     },
 
     /**
@@ -182,9 +185,7 @@ YUI.add('machine-view-machine', function() {
             {this.props.machine.displayName}
           </div>
           {this._generateHardware(units.length)}
-          <ul className="machine-view__machine-units">
-            {this._generateUnits(units)}
-          </ul>
+          {this._generateUnits(units)}
         </div>
       );
     }

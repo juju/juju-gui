@@ -9,6 +9,7 @@
         $width: 150px;
         @extend %floating-panel;
         position: absolute;
+        z-index: index($z-indexed-elements, more-menu);
         right: -10px;
         width: $width;
         list-style: none;
