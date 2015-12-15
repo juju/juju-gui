@@ -187,17 +187,19 @@ YUI.add('entity-header', function() {
                   <li>
                     <a id="item-twitter"
                       target="_blank"
-                      href={twitterUrl}
-                      className="entity-header__social-item--twitter">
-                      Share on Twitter
+                      href={twitterUrl}>
+                      <juju.components.SvgIcon
+                        name="icon-social-twitter"
+                        size="35"/>
                     </a>
                   </li>
                   <li>
                     <a id="item-googleplus"
                        target="_blank"
-                       href={googlePlusUrl}
-                       className="entity-header__social-item--google-plus">
-                       Share on Google Plus
+                       href={googlePlusUrl}>
+                      <juju.components.SvgIcon
+                        name="icon-social-google"
+                        size="35"/>
                     </a>
                   </li>
                 </ul>
