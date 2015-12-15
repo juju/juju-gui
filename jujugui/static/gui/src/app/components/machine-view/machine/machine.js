@@ -89,12 +89,14 @@ YUI.add('machine-view-machine', function() {
         }
         var service = this.props.services.getById(unit.service);
         components.push(
-          <li className="machine-view__machine-unit"
+          <li className={this._generateUnitClasses(unit)}
             key={unit.id}>
-            <img
-              alt={unit.displayName}
-              src={service.get('icon')}
-              title={unit.displayName} />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt={unit.displayName}
+                src={service.get('icon')}
+                title={unit.displayName} />
+            </span>
             {title}
             {menu}
           </li>);
@@ -130,14 +132,34 @@ YUI.add('machine-view-machine', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      var machine = this.props.machine;
       var classes = {
         'machine-view__machine--selected': this.props.selected,
-        'machine-view__machine--root': this.props.machine.root
+        'machine-view__machine--uncommitted': machine.deleted ||
+          machine.commitStatus === 'uncommitted',
+        'machine-view__machine--root': machine.root
       };
       classes['machine-view__machine--' + this.props.type] = true;
       return classNames(
         'machine-view__machine',
         classes
+      );
+    },
+
+    /**
+      Generate the classes for a unit.
+
+      @method _generateUnitClasses
+      @param {Object} unit The unit to generate classes for.
+      @returns {String} The collection of class names.
+    */
+    _generateUnitClasses: function(unit) {
+      return classNames(
+        'machine-view__machine-unit',
+        {
+          'machine-view__machine-unit--uncommitted':
+            unit.deleted || !unit.agent_state
+        }
       );
     },
 

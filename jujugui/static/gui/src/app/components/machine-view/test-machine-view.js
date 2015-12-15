@@ -302,7 +302,10 @@ describe('MachineView', function() {
     var filterByParent = sinon.stub();
     filterByParent.returns(machineList);
     filterByParent.withArgs('new0').returns([]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -353,7 +356,10 @@ describe('MachineView', function() {
     var filterByParent = sinon.stub();
     filterByParent.returns(machineList);
     filterByParent.withArgs('new0').returns([]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -440,7 +446,8 @@ describe('MachineView', function() {
       id: 'new1'
     }];
     var machines = {
-      filterByParent: sinon.stub().returns(machineList)
+      filterByParent: sinon.stub().returns(machineList),
+      getById: sinon.stub()
     };
     var units = {
       filterByMachine: sinon.stub().returns([])
@@ -471,7 +478,13 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([{
       id: 'new0/lxc/0'
     }]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub().returns({
+        id: 'new0',
+        commitStatus: 'committed'
+      })
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -497,7 +510,13 @@ describe('MachineView', function() {
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
             key="new0"
-            machine={{id: 'new0', displayName: 'Root container', root: true}}
+            machine={{
+              commitStatus: 'committed',
+              deleted: undefined,
+              displayName: 'Root container',
+              id: 'new0',
+              root: true
+            }}
             removeUnit={instance._removeUnit}
             services={services}
             type="container"
@@ -517,12 +536,18 @@ describe('MachineView', function() {
   });
 
   it('can display a form for adding a container', function() {
-    var machines = {filterByParent: function(arg) {
-      if (arg == 'new0') {
-        return [{id: 'new0/lxc/0'}];
-      }
-      return [{id: 'new0'}];
-    }};
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub().returns({
+        id: 'new0',
+        commitStatus: 'committed'
+      })
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -554,7 +579,13 @@ describe('MachineView', function() {
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
             key="new0"
-            machine={{displayName: 'Root container', id: 'new0', root: true}}
+            machine={{
+              commitStatus: 'committed',
+              deleted: undefined,
+              displayName: 'Root container',
+              id: 'new0',
+              root: true
+            }}
             removeUnit={instance._removeUnit}
             services={services}
             type="container"
@@ -574,12 +605,15 @@ describe('MachineView', function() {
   });
 
   it('can remove a unit', function() {
-    var machines = {filterByParent: function(arg) {
-      if (arg == 'new0') {
-        return [{id: 'new0/lxc/0'}];
-      }
-      return [{id: 'new0'}];
-    }};
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };

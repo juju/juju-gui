@@ -40,9 +40,11 @@ describe('MachineViewMachine', function() {
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
         displayName: 'wordpress/0',
         id: 'wordpress/0'
       }, {
+        agent_state: 'started',
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
@@ -81,25 +83,221 @@ describe('MachineViewMachine', function() {
         <ul className="machine-view__machine-units">
           <li className="machine-view__machine-unit"
             key="wordpress/0">
-            <img
-              alt="wordpress/0"
-              src="icon.svg"
-              title="wordpress/0" />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/0"
+                src="icon.svg"
+                title="wordpress/0" />
+            </span>
             {undefined}
             {undefined}
           </li>
           <li className="machine-view__machine-unit"
             key="wordpress/1">
-            <img
-              alt="wordpress/1"
-              src="icon.svg"
-              title="wordpress/1" />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/1"
+                src="icon.svg"
+                title="wordpress/1" />
+            </span>
             {undefined}
             {undefined}
           </li>
         </ul>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can display a machine as uncommitted', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {},
+      commitStatus: 'uncommitted'
+    };
+    var units = {filterByMachine: sinon.stub().returns([])};
+    var services = {getById: sinon.stub()};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className={'machine-view__machine ' +
+        'machine-view__machine--uncommitted machine-view__machine--machine'}
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        {output.props.children}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a deleted machine as uncommitted', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {},
+      deleted: true
+    };
+    var units = {filterByMachine: sinon.stub().returns([])};
+    var services = {getById: sinon.stub()};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className={'machine-view__machine ' +
+        'machine-view__machine--uncommitted machine-view__machine--machine'}
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        {output.props.children}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render a machine with uncommitted units', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {
+        cpuCores: 2,
+        cpuPower: 200,
+        disk: 2048,
+        mem: 4096,
+      }
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        deleted: false,
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        deleted: false,
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var services = {
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('icon.svg')
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>);
+    var expected = (
+      <ul className="machine-view__machine-units">
+        <li className={'machine-view__machine-unit ' +
+          'machine-view__machine-unit--uncommitted'}
+          key="wordpress/0">
+          <span className="machine-view__machine-unit-icon">
+            <img
+              alt="wordpress/0"
+              src="icon.svg"
+              title="wordpress/0" />
+          </span>
+          {undefined}
+          {undefined}
+        </li>
+        <li className={'machine-view__machine-unit ' +
+          'machine-view__machine-unit--uncommitted'}
+          key="wordpress/1">
+          <span className="machine-view__machine-unit-icon">
+            <img
+              alt="wordpress/1"
+              src="icon.svg"
+              title="wordpress/1" />
+          </span>
+          {undefined}
+          {undefined}
+        </li>
+      </ul>);
+    assert.deepEqual(output.props.children[3], expected);
+  });
+
+  it('can render a machine with deleted units', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {
+        cpuCores: 2,
+        cpuPower: 200,
+        disk: 2048,
+        mem: 4096,
+      }
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
+        deleted: true,
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        agent_state: 'started',
+        deleted: true,
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var services = {
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('icon.svg')
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>);
+    var expected = (
+      <ul className="machine-view__machine-units">
+        <li className={'machine-view__machine-unit ' +
+          'machine-view__machine-unit--uncommitted'}
+          key="wordpress/0">
+          <span className="machine-view__machine-unit-icon">
+            <img
+              alt="wordpress/0"
+              src="icon.svg"
+              title="wordpress/0" />
+          </span>
+          {undefined}
+          {undefined}
+        </li>
+        <li className={'machine-view__machine-unit ' +
+          'machine-view__machine-unit--uncommitted'}
+          key="wordpress/1">
+          <span className="machine-view__machine-unit-icon">
+            <img
+              alt="wordpress/1"
+              src="icon.svg"
+              title="wordpress/1" />
+          </span>
+          {undefined}
+          {undefined}
+        </li>
+      </ul>);
+    assert.deepEqual(output.props.children[3], expected);
   });
 
   it('can render a machine with no hardware', function() {
@@ -142,9 +340,11 @@ describe('MachineViewMachine', function() {
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
         displayName: 'wordpress/0',
         id: 'wordpress/0'
       }, {
+        agent_state: 'started',
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
@@ -182,10 +382,12 @@ describe('MachineViewMachine', function() {
         <ul className="machine-view__machine-units">
           <li className="machine-view__machine-unit"
             key="wordpress/0">
-            <img
-              alt="wordpress/0"
-              src="icon.svg"
-              title="wordpress/0" />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/0"
+                src="icon.svg"
+                title="wordpress/0" />
+            </span>
             wordpress/0
             <juju.components.MoreMenu
               items={[{
@@ -195,10 +397,12 @@ describe('MachineViewMachine', function() {
           </li>
           <li className="machine-view__machine-unit"
             key="wordpress/1">
-            <img
-              alt="wordpress/1"
-              src="icon.svg"
-              title="wordpress/1" />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/1"
+                src="icon.svg"
+                title="wordpress/1" />
+            </span>
             wordpress/1
             <juju.components.MoreMenu
               items={[{
