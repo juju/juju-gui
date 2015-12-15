@@ -314,9 +314,11 @@ describe('MachineViewMachine', function() {
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
         displayName: 'wordpress/0',
         id: 'wordpress/0'
       }, {
+        agent_state: 'started',
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
@@ -354,19 +356,23 @@ describe('MachineViewMachine', function() {
         <ul className="machine-view__machine-units">
           <li className="machine-view__machine-unit"
             key="wordpress/0">
-            <img
-              alt="wordpress/0"
-              src="icon.svg"
-              title="wordpress/0" />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/0"
+                src="icon.svg"
+                title="wordpress/0" />
+            </span>
             {undefined}
             {undefined}
           </li>
           <li className="machine-view__machine-unit"
             key="wordpress/1">
-            <img
-              alt="wordpress/1"
-              src="icon.svg"
-              title="wordpress/1" />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/1"
+                src="icon.svg"
+                title="wordpress/1" />
+            </span>
             {undefined}
             {undefined}
           </li>

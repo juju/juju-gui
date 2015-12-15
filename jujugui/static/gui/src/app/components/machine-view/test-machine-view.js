@@ -422,7 +422,10 @@ describe('MachineView', function() {
     var filterByParent = sinon.stub();
     filterByParent.returns(machineList);
     filterByParent.withArgs('new0').returns([]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
