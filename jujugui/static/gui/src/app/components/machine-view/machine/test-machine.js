@@ -102,6 +102,66 @@ describe('MachineViewMachine', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can display a machine as uncommitted', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {},
+      commitStatus: 'uncommitted'
+    };
+    var units = {filterByMachine: sinon.stub().returns([])};
+    var services = {getById: sinon.stub()};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className={'machine-view__machine ' +
+        'machine-view__machine--uncommitted machine-view__machine--machine'}
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        {output.props.children}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a deleted machine as uncommitted', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {},
+      deleted: true
+    };
+    var units = {filterByMachine: sinon.stub().returns([])};
+    var services = {getById: sinon.stub()};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className={'machine-view__machine ' +
+        'machine-view__machine--uncommitted machine-view__machine--machine'}
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        {output.props.children}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can render a machine with no hardware', function() {
     var selectMachine = sinon.stub();
     var machine = {
