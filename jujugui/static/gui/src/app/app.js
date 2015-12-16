@@ -1008,6 +1008,7 @@ YUI.add('juju-gui', function(Y) {
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
+          showConnectingMask={this.showConnectingMask.bind(this)}
           authDetails={this.get('auth')} />,
         document.getElementById('environment-switcher'));
     },
@@ -1736,6 +1737,22 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Shows the connecting to Juju environment mask.
+
+      @method showConnectingMask
+    */
+    showConnectingMask: function() {
+      var mask = document.getElementById('full-screen-mask');
+      var msg = document.getElementById('loading-message');
+      if (mask) {
+        mask.style.display = 'block';
+      }
+      if (msg) {
+        msg.style.display = 'block';
+      }
+    },
+
+    /**
      * Record environment default series changes in our model.
      *
      * The provider type arrives asynchronously.  Instead of updating the
@@ -1801,7 +1818,6 @@ YUI.add('juju-gui', function(Y) {
       if (!this.renderEnvironment) {
         next(); return;
       }
-      this.hideMask();
       var options = {
         getModelURL: Y.bind(this.getModelURL, this),
         nsRouter: this.nsRouter,

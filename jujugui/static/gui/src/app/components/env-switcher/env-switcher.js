@@ -26,7 +26,8 @@ YUI.add('env-switcher', function() {
       jem: React.PropTypes.object,
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
-      app: React.PropTypes.object
+      app: React.PropTypes.object,
+      showConnectingMask: React.PropTypes.func
     },
 
     getInitialState: function() {
@@ -115,6 +116,7 @@ YUI.add('env-switcher', function() {
     */
     handleEnvClick: function(e) {
       var currentTarget = e.currentTarget;
+      this.props.showConnectingMask();
       this.setState({showEnvList: false});
       this.setState({envName: currentTarget.getAttribute('data-name')});
       this.switchEnv(currentTarget.getAttribute('data-id'));
