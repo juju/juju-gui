@@ -146,6 +146,7 @@ describe('EnvSwitcher', function() {
     }];
     var listEnvs = sinon.stub();
     var switchEnv = sinon.stub();
+    var mask = sinon.stub();
     var jem = {
       listEnvironments: listEnvs
     };
@@ -154,6 +155,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={mask}
         jem={jem}
         app={app} />, true);
     var instance = renderer.getMountedInstance();
@@ -164,7 +166,13 @@ describe('EnvSwitcher', function() {
         getAttribute: () => 'abc123'
       }
     });
+    assert.equal(mask.callCount, 1);
     assert.equal(switchEnv.callCount, 1);
+    assert.deepEqual(instance.state, {
+      showEnvList: false,
+      envName: 'abc123',
+      envList: envs
+    });
     assert.deepEqual(switchEnv.args[0], [
       envs[0].uuid, envs[0].user, envs[0].password
     ]);
