@@ -23,36 +23,47 @@ YUI.add('machine-view-header', function() {
   juju.components.MachineViewHeader = React.createClass({
     propTypes: {
       menuItems: React.PropTypes.array,
-      title: React.PropTypes.string.isRequired
+      title: React.PropTypes.string.isRequired,
+      toggle: React.PropTypes.object
     },
 
     /**
       Generate a menu for the supplied controls.
 
-      @method _generateMenu
+      @method _generateControl
       @returns {Object} A more menu component
     */
-    _generateMenu: function() {
+    _generateControl: function() {
       var menuItems = this.props.menuItems;
-      if (!menuItems) {
-        return;
+      var toggle = this.props.toggle;
+      if (menuItems) {
+        return (
+          <juju.components.MoreMenu
+            items={menuItems} />);
+      } else if (toggle) {
+        var icon = toggle.toggleOn ? 'close_16' : 'add-light-16';
+        var type = toggle.toggleOn ? 'grey' : 'confirm';
+        return (
+          <juju.components.GenericButton
+            action={toggle.action}
+            disabled={toggle.disabled}
+            type={type}
+            icon={icon} />);
       }
-      return (
-        <juju.components.MoreMenu
-          items={menuItems} />);
     },
 
     render: function() {
       return (
         <div className="machine-view__header">
           {this.props.title}
-          {this._generateMenu()}
+          {this._generateControl()}
         </div>
       );
     }
   });
 }, '0.1.0', {
   requires: [
-    'more-menu'
+    'more-menu',
+    'generic-button'
   ]
 });

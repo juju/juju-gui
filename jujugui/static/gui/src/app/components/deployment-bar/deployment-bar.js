@@ -101,7 +101,7 @@ YUI.add('deployment-bar', function() {
             action={this.props.deployButtonAction}
             type="blue"
             disabled={changeCount === 0}
-            title={changeCount} />
+            title={changeCount.toString()} />
           <juju.components.GenericButton
             action={this.props.deployButtonAction}
             type="confirm"

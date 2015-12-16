@@ -52,7 +52,7 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    assert.deepEqual(output,
+    var expected = (
       <juju.components.Panel
         instanceName="deployment-bar-panel"
         visible={true}>
@@ -68,13 +68,14 @@ describe('DeploymentBar', function() {
           action={deployButtonAction}
           type="blue"
           disabled={false}
-          title={2} />
+          title="2" />
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
           disabled={false}
           title="Deploy changes" />
       </juju.components.Panel>);
+    assert.deepEqual(output, expected);
   });
 
   it('enables the button if there are changes', function() {

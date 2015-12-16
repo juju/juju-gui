@@ -76,6 +76,18 @@ describe('GenericButton', function() {
       </button>);
   });
 
+  it('displays a provided icon', function() {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.GenericButton
+          icon="plus_1" />);
+    assert.deepEqual(output,
+      <button className="generic-button"
+        onClick={output.props.onClick}>
+        <juju.components.SvgIcon name="plus_1"
+          size="16" />
+      </button>);
+  });
+
   it('sets the type class', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton
