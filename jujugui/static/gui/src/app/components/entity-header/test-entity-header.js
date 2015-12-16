@@ -41,17 +41,74 @@ describe('EntityHeader', function() {
   });
 
   it('renders an entity properly', function() {
-    var output = testUtils.renderIntoDocument(
+    var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
           deployService={sinon.spy()}
           changeState={sinon.spy()}
-          entityModel={mockEntity} />);
-
-    var entity = output.props.entityModel.toEntity();
-    assert.equal(entity.displayName, output.refs.entityHeaderTitle.textContent,
-                 'rendered name does not match entity name');
-    assert.equal(entity.owner, output.refs.entityHeaderBy.textContent,
-                 'rendered owner does not match entity owner');
+          entityModel={mockEntity}
+          scrollPosition={0} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="row-hero"
+        ref="headerWrapper"
+        style={{}}>
+        <header className="entity-header">
+          <div className="inner-wrapper">
+            <div className="eight-col no-margin-bottom">
+              <img src="data:image/gif;base64," alt="django"
+                   width="96" className="entity-header__icon"/>
+              <h1
+                className="entity-header__title"
+                itemProp="name"
+                ref="entityHeaderTitle">
+                django
+              </h1>
+              <ul className="bullets inline entity-header__properties">
+                <li className="entity-header__by">
+                  By{' '}
+                  <a href="https://launchpad.net/~test-owner"
+                    target="_blank">test-owner</a>
+                </li>
+                {null}
+              </ul>
+              <ul className="entity-header__social-list">
+                <li>
+                  <a id="item-twitter"
+                    target="_blank"
+                    href={'https://twitter.com/intent/tweet?text=django%20' +
+                      'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
+                      '.com%2Fdjango%2F%2F'}>
+                    <juju.components.SvgIcon
+                      name="icon-social-twitter"
+                      size="35"/>
+                  </a>
+                </li>
+                <li>
+                  <a id="item-googleplus"
+                    target="_blank"
+                    href={'https://plus.google.com/share?url=https%3A%2F%2F' +
+                      'jujucharms.com%2Fdjango%2F%2F'}>
+                    <juju.components.SvgIcon
+                      name="icon-social-google"
+                      size="35"/>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="four-col last-col no-margin-bottom">
+              <juju.components.CopyToClipboard
+                value="juju deploy cs:django" />
+              <juju.components.GenericButton
+                ref="deployButton"
+                action={instance._handleDeployClick}
+                type="confirm"
+                title="Add to canvas" />
+            </div>
+          </div>
+        </header>
+      </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('displays an add to canvas button', function() {

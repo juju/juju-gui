@@ -145,6 +145,10 @@ YUI.add('entity-content', function() {
       if (entityModel.get('entityType') === 'charm') {
         var bugLink = `https://bugs.launchpad.net/charms/+source/` +
           `${entityModel.get('name')}`;
+        var submitLink = `https://bugs.launchpad.net/charms/+source/` +
+          `${entityModel.get('name')}/+filebug`;
+        var contributeLink = `https://code.launchpad.net/~charmers/charms/` +
+          `trusty/${entityModel.get('name')}/trunk`;
         return (
           <div className="row entity-content__description">
             <div className="inner-wrapper">
@@ -158,6 +162,16 @@ YUI.add('entity-content', function() {
                   <li>
                     <a href={bugLink} target="_blank">
                       Bugs
+                    </a>
+                  </li>
+                  <li>
+                    <a href={submitLink} target="_blank">
+                      Submit a bug
+                    </a>
+                  </li>
+                  <li>
+                    <a href={contributeLink} target="_blank">
+                      Contribute
                     </a>
                   </li>
                 </ul>

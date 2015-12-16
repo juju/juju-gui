@@ -58,8 +58,7 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={getFile}
           pluralize={pluralize}
-          renderMarkdown={renderMarkdown} />
-    , true);
+          renderMarkdown={renderMarkdown} />, true);
     var option1 = {
       description: 'Your username',
       type: 'string',
@@ -95,6 +94,18 @@ describe('EntityContent', function() {
                     href="https://bugs.launchpad.net/charms/+source/django"
                     target="_blank">
                     Bugs
+                  </a>
+                </li>
+                <li>
+                  <a href={'https://bugs.launchpad.net/charms/+source/' +
+                    'django/+filebug'} target="_blank">
+                    Submit a bug
+                  </a>
+                </li>
+                <li>
+                  <a href={'https://code.launchpad.net/~charmers/charms/' +
+                    'trusty/django/trunk'} target="_blank">
+                    Contribute
                   </a>
                 </li>
               </ul>
@@ -153,8 +164,7 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getFile={getFile}
         pluralize={pluralize}
-        renderMarkdown={renderMarkdown} />
-    , true);
+        renderMarkdown={renderMarkdown} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -178,6 +188,18 @@ describe('EntityContent', function() {
                     href="https://bugs.launchpad.net/charms/+source/django"
                     target="_blank">
                     Bugs
+                  </a>
+                </li>
+                <li>
+                  <a href={'https://bugs.launchpad.net/charms/+source/' +
+                    'django/+filebug'} target="_blank">
+                    Submit a bug
+                  </a>
+                </li>
+                <li>
+                  <a href={'https://code.launchpad.net/~charmers/charms/' +
+                    'trusty/django/trunk'} target="_blank">
+                    Contribute
                   </a>
                 </li>
               </ul>
