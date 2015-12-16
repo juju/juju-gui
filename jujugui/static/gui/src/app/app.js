@@ -782,6 +782,8 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           services={services.toArray()}
           ecsCommit={ecs.commit.bind(ecs, env)}
+          exportEnvironmentFile={
+            utils.exportEnvironmentFile.bind(utils, this.db)}
           changeDescriptions={changeDescriptions}
           getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this,
               this.db.units)}
