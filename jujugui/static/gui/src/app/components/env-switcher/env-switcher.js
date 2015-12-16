@@ -31,6 +31,7 @@ YUI.add('env-switcher', function() {
 
     getInitialState: function() {
       return {
+        envName: this.props.environmentName,
         showEnvList: false,
         envList: []
       };
@@ -38,6 +39,16 @@ YUI.add('env-switcher', function() {
 
     componentDidMount: function() {
       this.updateEnvList();
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      // We only want to take the environment name that's being passed in if
+      // there is none displayed. Else rely on what the user has selected to
+      // avoid a long delay in updating the selected environment via the
+      // megawatcher.
+      if (!this.state.envName) {
+        this.setState({envName: nextProps.environmentName});
+      }
     },
 
     /**
@@ -103,9 +114,10 @@ YUI.add('env-switcher', function() {
       @param {Object} e The click event.
     */
     handleEnvClick: function(e) {
-      var uuid = e.currentTarget.getAttribute('data-id');
+      var currentTarget = e.currentTarget;
       this.setState({showEnvList: false});
-      this.switchEnv(uuid);
+      this.setState({envName: currentTarget.getAttribute('data-name')});
+      this.switchEnv(currentTarget.getAttribute('data-id'));
     },
 
     /**
@@ -233,7 +245,7 @@ YUI.add('env-switcher', function() {
             className="env-switcher--toggle"
             onClick={this.toggleEnvList}>
             <span className="environment-name">
-              {this.props.environmentName}
+              {this.state.envName}
             </span>
             <juju.components.SvgIcon name="chevron_down_16"
               size="16" />

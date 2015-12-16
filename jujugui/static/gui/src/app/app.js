@@ -629,6 +629,9 @@ YUI.add('juju-gui', function(Y) {
       this.db.relations.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
+      this.db.environment.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
       this.db.notifications.after('add', this._renderNotifications, this);
 
       // When someone wants a charm to be deployed they fire an event and we
