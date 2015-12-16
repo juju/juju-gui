@@ -72,3 +72,17 @@
         }
     }
 }
+
+.machine-view__header {
+    .generic-button {
+        float: right;
+        width: 24px;
+        height: 24px;
+        margin-top: 11px;
+        padding: 4px 0 0 0;
+
+        &--type-grey {
+            @extend %button-grey;
+        }
+    }
+}
