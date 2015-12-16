@@ -45,14 +45,23 @@ describe('DeploymentBar', function() {
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
-        deployButtonAction={deployButtonAction} />);
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     assert.deepEqual(output,
       <juju.components.Panel
         instanceName="deployment-bar-panel"
         visible={true}>
+        <span className="deployment-bar__export link"
+          onClick={instance._handleExport}
+          role="button"
+          tabIndex="0">
+          Export
+        </span>
         <juju.components.DeploymentBarNotification
           change={null} />
         <juju.components.GenericButton
@@ -74,13 +83,27 @@ describe('DeploymentBar', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
-        deployButtonAction={deployButtonAction} />);
-    assert.deepEqual(output.props.children[2],
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()} />);
+    assert.deepEqual(output.props.children[3],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
           disabled={false}
           title="Deploy changes" />);
+  });
+
+  it('can export the env', function() {
+    var currentChangeSet = {one: 1, two: 2};
+    var deployButtonAction = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={exportEnvironmentFile} />);
+    output.props.children[0].props.onClick();
+    assert.equal(exportEnvironmentFile.callCount, 1);
   });
 
   it('disables the button if there are no changes', function() {
@@ -89,8 +112,9 @@ describe('DeploymentBar', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
-        deployButtonAction={deployButtonAction} />);
-    assert.deepEqual(output.props.children[2],
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()} />);
+    assert.deepEqual(output.props.children[3],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -105,8 +129,9 @@ describe('DeploymentBar', function() {
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         hasCommits={true}
-        deployButtonAction={deployButtonAction} />);
-    assert.deepEqual(output.props.children[2],
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()} />);
+    assert.deepEqual(output.props.children[3],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -122,6 +147,7 @@ describe('DeploymentBar', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />, true);
@@ -130,11 +156,12 @@ describe('DeploymentBar', function() {
     renderer.render(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -149,6 +176,7 @@ describe('DeploymentBar', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />, true);
@@ -157,11 +185,12 @@ describe('DeploymentBar', function() {
     renderer.render(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -171,11 +200,12 @@ describe('DeploymentBar', function() {
     renderer.render(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -188,6 +218,7 @@ describe('DeploymentBar', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />, true);
@@ -196,11 +227,12 @@ describe('DeploymentBar', function() {
     renderer.render(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -210,11 +242,12 @@ describe('DeploymentBar', function() {
     renderer.render(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -223,11 +256,12 @@ describe('DeploymentBar', function() {
     renderer.render(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
+    assert.deepEqual(output.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
