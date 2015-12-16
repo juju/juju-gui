@@ -97,14 +97,12 @@ describe('LoginComponent', function() {
   });
 
   it('can display a login failure message', function() {
-    var renderer = jsTestUtils.shallowRender(
+    var output = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
         setCredentials={sinon.stub()}
         login={sinon.stub()}
-        loginFailure={true} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+        loginFailure={true} />);
     var expected = (
       <div className="login__failure-message">
         The supplied username or password was incorrect.
