@@ -53,4 +53,26 @@ describe('MachineViewHeader', function() {
         </div>);
     assert.deepEqual(output, expected);
   });
+
+  it('can render with a toggle', function() {
+    var action = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewHeader
+        toggle={{
+          action: action,
+          disabled: false,
+          toggleOn: true
+        }}
+        title="Sandbox" />);
+    var expected = (
+        <div className="machine-view__header">
+          Sandbox
+          <juju.components.GenericButton
+            action={action}
+            disabled={false}
+            type="grey"
+            icon="close_16" />
+        </div>);
+    assert.deepEqual(output, expected);
+  });
 });

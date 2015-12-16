@@ -39,6 +39,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
@@ -50,8 +51,14 @@ describe('MachineView', function() {
         <div className="machine-view__content">
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
-              title="New units" />
+              title="New units"
+              toggle={{
+                action: instance._toggleScaleUp,
+                disabled: true,
+                toggleOn: false
+              }} />
             <div className="machine-view__column-content">
+              {undefined}
               <div className="machine-view__column-onboarding">
                 <juju.components.SvgIcon name="add_16"
                   size="16" />
@@ -119,12 +126,14 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div className="machine-view__column-onboarding">
           <juju.components.SvgIcon name="add_16"
             size="16" />
@@ -147,12 +156,51 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
+        <div className="machine-view__column-onboarding">
+          <juju.components.SvgIcon name="task-done_16"
+            size="16" />
+          You have placed all of your units
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
+  });
+
+  it('can display a service scale up form', function() {
+    var addGhostAndEcsUnits = sinon.stub();
+    var machines = {
+      filterByParent: sinon.stub().returns([1, 2, 3])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(1)
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        addGhostAndEcsUnits={addGhostAndEcsUnits}
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._toggleScaleUp();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        <juju.components.MachineViewScaleUp
+          addGhostAndEcsUnits={addGhostAndEcsUnits}
+          services={services}
+          toggleScaleUp={instance._toggleScaleUp} />
         <div className="machine-view__column-onboarding">
           <juju.components.SvgIcon name="task-done_16"
             size="16" />
@@ -187,6 +235,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         environmentName="My Env"
         units={units}
@@ -197,6 +246,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div>
           <div className="machine-view__auto-place">
             <button onClick={autoPlaceUnits}>
@@ -245,13 +295,14 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     output.props.children.props.children[0].props.children[1]
-      .props.children.props.children[0].props.children[0].props.onClick();
+      .props.children[1].props.children[0].props.children[0].props.onClick();
     assert.equal(autoPlaceUnits.callCount, 1);
   });
 
@@ -267,6 +318,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
@@ -318,6 +370,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -373,6 +426,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -435,6 +489,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -489,6 +544,7 @@ describe('MachineView', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         environmentName="My Env"
         machines={machines}
@@ -526,6 +582,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
@@ -564,6 +621,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -628,6 +686,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -694,6 +753,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"

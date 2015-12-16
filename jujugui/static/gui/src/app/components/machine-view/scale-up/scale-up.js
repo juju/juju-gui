@@ -35,7 +35,8 @@ YUI.add('machine-view-scale-up', function() {
     */
     _generateServices: function() {
       var components = [];
-      this.props.services.each((service) => {
+      var services = this.props.services.toArray();
+      services.forEach((service) => {
         components.push(
           <li className="machine-view__scale-up-unit"
             key={service.get('id')}>
