@@ -685,14 +685,16 @@ YUI.add('juju-gui', function(Y) {
       Renders the login component.
 
       @method _renderLogin
+      @param {Boolean} failure Whether the login failed.
     */
-    _renderLogin: function() {
+    _renderLogin: function(failure) {
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
           envName={this.db.environment.get('name') || 'Sandbox'}
           setCredentials={this.env.setCredentials.bind(this.env)}
-          login={this.env.login.bind(this.env)}/>,
+          login={this.env.login.bind(this.env)}
+          loginFailure={failure} />,
         document.getElementById('login-container'));
     },
 
@@ -1076,7 +1078,7 @@ YUI.add('juju-gui', function(Y) {
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {
-        login: this._renderLogin.bind(this),
+        login: this._renderLogin.bind(this, false),
         deployTarget: views.utils.deployTargetDispatcher.bind(this),
         empty: this._emptySectionApp.bind(this)
       };
@@ -1630,7 +1632,7 @@ YUI.add('juju-gui', function(Y) {
         // Start observing bundle deployments.
         bundleNotifications.watchAll(this.env, this.db);
       } else {
-        this._renderLogin();
+        this._renderLogin(true);
       }
     },
 

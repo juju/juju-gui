@@ -41,34 +41,37 @@ describe('LoginComponent', function() {
           <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
         </div>
         <div className="login__full-form">
-          <div className="login__env-name">testenv</div>
-          <form
-            className="login__form"
-            ref="form"
-            onSubmit={instance._handleSubmit}>
-            <label
-              className="login__label">
-              Username
-              <input
-                className="login__input"
-                type="text"
-                name="username"
-                ref="username" />
-            </label>
-            <label
-              className="login__label">
-              Password
-              <input
-                className="login__input"
-                type="password"
-                name="password"
-                ref="password" />
-            </label>
-            <juju.components.GenericButton
-              action={instance._handleSubmit}
-              type="confirm"
-              title="Login" />
-          </form>
+          <div className="login__form-contents">
+            <div className="login__env-name">testenv</div>
+            {undefined}
+            <form
+              className="login__form"
+              ref="form"
+              onSubmit={instance._handleSubmit}>
+              <label
+                className="login__label">
+                Username
+                <input
+                  className="login__input"
+                  type="text"
+                  name="username"
+                  ref="username" />
+              </label>
+              <label
+                className="login__label">
+                Password
+                <input
+                  className="login__input"
+                  type="password"
+                  name="password"
+                  ref="password" />
+              </label>
+              <juju.components.GenericButton
+                action={instance._handleSubmit}
+                type="confirm"
+                title="Login" />
+            </form>
+          </div>
         </div>
         <div className="login__message">
           The password for newer Juju clients can be found by locating the
@@ -91,6 +94,21 @@ describe('LoginComponent', function() {
       </div>
     );
     assert.deepEqual(output, expected);
+  });
+
+  it('can display a login failure message', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Login
+        envName="testenv"
+        setCredentials={sinon.stub()}
+        login={sinon.stub()}
+        loginFailure={true} />);
+    var expected = (
+      <div className="login__failure-message">
+        The supplied username or password was incorrect.
+      </div>);
+    assert.deepEqual(
+      output.props.children[1].props.children.props.children[1], expected);
   });
 
   it('calls to log the user in on submit', function() {
