@@ -17,6 +17,7 @@
 
     &__list-item {
         @extend %stagger-fade-in;
+        position: relative;
         padding: 10px 20px;
         cursor: pointer;
 
