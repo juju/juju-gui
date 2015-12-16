@@ -31,8 +31,9 @@ YUI.add('juju-models', function(Y) {
       environments = Y.namespace('juju.environments'),
       handlers = models.handlers;
 
-  // The string representing juju-core entities' alive Life state.
+  // Define strings representing juju-core entities' Life state.
   var ALIVE = 'alive';
+  var DYING = 'dying';
   // The default Juju GUI service name.
   var JUJU_GUI_SERVICE_NAME = 'juju-gui';
 
@@ -244,13 +245,10 @@ YUI.add('juju-models', function(Y) {
 
       @method isAlive
       @return {Boolean} Whether this service is alive.
-     */
+    */
     isAlive: function() {
       var life = this.get('life');
-      if (life === ALIVE || life === 'dying') {
-        return true;
-      }
-      return false;
+      return (life === ALIVE || life === DYING);
     },
 
     /**
@@ -779,6 +777,170 @@ YUI.add('juju-models', function(Y) {
   });
 
   models.ServiceList = ServiceList;
+
+  /**
+    A remote service exposes relation endpoints offered from this model or
+    from a remote Juju model, either in the same controller on across multiple
+    controllers via the Juju environment manager.
+
+    @class RemoteService
+  */
+  var RemoteService = Y.Base.create('remoteService', Y.Model, [], {
+    // The service URL uniquely represents a remote service.
+    idAttribute: 'url',
+
+    /**
+      Report whether this remote service is alive.
+      Return true if the service life is 'alive' or 'dying', false otherwise.
+
+      @method isAlive
+      @return {Boolean} Whether this remote service is alive.
+    */
+    isAlive: function() {
+      var life = this.get('life');
+      return (life === ALIVE || life === DYING);
+    },
+
+    /**
+      Store more details to this remote service.
+
+      Details are usually retrieved calling "env.getOffer()" where env is the
+      Go Juju environment implementation. The above results in a call to
+      "ServiceOffers" on the "CrossModelRelations" Juju API facade.
+      The invariant here is that data provided to the env.getOffer() callback,
+      if data.err is not defined, can be passed as is to this function as the
+      details parameter. This way is easy to immediately enrich the database
+      with information taken from the Juju API.
+
+      @method addDetails
+      @param {Object} details A data object with the following attributes:
+        - description: the human friendly description for the remote service;
+        - sourceName: the label assigned to the source Juju model;
+        - endpoints: the list of offered endpoints.
+          Each endpoint must have the following attributes:
+          - name: the endpoint name (e.g. "db" or "website");
+          - interface: the endpoint interface (e.g. "http" or "mysql");
+          - role: the role for the endpoint ("requirer" or "provider").
+        Any other attribute in details is ignored.
+    */
+    addDetails: function(details) {
+      this.setAttrs({
+        description: details.description,
+        sourceName: details.sourceName,
+        endpoints: details.endpoints
+      });
+    }
+  }, {
+    // Define remote service attributes.
+    ATTRS: {
+      /**
+        The remote service URL, assigned to the service when it was originally
+        offered. For instance "local:/u/admin/ec2/django".
+        This info is included in the Juju mega-watcher for remote services.
+
+        @attribute url
+        @type {String}
+      */
+      url: {},
+      /**
+        The remote service name, for instance "django" or "haproxy".
+        This info is included in the Juju mega-watcher for remote services.
+
+        @attribute service
+        @type {String}
+      */
+      service: {},
+      /**
+        The UUID of the original Juju model from which this service is offered.
+        This info is included in the Juju mega-watcher for remote services.
+
+        @attribute sourceId
+        @type {String}
+      */
+      sourceId: {},
+      /**
+        The remote service life cycle status ("alive", "dying" or "dead").
+        This info is included in the Juju mega-watcher for remote services.
+
+        @attribute life
+        @type {String}
+      */
+      life: {},
+      /**
+        The remote service status, as an object with the following attributes:
+        - current: current status, for instance "idle" or "executing";
+        - message: arbitrary status message set by users;
+        - data: additional status data as an object, mostly unused;
+        - since: date of the last status change, for instance
+          "2015-12-16T12:35:27.873828132+01:00".
+        This info is included in the Juju mega-watcher for remote services.
+
+        @attribute status
+        @type {Object}
+        @default {}
+      */
+      status: {
+        value: {}
+      },
+      /**
+        The description of the remote service features and capabilities.
+        This info is NOT included in the Juju mega-watcher and can be provided
+        directly or by calling addDetails on the model instance.
+
+        @attribute description
+        @type {String}
+      */
+      description: {},
+      /**
+        The name of the original Juju model from which this service is offered.
+        This info is NOT included in the Juju mega-watcher and can be provided
+        directly or by calling addDetails on the model instance.
+
+        @attribute sourceName
+        @type {String}
+      */
+      sourceName: {},
+      /**
+        The offered endpoints, as a collection of objects with the following
+        attributes:
+        - name: the endpoint name (e.g. "db" or "website");
+        - interface: the endpoint interface (e.g. "http" or "mysql");
+        - role: the role for the endpoint ("requirer" or "provider").
+        This info is NOT included in the Juju mega-watcher and can be provided
+        directly or by calling addDetails on the model instance.
+
+        @attribute endpoints
+        @type {Array of objects}
+        @default []
+      */
+      endpoints: {
+        value: []
+      }
+    }
+  });
+  models.RemoteService = RemoteService;
+
+  /**
+    A list of remote services.
+
+    @class RemoteServiceList
+  */
+  var RemoteServiceList = Y.Base.create('remoteServiceList', Y.ModelList, [], {
+    model: RemoteService,
+
+    /**
+      Process remote service changes coming in from juju-core.
+
+      @method process_delta
+      @param {String} action The type of change: 'change', 'remove', 'add'.
+      @param {Object} data The data for the model being updated.
+    */
+    process_delta: function(action, data) {
+      _process_delta(this, action, data);
+    }
+  });
+  models.RemoteServiceList = RemoteServiceList;
+
 
   // This model is barely used.  Units are in a lazy model list, so we
   // usually only use objects.  However, the model is used to generate ids, and
@@ -2057,6 +2219,7 @@ YUI.add('juju-models', function(Y) {
       // Single model for environment database is bound to.
       this.environment = new Environment();
       this.services = new ServiceList();
+      this.remoteServices = new RemoteServiceList();
       this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
@@ -2071,8 +2234,8 @@ YUI.add('juju-models', function(Y) {
      */
     destructor: function() {
       var modelLists = [
-        this.environment, this.services, this.charms, this.relations,
-        this.notifications, this.machines, this.units];
+        this.environment, this.services, this.remoteServices, this.charms,
+        this.relations, this.notifications, this.machines, this.units];
       modelLists.forEach(function(modelList) {
         modelList.detachAll();
         modelList.destroy();
@@ -2120,6 +2283,7 @@ YUI.add('juju-models', function(Y) {
 
     reset: function() {
       this.services.reset();
+      this.remoteServices.reset();
       this.machines.reset();
       this.charms.reset();
       this.relations.reset();

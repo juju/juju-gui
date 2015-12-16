@@ -2245,6 +2245,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             ['annotation', 'change', {}],
             ['relation', 'change', {}],
             ['machine', 'change', {}],
+            ['remoteservice', 'change', {}],
             ['foobar', 'fake', {}],
             ['unit', 'change', {}],
             ['service', 'deploy', {}]
@@ -2261,6 +2262,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'unitInfo',
           'machineInfo',
           'annotationInfo',
+          'remoteserviceInfo',
           'foobarInfo'
         ], change);
         done();
@@ -2682,6 +2684,93 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         RequestId: 1,
         Error: 'bad wolf'
+      });
+    });
+
+    it('retrieves details on an offer', function(done) {
+      // Perform the request.
+      var url = 'local:/u/admin/ec2/django';
+      env.getOffer(url, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.url, url);
+        assert.strictEqual(data.description, 'these are the voyages');
+        assert.strictEqual(data.sourceName, 'aws');
+        assert.strictEqual(data.sourceId, 'uuid');
+        assert.deepEqual(data.endpoints, [
+          {name: 'cache', interface: 'http', role: 'requirer'},
+          {name: 'webproxy', interface: 'proxy', role: 'provider'}
+        ]);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'CrossModelRelations',
+          Version: env.facadeVersions['CrossModelRelations'],
+          Request: 'ServiceOffers',
+          Params: {serviceurls: [url]},
+          RequestId: 1
+        });
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            result: {
+              servicename: 'django',
+              serviceurl: url,
+              servicedescription: 'these are the voyages',
+              sourcelabel: 'aws',
+              sourceenviron: 'environment-uuid',
+              endpoints: [{
+                name: 'cache',
+                interface: 'http',
+                role: 'requirer',
+                limit: 0,
+                scope: 'global'
+              }, {
+                name: 'webproxy',
+                interface: 'proxy',
+                role: 'provider',
+                limit: 1,
+                scope: 'global'
+              }]
+            }
+          }]
+        }
+      });
+    });
+
+    it('handles request failures while retrieving an offer', function(done) {
+      // Perform the request.
+      env.getOffer('local:/u/admin/aws/haproxy', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'bad wolf'
+      });
+    });
+
+    it('handles API failures while retrieving an offer', function(done) {
+      // Perform the request.
+      env.getOffer('local:/u/admin/aws/haproxy', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            error: {Message: 'bad wolf'}
+          }]
+        }
       });
     });
 
