@@ -103,35 +103,52 @@ describe('AddedServicesList', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('performs the necessary work to focus a service', () => {
-    var allServices = [{
-      get: () => 'trusty/wordpress',
-      set: sinon.stub(),
-      setAttrs: sinon.stub()
-    }, {
-      get: () => 'trusty/apache',
-      set: sinon.stub(),
-      setAttrs: sinon.stub()
-    }, {
-      get: () => 'trusty/mysql',
-      set: sinon.stub(),
-      setAttrs: sinon.stub()
-    }];
-    var services = {
+  function createService(attrs) {
+    return {
+      attrs: attrs || {},
+
+      get: function(key) {
+        return this.attrs[key];
+      },
+
+      set: function(key, value) {
+        this.attrs[key] = value;
+      },
+
+      setAttrs: function(attrs) {
+        for (var key in attrs) {
+          this.attrs[key] = attrs[key];
+        }
+      }
+    };
+  }
+
+  function createModelList(models){
+    return {
       each: (cb) => {
-        allServices.forEach(cb);
+        models.forEach(cb);
       },
       getById: (id) => {
-        var service;
-        allServices.some((s) => {
-          if (s.get('id') === id) {
-            service = s;
+        var model;
+        models.some((m) => {
+          if (m.get('id') === id) {
+            model = m;
             return true;
           }
         });
-        return service;
+        return model;
       }
     };
+  }
+
+  it('performs the necessary work to focus a service', () => {
+    var id = 'trusty/wordpress';
+    var allServices = [
+      createService({id: id, fade: true, highlight: false}),
+      createService({id: 'trusty/apache', fade: false, highlight: true}),
+      createService({id: 'trusty/mysql', fade: false, highlight: false})
+    ];
+    var services = createModelList(allServices);
     var updateUnitFlags = sinon.stub();
     var findRelatedServices = sinon.stub();
     var relatedModelStub = sinon.stub();
@@ -159,21 +176,11 @@ describe('AddedServicesList', () => {
           services={services}/>, true);
 
     var instance = renderer.getMountedInstance();
+    var unfadeService = sinon.spy(instance, 'unfadeService');
     // Because shallowRenderer doesn't support refs this fakes a refs property
     // on the instance which is needed for the final step in the focus process.
     function generateListItem() {
-      var mockService = {
-        attrs: {},
-
-        get: function(key) {
-          return this.attrs[key];
-        },
-
-        set: function(key, value) {
-          this.attrs[key] = value;
-        }
-      };
-      return {props: {service: mockService}};
+      return {props: {service: createService()}};
     }
     instance.refs = {
       'AddedServicesListItem-trusty/wordpress': generateListItem(),
@@ -181,11 +188,14 @@ describe('AddedServicesList', () => {
       'AddedServicesListItem-trusty/mysql': generateListItem()
     };
     // Call the focus method that was passed down into the list item.
-    instance.focusService('trusty/wordpress');
+    instance.focusService(id);
+    // The service should unfade.
+    assert.isTrue(unfadeService.calledWith(id));
     // It needs to update the unit flags on the service
+    var focusedService = allServices[0];
     assert.equal(updateUnitFlags.callCount, 1);
     assert.deepEqual(updateUnitFlags.args[0], [
-      allServices[0],
+      focusedService,
       'highlight'
     ]);
     // We need to fetch the related and unrelated services and then set
@@ -198,44 +208,20 @@ describe('AddedServicesList', () => {
     // the user had clicked on.
     // In this test the user clicked on 'wordpress' so the others need to be
     // set to false
-    assert.equal(allServices[0].set.callCount, 0);
-    assert.equal(allServices[1].set.callCount, 1);
-    assert.deepEqual(allServices[1].set.args[0], ['highlight', false]);
-    assert.equal(allServices[2].set.callCount, 1);
-    assert.deepEqual(allServices[2].set.args[0], ['highlight', false]);
+    assert.equal(focusedService.get('highlight'), true);
+    assert.equal(focusedService.get('fade'), false);
+    assert.equal(allServices[1].get('highlight'), false);
     // It then has to set the proper values for the machine view visibility.
     assert.equal(setMVVisibility.callCount, 1);
   });
 
   it('performs the necessary work to unfocus a service', () => {
-    var allServices = [{
-      get: () => 'trusty/wordpress',
-      set: sinon.stub(),
-      setAttrs: sinon.stub()
-    }, {
-      get: () => 'trusty/apache',
-      set: sinon.stub(),
-      setAttrs: sinon.stub()
-    }, {
-      get: () => 'trusty/mysql',
-      set: sinon.stub(),
-      setAttrs: sinon.stub()
-    }];
-    var services = {
-      each: (cb) => {
-        allServices.forEach(cb);
-      },
-      getById: (id) => {
-        var service;
-        allServices.some((s) => {
-          if (s.get('id') === id) {
-            service = s;
-            return true;
-          }
-        });
-        return service;
-      }
-    };
+    var allServices = [
+      createService({id: 'trusty/wordpress'}),
+      createService({id: 'trusty/apache'}),
+      createService({id: 'trusty/mysql'})
+    ];
+    var services = createModelList(allServices);
     var updateUnitFlags = sinon.stub();
     var findRelatedServices = sinon.stub();
     var relatedModelStub = sinon.stub();
@@ -266,12 +252,12 @@ describe('AddedServicesList', () => {
     // Call the unfocus method that was passed down into the list item.
     instance.unfocusService('trusty/wordpress');
     // Check that the service highlight was set to false
-    assert.equal(allServices[0].set.callCount, 1);
-    assert.deepEqual(allServices[0].set.args[0], ['highlight', false]);
+    var unfocusedService = allServices[0];
+    assert.equal(unfocusedService.get('highlight'), false);
     // It needs to update the unit flags on the service
     assert.equal(updateUnitFlags.callCount, 1);
     assert.deepEqual(updateUnitFlags.args[0], [
-      allServices[0],
+      unfocusedService,
       'highlight'
     ]);
     // We need to fetch the unrelated services and then set
@@ -283,19 +269,13 @@ describe('AddedServicesList', () => {
   });
 
   it('performs the necessary work to fade a service', () => {
-    var serviceSet = sinon.stub();
-    var services = {
-      each: (cb) => {
-        cb({
-          get: () => 'trusty/wordpress',
-          set: serviceSet
-        });
-      },
-      getById: () => {
-        return {
-          set: serviceSet
-        };
-      }};
+    var id = 'trusty/wordpress';
+    var allServices = [
+      createService({id: id, highlight: true, fade: false}),
+      createService({id: 'trusty/apache'}),
+      createService({id: 'trusty/mysql'})
+    ];
+    var services = createModelList(allServices);
     var renderer = jsTestUtils.shallowRender(
         <juju.components.AddedServicesList
           updateUnitFlags={sinon.stub()}
@@ -307,26 +287,23 @@ describe('AddedServicesList', () => {
           services={services}/>, true);
 
     var instance = renderer.getMountedInstance();
-    // Call the fade Service method which would be passed down to the children.
-    instance.fadeService('trusty/wordpress');
-    assert.equal(serviceSet.callCount, 1);
-    assert.deepEqual(serviceSet.args[0], ['fade', true]);
+    var unfocusService = sinon.stub(instance, 'unfocusService');
+    instance.fadeService(id);
+    // Set the fade switch appropriately.
+    assert.equal(allServices[0].get('fade'), true);
+    // Unfocused the service.
+    assert.isTrue(unfocusService.calledWith(id));
+    unfocusService.restore();
   });
 
   it('performs the necessary work to unfade a service', () => {
-    var serviceSet = sinon.stub();
-    var services = {
-      each: (cb) => {
-        cb({
-          get: () => 'trusty/wordpress',
-          set: serviceSet
-        });
-      },
-      getById: () => {
-        return {
-          set: serviceSet
-        };
-      }};
+    var id = 'trusty/wordpress';
+    var allServices = [
+      createService({id: id, highlight: false, fade: true}),
+      createService({id: 'trusty/apache'}),
+      createService({id: 'trusty/mysql'})
+    ];
+    var services = createModelList(allServices);
     var renderer = jsTestUtils.shallowRender(
         <juju.components.AddedServicesList
           updateUnitFlags={sinon.stub()}
@@ -338,9 +315,8 @@ describe('AddedServicesList', () => {
           services={services}/>, true);
 
     var instance = renderer.getMountedInstance();
-    // Call the fade Service method which would be passed down to the children.
-    instance.unfadeService('trusty/wordpress');
-    assert.equal(serviceSet.callCount, 1);
-    assert.deepEqual(serviceSet.args[0], ['fade', false]);
+    instance.unfadeService(id);
+    // Set the fade switch appropriately.
+    assert.equal(allServices[0].get('fade'), false);
   });
 });

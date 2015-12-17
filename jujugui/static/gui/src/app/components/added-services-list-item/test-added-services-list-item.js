@@ -505,7 +505,6 @@ describe('AddedServicesListItem', function() {
         service={mockService} />);
 
     // Toggle focus on.
-    var service = instance.props.service;
     testUtils.Simulate.click(instance.refs.focusVisibilityIcon);
     assert.equal(focusService.callCount, 1);
     assert.equal(unfocusService.callCount, 0);
@@ -534,7 +533,6 @@ describe('AddedServicesListItem', function() {
         service={mockService} />);
 
     // Toggle focus on.
-    var service = instance.props.service;
     testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);
     assert.equal(fadeService.callCount, 1);
     assert.equal(unfadeService.callCount, 0);
