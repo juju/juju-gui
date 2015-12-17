@@ -5,63 +5,18 @@ HACKING
 Building
 --------
 
-Get the GUI source
-~~~~~~~~~~~~~~~~~~
-
-In order to run pyramid GUI, you need to import the juju-gui source. You can use
-either a gui tarball (e.g. a release tarball) from Launchpad_ or use the jujugui source on
-disk (e.g. the checked out source).
-
-You can then import the source using the source script:
-
-::
-
-   python scripts/source.py /path/to/tarball/or/source/directory
-
-If you choose source on disk, `scripts/source.py` creates a symlink to the source. This
-makes development in the gui source relatively easy to integrate with this pyramid
-application.
-
-If you would rather use make, there's a make target to set up the source as
-well. It requires you to provide the path to the src as an environment variable.
-
-::
-
-   SRC=/path/to/tarball/or/source/directory make src
-
-
-If for any reason you need to remove the source files, you can clear them with:
-
-::
-
-   make clean-gui-src
-Or clear them along with the built gui using:
-
-::
-
-   make clean-gui-all
-
-
-.. _Launchpad: https://launchpad.net/juju-gui/+download
-
 Building the GUI
 ~~~~~~~~~~~~~~~~
 
-The gui can be built in both a development and production form. In development,
+The GUI can be built in both a development and production form. In development,
 the files are not minified. In production, the files are minified with
 uglifyJS.
 
-To build the gui in dev mode, run:
+To build the GUI mode, run:
 
 ::
 
-    make gui-dev
-
-For production:
-
-::
-
-   make gui-prod
+    make gui
 
 You can clear away the built files by running:
 
@@ -72,10 +27,98 @@ You can clear away the built files by running:
 Running the GUI
 ~~~~~~~~~~~~~~~
 
-You can run the gui with the makefile:
+You can run the GUI with the makefile:
 
 ::
 
    make run
 
-This will spin up a python development server listening on `0.0.0.0:6543`
+This will spin up a python development server listening on `0.0.0.0:6543`.
+Changes to relevant files will cause the server to automatically reload them.
+
+You can also run the server without the watcher using
+
+::
+
+   make server
+
+To run the server with production settings use
+
+::
+
+   make qa-server
+
+Running tests
+~~~~~~~~~~~~~
+
+The test suite can be run using
+
+::
+
+   make test
+
+Testing the GUI via the charm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The most realistic way to test the GUI is to deploy the Juju GUI charm after
+including any changes you've made to the GUI.
+
+Assuming ``$GUI`` is your GUI repo and ``$CHARM`` is your charm repo, do the following:
+
+1. Move to the GUI directory and build the distribution that you want to
+   exercise: 
+
+::
+   
+   cd $GUI && make dist
+   
+The above creates a bz2 archive with the GUI release in ``$GUI/dist/``.
+
+2. Remove the release stored in the charm and copy the dist archive to the
+   releases directory of the charm:
+
+::
+   
+   rm $CHARM/releases/*.bz2
+   cp $GUI/dist/*.bz2 $CHARM/releases/
+
+3. Bootstrap the environment and deploy the charm:
+
+::
+
+   juju switch <your preferred provider>
+   juju bootstrap
+   cd $CHARM && make deploy
+
+4. Optionally enable debug mode in the GUI service so that the unit serves the unminified static files:
+
+::
+
+   juju set juju-gui juju-gui-debug=true
+   
+At this point it is possible to manually hack on the unit files: the GUI lives
+at ``/usr/local/lib/python2.7/dist-packages/jujugui/static/gui/build/app/``
+
+When the above is already set up, you have some local changes and you want to
+test them live, you can quickly just upload and install the new resulting
+release, like the following:
+
+1. Create a new release (same as point 1 above):
+
+::
+
+   cd $GUI && make dist
+
+2. Upload the resulting archive (this assumes the unit is juju-gui/0):
+
+::
+
+   juju ssh juju-gui/0 mkdir /tmp/release
+   juju scp $GUI/dist/*.bz2 juju-gui/0:/tmp/release
+
+3. Install the new release in the GUI unit:
+
+::
+
+   juju ssh juju-gui/0 "sudo pip install --no-index --no-dependencies -U /tmp/release/*.bz2”
+

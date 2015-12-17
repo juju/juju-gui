@@ -14,35 +14,37 @@ your work more intuitively from a web browser.
 
 Juju-GUI code is hosted `on Github`_
 
-Juju-GUI bugs are tracked on `on Launchpad
-<https://bugs.launchpad.net/juju-gui>`_.
+Juju-GUI bugs are tracked on `on Github Issues
+<https://github.com/juju/juju-gui/issues>`_.
 
 See also:
 
 - a `stable demo <http://jujucharms.com/>`_,
-- a `demo of trunk <http://comingsoon.jujucharms.com/>`_,
-- the `juju quickstart plugin
-  <http://jujugui.wordpress.com/2013/11/07/juju-quickstart-plugin-alpha-but-useful/>`_,
+- the `juju quickstart plugin`_,
 - our `blog <http://jujugui.wordpress.com/>`_, and
-- the `user-facing docs <https://jujucharms.com/docs/howto-gui-management>`_.
+- the `official documentation <https://jujucharms.com/docs/stable/juju-gui-management>`_.
 
 Deploy
 ======
 
-Deploying the GUI is easiest with the `juju quickstart plugin
-<http://jujugui.wordpress.com/2013/11/07/juju-quickstart-plugin-alpha-but-useful/>`_
-or `the Juju GUI charm <https://jujucharms.com/precise/juju-gui>`_.  If you
+Deploying the GUI is easiest with the `juju quickstart plugin`_
+or the `Juju GUI charm`_.  If you
 want to simply use the GUI, please try those.
 
 If you want to develop the GUI, or you have a deployment goal that the charm
 does not and cannot support, you can try the Makefile commands.  The most
-useful available commands are shown by the ``make help`` command.
+useful available commands are shown by the ``make help`` command.  If you've
+never run the GUI locally you'll want to start by executing ``make sysdeps``
+to install some required system-wide dependencies.  If you don't want those
+dependencies installed on your machine you may want to do the development work
+in a virtual machine or LXC.
 
-You will typically want to run one of ``make prod``,  ``make debug`` or ``make
-devel`` to deploy an environment. You might also run ``make test-debug`` and
-``make test-prod`` to check that everything is ok, and ``make docs`` to
-generate the available documentation for both project and code. See the
-`HACKING`_  file for details.
+To deploy a local environment you can run ``make server``, which will launch
+with appropriate development settings.  To mimic a production server run
+``make qa-server``.
+
+See the `HACKING`_  file for more details on developing and contributing to
+the project.
 
 Configure
 =========
@@ -53,43 +55,12 @@ Some configurable parameters may be found in three files:
 - ``app/config-debug.js``
 - ``app/config-prod.js``
 
-If you are using `the charm <https://jujucharms.com/precise/juju-gui>`_, the
-end-user configuration is available from the charm configuration.
+If you are using the `Juju GUI charm`_, the end-user configuration is
+available from the charm configuration.
 
-Demonstration Mode
-==================
-
-When giving a demonstration with the Gui you often want to help the visual
-presentation by showing icons for charms that are not yet reviewed and
-recommended. Since you have reviewed the charms you intend to use in your
-presentation, you may override the safety features by manually setting
-"demo-mode" into your localStorage for the Gui website.  You can do this using
-the developer tools for the browser you're demonstrating with.
-
-Open a console and enter:
-
-::
-
-  localStorage.setItem('demo-mode', true);
-
-Containerization support
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-By default, the Juju GUI only allows containers' management on providers fully
-supporting containerization, including creation/deletion and networking
-(e.g. port forwarding for exposed services).
-
-If containerization is not supported in the current Juju environment, the
-header of the third column in machine view shows the
-"Sub-containers not supported" message.
-
-When giving a demonstration, or in the case the networking aspects are
-manually handled, it is possible to override those checks and force containers
-support to be enabled by activating the `containers` flag,
-like in the example below::
-
-    https://<juju-gui-address>/:flags:/containers
 
 
 .. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
 .. _on Github: https://github.com/juju/juju-gui
+.. _juju quickstart plugin: https://launchpad.net/juju-quickstart
+.. _Juju GUI charm: https://jujucharms.com/trusty/juju-gui
