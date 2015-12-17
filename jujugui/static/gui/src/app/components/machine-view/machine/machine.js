@@ -26,7 +26,7 @@ YUI.add('machine-view-machine', function() {
 
     drop: function (props, monitor, component) {
       var item = monitor.getItem();
-      console.log(item);
+      props.dropUnit(item.unit, props.machine.id);
     }
   };
 
@@ -48,6 +48,7 @@ YUI.add('machine-view-machine', function() {
       destroyMachines: React.PropTypes.func.isRequired,
       machine: React.PropTypes.object.isRequired,
       removeUnit: React.PropTypes.func,
+      dropUnit: React.PropTypes.func.isRequired,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
       showConstraints: React.PropTypes.bool,
