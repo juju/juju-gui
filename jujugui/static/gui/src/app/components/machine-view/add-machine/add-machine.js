@@ -66,7 +66,7 @@ YUI.add('machine-view-add-machine', function() {
       var selectedContainer = state.selectedContainer;
       var selectedMachine = state.selectedMachine;
       var constraints = state.constraints;
-      var id;
+      var machine;
       if (machineId && machineId !== 'new' && !selectedContainer) {
         // Don't try and create a container if the container type has not been
         // selected.
@@ -76,9 +76,9 @@ YUI.add('machine-view-add-machine', function() {
           selectedContainer === 'kvm') {
         var machine = this.props.createMachine(
           selectedContainer, machineId, constraints);
-        id = machine.id;
       }
       if (props.unit) {
+        var id = machine && machine.id;
         props.placeUnit(props.unit, id || selectedContainer || selectedMachine);
       }
       this.props.close();
@@ -138,7 +138,7 @@ YUI.add('machine-view-add-machine', function() {
         return;
       }
       return (
-        <select className="add-machine__container-type"
+        <select className="add-machine__container"
           defaultValue=""
           onChange={this._updateSelectedContainer}>
           <option disabled={true} value="">

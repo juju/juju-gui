@@ -4,7 +4,7 @@
         font-size: $base + px;
     }
 
-    &__container-type {
+    &__container {
         margin: 0 10px 10px 10px;
         width: calc(100% - 20px);
     }
@@ -26,7 +26,7 @@
 .machine-view__unplaced-unit .add-machine {
     select,
     &__title,
-    &__container-type {
+    &__container {
         margin-left: 0;
         margin-right: 0;
     }

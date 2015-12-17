@@ -42,11 +42,12 @@ describe('MachineViewAddMachine', function() {
       action: close
     }, {
       title: 'Create',
-      action: instance._createMachine,
+      action: instance._submitForm,
       type: 'confirm'
     }];
     var expected = (
       <div className="add-machine">
+        {undefined}
         {undefined}
         <div className="add-machine__constraints">
           <h4 className="add-machine__title">
@@ -75,17 +76,19 @@ describe('MachineViewAddMachine', function() {
       action: close
     }, {
       title: 'Create',
-      action: instance._createMachine,
+      action: instance._submitForm,
       type: 'confirm'
     }];
     var expected = (
       <div className="add-machine">
-        <select className="add-machine__container-type"
+        {undefined}
+        <select className="add-machine__container"
           defaultValue=""
-          onChange={instance._updateContainerType}>
+          onChange={instance._updateSelectedContainer}>
           <option disabled={true} value="">
             Choose container type...
           </option>
+          {undefined}
           <option value="lxc">LXC</option>
           <option value="kvm">KVM</option>
         </select>
@@ -95,16 +98,104 @@ describe('MachineViewAddMachine', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can call the cancel method', function() {
+  it('can render for selecting a machine', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
+    var unit = sinon.stub();
+    var machines = {
+      filterByParent: sinon.stub().returns([{
+        id: 'new0',
+        displayName: 'new0'
+      }, {
+        id: 'new1',
+        displayName: 'new1'
+      }])
+    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
         close={close}
-        createMachine={createMachine} />, true);
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    output.props.children[2].props.buttons[0].action();
-    assert.equal(close.callCount, 1);
+    var expected = (
+      <select
+        defaultValue=""
+        onChange={instance._updateSelectedMachine}>
+        <option disabled={true} value="">
+          Move to...
+        </option>
+        <option value="new">
+          New machine
+        </option>
+        {[
+          <option
+            key="new0"
+            value="new0">
+            new0
+          </option>,
+          <option
+            key="new1"
+            value="new1">
+            new1
+          </option>
+        ]}
+      </select>);
+    assert.deepEqual(output.props.children[0], expected);
+  });
+
+  it('can render for selecting a container', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub();
+    var unit = sinon.stub();
+    var machines = {
+      filterByParent: sinon.stub().returns([{
+        id: 'new0/lxc/new0',
+        displayName: 'new0/lxc/new0'
+      }, {
+        id: 'new0/lxc/new1',
+        displayName: 'new0/lxc/new1'
+      }])
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._updateSelectedMachine({currentTarget: {value: 'new0'}});
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <select className="add-machine__container"
+        defaultValue=""
+        onChange={instance._updateSelectedContainer}>
+        <option disabled={true} value="">
+          Choose container type...
+        </option>
+        {[
+          <option
+            key="root"
+            value="new0">
+            {"new0"}/root-container
+          </option>,
+          <option
+            key="new0/lxc/new0"
+            value="new0/lxc/new0">
+            new0/lxc/new0
+          </option>,
+          <option
+            key="new0/lxc/new1"
+            value="new0/lxc/new1">
+            new0/lxc/new1
+          </option>
+        ]}
+        <option value="lxc">LXC</option>
+        <option value="kvm">KVM</option>
+      </select>);
+    assert.deepEqual(output.props.children[1], expected);
   });
 
   it('can call the cancel method', function() {
@@ -115,7 +206,7 @@ describe('MachineViewAddMachine', function() {
         close={close}
         createMachine={createMachine} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children[2].props.buttons[0].action();
+    output.props.children[3].props.buttons[0].action();
     assert.equal(close.callCount, 1);
   });
 
@@ -128,7 +219,7 @@ describe('MachineViewAddMachine', function() {
         createMachine={createMachine} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    output.props.children[2].props.buttons[1].action();
+    output.props.children[3].props.buttons[1].action();
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], null);
     assert.equal(createMachine.args[0][1], null);
@@ -143,8 +234,8 @@ describe('MachineViewAddMachine', function() {
         close={close}
         createMachine={createMachine}
         parentId="new0" />);
-    var outputNode = output.getDOMNode();
-    var selectNode = outputNode.querySelector('.add-machine__container-type');
+    var outputNode = ReactDOM.findDOMNode(output);
+    var selectNode = outputNode.querySelector('.add-machine__container');
     selectNode.value = 'lxc';
     testUtils.Simulate.change(selectNode);
     testUtils.Simulate.click(outputNode.querySelector(
@@ -152,5 +243,119 @@ describe('MachineViewAddMachine', function() {
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], 'lxc');
     assert.equal(createMachine.args[0][1], 'new0');
+  });
+
+  it('can place a unit on a new machine', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub().returns({id: 'new0'});
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var placeUnit = sinon.stub();
+    var unit = {id: 'unit1'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        placeUnit={placeUnit}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.state = {selectedMachine: 'new'};
+    instance._submitForm();
+    assert.equal(createMachine.callCount, 1);
+    assert.equal(createMachine.args[0][0], null);
+    assert.equal(createMachine.args[0][1], null);
+    assert.equal(createMachine.args[0][2], instance.state.constraints);
+    assert.equal(placeUnit.callCount, 1);
+    assert.deepEqual(placeUnit.args[0][0], {id: 'unit1'});
+    assert.equal(placeUnit.args[0][1], 'new0');
+  });
+
+  it('can place a unit on a new container', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub().returns({id: 'new0/lxc/new1'});
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var placeUnit = sinon.stub();
+    var unit = {id: 'unit1'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        placeUnit={placeUnit}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.state = {
+      selectedContainer: 'lxc'
+    };
+    instance._submitForm();
+    assert.equal(createMachine.callCount, 1);
+    assert.equal(createMachine.args[0][0], 'lxc');
+    assert.equal(createMachine.args[0][1], 'new0');
+    assert.equal(createMachine.args[0][2], instance.state.constraints);
+    assert.equal(placeUnit.callCount, 1);
+    assert.deepEqual(placeUnit.args[0][0], {id: 'unit1'});
+    assert.equal(placeUnit.args[0][1], 'new0/lxc/new1');
+  });
+
+  it('can place a unit on an existing machine', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub().returns({id: 'new0'});
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var placeUnit = sinon.stub();
+    var unit = {id: 'unit1'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        placeUnit={placeUnit}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.state = {
+      selectedMachine: 'new0',
+      selectedContainer: 'new0'
+    };
+    instance._submitForm();
+    assert.equal(createMachine.callCount, 0);
+    assert.equal(placeUnit.callCount, 1);
+    assert.deepEqual(placeUnit.args[0][0], {id: 'unit1'});
+    assert.equal(placeUnit.args[0][1], 'new0');
+  });
+
+  it('can place a unit on an existing container', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub().returns({id: 'new0'});
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var placeUnit = sinon.stub();
+    var unit = {id: 'unit1'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        placeUnit={placeUnit}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.state = {
+      selectedMachine: 'new0',
+      selectedContainer: 'new0/lxc/new0'
+    };
+    instance._submitForm();
+    assert.equal(createMachine.callCount, 0);
+    assert.equal(placeUnit.callCount, 1);
+    assert.deepEqual(placeUnit.args[0][0], {id: 'unit1'});
+    assert.equal(placeUnit.args[0][1], 'new0/lxc/new0');
   });
 });
