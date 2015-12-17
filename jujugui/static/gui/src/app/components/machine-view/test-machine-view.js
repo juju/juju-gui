@@ -399,6 +399,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             {[<juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -452,6 +453,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -462,6 +464,7 @@ describe('MachineView', function() {
               units={units} />
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new1"
               machine={machineList[1]}
               selected={false}
@@ -516,6 +519,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -526,6 +530,7 @@ describe('MachineView', function() {
               units={units} />
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new1"
               machine={machineList[1]}
               selected={false}
@@ -646,6 +651,7 @@ describe('MachineView', function() {
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0"
             machine={{
               commitStatus: 'committed',
@@ -660,6 +666,7 @@ describe('MachineView', function() {
             units={units} />
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
             removeUnit={instance._removeUnit}
@@ -716,6 +723,7 @@ describe('MachineView', function() {
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0"
             machine={{
               commitStatus: 'committed',
@@ -730,6 +738,7 @@ describe('MachineView', function() {
             units={units} />
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
             removeUnit={instance._removeUnit}

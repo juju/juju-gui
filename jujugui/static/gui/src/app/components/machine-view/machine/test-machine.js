@@ -106,6 +106,11 @@ describe('MachineViewMachine', function() {
             {undefined}
           </li>
         </ul>
+        <div className="machine-view__machine-drop-target">
+          <div className="machine-view__machine-drop-message">
+            Add to {"new0"}
+          </div>
+        </div>
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -383,6 +388,11 @@ describe('MachineViewMachine', function() {
             {undefined}
           </li>
         </ul>
+        <div className="machine-view__machine-drop-target">
+          <div className="machine-view__machine-drop-message">
+            Add to {"new0"}
+          </div>
+        </div>
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -502,6 +512,11 @@ describe('MachineViewMachine', function() {
               }]} />
           </li>
         </ul>
+        <div className="machine-view__machine-drop-target">
+          <div className="machine-view__machine-drop-message">
+            Add to {"new0/lxc/0"}
+          </div>
+        </div>
       </div>);
     assert.deepEqual(output, expected);
   });
