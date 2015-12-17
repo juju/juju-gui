@@ -9,6 +9,7 @@ Make the clone using:
 
      git clone --branch master git@github.com:juju/juju-gui.git
      cd juju-gui
+     git merge origin/develop
 
 Increment the version number using the ``make bumpversion`` target.  If you
 are incrementing the patch (major.minor.patch) number then that's all you need
@@ -31,6 +32,7 @@ Push to github
 ::
 
      git push origin master
+     git push origin --tags
 
 
 Merge changes to develop
