@@ -19,6 +19,8 @@
 .button-row {
     .generic-button {
         width: 100%;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
     &--multiple .generic-button {

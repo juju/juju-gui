@@ -105,21 +105,23 @@ YUI.add('login-component', function() {
             </div>
           </div>
           <div className="login__message">
-            The password for newer Juju clients can be found by locating the
-            Juju environment file placed in ~/.juju/environments/ with the
-            same name as the current environment.  For example, if you have
-            an environment named "production", then the file is named
-            ~/.juju/environments/production.jenv.  Look for the "password"
-            field in the file, or if that is empty, for the "admin-secret".
-            Remove the quotes from the value, and use this to log in.
-            Note that using juju-quickstart can automate logging in,
-            as well as other parts of installing and starting Juju.
-            <div>
-              <a
-                href="https://jujucharms.com"
-                target="_blank">
-                jujucharms.com
-              </a>
+            <div className="login__message-content">
+              The password for newer Juju clients can be found by locating the
+              Juju environment file placed in ~/.juju/environments/ with the
+              same name as the current environment.  For example, if you have
+              an environment named "production", then the file is named
+              ~/.juju/environments/production.jenv.  Look for the "password"
+              field in the file, or if that is empty, for the "admin-secret".
+              Remove the quotes from the value, and use this to log in.
+              Note that using juju-quickstart can automate logging in,
+              as well as other parts of installing and starting Juju.
+              <div>
+                <a
+                  href="https://jujucharms.com"
+                  target="_blank">
+                  jujucharms.com
+                </a>
+              </div>
             </div>
           </div>
         </div>
