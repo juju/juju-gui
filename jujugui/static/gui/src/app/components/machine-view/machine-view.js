@@ -413,6 +413,21 @@ YUI.add('machine-view', function() {
         `${unitCount} unit${unitPlural}`;
     },
 
+    /**
+      Sort machines by the given method.
+
+      @method _sortMachines
+      @param {String} sort The sort method.
+      @param {Boolean} sortContainers Whether to sort containers.
+    */
+    _sortMachines: function(sort, sortContainers) {
+      // console.log(this.props.machines.toArray());
+      this.props.machines.set('sortMethod', sort);
+      var sorted = this.props.machines.sort();
+      // console.log(this.props.machines.toArray());
+      // console.log(sorted.toArray());
+    },
+
     render: function() {
       var machineMenuItems = [{
         label: 'Add machine',
@@ -421,10 +436,41 @@ YUI.add('machine-view', function() {
         label: this.state.showConstraints ?
           'Hide constraints' : 'Show constaints',
         action: this._toggleConstraints
+      }, {
+        label: 'Sort by:'
+      }, {
+        label: 'Name',
+        action: this._sortMachines.bind(this, 'name')
+      }, {
+        label: 'No. services',
+        action: this._sortMachines.bind(this, 'services')
+      }, {
+        label: 'No. units',
+        action: this._sortMachines.bind(this, 'units')
+      }, {
+        label: 'Disk',
+        action: this._sortMachines.bind(this, 'disk')
+      }, {
+        label: 'RAM',
+        action: this._sortMachines.bind(this, 'ram')
+      }, {
+        label: 'CPU',
+        action: this._sortMachines.bind(this, 'cpu')
       }];
       var containerMenuItems = [{
         label: 'Add container',
         action: this._addContainer
+      }, {
+        label: 'Sort by:'
+      }, {
+        label: 'Name',
+        action: this._sortMachines.bind(this, 'name', true)
+      }, {
+        label: 'No. units',
+        action: this._sortMachines.bind(this, 'units', true)
+      }, {
+        label: 'Services',
+        action: this._sortMachines.bind(this, 'service', true)
       }];
       var unplacedToggle = {
         action: this._toggleScaleUp,

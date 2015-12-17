@@ -48,6 +48,10 @@ describe('MachineView', function() {
         machines={machines} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    var machineMenuItems = output.props.children.props.children[1]
+      .props.children[0].props.menuItems;
+    var containerMenuItems = output.props.children.props.children[2]
+      .props.children[0].props.menuItems;
     var expected = (
       <div className="machine-view">
         <div className="machine-view__content">
@@ -76,6 +80,26 @@ describe('MachineView', function() {
               }, {
                 label: 'Hide constraints',
                 action: instance._toggleConstraints
+              }, {
+                label: 'Sort by:'
+              }, {
+                label: 'Name',
+                action: machineMenuItems[3].action
+              }, {
+                label: 'No. services',
+                action: machineMenuItems[4].action
+              }, {
+                label: 'No. units',
+                action: machineMenuItems[5].action
+              }, {
+                label: 'Disk',
+                action: machineMenuItems[6].action
+              }, {
+                label: 'RAM',
+                action: machineMenuItems[7].action
+              }, {
+                label: 'CPU',
+                action: machineMenuItems[8].action
               }]}
               title="My Env (0)" />
             <div className="machine-view__column-content">
@@ -104,6 +128,17 @@ describe('MachineView', function() {
               menuItems={[{
                 label: 'Add container',
                 action: instance._addContainer
+              }, {
+                label: 'Sort by:'
+              }, {
+                label: 'Name',
+                action: containerMenuItems[2].action
+              }, {
+                label: 'No. units',
+                action: containerMenuItems[3].action
+              }, {
+                label: 'Services',
+                action: containerMenuItems[4].action
               }]}
               title="0 containers, 0 units" />
             <div className="machine-view__column-content">

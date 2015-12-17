@@ -36,6 +36,15 @@
                 background-color: $hover-background;
                 cursor: pointer;
             }
+
+            &--inactive {
+                color: $dark-grey;
+
+                &:hover {
+                    background-color: transparent;
+                    cursor: default;
+                }
+            }
         }
     }
 }
