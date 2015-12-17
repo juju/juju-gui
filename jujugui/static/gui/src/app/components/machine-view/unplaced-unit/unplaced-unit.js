@@ -27,7 +27,8 @@ YUI.add('machine-view-unplaced-unit', function() {
 
   function collect(connect, monitor) {
     return {
-      connectDragSource: connect.dragSource()
+      connectDragSource: connect.dragSource(),
+      isDragging: monitor.isDragging()
     };
   }
 
@@ -78,6 +79,21 @@ YUI.add('machine-view-unplaced-unit', function() {
           unit={this.props.unit} />);
     },
 
+    /**
+      Generate the classes for the unit.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'machine-view__unplaced-unit',
+        {
+          'machine-view__unplaced-unit--dragged': this.props.isDragging
+        }
+      );
+    },
+
     render: function() {
       var unit = this.props.unit;
       var menuItems = [{
@@ -88,13 +104,14 @@ YUI.add('machine-view-unplaced-unit', function() {
         action: this.props.removeUnit.bind(null, unit.id)
       }];
       return this.props.connectDragSource(
-        <li className="machine-view__unplaced-unit">
+        <li className={this._generateClasses()}>
           <img src={this.props.icon} alt={unit.displayName}
             className="machine-view__unplaced-unit-icon" />
           {unit.displayName}
           <juju.components.MoreMenu
             items={menuItems} />
           {this._generatePlaceUnit()}
+          <div className="machine-view__unplaced-unit-drag-state"></div>
         </li>
       );
     }
