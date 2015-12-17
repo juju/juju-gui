@@ -55,7 +55,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -119,7 +120,8 @@ describe('MachineViewMachine', function() {
     var units = {filterByMachine: sinon.stub().returns([])};
     var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -149,7 +151,8 @@ describe('MachineViewMachine', function() {
     var units = {filterByMachine: sinon.stub().returns([])};
     var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -197,7 +200,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -264,7 +268,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -329,7 +334,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -401,7 +407,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -438,7 +445,8 @@ describe('MachineViewMachine', function() {
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         removeUnit={removeUnit}
         services={services}
@@ -520,7 +528,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
         machine={machine}
         selected={false}
@@ -554,7 +563,8 @@ describe('MachineViewMachine', function() {
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         services={services}
         type="container"

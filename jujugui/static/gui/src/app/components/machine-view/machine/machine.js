@@ -20,7 +20,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view-machine', function() {
 
-  juju.components.MachineViewMachine = React.createClass({
+  var dropTarget = {
+    hover: function (props, monitor, component) {
+    },
+
+    drop: function (props, monitor, component) {
+      var item = monitor.getItem();
+      console.log(item);
+    }
+  };
+
+  function collect(connect, monitor) {
+    return {
+      // Call this function inside render()
+      // to let React DnD handle the drag events:
+      connectDropTarget: connect.dropTarget(),
+      // You can ask the monitor about the current drag state:
+      isOver: monitor.isOver(),
+      isOverCurrent: monitor.isOver({ shallow: true }),
+      canDrop: monitor.canDrop(),
+      itemType: monitor.getItemType()
+    };
+  }
+
+  var MachineViewMachine = React.createClass({
     propTypes: {
       destroyMachines: React.PropTypes.func.isRequired,
       machine: React.PropTypes.object.isRequired,
@@ -176,7 +199,7 @@ YUI.add('machine-view-machine', function() {
         label: 'Destroy',
         action: this._destroyMachine
       }];
-      return (
+      return this.props.connectDropTarget(
         <div className={this._generateClasses()}
           onClick={this._handleSelectMachine}
           role="button"
@@ -192,6 +215,8 @@ YUI.add('machine-view-machine', function() {
       );
     }
   });
+  juju.components.MachineViewMachine = ReactDnD.DropTarget(
+    'unit', dropTarget, collect)(MachineViewMachine);
 }, '0.1.0', {
   requires: [
     'more-menu'

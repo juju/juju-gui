@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view', function() {
 
-  juju.components.MachineView = React.createClass({
+  var MachineView = React.createClass({
     propTypes: {
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
@@ -452,6 +452,7 @@ YUI.add('machine-view', function() {
       );
     }
   });
+  juju.components.MachineView = ReactDnD.DragDropContext(ReactDnDHTML5Backend)(MachineView);
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

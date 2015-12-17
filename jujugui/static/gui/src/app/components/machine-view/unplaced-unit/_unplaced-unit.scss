@@ -2,6 +2,7 @@
     @extend %floating-panel;
     margin-bottom: 10px;
     padding: 10px;
+    cursor: move;
 
     &-icon {
         width: 24px;

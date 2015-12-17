@@ -31,7 +31,8 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7'};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewUnplacedUnit
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"
         removeUnit={removeUnit}
         unit={unit} />, true);
@@ -59,7 +60,8 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7', id: 'django/7'};
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewUnplacedUnit
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"
         removeUnit={removeUnit}
         unit={unit} />);

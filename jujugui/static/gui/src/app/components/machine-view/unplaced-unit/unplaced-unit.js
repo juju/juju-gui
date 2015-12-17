@@ -19,8 +19,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('machine-view-unplaced-unit', function() {
+  var dragSource = {
+    beginDrag: function(props) {
+      return {unit: props.unit};
+    }
+  };
 
-  juju.components.MachineViewUnplacedUnit = React.createClass({
+  function collect(connect, monitor) {
+    return {
+      connectDragSource: connect.dragSource()
+    };
+  }
+
+  var MachineViewUnplacedUnit = React.createClass({
     propTypes: {
       createMachine: React.PropTypes.func.isRequired,
       icon: React.PropTypes.string.isRequired,
@@ -76,7 +87,7 @@ YUI.add('machine-view-unplaced-unit', function() {
         label: 'Destroy',
         action: this.props.removeUnit.bind(null, unit.id)
       }];
-      return (
+      return this.props.connectDragSource(
         <li className="machine-view__unplaced-unit">
           <img src={this.props.icon} alt={unit.displayName}
             className="machine-view__unplaced-unit-icon" />
@@ -88,6 +99,8 @@ YUI.add('machine-view-unplaced-unit', function() {
       );
     }
   });
+  juju.components.MachineViewUnplacedUnit = ReactDnD.DragSource(
+    'unit', dragSource, collect)(MachineViewUnplacedUnit);
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',
