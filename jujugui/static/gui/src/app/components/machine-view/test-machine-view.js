@@ -785,4 +785,42 @@ describe('MachineView', function() {
     assert.equal(removeUnits.callCount, 1);
     assert.deepEqual(removeUnits.args[0][0], ['wordpress/8']);
   });
+
+  it('can place a unit on a machine', function() {
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub()
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var destroyMachines = sinon.stub();
+    var placeUnit = sinon.stub();
+    var removeUnits = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView.DecoratedComponent
+        addGhostAndEcsUnits={sinon.stub()}
+        createMachine={createMachine}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        placeUnit={placeUnit}
+        removeUnits={removeUnits}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._dropUnit('wordpress/8', 'new0');
+    assert.equal(placeUnit.callCount, 1);
+    assert.deepEqual(placeUnit.args[0][0], 'wordpress/8');
+    assert.deepEqual(placeUnit.args[0][1], 'new0');
+  });
 });
