@@ -182,6 +182,7 @@ YUI.add('env-switcher', function() {
         console.log(err);
         return;
       }
+      this.setState({envName: data.name || data.path});
       this.updateEnvList(this.switchEnv.bind(this, data.uuid));
     },
 

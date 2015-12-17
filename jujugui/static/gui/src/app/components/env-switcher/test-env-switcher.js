@@ -225,7 +225,10 @@ describe('EnvSwitcher', function() {
     assert.equal(newEnv.args[0][3], 'admin/foo');
     assert.equal(newEnv.args[0][4].length > 10, true);
     // Check to make sure that the env creation callback switches envs.
-    var createdEnv = {uuid: '123abc'};
+    var createdEnv = {
+      uuid: '123abc',
+      name: 'newname'
+    };
     newEnv.args[0][5](null, createdEnv);
     // After creating an env it should re-list them.
     assert.equal(listEnvs.callCount, 2);
@@ -233,6 +236,8 @@ describe('EnvSwitcher', function() {
     envs.push(createdEnv);
     listEnvs.args[1][0](null, envs);
     assert.equal(switchEnv.callCount, 1);
+    // After creating a new env it should update the envName state
+    assert.equal(instance.state.envName, 'newname');
   }
 
   it('can call to create a new env (JEM)', function() {
