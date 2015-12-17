@@ -23,6 +23,22 @@
             &-units {
                 display: inline-block;
             }
+
+            &-unit {
+                float: left;
+            }
+
+            &-unit-icon {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    &--container {
+        .machine-view__machine {
+            &-unit {
+                margin: 1px 0;
+            }
         }
     }
 

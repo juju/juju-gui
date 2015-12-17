@@ -213,6 +213,8 @@ describe('MachineView', function() {
 
   it('can display a list of unplaced units', function() {
     var autoPlaceUnits = sinon.stub();
+    var createMachine = sinon.stub();
+    var placeUnit = sinon.stub();
     var removeUnits = sinon.stub();
     var machines = {
       filterByParent: sinon.stub().returns([1, 2, 3])
@@ -237,8 +239,10 @@ describe('MachineView', function() {
       <juju.components.MachineView
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        createMachine={createMachine}
         environmentName="My Env"
         units={units}
+        placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
         machines={machines} />, true);
@@ -256,13 +260,19 @@ describe('MachineView', function() {
           </div>
           <ul className="machine-view__list">
             <juju.components.MachineViewUnplacedUnit
-              key="django/0"
+              createMachine={createMachine}
               icon="django.svg"
+              key="django/0"
+              machines={machines}
               removeUnit={instance._removeUnit}
+              placeUnit={placeUnit}
               unit={unitList[0]} />
             <juju.components.MachineViewUnplacedUnit
-              key="django/1"
+              createMachine={createMachine}
               icon="django.svg"
+              key="django/1"
+              machines={machines}
+              placeUnit={placeUnit}
               removeUnit={instance._removeUnit}
               unit={unitList[1]} />
           </ul>

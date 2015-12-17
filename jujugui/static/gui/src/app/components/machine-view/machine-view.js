@@ -126,8 +126,11 @@ YUI.add('machine-view', function() {
         var service = this.props.services.getById(unit.service);
         components.push(
           <juju.components.MachineViewUnplacedUnit
-            key={unit.id}
+            createMachine={this.props.createMachine}
             icon={service.get('icon') || ''}
+            key={unit.id}
+            machines={this.props.machines}
+            placeUnit={this.props.placeUnit}
             removeUnit={this._removeUnit}
             unit={unit} />);
       });

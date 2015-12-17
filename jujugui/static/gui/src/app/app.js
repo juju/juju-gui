@@ -632,6 +632,9 @@ YUI.add('juju-gui', function(Y) {
       this.db.environment.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
+      this.db.units.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
       this.db.notifications.after('add', this._renderNotifications, this);
 
       // When someone wants a charm to be deployed they fire an event and we
@@ -1034,6 +1037,7 @@ YUI.add('juju-gui', function(Y) {
             destroyMachines={this.env.destroyMachines.bind(this.env)}
             environmentName={db.environment.get('name')}
             machines={db.machines}
+            placeUnit={this.env.placeUnit.bind(this.env)}
             removeUnits={this.env.remove_units.bind(this.env)}
             services={db.services}
             units={db.units} />,

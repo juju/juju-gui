@@ -67,10 +67,12 @@ YUI.add('machine-view-machine', function() {
       Generate the unit icons for the machine.
 
       @method _generateUnits
-      @param {Array} units The units for the machine.
       @returns {Object} the unit elements.
     */
-    _generateUnits: function(units) {
+    _generateUnits: function() {
+      var includeChildren = this.props.type === 'machine';
+      var units = this.props.units.filterByMachine(
+        this.props.machine.id, includeChildren);
       if (units.length === 0) {
         return;
       }
@@ -169,7 +171,7 @@ YUI.add('machine-view-machine', function() {
 
     render: function() {
       var machine = this.props.machine;
-      var units = this.props.units.filterByMachine(machine.id);
+      var units = this.props.units.filterByMachine(machine.id, true);
       var menuItems = [{
         label: 'Destroy',
         action: this._destroyMachine
@@ -185,7 +187,7 @@ YUI.add('machine-view-machine', function() {
             {this.props.machine.displayName}
           </div>
           {this._generateHardware(units.length)}
-          {this._generateUnits(units)}
+          {this._generateUnits()}
         </div>
       );
     }
