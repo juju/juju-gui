@@ -305,7 +305,8 @@ YUI.add('juju-env-go', function(Y) {
             relationInfo: 2,
             unitInfo: 3,
             machineInfo: 4,
-            annotationInfo: 5
+            annotationInfo: 5,
+            remoteserviceInfo: 100
           };
       data.Response.Deltas.forEach(function(delta) {
         var kind = delta[0],
@@ -2538,7 +2539,7 @@ YUI.add('juju-env-go', function(Y) {
           - endpoints: the list of offered endpoints.
           Each endpoint has the following attributes:
           - name: the endpoint name (e.g. "db" or "website");
-          - interface: the endpoint inteface (e.g. "http" or "mysql");
+          - interface: the endpoint interface (e.g. "http" or "mysql");
           - role: the role for the endpoint ("requirer" or "provider").
     */
     listOffers: function(filters, callback) {
@@ -2589,6 +2590,73 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'ListOffers',
         Params: {Filters: [filter]}
       }, handleListOffers);
+    },
+
+    /**
+      Retrieve offered remote service details for a given URL.
+
+      @method getOffer
+      @param {String} url The URL to the remote service.
+        For instance "local:/u/admin/ec2/django".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with the following
+        attributes:
+        - err: optional error, only defined if something went wrong;
+        - service: the offered service name;
+        - url: the URL used to reference the remote service;
+        - description: the human friendly description for the remote service;
+        - sourceName: the label assigned to the source Juju model;
+        - sourceId: the UUID of the source Juju model;
+        - endpoints: the list of offered endpoints.
+          Each endpoint has the following attributes:
+          - name: the endpoint name (e.g. "db" or "website");
+          - interface: the endpoint interface (e.g. "http" or "mysql");
+          - role: the role for the endpoint ("requirer" or "provider").
+    */
+    getOffer: function(url, callback) {
+      // Define the API callback.
+      var handleGetOffer = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by getOffer API call:', data);
+          return;
+        }
+        var err = data.Error,
+            response = {};
+        if (!err) {
+          response = data.Response.results[0];
+          err = response.error && response.error.Message;
+        }
+        if (err) {
+          userCallback({err: err});
+          return;
+        }
+        var result = response.result;
+        userCallback({
+          service: result.servicename,
+          url: result.serviceurl,
+          description: result.servicedescription,
+          sourceName: result.sourcelabel,
+          sourceId: result.sourceenviron.replace(/^environment-/, ''),
+          endpoints: result.endpoints.map(function(endpoint) {
+            // Note that we are not really changing values or field names
+            // here, we are just excluding limit and scope attributes. The
+            // map method is mostly used in order to decouple API response
+            // structures from internal GUI objects.
+            return {
+              name: endpoint.name,
+              interface: endpoint.interface,
+              role: endpoint.role
+            };
+          })
+        });
+      }.bind(this, callback);
+
+      // Perform the API call.
+      this._send_rpc({
+        Type: 'CrossModelRelations',
+        Request: 'ServiceOffers',
+        Params: {serviceurls: [url]}
+      }, handleGetOffer);
     },
 
     /**
