@@ -49,7 +49,9 @@ YUI.add('charmbrowser-component', function() {
       @param {Object} e The scroll event
     */
     _onScroll: function(e) {
-      this.setState({scrollPosition: e.target.scrollTop});
+      if (this.state.activeComponent === 'entity-details') {
+        this.setState({scrollPosition: e.target.scrollTop});
+      }
     },
 
     /**
@@ -74,9 +76,16 @@ YUI.add('charmbrowser-component', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
-      return {
-        activeComponent: nextProps.appState.sectionC.metadata.activeComponent
-      };
+      var metadata = nextProps.appState.sectionC.metadata;
+      var activeComponent = metadata.activeComponent;
+      var state = {activeComponent: activeComponent};
+      // If the contents of the charmbrowser changes we need to scroll the
+      // container to the top.
+      if (this.state && activeComponent !== this.state.activeComponent) {
+        this.refs.charmbrowser.scrollTop = 0;
+        state.scrollPosition = 0;
+      }
+      return state;
     },
 
     /**

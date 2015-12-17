@@ -1,6 +1,5 @@
 # Copyright 2015 Canonical Ltd.  This software is licensed under the
 # GNU Affero General Public License version 3 (see the file LICENSE).
-
 import json
 import logging
 import os
@@ -20,6 +19,7 @@ ASSET_PATH = os.path.join(
     )
 
 
+VERSION = pkg_resources.get_distribution('jujugui').version
 log = logging.getLogger('jujugui')
 
 
@@ -31,9 +31,12 @@ def app(request):
     """The main Juju GUI JavaScript application."""
     env_uuid = request.matchdict.get('uuid')
     settings = request.registry.settings
+    cache_buster = settings.get('jujugui.cachebuster', VERSION)
+
     return {
         'config_url': request.route_path('jujugui.config', uuid=env_uuid),
-        'convoy_url': request.route_path('jujugui.convoy', uuid=env_uuid),
+        'convoy_url': request.route_path(
+            'jujugui.convoy', cachebuster=cache_buster, uuid=env_uuid),
         'combine': settings['jujugui.combine'],
         'raw': settings['jujugui.raw'],
     }
@@ -114,5 +117,4 @@ def config(request):
 
 @view_config(route_name='jujugui.version', renderer='prettyjson')
 def version(request):
-    version = pkg_resources.get_distribution('jujugui').version
-    return {'version': version}
+    return {'version': VERSION}

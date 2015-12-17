@@ -915,7 +915,16 @@ describe('Environment Change Set', function() {
             getById: function(arg) {
               assert.deepEqual(arg, args[0]);
               return machineObj;
-            }},
+            },
+            revive: function() {
+              return {
+                set: function () {
+                  machineObj.deleted = true;
+                }
+              };
+            },
+            free: testUtils.makeStubFunction()
+          },
           units: {
             filterByMachine: function() {
               return [];
@@ -1017,7 +1026,13 @@ describe('Environment Change Set', function() {
         db.machines = {
           getById: function() {
             return {};
-          }
+          },
+          revive: function() {
+            return {
+              set: testUtils.makeStubFunction()
+            };
+          },
+          free: testUtils.makeStubFunction()
         };
         db.units = {
           revive: function() { return { set: stubSet }; },
@@ -1413,7 +1428,15 @@ describe('Environment Change Set', function() {
           getById: function(arg) {
             assert.equal(arg.substr(0, 4), 'args');
             return unitObj;
-          }
+          },
+          revive: function() {
+            return {
+              set: function () {
+                unitObj.deleted = true;
+              }
+            };
+          },
+          free: testUtils.makeStubFunction()
         };
         var record = ecs._lazyRemoveUnit([['args1', 'args2']]);
         assert.equal(record.split('-')[0], 'removeUnit');

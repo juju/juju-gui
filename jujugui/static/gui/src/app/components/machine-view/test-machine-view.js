@@ -39,6 +39,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
@@ -50,8 +51,14 @@ describe('MachineView', function() {
         <div className="machine-view__content">
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
-              title="New units" />
+              title="New units"
+              toggle={{
+                action: instance._toggleScaleUp,
+                disabled: true,
+                toggleOn: false
+              }} />
             <div className="machine-view__column-content">
+              {undefined}
               <div className="machine-view__column-onboarding">
                 <juju.components.SvgIcon name="add_16"
                   size="16" />
@@ -64,6 +71,9 @@ describe('MachineView', function() {
               menuItems={[{
                 label: 'Add machine',
                 action: instance._addMachine
+              }, {
+                label: 'Hide constraints',
+                action: instance._toggleConstraints
               }]}
               title="My Env (0)" />
             <div className="machine-view__column-content">
@@ -116,12 +126,14 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div className="machine-view__column-onboarding">
           <juju.components.SvgIcon name="add_16"
             size="16" />
@@ -144,12 +156,51 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
+        <div className="machine-view__column-onboarding">
+          <juju.components.SvgIcon name="task-done_16"
+            size="16" />
+          You have placed all of your units
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
+  });
+
+  it('can display a service scale up form', function() {
+    var addGhostAndEcsUnits = sinon.stub();
+    var machines = {
+      filterByParent: sinon.stub().returns([1, 2, 3])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(1)
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        addGhostAndEcsUnits={addGhostAndEcsUnits}
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._toggleScaleUp();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        <juju.components.MachineViewScaleUp
+          addGhostAndEcsUnits={addGhostAndEcsUnits}
+          services={services}
+          toggleScaleUp={instance._toggleScaleUp} />
         <div className="machine-view__column-onboarding">
           <juju.components.SvgIcon name="task-done_16"
             size="16" />
@@ -162,6 +213,8 @@ describe('MachineView', function() {
 
   it('can display a list of unplaced units', function() {
     var autoPlaceUnits = sinon.stub();
+    var createMachine = sinon.stub();
+    var placeUnit = sinon.stub();
     var removeUnits = sinon.stub();
     var machines = {
       filterByParent: sinon.stub().returns([1, 2, 3])
@@ -184,9 +237,12 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        createMachine={createMachine}
         environmentName="My Env"
         units={units}
+        placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
         machines={machines} />, true);
@@ -194,6 +250,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-content">
+        {undefined}
         <div>
           <div className="machine-view__auto-place">
             <button onClick={autoPlaceUnits}>
@@ -203,13 +260,19 @@ describe('MachineView', function() {
           </div>
           <ul className="machine-view__list">
             <juju.components.MachineViewUnplacedUnit
-              key="django/0"
+              createMachine={createMachine}
               icon="django.svg"
+              key="django/0"
+              machines={machines}
               removeUnit={instance._removeUnit}
+              placeUnit={placeUnit}
               unit={unitList[0]} />
             <juju.components.MachineViewUnplacedUnit
-              key="django/1"
+              createMachine={createMachine}
               icon="django.svg"
+              key="django/1"
+              machines={machines}
+              placeUnit={placeUnit}
               removeUnit={instance._removeUnit}
               unit={unitList[1]} />
           </ul>
@@ -242,13 +305,14 @@ describe('MachineView', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         environmentName="My Env"
         units={units}
         services={services}
         machines={machines} />);
     output.props.children.props.children[0].props.children[1]
-      .props.children.props.children[0].props.children[0].props.onClick();
+      .props.children[1].props.children[0].props.children[0].props.onClick();
     assert.equal(autoPlaceUnits.callCount, 1);
   });
 
@@ -264,6 +328,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
@@ -302,7 +367,10 @@ describe('MachineView', function() {
     var filterByParent = sinon.stub();
     filterByParent.returns(machineList);
     filterByParent.withArgs('new0').returns([]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -312,6 +380,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -335,6 +404,7 @@ describe('MachineView', function() {
               selected={true}
               selectMachine={instance.selectMachine}
               services={services}
+              showConstraints={true}
               type="machine"
               units={units} />]}
           </ul>
@@ -353,7 +423,10 @@ describe('MachineView', function() {
     var filterByParent = sinon.stub();
     filterByParent.returns(machineList);
     filterByParent.withArgs('new0').returns([]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -363,6 +436,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -383,6 +457,7 @@ describe('MachineView', function() {
               selected={true}
               selectMachine={instance.selectMachine}
               services={services}
+              showConstraints={true}
               type="machine"
               units={units} />
             <juju.components.MachineViewMachine
@@ -392,6 +467,71 @@ describe('MachineView', function() {
               selected={false}
               selectMachine={instance.selectMachine}
               services={services}
+              showConstraints={true}
+              type="machine"
+              units={units} />
+          </ul>
+        </div>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[1].props.children[1], expected);
+  });
+
+  it('can toggle constraints on machines', function() {
+    var machineList = [{
+      id: 'new0'
+    }, {
+      id: 'new1'
+    }];
+    var filterByParent = sinon.stub();
+    filterByParent.returns(machineList);
+    filterByParent.withArgs('new0').returns([]);
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub()
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var destroyMachines = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._toggleConstraints();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        {undefined}
+        <div>
+          {undefined}
+          <ul className="machine-view__list">
+            <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
+              key="new0"
+              machine={machineList[0]}
+              selected={true}
+              selectMachine={instance.selectMachine}
+              services={services}
+              showConstraints={true}
+              type="machine"
+              units={units} />
+            <juju.components.MachineViewMachine
+              destroyMachines={destroyMachines}
+              key="new1"
+              machine={machineList[1]}
+              selected={false}
+              selectMachine={instance.selectMachine}
+              services={services}
+              showConstraints={false}
               type="machine"
               units={units} />
           </ul>
@@ -414,6 +554,7 @@ describe('MachineView', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         environmentName="My Env"
         machines={machines}
@@ -440,7 +581,8 @@ describe('MachineView', function() {
       id: 'new1'
     }];
     var machines = {
-      filterByParent: sinon.stub().returns(machineList)
+      filterByParent: sinon.stub().returns(machineList),
+      getById: sinon.stub()
     };
     var units = {
       filterByMachine: sinon.stub().returns([])
@@ -450,6 +592,7 @@ describe('MachineView', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
         services={services}
@@ -471,7 +614,13 @@ describe('MachineView', function() {
     filterByParent.withArgs('new0').returns([{
       id: 'new0/lxc/0'
     }]);
-    var machines = {filterByParent: filterByParent};
+    var machines = {
+      filterByParent: filterByParent,
+      getById: sinon.stub().returns({
+        id: 'new0',
+        commitStatus: 'committed'
+      })
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -482,6 +631,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
@@ -497,7 +647,13 @@ describe('MachineView', function() {
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
             key="new0"
-            machine={{id: 'new0', displayName: 'Root container', root: true}}
+            machine={{
+              commitStatus: 'committed',
+              deleted: undefined,
+              displayName: 'Root container',
+              id: 'new0',
+              root: true
+            }}
             removeUnit={instance._removeUnit}
             services={services}
             type="container"
@@ -517,12 +673,18 @@ describe('MachineView', function() {
   });
 
   it('can display a form for adding a container', function() {
-    var machines = {filterByParent: function(arg) {
-      if (arg == 'new0') {
-        return [{id: 'new0/lxc/0'}];
-      }
-      return [{id: 'new0'}];
-    }};
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub().returns({
+        id: 'new0',
+        commitStatus: 'committed'
+      })
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -534,6 +696,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -554,7 +717,13 @@ describe('MachineView', function() {
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
             key="new0"
-            machine={{displayName: 'Root container', id: 'new0', root: true}}
+            machine={{
+              commitStatus: 'committed',
+              deleted: undefined,
+              displayName: 'Root container',
+              id: 'new0',
+              root: true
+            }}
             removeUnit={instance._removeUnit}
             services={services}
             type="container"
@@ -574,12 +743,15 @@ describe('MachineView', function() {
   });
 
   it('can remove a unit', function() {
-    var machines = {filterByParent: function(arg) {
-      if (arg == 'new0') {
-        return [{id: 'new0/lxc/0'}];
-      }
-      return [{id: 'new0'}];
-    }};
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub()
+    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -591,6 +763,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView
+        addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"

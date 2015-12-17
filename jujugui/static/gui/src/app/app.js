@@ -289,28 +289,35 @@ YUI.add('juju-gui', function(Y) {
         // fails then fall back to getDOMNode().
         var tagName = evt.target.tagName;
         var contentEditable = evt.target.contentEditable;
+        var currentKey;
+        if (code_map[evt.keyCode]) {
+          currentKey = code_map[evt.which];
+        } else {
+          currentKey = String.fromCharCode(evt.which).toLowerCase();
+        }
         if (!tagName) {
           tagName = evt.target.getDOMNode().tagName;
         }
         if (!contentEditable) {
           contentEditable = evt.target.getDOMNode().contentEditable;
         }
-        // Target filtering, we want to listen on window
-        // but not honor hotkeys when focused on
-        // text oriented input fields
-        if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 ||
-            contentEditable === 'true') {
+        // Don't ignore esc in the search box.
+        if (currentKey === 'esc' &&
+            evt.target.className === 'header-search__input') {
+          // Remove the focus from the search box.
+          evt.target.blur();
+          // Target filtering, we want to listen on window
+          // but not honor hotkeys when focused on
+          // text oriented input fields.
+        } else if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 ||
+                   contentEditable === 'true') {
           return;
         }
         var symbolic = [];
         if (evt.ctrlKey) { symbolic.push('C');}
         if (evt.altKey) { symbolic.push('A');}
         if (evt.shiftKey) { symbolic.push('S');}
-        if (code_map[evt.keyCode]) {
-          symbolic.push(code_map[evt.which]);
-        } else {
-          symbolic.push(String.fromCharCode(evt.which).toLowerCase());
-        }
+        symbolic.push(currentKey);
         var trigger = symbolic.join('-');
         var spec = this.keybindings[trigger];
         if (spec) {
@@ -622,6 +629,12 @@ YUI.add('juju-gui', function(Y) {
       this.db.relations.after(
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
+      this.db.environment.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
+      this.db.units.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
       this.db.notifications.after('add', this._renderNotifications, this);
 
       // When someone wants a charm to be deployed they fire an event and we
@@ -678,14 +691,16 @@ YUI.add('juju-gui', function(Y) {
       Renders the login component.
 
       @method _renderLogin
+      @param {Boolean} failure Whether the login failed.
     */
-    _renderLogin: function() {
+    _renderLogin: function(failure) {
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
           envName={this.db.environment.get('name') || 'Sandbox'}
           setCredentials={this.env.setCredentials.bind(this.env)}
-          login={this.env.login.bind(this.env)}/>,
+          login={this.env.login.bind(this.env)}
+          loginFailure={failure} />,
         document.getElementById('login-container'));
     },
 
@@ -775,6 +790,8 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           services={services.toArray()}
           ecsCommit={ecs.commit.bind(ecs, env)}
+          exportEnvironmentFile={
+            utils.exportEnvironmentFile.bind(utils, this.db)}
           changeDescriptions={changeDescriptions}
           getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this,
               this.db.units)}
@@ -996,6 +1013,7 @@ YUI.add('juju-gui', function(Y) {
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
+          showConnectingMask={this.showConnectingMask.bind(this)}
           authDetails={this.get('auth')} />,
         document.getElementById('environment-switcher'));
     },
@@ -1012,11 +1030,14 @@ YUI.add('juju-gui', function(Y) {
         var db = this.db;
         ReactDOM.render(
           <components.MachineView
+            addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
+                this, this.db, this.env)}
             autoPlaceUnits={this._autoPlaceUnits.bind(this)}
             createMachine={this._createMachine.bind(this)}
             destroyMachines={this.env.destroyMachines.bind(this.env)}
             environmentName={db.environment.get('name')}
             machines={db.machines}
+            placeUnit={this.env.placeUnit.bind(this.env)}
             removeUnits={this.env.remove_units.bind(this.env)}
             services={db.services}
             units={db.units} />,
@@ -1067,7 +1088,7 @@ YUI.add('juju-gui', function(Y) {
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {
-        login: this._renderLogin.bind(this),
+        login: this._renderLogin.bind(this, false),
         deployTarget: views.utils.deployTargetDispatcher.bind(this),
         empty: this._emptySectionApp.bind(this)
       };
@@ -1621,7 +1642,7 @@ YUI.add('juju-gui', function(Y) {
         // Start observing bundle deployments.
         bundleNotifications.watchAll(this.env, this.db);
       } else {
-        this._renderLogin();
+        this._renderLogin(true);
       }
     },
 
@@ -1724,6 +1745,22 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Shows the connecting to Juju environment mask.
+
+      @method showConnectingMask
+    */
+    showConnectingMask: function() {
+      var mask = document.getElementById('full-screen-mask');
+      var msg = document.getElementById('loading-message');
+      if (mask) {
+        mask.style.display = 'block';
+      }
+      if (msg) {
+        msg.style.display = 'block';
+      }
+    },
+
+    /**
      * Record environment default series changes in our model.
      *
      * The provider type arrives asynchronously.  Instead of updating the
@@ -1789,7 +1826,6 @@ YUI.add('juju-gui', function(Y) {
       if (!this.renderEnvironment) {
         next(); return;
       }
-      this.hideMask();
       var options = {
         getModelURL: Y.bind(this.getModelURL, this),
         nsRouter: this.nsRouter,

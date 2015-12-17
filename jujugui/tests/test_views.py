@@ -35,10 +35,11 @@ class ViewTestCase(unittest.TestCase):
 class AppTests(ViewTestCase):
 
     def test_standalone(self):
+        self.update_settings({'jujugui.cachebuster': 'foo'})
         jujugui.make_application(self.config)
         expected_context = {
             'config_url': '/config.js',
-            'convoy_url': '/combo',
+            'convoy_url': '/foo/combo',
             'raw': False,
             'combine': True,
         }
@@ -46,16 +47,24 @@ class AppTests(ViewTestCase):
         self.assertEqual(expected_context, context)
 
     def test_included(self):
+        self.update_settings({'jujugui.cachebuster': 'foo'})
         gui.includeme(self.config)
         expected_context = {
             'config_url': '/config.js',
-            'convoy_url': '/combo',
+            'convoy_url': '/foo/combo',
             'raw': False,
             'combine': True,
         }
         self.request.matchdict['uuid'] = 'env-uuid'
         context = views.app(self.request)
         self.assertEqual(expected_context, context)
+
+    def test_cache_busting_defaults_to_version(self):
+        jujugui.make_application(self.config)
+        version = views.VERSION
+        expected_convoy_url = '/{}/combo'.format(version)
+        convoy_url = views.app(self.request)['convoy_url']
+        self.assertEqual(expected_convoy_url, convoy_url)
 
 
 class VersionTest(ViewTestCase):

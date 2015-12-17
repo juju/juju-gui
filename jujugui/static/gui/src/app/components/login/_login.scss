@@ -1,6 +1,5 @@
 .login {
     margin: 80px auto 0;
-    max-width: 65%;
 
     &__logo {
         text-align: center;
@@ -12,12 +11,21 @@
         width: 50%;
     }
 
+    &__failure-message {
+        padding: 20px;
+        background-color: $error;
+        color: $white;
+    }
+
+    &__form-contents {
+        width: 340px;
+        margin: 50px 20px 0 auto;
+        background-color: $white;
+        box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
     &__form {
         padding: 20px;
-        background-color: white;
-        width: 300px;
-        margin: 0px 20px 0 auto;
-        box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
 
         .generic-button {
             width: 100%;
@@ -35,11 +43,7 @@
     &__env-name {
         font-size: 23px;
         border-bottom: 1px solid $mid-grey;
-        background-color: white;
         padding: 20px;
-        width: 300px;
-        margin: 50px 20px 0 auto;
-        box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
     }
 
     &__input[type=text],
@@ -58,6 +62,11 @@
         color: $warm-grey;
         font-size: 13px;
         vertical-align: top;
+    }
+
+    &__message-content {
+        max-width: 400px;
+        padding-right: 20px;
     }
 
 }

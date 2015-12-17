@@ -22,10 +22,7 @@ def gui(config):
     config.add_route('jujugui.ui', '/{prefix:.*}juju-ui/{file:.*}')
     config.add_route('jujugui.config', '/config.js')
     config.add_route('jujugui.version', '/version')
-    # XXX jcsackett 2015-05-20 As soon as we have a means of getting a version
-    # or other indicator from the juju-gui we want to add that as a combo
-    # cache buster.
-    config.add_route('jujugui.convoy', '/combo')
+    config.add_route('jujugui.convoy', '/{cachebuster}/combo')
     js_files = _APP_DIR + '/static/gui/build'
     headers = [('Cache-Control', 'max-age=3600, public')]
     application = combo_app(js_files, additional_headers=headers)

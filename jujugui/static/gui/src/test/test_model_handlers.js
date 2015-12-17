@@ -375,6 +375,100 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('remoteserviceInfo handler', function() {
+      var remoteserviceInfo, status, url;
+
+      before(function() {
+        remoteserviceInfo = handlers.remoteserviceInfo;
+        status = {
+          Current: 'idle',
+          Message: 'waiting',
+          Data: {},
+          Since: 'yesterday'
+        };
+        url = 'local:/u/who/model/django';
+      });
+
+      it('creates a remote service in the database', function() {
+        var change = {
+          ServiceURL: url,
+          Name: 'django',
+          EnvUUID: 'uuid',
+          Life: 'alive',
+          Status: status
+        };
+        // Send the mega-watcher change.
+        remoteserviceInfo(db, 'add', change);
+        // A new remote service has been created.
+        assert.strictEqual(db.remoteServices.size(), 1);
+        var remoteService = db.remoteServices.getById(url);
+        // The remote service has the expected attributes.
+        assert.strictEqual(remoteService.get('url'), url);
+        assert.strictEqual(remoteService.get('service'), 'django');
+        assert.strictEqual(remoteService.get('sourceId'), 'uuid');
+        assert.strictEqual(remoteService.get('life'), 'alive');
+        assert.deepEqual(remoteService.get('status'), {
+          current: 'idle',
+          message: 'waiting',
+          data: {},
+          since: 'yesterday'
+        });
+      });
+
+      it('updates a remote service in the database', function() {
+        // Add a remote service to the database.
+        db.remoteServices.add({
+          id: url,
+          service: 'django',
+          sourceId: 'uuid',
+          life: 'alive'
+        });
+        var change = {
+          ServiceURL: url,
+          Name: 'rails',
+          EnvUUID: 'uuid',
+          Life: 'dying',
+          Status: status
+        };
+        // Send the mega-watcher change.
+        remoteserviceInfo(db, 'change', change);
+        // No new remote services have been created.
+        assert.strictEqual(db.remoteServices.size(), 1);
+        var remoteService = db.remoteServices.getById(url);
+        // The remote service has the expected attributes.
+        assert.strictEqual(remoteService.get('url'), url);
+        assert.strictEqual(remoteService.get('service'), 'rails');
+        assert.strictEqual(remoteService.get('sourceId'), 'uuid');
+        assert.strictEqual(remoteService.get('life'), 'dying');
+        assert.deepEqual(remoteService.get('status'), {
+          current: 'idle',
+          message: 'waiting',
+          data: {},
+          since: 'yesterday'
+        });
+      });
+
+      it('removes a remote service from the database', function() {
+        // Add a remote service to the database.
+        db.remoteServices.add({
+          id: url,
+          service: 'django',
+          sourceId: 'uuid',
+          life: 'alive'
+        });
+        var change = {
+          ServiceURL: url,
+          Name: 'django',
+          EnvUUID: 'uuid',
+          Life: 'alive',
+        };
+        // Send the mega-watcher change to remove the remote service.
+        remoteserviceInfo(db, 'remove', change);
+        // The remote service has been removed.
+        assert.strictEqual(db.remoteServices.size(), 0);
+      });
+
+    });
 
     describe('relationInfo handler', function() {
       var dbEndpoints, deltaEndpoints, relationInfo, relationKey;

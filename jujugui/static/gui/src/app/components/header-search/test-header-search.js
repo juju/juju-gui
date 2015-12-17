@@ -100,4 +100,58 @@ describe('HeaderSearch', function() {
     });
   });
 
+  it('opens the search input if the search button is clicked', function() {
+    var getAppState = sinon.stub();
+    var changeState = sinon.stub();
+    var focus = sinon.stub();
+    var preventDefault = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {searchInput: {focus: focus}};
+    var output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onClick({
+      preventDefault: preventDefault
+    });
+    assert.equal(changeState.callCount, 0);
+    assert.equal(focus.callCount, 1);
+    assert.equal(preventDefault.callCount, 1);
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output,
+      <div className={'header-search ignore-react-onclickoutside ' +
+        'header-search--active header-search--search-active'}
+        ref="headerSearchContainer">
+        {output.props.children}
+      </div>);
+  });
+
+  it('searches when clicking search button if the input is open', function() {
+    var getAppState = sinon.stub().returns({
+      search: 'apache2',
+      activeComponent: 'mid-point'
+    });
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {searchInput: {focus: sinon.stub()}};
+    var output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onClick({
+      preventDefault: sinon.stub()
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'search-results',
+          search: 'apache2'
+        }
+      }
+    });
+  });
 });

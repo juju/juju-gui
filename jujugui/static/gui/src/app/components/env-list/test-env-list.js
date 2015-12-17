@@ -42,12 +42,14 @@ describe('EnvList', function() {
     assert.deepEqual(output.props.children[0].props.children, [
       <li className="env-list__environment"
         data-id={envs[0].uuid}
+        data-name={envs[0].name}
         onClick={undefined}
         key={envs[0].uuid}>
         {envs[0].name}
       </li>,
       <li className="env-list__environment"
         data-id={envs[1].uuid}
+        data-name={envs[1].path}
         onClick={undefined}
         key={envs[1].uuid}>
         {envs[1].path}

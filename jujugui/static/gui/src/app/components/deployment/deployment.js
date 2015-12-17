@@ -21,6 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('deployment-component', function() {
 
   juju.components.Deployment = React.createClass({
+    propTypes: {
+      exportEnvironmentFile: React.PropTypes.func.isRequired
+    },
 
     /**
       Get the current state of the inspector.
@@ -65,6 +68,7 @@ YUI.add('deployment-component', function() {
             component: <juju.components.DeploymentBar
               hasCommits={hasCommits}
               deployButtonAction={this._barDeployAction}
+              exportEnvironmentFile={this.props.exportEnvironmentFile}
               generateChangeDescription={generateChangeDescription}
               currentChangeSet={currentChangeSet} />
           };

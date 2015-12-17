@@ -178,8 +178,9 @@ YUI.add('entity-header', function() {
                 </h1>
                 <ul className="bullets inline entity-header__properties">
                   <li className="entity-header__by">
-                    By <a href={ownerUrl} target="_blank"
-                          ref="entityHeaderBy">{entity.owner}</a>
+                    By{' '}
+                    <a href={ownerUrl}
+                      target="_blank">{entity.owner}</a>
                   </li>
                   {series}
                 </ul>

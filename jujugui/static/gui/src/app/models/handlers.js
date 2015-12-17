@@ -236,6 +236,34 @@ YUI.add('juju-delta-handlers', function(Y) {
     },
 
     /**
+      Handle remote service info coming from the juju-core delta, updating the
+      relevant database models.
+
+      @method remoteserviceInfo
+      @param {Object} db The app.models.models.Database instance.
+      @param {String} action The operation to be performed
+       ("add", "change" or "remove").
+      @param {Object} change The JSON entity information.
+      @param {String} kind The delta event type.
+     */
+    remoteserviceInfo: function(db, action, change) {
+      var status = change.Status || {};
+      var data = {
+        id: change.ServiceURL,
+        service: change.Name,
+        sourceId: change.EnvUUID,
+        life: change.Life,
+        status: {
+          current: status.Current,
+          message: status.Message,
+          data: status.Data,
+          since: status.Since
+        }
+      };
+      db.remoteServices.process_delta(action, data);
+    },
+
+    /**
       Handle relation info coming from the juju-core delta, updating the
       relevant database models.
 

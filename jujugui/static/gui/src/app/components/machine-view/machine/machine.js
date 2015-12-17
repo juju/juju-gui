@@ -27,6 +27,7 @@ YUI.add('machine-view-machine', function() {
       removeUnit: React.PropTypes.func,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
+      showConstraints: React.PropTypes.bool,
       services: React.PropTypes.object.isRequired,
       type: React.PropTypes.string.isRequired,
       units: React.PropTypes.object.isRequired
@@ -40,7 +41,7 @@ YUI.add('machine-view-machine', function() {
       @returns {Object} the machine hardware elements.
     */
     _generateHardware: function(unitCount) {
-      if (this.props.type === 'container') {
+      if (this.props.type === 'container' || !this.props.showConstraints) {
         return;
       }
       var machine = this.props.machine;
@@ -66,10 +67,12 @@ YUI.add('machine-view-machine', function() {
       Generate the unit icons for the machine.
 
       @method _generateUnits
-      @param {Array} units The units for the machine.
       @returns {Object} the unit elements.
     */
-    _generateUnits: function(units) {
+    _generateUnits: function() {
+      var includeChildren = this.props.type === 'machine';
+      var units = this.props.units.filterByMachine(
+        this.props.machine.id, includeChildren);
       if (units.length === 0) {
         return;
       }
@@ -89,17 +92,22 @@ YUI.add('machine-view-machine', function() {
         }
         var service = this.props.services.getById(unit.service);
         components.push(
-          <li className="machine-view__machine-unit"
+          <li className={this._generateUnitClasses(unit)}
             key={unit.id}>
-            <img
-              alt={unit.displayName}
-              src={service.get('icon')}
-              title={unit.displayName} />
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt={unit.displayName}
+                src={service.get('icon')}
+                title={unit.displayName} />
+            </span>
             {title}
             {menu}
           </li>);
       });
-      return components;
+      return (
+        <ul className="machine-view__machine-units">
+          {components}
+        </ul>);
     },
 
     /**
@@ -130,9 +138,12 @@ YUI.add('machine-view-machine', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      var machine = this.props.machine;
       var classes = {
         'machine-view__machine--selected': this.props.selected,
-        'machine-view__machine--root': this.props.machine.root
+        'machine-view__machine--uncommitted': machine.deleted ||
+          machine.commitStatus === 'uncommitted',
+        'machine-view__machine--root': machine.root
       };
       classes['machine-view__machine--' + this.props.type] = true;
       return classNames(
@@ -141,9 +152,26 @@ YUI.add('machine-view-machine', function() {
       );
     },
 
+    /**
+      Generate the classes for a unit.
+
+      @method _generateUnitClasses
+      @param {Object} unit The unit to generate classes for.
+      @returns {String} The collection of class names.
+    */
+    _generateUnitClasses: function(unit) {
+      return classNames(
+        'machine-view__machine-unit',
+        {
+          'machine-view__machine-unit--uncommitted':
+            unit.deleted || !unit.agent_state
+        }
+      );
+    },
+
     render: function() {
       var machine = this.props.machine;
-      var units = this.props.units.filterByMachine(machine.id);
+      var units = this.props.units.filterByMachine(machine.id, true);
       var menuItems = [{
         label: 'Destroy',
         action: this._destroyMachine
@@ -159,9 +187,7 @@ YUI.add('machine-view-machine', function() {
             {this.props.machine.displayName}
           </div>
           {this._generateHardware(units.length)}
-          <ul className="machine-view__machine-units">
-            {this._generateUnits(units)}
-          </ul>
+          {this._generateUnits()}
         </div>
       );
     }

@@ -1158,6 +1158,116 @@ describe('test_model.js', function() {
       });
     });
 
+    describe('remote services model list', function() {
+      var remoteServices;
+
+      beforeEach(function() {
+        remoteServices = new models.RemoteServiceList();
+      });
+
+      afterEach(function() {
+        remoteServices.destroy();
+      });
+
+      it('stores remote services by their URL', function() {
+        var remoteService = remoteServices.add({id: 'local:/u/who/service'});
+        assert.strictEqual(remoteService.get('url'), 'local:/u/who/service');
+      });
+
+      it('is populated with info from the mega-watcher', function() {
+        var url = 'local:/u/dalek/does/exterminate';
+        var status = {
+          current: 'killing',
+          message: 'extermiate!',
+          data: {},
+          since: 'the beginning of space and time'
+        };
+        remoteServices.process_delta('change', {
+          id: url,
+          service: 'extermination',
+          sourceId: 'skaro',
+          life: 'exterminated',
+          status: status
+        });
+        assert.strictEqual(remoteServices.size(), 1);
+        var remoteService = remoteServices.getById(url);
+        var attrs = remoteService.getAttrs();
+        // The delta info is present in the model instance.
+        assert.strictEqual(attrs.url, url);
+        assert.strictEqual(attrs.service, 'extermination');
+        assert.strictEqual(attrs.sourceId, 'skaro');
+        assert.strictEqual(attrs.life, 'exterminated');
+        assert.deepEqual(attrs.status, status);
+        // The mega-watcher does not provide everything.
+        assert.strictEqual(attrs.description, undefined);
+        assert.strictEqual(attrs.sourceName, undefined);
+        assert.deepEqual(attrs.endpoints, []);
+      });
+
+      it('instances know if they are alive', function() {
+        var alive = remoteServices.add({
+          id: 'local:/u/who/service-alive',
+          life: 'alive'
+        });
+        assert.strictEqual(alive.isAlive(), true);
+        var dying = remoteServices.add({
+          id: 'local:/u/who/service-dying',
+          life: 'dying'
+        });
+        assert.strictEqual(dying.isAlive(), true);
+      });
+
+      it('instances know if they are dead', function() {
+        var dead = remoteServices.add({
+          id: 'local:/u/who/service-dead',
+          life: 'dead'
+        });
+        assert.strictEqual(dead.isAlive(), false);
+      });
+
+      it('instances can be upgraded with details', function() {
+        var url = 'local:/u/who/model/django';
+        // Add a remote service.
+        var remoteService = remoteServices.add({
+          id: url,
+          service: 'django',
+          sourceId: 'uuid',
+          life: 'alive'
+        });
+        var endpoints = [{
+          name: 'db',
+          inteface: 'postgres',
+          role: 'requirer'
+        }];
+        var details = {
+          // Valid details.
+          description: 'django description',
+          sourceName: 'ec2',
+          endpoints: endpoints,
+          // Data already provided by the mega-watcher is not overridden.
+          url: 'not valid',
+          service: 'rails',
+          // Extraneous data is ignored.
+          bad: 'wolf'
+        };
+        // Update the remote service with new info.
+        remoteService.addDetails(details);
+        var attrs = remoteService.getAttrs();
+        // Original mega-watcher info is still there.
+        assert.strictEqual(attrs.url, url);
+        assert.strictEqual(attrs.service, 'django');
+        assert.strictEqual(attrs.sourceId, 'uuid');
+        assert.strictEqual(attrs.life, 'alive');
+        // New info has been added.
+        assert.strictEqual(attrs.description, 'django description');
+        assert.strictEqual(attrs.sourceName, 'ec2');
+        assert.deepEqual(attrs.endpoints, endpoints);
+        // Extraneous info is ignored.
+        assert.strictEqual(attrs.bad, undefined);
+      });
+
+    });
+
     describe('machines model list', function() {
       var machineJobs, machines;
 

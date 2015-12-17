@@ -22,14 +22,57 @@ YUI.add('machine-view-unplaced-unit', function() {
 
   juju.components.MachineViewUnplacedUnit = React.createClass({
     propTypes: {
+      createMachine: React.PropTypes.func.isRequired,
       icon: React.PropTypes.string.isRequired,
+      machines: React.PropTypes.object.isRequired,
+      placeUnit: React.PropTypes.func.isRequired,
       removeUnit: React.PropTypes.func.isRequired,
       unit: React.PropTypes.object.isRequired
+    },
+
+    /**
+      Generate the initial state for the component.
+
+      @method getInitialState
+      @returns {Object} The initial state.
+    */
+    getInitialState: function() {
+      return {showPlaceUnit: false};
+    },
+
+    /**
+      Toggle the visibility of the unit placement form.
+
+      @method _togglePlaceUnit
+    */
+    _togglePlaceUnit: function() {
+      this.setState({showPlaceUnit: !this.state.showPlaceUnit});
+    },
+
+    /**
+      Generate the place unit form.
+
+      @method _generatePlaceUnit
+    */
+    _generatePlaceUnit: function() {
+      if (!this.state.showPlaceUnit) {
+        return;
+      }
+      return (
+        <juju.components.MachineViewAddMachine
+          close={this._togglePlaceUnit}
+          createMachine={this.props.createMachine}
+          machines={this.props.machines}
+          placeUnit={this.props.placeUnit}
+          unit={this.props.unit} />);
     },
 
     render: function() {
       var unit = this.props.unit;
       var menuItems = [{
+        label: 'Deploy to...',
+        action: this._togglePlaceUnit
+      }, {
         label: 'Destroy',
         action: this.props.removeUnit.bind(null, unit.id)
       }];
@@ -40,12 +83,14 @@ YUI.add('machine-view-unplaced-unit', function() {
           {unit.displayName}
           <juju.components.MoreMenu
             items={menuItems} />
+          {this._generatePlaceUnit()}
         </li>
       );
     }
   });
 }, '0.1.0', {
   requires: [
+    'machine-view-add-machine',
     'more-menu'
   ]
 });

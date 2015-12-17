@@ -22,6 +22,7 @@ YUI.add('machine-view', function() {
 
   juju.components.MachineView = React.createClass({
     propTypes: {
+      addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
@@ -41,7 +42,9 @@ YUI.add('machine-view', function() {
     getInitialState: function() {
       return {
         selectedMachine: this._getFirstMachineId(this.props.machines),
-        showAddMachine: false
+        showAddMachine: false,
+        showConstraints: true,
+        showScaleUp: false
       };
     },
 
@@ -123,8 +126,11 @@ YUI.add('machine-view', function() {
         var service = this.props.services.getById(unit.service);
         components.push(
           <juju.components.MachineViewUnplacedUnit
-            key={unit.id}
+            createMachine={this.props.createMachine}
             icon={service.get('icon') || ''}
+            key={unit.id}
+            machines={this.props.machines}
+            placeUnit={this.props.placeUnit}
             removeUnit={this._removeUnit}
             unit={unit} />);
       });
@@ -140,6 +146,23 @@ YUI.add('machine-view', function() {
             {components}
           </ul>
         </div>);
+    },
+
+    /**
+      Display a list of unplaced units or onboarding.
+
+      @method _generateUnplacedUnits
+      @returns {Object} A unit list or onboarding.
+    */
+    _generateScaleUp: function() {
+      if (!this.state.showScaleUp) {
+        return;
+      }
+      return (
+        <juju.components.MachineViewScaleUp
+          addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
+          services={this.props.services}
+          toggleScaleUp={this._toggleScaleUp} />);
     },
 
     /**
@@ -192,14 +215,17 @@ YUI.add('machine-view', function() {
       }
       var components = [];
       machines.forEach((machine) => {
+        var selectedMachine = this.state.selectedMachine;
         components.push(
           <juju.components.MachineViewMachine
             destroyMachines={this.props.destroyMachines}
             key={machine.id}
             machine={machine}
-            selected={this.state.selectedMachine === machine.id}
+            selected={selectedMachine === machine.id}
             selectMachine={this.selectMachine}
             services={this.props.services}
+            showConstraints={
+              this.state.showConstraints || machine.id === selectedMachine}
             type="machine"
             units={this.props.units} />);
       });
@@ -224,7 +250,13 @@ YUI.add('machine-view', function() {
         return;
       }
       var containers = this.props.machines.filterByParent(selectedMachine);
+      var machine = this.props.machines.getById(selectedMachine);
+      if (!machine) {
+        return;
+      }
       containers.unshift({
+        commitStatus: machine.commitStatus,
+        deleted: machine.deleted,
         displayName: 'Root container',
         id: selectedMachine,
         root: true
@@ -328,6 +360,24 @@ YUI.add('machine-view', function() {
     },
 
     /**
+      Toggle the visibililty of the constraints on machines.
+
+      @method _toggleConstraints
+    */
+    _toggleConstraints: function() {
+      this.setState({showConstraints: !this.state.showConstraints});
+    },
+
+    /**
+      Toggle the visibililty of the service scale up.
+
+      @method _toggleScaleUp
+    */
+    _toggleScaleUp: function() {
+      this.setState({showScaleUp: !this.state.showScaleUp});
+    },
+
+    /**
       Generate the title for the container column header.
 
       @method _generateContainersTitle
@@ -353,18 +403,29 @@ YUI.add('machine-view', function() {
       var machineMenuItems = [{
         label: 'Add machine',
         action: this._addMachine
+      }, {
+        label: this.state.showConstraints ?
+          'Hide constraints' : 'Show constaints',
+        action: this._toggleConstraints
       }];
       var containerMenuItems = [{
         label: 'Add container',
         action: this._addContainer
       }];
+      var unplacedToggle = {
+        action: this._toggleScaleUp,
+        disabled: this.props.services.size() === 0,
+        toggleOn: this.state.showScaleUp
+      };
       return (
         <div className="machine-view">
           <div className="machine-view__content">
             <div className="machine-view__column">
               <juju.components.MachineViewHeader
-                title="New units" />
+                title="New units"
+                toggle={unplacedToggle} />
               <div className="machine-view__column-content">
+                {this._generateScaleUp()}
                 {this._generateUnplacedUnits()}
               </div>
             </div>
@@ -396,6 +457,7 @@ YUI.add('machine-view', function() {
     'machine-view-add-machine',
     'machine-view-header',
     'machine-view-machine',
+    'machine-view-scale-up',
     'machine-view-unplaced-unit',
     'svg-icon'
   ]

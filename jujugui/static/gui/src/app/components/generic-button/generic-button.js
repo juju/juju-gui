@@ -21,6 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('generic-button', function() {
 
   juju.components.GenericButton = React.createClass({
+    propTypes: {
+      icon: React.PropTypes.string,
+      title: React.PropTypes.string
+    },
 
     /**
       Returns the classes for the button based on the provided props.
@@ -51,14 +55,33 @@ YUI.add('generic-button', function() {
       }
     },
 
+    /**
+      Generate the label or icon.
+
+      @method _generateContent
+    */
+    _generateContent: function() {
+      var title = this.props.title;
+      var icon = this.props.icon;
+      if (title) {
+        return title;
+      } else if (icon) {
+        return (
+          <juju.components.SvgIcon name={icon}
+            size="16" />);
+      }
+    },
+
     render: function() {
       return (
         <button className={this._generateClasses()}
           onClick={this._handleClick}>
-          {this.props.title}
+          {this._generateContent()}
         </button>
       );
     }
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'svg-icon'
+]});

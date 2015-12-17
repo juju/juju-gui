@@ -48,6 +48,7 @@ YUI.add('env-list', function() {
         envs.push(
           <li className="env-list__environment"
             data-id={env.uuid}
+            data-name={envName}
             onClick={this.props.handleEnvClick}
             key={env.uuid}>
             {envName}

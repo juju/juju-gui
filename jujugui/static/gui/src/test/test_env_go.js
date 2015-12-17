@@ -2245,6 +2245,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             ['annotation', 'change', {}],
             ['relation', 'change', {}],
             ['machine', 'change', {}],
+            ['remoteservice', 'change', {}],
             ['foobar', 'fake', {}],
             ['unit', 'change', {}],
             ['service', 'deploy', {}]
@@ -2261,6 +2262,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'unitInfo',
           'machineInfo',
           'annotationInfo',
+          'remoteserviceInfo',
           'foobarInfo'
         ], change);
         done();
@@ -2448,6 +2450,327 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         RequestId: 2,
         Response: {Errors: ['bad wolf']}
+      });
+    });
+
+    it('offers endpoints', function(done) {
+      // Define the asynchronous callback.
+      var callback = function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.deepEqual(data.endpoints, ['web', 'cache']);
+        assert.strictEqual(data.url, 'local:/u/mydjango');
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'CrossModelRelations',
+          Version: env.facadeVersions['CrossModelRelations'],
+          Request: 'Offer',
+          Params: {
+            Offers: [{
+              servicename: 'django',
+              endpoints: ['web', 'cache'],
+              serviceurl: 'local:/u/mydjango',
+              allowedusers: ['user-dalek', 'user-cyberman'],
+              servicedescription: 'my description'
+            }]
+          },
+          RequestId: 1
+        });
+        done();
+      };
+
+      // Perform the request.
+      env.offer(
+        'django', ['web', 'cache'], 'local:/u/mydjango', ['dalek', 'cyberman'],
+        'my description', callback);
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Results: [{}]
+        }
+      });
+    });
+
+    it('offers endpoints without users and URL', function(done) {
+      // Define the asynchronous callback.
+      env.set('environmentName', 'myenv');
+      var callback = function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'haproxy');
+        assert.deepEqual(data.endpoints, ['proxy']);
+        assert.strictEqual(data.url, 'local:/u/user/myenv/haproxy');
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'CrossModelRelations',
+          Version: env.facadeVersions['CrossModelRelations'],
+          Request: 'Offer',
+          Params: {
+            Offers: [{
+              servicename: 'haproxy',
+              endpoints: ['proxy'],
+              serviceurl: 'local:/u/user/myenv/haproxy',
+              allowedusers: ['user-public'],
+              servicedescription: ''
+            }]
+          },
+          RequestId: 1
+        });
+        done();
+      };
+
+      // Perform the request.
+      env.offer('haproxy', ['proxy'], '', [], '', callback);
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Results: [{}]
+        }
+      });
+    });
+
+    it('handles request failures while offering endpoints', function(done) {
+      var callback = function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        assert.strictEqual(data.service, 'django');
+        assert.deepEqual(data.endpoints, ['web', 'cache']);
+        assert.strictEqual(data.url, 'local:/u/mydjango');
+        done();
+      };
+
+      // Perform the request.
+      env.offer(
+        'django', ['web', 'cache'], 'local:/u/mydjango', ['dalek'],
+        'my description', callback);
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Results: [{Error: {
+            Message: 'bad wolf'
+          }}]
+        }
+      });
+    });
+
+    it('handles API failures while offering endpoints', function(done) {
+      var callback = function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        assert.strictEqual(data.service, 'django');
+        assert.deepEqual(data.endpoints, ['web', 'cache']);
+        assert.strictEqual(data.url, 'local:/u/mydjango');
+        done();
+      };
+
+      // Perform the request.
+      env.offer(
+        'django', ['web', 'cache'], 'local:/u/mydjango', ['dalek'],
+        'my description', callback);
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'bad wolf'
+      });
+    });
+
+    it('lists offers', function(done) {
+      // Perform the request.
+      env.listOffers(null, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.deepEqual(data.results, [
+          {
+            service: 'mydjango',
+            url: 'local:/u/who/my-env/django',
+            charm: 'django',
+            endpoints: [
+              {
+                name: 'website',
+                interface: 'http',
+                role: 'provider'
+              }
+            ]
+          },
+          {err: 'bad wolf'},
+          {
+            service: 'haproxy',
+            url: 'local:/u/dalek/ha',
+            charm: 'cs:haproxy',
+            endpoints: [
+              {
+                name: 'cache',
+                interface: 'http',
+                role: 'requirer'
+              },
+              {
+                name: 'webproxy',
+                interface: 'proxy',
+                role: 'provider'
+              }
+            ]
+          }
+        ]);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'CrossModelRelations',
+          Version: env.facadeVersions['CrossModelRelations'],
+          Request: 'ListOffers',
+          Params: {
+            Filters: [{
+              FilterTerms: []
+            }]
+          },
+          RequestId: 1
+        });
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            result: [
+              {result: {
+                servicename: 'mydjango',
+                serviceurl: 'local:/u/who/my-env/django',
+                charmname: 'django',
+                endpoints: [{
+                  name: 'website',
+                  interface: 'http',
+                  role: 'provider',
+                  limit: 0,
+                  scope: 'global'
+                }]
+              }},
+              {error: 'bad wolf'},
+              {result: {
+                servicename: 'haproxy',
+                serviceurl: 'local:/u/dalek/ha',
+                charmname: 'cs:haproxy',
+                endpoints: [{
+                  name: 'cache',
+                  interface: 'http',
+                  role: 'requirer',
+                  limit: 0,
+                  scope: 'global'
+                }, {
+                  name: 'webproxy',
+                  interface: 'proxy',
+                  role: 'provider',
+                  limit: 1,
+                  scope: 'global'
+                }]
+              }}
+            ]
+          }]
+        }
+      });
+    });
+
+    it('handles failures while listing offers', function(done) {
+      // Perform the request.
+      env.listOffers(null, function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        assert.deepEqual(data.results, []);
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'bad wolf'
+      });
+    });
+
+    it('retrieves details on an offer', function(done) {
+      // Perform the request.
+      var url = 'local:/u/admin/ec2/django';
+      env.getOffer(url, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.url, url);
+        assert.strictEqual(data.description, 'these are the voyages');
+        assert.strictEqual(data.sourceName, 'aws');
+        assert.strictEqual(data.sourceId, 'uuid');
+        assert.deepEqual(data.endpoints, [
+          {name: 'cache', interface: 'http', role: 'requirer'},
+          {name: 'webproxy', interface: 'proxy', role: 'provider'}
+        ]);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'CrossModelRelations',
+          Version: env.facadeVersions['CrossModelRelations'],
+          Request: 'ServiceOffers',
+          Params: {serviceurls: [url]},
+          RequestId: 1
+        });
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            result: {
+              servicename: 'django',
+              serviceurl: url,
+              servicedescription: 'these are the voyages',
+              sourcelabel: 'aws',
+              sourceenviron: 'environment-uuid',
+              endpoints: [{
+                name: 'cache',
+                interface: 'http',
+                role: 'requirer',
+                limit: 0,
+                scope: 'global'
+              }, {
+                name: 'webproxy',
+                interface: 'proxy',
+                role: 'provider',
+                limit: 1,
+                scope: 'global'
+              }]
+            }
+          }]
+        }
+      });
+    });
+
+    it('handles request failures while retrieving an offer', function(done) {
+      // Perform the request.
+      env.getOffer('local:/u/admin/aws/haproxy', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'bad wolf'
+      });
+    });
+
+    it('handles API failures while retrieving an offer', function(done) {
+      // Perform the request.
+      env.getOffer('local:/u/admin/aws/haproxy', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            error: {Message: 'bad wolf'}
+          }]
+        }
       });
     });
 

@@ -32,15 +32,18 @@ describe('Deployment', function() {
 
   it('can display the deployment bar', function() {
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var generateChangeDescription = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        exportEnvironmentFile={exportEnvironmentFile}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar" />);
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
+          exportEnvironmentFile={exportEnvironmentFile}
           hasCommits={false}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
@@ -50,14 +53,17 @@ describe('Deployment', function() {
 
   it('displays the deployment bar by default', function() {
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var generateChangeDescription = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        exportEnvironmentFile={exportEnvironmentFile}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet} />);
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
+          exportEnvironmentFile={exportEnvironmentFile}
           hasCommits={false}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
@@ -67,10 +73,12 @@ describe('Deployment', function() {
 
   it('tracks that it has commits after the first deploy', function() {
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var generateChangeDescription = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
+        exportEnvironmentFile={exportEnvironmentFile}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
         currentChangeSet={currentChangeSet} />, true);
@@ -79,6 +87,7 @@ describe('Deployment', function() {
     shallowRenderer.render(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
+        exportEnvironmentFile={exportEnvironmentFile}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
         currentChangeSet={currentChangeSet} />);
@@ -86,6 +95,7 @@ describe('Deployment', function() {
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
+          exportEnvironmentFile={exportEnvironmentFile}
           hasCommits={true}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
@@ -95,6 +105,7 @@ describe('Deployment', function() {
 
   it('tracks that it has commits if existing non-pending service', function() {
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var generateChangeDescription = sinon.stub();
     var services = [
       {get: sinon.stub().returns(true)},
@@ -103,6 +114,7 @@ describe('Deployment', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
+        exportEnvironmentFile={exportEnvironmentFile}
         services={services}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
@@ -111,6 +123,7 @@ describe('Deployment', function() {
     shallowRenderer.render(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
+        exportEnvironmentFile={exportEnvironmentFile}
         services={services}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
@@ -119,6 +132,7 @@ describe('Deployment', function() {
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
+          exportEnvironmentFile={exportEnvironmentFile}
           hasCommits={true}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
@@ -128,12 +142,14 @@ describe('Deployment', function() {
 
   it('can display the deployment summary', function() {
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var getUnplacedUnitCount = sinon.stub();
     var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
+        exportEnvironmentFile={exportEnvironmentFile}
         getUnplacedUnitCount={getUnplacedUnitCount}
         activeComponent="deployment-summary" />);
     assert.deepEqual(output,
@@ -153,12 +169,14 @@ describe('Deployment', function() {
 
   it('can pass updated props to the components', function() {
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var newChangeSet = sinon.stub();
     var generateChangeDescription = sinon.stub();
     var services = [];
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
+        exportEnvironmentFile={exportEnvironmentFile}
         services={services}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
@@ -167,6 +185,7 @@ describe('Deployment', function() {
     shallowRenderer.render(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
+        exportEnvironmentFile={exportEnvironmentFile}
         services={services}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
@@ -176,6 +195,7 @@ describe('Deployment', function() {
       <div className="deployment-view">
         <juju.components.DeploymentBar
           hasCommits={false}
+          exportEnvironmentFile={exportEnvironmentFile}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={newChangeSet} />
@@ -186,11 +206,13 @@ describe('Deployment', function() {
     var ecsCommit = sinon.stub();
     var autoPlaceUnits = sinon.stub();
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var getUnplacedUnitCount = sinon.stub();
     var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={ecsCommit}
+        exportEnvironmentFile={exportEnvironmentFile}
         autoPlaceUnits={autoPlaceUnits}
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
@@ -205,11 +227,13 @@ describe('Deployment', function() {
     var ecsCommit = sinon.stub();
     var autoPlaceUnits = sinon.stub();
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var getUnplacedUnitCount = sinon.stub();
     var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={ecsCommit}
+        exportEnvironmentFile={exportEnvironmentFile}
         autoPlaceUnits={autoPlaceUnits}
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
@@ -229,12 +253,14 @@ describe('Deployment', function() {
     var changeState = sinon.stub();
     var autoPlaceUnits = sinon.stub();
     var currentChangeSet = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
     var getUnplacedUnitCount = sinon.stub();
     var generateChangeDescription = sinon.stub();
     var changeDescriptions = {};
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={ecsCommit}
+        exportEnvironmentFile={exportEnvironmentFile}
         changeState={changeState}
         autoPlaceUnits={autoPlaceUnits}
         currentChangeSet={currentChangeSet}

@@ -1,0 +1,29 @@
+.machine-view__scale-up {
+    margin-bottom: 20px;
+
+    &-units {
+        margin: 0 10px;
+        list-style: none;
+    }
+
+    &-unit {
+        padding: 10px;
+        border-bottom: 1px dotted $mid-grey;
+    }
+
+    &-unit-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        vertical-align: bottom;
+    }
+
+    &-unit-input[type="text"] {
+        float: right;
+        width: 35px;
+        margin-top: -2px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        text-align: right;
+    }
+}

@@ -4,11 +4,16 @@
     border: 1px solid $mid-grey;
     border-radius: 2px;
 
+    &--selected.machine-view__machine--uncommitted,
     &--selected {
         margin-right: -20px;
         padding-right: 30px;
         border-style: dashed;
         border-right: 1px solid $canvas-background;
+    }
+
+    &--uncommitted {
+        border-color: $uncommitted;
     }
 
     &--machine {
@@ -18,11 +23,27 @@
             &-units {
                 display: inline-block;
             }
+
+            &-unit {
+                float: left;
+            }
+
+            &-unit-icon {
+                margin-right: 5px;
+            }
         }
     }
 
-    &-name {
-        margin-bottom: 7px;
+    &--container {
+        .machine-view__machine {
+            &-unit {
+                margin: 1px 0;
+            }
+        }
+    }
+
+    &-hardware {
+        margin-top: 7px;
     }
 
     &-units {
@@ -32,8 +53,23 @@
         img {
             width: 24px;
             height: 24px;
-            margin-right: 10px;
             vertical-align: middle;
         }
+    }
+
+    &-unit {
+        &--uncommitted {
+            .machine-view__machine-unit-icon {
+                border: 1px solid $uncommitted;
+            }
+        }
+    }
+
+    &-unit-icon {
+        display: inline-block;
+        margin-right: 10px;
+        padding: 2px;
+        border: 1px solid $canvas-background;
+        border-radius: 6px;
     }
 }

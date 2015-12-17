@@ -169,8 +169,9 @@ YUI.add('juju-env-go', function(Y) {
       @type {Object}
     */
     facadeVersions: {
+      CrossModelRelations: 1,
       EnvironmentManager: 1,
-      Service: 2,
+      Service: 2
     },
 
     /**
@@ -304,7 +305,8 @@ YUI.add('juju-env-go', function(Y) {
             relationInfo: 2,
             unitInfo: 3,
             machineInfo: 4,
-            annotationInfo: 5
+            annotationInfo: 5,
+            remoteserviceInfo: 100
           };
       data.Response.Deltas.forEach(function(delta) {
         var kind = delta[0],
@@ -2439,6 +2441,222 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'GetBundleChanges',
         Params: params
       }, handle.bind(self, callback));
+    },
+
+    /**
+      Make service endpoints available for consumption.
+
+      @method offer
+      @param {String} service The name of the service being offered.
+      @param {Array of strings} endpoints The offered endpoint names.
+      @param {String} url The URL to use to reference the resulting remote
+        service. For instance "local:/u/admin/ec2/django".
+        If empty, a URL is automatically generated using the
+        "local:/u/$user/$env-name/$service" pattern.
+      @param {Array of strings} users Users that these endpoints are offered
+        to. If left empty, the offer is considered public.
+      @param {String} description Description for the offered service. It
+        defaults to the description provided in the charm.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with the following
+        attributes:
+        - err: optional error, only defined if something went wrong;
+        - service: the provided name of the offered service;
+        - endpoints: the provided offered endpoints;
+        - url: the offered service URL.
+    */
+    offer: function(service, endpoints, url, users, description, callback) {
+      // Generate the URL if an empty one has been provided.
+      // XXX frankban 2015/12/15: this will be done automatically by the
+      // server, and the URL will be returned as part of the API response.
+      if (!url) {
+        var user = this.getCredentials().user.replace(/^user-/, '');
+        var envName = this.get('environmentName');
+        url = 'local:/u/' + user + '/' + envName + '/' + service;
+      }
+
+      // Define the API callback.
+      var handleOffer = function(userCallback, service, endpoints, url, data) {
+        if (!userCallback) {
+          console.log('data returned by offer API call:', data);
+          return;
+        }
+        var err = data.Error;
+        if (!err) {
+          var errResponse = data.Response.Results[0].Error;
+          err = errResponse && errResponse.Message;
+        }
+        userCallback({
+          err: err,
+          service: service,
+          endpoints: endpoints,
+          url: url
+        });
+      }.bind(this, callback, service, endpoints, url);
+
+      // Build the API call parameters.
+      if (users && users.length) {
+        users = users.map(function(user) {
+          return 'user-' + user;
+        });
+      } else {
+        users = ['user-public'];
+      }
+      var offer = {
+        servicename: service,
+        endpoints: endpoints,
+        serviceurl: url,
+        allowedusers: users,
+        servicedescription: description
+      };
+
+      // Perform the API call.
+      this._send_rpc({
+        Type: 'CrossModelRelations',
+        Request: 'Offer',
+        Params: {Offers: [offer]}
+      }, handleOffer);
+    },
+
+    /**
+      Get all remote services that have been offered from this Juju model.
+      Each returned service satisfies at least one of the the specified
+      filters.
+
+      @method listOffers
+      @param {Object} filters Not implemented.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with the following
+        attributes:
+        - err: optional error, only defined if something went wrong;
+        - results: an array of objects representing a remote service, only
+          present if the request succeeded.
+          Each result has the following attributes:
+          - err: possible error occurred while retrieving offer;
+          - service: the offered service name;
+          - url: the URL used to reference the remote service;
+          - charm: the charm name;
+          - endpoints: the list of offered endpoints.
+          Each endpoint has the following attributes:
+          - name: the endpoint name (e.g. "db" or "website");
+          - interface: the endpoint interface (e.g. "http" or "mysql");
+          - role: the role for the endpoint ("requirer" or "provider").
+    */
+    listOffers: function(filters, callback) {
+      // Define the API callback.
+      var handleListOffers = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by listOffers API call:', data);
+          return;
+        }
+        if (data.Error) {
+          userCallback({err: data.Error, results: []});
+          return;
+        }
+        // XXX frankban 2015/12/15: really?
+        var apiResults = data.Response.results[0].result;
+        var results = apiResults.map(function(apiResult) {
+          if (apiResult.error) {
+            return {err: apiResult.error};
+          }
+          var result = apiResult.result;
+          return {
+            service: result.servicename,
+            url: result.serviceurl,
+            charm: result.charmname,
+            endpoints: result.endpoints.map(function(endpoint) {
+              // Note that we are not really changing values or field names
+              // here, we are just excluding limit and scope attributes. The
+              // map method is mostly used in order to decouple API response
+              // structures from internal GUI objects.
+              return {
+                name: endpoint.name,
+                interface: endpoint.interface,
+                role: endpoint.role
+              };
+            })
+          };
+        });
+        userCallback({results: results});
+      }.bind(this, callback);
+
+      // Build the API call parameters.
+      // XXX frankban 2015/12/15: add support for specifying filters.
+      var filter = {FilterTerms: []};
+
+      // Perform the API call.
+      this._send_rpc({
+        Type: 'CrossModelRelations',
+        Request: 'ListOffers',
+        Params: {Filters: [filter]}
+      }, handleListOffers);
+    },
+
+    /**
+      Retrieve offered remote service details for a given URL.
+
+      @method getOffer
+      @param {String} url The URL to the remote service.
+        For instance "local:/u/admin/ec2/django".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with the following
+        attributes:
+        - err: optional error, only defined if something went wrong;
+        - service: the offered service name;
+        - url: the URL used to reference the remote service;
+        - description: the human friendly description for the remote service;
+        - sourceName: the label assigned to the source Juju model;
+        - sourceId: the UUID of the source Juju model;
+        - endpoints: the list of offered endpoints.
+          Each endpoint has the following attributes:
+          - name: the endpoint name (e.g. "db" or "website");
+          - interface: the endpoint interface (e.g. "http" or "mysql");
+          - role: the role for the endpoint ("requirer" or "provider").
+    */
+    getOffer: function(url, callback) {
+      // Define the API callback.
+      var handleGetOffer = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by getOffer API call:', data);
+          return;
+        }
+        var err = data.Error,
+            response = {};
+        if (!err) {
+          response = data.Response.results[0];
+          err = response.error && response.error.Message;
+        }
+        if (err) {
+          userCallback({err: err});
+          return;
+        }
+        var result = response.result;
+        userCallback({
+          service: result.servicename,
+          url: result.serviceurl,
+          description: result.servicedescription,
+          sourceName: result.sourcelabel,
+          sourceId: result.sourceenviron.replace(/^environment-/, ''),
+          endpoints: result.endpoints.map(function(endpoint) {
+            // Note that we are not really changing values or field names
+            // here, we are just excluding limit and scope attributes. The
+            // map method is mostly used in order to decouple API response
+            // structures from internal GUI objects.
+            return {
+              name: endpoint.name,
+              interface: endpoint.interface,
+              role: endpoint.role
+            };
+          })
+        });
+      }.bind(this, callback);
+
+      // Perform the API call.
+      this._send_rpc({
+        Type: 'CrossModelRelations',
+        Request: 'ServiceOffers',
+        Params: {serviceurls: [url]}
+      }, handleGetOffer);
     },
 
     /**

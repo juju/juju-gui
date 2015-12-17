@@ -96,6 +96,21 @@ button,
     }
 }
 
+%button-grey {
+    @extend %button;
+    border: none;
+    background-color: $mid-grey;
+    color: $white;
+
+    &:active,
+    &:focus,
+    &:hover {
+        $colour: darken($mid-grey, 10%);
+        background-color: $colour;
+        border-color: $colour;
+    }
+}
+
 %button-disabled {
     @extend %button;
     $colour: $mid-grey;
