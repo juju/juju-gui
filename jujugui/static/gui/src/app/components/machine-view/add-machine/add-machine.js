@@ -72,11 +72,15 @@ YUI.add('machine-view-add-machine', function() {
         // selected.
         return;
       }
+      // If the state is set for a new machine or container then actually add
+      // the machine/container.
       if (selectedMachine === 'new' || selectedContainer === 'lxc' ||
           selectedContainer === 'kvm') {
         var machine = this.props.createMachine(
           selectedContainer, machineId, constraints);
       }
+      // If the component has been provided a unit then we need to place the
+      // unit on the machine/container.
       if (props.unit) {
         var id = machine && machine.id;
         props.placeUnit(props.unit, id || selectedContainer || selectedMachine);
