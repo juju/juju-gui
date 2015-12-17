@@ -16,4 +16,18 @@
             margin-top: 0;
         }
     }
+
+    select {
+        width: 100%;
+        margin: 10px 10px 0 10px;
+    }
+}
+
+.machine-view__unplaced-unit .add-machine {
+    select,
+    &__title,
+    &__container-type {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }

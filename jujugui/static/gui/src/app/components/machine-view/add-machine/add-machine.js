@@ -24,7 +24,10 @@ YUI.add('machine-view-add-machine', function() {
     propTypes: {
       close: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
-      parentId: React.PropTypes.string
+      machines: React.PropTypes.object,
+      parentId: React.PropTypes.string,
+      placeUnit: React.PropTypes.func,
+      unit: React.PropTypes.object
     },
 
     /**
@@ -36,7 +39,8 @@ YUI.add('machine-view-add-machine', function() {
     getInitialState: function() {
       return {
         constraints: null,
-        containerType: null
+        selectedContainer: null,
+        selectedMachine: !this.props.unit && !this.props.parentId ? 'new' : null
       };
     },
 
@@ -53,18 +57,44 @@ YUI.add('machine-view-add-machine', function() {
     /**
       Create the machine.
 
-      @method _createMachine
+      @method _submitForm
     */
-    _createMachine: function() {
-      // Don't try and create a container if the container type has not been
-      // selected.
-      if (this.props.parentId && !this.state.containerType) {
+    _submitForm: function() {
+      var props = this.props;
+      var state = this.state;
+      var machineId = this._getParentId();
+      var selectedContainer = state.selectedContainer;
+      var selectedMachine = state.selectedMachine;
+      var constraints = state.constraints;
+      var id;
+      if (machineId && machineId !== 'new' && !selectedContainer) {
+        // Don't try and create a container if the container type has not been
+        // selected.
         return;
       }
-      this.props.createMachine(
-        this.state.containerType, this.props.parentId, this.state.constraints);
+      if (selectedMachine === 'new' || selectedContainer === 'lxc' ||
+          selectedContainer === 'kvm') {
+        var machine = this.props.createMachine(
+          selectedContainer, machineId, constraints);
+        id = machine.id;
+      }
+      if (props.unit) {
+        props.placeUnit(props.unit, id || selectedContainer || selectedMachine);
+      }
       this.props.close();
+    },
 
+    /**
+      Get the parent id or selected machine.
+
+      @method _getParentId
+    */
+    _getParentId: function() {
+      var selectedMachine = this.state.selectedMachine;
+      if (selectedMachine === 'new') {
+        return null;
+      }
+      return this.props.parentId || selectedMachine;
     },
 
     /**
@@ -75,64 +105,167 @@ YUI.add('machine-view-add-machine', function() {
     _generateConstraints: function() {
       // Show the constraints if we're creating a machine or we're creating a
       // LXC container.
-      if (this.props.parentId && this.state.containerType !== 'kvm') {
-        return;
+      if (this.state.selectedContainer === 'kvm' ||
+          this.state.selectedMachine === 'new') {
+        return (
+          <div className="add-machine__constraints">
+            <h4 className="add-machine__title">
+              Define constraints
+            </h4>
+            <juju.components.Constraints
+              valuesChanged={this._updateConstraints} />
+          </div>);
       }
-      return (
-        <div className="add-machine__constraints">
-          <h4 className="add-machine__title">
-            Define constraints
-          </h4>
-          <juju.components.Constraints
-            valuesChanged={this._updateConstraints} />
-        </div>);
     },
 
     /**
-      Generate the container type form.
+      Update the state with the selected container type.
 
-      @method _generateContainerType
+      @method _updateSelectedContainer
       @param {Object} e The change event.
     */
-    _updateContainerType: function(e) {
-      this.setState({containerType: e.currentTarget.value});
+    _updateSelectedContainer: function(e) {
+      this.setState({selectedContainer: e.currentTarget.value});
     },
 
     /**
       Generate the container type form.
 
-      @method _generateContainerType
+      @method _generateSelectContainer
     */
-    _generateContainerType: function() {
-      if (!this.props.parentId) {
+    _generateSelectContainer: function() {
+      if (!this._getParentId()) {
         return;
       }
       return (
         <select className="add-machine__container-type"
           defaultValue=""
-          onChange={this._updateContainerType}>
+          onChange={this._updateSelectedContainer}>
           <option disabled={true} value="">
             Choose container type...
           </option>
+          {this._generateContainerOptions()}
           <option value="lxc">LXC</option>
           <option value="kvm">KVM</option>
         </select>);
     },
 
-    render: function() {
+    /**
+      Update the state with the selected machine.
+
+      @method _updateSelectedMachine
+      @param {Object} e The change event.
+    */
+    _updateSelectedMachine: function(e) {
+      this.setState({selectedMachine: e.currentTarget.value});
+    },
+
+    /**
+      Generate machine selection.
+
+      @method _generateSelectContainer
+    */
+    _generateSelectMachine: function() {
+      if (!this.props.unit) {
+        return;
+      }
+      return (
+        <select
+          defaultValue=""
+          onChange={this._updateSelectedMachine}>
+          <option disabled={true} value="">
+            Move to...
+          </option>
+          <option value="new">
+            New machine
+          </option>
+          {this._generateMachineOptions()}
+        </select>);
+    },
+
+    /**
+      Generate a list of machine options.
+
+      @method _generateMachineOptions
+      @return {Array} A list of machine options.
+    */
+    _generateMachineOptions: function() {
+      if (!this.props.machines) {
+        return;
+      }
+      var components = [];
+      var machines = this.props.machines.filterByParent();
+      machines.forEach((machine) => {
+        components.push(
+          <option
+            key={machine.id}
+            value={machine.id}>
+            {machine.displayName}
+          </option>);
+      });
+      return components;
+    },
+
+    /**
+      Generate a list of container options.
+
+      @method _generateContainerOptions
+      @return {Array} A list of container options.
+    */
+    _generateContainerOptions: function() {
+      if (!this.state.selectedMachine) {
+        return;
+      }
+      var components = [];
+      var containers = this.props.machines.filterByParent(
+        this.state.selectedMachine);
+      var machineId = this._getParentId();
+      components.push(
+        <option
+          key="root"
+          value={machineId}>
+          {machineId}/root-container
+        </option>);
+      containers.forEach((container) => {
+        components.push(
+          <option
+            key={container.id}
+            value={container.id}>
+            {container.displayName}
+          </option>);
+      });
+      return components;
+    },
+
+    /**
+      Generate the buttons based on the state.
+
+      @method _generateButtons
+      @return {Object} The buttons.
+    */
+    _generateButtons: function() {
+      if (this.props.unit && !this.state.selectedMachine) {
+        return;
+      }
       var buttons = [{
         title: 'Cancel',
         action: this.props.close
       }, {
-        title: 'Create',
-        action: this._createMachine,
+        title: this.props.unit ? 'Place' : 'Create',
+        action: this._submitForm,
         type: 'confirm'
       }];
       return (
+        <juju.components.ButtonRow buttons={buttons} />);
+    },
+
+    render: function() {
+      return (
         <div className="add-machine">
-          {this._generateContainerType()}
+          {this._generateSelectMachine()}
+          {this._generateSelectContainer()}
           {this._generateConstraints()}
-          <juju.components.ButtonRow buttons={buttons} />
+          {this._generateButtons()}
         </div>
       );
     }
