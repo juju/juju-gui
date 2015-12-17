@@ -21,9 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('machine-view-machine', function() {
 
   var dropTarget = {
-    hover: function (props, monitor, component) {
-    },
-
     drop: function (props, monitor, component) {
       var item = monitor.getItem();
       props.dropUnit(item.unit, props.machine.id);
@@ -32,14 +29,8 @@ YUI.add('machine-view-machine', function() {
 
   function collect(connect, monitor) {
     return {
-      // Call this function inside render()
-      // to let React DnD handle the drag events:
       connectDropTarget: connect.dropTarget(),
-      // You can ask the monitor about the current drag state:
-      isOver: monitor.isOver(),
-      isOverCurrent: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop(),
-      itemType: monitor.getItemType()
+      isOver: monitor.isOver()
     };
   }
 
@@ -164,6 +155,7 @@ YUI.add('machine-view-machine', function() {
     _generateClasses: function() {
       var machine = this.props.machine;
       var classes = {
+        'machine-view__machine--drop': this.props.isOver,
         'machine-view__machine--selected': this.props.selected,
         'machine-view__machine--uncommitted': machine.deleted ||
           machine.commitStatus === 'uncommitted',
@@ -212,6 +204,11 @@ YUI.add('machine-view-machine', function() {
           </div>
           {this._generateHardware(units.length)}
           {this._generateUnits()}
+          <div className="machine-view__machine-drop-target">
+            <div className="machine-view__machine-drop-message">
+              Add to {this.props.machine.displayName}
+            </div>
+          </div>
         </div>
       );
     }
