@@ -130,6 +130,10 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
+            <div className="four-col">
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
+            </div>
           </div>
         </div>
         <div id="configuration" className="row entity-content__configuration">
@@ -224,6 +228,10 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
+            <div className="four-col">
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
+            </div>
           </div>
         </div>
         {undefined}
@@ -262,6 +270,7 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
+            {undefined}
           </div>
         </div>
         {undefined}

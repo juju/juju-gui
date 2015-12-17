@@ -199,6 +199,22 @@ YUI.add('entity-content', function() {
       }
     },
 
+    /**
+      We only show the revisions when it's a charm, but not a bundle.
+
+      @method _showEntityRevisions
+    */
+    _showEntityRevisions: function() {
+      var entityModel = this.props.entityModel;
+      if (entityModel.get('entityType') === 'charm') {
+        return (
+          <div className="four-col">
+            <juju.components.EntityContentRevisions
+              revisions={entityModel.get('revisions')} />
+          </div>);
+      }
+    },
+
     render: function() {
       var entityModel = this.props.entityModel;
       return (
@@ -218,6 +234,7 @@ YUI.add('entity-content', function() {
                   entityModel={entityModel}
                   pluralize={this.props.pluralize} />
               </div>
+              {this._showEntityRevisions()}
             </div>
           </div>
           {this._generateOptionsList(entityModel)}
@@ -231,6 +248,7 @@ YUI.add('entity-content', function() {
     'entity-content-config-option',
     'entity-content-readme',
     'entity-content-relations',
+    'entity-content-revisions',
     'entity-files'
   ]
 });
