@@ -144,9 +144,11 @@ describe('Deployment', function() {
     var currentChangeSet = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var getUnplacedUnitCount = sinon.stub();
+    var ecsClear = sinon.stub();
     var changeDescriptions = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        ecsClear={ecsClear}
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -155,6 +157,7 @@ describe('Deployment', function() {
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentSummary
+          summaryClearAction={output.props.children.props.summaryClearAction}
           deployButtonAction={output.props.children.props.deployButtonAction}
           closeButtonAction={output.props.children.props.closeButtonAction}
           changeDescriptions={changeDescriptions}
