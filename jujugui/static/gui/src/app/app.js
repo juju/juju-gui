@@ -1656,6 +1656,29 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    createSocketURL: function(apiServer, apiPort, uuid) {
+      var currentHost = window.location.hostname,
+          currentPort = window.location.port;
+
+      var baseUrl = 'wss://' + currentHost;
+      if (currentPort !== '') {
+        baseUrl = baseUrl + ':' + currentPort;
+      }
+      baseUrl = baseUrl + '/ws';
+
+      if (!apiServer || !apiPort) {
+        var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
+        apiAddress = apiAddress.split(':');
+        apiServer = apiAddress[0];
+        apiPort = apiAddress[1];
+      }
+
+      var path = window.juju_config.socketTemplate.replace(
+          '$server', apiServer);
+      path = path.replace('$port', apiPort);
+      path = path.replace('$uuid', uuid);
+      return baseUrl + path;
+    },
     /**
       Switch the application to another environment.
       Disconnect the current WebSocket connection and establish a new one
@@ -1664,19 +1687,21 @@ YUI.add('juju-gui', function(Y) {
       @method switchEnv
       @param {String} uuid The environment UUID where to switch to.
     */
-    switchEnv: function(uuid, username, password) {
+    switchEnv: function(socketUrl, username, password) {
       if (this.get('sandbox')) {
         console.log('switching environments is not supported in sandbox');
         return;
       }
-      if (this.jem) {
-        // We only set the credentials if we're using JEM. GUI will
-        // automatically log in when we switch the environments.
+      if (username && password) {
+        // We don't always get a new username and password when switching
+        // environments; only set new credentials if we've actually gotten them.
+        // The GUI will automatically log in when we switch.
         this.env.setCredentials({
           user: username,
           password: password
         });
       };
+      
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(
@@ -1686,22 +1711,8 @@ YUI.add('juju-gui', function(Y) {
         breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
           'anonymous';
       }
-
-      // XXX jcsackett 2015-12-11 This is fine for now, but ultimately we want
-      // to take a better approach using a configurable socket_url template. See
-      // this comment:
-      // https://github.com/juju/juju-gui/pull/1065#discussion_r47335565
-      var socketUrl = this.env.get('socket_url');
-      var newSocketUrl, baseUrl;
-      if (window.juju_config.embedded) {
-        baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
-        newSocketUrl = baseUrl + '/' + uuid;
-      } else {
-        baseUrl = socketUrl.substring(0, socketUrl.indexOf('/ws')) + '/ws';
-        newSocketUrl = baseUrl + '/environment/' + uuid + '/api';
-      }
       // Tell the environment to use the new socket URL when reconnecting.
-      this.env.set('socket_url', newSocketUrl);
+      this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
       this.env.get('ecs').clear();
       // Disconnect and reconnect the environment.
