@@ -22,6 +22,10 @@ YUI.add('deployment-summary', function() {
 
   juju.components.DeploymentSummary = React.createClass({
 
+    propTypes: {
+      summaryClearAction: React.PropTypes.func.isRequired
+    },
+
     /**
       Generate the list of change items.
 
@@ -79,6 +83,10 @@ YUI.add('deployment-summary', function() {
               </ul>
             </div>
             <div className="deployment-summary__footer">
+              <juju.components.GenericButton
+                type="clear-changes"
+                action={this.props.summaryClearAction}
+                title="Clear changes" />
               <juju.components.GenericButton
                 action={this.props.deployButtonAction}
                 type="confirm"

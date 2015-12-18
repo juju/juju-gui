@@ -22,7 +22,8 @@ YUI.add('deployment-component', function() {
 
   juju.components.Deployment = React.createClass({
     propTypes: {
-      exportEnvironmentFile: React.PropTypes.func.isRequired
+      exportEnvironmentFile: React.PropTypes.func.isRequired,
+      ecsClear: React.PropTypes.func.isRequired
     },
 
     /**
@@ -78,6 +79,7 @@ YUI.add('deployment-component', function() {
               this.props.changeDescriptions;
           state.activeChild = {
             component: <juju.components.DeploymentSummary
+              summaryClearAction={this._summaryClearAction}
               deployButtonAction={this._summaryDeployAction}
               closeButtonAction={this._summaryCloseAction}
               changeDescriptions={changeDescriptions}
@@ -124,6 +126,17 @@ YUI.add('deployment-component', function() {
     */
     _barDeployAction: function() {
       this._changeActiveComponent('deployment-summary');
+    },
+
+    /**
+      Handles calling to clear the ecs and then closing the deployment
+      summary.
+
+      @method _summaryClearAction
+    */
+    _summaryClearAction: function() {
+      this.props.ecsClear();
+      this._changeActiveComponent('deployment-bar');
     },
 
     /**
