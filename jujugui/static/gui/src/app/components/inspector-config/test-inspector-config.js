@@ -52,9 +52,15 @@ describe('Configuration', function() {
     var setConfig = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
-        service={service}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
         charm={charm}
-        setConfig={setConfig} />);
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={setConfig}
+        updateServiceUnitsDisplayname={sinon.stub()} />);
 
     assert.deepEqual(output.props.children[0].props.children[3], [
       <juju.components.StringConfig
@@ -87,8 +93,15 @@ describe('Configuration', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
         service={service}
-        charm={charm} />);
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[3],
       <div className="inspector-config--no-config">
         No configuration options.
@@ -116,10 +129,15 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
-        service={service}
+        addNotification={sinon.stub()}
+        changeState={changeState}
         charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
         setConfig={setConfig}
-        changeState={changeState}/>);
+        updateServiceUnitsDisplayname={sinon.stub()}/>);
 
     var domNode = ReactDOM.findDOMNode(component);
 
@@ -172,10 +190,14 @@ describe('Configuration', function() {
     var getServiceByName = sinon.stub().returns(null);
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
-        service={service}
-        charm={charm}
+        addNotification={sinon.stub()}
         changeState={sinon.stub()}
+        charm={charm}
         getServiceByName={getServiceByName}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
         updateServiceUnitsDisplayname={updateUnit}/>);
     assert.equal(component.refs.ServiceName.props.config, 'servicename');
 
@@ -217,11 +239,14 @@ describe('Configuration', function() {
     var addNotification = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
-        service={service}
-        charm={charm}
-        changeState={sinon.stub()}
-        getServiceByName={getServiceByName}
         addNotification={addNotification}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={getServiceByName}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
         updateServiceUnitsDisplayname={updateUnit}/>);
 
     var domNode = ReactDOM.findDOMNode(component);
@@ -255,8 +280,15 @@ describe('Configuration', function() {
     };
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
         service={service}
-        charm={charm} />);
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()}/>);
     assert.equal(component.refs.ServiceName, undefined);
   });
 
@@ -271,9 +303,15 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
-        service={service}
+        addNotification={sinon.stub()}
         changeState={changeState}
-        charm={charm} />);
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()}/>);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -297,9 +335,15 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
-        service={service}
+        addNotification={sinon.stub()}
         changeState={changeState}
-        charm={charm} />, true);
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()}/>, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {file: {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
@@ -321,10 +365,15 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
-        service={service}
-        getYAMLConfig={getYAMLConfig}
+        addNotification={sinon.stub()}
         changeState={changeState}
-        charm={charm} />, true);
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={getYAMLConfig}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       file: {files: ['apache2.yaml']},
@@ -359,10 +408,15 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
-        service={service}
-        getYAMLConfig={getYAMLConfig}
+        addNotification={sinon.stub()}
         changeState={changeState}
-        charm={charm} />, true);
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={getYAMLConfig}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       file: {files: ['apache2.yaml']},
@@ -407,10 +461,15 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
-        service={service}
-        getYAMLConfig={getYAMLConfig}
+        addNotification={sinon.stub()}
         changeState={changeState}
-        charm={charm} />, true);
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={getYAMLConfig}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       file: {files: ['apache2.yaml']},

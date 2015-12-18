@@ -1163,4 +1163,69 @@ describe('utilities', function() {
     });
   });
 
+  describe('linkify', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    var testLinks = [
+        {
+          text: 'google.com',
+          expected: '<a href="google.com" target="_blank">google.com</a>'
+        },
+        {
+          text: 'www.domain.com',
+          expected: '<a href="www.domain.com" target="_blank">www.domain.com</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'thisisareallylongdomainnamewithunder62parts.co',
+          expected: '<a href="thisisareallylongdomainnamewithunder62parts.co" target="_blank">thisisareallylongdomainnamewithunder62parts.co</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'node-1.www4.example.com.jp',
+          expected: '<a href="node-1.www4.example.com.jp" target="_blank">node-1.www4.example.com.jp</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'http://domain.com',
+          expected: '<a href="http://domain.com" target="_blank">http://domain.com</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'ftp://foo.1.example.com.uk',
+          expected: '<a href="ftp://foo.1.example.com.uk" target="_blank">ftp://foo.1.example.com.uk</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'example.com/?foo=bar',
+          expected: '<a href="example.com/?foo=bar" target="_blank">example.com/?foo=bar</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'example.com/foo/bar?baz=true&something=%20alsotrue',
+          expected: '<a href="example.com/foo/bar?baz=true&amp;something=%20alsotrue" target="_blank">example.com/foo/bar?baz=true&amp;something=%20alsotrue</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'http://example.com/index?foo=bar<script>alert(\'xss\')</script>',  // eslint-disable-line max-len
+          expected: '<a href="http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt" target="_blank">http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt</a>;'  // eslint-disable-line max-len
+        },
+        {
+          text: 'http://example.com/foo"bar',
+          expected: '<a href="http://example.com/foo&quot;bar" target="_blank">http://example.com/foo"bar</a>'  // eslint-disable-line max-len
+        },
+        {
+          text: 'Hi there John.Bob',
+          expected: 'Hi there John.Bob'
+        }
+    ];
+
+    testLinks.forEach(function(test) {
+      it('correctly linkifies: ' + test.text, function() {
+        var actual = utils.linkify(test.text);
+        assert.equal(actual, test.expected);
+      });
+    });
+  });
+
 })();
