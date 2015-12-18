@@ -431,6 +431,8 @@ YUI.add('machine-view', function() {
       return machines.sort(function (a, b) {
         var sortedA = sortMethod(a);
         var sortedB = sortMethod(b);
+        // Phantomjs only likes sort to return integer values so we have to
+        // translate our comparisons to numbers.
         if (sortedA == sortedB) {
           return 0;
         }
