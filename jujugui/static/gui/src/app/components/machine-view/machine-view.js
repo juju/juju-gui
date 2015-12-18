@@ -429,7 +429,17 @@ YUI.add('machine-view', function() {
     _sortMachines: function(machines, method) {
       var sortMethod = this._getSortMethod(method);
       return machines.sort(function (a, b) {
-        return sortMethod(a) > sortMethod(b);
+        var sortedA = sortMethod(a);
+        var sortedB = sortMethod(b);
+        if (sortedA == sortedB) {
+          return 0;
+        }
+        if (sortedA > sortedB) {
+          return 1;
+        }
+        if (sortedA < sortedB) {
+          return -1;
+        }
       });
     },
 

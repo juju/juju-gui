@@ -580,10 +580,10 @@ describe('MachineView', function() {
   it('can order a list of machines', function() {
     var machineList = [{
       displayName: 'new5',
-      id: 'new5',
+      id: 'new5'
     }, {
       displayName: 'new0',
-      id: 'new0',
+      id: 'new0'
     }];
     var filterByParent = sinon.stub();
     filterByParent.returns(machineList);
@@ -620,7 +620,7 @@ describe('MachineView', function() {
               key="new0"
               machine={{
                 displayName: 'new0',
-                id: 'new0',
+                id: 'new0'
               }}
               selected={false}
               selectMachine={instance.selectMachine}
@@ -633,7 +633,7 @@ describe('MachineView', function() {
               key="new5"
               machine={{
                 displayName: 'new5',
-                id: 'new5',
+                id: 'new5'
               }}
               selected={true}
               selectMachine={instance.selectMachine}
