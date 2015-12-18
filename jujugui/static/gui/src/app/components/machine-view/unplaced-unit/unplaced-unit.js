@@ -87,11 +87,9 @@ YUI.add('machine-view-unplaced-unit', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'machine-view__unplaced-unit',
-        {
+        'machine-view__unplaced-unit', {
           'machine-view__unplaced-unit--dragged': this.props.isDragging
-        }
-      );
+        });
     },
 
     render: function() {

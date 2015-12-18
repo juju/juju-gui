@@ -115,6 +115,57 @@ describe('MachineViewMachine', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can render a machine in drop mode', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {
+        cpuCores: 2,
+        cpuPower: 200,
+        disk: 2048,
+        mem: 4096,
+      }
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        agent_state: 'started',
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var services = {
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('icon.svg')
+      })
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        isOver={true}
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className={'machine-view__machine machine-view__machine--drop ' +
+        'machine-view__machine--machine'}
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        {output.props.children}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can display a machine as uncommitted', function() {
     var selectMachine = sinon.stub();
     var machine = {

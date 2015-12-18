@@ -177,12 +177,10 @@ YUI.add('machine-view-machine', function() {
     */
     _generateUnitClasses: function(unit) {
       return classNames(
-        'machine-view__machine-unit',
-        {
+        'machine-view__machine-unit', {
           'machine-view__machine-unit--uncommitted':
             unit.deleted || !unit.agent_state
-        }
-      );
+        });
     },
 
     render: function() {

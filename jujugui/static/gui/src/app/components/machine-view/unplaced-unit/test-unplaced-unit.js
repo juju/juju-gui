@@ -57,6 +57,24 @@ describe('MachineViewUnplacedUnit', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can display in dragged mode', function() {
+    var removeUnit = sinon.stub();
+    var unit = {displayName: 'django/7'};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        connectDragSource={jsTestUtils.connectDragSource}
+        icon="icon.svg"
+        isDragging={true}
+        removeUnit={removeUnit}
+        unit={unit} />);
+    var expected = (
+      <li className={'machine-view__unplaced-unit ' +
+        'machine-view__unplaced-unit--dragged'}>
+        {output.props.children}
+      </li>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can remove a unit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7', id: 'django/7'};
