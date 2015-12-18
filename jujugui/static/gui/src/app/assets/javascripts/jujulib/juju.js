@@ -311,7 +311,7 @@ var module = module;
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
         owner: bzrOwner,
-        revisions: extraInfo['bzr-revisions'],
+        revisions: extraInfo['bzr-revisions'] || [],
         code_source: {
           location: extraInfo['bzr-url']
         }
