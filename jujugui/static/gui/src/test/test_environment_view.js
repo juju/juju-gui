@@ -328,6 +328,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('should relocate the plus nearby', function() {
+      var db = new models.Database();
+      view.set('db', db);
+      view.render().rendered();
+      var plus = view.topo.vis.select('.included-plus');
+      var firstTransform = plus.attr('transform');
+
+      db.onDelta({data: Y.clone(environment_delta)});
+      view.update();
+      assert.notEqual(plus.attr('transform'), firstTransform);
+    });
+
     it('must handle the window resize event', function(done) {
       var beforeResizeEventFired = false;
       view.render();
