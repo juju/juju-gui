@@ -32,6 +32,7 @@ describe('DeploymentSummary', function() {
 
   it('can display a list of changes', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
+    var summaryClearAction = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
     var handlePlacementChange = sinon.stub();
     var closeButtonAction = sinon.stub();
@@ -56,6 +57,7 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        summaryClearAction={summaryClearAction}
         getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
         deployButtonAction={deployButtonAction}
@@ -98,6 +100,10 @@ describe('DeploymentSummary', function() {
             </ul>
           </div>
           <div className="deployment-summary__footer">
+            <juju.components.GenericButton
+              type="clear-changes"
+              action={summaryClearAction}
+              title="Clear changes" />
             <juju.components.GenericButton
               action={deployButtonAction}
               type="confirm"
