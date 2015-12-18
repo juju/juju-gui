@@ -198,6 +198,29 @@ describe('jujulib charmstore', function() {
       });
     });
 
+    it('handles missing extra-info data', function() {
+      var data = {
+        Id: 'cs:trusty/mongodb-9',
+        Meta: {
+          'charm-metadata': {
+            Name: 'mongodb',
+            Provides: {}
+          },
+          'extra-info': {},
+          'charm-related': {
+            Requires: {'ceph-client': {id: 'cs:foo'}},
+            Provides: {haproxy: {id: 'cs:bar'}}
+          },
+          'charm-config': {Options: {}},
+          stats: {ArchiveDownloadCount: 42}
+        }
+      };
+      var processed = charmstore._processEntityQueryData(data);
+      assert.strictEqual(processed.owner, undefined);
+      assert.strictEqual(processed.code_source.location, undefined);
+      assert.deepEqual(processed.revisions, []);
+    });
+
     it('can properly transform v4 bundle data to v3', function() {
       var data = {
         Id: 'cs:~charmers/bundle/mongodb-cluster-4',
