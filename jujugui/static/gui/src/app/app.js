@@ -494,9 +494,18 @@ YUI.add('juju-gui', function(Y) {
       // their default then it would show them the login screen. This sets
       // the credentials to the environment that they are logging into
       // initially.
+      var user = env.get('user');
+      var password = env.get('password');
+      var credentials = env.getCredentials();
+      if (!user || !password) {
+        if (credentials && credentials.areAvailable) {
+          user = credentials.user;
+          password = credentials.password;
+        }
+      }
       env.setCredentials({
-        user: env.get('user'),
-        password: env.get('password')
+        user: user,
+        password: password
       });
       this.env = env;
 
@@ -2057,9 +2066,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'parseURLState'},
           { path: '*', callbacks: 'checkUserCredentials'},
           { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'authorizeCookieUse'},
-          // Authorization
-          { path: '/login/', callbacks: 'showLogin' }
+          { path: '*', callbacks: 'authorizeCookieUse'}
         ]
       }
     }

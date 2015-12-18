@@ -30,7 +30,8 @@ describe('application hotkeys', function() {
             on: function() {},
             once: function() {},
             set: function() {},
-            setCredentials: function() {}
+            setCredentials: function() {},
+            getCredentials: function() {}
           };
           windowNode = Y.one(window);
           done();

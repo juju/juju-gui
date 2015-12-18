@@ -650,6 +650,7 @@ describe('File drag over notification system', function() {
     });
 
     it('avoids trying to login without credentials', function(done) {
+      sessionStorage.clear();
       env.setAttrs({
         user: null,
         password: null
@@ -1077,7 +1078,7 @@ describe('File drag over notification system', function() {
       var fake_ecs = {
         clear: function() { this.clearCalled = true; },
         clearCalled: false
-      }; 
+      };
       var fake_env = {
         ecs: fake_ecs,
         ws: fake_ws,
@@ -1088,7 +1089,7 @@ describe('File drag over notification system', function() {
         close: function() { this.closeCalled = true; },
         get: function(key) {
           if (key === 'socket_url') {
-            return this.socketUrl; 
+            return this.socketUrl;
           }
           if (key === 'ecs') {
             return this.ecs;
@@ -1097,7 +1098,7 @@ describe('File drag over notification system', function() {
         set: function(key, val) {
           if (key === 'socket_url') {
             this.socketUrl = val;
-          } 
+          }
         },
         setCredentials: function(obj) {
           this.setUser = obj.user;
@@ -1113,7 +1114,7 @@ describe('File drag over notification system', function() {
       app.env = fake_env;
       app.db = fake_db;
       return app;
-    }; 
+    };
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
@@ -1165,7 +1166,7 @@ describe('File drag over notification system', function() {
           'juju/api/example.com/17070/new-uuid',
           'socket url not correctly set.');
     });
-      
+
     it('sets credentials based on existence of jem', function() {
       app = _generateMockedApp(false);
       app.jem = false;
