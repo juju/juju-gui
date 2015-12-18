@@ -72,6 +72,38 @@ describe('InspectorRelationsItem', function() {
       </li>);
   });
 
+  it('can render peer relations', function() {
+    var relation = {
+      near: {
+        name: 'wordpress',
+        role: 'peer'
+      },
+      interface: 'reversenginx',
+      scope: 'global'
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorRelationsItem
+          relation={relation} />);
+    assert.deepEqual(output,
+      <li className="inspector-relations-item">
+        <span />
+        <span className="inspector-relations-item__details">
+          <p className="inspector-relations-item__property">
+            Interface: {"reversenginx"}
+          </p>
+          <p className="inspector-relations-item__property">
+            Name: {"wordpress"}
+          </p>
+          <p className="inspector-relations-item__property">
+            Role: {"peer"}
+          </p>
+          <p className="inspector-relations-item__property">
+            Scope: {"global"}
+          </p>
+        </span>
+      </li>);
+  });
+
   it('navigates to the service when it is clicked', function() {
     var changeState = sinon.stub();
     var relation = {

@@ -47,17 +47,25 @@ YUI.add('inspector-relations-item', function() {
 
     render: function() {
       var relation = this.props.relation;
-      return (
-        <li className="inspector-relations-item">
-          <span className="inspector-relations-item__service"
-            role="button" tabIndex="0"
-            onClick={this._handleServiceClick}>
+      var farEndpoint;
+      if (relation.far) {
+        farEndpoint = (
+         <span className="inspector-relations-item__service"
+          role="button" tabIndex="0"
+          onClick={this._handleServiceClick}>
             <span className="inspector-relations-item__status">
               <juju.components.SvgIcon name={this._getIcon(relation.pending)}
                 size="16" />
             </span>
             {relation.far.serviceName}
           </span>
+        );
+      } else {
+        farEndpoint = <span />;
+      }
+      return (
+        <li className="inspector-relations-item">
+          {farEndpoint}
           <span className="inspector-relations-item__details">
             <p className="inspector-relations-item__property">
               Interface: {relation.interface}
