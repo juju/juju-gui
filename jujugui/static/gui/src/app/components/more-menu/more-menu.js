@@ -23,6 +23,7 @@ YUI.add('more-menu', function() {
   juju.components.MoreMenu = React.createClass({
     mixins: [OnClickOutside],
     propTypes: {
+      activeItem: React.PropTypes.string,
       items: React.PropTypes.array.isRequired
     },
 
@@ -80,6 +81,8 @@ YUI.add('more-menu', function() {
       return classNames(
         'more-menu__menu-item',
         {
+          'more-menu__menu-item--active':
+            item.id && this.props.activeItem === item.id,
           'more-menu__menu-item--inactive': !item.action
         }
       );

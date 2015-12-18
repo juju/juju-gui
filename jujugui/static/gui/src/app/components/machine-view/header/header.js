@@ -22,6 +22,7 @@ YUI.add('machine-view-header', function() {
 
   juju.components.MachineViewHeader = React.createClass({
     propTypes: {
+      activeMenuItem: React.PropTypes.string,
       menuItems: React.PropTypes.array,
       title: React.PropTypes.string.isRequired,
       toggle: React.PropTypes.object
@@ -39,6 +40,7 @@ YUI.add('machine-view-header', function() {
       if (menuItems) {
         return (
           <juju.components.MoreMenu
+            activeItem={this.props.activeMenuItem}
             items={menuItems} />);
       } else if (toggle) {
         var icon = toggle.toggleOn ? 'close_16' : 'add-light-16';

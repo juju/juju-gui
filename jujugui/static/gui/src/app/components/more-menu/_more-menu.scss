@@ -37,6 +37,10 @@
                 cursor: pointer;
             }
 
+            &--active {
+                color: $ubuntu-orange;
+            }
+
             &--inactive {
                 color: $dark-grey;
 
