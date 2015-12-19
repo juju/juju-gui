@@ -100,7 +100,7 @@ describe('Inspector', function() {
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.UnitList
-          serviceId="demo"
+          service={service}
           unitStatus="error"
           units={[]}
           envResolved={envResolved}

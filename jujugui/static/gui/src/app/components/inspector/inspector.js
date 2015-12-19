@@ -119,7 +119,7 @@ YUI.add('inspector-component', function() {
             headerType: unitStatus,
             component:
               <juju.components.UnitList
-                serviceId={serviceId}
+                service={service}
                 unitStatus={unitStatus}
                 units={units}
                 envResolved={this.props.envResolved}
