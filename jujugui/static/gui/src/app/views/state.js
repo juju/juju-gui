@@ -662,7 +662,7 @@ YUI.add('juju-app-state', function(Y) {
       @return {Array} The url split into it's sections.
     */
     _splitIntoComponents: function(url) {
-      var sections = ['machine', 'inspector'],
+      var sections = ['machine', 'inspector', 'profile'],
           parts = [],
           indexes = [];
       sections.forEach(function(section) {
