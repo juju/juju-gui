@@ -22,10 +22,22 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 
 describe('UnitList', () => {
+  var service;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
     YUI().use('unit-list', () => { done(); });
+  });
+
+  beforeEach(() => {
+    service = {
+      get: function(val) {
+        if (val === 'subordinate') {
+          return false;
+        }
+        return 'mysql';
+      }
+    };
   });
 
   it('renders a list of unit components', () => {
@@ -38,6 +50,7 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          service={service}
           units={units} />);
     var children = output.props.children[1].props.children;
     var refs = [
@@ -117,8 +130,10 @@ describe('UnitList', () => {
     var units = [{
       displayName: 'mysql/0'
     }];
+
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          service={service}
           units={units} />);
     var child = output.props.children[0].props.children;
     assert.deepEqual(child,
@@ -128,21 +143,44 @@ describe('UnitList', () => {
         title="Scale service"/>);
   });
 
-  it('hides the actions when viewing a status list', () => {
+  it('does not render the actions when viewing a status list', () => {
     var units = [{
       displayName: 'mysql/0'
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          service={service}
           unitStatus="pending"
           units={units} />);
-    var child = output.props.children[0];
-    assert.deepEqual(child,
-      <div className="unit-list__actions hidden">
-        <juju.components.OverviewAction
-          action={child.props.children.props.action}
-          icon="plus_box_16"
-          title="Scale service"/>
+    assert.deepEqual(output,
+      <div className="unit-list">
+        {undefined}
+        {output.props.children[1]}
+        {output.props.children[2]}
+      </div>);
+  });
+
+  it('does not render the actions when viewing a subordinate', () => {
+    var units = [{
+      displayName: 'mysql/0'
+    }];
+    service = {
+      get: function(val) {
+        if (val === 'subordinate') {
+          return true;
+        }
+        return 'mysql';
+      }
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          service={service}
+          units={units} />);
+    assert.deepEqual(output,
+      <div className="unit-list">
+        {undefined}
+        {output.props.children[1]}
+        {output.props.children[2]}
       </div>);
   });
 
@@ -156,7 +194,9 @@ describe('UnitList', () => {
     }];
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
-      <juju.components.UnitList units={units} />);
+      <juju.components.UnitList
+        service={service}
+        units={units} />);
     var refs = component.refs;
     // We want to make sure that they are not checked first.
     assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
@@ -177,7 +217,7 @@ describe('UnitList', () => {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           changeState={changeState}
-          serviceId="mysql"
+          service={service}
           unitStatus={null}
           units={units} />);
     output.props.children[1].props.children[1].props.action({
@@ -210,7 +250,7 @@ describe('UnitList', () => {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           changeState={changeState}
-          serviceId="nrpe"
+          service={service}
           unitStatus={null}
           units={units} />);
     output.props.children[1].props.children[1].props.action({
@@ -236,6 +276,7 @@ describe('UnitList', () => {
   it('only displays a remove button for a non-error list', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          service={service}
           units={[]} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
@@ -286,7 +327,7 @@ describe('UnitList', () => {
         <juju.components.UnitList
           destroyUnits={destroyUnits}
           changeState={changeState}
-          serviceId="service1"
+          service={service}
           units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     output.refs['UnitListItem-' + units[2].id].setState({checked: true});
@@ -310,7 +351,7 @@ describe('UnitList', () => {
         <juju.components.UnitList
           destroyUnits={destroyUnits}
           changeState={changeState}
-          serviceId="service1"
+          service={service}
           units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     var button = testUtils.findRenderedDOMComponentWithClass(
@@ -339,7 +380,7 @@ describe('UnitList', () => {
           unitStatus='error'
           envResolved={envResolved}
           changeState={changeState}
-          serviceId="service1"
+          service={service}
           units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
     output.refs['UnitListItem-' + units[1].id].setState({checked: true});

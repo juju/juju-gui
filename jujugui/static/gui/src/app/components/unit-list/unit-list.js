@@ -33,7 +33,7 @@ YUI.add('unit-list', function() {
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: this.props.serviceId,
+            id: this.props.service.get('id'),
             activeComponent: 'scale'
           }}});
     },
@@ -149,21 +149,6 @@ YUI.add('unit-list', function() {
     },
 
     /**
-      Generate the classes for the actions from the props.
-
-      @method _generateActionsClasses
-      @returns {String} The collection of class names.
-    */
-    _generateActionsClasses: function() {
-      return classNames(
-        'unit-list__actions',
-        {
-          hidden: this.props.unitStatus
-        }
-      );
-    },
-
-    /**
       Generate the groups of units for the service.
 
       @method _generateGroups
@@ -235,15 +220,30 @@ YUI.add('unit-list', function() {
       return buttons;
     },
 
+    /**
+      Generate the scale service action.
+
+      @returns {Object} The scale service component.
+    */
+    _generateScaleService: function() {
+      // Don't show the scale service if we're viewing a status list (e.g.
+      // errors) or if the service is a subordinate.
+      if (this.props.unitStatus || this.props.service.get('subordinate')) {
+        return;
+      }
+      return (
+        <div className="unit-list__actions">
+          <juju.components.OverviewAction
+            action={this._navigate}
+            icon="plus_box_16"
+            title="Scale service" />
+        </div>);
+    },
+
     render: function() {
       return (
         <div className="unit-list">
-          <div className={this._generateActionsClasses()}>
-            <juju.components.OverviewAction
-              action={this._navigate}
-              icon="plus_box_16"
-              title="Scale service" />
-          </div>
+          {this._generateScaleService()}
           <ul className="unit-list__units">
             {this._generateListGroups()}
           </ul>
