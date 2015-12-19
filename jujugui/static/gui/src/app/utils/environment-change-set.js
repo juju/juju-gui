@@ -711,18 +711,21 @@ YUI.add('environment-change-set', function(Y) {
       var db = this.get('db');
       var machine = db.machines.getById(command.args[0]);
       var removedUnits = [];
-      var units = db.units.filterByMachine(machine.id);
+      var units = db.units.filterByMachine(machine.id, true);
       units.forEach(function(unit) {
+        // Update the revived model to trigger events.
+        var unitModel = db.units.revive(unit);
         if (!unit.agent_state) {
           // Remove the unit's machine, making it an unplaced unit.
           delete unit.machine;
           removedUnits.push(unit);
-
-          // Update the revived model to trigger events.
-          var unitModel = db.units.revive(unit);
           unitModel.set('machine', null);
-          db.units.free(unitModel);
+        } else {
+          // If the unit is deployed to the machine then mark it as deleted
+          // so that the UI updates.
+          unitModel.set('deleted', true);
         }
+        db.units.free(unitModel);
       }, this);
       if (machine.parentId) {
         // Remove the removed units from the parent machines unit list.
@@ -736,9 +739,15 @@ YUI.add('environment-change-set', function(Y) {
       if (existingMachine) {
         this._destroyQueuedMachine(existingMachine);
       } else {
-        var machineModel = db.machines.revive(machine);
-        machineModel.set('deleted', true);
-        db.machines.free(machineModel);
+        var allMachines = db.machines.filterByAncestor(machine.id);
+        // Add the parent to the list.
+        allMachines.unshift(machine);
+        // Loop through all of the machines setting them to deleted.
+        allMachines.forEach((machine) => {
+          var machineModel = db.machines.revive(machine);
+          machineModel.set('deleted', true);
+          db.machines.free(machineModel);
+        });
         return this._createNewRecord('destroyMachines', command, []);
       }
     },
