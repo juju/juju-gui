@@ -23,6 +23,7 @@ YUI.add('more-menu', function() {
   juju.components.MoreMenu = React.createClass({
     mixins: [OnClickOutside],
     propTypes: {
+      activeItem: React.PropTypes.string,
       items: React.PropTypes.array.isRequired
     },
 
@@ -70,6 +71,24 @@ YUI.add('more-menu', function() {
     },
 
     /**
+      Generate the classes for the menu item.
+
+      @method _generateItemClasses
+      @param {Object} item The menu item.
+      @returns {String} The collection of class names.
+    */
+    _generateItemClasses: function(item) {
+      return classNames(
+        'more-menu__menu-item',
+        {
+          'more-menu__menu-item--active':
+            item.id && this.props.activeItem === item.id,
+          'more-menu__menu-item--inactive': !item.action
+        }
+      );
+    },
+
+    /**
       Generate the menu.
 
       @method _generateMenu
@@ -82,7 +101,7 @@ YUI.add('more-menu', function() {
       var components = [];
       this.props.items.forEach((item) => {
         components.push(
-          <li className="more-menu__menu-item"
+          <li className={this._generateItemClasses(item)}
             key={item.label}
             onClick={this._handleItemClick.bind(this, item.action)}
             role="button"

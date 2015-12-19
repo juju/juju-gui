@@ -36,6 +36,19 @@
                 background-color: $hover-background;
                 cursor: pointer;
             }
+
+            &--active {
+                color: $ubuntu-orange;
+            }
+
+            &--inactive {
+                color: $dark-grey;
+
+                &:hover {
+                    background-color: transparent;
+                    cursor: default;
+                }
+            }
         }
     }
 }

@@ -87,7 +87,7 @@ describe('MoreMenu', function() {
               tabIndex="0">
               Add machine
             </li>
-            <li className="more-menu__menu-item"
+            <li className="more-menu__menu-item more-menu__menu-item--inactive"
               key="Add container"
               onClick={output.props.children[1].props.children[1].props.onClick}
               role="button"

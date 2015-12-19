@@ -42,6 +42,8 @@ YUI.add('machine-view', function() {
     */
     getInitialState: function() {
       return {
+        containerSort: 'name',
+        machineSort: 'name',
         selectedMachine: this._getFirstMachineId(this.props.machines),
         showAddMachine: false,
         showConstraints: true,
@@ -194,7 +196,8 @@ YUI.add('machine-view', function() {
       @returns {Object} A list of machines or onboarding.
     */
     _generateMachines: function() {
-      var machines = this.props.machines.filterByParent();
+      var machineList = this.props.machines.filterByParent();
+      var machines = this._sortMachines(machineList, this.state.machineSort);
       var onboarding;
       if (this.state.showAddMachine) {
         return;
@@ -262,7 +265,9 @@ YUI.add('machine-view', function() {
       if (!selectedMachine) {
         return;
       }
-      var containers = this.props.machines.filterByParent(selectedMachine);
+      var containerList = this.props.machines.filterByParent(selectedMachine);
+      var containers = this._sortMachines(
+        containerList, this.state.containerSort);
       var machine = this.props.machines.getById(selectedMachine);
       if (!machine) {
         return;
@@ -413,6 +418,143 @@ YUI.add('machine-view', function() {
         `${unitCount} unit${unitPlural}`;
     },
 
+    /**
+      Sort the machines.
+
+      @method _sortMachines
+      @param {Array} machines A list of machines.
+      @param {String} method The sort method.
+      @returns {Array} A sorted list of machines
+    */
+    _sortMachines: function(machines, method) {
+      var sortMethod = this._getSortMethod(method);
+      return machines.sort(function (a, b) {
+        var sortedA = sortMethod(a);
+        var sortedB = sortMethod(b);
+        if (sortedA == sortedB) {
+          return 0;
+        } else if (sortedA > sortedB) {
+          return 1;
+        } else if (sortedA < sortedB) {
+          return -1;
+        }
+      });
+    },
+
+    /**
+      Set the sort method to the given method.
+
+      @method _setSortMethod
+      @param {String} sort The sort method.
+      @param {Boolean} sortContainers Whether to sort containers.
+    */
+    _setSortMethod: function(sort, sortContainers) {
+      var state = {};
+      if (sortContainers) {
+        state.containerSort = sort;
+      } else {
+        state.machineSort = sort;
+      }
+      this.setState(state);
+    },
+
+    /**
+       Get the sort method for the given sort type.
+
+       @method _getSortMethod
+       @param {String} sort The sort type.
+       @return {Function} The sorting method function.
+     */
+    _getSortMethod: function(sort) {
+      var sortMethod;
+      var weight = 0;
+      var units = this.props.units;
+      switch (sort) {
+        case 'units':
+          sortMethod = function(model) {
+            var unitList = units.filterByMachine(model.id);
+            if (unitList) {
+              weight = unitList.length;
+            }
+            return -weight;
+          };
+          break;
+        case 'name':
+          sortMethod = function(model) {
+            // A fairly arbitrary string length to pad out the strings
+            // to. If there are sort issues, try increasing this value.
+            var maxLength = 50;
+            var name = model.displayName;
+            // Pad the string out to our max value so that the numbers
+            // inside the strings sort correctly.
+            for (var i = 0; i < maxLength - name.length; i += 1) {
+              name = '0' + name;
+            }
+            return name;
+          };
+          break;
+        case 'disk':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.disk;
+            }
+            return -weight;
+          };
+          break;
+        case 'ram':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.mem;
+            }
+            return -weight;
+          };
+          break;
+        case 'cpu':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.cpuPower;
+            }
+            return -weight;
+          };
+          break;
+        case 'service':
+          sortMethod = function(model) {
+            var unitList = units.filterByMachine(model.id);
+            if (unitList) {
+              var services = {};
+              unitList.forEach(function(unit) {
+                services[unit.service] = true;
+              });
+              weight = Object.keys(services);
+            }
+            return weight;
+          };
+          break;
+        case 'services':
+          sortMethod = function(model) {
+            var unitList = units.filterByMachine(model.id);
+            if (unitList) {
+              var services = {};
+              unitList.forEach(function(unit) {
+                services[unit.service] = true;
+              });
+              weight = Object.keys(services).length;
+            }
+            return -weight;
+          };
+          break;
+        case 'size':
+          sortMethod = function(model) {
+            if (model.hardware) {
+              weight = model.hardware.mem + model.hardware.disk;
+            }
+            return -weight;
+          };
+          break;
+      }
+      return sortMethod;
+    },
+
     render: function() {
       var machineMenuItems = [{
         label: 'Add machine',
@@ -421,10 +563,50 @@ YUI.add('machine-view', function() {
         label: this.state.showConstraints ?
           'Hide constraints' : 'Show constaints',
         action: this._toggleConstraints
+      }, {
+        label: 'Sort by:'
+      }, {
+        label: 'Name',
+        id: 'name',
+        action: this._setSortMethod.bind(this, 'name')
+      }, {
+        label: 'No. services',
+        id: 'services',
+        action: this._setSortMethod.bind(this, 'services')
+      }, {
+        label: 'No. units',
+        id: 'units',
+        action: this._setSortMethod.bind(this, 'units')
+      }, {
+        label: 'Disk',
+        id: 'disk',
+        action: this._setSortMethod.bind(this, 'disk')
+      }, {
+        label: 'RAM',
+        id: 'ram',
+        action: this._setSortMethod.bind(this, 'ram')
+      }, {
+        label: 'CPU',
+        id: 'cpu',
+        action: this._setSortMethod.bind(this, 'cpu')
       }];
       var containerMenuItems = [{
         label: 'Add container',
         action: this._addContainer
+      }, {
+        label: 'Sort by:'
+      }, {
+        label: 'Name',
+        id: 'name',
+        action: this._setSortMethod.bind(this, 'name', true)
+      }, {
+        label: 'No. units',
+        id: 'units',
+        action: this._setSortMethod.bind(this, 'units', true)
+      }, {
+        label: 'Services',
+        id: 'services',
+        action: this._setSortMethod.bind(this, 'service', true)
       }];
       var unplacedToggle = {
         action: this._toggleScaleUp,
@@ -445,6 +627,7 @@ YUI.add('machine-view', function() {
             </div>
             <div className="machine-view__column machine-view__column--overlap">
               <juju.components.MachineViewHeader
+                activeMenuItem={this.state.machineSort}
                 menuItems={machineMenuItems}
                 title={this._generateMachinesTitle()} />
               <div className="machine-view__column-content">
@@ -454,6 +637,7 @@ YUI.add('machine-view', function() {
             </div>
             <div className="machine-view__column">
               <juju.components.MachineViewHeader
+                activeMenuItem={this.state.containerSort}
                 menuItems={containerMenuItems}
                 title={this._generateContainersTitle()} />
               <div className="machine-view__column-content">

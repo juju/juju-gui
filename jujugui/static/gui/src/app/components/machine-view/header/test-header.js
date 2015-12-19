@@ -43,12 +43,14 @@ describe('MachineViewHeader', function() {
     var menuItems = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader
+        activeMenuItem="name"
         menuItems={menuItems}
         title="Sandbox" />);
     var expected = (
         <div className="machine-view__header">
           Sandbox
           <juju.components.MoreMenu
+            activeItem="name"
             items={menuItems} />
         </div>);
     assert.deepEqual(output, expected);
