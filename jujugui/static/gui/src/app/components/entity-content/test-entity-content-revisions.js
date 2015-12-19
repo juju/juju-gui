@@ -53,7 +53,7 @@ describe('EntityContentRevisions', function() {
               <p className="revisions__list-meta smaller">
                 by {"Charles Butler"}
                 <span className="revisions__list-meta-date">
-                  2015-06-03
+                  2015-06-16
                 </span>
               </p>
               <p className="revisions__list-message">
@@ -64,7 +64,7 @@ describe('EntityContentRevisions', function() {
               <p className="revisions__list-meta smaller">
                 by {"Tim Van Steenburgh"}
                 <span className="revisions__list-meta-date">
-                  2015-06-06
+                  2015-06-12
                 </span>
               </p>
               <p className="revisions__list-message">
@@ -75,7 +75,7 @@ describe('EntityContentRevisions', function() {
               <p className="revisions__list-meta smaller">
                 by {"Charles Butler"}
                 <span className="revisions__list-meta-date">
-                  2015-05-06
+                  2015-05-22
                 </span>
               </p>
               <p className="revisions__list-message">

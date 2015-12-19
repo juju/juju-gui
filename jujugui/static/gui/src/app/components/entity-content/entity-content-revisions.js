@@ -50,12 +50,13 @@ YUI.add('entity-content-revisions', function() {
       Format ISO date/time to human readable format (2015-09-05).
 
       @method _formatDate
+      @param {String} iso A date to be parsed.
     */
     _formatDate: function(iso) {
       var date = new Date(Date.parse(iso));
-      date = date.getFullYear() + '-' +
-        ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-        ('0' + (date.getDay() + 1)).slice(-2);
+      date = date.getUTCFullYear() + '-' +
+        ('0' + (date.getUTCMonth() + 1)).slice(-2) + '-' +
+        ('0' + date.getUTCDate()).slice(-2);
       return date;
     },
 
