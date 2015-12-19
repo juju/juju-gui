@@ -140,13 +140,10 @@ YUI.add('header-search', function() {
 
       @method _closeSearch
     */
-    _closeSearch: function(active) {
-      if (active === undefined) {
-        active = false;
-      }
+    _closeSearch: function() {
       this.setState({
         query: undefined,
-        active: active,
+        active: false,
         inputStyles: this._generateInputStyles(false)
       });
     },
@@ -209,7 +206,13 @@ YUI.add('header-search', function() {
       @method _handleClose
     */
     _handleClose: function() {
-      this._closeSearch(true);
+      this._closeSearch();
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: null
+        }
+      });
     },
 
     /**
@@ -260,12 +263,6 @@ YUI.add('header-search', function() {
               ref="searchInput"/>
           </form>
           <span tabIndex="0" role="button"
-            className={this._closeClasses()}
-            onClick={this._handleClose}>
-            <juju.components.SvgIcon name="close_16"
-              size="16" />
-          </span>
-          <span tabIndex="0" role="button"
             onClick={this._handleStoreClick}
             className="header-search__store">
             <span className="header-search__store-icon">
@@ -275,6 +272,12 @@ YUI.add('header-search', function() {
             <span className="header-search__store-label">
               Store
             </span>
+          </span>
+          <span tabIndex="0" role="button"
+            className={this._closeClasses()}
+            onClick={this._handleClose}>
+            <juju.components.SvgIcon name="close_16"
+              size="16" />
           </span>
         </div>
       );

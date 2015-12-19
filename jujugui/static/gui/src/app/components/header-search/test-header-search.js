@@ -57,13 +57,34 @@ describe('HeaderSearch', function() {
         getAppState={getAppState}
         changeState={changeState}
         active={false} />);
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2],
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
-        onClick={output.props.children[1].props.onClick}>
+        onClick={output.props.children[2].props.onClick}>
         <juju.components.SvgIcon name="close_16"
           size="16" />
       </span>);
+  });
+
+  it('changes state when the close button is clicked', function() {
+    var getAppState = sinon.stub();
+    getAppState.withArgs(
+      'current', 'sectionC', 'component').returns('charmbrowser');
+    getAppState.withArgs(
+      'current', 'sectionC', 'metadata').returns(undefined);
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />);
+    output.props.children[2].props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: null,
+        metadata: null
+      }
+    });
   });
 
   it('becomes active when the input is focused', function() {
@@ -88,7 +109,7 @@ describe('HeaderSearch', function() {
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />);
-    output.props.children[2].props.onClick();
+    output.props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {

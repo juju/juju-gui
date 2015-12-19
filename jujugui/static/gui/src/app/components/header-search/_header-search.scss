@@ -44,6 +44,7 @@
     }
 
     &__store {
+        margin-right: 10px;
         cursor: pointer;
         transition: color .3s;
 
@@ -57,12 +58,14 @@
     }
 
     &__store-icon {
-        margin-right: 10px;
-
         .svg-icon {
             transition: fill 0.3s;
             fill: $warm-grey;
         }
+    }
+
+    &__store-label {
+        margin-left: 10px;
     }
 
     &__close {
