@@ -140,7 +140,7 @@ describe('LoginComponent', function() {
         envName="testenv"
         setCredentials={sinon.stub()}
         login={sinon.stub()}
-        loginFailure={true} />);
+        loginFailure={true} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {username: {focus: focus}};
     instance.componentDidMount();
