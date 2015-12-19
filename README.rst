@@ -59,7 +59,6 @@ If you are using the `Juju GUI charm`_, the end-user configuration is
 available from the charm configuration.
 
 
-
 .. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
 .. _on Github: https://github.com/juju/juju-gui
 .. _juju quickstart plugin: https://launchpad.net/juju-quickstart
