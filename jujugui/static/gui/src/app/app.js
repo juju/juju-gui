@@ -995,7 +995,7 @@ YUI.add('juju-gui', function(Y) {
       @method emptySectionB
     */
     emptySectionB: function() {
-      if (window.flags && window.flags.mv) {
+      if (!window.flags || !window.flags.mv) {
         ReactDOM.unmountComponentAtNode(
           document.getElementById('machine-view'));
       } else if (this.machineViewPanel) {
@@ -1036,7 +1036,7 @@ YUI.add('juju-gui', function(Y) {
         view.
     */
     _renderMachineView: function(metadata) {
-      if (window.flags && window.flags.mv) {
+      if (!window.flags || !window.flags.mv) {
         var db = this.db;
         ReactDOM.render(
           <components.MachineView
