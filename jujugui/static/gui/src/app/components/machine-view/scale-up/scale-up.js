@@ -37,6 +37,9 @@ YUI.add('machine-view-scale-up', function() {
       var components = [];
       var services = this.props.services.toArray();
       services.forEach((service) => {
+        if (service.get('subordinate')) {
+          return;
+        }
         components.push(
           <li className="machine-view__scale-up-unit"
             key={service.get('id')}>

@@ -59,6 +59,24 @@ describe('MachineViewScaleUp', function() {
               break;
           }
         }
+      }, {
+        // Subordinate services should not appear in the list.
+        get: function (val) {
+          switch (val) {
+            case 'id':
+              return '333333$';
+              break;
+            case 'name':
+              return 'ntp';
+              break;
+            case 'icon':
+              return 'ntp.svg';
+              break;
+            case 'subordinate':
+              return true;
+              break;
+          }
+        }
       }])
     };
     var renderer = jsTestUtils.shallowRender(
