@@ -662,7 +662,7 @@ YUI.add('juju-app-state', function(Y) {
       @return {Array} The url split into it's sections.
     */
     _splitIntoComponents: function(url) {
-      var sections = ['machine', 'inspector', 'profile'],
+      var sections = ['services', 'machine', 'inspector', 'profile'],
           parts = [],
           indexes = [];
       sections.forEach(function(section) {
@@ -671,7 +671,11 @@ YUI.add('juju-app-state', function(Y) {
           indexes.push(idx);
         }
       });
-      indexes.sort();
+      // JavaScript array sort sorts alphabetically which causes issues if
+      // you have multiple default sections ie) [0, 9, 17] gets sorted as
+      // [0, 17, 9]. So we must pass a custom sorter to it so that it sorts
+      // numerically.
+      indexes.sort((a, b) => a-b);
       // If the first part of the url isn't part of a section then store it.
       if (indexes[0] !== 0) {
         parts.push(url.substr(0, indexes[0]));

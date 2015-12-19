@@ -919,6 +919,17 @@ describe('UI State object', function() {
           component: 'profile'
         }
       },
+      '/services/machine/profile': {
+        sectionA: {
+          component: 'services'
+        },
+        sectionB: {
+          component: 'machine'
+        },
+        sectionC: {
+          component: 'profile'
+        }
+      },
       'login': {
         app: {
           component: 'login'
