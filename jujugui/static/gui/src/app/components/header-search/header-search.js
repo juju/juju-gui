@@ -140,7 +140,7 @@ YUI.add('header-search', function() {
 
       @method _closeSearch
     */
-    _closeSearch: function(active) {
+    _closeSearch: function() {
       this.setState({
         query: undefined,
         active: false,
