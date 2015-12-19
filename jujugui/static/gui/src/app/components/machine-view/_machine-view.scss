@@ -20,6 +20,7 @@
 
     &__column {
         @extend %scroll-children;
+        overflow-y: hidden;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;

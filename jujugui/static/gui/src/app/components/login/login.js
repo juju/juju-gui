@@ -29,6 +29,10 @@ YUI.add('login-component', function() {
       loginFailure: React.PropTypes.bool
     },
 
+    componentDidMount: function () {
+      this.refs.username.focus();
+    },
+
     /**
       Handles the form submit by calling the set credentials and login
       methods with the appropriate values.

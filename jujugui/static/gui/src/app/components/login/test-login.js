@@ -133,4 +133,17 @@ describe('LoginComponent', function() {
     assert.equal(login.callCount, 1, 'login never called');
   });
 
+  it('can focus on the username field', function() {
+    var focus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Login
+        envName="testenv"
+        setCredentials={sinon.stub()}
+        login={sinon.stub()}
+        loginFailure={true} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {username: {focus: focus}};
+    instance.componentDidMount();
+    assert.equal(focus.callCount, 1);
+  });
 });
