@@ -600,7 +600,7 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -617,6 +617,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={{
                 displayName: 'new0',
@@ -630,6 +631,7 @@ describe('MachineView', function() {
               units={units} />
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new5"
               machine={{
                 displayName: 'new5',
@@ -894,7 +896,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -910,6 +912,7 @@ describe('MachineView', function() {
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0"
             machine={{
               commitStatus: 'committed',
@@ -924,6 +927,7 @@ describe('MachineView', function() {
             units={units} />
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0/lxc/0"
             machine={{
               displayName: 'new0/lxc/0',
@@ -935,6 +939,7 @@ describe('MachineView', function() {
             units={units} />
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0/lxc/5"
             machine={{
               displayName: 'new0/lxc/5',
