@@ -38,7 +38,9 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
@@ -125,7 +127,9 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
@@ -155,7 +159,9 @@ describe('MachineView', function() {
       size: sinon.stub().returns(1)
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
@@ -186,7 +192,9 @@ describe('MachineView', function() {
       size: sinon.stub().returns(1)
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         environmentName="My Env"
         units={units}
@@ -236,7 +244,9 @@ describe('MachineView', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         createMachine={createMachine}
@@ -304,7 +314,9 @@ describe('MachineView', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         environmentName="My Env"
@@ -327,7 +339,9 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
@@ -379,7 +393,9 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -399,6 +415,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             {[<juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -435,7 +452,9 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -452,6 +471,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -462,6 +482,7 @@ describe('MachineView', function() {
               units={units} />
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new1"
               machine={machineList[1]}
               selected={false}
@@ -498,7 +519,9 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -516,6 +539,7 @@ describe('MachineView', function() {
           <ul className="machine-view__list">
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new0"
               machine={machineList[0]}
               selected={true}
@@ -526,6 +550,7 @@ describe('MachineView', function() {
               units={units} />
             <juju.components.MachineViewMachine
               destroyMachines={destroyMachines}
+              dropUnit={instance._dropUnit}
               key="new1"
               machine={machineList[1]}
               selected={false}
@@ -553,7 +578,9 @@ describe('MachineView', function() {
     };
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         environmentName="My Env"
@@ -591,7 +618,9 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
         units={units}
@@ -630,7 +659,9 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
@@ -646,6 +677,7 @@ describe('MachineView', function() {
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0"
             machine={{
               commitStatus: 'committed',
@@ -660,6 +692,7 @@ describe('MachineView', function() {
             units={units} />
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
             removeUnit={instance._removeUnit}
@@ -695,7 +728,9 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
@@ -716,6 +751,7 @@ describe('MachineView', function() {
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0"
             machine={{
               commitStatus: 'committed',
@@ -730,6 +766,7 @@ describe('MachineView', function() {
             units={units} />
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
             key="new0/lxc/0"
             machine={{id: 'new0/lxc/0'}}
             removeUnit={instance._removeUnit}
@@ -762,7 +799,9 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineView
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
@@ -775,5 +814,45 @@ describe('MachineView', function() {
     instance._removeUnit('wordpress/8');
     assert.equal(removeUnits.callCount, 1);
     assert.deepEqual(removeUnits.args[0][0], ['wordpress/8']);
+  });
+
+  it('can place a unit on a machine', function() {
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub()
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var destroyMachines = sinon.stub();
+    var placeUnit = sinon.stub();
+    var removeUnits = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        addGhostAndEcsUnits={sinon.stub()}
+        createMachine={createMachine}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        placeUnit={placeUnit}
+        removeUnits={removeUnits}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._dropUnit('wordpress/8', 'new0');
+    assert.equal(placeUnit.callCount, 1);
+    assert.deepEqual(placeUnit.args[0][0], 'wordpress/8');
+    assert.deepEqual(placeUnit.args[0][1], 'new0');
   });
 });

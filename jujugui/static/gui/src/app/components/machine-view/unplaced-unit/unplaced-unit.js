@@ -19,8 +19,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('machine-view-unplaced-unit', function() {
+  var dragSource = {
+    /**
+      Called when the component starts the drag.
+      See: http://gaearon.github.io/react-dnd/docs-drag-source.html
 
-  juju.components.MachineViewUnplacedUnit = React.createClass({
+      @method beginDrag
+      @param {Object} props The component props.
+    */
+    beginDrag: function(props) {
+      return {unit: props.unit};
+    }
+  };
+
+  /**
+    Provides props to be injected into the component.
+
+    @method collect
+    @param {Object} connect The connector.
+    @param {Object} monitor A DropTargetMonitor.
+  */
+  function collect(connect, monitor) {
+    return {
+      connectDragSource: connect.dragSource(),
+      isDragging: monitor.isDragging()
+    };
+  }
+
+  var MachineViewUnplacedUnit = React.createClass({
     propTypes: {
       createMachine: React.PropTypes.func.isRequired,
       icon: React.PropTypes.string.isRequired,
@@ -67,6 +93,19 @@ YUI.add('machine-view-unplaced-unit', function() {
           unit={this.props.unit} />);
     },
 
+    /**
+      Generate the classes for the unit.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'machine-view__unplaced-unit', {
+          'machine-view__unplaced-unit--dragged': this.props.isDragging
+        });
+    },
+
     render: function() {
       var unit = this.props.unit;
       var menuItems = [{
@@ -76,18 +115,24 @@ YUI.add('machine-view-unplaced-unit', function() {
         label: 'Destroy',
         action: this.props.removeUnit.bind(null, unit.id)
       }];
-      return (
-        <li className="machine-view__unplaced-unit">
+      // Wrap the returned components in the drag source method.
+      return this.props.connectDragSource(
+        <li className={this._generateClasses()}>
           <img src={this.props.icon} alt={unit.displayName}
             className="machine-view__unplaced-unit-icon" />
           {unit.displayName}
           <juju.components.MoreMenu
             items={menuItems} />
           {this._generatePlaceUnit()}
+          <div className="machine-view__unplaced-unit-drag-state"></div>
         </li>
       );
     }
   });
+
+  juju.components.MachineViewUnplacedUnit = ReactDnD.DragSource(
+    'unit', dragSource, collect)(MachineViewUnplacedUnit);
+
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

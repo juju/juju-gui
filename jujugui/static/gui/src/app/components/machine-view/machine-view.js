@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view', function() {
 
-  juju.components.MachineView = React.createClass({
+  var MachineView = React.createClass({
     propTypes: {
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
@@ -28,6 +28,7 @@ YUI.add('machine-view', function() {
       destroyMachines: React.PropTypes.func.isRequired,
       environmentName: React.PropTypes.string.isRequired,
       machines: React.PropTypes.object.isRequired,
+      placeUnit: React.PropTypes.func.isRequired,
       removeUnits: React.PropTypes.func.isRequired,
       services: React.PropTypes.object.isRequired,
       units: React.PropTypes.object.isRequired
@@ -94,6 +95,17 @@ YUI.add('machine-view', function() {
     */
     _removeUnit: function(id) {
       this.props.removeUnits([id]);
+    },
+
+    /**
+      Handle dropping a unit.
+
+      @method _dropUnit
+      @param {Object} unit The unit that was dropped.
+      @param {String} machine The machine id that the unit dropped onto.
+    */
+    _dropUnit: function(unit, machine) {
+      this.props.placeUnit(unit, machine);
     },
 
     /**
@@ -219,6 +231,7 @@ YUI.add('machine-view', function() {
         components.push(
           <juju.components.MachineViewMachine
             destroyMachines={this.props.destroyMachines}
+            dropUnit={this._dropUnit}
             key={machine.id}
             machine={machine}
             selected={selectedMachine === machine.id}
@@ -266,6 +279,7 @@ YUI.add('machine-view', function() {
         components.push(
           <juju.components.MachineViewMachine
             destroyMachines={this.props.destroyMachines}
+            dropUnit={this._dropUnit}
             key={container.id}
             machine={container}
             removeUnit={this._removeUnit}
@@ -452,6 +466,10 @@ YUI.add('machine-view', function() {
       );
     }
   });
+
+  juju.components.MachineView = ReactDnD.DragDropContext(
+    ReactDnDHTML5Backend)(MachineView);
+
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

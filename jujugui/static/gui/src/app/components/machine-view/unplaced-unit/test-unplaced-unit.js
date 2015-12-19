@@ -31,7 +31,10 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7'};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewUnplacedUnit
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"
         removeUnit={removeUnit}
         unit={unit} />, true);
@@ -51,6 +54,27 @@ describe('MachineViewUnplacedUnit', function() {
             action: output.props.children[2].props.items[1].action
           }]} />
           {undefined}
+          <div className="machine-view__unplaced-unit-drag-state"></div>
+      </li>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display in dragged mode', function() {
+    var removeUnit = sinon.stub();
+    var unit = {displayName: 'django/7'};
+    var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        connectDragSource={jsTestUtils.connectDragSource}
+        icon="icon.svg"
+        isDragging={true}
+        removeUnit={removeUnit}
+        unit={unit} />);
+    var expected = (
+      <li className={'machine-view__unplaced-unit ' +
+        'machine-view__unplaced-unit--dragged'}>
+        {output.props.children}
       </li>);
     assert.deepEqual(output, expected);
   });
@@ -59,7 +83,10 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7', id: 'django/7'};
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewUnplacedUnit
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"
         removeUnit={removeUnit}
         unit={unit} />);

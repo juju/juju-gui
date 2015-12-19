@@ -20,11 +20,42 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view-machine', function() {
 
-  juju.components.MachineViewMachine = React.createClass({
+  var dropTarget = {
+    /**
+      Called when something is dropped on the machine.
+      See: http://gaearon.github.io/react-dnd/docs-drop-target.html
+
+      @method drop
+      @param {Object} props The component props.
+      @param {Object} monitor A DropTargetMonitor.
+      @param {Object} component The component that is being dropped onto.
+    */
+    drop: function (props, monitor, component) {
+      var item = monitor.getItem();
+      props.dropUnit(item.unit, props.machine.id);
+    }
+  };
+
+  /**
+    Provides props to be injected into the component.
+
+    @method collect
+    @param {Object} connect The connector.
+    @param {Object} monitor A DropTargetMonitor.
+  */
+  function collect(connect, monitor) {
+    return {
+      connectDropTarget: connect.dropTarget(),
+      isOver: monitor.isOver()
+    };
+  }
+
+  var MachineViewMachine = React.createClass({
     propTypes: {
       destroyMachines: React.PropTypes.func.isRequired,
       machine: React.PropTypes.object.isRequired,
       removeUnit: React.PropTypes.func,
+      dropUnit: React.PropTypes.func.isRequired,
       selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
       showConstraints: React.PropTypes.bool,
@@ -140,6 +171,7 @@ YUI.add('machine-view-machine', function() {
     _generateClasses: function() {
       var machine = this.props.machine;
       var classes = {
+        'machine-view__machine--drop': this.props.isOver,
         'machine-view__machine--selected': this.props.selected,
         'machine-view__machine--uncommitted': machine.deleted ||
           machine.commitStatus === 'uncommitted',
@@ -161,12 +193,10 @@ YUI.add('machine-view-machine', function() {
     */
     _generateUnitClasses: function(unit) {
       return classNames(
-        'machine-view__machine-unit',
-        {
+        'machine-view__machine-unit', {
           'machine-view__machine-unit--uncommitted':
             unit.deleted || !unit.agent_state
-        }
-      );
+        });
     },
 
     render: function() {
@@ -176,7 +206,8 @@ YUI.add('machine-view-machine', function() {
         label: 'Destroy',
         action: this._destroyMachine
       }];
-      return (
+      // Wrap the returned components in the drop target method.
+      return this.props.connectDropTarget(
         <div className={this._generateClasses()}
           onClick={this._handleSelectMachine}
           role="button"
@@ -188,10 +219,19 @@ YUI.add('machine-view-machine', function() {
           </div>
           {this._generateHardware(units.length)}
           {this._generateUnits()}
+          <div className="machine-view__machine-drop-target">
+            <div className="machine-view__machine-drop-message">
+              Add to {this.props.machine.displayName}
+            </div>
+          </div>
         </div>
       );
     }
   });
+
+  juju.components.MachineViewMachine = ReactDnD.DropTarget(
+    'unit', dropTarget, collect)(MachineViewMachine);
+
 }, '0.1.0', {
   requires: [
     'more-menu'

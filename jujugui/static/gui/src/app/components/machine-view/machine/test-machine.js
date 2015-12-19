@@ -55,7 +55,10 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -105,6 +108,64 @@ describe('MachineViewMachine', function() {
             {undefined}
           </li>
         </ul>
+        <div className="machine-view__machine-drop-target">
+          <div className="machine-view__machine-drop-message">
+            Add to {"new0"}
+          </div>
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render a machine in drop mode', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {
+        cpuCores: 2,
+        cpuPower: 200,
+        disk: 2048,
+        mem: 4096,
+      }
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        agent_state: 'started',
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var services = {
+      getById: sinon.stub().returns({
+        get: sinon.stub().returns('icon.svg')
+      })
+    };
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        isOver={true}
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={units}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className={'machine-view__machine machine-view__machine--drop ' +
+        'machine-view__machine--machine'}
+        onClick={instance._handleSelectMachine}
+        role="button"
+        tabIndex="0">
+        {output.props.children}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -119,7 +180,10 @@ describe('MachineViewMachine', function() {
     var units = {filterByMachine: sinon.stub().returns([])};
     var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -149,7 +213,10 @@ describe('MachineViewMachine', function() {
     var units = {filterByMachine: sinon.stub().returns([])};
     var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -197,7 +264,10 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -264,7 +334,10 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -329,7 +402,10 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -377,6 +453,11 @@ describe('MachineViewMachine', function() {
             {undefined}
           </li>
         </ul>
+        <div className="machine-view__machine-drop-target">
+          <div className="machine-view__machine-drop-message">
+            Add to {"new0"}
+          </div>
+        </div>
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -401,7 +482,10 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -438,7 +522,10 @@ describe('MachineViewMachine', function() {
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         removeUnit={removeUnit}
         services={services}
@@ -494,6 +581,11 @@ describe('MachineViewMachine', function() {
               }]} />
           </li>
         </ul>
+        <div className="machine-view__machine-drop-target">
+          <div className="machine-view__machine-drop-message">
+            Add to {"new0/lxc/0"}
+          </div>
+        </div>
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -520,7 +612,10 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
         machine={machine}
         selected={false}
@@ -554,7 +649,10 @@ describe('MachineViewMachine', function() {
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MachineViewMachine
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
         services={services}
         type="container"

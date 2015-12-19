@@ -334,13 +334,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'use strict' and d3 doesn't work under strict.
     -->
     % if raw:
-    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-onclickoutside.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-onclickoutside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
     <script src="${convoy_url}?modules.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/gallery-markdown.js"></script>
     <script src="${convoy_url}?app/store/env/bakery.js&app/assets/javascripts/jujulib/juju.js"></script>
     % else:
-    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-onclickoutside-min.js"></script>
+    <script src="${convoy_url}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-onclickoutside-min.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="${convoy_url}?modules-min.js"></script>
     <script src="${convoy_url}?app/store/env/bakery-min.js&app/assets/javascripts/jujulib/juju-min.js"></script>

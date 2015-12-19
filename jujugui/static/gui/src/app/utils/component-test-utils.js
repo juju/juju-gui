@@ -51,6 +51,26 @@ var jsTestUtils = {
   },
 
   /**
+    Provide a mock method for the ReactDnD connectDragSource method.
+
+    @method connectDragSource
+    @param {Object} components The components to return.
+  */
+  connectDragSource: function(components) {
+    return components;
+  },
+
+  /**
+    Provide a mock method for the ReactDnD connectDropTarget method.
+
+    @method connectDropTarget
+    @param {Object} components The components to return.
+  */
+  connectDropTarget: function(components) {
+    return components;
+  },
+
+  /**
     JSON.stringify doesn't print undefined values to the console when trying
     to inspect an object. This loging wrapper prints the undefined values
     and also gives you the option to print the functions as well.

@@ -647,10 +647,12 @@ th {
 
 .visibility-classes {
     transition: opacity 0.4s ease;
+
     &.show {
         opacity: 1;
         visibility: visible;
     }
+
     &.fade {
         /*
           Put visibility on a delay so it gets hidden after the opacity is
@@ -660,6 +662,7 @@ th {
         opacity: 0;
         visibility: hidden;
     }
+
     &.hide {
         /*
           Put visibility on a delay so it gets hidden after the opacity is
@@ -670,8 +673,10 @@ th {
         visibility: hidden;
     }
 }
+
 .plus-service {
     transition: opacity 0.4s ease;
+
     &.fade {
         visibility: visible;
         stroke-opacity: .2;
@@ -682,6 +687,7 @@ th {
 .rel-group {
     @extend .visibility-classes;
 }
+
 .rel-indicator {
     cursor: pointer;
 }
@@ -698,6 +704,7 @@ g.service-status {
         fill: #fff;
     }
 }
+
 g.unit {
     stroke-width: 0; font-weight: bold;
     font-size: 18px;
@@ -706,6 +713,7 @@ g.unit {
     .address {
         fill: #fff; font-size: 14px;
     }
+
     .unit-border {
         stroke-width: 2px; fill: #a0a0a0;
     }
