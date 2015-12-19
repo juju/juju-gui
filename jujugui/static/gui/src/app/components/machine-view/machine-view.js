@@ -466,8 +466,10 @@ YUI.add('machine-view', function() {
       );
     }
   });
+
   juju.components.MachineView = ReactDnD.DragDropContext(
     ReactDnDHTML5Backend)(MachineView);
+
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

@@ -55,6 +55,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -143,6 +145,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         isOver={true}
@@ -176,6 +180,8 @@ describe('MachineViewMachine', function() {
     var units = {filterByMachine: sinon.stub().returns([])};
     var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -207,6 +213,8 @@ describe('MachineViewMachine', function() {
     var units = {filterByMachine: sinon.stub().returns([])};
     var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -256,6 +264,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -324,6 +334,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -390,6 +402,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -468,6 +482,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -506,6 +522,8 @@ describe('MachineViewMachine', function() {
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}
@@ -594,6 +612,8 @@ describe('MachineViewMachine', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
@@ -629,6 +649,8 @@ describe('MachineViewMachine', function() {
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
         connectDropTarget={jsTestUtils.connectDropTarget}
         machine={machine}

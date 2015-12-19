@@ -20,11 +20,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view-unplaced-unit', function() {
   var dragSource = {
+    /**
+      Called when the component starts the drag.
+      See: http://gaearon.github.io/react-dnd/docs-drag-source.html
+
+      @method beginDrag
+      @param {Object} props The component props.
+    */
     beginDrag: function(props) {
       return {unit: props.unit};
     }
   };
 
+  /**
+    Provides props to be injected into the component.
+
+    @method collect
+    @param {Object} connect The connector.
+    @param {Object} monitor A DropTargetMonitor.
+  */
   function collect(connect, monitor) {
     return {
       connectDragSource: connect.dragSource(),
@@ -101,6 +115,7 @@ YUI.add('machine-view-unplaced-unit', function() {
         label: 'Destroy',
         action: this.props.removeUnit.bind(null, unit.id)
       }];
+      // Wrap the returned components in the drag source method.
       return this.props.connectDragSource(
         <li className={this._generateClasses()}>
           <img src={this.props.icon} alt={unit.displayName}
@@ -114,8 +129,10 @@ YUI.add('machine-view-unplaced-unit', function() {
       );
     }
   });
+
   juju.components.MachineViewUnplacedUnit = ReactDnD.DragSource(
     'unit', dragSource, collect)(MachineViewUnplacedUnit);
+
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',

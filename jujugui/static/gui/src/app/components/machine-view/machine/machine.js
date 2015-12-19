@@ -21,12 +21,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('machine-view-machine', function() {
 
   var dropTarget = {
+    /**
+      Called when something is dropped on the machine.
+      See: http://gaearon.github.io/react-dnd/docs-drop-target.html
+
+      @method drop
+      @param {Object} props The component props.
+      @param {Object} monitor A DropTargetMonitor.
+      @param {Object} component The component that is being dropped onto.
+    */
     drop: function (props, monitor, component) {
       var item = monitor.getItem();
       props.dropUnit(item.unit, props.machine.id);
     }
   };
 
+  /**
+    Provides props to be injected into the component.
+
+    @method collect
+    @param {Object} connect The connector.
+    @param {Object} monitor A DropTargetMonitor.
+  */
   function collect(connect, monitor) {
     return {
       connectDropTarget: connect.dropTarget(),
@@ -190,6 +206,7 @@ YUI.add('machine-view-machine', function() {
         label: 'Destroy',
         action: this._destroyMachine
       }];
+      // Wrap the returned components in the drop target method.
       return this.props.connectDropTarget(
         <div className={this._generateClasses()}
           onClick={this._handleSelectMachine}
@@ -211,8 +228,10 @@ YUI.add('machine-view-machine', function() {
       );
     }
   });
+
   juju.components.MachineViewMachine = ReactDnD.DropTarget(
     'unit', dropTarget, collect)(MachineViewMachine);
+
 }, '0.1.0', {
   requires: [
     'more-menu'

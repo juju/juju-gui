@@ -31,6 +31,8 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7'};
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"
@@ -61,6 +63,8 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7'};
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"
@@ -79,6 +83,8 @@ describe('MachineViewUnplacedUnit', function() {
     var removeUnit = sinon.stub();
     var unit = {displayName: 'django/7', id: 'django/7'};
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
         icon="icon.svg"

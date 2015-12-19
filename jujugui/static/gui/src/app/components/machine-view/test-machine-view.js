@@ -38,6 +38,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
@@ -125,6 +127,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
@@ -155,6 +159,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(1)
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
@@ -186,6 +192,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(1)
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         environmentName="My Env"
@@ -236,6 +244,8 @@ describe('MachineView', function() {
       })
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
@@ -304,6 +314,8 @@ describe('MachineView', function() {
       })
     };
     var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
@@ -327,6 +339,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
@@ -379,6 +393,8 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
@@ -436,6 +452,8 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
@@ -501,6 +519,8 @@ describe('MachineView', function() {
     };
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
@@ -558,6 +578,8 @@ describe('MachineView', function() {
     };
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
@@ -596,6 +618,8 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         environmentName="My Env"
@@ -635,6 +659,8 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         destroyMachines={destroyMachines}
@@ -702,6 +728,8 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
@@ -771,6 +799,8 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
@@ -807,6 +837,8 @@ describe('MachineView', function() {
     var placeUnit = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         createMachine={createMachine}
