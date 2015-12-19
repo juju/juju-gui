@@ -74,12 +74,6 @@
     &-units {
         margin-top: 7px;
         list-style: none;
-
-        img {
-            width: 24px;
-            height: 24px;
-            vertical-align: middle;
-        }
     }
 
     &-unit {
@@ -95,6 +89,14 @@
         margin-right: 10px;
         padding: 2px;
         border: 1px solid $canvas-background;
-        border-radius: 6px;
+        border-radius: 50%;
+
+        img {
+            $size: 24px;
+            width: $size;
+            height: $size;
+            border-radius: $size / 2;
+            vertical-align: middle;
+        }
     }
 }
