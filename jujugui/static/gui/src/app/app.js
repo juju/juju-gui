@@ -1144,13 +1144,7 @@ YUI.add('juju-gui', function(Y) {
           var envData = envList[0];
           this.set('environmentList', envList);
           this._renderEnvSwitcher();
-          var doc = window.document;
-          var host = doc.location.hostname;
-          var port = doc.port;
-          var socketUrl = 'wss://' + host;
-          if (port) {
-            socketUrl += ':' + port;
-          }
+
           // XXX frankban: we cannot rely on the fact that the public address
           // is the last one. There is really no ordering in the returned
           // hosts and ports. We need to try them all in parallel so that at
@@ -1158,39 +1152,15 @@ YUI.add('juju-gui', function(Y) {
           // reused for handling high availability controllers.
           var addresses = envData['host-ports'];
           var wssData = addresses[addresses.length - 1].split(':');
-          socketUrl += '/juju/api/' +
-                        wssData[0] + '/' +
-                        wssData[1] + '/' +
-                        envData.uuid;
+          socketUrl = this.createSocketURL(
+              wssData[0], wssData[1], envData.uuid, callback);
           callback.call(this, socketUrl, envData.user, envData.password);
         });
         return;
       }
-      var socketProtocol = this.get('socket_protocol');
-      // Assemble a socket URL from the Location.
-      var loc = Y.getLocation();
-      socketProtocol = socketProtocol || 'wss';
-      var socketUrl = socketProtocol + '://' + loc.hostname;
-      if (loc.port) {
-        socketUrl += ':' + loc.port;
-      }
-      // If a WebSocket path is explicitly provided, it gets precedence over
-      // all the other methods to automatically calculate it.
-      var path = this.get('socket_path');
-      if (path) {
-        socketUrl += path;
-      } else {
-        // If the Juju version is over 1.21 then we need to make requests to the
-        // api using the environments uuid.
-        var jujuVersion = this.get('jujuCoreVersion').split('.');
-        var suffix = '';
-        var majorVersion = parseInt(jujuVersion[0], 10);
-        var minorVersion = parseInt(jujuVersion[1], 10);
-        if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
-          suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
-        }
-        socketUrl += '/ws' + suffix;
-      }
+
+      var socketUrl = this.createSocketURL(
+          null, null, this.get('jujuEnvUUID'));
       callback.call(this, socketUrl, this.get('user'), this.get('password'));
     },
 
@@ -1656,6 +1626,50 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    createSocketURL: function(apiServer, apiPort, uuid) {
+      var currentHost = window.location.hostname,
+          currentPort = window.location.port;
+
+      var protocol = this.get('socket_protocol') || 'wss';
+      var baseUrl = protocol + '://' + currentHost;
+      if (currentPort !== '') {
+        baseUrl += ':' + currentPort;
+      }
+      baseUrl += '/ws';
+
+      if (!apiServer || !apiPort) {
+        var apiAddress = window.juju_config.apiAddress.replace('wss://', '');
+        apiAddress = apiAddress.split(':');
+        apiServer = apiAddress[0];
+        apiPort = apiAddress[1];
+      }
+
+      //XXX j.c.sackett 2015-12-18 We want to default to the bare /ws url in
+      //older versions of juju; however jujuCoreVersion is always '' in our
+      //current setup. Either we're breaking backwards compatability or we need
+      //to resolve determine the juju core version, at which point we can
+      //uncomment the block below.
+      //var path = '';
+      //var jujuVersion = this.get('jujuCoreVersion').split('.');
+      //var majorVersion = parseInt(jujuVersion[0], 10);
+      //var minorVersion = parseInt(jujuVersion[1], 10);
+      //if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
+        //path = window.juju_config.socketTemplate.replace(
+            //'$server', apiServer);
+        //path = path.replace('$port', apiPort);
+        //path = path.replace('$uuid', uuid);
+      //}
+
+      //XXX j.c.sackett 2015-12-18 When the block above is uncommented we can
+      //remove this path block, as it's the same as what's contained inside the
+      //if clause above.
+      var path = window.juju_config.socketTemplate.replace(
+          '$server', apiServer);
+      path = path.replace('$port', apiPort);
+      path = path.replace('$uuid', uuid);
+      return baseUrl + path;
+
+    },
     /**
       Switch the application to another environment.
       Disconnect the current WebSocket connection and establish a new one
@@ -1664,19 +1678,21 @@ YUI.add('juju-gui', function(Y) {
       @method switchEnv
       @param {String} uuid The environment UUID where to switch to.
     */
-    switchEnv: function(uuid, username, password) {
+    switchEnv: function(socketUrl, username, password) {
       if (this.get('sandbox')) {
         console.log('switching environments is not supported in sandbox');
         return;
       }
-      if (this.jem) {
-        // We only set the credentials if we're using JEM. GUI will
-        // automatically log in when we switch the environments.
+      if (username && password) {
+        // We don't always get a new username and password when switching
+        // environments; only set new credentials if we've actually gotten them.
+        // The GUI will automatically log in when we switch.
         this.env.setCredentials({
           user: username,
           password: password
         });
       };
+
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(
@@ -1686,22 +1702,8 @@ YUI.add('juju-gui', function(Y) {
         breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
           'anonymous';
       }
-
-      // XXX jcsackett 2015-12-11 This is fine for now, but ultimately we want
-      // to take a better approach using a configurable socket_url template. See
-      // this comment:
-      // https://github.com/juju/juju-gui/pull/1065#discussion_r47335565
-      var socketUrl = this.env.get('socket_url');
-      var newSocketUrl, baseUrl;
-      if (window.juju_config.embedded) {
-        baseUrl = socketUrl.substring(0, socketUrl.lastIndexOf('/'));
-        newSocketUrl = baseUrl + '/' + uuid;
-      } else {
-        baseUrl = socketUrl.substring(0, socketUrl.indexOf('/ws')) + '/ws';
-        newSocketUrl = baseUrl + '/environment/' + uuid + '/api';
-      }
       // Tell the environment to use the new socket URL when reconnecting.
-      this.env.set('socket_url', newSocketUrl);
+      this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
       this.env.get('ecs').clear();
       // Disconnect and reconnect the environment.
