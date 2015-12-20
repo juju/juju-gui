@@ -144,6 +144,8 @@ describe('EnvSwitcher', function() {
       user: 'The Dr.',
       password: 'buffalo'
     }];
+    var socketURL = '/a/socket/url/abc123';
+    var createSocketURL = sinon.stub().returns(socketURL);
     var listEnvs = sinon.stub();
     var switchEnv = sinon.stub();
     var mask = sinon.stub();
@@ -151,6 +153,7 @@ describe('EnvSwitcher', function() {
       listEnvironments: listEnvs
     };
     var app = {
+      createSocketURL: createSocketURL,
       switchEnv: switchEnv
     };
     var renderer = jsTestUtils.shallowRender(
@@ -174,7 +177,7 @@ describe('EnvSwitcher', function() {
       envList: envs
     });
     assert.deepEqual(switchEnv.args[0], [
-      envs[0].uuid, envs[0].user, envs[0].password
+      socketURL, envs[0].user, envs[0].password
     ]);
   });
 
@@ -201,8 +204,11 @@ describe('EnvSwitcher', function() {
       listServers: listSrv,
       newEnvironment: newEnv
     };
+    var socketURL = '/a/socket/url/abc123';
+    var createSocketURL = sinon.stub().returns(socketURL);
     var switchEnv = sinon.stub();
     var app = {
+      createSocketURL: createSocketURL,
       switchEnv: switchEnv
     };
     var renderer = jsTestUtils.shallowRender(
