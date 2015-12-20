@@ -1144,7 +1144,7 @@ YUI.add('juju-gui', function(Y) {
           var envData = envList[0];
           this.set('environmentList', envList);
           this._renderEnvSwitcher();
-          
+
           // XXX frankban: we cannot rely on the fact that the public address
           // is the last one. There is really no ordering in the returned
           // hosts and ports. We need to try them all in parallel so that at
@@ -1153,19 +1153,14 @@ YUI.add('juju-gui', function(Y) {
           var addresses = envData['host-ports'];
           var wssData = addresses[addresses.length - 1].split(':');
           socketUrl = this.createSocketURL(
-              wssData[0], wssData[1], envData.uuid, callback);
+              wssData[0], wssData[1], envData.uuid);
           callback.call(this, socketUrl, envData.user, envData.password);
         });
         return;
       }
 
-      // TODO: remove this.get('socket_path') etc entirely
-      var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
-      apiAddress = apiAddress.split(':');
-      apiServer = apiAddress[0];
-      apiPort = apiAddress[1];
       var socketUrl = this.createSocketURL(
-          apiServer, apiPort, this.get('jujuEnvUUID'));
+          null, null, this.get('jujuEnvUUID'));
       callback.call(this, socketUrl, this.get('user'), this.get('password'));
     },
 
@@ -1631,7 +1626,16 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
-    createSocketURL: function(apiServer, apiPort, uuid) {
+    /**
+      Create the new socket url based on the socket template and the new
+      environment details.
+
+      @method createSocketURL
+      @param {String} server The state-server host address for the environment.
+      @param {String} port The state-server port for the environment.
+      @param {String} uuid The uuid for the environment.
+    */
+    createSocketURL: function(server, port, uuid) {
       var currentHost = window.location.hostname,
           currentPort = window.location.port;
 
@@ -1642,39 +1646,20 @@ YUI.add('juju-gui', function(Y) {
       }
       baseUrl += '/ws';
 
-      if (!apiServer || !apiPort) {
-        var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
+      if (!server || !port) {
+        var apiAddress = window.juju_config.apiAddress.replace('wss://', '');
         apiAddress = apiAddress.split(':');
-        apiServer = apiAddress[0];
-        apiPort = apiAddress[1];
+        server = apiAddress[0];
+        port = apiAddress[1];
       }
 
-      //XXX j.c.sackett 2015-12-18 We want to default to the bare /ws url in
-      //older versions of juju; however jujuCoreVersion is always '' in our
-      //current setup. Either we're breaking backwards compatability or we need
-      //to resolve determine the juju core version, at which point we can
-      //uncomment the block below.
-      //var path = '';
-      //var jujuVersion = this.get('jujuCoreVersion').split('.');
-      //var majorVersion = parseInt(jujuVersion[0], 10);
-      //var minorVersion = parseInt(jujuVersion[1], 10);
-      //if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
-        //path = window.juju_config.socketTemplate.replace(
-            //'$server', apiServer);
-        //path = path.replace('$port', apiPort);
-        //path = path.replace('$uuid', uuid);
-      //}
-      
-      //XXX j.c.sackett 2015-12-18 When the block above is uncommented we can
-      //remove this path block, as it's the same as what's contained inside the
-      //if clause above.
-      var path = window.juju_config.socketTemplate.replace(
-          '$server', apiServer);
-      path = path.replace('$port', apiPort);
+      var path = window.juju_config.socketTemplate.replace('$server', server);
+      path = path.replace('$port', port);
       path = path.replace('$uuid', uuid);
       return baseUrl + path;
 
     },
+
     /**
       Switch the application to another environment.
       Disconnect the current WebSocket connection and establish a new one
@@ -1682,6 +1667,8 @@ YUI.add('juju-gui', function(Y) {
 
       @method switchEnv
       @param {String} uuid The environment UUID where to switch to.
+      @param {String} username The username for the new environment.
+      @param {String} password The password for the new environment.
     */
     switchEnv: function(socketUrl, username, password) {
       if (this.get('sandbox')) {
@@ -1697,7 +1684,7 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
-      
+
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(

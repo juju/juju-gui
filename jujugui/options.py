@@ -22,8 +22,9 @@ def update(settings):
     _update(settings, 'jujugui.api_path', default=DEFAULT_API_PATH)
     _update(settings, 'jujugui.ga_key', default='')
     _update(settings, 'jujugui.password', default=None)
-    _update(settings, 'jujugui.socket_path', default=None)
     _update(settings, 'jujugui.user', default='')
+    _update(
+        settings, 'jujugui.socketTemplate', default='/environment/$uuid/api')
     _update(settings, 'jujugui.jem_url', default=None)
     _update_bool(settings, 'jujugui.interactive_login', default=False)
     _update_bool(settings, 'jujugui.sandbox', default=False)

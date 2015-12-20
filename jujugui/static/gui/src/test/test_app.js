@@ -120,6 +120,10 @@ function injectData(app, data) {
 
     it('should propagate login credentials from the configuration',
         function(done) {
+          window.juju_config = {
+            apiAddress: 'http://example.com:17070',
+            socketTemplate: '/environment/$uuid/api'
+          };
           var the_username = 'nehi';
           var the_password = 'moonpie';
           app = new Y.juju.App(
@@ -139,6 +143,10 @@ function injectData(app, data) {
         });
 
     it('propagates the readOnly option from the configuration', function() {
+      window.juju_config = {
+        apiAddress: 'http://example.com:17070',
+        socketTemplate: '/environment/$uuid/api'
+      };
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -163,6 +171,10 @@ function injectData(app, data) {
     });
 
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
+      window.juju_config = {
+        apiAddress: 'http://example.com:17070',
+        socketTemplate: '/environment/$uuid/api'
+      };
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
@@ -177,6 +189,10 @@ function injectData(app, data) {
     });
 
     it('autoplaceAndCommitAll places and deploys', function() {
+      window.juju_config = {
+        apiAddress: 'http://example.com:17070',
+        socketTemplate: '/environment/$uuid/api'
+      };
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
@@ -1057,6 +1073,7 @@ describe('File drag over notification system', function() {
     });
 
   });
+
   describe('switchEnv', function() {
     var Y, app, container;
     var _generateMockedApp = function(sandbox, socketUrl) {
@@ -1124,6 +1141,10 @@ describe('File drag over notification system', function() {
 
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
+      window.juju_config = {
+        apiAddress: 'http://example.com:17070',
+        socketTemplate: '/environment/$uuid/api'
+      };
     });
 
     afterEach(function() {
@@ -1142,29 +1163,11 @@ describe('File drag over notification system', function() {
 
     it('clears and resets the env, db, and ecs on change', function() {
       app = _generateMockedApp(false);
-      window.juju_config = {embedded: false};
       app.switchEnv('uuid', 'user', 'password');
       assert.isTrue(app.env.ecs.clearCalled, 'ecs was not cleared.');
       assert.isTrue(app.env.closeCalled, 'env was not closed.');
       assert.isTrue(app.db.resetCalled, 'db was not reset.');
       assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
-    });
-
-    it('determines socket_url based on embedded state', function() {
-      app = _generateMockedApp(false);
-      window.juju_config = {embedded: false};
-      app.switchEnv('uuid');
-      assert.equal(
-          app.env.socketUrl,
-          'wss://example.com/ws/environment/uuid/api',
-          'socket url not correctly set.');
-      window.juju_config = {embedded: true};
-      app.env.set('socket_url', 'juju/api/example.com/17070/uuid');
-      app.switchEnv('new-uuid');
-      assert.equal(
-          app.env.socketUrl,
-          'juju/api/example.com/17070/new-uuid',
-          'socket url not correctly set.');
     });
 
     it('sets credentials based on existence of jem', function() {
@@ -1202,6 +1205,10 @@ describe('File drag over notification system', function() {
 
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
+      window.juju_config = {
+        apiAddress: 'http://example.com:17070',
+        socketTemplate: '/environment/$uuid/api'
+      };
     });
 
     afterEach(function() {
@@ -1279,6 +1286,17 @@ describe('File drag over notification system', function() {
     });
 
     it('should honor socket_protocol and uuid', function() {
+      window.juju_config = {
+        apiAddress: 'example.com:17070',
+        socketTemplate: '/juju/api/$server/$port/$uuid'
+      };
+      var expected = [
+        'ws://',
+        window.location.hostname,
+        ':',
+        window.location.port,
+        '/ws/juju/api/example.com/17070/1234-1234'
+      ].join('');
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
@@ -1287,41 +1305,8 @@ describe('File drag over notification system', function() {
             jujuEnvUUID: '1234-1234',
             conn: {close: function() {}} });
       app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'ws://example.net:71070/ws/environment/1234-1234/api');
+      assert.equal(app.env.get('socket_url'), expected);
     });
-
-    it('uses an explicitly provided socket path', function() {
-      app = new Y.juju.App({
-        container: container,
-        viewContainer: container,
-        socket_path: '/these/are/the/voyages',
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
-        jujuEnvUUID: '1234-1234',
-        conn: {close: function() {}}
-      });
-      app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'wss://example.net:71070/these/are/the/voyages');
-    });
-
-    it('ignores socket path if empty', function() {
-      app = new Y.juju.App({
-        container: container,
-        viewContainer: container,
-        socket_path: '',
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
-        jujuEnvUUID: '1234-1234',
-        conn: {close: function() {}}
-      });
-      app.showView(new Y.View());
-      assert.equal(
-          app.env.get('socket_url'),
-          'wss://example.net:71070/ws/environment/1234-1234/api');
-    });
-
   });
 
 

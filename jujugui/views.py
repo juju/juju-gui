@@ -94,7 +94,6 @@ def config(request):
         'apiPath': settings['jujugui.api_path'],
         # WebSocket connection to the Juju API.
         'socket_protocol': 'wss',
-        'socket_path': settings['jujugui.socket_path'],
         'user': user,
         'password': password,
         'jujuEnvUUID': request.matchdict.get('uuid', 'sandbox'),
@@ -110,7 +109,7 @@ def config(request):
         'GA_key': settings['jujugui.ga_key'],
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': '',
-        'apiAddress': settings['jujugui.apiAddress'],
+        'apiAddress': settings.get('jujugui.apiAddress'),
         'socketTemplate': settings['jujugui.socketTemplate'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
