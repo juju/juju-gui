@@ -1144,7 +1144,7 @@ YUI.add('juju-gui', function(Y) {
           var envData = envList[0];
           this.set('environmentList', envList);
           this._renderEnvSwitcher();
-          
+
           // XXX frankban: we cannot rely on the fact that the public address
           // is the last one. There is really no ordering in the returned
           // hosts and ports. We need to try them all in parallel so that at
@@ -1638,7 +1638,7 @@ YUI.add('juju-gui', function(Y) {
       baseUrl += '/ws';
 
       if (!apiServer || !apiPort) {
-        var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
+        var apiAddress = window.juju_config.apiAddress.replace('wss://', '');
         apiAddress = apiAddress.split(':');
         apiServer = apiAddress[0];
         apiPort = apiAddress[1];
@@ -1659,7 +1659,7 @@ YUI.add('juju-gui', function(Y) {
         //path = path.replace('$port', apiPort);
         //path = path.replace('$uuid', uuid);
       //}
-      
+
       //XXX j.c.sackett 2015-12-18 When the block above is uncommented we can
       //remove this path block, as it's the same as what's contained inside the
       //if clause above.
@@ -1692,7 +1692,7 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
-      
+
       // XXX Update the header breadcrumb to show the username. This is a
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(

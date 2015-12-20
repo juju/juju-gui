@@ -1284,7 +1284,7 @@ describe('File drag over notification system', function() {
       app.destroy();
     });
 
-    it.only('should honor socket_protocol and uuid', function() {
+    it('should honor socket_protocol and uuid', function() {
       window.juju_config = {
         apiAddress: 'http://example.com:17070',
         socketTemplate: '/environment/$uuid/api'
