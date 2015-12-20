@@ -1159,13 +1159,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
 
-      // TODO: remove this.get('socket_path') etc entirely
-      var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
-      apiAddress = apiAddress.split(':');
-      apiServer = apiAddress[0];
-      apiPort = apiAddress[1];
       var socketUrl = this.createSocketURL(
-          apiServer, apiPort, this.get('jujuEnvUUID'));
+          null, null, this.get('jujuEnvUUID'));
       callback.call(this, socketUrl, this.get('user'), this.get('password'));
     },
 
