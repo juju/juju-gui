@@ -1144,13 +1144,7 @@ YUI.add('juju-gui', function(Y) {
           var envData = envList[0];
           this.set('environmentList', envList);
           this._renderEnvSwitcher();
-          var doc = window.document;
-          var host = doc.location.hostname;
-          var port = doc.port;
-          var socketUrl = 'wss://' + host;
-          if (port) {
-            socketUrl += ':' + port;
-          }
+          
           // XXX frankban: we cannot rely on the fact that the public address
           // is the last one. There is really no ordering in the returned
           // hosts and ports. We need to try them all in parallel so that at
@@ -1158,39 +1152,20 @@ YUI.add('juju-gui', function(Y) {
           // reused for handling high availability controllers.
           var addresses = envData['host-ports'];
           var wssData = addresses[addresses.length - 1].split(':');
-          socketUrl += '/juju/api/' +
-                        wssData[0] + '/' +
-                        wssData[1] + '/' +
-                        envData.uuid;
+          socketUrl = this.createSocketURL(
+              wssData[0], wssData[1], envData.uuid, callback);
           callback.call(this, socketUrl, envData.user, envData.password);
         });
         return;
       }
-      var socketProtocol = this.get('socket_protocol');
-      // Assemble a socket URL from the Location.
-      var loc = Y.getLocation();
-      socketProtocol = socketProtocol || 'wss';
-      var socketUrl = socketProtocol + '://' + loc.hostname;
-      if (loc.port) {
-        socketUrl += ':' + loc.port;
-      }
-      // If a WebSocket path is explicitly provided, it gets precedence over
-      // all the other methods to automatically calculate it.
-      var path = this.get('socket_path');
-      if (path) {
-        socketUrl += path;
-      } else {
-        // If the Juju version is over 1.21 then we need to make requests to the
-        // api using the environments uuid.
-        var jujuVersion = this.get('jujuCoreVersion').split('.');
-        var suffix = '';
-        var majorVersion = parseInt(jujuVersion[0], 10);
-        var minorVersion = parseInt(jujuVersion[1], 10);
-        if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
-          suffix = '/environment/' + this.get('jujuEnvUUID') + '/api';
-        }
-        socketUrl += '/ws' + suffix;
-      }
+
+      // TODO: remove this.get('socket_path') etc entirely
+      var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
+      apiAddress = apiAddress.split(':');
+      apiServer = apiAddress[0];
+      apiPort = apiAddress[1];
+      var socketUrl = this.createSocketURL(
+          apiServer, apiPort, this.get('jujuEnvUUID'));
       callback.call(this, socketUrl, this.get('user'), this.get('password'));
     },
 
@@ -1660,11 +1635,12 @@ YUI.add('juju-gui', function(Y) {
       var currentHost = window.location.hostname,
           currentPort = window.location.port;
 
-      var baseUrl = 'wss://' + currentHost;
+      var protocol = this.get('socket_protocol') || 'wss';
+      var baseUrl = protocol + '://' + currentHost;
       if (currentPort !== '') {
-        baseUrl = baseUrl + ':' + currentPort;
+        baseUrl += ':' + currentPort;
       }
-      baseUrl = baseUrl + '/ws';
+      baseUrl += '/ws';
 
       if (!apiServer || !apiPort) {
         var apiAddress = window.juju_config.apiAddress.replace('wss://', ''); 
@@ -1673,11 +1649,31 @@ YUI.add('juju-gui', function(Y) {
         apiPort = apiAddress[1];
       }
 
+      //XXX j.c.sackett 2015-12-18 We want to default to the bare /ws url in
+      //older versions of juju; however jujuCoreVersion is always '' in our
+      //current setup. Either we're breaking backwards compatability or we need
+      //to resolve determine the juju core version, at which point we can
+      //uncomment the block below.
+      //var path = '';
+      //var jujuVersion = this.get('jujuCoreVersion').split('.');
+      //var majorVersion = parseInt(jujuVersion[0], 10);
+      //var minorVersion = parseInt(jujuVersion[1], 10);
+      //if (majorVersion === 1 && minorVersion > 20 || majorVersion > 1) {
+        //path = window.juju_config.socketTemplate.replace(
+            //'$server', apiServer);
+        //path = path.replace('$port', apiPort);
+        //path = path.replace('$uuid', uuid);
+      //}
+      
+      //XXX j.c.sackett 2015-12-18 When the block above is uncommented we can
+      //remove this path block, as it's the same as what's contained inside the
+      //if clause above.
       var path = window.juju_config.socketTemplate.replace(
           '$server', apiServer);
       path = path.replace('$port', apiPort);
       path = path.replace('$uuid', uuid);
       return baseUrl + path;
+
     },
     /**
       Switch the application to another environment.
