@@ -66,10 +66,11 @@ YUI.add('machine-view-scale-up', function() {
       @method _handleAddUnits
     */
     _handleAddUnits: function() {
+      var re = /(scaleUpUnit-)(.*)/;
       Object.keys(this.refs).forEach((ref) => {
-        var parts = ref.split('-');
-        if (parts[0] === 'scaleUpUnit') {
-          var service = this.props.services.getById(parts[1]);
+        var parts = re.exec(ref);
+        if (parts) {
+          var service = this.props.services.getById(parts[2]);
           this.props.addGhostAndEcsUnits(service, this.refs[ref].value);
         }
       });
