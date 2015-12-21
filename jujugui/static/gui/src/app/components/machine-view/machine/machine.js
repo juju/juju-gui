@@ -33,6 +33,17 @@ YUI.add('machine-view-machine', function() {
     drop: function (props, monitor, component) {
       var item = monitor.getItem();
       props.dropUnit(item.unit, props.machine.id);
+    },
+
+    /**
+      Called to check whether something can be dropped on the component.
+
+      @method drop
+      @param {Object} props The component props.
+      @param {Object} monitor A DropTargetMonitor.
+    */
+    canDrop: function (props, monitor) {
+      return !props.machine.deleted;
     }
   };
 
@@ -45,6 +56,7 @@ YUI.add('machine-view-machine', function() {
   */
   function collect(connect, monitor) {
     return {
+      canDrop: monitor.canDrop(),
       connectDropTarget: connect.dropTarget(),
       isOver: monitor.isOver()
     };
@@ -171,7 +183,7 @@ YUI.add('machine-view-machine', function() {
     _generateClasses: function() {
       var machine = this.props.machine;
       var classes = {
-        'machine-view__machine--drop': this.props.isOver,
+        'machine-view__machine--drop': this.props.isOver && this.props.canDrop,
         'machine-view__machine--selected': this.props.selected,
         'machine-view__machine--uncommitted': machine.deleted ||
           machine.commitStatus === 'uncommitted',
