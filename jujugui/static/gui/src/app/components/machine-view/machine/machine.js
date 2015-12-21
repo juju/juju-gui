@@ -77,20 +77,28 @@ YUI.add('machine-view-machine', function() {
       }
       var machine = this.props.machine;
       var hardware = machine.hardware;
-      if (!hardware) {
-        return (
-          <div className="machine-view__machine-hardware">
-            Hardware details not available
-          </div>);
+      var hardwareDetails;
+      if (hardware) {
+        var cpu = hardware.cpuPower;
+        var disk = hardware.disk;
+        var mem = hardware.mem;
+        var cpuCores = hardware.cpuCores;
+        if (cpuCores && cpu && disk && mem && disk) {
+          cpu = cpu / 100;
+          disk = disk / 1024;
+          mem = mem / 1024;
+          hardwareDetails = `${cpuCores}x${cpu}GHz, ${mem.toFixed(2)}GB, ` +
+          `${disk.toFixed(2)}GB`;
+        }
       }
-      var cpu = hardware.cpuPower / 100;
-      var disk = hardware.disk / 1024;
-      var mem = hardware.mem / 1024;
+      if (!hardwareDetails) {
+        hardwareDetails = 'hardware details not available';
+      }
       var plural = unitCount === 1 ? '' : 's';
+      var series = machine.series ? `${machine.series}, ` : undefined;
       return (
         <div className="machine-view__machine-hardware">
-          {unitCount} unit{plural}, {hardware.cpuCores}x{cpu}GHz,{' '}
-          {mem.toFixed(2)}GB, {disk.toFixed(2)}GB
+          {unitCount} unit{plural}, {series} {hardwareDetails}
         </div>);
     },
 
