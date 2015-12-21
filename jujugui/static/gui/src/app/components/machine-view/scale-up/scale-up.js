@@ -70,7 +70,7 @@ YUI.add('machine-view-scale-up', function() {
       Object.keys(this.refs).forEach((ref) => {
         var parts = re.exec(ref);
         if (parts) {
-          var service = this.props.services.getById(parts[parts.length-1]);
+          var service = this.props.services.getById(parts[2]);
           this.props.addGhostAndEcsUnits(service, this.refs[ref].value);
         }
       });
