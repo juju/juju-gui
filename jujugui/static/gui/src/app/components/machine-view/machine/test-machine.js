@@ -36,7 +36,8 @@ describe('MachineViewMachine', function() {
         cpuPower: 200,
         disk: 2048,
         mem: 4096,
-      }
+      },
+      series: 'wily'
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
@@ -82,7 +83,7 @@ describe('MachineViewMachine', function() {
           new0
         </div>
         <div className="machine-view__machine-hardware">
-          {2} unit{"s"}, {2}x{2}GHz,{' '}{"4.00"}GB, {"2.00"}GB
+          {2} unit{"s"}, {"wily, "} {"2x2GHz, 4.00GB, 2.00GB"}
         </div>
         <ul className="machine-view__machine-units">
           <li className="machine-view__machine-unit"
@@ -465,7 +466,8 @@ describe('MachineViewMachine', function() {
   it('can render a machine with no hardware', function() {
     var selectMachine = sinon.stub();
     var machine = {
-      displayName: 'new0'
+      displayName: 'new0',
+      hardware: {}
     };
     var units = {
       filterByMachine: sinon.stub().returns([{
@@ -495,7 +497,7 @@ describe('MachineViewMachine', function() {
         units={units}/>);
     var expected = (
       <div className="machine-view__machine-hardware">
-        Hardware details not available
+        {2} unit{"s"}, {undefined} {"hardware details not available"}
       </div>);
     assert.deepEqual(output.props.children[2], expected);
   });

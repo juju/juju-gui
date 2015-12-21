@@ -83,7 +83,7 @@ YUI.add('machine-view-machine', function() {
         var disk = hardware.disk;
         var mem = hardware.mem;
         var cpuCores = hardware.cpuCores;
-        if (cpuCores && cpu && disk && mem && disk) {
+        if (cpuCores && cpu && disk && mem) {
           cpu = cpu / 100;
           disk = disk / 1024;
           mem = mem / 1024;
