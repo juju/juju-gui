@@ -33,34 +33,7 @@ describe('AddedServicesListItem', function() {
   });
 
   beforeEach(function() {
-    mockService = {
-      attrs: {
-        id: 'wordpress',
-        icon: 'icon.gif',
-        unit_count: '2',
-        name: 'demo',
-        units: {
-          toArray: function() {
-            return [
-              {agent_state: 'uncommitted'},
-              {agent_state: 'pending'}
-            ];
-          }
-        }
-      },
-
-      getAttrs: function() {
-        return this.attrs;
-      },
-
-      get: function(key) {
-        return this.attrs[key];
-      },
-
-      set: function(key, value) {
-        this.attrs[key] = value;
-      }
-    };
+    mockService = jsTestUtils.makeModel();
   });
 
   function getUnitStatusCounts(error=0, pending=0, uncommitted=0, started=0) {

@@ -103,26 +103,6 @@ describe('AddedServicesList', () => {
     assert.deepEqual(output, expected);
   });
 
-  function createService(attrs) {
-    return {
-      attrs: attrs || {},
-
-      get: function(key) {
-        return this.attrs[key];
-      },
-
-      set: function(key, value) {
-        this.attrs[key] = value;
-      },
-
-      setAttrs: function(attrs) {
-        for (var key in attrs) {
-          this.attrs[key] = attrs[key];
-        }
-      }
-    };
-  }
-
   function createModelList(models){
     return {
       each: (cb) => {
@@ -143,10 +123,11 @@ describe('AddedServicesList', () => {
 
   it('performs the necessary work to focus a service', () => {
     var id = 'trusty/wordpress';
+    var makeModel = jsTestUtils.makeModel;
     var allServices = [
-      createService({id: id, fade: true, highlight: false}),
-      createService({id: 'trusty/apache', fade: false, highlight: true}),
-      createService({id: 'trusty/mysql', fade: false, highlight: false})
+      makeModel({id: id, fade: true, highlight: false}),
+      makeModel({id: 'trusty/apache', fade: false, highlight: true}),
+      makeModel({id: 'trusty/mysql', fade: false, highlight: false})
     ];
     var services = createModelList(allServices);
     var updateUnitFlags = sinon.stub();
@@ -180,7 +161,7 @@ describe('AddedServicesList', () => {
     // Because shallowRenderer doesn't support refs this fakes a refs property
     // on the instance which is needed for the final step in the focus process.
     function generateListItem() {
-      return {props: {service: createService()}};
+      return {props: {service: jsTestUtils.makeModel()}};
     }
     instance.refs = {
       'AddedServicesListItem-trusty/wordpress': generateListItem(),
@@ -217,9 +198,9 @@ describe('AddedServicesList', () => {
 
   it('performs the necessary work to unfocus a service', () => {
     var allServices = [
-      createService({id: 'trusty/wordpress'}),
-      createService({id: 'trusty/apache'}),
-      createService({id: 'trusty/mysql'})
+      jsTestUtils.makeModel({id: 'trusty/wordpress'}),
+      jsTestUtils.makeModel({id: 'trusty/apache'}),
+      jsTestUtils.makeModel({id: 'trusty/mysql'})
     ];
     var services = createModelList(allServices);
     var updateUnitFlags = sinon.stub();
@@ -271,9 +252,9 @@ describe('AddedServicesList', () => {
   it('performs the necessary work to fade a service', () => {
     var id = 'trusty/wordpress';
     var allServices = [
-      createService({id: id, highlight: true, fade: false}),
-      createService({id: 'trusty/apache'}),
-      createService({id: 'trusty/mysql'})
+      jsTestUtils.makeModel({id: id, highlight: true, fade: false}),
+      jsTestUtils.makeModel({id: 'trusty/apache'}),
+      jsTestUtils.makeModel({id: 'trusty/mysql'})
     ];
     var services = createModelList(allServices);
     var renderer = jsTestUtils.shallowRender(
@@ -299,9 +280,9 @@ describe('AddedServicesList', () => {
   it('performs the necessary work to unfade a service', () => {
     var id = 'trusty/wordpress';
     var allServices = [
-      createService({id: id, highlight: false, fade: true}),
-      createService({id: 'trusty/apache'}),
-      createService({id: 'trusty/mysql'})
+      jsTestUtils.makeModel({id: id, highlight: false, fade: true}),
+      jsTestUtils.makeModel({id: 'trusty/apache'}),
+      jsTestUtils.makeModel({id: 'trusty/mysql'})
     ];
     var services = createModelList(allServices);
     var renderer = jsTestUtils.shallowRender(
