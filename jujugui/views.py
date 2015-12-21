@@ -69,13 +69,17 @@ def config(request):
     user, password = 'admin', 'password'
     if not sandbox_enabled:
         user, password = settings['jujugui.user'], settings['jujugui.password']
-    env_uuid = request.matchdict.get('uuid', 'sandbox')
     baseUrl = settings['jujugui.base_url']
+    env_uuid = settings.get('jujugui.uuid')
+    path_env_uuid = request.matchdict.get('uuid')
     if baseUrl is None:
-        if env_uuid == 'sandbox':
+        if path_env_uuid is None:
             baseUrl = ''
         else:
-            baseUrl = '/u/anonymous/{}'.format(env_uuid)
+            baseUrl = '/u/anonymous/{}'.format(path_env_uuid)
+    env_uuid = [
+        uuid for uuid in [path_env_uuid, env_uuid, 'sandbox']
+        if uuid is not None][0]
     options = {
         # Base YUI options.
         'auth': settings['jujugui.auth'],
@@ -96,7 +100,7 @@ def config(request):
         'socket_protocol': 'wss',
         'user': user,
         'password': password,
-        'jujuEnvUUID': request.matchdict.get('uuid', 'sandbox'),
+        'jujuEnvUUID': env_uuid,
         'jemUrl': jem_url,
         'interactiveLogin': settings['jujugui.interactive_login'],
         # Enable/disable sandbox (demonstration) mode.
@@ -108,7 +112,7 @@ def config(request):
         # Also implies using cookies.
         'GA_key': settings['jujugui.ga_key'],
         # Set a juju-core version so the GUI can adapt its available features.
-        'jujuCoreVersion': '',
+        'jujuCoreVersion': settings.get('jujugui.jujuCoreVersion', ''),
         'apiAddress': settings.get('jujugui.apiAddress'),
         'socketTemplate': settings['jujugui.socketTemplate'],
     }
