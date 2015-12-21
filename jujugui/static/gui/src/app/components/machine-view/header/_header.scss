@@ -1,7 +1,35 @@
 .machine-view__header {
+    position: relative;
     height: 50px;
     margin: 0 20px;
     padding: 0 10px;
     border-bottom: 1px dotted $mid-grey;
     line-height: 50px;
+
+    &-drop-target {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: $canvas-background;
+    }
+
+    &-drop-message {
+        color: $ubuntu-orange;
+        text-align: center;
+    }
+
+    &--droppable {
+        border: 1px dashed $mid-grey;
+    }
+
+    &--droppable &-drop-target {
+        display: block;
+    }
+
+    &--drop &-drop-target {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
 }

@@ -20,12 +20,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('machine-view-header', function() {
 
-  juju.components.MachineViewHeader = React.createClass({
+  var dropTarget = {
+    /**
+      Called when something is dropped on the header.
+      See: http://gaearon.github.io/react-dnd/docs-drop-target.html
+
+      @method drop
+      @param {Object} props The component props.
+      @param {Object} monitor A DropTargetMonitor.
+      @param {Object} component The component that is being dropped onto.
+    */
+    drop: function (props, monitor, component) {
+      var item = monitor.getItem();
+      if (props.droppable) {
+        props.dropUnit(item.unit, null, props.type);
+      }
+    },
+
+    /**
+      Called to check if the unit is allowed to be dropped on the header.
+
+      @method canDrop
+      @param {Object} props The component props.
+      @param {Object} monitor A DropTargetMonitor.
+    */
+    canDrop: function (props, monitor) {
+      return props.droppable;
+    }
+  };
+
+  /**
+    Provides props to be injected into the component.
+
+    @method collect
+    @param {Object} connect The connector.
+    @param {Object} monitor A DropTargetMonitor.
+  */
+  function collect(connect, monitor) {
+    return {
+      connectDropTarget: connect.dropTarget(),
+      canDrop: monitor.canDrop(),
+      isOver: monitor.isOver()
+    };
+  }
+
+  var MachineViewHeader = React.createClass({
     propTypes: {
       activeMenuItem: React.PropTypes.string,
+      droppable: React.PropTypes.bool.isRequired,
+      dropUnit: React.PropTypes.func,
       menuItems: React.PropTypes.array,
       title: React.PropTypes.string.isRequired,
-      toggle: React.PropTypes.object
+      toggle: React.PropTypes.object,
+      type: React.PropTypes.string
     },
 
     /**
@@ -54,15 +101,39 @@ YUI.add('machine-view-header', function() {
       }
     },
 
+    /**
+      Generate the classes for the component.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'machine-view__header', {
+          'machine-view__header--droppable':
+            this.props.droppable && this.props.canDrop,
+          'machine-view__header--drop': this.props.isOver
+        });
+    },
+
     render: function() {
-      return (
-        <div className="machine-view__header">
+      return this.props.connectDropTarget(
+        <div className={this._generateClasses()}>
           {this.props.title}
           {this._generateControl()}
+          <div className="machine-view__header-drop-target">
+            <div className="machine-view__header-drop-message">
+              Create new {this.props.type}
+            </div>
+          </div>
         </div>
       );
     }
   });
+
+  juju.components.MachineViewHeader = ReactDnD.DropTarget(
+    'unit', dropTarget, collect)(MachineViewHeader);
+
 }, '0.1.0', {
   requires: [
     'more-menu',
