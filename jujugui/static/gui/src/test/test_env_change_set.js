@@ -622,13 +622,29 @@ describe('Environment Change Set', function() {
     it('undeletes deleted machines', function() {
       var db = ecs.get('db');
       var attrs = {deleted: true};
+      var machine = {
+        deleted: true
+      };
+      var unit = {
+        deleted: true
+      };
       db.machines = {
         getById: function() {
           return attrs;
+        },
+        filterByAncestor: function() {
+          return [machine];
+        }
+      };
+      db.units = {
+        filterByMachine: function() {
+          return [unit];
         }
       };
       ecs._clearFromDB({method: '_destroyMachines', args: [1]});
       assert.deepEqual(attrs, {deleted: false});
+      assert.equal(machine.deleted, false);
+      assert.equal(unit.deleted, false);
     });
 
     it('backs out config changes', function() {
