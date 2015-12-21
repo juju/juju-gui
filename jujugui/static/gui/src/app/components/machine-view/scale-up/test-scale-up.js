@@ -179,15 +179,51 @@ describe('MachineViewScaleUp', function() {
       '.generic-button--type-confirm');
     var input1 = output.refs['scaleUpUnit-111111$'];
     input1.value = '5';
-    //testUtils.Simulate.change(input1);
     var input2 = output.refs['scaleUpUnit-222222$'];
     input2.value = '9';
-    //testUtils.Simulate.change(input2);
     testUtils.Simulate.click(confirm);
     assert.equal(addGhostAndEcsUnits.callCount, 2);
     assert.equal(addGhostAndEcsUnits.args[0][0], '111111$');
     assert.equal(addGhostAndEcsUnits.args[0][1], '5');
     assert.equal(addGhostAndEcsUnits.args[1][0], '222222$');
     assert.equal(addGhostAndEcsUnits.args[1][1], '9');
+  });
+
+  it('can scale services with dashes in the name', () => {
+    var addGhostAndEcsUnits = sinon.stub();
+    var toggleScaleUp = sinon.stub();
+    var services = {
+      toArray: sinon.stub().returns([{
+        get: function (val) {
+          switch (val) {
+            case 'id':
+              return 'juju-gui';
+              break;
+            case 'name':
+              return 'juju-gui';
+              break;
+            case 'icon':
+              return 'juju-gui.svg';
+              break;
+          }
+        }
+      }]),
+      getById: function (val) {
+        return 'juju-gui';
+      }
+    };
+    var output = testUtils.renderIntoDocument(
+      <juju.components.MachineViewScaleUp
+        addGhostAndEcsUnits={addGhostAndEcsUnits}
+        services={services}
+        toggleScaleUp={toggleScaleUp} />, true);
+    var confirm = output.getDOMNode().querySelector(
+      '.generic-button--type-confirm');
+    var input1 = output.refs['scaleUpUnit-juju-gui'];
+    input1.value = '5';
+    testUtils.Simulate.click(confirm);
+    assert.equal(addGhostAndEcsUnits.callCount, 1);
+    assert.equal(addGhostAndEcsUnits.args[0][0], 'juju-gui');
+    assert.equal(addGhostAndEcsUnits.args[0][1], '5');
   });
 });
