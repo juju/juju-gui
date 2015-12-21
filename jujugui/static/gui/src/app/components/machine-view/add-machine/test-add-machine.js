@@ -111,6 +111,11 @@ describe('MachineViewAddMachine', function() {
       }, {
         id: 'new1',
         displayName: 'new1'
+      }, {
+        // Deleted machines should not appear in the list of options.
+        id: 'new2',
+        deleted: true,
+        displayName: 'new2'
       }])
     };
     var renderer = jsTestUtils.shallowRender(
@@ -160,6 +165,11 @@ describe('MachineViewAddMachine', function() {
       }, {
         id: 'new0/lxc/new1',
         displayName: 'new0/lxc/new1'
+      }, {
+        // Deleted containers should not appear in the list of options.
+        id: 'new0/lxc/new2',
+        deleted: true,
+        displayName: 'new0/lxc/new2'
       }])
     };
     var renderer = jsTestUtils.shallowRender(

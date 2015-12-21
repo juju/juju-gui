@@ -1078,6 +1078,78 @@ describe('MachineView', function() {
       output.props.children.props.children[2].props.children[1], expected);
   });
 
+  it('does not show an add container form for deleted machines', function() {
+    var machines = {
+      filterByParent: function(arg) {
+        if (arg == 'new0') {
+          return [{id: 'new0/lxc/0'}];
+        }
+        return [{id: 'new0'}];
+      },
+      getById: sinon.stub().returns({
+        id: 'new0',
+        deleted: true,
+        commitStatus: 'committed'
+      })
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var createMachine = sinon.stub();
+    var destroyMachines = sinon.stub();
+    var removeUnits = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        addGhostAndEcsUnits={sinon.stub()}
+        createMachine={createMachine}
+        destroyMachines={destroyMachines}
+        environmentName="My Env"
+        units={units}
+        removeUnits={removeUnits}
+        services={services}
+        machines={machines} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._addContainer();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="machine-view__column-content">
+        {undefined}
+        <ul className="machine-view__list">
+          <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
+            key="new0"
+            machine={{
+              commitStatus: 'committed',
+              deleted: true,
+              displayName: 'Root container',
+              id: 'new0',
+              root: true
+            }}
+            removeUnit={instance._removeUnit}
+            services={services}
+            type="container"
+            units={units} />
+          <juju.components.MachineViewMachine
+            destroyMachines={destroyMachines}
+            dropUnit={instance._dropUnit}
+            key="new0/lxc/0"
+            machine={{id: 'new0/lxc/0'}}
+            removeUnit={instance._removeUnit}
+            services={services}
+            type="container"
+            units={units} />
+        </ul>
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[2].props.children[1], expected);
+  });
+
   it('can remove a unit', function() {
     var machines = {
       filterByParent: function(arg) {
