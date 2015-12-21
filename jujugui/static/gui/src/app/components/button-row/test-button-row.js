@@ -75,7 +75,7 @@ describe('ButtonRow', function() {
         type="submit" />
     ];
     assert.deepEqual(output,
-      <div className="button-row button-row--multiple">
+      <div className="button-row button-row--multiple button-row--count-2">
         {children}
       </div>);
   });

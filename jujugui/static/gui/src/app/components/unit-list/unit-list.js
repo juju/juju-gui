@@ -108,6 +108,8 @@ YUI.add('unit-list', function() {
           var unitName = ref.slice(ref.indexOf('-') + 1);
           units.push(unitName);
           if (action === 'resolve') {
+            envResolved(unitName, null, false);
+          } else if (action === 'retry') {
             envResolved(unitName, null, true);
           }
         }
@@ -209,8 +211,12 @@ YUI.add('unit-list', function() {
       var buttons = [];
       if (this.props.unitStatus === 'error') {
         buttons.push({
-          title: 'Resolve & retry',
+          title: 'Resolve',
           action: this._handleUpdateUnits.bind(this, 'resolve')
+        });
+        buttons.push({
+          title: 'Retry',
+          action: this._handleUpdateUnits.bind(this, 'retry')
         });
       }
       buttons.push({
