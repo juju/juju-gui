@@ -274,7 +274,6 @@ describe('AddedServicesList', () => {
     assert.equal(allServices[0].get('fade'), true);
     // Unfocused the service.
     assert.isTrue(unfocusService.calledWith(id));
-    unfocusService.restore();
   });
 
   it('performs the necessary work to unfade a service', () => {
