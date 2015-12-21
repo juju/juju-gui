@@ -923,9 +923,17 @@ describe('Environment Change Set', function() {
                 }
               };
             },
+            filterByAncestor: function() {
+              return [];
+            },
+            reset: function() {},
+            detachAll: function() {},
+            destroy: function() {},
             free: testUtils.makeStubFunction()
           },
           units: {
+            detachAll: function() {},
+            destroy: function() {},
             filterByMachine: function() {
               return [];
             }}
@@ -952,9 +960,15 @@ describe('Environment Change Set', function() {
           getById: function() {
             return {};
           },
+          detachAll: function() {},
+          destroy: function() {},
+          reset: function() {},
           remove: stubRemove
         };
         ecs.get('db').units = {
+          detachAll: function() {},
+          destroy: function() {},
+          reset: function() {},
           filterByMachine: function() {
             return [];
           }
@@ -970,6 +984,9 @@ describe('Environment Change Set', function() {
             ecs, '_destroyQueuedMachine');
         this._cleanups.push(stubDestroy.reset);
         ecs.get('db').machines = {
+          detachAll: function() {},
+          destroy: function() {},
+          reset: function() {},
           getById: function() {
             return { units: []};
           }
@@ -991,10 +1008,16 @@ describe('Environment Change Set', function() {
       it('removes uncommitted units from machines', function() {
         var stubRemove = testUtils.makeStubFunction();
         ecs.get('db').machines = {
+          detachAll: function() {},
+          destroy: function() {},
           getById: function() {},
+          reset: function() {},
           remove: stubRemove
         };
         ecs.get('db').units = {
+          detachAll: function() {},
+          destroy: function() {},
+          reset: function() {},
           filterByMachine: function() {}
         };
         ecs.changeSet = {
@@ -1032,11 +1055,20 @@ describe('Environment Change Set', function() {
               set: testUtils.makeStubFunction()
             };
           },
+          filterByAncestor: function() {
+            return [];
+          },
+          reset: function() {},
+          detachAll: function() {},
+          destroy: function() {},
           free: testUtils.makeStubFunction()
         };
         db.units = {
           revive: function() { return { set: stubSet }; },
           free: function() {},
+          reset: function() {},
+          detachAll: function() {},
+          destroy: function() {},
           filterByMachine: function() {
             return [unit];
           }
@@ -1044,6 +1076,63 @@ describe('Environment Change Set', function() {
         ecs._lazyDestroyMachines([['baz'], function() {}]);
         assert.deepEqual(unit, {});
         assert.deepEqual(stubSet.lastArguments(), ['machine', null]);
+      });
+
+      it('marks nested containers and units as deleted', function() {
+        var cmdArgs = ['abc123', true, function() {}];
+        var unit = {
+          // Required so it's treated as a real unit and not a ghost.
+          agent_state: 'running',
+          deleted: null
+        };
+        var machine = {
+          deleted: null
+        };
+        ecs.get('db').machines = {
+          detachAll: function() {},
+          destroy: function() {},
+          reset: function() {},
+          free: function() {},
+          revive: function(obj) {
+            return {
+              set: function(key, value) {
+                obj[key] = value;
+              }
+            };
+          },
+          getById: function() {
+            return {
+              id: cmdArgs[0],
+              parentId: 0
+            };
+          },
+          filterByAncestor: function(machineId) {
+            assert.equal(machineId, cmdArgs[0]);
+            return [machine];
+          }
+        };
+        ecs.get('db').units = {
+          detachAll: function() {},
+          destroy: function() {},
+          reset: function() {},
+          getById: function() {},
+          free: function() {},
+          revive: function(obj) {
+            return {
+              set: function(key, value) {
+                obj[key] = value;
+              }
+            };
+          },
+          filterByMachine: function(machineId, includeChildren) {
+            assert.equal(machineId, cmdArgs[0]);
+            assert.equal(includeChildren, true);
+            return [unit];
+          }
+        };
+        ecs._lazyDestroyMachines(cmdArgs);
+        assert.equal(unit.deleted, true, 'unit not set as deleted');
+        assert.equal(machine.deleted, true, 'machine not set as deleted');
       });
     });
 
