@@ -27,6 +27,7 @@ YUI.add('machine-view-add-machine', function() {
       machines: React.PropTypes.object,
       parentId: React.PropTypes.string,
       placeUnit: React.PropTypes.func,
+      selectMachine: React.PropTypes.func,
       unit: React.PropTypes.object
     },
 
@@ -79,6 +80,9 @@ YUI.add('machine-view-add-machine', function() {
           selectedContainer === 'kvm') {
         var machine = this.props.createMachine(
           selectedContainer, machineId, constraints);
+        if (this.props.selectMachine && !machineId) {
+          this.props.selectMachine(machine.id);
+        }
       }
       // If the component has been provided a unit then we need to place the
       // unit on the machine/container.

@@ -53,6 +53,7 @@ YUI.add('machine-view-unplaced-unit', function() {
       machines: React.PropTypes.object.isRequired,
       placeUnit: React.PropTypes.func.isRequired,
       removeUnit: React.PropTypes.func.isRequired,
+      selectMachine: React.PropTypes.func.isRequired,
       unit: React.PropTypes.object.isRequired
     },
 
@@ -90,6 +91,7 @@ YUI.add('machine-view-unplaced-unit', function() {
           createMachine={this.props.createMachine}
           machines={this.props.machines}
           placeUnit={this.props.placeUnit}
+          selectMachine={this.props.selectMachine}
           unit={this.props.unit} />);
     },
 

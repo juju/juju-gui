@@ -362,4 +362,55 @@ describe('MachineViewAddMachine', function() {
     assert.deepEqual(placeUnit.args[0][0], {id: 'unit1'});
     assert.equal(placeUnit.args[0][1], 'new0/lxc/new0');
   });
+
+  it('can select a machine when created', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub().returns({id: 'new0'});
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var placeUnit = sinon.stub();
+    var selectMachine = sinon.stub();
+    var unit = {id: 'unit1'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        placeUnit={placeUnit}
+        selectMachine={selectMachine}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.state = {selectedMachine: 'new'};
+    instance._submitForm();
+    assert.equal(selectMachine.callCount, 1);
+    assert.equal(selectMachine.args[0][0], 'new0');
+  });
+
+  it('does not select a container when created', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub().returns({id: 'new0/lxc/new1'});
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var placeUnit = sinon.stub();
+    var selectMachine = sinon.stub();
+    var unit = {id: 'unit1'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        machines={machines}
+        parentId="new0"
+        placeUnit={placeUnit}
+        selectMachine={selectMachine}
+        unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.state = {
+      selectedContainer: 'lxc'
+    };
+    instance._submitForm();
+    assert.equal(selectMachine.callCount, 0);
+  });
 });

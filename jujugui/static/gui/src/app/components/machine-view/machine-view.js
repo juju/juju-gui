@@ -166,6 +166,7 @@ YUI.add('machine-view', function() {
             machines={this.props.machines}
             placeUnit={this.props.placeUnit}
             removeUnit={this._removeUnit}
+            selectMachine={this.selectMachine}
             unit={unit} />);
       });
       return (
@@ -354,6 +355,7 @@ YUI.add('machine-view', function() {
           close={this._closeAddMachine}
           createMachine={this.props.createMachine}
           placeUnit={this.props.placeUnit}
+          selectMachine={this.selectMachine}
           unit={this.state.placingUnit} />);
     },
 
