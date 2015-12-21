@@ -189,6 +189,9 @@ YUI.add('machine-view-add-machine', function() {
       var components = [];
       var machines = this.props.machines.filterByParent();
       machines.forEach((machine) => {
+        if (machine.deleted) {
+          return;
+        }
         components.push(
           <option
             key={machine.id}
@@ -220,6 +223,9 @@ YUI.add('machine-view-add-machine', function() {
           {machineId}/root-container
         </option>);
       containers.forEach((container) => {
+        if (container.deleted) {
+          return;
+        }
         components.push(
           <option
             key={container.id}
