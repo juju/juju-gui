@@ -482,6 +482,7 @@ YUI.add('environment-change-set', function(Y) {
       this.currentIndex += 1;
       this.currentCommit = [];
       this.fire('changeSetModified');
+      this.get('db').fire('update');
     },
 
     /**
@@ -505,7 +506,16 @@ YUI.add('environment-change-set', function(Y) {
           services.getById(command.args[0]).set('deleted', false);
           break;
         case '_destroyMachines':
+          var machineId = command.args[0][0];
+          // Set the parent machine to not be deleted.
           machines.getById(command.args[0]).deleted = false;
+          // Set the containers of the parent machine to not be deleted.
+          machines.filterByAncestor(machineId).forEach(machine => {
+            machine.deleted = false;
+          });
+          units.filterByMachine(machineId, true).forEach(unit => {
+            unit.deleted = false;
+          });
           break;
         case '_set_config':
           var service = services.getById(command.args[0]);
