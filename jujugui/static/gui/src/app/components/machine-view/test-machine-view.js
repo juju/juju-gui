@@ -21,10 +21,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineView', function() {
+  var machines;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view', function() { done(); });
+  });
+
+  beforeEach(function() {
+    machines = {
+      filterByParent: sinon.stub().returns([{
+        displayName: 'new0',
+        id: 'new0'
+      }, {
+        displayName: 'new1',
+        id: 'new1'
+      }, {
+        displayName: 'new2',
+        id: 'new2'
+      }]),
+      getById: sinon.stub()
+    };
   });
 
   it('can render', function() {
@@ -37,15 +54,21 @@ describe('MachineView', function() {
     var services = {
       size: sinon.stub().returns(0)
     };
+    var placeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={placeUnit}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var machineMenuItems = output.props.children.props.children[1]
@@ -57,6 +80,7 @@ describe('MachineView', function() {
         <div className="machine-view__content">
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
+              droppable={false}
               title="New units"
               toggle={{
                 action: instance._toggleScaleUp,
@@ -75,6 +99,8 @@ describe('MachineView', function() {
           <div className="machine-view__column machine-view__column--overlap">
             <juju.components.MachineViewHeader
               activeMenuItem="name"
+              droppable={true}
+              dropUnit={instance._dropUnit}
               menuItems={[{
                 label: 'Add machine',
                 action: instance._addMachine
@@ -108,7 +134,8 @@ describe('MachineView', function() {
                 id: 'cpu',
                 action: machineMenuItems[8].action
               }]}
-              title="My Env (0)" />
+              title="My Env (0)"
+              type="machine" />
             <div className="machine-view__column-content">
               {undefined}
               <div className="machine-view__column-onboarding">
@@ -133,6 +160,8 @@ describe('MachineView', function() {
           <div className="machine-view__column">
             <juju.components.MachineViewHeader
               activeMenuItem="name"
+              droppable={false}
+              dropUnit={instance._dropUnit}
               menuItems={[{
                 label: 'Add container',
                 action: instance._addContainer
@@ -151,7 +180,8 @@ describe('MachineView', function() {
                 id: 'services',
                 action: containerMenuItems[4].action
               }]}
-              title="0 containers, 0 units" />
+              title="0 containers, 0 units"
+              type="container" />
             <div className="machine-view__column-content">
               {undefined}
               {undefined}
@@ -163,15 +193,6 @@ describe('MachineView', function() {
   });
 
   it('can display onboarding if there are no services', function() {
-    var machines = {
-      filterByParent: sinon.stub().returns([{
-        displayName: 'new0'
-      }, {
-        displayName: 'new1'
-      }, {
-        displayName: 'new2'
-      }])
-    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -183,10 +204,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         units={units}
-        services={services}
-        machines={machines} />);
+        services={services} />);
     var expected = (
       <div className="machine-view__column-content">
         {undefined}
@@ -201,15 +227,6 @@ describe('MachineView', function() {
   });
 
   it('can display onboarding if there are no unplaced units', function() {
-    var machines = {
-      filterByParent: sinon.stub().returns([{
-        displayName: 'new0'
-      }, {
-        displayName: 'new1'
-      }, {
-        displayName: 'new2'
-      }])
-    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -221,10 +238,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         units={units}
-        services={services}
-        machines={machines} />);
+        services={services} />);
     var expected = (
       <div className="machine-view__column-content">
         {undefined}
@@ -240,15 +262,6 @@ describe('MachineView', function() {
 
   it('can display a service scale up form', function() {
     var addGhostAndEcsUnits = sinon.stub();
-    var machines = {
-      filterByParent: sinon.stub().returns([{
-        displayName: 'new0'
-      }, {
-        displayName: 'new1'
-      }, {
-        displayName: 'new2'
-      }])
-    };
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -260,10 +273,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={addGhostAndEcsUnits}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         units={units}
-        services={services}
-        machines={machines} />, true);
+        services={services} />, true);
     var instance = renderer.getMountedInstance();
     instance._toggleScaleUp();
     var output = renderer.getRenderOutput();
@@ -288,15 +306,6 @@ describe('MachineView', function() {
     var createMachine = sinon.stub();
     var placeUnit = sinon.stub();
     var removeUnits = sinon.stub();
-    var machines = {
-      filterByParent: sinon.stub().returns([{
-        displayName: 'new0'
-      }, {
-        displayName: 'new1'
-      }, {
-        displayName: 'new2'
-      }])
-    };
     var unitList = [{
       id: 'django/0',
       service: 'django'
@@ -320,12 +329,13 @@ describe('MachineView', function() {
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         createMachine={createMachine}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
-        units={units}
+        machines={machines}
         placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -364,15 +374,6 @@ describe('MachineView', function() {
 
   it('can auto place units', function() {
     var autoPlaceUnits = sinon.stub();
-    var machines = {
-      filterByParent: sinon.stub().returns([{
-        displayName: 'new0'
-      }, {
-        displayName: 'new1'
-      }, {
-        displayName: 'new2'
-      }])
-    };
     var unitList = [{
       id: 'django/0',
       service: 'django'
@@ -395,10 +396,14 @@ describe('MachineView', function() {
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />);
+        units={units} />);
     output.props.children.props.children[0].props.children[1]
       .props.children[1].props.children[0].props.children[0].props.onClick();
     assert.equal(autoPlaceUnits.callCount, 1);
@@ -419,10 +424,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -474,11 +484,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -535,11 +549,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -602,11 +620,15 @@ describe('MachineView', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -677,11 +699,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     instance._toggleConstraints();
     var output = renderer.getRenderOutput();
@@ -731,14 +757,19 @@ describe('MachineView', function() {
       size: sinon.stub().returns(0)
     };
     var createMachine = sinon.stub();
+    var placeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
         machines={machines}
+        placeUnit={placeUnit}
+        removeUnits={sinon.stub()}
         services={services}
         units={units} />, true);
     var instance = renderer.getMountedInstance();
@@ -748,7 +779,9 @@ describe('MachineView', function() {
       <div className="machine-view__column-content">
         <juju.components.MachineViewAddMachine
           close={instance._closeAddMachine}
-          createMachine={createMachine} />
+          createMachine={createMachine}
+          placeUnit={placeUnit}
+          unit={undefined} />
         {undefined}
       </div>);
     assert.deepEqual(
@@ -778,10 +811,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     assert.equal(instance.state.selectedMachine, 'new0');
     instance.selectMachine('new1');
@@ -821,12 +859,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -898,12 +939,15 @@ describe('MachineView', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -976,19 +1020,22 @@ describe('MachineView', function() {
     };
     var createMachine = sinon.stub();
     var destroyMachines = sinon.stub();
+    var placeUnit = sinon.stub();
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     instance._addContainer();
     var output = renderer.getRenderOutput();
@@ -997,7 +1044,9 @@ describe('MachineView', function() {
         <juju.components.MachineViewAddMachine
           close={instance._closeAddContainer}
           createMachine={createMachine}
-          parentId="new0" />
+          parentId="new0"
+          placeUnit={placeUnit}
+          unit={undefined} />
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}
@@ -1053,13 +1102,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
+        placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     instance._removeUnit('wordpress/8');
     assert.equal(removeUnits.callCount, 1);
@@ -1091,14 +1142,15 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
-        units={units}
+        machines={machines}
         placeUnit={placeUnit}
         removeUnits={removeUnits}
         services={services}
-        machines={machines} />, true);
+        units={units} />, true);
     var instance = renderer.getMountedInstance();
     instance._dropUnit('wordpress/8', 'new0');
     assert.equal(placeUnit.callCount, 1);
