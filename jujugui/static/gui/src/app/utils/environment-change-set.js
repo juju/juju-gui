@@ -1271,6 +1271,11 @@ YUI.add('environment-change-set', function(Y) {
       var error = this.validateUnitPlacement(
           unit, db.machines.getById(machineId));
       if (error) {
+        db.notifications.add({
+          title: 'Error placing unit',
+          message: 'Error placing unit: ' + error,
+          level: 'error'
+        });
         return error;
       }
       // When placeUnit is called the unit could have been already placed on a
