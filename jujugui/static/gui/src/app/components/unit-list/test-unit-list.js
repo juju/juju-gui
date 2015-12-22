@@ -289,23 +289,26 @@ describe('UnitList', () => {
     assert.equal(buttonItems.length, 1);
   });
 
-  it('displays a Resolve & retry button for an error list', function() {
+  it('displays Resolve and Retry buttons for an error list', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           unitStatus='error'
           units={[]} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
-      title: 'Resolve & retry',
+      title: 'Resolve',
       action: buttonItems[0].action
     }, {
-      title: 'Remove',
+      title: 'Retry',
       action: buttonItems[1].action
+    }, {
+      title: 'Remove',
+      action: buttonItems[2].action
     }];
     assert.deepEqual(output.props.children[2],
       <juju.components.ButtonRow
         buttons={buttons} />);
-    assert.equal(buttonItems.length, 2);
+    assert.equal(buttonItems.length, 3);
   });
 
   it('can remove the selected units', function() {
@@ -389,6 +392,42 @@ describe('UnitList', () => {
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
+    assert.deepEqual(envResolved.args[0][2], false);
     assert.deepEqual(envResolved.args[1][0], units[1].id);
+    assert.deepEqual(envResolved.args[1][2], false);
+  });
+
+  it('can retry the selected units', function() {
+    var changeState = sinon.stub();
+    var envResolved = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      id: 'mysql/2'
+    }];
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          unitStatus='error'
+          envResolved={envResolved}
+          changeState={changeState}
+          service={service}
+          units={units} />);
+    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
+    output.refs['UnitListItem-' + units[1].id].setState({checked: true});
+    var button = testUtils.scryRenderedDOMComponentsWithClass(
+        output, 'generic-button')[1];
+    testUtils.Simulate.click(button);
+    assert.equal(envResolved.callCount, 2);
+    assert.deepEqual(envResolved.args[0][0], units[0].id);
+    assert.deepEqual(envResolved.args[0][2], true);
+    assert.deepEqual(envResolved.args[1][0], units[1].id);
+    assert.deepEqual(envResolved.args[1][2], true);
   });
 });

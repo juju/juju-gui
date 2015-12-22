@@ -24,11 +24,19 @@
     }
 
     &--multiple .generic-button {
-        width: calc(50% - 5px);
+        margin-right: 10px;
 
-        &:first-child {
-            margin-right: 10px;
+        &:last-child {
+            margin-right: 0;
         }
+    }
+
+    &--count-2 .generic-button {
+        width: calc(50% - 5px);
+    }
+
+    &--count-3 .generic-button {
+        width: calc(33.333% - 7px);
     }
 }
 

@@ -28,9 +28,13 @@ YUI.add('button-row', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      var classes = {};
+      var buttonsLength = this.props.buttons.length;
+      classes['button-row--multiple'] = buttonsLength > 0;
+      classes['button-row--count-' + buttonsLength] = true;
       return classNames(
         'button-row',
-        this.props.buttons.length > 1 ? 'button-row--multiple' : ''
+        classes
       );
     },
 
