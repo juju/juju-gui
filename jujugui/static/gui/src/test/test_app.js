@@ -120,10 +120,6 @@ function injectData(app, data) {
 
     it('should propagate login credentials from the configuration',
         function(done) {
-          window.juju_config = {
-            apiAddress: 'http://example.com:17070',
-            socketTemplate: '/environment/$uuid/api'
-          };
           var the_username = 'nehi';
           var the_password = 'moonpie';
           app = new Y.juju.App(
@@ -143,10 +139,6 @@ function injectData(app, data) {
         });
 
     it('propagates the readOnly option from the configuration', function() {
-      window.juju_config = {
-        apiAddress: 'http://example.com:17070',
-        socketTemplate: '/environment/$uuid/api'
-      };
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -171,10 +163,6 @@ function injectData(app, data) {
     });
 
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
-      window.juju_config = {
-        apiAddress: 'http://example.com:17070',
-        socketTemplate: '/environment/$uuid/api'
-      };
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
@@ -189,10 +177,6 @@ function injectData(app, data) {
     });
 
     it('autoplaceAndCommitAll places and deploys', function() {
-      window.juju_config = {
-        apiAddress: 'http://example.com:17070',
-        socketTemplate: '/environment/$uuid/api'
-      };
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
@@ -1078,15 +1062,17 @@ describe('File drag over notification system', function() {
     var Y, app, container;
     var _generateMockedApp = function(sandbox, socketUrl) {
       app = new Y.juju.App({
-        container: container,
-        viewContainer: container,
-        sandbox: sandbox,
-        consoleEnabled: true,
-        user: 'admin',
-        password: 'admin',
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        apiAddress: 'http://example.com:17070',
         charmstorestore: new window.jujulib.charmstore(),
-        sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api'
+        consoleEnabled: true,
+        container: container,
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        password: 'admin',
+        sandbox: sandbox,
+        sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api',
+        socketTemplate: '/environment/$uuid/api',
+        user: 'admin',
+        viewContainer: container
       });
       var fake_ws = {
         onclose: function() { this.oncloseCalled = true; },
@@ -1141,10 +1127,6 @@ describe('File drag over notification system', function() {
 
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
-      window.juju_config = {
-        apiAddress: 'http://example.com:17070',
-        socketTemplate: '/environment/$uuid/api'
-      };
     });
 
     afterEach(function() {
@@ -1205,10 +1187,6 @@ describe('File drag over notification system', function() {
 
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
-      window.juju_config = {
-        apiAddress: 'http://example.com:17070',
-        socketTemplate: '/environment/$uuid/api'
-      };
     });
 
     afterEach(function() {
@@ -1218,17 +1196,19 @@ describe('File drag over notification system', function() {
     });
 
     it('instantiates correctly', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            sandbox: true,
-            consoleEnabled: true,
-            user: 'admin',
-            password: 'admin',
-            jujuCoreVersion: '1.21.1.1-trusty-amd64',
-            charmstorestore: new window.jujulib.charmstore(),
-            sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api'
-          });
+      app = new Y.juju.App({
+        apiAddress: 'http://example.com:17070',
+        charmstorestore: new window.jujulib.charmstore(),
+        consoleEnabled: true,
+        container: container,
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        password: 'admin',
+        sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api',
+        sandbox: true,
+        socketTemplate: '/environment/$uuid/api',
+        user: 'admin',
+        viewContainer: container
+      });
       app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the
       // necessary parts are there.
@@ -1241,11 +1221,13 @@ describe('File drag over notification system', function() {
 
     it('passes a fake web handler to the environment', function() {
       app = new Y.juju.App({
+        apiAddress: 'http://example.com:17070',
+        charmstore: new window.jujulib.charmstore(),
         container: container,
-        viewContainer: container,
-        sandbox: true,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
-        charmstore: new window.jujulib.charmstore()
+        sandbox: true,
+        socketTemplate: '/environment/$uuid/api',
+        viewContainer: container
       });
       app.showView(new Y.View());
       var webHandler = app.env.get('webHandler');
@@ -1286,10 +1268,6 @@ describe('File drag over notification system', function() {
     });
 
     it('should honor socket_protocol and uuid', function() {
-      window.juju_config = {
-        apiAddress: 'example.com:17070',
-        socketTemplate: '/juju/api/$server/$port/$uuid'
-      };
       var expected = [
         'ws://',
         window.location.hostname,
@@ -1297,13 +1275,16 @@ describe('File drag over notification system', function() {
         window.location.port,
         '/ws/juju/api/example.com/17070/1234-1234'
       ].join('');
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            socket_protocol: 'ws',
-            jujuCoreVersion: '1.21.1.1-trusty-amd64',
-            jujuEnvUUID: '1234-1234',
-            conn: {close: function() {}} });
+      app = new Y.juju.App({
+        apiAddress: 'example.com:17070',
+        conn: {close: function() {}},
+        container: container,
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuEnvUUID: '1234-1234',
+        socket_protocol: 'ws',
+        socketTemplate: '/juju/api/$server/$port/$uuid',
+        viewContainer: container
+      });
       app.showView(new Y.View());
       assert.equal(app.env.get('socket_url'), expected);
     });
