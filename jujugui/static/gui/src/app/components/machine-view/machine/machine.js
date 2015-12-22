@@ -111,6 +111,7 @@ YUI.add('machine-view-machine', function() {
       units.forEach((unit) => {
         var menu;
         var title;
+        var service = this.props.services.getById(unit.service);
         if (this.props.type === 'container') {
           var menuItems = [{
             label: 'Destroy',
@@ -120,8 +121,9 @@ YUI.add('machine-view-machine', function() {
             <juju.components.MoreMenu
               items={menuItems} />);
           title = unit.displayName;
+        } else if (service.get('hide') || service.get('fade')) {
+          return;
         }
-        var service = this.props.services.getById(unit.service);
         components.push(
           <li className={this._generateUnitClasses(unit)}
             key={unit.id}>
