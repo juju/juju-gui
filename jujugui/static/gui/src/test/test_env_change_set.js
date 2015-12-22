@@ -1766,11 +1766,15 @@ describe('Environment Change Set', function() {
       });
 
       it('does not apply changes if unit placement is not valid', function() {
+        var addStub = testUtils.makeStubFunction();
+        ecs.get('db').notifications = {add: addStub};
         mockValidateUnitPlacement = testUtils.makeStubMethod(
             ecs, 'validateUnitPlacement', 'bad wolf');
         this._cleanups.push(mockValidateUnitPlacement.reset);
         var err = ecs.placeUnit(unit, machineId);
         assert.strictEqual(err, 'bad wolf');
+        // A notification should have been added.
+        assert.equal(addStub.callCount(), 1);
         // No parents have been added to the changeset record.
         assert.strictEqual(ecs.changeSet.a.parents.length, 0);
         // The machine id has not been set on the unit.
