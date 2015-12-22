@@ -47,16 +47,17 @@ describe('MachineViewAddMachine', function() {
     }];
     var expected = (
       <div className="add-machine">
-        {undefined}
-        {undefined}
-        <div className="add-machine__constraints">
+        <div className="add-machine__constraints"
+          key="constraints">
           <h4 className="add-machine__title">
             Define constraints
           </h4>
           <juju.components.Constraints
             valuesChanged={instance._updateConstraints} />
         </div>
-        <juju.components.ButtonRow buttons={buttons} />
+        <juju.components.ButtonRow
+          buttons={buttons}
+          key="buttons" />
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -81,9 +82,9 @@ describe('MachineViewAddMachine', function() {
     }];
     var expected = (
       <div className="add-machine">
-        {undefined}
         <select className="add-machine__container"
           defaultValue=""
+          key="containers"
           onChange={instance._updateSelectedContainer}>
           <option disabled={true} value="">
             Choose container type...
@@ -92,8 +93,9 @@ describe('MachineViewAddMachine', function() {
           <option value="lxc">LXC</option>
           <option value="kvm">KVM</option>
         </select>
-        {undefined}
-        <juju.components.ButtonRow buttons={buttons} />
+        <juju.components.ButtonRow
+          buttons={buttons}
+          key="buttons" />
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -101,7 +103,7 @@ describe('MachineViewAddMachine', function() {
   it('can render for selecting a machine', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
-    var unit = sinon.stub();
+    var unit = {};
     var machines = {
       filterByParent: sinon.stub().returns([{
         id: 'new0',
@@ -123,6 +125,7 @@ describe('MachineViewAddMachine', function() {
     var expected = (
       <select
         defaultValue=""
+        key="machines"
         onChange={instance._updateSelectedMachine}>
         <option disabled={true} value="">
           Move to...
@@ -149,7 +152,7 @@ describe('MachineViewAddMachine', function() {
   it('can render for selecting a container', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
-    var unit = sinon.stub();
+    var unit = {};
     var machines = {
       filterByParent: sinon.stub().returns([{
         id: 'new0/lxc/new0',
@@ -171,6 +174,7 @@ describe('MachineViewAddMachine', function() {
     var expected = (
       <select className="add-machine__container"
         defaultValue=""
+        key="containers"
         onChange={instance._updateSelectedContainer}>
         <option disabled={true} value="">
           Choose container type...
@@ -206,7 +210,7 @@ describe('MachineViewAddMachine', function() {
         close={close}
         createMachine={createMachine} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children[3].props.buttons[0].action();
+    output.props.children[1].props.buttons[0].action();
     assert.equal(close.callCount, 1);
   });
 
@@ -219,7 +223,7 @@ describe('MachineViewAddMachine', function() {
         createMachine={createMachine} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    output.props.children[3].props.buttons[1].action();
+    output.props.children[1].props.buttons[1].action();
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], null);
     assert.equal(createMachine.args[0][1], null);

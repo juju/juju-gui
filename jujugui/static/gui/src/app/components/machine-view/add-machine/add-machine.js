@@ -40,7 +40,8 @@ YUI.add('machine-view-add-machine', function() {
       return {
         constraints: null,
         selectedContainer: null,
-        selectedMachine: !this.props.unit && !this.props.parentId ? 'new' : null
+        selectedMachine:
+          !this.props.machines && !this.props.parentId ? 'new' : null
       };
     },
 
@@ -107,19 +108,14 @@ YUI.add('machine-view-add-machine', function() {
       @method _generateConstraints
     */
     _generateConstraints: function() {
-      // Show the constraints if we're creating a machine or we're creating a
-      // LXC container.
-      if (this.state.selectedContainer === 'kvm' ||
-          this.state.selectedMachine === 'new') {
-        return (
-          <div className="add-machine__constraints">
-            <h4 className="add-machine__title">
-              Define constraints
-            </h4>
-            <juju.components.Constraints
-              valuesChanged={this._updateConstraints} />
-          </div>);
-      }
+      return (
+        <div className="add-machine__constraints" key='constraints'>
+          <h4 className="add-machine__title">
+            Define constraints
+          </h4>
+          <juju.components.Constraints
+            valuesChanged={this._updateConstraints} />
+        </div>);
     },
 
     /**
@@ -138,12 +134,10 @@ YUI.add('machine-view-add-machine', function() {
       @method _generateSelectContainer
     */
     _generateSelectContainer: function() {
-      if (!this._getParentId()) {
-        return;
-      }
       return (
         <select className="add-machine__container"
           defaultValue=""
+          key="containers"
           onChange={this._updateSelectedContainer}>
           <option disabled={true} value="">
             Choose container type...
@@ -170,12 +164,10 @@ YUI.add('machine-view-add-machine', function() {
       @method _generateSelectContainer
     */
     _generateSelectMachine: function() {
-      if (!this.props.unit) {
-        return;
-      }
       return (
         <select
           defaultValue=""
+          key="machines"
           onChange={this._updateSelectedMachine}>
           <option disabled={true} value="">
             Move to...
@@ -194,9 +186,6 @@ YUI.add('machine-view-add-machine', function() {
       @return {Array} A list of machine options.
     */
     _generateMachineOptions: function() {
-      if (!this.props.machines) {
-        return;
-      }
       var components = [];
       var machines = this.props.machines.filterByParent();
       machines.forEach((machine) => {
@@ -217,12 +206,12 @@ YUI.add('machine-view-add-machine', function() {
       @return {Array} A list of container options.
     */
     _generateContainerOptions: function() {
-      if (!this.state.selectedMachine) {
+      var machines = this.props.machines;
+      if (!machines) {
         return;
       }
       var components = [];
-      var containers = this.props.machines.filterByParent(
-        this.state.selectedMachine);
+      var containers = machines.filterByParent(this.state.selectedMachine);
       var machineId = this._getParentId();
       components.push(
         <option
@@ -248,9 +237,6 @@ YUI.add('machine-view-add-machine', function() {
       @return {Object} The buttons.
     */
     _generateButtons: function() {
-      if (this.props.unit && !this.state.selectedMachine) {
-        return;
-      }
       var buttons = [{
         title: 'Cancel',
         action: this.props.close
@@ -260,16 +246,43 @@ YUI.add('machine-view-add-machine', function() {
         type: 'confirm'
       }];
       return (
-        <juju.components.ButtonRow buttons={buttons} />);
+        <juju.components.ButtonRow
+          buttons={buttons}
+          key="buttons" />);
     },
 
     render: function() {
+      var components = [];
+      var props = this.props;
+      var state = this.state;
+      var machines = props.machines;
+      var parentId = props.parentId;
+      var selectedContainer = state.selectedContainer;
+      var selectedMachine = state.selectedMachine;
+      var unit = props.unit;
+      if (unit && machines) {
+        components.push(this._generateSelectMachine());
+        if (selectedMachine) {
+          if (selectedMachine !== 'new') {
+            components.push(this._generateSelectContainer());
+          }
+          if (selectedMachine === 'new' || selectedContainer === 'kvm') {
+            components.push(this._generateConstraints());
+          }
+          components.push(this._generateButtons());
+        }
+      } else if (!machines) {
+        if (parentId) {
+          components.push(this._generateSelectContainer());
+        }
+        if (!parentId || selectedContainer === 'kvm') {
+          components.push(this._generateConstraints());
+        }
+        components.push(this._generateButtons());
+      }
       return (
         <div className="add-machine">
-          {this._generateSelectMachine()}
-          {this._generateSelectContainer()}
-          {this._generateConstraints()}
-          {this._generateButtons()}
+          {components}
         </div>
       );
     }

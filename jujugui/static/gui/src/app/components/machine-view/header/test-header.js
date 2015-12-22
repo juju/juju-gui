@@ -28,30 +28,78 @@ describe('MachineViewHeader', function() {
   });
 
   it('can render', function() {
+    // The component is wrapped to handle drag and drop, but we just want to
+    // test the internal component so we access it via DecoratedComponent.
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewHeader
-        title="Sandbox" />);
+      <juju.components.MachineViewHeader.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        droppable={true}
+        title="Sandbox"
+        type="machine" />);
     var expected = (
         <div className="machine-view__header">
           Sandbox
           {undefined}
+          <div className="machine-view__header-drop-target">
+            <div className="machine-view__header-drop-message">
+              Create new {"machine"}
+            </div>
+          </div>
+        </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render in droppable mode', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewHeader.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        droppable={true}
+        isOver={true}
+        title="Sandbox"
+        type="machine" />);
+    var expected = (
+        <div className="machine-view__header machine-view__header--drop">
+          {output.props.children}
+        </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render in drop mode', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewHeader.DecoratedComponent
+        canDrop={true}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        droppable={true}
+        title="Sandbox"
+        type="machine" />);
+    var expected = (
+        <div className="machine-view__header machine-view__header--droppable">
+          {output.props.children}
         </div>);
     assert.deepEqual(output, expected);
   });
 
   it('can render with a menu', function() {
-    var menuItems = sinon.stub();
+    var menuItems = [];
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewHeader
+      <juju.components.MachineViewHeader.DecoratedComponent
         activeMenuItem="name"
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        droppable={true}
         menuItems={menuItems}
-        title="Sandbox" />);
+        title="Sandbox"
+        type="machine" />);
     var expected = (
         <div className="machine-view__header">
           Sandbox
           <juju.components.MoreMenu
             activeItem="name"
             items={menuItems} />
+          <div className="machine-view__header-drop-target">
+            <div className="machine-view__header-drop-message">
+              Create new {"machine"}
+            </div>
+          </div>
         </div>);
     assert.deepEqual(output, expected);
   });
@@ -59,13 +107,16 @@ describe('MachineViewHeader', function() {
   it('can render with a toggle', function() {
     var action = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.MachineViewHeader
+      <juju.components.MachineViewHeader.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        droppable={true}
         toggle={{
           action: action,
           disabled: false,
           toggleOn: true
         }}
-        title="Sandbox" />);
+        title="Sandbox"
+        type="machine" />);
     var expected = (
         <div className="machine-view__header">
           Sandbox
@@ -74,6 +125,11 @@ describe('MachineViewHeader', function() {
             disabled={false}
             type="grey"
             icon="close_16" />
+          <div className="machine-view__header-drop-target">
+            <div className="machine-view__header-drop-message">
+              Create new {"machine"}
+            </div>
+          </div>
         </div>);
     assert.deepEqual(output, expected);
   });

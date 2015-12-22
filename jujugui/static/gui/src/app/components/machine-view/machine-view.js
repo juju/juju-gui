@@ -44,6 +44,7 @@ YUI.add('machine-view', function() {
       return {
         containerSort: 'name',
         machineSort: 'name',
+        placingUnit: null,
         selectedMachine: this._getFirstMachineId(this.props.machines),
         showAddMachine: false,
         showConstraints: true,
@@ -106,8 +107,19 @@ YUI.add('machine-view', function() {
       @param {Object} unit The unit that was dropped.
       @param {String} machine The machine id that the unit dropped onto.
     */
-    _dropUnit: function(unit, machine) {
-      this.props.placeUnit(unit, machine);
+    _dropUnit: function(unit, machine, newType) {
+      if (machine) {
+        this.props.placeUnit(unit, machine);
+      } else {
+        var state = {};
+        if (newType === 'machine') {
+          state.showAddMachine = true;
+        } else {
+          state.showAddContainer = true;
+        }
+        state.placingUnit = unit;
+        this.setState(state);
+      }
     },
 
     /**
@@ -136,8 +148,16 @@ YUI.add('machine-view', function() {
           </div>);
       }
       var components = [];
+      var state = this.state;
+      var placingUnit;
+      if (state.showAddMachine || state.showAddContainer) {
+        placingUnit = state.placingUnit;
+      }
       units.forEach((unit) => {
         var service = this.props.services.getById(unit.service);
+        if (placingUnit && unit.id === placingUnit.id) {
+          return;
+        }
         components.push(
           <juju.components.MachineViewUnplacedUnit
             createMachine={this.props.createMachine}
@@ -313,7 +333,10 @@ YUI.add('machine-view', function() {
       @method _closeAddMachine
     */
     _closeAddMachine: function() {
-      this.setState({showAddMachine: false});
+      this.setState({
+        placingUnit: null,
+        showAddMachine: false
+      });
     },
 
     /**
@@ -322,13 +345,16 @@ YUI.add('machine-view', function() {
       @method _generateAddMachine
     */
     _generateAddMachine: function() {
-      if (!this.state.showAddMachine) {
+      var showAddMachine = this.state.showAddMachine;
+      if (!showAddMachine) {
         return;
       }
       return (
         <juju.components.MachineViewAddMachine
           close={this._closeAddMachine}
-          createMachine={this.props.createMachine} />);
+          createMachine={this.props.createMachine}
+          placeUnit={this.props.placeUnit}
+          unit={this.state.placingUnit} />);
     },
 
     /**
@@ -348,7 +374,10 @@ YUI.add('machine-view', function() {
       @method _closeAddContainer
     */
     _closeAddContainer: function() {
-      this.setState({showAddContainer: false});
+      this.setState({
+        placingUnit: null,
+        showAddContainer: false
+      });
     },
 
     /**
@@ -357,14 +386,17 @@ YUI.add('machine-view', function() {
       @method _generateAddContainer
     */
     _generateAddContainer: function() {
-      if (!this.state.showAddContainer) {
+      var showAddContainer = this.state.showAddContainer;
+      if (!showAddContainer) {
         return;
       }
       return (
         <juju.components.MachineViewAddMachine
           close={this._closeAddContainer}
           createMachine={this.props.createMachine}
-          parentId={this.state.selectedMachine} />);
+          parentId={this.state.selectedMachine}
+          placeUnit={this.props.placeUnit}
+          unit={this.state.placingUnit} />);
     },
 
     /**
@@ -618,6 +650,7 @@ YUI.add('machine-view', function() {
           <div className="machine-view__content">
             <div className="machine-view__column">
               <juju.components.MachineViewHeader
+                droppable={false}
                 title="New units"
                 toggle={unplacedToggle} />
               <div className="machine-view__column-content">
@@ -628,8 +661,11 @@ YUI.add('machine-view', function() {
             <div className="machine-view__column machine-view__column--overlap">
               <juju.components.MachineViewHeader
                 activeMenuItem={this.state.machineSort}
+                droppable={true}
+                dropUnit={this._dropUnit}
                 menuItems={machineMenuItems}
-                title={this._generateMachinesTitle()} />
+                title={this._generateMachinesTitle()}
+                type="machine" />
               <div className="machine-view__column-content">
                 {this._generateAddMachine()}
                 {this._generateMachines()}
@@ -638,8 +674,11 @@ YUI.add('machine-view', function() {
             <div className="machine-view__column">
               <juju.components.MachineViewHeader
                 activeMenuItem={this.state.containerSort}
+                droppable={!!this.state.selectedMachine}
+                dropUnit={this._dropUnit}
                 menuItems={containerMenuItems}
-                title={this._generateContainersTitle()} />
+                title={this._generateContainersTitle()}
+                type="container" />
               <div className="machine-view__column-content">
                 {this._generateAddContainer()}
                 {this._generateContainers()}
