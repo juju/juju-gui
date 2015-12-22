@@ -18,51 +18,6 @@
         right: 20px;
     }
 
-    &__column {
-        @extend %scroll-children;
-        overflow-y: hidden;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        flex: 1 0 33.333%;
-        border-left: 1px dotted $mid-grey;
-
-        &:first-child {
-            padding-left: 0;
-            border-left: none;
-        }
-
-        &:last-child {
-            padding-right: 0;
-        }
-
-        &--overlap {
-            z-index: 1;
-            // Overlap the right border so that the selected machine token
-            // can overlay the column border.
-            margin-right: -1px;
-        }
-
-        &-content {
-            @extend %collapse-children;
-            padding: 20px;
-        }
-
-        &-onboarding {
-            padding: 0 10px 20px 10px;
-
-            .svg-icon {
-                margin-right: 7px;
-                vertical-align: top;
-            }
-
-            ul {
-                padding-left: 10px;
-                list-style-position: inside;
-            }
-        }
-    }
-
     &__list {
         list-style: none;
         margin: 0;
