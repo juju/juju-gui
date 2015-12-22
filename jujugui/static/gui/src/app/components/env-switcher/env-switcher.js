@@ -194,19 +194,24 @@ YUI.add('env-switcher', function() {
       @param {String} uuid The env UUID.
     */
     switchEnv: function(uuid) {
-      var username = '';
-      var password = '';
+      var username, password, address, port;
       var found = this.state.envList.some((env) => {
         if (env.uuid === uuid) {
           username = env.user;
           password = env.password;
+          if (env['host-ports']) {
+            var hostport = env['host-ports'][0].split(':');
+            address = hostport[0];
+            port = hostport[1];
+          }
           return true;
         }
       });
       if (!found) {
         console.log('No user credentials for env: ', uuid);
       }
-      this.props.app.switchEnv(uuid, username, password);
+      var socketUrl = this.props.app.createSocketURL(address, port, uuid);
+      this.props.app.switchEnv(socketUrl, username, password);
     },
 
     /**

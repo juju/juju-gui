@@ -108,8 +108,6 @@ class ConfigTests(ViewTestCase):
         self.assertIsNone(config['password'])
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
-        self.assertIsNone(config['socket_path'])
-        self.assertIs(False, config['embedded'])
 
     def test_customized_options(self):
         self.update_settings({
@@ -117,10 +115,8 @@ class ConfigTests(ViewTestCase):
             'jujugui.ga_key': 'my-key',
             'jujugui.sandbox': 'true',
             'jujugui.auth': 'blob',
-            'jujugui.socket_path': '/api/address',
             'jujugui.user': 'who',
             'jujugui.password': 'secret',
-            'jujugui.embedded': 'true',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -128,14 +124,12 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('1.2.3.4/api', config['charmstoreURL'])
         self.assertEqual('my-key', config['GA_key'])
         self.assertEqual('blob', config['auth'])
-        self.assertEqual('/api/address', config['socket_path'])
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['sandbox'])
         # The hideLoginButton, user and password values reflect sandbox status.
         self.assertEqual('admin', config['user'])
         self.assertEqual('password', config['password'])
-        self.assertIs(True, config['embedded'])
 
     def test_standalone(self):
         jujugui.make_application(self.config)
