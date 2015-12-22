@@ -1647,13 +1647,13 @@ YUI.add('juju-gui', function(Y) {
       baseUrl += '/ws';
 
       if (!server || !port) {
-        var apiAddress = window.juju_config.apiAddress.replace('wss://', '');
+        var apiAddress = this.get('apiAddress').replace('wss://', '');
         apiAddress = apiAddress.split(':');
         server = apiAddress[0];
         port = apiAddress[1];
       }
 
-      var path = window.juju_config.socketTemplate.replace('$server', server);
+      var path = this.get('socketTemplate').replace('$server', server);
       path = path.replace('$port', port);
       path = path.replace('$uuid', uuid);
       return baseUrl + path;
@@ -2027,6 +2027,25 @@ YUI.add('juju-gui', function(Y) {
        @default false
        */
       interactiveLogin: {value: false},
+
+      /**
+       The address for the environment's state-server. Used for websocket
+       creation.
+
+       @attribute apiAddress
+       @type {String}
+       @default ''
+       */
+      apiAddress: {value: ''},
+
+      /**
+       The template to use to create websockets.       
+
+       @attribute socketTemplate
+       @type {String}
+       @default '/environment/$uuid/api'
+       */
+      socketTemplate: {value: '/environment/$uuid/api'},
 
       /**
        * Routes
