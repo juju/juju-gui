@@ -781,7 +781,7 @@ describe('MachineView', function() {
           close={instance._closeAddMachine}
           createMachine={createMachine}
           placeUnit={placeUnit}
-          unit={undefined} />
+          unit={null} />
         {undefined}
       </div>);
     assert.deepEqual(
@@ -1046,7 +1046,7 @@ describe('MachineView', function() {
           createMachine={createMachine}
           parentId="new0"
           placeUnit={placeUnit}
-          unit={undefined} />
+          unit={null} />
         <ul className="machine-view__list">
           <juju.components.MachineViewMachine
             destroyMachines={destroyMachines}

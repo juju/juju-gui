@@ -44,6 +44,7 @@ YUI.add('machine-view', function() {
       return {
         containerSort: 'name',
         machineSort: 'name',
+        placingUnit: null,
         selectedMachine: this._getFirstMachineId(this.props.machines),
         showAddMachine: false,
         showConstraints: true,
@@ -112,10 +113,11 @@ YUI.add('machine-view', function() {
       } else {
         var state = {};
         if (newType === 'machine') {
-          state.showAddMachine = {unit: unit};
+          state.showAddMachine = true;
         } else {
-          state.showAddContainer = {unit: unit};
+          state.showAddContainer = true;
         }
+        state.placingUnit = unit;
         this.setState(state);
       }
     },
@@ -146,10 +148,11 @@ YUI.add('machine-view', function() {
           </div>);
       }
       var components = [];
-      var showAddMachine = this.state.showAddMachine;
-      var showAddContainer = this.state.showAddContainer;
-      var placingUnit = showAddMachine && showAddMachine.unit ||
-        showAddContainer && showAddContainer.unit;
+      var state = this.state;
+      var placingUnit;
+      if (state.showAddMachine || state.showAddContainer) {
+        placingUnit = state.placingUnit;
+      }
       units.forEach((unit) => {
         var service = this.props.services.getById(unit.service);
         if (placingUnit && unit.id === placingUnit.id) {
@@ -330,7 +333,10 @@ YUI.add('machine-view', function() {
       @method _closeAddMachine
     */
     _closeAddMachine: function() {
-      this.setState({showAddMachine: false});
+      this.setState({
+        placingUnit: null,
+        showAddMachine: false
+      });
     },
 
     /**
@@ -343,16 +349,12 @@ YUI.add('machine-view', function() {
       if (!showAddMachine) {
         return;
       }
-      var unit;
-      if (showAddMachine.unit) {
-        unit = showAddMachine.unit;
-      }
       return (
         <juju.components.MachineViewAddMachine
           close={this._closeAddMachine}
           createMachine={this.props.createMachine}
           placeUnit={this.props.placeUnit}
-          unit={unit} />);
+          unit={this.state.placingUnit} />);
     },
 
     /**
@@ -372,7 +374,10 @@ YUI.add('machine-view', function() {
       @method _closeAddContainer
     */
     _closeAddContainer: function() {
-      this.setState({showAddContainer: false});
+      this.setState({
+        placingUnit: null,
+        showAddContainer: false
+      });
     },
 
     /**
@@ -385,17 +390,13 @@ YUI.add('machine-view', function() {
       if (!showAddContainer) {
         return;
       }
-      var unit;
-      if (showAddContainer.unit) {
-        unit = showAddContainer.unit;
-      }
       return (
         <juju.components.MachineViewAddMachine
           close={this._closeAddContainer}
           createMachine={this.props.createMachine}
           parentId={this.state.selectedMachine}
           placeUnit={this.props.placeUnit}
-          unit={unit} />);
+          unit={this.state.placingUnit} />);
     },
 
     /**
