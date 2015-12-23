@@ -656,42 +656,33 @@ YUI.add('machine-view', function() {
       return (
         <div className="machine-view">
           <div className="machine-view__content">
-            <div className="machine-view__column">
-              <juju.components.MachineViewHeader
-                droppable={false}
-                title="New units"
-                toggle={unplacedToggle} />
-              <div className="machine-view__column-content">
-                {this._generateScaleUp()}
-                {this._generateUnplacedUnits()}
-              </div>
-            </div>
-            <div className="machine-view__column machine-view__column--overlap">
-              <juju.components.MachineViewHeader
-                activeMenuItem={this.state.machineSort}
-                droppable={true}
-                dropUnit={this._dropUnit}
-                menuItems={machineMenuItems}
-                title={this._generateMachinesTitle()}
-                type="machine" />
-              <div className="machine-view__column-content">
-                {this._generateAddMachine()}
-                {this._generateMachines()}
-              </div>
-            </div>
-            <div className="machine-view__column">
-              <juju.components.MachineViewHeader
-                activeMenuItem={this.state.containerSort}
-                droppable={!!this.state.selectedMachine}
-                dropUnit={this._dropUnit}
-                menuItems={containerMenuItems}
-                title={this._generateContainersTitle()}
-                type="container" />
-              <div className="machine-view__column-content">
-                {this._generateAddContainer()}
-                {this._generateContainers()}
-              </div>
-            </div>
+            <juju.components.MachineViewColumn
+              droppable={false}
+              title="New units"
+              toggle={unplacedToggle}>
+              {this._generateScaleUp()}
+              {this._generateUnplacedUnits()}
+            </juju.components.MachineViewColumn>
+            <juju.components.MachineViewColumn
+              activeMenuItem={this.state.machineSort}
+              droppable={true}
+              dropUnit={this._dropUnit}
+              menuItems={machineMenuItems}
+              title={this._generateMachinesTitle()}
+              type="machine">
+              {this._generateAddMachine()}
+              {this._generateMachines()}
+            </juju.components.MachineViewColumn>
+            <juju.components.MachineViewColumn
+              activeMenuItem={this.state.containerSort}
+              droppable={!!this.state.selectedMachine}
+              dropUnit={this._dropUnit}
+              menuItems={containerMenuItems}
+              title={this._generateContainersTitle()}
+              type="container">
+              {this._generateAddContainer()}
+              {this._generateContainers()}
+            </juju.components.MachineViewColumn>
           </div>
         </div>
       );
@@ -704,6 +695,7 @@ YUI.add('machine-view', function() {
 }, '0.1.0', {
   requires: [
     'machine-view-add-machine',
+    'machine-view-column',
     'machine-view-header',
     'machine-view-machine',
     'machine-view-scale-up',

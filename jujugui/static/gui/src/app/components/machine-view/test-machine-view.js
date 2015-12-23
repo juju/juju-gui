@@ -72,121 +72,112 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var machineMenuItems = output.props.children.props.children[1]
-      .props.children[0].props.menuItems;
+      .props.menuItems;
     var containerMenuItems = output.props.children.props.children[2]
-      .props.children[0].props.menuItems;
+      .props.menuItems;
     var expected = (
       <div className="machine-view">
         <div className="machine-view__content">
-          <div className="machine-view__column">
-            <juju.components.MachineViewHeader
-              droppable={false}
-              title="New units"
-              toggle={{
-                action: instance._toggleScaleUp,
-                disabled: true,
-                toggleOn: false
-              }} />
-            <div className="machine-view__column-content">
-              {undefined}
-              <div className="machine-view__column-onboarding">
-                <juju.components.SvgIcon name="add_16"
-                  size="16" />
-                Add services to get started
-              </div>
+          <juju.components.MachineViewColumn
+            droppable={false}
+            title="New units"
+            toggle={{
+              action: instance._toggleScaleUp,
+              disabled: true,
+              toggleOn: false
+            }}>
+            {undefined}
+            <div className="machine-view__column-onboarding">
+              <juju.components.SvgIcon name="add_16"
+                size="16" />
+              Add services to get started
             </div>
-          </div>
-          <div className="machine-view__column machine-view__column--overlap">
-            <juju.components.MachineViewHeader
-              activeMenuItem="name"
-              droppable={true}
-              dropUnit={instance._dropUnit}
-              menuItems={[{
-                label: 'Add machine',
-                action: instance._addMachine
-              }, {
-                label: 'Hide constraints',
-                action: instance._toggleConstraints
-              }, {
-                label: 'Sort by:'
-              }, {
-                label: 'Name',
-                id: 'name',
-                action: machineMenuItems[3].action
-              }, {
-                label: 'No. services',
-                id: 'services',
-                action: machineMenuItems[4].action
-              }, {
-                label: 'No. units',
-                id: 'units',
-                action: machineMenuItems[5].action
-              }, {
-                label: 'Disk',
-                id: 'disk',
-                action: machineMenuItems[6].action
-              }, {
-                label: 'RAM',
-                id: 'ram',
-                action: machineMenuItems[7].action
-              }, {
-                label: 'CPU',
-                id: 'cpu',
-                action: machineMenuItems[8].action
-              }]}
-              title="My Env (0)"
-              type="machine" />
-            <div className="machine-view__column-content">
-              {undefined}
-              <div className="machine-view__column-onboarding">
-                Use machine view to:
-                <ul>
-                  <li>Create machines</li>
-                  <li>Create containers</li>
-                  <li>Customise placement</li>
-                  <li>Scale up your environment</li>
-                  <li>Manually place new units</li>
-                  <li>Collocate services</li>
-                </ul>
-                <span className="link"
-                  onClick={instance._addMachine}
-                  role="button"
-                  tabIndex="0">
-                  Add machine
-                </span>
-              </div>
+          </juju.components.MachineViewColumn>
+          <juju.components.MachineViewColumn
+            activeMenuItem="name"
+            droppable={true}
+            dropUnit={instance._dropUnit}
+            menuItems={[{
+              label: 'Add machine',
+              action: instance._addMachine
+            }, {
+              label: 'Hide constraints',
+              action: instance._toggleConstraints
+            }, {
+              label: 'Sort by:'
+            }, {
+              label: 'Name',
+              id: 'name',
+              action: machineMenuItems[3].action
+            }, {
+              label: 'No. services',
+              id: 'services',
+              action: machineMenuItems[4].action
+            }, {
+              label: 'No. units',
+              id: 'units',
+              action: machineMenuItems[5].action
+            }, {
+              label: 'Disk',
+              id: 'disk',
+              action: machineMenuItems[6].action
+            }, {
+              label: 'RAM',
+              id: 'ram',
+              action: machineMenuItems[7].action
+            }, {
+              label: 'CPU',
+              id: 'cpu',
+              action: machineMenuItems[8].action
+            }]}
+            title="My Env (0)"
+            type="machine">
+            {undefined}
+            <div className="machine-view__column-onboarding">
+              Use machine view to:
+              <ul>
+                <li>Create machines</li>
+                <li>Create containers</li>
+                <li>Customise placement</li>
+                <li>Scale up your environment</li>
+                <li>Manually place new units</li>
+                <li>Collocate services</li>
+              </ul>
+              <span className="link"
+                onClick={instance._addMachine}
+                role="button"
+                tabIndex="0">
+                Add machine
+              </span>
             </div>
-          </div>
-          <div className="machine-view__column">
-            <juju.components.MachineViewHeader
-              activeMenuItem="name"
-              droppable={false}
-              dropUnit={instance._dropUnit}
-              menuItems={[{
-                label: 'Add container',
-                action: instance._addContainer
-              }, {
-                label: 'Sort by:'
-              }, {
-                label: 'Name',
-                id: 'name',
-                action: containerMenuItems[2].action
-              }, {
-                label: 'No. units',
-                id: 'units',
-                action: containerMenuItems[3].action
-              }, {
-                label: 'Services',
-                id: 'services',
-                action: containerMenuItems[4].action
-              }]}
-              title="0 containers, 0 units"
-              type="container" />
-            <div className="machine-view__column-content">
-              {undefined}
-              {undefined}
-            </div>
-          </div>
+          </juju.components.MachineViewColumn>
+          <juju.components.MachineViewColumn
+            activeMenuItem="name"
+            droppable={false}
+            dropUnit={instance._dropUnit}
+            menuItems={[{
+              label: 'Add container',
+              action: instance._addContainer
+            }, {
+              label: 'Sort by:'
+            }, {
+              label: 'Name',
+              id: 'name',
+              action: containerMenuItems[2].action
+            }, {
+              label: 'No. units',
+              id: 'units',
+              action: containerMenuItems[3].action
+            }, {
+              label: 'Services',
+              id: 'services',
+              action: containerMenuItems[4].action
+            }]}
+            title="0 containers, 0 units"
+            type="container">
+            {undefined}
+            {undefined}
+          </juju.components.MachineViewColumn>
         </div>
       </div>);
     assert.deepEqual(output, expected);
@@ -214,13 +205,10 @@ describe('MachineView', function() {
         units={units}
         services={services} />);
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div className="machine-view__column-onboarding">
-          <juju.components.SvgIcon name="add_16"
-            size="16" />
-          Add services to get started
-        </div>
+      <div className="machine-view__column-onboarding">
+        <juju.components.SvgIcon name="add_16"
+          size="16" />
+        Add services to get started
       </div>);
     assert.deepEqual(
       output.props.children.props.children[0].props.children[1], expected);
@@ -248,13 +236,10 @@ describe('MachineView', function() {
         units={units}
         services={services} />);
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div className="machine-view__column-onboarding">
-          <juju.components.SvgIcon name="task-done_16"
-            size="16" />
-          You have placed all of your units
-        </div>
+      <div className="machine-view__column-onboarding">
+        <juju.components.SvgIcon name="task-done_16"
+          size="16" />
+        You have placed all of your units
       </div>);
     assert.deepEqual(
       output.props.children.props.children[0].props.children[1], expected);
@@ -286,19 +271,12 @@ describe('MachineView', function() {
     instance._toggleScaleUp();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        <juju.components.MachineViewScaleUp
-          addGhostAndEcsUnits={addGhostAndEcsUnits}
-          services={services}
-          toggleScaleUp={instance._toggleScaleUp} />
-        <div className="machine-view__column-onboarding">
-          <juju.components.SvgIcon name="task-done_16"
-            size="16" />
-          You have placed all of your units
-        </div>
-      </div>);
+      <juju.components.MachineViewScaleUp
+        addGhostAndEcsUnits={addGhostAndEcsUnits}
+        services={services}
+        toggleScaleUp={instance._toggleScaleUp} />);
     assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+      output.props.children.props.children[0].props.children[0], expected);
   });
 
   it('can display a list of unplaced units', function() {
@@ -339,39 +317,29 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div>
-          <div className="machine-view__auto-place">
-            <button onClick={autoPlaceUnits}>
-              Auto place
-            </button>
-            or manually place
-          </div>
-          <ul className="machine-view__list">
-            <juju.components.MachineViewUnplacedUnit
-              createMachine={createMachine}
-              icon="django.svg"
-              key="django/0"
-              machines={machines}
-              removeUnit={instance._removeUnit}
-              placeUnit={placeUnit}
-              selectMachine={instance.selectMachine}
-              unit={unitList[0]} />
-            <juju.components.MachineViewUnplacedUnit
-              createMachine={createMachine}
-              icon="django.svg"
-              key="django/1"
-              machines={machines}
-              placeUnit={placeUnit}
-              removeUnit={instance._removeUnit}
-              selectMachine={instance.selectMachine}
-              unit={unitList[1]} />
-          </ul>
-        </div>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewUnplacedUnit
+          createMachine={createMachine}
+          icon="django.svg"
+          key="django/0"
+          machines={machines}
+          removeUnit={instance._removeUnit}
+          placeUnit={placeUnit}
+          selectMachine={instance.selectMachine}
+          unit={unitList[0]} />
+        <juju.components.MachineViewUnplacedUnit
+          createMachine={createMachine}
+          icon="django.svg"
+          key="django/1"
+          machines={machines}
+          placeUnit={placeUnit}
+          removeUnit={instance._removeUnit}
+          selectMachine={instance.selectMachine}
+          unit={unitList[1]} />
+      </ul>);
     assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+      output.props.children.props.children[0].props.children[1]
+      .props.children[1], expected);
   });
 
   it('can auto place units', function() {
@@ -406,8 +374,8 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         services={services}
         units={units} />);
-    output.props.children.props.children[0].props.children[1]
-      .props.children[1].props.children[0].props.children[0].props.onClick();
+    output.props.children.props.children[0].props.children[1].props.children[0]
+    .props.children[0].props.onClick();
     assert.equal(autoPlaceUnits.callCount, 1);
   });
 
@@ -438,25 +406,22 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div className="machine-view__column-onboarding">
-          Use machine view to:
-          <ul>
-            <li>Create machines</li>
-            <li>Create containers</li>
-            <li>Customise placement</li>
-            <li>Scale up your environment</li>
-            <li>Manually place new units</li>
-            <li>Collocate services</li>
-          </ul>
-          <span className="link"
-            onClick={instance._addMachine}
-            role="button"
-            tabIndex="0">
-            Add machine
-          </span>
-        </div>
+      <div className="machine-view__column-onboarding">
+        Use machine view to:
+        <ul>
+          <li>Create machines</li>
+          <li>Create containers</li>
+          <li>Customise placement</li>
+          <li>Scale up your environment</li>
+          <li>Manually place new units</li>
+          <li>Collocate services</li>
+        </ul>
+        <span className="link"
+          onClick={instance._addMachine}
+          role="button"
+          tabIndex="0">
+          Add machine
+        </span>
       </div>);
     assert.deepEqual(
       output.props.children.props.children[1].props.children[1], expected);
@@ -495,33 +460,15 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         services={services}
         units={units} />, true);
-    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div>
-          <div className="machine-view__column-onboarding">
-            Drag and drop unplaced units onto your machines and containers to
-            customise your deployment.
-          </div>
-          <ul className="machine-view__list">
-            {[<juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new0"
-              machine={machineList[0]}
-              selected={true}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={true}
-              type="machine"
-              units={units} />]}
-          </ul>
-        </div>
+      <div className="machine-view__column-onboarding">
+        Drag and drop unplaced units onto your machines and containers to
+        customise your deployment.
       </div>);
     assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+      output.props.children.props.children[1].props.children[1]
+      .props.children[0], expected);
   });
 
   it('can display a list of machines', function() {
@@ -563,38 +510,33 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div>
-          {undefined}
-          <ul className="machine-view__list">
-            <juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new0"
-              machine={machineList[0]}
-              selected={true}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={true}
-              type="machine"
-              units={units} />
-            <juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new1"
-              machine={machineList[1]}
-              selected={false}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={true}
-              type="machine"
-              units={units} />
-          </ul>
-        </div>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={machineList[0]}
+          selected={true}
+          selectMachine={instance.selectMachine}
+          services={services}
+          showConstraints={true}
+          type="machine"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new1"
+          machine={machineList[1]}
+          selected={false}
+          selectMachine={instance.selectMachine}
+          services={services}
+          showConstraints={true}
+          type="machine"
+          units={units} />
+      </ul>);
     assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+      output.props.children.props.children[1].props.children[1]
+      .props.children[1], expected);
   });
 
   it('can order a list of machines', function() {
@@ -634,44 +576,39 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div>
-          {undefined}
-          <ul className="machine-view__list">
-            <juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new0"
-              machine={{
-                displayName: 'new0',
-                id: 'new0'
-              }}
-              selected={false}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={true}
-              type="machine"
-              units={units} />
-            <juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new5"
-              machine={{
-                displayName: 'new5',
-                id: 'new5'
-              }}
-              selected={true}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={true}
-              type="machine"
-              units={units} />
-          </ul>
-        </div>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={{
+            displayName: 'new0',
+            id: 'new0'
+          }}
+          selected={false}
+          selectMachine={instance.selectMachine}
+          services={services}
+          showConstraints={true}
+          type="machine"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new5"
+          machine={{
+            displayName: 'new5',
+            id: 'new5'
+          }}
+          selected={true}
+          selectMachine={instance.selectMachine}
+          services={services}
+          showConstraints={true}
+          type="machine"
+          units={units} />
+      </ul>);
     assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+      output.props.children.props.children[1].props.children[1]
+      .props.children[1], expected);
   });
 
   it('can toggle constraints on machines', function() {
@@ -714,38 +651,33 @@ describe('MachineView', function() {
     instance._toggleConstraints();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <div>
-          {undefined}
-          <ul className="machine-view__list">
-            <juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new0"
-              machine={machineList[0]}
-              selected={true}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={true}
-              type="machine"
-              units={units} />
-            <juju.components.MachineViewMachine
-              destroyMachines={destroyMachines}
-              dropUnit={instance._dropUnit}
-              key="new1"
-              machine={machineList[1]}
-              selected={false}
-              selectMachine={instance.selectMachine}
-              services={services}
-              showConstraints={false}
-              type="machine"
-              units={units} />
-          </ul>
-        </div>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={machineList[0]}
+          selected={true}
+          selectMachine={instance.selectMachine}
+          services={services}
+          showConstraints={true}
+          type="machine"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new1"
+          machine={machineList[1]}
+          selected={false}
+          selectMachine={instance.selectMachine}
+          services={services}
+          showConstraints={false}
+          type="machine"
+          units={units} />
+      </ul>);
     assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+      output.props.children.props.children[1].props.children[1]
+      .props.children[1], expected);
   });
 
   it('can display a form for adding a machine', function() {
@@ -778,17 +710,14 @@ describe('MachineView', function() {
     instance._addMachine();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        <juju.components.MachineViewAddMachine
-          close={instance._closeAddMachine}
-          createMachine={createMachine}
-          placeUnit={placeUnit}
-          selectMachine={instance.selectMachine}
-          unit={null} />
-        {undefined}
-      </div>);
+      <juju.components.MachineViewAddMachine
+        close={instance._closeAddMachine}
+        createMachine={createMachine}
+        placeUnit={placeUnit}
+        selectMachine={instance.selectMachine}
+        unit={null} />);
     assert.deepEqual(
-      output.props.children.props.children[1].props.children[1], expected);
+      output.props.children.props.children[1].props.children[0], expected);
   });
 
   it('can select a machine', function() {
@@ -874,35 +803,32 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <ul className="machine-view__list">
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0"
-            machine={{
-              commitStatus: 'committed',
-              deleted: undefined,
-              displayName: 'Root container',
-              id: 'new0',
-              root: true
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0/lxc/0"
-            machine={{id: 'new0/lxc/0'}}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-        </ul>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: undefined,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0/lxc/0"
+          machine={{id: 'new0/lxc/0'}}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+      </ul>);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[1], expected);
   });
@@ -954,50 +880,47 @@ describe('MachineView', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <ul className="machine-view__list">
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0"
-            machine={{
-              commitStatus: 'committed',
-              deleted: undefined,
-              displayName: 'Root container',
-              id: 'new0',
-              root: true
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0/lxc/0"
-            machine={{
-              displayName: 'new0/lxc/0',
-              id: 'new0/lxc/0'
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0/lxc/5"
-            machine={{
-              displayName: 'new0/lxc/5',
-              id: 'new0/lxc/5'
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-        </ul>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: undefined,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0/lxc/0"
+          machine={{
+            displayName: 'new0/lxc/0',
+            id: 'new0/lxc/0'
+          }}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0/lxc/5"
+          machine={{
+            displayName: 'new0/lxc/5',
+            id: 'new0/lxc/5'
+          }}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+      </ul>);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[1], expected);
   });
@@ -1043,42 +966,14 @@ describe('MachineView', function() {
     instance._addContainer();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        <juju.components.MachineViewAddMachine
-          close={instance._closeAddContainer}
-          createMachine={createMachine}
-          parentId="new0"
-          placeUnit={placeUnit}
-          unit={null} />
-        <ul className="machine-view__list">
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0"
-            machine={{
-              commitStatus: 'committed',
-              deleted: undefined,
-              displayName: 'Root container',
-              id: 'new0',
-              root: true
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0/lxc/0"
-            machine={{id: 'new0/lxc/0'}}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-        </ul>
-      </div>);
+      <juju.components.MachineViewAddMachine
+        close={instance._closeAddContainer}
+        createMachine={createMachine}
+        parentId="new0"
+        placeUnit={placeUnit}
+        unit={null} />);
     assert.deepEqual(
-      output.props.children.props.children[2].props.children[1], expected);
+      output.props.children.props.children[2].props.children[0], expected);
   });
 
   it('does not show an add container form for deleted machines', function() {
@@ -1120,35 +1015,32 @@ describe('MachineView', function() {
     instance._addContainer();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <ul className="machine-view__list">
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0"
-            machine={{
-              commitStatus: 'committed',
-              deleted: true,
-              displayName: 'Root container',
-              id: 'new0',
-              root: true
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0/lxc/0"
-            machine={{id: 'new0/lxc/0'}}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-        </ul>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: true,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0/lxc/0"
+          machine={{id: 'new0/lxc/0'}}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+      </ul>);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[1], expected);
   });

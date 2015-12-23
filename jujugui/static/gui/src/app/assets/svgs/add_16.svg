@@ -93,9 +93,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="-4.3113214"
-     inkscape:cy="8.7808005"
+     inkscape:zoom="11.313708"
+     inkscape:cx="-7.8189629"
+     inkscape:cy="-2.6869298"
      inkscape:document-units="px"
      inkscape:current-layer="g5346"
      showgrid="true"
@@ -115,8 +115,8 @@
      inkscape:snap-midpoints="true"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-center="true"
-     inkscape:window-width="1631"
-     inkscape:window-height="1026"
+     inkscape:window-width="1391"
+     inkscape:window-height="876"
      inkscape:window-x="49"
      inkscape:window-y="24"
      inkscape:window-maximized="1">
@@ -152,28 +152,19 @@
        id="g5346"
        transform="translate(-769.06151,404.35792)">
       <g
-         style="display:inline"
-         transform="matrix(0.66666668,0,0,0.66666668,868.19455,-110.98133)"
-         id="g4327">
-        <rect
-           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate"
-           id="rect4329"
-           width="24"
-           height="24"
-           x="125.70817"
-           y="401.01526" />
+         id="g4159">
         <path
            style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate"
-           d="m 136.20817,402.51527 3,0 0,21 -3,0 z"
+           d="m 959,157.36219 2,0 0,14 -2,0 z"
            id="path4331"
            inkscape:connector-curvature="0"
            sodipodi:nodetypes="ccccc" />
         <rect
            transform="matrix(0,1,-1,0,0,0)"
-           y="-148.20816"
-           x="411.51526"
-           height="20.999979"
-           width="2.9999762"
+           y="-967"
+           x="163.36218"
+           height="13.999987"
+           width="1.9999841"
            id="rect4333"
            style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate" />
       </g>
