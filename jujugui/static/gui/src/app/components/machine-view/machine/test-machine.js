@@ -21,10 +21,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachine', function() {
+  var services;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view-machine', function() { done(); });
+  });
+
+  beforeEach(function () {
+    services = {
+      getById: sinon.stub().returns({
+        get: function(val) {
+          switch (val) {
+            case 'icon':
+              return 'icon.svg';
+              break;
+            case 'fade':
+              return false;
+              break;
+            case 'hide':
+              return false;
+              break;
+          }
+        }
+      })
+    };
   });
 
   it('can render a machine', function() {
@@ -49,11 +70,6 @@ describe('MachineViewMachine', function() {
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
-    };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
     };
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
@@ -140,11 +156,6 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
-    };
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -179,7 +190,6 @@ describe('MachineViewMachine', function() {
       commitStatus: 'uncommitted'
     };
     var units = {filterByMachine: sinon.stub().returns([])};
-    var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -212,7 +222,6 @@ describe('MachineViewMachine', function() {
       deleted: true
     };
     var units = {filterByMachine: sinon.stub().returns([])};
-    var services = {getById: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -259,11 +268,6 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
-    };
     var output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -305,6 +309,99 @@ describe('MachineViewMachine', function() {
     assert.deepEqual(output.props.children[3], expected);
   });
 
+  it('can hide units', function() {
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {
+        cpuCores: 2,
+        cpuPower: 200,
+        disk: 2048,
+        mem: 4096,
+      }
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        deleted: false,
+        displayName: 'mysql/0',
+        id: 'mysql/0',
+        service: 'mysql'
+      }, {
+        deleted: false,
+        displayName: 'wordpress/1',
+        id: 'wordpress/1',
+        service: 'wordpress'
+      }])
+    };
+    services.getById = function(val) {
+      switch (val) {
+        case 'mysql':
+          return {
+            get: function(val) {
+              switch (val) {
+                case 'icon':
+                  return 'icon.svg';
+                  break;
+                case 'fade':
+                  return true;
+                  break;
+                case 'hide':
+                  return true;
+                  break;
+              }
+            }
+          };
+          break;
+        case 'wordpress':
+          return {
+            get: function(val) {
+              switch (val) {
+                case 'icon':
+                  return 'icon.svg';
+                  break;
+                case 'fade':
+                  return false;
+                  break;
+                case 'hide':
+                  return false;
+                  break;
+              }
+            }
+          };
+          break;
+      }
+    };
+    var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        machine={machine}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        type="machine"
+        units={units}/>);
+    var expected = (
+      <ul className="machine-view__machine-units">
+        {[
+          <li className={'machine-view__machine-unit ' +
+            'machine-view__machine-unit--uncommitted'}
+            key="wordpress/1">
+            <span className="machine-view__machine-unit-icon">
+              <img
+                alt="wordpress/1"
+                src="icon.svg"
+                title="wordpress/1" />
+            </span>
+            {undefined}
+            {undefined}
+          </li>
+        ]}
+      </ul>);
+    assert.deepEqual(output.props.children[3], expected);
+  });
+
   it('can render a machine with deleted units', function() {
     var selectMachine = sinon.stub();
     var machine = {
@@ -328,11 +425,6 @@ describe('MachineViewMachine', function() {
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
-    };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
     };
     var output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
@@ -396,11 +488,6 @@ describe('MachineViewMachine', function() {
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
-    };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
     };
     var renderer = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
@@ -478,11 +565,6 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
-    };
     var output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -516,11 +598,6 @@ describe('MachineViewMachine', function() {
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
-    };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -608,11 +685,6 @@ describe('MachineViewMachine', function() {
         id: 'wordpress/1'
       }])
     };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
-    };
     var output = jsTestUtils.shallowRender(
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
@@ -643,11 +715,6 @@ describe('MachineViewMachine', function() {
         displayName: 'wordpress/1',
         id: 'wordpress/1'
       }])
-    };
-    var services = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().returns('icon.svg')
-      })
     };
     var removeUnit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
