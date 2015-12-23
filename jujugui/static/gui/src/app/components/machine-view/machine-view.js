@@ -365,7 +365,13 @@ YUI.add('machine-view', function() {
       @method _addContainer
     */
     _addContainer: function() {
-      if (this.state.selectedMachine) {
+      var selectedMachine = this.state.selectedMachine;
+      var deleted = false;
+      if (selectedMachine) {
+        var machine = this.props.machines.getById(selectedMachine);
+        deleted = machine.deleted;
+      }
+      if (this.state.selectedMachine && !deleted) {
         this.setState({showAddContainer: true});
       }
     },

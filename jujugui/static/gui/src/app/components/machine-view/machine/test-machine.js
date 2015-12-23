@@ -160,6 +160,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
         isOver={true}
         machine={machine}
