@@ -356,6 +356,7 @@ describe('MachineView', function() {
               machines={machines}
               removeUnit={instance._removeUnit}
               placeUnit={placeUnit}
+              selectMachine={instance.selectMachine}
               unit={unitList[0]} />
             <juju.components.MachineViewUnplacedUnit
               createMachine={createMachine}
@@ -364,6 +365,7 @@ describe('MachineView', function() {
               machines={machines}
               placeUnit={placeUnit}
               removeUnit={instance._removeUnit}
+              selectMachine={instance.selectMachine}
               unit={unitList[1]} />
           </ul>
         </div>
@@ -781,6 +783,7 @@ describe('MachineView', function() {
           close={instance._closeAddMachine}
           createMachine={createMachine}
           placeUnit={placeUnit}
+          selectMachine={instance.selectMachine}
           unit={null} />
         {undefined}
       </div>);
