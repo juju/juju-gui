@@ -1015,35 +1015,32 @@ describe('MachineView', function() {
     instance._addContainer();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__column-content">
-        {undefined}
-        <ul className="machine-view__list">
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0"
-            machine={{
-              commitStatus: 'committed',
-              deleted: true,
-              displayName: 'Root container',
-              id: 'new0',
-              root: true
-            }}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-          <juju.components.MachineViewMachine
-            destroyMachines={destroyMachines}
-            dropUnit={instance._dropUnit}
-            key="new0/lxc/0"
-            machine={{id: 'new0/lxc/0'}}
-            removeUnit={instance._removeUnit}
-            services={services}
-            type="container"
-            units={units} />
-        </ul>
-      </div>);
+      <ul className="machine-view__list">
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0"
+          machine={{
+            commitStatus: 'committed',
+            deleted: true,
+            displayName: 'Root container',
+            id: 'new0',
+            root: true
+          }}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+        <juju.components.MachineViewMachine
+          destroyMachines={destroyMachines}
+          dropUnit={instance._dropUnit}
+          key="new0/lxc/0"
+          machine={{id: 'new0/lxc/0'}}
+          removeUnit={instance._removeUnit}
+          services={services}
+          type="container"
+          units={units} />
+      </ul>);
     assert.deepEqual(
       output.props.children.props.children[2].props.children[1], expected);
   });
