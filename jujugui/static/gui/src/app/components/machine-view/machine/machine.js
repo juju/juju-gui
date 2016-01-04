@@ -169,7 +169,7 @@ YUI.add('machine-view-machine', function() {
       @method _destroyMachine
     */
     _destroyMachine: function() {
-      this.props.destroyMachines([this.props.machine.id]);
+      this.props.destroyMachines([this.props.machine.id], true);
     },
 
     /**
