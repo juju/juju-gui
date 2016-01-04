@@ -872,7 +872,7 @@ YUI.add('juju-topology-relation', function(Y) {
               .classed('selectable-service', true)
               .filter(function(d) {
                 return (d.id in invalidRelationTargets &&
-                          d.id !== service.id);
+                          d.id !== service.get('id'));
               });
       topo.fire('fade', { selection: sel,
         serviceNames: Object.keys(invalidRelationTargets) });
