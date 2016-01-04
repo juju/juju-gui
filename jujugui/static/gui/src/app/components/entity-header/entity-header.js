@@ -160,6 +160,26 @@ YUI.add('entity-header', function() {
         'https://plus.google.com/share?url=',
         this._getStoreURL(entity)
       ].join('');
+      // XXX kadams54, 2016-01-04: the deployAction var will need to be removed
+      // once we fully support multi-series charms.
+      var deployAction;
+      // If the entity is not a charm OR it is a charm and has the series set,
+      // display a button. Otherwise display a "not supported" message.
+      if (entity.type !== 'charm' || entity.series) {
+        deployAction = (
+          <juju.components.GenericButton
+            ref="deployAction"
+            action={this._handleDeployClick}
+            type="confirm"
+            title="Add to canvas" />
+        );
+      } else {
+        deployAction = (
+          <div ref="deployAction">
+            This type of charm can only be deployed from the command line.
+          </div>
+        );
+      }
 
       return (
         <div className="row-hero"
@@ -208,11 +228,7 @@ YUI.add('entity-header', function() {
               <div className="four-col last-col no-margin-bottom">
                 <juju.components.CopyToClipboard
                   value={'juju deploy ' + entity.id} />
-                <juju.components.GenericButton
-                  ref="deployButton"
-                  action={this._handleDeployClick}
-                  type="confirm"
-                  title="Add to canvas" />
+                {deployAction}
               </div>
             </div>
           </header>

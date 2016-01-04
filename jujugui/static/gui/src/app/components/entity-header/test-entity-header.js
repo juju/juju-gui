@@ -70,7 +70,9 @@ describe('EntityHeader', function() {
                   <a href="https://launchpad.net/~test-owner"
                     target="_blank">test-owner</a>
                 </li>
-                {null}
+                <li className="entity-header__series">
+                  trusty
+                </li>
               </ul>
               <ul className="entity-header__social-list">
                 <li>
@@ -78,7 +80,7 @@ describe('EntityHeader', function() {
                     target="_blank"
                     href={'https://twitter.com/intent/tweet?text=django%20' +
                       'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
-                      '.com%2Fdjango%2F%2F'}>
+                      '.com%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-twitter"
                       size="35"/>
@@ -88,7 +90,7 @@ describe('EntityHeader', function() {
                   <a id="item-googleplus"
                     target="_blank"
                     href={'https://plus.google.com/share?url=https%3A%2F%2F' +
-                      'jujucharms.com%2Fdjango%2F%2F'}>
+                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-google"
                       size="35"/>
@@ -100,7 +102,7 @@ describe('EntityHeader', function() {
               <juju.components.CopyToClipboard
                 value="juju deploy cs:django" />
               <juju.components.GenericButton
-                ref="deployButton"
+                ref="deployAction"
                 action={instance._handleDeployClick}
                 type="confirm"
                 title="Add to canvas" />
@@ -117,9 +119,22 @@ describe('EntityHeader', function() {
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()} />);
-    var deployButton = output.refs.deployButton;
-    assert.equal(deployButton.props.type, 'confirm');
-    assert.equal(deployButton.props.title, 'Add to canvas');
+    var deployAction = output.refs.deployAction;
+    assert.equal(deployAction.props.type, 'confirm');
+    assert.equal(deployAction.props.title, 'Add to canvas');
+  });
+
+  it('displays an unsupported message for multi-series charms', function() {
+    mockEntity.set('series', undefined);
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityHeader
+        entityModel={mockEntity}
+        changeState={sinon.spy()}
+        deployService={sinon.spy()} />);
+    var deployAction = output.refs.deployAction;
+    var textContent = deployAction.props.children;
+    assert.equal(textContent, 'This type of charm can only be deployed from ' +
+      'the command line.');
   });
 
   it('adds a charm when the add button is clicked', function() {
@@ -134,9 +149,9 @@ describe('EntityHeader', function() {
         deployService={deployService}
         changeState={changeState}
         entityModel={mockEntity} />);
-    var deployButton = output.refs.deployButton;
+    var deployAction = output.refs.deployAction;
     // Simulate a click.
-    deployButton.props.action();
+    deployAction.props.action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
     assert.equal(changeState.callCount, 1);
@@ -161,9 +176,9 @@ describe('EntityHeader', function() {
         deployService={deployService}
         changeState={changeState}
         entityModel={entity} />);
-    var deployButton = output.refs.deployButton;
+    var deployAction = output.refs.deployAction;
     // Simulate a click.
-    deployButton.props.action();
+    deployAction.props.action();
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
@@ -185,9 +200,9 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={entity}
         addNotification={addNotification} />);
-    var deployButton = output.refs.deployButton;
+    var deployAction = output.refs.deployAction;
     // Simulate a click.
-    deployButton.props.action();
+    deployAction.props.action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
