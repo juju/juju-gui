@@ -248,5 +248,56 @@ var jsTestUtils = {
       pojo[key] = value;
     };
     return mockEntity;
+  },
+
+  /**
+    Constructs a generic Model object, suitable for being used in place of a YUI
+    model. The object stubs out get, set, and associated functions to work
+    properly within the relatively simple test environment.
+
+    @method makeModel
+   */
+  makeModel: function(attrs) {
+    var defaultAttrs = {
+      id: 'wordpress',
+      icon: 'icon.gif',
+      unit_count: '2',
+      name: 'demo',
+      units: {
+        toArray: function() {
+          return [
+            {agent_state: 'uncommitted'},
+            {agent_state: 'pending'}
+          ];
+        }
+      }
+    };
+    function extend(a, b) {
+      for (var key in b) {
+        a[key] = b[key];
+      }
+      return a;
+    }
+    return {
+      attrs: extend(defaultAttrs, attrs),
+
+      get: function(key) {
+        return this.attrs[key];
+      },
+
+      getAttrs: function() {
+        return this.attrs;
+      },
+
+      set: function(key, value) {
+        this.attrs[key] = value;
+      },
+
+      setAttrs: function(a) {
+        for (var key in a) {
+          this.attrs[key] = a[key];
+        }
+      }
+    };
   }
 };

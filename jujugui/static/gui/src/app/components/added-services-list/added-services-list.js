@@ -69,6 +69,9 @@ YUI.add('added-services-list', function() {
     focusService: function(serviceId) {
       var props = this.props;
       var service = props.services.getById(serviceId);
+      if (service.get('fade')) {
+        this.unfadeService(serviceId);
+      }
       service.setAttrs({
         highlight: true,
         hide: false
@@ -121,6 +124,9 @@ YUI.add('added-services-list', function() {
     */
     fadeService: function(serviceId) {
       var service = this.props.services.getById(serviceId);
+      if (service.get('highlight')) {
+        this.unfocusService(serviceId);
+      }
       service.set('fade', true);
     },
 
@@ -148,7 +154,7 @@ YUI.add('added-services-list', function() {
         if (key.indexOf('AddedServicesListItem-') === 0) {
           // Skip the component for the provided serviceId.
           if (serviceId && key !== 'AddedServicesListItem-' + serviceId) {
-            this.refs[key].setState({focus: false});
+            this.refs[key].props.service.set('highlight', false);
           }
         }
       });
