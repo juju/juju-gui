@@ -1433,6 +1433,19 @@ YUI.add('juju-topology-service', function(Y) {
         .remove();
 
       this.updateElementVisibility();
+      // New line for testing purposes
+    },
+
+    /**
+      Updates the location of the add-service button to always be near the
+      collection of services.
+      @method updatePlusLocation
+    */
+    updatePlusLocation: function() {
+      var topo = this.get('component');
+      var pointOutside = topo.servicePointOutside();
+      topo.vis.select('.included-plus')
+        .attr('transform', 'translate('+pointOutside+')');
     },
 
     /**
