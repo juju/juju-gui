@@ -351,7 +351,7 @@ test: $(JUJUGUI) $(PYTEST)
 
 .PHONY: test-js-phantom
 test-js-phantom: gui
-	./scripts/test-js.sh
+	./scripts/test-js-old.sh
 
 .PHONY: test-js-karma
 test-js-karma: gui
