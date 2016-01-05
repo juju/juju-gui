@@ -4004,6 +4004,11 @@
       "from": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.3.6.tgz",
       "resolved": "https://registry.npmjs.org/karma-jasmine/-/karma-jasmine-0.3.6.tgz"
     },
+    "karma-mocha": {
+      "version": "0.2.1",
+      "from": "karma-mocha@latest",
+      "resolved": "https://registry.npmjs.org/karma-mocha/-/karma-mocha-0.2.1.tgz"
+    },
     "karma-mocha-reporter": {
       "version": "1.1.5",
       "from": "karma-mocha-reporter@1.1.5",
