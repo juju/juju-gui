@@ -58,6 +58,22 @@ describe('test_model.js', function() {
           '~alt-bac/precise/openstack-dashboard/json');
     });
 
+    it('must accept charm ids with periods.', function() {
+      var charm = new models.Charm(
+          {id: 'cs:~alt.bac/precise/openstack-dashboard-0'});
+      assert.equal(charm.get('owner'), 'alt.bac');
+      assert.equal(charm.get('charm_path'),
+          '~alt.bac/precise/openstack-dashboard-0/json');
+    });
+
+    it('must accept charm ids without series.', function() {
+      var charm = new models.Charm(
+          {id: 'cs:~alt-bac/openstack-dashboard'});
+      assert.isUndefined(charm.get('series'));
+      assert.equal(charm.get('charm_path'),
+          '~alt-bac/openstack-dashboard/json');
+    });
+
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.
@@ -68,7 +84,7 @@ describe('test_model.js', function() {
 
     it('must reject bad charm ids.', function() {
       try {
-        new models.Charm({id: 'foobar'});
+        new models.Charm({id: ''});
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(

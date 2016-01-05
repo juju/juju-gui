@@ -28,7 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
-  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)(?:-(\d+|HEAD))?$/;
+  var charmIdRe = /^(?:(\w+):)?(?:~([\w-\.]+)\/)?(?:(\w+)\/)?([\w-\.]+?)(?:-(\d+|HEAD))?$/;  // eslint-disable-line max-len
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
@@ -426,7 +426,7 @@ YUI.add('juju-charm-models', function(Y) {
             this.get('series'),
             (this.get('package_name') + revision),
             'json'
-          ].join('/');
+          ].filter(function(val) { return val; }).join('/');
         }
       },
       /**

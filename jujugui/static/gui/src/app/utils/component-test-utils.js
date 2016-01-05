@@ -167,6 +167,7 @@ var jsTestUtils = {
         iconPath: 'data:image/gif;base64,',
         tags: ['database'],
         options: {},
+        series: 'trusty',
         files: files
       };
     } else {
@@ -185,6 +186,7 @@ var jsTestUtils = {
         entityType: 'charm',
         iconPath: 'data:image/gif;base64,',
         tags: ['database'],
+        series: 'trusty',
         files: files,
         options: {
           username: {
