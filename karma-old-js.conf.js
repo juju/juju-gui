@@ -58,14 +58,15 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/test_create_machine_view.js',
       'jujugui/static/gui/src/test/test_d3_components.js',
       'jujugui/static/gui/src/test/test_drop_target_view_extension.js',
-      //'jujugui/static/gui/src/test/test_endpoints.js',
+      'jujugui/static/gui/src/test/test_endpoints.js',
       'jujugui/static/gui/src/test/test_entity_extension.js',
       'jujugui/static/gui/src/test/test_env_change_set.js',
       // test_env_go.js is skipped because it causes cascading failures.
       // 'jujugui/static/gui/src/test/test_env_go.js',
       'jujugui/static/gui/src/test/test_env.js',
-      //'jujugui/static/gui/src/test/test_environment_view.js',
+      'jujugui/static/gui/src/test/test_environment_view.js',
       'jujugui/static/gui/src/test/test_event_tracker.js',
+      // test_fakebackend.js causes phantomjs to crash
       //'jujugui/static/gui/src/test/test_fakebackend.js',
       // feature flags tests were skipped in the old suite as well because
       // they rely on code only included in test_startup.js (which
@@ -78,16 +79,17 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/test_machine_view_panel_extension.js',
       'jujugui/static/gui/src/test/test_machine_view_panel_header.js',
       'jujugui/static/gui/src/test/test_machine_view_panel.js',
-      //'jujugui/static/gui/src/test/test_model_bundle.js',
+      'jujugui/static/gui/src/test/test_model_bundle.js',
       'jujugui/static/gui/src/test/test_model_controller.js',
       'jujugui/static/gui/src/test/test_model_handlers.js',
-      // 'jujugui/static/gui/src/test/test_model.js',
+      'jujugui/static/gui/src/test/test_model.js',
       'jujugui/static/gui/src/test/test_more_menu.js',
       'jujugui/static/gui/src/test/test_panzoom.js',
       'jujugui/static/gui/src/test/test_prettify.js',
       'jujugui/static/gui/src/test/test_routing.js',
+      // test_sandbox_go.js causes phantomjs to crash
       //'jujugui/static/gui/src/test/test_sandbox_go.js',
-      //'jujugui/static/gui/src/test/test_sandbox.js',
+      'jujugui/static/gui/src/test/test_sandbox.js',
       'jujugui/static/gui/src/test/test_service_module.js',
       'jujugui/static/gui/src/test/test_service_scale_up_view.js',
       'jujugui/static/gui/src/test/test_serviceunit_token.js',
@@ -103,7 +105,16 @@ module.exports = function(config) {
       'jujugui/static/gui/src/test/test_web_handler.js',
       'jujugui/static/gui/src/test/test_web_sandbox.js',
       'jujugui/static/gui/src/test/test_websocket_logging.js',
-      'jujugui/static/gui/src/test/test_zip_utils.js'
+      'jujugui/static/gui/src/test/test_zip_utils.js',
+
+      // Test Assets
+      {
+        pattern: 'jujugui/static/gui/src/test/data/*.json',
+        watched: false,
+        included: false,
+        served: true,
+        nocache: false
+      }
     ],
 
     proxies: {

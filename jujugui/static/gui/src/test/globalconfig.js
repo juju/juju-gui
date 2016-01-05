@@ -23,6 +23,8 @@ var GlobalConfig = {
   }
 };
 
+GlobalConfig.test_url = window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/";
+
 var origBeforeEach = Mocha.Suite.prototype.beforeEach;
 var origAfterEach = Mocha.Suite.prototype.afterEach;
 Mocha.Suite.prototype.beforeEach = function(title, fn) {
