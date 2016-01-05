@@ -357,6 +357,10 @@ test-js-phantom: gui
 test-js-karma: gui
 	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --log-level warn --reporters mocha
 
+.PHONY: test-js-old-karma
+test-js-old-karma: gui
+	@(NODE_MODULES)/.bin/karma start karma-old.conf.js --single-run --browsers PhantomJS - log-level warn --reporters mocha
+
 .PHONY: start-karma
 start-karma:
 	$(NODE_MODULES)/.bin/karma start karma.conf.js
