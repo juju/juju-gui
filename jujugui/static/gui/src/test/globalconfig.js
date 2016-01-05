@@ -2,6 +2,7 @@ var juju = {
   utils: {},
   components: {}
 };
+var flags = {};
 var zip = {};
 var GlobalConfig = {
   combine: true,
