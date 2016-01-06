@@ -79,32 +79,14 @@ including any changes you've made to the GUI.
 
 Assuming ``$GUI`` is your GUI repo and ``$CHARM`` is your charm repo, do the following:
 
-1. Move to the GUI directory and build the distribution that you want to
-   exercise: 
-
 ::
-   
-   cd $GUI && make dist
-   
-The above creates a bz2 archive with the GUI release in ``$GUI/dist/``.
-
-2. Remove the release stored in the charm and copy the dist archive to the
-   releases directory of the charm:
-
-::
-   
-   rm $CHARM/releases/*.bz2
-   cp $GUI/dist/*.bz2 $CHARM/releases/
-
-3. Bootstrap the environment and deploy the charm:
-
-::
-
+   cd $CHARM
+   JUJU_GUI_BRANCH=$GUI make package
    juju switch <your preferred provider>
    juju bootstrap
-   cd $CHARM && make deploy
+   make deploy
 
-4. Optionally enable debug mode in the GUI service so that the unit serves the unminified static files:
+Optionally you can enable debug mode in the GUI service so that the unit serves the unminified static files:
 
 ::
 
@@ -117,7 +99,7 @@ When the above is already set up, you have some local changes and you want to
 test them live, you can quickly just upload and install the new resulting
 release, like the following:
 
-1. Create a new release (same as point 1 above):
+1. Create a new release:
 
 ::
 
