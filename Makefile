@@ -373,7 +373,7 @@ test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
-check: clean-pyc lint lint-js test test-mocha-phantom test-mocha-karma test-mocha-karma
+check: clean-pyc lint lint-js test test-mocha-karma test-js-karma test-mocha-phantom
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
