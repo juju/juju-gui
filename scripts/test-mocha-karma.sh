@@ -25,5 +25,8 @@ sleep 2
 # causes the trap command to exit.
 # Capture ctrl-c
 trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
+# Modify the karma-mocha-phantom.conf.js to have the port for the proxy serviceRelations
+# supplied above. This allows us to use different ports in CI.
+sed -i -e 's/{TEST_PORT}/'$TEST_PORT'/' karma-mocha-phantom.conf.js
 
-node_modules/.bin/karma start karma-old-js.conf.js --single-run --browsers PhantomJS - log-level warn --reporters mocha
+node_modules/.bin/karma start karma-mocha-phantom.conf.js --single-run --browsers PhantomJS - log-level warn --reporters mocha

@@ -118,7 +118,7 @@ module.exports = function(config) {
     ],
 
     proxies: {
-      '/dev/combo': 'http://0.0.0.0:8888/dev/combo'
+      '/dev/combo': 'http://0.0.0.0:{TEST_PORT}/dev/combo'
     },
 
 
