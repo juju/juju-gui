@@ -29,4 +29,4 @@ trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
 # supplied above. This allows us to use different ports in CI.
 sed -i -e 's/{TEST_PORT}/'$TEST_PORT'/' karma-mocha-phantom.conf.js
 
-node_modules/.bin/karma start karma-mocha-phantom.conf.js --single-run --browsers PhantomJS - log-level warn --reporters mocha
+node_modules/.bin/karma start karma-mocha-phantom.conf.js --single-run --browsers PhantomJS --log-level debug --reporters mocha
