@@ -54,8 +54,8 @@ YUI.add('string-config', function() {
             onBlur={this._updateValue}
             dangerouslySetInnerHTML={{__html: this.state.value}}>
           </div>
-          <span className="string-config--description">
-            {this.props.option.description}
+          <span className="string-config--description"
+            dangerouslySetInnerHTML={{__html: this.props.option.description}}>
           </span>
         </div>
       );

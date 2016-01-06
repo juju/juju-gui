@@ -52,8 +52,8 @@ describe('StringConfig', function() {
           onBlur={output.props.children[1].props.onBlur}
           dangerouslySetInnerHTML={{__html: config}}>
         </div>
-        <span className="string-config--description">
-          {option.description}
+        <span className="string-config--description"
+          dangerouslySetInnerHTML={{__html: option.description}}>
         </span>
       </div>);
 

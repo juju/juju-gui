@@ -118,6 +118,7 @@ describe('Inspector', function() {
     var updateServiceUnitsDisplayname = sinon.stub();
     var getServiceByName = sinon.stub();
     var addNotification = sinon.stub();
+    var linkify = sinon.stub();
     var service = {
       get: getStub
     };
@@ -137,6 +138,7 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}
           addNotification={addNotification}
           getServiceByName={getServiceByName}
+          linkify={linkify}
           setConfig={setConfig} /> );
 
     var children = output.props.children[1].props.children;
@@ -149,6 +151,7 @@ describe('Inspector', function() {
           setConfig={setConfig}
           updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}
           addNotification={addNotification}
+          linkify={linkify}
           getServiceByName={getServiceByName} />);
   });
 

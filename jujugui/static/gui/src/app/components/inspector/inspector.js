@@ -21,6 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
+    propTypes: {
+      linkify: React.PropTypes.func.isRequired
+    },
 
     /**
       Get the current state of the inspector.
@@ -214,6 +217,7 @@ YUI.add('inspector-component', function() {
                   {this.props.updateServiceUnitsDisplayname}
                 getServiceByName={this.props.getServiceByName}
                 addNotification={this.props.addNotification}
+                linkify={this.props.linkify}
                 setConfig={nextProps.setConfig} />,
             backState: {
               sectionA: {

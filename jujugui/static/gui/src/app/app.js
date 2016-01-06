@@ -910,6 +910,7 @@ YUI.add('juju-gui', function(Y) {
               {this.db.updateServiceUnitsDisplayname.bind(this.db)}
             getServiceByName=
               {this.db.services.getServiceByName.bind(this.db.services)}
+            linkify={utils.linkify}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
         );

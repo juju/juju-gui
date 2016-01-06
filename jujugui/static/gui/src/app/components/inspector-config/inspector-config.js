@@ -21,6 +21,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-config', function() {
 
   juju.components.Configuration = React.createClass({
+    propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      charm: React.PropTypes.object.isRequired,
+      getServiceByName: React.PropTypes.func.isRequired,
+      getYAMLConfig: React.PropTypes.func.isRequired,
+      linkify: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
+      setConfig: React.PropTypes.func.isRequired,
+      updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
+    },
+
     /**
       Set the intial state.
 
@@ -234,6 +246,7 @@ YUI.add('inspector-config', function() {
       Object.keys(charmOptions).forEach((key) => {
         var option = charmOptions[key];
         option.key = key;
+        option.description = this.props.linkify(option.description);
         var ref = 'Config-' + key;
         // We use one component for numeric and string values and
         // another for boolean values.

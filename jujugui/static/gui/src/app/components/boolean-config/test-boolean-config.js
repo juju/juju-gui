@@ -41,7 +41,7 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />
     );
-    assert.deepEqual(output,
+    var expected = (
       <div className="boolean-config">
         <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
@@ -58,10 +58,12 @@ describe('BooleanConfig', function() {
             <div className="boolean-config--handle"></div>
           </label>
         </div>
-        <div className="boolean-config--description">
-          {option.description}
+        <div className="boolean-config--description"
+          dangerouslySetInnerHTML={{__html: option.description}}>
         </div>
-      </div>);
+      </div>
+    );
+    assert.deepEqual(output, expected);
   });
 
   it('renders an unchecked input based on config prop', function() {
@@ -92,8 +94,8 @@ describe('BooleanConfig', function() {
             <div className="boolean-config--handle"></div>
           </label>
         </div>
-        <div className="boolean-config--description">
-          {option.description}
+        <div className="boolean-config--description"
+          dangerouslySetInnerHTML={{__html: option.description}}>
         </div>
       </div>);
   });
@@ -126,8 +128,8 @@ describe('BooleanConfig', function() {
             <div className="boolean-config--handle"></div>
           </label>
         </div>
-        <div className="boolean-config--description">
-          {option.description}
+        <div className="boolean-config--description"
+          dangerouslySetInnerHTML={{__html: option.description}}>
         </div>
       </div>);
   });
@@ -160,8 +162,8 @@ describe('BooleanConfig', function() {
             <div className="boolean-config--handle"></div>
           </label>
         </div>
-        <div className="boolean-config--description">
-          {option.description}
+        <div className="boolean-config--description"
+          dangerouslySetInnerHTML={{__html: option.description}}>
         </div>
       </div>);
   });

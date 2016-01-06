@@ -92,8 +92,8 @@ YUI.add('boolean-config', function() {
               <div className="boolean-config--handle"></div>
             </label>
           </div>
-          <div className="boolean-config--description">
-            {this.props.option.description}
+          <div className="boolean-config--description"
+            dangerouslySetInnerHTML={{__html: this.props.option.description}}>
           </div>
         </div>
       );
