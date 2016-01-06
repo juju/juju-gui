@@ -349,16 +349,16 @@ lint-js: $(NODE_MODULES)
 test: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
-.PHONY: test-js-phantom
-test-js-phantom: gui
-	./scripts/test-js-old.sh
+.PHONY: test-mocha-phantom
+test-mocha-phantom: gui
+	./scripts/test-mocha-phantom.sh
 
 .PHONY: test-js-karma
 test-js-karma: gui
 	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --log-level warn --reporters mocha
 
-.PHONY: test-old-js-karma
-test-old-js-karma: gui
+.PHONY: test-mocha-karma
+test-mocha-karma: gui
 	./scripts/test-js.sh
 
 
@@ -373,7 +373,7 @@ test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
-check: clean-pyc lint lint-js test test-js-phantom test-js-karma test-old-js-karma
+check: clean-pyc lint lint-js test test-mocha-phantom test-mocha-karma test-mocha-karma
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
