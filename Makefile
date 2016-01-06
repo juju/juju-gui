@@ -359,7 +359,7 @@ test-js-karma: gui
 
 .PHONY: test-mocha-karma
 test-mocha-karma: gui
-	./scripts/test-js.sh
+	./scripts/test-mocha-karma.sh
 
 
 .PHONY: start-karma
