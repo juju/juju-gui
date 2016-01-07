@@ -1146,15 +1146,19 @@ YUI.add('juju-gui', function(Y) {
           this.set('environmentList', envList);
           this._renderEnvSwitcher();
 
-          // XXX frankban: we cannot rely on the fact that the public address
-          // is the last one. There is really no ordering in the returned
-          // hosts and ports. We need to try them all in parallel so that at
-          // least one connection will succeed. The same logic will be then
-          // reused for handling high availability controllers.
-          var addresses = envData['host-ports'];
-          var wssData = addresses[addresses.length - 1].split(':');
+          // XXX frankban: we should try to connect to all the addresses in
+          // parallel instead of assuming private addresses must be excluded.
+          // The same logic will be then reused for handling HA controllers.
+          var address = window.juju.chooseAddress(envData['host-ports']);
+          if (address === null) {
+            console.error(
+              'no valid controller address returned by JEM:',
+              envData['host-ports']);
+            return;
+          }
+          var hostAndPort = address.split(':');
           socketUrl = this.createSocketURL(
-              wssData[0], wssData[1], envData.uuid);
+            hostAndPort[0], hostAndPort[1], envData.uuid);
           callback.call(this, socketUrl, envData.user, envData.password);
         });
         return;
@@ -2040,7 +2044,7 @@ YUI.add('juju-gui', function(Y) {
       apiAddress: {value: ''},
 
       /**
-       The template to use to create websockets.       
+       The template to use to create websockets.
 
        @attribute socketTemplate
        @type {String}
@@ -2106,6 +2110,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-fakebackend-simulator',
     'juju-models',
     'jujulib-utils',
+    'net-utils',
     'ns-routing-app-extension',
     // React components
     'charmbrowser-component',
