@@ -51,15 +51,15 @@ To run the server with production settings use
 Configuration
 ~~~~~~~~~~~~~
 
-The gui has several configuration options that can be set in its ini file
+The GUI has several configuration options that can be set in its ini file
 which effect its running.
 
-* jujugui.raw -- Setting to true sets the combo loader to load the unminified
-    files.
-* jujugui.combo -- Setting to false causes the combo loader to serve files
-    separately, rather than loading them altogther.
-* jujugui.socketTemplate -- Sets the template for creating new websocket urls.
-    Defaults to /environment/$uuid/api.
+- jujugui.raw -- Setting to true sets the combo loader to load the unminified
+  files.
+- jujugui.combo -- Setting to false causes the combo loader to serve files
+  separately, rather than loading them altogether.
+- jujugui.socketTemplate -- Sets the template for creating new websocket urls.
+  Defaults to /environment/$uuid/api.
 
 
 Running tests
