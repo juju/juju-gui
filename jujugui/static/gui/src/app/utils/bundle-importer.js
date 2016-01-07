@@ -46,6 +46,11 @@ YUI.add('bundle-importer', function(Y) {
       @param {String} bundleYAML The bundle YAML to deploy.
     */
     importBundleYAML: function(bundleYAML) {
+      this.db.notifications.add({
+        title: 'Fetching bundle data',
+        message: 'Fetching detailed bundle data, this may take some time',
+        level: 'important'
+      });
       this.fetchDryRun(bundleYAML, null);
     },
 
