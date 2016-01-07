@@ -67,13 +67,21 @@ describe('Bundle Importer', function() {
     describe('importBundleYAML', function() {
       it('calls fetchDryRun with yaml', function() {
         var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
-        this._cleanups.push(fetch.reset);
+        var notify = utils.makeStubMethod(
+          bundleImporter.db.notifications, 'add');
+        this._cleanups.concat([fetch.reset, notify.reset]);
         bundleImporter.importBundleYAML('foo: bar');
         assert.equal(fetch.callCount(), 1);
         var args = fetch.lastArguments();
         assert.equal(args.length, 2);
         assert.equal(args[0], 'foo: bar');
         assert.strictEqual(args[1], null);
+        assert.equal(notify.callCount(), 1);
+        assert.deepEqual(notify.lastArguments()[0], {
+          title: 'Fetching bundle data',
+          message: 'Fetching detailed bundle data, this may take some time',
+          level: 'important'
+        });
       });
     });
 
