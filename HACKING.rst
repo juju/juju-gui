@@ -51,16 +51,16 @@ To run the server with production settings use
 Configuration
 ~~~~~~~~~~~~~
 
-The gui has several configuration options that can be set in its ini file
+The GUI has several configuration options that can be set in its ini file
 which effect its running.
 
-* jujugui.raw -- Setting to true sets the combo loader to load the unminified
-    files.
-* jujugui.combo -- Setting to false causes the combo loader to serve files
-    separately, rather than loading them altogther.
-* jujugui.socketTemplate -- Sets the template for creating new websocket urls.
-    Defaults to /environment/$uuid/api.
-  
+- jujugui.raw -- Setting to true sets the combo loader to load the unminified
+  files.
+- jujugui.combo -- Setting to false causes the combo loader to serve files
+  separately, rather than loading them altogether.
+- jujugui.socketTemplate -- Sets the template for creating new websocket urls.
+  Defaults to /environment/$uuid/api.
+
 
 Running tests
 ~~~~~~~~~~~~~
@@ -80,6 +80,7 @@ including any changes you've made to the GUI.
 Assuming ``$GUI`` is your GUI repo and ``$CHARM`` is your charm repo, do the following:
 
 ::
+
    cd $CHARM
    JUJU_GUI_BRANCH=$GUI make package
    juju switch <your preferred provider>
@@ -91,7 +92,7 @@ Optionally you can enable debug mode in the GUI service so that the unit serves 
 ::
 
    juju set juju-gui juju-gui-debug=true
-   
+
 At this point it is possible to manually hack on the unit files: the GUI lives
 at ``/usr/local/lib/python2.7/dist-packages/jujugui/static/gui/build/app/``
 
@@ -117,4 +118,3 @@ release, like the following:
 ::
 
    juju ssh juju-gui/0 "sudo pip install --no-index --no-dependencies -U /tmp/release/*.bz2”
-
