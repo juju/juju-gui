@@ -14,6 +14,7 @@ fi
 # serviceRelations supplied above. This allows us to use different ports in CI.
 # This needs to be placed before pserve starts or else the server will not
 # start properly.
+cp karma-mocha-phantom.conf.js.tmpl karma-mocha-phantom.conf.js
 sed -i -e 's/{TEST_PORT}/'$PORT'/' karma-mocha-phantom.conf.js
 
 bin/pserve test.ini test_port=$PORT & echo $! > $SERVE_PID
