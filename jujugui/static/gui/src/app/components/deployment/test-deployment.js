@@ -75,13 +75,15 @@ describe('Deployment', function() {
     var currentChangeSet = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var generateChangeDescription = sinon.stub();
+    var autoPlaceUnits = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
-        currentChangeSet={currentChangeSet} />, true);
+        currentChangeSet={currentChangeSet}
+        autoPlaceUnits={autoPlaceUnits} />, true);
     var output = shallowRenderer.getRenderOutput();
     output.props.children.props.deployButtonAction();
     shallowRenderer.render(
@@ -165,7 +167,7 @@ describe('Deployment', function() {
               output.props.children.props.handleViewMachinesClick}
           handlePlacementChange={
               output.props.children.props.handlePlacementChange}
-          autoPlace={false}
+          autoPlace={true}
           getUnplacedUnitCount={getUnplacedUnitCount} />
       </div>);
   });
@@ -223,7 +225,7 @@ describe('Deployment', function() {
         activeComponent="deployment-summary" />);
     output.props.children.props.deployButtonAction();
     assert.equal(ecsCommit.callCount, 1);
-    assert.equal(autoPlaceUnits.callCount, 0);
+    assert.equal(autoPlaceUnits.callCount, 1);
   });
 
   it('can automatically place units on commit', function() {
