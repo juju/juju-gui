@@ -440,7 +440,7 @@ YUI.add('juju-gui', function(Y) {
         var auth = this._getAuth();
         if (breadcrumbElement) {
           breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
-            'anonymous';
+            'admin';
         }
 
         this.set('socket_url', socketUrl);
@@ -1787,7 +1787,7 @@ YUI.add('juju-gui', function(Y) {
       var auth = this._getAuth();
       if (breadcrumbElement) {
         breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
-          'anonymous';
+          'admin';
       }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
