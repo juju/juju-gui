@@ -1240,7 +1240,6 @@ YUI.add('juju-gui', function(Y) {
           // sandbox mode then allow the user to choose an env.
           var envData = envList[0];
           this.set('environmentList', envList);
-          this._renderEnvSwitcher();
 
           // XXX frankban: we should try to connect to all the addresses in
           // parallel instead of assuming private addresses must be excluded.
