@@ -143,8 +143,8 @@ YUI.add('juju-gui', function(Y) {
                   environmentName: this.env.get('environmentName'),
                   'force-containers': localStorage.getItem('force-containers'),
                   'disable-cookie': localStorage.getItem('disable-cookie'),
-                  'auto-place-default': localStorage.getItem(
-                      'auto-place-default')
+                  'disable-auto-place': localStorage.getItem(
+                      'disable-auto-place')
                 })
             );
 
