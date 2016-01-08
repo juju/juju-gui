@@ -321,7 +321,7 @@ describe('Bundle Importer', function() {
 
   describe('Changeset execution', function() {
 
-    it('Sets up the correct environment (v4 Integration)', function(done) {
+    it.only('Sets up the correct environment (v4 Integration)', function(done) {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
@@ -334,6 +334,8 @@ describe('Bundle Importer', function() {
         assert.equal(db.units.size(), 5);
         assert.equal(db.machines.size(), 5);
         assert.equal(db.relations.size(), 2);
+        // Charms are marked as loaded.
+        assert.equal(db.charms.item(0).loaded, true);
         // Services and units
         // Note that this service, as specified in the fixture, does not include
         // a revision number, but a revision number is included here due to
