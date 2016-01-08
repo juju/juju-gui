@@ -70,6 +70,9 @@ YUI.add('deployment-component', function() {
               hasCommits={hasCommits}
               deployButtonAction={this._barDeployAction}
               exportEnvironmentFile={this.props.exportEnvironmentFile}
+              renderDragOverNotification={this.props.renderDragOverNotification}
+              importBundleFile={this.props.importBundleFile}
+              hideDragOverNotification={this.props.hideDragOverNotification}
               generateChangeDescription={generateChangeDescription}
               currentChangeSet={currentChangeSet} />
           };

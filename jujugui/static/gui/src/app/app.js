@@ -805,6 +805,11 @@ YUI.add('juju-gui', function(Y) {
           ecsClear={ecs.clear.bind(ecs)}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, this.db)}
+          renderDragOverNotification={
+            this._renderDragOverNotification.bind(this)}
+          importBundleFile={this.bundleImporter.importBundleFile.bind(
+            this.bundleImporter)}
+          hideDragOverNotification={this._hideDragOverNotification.bind(this)}  
           changeDescriptions={changeDescriptions}
           getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this,
               this.db.units)}
@@ -1163,9 +1168,10 @@ YUI.add('juju-gui', function(Y) {
       a user drags a yaml file or zip file over the canvas.
 
       @method _renderDragOverNotification
+      @param {Boolean} showIndicator
     */
-    _renderDragOverNotification: function() {
-      this.views.environment.instance.fadeHelpIndicator(true);
+    _renderDragOverNotification: function(showIndicator = true) {
+      this.views.environment.instance.fadeHelpIndicator(showIndicator);
       ReactDOM.render(
         <components.ExpandingProgress />,
         document.getElementById('drag-over-notification-container'));
