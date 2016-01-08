@@ -516,6 +516,9 @@ YUI.add('bundle-importer', function(Y) {
       this.fakebackend._loadCharm(charmId, {
         'success': function(charm) {
           if (db.charms.getById(charm.get('id')) === null) {
+            // Mark the charm as loaded so that its endpoints get added to the
+            // map of available endpoints.
+            charm.loaded = true;
             db.charms.add(charm);
           }
           this._saveModelToRequires(record.id, charm);
