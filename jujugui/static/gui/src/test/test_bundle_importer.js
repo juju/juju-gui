@@ -321,7 +321,7 @@ describe('Bundle Importer', function() {
 
   describe('Changeset execution', function() {
 
-    it.only('Sets up the correct environment (v4 Integration)', function(done) {
+    it('Sets up the correct environment (v4 Integration)', function(done) {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
