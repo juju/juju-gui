@@ -1172,6 +1172,110 @@ describe('File drag over notification system', function() {
           'Credentials should have been set.');
     });
   });
+
+  describe('_getAuth', function() {
+    var Y, app, container;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      app = new Y.juju.App({
+        viewContainer: container,
+        consoleEnabled: true
+      });
+    });
+
+    afterEach(function() {
+      app.destroy({remove: true});
+    });
+
+    it('uses the auth object if it exists', function() {
+      app.set('auth', 'foo');
+      assert.equal(app._getAuth(), 'foo');
+    });
+
+    it('gets a partial auth from cookie when needed', function() {
+      var called = false;
+      app.set('auth', null);
+      app._getUsernameFromCookie = function() {
+        called = true;
+        return 'bar';
+      };
+      var auth = app._getAuth();
+      assert.equal('bar', auth.user.name);
+      assert.isTrue(called);
+    });
+  });
+
+  describe('_getUsernameFromCookie', function() {
+    var Y, app, container;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      app = new Y.juju.App({
+        viewContainer: container,
+        consoleEnabled: true
+      });
+    });
+
+    afterEach(function() {
+      app.destroy({remove: true});
+    });
+
+    var makeMacaroon = function(invalid) {
+      var data = [{
+        caveats: [{cid: 'nothing'}, {cid: 'also nothing'}],
+      }, {
+        caveats: [{cid: 'declared username rose'}, {cid: 'more nothing'}]
+      }, {
+        caveats: [{cid: 'whole lot of nothing'}]
+      }];
+      if (invalid) {
+        data.push({caveats: [{cid: 'declared username bad wolf'}]});
+        data.push({caveats: [{cid: 'declared username dalek'}]});
+      }
+      data = JSON.stringify(data);
+      return 'Macaroons-jem=' + btoa(data);
+    };
+
+    it('does not check cookies if in sandbox.', function() {
+      app.set('sandbox', true);
+      assert.isNull(app._getUsernameFromCookie());
+    });
+
+    it('handles no macaroon being found.', function() {
+      app._getCookie = function() {
+        return '';
+      };
+      assert.isNull(app._getUsernameFromCookie());
+    });
+
+    it('can get username from a macaroon.', function() {
+      app._getCookie = function() {
+        return makeMacaroon();
+      };
+      assert.equal('rose', app._getUsernameFromCookie());
+    });
+
+    it('returns null if the macaroon has multiple usernames.', function() {
+      app._getCookie = function() {
+        return makeMacaroon(true);
+      };
+      assert.isNull(app._getUsernameFromCookie());
+    });
+  });
+
 })();
 
 (function() {

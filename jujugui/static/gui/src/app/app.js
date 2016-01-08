@@ -437,10 +437,10 @@ YUI.add('juju-gui', function(Y) {
         // quick hack for the demo.
         var breadcrumbElement = document.querySelector(
             '#user-name .header-banner__link--breadcrumb');
-        var auth = this.get('auth');
+        var auth = this._getAuth();
         if (breadcrumbElement) {
           breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
-            'anonymous';
+            'admin';
         }
 
         this.set('socket_url', socketUrl);
@@ -1011,11 +1011,101 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Get cookies
+
+      @method _getCookies
+    */
+    _getCookie: function() {
+      return document.cookie; 
+    },
+
+    /**
+      Get user name from cookie.
+
+      @method _getUsernameFromCookie
+      @returns the username or null if no username is found.
+    */
+    _getUsernameFromCookie: function() {
+      // XXX jcsackett 2016-01-08: We should be using the whoami endpoint on
+      // jem to get the username of a logged in jem user rather than
+      // parsing the cookie. Consider this all a bad hack for demo and we'll do
+      // something better in the very near future.
+
+      // Don't look for cookies if in sandbox.
+      if (this.get('sandbox')) {
+        return null;
+      }
+      var cookie = this._getCookie();
+      var data = cookie.split(';');
+      var macaroon = null;
+      var prefix = 'Macaroons-jem=';
+      var found = data.some(function(item) {
+        macaroon = item;
+        return (item.indexOf(prefix) !== -1);
+      });
+      if (!found) {
+        console.log('No macaroon found to get username from.');
+        return null;
+      }
+      var index = macaroon.indexOf(prefix) + prefix.length;
+      macaroon = macaroon.slice(index);
+
+      try {
+        macaroon = JSON.parse(atob(macaroon));
+        var username = null;
+        // We check all the caveats of each piece of the macaroon for the
+        // username data. If we find more than one username we abandon the
+        // macaroon as invalid.
+        macaroon.some(function(piece) {
+          var caveats = piece.caveats;
+          return caveats.some(function(caveat) {
+            var declaration = 'declared username ';
+            var index = caveat.cid.indexOf(declaration);
+            if (index !== -1) {
+              if (username === null) {
+                username = caveat.cid.slice(index + declaration.length);
+              } else {
+                console.log(
+                  'Multiple usernames found in macaroon. Macaroon is invalid.');
+                username = null;
+                return true; //breaks the foreach.
+              }
+            }
+          });
+        });
+        return username;
+      } catch (e) {
+        console.log('Error working with macaroon json: ' + e);
+        return null; 
+      }
+    },
+
+    /**
+      Get auth object, or if unavailable get mocked object with username from
+      cookie.
+
+      @method _getAuth
+      @returns The auth object or a mock following the format of the config
+        auth object.
+    */
+    _getAuth: function() {
+      var auth = this.get('auth');
+      if (auth === null) {
+        var username = this._getUsernameFromCookie();
+        if (username !== null) {
+          auth = { user: { name: username }};
+        }
+      }
+      return auth;
+    },
+
+    /**
       Renders the environment switcher
 
       @method _renderEnvSwitcher
     */
     _renderEnvSwitcher: function() {
+      var auth = this._getAuth();
       ReactDOM.render(
         <components.EnvSwitcher
           app={this}
@@ -1025,7 +1115,7 @@ YUI.add('juju-gui', function(Y) {
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
           showConnectingMask={this.showConnectingMask.bind(this)}
-          authDetails={this.get('auth')} />,
+          authDetails={auth} />,
         document.getElementById('environment-switcher'));
     },
 
@@ -1694,10 +1784,10 @@ YUI.add('juju-gui', function(Y) {
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(
           '#user-name .header-banner__link--breadcrumb');
-      var auth = this.get('auth');
+      var auth = this._getAuth();
       if (breadcrumbElement) {
         breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
-          'anonymous';
+          'admin';
       }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
