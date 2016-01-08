@@ -1016,7 +1016,7 @@ YUI.add('juju-gui', function(Y) {
       @method _getCookies
     */
     _getCookie: function() {
-      return document.cookie; 
+      return document.cookie;
     },
 
     /**
@@ -1076,7 +1076,7 @@ YUI.add('juju-gui', function(Y) {
         return username;
       } catch (e) {
         console.log('Error working with macaroon json: ' + e);
-        return null; 
+        return null;
       }
     },
 
@@ -1105,6 +1105,12 @@ YUI.add('juju-gui', function(Y) {
       @method _renderEnvSwitcher
     */
     _renderEnvSwitcher: function() {
+      if(!this.env.facadeSupported('EnvironmentManager')) {
+        // We do not want to show the model switcher if it isn't supported as
+        // it throws an error in the browser console and confuses the user
+        // as it's visible but not functional.
+        return;
+      }
       var auth = this._getAuth();
       ReactDOM.render(
         <components.EnvSwitcher
