@@ -1118,6 +1118,7 @@ YUI.add('juju-gui', function(Y) {
           app={this}
           env={this.env}
           environmentName={this.db.environment.get('name')}
+          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
