@@ -46,11 +46,12 @@ YUI.add('user-profile-list', function() {
           if (!valid) { return; }
         }
         var value = showKeys ? key : item[key];
-        var key = `${item[this.props.uuidKey]}-${key}`;
+        var reactKey = `${item[this.props.uuidKey]}-${key}`;
         items.push(
           <div
             className="user-profile-list__line-item"
-            key={key}>
+            data-key={key}
+            key={reactKey}>
             {value}
           </div>);
       });
@@ -122,7 +123,10 @@ YUI.add('user-profile-list', function() {
       @param {Object} e The click event.
     */
     _switchEnv: function(e) {
-      this.props.switchEnv(e.currentTarget.getAttribute('data-uuid'));
+      var currentTarget = e.currentTarget;
+      this.props.switchEnv(
+        currentTarget.getAttribute('data-uuid'),
+        currentTarget.querySelector('[data-key=name]').innerText);
     },
 
     render: function () {

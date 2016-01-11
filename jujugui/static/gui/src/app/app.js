@@ -725,6 +725,7 @@ YUI.add('juju-gui', function(Y) {
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}
           switchEnv={this.switchEnv.bind(this)}
+          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           createSocketURL={this.createSocketURL.bind(this)} />,
         document.getElementById('charmbrowser-container'));
     },
