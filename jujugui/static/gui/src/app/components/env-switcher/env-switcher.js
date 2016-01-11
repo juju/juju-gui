@@ -27,7 +27,7 @@ YUI.add('env-switcher', function() {
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
       app: React.PropTypes.object,
-      showConnectingMask: React.PropTypes.func,
+      showConnectingMask: React.PropTypes.func.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired
     },
 
