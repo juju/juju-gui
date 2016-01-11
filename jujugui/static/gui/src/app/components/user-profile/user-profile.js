@@ -28,7 +28,8 @@ YUI.add('user-profile', function() {
       switchEnv: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
-      createSocketURL: React.PropTypes.func.isRequired
+      createSocketURL: React.PropTypes.func.isRequired,
+      showConnectingMask: React.PropTypes.func.isRequired,
     },
 
     getInitialState: function() {
@@ -89,6 +90,7 @@ YUI.add('user-profile', function() {
       var password = '';
       var address, port;
       var props = this.props;
+      props.showConnectingMask();
       var found = this.state.envList.some((env) => {
         if (env.uuid === uuid) {
           username = env.user;
