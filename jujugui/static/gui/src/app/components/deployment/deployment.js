@@ -36,7 +36,7 @@ YUI.add('deployment-component', function() {
       // Setting a default state object.
       var state = {
         hasCommits: false,
-        autoPlace: !!localStorage.getItem('auto-place-default')
+        autoPlace: !localStorage.getItem('disable-auto-place')
       };
       return this.generateState(this.props, state);
     },
