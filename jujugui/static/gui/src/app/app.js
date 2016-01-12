@@ -714,6 +714,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the Logout component.
+
+      @method _renderLogout
+    */
+    _renderLogout: function() {
+      ReactDOM.render(
+        <window.juju.components.Logout
+          logout={this.logout.bind(this)} />,
+        document.getElementById('profile-link-container'));
+    },
+
+    /**
       Renders the user profile component.
 
       @method _renderUserProfile
@@ -1569,6 +1581,8 @@ YUI.add('juju-gui', function(Y) {
       }
       this.set('loggedIn', false);
       this.env.logout();
+      this.maskVisibility(true);
+      this._renderLogin();
       return;
     },
 
@@ -1675,7 +1689,7 @@ YUI.add('juju-gui', function(Y) {
     onLogin: function(e) {
       if (e.data.result) {
         // The login was a success.
-        this.hideMask();
+        this.maskVisibility(false);
         this._emptySectionApp();
         var redirectPath = this.popLoginRedirectPath();
         this.set('loggedIn', true);
@@ -1840,15 +1854,11 @@ YUI.add('juju-gui', function(Y) {
       maasContainer.show();
     },
 
-    /**
-      Hides the fullscreen mask.
-
-      @method hideMask
-    */
-    hideMask: function() {
-      var mask = Y.one('#full-screen-mask');
+    maskVisibility: function(visibility = true) {
+      var mask = document.getElementById('full-screen-mask');
+      var display = visibility ? 'block' : 'none';
       if (mask) {
-        mask.hide();
+        mask.style.display = display;
       }
     },
 
@@ -1858,11 +1868,8 @@ YUI.add('juju-gui', function(Y) {
       @method showConnectingMask
     */
     showConnectingMask: function() {
-      var mask = document.getElementById('full-screen-mask');
+      this.maskVisibility(true);
       var msg = document.getElementById('loading-message');
-      if (mask) {
-        mask.style.display = 'block';
-      }
       if (msg) {
         msg.style.display = 'block';
       }
@@ -1961,6 +1968,7 @@ YUI.add('juju-gui', function(Y) {
 
       this._renderComponents();
       this._renderNotifications();
+      this._renderLogout();
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
@@ -2222,6 +2230,7 @@ YUI.add('juju-gui', function(Y) {
     'local-inspector',
     'machine-view',
     'login-component',
+    'logout-component',
     'notification-list',
     'panel-component',
     'user-profile',

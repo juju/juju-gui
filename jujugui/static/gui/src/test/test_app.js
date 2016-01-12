@@ -757,7 +757,7 @@ describe('File drag over notification system', function() {
           Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
       this._cleanups.push(popup.reset);
       var app = makeApp(true, this);
-      stubit(app, 'hideMask');
+      stubit(app, 'maskVisibility');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
       app.onLogin({ data: { result: true } });
@@ -783,7 +783,7 @@ describe('File drag over notification system', function() {
           Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar#baz');
       this._cleanups.push(popup.reset);
       var app = makeApp(true, this);
-      stubit(app, 'hideMask');
+      stubit(app, 'maskVisibility');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
       app.onLogin({ data: { result: true } });
@@ -813,7 +813,7 @@ describe('File drag over notification system', function() {
       // See the "this.reset()" call in the callback below that cleans up.
       var stub = utils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
       var app = makeApp(false, this);
-      utils.makeStubMethod(app, 'hideMask');
+      utils.makeStubMethod(app, 'maskVisibility');
       app.redirectPath = '/foo/bar/';
       app.location = {
         toString: function() {return '/login/';},
@@ -830,7 +830,7 @@ describe('File drag over notification system', function() {
         assert.equal(e.data.result, true);
         assert.equal(e.data.fromToken, true);
         this.passThroughToOriginalMethod(app);
-        assert.equal(app.hideMask.calledOnce(), true);
+        assert.equal(app.maskVisibility.calledOnce(), true);
         assert.equal(app.env.onceAfter.calledOnce(), true);
         var onceAfterArgs = app.env.onceAfter.lastArguments();
         assert.equal(onceAfterArgs[0], 'environmentNameChange');
