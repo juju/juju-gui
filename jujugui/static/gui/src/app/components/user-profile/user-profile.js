@@ -26,7 +26,10 @@ YUI.add('user-profile', function() {
       jem: React.PropTypes.object,
       listEnvs: React.PropTypes.func,
       switchEnv: React.PropTypes.func.isRequired,
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      dbEnvironmentSet: React.PropTypes.func.isRequired,
+      createSocketURL: React.PropTypes.func.isRequired,
+      showConnectingMask: React.PropTypes.func.isRequired,
     },
 
     getInitialState: function() {
@@ -80,21 +83,32 @@ YUI.add('user-profile', function() {
 
       @method switchEnv
       @param {String} uuid The env UUID.
+      @param {String} name The env name.
     */
-    switchEnv: function(uuid) {
+    switchEnv: function(uuid, name) {
       var username = '';
       var password = '';
+      var address, port;
+      var props = this.props;
+      props.showConnectingMask();
       var found = this.state.envList.some((env) => {
         if (env.uuid === uuid) {
           username = env.user;
           password = env.password;
+          if (env['host-ports']) {
+            var hostport = env['host-ports'][0].split(':');
+            address = hostport[0];
+            port = hostport[1];
+          }
           return true;
         }
       });
       if (!found) {
         console.log('No user credentials for env: ', uuid);
       }
-      this.props.switchEnv(uuid, username, password);
+      var socketUrl = props.createSocketURL(address, port, uuid);
+      props.switchEnv(socketUrl, username, password);
+      props.dbEnvironmentSet('name', name);
       this.close();
     },
 

@@ -85,15 +85,21 @@ describe('UserProfileList', () => {
             className="user-profile-list__header-row"
             key="TestList-header-row">
             <div
-              className="user-profile-list__line-item" key="abc123-uuid">
+              className="user-profile-list__line-item"
+              data-key="uuid"
+              key="abc123-uuid">
               uuid
             </div>
             <div
-              className="user-profile-list__line-item" key="abc123-ship">
+              className="user-profile-list__line-item"
+              data-key="ship"
+              key="abc123-ship">
               ship
             </div>
             <div
-              className="user-profile-list__line-item" key="abc123-pilot">
+              className="user-profile-list__line-item"
+              data-key="pilot"
+              key="abc123-pilot">
               pilot
             </div>
           </li>
@@ -102,13 +108,22 @@ describe('UserProfileList', () => {
             key={data[0].uuid}
             data-uuid={data[0].uuid}
             onClick={instance._switchEnv}>
-            <div className="user-profile-list__line-item" key="abc123-uuid">
+            <div
+              className="user-profile-list__line-item"
+              data-key="uuid"
+              key="abc123-uuid">
               {data[0].uuid}
             </div>
-            <div className="user-profile-list__line-item" key="abc123-ship">
+            <div
+              className="user-profile-list__line-item"
+              data-key="ship"
+              key="abc123-ship">
               {data[0].ship}
             </div>
-            <div className="user-profile-list__line-item" key="abc123-pilot">
+            <div
+              className="user-profile-list__line-item"
+              data-key="pilot"
+              key="abc123-pilot">
               {data[0].pilot}
             </div>
           </li>
@@ -117,13 +132,22 @@ describe('UserProfileList', () => {
             key={data[1].uuid}
             data-uuid={data[1].uuid}
             onClick={instance._switchEnv}>
-            <div className="user-profile-list__line-item" key="123abc-uuid">
+            <div
+              className="user-profile-list__line-item"
+              data-key="uuid"
+              key="123abc-uuid">
               {data[1].uuid}
             </div>
-            <div className="user-profile-list__line-item" key="123abc-ship">
+            <div
+              className="user-profile-list__line-item"
+              data-key="ship"
+              key="123abc-ship">
               {data[1].ship}
             </div>
-            <div className="user-profile-list__line-item" key="123abc-pilot">
+            <div
+              className="user-profile-list__line-item"
+              data-key="pilot"
+              key="123abc-pilot">
               {data[1].pilot}
             </div>
           </li>
@@ -164,11 +188,15 @@ describe('UserProfileList', () => {
             className="user-profile-list__header-row"
             key="TestList-header-row">
             <div
-              className="user-profile-list__line-item" key="abc123-uuid">
+              className="user-profile-list__line-item"
+              data-key="uuid"
+              key="abc123-uuid">
               uuid
             </div>
             <div
-              className="user-profile-list__line-item" key="abc123-ship">
+              className="user-profile-list__line-item"
+              data-key="ship"
+              key="abc123-ship">
               ship
             </div>
           </li>
@@ -177,10 +205,16 @@ describe('UserProfileList', () => {
             key={data[0].uuid}
             data-uuid={data[0].uuid}
             onClick={instance._switchEnv}>
-            <div className="user-profile-list__line-item" key="abc123-uuid">
+            <div
+              className="user-profile-list__line-item"
+              data-key="uuid"
+              key="abc123-uuid">
               {data[0].uuid}
             </div>
-            <div className="user-profile-list__line-item" key="abc123-ship">
+            <div
+              className="user-profile-list__line-item"
+              data-key="ship"
+              key="abc123-ship">
               {data[0].ship}
             </div>
           </li>
@@ -194,7 +228,7 @@ describe('UserProfileList', () => {
     var data = [{
       uuid: 'abc123',
       ship: 'tardis',
-      pilot: 'the dr'
+      name: 'the dr'
     }];
     var switchEnv = sinon.stub();
     var component = testUtils.renderIntoDocument(
@@ -207,7 +241,7 @@ describe('UserProfileList', () => {
       ReactDOM.findDOMNode(component)
               .querySelector('.user-profile-list__item-row'));
     assert.equal(switchEnv.callCount, 1);
-    assert.equal(switchEnv.args[0][0], 'abc123');
+    assert.deepEqual(switchEnv.args[0], ['abc123', 'the dr']);
   });
 
 });

@@ -27,12 +27,12 @@ YUI.add('env-switcher', function() {
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
       app: React.PropTypes.object,
-      showConnectingMask: React.PropTypes.func
+      showConnectingMask: React.PropTypes.func.isRequired,
+      dbEnvironmentSet: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
       return {
-        envName: this.props.environmentName,
         showEnvList: false,
         envList: []
       };
@@ -40,16 +40,6 @@ YUI.add('env-switcher', function() {
 
     componentDidMount: function() {
       this.updateEnvList();
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      // We only want to take the environment name that's being passed in if
-      // there is none displayed. Else rely on what the user has selected to
-      // avoid a long delay in updating the selected environment via the
-      // megawatcher.
-      if (!this.state.envName) {
-        this.setState({envName: nextProps.environmentName});
-      }
     },
 
     /**
@@ -116,9 +106,10 @@ YUI.add('env-switcher', function() {
     */
     handleEnvClick: function(e) {
       var currentTarget = e.currentTarget;
-      this.props.showConnectingMask();
+      var props = this.props;
+      props.showConnectingMask();
       this.setState({showEnvList: false});
-      this.setState({envName: currentTarget.getAttribute('data-name')});
+      props.dbEnvironmentSet('name', currentTarget.getAttribute('data-name'));
       this.switchEnv(currentTarget.getAttribute('data-id'));
     },
 
@@ -182,7 +173,7 @@ YUI.add('env-switcher', function() {
         console.log(err);
         return;
       }
-      this.setState({envName: data.name || data.path});
+      this.props.dbEnvironmentSet('name', data.name || data.path);
       this.updateEnvList(this.switchEnv.bind(this, data.uuid));
     },
 
@@ -253,7 +244,7 @@ YUI.add('env-switcher', function() {
             className="env-switcher--toggle"
             onClick={this.toggleEnvList}>
             <span className="environment-name">
-              {this.state.envName}
+              {this.props.environmentName}
             </span>
             <juju.components.SvgIcon name="chevron_down_16"
               size="16" />

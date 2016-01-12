@@ -724,7 +724,10 @@ YUI.add('juju-gui', function(Y) {
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}
-          switchEnv={this.switchEnv.bind(this)} />,
+          switchEnv={this.switchEnv.bind(this)}
+          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
+          createSocketURL={this.createSocketURL.bind(this)}
+          showConnectingMask={this.showConnectingMask.bind(this)} />,
         document.getElementById('charmbrowser-container'));
     },
 
@@ -1117,6 +1120,7 @@ YUI.add('juju-gui', function(Y) {
           app={this}
           env={this.env}
           environmentName={this.db.environment.get('name')}
+          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}

@@ -33,6 +33,8 @@ describe('EnvSwitcher', function() {
   it('renders the closed switcher component', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         environmentName="MyEnv" />);
     assert.deepEqual(output,
       <div className="env-switcher">
@@ -55,6 +57,8 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
@@ -64,6 +68,8 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         env={env} />);
 
     var instance = renderer.getMountedInstance();
@@ -84,6 +90,8 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         jem={jem} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -102,6 +110,8 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -119,6 +129,8 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
@@ -158,6 +170,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        dbEnvironmentSet={sinon.stub()}
         showConnectingMask={mask}
         jem={jem}
         app={app} />, true);
@@ -173,7 +186,6 @@ describe('EnvSwitcher', function() {
     assert.equal(switchEnv.callCount, 1);
     assert.deepEqual(instance.state, {
       showEnvList: false,
-      envName: 'abc123',
       envList: envs
     });
     assert.deepEqual(switchEnv.args[0], [
@@ -211,8 +223,11 @@ describe('EnvSwitcher', function() {
       createSocketURL: createSocketURL,
       switchEnv: switchEnv
     };
+    var dbset = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={dbset}
         jem={jem}
         app={app} />, true);
     var instance = renderer.getMountedInstance();
@@ -242,8 +257,10 @@ describe('EnvSwitcher', function() {
     envs.push(createdEnv);
     listEnvs.args[1][0](null, envs);
     assert.equal(switchEnv.callCount, 1);
-    // After creating a new env it should update the envName state
-    assert.equal(instance.state.envName, 'newname');
+    // After creating a new env it should call to update the environment name
+    // in the db.
+    assert.equal(dbset.callCount, 1);
+    assert.deepEqual(dbset.args[0], ['name', 'newname']);
   }
 
   it('can call to create a new env (JEM)', function() {
@@ -271,6 +288,8 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -291,6 +310,8 @@ describe('EnvSwitcher', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher
+        showConnectingMask={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         changeState={changeState} />, true);
     var instance = renderer.getMountedInstance();
     instance.showUserProfile();
