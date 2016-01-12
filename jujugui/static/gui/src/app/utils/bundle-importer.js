@@ -74,6 +74,7 @@ YUI.add('bundle-importer', function(Y) {
       var reader = this._generateFileReader();
       reader.onload = this._fileReaderOnload.bind(this, file);
       reader.readAsText(file);
+      app._hideDragOverNotification();
       return reader; // Not intended for use. Returned for testing.
     },
 
