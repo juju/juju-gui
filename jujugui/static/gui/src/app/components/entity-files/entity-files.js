@@ -176,7 +176,9 @@ YUI.add('entity-files', function() {
       var entityModel = this.props.entityModel;
       var files = entityModel.get('files');
       var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
-      var archiveUrl = `${apiUrl}/${entityModel.get('full_name')}/archive`;
+      var name = (entityModel.get('entityType') === 'bundle')?
+        entityModel.get('name'):entityModel.get('full_name');
+      var archiveUrl = `${apiUrl}/${name}/archive`;
       return (
         <div className="entity-files section" id="files">
           <h3 className="section__title">
