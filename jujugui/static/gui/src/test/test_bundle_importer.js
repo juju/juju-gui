@@ -107,6 +107,8 @@ describe('Bundle Importer', function() {
               onload: '',
               readAsText: asText
             });
+        var hideNotification = utils.makeStubMethod(
+          bundleImporter, 'hideDragOverNotification');
         var onload = utils.makeStubMethod(bundleImporter, '_fileReaderOnload');
         this._cleanups.concat([generate.reset, onload.reset]);
         var reader = bundleImporter.importBundleFile('path/to/file');
@@ -114,6 +116,8 @@ describe('Bundle Importer', function() {
         assert.equal(asText.callCount(), 1);
         reader.onload();
         assert.equal(onload.callCount(), 1);
+        // Make sure we hide the bundle drag over notification.
+        assert.equal(hideNotification.callCount(), 1);
       });
 
       describe('FileReader onload callback', function() {
