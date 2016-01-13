@@ -34,7 +34,10 @@ YUI.add('juju-topology-service', function(Y) {
       views = Y.namespace('juju.views'),
       ziputils = Y.namespace('juju.ziputils');
 
-  var ServiceModuleCommon = function() {};
+  var ServiceModuleCommon = function() {
+    // Default to true, once centered this will be set to false.
+    this.centerOnLoad = true;
+  };
   /**
     Sync view models with current db.models.
 
@@ -50,6 +53,9 @@ YUI.add('juju-topology-service', function(Y) {
     var visibleServices = db.services.visible();
     views.toBoundingBoxes(
         this, visibleServices, topo.service_boxes, env);
+    // Store the size of the visibleServices model list because it gets
+    // reset below.
+    var serviceCount = visibleServices.size();
     // Break a reference cycle that results in uncollectable objects leaking.
     visibleServices.reset();
 
@@ -57,6 +63,17 @@ YUI.add('juju-topology-service', function(Y) {
     this.node = vis.selectAll('.service')
                      .data(Y.Object.values(topo.service_boxes),
                            function(d) {return d.modelId;});
+    // It takes a few update cycles to add the services to the database so
+    // this checks to make sure we only center once we have some services to
+    // center on.
+    if (this.centerOnLoad && serviceCount > 0) {
+      this.centerOnLoad = false;
+      // Bounce this panToCenter to the top of the stack so that the async
+      // d3 renderings complete before we try to pan.
+      setTimeout(() => {
+        this.panToCenter();
+      });
+    }
   };
 
   /**
