@@ -525,7 +525,8 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         fakebackend: new environments.FakeBackend({
           charmstore: this.get('charmstore')
-        })
+        }),
+        hideDragOverNotification: this._hideDragOverNotification.bind(this)
       });
 
       this.changesUtils = window.juju.utils.ChangesUtils;
@@ -821,7 +822,7 @@ YUI.add('juju-gui', function(Y) {
             this._renderDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
-          hideDragOverNotification={this._hideDragOverNotification.bind(this)}  
+          hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           changeDescriptions={changeDescriptions}
           getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this,
               this.db.units)}

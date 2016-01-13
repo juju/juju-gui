@@ -33,6 +33,7 @@ YUI.add('bundle-importer', function(Y) {
     this.env = cfg.env;
     this.db = cfg.db;
     this.fakebackend = cfg.fakebackend;
+    this.hideDragOverNotification = cfg.hideDragOverNotification;
     this._dryRunIndex = -1;
     this._collectedServices = [];
   }
@@ -74,7 +75,7 @@ YUI.add('bundle-importer', function(Y) {
       var reader = this._generateFileReader();
       reader.onload = this._fileReaderOnload.bind(this, file);
       reader.readAsText(file);
-      app._hideDragOverNotification();
+      this.hideDragOverNotification();
       return reader; // Not intended for use. Returned for testing.
     },
 
