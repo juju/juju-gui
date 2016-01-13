@@ -1,7 +1,30 @@
+
+
 .deployment-bar {
+    &__import {
+        @extend %deployment-bar__links;
+        left: -140px;
+
+        &:after {
+            content: "";
+            border-right: 1px solid $mid-grey;
+            position: relative;
+            right: -10px;
+        }
+    }
+
     &__export {
-        position: absolute;
-        top: 11px;
+        @extend %deployment-bar__links;
         left: -70px;
     }
+
+    &__file {
+        @extend %deployment-bar__links;
+        visibility: hidden;
+    }
+}
+
+%deployment-bar__links {
+    position: absolute;
+    top: 11px;
 }

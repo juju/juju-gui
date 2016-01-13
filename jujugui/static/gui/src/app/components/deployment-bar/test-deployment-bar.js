@@ -62,6 +62,17 @@ describe('DeploymentBar', function() {
           tabIndex="0">
           Export
         </span>
+        <span className="deployment-bar__import link"
+          onClick={instance._handleImportClick}
+          role="button"
+          tabIndex="0">
+          Import
+        </span>
+        <input className="deployment-bar__file"
+          type="file"
+          onChange={instance._handleImportFile}
+          accept=".zip,.yaml,.yml"
+          ref="file-input" />
         <juju.components.DeploymentBarNotification
           change={null} />
         <juju.components.GenericButton
@@ -86,7 +97,7 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[5],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -107,6 +118,60 @@ describe('DeploymentBar', function() {
     assert.equal(exportEnvironmentFile.callCount, 1);
   });
 
+  it('can open the file dialog when import is clicked', function() {
+    var currentChangeSet = {one: 1, two: 2};
+    var fileClick = sinon.stub();
+    var importBundleFile = sinon.stub();
+    var generateChangeDescription = sinon.stub();
+    var hideDragOverNotification = sinon.stub();
+    var renderDragOverNotification = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
+    var deployButtonAction = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        hasCommits={false}
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={exportEnvironmentFile}
+        renderDragOverNotification={renderDragOverNotification}
+        importBundleFile={importBundleFile}
+        hideDragOverNotification={hideDragOverNotification}
+        generateChangeDescription={generateChangeDescription}
+        currentChangeSet={currentChangeSet} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {'file-input': {click: fileClick}};
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[1].props.onClick();
+    assert.equal(fileClick.callCount, 1);
+  });
+
+  it('can get a file when a file is selected', function() {
+    var currentChangeSet = {one: 1, two: 2};
+    var importBundleFile = sinon.stub();
+    var generateChangeDescription = sinon.stub();
+    var hideDragOverNotification = sinon.stub();
+    var renderDragOverNotification = sinon.stub();
+    var exportEnvironmentFile = sinon.stub();
+    var deployButtonAction = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        hasCommits={false}
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={exportEnvironmentFile}
+        renderDragOverNotification={renderDragOverNotification}
+        importBundleFile={importBundleFile}
+        hideDragOverNotification={hideDragOverNotification}
+        generateChangeDescription={generateChangeDescription}
+        currentChangeSet={currentChangeSet} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {
+      'file-input': {files: ['apache2.yaml']},
+    };
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[2].props.onChange();
+    assert.equal(importBundleFile.callCount, 1);
+    assert.equal(importBundleFile.args[0][0], 'apache2.yaml');
+  });
+
   it('disables the button if there are no changes', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
@@ -115,7 +180,7 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[5],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -132,7 +197,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[5],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -162,7 +227,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -191,7 +256,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -206,7 +271,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -233,7 +298,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -248,7 +313,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -262,7 +327,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });

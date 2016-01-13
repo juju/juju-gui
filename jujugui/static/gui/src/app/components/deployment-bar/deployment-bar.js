@@ -22,7 +22,9 @@ YUI.add('deployment-bar', function() {
 
   juju.components.DeploymentBar = React.createClass({
     propTypes: {
-      exportEnvironmentFile: React.PropTypes.func.isRequired
+      exportEnvironmentFile: React.PropTypes.func.isRequired,
+      renderDragOverNotification: React.PropTypes.func.isRequired,
+      importBundleFile: React.PropTypes.func.isRequired
     },
 
     previousNotifications: [],
@@ -77,10 +79,37 @@ YUI.add('deployment-bar', function() {
       Export the env when the button is clicked.
 
       @method _handleExport
-      @returns {String} the label for the deploy button
     */
     _handleExport: function() {
       this.props.exportEnvironmentFile();
+    },
+
+    /**
+      Open a file picker when the button is clicked.
+
+      @method _handleImportClick
+    */
+    _handleImportClick: function() {
+      var input = this.refs['file-input'];
+      if (input) {
+        input.click();
+      }
+    },
+
+    /**
+      When file is submitted the drag over animation is triggered and the file
+      is passed to the utils function.
+
+      @method _handleImportFile
+    */
+    _handleImportFile: function() {
+      var inputFile = this.refs['file-input'].files[0];
+      if(inputFile) {
+        this.props.renderDragOverNotification(false);
+        this.props.importBundleFile(inputFile);
+        setTimeout(() => {
+          this.props.hideDragOverNotification();}, 600);
+      }
     },
 
     render: function() {
@@ -95,6 +124,17 @@ YUI.add('deployment-bar', function() {
             tabIndex="0">
             Export
           </span>
+          <span className="deployment-bar__import link"
+            onClick={this._handleImportClick}
+            role="button"
+            tabIndex="0">
+            Import
+          </span>
+          <input className="deployment-bar__file"
+            type="file"
+            onChange={this._handleImportFile}
+            accept=".zip,.yaml,.yml"
+            ref="file-input" />
           <juju.components.DeploymentBarNotification
             change={this.state.latestChangeDescription} />
           <juju.components.GenericButton
