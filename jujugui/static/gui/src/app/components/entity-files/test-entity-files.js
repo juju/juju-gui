@@ -121,6 +121,32 @@ describe('EntityFiles', function() {
     assert.equal(output.refs.codeLink, undefined);
   });
 
+  it('renders file urls correctly for bundle', function() {
+    mockEntity.set('entityType', 'bundle');
+    mockEntity.set('name', 'django');
+    mockEntity.set('full_name', 'wordpress');
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityFiles
+        entityModel={mockEntity}
+        pluralize={sinon.spy()} />
+    );
+    assert.equal(output.refs.files.children[0].children[0].href,
+      'https://api.jujucharms.com/charmstore/v4/django/archive/foo.zip');
+  });
+
+  it('renders file urls correctly for charm', function() {
+    mockEntity.set('entityType', 'charm');
+    mockEntity.set('name', 'django');
+    mockEntity.set('full_name', 'wordpress');
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityFiles
+        entityModel={mockEntity}
+        pluralize={sinon.spy()} />
+    );
+    assert.equal(output.refs.files.children[0].children[0].href,
+      'https://api.jujucharms.com/charmstore/v4/wordpress/archive/foo.zip');
+  });
+
   it('properly builds a tree structure from file paths', function() {
     // Since there's recursion logic in this function, test it
     // directly for easier debugging.
