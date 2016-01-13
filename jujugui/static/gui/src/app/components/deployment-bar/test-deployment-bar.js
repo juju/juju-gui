@@ -73,6 +73,11 @@ describe('DeploymentBar', function() {
           onChange={instance._handleImportFile}
           accept=".zip,.yaml,.yml"
           ref="file-input" />
+        <a className="deployment-bar__install-button"
+          href="https://jujucharms.com/docs/stable/getting-started"
+          target="_blank">
+          Install Juju
+        </a>
         <juju.components.DeploymentBarNotification
           change={null} />
         <juju.components.GenericButton
@@ -97,7 +102,7 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[5],
+    assert.deepEqual(output.props.children[6],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -180,7 +185,7 @@ describe('DeploymentBar', function() {
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[5],
+    assert.deepEqual(output.props.children[6],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -197,7 +202,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()} />);
-    assert.deepEqual(output.props.children[5],
+    assert.deepEqual(output.props.children[6],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -227,7 +232,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[4],
       <juju.components.DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -256,7 +261,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[4],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -271,7 +276,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[4],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -298,7 +303,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[4],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -313,7 +318,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[4],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -327,7 +332,7 @@ describe('DeploymentBar', function() {
         hasCommits={true}
         deployButtonAction={deployButtonAction} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[3],
+    assert.deepEqual(output.props.children[4],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
