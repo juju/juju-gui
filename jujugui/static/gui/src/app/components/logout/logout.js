@@ -33,9 +33,11 @@ YUI.add('logout-component', function() {
 
     render: function() {
       return (
-        <span>
-          <a href="#" onClick={this.logout}>Logout</a>
-        </span>
+        <a className="logout-link"
+          href="#"
+          onClick={this.logout}>
+          Logout
+        </a>
       );
     }
 

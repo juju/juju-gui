@@ -93,7 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           <li id="header-search-container"
               class="header-banner__list-item header-banner__list-item--no-padding"></li>
           <li id="profile-link-container"
-              class="header-banner__list-item"></li>
+              class="header-banner__list-item header-banner__list-item--logout"></li>
         </ul>
       </div>
       <div id="full-screen-mask">

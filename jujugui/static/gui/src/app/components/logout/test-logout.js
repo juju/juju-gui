@@ -36,9 +36,10 @@ describe('Logout', () => {
       <juju.components.Logout
         logout={logout} />);
     var expected = (
-      <span>
-        <a href="#" onClick={output.props.children.props.onClick}>Logout</a>
-      </span>);
+      <a className="logout-link"
+        href="#"
+        onClick={output.props.onClick}>Logout</a>
+      );
     assert.deepEqual(output, expected);
   });
 
@@ -49,7 +50,7 @@ describe('Logout', () => {
       <juju.components.Logout
         logout={logout} />);
     assert.equal(logout.callCount, 0);
-    output.props.children.props.onClick({ preventDefault: prevent });
+    output.props.onClick({ preventDefault: prevent });
     assert.equal(logout.callCount, 1);
     assert.equal(prevent.callCount, 1);
   });
