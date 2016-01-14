@@ -78,8 +78,7 @@ YUI.add('more-menu', function() {
     */
     _generateItemClasses: function(item) {
       return classNames(
-        'more-menu__menu-item',
-        {
+        'more-menu__menu-item', {
           'more-menu__menu-item--active':
             item.id && this.props.activeItem === item.id,
           'more-menu__menu-item--inactive': !item.action
@@ -122,8 +121,7 @@ YUI.add('more-menu', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'more-menu',
-        {
+        'more-menu', {
           'more-menu--active': this.state.menuOpen
         }
       );

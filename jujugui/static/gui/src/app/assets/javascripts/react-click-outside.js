@@ -15,6 +15,8 @@ function enhanceWithClickOutside(WrappedComponent) {
 
   return React.createClass({
     displayName: 'Wrapped' + componentName,
+    // XXX huwshimi 15 Jan 2016 Expose the wrapped component for testing.
+    wrappedComponent: WrappedComponent,
 
     componentDidMount: function componentDidMount() {
       this.__wrappedComponent = this.refs.wrappedComponent;
