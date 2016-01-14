@@ -1409,6 +1409,12 @@ YUI.add('juju-topology-service', function(Y) {
           });
         }
       }
+      // Find the centroid of our hull of services and inform the
+      // topology.
+      if (vertices.length && !this.centeredOnce) {
+        this.findCentroid(vertices);
+        this.centeredOnce = true;
+      }
 
       // enter
       node
