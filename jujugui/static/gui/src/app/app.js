@@ -1065,7 +1065,11 @@ YUI.add('juju-gui', function(Y) {
         return (item.indexOf(prefix) !== -1);
       });
       if (!found) {
-        console.log('No macaroon found to get username from.');
+        if (this.get('jemUrl')) {
+          // We only want to show this warning if we're in a JEM environment
+          // as JES env's won't have a macaroon with username.
+          console.log('No macaroon found to get username from.');
+        }
         return null;
       }
       var index = macaroon.indexOf(prefix) + prefix.length;
