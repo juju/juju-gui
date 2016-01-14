@@ -41,56 +41,46 @@ describe('LoginComponent', function() {
           <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
         </div>
         <div className="login__full-form">
-          <div className="login__form-contents">
-            <div className="login__env-name">testenv</div>
-            {undefined}
-            <form
-              className="login__form"
-              ref="form"
-              onSubmit={instance._handleSubmit}>
-              <label
-                className="login__label">
-                Username
-                <input
-                  className="login__input"
-                  type="text"
-                  name="username"
-                  ref="username" />
-              </label>
-              <label
-                className="login__label">
-                Password
-                <input
-                  className="login__input"
-                  type="password"
-                  name="password"
-                  ref="password" />
-              </label>
-              <juju.components.GenericButton
-                action={instance._handleSubmit}
-                type="confirm"
-                title="Login" />
-            </form>
+          <div className="login__env-name">
+            testenv
           </div>
+          {undefined}
+          <form
+            className="login__form"
+            ref="form"
+            onSubmit={instance._handleSubmit}>
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                type="text"
+                name="username"
+                ref="username" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                type="password"
+                name="password"
+                ref="password" />
+            </label>
+            <juju.components.GenericButton
+              action={instance._handleSubmit}
+              type="confirm"
+              title="Login" />
+          </form>
         </div>
         <div className="login__message">
-          <div className="login__message-content">
-            The password for newer Juju clients can be found by locating the
-            Juju environment file placed in ~/.juju/environments/ with the
-            same name as the current environment.  For example, if you have
-            an environment named "production", then the file is named
-            ~/.juju/environments/production.jenv.  Look for the "password"
-            field in the file, or if that is empty, for the "admin-secret".
-            Remove the quotes from the value, and use this to log in.
-            Note that using juju-quickstart can automate logging in,
-            as well as other parts of installing and starting Juju.
-            <div>
-              <a
-                href="https://jujucharms.com"
-                target="_blank">
-                jujucharms.com
-              </a>
-            </div>
+          Find your password with `juju api-info --password password`
+          <div className="login__message-link">
+            <a
+              href="https://jujucharms.com"
+              target="_blank">
+              jujucharms.com
+            </a>
           </div>
         </div>
       </div>
@@ -110,7 +100,7 @@ describe('LoginComponent', function() {
         The supplied username or password was incorrect.
       </div>);
     assert.deepEqual(
-      output.props.children[1].props.children.props.children[1], expected);
+      output.props.children[1].props.children[1], expected);
   });
 
   it('calls to log the user in on submit', function() {
