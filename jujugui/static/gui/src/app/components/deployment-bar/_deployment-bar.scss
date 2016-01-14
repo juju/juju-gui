@@ -3,10 +3,10 @@
 .deployment-bar {
     &__import {
         @extend %deployment-bar__links;
-        left: -140px;
+        left: -240px;
 
         &:after {
-            content: "";
+            content: '';
             border-right: 1px solid $mid-grey;
             position: relative;
             right: -10px;
@@ -15,12 +15,20 @@
 
     &__export {
         @extend %deployment-bar__links;
-        left: -70px;
+        left: -170px;
     }
 
     &__file {
         @extend %deployment-bar__links;
         visibility: hidden;
+    }
+
+    &__install-button {
+        @extend %floating-panel;
+        left: -105px;
+        position: absolute;
+        padding: 10px;
+        color: $cool-grey;
     }
 }
 

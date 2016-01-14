@@ -135,6 +135,11 @@ YUI.add('deployment-bar', function() {
             onChange={this._handleImportFile}
             accept=".zip,.yaml,.yml"
             ref="file-input" />
+          <a className="deployment-bar__install-button"
+            href="https://jujucharms.com/docs/stable/getting-started"
+            target="_blank">
+            Install Juju
+          </a>
           <juju.components.DeploymentBarNotification
             change={this.state.latestChangeDescription} />
           <juju.components.GenericButton
