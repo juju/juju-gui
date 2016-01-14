@@ -1111,8 +1111,13 @@ YUI.add('juju-gui', function(Y) {
     */
     _getAuth: function() {
       var auth = this.get('auth');
+      var username = null;
       if (auth === null) {
-        var username = this._getUsernameFromCookie();
+        if (this.get('jemUrl')) {
+          // If we're in a JEM enabled environment then try and get the
+          // username from the cookie else skip it.
+          username = this._getUsernameFromCookie();
+        }
         if (username !== null) {
           auth = { user: { name: username }};
         }
