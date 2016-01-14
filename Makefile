@@ -195,12 +195,10 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
 	cp $(NODE_MODULES)/clipboard/dist/clipboard.js $(BUILT_JS_ASSETS)/clipboard.js
 	cp $(NODE_MODULES)/clipboard/dist/clipboard.min.js $(BUILT_JS_ASSETS)/clipboard.min.js
-	cp $(NODE_MODULES)/react-onclickoutside/index.js $(BUILT_JS_ASSETS)/react-onclickoutside.js
 	cp $(NODE_MODULES)/react-dnd/dist/ReactDnD.min.js $(BUILT_JS_ASSETS)/ReactDnD.min.js
 	cp $(NODE_MODULES)/react-dnd-html5-backend/dist/ReactDnDHTML5Backend.min.js $(BUILT_JS_ASSETS)/ReactDnDHTML5Backend.min.js
 	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/react-onclickoutside/index.js -o $(BUILT_JS_ASSETS)/react-onclickoutside-min.js
 
 $(HANDLEBARS_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/handlebars/dist/handlebars.runtime.js $(BUILT_JS_ASSETS)/handlebars.runtime.js
