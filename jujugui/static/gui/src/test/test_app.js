@@ -1174,10 +1174,11 @@ describe('File drag over notification system', function() {
   });
 
   describe('_getAuth', function() {
-    var Y, app, container;
+    var Y, app, container, testUtils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use('juju-gui', 'juju-tests-utils', function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1200,15 +1201,19 @@ describe('File drag over notification system', function() {
     });
 
     it('gets a partial auth from cookie when needed', function() {
-      var called = false;
       app.set('auth', null);
-      app._getUsernameFromCookie = function() {
-        called = true;
-        return 'bar';
-      };
+      app.set('jemUrl', 'jem url');
+      var stub = testUtils.makeStubMethod(app, '_getUsernameFromCookie', 'bar');
       var auth = app._getAuth();
       assert.equal('bar', auth.user.name);
-      assert.isTrue(called);
+      assert.equal(stub.callCount(), 1);
+    });
+
+    it('skips getting username from cookie if not in JEM', function() {
+      app.set('auth', null);
+      var stub = testUtils.makeStubMethod(app, '_getUsernameFromCookie');
+      app._getAuth();
+      assert.equal(stub.callCount(), 0);
     });
   });
 
