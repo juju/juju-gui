@@ -1,14 +1,9 @@
 .login {
     margin: 80px auto 0;
+    width: 350px;
 
     &__logo {
         text-align: center;
-    }
-
-    &__full-form {
-        box-sizing: border-box;
-        display: inline-block;
-        width: 50%;
     }
 
     &__failure-message {
@@ -17,9 +12,8 @@
         color: $white;
     }
 
-    &__form-contents {
-        width: 340px;
-        margin: 50px 20px 0 auto;
+    &__full-form {
+        margin: 50px auto 25px;
         background-color: $white;
         box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
     }
@@ -54,19 +48,13 @@
     }
 
     &__message {
-        display: inline-block;
-        box-sizing: border-box;
-        width: 50%;
-        margin-top: 44px;
-        text-align: left;
         color: $warm-grey;
         font-size: 13px;
-        vertical-align: top;
+        text-align: center;
     }
 
-    &__message-content {
-        max-width: 400px;
-        padding-right: 20px;
+    &__message-link {
+        margin-top: 25px;
     }
 
 }
