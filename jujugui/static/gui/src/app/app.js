@@ -1065,11 +1065,7 @@ YUI.add('juju-gui', function(Y) {
         return (item.indexOf(prefix) !== -1);
       });
       if (!found) {
-        if (this.get('jemUrl')) {
-          // We only want to show this warning if we're in a JEM environment
-          // as JES env's won't have a macaroon with username.
-          console.log('No macaroon found to get username from.');
-        }
+        console.log('No macaroon found to get username from.');
         return null;
       }
       var index = macaroon.indexOf(prefix) + prefix.length;
@@ -1115,8 +1111,13 @@ YUI.add('juju-gui', function(Y) {
     */
     _getAuth: function() {
       var auth = this.get('auth');
+      var username = null;
       if (auth === null) {
-        var username = this._getUsernameFromCookie();
+        if (this.get('jemUrl')) {
+          // If we're in a JEM enabled environment then try and get the
+          // username from the cookie else skip it.
+          username = this._getUsernameFromCookie();
+        }
         if (username !== null) {
           auth = { user: { name: username }};
         }
