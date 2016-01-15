@@ -130,7 +130,11 @@ describe('Ghost Deployer Extension', function() {
         metadata: {
           id: 'ghost-service-id',
           localType: null
-        }}});
+        }},
+      sectionC: {
+        component: null,
+        metadata: null
+      }});
   });
 
   it('increments the name for duplicate ghost services', function() {

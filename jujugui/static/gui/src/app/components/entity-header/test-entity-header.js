@@ -154,13 +154,6 @@ describe('EntityHeader', function() {
     deployAction.props.action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: null,
-        metadata: null
-      }
-    });
   });
 
   it('adds a bundle when the add button is clicked', function() {
