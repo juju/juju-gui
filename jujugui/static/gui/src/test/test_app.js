@@ -1142,6 +1142,9 @@ describe('File drag over notification system', function() {
       assert.isTrue(app.env.closeCalled, 'env was not closed.');
       assert.isTrue(app.db.resetCalled, 'db was not reset.');
       assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
+      var topo = app.views.environment.instance.topo;
+      assert.isTrue(topop.modules.ServiceModule.centerOnLoad,
+                    'canvas centering was not reset.');
     });
 
     it('sets credentials based on existence of jem', function() {

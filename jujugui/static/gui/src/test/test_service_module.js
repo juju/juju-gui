@@ -145,6 +145,18 @@ describe('service updates', function() {
     serviceModule.update();
     assert.equal(service.select('.service-block').attr('cx'), 65);
   });
+
+  it('should center on first load', function(done) {
+    serviceModule.panToCenter = function() {
+      assert.equal(serviceModule.centerOnLoad, false);
+      done();
+    };
+    db.services.add({
+      id: 'foo',
+      subordinate: false
+    });
+    serviceModule.update();
+  });
 });
 
 
