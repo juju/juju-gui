@@ -2,12 +2,25 @@
     $dimension: 13px;
 
     &__link {
+        display: inline-block;
+
         a:hover {
             text-decoration: underline;
         }
+        &:after {
+            color: $warm-grey;
+            content: "\2022";
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+
+        &:last-child:after {
+            display: none;
+        }
     }
 
-    &__file, &__directory {
+    &__file,
+    &__directory {
         margin: 10px 0;
         list-style: none;
         white-space: nowrap;
