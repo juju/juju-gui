@@ -41,35 +41,52 @@ YUI.add('unit-details', function() {
           }}});
     },
 
+    /**
+      Build a HTML list from an array of ports and an IP address
+
+      @method _getAddressList
+      @returns {String} HTML of list
+    */
+    _getAddressList: function(address, ports) {
+      var list = '';
+      if (ports && ports.length > 0 && address) {
+        list = '<ul class="unit-details__list">';
+        for (let i in ports) {
+          list += `<li class="unit-details__list-item"><a href="http://${address}:${ports[i]}" target="_blank">${address}:${ports[i]}</a></li>`;
+        }
+        list += '</ul>';
+      }
+      return list;
+    },
+
     render: function() {
       var unit = this.props.unit;
       var buttons = [{
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
-      var publicPort = '80';
-      if (unit.open_ports.length > 0) {
-        publicPort = unit.open_ports[0];
-      }
-      var privateLink = (unit.private_address)?
-        `IP address: <a href="http://${unit.private_address}" target="_blank">`
-        `${unit.private_address}</a>`
-        :'IP address: none';
-      var publicLink = (unit.public_address)?
-        `Public address: <a href="http://${unit.public_address}:${publicPort}" `
-        `target="_blank">${unit.public_address}</a>`
-        :'Public address: none';
+      // unit.private_address = '12.12.12.12';
+      // unit.public_address = '12.12.12.12';
+      // unit.open_ports = [80, 443];
+
+      var privateLabel = 'IP address: ';
+      var publicLabel = 'Public address: ';
+      var privateList = this._getAddressList(unit.private_address, unit.open_ports);
+      var publicList = this._getAddressList(unit.public_address, unit.open_ports);
+      privateLabel += (privateList === '')?'none':'';
+      publicLabel += (publicList === '')?'none':'';
+
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
-            <p className="unit-details__property"
-              dangerouslySetInnerHTML={{__html: privateLink}}>
-            </p>
             <p className="unit-details__property">
               Status: {unit.agent_state || 'uncommitted'}
             </p>
             <p className="unit-details__property"
-              dangerouslySetInnerHTML={{__html: publicLink}}>
+              dangerouslySetInnerHTML={{__html: privateLabel + privateList}}>
+            </p>
+            <p className="unit-details__property"
+              dangerouslySetInnerHTML={{__html: publicLabel + publicList}}>
             </p>
           </div>
           <juju.components.ButtonRow

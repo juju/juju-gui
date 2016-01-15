@@ -10,6 +10,11 @@
         font-size: $font-size-small;
     }
 
+    &__list {
+      list-style: none;
+      margin-top: 0;
+    }
+
     a:hover {
         text-decoration: underline;
     }
