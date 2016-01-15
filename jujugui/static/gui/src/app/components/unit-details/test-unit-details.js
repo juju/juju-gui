@@ -50,13 +50,186 @@ describe('UnitDetails', function() {
     assert.deepEqual(output.props.children[0],
       <div className="unit-details__properties">
         <p className="unit-details__property">
-          IP address: {fakeUnit.private_address}
+          Status: {fakeUnit.agent_state}
         </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "IP address: none"}}>
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "Public address: none"}}>
+        </p>
+      </div>);
+  });
+
+  it('shows list of addresses correctly', function() {
+    fakeUnit = {
+      private_address: '192.168.0.1',
+      public_address: '93.20.93.20',
+      open_ports: [80, 443],
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId="abc123"
+        previousComponent="units"
+        unitStatus="error"
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+      <div className="unit-details__properties">
         <p className="unit-details__property">
           Status: {fakeUnit.agent_state}
         </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "IP address: "+
+            "<ul class=\"unit-details__list\">"+
+              "<li class=\"unit-details__list-item\">"+
+                "<a href=\"http://192.168.0.1:80\" target=\"_blank\">"+
+                  "192.168.0.1:80"+
+                "</a>"+
+              "</li>"+
+              "<li class=\"unit-details__list-item\">"+
+                "<a href=\"http://192.168.0.1:443\" target=\"_blank\">"+
+                  "192.168.0.1:443"+
+                "</a>"+
+              "</li>"+
+            "</ul>"}}>
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "Public address: "+
+            "<ul class=\"unit-details__list\">"+
+              "<li class=\"unit-details__list-item\">"+
+                "<a href=\"http://93.20.93.20:80\" target=\"_blank\">"+
+                  "93.20.93.20:80"+
+                "</a>"+
+              "</li>"+
+              "<li class=\"unit-details__list-item\">"+
+                "<a href=\"http://93.20.93.20:443\" target=\"_blank\">"+
+                  "93.20.93.20:443"+
+                "</a>"+
+              "</li>"+
+            "</ul>"}}>
+        </p>
+      </div>);
+  });
+
+  it('shows no addresses if no ports available', function() {
+    fakeUnit = {
+      private_address: '192.168.0.1',
+      public_address: '93.20.93.20',
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId="abc123"
+        previousComponent="units"
+        unitStatus="error"
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+      <div className="unit-details__properties">
         <p className="unit-details__property">
-          Public address: {fakeUnit.public_address}
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "IP address: none"}}>
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "Public address: none"}}>
+        </p>
+      </div>);
+  });
+
+  it('shows only public address if available', function() {
+    fakeUnit = {
+      public_address: '93.20.93.20',
+      open_ports: [80, 443],
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId="abc123"
+        previousComponent="units"
+        unitStatus="error"
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+      <div className="unit-details__properties">
+        <p className="unit-details__property">
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "IP address: none"}}>
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "Public address: "+
+            "<ul class=\"unit-details__list\">"+
+              "<li class=\"unit-details__list-item\">"+
+                "<a href=\"http://93.20.93.20:80\" target=\"_blank\">"+
+                  "93.20.93.20:80"+
+                "</a>"+
+              "</li>"+
+              "<li class=\"unit-details__list-item\">"+
+                "<a href=\"http://93.20.93.20:443\" target=\"_blank\">"+
+                  "93.20.93.20:443"+
+                "</a>"+
+              "</li>"+
+            "</ul>"}}>
+        </p>
+      </div>);
+  });
+
+  it('shows only private address if available', function() {
+    fakeUnit = {
+      private_address: '93.20.93.20',
+      open_ports: [80, 443],
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId="abc123"
+        previousComponent="units"
+        unitStatus="error"
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+      <div className="unit-details__properties">
+        <p className="unit-details__property">
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "IP address: "+
+          "<ul class=\"unit-details__list\">"+
+            "<li class=\"unit-details__list-item\">"+
+              "<a href=\"http://93.20.93.20:80\" target=\"_blank\">"+
+                "93.20.93.20:80"+
+              "</a>"+
+            "</li>"+
+            "<li class=\"unit-details__list-item\">"+
+              "<a href=\"http://93.20.93.20:443\" target=\"_blank\">"+
+                "93.20.93.20:443"+
+              "</a>"+
+            "</li>"+
+          "</ul>"}}>
+        </p>
+        <p className="unit-details__property"
+          dangerouslySetInnerHTML={{__html: "Public address: none"}}>
         </p>
       </div>);
   });
