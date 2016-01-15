@@ -65,9 +65,6 @@ YUI.add('unit-details', function() {
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
-      // unit.private_address = '12.12.12.12';
-      // unit.public_address = '12.12.12.12';
-      // unit.open_ports = [80, 443];
 
       var privateLabel = 'IP address: ';
       var publicLabel = 'Public address: ';
