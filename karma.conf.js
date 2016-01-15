@@ -23,7 +23,7 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/react-dom.js',
       'jujugui/static/gui/build/app/assets/javascripts/classnames.js',
       'jujugui/static/gui/build/app/assets/javascripts/clipboard.js',
-      'jujugui/static/gui/build/app/assets/javascripts/react-onclickoutside.js',
+      'jujugui/static/gui/build/app/assets/javascripts/react-click-outside.js',
       'jujugui/static/gui/build/app/assets/javascripts/ReactDnD.min.js',
       'jujugui/static/gui/build/app/assets/javascripts/ReactDnDHTML5Backend.min.js',
       'jujugui/static/gui/build/app/assets/javascripts/diff.js',

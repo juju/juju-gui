@@ -83,7 +83,6 @@ YUI.add('header-search', function() {
       }
       return classNames(
         'header-search',
-        'ignore-react-onclickoutside',
          classes
       );
     },

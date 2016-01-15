@@ -35,7 +35,9 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MoreMenu
+      // Have to access the wrapped component as we don't want to test the click
+      // outside wrapper.
+      <juju.components.MoreMenu.prototype.wrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();
@@ -63,7 +65,7 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MoreMenu
+      <juju.components.MoreMenu.prototype.wrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();
@@ -108,7 +110,7 @@ describe('MoreMenu', function() {
       label: 'Add container'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MoreMenu
+      <juju.components.MoreMenu.prototype.wrappedComponent
         items={menuItems}
         title="Sandbox" />, true);
     var instance = renderer.getMountedInstance();

@@ -32,7 +32,9 @@ describe('EnvSwitcher', function() {
 
   it('renders the closed switcher component', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      // Have to access the wrapped component as we don't want to test the click
+      // outside wrapper.
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         environmentName="MyEnv" />);
@@ -56,7 +58,7 @@ describe('EnvSwitcher', function() {
       listEnvs: sinon.stub()
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
@@ -67,7 +69,7 @@ describe('EnvSwitcher', function() {
     });
 
     renderer.render(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env} />);
@@ -89,7 +91,7 @@ describe('EnvSwitcher', function() {
       listEnvironments: listEnvs
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         jem={jem} />, true);
@@ -109,7 +111,7 @@ describe('EnvSwitcher', function() {
       listEnvs: listEnvs
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
@@ -128,7 +130,7 @@ describe('EnvSwitcher', function() {
       listEnvs: sinon.stub()
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
@@ -169,7 +171,7 @@ describe('EnvSwitcher', function() {
       switchEnv: switchEnv
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         dbEnvironmentSet={sinon.stub()}
         showConnectingMask={mask}
         jem={jem}
@@ -225,7 +227,7 @@ describe('EnvSwitcher', function() {
     };
     var dbset = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={dbset}
         jem={jem}
@@ -287,7 +289,7 @@ describe('EnvSwitcher', function() {
       listEnvs: listEnvs
     };
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env} />, true);
@@ -309,7 +311,7 @@ describe('EnvSwitcher', function() {
     // excersizes the method that gets passed down.
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher
+      <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         changeState={changeState} />, true);
