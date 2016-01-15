@@ -107,7 +107,9 @@ YUI.add('unit-list', function() {
         if (isInstance && refs[ref].state.checked) {
           var unitName = ref.slice(ref.indexOf('-') + 1);
           units.push(unitName);
-          if (action === 'resolve') {
+          // On resolve and remove we want to mark the unit as resolved else
+          // Juju won't remove units that are in error.
+          if (action === 'resolve' || action === 'remove') {
             envResolved(unitName, null, false);
           } else if (action === 'retry') {
             envResolved(unitName, null, true);

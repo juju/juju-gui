@@ -314,6 +314,7 @@ describe('UnitList', () => {
   it('can remove the selected units', function() {
     var destroyUnits = sinon.stub();
     var changeState = sinon.stub();
+    var envResolved = sinon.stub();
     var units = [{
       displayName: 'mysql/0',
       id: 'mysql/0'
@@ -330,6 +331,7 @@ describe('UnitList', () => {
         <juju.components.UnitList
           destroyUnits={destroyUnits}
           changeState={changeState}
+          envResolved={envResolved}
           service={service}
           units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
@@ -339,6 +341,8 @@ describe('UnitList', () => {
     testUtils.Simulate.click(button);
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
+    // Make sure we mark the unit as resolved so that we can remove it.
+    assert.equal(envResolved.callCount, 2);
   });
 
   it('deselects all units after removal', function() {
@@ -354,6 +358,7 @@ describe('UnitList', () => {
         <juju.components.UnitList
           destroyUnits={destroyUnits}
           changeState={changeState}
+          envResolved={sinon.stub()}
           service={service}
           units={units} />);
     output.refs['UnitListItem-' + units[0].id].setState({checked: true});
