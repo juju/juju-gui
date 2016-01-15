@@ -54,7 +54,6 @@ YUI.add('entity-header', function() {
       var entity = entityModel.toEntity();
       if (entity.type === 'charm') {
         this.props.deployService(entityModel);
-        this._closeEntityDetails();
       } else {
         var id = entity.id.replace('cs:', '');
         this.props.getBundleYAML(id, this._getBundleYAMLCallback);

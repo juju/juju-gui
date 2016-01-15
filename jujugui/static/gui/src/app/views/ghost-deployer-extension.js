@@ -108,6 +108,10 @@ YUI.add('ghost-deployer-extension', function(Y) {
             id: ghostService.get('id'),
             localType: null
           }
+        },
+        sectionC: {
+          component: null,
+          metadata: null
         }});
     },
 
