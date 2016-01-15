@@ -720,16 +720,13 @@ YUI.add('juju-gui', function(Y) {
       @method _renderLogout
     */
     _renderLogout: function() {
-      var node = document.getElementById('profile-link-container');
-      if(this.state.getState('current', 'sectionC', 'metadata')) {
-        // If the charmbrowser is open then don't show the logout link.
-        ReactDOM.unmountComponentAtNode(node);
-      } else {
-        ReactDOM.render(
-          <window.juju.components.Logout
-            logout={this.logout.bind(this)} />,
-          node);
-      }
+      // If the charmbrowser is open then don't show the logout link.
+      var visible = !this.state.getState('current', 'sectionC', 'metadata');
+      ReactDOM.render(
+        <window.juju.components.Logout
+          logout={this.logout.bind(this)}
+          visible={visible} />,
+        document.getElementById('profile-link-container'));
     },
 
     /**

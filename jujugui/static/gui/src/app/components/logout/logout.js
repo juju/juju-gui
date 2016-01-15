@@ -23,7 +23,8 @@ YUI.add('logout-component', function() {
   juju.components.Logout = React.createClass({
 
     propTypes: {
-      logout: React.PropTypes.func.isRequired
+      logout: React.PropTypes.func.isRequired,
+      visible: React.PropTypes.bool.isRequired
     },
 
     logout: function(e) {
@@ -31,9 +32,24 @@ YUI.add('logout-component', function() {
       this.props.logout();
     },
 
+    /**
+      Generate the classes based on the props.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'logout-link',
+        {
+          'logout-link--hidden': !this.props.visible
+        }
+      );
+    },
+
     render: function() {
       return (
-        <a className="logout-link"
+        <a className={this._generateClasses()}
           href="#"
           onClick={this.logout}>
           Logout

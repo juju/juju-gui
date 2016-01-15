@@ -34,9 +34,24 @@ describe('Logout', () => {
     var logout = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout} />);
+        logout={logout}
+        visible={true} />);
     var expected = (
       <a className="logout-link"
+        href="#"
+        onClick={output.props.onClick}>Logout</a>
+      );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can be hidden', () => {
+    var logout = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Logout
+        logout={logout}
+        visible={false} />);
+    var expected = (
+      <a className="logout-link logout-link--hidden"
         href="#"
         onClick={output.props.onClick}>Logout</a>
       );
@@ -48,7 +63,8 @@ describe('Logout', () => {
     var prevent = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Logout
-        logout={logout} />);
+        logout={logout}
+        visible={true} />);
     assert.equal(logout.callCount, 0);
     output.props.onClick({ preventDefault: prevent });
     assert.equal(logout.callCount, 1);
