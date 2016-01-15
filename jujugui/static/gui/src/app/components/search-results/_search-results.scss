@@ -6,6 +6,15 @@
     }
 }
 
+%hover-state {
+    &:focus,
+    &:active,
+    &:hover {
+        color: $ubuntu-orange;
+        text-decoration: underline;
+    }
+}
+
 .search-results {
     .inner-wrapper {
         max-width: none;
@@ -101,6 +110,7 @@
             }
 
             .list-block__list--item-title {
+                @extend %hover-state;
                 margin: 0;
                 font-size: 1em;
                 line-height: 1.3;
@@ -147,6 +157,7 @@
         }
 
         .tag-list--item {
+            @extend %hover-state;
             margin: 0 10px 0 0;
             color: $warm-grey;
             display: inline-block;
