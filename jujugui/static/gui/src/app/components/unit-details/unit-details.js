@@ -51,10 +51,14 @@ YUI.add('unit-details', function() {
       if (unit.open_ports.length > 0) {
         publicPort = unit.open_ports[0];
       }
-      unit.private_address = '10.50.50.127';
-      unit.public_address = '10.100.100.127';
-      var privateLink = (unit.private_address)?`IP address: <a href="http://${unit.private_address}" target="_blank">${unit.private_address}</a>`:'IP address: none';
-      var publicLink = (unit.public_address)?`Public address: <a href="http://${unit.public_address}:${publicPort}" target="_blank">${unit.public_address}</a>`:'Public address: none';
+      var privateLink = (unit.private_address)?
+        `IP address: <a href="http://${unit.private_address}" target="_blank">`
+        `${unit.private_address}</a>`
+        :'IP address: none';
+      var publicLink = (unit.public_address)?
+        `Public address: <a href="http://${unit.public_address}:${publicPort}" `
+        `target="_blank">${unit.public_address}</a>`
+        :'Public address: none';
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
