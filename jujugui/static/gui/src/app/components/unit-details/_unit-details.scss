@@ -9,4 +9,8 @@
         margin-bottom: 0;
         font-size: $font-size-small;
     }
+
+    a:hover {
+        text-decoration: underline;
+    }
 }
