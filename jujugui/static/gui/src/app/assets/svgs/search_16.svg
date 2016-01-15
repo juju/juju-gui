@@ -13,7 +13,7 @@
    height="15.999999"
    id="svg5918"
    version="1.1"
-   inkscape:version="0.91pre2 r"
+   inkscape:version="0.91 r13725"
    viewBox="0 0 16 15.999999"
    sodipodi:docname="search_16.svg">
   <defs
@@ -59,7 +59,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="30.357661"
-     inkscape:cx="6.114383"
+     inkscape:cx="0.58035981"
      inkscape:cy="7.4631759"
      inkscape:document-units="px"
      inkscape:current-layer="g5346"
@@ -79,7 +79,12 @@
      inkscape:snap-smooth-nodes="true"
      inkscape:snap-midpoints="true"
      inkscape:snap-object-midpoints="true"
-     inkscape:snap-center="true">
+     inkscape:snap-center="true"
+     inkscape:window-width="1631"
+     inkscape:window-height="1026"
+     inkscape:window-x="49"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid4137"
@@ -94,7 +99,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -112,31 +117,12 @@
        id="g5346"
        transform="translate(-769.06151,404.35792)">
       <g
-         style="display:inline"
-         transform="matrix(0.66666668,0,0,0.66666668,877.33333,-129.21261)"
-         id="g4355">
-        <rect
-           transform="scale(1,-1)"
-           y="-452.36218"
-           x="111.99999"
-           height="24.000004"
-           width="24"
-           id="rect4357"
-           style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.05;fill:none;stroke:none;stroke-width:2;marker:none;enable-background:accumulate" />
+         id="g4151">
         <path
-           sodipodi:nodetypes="ccccc"
-           inkscape:connector-curvature="0"
-           id="path4359"
-           d="m 129.93056,444.03146 -2.27036,2.27324 6.07003,6.06986 L 136,450.10133 Z"
-           style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:normal;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.00393677;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
-        <ellipse
-           ry="9.4794722"
-           rx="9.4794664"
-           cy="438.86221"
-           cx="122.49998"
-           id="ellipse4361"
-           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#808080;stroke-width:2.04102874;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
-           d="m 131.97944,438.86221 a 9.4794664,9.4794722 0 0 1 -9.47946,9.47948 9.4794664,9.4794722 0 0 1 -9.47947,-9.47948 9.4794664,9.4794722 0 0 1 9.47947,-9.47947 9.4794664,9.4794722 0 0 1 9.47946,9.47947 z" />
+           style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:normal;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.00393677;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+           d="M 7 0 C 3.14207 0 0 3.14207 0 7 C 0 10.85793 3.14207 14 7 14 C 8.5412392 14 9.963051 13.490829 11.121094 12.642578 L 14.486328 16.007812 L 16 14.492188 L 12.638672 11.130859 C 13.490817 9.9712559 14 8.5451289 14 7 C 14 3.14207 10.85793 0 7 0 z M 7 1.3613281 C 10.12256 1.3613281 12.638672 3.87744 12.638672 7 C 12.638672 10.12256 10.12256 12.640625 7 12.640625 C 3.87744 12.640625 1.3613281 10.12256 1.3613281 7 C 1.3613281 3.87744 3.87744 1.3613281 7 1.3613281 z "
+           transform="translate(952,156.36218)"
+           id="path4359" />
       </g>
     </g>
   </g>

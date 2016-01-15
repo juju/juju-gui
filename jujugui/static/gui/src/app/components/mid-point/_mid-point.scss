@@ -68,6 +68,12 @@
             content: '';
             margin-right: 0;
         }
+
+        &:focus,
+        &:active,
+        &:hover {
+            color: $ubuntu-orange;
+        }
     }
 
     &__tag-count {

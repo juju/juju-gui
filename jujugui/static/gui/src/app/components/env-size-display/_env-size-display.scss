@@ -4,7 +4,7 @@
     position: absolute;
     z-index: index($z-indexed-elements, env-size-display);
     top: $navbar-height + $panel-space;
-    left: $panel-space;
+    left: $panel-space * 2;
     width: $left-panel-width;
     height: $environment-header-height;
     padding: 0 20px;

@@ -5,7 +5,7 @@
     position: absolute;
     z-index: index($z-indexed-elements, inspector-view);
     top: $environment-header-height + ($panel-space * 2) + $navbar-height;
-    left: $panel-space;
+    left: $panel-space * 2;
     width: $left-panel-width;
     max-height: calc(100% - #{$extra-space});
 

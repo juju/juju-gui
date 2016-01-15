@@ -22,6 +22,28 @@
             &__store-label {
                 display: none;
             }
+
+            &__form .svg-icon {
+                fill: $ubuntu-orange
+            }
+
+            &__input {
+                &:focus,
+                &:active,
+                &:hover {
+                    &::-webkit-input-placeholder {
+                        color: $warm-grey;
+                    }
+
+                    &::-moz-placeholder {
+                        color: $warm-grey;
+                    }
+
+                    &:-ms-input-placeholder {
+                        color: $warm-grey;
+                    }
+                }
+            }
         }
     }
 
@@ -34,6 +56,12 @@
         margin-right: 10px;
         background: transparent;
         border: none;
+
+        &:focus,
+        &:active,
+        &:hover {
+            background: transparent;
+        }
     }
 
     &__input {
@@ -41,26 +69,45 @@
         background-color: transparent;
         border: none;
         transition: width .3s;
+
+        &:focus,
+        &:active,
+        &:hover {
+            cursor: pointer;
+        }
     }
 
+    &__form,
     &__store {
         cursor: pointer;
         transition: color .3s;
 
+        &:focus,
+        &:active,
         &:hover {
             color: $ubuntu-orange;
 
             .svg-icon {
                 fill: $ubuntu-orange
             }
+
+            ::-webkit-input-placeholder {
+                color: $ubuntu-orange;
+            }
+
+            ::-moz-placeholder {
+                color: $ubuntu-orange;
+            }
+
+            :-ms-input-placeholder {
+                color: $ubuntu-orange;
+            }
         }
     }
 
-    &__store-icon {
-        .svg-icon {
-            transition: fill 0.3s;
-            fill: $warm-grey;
-        }
+    .svg-icon {
+        transition: fill 0.3s;
+        fill: $warm-grey;
     }
 
     &__store-label {
@@ -70,6 +117,14 @@
     &__close {
         margin-left: 20px;
         cursor: pointer;
+
+        &:focus,
+        &:active,
+        &:hover {
+            .svg-icon {
+                stroke: $ubuntu-orange
+            }
+        }
     }
 
     &--active {

@@ -34,6 +34,10 @@
         display: block;
         margin-top: 3px;
         color: $ubuntu-orange;
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: left;
+        direction: rtl;
     }
 
     &__value {

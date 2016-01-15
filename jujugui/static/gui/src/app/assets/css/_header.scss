@@ -17,6 +17,7 @@
     &--left {
       z-index: index($z-indexed-elements, header-banner-breadcrumbs);
       left: 0;
+      margin-top: -6px;
     }
 
     &__link,
@@ -50,6 +51,7 @@
     &__logo {
         position: relative;
         top: -1px;
+        margin-left: 10px;
     }
 
     .environment-name {
