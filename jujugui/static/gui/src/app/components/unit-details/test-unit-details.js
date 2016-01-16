@@ -42,21 +42,21 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        serviceId="abc123"
-        previousComponent="units"
-        unitStatus="error"
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
-      <div className="unit-details__properties">
-        <p className="unit-details__property">
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "IP address: none"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'IP address: none'}}>
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "Public address: none"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'Public address: none'}}>
         </p>
       </div>);
   });
@@ -74,9 +74,9 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        serviceId="abc123"
-        previousComponent="units"
-        unitStatus="error"
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
@@ -85,34 +85,34 @@ describe('UnitDetails', function() {
           Status: {fakeUnit.agent_state}
         </p>
         <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "IP address: "+
-            "<ul class=\"unit-details__list\">"+
-              "<li class=\"unit-details__list-item\">"+
-                "<a href=\"http://192.168.0.1:80\" target=\"_blank\">"+
-                  "192.168.0.1:80"+
-                "</a>"+
-              "</li>"+
-              "<li class=\"unit-details__list-item\">"+
-                "<a href=\"http://192.168.0.1:443\" target=\"_blank\">"+
-                  "192.168.0.1:443"+
-                "</a>"+
-              "</li>"+
-            "</ul>"}}>
+          dangerouslySetInnerHTML={{__html: 'IP address: '+
+            '<ul class=\"unit-details__list\">'+
+            '<li class=\"unit-details__list-item\">'+
+                '<a href=\"http://192.168.0.1:80\" target=\"_blank\">'+
+                  '192.168.0.1:80'+
+                '</a>'+
+              '</li>'+
+              '<li class=\"unit-details__list-item\">'+
+                '<a href=\"http://192.168.0.1:443\" target=\"_blank\">'+
+                  '192.168.0.1:443'+
+                '</a>'+
+              '</li>'+
+            '</ul>'}}>
         </p>
         <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "Public address: "+
-            "<ul class=\"unit-details__list\">"+
-              "<li class=\"unit-details__list-item\">"+
-                "<a href=\"http://93.20.93.20:80\" target=\"_blank\">"+
-                  "93.20.93.20:80"+
-                "</a>"+
-              "</li>"+
-              "<li class=\"unit-details__list-item\">"+
-                "<a href=\"http://93.20.93.20:443\" target=\"_blank\">"+
-                  "93.20.93.20:443"+
-                "</a>"+
-              "</li>"+
-            "</ul>"}}>
+          dangerouslySetInnerHTML={{__html: 'Public address: '+
+            '<ul class=\"unit-details__list\">'+
+              '<li class=\"unit-details__list-item\">'+
+                '<a href=\"http://93.20.93.20:80\" target=\"_blank\">'+
+                  '93.20.93.20:80'+
+                '</a>'+
+              '</li>'+
+              '<li class=\"unit-details__list-item\">'+
+                '<a href=\"http://93.20.93.20:443\" target=\"_blank\">'+
+                  '93.20.93.20:443'+
+                '</a>'+
+              '</li>'+
+            '</ul>'}}>
         </p>
       </div>);
   });
@@ -129,21 +129,21 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        serviceId="abc123"
-        previousComponent="units"
-        unitStatus="error"
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
-      <div className="unit-details__properties">
-        <p className="unit-details__property">
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "IP address: none"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'IP address: none'}}>
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "Public address: none"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'Public address: none'}}>
         </p>
       </div>);
   });
@@ -160,33 +160,33 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        serviceId="abc123"
-        previousComponent="units"
-        unitStatus="error"
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
-      <div className="unit-details__properties">
-        <p className="unit-details__property">
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "IP address: none"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'IP address: none'}}>
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "Public address: "+
-            "<ul class=\"unit-details__list\">"+
-              "<li class=\"unit-details__list-item\">"+
-                "<a href=\"http://93.20.93.20:80\" target=\"_blank\">"+
-                  "93.20.93.20:80"+
-                "</a>"+
-              "</li>"+
-              "<li class=\"unit-details__list-item\">"+
-                "<a href=\"http://93.20.93.20:443\" target=\"_blank\">"+
-                  "93.20.93.20:443"+
-                "</a>"+
-              "</li>"+
-            "</ul>"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'Public address: '+
+            '<ul class=\"unit-details__list\">'+
+              '<li class=\"unit-details__list-item\">'+
+                '<a href=\"http://93.20.93.20:80\" target=\"_blank\">'+
+                  '93.20.93.20:80'+
+                '</a>'+
+              '</li>'+
+              '<li class=\"unit-details__list-item\">'+
+                '<a href=\"http://93.20.93.20:443\" target=\"_blank\">'+
+                  '93.20.93.20:443'+
+                '</a>'+
+              '</li>'+
+            '</ul>'}}>
         </p>
       </div>);
   });
@@ -203,33 +203,33 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        serviceId="abc123"
-        previousComponent="units"
-        unitStatus="error"
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
-      <div className="unit-details__properties">
-        <p className="unit-details__property">
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "IP address: "+
-          "<ul class=\"unit-details__list\">"+
-            "<li class=\"unit-details__list-item\">"+
-              "<a href=\"http://93.20.93.20:80\" target=\"_blank\">"+
-                "93.20.93.20:80"+
-              "</a>"+
-            "</li>"+
-            "<li class=\"unit-details__list-item\">"+
-              "<a href=\"http://93.20.93.20:443\" target=\"_blank\">"+
-                "93.20.93.20:443"+
-              "</a>"+
-            "</li>"+
-          "</ul>"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'IP address: '+
+          '<ul class=\"unit-details__list\">'+
+            '<li class=\"unit-details__list-item\">'+
+              '<a href=\"http://93.20.93.20:80\" target=\"_blank\">'+
+                '93.20.93.20:80'+
+              '</a>'+
+            '</li>'+
+            '<li class=\"unit-details__list-item\">'+
+              '<a href=\"http://93.20.93.20:443\" target=\"_blank\">'+
+                '93.20.93.20:443'+
+              '</a>'+
+            '</li>'+
+          '</ul>'}}>
         </p>
-        <p className="unit-details__property"
-          dangerouslySetInnerHTML={{__html: "Public address: none"}}>
+        <p className='unit-details__property'
+          dangerouslySetInnerHTML={{__html: 'Public address: none'}}>
         </p>
       </div>);
   });
@@ -267,8 +267,8 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={destroyUnits}
         changeState={changeState}
-        unitStatus="pending"
-        serviceId="service1"
+        unitStatus='pending'
+        serviceId='service1'
         unit={fakeUnit} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -290,8 +290,8 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={destroyUnits}
         changeState={changeState}
-        previousComponent="expose"
-        serviceId="service1"
+        previousComponent='expose'
+        serviceId='service1'
         unit={fakeUnit} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
