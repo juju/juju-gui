@@ -51,8 +51,12 @@ YUI.add('unit-details', function() {
       var list = '';
       if (ports && ports.length > 0 && address) {
         list = '<ul class="unit-details__list">';
-        for (let i in ports) {
-          list += `<li class="unit-details__list-item"><a href="http://${address}:${ports[i]}" target="_blank">${address}:${ports[i]}</a></li>`;
+        for (var i in ports) {
+          list += `<li class="unit-details__list-item">`+
+            `<a href="http://${address}:${ports[i]}" target="_blank">`+
+              `${address}:${ports[i]}`+
+            `</a>`+
+          `</li>`;
         }
         list += '</ul>';
       }
@@ -68,8 +72,10 @@ YUI.add('unit-details', function() {
 
       var privateLabel = 'IP address: ';
       var publicLabel = 'Public address: ';
-      var privateList = this._getAddressList(unit.private_address, unit.open_ports);
-      var publicList = this._getAddressList(unit.public_address, unit.open_ports);
+      var privateList = this._getAddressList(
+        unit.private_address, unit.open_ports);
+      var publicList = this._getAddressList(
+        unit.public_address, unit.open_ports);
       privateLabel += (privateList === '')?'none':'';
       publicLabel += (publicList === '')?'none':'';
 
