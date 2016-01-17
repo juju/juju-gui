@@ -1135,14 +1135,6 @@ describe('File drag over notification system', function() {
       }
     });
 
-    it('does not switch envs in sandbox', function() {
-      app = _generateMockedApp(true);
-      app.switchEnv();
-      assert.isFalse(
-          app.env.closeCalled,
-          'switchEnv did not return before closing the env.');
-    });
-
     it('clears and resets the env, db, and ecs on change', function() {
       app = _generateMockedApp(false);
       app.switchEnv('uuid', 'user', 'password');
