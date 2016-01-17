@@ -1433,7 +1433,6 @@ YUI.add('juju-topology-service', function(Y) {
         .remove();
 
       this.updateElementVisibility();
-      this.updatePlusLocation();
     },
 
     /**
