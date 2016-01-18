@@ -64,8 +64,12 @@ YUI.add('machine-view-scale-up', function() {
       Add units to the services.
 
       @method _handleAddUnits
+      @param {Object} e An event object.
     */
-    _handleAddUnits: function() {
+    _handleAddUnits: function(e) {
+      if (e) {
+        e.preventDefault();
+      }
       var re = /(scaleUpUnit-)(.*)/;
       Object.keys(this.refs).forEach((ref) => {
         var parts = re.exec(ref);
@@ -87,10 +91,11 @@ YUI.add('machine-view-scale-up', function() {
         type: 'confirm'
       }];
       return (
-        <div className="machine-view__scale-up">
+        <form className="machine-view__scale-up"
+           onSubmit={this._handleAddUnits}>
           {this._generateServices()}
           <juju.components.ButtonRow buttons={buttons} />
-        </div>
+        </form>
       );
     }
   });

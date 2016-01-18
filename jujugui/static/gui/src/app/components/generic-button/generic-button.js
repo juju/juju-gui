@@ -23,6 +23,7 @@ YUI.add('generic-button', function() {
   juju.components.GenericButton = React.createClass({
     propTypes: {
       icon: React.PropTypes.string,
+      submit: React.PropTypes.bool,
       title: React.PropTypes.string
     },
 
@@ -75,7 +76,8 @@ YUI.add('generic-button', function() {
     render: function() {
       return (
         <button className={this._generateClasses()}
-          onClick={this._handleClick}>
+          onClick={this._handleClick}
+          type={this.props.submit ? 'submit' : 'confirm'}>
           {this._generateContent()}
         </button>
       );
