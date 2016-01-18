@@ -66,6 +66,7 @@ help:
 	@echo "run - run the development server and watch for changes"
 	@echo "server - run the server with development settings"
 	@echo "start-karma - run Karma for development js testing"
+	@echo "mocha-test-server - run phantom for development js testing"
 	@echo "sysdeps - install the system-wide dependencies"
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
@@ -363,6 +364,10 @@ test-mocha-karma: gui
 .PHONY: start-karma
 start-karma:
 	$(NODE_MODULES)/.bin/karma start karma.conf.js
+
+.PHONY: mocha-test-server
+mocha-test-server:
+	bin/pserve test.ini test_port=8888
 
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything
