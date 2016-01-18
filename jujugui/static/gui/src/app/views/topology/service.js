@@ -1436,19 +1436,6 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-      Updates the location of the add-service button to always be near the
-      collection of services.
-
-      @method updatePlusLocation
-    */
-    updatePlusLocation: function() {
-      var topo = this.get('component');
-      var pointOutside = topo.servicePointOutside();
-      topo.vis.select('.included-plus')
-        .attr('transform', 'translate('+pointOutside+')');
-    },
-
-    /**
       Pans the environment view to the center all the services on the canvas.
 
       @method panToCenter
