@@ -52,11 +52,11 @@ describe('UnitDetails', function() {
         <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
-        <p className='unit-details__property'
-          dangerouslySetInnerHTML={{__html: 'IP address: none'}}>
+        <p className='unit-details__property'>
+          ['IP address:','none']
         </p>
-        <p className='unit-details__property'
-          dangerouslySetInnerHTML={{__html: 'Public address: none'}}>
+        <p className='unit-details__property'>
+          ['Public address:','none']
         </p>
       </div>);
   });

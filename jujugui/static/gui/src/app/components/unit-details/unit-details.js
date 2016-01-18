@@ -48,19 +48,22 @@ YUI.add('unit-details', function() {
       @returns {String} HTML of list
     */
     _getAddressList: function(address, ports) {
-      var list = '';
-      if (ports && ports.length > 0 && address) {
-        list = '<ul class="unit-details__list">';
-        for (var i in ports) {
-          list += `<li class="unit-details__list-item">`+
-            `<a href="http://${address}:${ports[i]}" target="_blank">`+
-              `${address}:${ports[i]}`+
-            `</a>`+
-          `</li>`;
-        }
-        list += '</ul>';
+      if (!ports || ports.length === 0 || !address) {
+          return;
       }
-      return list;
+      var items = [];
+      for (var i in ports) {
+        var href = `http://${address}:${ports[i]}`;
+        items.push(<li className="unit-details__list-item" key={href}>
+          <a href={href} target="_blank">
+            {address}:{ports[i]}
+          </a>
+        </li>);
+      }
+      return (
+        <ul className="unit-details__list">
+          {items}
+        </ul>);
     },
 
     render: function() {
@@ -69,28 +72,24 @@ YUI.add('unit-details', function() {
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
-
-      var privateLabel = 'IP address: ';
-      var publicLabel = 'Public address: ';
       var privateList = this._getAddressList(
         unit.private_address, unit.open_ports);
       var publicList = this._getAddressList(
         unit.public_address, unit.open_ports);
-      privateLabel += (privateList === '')?'none':'';
-      publicLabel += (publicList === '')?'none':'';
-
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
             <p className="unit-details__property">
               Status: {unit.agent_state || 'uncommitted'}
             </p>
-            <p className="unit-details__property"
-              dangerouslySetInnerHTML={{__html: privateLabel + privateList}}>
+            <p className="unit-details__property">
+              IP address: {privateList !== undefined || 'none'}
             </p>
-            <p className="unit-details__property"
-              dangerouslySetInnerHTML={{__html: publicLabel + publicList}}>
+            {privateList === undefined || privateList}
+            <p className="unit-details__property">
+              Public address: {publicList !== undefined || 'none'}
             </p>
+            {publicList === undefined || publicList}
           </div>
           <juju.components.ButtonRow
             buttons={buttons} />
