@@ -147,7 +147,13 @@ describe('service updates', function() {
   });
 
   it('should center on first load', function(done) {
+    var callCount = 0;
     serviceModule.panToCenter = function() {
+      callCount += 1;
+      if (callCount > 1) {
+        assert.fail('panToCenter should only be called once on load');
+        done();
+      }
       assert.equal(serviceModule.centerOnLoad, false);
       done();
     };
@@ -155,6 +161,8 @@ describe('service updates', function() {
       id: 'foo',
       subordinate: false
     });
+    serviceModule.update();
+    // Call it a second time to see if it fails.
     serviceModule.update();
   });
 });
