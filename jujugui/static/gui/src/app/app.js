@@ -1806,7 +1806,6 @@ YUI.add('juju-gui', function(Y) {
     switchEnv: function(socketUrl, username, password) {
       if (this.get('sandbox')) {
         console.log('switching environments is not supported in sandbox');
-        return;
       }
       if (username && password) {
         // We don't always get a new username and password when switching
