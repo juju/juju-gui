@@ -49,7 +49,7 @@ YUI.add('unit-details', function() {
     */
     _getAddressList: function(address, ports) {
       if (!ports || ports.length === 0 || !address) {
-          return;
+          return '';
       }
       var items = [];
       for (var i in ports) {
@@ -83,13 +83,13 @@ YUI.add('unit-details', function() {
               Status: {unit.agent_state || 'uncommitted'}
             </p>
             <p className="unit-details__property">
-              IP address: {privateList !== undefined || 'none'}
+              IP address: {privateList !== '' || 'none'}
             </p>
-            {privateList === undefined || privateList}
+            {privateList}
             <p className="unit-details__property">
-              Public address: {publicList !== undefined || 'none'}
+              Public address: {publicList !== '' || 'none'}
             </p>
-            {publicList === undefined || publicList}
+            {publicList}
           </div>
           <juju.components.ButtonRow
             buttons={buttons} />
