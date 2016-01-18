@@ -41,24 +41,55 @@ YUI.add('unit-details', function() {
           }}});
     },
 
+    /**
+      Build a HTML list from an array of ports and an IP address
+
+      @method _getAddressList
+      @returns {String} HTML of list
+    */
+    _getAddressList: function(address, ports) {
+      if (!ports || ports.length === 0 || !address) {
+          return '';
+      }
+      var items = [];
+      for (var i in ports) {
+        var href = `http://${address}:${ports[i]}`;
+        items.push(<li className="unit-details__list-item" key={href}>
+          <a href={href} target="_blank">
+            {address}:{ports[i]}
+          </a>
+        </li>);
+      }
+      return (
+        <ul className="unit-details__list">
+          {items}
+        </ul>);
+    },
+
     render: function() {
       var unit = this.props.unit;
       var buttons = [{
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
+      var privateList = this._getAddressList(
+        unit.private_address, unit.open_ports);
+      var publicList = this._getAddressList(
+        unit.public_address, unit.open_ports);
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
             <p className="unit-details__property">
-              IP address: {unit.private_address || 'none'}
-            </p>
-            <p className="unit-details__property">
               Status: {unit.agent_state || 'uncommitted'}
             </p>
             <p className="unit-details__property">
-              Public address: {unit.public_address || 'none'}
+              IP address: {privateList !== '' || 'none'}
             </p>
+            {privateList}
+            <p className="unit-details__property">
+              Public address: {publicList !== '' || 'none'}
+            </p>
+            {publicList}
           </div>
           <juju.components.ButtonRow
             buttons={buttons} />

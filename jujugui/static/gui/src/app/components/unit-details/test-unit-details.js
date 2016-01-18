@@ -42,22 +42,203 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        serviceId="abc123"
-        previousComponent="units"
-        unitStatus="error"
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
-      <div className="unit-details__properties">
-        <p className="unit-details__property">
-          IP address: {fakeUnit.private_address}
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
+          Status: {fakeUnit.agent_state}
         </p>
-        <p className="unit-details__property">
+        <p className='unit-details__property'>
+          {['IP address: ','none']}
+        </p>
+        {''}
+        <p className='unit-details__property'>
+          {['Public address: ','none']}
+        </p>
+        {''}
+      </div>);
+  });
+
+  it('shows list of addresses correctly', function() {
+    fakeUnit = {
+      private_address: '192.168.0.1',
+      public_address: '93.20.93.20',
+      open_ports: [80, 443],
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
+        unit={fakeUnit} />);
+
+    var expected = <div className="unit-details__properties">
+      <p className="unit-details__property">
+        Status: {fakeUnit.agent_state}
+      </p>
+      <p className="unit-details__property">
+        {['IP address: ', true]}
+      </p>
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item" key="http://192.168.0.1:80">
+          <a href="http://192.168.0.1:80" target="_blank">
+            {['192.168.0.1', ':', 80]}
+          </a>
+        </li>
+        <li className="unit-details__list-item" key="http://192.168.0.1:443">
+          <a href="http://192.168.0.1:443" target="_blank">
+            {['192.168.0.1', ':', 443]}
+          </a>
+        </li>
+      </ul>
+      <p className="unit-details__property">
+        {['Public address: ']}
+      </p>
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item" key="http://93.20.93.20:80">
+          <a href="http://93.20.93.20:80" target="_blank">
+            {['93.20.93.20', ':', 80]}
+          </a>
+        </li>
+        <li className="unit-details__list-item" key="http://93.20.93.20:443">
+          <a href="http://93.20.93.20:443" target="_blank">
+            {['93.20.93.20', ':', 443]}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    assert.deepEqual(output.props.children[0], expected);
+  });
+
+  it('shows no addresses if ports are unavailable', function() {
+    fakeUnit = {
+      private_address: '192.168.0.1',
+      public_address: '93.20.93.20',
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className='unit-details__property'>
+          {['IP address: ','none']}
+        </p>
+        {''}
+        <p className='unit-details__property'>
+          {['Public address: ','none']}
+        </p>
+        {''}
+      </div>);
+  });
+
+  it('shows only public address if available', function() {
+    fakeUnit = {
+      public_address: '93.20.93.20',
+      open_ports: [80, 443],
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
+        unit={fakeUnit} />);
+
+    var expect = <div className='unit-details__properties'>
+      <p className='unit-details__property'>
+        Status: {fakeUnit.agent_state}
+      </p>
+      <p className='unit-details__property'>
+        {['IP address: ','none']}
+      </p>
+      {''}
+      <p className='unit-details__property'>
+        {['Public address: ']}
+      </p>
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item" key="http://93.20.93.20:80">
+          <a href="http://93.20.93.20:80" target="_blank">
+            {['93.20.93.20', ':', 80]}
+          </a>
+        </li>
+        <li className="unit-details__list-item" key="http://93.20.93.20:443">
+          <a href="http://93.20.93.20:443" target="_blank">
+            {['93.20.93.20', ':', 443]}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    assert.deepEqual(output.props.children[0], expect);
+  });
+
+  it('shows only private address if available', function() {
+    fakeUnit = {
+      private_address: '93.20.93.20',
+      open_ports: [80, 443],
+      agent_state: 'started',
+      id: 'unit1'
+    };
+
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        destroyUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        serviceId='abc123'
+        previousComponent='units'
+        unitStatus='error'
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
         <p className="unit-details__property">
-          Public address: {fakeUnit.public_address}
+          {['IP address: ', true]}
         </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="http://192.168.0.1:80">
+            <a href="http://192.168.0.1:80" target="_blank">
+              {['93.20.93.20', ':', 80]}
+            </a>
+          </li>
+          <li className="unit-details__list-item" key="http://192.168.0.1:443">
+            <a href="http://192.168.0.1:443" target="_blank">
+              {['93.20.93.20', ':', 443]}
+            </a>
+          </li>
+        </ul>
+        <p className='unit-details__property'>
+          {['Public address: ','none']}
+        </p>
+        {''}
       </div>);
   });
 
@@ -94,8 +275,8 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={destroyUnits}
         changeState={changeState}
-        unitStatus="pending"
-        serviceId="service1"
+        unitStatus='pending'
+        serviceId='service1'
         unit={fakeUnit} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -117,8 +298,8 @@ describe('UnitDetails', function() {
       <juju.components.UnitDetails
         destroyUnits={destroyUnits}
         changeState={changeState}
-        previousComponent="expose"
-        serviceId="service1"
+        previousComponent='expose'
+        serviceId='service1'
         unit={fakeUnit} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
