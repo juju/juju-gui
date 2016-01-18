@@ -145,6 +145,26 @@ describe('service updates', function() {
     serviceModule.update();
     assert.equal(service.select('.service-block').attr('cx'), 65);
   });
+
+  it('should center on first load', function(done) {
+    var callCount = 0;
+    serviceModule.panToCenter = function() {
+      callCount += 1;
+      if (callCount > 1) {
+        assert.fail('panToCenter should only be called once on load');
+        done();
+      }
+      assert.equal(serviceModule.centerOnLoad, false);
+      done();
+    };
+    db.services.add({
+      id: 'foo',
+      subordinate: false
+    });
+    serviceModule.update();
+    // Call it a second time to see if it fails.
+    serviceModule.update();
+  });
 });
 
 

@@ -71,7 +71,8 @@ help:
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
 	@echo "test-js-karma - run newer js tests in terminal; primarily for CI build"
-	@echo "test-js-phantom - run older js tests in terminal"
+	@echo "test-mocha-phantom - run older js tests that have not transitioned to karma in the terminal"
+	@echo "test-mocha-karma - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
 
 

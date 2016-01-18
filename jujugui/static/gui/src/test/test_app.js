@@ -1114,6 +1114,17 @@ describe('File drag over notification system', function() {
         reset: function() { this.resetCalled = true; },
         fire: function(signal) { this.fireSignal = signal; }
       };
+      // Create a mock topology instance for the switchEnv setting the
+      // centerOnLoad property on the topology.
+      app.views.environment.instance = {
+        topo: {
+          modules: {
+            ServiceModule: {
+              centerOnLoad: false
+            }
+          }
+        }
+      };
       app.env = fake_env;
       app.db = fake_db;
       return app;
@@ -1142,6 +1153,9 @@ describe('File drag over notification system', function() {
       assert.isTrue(app.env.closeCalled, 'env was not closed.');
       assert.isTrue(app.db.resetCalled, 'db was not reset.');
       assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
+      var topo = app.views.environment.instance.topo;
+      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
+                    'canvas centering was not reset.');
     });
 
     it('sets credentials based on existence of jem', function() {
