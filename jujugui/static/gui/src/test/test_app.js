@@ -1114,6 +1114,17 @@ describe('File drag over notification system', function() {
         reset: function() { this.resetCalled = true; },
         fire: function(signal) { this.fireSignal = signal; }
       };
+      // Create a mock topology instance for the switchEnv setting the
+      // centerOnLoad property on the topology.
+      app.views.environment.instance = {
+        topo: {
+          modules: {
+            ServiceModule: {
+              centerOnLoad: false
+            }
+          }
+        }
+      };
       app.env = fake_env;
       app.db = fake_db;
       return app;
