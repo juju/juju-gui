@@ -1838,6 +1838,8 @@ YUI.add('juju-gui', function(Y) {
       this.env.close();
       this.db.reset();
       this.db.fire('update');
+      // Reset canvas centering so it will re-center for the new environment.
+      this.views.environment.instance.topo.modules.ServiceModule.centeredOnce = false;
     },
 
     /**

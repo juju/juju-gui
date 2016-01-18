@@ -1409,6 +1409,22 @@ YUI.add('juju-topology-service', function(Y) {
           });
         }
       }
+      // Find the centroid of our hull of services and inform the
+      // topology.
+      // XXX kadams54, 2016-01-15: Note that the logic here has changed
+      // fundmentally from what it once was. It used to center the canvas on
+      // new services, as determined in the block above; it now centers on all
+      // services. I very much suspect that the entire chunk above, beginning
+      // with the "rerun the pack layout" comment, is useless, as we don't
+      // pass vertices into findCentroid anymore.
+      if (!this.centeredOnce) {
+        setTimeout(() => {
+          // Bounce this panToCenter to the top of the stack so that the async
+          // d3 renderings complete before we try to pan.
+          this.panToCenter();
+          this.centeredOnce = true;
+        });
+      }
 
       // enter
       node
