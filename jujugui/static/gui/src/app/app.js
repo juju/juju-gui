@@ -140,7 +140,7 @@ YUI.add('juju-gui', function(Y) {
             target.setHTML(
                 views.Templates.shortcuts({
                   bindings: bindings,
-                  environmentName: this.env.get('environmentName'),
+                  environmentName: this.env.get('environmentName') || 'model',
                   'force-containers': localStorage.getItem('force-containers'),
                   'disable-cookie': localStorage.getItem('disable-cookie'),
                   'disable-auto-place': localStorage.getItem(
