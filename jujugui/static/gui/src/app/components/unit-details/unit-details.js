@@ -49,16 +49,18 @@ YUI.add('unit-details', function() {
     */
     _getAddressList: function(address, ports) {
       if (!ports || ports.length === 0 || !address) {
-          return '';
+        return;
       }
       var items = [];
       for (var i in ports) {
         var href = `http://${address}:${ports[i]}`;
-        items.push(<li className="unit-details__list-item" key={href}>
-          <a href={href} target="_blank">
-            {address}:{ports[i]}
-          </a>
-        </li>);
+        items.push(
+          <li className="unit-details__list-item"
+            key={href}>
+            <a href={href} target="_blank">
+              {address}:{ports[i]}
+            </a>
+          </li>);
       }
       return (
         <ul className="unit-details__list">
@@ -83,11 +85,11 @@ YUI.add('unit-details', function() {
               Status: {unit.agent_state || 'uncommitted'}
             </p>
             <p className="unit-details__property">
-              IP address: {privateList !== '' || 'none'}
+              IP address: {privateList ? null : 'none'}
             </p>
             {privateList}
             <p className="unit-details__property">
-              Public address: {publicList !== '' || 'none'}
+              Public address: {publicList ? null : 'none'}
             </p>
             {publicList}
           </div>

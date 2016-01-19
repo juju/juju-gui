@@ -53,13 +53,13 @@ describe('UnitDetails', function() {
           Status: {fakeUnit.agent_state}
         </p>
         <p className='unit-details__property'>
-          {['IP address: ','none']}
+          IP address: {"none"}
         </p>
-        {''}
+        {undefined}
         <p className='unit-details__property'>
-          {['Public address: ','none']}
+          Public address: {"none"}
         </p>
-        {''}
+        {undefined}
       </div>);
   });
 
@@ -81,42 +81,42 @@ describe('UnitDetails', function() {
         unitStatus='error'
         unit={fakeUnit} />);
 
-    var expected = <div className="unit-details__properties">
-      <p className="unit-details__property">
-        Status: {fakeUnit.agent_state}
-      </p>
-      <p className="unit-details__property">
-        {['IP address: ', true]}
-      </p>
-      <ul className="unit-details__list">
-        <li className="unit-details__list-item" key="http://192.168.0.1:80">
-          <a href="http://192.168.0.1:80" target="_blank">
-            {['192.168.0.1', ':', 80]}
-          </a>
-        </li>
-        <li className="unit-details__list-item" key="http://192.168.0.1:443">
-          <a href="http://192.168.0.1:443" target="_blank">
-            {['192.168.0.1', ':', 443]}
-          </a>
-        </li>
-      </ul>
-      <p className="unit-details__property">
-        {['Public address: ']}
-      </p>
-      <ul className="unit-details__list">
-        <li className="unit-details__list-item" key="http://93.20.93.20:80">
-          <a href="http://93.20.93.20:80" target="_blank">
-            {['93.20.93.20', ':', 80]}
-          </a>
-        </li>
-        <li className="unit-details__list-item" key="http://93.20.93.20:443">
-          <a href="http://93.20.93.20:443" target="_blank">
-            {['93.20.93.20', ':', 443]}
-          </a>
-        </li>
-      </ul>
-    </div>
-
+    var expected = (
+      <div className="unit-details__properties">
+        <p className="unit-details__property">
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className="unit-details__property">
+          IP address: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="http://192.168.0.1:80">
+            <a href="http://192.168.0.1:80" target="_blank">
+              {"192.168.0.1"}:{80}
+            </a>
+          </li>
+          <li className="unit-details__list-item" key="http://192.168.0.1:443">
+            <a href="http://192.168.0.1:443" target="_blank">
+              {"192.168.0.1"}:{443}
+            </a>
+          </li>
+        </ul>
+        <p className="unit-details__property">
+          Public address: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="http://93.20.93.20:80">
+            <a href="http://93.20.93.20:80" target="_blank">
+              {"93.20.93.20"}:{80}
+            </a>
+          </li>
+          <li className="unit-details__list-item" key="http://93.20.93.20:443">
+            <a href="http://93.20.93.20:443" target="_blank">
+              {"93.20.93.20"}:{443}
+            </a>
+          </li>
+        </ul>
+      </div>);
     assert.deepEqual(output.props.children[0], expected);
   });
 
@@ -145,11 +145,11 @@ describe('UnitDetails', function() {
         <p className='unit-details__property'>
           {['IP address: ','none']}
         </p>
-        {''}
+        {undefined}
         <p className='unit-details__property'>
-          {['Public address: ','none']}
+          Public address: {"none"}
         </p>
-        {''}
+        {undefined}
       </div>);
   });
 
@@ -170,31 +170,31 @@ describe('UnitDetails', function() {
         unitStatus='error'
         unit={fakeUnit} />);
 
-    var expect = <div className='unit-details__properties'>
-      <p className='unit-details__property'>
-        Status: {fakeUnit.agent_state}
-      </p>
-      <p className='unit-details__property'>
-        {['IP address: ','none']}
-      </p>
-      {''}
-      <p className='unit-details__property'>
-        {['Public address: ']}
-      </p>
-      <ul className="unit-details__list">
-        <li className="unit-details__list-item" key="http://93.20.93.20:80">
-          <a href="http://93.20.93.20:80" target="_blank">
-            {['93.20.93.20', ':', 80]}
-          </a>
-        </li>
-        <li className="unit-details__list-item" key="http://93.20.93.20:443">
-          <a href="http://93.20.93.20:443" target="_blank">
-            {['93.20.93.20', ':', 443]}
-          </a>
-        </li>
-      </ul>
-    </div>
-
+    var expect = (
+      <div className='unit-details__properties'>
+        <p className='unit-details__property'>
+          Status: {fakeUnit.agent_state}
+        </p>
+        <p className='unit-details__property'>
+          IP address: {"none"}
+        </p>
+        {undefined}
+        <p className='unit-details__property'>
+          Public address: {null}
+        </p>
+        <ul className="unit-details__list">
+          <li className="unit-details__list-item" key="http://93.20.93.20:80">
+            <a href="http://93.20.93.20:80" target="_blank">
+              {"93.20.93.20"}:{80}
+            </a>
+          </li>
+          <li className="unit-details__list-item" key="http://93.20.93.20:443">
+            <a href="http://93.20.93.20:443" target="_blank">
+              {"93.20.93.20"}:{443}
+            </a>
+          </li>
+        </ul>
+      </div>);
     assert.deepEqual(output.props.children[0], expect);
   });
 
@@ -215,31 +215,32 @@ describe('UnitDetails', function() {
         unitStatus='error'
         unit={fakeUnit} />);
 
-    assert.deepEqual(output.props.children[0],
+    var expected = (
       <div className='unit-details__properties'>
         <p className='unit-details__property'>
           Status: {fakeUnit.agent_state}
         </p>
         <p className="unit-details__property">
-          {['IP address: ', true]}
+          IP address: {null}
         </p>
         <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="http://192.168.0.1:80">
-            <a href="http://192.168.0.1:80" target="_blank">
-              {['93.20.93.20', ':', 80]}
+          <li className="unit-details__list-item" key="http://93.20.93.20:80">
+            <a href="http://93.20.93.20:80" target="_blank">
+              {"93.20.93.20"}:{80}
             </a>
           </li>
-          <li className="unit-details__list-item" key="http://192.168.0.1:443">
-            <a href="http://192.168.0.1:443" target="_blank">
-              {['93.20.93.20', ':', 443]}
+          <li className="unit-details__list-item" key="http://93.20.93.20:443">
+            <a href="http://93.20.93.20:443" target="_blank">
+              {"93.20.93.20"}:{443}
             </a>
           </li>
         </ul>
         <p className='unit-details__property'>
-          {['Public address: ','none']}
+          Public address: {"none"}
         </p>
-        {''}
+        {undefined}
       </div>);
+    assert.deepEqual(output.props.children[0], expected);
   });
 
   it('renders the remove button', function() {
