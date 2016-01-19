@@ -30,6 +30,7 @@ def update(settings):
     _update_bool(settings, 'jujugui.sandbox', default=False)
     _update_bool(settings, 'jujugui.raw', default=False)
     _update_bool(settings, 'jujugui.combine', default=True)
+    _update_bool(settings, 'jujugui.gzip', default=True)
 
 
 def _update(settings, name, default=None, convert=lambda value: value):
