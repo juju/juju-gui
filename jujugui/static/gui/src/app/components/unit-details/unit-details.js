@@ -53,12 +53,15 @@ YUI.add('unit-details', function() {
       }
       var items = [];
       for (var i in ports) {
-        var href = `http://${address}:${ports[i]}`;
+        // The port can have the protocol e.g. "80/tcp" so we need to just get
+        // the port number.
+        var port = ports[i].toString().split('/')[0];
+        var href = `http://${address}:${port}`;
         items.push(
           <li className="unit-details__list-item"
             key={href}>
             <a href={href} target="_blank">
-              {address}:{ports[i]}
+              {address}:{port}
             </a>
           </li>);
       }

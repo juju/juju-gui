@@ -67,7 +67,7 @@ describe('UnitDetails', function() {
     fakeUnit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
-      open_ports: [80, 443],
+      open_ports: ['80/tcp', 443],
       agent_state: 'started',
       id: 'unit1'
     };
@@ -92,12 +92,12 @@ describe('UnitDetails', function() {
         <ul className="unit-details__list">
           <li className="unit-details__list-item" key="http://192.168.0.1:80">
             <a href="http://192.168.0.1:80" target="_blank">
-              {"192.168.0.1"}:{80}
+              {"192.168.0.1"}:{"80"}
             </a>
           </li>
           <li className="unit-details__list-item" key="http://192.168.0.1:443">
             <a href="http://192.168.0.1:443" target="_blank">
-              {"192.168.0.1"}:{443}
+              {"192.168.0.1"}:{"443"}
             </a>
           </li>
         </ul>
@@ -107,12 +107,12 @@ describe('UnitDetails', function() {
         <ul className="unit-details__list">
           <li className="unit-details__list-item" key="http://93.20.93.20:80">
             <a href="http://93.20.93.20:80" target="_blank">
-              {"93.20.93.20"}:{80}
+              {"93.20.93.20"}:{"80"}
             </a>
           </li>
           <li className="unit-details__list-item" key="http://93.20.93.20:443">
             <a href="http://93.20.93.20:443" target="_blank">
-              {"93.20.93.20"}:{443}
+              {"93.20.93.20"}:{"443"}
             </a>
           </li>
         </ul>
@@ -185,12 +185,12 @@ describe('UnitDetails', function() {
         <ul className="unit-details__list">
           <li className="unit-details__list-item" key="http://93.20.93.20:80">
             <a href="http://93.20.93.20:80" target="_blank">
-              {"93.20.93.20"}:{80}
+              {"93.20.93.20"}:{"80"}
             </a>
           </li>
           <li className="unit-details__list-item" key="http://93.20.93.20:443">
             <a href="http://93.20.93.20:443" target="_blank">
-              {"93.20.93.20"}:{443}
+              {"93.20.93.20"}:{"443"}
             </a>
           </li>
         </ul>
@@ -226,12 +226,12 @@ describe('UnitDetails', function() {
         <ul className="unit-details__list">
           <li className="unit-details__list-item" key="http://93.20.93.20:80">
             <a href="http://93.20.93.20:80" target="_blank">
-              {"93.20.93.20"}:{80}
+              {"93.20.93.20"}:{"80"}
             </a>
           </li>
           <li className="unit-details__list-item" key="http://93.20.93.20:443">
             <a href="http://93.20.93.20:443" target="_blank">
-              {"93.20.93.20"}:{443}
+              {"93.20.93.20"}:{"443"}
             </a>
           </li>
         </ul>

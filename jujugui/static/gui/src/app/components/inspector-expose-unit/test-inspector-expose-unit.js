@@ -34,7 +34,7 @@ describe('InspectorExposeUnit', function() {
     var unit = {
       id: 'django/1',
       displayName: 'django/1',
-      open_ports: [80, 443],
+      open_ports: [80, '443/tcp'],
       public_address: '20.20.20.199'
     };
     var action = sinon.stub();
@@ -57,7 +57,7 @@ describe('InspectorExposeUnit', function() {
               <a href="http://20.20.20.199:80"
                 onClick={instance._stopBubble}
                 target="_blank">
-                {"20.20.20.199"}:{80}
+                {"20.20.20.199"}:{"80"}
               </a>
             </li>
             <li className="inspector-expose__unit-list-item"
@@ -65,7 +65,7 @@ describe('InspectorExposeUnit', function() {
               <a href="http://20.20.20.199:443"
                 onClick={instance._stopBubble}
                 target="_blank">
-                {"20.20.20.199"}:{443}
+                {"20.20.20.199"}:{"443"}
               </a>
             </li>
           </ul>

@@ -47,14 +47,17 @@ YUI.add('inspector-expose-unit', function() {
       }
       var items = [];
       for (var i in ports) {
-        var href = `http://${address}:${ports[i]}`;
+        // The port can have the protocol e.g. "80/tcp" so we need to just get
+        // the port number.
+        var port = ports[i].toString().split('/')[0];
+        var href = `http://${address}:${port}`;
         items.push(
           <li className="inspector-expose__unit-list-item"
             key={href}>
             <a href={href}
               onClick={this._stopBubble}
               target="_blank">
-              {address}:{ports[i]}
+              {address}:{port}
             </a>
           </li>);
       }
