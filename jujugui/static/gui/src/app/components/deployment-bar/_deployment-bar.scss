@@ -35,4 +35,8 @@
 %deployment-bar__links {
     position: absolute;
     top: 11px;
+
+    &:hover {
+        text-decoration: underline;
+    }
 }
