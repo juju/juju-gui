@@ -2,6 +2,7 @@
 # GNU Affero General Public License version 3 (see the file LICENSE).
 
 from pyramid.config import Configurator
+from paste.gzipper import middleware as GzipMiddleware
 
 
 def main(global_config, **settings):
@@ -13,4 +14,7 @@ def main(global_config, **settings):
 def make_application(config):
     """Set up the routes and return the WSGI application."""
     config.include('jujugui.gui')
-    return config.make_wsgi_app()
+    app = config.make_wsgi_app()
+    if config.registry.settings['jujugui.gzip']:
+        app = GzipMiddleware(app)
+    return app
