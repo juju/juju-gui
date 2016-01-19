@@ -9,4 +9,15 @@
         margin-bottom: 0;
         font-size: $font-size-small;
     }
+
+    &__list {
+      list-style: none;
+      margin: 0;
+    }
+
+    a:focus,
+    a:active,
+    a:hover {
+        text-decoration: underline;
+    }
 }

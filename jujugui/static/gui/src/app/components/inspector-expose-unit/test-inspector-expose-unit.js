@@ -34,23 +34,68 @@ describe('InspectorExposeUnit', function() {
     var unit = {
       id: 'django/1',
       displayName: 'django/1',
+      open_ports: [80, '443/tcp'],
       public_address: '20.20.20.199'
     };
     var action = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
         <juju.components.InspectorExposeUnit
           action={action}
-          unit={unit} />);
-    assert.deepEqual(output,
+          unit={unit} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
       <li className="inspector-expose__unit" tabIndex="0" role="button"
         data-id="django/1"
         onClick={action}>
           <div className="inspector-expose__unit-detail">
               django/1
           </div>
+          <ul className="inspector-expose__unit-list">
+            <li className="inspector-expose__unit-list-item"
+              key="http://20.20.20.199:80">
+              <a href="http://20.20.20.199:80"
+                onClick={instance._stopBubble}
+                target="_blank">
+                {"20.20.20.199"}:{"80"}
+              </a>
+            </li>
+            <li className="inspector-expose__unit-list-item"
+              key="https://20.20.20.199:443">
+              <a href="https://20.20.20.199:443"
+                onClick={instance._stopBubble}
+                target="_blank">
+                {"20.20.20.199"}:{"443"}
+              </a>
+            </li>
+          </ul>
+      </li>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render the unit without a public address', function() {
+    var unit = {
+      id: 'django/1',
+      displayName: 'django/1'
+    };
+    var action = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorExposeUnit
+          action={action}
+          unit={unit} />);
+    var expected = (
+      <li className="inspector-expose__unit"
+        tabIndex="0"
+        role="button"
+        data-id="django/1"
+        onClick={action}>
           <div className="inspector-expose__unit-detail">
-              20.20.20.199
+              django/1
+          </div>
+          <div className="inspector-expose__unit-detail">
+              No public address
           </div>
       </li>);
+    assert.deepEqual(output, expected);
   });
 });
