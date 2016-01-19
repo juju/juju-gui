@@ -19,8 +19,12 @@
         right: 20px;
         cursor: pointer;
 
-        &:hover .svg-icon {
-            stroke: $ubuntu-orange;
+        &:focus,
+        &:active,
+        &:hover {
+            .svg-icon {
+                stroke: $ubuntu-orange;
+            }
         }
     }
 
