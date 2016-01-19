@@ -87,7 +87,8 @@ describe('MachineViewScaleUp', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="machine-view__scale-up">
+      <form className="machine-view__scale-up"
+        onSubmit={instance._handleAddUnits}>
         <ul className="machine-view__scale-up-units">
           <li className="machine-view__scale-up-unit"
             key="111111$">
@@ -122,7 +123,7 @@ describe('MachineViewScaleUp', function() {
           title: 'Add units',
           type: 'confirm'
         }]} />
-      </div>);
+      </form>);
     assert.deepEqual(output, expected);
   });
 

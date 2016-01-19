@@ -83,8 +83,12 @@ YUI.add('scale-service', function() {
       Handles calling the appropriate methods to scale up the service.
 
       @method _scaleUpService
+      @param {Object} e An event object.
     */
-    _scaleUpService: function() {
+    _scaleUpService: function(e) {
+      if (e) {
+        e.preventDefault();
+      }
       var state = this.state;
       var appState = {
         sectionA: {
@@ -117,11 +121,13 @@ YUI.add('scale-service', function() {
     render: function() {
       var buttons = [{
         title: 'Confirm',
-        action: this._scaleUpService
+        action: this._scaleUpService,
+        submit: true
       }];
 
       return (
-        <div className="scale-service">
+        <form className="scale-service"
+          onSubmit={this._scaleUpService}>
           <div className="scale-service--units">
             <input
               className="scale-service--units__input"
@@ -156,7 +162,7 @@ YUI.add('scale-service', function() {
               valuesChanged={this._updateConstraints} />
           </div>
           <juju.components.ButtonRow buttons={buttons} />
-        </div>
+        </form>
       );
     }
   });
