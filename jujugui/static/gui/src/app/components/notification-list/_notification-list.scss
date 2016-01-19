@@ -1,7 +1,10 @@
 .notification-list {
+    $width: 45%;
     position: absolute;
-    bottom: $panel-space;
-    left: $panel-space;
-    max-width: 50%;
+    top: $navbar-height + $panel-space;
+    left: 50%;
+    margin: 0;
+    margin-left: -1 * ($width / 2);
+    width: $width;
     z-index: index($z-indexed-elements, notification-list);
 }

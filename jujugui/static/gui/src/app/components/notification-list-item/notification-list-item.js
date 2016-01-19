@@ -63,10 +63,12 @@ YUI.add('notification-list-item', function() {
     hide: function() {
       this.setState({visible: false});
       setTimeout(() => {
-        // Wait 0.5s before telling the parent to clean up so that the animation
-        // has time to complete.
+        // Wait before telling the parent to clean up so that the animation
+        // has time to complete. Note that the default timeout is closely tied
+        // to animation timings set in the notification CSS, so don't change one
+        // without changing the other.
         this.props.removeNotification(this.props.timestamp);
-      }, this.props.timeout || 500);
+      }, this.props.timeout || 750);
     },
 
     render: function() {
