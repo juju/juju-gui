@@ -720,6 +720,10 @@ YUI.add('juju-gui', function(Y) {
       @method _renderLogout
     */
     _renderLogout: function() {
+      if (this.get('sandbox')) {
+        // Do not show the logout link if the user is in sandbox mode.
+        return;
+      }
       // If the charmbrowser is open then don't show the logout link.
       var visible = !this.state.getState('current', 'sectionC', 'metadata');
       ReactDOM.render(
