@@ -22,8 +22,52 @@ YUI.add('inspector-expose-unit', function() {
 
   juju.components.InspectorExposeUnit = React.createClass({
 
+    /**
+      Don't bubble the click event to the parent.
+
+      @method _stopBubble
+      @param {Object} The click event.
+    */
+    _stopBubble: function(e) {
+      e.stopPropagation();
+    },
+
+    /**
+      Build a HTML list from an array of ports and an IP address.
+
+      @method _getAddressList
+      @returns {String} HTML of list
+    */
+    _getAddressList: function(address, ports) {
+      if (!ports || ports.length === 0 || !address) {
+        return (
+          <div className="inspector-expose__unit-detail">
+            No public address
+          </div>);
+      }
+      var items = [];
+      for (var i in ports) {
+        var href = `http://${address}:${ports[i]}`;
+        items.push(
+          <li className="inspector-expose__unit-list-item"
+            key={href}>
+            <a href={href}
+              onClick={this._stopBubble}
+              target="_blank">
+              {address}:{ports[i]}
+            </a>
+          </li>);
+      }
+      return (
+        <ul className="inspector-expose__unit-list">
+          {items}
+        </ul>);
+    },
+
     render: function() {
       var unit = this.props.unit;
+      var publicList = this._getAddressList(
+        unit.public_address, unit.open_ports);
       return (
         <li className="inspector-expose__unit" tabIndex="0" role="button"
           data-id={unit.id}
@@ -31,9 +75,7 @@ YUI.add('inspector-expose-unit', function() {
             <div className="inspector-expose__unit-detail">
                 {unit.displayName}
             </div>
-            <div className="inspector-expose__unit-detail">
-                {unit.public_address || 'No public address'}
-            </div>
+            {publicList}
         </li>
       );
     }

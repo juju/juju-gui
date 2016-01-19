@@ -22,4 +22,15 @@
             font-size: $font-size-small;
         }
     }
+
+    &-list {
+      list-style: none;
+      margin: 0;
+    }
+
+    a:focus,
+    a:active,
+    a:hover {
+        text-decoration: underline;
+    }
 }

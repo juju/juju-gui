@@ -42,7 +42,7 @@ YUI.add('unit-details', function() {
     },
 
     /**
-      Build a HTML list from an array of ports and an IP address
+      Build a HTML list from an array of ports and an IP address.
 
       @method _getAddressList
       @returns {String} HTML of list
