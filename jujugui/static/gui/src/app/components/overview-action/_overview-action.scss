@@ -9,11 +9,8 @@
     &:hover {
         background-color: $hover-background;
 
-        .overview-action__icon {
-          circle,
-          path {
-            fill: $cool-grey;
-          }
+        .svg-icon {
+          opacity: 1;
         }
     }
 
@@ -24,9 +21,9 @@
         left: 20px;
         top: 13px;
 
-        circle,
-        path {
-          transition: fill .3s;
+        .svg-icon {
+          transition: opacity .3s;
+          opacity: 0.6;
         }
     }
 
