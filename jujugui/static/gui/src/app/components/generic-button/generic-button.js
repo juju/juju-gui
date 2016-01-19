@@ -77,7 +77,7 @@ YUI.add('generic-button', function() {
       return (
         <button className={this._generateClasses()}
           onClick={this._handleClick}
-          type={this.props.submit ? 'submit' : 'confirm'}>
+          type={this.props.submit ? 'submit' : 'button'}>
           {this._generateContent()}
         </button>
       );

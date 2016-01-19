@@ -45,6 +45,7 @@ describe('ButtonRow', function() {
         title="My button"
         key="My button"
         action={callbackStub}
+        submit={undefined}
         type="submit" />]);
   });
 
@@ -67,11 +68,13 @@ describe('ButtonRow', function() {
         title="My button"
         key="My button"
         action={callbackStub}
+        submit={undefined}
         type="submit" />,
       <juju.components.GenericButton
         title="Another button"
         key="Another button"
         action={callbackStub}
+        submit={undefined}
         type="submit" />
     ];
     assert.deepEqual(output,
