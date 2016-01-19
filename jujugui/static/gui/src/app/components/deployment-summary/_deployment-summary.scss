@@ -18,6 +18,10 @@
         top: 20px;
         right: 20px;
         cursor: pointer;
+
+        &:hover .svg-icon {
+            stroke: $ubuntu-orange;
+        }
     }
 
     &__title {
