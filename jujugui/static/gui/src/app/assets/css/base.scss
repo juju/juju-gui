@@ -94,7 +94,6 @@ $z-indexed-elements: search-results-list-block__tags,
                      search-results-cell--hover,
                      boolean-config--handle,
                      boolean-config--label,
-                     machine-view-panel,
                      machine-view,
                      notification-list,
                      env-size-display,
@@ -812,14 +811,6 @@ g.unit {
 }
 
 /** Widgets **/
-@import "machine-view/serviceunit-token";
-@import "machine-view/container-token";
-@import "machine-view/create-machine-view";
-@import "machine-view/machine-token";
-@import "machine-view/machine-view-panel";
-@import "machine-view/machine-view-token-base";
-@import "machine-view/more-menu";
-@import "machine-view/service-scale-up-view";
 @import "header";
 @import "loading";
 

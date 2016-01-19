@@ -145,7 +145,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="env-size-display-container"></div>
       <div id="inspector-container"></div>
       <div id="white-box-container"></div>
-      <div id="machine-view-panel"></div>
       <div id="machine-view"></div>
 
       <div class="cookie-policy" style="display:none;">

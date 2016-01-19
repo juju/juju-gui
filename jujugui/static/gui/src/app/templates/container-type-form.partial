@@ -1,8 +1,0 @@
-<div class="containers">
-  <select>
-    <option value="" selected disabled class="default">Choose container type&hellip;</option>
-    {{#each containerTypes}}
-        <option value="{{value}}" class="default">{{label}}</option>
-    {{/each}}
-  </select>
-</div>
