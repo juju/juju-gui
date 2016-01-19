@@ -61,8 +61,8 @@ describe('InspectorExposeUnit', function() {
               </a>
             </li>
             <li className="inspector-expose__unit-list-item"
-              key="http://20.20.20.199:443">
-              <a href="http://20.20.20.199:443"
+              key="https://20.20.20.199:443">
+              <a href="https://20.20.20.199:443"
                 onClick={instance._stopBubble}
                 target="_blank">
                 {"20.20.20.199"}:{"443"}

@@ -185,7 +185,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.UnitDetails
           destroyUnits={destroyUnits}
-          serviceId="demo"
+          service={service}
           changeState={changeState}
           previousComponent={undefined}
           unitStatus={null}

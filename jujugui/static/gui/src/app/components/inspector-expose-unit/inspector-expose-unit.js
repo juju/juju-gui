@@ -36,6 +36,8 @@ YUI.add('inspector-expose-unit', function() {
       Build a HTML list from an array of ports and an IP address.
 
       @method _getAddressList
+      @param {String} address An IP address.
+      @param {Array} ports A list of ports.
       @returns {String} HTML of list
     */
     _getAddressList: function(address, ports) {
@@ -50,7 +52,8 @@ YUI.add('inspector-expose-unit', function() {
         // The port can have the protocol e.g. "80/tcp" so we need to just get
         // the port number.
         var port = ports[i].toString().split('/')[0];
-        var href = `http://${address}:${port}`;
+        var protocol = port === '443' ? 'https' : 'http';
+        var href = `${protocol}://${address}:${port}`;
         items.push(
           <li className="inspector-expose__unit-list-item"
             key={href}>

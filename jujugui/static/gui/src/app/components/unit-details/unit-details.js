@@ -21,6 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('unit-details', function() {
 
   juju.components.UnitDetails = React.createClass({
+    propTypes: {
+      service: React.PropTypes.object.isRequired,
+    },
 
     /**
       Handle removing a unit if the button has been clicked.
@@ -34,7 +37,7 @@ YUI.add('unit-details', function() {
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: this.props.serviceId,
+            id: this.props.service.get('id'),
             activeComponent: this.props.previousComponent || 'units',
             unitStatus: this.props.unitStatus,
             unit: null
@@ -45,9 +48,12 @@ YUI.add('unit-details', function() {
       Build a HTML list from an array of ports and an IP address.
 
       @method _getAddressList
-      @returns {String} HTML of list
+      @param {String} address An IP address.
+      @param {Array} ports A list of ports.
+      @param {Boolean} clickabl Whether the addresses are clickable.
+      @returns {String} HTML of list.
     */
-    _getAddressList: function(address, ports) {
+    _getAddressList: function(address, ports, clickable) {
       if (!ports || ports.length === 0 || !address) {
         return;
       }
@@ -56,13 +62,24 @@ YUI.add('unit-details', function() {
         // The port can have the protocol e.g. "80/tcp" so we need to just get
         // the port number.
         var port = ports[i].toString().split('/')[0];
-        var href = `http://${address}:${port}`;
+        var protocol = port === '443' ? 'https' : 'http';
+        var href = `${protocol}://${address}:${port}`;
+        var link;
+        if (clickable) {
+          var link = (
+            <a href={href} target="_blank">
+              {address}:{port}
+            </a>);
+        } else {
+          var link = (
+            <span>
+              {address}:{port}
+            </span>);
+        }
         items.push(
           <li className="unit-details__list-item"
             key={href}>
-            <a href={href} target="_blank">
-              {address}:{port}
-            </a>
+            {link}
           </li>);
       }
       return (
@@ -77,10 +94,16 @@ YUI.add('unit-details', function() {
         title: 'Remove',
         action: this._handleRemoveUnit
       }];
+      var ports = unit.open_ports;
       var privateList = this._getAddressList(
-        unit.private_address, unit.open_ports);
+        unit.private_address, ports, true);
       var publicList = this._getAddressList(
-        unit.public_address, unit.open_ports);
+        unit.public_address, ports,
+        this.props.service.get('exposed'));
+      var privatePlural = unit.private_address && ports && ports.length > 1 ?
+        'es' : '';
+      var publicPlural = unit.public_address && ports && ports.length > 1 ?
+        'es' : '';
       return (
         <div className="unit-details">
           <div className="unit-details__properties">
@@ -88,11 +111,11 @@ YUI.add('unit-details', function() {
               Status: {unit.agent_state || 'uncommitted'}
             </p>
             <p className="unit-details__property">
-              IP address: {privateList ? null : 'none'}
+              IP address{privatePlural}: {privateList ? null : 'none'}
             </p>
             {privateList}
             <p className="unit-details__property">
-              Public address: {publicList ? null : 'none'}
+              Public address{publicPlural}: {publicList ? null : 'none'}
             </p>
             {publicList}
           </div>
