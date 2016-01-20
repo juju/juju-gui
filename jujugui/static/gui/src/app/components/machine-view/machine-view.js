@@ -130,6 +130,12 @@ YUI.add('machine-view', function() {
     */
     _generateUnplacedUnits: function() {
       var units = this.props.units.filterByMachine();
+      units = units.filter((unit) => {
+        var service = this.props.services.getById(unit.service);
+        if (!service.get('subordinate')) {
+          return unit;
+        }
+      });
       if (units.length === 0) {
         var icon;
         var content;
@@ -155,8 +161,7 @@ YUI.add('machine-view', function() {
       }
       units.forEach((unit) => {
         var service = this.props.services.getById(unit.service);
-        if (placingUnit && unit.id === placingUnit.id ||
-          service.get('subordinate')) {
+        if (placingUnit && unit.id === placingUnit.id) {
           return;
         }
         components.push(

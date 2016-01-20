@@ -403,6 +403,50 @@ describe('MachineView', function() {
       .props.children[1], expected);
   });
 
+  it('displays onboarding if there are only subordinate units', function() {
+    var unitList = [{
+      id: 'django/0',
+      service: 'django'
+    }, {
+      id: 'django/1',
+      service: 'django'
+    }];
+    var units = {
+      filterByMachine: sinon.stub().returns(unitList)
+    };
+    var getStub = sinon.stub();
+    getStub.withArgs('icon').returns('django.svg');
+    getStub.withArgs('subordinate').returns(true);
+    var services = {
+      size: sinon.stub().returns(1),
+      getById: sinon.stub().returns({
+        get: getStub
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
+        environmentName="My Env"
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
+        units={units}
+        services={services} />);
+    var expected = (
+      <div className="machine-view__column-onboarding">
+        <juju.components.SvgIcon name="task-done_16"
+          size="16" />
+        You have placed all of your units
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
+  });
+
   it('can auto place units', function() {
     var autoPlaceUnits = sinon.stub();
     var unitList = [{
@@ -415,10 +459,13 @@ describe('MachineView', function() {
     var units = {
       filterByMachine: sinon.stub().returns(unitList)
     };
+    var getStub = sinon.stub();
+    getStub.withArgs('icon').returns('django.svg');
+    getStub.withArgs('subordinate').returns(false);
     var services = {
       size: sinon.stub().returns(1),
       getById: sinon.stub().returns({
-        get: sinon.stub().returns('django.svg')
+        get: getStub
       })
     };
     var output = jsTestUtils.shallowRender(
