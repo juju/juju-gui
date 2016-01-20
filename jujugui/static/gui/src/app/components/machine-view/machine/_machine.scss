@@ -67,6 +67,17 @@
         }
     }
 
+    &--machine,
+    &--container {
+        transition: background-color 0.3s;
+
+        &:focus,
+        &:active,
+        &:hover {
+            background-color: $white;
+        }
+    }
+
     &-hardware {
         margin-top: 7px;
     }
