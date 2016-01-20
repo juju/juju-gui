@@ -294,10 +294,13 @@ describe('MachineView', function() {
     var units = {
       filterByMachine: sinon.stub().returns(unitList)
     };
+    var getStub = sinon.stub();
+    getStub.withArgs('icon').returns('django.svg');
+    getStub.withArgs('subordinate').returns(false);
     var services = {
       size: sinon.stub().returns(1),
       getById: sinon.stub().returns({
-        get: sinon.stub().returns('django.svg')
+        get: getStub
       })
     };
     var renderer = jsTestUtils.shallowRender(
@@ -336,6 +339,64 @@ describe('MachineView', function() {
           removeUnit={instance._removeUnit}
           selectMachine={instance.selectMachine}
           unit={unitList[1]} />
+      </ul>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1]
+      .props.children[1], expected);
+  });
+
+  it('does not display unplaced subordinate units', function() {
+    var autoPlaceUnits = sinon.stub();
+    var createMachine = sinon.stub();
+    var placeUnit = sinon.stub();
+    var removeUnits = sinon.stub();
+    var unitList = [{
+      id: 'django/0',
+      service: 'django'
+    }, {
+      id: 'django/1',
+      service: 'django'
+    }];
+    var units = {
+      filterByMachine: sinon.stub().returns(unitList)
+    };
+    var getStub = sinon.stub();
+    getStub.withArgs('icon').returns('django.svg');
+    getStub.withArgs('subordinate').onFirstCall().returns(false)
+      .onSecondCall().returns(true);
+    var services = {
+      size: sinon.stub().returns(1),
+      getById: sinon.stub().returns({
+        get: getStub
+      })
+    };
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={autoPlaceUnits}
+        createMachine={createMachine}
+        destroyMachines={sinon.stub()}
+        environmentName="My Env"
+        machines={machines}
+        placeUnit={placeUnit}
+        removeUnits={removeUnits}
+        services={services}
+        units={units} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <ul className="machine-view__list">
+        {[<juju.components.MachineViewUnplacedUnit
+          createMachine={createMachine}
+          icon="django.svg"
+          key="django/0"
+          machines={machines}
+          removeUnit={instance._removeUnit}
+          placeUnit={placeUnit}
+          selectMachine={instance.selectMachine}
+          unit={unitList[0]} />]}
       </ul>);
     assert.deepEqual(
       output.props.children.props.children[0].props.children[1]

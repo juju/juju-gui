@@ -155,7 +155,8 @@ YUI.add('machine-view', function() {
       }
       units.forEach((unit) => {
         var service = this.props.services.getById(unit.service);
-        if (placingUnit && unit.id === placingUnit.id) {
+        if (placingUnit && unit.id === placingUnit.id ||
+          service.get('subordinate')) {
           return;
         }
         components.push(
