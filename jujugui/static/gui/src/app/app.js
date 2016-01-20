@@ -52,7 +52,6 @@ YUI.add('juju-gui', function(Y) {
     widgets.AutodeployExtension,
     Y.juju.Cookies,
     Y.juju.GhostDeployer,
-    Y.juju.MachineViewPanel,
     Y.Event.EventTracker
   ];
   var JujuGUI = Y.Base.create('juju-gui', Y.App, extensions, {
@@ -1024,13 +1023,8 @@ YUI.add('juju-gui', function(Y) {
       @method emptySectionB
     */
     emptySectionB: function() {
-      if (!window.flags || !window.flags.mv) {
-        ReactDOM.unmountComponentAtNode(
-          document.getElementById('machine-view'));
-      } else if (this.machineViewPanel) {
-        this.machineViewPanel.destroy();
-        this.machineViewPanel = null;
-      }
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('machine-view'));
     },
 
     _emptySectionC: function() {
@@ -1167,25 +1161,21 @@ YUI.add('juju-gui', function(Y) {
         view.
     */
     _renderMachineView: function(metadata) {
-      if (!window.flags || !window.flags.mv) {
-        var db = this.db;
-        ReactDOM.render(
-          <components.MachineView
-            addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
-                this, this.db, this.env)}
-            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
-            createMachine={this._createMachine.bind(this)}
-            destroyMachines={this.env.destroyMachines.bind(this.env)}
-            environmentName={db.environment.get('name')}
-            machines={db.machines}
-            placeUnit={this.env.placeUnit.bind(this.env)}
-            removeUnits={this.env.remove_units.bind(this.env)}
-            services={db.services}
-            units={db.units} />,
-          document.getElementById('machine-view'));
-      } else {
-        this._renderMachineViewPanelView(this.db, this.env);
-      }
+      var db = this.db;
+      ReactDOM.render(
+        <components.MachineView
+          addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
+              this, this.db, this.env)}
+          autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+          createMachine={this._createMachine.bind(this)}
+          destroyMachines={this.env.destroyMachines.bind(this.env)}
+          environmentName={db.environment.get('name')}
+          machines={db.machines}
+          placeUnit={this.env.placeUnit.bind(this.env)}
+          removeUnits={this.env.remove_units.bind(this.env)}
+          services={db.services}
+          units={db.units} />,
+        document.getElementById('machine-view'));
     },
 
     /**
@@ -1511,9 +1501,6 @@ YUI.add('juju-gui', function(Y) {
     destructor: function() {
       if (this.zoomMessageHandler) {
         this.zoomMessageHandler.detach();
-      }
-      if (this.machineViewPanel) {
-        this.machineViewPanel.destroy();
       }
       if (this._keybindings) {
         this._keybindings.detach();
@@ -2257,16 +2244,8 @@ YUI.add('juju-gui', function(Y) {
     'user-profile',
     // juju-views group
     'd3-components',
-    'container-token',
     'juju-templates',
-    'create-machine-view',
-    'machine-token',
-    'juju-serviceunit-token',
-    'machine-view-panel',
-    'machine-view-panel-extension',
-    'machine-view-panel-header',
     'juju-view-utils',
-    'service-scale-up-view',
     'juju-topology',
     'juju-view-environment',
     'juju-landscape',

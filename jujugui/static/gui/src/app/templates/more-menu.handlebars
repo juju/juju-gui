@@ -1,8 +1,0 @@
-<ul class="menu">
-  {{#each items}}
-    <li class="{{ id }} {{#unless heading}}link{{/unless}} {{#if child}}child{{/if}} {{#if disabled}}disabled{{/if}}"
-        {{#unless heading}}tabindex="0" role="button"{{/unless}}>
-      {{ label }}
-    </li>
-  {{/each}}
-</ul>
