@@ -58,6 +58,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   </head>
 
   <body>
+
       <div class="hidden">
         ## Include the svg sprite image inside the body.
         <%include file="../static/gui/build/app/assets/stack/svg/sprite.css.svg" />
@@ -398,30 +399,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
-
-          window.ga_id = juju_config.GA_key || '';
-          if (window.ga_id != '') {
-            _gaq.push(['_setAccount', window.ga_id]);
-            _gaq.push (['_gat._anonymizeIp']);
-            _gaq.push(['_setDomainName', 'none']);
-            _gaq.push(['_setAllowLinker', true]);
-            _gaq.push(['_trackPageview']);
-          }
         });
 
       };
     </script>
-    <script async type="text/javascript">
-      (function() {
-      var ga = document.createElement('script');
-      ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ?
-                'https://ssl' : 'http://www') +
-                '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(ga, s);
-      })();
+
+
+    <!-- Google Tag Manager -->
+    <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-K9KCMZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <script>
+    if (juju_config.GA_key) {
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-K9KCMZ');
+    }
     </script>
+    <!-- End Google Tag Manager -->
 
   </body>
 </html>
