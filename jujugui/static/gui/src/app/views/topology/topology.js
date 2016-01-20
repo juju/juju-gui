@@ -283,10 +283,17 @@ YUI.add('juju-topology', function(Y) {
      @param {Object} box.
     */
     annotateBoxPosition: function(box) {
-      if (box.pending) { return; }
-      this.get('env').update_annotations(
-          box.id, 'service', {'gui-x': box.x, 'gui-y': box.y});
-      box.inDrag = views.DRAG_ENDING;
+      if (box.pending) {
+        // If the service is pending, bypass the environment and set the service
+        // annotations directly.
+        var service = this.get('db').services.getById(box.id);
+        service.get('annotations')['gui-x'] = box.x;
+        service.get('annotations')['gui-y'] = box.y;
+      } else {
+        this.get('env').update_annotations(
+            box.id, 'service', {'gui-x': box.x, 'gui-y': box.y});
+        box.inDrag = views.DRAG_ENDING;
+      }
     }
 
   }, {
