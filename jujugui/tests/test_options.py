@@ -76,3 +76,8 @@ class TestUpdate(unittest.TestCase):
 
     def test_none_returned(self):
         self.assertIsNone(options.update({}))
+
+    def test_false_non_defaults(self):
+        settings = {'jujugui.gzip': False}
+        options.update(settings)
+        self.assertFalse(settings['jujugui.gzip'])
