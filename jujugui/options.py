@@ -42,7 +42,10 @@ def _update(settings, name, default=None, convert=lambda value: value):
 
     Modify the given settings object in place.
     """
-    settings[name] = convert(settings.get(name, default) or default)
+    val = settings.get(name, default)
+    if val == '' or val is None:
+        val = default
+    settings[name] = convert(val)
 
 
 _update_bool = functools.partial(_update, convert=asbool)
