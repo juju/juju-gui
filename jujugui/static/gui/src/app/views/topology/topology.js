@@ -287,8 +287,10 @@ YUI.add('juju-topology', function(Y) {
         // If the service is pending, bypass the environment and set the service
         // annotations directly.
         var service = this.get('db').services.getById(box.id);
-        service.get('annotations')['gui-x'] = box.x;
-        service.get('annotations')['gui-y'] = box.y;
+        var annotations = service.get('annotations');
+        annotations['gui-x'] = box.x;
+        annotations['gui-y'] = box.y;
+        service.set('annotations', annotations);
       } else {
         this.get('env').update_annotations(
             box.id, 'service', {'gui-x': box.x, 'gui-y': box.y});

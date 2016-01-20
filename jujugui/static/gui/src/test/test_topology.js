@@ -148,6 +148,9 @@ describe('topology', function() {
             return {
               get: function() {
                 return annotations;
+              },
+              set: function(_, newAnnotations) {
+                annotations = newAnnotations;
               }
             };
           }
