@@ -942,6 +942,10 @@ YUI.add('juju-gui', function(Y) {
             appPreviousState={state.get('previous')} />
         );
       } else if (localType && metadata.flash && metadata.flash.file) {
+        // When dragging a local charm zip over the canvas it animates the
+        // drag over notification which needs to be closed when the inspector
+        // is opened.
+        this._hideDragOverNotification();
         var localCharmHelpers = juju.localCharmHelpers;
         inspector = (
           <components.LocalInspector
