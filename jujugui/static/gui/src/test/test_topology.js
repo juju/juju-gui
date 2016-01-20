@@ -133,4 +133,45 @@ describe('topology', function() {
 
   });
 
+  describe('annotateBoxPosition', function() {
+    var annotations, update_annotations;
+
+    beforeEach(function() {
+      update_annotations = utils.makeStubFunction();
+      var env = {
+        update_annotations: update_annotations
+      };
+      annotations = {};
+      var db = {
+        services: {
+          getById: function() {
+            return {
+              get: function() {
+                return annotations;
+              },
+              set: function(_, newAnnotations) {
+                annotations = newAnnotations;
+              }
+            };
+          }
+        }
+      };
+      topo = new views.Topology({
+        db: db,
+        env: env
+      });
+    });
+
+    it('updates annotations on pending services', function() {
+      topo.annotateBoxPosition({x: 1, y: 1, pending: true});
+      assert.deepEqual(annotations, {'gui-x': 1, 'gui-y': 1});
+      assert.equal(update_annotations.called(), false);
+    });
+
+    it('updates annotations on committed services', function() {
+      topo.annotateBoxPosition({x: 1, y: 1});
+      assert.equal(update_annotations.calledOnce(), true);
+    });
+  });
+
 });
