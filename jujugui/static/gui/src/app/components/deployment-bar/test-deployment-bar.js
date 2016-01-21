@@ -74,7 +74,7 @@ describe('DeploymentBar', function() {
           accept=".zip,.yaml,.yml"
           ref="file-input" />
         <a className="deployment-bar__install-button"
-          href="https://jujucharms.com/docs/stable/getting-started"
+          href="https://jujucharms.com/get-started"
           target="_blank">
           Install Juju
         </a>
