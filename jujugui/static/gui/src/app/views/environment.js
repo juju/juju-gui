@@ -223,7 +223,6 @@ YUI.add('juju-view-environment', function(Y) {
     'base-build',
     'event-tracker',
     'environment',
-    'handlebars-base',
     'juju-topology',
     'node',
     'view'

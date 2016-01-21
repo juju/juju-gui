@@ -29,7 +29,7 @@ YUI.add('ambiguous-relation-menu', function() {
   */
   function _generateRelations(endpoints) {
     var components = [];
-    endpoints.forEach((endpoint) => {
+    endpoints.forEach((endpoint, i) => {
       var start = endpoint[0];
       var end = endpoint[1];
       components.push(
@@ -38,7 +38,7 @@ YUI.add('ambiguous-relation-menu', function() {
             data-startname={start.name}
             data-endservice={end.service}
             data-endname={end.name}
-            key={start.name + end.name}>
+            key={start.name + end.name + i}>
             {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
         </li>);
     });

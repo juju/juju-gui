@@ -326,10 +326,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
   views.humanizeTimestamp = humanizeTimestamp;
 
-  Y.Handlebars.registerHelper('humanizeTime', function(text) {
-    if (!text || text === undefined) {return '';}
-    return new Y.Handlebars.SafeString(humanizeTimestamp(Number(text)));
-  });
   var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
     bindModelView: function(model) {
@@ -1367,7 +1363,7 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /*
-    pluralize is a handlebar helper that handles pluralization of strings.
+    pluralize is a helper that handles pluralization of strings.
     The requirement for pluralization is based on the passed in object,
     which can be number, array, or object. If a number, it is directly
     checked to see if pluralization is needed. Arrays and objects are
@@ -1399,19 +1395,6 @@ YUI.add('juju-view-utils', function(Y) {
       return word;
     }
   };
-
-  Y.Handlebars.registerHelper('pluralize', utils.pluralize);
-
-  /*
-   * Dev tool: dump to debugger in template.
-   * Allows you to inspect a variable by passing it to
-   * the debugger helper
-   * {{debugger yourVar}}
-   *
-   */
-  Y.Handlebars.registerHelper('debugger', function(value) {
-    debugger; //eslint-disable-line no-debugger
-  });
 
   /**
     Handles deploying the charm or bundle id passed in as a deploy-target
@@ -1800,7 +1783,6 @@ YUI.add('juju-view-utils', function(Y) {
   requires: [
     'base-build',
     'escape',
-    'handlebars',
     'node',
     'view',
     'panel',

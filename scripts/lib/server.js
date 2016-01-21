@@ -29,9 +29,7 @@ var express = require('express'),
 
 server.configure(function() {
   server.set('views', __dirname + './lib/views/');
-  server.set('view engine', 'handlebars');
   server.set('view options', {layout: false});
-  server.engine('handlebars', view.handlebars);
 
   server.use(express.logger('dev'));
   // 'static' is a reserved word so dot notation is not used to

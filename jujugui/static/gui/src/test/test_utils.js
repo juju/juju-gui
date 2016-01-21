@@ -768,50 +768,6 @@ describe('utilities', function() {
 })();
 
 (function() {
-  describe('template helpers', function() {
-    var Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-view-utils', 'handlebars'], function(Y) {
-        done();
-      });
-    });
-
-    it('pluralizes correctly', function() {
-      var source = '{{ pluralize \'foo\' bar }}',
-          template = Y.Handlebars.compile(source),
-          context = {bar: 1},
-          html = template(context);
-      assert.equal('foo', html);
-
-      context = {bar: 2};
-      html = template(context);
-      assert.equal('foos', html);
-
-      context = {bar: [1]};
-      html = template(context);
-      assert.equal('foo', html);
-
-      context = {bar: [1, 2]};
-      html = template(context);
-      assert.equal('foos', html);
-    });
-
-    it('can pluralize with an alternate word', function() {
-      var source = '{{ pluralize \'foo\' bar \'fooi\' }}',
-          template = Y.Handlebars.compile(source),
-          context = {bar: 1},
-          html = template(context);
-      assert.equal('foo', html);
-
-      context = {bar: 2};
-      html = template(context);
-      assert.equal('fooi', html);
-    });
-  });
-})();
-
-(function() {
   describe('utils.ensureTrailingSlash', function() {
     var utils;
 

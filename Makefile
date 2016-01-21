@@ -3,7 +3,6 @@ PY := bin/python
 PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
-OLD_TEMPLATES_FILE := $(GUIBUILD)/app/templates.js
 SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
 SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
@@ -40,7 +39,6 @@ VPART ?= patch
 RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/assets/javascripts/*")
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
-OLD_TEMPLATE_FILES := $(shell find $(GUISRC)/app -type f -name "*.handlebars" -or -name "*.partial")
 SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
 FONT_FILES := $(shell find $(GUISRC)/app/assets/fonts -type f -name "*.woff" -or -name "*.woff2")
 STATIC_FONT_FILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(FONT_FILES))
@@ -123,7 +121,7 @@ venv: $(PY)
 $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
-$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(OLD_TEMPLATES_FILE) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
+$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
 
@@ -202,10 +200,6 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
 
-$(HANDLEBARS_ASSETS): $(NODE_MODULES)
-	cp $(NODE_MODULES)/handlebars/dist/handlebars.runtime.js $(BUILT_JS_ASSETS)/handlebars.runtime.js
-	cp $(NODE_MODULES)/handlebars/dist/handlebars.runtime.min.js $(BUILT_JS_ASSETS)/handlebars.runtime.min.js
-
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
 
@@ -227,14 +221,6 @@ $(BUILT_D3):
 	  node_modules/d3/src/layout/pack.js \
 	  $(GUISRC)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
 	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3-min.js
-
-$(OLD_TEMPLATES_FILE): $(NODE_MODULES) $(OLD_TEMPLATE_FILES)
-	mkdir -p $(GUIBUILD)/app/assets
-	scripts/generateTemplates
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(OLD_TEMPLATES_FILE) -o $(basename $(OLD_TEMPLATES_FILE))-min.js
-
-.PHONY: template
-template: $(OLD_TEMPLATES_FILE)
 
 $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
@@ -266,7 +252,7 @@ $(FAVICON):
 images: $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON)
 
 .PHONY: gui
-gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(HANDLEBARS_ASSETS) $(STATIC_FONT_FILES)
+gui: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(SVG_SPRITE_FILE) $(FAVICON) $(REACT_ASSETS) $(STATIC_FONT_FILES)
 
 .PHONY: watch
 watch:
