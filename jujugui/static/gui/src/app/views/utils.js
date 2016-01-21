@@ -1367,17 +1367,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /*
-   * Build a list of relation types given a list of endpoints.
-   */
-  Y.Handlebars.registerHelper('relationslist', function(endpoints, options) {
-    var out = '';
-    endpoints.forEach(function(ep) {
-      out += options.fn({start: ep[0], end: ep[1]});
-    });
-    return out;
-  });
-
-  /*
     pluralize is a handlebar helper that handles pluralization of strings.
     The requirement for pluralization is based on the passed in object,
     which can be number, array, or object. If a number, it is directly

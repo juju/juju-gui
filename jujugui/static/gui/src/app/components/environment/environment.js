@@ -69,18 +69,17 @@ YUI.add('environment', function() {
                   '99.938c-1.933 0-3.5-1.567-3.5-3.5s1.567-3.5 3.5-3.5'}/>
               </svg>
             </div>
-        </div>
-        <div className="environment-menu" id="ambiguous-relation-menu">
-          <div className="triangle">&nbsp;</div>
-            <div className="menu-title">Select relation type:</div>
-              <ul/>
-            </div>
-          <div className="environment-menu top" id="relation-menu">
           </div>
+          <div className="environment-menu" id="ambiguous-relation-menu">
+            <div className="triangle">&nbsp;</div>
+            <div className="menu-title">Select relation type:</div>
+            <div id="ambiguous-relation-menu-content"></div>
+          </div>
+          <div className="environment-menu top" id="relation-menu"></div>
         </div>
         <div id="rmrelation-modal-panel"></div>
         <div id="rmsubrelation-modal-panel"></div>
-      </div>
+    </div>
     );
   };
 
