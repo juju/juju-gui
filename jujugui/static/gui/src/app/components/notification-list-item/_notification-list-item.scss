@@ -34,16 +34,28 @@
             0% {
                 height: 0;
                 opacity: 0;
+                margin-top: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                line-height: 0;
             }
 
             50% {
                 height: auto;
                 opacity: 0;
+                margin-top: 10px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                line-height: 1.6;
             }
 
             100% {
                 height: auto;
                 opacity: 1;
+                margin-top: 10px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                line-height: 1.6;
             }
         }
     }
