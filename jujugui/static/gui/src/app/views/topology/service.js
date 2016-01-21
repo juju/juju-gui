@@ -688,6 +688,24 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Reorder the services with the selected service at the top.
+
+      @method _raiseToTop
+      @param {String} id The selected service id.
+    */
+    _raiseToTop: function(selectedId) {
+      d3.selectAll('.service').sort((a, b) => {
+        if (a.id === selectedId) {
+          return 1;
+        } else if (b.id === selectedId) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+    },
+
+    /**
       Handles the click or tap on the service svg elements.
 
       It is executed under the context of the clicked/tapped DOM element
@@ -741,6 +759,7 @@ YUI.add('juju-topology-service', function(Y) {
       // with the service, the SVG node, and the view
       // as arguments.
       self[curr_click_action](box, topo);
+      self._raiseToTop(box.id);
     },
 
     serviceMouseEnter: function(box, context) {
@@ -1180,6 +1199,7 @@ YUI.add('juju-topology-service', function(Y) {
      */
     dragstart: function(box, self) {
       box.inDrag = views.DRAG_START;
+      self._raiseToTop(box.id);
     },
 
     dragend: function(box,  self) {
