@@ -1227,9 +1227,10 @@ YUI.add('juju-topology-relation', function(Y) {
       if (menuInternals) {
         menuInternals.remove(true);
       }
-      menu.append(Templates.relationList({
-        relations: relation.relations
-      }));
+      ReactDOM.render(
+        <juju.components.RelationMenu
+          relations={relation.relations} />,
+        menu.getDOMNode());
       menu.addClass('active');
       this.set('relationMenuActive', true);
       this.set('relationMenuRelation', relation);
@@ -1346,6 +1347,7 @@ YUI.add('juju-topology-relation', function(Y) {
     'node',
     'event',
     'juju-models',
-    'juju-topology-utils'
+    'juju-topology-utils',
+    'relation-menu'
   ]
 });
