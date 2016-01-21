@@ -447,7 +447,7 @@ YUI.add('search-results', function(Y) {
       @returns {String} The collection of class names.
     */
     _generateResultsList: function(count, results, promulgated) {
-      var title = promulgated ? 'Community recommended' : 'Recommended';
+      var title = promulgated ? 'Recommended' : 'Community';
       var items = [];
       var changeState = this.props.changeState;
       results.forEach(function(item) {

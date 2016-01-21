@@ -283,7 +283,7 @@ describe('SearchResults', function() {
               <div className="entity-search-results">
                 <div>
                   <h4>
-                    {"Community recommended"}{' '}
+                    {"Recommended"}{' '}
                     <span className="count">({2})</span>
                   </h4>
                   <ul className="list-block__list promulgated">
@@ -299,7 +299,7 @@ describe('SearchResults', function() {
                 </div>
                 <div>
                   <h4>
-                    {"Recommended"} <span className="count">({2})</span>
+                    {"Community"} <span className="count">({2})</span>
                   </h4>
                   <ul className="list-block__list">
                     <juju.components.SearchResultsItem
