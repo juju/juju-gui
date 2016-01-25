@@ -100,8 +100,7 @@ YUI.add('machine-view-machine-unit', function() {
       }
       // Wrap the returned components in the drag source method.
       return this.props.connectDragSource(
-        <li className={this._generateClasses()}
-          key={unit.id}>
+        <li className={this._generateClasses()}>
           <span className="machine-view__machine-unit-icon">
             <img
               alt={unit.displayName}
