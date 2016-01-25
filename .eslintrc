@@ -16,10 +16,10 @@ rules:
   quotes: [2, "single"]
   strict: [2, "global"]
   no-underscore-dangle: 0
-  no-debugger: 1
+  no-debugger: 2
   no-unused-vars: [2, {args: "none"}]
   indent: [2, 2, {SwitchCase: 1, VariableDeclarator: 2}]
-  no-single-tests: 1
-  no-test-utils: 1
-  react/jsx-key: 1
-  react/jsx-no-duplicate-props: 1
+  no-single-tests: 2
+  no-test-utils: 2
+  react/jsx-key: 2
+  react/jsx-no-duplicate-props: 2
