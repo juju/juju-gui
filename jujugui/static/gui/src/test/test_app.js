@@ -1349,6 +1349,27 @@ describe('File drag over notification system', function() {
       assert.strictEqual(webHandler.name, 'sandbox-web-handler');
     });
 
+    it('creates a placeholder socketUrl', function() {
+      app = new Y.juju.App({
+        apiAddress: 'http://example.com:17070',
+        charmstore: new window.jujulib.charmstore(),
+        container: container,
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        sandbox: true,
+        socketTemplate: '/environment/$uuid/api',
+        viewContainer: container
+      });
+      var socketUrl = app.createSocketURL();
+      var expected = [
+        'wss://',
+        window.location.hostname,
+        ':',
+        window.location.port,
+        '/ws/sandbox'
+      ].join('');
+      assert.equal(expected, socketUrl);
+    });
+
   });
 
 })();

@@ -1772,6 +1772,12 @@ YUI.add('juju-gui', function(Y) {
       }
       baseUrl += '/ws';
 
+      if (this.get('sandbox')) {
+        // We don't actually use a websocket in sandbox mode; create a
+        // placeholder that makes it reasonably clear that this isn't real.
+        return baseUrl + '/sandbox';
+      }
+
       if (!server || !port) {
         var apiAddress = this.get('apiAddress').replace('wss://', '');
         apiAddress = apiAddress.split(':');
@@ -1783,7 +1789,6 @@ YUI.add('juju-gui', function(Y) {
       path = path.replace('$port', port);
       path = path.replace('$uuid', uuid);
       return baseUrl + path;
-
     },
 
     /**
