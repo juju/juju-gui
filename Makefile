@@ -203,7 +203,9 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/react-dnd/dist/ReactDnD.min.js $(BUILT_JS_ASSETS)/ReactDnD.min.js
 	cp $(NODE_MODULES)/react-dnd-html5-backend/dist/ReactDnDHTML5Backend.min.js $(BUILT_JS_ASSETS)/ReactDnDHTML5Backend.min.js
 	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
+	cp $(NODE_MODULES)/prismjs/prism.js $(BUILT_JS_ASSETS)/prism.js
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
+	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/prismjs/prism.js -o $(BUILT_JS_ASSETS)/prism.min.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
