@@ -69,6 +69,7 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.GenericButton
               action={instance._handleSubmit}
+              submit={true}
               type="confirm"
               title="Login" />
           </form>

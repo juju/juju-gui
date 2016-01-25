@@ -102,6 +102,7 @@ YUI.add('login-component', function() {
               </label>
               <juju.components.GenericButton
                 action={this._handleSubmit}
+                submit={true}
                 type="confirm"
                 title="Login" />
             </form>
