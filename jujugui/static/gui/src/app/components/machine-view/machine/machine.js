@@ -129,33 +129,18 @@ YUI.add('machine-view-machine', function() {
       }
       var components = [];
       units.forEach((unit) => {
-        var menu;
-        var title;
         var service = this.props.services.getById(unit.service);
-        if (this.props.type === 'container') {
-          var menuItems = [{
-            label: 'Destroy',
-            action: this.props.removeUnit.bind(null, unit.id)
-          }];
-          menu = (
-            <juju.components.MoreMenu
-              items={menuItems} />);
-          title = unit.displayName;
-        } else if (service.get('hide') || service.get('fade')) {
+        if (this.props.type === 'machine' && (service.get('hide')
+          || service.get('fade'))) {
           return;
         }
         components.push(
-          <li className={this._generateUnitClasses(unit)}
-            key={unit.id}>
-            <span className="machine-view__machine-unit-icon">
-              <img
-                alt={unit.displayName}
-                src={service.get('icon')}
-                title={unit.displayName} />
-            </span>
-            {title}
-            {menu}
-          </li>);
+          <juju.components.MachineViewMachineUnit
+            key={unit.id}
+            machineType={this.props.type}
+            removeUnit={this.props.removeUnit}
+            service={service}
+            unit={unit} />);
       });
       return (
         <ul className="machine-view__machine-units">
@@ -206,21 +191,6 @@ YUI.add('machine-view-machine', function() {
       );
     },
 
-    /**
-      Generate the classes for a unit.
-
-      @method _generateUnitClasses
-      @param {Object} unit The unit to generate classes for.
-      @returns {String} The collection of class names.
-    */
-    _generateUnitClasses: function(unit) {
-      return classNames(
-        'machine-view__machine-unit', {
-          'machine-view__machine-unit--uncommitted':
-            unit.deleted || !unit.agent_state
-        });
-    },
-
     render: function() {
       var machine = this.props.machine;
       var units = this.props.units.filterByMachine(machine.id, true);
@@ -256,6 +226,7 @@ YUI.add('machine-view-machine', function() {
 
 }, '0.1.0', {
   requires: [
+    'machine-view-machine-unit',
     'more-menu'
   ]
 });
