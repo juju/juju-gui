@@ -251,7 +251,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   });
 }, '0.1.0', {
   requires: [
-    'handlebars',
     'io',
     'node',
     'promise',

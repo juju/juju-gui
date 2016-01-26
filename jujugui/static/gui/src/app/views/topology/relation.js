@@ -31,8 +31,7 @@ YUI.add('juju-topology-relation', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
       d3 = Y.namespace('d3'),
-      components = Y.namespace('d3-components'),
-      Templates = views.Templates;
+      components = Y.namespace('d3-components');
 
   /**
    * Manage relation rendering and events.
@@ -981,12 +980,10 @@ YUI.add('juju-topology-relation', function(Y) {
     */
     _renderAmbiguousRelationMenu: function(endpoints) {
       var menu = this.get('container').one('#ambiguous-relation-menu');
-      if (menu.one('.menu')) {
-        menu.one('.menu').remove(true);
-      }
-      menu.append(Templates.ambiguousRelationList({
-        endpoints: endpoints
-      }));
+      ReactDOM.render(
+        <juju.components.AmbiguousRelationMenu
+          endpoints={endpoints} />,
+        document.getElementById('ambiguous-relation-menu-content'));
       return menu;
     },
 
@@ -1005,7 +1002,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // encountered when using "on" on a YUI NodeList: in some situations,
       // e.g. our production server, NodeList.on does not work.
       menu.one('.menu').delegate('click', function(evt) {
-        var el = evt.target;
+        var el = evt.currentTarget;
         var endpoints_item = [
           [el.getData('startservice'), {
             name: el.getData('startname'),
@@ -1223,13 +1220,10 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     showRelationMenu: function(relation) {
       var menu = Y.one('#relation-menu');
-      var menuInternals = menu.one('.menu');
-      if (menuInternals) {
-        menuInternals.remove(true);
-      }
-      menu.append(Templates.relationList({
-        relations: relation.relations
-      }));
+      ReactDOM.render(
+        <juju.components.RelationMenu
+          relations={relation.relations} />,
+        menu.getDOMNode());
       menu.addClass('active');
       this.set('relationMenuActive', true);
       this.set('relationMenuRelation', relation);
@@ -1341,11 +1335,13 @@ YUI.add('juju-topology-relation', function(Y) {
   views.RelationModule = RelationModule;
 }, '0.1.0', {
   requires: [
+    'ambiguous-relation-menu',
     'd3',
     'd3-components',
     'node',
     'event',
     'juju-models',
-    'juju-topology-utils'
+    'juju-topology-utils',
+    'relation-menu'
   ]
 });

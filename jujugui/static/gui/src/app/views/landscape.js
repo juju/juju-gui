@@ -168,7 +168,6 @@ YUI.add('juju-landscape', function(Y) {
 }, '0.1.0', {
   requires: [
     'juju-models',
-    'juju-templates',
     'juju-view-utils',
     'base'
   ]

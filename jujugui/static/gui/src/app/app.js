@@ -136,16 +136,14 @@ YUI.add('juju-gui', function(Y) {
               }
             }, this);
 
-            target.setHTML(
-                views.Templates.shortcuts({
-                  bindings: bindings,
-                  environmentName: this.env.get('environmentName') || 'model',
-                  'force-containers': localStorage.getItem('force-containers'),
-                  'disable-cookie': localStorage.getItem('disable-cookie'),
-                  'disable-auto-place': localStorage.getItem(
-                      'disable-auto-place')
-                })
-            );
+            ReactDOM.render(
+              <components.Shortcuts
+                bindings={bindings}
+                disableCookie={localStorage.getItem('disable-cookie')}
+                disableAutoPlace={localStorage.getItem('disable-auto-place')}
+                environmentName={this.env.get('environmentName') || 'model'}
+                forceContainers={localStorage.getItem('force-containers')} />,
+              target.getDOMNode());
 
             // This is only added to the DOM once and is checked if it exists
             // above. It's hidden and then shown, so this event is not auto
@@ -2245,10 +2243,10 @@ YUI.add('juju-gui', function(Y) {
     'logout-component',
     'notification-list',
     'panel-component',
+    'shortcuts',
     'user-profile',
     // juju-views group
     'd3-components',
-    'juju-templates',
     'juju-view-utils',
     'juju-topology',
     'juju-view-environment',
@@ -2276,9 +2274,6 @@ YUI.add('juju-gui', function(Y) {
     'ghost-deployer-extension',
     'local-charm-import-helpers',
     'environment-change-set',
-    'gallery-markdown',
-    // This must stay down here else it breaks the merge-files by being put
-    // first in the dependency list, before even YUI.
-    'handlebars'
+    'gallery-markdown'
   ]
 });

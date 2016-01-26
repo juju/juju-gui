@@ -371,7 +371,6 @@ YUI.add('juju-topology', function(Y) {
     'd3-components',
     'node',
     'event',
-    'juju-templates',
     'juju-topology-service',
     'juju-topology-relation',
     'juju-topology-panzoom',

@@ -27,8 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-view-environment', function(Y) {
 
-  var views = Y.namespace('juju.views'),
-      Templates = views.Templates;
+  var views = Y.namespace('juju.views');
 
   /**
    * Display an environment.
@@ -81,7 +80,9 @@ YUI.add('juju-view-environment', function(Y) {
       // If we need the initial HTML template, take care of that.
       if (!this._rendered) {
         EnvironmentView.superclass.render.apply(this, arguments);
-        container.setHTML(Templates.overview());
+        ReactDOM.render(
+          <juju.components.Environment />,
+          container.getDOMNode());
         this._rendered = true;
       }
 
@@ -221,8 +222,7 @@ YUI.add('juju-view-environment', function(Y) {
   requires: [
     'base-build',
     'event-tracker',
-    'handlebars-base',
-    'juju-templates',
+    'environment',
     'juju-topology',
     'node',
     'view'

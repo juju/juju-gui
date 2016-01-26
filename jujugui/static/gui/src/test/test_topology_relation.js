@@ -492,7 +492,10 @@ describe('topology relation module', function() {
       }, {
         name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
       }]];
-      container.append('<div id="ambiguous-relation-menu"></div>');
+      container.append(
+        '<div id="ambiguous-relation-menu">' +
+          '<div id="ambiguous-relation-menu-content"></div>' +
+        '</div>');
       var menu = view._renderAmbiguousRelationMenu.call({
         get: function() {
           return container;
