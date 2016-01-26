@@ -409,7 +409,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-K9KCMZ"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script>
-    if (juju_config.GA_key) {
+    if (juju_config.GTM_enabled) {
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=

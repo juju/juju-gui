@@ -98,7 +98,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('wss', config['socket_protocol'])
         self.assertEqual(
             options.DEFAULT_CHARMSTORE_URL, config['charmstoreURL'])
-        self.assertEqual('', config['GA_key'])
+        self.assertFalse(config['GTM_enabled'])
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['consoleEnabled'])
@@ -112,7 +112,7 @@ class ConfigTests(ViewTestCase):
     def test_customized_options(self):
         self.update_settings({
             'jujugui.charmstore_url': '1.2.3.4/api',
-            'jujugui.ga_key': 'my-key',
+            'jujugui.GTM_enabled': 'true',
             'jujugui.sandbox': 'true',
             'jujugui.auth': 'blob',
             'jujugui.user': 'who',
@@ -122,7 +122,7 @@ class ConfigTests(ViewTestCase):
         response = views.config(self.request)
         config = self.check_response(response)
         self.assertEqual('1.2.3.4/api', config['charmstoreURL'])
-        self.assertEqual('my-key', config['GA_key'])
+        self.assertTrue(config['GTM_enabled'])
         self.assertEqual('blob', config['auth'])
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
