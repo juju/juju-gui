@@ -29,7 +29,8 @@ SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selen
 REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
 
 CACHE := $(shell pwd)/downloadcache
-PYTHON_CACHE := file:///$(CACHE)/python
+PYTHON_FILES := $(CACHE)/python
+PYTHON_CACHE := file:///$(PYTHON_FILES)
 WHEEL_CACHE := file:///$(CACHE)/wheels/generic
 LSB_WHEEL_CACHE := file:///$(CACHE)/wheels/$(shell lsb_release -c -s)
 COLLECTED_REQUIREMENTS := collected-requirements
@@ -46,6 +47,8 @@ STATIC_CSS_FILES = \
 	$(GUIBUILD)/app/assets/stylesheets/normalize.css \
 	$(GUIBUILD)/app/assets/stylesheets/prettify.css \
 	$(GUIBUILD)/app/assets/stylesheets/cssgrids-responsive-min.css
+
+LSB_RELEASE = $(shell lsb_release -cs)
 
 .PHONY: help
 help:
@@ -278,11 +281,17 @@ clean-downloadcache:
 update-downloadcache: $(CACHE)
 	cd $(CACHE) && git pull origin master || true
 
+ifeq ($(LSB_RELEASE),precise)
+  COLLECT_CMD=@cp $(PYTHON_FILES)/* $(COLLECTED_REQUIREMENTS)
+else
+  COLLECT_CMD=bin/pip install -d $(COLLECTED_REQUIREMENTS) --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r requirements.txt
+endif
+
 .PHONY: collect-requirements
 collect-requirements: deps
 	-@rm -rf $(COLLECTED_REQUIREMENTS)
 	@mkdir $(COLLECTED_REQUIREMENTS)
-	bin/pip install -d $(COLLECTED_REQUIREMENTS) --no-compile --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r requirements.txt
+	$(COLLECT_CMD)
 	@# Arch-specific wheels cannot be used.
 	-@rm -rf $(COLLECTED_REQUIREMENTS)/zope.interface*
 	-@rm -rf $(COLLECTED_REQUIREMENTS)/MarkupSafe*
