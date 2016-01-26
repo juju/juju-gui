@@ -1939,7 +1939,7 @@ YUI.add('juju-gui', function(Y) {
       // Update the react views on database change
       this._renderEnvSizeDisplay(
         this.db.services.size(),
-        this.db.machines.size()
+        this.db.machines.filterByParent().length
       );
       this._renderDeployment();
       this._renderEnvSwitcher();
