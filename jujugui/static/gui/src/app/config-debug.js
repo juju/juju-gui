@@ -53,10 +53,10 @@ var juju_config = { // eslint-disable-line no-unused-vars
   // There is also a hotkey to toggle the simulator.
   simulateEvents: false,
   readOnly: false,
-  // Set the GA_key to enable Google Analytics usage and calls. Also implies
-  // using cookies. For the debug configuration, the GA_key should be blank to
-  // prevent muddying the gathered statistics.
-  GA_key: '',
+  // Set the GTM_enabled to enable Google Tag Manager usage and calls. Also
+  // implies using cookies. For the debug configuration, the GTM_enabled should
+  // be false to prevent muddying the gathered statistics.
+  GTM_enabled: false,
   login_help: 'For this demonstration, use the password "admin" to connect.',
   isJujucharms: false,
   // Shows the user dropdown view which contains the login button and hides

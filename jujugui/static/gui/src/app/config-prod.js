@@ -50,9 +50,9 @@ var juju_config = { // eslint-disable-line no-unused-vars
   // You can also use the :flags:/simulateEvents feature flag.
   simulateEvents: false,
   readOnly: false,
-  // Set the GA_key to enable Google Analytics usage and calls. Also implies
-  // using cookies.
-  GA_key: 'UA-41463568-2',
+  // Set the GTM_enabled to enable Google Tag Manager usage and calls. Also
+  // implies using cookies.
+  GTM_enabled: true,
   login_help: (
       'The password for newer Juju clients can be found by locating the ' +
       'Juju environment file placed in ~/.juju/environments/ with the same ' +

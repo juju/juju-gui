@@ -108,9 +108,9 @@ def config(request):
         'sandboxSocketURL': 'wss://demo.jujucharms.com/ws',
         # XXX frankban: do we still support read-only mode?
         'readOnly': False,
-        # Set the GA_key to enable Google Analytics usage and calls.
+        # Set the GTM_enabled to enable Google Tag Manager usage and calls.
         # Also implies using cookies.
-        'GA_key': settings['jujugui.ga_key'],
+        'GTM_enabled': settings['jujugui.GTM_enabled'],
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': settings.get('jujugui.jujuCoreVersion', ''),
         'apiAddress': settings.get('jujugui.apiAddress'),

@@ -2067,8 +2067,8 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     authorizeCookieUse: function(req, res, next) {
-      var ga_key = this.get('GA_key');
-      if (ga_key) {
+      var GTM_enabled = this.get('GTM_enabled');
+      if (GTM_enabled) {
         this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
         this.cookieHandler.check();
       }
