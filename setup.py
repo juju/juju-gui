@@ -1,12 +1,25 @@
-from pip.download import PipSession
+# PipSession is not available in older pips.
+try:
+    from pip.download import PipSession
+except:
+    # Precise has an old version of pip that lacks PipSession.
+    PipSession = None
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-pip_session = PipSession()
-requirements = parse_requirements("requirements.txt", session=pip_session)
-test_requirements = parse_requirements("test-requirements.txt",
-                                       session=pip_session)
+if PipSession is not None:
+    pip_session = PipSession()
+    kwargs = dict(session=pip_session)
+else:
+    # The parse_requirements in the precise version of pip is broken
+    # and requires options.skip_requirements_regex to be present.
+    from collections import namedtuple
+    options = namedtuple('Options', 'skip_requirements_regex')
+    options.skip_requirements_regex = None
+    kwargs = dict(options=options)
 
+requirements = parse_requirements("requirements.txt", **kwargs)
+test_requirements = parse_requirements("test-requirements.txt", **kwargs)
 install_requires = [str(req.req) for req in requirements]
 tests_require = [str(req.req) for req in test_requirements]
 
