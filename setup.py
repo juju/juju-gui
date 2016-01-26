@@ -1,7 +1,7 @@
 # PipSession is not available in older pips.
 try:
     from pip.download import PipSession
-except:
+except ImportError:
     # Precise has an old version of pip that lacks PipSession.
     PipSession = None
 from pip.req import parse_requirements
@@ -15,8 +15,7 @@ else:
     # and requires options.skip_requirements_regex to be present.
     from collections import namedtuple
     options = namedtuple('Options', 'skip_requirements_regex')
-    options.skip_requirements_regex = None
-    kwargs = dict(options=options)
+    kwargs = dict(options=options(skip_requirements_regex=None))
 
 requirements = parse_requirements("requirements.txt", **kwargs)
 test_requirements = parse_requirements("test-requirements.txt", **kwargs)
