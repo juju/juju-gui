@@ -15,7 +15,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.base_url': None,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
         'jujugui.combine': True,
-        'jujugui.GTM_enabled': '',
+        'jujugui.GTM_enabled': False,
         'jujugui.gzip': True,
         'jujugui.interactive_login': False,
         'jujugui.jem_url': None,

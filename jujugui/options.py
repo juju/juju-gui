@@ -20,7 +20,7 @@ def update(settings):
     _update(settings, 'jujugui.base_url', default=None)
     _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
     _update(settings, 'jujugui.api_path', default=DEFAULT_API_PATH)
-    _update(settings, 'jujugui.GTM_enabled', default='')
+    _update(settings, 'jujugui.GTM_enabled', default=False)
     _update(settings, 'jujugui.password', default=None)
     _update(settings, 'jujugui.user', default='')
     _update(
