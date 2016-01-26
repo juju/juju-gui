@@ -104,6 +104,7 @@ YUI.add('machine-view-machine-unit', function() {
           <span className="machine-view__machine-unit-icon">
             <img
               alt={unit.displayName}
+              className="machine-view__machine-unit-icon-img"
               src={service.get('icon')}
               title={unit.displayName} />
           </span>

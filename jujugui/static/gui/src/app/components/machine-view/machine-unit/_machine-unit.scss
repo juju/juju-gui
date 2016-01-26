@@ -14,7 +14,7 @@
         border: 1px solid $canvas-background;
         border-radius: 50%;
 
-        img {
+        &-img {
             $size: 24px;
             width: $size;
             height: $size;

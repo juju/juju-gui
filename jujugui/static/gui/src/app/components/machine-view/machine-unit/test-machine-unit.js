@@ -67,6 +67,7 @@ describe('MachineViewMachineUnit', function() {
         <span className="machine-view__machine-unit-icon">
           <img
             alt="django/7"
+            className="machine-view__machine-unit-icon-img"
             src="icon.svg"
             title="django/7" />
         </span>
@@ -90,6 +91,7 @@ describe('MachineViewMachineUnit', function() {
         <span className="machine-view__machine-unit-icon">
           <img
             alt="django/7"
+            className="machine-view__machine-unit-icon-img"
             src="icon.svg"
             title="django/7" />
         </span>
