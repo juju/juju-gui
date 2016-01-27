@@ -746,11 +746,14 @@ YUI.add('juju-models', function(Y) {
       @returns {String} The name for the service.
     */
     _generateServiceName: function(charmName, charmId) {
+      // Juju doesn't allow serivce names that end in '-#' adding the 's'
+      // gets around that.
+      var joiner = '-s';
       var highestId = Math.max.apply(Math, this.map(function(service) {
         // Only check the count for matching charms.
         if (service.get('charm') === charmId) {
           var count = parseInt(service.get('name').replace(
-              charmName + '-', ''));
+              charmName + joiner, ''));
           // The first service that is created won't have a count.
           return count || 1;
         }
@@ -761,7 +764,7 @@ YUI.add('juju-models', function(Y) {
       if (highestId < 1 || isNaN(highestId) || highestId === null) {
         return charmName;
       }
-      return charmName + '-' + (highestId + 1);
+      return charmName + joiner + (highestId + 1);
     },
 
     /**
