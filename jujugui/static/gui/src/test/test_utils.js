@@ -1119,6 +1119,43 @@ describe('utilities', function() {
     });
   });
 
+  describe('numToLetter', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.juju.views.utils;
+        done();
+      });
+    });
+
+    it('converts numbers to letters correctly', function() {
+      // Map of numbers and output to check. This list isn't exhaustive
+      // but checks some important milestones for common issues with this
+      // technique.
+      var mapping = {
+        1: 'A',
+        2: 'B',
+        10: 'J',
+        15: 'O',
+        26: 'Z',
+        27: 'AA',
+        28: 'AB',
+        52: 'AZ',
+        53: 'BA',
+        54: 'BB',
+        703: 'AAA',
+        748: 'ABT',
+        1982: 'BXF'
+      };
+      Object.keys(mapping).forEach(function(key) {
+        assert.equal(
+          utils.numToLetter(key), mapping[key],
+          key + ' did not properly convert to ' + mapping[key]);
+      });
+    });
+  });
+
   describe('linkify', function() {
     var utils;
 
