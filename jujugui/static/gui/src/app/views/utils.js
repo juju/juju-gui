@@ -1779,6 +1779,37 @@ YUI.add('juju-view-utils', function(Y) {
     return sanitizedStr;
   };
 
+  /**
+    Convert the number passed in into a alphabet representation. Starting
+    from 1, 0 will return ?Z.
+    ex) 2 = B, 27 = AA, 38 = AL ...
+
+    @method numToLetter
+    @param {Integer} num The number to convert to an alphabet.
+    @returns {String} The alphabet representation.
+  */
+  utils.numToLetter = function(num) {
+    // Because num can be more than 26 we need to reduce it down to a value
+    // between 0 and 26 to match alphabets.
+    var remainder = num % 26;
+    // Reduce it down to the number of characters we need, since we only have
+    // 26 characters any multiple of that will require us to add more.
+    var multiple = num / 26 | 0;
+    var char = '';
+    // remainder will be 0 if number is 26 (Z)
+    if (remainder) {
+      // 64 is the start of upper case alphabet.
+      char = String.fromCharCode(64 + remainder);
+    } else {
+      // subtract 1 from the multiple if remainder is 0 and add a Z;
+      multiple--;
+      char = 'Z';
+    }
+    // If there are multiple characters required then recurse else
+    // return the value of char.
+    return multiple ? utils.numToLetter(multiple) + char : char;
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
