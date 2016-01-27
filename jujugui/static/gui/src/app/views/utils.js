@@ -1799,11 +1799,11 @@ YUI.add('juju-view-utils', function(Y) {
     // remainder will be 0 if number is 26 (Z)
     if (remainder) {
       // 64 is the start of upper case alphabet.
-      char = String.fromCharCode(64 + remainder);
+      char = String.fromCharCode(96 + remainder);
     } else {
       // subtract 1 from the multiple if remainder is 0 and add a Z;
       multiple--;
-      char = 'Z';
+      char = 'z';
     }
     // If there are multiple characters required then recurse else
     // return the value of char.

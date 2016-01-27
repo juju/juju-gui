@@ -152,9 +152,9 @@ describe('Ghost Deployer Extension', function() {
     services.ghostService(new Y.Model(mysql));
     services.ghostService(new Y.Model(mysql));
     assert.equal(services.item(0).get('name'), 'django');
-    assert.equal(services.item(1).get('name'), 'django-A');
+    assert.equal(services.item(1).get('name'), 'django-a');
     assert.equal(services.item(2).get('name'), 'mysql');
-    assert.equal(services.item(3).get('name'), 'mysql-A');
+    assert.equal(services.item(3).get('name'), 'mysql-a');
   });
 
   it('can create a ghost unit', function() {
