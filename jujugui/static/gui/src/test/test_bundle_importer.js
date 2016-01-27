@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bundle Importer', function() {
-  var bundleImporter, BundleImporter, db, env, fakebackend,
+  var bundleImporter, BundleImporter, db, env, fakebackend, models,
       utils, yui;
 
   before(function(done) {
@@ -29,13 +29,14 @@ describe('Bundle Importer', function() {
     YUI(GlobalConfig).use(requires, function(Y) {
       BundleImporter = Y.juju.BundleImporter;
       utils = Y['juju-tests'].utils;
+      models = Y.namespace('juju.models');
       yui = Y;
       done();
     });
   });
 
   beforeEach(function() {
-    db = new yui.juju.models.Database();
+    db = new models.Database();
     env = new yui.juju.environments.GoEnvironment({
       ecs: new yui.juju.EnvironmentChangeSet({
         db: db

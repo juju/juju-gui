@@ -41,6 +41,9 @@ describe('application hotkeys', function() {
 
   beforeEach(function() {
     container = Y.namespace('juju-tests.utils').makeContainer(this);
+    container.appendChild(Y.Node.create('<div/>'))
+      .set('id', 'shortcut-help')
+      .setStyle('display', 'none');
     app = new Y.juju.App({
       env: env,
       container: container,
@@ -48,8 +51,6 @@ describe('application hotkeys', function() {
     });
     app.showView(new Y.View());
     app.activateHotkeys();
-
-    Y.one('#main').append(container);
     app.render();
   });
 
@@ -63,7 +64,7 @@ describe('application hotkeys', function() {
       keyCode: 191, // "/" key.
       shiftKey: true
     });
-    var help = Y.one('#shortcut-help');
+    var help = container.one('#shortcut-help');
     assert.equal(help.getStyle('display'), 'block',
                  'Shortcut help not displayed');
     // Is the "S-?" label displayed in the help?
