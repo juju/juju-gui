@@ -999,7 +999,7 @@ YUI.add('juju-gui', function(Y) {
           getEntity={charmstore.getEntity.bind(charmstore)}
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-          renderMarkdown={Y.Markdown.toHTML.bind(this)}
+          renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
