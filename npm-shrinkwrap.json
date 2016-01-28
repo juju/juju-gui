@@ -1,6 +1,6 @@
 {
   "name": "juju-gui",
-  "version": "1.9.7",
+  "version": "2.0.0",
   "dependencies": {
     "babel": {
       "version": "5.8.34",
@@ -4074,6 +4074,11 @@
         }
       }
     },
+    "marked": {
+      "version": "0.3.5",
+      "from": "marked@",
+      "resolved": "https://registry.npmjs.org/marked/-/marked-0.3.5.tgz"
+    },
     "mocha": {
       "version": "2.3.4",
       "from": "https://registry.npmjs.org/mocha/-/mocha-2.3.4.tgz",
@@ -4439,11 +4444,6 @@
           }
         }
       }
-    },
-    "node-markdown": {
-      "version": "0.1.1",
-      "from": "https://registry.npmjs.org/node-markdown/-/node-markdown-0.1.1.tgz",
-      "resolved": "https://registry.npmjs.org/node-markdown/-/node-markdown-0.1.1.tgz"
     },
     "node-minify": {
       "version": "0.7.5",
