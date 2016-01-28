@@ -27,7 +27,7 @@ YUI.add('jujulib-utils', function(Y) {
 
   var juju = Y.namespace('juju');
 
-  /** 
+  /**
     Munge jujulib style entity data into juju GUI models.
 
     @function processEntityData
