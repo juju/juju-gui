@@ -33,6 +33,8 @@ describe('test_model.js', function() {
       var charm = new models.Charm(
           {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
       charm.get('scheme').should.equal('cs');
+      charm.get('storeId').should.equal(
+        '~alt-bac/precise/openstack-dashboard-0');
       charm.get('owner').should.equal('alt-bac');
       charm.get('series').should.equal('precise');
       charm.get('package_name').should.equal('openstack-dashboard');
@@ -72,6 +74,15 @@ describe('test_model.js', function() {
       assert.isUndefined(charm.get('series'));
       assert.equal(charm.get('charm_path'),
           '~alt-bac/openstack-dashboard/json');
+    });
+
+    it('must accept charm ids with a channel.', function() {
+      var charm = new models.Charm(
+          {id: 'cs:development/precise/openstack-dashboard'});
+      assert.equal(charm.get('id'),
+        'cs:development/precise/openstack-dashboard');
+      assert.equal(charm.get('storeId'),
+          'development/precise/openstack-dashboard');
     });
 
     it('must be able to parse hyphenated owner names', function() {

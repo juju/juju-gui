@@ -48,7 +48,7 @@ describe('EntityContentReadme', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.equal(getFile.callCount, 1);
-    assert.equal(getFile.args[0][0], 'cs:django');
+    assert.equal(getFile.args[0][0], 'cs:~charmers/wily/django');
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 1);
     assert.equal(renderMarkdown.args[0][0], 'mock markdown');
@@ -98,7 +98,7 @@ describe('EntityContentReadme', function() {
         entityModel={mockEntity} />
     );
     assert.equal(getFile.callCount, 1);
-    assert.equal(getFile.args[0][0], 'cs:django');
+    assert.equal(getFile.args[0][0], 'cs:~charmers/wily/django');
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(renderMarkdown.callCount, 0);
     assert.equal(component.refs['content'].textContent, 'No readme.');

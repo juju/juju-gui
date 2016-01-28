@@ -28,8 +28,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
-  var charmIdRe = /^(?:(\w+):)?(?:~([\w-\.]+)\/)?(?:(\w+)\/)?([\w-\.]+?)(?:-(\d+|HEAD))?$/;  // eslint-disable-line max-len
-  var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
+  var charmIdRe = /^(?:(\w+):)?(?:(~?)([\w-\.]+)\/)?(?:(\w+)\/)?([\w-\.]+?)(?:-(\d+|HEAD))?$/;  // eslint-disable-line max-len
+  var idElements = ['scheme', 'ownerToken', 'namespace', 'series',
+    'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
 
@@ -56,10 +57,14 @@ YUI.add('juju-charm-models', function(Y) {
           result.series,
           result.package_name + (result.revision ? '-' + result.revision : '')
         ];
-        if (result.owner) {
-          storeId.unshift('~' + result.owner);
+        if (result.namespace) {
+          var token = result.ownerToken || '';
+          storeId.unshift(token + result.namespace);
         }
         result.storeId = storeId.join('/');
+        // Return the correct parameter to set on the model.
+        result[result.ownerToken ? 'owner' : 'channel'] = result.namespace;
+        delete result.namespace;
         return result;
       }
     }
