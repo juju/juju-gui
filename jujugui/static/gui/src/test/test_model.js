@@ -74,6 +74,15 @@ describe('test_model.js', function() {
           '~alt-bac/openstack-dashboard/json');
     });
 
+    it('must accept charm ids with a channel.', function() {
+      var charm = new models.Charm(
+          {id: 'cs:development/precise/openstack-dashboard'});
+      assert.equal(charm.get('id'),
+        'cs:development/precise/openstack-dashboard');
+      assert.equal(charm.get('storeId'),
+          'development/precise/openstack-dashboard');
+    });
+
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.
