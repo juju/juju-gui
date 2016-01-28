@@ -62,6 +62,9 @@ YUI.add('juju-charm-models', function(Y) {
           storeId.unshift(token + result.namespace);
         }
         result.storeId = storeId.join('/');
+        // Return the correct parameter to set on the model.
+        result[parts.ownerToken ? 'owner' : 'channel'] = result.namespace;
+        delete result.namespace;
         return result;
       }
     }
