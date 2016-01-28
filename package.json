@@ -2,7 +2,7 @@
   "author": "Juju Developers",
   "name": "juju-gui",
   "description": "Juju GUI build dependencies",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "homepage": "http://launchpad.net/juju-gui",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "phantomjs": "^1.9.19",
     "react": "^0.14.3",
     "react-dnd": "^2.0.2",
-    "react-dnd-html5-backend": "^2.0.0",
+    "react-dnd-html5-backend": "^2.0.1",
     "react-dom": "^0.14.3",
     "should": ">=1.0.0",
     "smash": "0.0.12",

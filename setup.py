@@ -23,7 +23,7 @@ install_requires = [str(req.req) for req in requirements]
 tests_require = [str(req.req) for req in test_requirements]
 
 setup(name='jujugui',
-      version='2.0.0',
+      version='2.0.1',
       description='jujugui',
       classifiers=[
           "Programming Language :: Python",
