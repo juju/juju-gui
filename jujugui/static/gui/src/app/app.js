@@ -2278,7 +2278,6 @@ YUI.add('juju-gui', function(Y) {
     'FileSaver',
     'ghost-deployer-extension',
     'local-charm-import-helpers',
-    'environment-change-set',
-    'gallery-markdown'
+    'environment-change-set'
   ]
 });
