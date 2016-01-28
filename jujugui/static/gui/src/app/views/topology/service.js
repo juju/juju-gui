@@ -694,21 +694,15 @@ YUI.add('juju-topology-service', function(Y) {
       @param {String} id The selected service id.
     */
     _raiseToTop: function(selectedId) {
-      d3.selectAll('.the-canvas .service, .the-canvas .plus-service')
-        .sort((a, b) => {
-          // The plus is undefined and it should always be at the top.
-          if (!a) {
-            return 1;
-          } else if (!b) {
-            return -1;
-          } else if (a.id === selectedId) {
-            return 1;
-          } else if (b.id === selectedId) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
+      d3.selectAll('.the-canvas .service').sort((a, b) => {
+        if (a.id === selectedId) {
+          return 1;
+        } else if (b.id === selectedId) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
     },
 
     /**
