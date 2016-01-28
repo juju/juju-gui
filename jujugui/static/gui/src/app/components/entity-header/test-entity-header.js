@@ -80,7 +80,7 @@ describe('EntityHeader', function() {
                     target="_blank"
                     href={'https://twitter.com/intent/tweet?text=django%20' +
                       'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
-                      '.com%2Fdjango%2Ftrusty%2F'}>
+                      '.com%2Fu%2Ftest-owner%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-twitter"
                       size="35"/>
@@ -90,7 +90,7 @@ describe('EntityHeader', function() {
                   <a id="item-googleplus"
                     target="_blank"
                     href={'https://plus.google.com/share?url=https%3A%2F%2F' +
-                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
+                      'jujucharms.com%2Fu%2Ftest-owner%2Fdjango%2Ftrusty%2F'}>
                     <juju.components.SvgIcon
                       name="icon-social-google"
                       size="35"/>
@@ -100,7 +100,7 @@ describe('EntityHeader', function() {
             </div>
             <div className="four-col last-col no-margin-bottom">
               <juju.components.CopyToClipboard
-                value="juju deploy cs:django" />
+                value="juju deploy cs:~charmers/wily/django" />
               <juju.components.GenericButton
                 ref="deployAction"
                 action={instance._handleDeployClick}
@@ -126,6 +126,19 @@ describe('EntityHeader', function() {
 
   it('displays an unsupported message for multi-series charms', function() {
     mockEntity.set('series', undefined);
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityHeader
+        entityModel={mockEntity}
+        changeState={sinon.spy()}
+        deployService={sinon.spy()} />);
+    var deployAction = output.refs.deployAction;
+    var textContent = deployAction.props.children;
+    assert.equal(textContent, 'This type of charm can only be deployed from ' +
+      'the command line.');
+  });
+
+  it('displays unsupported for charms with a channel id', function() {
+    mockEntity.set('id', 'cs:development/wily/juju-gui');
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
         entityModel={mockEntity}
@@ -173,7 +186,7 @@ describe('EntityHeader', function() {
     // Simulate a click.
     deployAction.props.action();
     assert.equal(getBundleYAML.callCount, 1);
-    assert.equal(getBundleYAML.args[0][0], 'django-cluster');
+    assert.equal(getBundleYAML.args[0][0], '~charmers/wily/django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
     assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
   });

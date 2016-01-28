@@ -160,11 +160,13 @@ YUI.add('entity-header', function() {
         this._getStoreURL(entity)
       ].join('');
       // XXX kadams54, 2016-01-04: the deployAction var will need to be removed
-      // once we fully support multi-series charms.
+      // once we fully support multi-series and channel charms.
       var deployAction;
-      // If the entity is not a charm OR it is a charm and has the series set,
+      // If the entity is not a charm OR it is a charm and has the series set
+      // AND the charm id includes an owner not a channel then
       // display a button. Otherwise display a "not supported" message.
-      if (entity.type !== 'charm' || entity.series) {
+      if ((entity.type !== 'charm' || entity.series) &&
+        entity.id.slice(0, 4) === 'cs:~') {
         deployAction = (
           <juju.components.GenericButton
             ref="deployAction"
