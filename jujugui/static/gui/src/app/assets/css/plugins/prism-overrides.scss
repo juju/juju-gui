@@ -1,0 +1,12 @@
+code[class*="language-"],
+pre[class*="language-"] {
+    font-family: "Ubuntu Mono", "Consolas", "Monaco", "Lucida Console", "Courier New", Courier, monospace;
+    text-shadow: none;
+}
+
+pre[class*="language-"] {
+    box-shadow: none;
+    background-color: $cool-grey;
+    border: none;
+    border-radius: inherit;
+}
