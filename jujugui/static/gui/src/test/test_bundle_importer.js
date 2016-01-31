@@ -26,7 +26,7 @@ describe('Bundle Importer', function() {
     var requires = ['bundle-importer', 'juju-tests-utils', 'juju-models',
                     'juju-env-go', 'juju-tests-factory',
                     'environment-change-set'];
-    YUI().use(requires, function(Y) {
+    YUI(GlobalConfig).use(requires, function(Y) {
       BundleImporter = Y.juju.BundleImporter;
       utils = Y['juju-tests'].utils;
       yui = Y;
