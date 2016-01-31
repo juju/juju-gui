@@ -57,6 +57,7 @@ describe('AddedServicesListItem', function() {
           unfadeService={sinon.stub()}
           changeState={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
+          panToService={sinon.stub()}
           service={mockService} />, true);
 
     var output = renderer.getRenderOutput();
@@ -141,6 +142,7 @@ describe('AddedServicesListItem', function() {
             unfadeService={sinon.stub()}
             changeState={sinon.stub()}
             getUnitStatusCounts={status.statusCounts}
+            panToService={sinon.stub()}
             service={service} />, true);
 
       var output = renderer.getRenderOutput();
@@ -201,6 +203,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
+        panToService={sinon.stub()}
         service={service} />, true);
 
     var output = renderer.getRenderOutput();
@@ -259,6 +262,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts(1, 1)}
+        panToService={sinon.stub()}
         service={service} />, true);
 
     var output = renderer.getRenderOutput();
@@ -317,6 +321,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
+        panToService={sinon.stub()}
         service={service} />, true);
 
     var output = renderer.getRenderOutput();
@@ -408,6 +413,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
+        panToService={sinon.stub()}
         service={mockService} />, true);
 
     // This is ugly but we have to check that the proper name prop was passed
@@ -433,6 +439,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
+        panToService={sinon.stub()}
         service={mockService} />, true);
 
     // This is ugly but we have to check that the proper name prop was passed
@@ -453,6 +460,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
+        panToService={sinon.stub()}
         service={mockService} />);
     var output = renderer.getRenderOutput();
     assert.deepEqual(
@@ -475,6 +483,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
+        panToService={sinon.stub()}
         service={mockService} />);
 
     // Toggle focus on.
@@ -503,6 +512,7 @@ describe('AddedServicesListItem', function() {
         unfadeService={unfadeService}
         changeState={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
+        panToService={sinon.stub()}
         service={mockService} />);
 
     // Toggle focus on.
@@ -535,9 +545,14 @@ describe('AddedServicesListItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.AddedServicesListItem
           changeState={changeStub}
+          fadeService={sinon.stub()}
+          focusService={sinon.stub()}
           hoverService={hoverService}
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service} />);
+          panToService={sinon.stub()}
+          service={service}
+          unfadeService={sinon.stub()}
+          unfocusService={sinon.stub()} />);
     output.props.onMouseEnter();
     assert.equal(hoverService.callCount, 1);
     assert.equal(hoverService.args[0][0], 'apache2');
@@ -560,9 +575,14 @@ describe('AddedServicesListItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.AddedServicesListItem
           changeState={changeStub}
+          fadeService={sinon.stub()}
+          focusService={sinon.stub()}
           hoverService={hoverService}
           getUnitStatusCounts={getUnitStatusCounts()}
-          service={service} />);
+          panToService={sinon.stub()}
+          service={service}
+          unfadeService={sinon.stub()}
+          unfocusService={sinon.stub()} />);
     output.props.onMouseLeave();
     assert.equal(hoverService.callCount, 1);
     assert.equal(hoverService.args[0][0], 'apache2');
