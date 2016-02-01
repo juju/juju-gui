@@ -1810,6 +1810,57 @@ YUI.add('juju-view-utils', function(Y) {
     return multiple ? utils.numToLetter(multiple) + char : char;
   };
 
+  /**
+    Generate a name for a service with an incremented number if needed.
+
+    @method generateServiceName
+    @param {String} charmName The charm name.
+    @param {String} charmId the full charm id.
+    @param {Object} services the list of services.
+    @param {Boolean} ignoreSelf ignore this service in the service count.
+    @returns {String} The name for the service.
+  */
+  utils.generateServiceName = function(
+    charmName, charmId, services, ignoreSelf) {
+    var charmCount = 0;
+    // Loop through each service and grab its charmid to see if it matches.
+    services.each((service) => {
+      // Remove the version number from the charm id as we don't care about the
+      // version when comparing charms.
+      var serviceCharmId = utils._extractCharmName(service.get('charm'));
+      var providedCharmId = utils._extractCharmName(charmId);
+      // If we have a matching charm then increase the count.
+      if (serviceCharmId === providedCharmId) {
+        charmCount += 1;
+      }
+    });
+    // In some cases the service has already been added to the db so we need to
+    // ignore it in the final count.
+    if (ignoreSelf) {
+      charmCount -= 1;
+    }
+    // The first service for a charm shouldn't get a count, but subsequent
+    // services should.
+    if (charmCount === 0) {
+      return charmName;
+    }
+    // numToLetter doesn't support 0's so this shouldn't be reached if
+    // charmCount === 0.
+    return `${charmName}-${utils.numToLetter(charmCount)}`;
+  };
+
+  /**
+    Extract the name of the charm from the id e.g. cs:trusty/wordpress-11 would
+    become "wordpress".
+
+    @method _extractCharmName
+    @param {String} charmId the full charm id.
+    @returns {String} The name for the charm.
+  */
+  utils._extractCharmName = function(charmId) {
+    return charmId.split('/')[1].split('-').slice(0, -1).join('-');
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
