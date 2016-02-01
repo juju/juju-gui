@@ -63,7 +63,8 @@ describe('MachineViewMachineUnit', function() {
         unit={unit} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <li className="machine-view__machine-unit">
+      <li className={'machine-view__machine-unit ' +
+        'machine-view__machine-unit--started'}>
         <span className="machine-view__machine-unit-icon">
           <img
             alt="django/7"
@@ -87,7 +88,8 @@ describe('MachineViewMachineUnit', function() {
         service={service}
         unit={unit} />);
     var expected = (
-      <li className="machine-view__machine-unit">
+      <li className={'machine-view__machine-unit ' +
+        'machine-view__machine-unit--started'}>
         <span className="machine-view__machine-unit-icon">
           <img
             alt="django/7"
@@ -117,7 +119,8 @@ describe('MachineViewMachineUnit', function() {
         unit={unit} />);
     var expected = (
       <li className={'machine-view__machine-unit ' +
-        'machine-view__machine-unit--dragged'}>
+        'machine-view__machine-unit--dragged ' +
+        'machine-view__machine-unit--started'}>
         {output.props.children}
       </li>);
     assert.deepEqual(output, expected);
@@ -153,7 +156,8 @@ describe('MachineViewMachineUnit', function() {
         unit={unit} />);
     var expected = (
       <li className={'machine-view__machine-unit ' +
-        'machine-view__machine-unit--draggable'}>
+        'machine-view__machine-unit--draggable ' +
+        'machine-view__machine-unit--started'}>
         {output.props.children}
       </li>);
     assert.deepEqual(output, expected);

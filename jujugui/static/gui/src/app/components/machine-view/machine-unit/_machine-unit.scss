@@ -7,6 +7,18 @@
         }
     }
 
+    &--error {
+        .machine-view__machine-unit-icon {
+            border: 1px solid $error;
+        }
+    }
+
+    &--pending {
+        .machine-view__machine-unit-icon {
+            border: 1px solid $pending;
+        }
+    }
+
     &-icon {
         display: inline-block;
         margin-right: 10px;

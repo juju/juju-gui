@@ -74,13 +74,16 @@ YUI.add('machine-view-machine-unit', function() {
     */
     _generateClasses: function() {
       var unit = this.props.unit;
+      var agentState = unit.agent_state;
+      var status = unit.deleted || !agentState ? 'uncommitted' : agentState;
+      var classes = {
+        'machine-view__machine-unit--draggable': this.props.canDrag,
+        'machine-view__machine-unit--dragged': this.props.isDragging
+      };
+      classes['machine-view__machine-unit--' + status] = true;
       return classNames(
-        'machine-view__machine-unit', {
-          'machine-view__machine-unit--uncommitted':
-            unit.deleted || !unit.agent_state,
-          'machine-view__machine-unit--draggable': this.props.canDrag,
-          'machine-view__machine-unit--dragged': this.props.isDragging
-        });
+        'machine-view__machine-unit',
+        classes);
     },
 
     render: function() {
