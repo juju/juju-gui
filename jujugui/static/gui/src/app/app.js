@@ -989,6 +989,15 @@ YUI.add('juju-gui', function(Y) {
       var state = this.state;
       var utils = views.utils;
       var charmstore = this.get('charmstore');
+      // Configure syntax highlighting for the markdown renderer.
+      marked.setOptions({
+        highlight: function(code, lang) {
+          var language = Prism.languages[lang];
+          if (language) {
+            return Prism.highlight(code, language);
+          }
+        }
+      });
       ReactDOM.render(
         <components.Charmbrowser
           charmstoreSearch={charmstore.search.bind(charmstore)}
