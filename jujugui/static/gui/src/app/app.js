@@ -613,17 +613,6 @@ YUI.add('juju-gui', function(Y) {
 
       this.enableBehaviors();
 
-      // Halt the default navigation on the juju logo to allow us to show
-      // the real root view without namespaces
-      var navNode = Y.one('#nav-brand-env');
-      // Tests won't have this node.
-      if (navNode) {
-        navNode.on('click', function(e) {
-          e.halt();
-          this.showRootView();
-        }, this);
-      }
-
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
@@ -1942,15 +1931,6 @@ YUI.add('juju-gui', function(Y) {
         this.set('jujuEnvUUID', environmentName);
       }
       this.db.environment.set('name', environmentName);
-    },
-
-    /**
-      Shows the root view of the application erasing all namespaces
-
-      @method showRootView
-    */
-    showRootView: function() {
-      this._navigate('/', { overrideAllNamespaces: true });
     },
 
     /**
