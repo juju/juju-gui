@@ -32,12 +32,15 @@ def app(request):
     env_uuid = request.matchdict.get('uuid')
     settings = request.registry.settings
     cache_buster = settings.get('jujugui.cachebuster', VERSION)
+    # kadams54, 2016-02-01: per https://github.com/juju/juju-gui/issues/1299
+    logo_url = 'http://jujucharms.com/' if settings['jujugui.sandbox'] else '/'
 
     return {
         'config_url': request.route_path('jujugui.config', uuid=env_uuid),
         'convoy_url': request.route_path(
             'jujugui.convoy', cachebuster=cache_buster, uuid=env_uuid),
         'combine': settings['jujugui.combine'],
+        'logo_url': logo_url,
         'raw': settings['jujugui.raw'],
     }
 

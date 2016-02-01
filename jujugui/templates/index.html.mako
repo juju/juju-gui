@@ -67,7 +67,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="header-banner header-banner--left">
         <ul id="browser-nav" class="header-banner__list">
           <li id="nav-brand-env" class="header-banner__list-item">
-            <a class="header-banner__link" href="/">
+            <a class="header-banner__link" href="${logo_url}">
               <svg class="svg-icon header-banner__logo"
                 viewBox="0 0 75 30"
                 style="width:75px; height:30px;">
