@@ -744,7 +744,9 @@ YUI.add('juju-gui', function(Y) {
           switchEnv={this.switchEnv.bind(this)}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           createSocketURL={this.createSocketURL.bind(this)}
-          showConnectingMask={this.showConnectingMask.bind(this)} />,
+          showConnectingMask={this.showConnectingMask.bind(this)}
+          interactiveLogin={this.get('interactiveLogin')}
+          charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
     },
 
@@ -1322,6 +1324,7 @@ YUI.add('juju-gui', function(Y) {
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
+          staticMacaroonPath: `${charmstoreURL}${apiPath}/macaroon`,
           serviceName: 'charmstore'
         });
         this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
