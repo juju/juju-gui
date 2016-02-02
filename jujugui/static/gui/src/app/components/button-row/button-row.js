@@ -52,6 +52,7 @@ YUI.add('button-row', function() {
             key={button.title}
             title={button.title}
             action={button.action}
+            disabled={button.disabled}
             submit={button.submit}
             type={button.type} />);
       });

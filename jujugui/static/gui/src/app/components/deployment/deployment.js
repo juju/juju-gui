@@ -27,7 +27,7 @@ YUI.add('deployment-component', function() {
     },
 
     /**
-      Get the current state of the inspector.
+      Get the current state of the component.
 
       @method getInitialState
       @returns {String} The current state.
