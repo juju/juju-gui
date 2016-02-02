@@ -359,8 +359,8 @@ describe('Bundle Importer', function() {
         // There was a bug where their names would clash and they would get
         // combined into a single service on deploy.
         assert.equal(db.services.item(3).get('charm'), 'cs:precise/mysql-51');
-        assert.equal(db.services.item(3).get('name'), 'mysql-slave');
-        assert.equal(db.services.item(3).get('displayName'), '(mysql-slave)');
+        assert.equal(db.services.item(3).get('name'), 'mysql-slave-a');
+        assert.equal(db.services.item(3).get('displayName'), '(mysql-slave-a)');
         // Machines
         assert.equal(db.machines.item(0).id, 'new0');
         assert.equal(db.machines.item(1).id, 'new1');
@@ -379,6 +379,21 @@ describe('Bundle Importer', function() {
         assert.equal(db.services.item(1).get('exposed'), false);
         assert.equal(db.services.item(2).get('exposed'), true);
         assert.equal(db.services.item(3).get('exposed'), false);
+        done();
+      });
+      bundleImporter.importBundleDryRun(data);
+    });
+
+    it('handles conflicts with existing service names', function(done) {
+      db.services.add(new yui.juju.models.Service({
+        id: 'haproxy',
+        charm: 'cs:precise/haproxy-35'
+      }));
+      var data = utils.loadFixture(
+          'data/wordpress-bundle-recordset.json', true);
+      bundleImporter.db.after('bundleImportComplete', function() {
+        assert.equal(db.services.item(0).get('name'), 'haproxy');
+        assert.equal(db.services.item(1).get('name'), 'haproxy-a');
         done();
       });
       bundleImporter.importBundleDryRun(data);

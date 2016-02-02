@@ -720,7 +720,7 @@ YUI.add('juju-models', function(Y) {
 
       var charmId = charm.get('id');
       var charmName = charm.get('package_name');
-      var name = this._generateServiceName(charmName, charmId);
+      var name = utils.generateServiceName(charmName, charmId, this);
       var ghostService = this.create({
         // Creating a temporary id because it's undefined by default.
         id: randomId,
@@ -735,33 +735,6 @@ YUI.add('juju-models', function(Y) {
         config: config
       });
       return ghostService;
-    },
-
-    /**
-      Generate a name for this service with an incremented number if needed.
-
-      @method _generateServiceName
-      @param {String} charmName The charm name.
-      @param {String} charmId the full charm id.
-      @returns {String} The name for the service.
-    */
-    _generateServiceName: function(charmName, charmId) {
-      var charmCount = 0;
-      // Loop through each service and grab its charmid to see if it matches.
-      this.each((service) => {
-        // If we have a matching charm then increase the count.
-        if (service.get('charm') === charmId) {
-          charmCount += 1;
-        }
-      });
-      // The first service for a charm shouldn't get a count, but subsequent
-      // services should.
-      if (charmCount === 0) {
-        return charmName;
-      }
-      // numToLetter doesn't support 0's so this shouldn't be reached if
-      // charmCount === 0.
-      return `${charmName}-${utils.numToLetter(charmCount)}`;
     },
 
     /**

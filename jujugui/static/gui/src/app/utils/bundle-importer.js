@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('bundle-importer', function(Y) {
 
   var ns = Y.namespace('juju');
+  var utils = Y.namespace('juju.views.utils');
 
   /**
     Bundle importer class handles importing bundles in YAML and dry-run
@@ -450,10 +451,15 @@ YUI.add('bundle-importer', function(Y) {
               }
             });
           }
+          var displayName = record.args[1];
+          // Update the name to make sure there are no collisions.
+          var displayName = utils.generateServiceName(
+            displayName, charm.get('id'), this.db.services, true);
+          // Update the record with the new name.
+          record.args[1] = displayName;
           // We have to set the display name and charm name for the services
           // because some bundles specify multiples of the same charms as
           // different names.
-          var displayName = record.args[1];
           ghostService.set('name', displayName);
           ghostService.set('displayName', displayName);
           ghostService.set('config', config);
@@ -694,6 +700,7 @@ YUI.add('bundle-importer', function(Y) {
 }, '', {
   requires: [
     'juju-env-go',
+    'juju-view-utils',
     'environment-change-set'
   ]
 });
