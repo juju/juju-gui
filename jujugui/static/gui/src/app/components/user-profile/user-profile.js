@@ -30,6 +30,8 @@ YUI.add('user-profile', function() {
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
+      charmstore: React.PropTypes.object,
+      interactiveLogin: React.PropTypes.bool
     },
 
     getInitialState: function() {
@@ -121,8 +123,34 @@ YUI.add('user-profile', function() {
       });
     },
 
+    /**
+      Calls the bakery to get a charmstore macaroon.
+
+      @method _interactiveLogin
+    */
+    _interactiveLogin: function() {
+      var bakery = this.props.charmstore.bakery;
+      bakery.fetchMacaroonFromStaticPath(this._fetchMacaroonCallback);
+    },
+
+    /**
+      Callback for fetching the macaroon.
+
+      @method _fetchMacaroonCallback
+      @param {String|Object|Null} The error response from the callback.
+      @param {String} The resolved macaroon.
+    */
+    _fetchMacaroonCallback: function(err, macaroon) {
+
+    },
+
+
     render: function() {
       var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
+      var interactiveLogin = this.props.interactiveLogin ?
+        <juju.components.GenericButton
+          title="Log in to the charmstore"
+          action={this._interactiveLogin} /> : '';
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -140,6 +168,7 @@ YUI.add('user-profile', function() {
             uuidKey="uuid"
             switchEnv={this.switchEnv}
             whitelist={whitelist}/>
+          {interactiveLogin}
         </juju.components.Panel>
       );
     }
@@ -150,6 +179,7 @@ YUI.add('user-profile', function() {
   requires: [
     'svg-icon',
     'panel-component',
+    'generic-button',
     'user-profile-header',
     'user-profile-list'
   ]
