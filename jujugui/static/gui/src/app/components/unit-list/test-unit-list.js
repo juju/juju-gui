@@ -48,10 +48,12 @@ describe('UnitList', () => {
       displayName: 'mysql/1',
       id: 'mysql/1'
     }];
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
           service={service}
-          units={units} />);
+          units={units} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var children = output.props.children[1].props.children;
     var refs = [
       'UnitListItem-' + units[0].id,
@@ -69,13 +71,15 @@ describe('UnitList', () => {
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
-        unitId="mysql/0" />,
+        unitId="mysql/0"
+        whenChanged={instance._updateActiveCount} />,
       <juju.components.UnitListItem
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
         action={children[2].props.action}
-        unitId="mysql/1" />
+        unitId="mysql/1"
+        whenChanged={instance._updateActiveCount} />
     ]);
   });
 
@@ -89,10 +93,12 @@ describe('UnitList', () => {
       id: 'mysql/1',
       agent_state_info: 'hook failed: config-changed'
     }];
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
           unitStatus='error'
-          units={units} />);
+          units={units} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     var children = output.props.children[1].props.children;
     var refs = [
       'UnitListItem-' + units[0].id,
@@ -110,7 +116,8 @@ describe('UnitList', () => {
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
-        unitId="mysql/0" />,
+        unitId="mysql/0"
+        whenChanged={instance._updateActiveCount} />,
       <juju.components.UnitListItem
         ref="select-all-1"
         key="select-all-1"
@@ -122,7 +129,8 @@ describe('UnitList', () => {
         ref={refs[1]}
         label={units[1].displayName}
         action={children[3].props.action}
-        unitId="mysql/1" />
+        unitId="mysql/1"
+        whenChanged={instance._updateActiveCount} />
     ]);
   });
 
@@ -281,7 +289,8 @@ describe('UnitList', () => {
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Remove',
-      action: buttonItems[0].action
+      action: buttonItems[0].action,
+      disabled: true
     }];
     assert.deepEqual(output.props.children[2],
       <juju.components.ButtonRow
@@ -297,13 +306,16 @@ describe('UnitList', () => {
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Resolve',
-      action: buttonItems[0].action
+      action: buttonItems[0].action,
+      disabled: true
     }, {
       title: 'Retry',
-      action: buttonItems[1].action
+      action: buttonItems[1].action,
+      disabled: true
     }, {
       title: 'Remove',
-      action: buttonItems[2].action
+      action: buttonItems[2].action,
+      disabled: true
     }];
     assert.deepEqual(output.props.children[2],
       <juju.components.ButtonRow
@@ -334,8 +346,12 @@ describe('UnitList', () => {
           envResolved={envResolved}
           service={service}
           units={units} />);
-    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
-    output.refs['UnitListItem-' + units[2].id].setState({checked: true});
+    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
+    checkboxes[3].checked = true;
+    testUtils.Simulate.change(checkboxes[3]);
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'generic-button');
     testUtils.Simulate.click(button);
@@ -361,7 +377,10 @@ describe('UnitList', () => {
           envResolved={sinon.stub()}
           service={service}
           units={units} />);
-    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
+    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'generic-button');
     testUtils.Simulate.click(button);
@@ -390,8 +409,12 @@ describe('UnitList', () => {
           changeState={changeState}
           service={service}
           units={units} />);
-    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
-    output.refs['UnitListItem-' + units[1].id].setState({checked: true});
+    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
+    checkboxes[2].checked = true;
+    testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
         output, 'generic-button')[0];
     testUtils.Simulate.click(button);
@@ -424,8 +447,12 @@ describe('UnitList', () => {
           changeState={changeState}
           service={service}
           units={units} />);
-    output.refs['UnitListItem-' + units[0].id].setState({checked: true});
-    output.refs['UnitListItem-' + units[1].id].setState({checked: true});
+    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[1].checked = true;
+    testUtils.Simulate.change(checkboxes[1]);
+    checkboxes[2].checked = true;
+    testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
         output, 'generic-button')[1];
     testUtils.Simulate.click(button);
