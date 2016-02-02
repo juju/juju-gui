@@ -69,8 +69,57 @@ YUI.add('juju-env-bakery', function(Y) {
           this.visitMethod = this._defaultVisitMethod;
         }
         this.macaroonName = 'Macaroons-' + cfg.serviceName;
+        this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
         this.nonceLen = 24;
+      },
+
+
+      /**
+        Returns a macaroon for this bakery instance. If a macaroon has already
+        been stored it will return that. If not, it makes a request to the
+        staticMacaroonPath to fetch and discharge and store a new macaroon for
+        later use.
+
+        @method fetchMacaroonFromStaticPath
+        @param {Function} callback The callback that gets called for success
+          or failure at any point in the macaroon chain.
+        @return {undefined}
+      */
+      fetchMacaroonFromStaticPath: function(callback) {
+        var savedMacaroon = this._getMacaroon();
+        if (savedMacaroon !== null) {
+          callback(null, savedMacaroon);
+          return;
+        }
+        if (!this.staticMacaroonPath) {
+          callback('Charmstore macaroon path was not defined.');
+          return;
+        }
+        this.webhandler.sendGetRequest(
+          this.staticMacaroonPath, null, null, null, false, null,
+          this._interactivePrefetch.bind(this, callback));
+      },
+
+      /**
+        Handler for the interactive macaroon prefetch.
+
+        @method _interactivePrefetch
+        @param {Function} callback The callback to be called after success
+          or failure.
+        @param {Object} The response object from the staticMacaroonPath fetch.
+        @return {undefined}
+      */
+      _interactivePrefetch: function(callback, res) {
+        var macaroon = {};
+        try {
+          macaroon = JSON.parse(res.target.responseText);
+        } catch(e) {
+          callback(e);
+        }
+        this._authenticate(macaroon, function() {
+          callback(null, this._getMacaroon());
+        }.bind(this), callback);
       },
 
       /**
