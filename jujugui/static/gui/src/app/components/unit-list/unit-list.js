@@ -23,6 +23,16 @@ YUI.add('unit-list', function() {
   juju.components.UnitList = React.createClass({
 
     /**
+      Generate the initial state.
+
+      @method getInitialState
+      @returns {String} The intial state.
+    */
+    getInitialState: function() {
+      return {activeCount: 0};
+    },
+
+    /**
       Fires changeState to update the UI based on the component clicked.
 
       @method _navigate
@@ -52,6 +62,8 @@ YUI.add('unit-list', function() {
         groups[key].units.forEach((unit) => {
           this.refs['UnitListItem-' + unit.id].setState({
             checked: checked
+          }, () => {
+            this._updateActiveCount();
           });
         });
       };
@@ -66,7 +78,6 @@ YUI.add('unit-list', function() {
       } else {
         setChecked(group, groups);
       }
-
     },
 
     /**
@@ -147,7 +158,8 @@ YUI.add('unit-list', function() {
             ref={ref}
             label={unit.displayName}
             action={this._unitItemAction}
-            unitId={unit.id} />);
+            unitId={unit.id}
+            whenChanged={this._updateActiveCount} />);
       });
       return unitList;
     },
@@ -192,6 +204,7 @@ YUI.add('unit-list', function() {
     /**
       Generate the groups of units.
 
+      @method _generateListGroups
       @returns {Object} The list components
     */
     _generateListGroups: function() {
@@ -205,25 +218,48 @@ YUI.add('unit-list', function() {
     },
 
     /**
+      Update the count of the number of active checkboxes.
+
+      @method _updateActiveCount
+    */
+    _updateActiveCount: function() {
+      var activeCount = 0;
+      var refs = this.refs;
+      Object.keys(refs).forEach((ref) => {
+        if (ref.split('-')[0] === 'UnitListItem') {
+          if (refs[ref].state.checked) {
+            activeCount += 1;
+          }
+        }
+      });
+      this.setState({'activeCount': activeCount});
+    },
+
+    /**
       Generate the buttons for the status.
 
+      @method _generateButtons
       @returns {Array} The list of buttons
     */
     _generateButtons: function() {
       var buttons = [];
+      var disabled = this.state.activeCount === 0;
       if (this.props.unitStatus === 'error') {
         buttons.push({
           title: 'Resolve',
-          action: this._handleUpdateUnits.bind(this, 'resolve')
+          action: this._handleUpdateUnits.bind(this, 'resolve'),
+          disabled: disabled
         });
         buttons.push({
           title: 'Retry',
-          action: this._handleUpdateUnits.bind(this, 'retry')
+          action: this._handleUpdateUnits.bind(this, 'retry'),
+          disabled: disabled
         });
       }
       buttons.push({
         title: 'Remove',
-        action: this._handleUpdateUnits.bind(this, 'remove')
+        action: this._handleUpdateUnits.bind(this, 'remove'),
+        disabled: disabled
       });
       return buttons;
     },

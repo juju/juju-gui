@@ -71,12 +71,13 @@ YUI.add('unit-list-item', function() {
     _handleChange: function(e) {
       var whenChanged = this.props.whenChanged;
       var checked = e.currentTarget.checked;
-      // When whenChanged is set by the list parent and is used
-      // to (de)select all checkboxes.
-      if (whenChanged) {
-        whenChanged(checked);
-      }
-      this.setState({checked: checked});
+      this.setState({checked: checked}, () => {
+        // When whenChanged is set by the list parent and is used
+        // to (de)select all checkboxes.
+        if (whenChanged) {
+          whenChanged(checked);
+        }
+      });
     },
 
     /**
