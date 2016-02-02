@@ -63,6 +63,8 @@ YUI.add('unit-list', function() {
           this.refs['UnitListItem-' + unit.id].setState({
             checked: checked
           }, () => {
+            // After the state has been updated then update the active unit
+            // count to enable/disable the buttons.
             this._updateActiveCount();
           });
         });
