@@ -93,7 +93,7 @@ YUI.add('juju-env-bakery', function(Y) {
           return;
         }
         if (!this.staticMacaroonPath) {
-          callback('Charmstore macaroon path was not defined.');
+          callback('Static macaroon path was not defined.');
           return;
         }
         this.webhandler.sendGetRequest(

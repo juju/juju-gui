@@ -140,9 +140,7 @@ YUI.add('user-profile', function() {
       @param {String|Object|Null} The error response from the callback.
       @param {String} The resolved macaroon.
     */
-    _fetchMacaroonCallback: function(err, macaroon) {
-
-    },
+    _fetchMacaroonCallback: function(err, macaroon) {},
 
 
     render: function() {
