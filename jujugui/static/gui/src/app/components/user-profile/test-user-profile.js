@@ -36,6 +36,7 @@ describe('UserProfile', () => {
         jem={jem}
         switchEnv={sinon.stub()}
         showConnectingMask={sinon.stub()}
+        interactiveLogin={true}
         changeState={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
@@ -57,9 +58,43 @@ describe('UserProfile', () => {
           uuidKey="uuid"
           switchEnv={instance.switchEnv}
           whitelist={whitelist}/>
+        <juju.components.GenericButton
+          title="Log in to the charmstore"
+          action={instance._interactiveLogin} />
       </juju.components.Panel>
     );
     assert.deepEqual(output, expected);
+  });
+
+  it('does not display charmstore log in if interactiveLogin is falsy', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        switchEnv={sinon.stub()}
+        listEnvs={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        changeState={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        interactiveLogin={false} />);
+    assert.equal(output.props.children[3], '');
+  });
+
+  it('clicks to log in to charmstore fetch macaroons from the bakery', () => {
+    var charmstore = {
+      bakery: {
+        fetchMacaroonFromStaticPath: sinon.stub()
+      }
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        switchEnv={sinon.stub()}
+        listEnvs={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        changeState={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        charmstore={charmstore}
+        interactiveLogin={true} />);
+    output.props.children[3].props.action();
+    assert.equal(charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1);
   });
 
   it('closes when clicking the close button', () => {
