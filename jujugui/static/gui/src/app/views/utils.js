@@ -1798,7 +1798,7 @@ YUI.add('juju-view-utils', function(Y) {
     var char = '';
     // remainder will be 0 if number is 26 (Z)
     if (remainder) {
-      // 64 is the start of upper case alphabet.
+      // 96 is the start of lower case alphabet.
       char = String.fromCharCode(96 + remainder);
     } else {
       // subtract 1 from the multiple if remainder is 0 and add a Z;
@@ -1808,6 +1808,30 @@ YUI.add('juju-view-utils', function(Y) {
     // If there are multiple characters required then recurse else
     // return the value of char.
     return multiple ? utils.numToLetter(multiple) + char : char;
+  };
+
+  /**
+    Convert the string passed in into a number representation.
+    ex) B = 2, AA = 27, AL = 38 ...
+
+    @method letterToNum
+    @returns {String} str The string to convert to a number.
+    @returns {Integer} The number representation.
+  */
+  utils.letterToNum = function(str) {
+    var num = 0;
+    var characters = str.split('');
+    var characterLength = characters.length;
+    characters.forEach((letter, characterPosition) => {
+      // Use the character position to calculate the base for this character.
+      // The last character needs to have a base of 0 so we subtract one from
+      // the position.
+      var base = Math.pow(26, characterLength - characterPosition - 1);
+      // Use the character code to get the number value for the letter. 96 is
+      // the start of lower case alphabet.
+      num += base * (str.charCodeAt(characterPosition) - 96);
+    });
+    return num;
   };
 
   /**
@@ -1822,31 +1846,40 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.generateServiceName = function(
     charmName, charmId, services, ignoreSelf) {
-    var charmCount = 0;
     // Loop through each service and grab its charmid to see if it matches.
-    services.each((service) => {
+    var highestCounter = Math.max.apply(Math, services.map((service) => {
       // Remove the version number from the charm id as we don't care about the
       // version when comparing charms.
       var serviceCharmId = utils._extractCharmName(service.get('charm'));
       var providedCharmId = utils._extractCharmName(charmId);
       // If we have a matching charm then increase the count.
       if (serviceCharmId === providedCharmId) {
-        charmCount += 1;
+        // Remove the service name and dash from the name to get the counter.
+        var counter = service.get('name').replace(
+          charmName, '').replace('-', '');
+        if (counter === '') {
+          // The first service won't have a counter.
+          return 0;
+        }
+        return utils.letterToNum(counter);
       }
-    });
+      // The service did not have a matching charm, ignore it.
+      return -1;
+    }));
     // In some cases the service has already been added to the db so we need to
-    // ignore it in the final count.
+    // ignore it in the count.
     if (ignoreSelf) {
-      charmCount -= 1;
+      highestCounter -= 1;
     }
     // The first service for a charm shouldn't get a count, but subsequent
-    // services should.
-    if (charmCount === 0) {
+    // services should. If there are no existing services then the counter will
+    // be -Infinity.
+    if (highestCounter < 0) {
       return charmName;
     }
     // numToLetter doesn't support 0's so this shouldn't be reached if
     // charmCount === 0.
-    return `${charmName}-${utils.numToLetter(charmCount)}`;
+    return `${charmName}-${utils.numToLetter(highestCounter + 1)}`;
   };
 
   /**

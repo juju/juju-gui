@@ -157,6 +157,18 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(services.item(3).get('name'), 'mysql-a');
   });
 
+  it('increments the name with deleted services', function() {
+    var charm = makeCharm();
+    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    var services = ghostDeployer.db.services;
+    services.ghostService(charm);
+    services.ghostService(charm);
+    services.item(0).destroy();
+    services.ghostService(charm);
+    assert.equal(services.item(0).get('name'), 'django-a');
+    assert.equal(services.item(1).get('name'), 'django-b');
+  });
+
   it('can create a ghost unit', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
