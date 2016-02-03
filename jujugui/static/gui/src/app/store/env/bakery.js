@@ -116,6 +116,7 @@ YUI.add('juju-env-bakery', function(Y) {
           macaroon = JSON.parse(res.target.responseText);
         } catch(e) {
           callback(e);
+          return;
         }
         this._authenticate(macaroon, function() {
           callback(null, this._getMacaroon());
