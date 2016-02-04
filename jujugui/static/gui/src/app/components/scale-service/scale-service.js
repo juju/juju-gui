@@ -121,7 +121,6 @@ YUI.add('scale-service', function() {
     render: function() {
       var buttons = [{
         title: 'Confirm',
-        action: this._scaleUpService,
         submit: true
       }];
 

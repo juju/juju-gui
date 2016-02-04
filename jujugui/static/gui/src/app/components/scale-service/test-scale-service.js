@@ -98,9 +98,9 @@ describe('ScaleService', function() {
     disk.value = 'd i s k';
     testUtils.Simulate.change(disk);
 
-    // Click the submit button in the ButtonRow component.
-    var button = ReactDOM.findDOMNode(output).querySelector('button');
-    testUtils.Simulate.click(button);
+    // Submit the scale-service form.
+    var form = ReactDOM.findDOMNode(output);
+    testUtils.Simulate.submit(form);
     assert.equal(createMachineStub.callCount, 1);
     assert.equal(addGhostStub.callCount, 0);
     assert.equal(changeStateStub.callCount, 1);
@@ -140,9 +140,9 @@ describe('ScaleService', function() {
     var unitCount = output.refs.numUnitsInput;
     unitCount.value = 3;
     testUtils.Simulate.change(unitCount);
-    // Click the submit button in the ButtonRow component.
-    var button = ReactDOM.findDOMNode(output).querySelector('button');
-    testUtils.Simulate.click(button);
+    // Submit the scale-service form.
+    var form = ReactDOM.findDOMNode(output);
+    testUtils.Simulate.submit(form);
     assert.equal(createMachineStub.callCount, 0);
     assert.equal(addGhostStub.callCount, 1);
     assert.equal(changeStateStub.callCount, 1);

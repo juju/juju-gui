@@ -53,6 +53,16 @@ describe('GenericButton', function() {
     assert.equal(callbackStub.callCount, 0);
   });
 
+  it('does not call the callable if not provided', function() {
+    // This is checking that code is not executed and so there are no side
+    // effects to check. No syntax error is considered a success.
+    var output = jsTestUtils.shallowRender(
+        <juju.components.GenericButton />);
+    output.props.onClick({
+      stopPropagation: sinon.stub()
+    });
+  });
+
   it('stop the event propogating when clicked', function() {
     var callbackStub = sinon.stub();
     var stopPropagation = sinon.stub();

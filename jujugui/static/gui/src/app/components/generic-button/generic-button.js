@@ -51,7 +51,9 @@ YUI.add('generic-button', function() {
     _handleClick: function(e) {
       // Don't bubble the click the parent.
       e.stopPropagation();
-      if (!this.props.disabled) {
+      // If submit is true then typically no action is provided because it
+      // is submitting a form.
+      if (!this.props.disabled && this.props.action) {
         this.props.action();
       }
     },
