@@ -437,6 +437,7 @@ YUI.add('juju-gui', function(Y) {
         var auth = this._getAuth();
         if (breadcrumbElement) {
           breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
+            window.juju_config.user ||
             'admin';
         }
 
@@ -1150,11 +1151,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var auth = this._getAuth();
+      var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
       ReactDOM.render(
         <components.EnvSwitcher
           app={this}
           env={this.env}
-          environmentName={this.db.environment.get('name')}
+          environmentName={envName}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
           envList={this.get('environmentList')}
@@ -1831,6 +1833,7 @@ YUI.add('juju-gui', function(Y) {
       var auth = this._getAuth();
       if (breadcrumbElement) {
         breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
+          window.juju_config.user ||
           'admin';
       }
       // Tell the environment to use the new socket URL when reconnecting.
@@ -1926,6 +1929,14 @@ YUI.add('juju-gui', function(Y) {
       // If there's an override in the custom settings use that instead.
       if (localStorage.getItem('environmentName')) {
         environmentName = localStorage.getItem('environmentName');
+      }
+      // The config.js jujuEnvUUID trumps 'sandbox'; in any other
+      // situation, the provided environmentName should update the app's
+      // jujuEnvUUID.
+      if (environmentName === 'sandbox') {
+        environmentName = this.get('jujuEnvUUID');
+      } else {
+        this.set('jujuEnvUUID', environmentName);
       }
       this.db.environment.set('name', environmentName);
     },

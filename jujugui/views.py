@@ -64,22 +64,11 @@ def config(request):
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
     jem_url = settings['jujugui.jem_url']
-    # If sandbox is enabled then set the password to "admin" so that the
-    # Juju GUI will automatically log in.
-    user, password = 'admin', 'password'
-    if not sandbox_enabled:
-        user, password = settings['jujugui.user'], settings['jujugui.password']
-    baseUrl = settings['jujugui.base_url']
-    env_uuid = settings.get('jujugui.uuid')
-    path_env_uuid = request.matchdict.get('uuid')
-    if baseUrl is None:
-        if path_env_uuid is None:
-            baseUrl = ''
-        else:
-            baseUrl = '/u/anonymous/{}'.format(path_env_uuid)
-    env_uuid = [
-        uuid for uuid in [path_env_uuid, env_uuid, 'sandbox']
-        if uuid is not None][0]
+    user = settings.get('jujugui.user')
+    password = settings.get('jujugui.password')
+    base_url = settings.get('jujugui.base_url')
+    env_uuid = settings.get('jujugui.uuid', 'sandbox')
+
     options = {
         # Base YUI options.
         'auth': settings['jujugui.auth'],
@@ -87,7 +76,7 @@ def config(request):
         'html5': True,
         'container': '#main',
         'viewContainer': '#main',
-        'baseUrl': baseUrl,
+        'baseUrl': base_url,
         'transitions': False,
         'cachedFonts': False,
         # Debugging options.
@@ -113,7 +102,7 @@ def config(request):
         'GTM_enabled': settings['jujugui.GTM_enabled'],
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': settings.get('jujugui.jujuCoreVersion', ''),
-        'apiAddress': settings.get('jujugui.apiAddress'),
+        'apiAddress': settings.get('jujugui.apiAddress', ''),
         'socketTemplate': settings['jujugui.socketTemplate'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
