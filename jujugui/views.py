@@ -69,6 +69,10 @@ def config(request):
     base_url = settings.get('jujugui.base_url')
     env_uuid = settings.get('jujugui.uuid', 'sandbox')
 
+    if sandbox_enabled:
+        user = user if user is not None else 'admin'
+        password = password if password is not None else 'password'
+
     options = {
         # Base YUI options.
         'auth': settings['jujugui.auth'],
