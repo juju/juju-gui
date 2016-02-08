@@ -190,6 +190,27 @@ YUI.add('juju-topology', function(Y) {
         plusIndicator.call(plusDrag);
       }
 
+      // The service icon mask for displaying as circles.
+      vis.append('circle')
+        .attr({
+          id: function(d) { return 'service-icon-mask'; },
+          cx: 48,
+          cy: 48,
+          r: 43,
+          fill: 'transparent'
+        })
+        .style('pointer-events', 'none');
+
+      var clip = vis.append('clipPath')
+        .attr({
+          id: function(d) { return 'clip-mask'; },
+        });
+
+      clip.append('use')
+        .attr({
+          'xlink:href': function(d) { return '#service-icon-mask'; }
+        });
+
       Topology.superclass.renderOnce.apply(this, arguments);
       return this;
     },

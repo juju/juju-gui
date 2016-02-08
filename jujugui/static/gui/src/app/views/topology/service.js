@@ -1635,24 +1635,6 @@ YUI.add('juju-topology-service', function(Y) {
         })
         .classed('service-block', true);
 
-      node.append('circle')
-        .attr({
-          id: function(d) { return 'service-icon-mask-' + d.name; },
-          cx: 48,
-          cy: 48,
-          r: 45
-        });
-
-      var clip = node.append('clipPath')
-        .attr({
-          id: function(d) { return 'clip-' + d.name; },
-        });
-
-      clip.append('use')
-        .attr({
-          'xlink:href': function(d) { return '#service-icon-mask-' + d.name; }
-        });
-
       node.append('image')
        .classed('service-icon', true)
        .attr({
@@ -1664,7 +1646,7 @@ YUI.add('juju-topology-service', function(Y) {
          transform: function(d) {
            return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
          },
-         'clip-path': function(d) { return 'url(#clip-' + d.name + ')'; }
+         'clip-path': function(d) { return 'url(#clip-mask)'; }
        });
 
       // Manually attach the touchstart event (see method for details)

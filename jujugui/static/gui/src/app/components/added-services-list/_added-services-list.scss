@@ -44,12 +44,8 @@
     }
 
     &__item-icon {
-        $size: 24px;
-        width: $size;
-        height: $size;
+        @extend %icon--small;
         margin-right: 16px;
-        border-radius: $size / 2;
-        vertical-align: middle;
     }
 
     &__item-name {
