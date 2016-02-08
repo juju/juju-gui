@@ -1846,7 +1846,9 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.generateServiceName = function(
     charmName, charmId, services, ignoreSelf) {
-    // Loop through each service and grab its charmid to see if it matches.
+    // Find the highest counter from the existing services. We can't just
+    // use the number of services as there could be duplicate names if services
+    // have been removed.
     var highestCounter = Math.max.apply(Math, services.map((service) => {
       // Remove the version number from the charm id as we don't care about the
       // version when comparing charms.
@@ -1854,7 +1856,9 @@ YUI.add('juju-view-utils', function(Y) {
       var providedCharmId = utils._extractCharmName(charmId);
       // If we have a matching charm then increase the count.
       if (serviceCharmId === providedCharmId) {
-        // Remove the service name and dash from the name to get the counter.
+        // Remove the service name and dash to get the counter. It is done this
+        // way so that we can get just the counter from the string and don't get
+        // false positives from names with dashes in them.
         var counter = service.get('name').replace(
           charmName, '').replace('-', '');
         if (counter === '') {
