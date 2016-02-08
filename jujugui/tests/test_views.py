@@ -104,7 +104,7 @@ class ConfigTests(ViewTestCase):
         self.assertIs(True, config['consoleEnabled'])
         self.assertEqual('', config['jujuCoreVersion'])
         self.assertIs(False, config['sandbox'])
-        self.assertEqual('', config['user'])
+        self.assertIsNone(config['user'])
         self.assertIsNone(config['password'])
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
@@ -127,24 +127,9 @@ class ConfigTests(ViewTestCase):
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
         self.assertIs(True, config['sandbox'])
-        # The hideLoginButton, user and password values reflect sandbox status.
-        self.assertEqual('admin', config['user'])
-        self.assertEqual('password', config['password'])
-
-    def test_standalone(self):
-        jujugui.make_application(self.config)
-        response = views.config(self.request)
-        config = self.check_response(response)
-        self.assertEqual('sandbox', config['jujuEnvUUID'])
-        self.assertEqual('', config['baseUrl'])
-
-    def test_included(self):
-        jujugui.gui.includeme(self.config)
-        self.request.matchdict['uuid'] = 'env-uuid'
-        response = views.config(self.request)
-        config = self.check_response(response)
-        self.assertEqual('env-uuid', config['jujuEnvUUID'])
-        self.assertEqual('/u/anonymous/env-uuid', config['baseUrl'])
+        # User/password values that are explitly set trump defaults.
+        self.assertEqual('who', config['user'])
+        self.assertEqual('secret', config['password'])
 
     def test_explicit_base_url(self):
         self.update_settings({'jujugui.base_url': '/ignore/prefix'})

@@ -12,7 +12,7 @@ class TestUpdate(unittest.TestCase):
     default_settings = {
         'jujugui.api_path': options.DEFAULT_API_PATH,
         'jujugui.auth': None,
-        'jujugui.base_url': None,
+        'jujugui.base_url': '',
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
         'jujugui.combine': True,
         'jujugui.GTM_enabled': False,
@@ -23,7 +23,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.raw': False,
         'jujugui.sandbox': False,
         'jujugui.socketTemplate': '/environment/$uuid/api',
-        'jujugui.user': '',
+        'jujugui.user': None,
     }
 
     def test_default_values(self):
