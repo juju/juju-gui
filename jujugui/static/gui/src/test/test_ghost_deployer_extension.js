@@ -157,7 +157,49 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(services.item(3).get('name'), 'mysql-a');
   });
 
-  it('increments the name with deleted services', function() {
+  it('increments subset names for duplicate services', function() {
+    var mysql = {
+      id: 'cs:trusty/mysql',
+      name: 'mysql',
+      package_name: 'mysql',
+      is_subordinate: false
+    };
+    var mysqlSlave = {
+      id: 'cs:trusty/mysql-slave',
+      name: 'mysql-slave',
+      package_name: 'mysql-slave',
+      is_subordinate: false
+    };
+    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    var services = ghostDeployer.db.services;
+    services.ghostService(new Y.Model(mysqlSlave));
+    services.ghostService(new Y.Model(mysql));
+    assert.equal(services.item(0).get('name'), 'mysql-slave');
+    assert.equal(services.item(1).get('name'), 'mysql');
+  });
+
+  it('increments subset custom names for duplicate services', function() {
+    var mysql = {
+      id: 'cs:trusty/mysql',
+      name: 'my-mysql',
+      package_name: 'my-mysql',
+      is_subordinate: false
+    };
+    var mysqlSlave = {
+      id: 'cs:trusty/mysql',
+      name: 'my-mysql-slave',
+      package_name: 'my-mysql-slave',
+      is_subordinate: false
+    };
+    ghostDeployer.db.services = new Y.juju.models.ServiceList();
+    var services = ghostDeployer.db.services;
+    services.ghostService(new Y.Model(mysqlSlave));
+    services.ghostService(new Y.Model(mysql));
+    assert.equal(services.item(0).get('name'), 'my-mysql-slave');
+    assert.equal(services.item(1).get('name'), 'my-mysql');
+  });
+
+  it('uses the default name if available', function() {
     var charm = makeCharm();
     ghostDeployer.db.services = new Y.juju.models.ServiceList();
     var services = ghostDeployer.db.services;
@@ -167,7 +209,7 @@ describe('Ghost Deployer Extension', function() {
     var service3 = services.ghostService(charm);
     assert.equal(services.item(0).get('name'), 'django-a');
     assert.equal(services.item(0).get('id'), service2.get('id'));
-    assert.equal(services.item(1).get('name'), 'django-b');
+    assert.equal(services.item(1).get('name'), 'django');
     assert.equal(services.item(1).get('id'), service3.get('id'));
   });
 
@@ -182,7 +224,7 @@ describe('Ghost Deployer Extension', function() {
     services.ghostService(charm);
     assert.equal(services.item(0).get('name'), 'django');
     assert.equal(services.item(1).get('name'), 'django-b');
-    assert.equal(services.item(2).get('name'), 'django-c');
+    assert.equal(services.item(2).get('name'), 'django-a');
   });
 
   it('can create a ghost unit', function() {

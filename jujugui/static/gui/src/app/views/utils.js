@@ -1839,63 +1839,22 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method generateServiceName
     @param {String} charmName The charm name.
-    @param {String} charmId the full charm id.
     @param {Object} services the list of services.
-    @param {Boolean} ignoreSelf ignore this service in the service count.
+    @param {Integer} counter The optional increment counter.
     @returns {String} The name for the service.
   */
-  utils.generateServiceName = function(
-    charmName, charmId, services, ignoreSelf) {
-    // Find the highest counter from the existing services. We can't just
-    // use the number of services as there could be duplicate names if services
-    // have been removed.
-    var highestCounter = Math.max.apply(Math, services.map((service) => {
-      // Remove the version number from the charm id as we don't care about the
-      // version when comparing charms.
-      var serviceCharmId = utils._extractCharmName(service.get('charm'));
-      var providedCharmId = utils._extractCharmName(charmId);
-      // If we have a matching charm then increase the count.
-      if (serviceCharmId === providedCharmId) {
-        // Remove the service name and dash to get the counter. It is done this
-        // way so that we can get just the counter from the string and don't get
-        // false positives from names with dashes in them.
-        var counter = service.get('name').replace(
-          charmName, '').replace('-', '');
-        if (counter === '') {
-          // The first service won't have a counter.
-          return 0;
-        }
-        return utils.letterToNum(counter);
-      }
-      // The service did not have a matching charm, ignore it.
-      return -1;
-    }));
-    // In some cases the service has already been added to the db so we need to
-    // ignore it in the count.
-    if (ignoreSelf) {
-      highestCounter -= 1;
-    }
-    // The first service for a charm shouldn't get a count, but subsequent
-    // services should. If there are no existing services then the counter will
-    // be -Infinity.
-    if (highestCounter < 0) {
-      return charmName;
-    }
-    // numToLetter doesn't support 0's so this shouldn't be reached if
-    // charmCount === 0.
-    return `${charmName}-${utils.numToLetter(highestCounter + 1)}`;
-  };
-
-  /**
-    Extract the name of the charm from the id e.g. cs:trusty/wordpress-11 would
-    become "wordpress".
-
-    @method _extractCharmName
-    @param {String} charmId the full charm id.
-    @returns {String} The name for the charm.
-  */
-  utils._extractCharmName = function(charmId) {
-    return charmId.split('/')[1].split('-').slice(0, -1).join('-');
+  utils.generateServiceName = function(charmName, services, counter = 0) {
+    // There should only be a counter in the charm name after the first one.
+    var name = counter > 0 ?
+      charmName + '-' + utils.numToLetter(counter) : charmName;
+    // Check each service to see if this counter is being used.
+    var match = services.some(service => {
+      return service.get('name') === name;
+    });
+    // If there is no match return the new name, otherwise check the next
+    // counter.
+    return match ? utils.generateServiceName(
+      charmName, services, counter += 1) : name;
   };
 
 }, '0.1.0', {

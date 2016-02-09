@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('bundle-importer', function(Y) {
 
   var ns = Y.namespace('juju');
-  var utils = Y.namespace('juju.views.utils');
 
   /**
     Bundle importer class handles importing bundles in YAML and dry-run
@@ -429,7 +428,13 @@ YUI.add('bundle-importer', function(Y) {
       });
       this.fakebackend._loadCharm(record.args[0], {
         'success': function(charm) {
-          var ghostService = this.db.services.ghostService(charm);
+          // We have to set the name for the service because some bundles
+          // specify multiples of the same charms as different names.
+          var displayName = record.args[1];
+          var ghostService = this.db.services.ghostService(charm, displayName);
+          // The service name may have been updated to prevent collisions, so
+          // update the record with the new name.
+          record.args[1] = ghostService.get('name');
 
           if (record.annotations) {
             ghostService.annotations['gui-x'] = record.annotations['gui-x'];
@@ -451,17 +456,6 @@ YUI.add('bundle-importer', function(Y) {
               }
             });
           }
-          var displayName = record.args[1];
-          // Update the name to make sure there are no collisions.
-          var displayName = utils.generateServiceName(
-            displayName, charm.get('id'), this.db.services, true);
-          // Update the record with the new name.
-          record.args[1] = displayName;
-          // We have to set the display name and charm name for the services
-          // because some bundles specify multiples of the same charms as
-          // different names.
-          ghostService.set('name', displayName);
-          ghostService.set('displayName', displayName);
           ghostService.set('config', config);
 
           var constraints = record.args[3] || {};
@@ -700,7 +694,6 @@ YUI.add('bundle-importer', function(Y) {
 }, '', {
   requires: [
     'juju-env-go',
-    'juju-view-utils',
     'environment-change-set'
   ]
 });
