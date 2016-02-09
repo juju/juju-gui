@@ -47,6 +47,8 @@ YUI.add('env-list', function() {
         var envName = env.name || env.path;
         envs.push(
           <li className="env-list__environment"
+            role="menuitem"
+            tabIndex="0"
             data-id={env.uuid}
             data-name={envName}
             onClick={this.props.handleEnvClick}
@@ -101,7 +103,12 @@ YUI.add('env-list', function() {
         <juju.components.Panel
           instanceName="env-list-panel"
           visible={true}>
-          <ul className="env-list">
+          <ul className="env-list"
+            role="menubar"
+            id="environmentSwitcherMenu"
+            aria-expanded="true"
+            aria-hidden="false"
+            aria-labelledby="environmentSwitcherToggle">
             {this.generateEnvList()}
           </ul>
           <input

@@ -108,6 +108,20 @@ YUI.add('env-switcher', function() {
     },
 
     /**
+      Sets the state of the 'showEnvList' property to the inverse of what
+      it was when <Enter> or <Space> is clicked.
+
+      @method handleKeyToggle
+    */
+    handleKeyToggle: function(e) {
+      var key = e.which || e.keyCode || 0;
+      // key === <Enter> or <Space>
+      if (key === 13 || key === 32) {
+        this.toggleEnvList(e);
+      }
+    },
+
+    /**
       Hides the env list and calls the switchEnv method based on the data-id of
       the currentTarget passed to this click handler.
 
@@ -249,10 +263,20 @@ YUI.add('env-switcher', function() {
 
     render: function() {
       return (
-        <div className="env-switcher">
+        <div className="env-switcher"
+          role="navigation"
+          aria-label="Environment switcher">
           <div
             className="env-switcher--toggle"
-            onClick={this.toggleEnvList}>
+            onClick={this.toggleEnvList}
+            onKeyPress={this.handleKeyToggle}
+            id="environmentSwitcherToggle"
+            role="button"
+            tabIndex="0"
+            aria-haspopup="true"
+            aria-owns="environmentSwitcherMenu"
+            aria-controls="environmentSwitcherMenu"
+            aria-expanded="false">
             <span className="environment-name">
               {this.props.environmentName}
             </span>
