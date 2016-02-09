@@ -1156,6 +1156,43 @@ describe('utilities', function() {
     });
   });
 
+  describe('letterToNum', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.juju.views.utils;
+        done();
+      });
+    });
+
+    it('converts letters to numbers correctly', function() {
+      // Map of numbers and output to check. This list isn't exhaustive
+      // but checks some important milestones for common issues with this
+      // technique.
+      var mapping = {
+        a: 1,
+        b: 2,
+        j: 10,
+        o: 15,
+        z: 26,
+        aa: 27,
+        ab: 28,
+        az: 52,
+        ba: 53,
+        bb: 54,
+        aaa: 703,
+        abt: 748,
+        bxf: 1982
+      };
+      Object.keys(mapping).forEach(function(key) {
+        assert.equal(
+          utils.letterToNum(key), mapping[key],
+          key + ' did not properly convert to ' + mapping[key]);
+      });
+    });
+  });
+
   describe('linkify', function() {
     var utils;
 

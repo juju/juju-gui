@@ -700,9 +700,10 @@ YUI.add('juju-models', function(Y) {
 
      @method ghostService
      @param {Model} charm to add.
+     @param {String} charmName An optional name for this charm.
      @return {Model} Ghosted Service model.
    */
-    ghostService: function(charm) {
+    ghostService: function(charm, charmName) {
       var config = charm && charm.get('config');
       var randomId, invalid = true;
 
@@ -719,8 +720,10 @@ YUI.add('juju-models', function(Y) {
       } while (invalid);
 
       var charmId = charm.get('id');
-      var charmName = charm.get('package_name');
-      var name = utils.generateServiceName(charmName, charmId, this);
+      if (!charmName) {
+        charmName = charm.get('package_name');
+      }
+      var name = utils.generateServiceName(charmName, this);
       var ghostService = this.create({
         // Creating a temporary id because it's undefined by default.
         id: randomId,

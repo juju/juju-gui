@@ -359,8 +359,8 @@ describe('Bundle Importer', function() {
         // There was a bug where their names would clash and they would get
         // combined into a single service on deploy.
         assert.equal(db.services.item(3).get('charm'), 'cs:precise/mysql-51');
-        assert.equal(db.services.item(3).get('name'), 'mysql-slave-a');
-        assert.equal(db.services.item(3).get('displayName'), '(mysql-slave-a)');
+        assert.equal(db.services.item(3).get('name'), 'mysql-slave');
+        assert.equal(db.services.item(3).get('displayName'), '(mysql-slave)');
         // Machines
         assert.equal(db.machines.item(0).id, 'new0');
         assert.equal(db.machines.item(1).id, 'new1');

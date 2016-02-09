@@ -1798,7 +1798,7 @@ YUI.add('juju-view-utils', function(Y) {
     var char = '';
     // remainder will be 0 if number is 26 (Z)
     if (remainder) {
-      // 64 is the start of upper case alphabet.
+      // 96 is the start of lower case alphabet.
       char = String.fromCharCode(96 + remainder);
     } else {
       // subtract 1 from the multiple if remainder is 0 and add a Z;
@@ -1811,54 +1811,50 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Convert the string passed in into a number representation.
+    ex) B = 2, AA = 27, AL = 38 ...
+
+    @method letterToNum
+    @returns {String} str The string to convert to a number.
+    @returns {Integer} The number representation.
+  */
+  utils.letterToNum = function(str) {
+    var num = 0;
+    var characters = str.split('');
+    var characterLength = characters.length;
+    characters.forEach((letter, characterPosition) => {
+      // Use the character position to calculate the base for this character.
+      // The last character needs to have a base of 0 so we subtract one from
+      // the position.
+      var base = Math.pow(26, characterLength - characterPosition - 1);
+      // Use the character code to get the number value for the letter. 96 is
+      // the start of lower case alphabet.
+      num += base * (str.charCodeAt(characterPosition) - 96);
+    });
+    return num;
+  };
+
+  /**
     Generate a name for a service with an incremented number if needed.
 
     @method generateServiceName
     @param {String} charmName The charm name.
-    @param {String} charmId the full charm id.
     @param {Object} services the list of services.
-    @param {Boolean} ignoreSelf ignore this service in the service count.
+    @param {Integer} counter The optional increment counter.
     @returns {String} The name for the service.
   */
-  utils.generateServiceName = function(
-    charmName, charmId, services, ignoreSelf) {
-    var charmCount = 0;
-    // Loop through each service and grab its charmid to see if it matches.
-    services.each((service) => {
-      // Remove the version number from the charm id as we don't care about the
-      // version when comparing charms.
-      var serviceCharmId = utils._extractCharmName(service.get('charm'));
-      var providedCharmId = utils._extractCharmName(charmId);
-      // If we have a matching charm then increase the count.
-      if (serviceCharmId === providedCharmId) {
-        charmCount += 1;
-      }
+  utils.generateServiceName = function(charmName, services, counter = 0) {
+    // There should only be a counter in the charm name after the first one.
+    var name = counter > 0 ?
+      charmName + '-' + utils.numToLetter(counter) : charmName;
+    // Check each service to see if this counter is being used.
+    var match = services.some(service => {
+      return service.get('name') === name;
     });
-    // In some cases the service has already been added to the db so we need to
-    // ignore it in the final count.
-    if (ignoreSelf) {
-      charmCount -= 1;
-    }
-    // The first service for a charm shouldn't get a count, but subsequent
-    // services should.
-    if (charmCount === 0) {
-      return charmName;
-    }
-    // numToLetter doesn't support 0's so this shouldn't be reached if
-    // charmCount === 0.
-    return `${charmName}-${utils.numToLetter(charmCount)}`;
-  };
-
-  /**
-    Extract the name of the charm from the id e.g. cs:trusty/wordpress-11 would
-    become "wordpress".
-
-    @method _extractCharmName
-    @param {String} charmId the full charm id.
-    @returns {String} The name for the charm.
-  */
-  utils._extractCharmName = function(charmId) {
-    return charmId.split('/')[1].split('-').slice(0, -1).join('-');
+    // If there is no match return the new name, otherwise check the next
+    // counter.
+    return match ? utils.generateServiceName(
+      charmName, services, counter += 1) : name;
   };
 
 }, '0.1.0', {
