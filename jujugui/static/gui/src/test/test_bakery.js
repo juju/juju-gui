@@ -66,6 +66,95 @@ describe('Bakery', function() {
     assert.equal(bakery.visitMethod, newVisitMethod);
   });
 
+  describe('_fetchMacaroonFromStaticPath', function() {
+
+    it('can return a saved macaroon', function() {
+      var getStub = utils.makeStubMethod(bakery, '_getMacaroon', 'macaroons');
+      this._cleanups.push(getStub.reset);
+      var callback = utils.makeStubFunction();
+      bakery.fetchMacaroonFromStaticPath(callback);
+      assert.equal(callback.callCount(), 1);
+      assert.deepEqual(callback.lastArguments(), [null, 'macaroons']);
+    });
+
+    it('fails gracefully if no static path is defined', function() {
+      var getStub = utils.makeStubMethod(bakery, '_getMacaroon', null);
+      this._cleanups.push(getStub.reset);
+      var callback = utils.makeStubFunction();
+      bakery.staticMacaroonPath = false;
+      bakery.fetchMacaroonFromStaticPath(callback);
+      assert.equal(callback.callCount(), 1);
+      assert.deepEqual(
+        callback.lastArguments(), ['Static macaroon path was not defined.']);
+    });
+
+    it('sends get request to fetch macaroon', function() {
+      var getStub = utils.makeStubMethod(bakery, '_getMacaroon', null);
+      var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
+      this._cleanups.push(sendGet.reset);
+      this._cleanups.push(getStub.reset);
+      var callback = utils.makeStubFunction();
+      bakery.staticMacaroonPath = 'path/to/macaroon';
+      bakery.fetchMacaroonFromStaticPath(callback);
+      assert.equal(sendGet.callCount(), 1);
+      assert.equal(sendGet.lastArguments()[0], bakery.staticMacaroonPath);
+      assert.equal(sendGet.lastArguments()[1], null);
+      assert.equal(sendGet.lastArguments()[2], null);
+      assert.equal(sendGet.lastArguments()[3], null);
+      assert.equal(sendGet.lastArguments()[4], false);
+      assert.equal(sendGet.lastArguments()[5], null);
+      assert.equal(typeof sendGet.lastArguments()[6], 'function');
+    });
+
+    it('authenticates the macaroon after fetching', function() {
+      var getStub = utils.makeStubMethod(
+        bakery, '_getMacaroon', null, 'macaroons');
+      var authStub = utils.makeStubMethod(bakery, '_authenticate');
+      var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
+      this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
+      var callback = utils.makeStubFunction();
+      bakery.staticMacaroonPath = 'path/to/macaroon';
+      bakery.fetchMacaroonFromStaticPath(callback);
+      var responseText = '{"valid": "json"}';
+      var response = {
+        target: {
+          responseText: responseText
+        }
+      };
+      sendGet.lastArguments()[6](response); // Call the get request callback
+      assert.equal(authStub.callCount(), 1);
+      assert.deepEqual(authStub.lastArguments()[0], JSON.parse(responseText));
+      assert.equal(typeof authStub.lastArguments()[1], 'function');
+      assert.equal(typeof authStub.lastArguments()[2], 'function');
+      // Call the authenticate callback
+      authStub.lastArguments()[1]();
+      assert.equal(callback.callCount(), 1);
+      assert.deepEqual(callback.lastArguments(), [null, 'macaroons']);
+    });
+
+    it('fails gracefully if it cannot parse the macaroon response', function() {
+      var getStub = utils.makeStubMethod(
+        bakery, '_getMacaroon', null, 'macaroons');
+      var authStub = utils.makeStubMethod(bakery, '_authenticate');
+      var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
+      this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
+      var callback = utils.makeStubFunction();
+      bakery.staticMacaroonPath = 'path/to/macaroon';
+      bakery.fetchMacaroonFromStaticPath(callback);
+      var response = {
+        target: {
+          responseText: 'invalidjson'
+        }
+      };
+      sendGet.lastArguments()[6](response); // Call the get request callback
+      assert.equal(callback.callCount(), 1);
+      assert.equal(
+        callback.lastArguments()[0].message, 'Unable to parse JSON string');
+      assert.equal(authStub.callCount(), 0);
+    });
+
+  });
+
   describe('_requestHandler', function() {
     var success, failure;
 

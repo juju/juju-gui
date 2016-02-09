@@ -35,6 +35,7 @@ Session.vim
 tags
 test/extracted_startup_code
 test/test_startup.js
+.tern-project
 upload_release.py
 .vagrant
 virtualenv
