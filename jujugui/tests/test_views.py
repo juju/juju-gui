@@ -126,6 +126,7 @@ class ConfigTests(ViewTestCase):
         self.assertIsNone(config['password'])
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
+        self.assertEqual('wss', config['socket_protocol'])
 
     def test_customized_options(self):
         self.update_settings({
@@ -135,6 +136,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.auth': 'blob',
             'jujugui.user': 'who',
             'jujugui.password': 'secret',
+            'jujugui.insecure': 'true',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)

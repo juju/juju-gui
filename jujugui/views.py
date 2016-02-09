@@ -68,6 +68,7 @@ def config(request):
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
     jem_url = settings['jujugui.jem_url']
+
     user = settings.get('jujugui.user')
     password = settings.get('jujugui.password')
     base_url = settings.get('jujugui.base_url')
@@ -76,6 +77,11 @@ def config(request):
     if sandbox_enabled:
         user = user if user is not None else 'admin'
         password = password if password is not None else 'password'
+
+    if settings.get('jujugui.insecure', False):
+        socket_protocol = 'ws'
+    else:
+        socket_protocol = 'wss'
 
     options = {
         # Base YUI options.
@@ -94,7 +100,7 @@ def config(request):
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'apiPath': settings['jujugui.api_path'],
         # WebSocket connection to the Juju API.
-        'socket_protocol': 'wss',
+        'socket_protocol': socket_protocol,
         'user': user,
         'password': password,
         'jujuEnvUUID': env_uuid,
