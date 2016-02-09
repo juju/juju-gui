@@ -80,6 +80,12 @@ def config(request):
     env_uuid = [
         uuid for uuid in [path_env_uuid, env_uuid, 'sandbox']
         if uuid is not None][0]
+
+    if settings.get('jujugui.insecure', False):
+        socket_protocol = 'ws'
+    else:
+        socket_protocol = 'wss'
+
     options = {
         # Base YUI options.
         'auth': settings['jujugui.auth'],
@@ -97,7 +103,7 @@ def config(request):
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'apiPath': settings['jujugui.api_path'],
         # WebSocket connection to the Juju API.
-        'socket_protocol': 'wss',
+        'socket_protocol': socket_protocol,
         'user': user,
         'password': password,
         'jujuEnvUUID': env_uuid,

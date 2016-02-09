@@ -108,6 +108,7 @@ class ConfigTests(ViewTestCase):
         self.assertIsNone(config['password'])
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
+        self.assertEqual('wss', config['socket_protocol'])
 
     def test_customized_options(self):
         self.update_settings({
@@ -117,6 +118,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.auth': 'blob',
             'jujugui.user': 'who',
             'jujugui.password': 'secret',
+            'jujugui.insecure': 'true',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -130,6 +132,7 @@ class ConfigTests(ViewTestCase):
         # The hideLoginButton, user and password values reflect sandbox status.
         self.assertEqual('admin', config['user'])
         self.assertEqual('password', config['password'])
+        self.assertEqual('ws', config['socket_protocol'])
 
     def test_standalone(self):
         jujugui.make_application(self.config)

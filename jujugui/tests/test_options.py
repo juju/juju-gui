@@ -24,6 +24,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.sandbox': False,
         'jujugui.socketTemplate': '/environment/$uuid/api',
         'jujugui.user': '',
+        'jujugui.insecure': False,
     }
 
     def test_default_values(self):
@@ -48,6 +49,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.sandbox': True,
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.user': 'who',
+            'jujugui.insecure': True,
         }
         settings = {
             'jujugui.api_path': 'v4',
@@ -64,6 +66,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.sandbox': 'on',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.user': 'who',
+            'jujugui.insecure': True,
         }
         options.update(settings)
         self.assertEqual(expected_settings, settings)
