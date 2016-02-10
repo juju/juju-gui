@@ -58,9 +58,10 @@ YUI.add('unit-list', function() {
         checked.
     */
     _selectAllUnits: function(group, checked) {
+      var refs = this.refs;
       var setChecked = (key, groups) => {
         groups[key].units.forEach((unit) => {
-          this.refs['UnitListItem-' + unit.id].setState({
+          refs['UnitListItem-' + unit.id].setState({
             checked: checked
           }, () => {
             // After the state has been updated then update the active unit
@@ -76,6 +77,10 @@ YUI.add('unit-list', function() {
       if (group === null) {
         for (var key in groups) {
           setChecked(key, groups);
+          var groupSelectAll = refs[key];
+          if (groupSelectAll.state.checked !== checked) {
+            groupSelectAll.setState({checked: checked});
+          }
         }
       } else {
         setChecked(group, groups);
@@ -210,13 +215,22 @@ YUI.add('unit-list', function() {
       @returns {Object} The list components
     */
     _generateListGroups: function() {
+      if (this.props.units.length === 0) {
+        return (
+          <div className="unit-list__message">
+            No units for this service. Scale to add units.
+          </div>);
+      }
       var components = [];
       var groups = this._generateGroups();
       Object.keys(groups).forEach(function(key) {
         var group = groups[key];
         components = components.concat(this._generateUnitList(group));
       }, this);
-      return components;
+      return (
+        <ul className="unit-list__units">
+          {components}
+        </ul>);
     },
 
     /**
@@ -244,6 +258,9 @@ YUI.add('unit-list', function() {
       @returns {Array} The list of buttons
     */
     _generateButtons: function() {
+      if (this.props.units.length === 0) {
+        return;
+      }
       var buttons = [];
       var disabled = this.state.activeCount === 0;
       if (this.props.unitStatus === 'error') {
@@ -263,7 +280,9 @@ YUI.add('unit-list', function() {
         action: this._handleUpdateUnits.bind(this, 'remove'),
         disabled: disabled
       });
-      return buttons;
+      return (
+        <juju.components.ButtonRow
+          buttons={buttons} />);
     },
 
     /**
@@ -290,11 +309,8 @@ YUI.add('unit-list', function() {
       return (
         <div className="unit-list">
           {this._generateScaleService()}
-          <ul className="unit-list__units">
-            {this._generateListGroups()}
-          </ul>
-          <juju.components.ButtonRow
-            buttons={this._generateButtons()} />
+          {this._generateListGroups()}
+          {this._generateButtons()}
         </div>
       );
     }

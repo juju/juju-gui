@@ -40,6 +40,29 @@ describe('UnitList', () => {
     };
   });
 
+  it('renders if there are no units', () => {
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          service={service}
+          units={[]} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="unit-list">
+        <div className="unit-list__actions">
+          <juju.components.OverviewAction
+            action={instance._navigate}
+            icon="plus_box_16"
+            title="Scale service" />
+        </div>
+        <div className="unit-list__message">
+          No units for this service. Scale to add units.
+        </div>
+        {undefined}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('renders a list of unit components', () => {
     var units = [{
       displayName: 'mysql/0',
@@ -282,10 +305,13 @@ describe('UnitList', () => {
   });
 
   it('only displays a remove button for a non-error list', function() {
+    var units = [{
+      displayName: 'mysql/0'
+    }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           service={service}
-          units={[]} />);
+          units={units} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Remove',
@@ -299,10 +325,13 @@ describe('UnitList', () => {
   });
 
   it('displays Resolve and Retry buttons for an error list', function() {
+    var units = [{
+      displayName: 'mysql/0'
+    }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           unitStatus='error'
-          units={[]} />);
+          units={units} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Resolve',
@@ -385,6 +414,34 @@ describe('UnitList', () => {
         output, 'generic-button');
     testUtils.Simulate.click(button);
     assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
+  });
+
+  it('deselects select all after removal', function() {
+    var destroyUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }];
+    // Have to use renderIntoDocument here as shallowRenderer does not support
+    // refs.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.UnitList
+          destroyUnits={destroyUnits}
+          changeState={changeState}
+          envResolved={sinon.stub()}
+          service={service}
+          units={units} />);
+    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
+      output, 'input');
+    checkboxes[0].checked = true;
+    testUtils.Simulate.change(checkboxes[0]);
+    assert.isTrue(output.refs['select-all'].state.checked);
+    var button = testUtils.findRenderedDOMComponentWithClass(
+        output, 'generic-button');
+    testUtils.Simulate.click(button);
+    assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
+    assert.isFalse(output.refs['select-all'].state.checked);
   });
 
   it('can resolve the selected units', function() {
