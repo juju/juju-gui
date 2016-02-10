@@ -67,12 +67,10 @@ help:
 	@echo "run - run the development server and watch for changes"
 	@echo "server - run the server with development settings"
 	@echo "start-karma - run Karma for development js testing"
-	@echo "mocha-test-server - run phantom for development js testing"
 	@echo "sysdeps - install the system-wide dependencies"
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
 	@echo "test-js-karma - run newer js tests in terminal; primarily for CI build"
-	@echo "test-mocha-phantom - run older js tests that have not transitioned to karma in the terminal"
 	@echo "test-mocha-karma - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
 
@@ -348,10 +346,6 @@ lint-js: $(NODE_MODULES)
 test: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
-.PHONY: test-mocha-phantom
-test-mocha-phantom: gui
-	./scripts/test-mocha-phantom.sh
-
 .PHONY: test-js-karma
 test-js-karma: gui
 	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --log-level warn --reporters mocha
@@ -365,10 +359,6 @@ test-mocha-karma: gui
 start-karma:
 	$(NODE_MODULES)/.bin/karma start karma.conf.js
 
-.PHONY: mocha-test-server
-mocha-test-server:
-	bin/pserve test.ini test_port=8888
-
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything
 # with it, it's being skipped in ci for now.
@@ -376,7 +366,7 @@ test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
-check: clean-pyc lint lint-js test test-mocha-karma test-js-karma test-mocha-phantom
+check: clean-pyc lint lint-js test test-mocha-karma test-js-karma
 
 # ci-check is the target run by CI.
 .PHONY: ci-check

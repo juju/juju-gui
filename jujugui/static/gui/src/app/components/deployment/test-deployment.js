@@ -169,8 +169,8 @@ describe('Deployment', function() {
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
         currentChangeSet={currentChangeSet} />);
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output,
+    output = shallowRenderer.getRenderOutput();
+    var expected = (
       <div className="deployment-view">
         <juju.components.DeploymentBar
           exportEnvironmentFile={exportEnvironmentFile}
@@ -182,6 +182,7 @@ describe('Deployment', function() {
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={currentChangeSet} />
       </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('can display the deployment summary', function() {
@@ -252,8 +253,8 @@ describe('Deployment', function() {
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
         currentChangeSet={newChangeSet} />);
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output,
+    output = shallowRenderer.getRenderOutput();
+    var expected = (
       <div className="deployment-view">
         <juju.components.DeploymentBar
           hasCommits={false}
@@ -265,6 +266,7 @@ describe('Deployment', function() {
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={newChangeSet} />
       </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('can commit to ecs changes', function() {
