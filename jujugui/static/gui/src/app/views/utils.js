@@ -1857,6 +1857,31 @@ YUI.add('juju-view-utils', function(Y) {
       charmName, services, counter += 1) : name;
   };
 
+  /**
+    Compare two semver version strings and return if one is
+    older than the other.
+
+    @method compareSemver
+    @param {String} a Version.
+    @param {String} b Version to compare to.
+    @param {Boolean} If a is older than b.
+  */
+  utils.compareSemver = function(a, b) {
+    a = a.split('-')[0];
+    b = b.split('-')[0];
+    var pa = a.split('.');
+    var pb = b.split('.');
+    for (var i = 0; i < 3; i++) {
+      var na = Number(pa[i]);
+      var nb = Number(pb[i]);
+      if (na > nb) return 1;
+      if (nb > na) return -1;
+      if (!isNaN(na) && isNaN(nb)) return 1;
+      if (isNaN(na) && !isNaN(nb)) return -1;
+    }
+    return 0;
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
