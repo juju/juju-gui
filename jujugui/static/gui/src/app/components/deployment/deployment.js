@@ -101,24 +101,36 @@ YUI.add('deployment-component', function() {
     },
 
     componentWillReceiveProps: function(nextProps) {
-      this._updateHasCommits();
-      this.setState(this.generateState(nextProps));
+      this._updateHasCommits(() => {
+        this.setState(this.generateState(nextProps));
+      });
     },
 
     /**
       Check if we have an commits.
 
+      @param {Function} callback A function to call once the state has updated.
       @method _updateHasCommits
     */
-    _updateHasCommits: function() {
+    _updateHasCommits: function(callback) {
+      var hasCommits = false;
       if (!this.state.hasCommits) {
         var services = this.props.services;
         services.forEach(function(service) {
           if (!service.get('pending')) {
-            this.setState({hasCommits: true});
+            hasCommits = true;
             return false;
           }
         }, this);
+      }
+      if (hasCommits) {
+        // If the callback exists then we always want to call it, but if we're
+        // setting the state we want to call it after the state has updated.
+        this.setState({hasCommits: true}, callback);
+      } else {
+        if (callback) {
+          callback();
+        }
       }
     },
 
@@ -153,8 +165,9 @@ YUI.add('deployment-component', function() {
       }
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
-      this.setState({hasCommits: true});
-      this._changeActiveComponent('deployment-bar');
+      this.setState({hasCommits: true}, () => {
+        this._changeActiveComponent('deployment-bar');
+      });
     },
 
     /**

@@ -35,7 +35,7 @@ describe('topology relation module', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this);
-    view = new views.RelationModule();
+    view = new views.RelationModule({container: container});
   });
 
   afterEach(function() {
