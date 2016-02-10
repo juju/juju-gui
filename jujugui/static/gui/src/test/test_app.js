@@ -49,10 +49,32 @@ function injectData(app, data) {
   return app;
 }
 
-(function() {
+describe('App', function() {
+  var container;
+
+  before(function(done) {
+    YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      var elements = [
+        'charmbrowser-container',
+        'deployment-container',
+        'login-container',
+        'notifications-container',
+        'loading-message'
+      ];
+      container = Y.Node.create('<div>');
+      container.set('id', 'test-container');
+      container.addClass('container');
+      // Set up the elements needed to render the components.
+      elements.forEach(function(id) {
+        container.appendChild(Y.Node.create('<div/>')).set('id', id);
+      });
+      container.appendTo(document.body);
+      done();
+    });
+  });
 
   describe('Application basics', function() {
-    var Y, app, container, utils, juju;
+    var Y, app, utils, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -71,18 +93,12 @@ function injectData(app, data) {
 
     beforeEach(function() {
       window._gaq = [];
-      container = Y.one('#main')
-        .appendChild(Y.Node.create('<div/>'))
-          .set('id', 'test-container')
-          .addClass('container');
-
     });
 
     afterEach(function() {
       // Reset the flags.
       window.flags = {};
       app.after('destroy', function() {
-        container.remove(true);
         sessionStorage.setItem('credentials', null);
       });
 
@@ -253,6 +269,10 @@ function injectData(app, data) {
         });
       });
 
+      afterEach(function() {
+        container.one('#maas-server').remove(true);
+      });
+
       // Ensure the given MAAS node is shown and includes a link to the given
       // address.
       var assertMaasLinkExists = function(node, address) {
@@ -350,81 +370,60 @@ function injectData(app, data) {
     });
 
   });
-})();
 
 
-describe('File drag over notification system', function() {
-  var Y, app, container, testUtils, juju;
+  describe('File drag over notification system', function() {
+    var Y, app, testUtils, juju;
 
-  before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
-        function(Y) {
-          testUtils = Y.namespace('juju-tests.utils');
-          juju = Y.namespace('juju');
-          done();
-        });
-  });
-
-  beforeEach(function() {
-    container = Y.one('#main')
-      .appendChild(Y.Node.create('<div/>'))
-        .set('id', 'test-container')
-        .addClass('container');
-  });
-
-  afterEach(function() {
-    app.after('destroy', function() {
-      container.remove(true);
-      sessionStorage.setItem('credentials', null);
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
+          function(Y) {
+            testUtils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
+            done();
+          });
     });
 
-    app.destroy();
-  });
-
-  function constructAppInstance(config, context) {
-    config = config || {};
-    if (!config.env) {
-      config.env = new juju.environments.GoEnvironment({
-        conn: {
-          send: function() {},
-          close: function() {}
-        },
-        ecs: new juju.EnvironmentChangeSet()
-      });
-    }
-    if (config.env && config.env.connect) {
-      config.env.connect();
-      context._cleanups.push(config.env.close.bind(config.env));
-    }
-    config.container = container;
-    config.viewContainer = container;
-
-    app = new Y.juju.App(config);
-    return app;
-  }
-
-  describe('drag event attach and detach', function() {
-    it('binds the drag handlers', function() {
-      var stub = testUtils.makeStubMethod(document, 'addEventListener');
-      this._cleanups.push(stub.reset);
-      constructAppInstance({}, this);
-      assert.equal(stub.callCount(), 3);
-      var args = stub.allArguments();
-      assert.equal(args[0][0], 'dragenter');
-      assert.isFunction(args[0][1]);
-      assert.equal(args[1][0], 'dragover');
-      assert.isFunction(args[1][1]);
-      assert.equal(args[2][0], 'dragleave');
-      assert.isFunction(args[2][1]);
+    beforeEach(function() {
+      // The context monkeypatching requires a beforeEach to be defined.
     });
 
-    it('removes the drag handlers', function(done) {
-      var stub = testUtils.makeStubMethod(document, 'removeEventListener');
-      this._cleanups.push(stub.reset);
-      constructAppInstance({}, this);
-
+    afterEach(function() {
       app.after('destroy', function() {
+        sessionStorage.setItem('credentials', null);
+      });
+
+      app.destroy();
+    });
+
+    function constructAppInstance(config, context) {
+      config = config || {};
+      if (!config.env) {
+        config.env = new juju.environments.GoEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          },
+          ecs: new juju.EnvironmentChangeSet()
+        });
+      }
+      if (config.env && config.env.connect) {
+        config.env.connect();
+        context._cleanups.push(config.env.close.bind(config.env));
+      }
+      config.container = container;
+      config.viewContainer = container;
+
+      app = new Y.juju.App(config);
+      return app;
+    }
+
+    describe('drag event attach and detach', function() {
+      it('binds the drag handlers', function() {
+        var stub = testUtils.makeStubMethod(document, 'addEventListener');
+        this._cleanups.push(stub.reset);
+        constructAppInstance({}, this);
         assert.equal(stub.callCount(), 3);
         var args = stub.allArguments();
         assert.equal(args[0][0], 'dragenter');
@@ -433,150 +432,166 @@ describe('File drag over notification system', function() {
         assert.isFunction(args[1][1]);
         assert.equal(args[2][0], 'dragleave');
         assert.isFunction(args[2][1]);
-        done();
       });
-      app.destroy();
-    });
-  });
 
-  describe('_determineFileType', function() {
-    before(function() {
-      // This gets cleaned up by the parent after function.
+      it('removes the drag handlers', function(done) {
+        var stub = testUtils.makeStubMethod(document, 'removeEventListener');
+        this._cleanups.push(stub.reset);
+        constructAppInstance({}, this);
+
+        app.after('destroy', function() {
+          assert.equal(stub.callCount(), 3);
+          var args = stub.allArguments();
+          assert.equal(args[0][0], 'dragenter');
+          assert.isFunction(args[0][1]);
+          assert.equal(args[1][0], 'dragover');
+          assert.isFunction(args[1][1]);
+          assert.equal(args[2][0], 'dragleave');
+          assert.isFunction(args[2][1]);
+          done();
+        });
+        app.destroy();
+      });
+    });
+
+    describe('_determineFileType', function() {
+      before(function() {
+        // This gets cleaned up by the parent after function.
+        constructAppInstance({}, this);
+      });
+
+      it('returns false if it\'s not a file being dragged', function() {
+        var result = app._determineFileType({
+          types: ['foo']
+        });
+        // It should have returned false if it's not a file because then it is
+        // something being dragged inside the browser.
+        assert.equal(result, false);
+      });
+
+      it('returns "zip" for zip files', function() {
+        var result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/zip' }]
+        });
+        assert.equal(result, 'zip');
+      });
+
+      it('returns "zip" for zip files in IE', function() {
+        // IE uses a different mime type than other browsers.
+        var result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/x-zip-compressed' }]
+        });
+        assert.equal(result, 'zip');
+      });
+
+      it('returns "yaml" for the yaml mime type', function() {
+        // At the moment we cannot determine between folders and yaml files
+        // across browser so we respond with yaml for now.
+        var result = app._determineFileType({
+          types: ['Files'],
+          items: [{ type: 'application/x-yaml' }]
+        });
+        assert.equal(result, 'yaml');
+      });
+
+      it('returns "" if the browser does not support "items"', function() {
+        // IE10 and 11 do not have the dataTransfer.items property during hover
+        // so we cannot tell what type of file is being hovered over the canvas.
+        // So we will just return the default which is "yaml".
+        var result = app._determineFileType({
+          types: ['Files']
+        });
+        assert.equal(result, '');
+      });
+    });
+
+    describe('UI notifications', function() {
+
+      it('_renderDragOverNotification renders drop UI', function() {
+        var fade = testUtils.makeStubFunction();
+        var reactdom = testUtils.makeStubMethod(ReactDOM, 'render');
+        this._cleanups.push(reactdom.reset);
+        app._renderDragOverNotification.call({
+          views: {
+            environment: {
+              instance: {
+                fadeHelpIndicator: fade
+              }}}
+        });
+        assert.equal(fade.callCount(), 1);
+        assert.equal(fade.lastArguments()[0], true);
+        assert.equal(reactdom.callCount(), 1);
+      });
+
+      it('_hideDragOverNotification hides drop UI', function() {
+        var fade = testUtils.makeStubFunction();
+        var reactdom = testUtils.makeStubMethod(
+          ReactDOM, 'unmountComponentAtNode');
+        this._cleanups.push(reactdom.reset);
+        app._hideDragOverNotification.call({
+          views: {
+            environment: {
+              instance: {
+                fadeHelpIndicator: fade
+              }}}
+        });
+        assert.equal(fade.callCount(), 1);
+        assert.equal(fade.lastArguments()[0], false);
+        assert.equal(reactdom.callCount(), 1);
+      });
+    });
+
+    it('dispatches drag events properly: _appDragOverHanlder', function() {
+      var determineFileTypeStub, renderDragOverStub, dragTimerControlStub;
+
       constructAppInstance({}, this);
+
+      determineFileTypeStub = testUtils.makeStubMethod(
+          app, '_determineFileType', 'zip');
+      renderDragOverStub = testUtils.makeStubMethod(
+          app, '_renderDragOverNotification');
+      dragTimerControlStub = testUtils.makeStubMethod(
+          app, '_dragleaveTimerControl');
+      this._cleanups.concat([
+        determineFileTypeStub.reset,
+        renderDragOverStub.reset,
+        dragTimerControlStub
+      ]);
+
+      var noop = function() {};
+      var ev1 = {
+        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
+      var ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
+      var ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+
+      app._appDragOverHandler(ev1);
+      app._appDragOverHandler(ev2);
+      app._appDragOverHandler(ev3);
+
+      assert.equal(determineFileTypeStub.callCount(), 3);
+      assert.equal(renderDragOverStub.calledOnce(), true);
+      assert.equal(dragTimerControlStub.callCount(), 3);
+      var args = dragTimerControlStub.allArguments();
+      assert.equal(args[0][0], 'start');
+      assert.equal(args[1][0], 'start');
+      assert.equal(args[2][0], 'stop');
     });
 
-    it('returns false if it\'s not a file being dragged', function() {
-      var result = app._determineFileType({
-        types: ['foo']
-      });
-      // It should have returned false if it's not a file because then it is
-      // something being dragged inside the browser.
-      assert.equal(result, false);
+    it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
+      var app = constructAppInstance({}, this);
+      app._dragleaveTimerControl('start');
+      assert.equal(app._dragLeaveTimer !== undefined, true);
+      app._dragleaveTimerControl('stop');
+      assert.equal(app._dragLeaveTimer === null, true);
     });
 
-    it('returns "zip" for zip files', function() {
-      var result = app._determineFileType({
-        types: ['Files'],
-        items: [{ type: 'application/zip' }]
-      });
-      assert.equal(result, 'zip');
-    });
-
-    it('returns "zip" for zip files in IE', function() {
-      // IE uses a different mime type than other browsers.
-      var result = app._determineFileType({
-        types: ['Files'],
-        items: [{ type: 'application/x-zip-compressed' }]
-      });
-      assert.equal(result, 'zip');
-    });
-
-    it('returns "yaml" for the yaml mime type', function() {
-      // At the moment we cannot determine between folders and yaml files
-      // across browser so we respond with yaml for now.
-      var result = app._determineFileType({
-        types: ['Files'],
-        items: [{ type: 'application/x-yaml' }]
-      });
-      assert.equal(result, 'yaml');
-    });
-
-    it('returns "" if the browser does not support "items"', function() {
-      // IE10 and 11 do not have the dataTransfer.items property during hover
-      // so we cannot tell what type of file is being hovered over the canvas.
-      // So we will just return the default which is "yaml".
-      var result = app._determineFileType({
-        types: ['Files']
-      });
-      assert.equal(result, '');
-    });
   });
 
-  describe('UI notifications', function() {
-    it('_renderDragOverNotification renders drop UI', function() {
-      var fade = testUtils.makeStubFunction();
-      var reactdom = testUtils.makeStubMethod(ReactDOM, 'render');
-      this._cleanups.push(reactdom.reset);
-      app._renderDragOverNotification.call({
-        views: {
-          environment: {
-            instance: {
-              fadeHelpIndicator: fade
-            }}}
-      });
-      assert.equal(fade.callCount(), 1);
-      assert.equal(fade.lastArguments()[0], true);
-      assert.equal(reactdom.callCount(), 1);
-    });
-
-    it('_hideDragOverNotification hides drop UI', function() {
-      var fade = testUtils.makeStubFunction();
-      var reactdom = testUtils.makeStubMethod(
-        ReactDOM, 'unmountComponentAtNode');
-      this._cleanups.push(reactdom.reset);
-      app._hideDragOverNotification.call({
-        views: {
-          environment: {
-            instance: {
-              fadeHelpIndicator: fade
-            }}}
-      });
-      assert.equal(fade.callCount(), 1);
-      assert.equal(fade.lastArguments()[0], false);
-      assert.equal(reactdom.callCount(), 1);
-    });
-  });
-
-  it('dispatches drag events properly: _appDragOverHanlder', function() {
-    var determineFileTypeStub, renderDragOverStub, dragTimerControlStub;
-
-    constructAppInstance({}, this);
-
-    determineFileTypeStub = testUtils.makeStubMethod(
-        app, '_determineFileType', 'zip');
-    renderDragOverStub = testUtils.makeStubMethod(
-        app, '_renderDragOverNotification');
-    dragTimerControlStub = testUtils.makeStubMethod(
-        app, '_dragleaveTimerControl');
-    this._cleanups.concat([
-      determineFileTypeStub.reset,
-      renderDragOverStub.reset,
-      dragTimerControlStub
-    ]);
-
-    var noop = function() {};
-    var ev1 = { dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
-    var ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
-    var ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
-
-    app._appDragOverHandler(ev1);
-    app._appDragOverHandler(ev2);
-    app._appDragOverHandler(ev3);
-
-    assert.equal(determineFileTypeStub.callCount(), 3);
-    assert.equal(renderDragOverStub.calledOnce(), true);
-    assert.equal(dragTimerControlStub.callCount(), 3);
-    var args = dragTimerControlStub.allArguments();
-    assert.equal(args[0][0], 'start');
-    assert.equal(args[1][0], 'start');
-    assert.equal(args[2][0], 'stop');
-  });
-
-  it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
-    var app = constructAppInstance({}, this);
-    app._dragleaveTimerControl('start');
-    assert.equal(app._dragLeaveTimer !== undefined, true);
-    app._dragleaveTimerControl('stop');
-    assert.equal(app._dragLeaveTimer === null, true);
-  });
-
-});
-
-
-(function() {
 
   describe('Application authentication', function() {
-    var conn, container, destroyMe, ecs, env, juju, utils, Y;
+    var conn, destroyMe, ecs, env, juju, utils, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
@@ -589,7 +604,6 @@ describe('File drag over notification system', function() {
     });
 
     beforeEach(function(done) {
-      container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
@@ -991,12 +1005,10 @@ describe('File drag over notification system', function() {
     });
 
   });
-})();
 
-(function() {
 
   describe('Application Connection State', function() {
-    var container, Y;
+    var Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
@@ -1059,7 +1071,7 @@ describe('File drag over notification system', function() {
   });
 
   describe('switchEnv', function() {
-    var Y, app, container;
+    var Y, app;
     var _generateMockedApp = function(sandbox, socketUrl) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
@@ -1180,7 +1192,7 @@ describe('File drag over notification system', function() {
   });
 
   describe('_getAuth', function() {
-    var Y, app, container, testUtils;
+    var Y, app, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-gui', 'juju-tests-utils', function(Y) {
@@ -1224,7 +1236,7 @@ describe('File drag over notification system', function() {
   });
 
   describe('_getUsernameFromCookie', function() {
-    var Y, app, container;
+    var Y, app;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
@@ -1287,12 +1299,9 @@ describe('File drag over notification system', function() {
     });
   });
 
-})();
-
-(function() {
 
   describe('Application sandbox mode', function() {
-    var Y, app, container;
+    var Y, app;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
@@ -1372,13 +1381,10 @@ describe('File drag over notification system', function() {
 
   });
 
-})();
-
-(function() {
 
   describe('configuration parsing', function() {
 
-    var Y, app, container, getLocation;
+    var Y, app, getLocation;
 
     before(function(done) {
       console.log('Loading App prefetch test code');
@@ -1426,5 +1432,4 @@ describe('File drag over notification system', function() {
     });
   });
 
-
-})();
+});
