@@ -149,7 +149,8 @@ describe('Bakery', function() {
       sendGet.lastArguments()[6](response); // Call the get request callback
       assert.equal(callback.callCount(), 1);
       assert.equal(
-        callback.lastArguments()[0].message, 'Unable to parse JSON string');
+        callback.lastArguments()[0].message,
+        'JSON Parse error: Unexpected identifier "invalidjson"');
       assert.equal(authStub.callCount(), 0);
     });
 
