@@ -67,13 +67,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="header-banner header-banner--left">
         <ul id="browser-nav" class="header-banner__list">
           <li id="nav-brand-env" class="header-banner__list-item">
-            <a class="header-banner__link" href="/">
-              <svg class="svg-icon header-banner__logo"
-                viewBox="0 0 75 30"
-                style="width:75px; height:30px;">
-                <use xlink:href="#juju-logo" />
-              </svg>
-            </a>
+            {{/* No need to link the logo; embedded GUI only runs in standalone mode. */}}
+            <svg class="svg-icon header-banner__logo"
+              viewBox="0 0 75 30"
+              style="width:75px; height:30px;">
+              <use xlink:href="#juju-logo" />
+            </svg>
           </li>
           <li id="user-name" class="header-banner__list-item">
             <a class="header-banner__link--breadcrumb" href="#">

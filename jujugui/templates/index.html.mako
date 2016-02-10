@@ -67,6 +67,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="header-banner header-banner--left">
         <ul id="browser-nav" class="header-banner__list">
           <li id="nav-brand-env" class="header-banner__list-item">
+            ## Conditionally linking is not needed in the Go version of the template.
             % if logo_url:
             <a class="header-banner__link" target="_blank" href="${logo_url}">
             % endif
