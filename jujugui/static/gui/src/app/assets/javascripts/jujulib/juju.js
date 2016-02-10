@@ -468,14 +468,18 @@ var module = module;
 
       @method list
       @param author {String} The charm author's username.
-      @params callback {Function} A callback to handle errors or accept the data
+      @param callback {Function} A callback to handle errors or accept the data
           from the request. Must accept an error message or null as its first
           parameter and the response data as its second.
+      @param type {String} Type of entity to list, must be either 'bundle' or
+          'charm'. Defaults to charm.
     */
-    list: function(author, callback) {
+    list: function(author, callback, type) {
       author = encodeURIComponent(author);
+      type = encodeURIComponent(type || 'charm');
       var qs = [
         'owner=' + author,
+        'type=' + type,
         'include=charm-metadata',
         'include=bundle-metadata',
         'include=bundle-unit-count',
