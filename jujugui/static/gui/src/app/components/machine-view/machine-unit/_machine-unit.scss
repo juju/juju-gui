@@ -27,11 +27,7 @@
         border-radius: 50%;
 
         &-img {
-            $size: 24px;
-            width: $size;
-            height: $size;
-            border-radius: $size / 2;
-            vertical-align: middle;
+            @extend %icon--small;
         }
     }
 

@@ -6,11 +6,8 @@
     cursor: move;
 
     &-icon {
-        $size: 24px;
-        width: $size;
-        height: $size;
+        @extend %icon--small;
         margin: -2px 7px -2px 0;
-        border-radius: $size / 2;
         vertical-align: text-top;
     }
 
