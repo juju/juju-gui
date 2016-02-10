@@ -113,23 +113,24 @@ YUI.add('deployment-component', function() {
       @method _updateHasCommits
     */
     _updateHasCommits: function(callback) {
-      var callbackCalled = false;
+      var hasCommits = false;
       if (!this.state.hasCommits) {
         var services = this.props.services;
         services.forEach(function(service) {
           if (!service.get('pending')) {
-            this.setState({hasCommits: true}, () => {
-              if (callback) {
-                callbackCalled = true;
-                callback();
-              }
-            });
+            hasCommits = true;
             return false;
           }
         }, this);
       }
-      if (callback && !callbackCalled) {
-        callback();
+      if (hasCommits) {
+        // If the callback exists then we always want to call it, but if we're
+        // setting the state we want to call it after the state has updated.
+        this.setState({hasCommits: true}, callback);
+      } else {
+        if (callback) {
+          callback();
+        }
       }
     },
 
