@@ -33,7 +33,8 @@ def app(request):
     settings = request.registry.settings
     cache_buster = settings.get('jujugui.cachebuster', VERSION)
     # kadams54, 2016-02-01: per https://github.com/juju/juju-gui/issues/1299
-    logo_url = 'http://jujucharms.com/' if settings['jujugui.sandbox'] else '/'
+    is_standalone = request.domain != 'demo.jujucharms.com'
+    logo_url = '' if is_standalone else 'http://jujucharms.com/'
 
     return {
         'config_url': request.route_path('jujugui.config', uuid=env_uuid),
