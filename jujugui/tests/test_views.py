@@ -41,7 +41,7 @@ class AppTests(ViewTestCase):
             'config_url': '/config.js',
             'convoy_url': '/foo/combo',
             'raw': False,
-            'logo_url': '/',
+            'logo_url': '',
             'combine': True,
         }
         context = views.app(self.request)
@@ -54,7 +54,7 @@ class AppTests(ViewTestCase):
             'config_url': '/config.js',
             'convoy_url': '/foo/combo',
             'raw': False,
-            'logo_url': '/',
+            'logo_url': '',
             'combine': True,
         }
         self.request.matchdict['uuid'] = 'env-uuid'
@@ -64,8 +64,8 @@ class AppTests(ViewTestCase):
     def test_sandbox_logo_url(self):
         self.update_settings({
             'jujugui.cachebuster': 'foo',
-            'jujugui.sandbox': 'true'
         })
+        self.request.domain = 'demo.jujucharms.com'
         gui.includeme(self.config)
         expected_context = {
             'config_url': '/config.js',
