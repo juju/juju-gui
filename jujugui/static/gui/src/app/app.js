@@ -1186,9 +1186,24 @@ YUI.add('juju-gui', function(Y) {
             console.log('Environment listing failure: ' + error);
             return;
           }
-          // XXX This picks the first environment but we'll want to default to
-          // sandbox mode then allow the user to choose an env.
-          var envData = envList[0];
+          
+          // XXX This picks the first environment if one is not provided by
+          // config, but we'll want to default to sandbox mode then allow the
+          // user to choose an env if one isn't provided in config.
+          var envName = this.get('jujuEnvUUID'),
+              user = this.get('user'),
+              envData; 
+          if (envName && user) {
+            var path = user + '/' + envName;
+            envData = envList.filter(function(env) {
+              return env.path === path;
+            }); 
+          }
+          if (envData.length !== 0) {
+            envData = envData[0];  // Filter returns a list a of one.
+          } else {
+            var envData = envList[0];
+          }
           this.set('environmentList', envList);
 
           // XXX frankban: we should try to connect to all the addresses in
