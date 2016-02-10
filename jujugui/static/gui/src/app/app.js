@@ -1773,7 +1773,6 @@ YUI.add('juju-gui', function(Y) {
       if (currentPort !== '') {
         baseUrl += ':' + currentPort;
       }
-      baseUrl += '/ws';
 
       if (this.get('sandbox')) {
         // We don't actually use a websocket in sandbox mode; create a

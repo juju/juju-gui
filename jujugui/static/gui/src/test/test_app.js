@@ -1374,7 +1374,7 @@ describe('App', function() {
         window.location.hostname,
         ':',
         window.location.port,
-        '/ws/sandbox'
+        '/sandbox'
       ].join('');
       assert.equal(expected, socketUrl);
     });
@@ -1415,7 +1415,7 @@ describe('App', function() {
         window.location.hostname,
         ':',
         window.location.port,
-        '/ws/juju/api/example.com/17070/1234-1234'
+        '/juju/api/example.com/17070/1234-1234'
       ].join('');
       app = new Y.juju.App({
         apiAddress: 'example.com:17070',
