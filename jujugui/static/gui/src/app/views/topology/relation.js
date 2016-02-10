@@ -983,7 +983,7 @@ YUI.add('juju-topology-relation', function(Y) {
       ReactDOM.render(
         <juju.components.AmbiguousRelationMenu
           endpoints={endpoints} />,
-        document.getElementById('ambiguous-relation-menu-content'));
+        menu.one('#ambiguous-relation-menu-content').getDOMNode());
       return menu;
     },
 
