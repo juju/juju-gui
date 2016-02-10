@@ -463,6 +463,37 @@ var module = module;
     },
 
     /**
+      Makes a list request using the supplied author and returns the results to
+      the supplied callback.
+
+      @method list
+      @param author {String} The charm author's username.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+    */
+    list: function(author, callback) {
+      author = encodeURIComponent(author);
+      var qs = [
+        'owner=' + author,
+        'include=charm-metadata',
+        'include=bundle-metadata',
+        'include=bundle-unit-count',
+        'include=extra-info%2Fbzr-owner',
+        'include=supported-series',
+        'include=stats'
+      ];
+      qs = qs.join('&');
+      var path = this._generatePath('list', qs);
+      return _makeRequest(
+        this.bakery,
+        path,
+        'GET',
+        null,
+        this._transformQueryResults.bind(this, callback));
+    },
+
+    /**
       Takes the bundle id and fetches the bundle YAML contents. Required for
       deploying a bundle via the deployer.
 

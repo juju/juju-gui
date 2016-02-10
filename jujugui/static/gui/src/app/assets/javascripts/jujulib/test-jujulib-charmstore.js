@@ -309,6 +309,42 @@ describe('jujulib charmstore', function() {
     });
   });
 
+  describe('list', function() {
+    var generatePath;
+
+    beforeEach(function() {
+      generatePath = sinon.stub(charmstore, '_generatePath').returns('path');
+    });
+
+    it('accepts an author & calls to generate an api path', function() {
+      charmstore.list('test-author');
+      assert.equal(generatePath.callCount, 1, 'generatePath not called');
+      assert.deepEqual(generatePath.lastCall.args, [
+        'list',
+        'owner=' + 'test-author&' +
+            'include=charm-metadata&' +
+            'include=bundle-metadata&' +
+            'include=bundle-unit-count&' +
+            'include=extra-info%2Fbzr-owner&' +
+            'include=supported-series&' +
+            'include=stats']);
+    });
+
+    it('calls to make a valid charmstore request', function() {
+      var transform = sinon.stub(charmstore, '_transformQueryResults');
+      charmstore.list('test-author', 'cb');
+      assert.equal(
+          charmstore.bakery.sendGetRequest.callCount, 1,
+          'sendGetRequest not called');
+      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
+      var successCb = requestArgs[1];
+      assert.equal(requestArgs[0], 'path');
+      // Call the success handler to make sure it's passed the callback.
+      successCb({target: {responseText: '{}'}});
+      assert.equal(transform.lastCall.args[0], 'cb');
+    });
+  });
+
   describe('getDiagramURL', function() {
     it('can generate a URL for a bundle diagram', function() {
       assert.equal(charmstore.getDiagramURL('apache2'),
