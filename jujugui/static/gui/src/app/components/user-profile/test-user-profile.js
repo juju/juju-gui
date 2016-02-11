@@ -70,6 +70,12 @@ describe('UserProfile', () => {
               uuidKey="uuid"
               switchEnv={instance.switchEnv}
               whitelist={whitelist}/>
+            <juju.components.UserProfileList
+              title="Charms"
+              data={[]} />
+            <juju.components.UserProfileList
+              title="Bundles"
+              data={[]} />
           </div>
         </div>
       </juju.components.Panel>
@@ -240,5 +246,4 @@ describe('UserProfile', () => {
     });
 
   });
-
 });

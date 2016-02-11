@@ -26,7 +26,7 @@ YUI.add('user-profile-list', function() {
       title: React.PropTypes.string.isRequired,
       data: React.PropTypes.array.isRequired,
       uuidKey: React.PropTypes.string.isRequired,
-      switchEnv: React.PropTypes.func.isRequired,
+      clickHandler: React.PropTypes.func,
       whitelist: React.PropTypes.array
     },
 
@@ -74,7 +74,7 @@ YUI.add('user-profile-list', function() {
             className="user-profile-list__item-row"
             key={key}
             data-uuid={key}
-            onClick={this._switchEnv}>
+            onClick={this._clickHandler}>
             {rowItems}
           </li>);
       });
@@ -117,16 +117,19 @@ YUI.add('user-profile-list', function() {
     },
 
     /**
-      Calls to switch the env to the one the user clicked on.
+      Calls to handle user clicks on a profile list item.
 
-      @method _switchEnv
+      @method _clickHandler
       @param {Object} e The click event.
     */
-    _switchEnv: function(e) {
-      var currentTarget = e.currentTarget;
-      this.props.switchEnv(
-        currentTarget.getAttribute('data-uuid'),
-        currentTarget.querySelector('[data-key=name]').innerText);
+    _clickHandler: function(e) {
+      var target = e.currentTarget;
+      var handler = this.props.clickHandler;
+      if (handler) {
+        handler(
+          target.getAttribute('data-uuid'),
+          target.querySelector('[data-key=name]').innerText);
+      }
     },
 
     render: function () {

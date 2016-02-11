@@ -38,7 +38,9 @@ YUI.add('user-profile', function() {
 
     getInitialState: function() {
       return {
-        envList: []
+        envList: [],
+        charmList: [],
+        bundleList: []
       };
     },
 
@@ -65,7 +67,7 @@ YUI.add('user-profile', function() {
     /**
       Callback for the JEM and JES list environments call.
 
-      @method _fetchEnvironments
+      @method _fetchEnvironmentsCallback
       @param {String} error The error from the request, or null.
       @param {Object} data The data from the request.
     */
@@ -80,6 +82,35 @@ YUI.add('user-profile', function() {
       // the environments are in the top level 'data' object.
       this.setState({envList: data.envs || data});
     },
+
+    /**
+      Requests a list from charmstore of the user's charms.
+
+      @method _fetchCharms
+      @param {String} user the current user
+    */
+    _fetchCharms:  function(user) {
+      var callback = this._fetchCharmsCallback;
+      var charmstore = this.props.charmstore;
+      // XXX grab the username from somewhere
+      charmstore.list(user, callback.bind(this, null), 'charm');
+    },
+
+    /**
+      Callback for the request to list a user's charms.
+
+      @method _fetchCharmsCallback
+      @param {String} error The error from the request, or null.
+      @param {Object} data The data from the request.
+    */
+    _fetchCharmsCallback: function (error, data) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      this.setState({charmsList: data});
+    },
+
 
     /**
       Take the supplied UUID, fetch the username and password then call the
@@ -176,8 +207,14 @@ YUI.add('user-profile', function() {
                 title="Models"
                 data={this.state.envList}
                 uuidKey="uuid"
-                switchEnv={this.switchEnv}
+                clickHandler={this.switchEnv}
                 whitelist={whitelist}/>
+              <juju.components.UserProfileList
+                title="Charms"
+                data={this.state.charmList} />
+              <juju.components.UserProfileList
+                title="Bundles"
+                data={this.state.bundleList} />
             </div>
           </div>
         </juju.components.Panel>

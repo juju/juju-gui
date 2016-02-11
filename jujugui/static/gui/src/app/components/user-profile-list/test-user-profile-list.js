@@ -31,13 +31,13 @@ describe('UserProfileList', () => {
   it('renders without data', () => {
     var data = [];
     var count = 0;
-    var switchEnv = sinon.stub();
+    var clickHandler = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileList
         title="Test List"
         data={data}
         uuidKey="uuid"
-        switchEnv={switchEnv}/>);
+        clickHandler={clickHandler}/>);
     var expected = (
       <div className="user-profile-list twelve-col">
         <div className="user-profile-list__header">
@@ -63,13 +63,13 @@ describe('UserProfileList', () => {
       pilot: 'dozer'
     }];
     var count = 2;
-    var switchEnv = sinon.stub();
+    var clickHandler = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileList
         title="TestList"
         data={data}
         uuidKey="uuid"
-        switchEnv={switchEnv}/>, true);
+        clickHandler={clickHandler}/>, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var expected = (
@@ -107,7 +107,7 @@ describe('UserProfileList', () => {
             className="user-profile-list__item-row"
             key={data[0].uuid}
             data-uuid={data[0].uuid}
-            onClick={instance._switchEnv}>
+            onClick={instance._clickHandler}>
             <div
               className="user-profile-list__line-item"
               data-key="uuid"
@@ -131,7 +131,7 @@ describe('UserProfileList', () => {
             className="user-profile-list__item-row"
             key={data[1].uuid}
             data-uuid={data[1].uuid}
-            onClick={instance._switchEnv}>
+            onClick={instance._clickHandler}>
             <div
               className="user-profile-list__line-item"
               data-key="uuid"
@@ -164,14 +164,14 @@ describe('UserProfileList', () => {
       pilot: 'the dr'
     }];
     var count = 1;
-    var switchEnv = sinon.stub();
+    var clickHandler = sinon.stub();
     var whitelist = ['uuid', 'ship'];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileList
         title="TestList"
         data={data}
         uuidKey="uuid"
-        switchEnv={switchEnv}
+        clickHandler={clickHandler}
         whitelist={whitelist}/>, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
@@ -204,7 +204,7 @@ describe('UserProfileList', () => {
             className="user-profile-list__item-row"
             key={data[0].uuid}
             data-uuid={data[0].uuid}
-            onClick={instance._switchEnv}>
+            onClick={instance._clickHandler}>
             <div
               className="user-profile-list__line-item"
               data-key="uuid"
@@ -224,24 +224,24 @@ describe('UserProfileList', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('calls to switch envs when clicking on row', function() {
+  it('calls to handler when clicking on row', function() {
     var data = [{
       uuid: 'abc123',
       ship: 'tardis',
       name: 'the dr'
     }];
-    var switchEnv = sinon.stub();
+    var clickHandler = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.UserProfileList
         title="TestList"
         data={data}
         uuidKey="uuid"
-        switchEnv={switchEnv}/>);
+        clickHandler={clickHandler}/>);
     testUtils.Simulate.click(
       ReactDOM.findDOMNode(component)
               .querySelector('.user-profile-list__item-row'));
-    assert.equal(switchEnv.callCount, 1);
-    assert.deepEqual(switchEnv.args[0], ['abc123', 'the dr']);
+    assert.equal(clickHandler.callCount, 1);
+    assert.deepEqual(clickHandler.args[0], ['abc123', 'the dr']);
   });
 
 });
