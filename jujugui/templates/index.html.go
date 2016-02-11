@@ -40,9 +40,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Make sure the config is loaded before other JS for use in the page
          below.
     -->
-    <script src="{{.ConfigURL}}"></script>
+    <script src="{{.configURL}}"></script>
     <link rel="shortcut icon" href="juju-ui/favicon.ico">
-    <link rel="stylesheet" href="{{.ComboURL}}?app/assets/stylesheets/normalize.css&app/assets/stylesheets/prettify.css&app/assets/stylesheets/cssgrids-responsive-min.css&app/assets/javascripts/yui/app-transitions-css/app-transitions-css-min.css&app/assets/javascripts/yui/panel/assets/panel-core.css&app/assets/javascripts/yui/widget-base/assets/widget-base-core.css&app/assets/javascripts/yui/widget-stack/assets/widget-stack-core.css&app/assets/juju-gui.css">
+    <link rel="stylesheet" href="{{.comboURL}}?app/assets/stylesheets/normalize.css&app/assets/stylesheets/prettify.css&app/assets/stylesheets/cssgrids-responsive-min.css&app/assets/javascripts/yui/app-transitions-css/app-transitions-css-min.css&app/assets/javascripts/yui/panel/assets/panel-core.css&app/assets/javascripts/yui/widget-base/assets/widget-base-core.css&app/assets/javascripts/yui/widget-stack/assets/widget-stack-core.css&app/assets/juju-gui.css">
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -61,7 +61,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <div class="hidden">
         {{/* Include the svg sprite image inside the body. */}}
-        {{.SpriteContent}}
+        {{.spriteContent}}
       </div>
 
       <div class="header-banner header-banner--left">
@@ -334,18 +334,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it will be combined with our app code and be interpreted under global
       'use strict' and d3 doesn't work under strict.
     -->
-    {{if .Debug}}
+    {{if .debug}}
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
-    <script data-manual src="{{.ComboURL}}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
-    <script src="{{.ComboURL}}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
-    <script src="{{.ComboURL}}?modules.js"></script>
-    <script src="{{.ComboURL}}?app/store/env/bakery.js&app/assets/javascripts/jujulib/juju.js"></script>
+    <script data-manual src="{{.comboURL}}?app/assets/javascripts/react-with-addons.js&app/assets/javascripts/react-dom.js&app/assets/javascripts/classnames.js&app/assets/javascripts/clipboard.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.js&app/assets/javascripts/prism.js&app/assets/javascripts/prism-languages.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js&app/assets/javascripts/yui/loader/loader.js&app/assets/javascripts/d3.js"></script>
+    <script src="{{.comboURL}}?modules.js"></script>
+    <script src="{{.comboURL}}?app/store/env/bakery.js&app/assets/javascripts/jujulib/juju.js"></script>
     {{else}}
     <!-- data-manual tells the Prism syntax highlighting lib to not auto-highlight -->
-    <script data-manual src="{{.ComboURL}}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
-    <script src="{{.ComboURL}}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
-    <script src="{{.ComboURL}}?modules-min.js"></script>
-    <script src="{{.ComboURL}}?app/store/env/bakery-min.js&app/assets/javascripts/jujulib/juju-min.js"></script>
+    <script data-manual src="{{.comboURL}}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
+    <script src="{{.comboURL}}?modules-min.js"></script>
+    <script src="{{.comboURL}}?app/store/env/bakery-min.js&app/assets/javascripts/jujulib/juju-min.js"></script>
     {{end}}
 
     <script>
@@ -370,8 +370,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         var GlobalConfig = {
           combine: true,
-          base: '{{.ComboURL}}?/app/assets/javascripts/yui/',
-          comboBase: '{{.ComboURL}}?',
+          base: '{{.comboURL}}?/app/assets/javascripts/yui/',
+          comboBase: '{{.comboURL}}?',
           maxURLLenght: 1300,
           root: 'app/assets/javascripts/yui/',
           groups: {
@@ -382,8 +382,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{else}}
                 combine: true,
                 {{end}}
-                base: "{{.ComboURL}}?app/",
-                comboBase: "{{.ComboURL}}?",
+                base: "{{.comboURL}}?app/",
+                comboBase: "{{.comboURL}}?",
                 root: 'app/',
                 // From modules.js
                 modules: YUI_MODULES,
