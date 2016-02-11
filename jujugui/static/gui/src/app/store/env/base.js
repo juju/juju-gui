@@ -94,6 +94,15 @@ YUI.add('juju-env-base', function(Y) {
   BaseEnvironment.NAME = 'base-env';
   BaseEnvironment.ATTRS = {
     /**
+      The version of Juju core.
+
+      @attribute jujuCoreVersion
+      @type {String}
+    */
+    'jujuCoreVersion': {
+      value: ''
+    },
+    /**
       The websocket URL to connect to.
 
       @attribute socket_url

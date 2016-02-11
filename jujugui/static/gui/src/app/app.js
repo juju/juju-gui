@@ -448,7 +448,8 @@ YUI.add('juju-gui', function(Y) {
           user: user,
           password: password,
           readOnly: this.get('readOnly'),
-          conn: this.get('conn')
+          conn: this.get('conn'),
+          jujuCoreVersion: this.get('jujuCoreVersion')
         };
         var webModule = environments.web;
         if (this.get('sandbox')) {

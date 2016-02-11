@@ -240,7 +240,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('login', function() {
-      it('sends the correct login message', function() {
+      it('sends the correct login message for juju < 2.0', function() {
+        env.set('jujuCoreVersion', '1.23');
         noopHandleLogin();
         env.login();
         var last_message = conn.last_message();
@@ -248,7 +249,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Type: 'Admin',
           Request: 'Login',
           RequestId: 1,
-          Params: {AuthTag: 'user-user', Password: 'password'}
+          Params: {AuthTag: 'user-user', Password: 'password'},
+          Version: 0
+        };
+        assert.deepEqual(expected, last_message);
+      });
+
+      it('sends the correct login message for juju > 2.0', function() {
+        env.set('jujuCoreVersion', '2.0');
+        noopHandleLogin();
+        env.login();
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'Admin',
+          Request: 'Login',
+          RequestId: 1,
+          Params: {'auth-tag': 'user-user', credentials: 'password'},
+          Version: 2
         };
         assert.deepEqual(expected, last_message);
       });

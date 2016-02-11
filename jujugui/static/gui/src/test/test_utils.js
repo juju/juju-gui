@@ -1193,6 +1193,53 @@ describe('utilities', function() {
     });
   });
 
+  describe('compareSemver', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('properly compares semver values', function() {
+      var versions = [
+        '1.2.3',
+        '2.0-alpha-foo-bar',
+        '4.11.6',
+        '4.2.0',
+        '1.5.19',
+        '1.5.5',
+        '1.5.5-foo',
+        '3.7.1-alpha-foo',
+        '4.1.3',
+        '2.3.1',
+        '10.5.5',
+        '5.1',
+        '11.3.0'
+      ];
+
+      assert.deepEqual(
+        versions.sort(utils.compareSemver), [
+          '1.2.3',
+          '1.5.5',
+          '1.5.5-foo',
+          '1.5.19',
+          '2.0-alpha-foo-bar',
+          '2.3.1',
+          '3.7.1-alpha-foo',
+          '4.1.3',
+          '4.2.0',
+          '4.11.6',
+          '5.1',
+          '10.5.5',
+          '11.3.0'
+        ]);
+    });
+
+  });
+
   describe('linkify', function() {
     var utils;
 
