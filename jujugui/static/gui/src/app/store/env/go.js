@@ -515,8 +515,10 @@ YUI.add('juju-env-go', function(Y) {
           Password: credentials.password
         };
         // If the user is connecting to juju-core 2.0 or higher then we need
-        // to use the new params arguments.
-        if (utils.compareSemver(this.get('jujuCoreVersion'), '2.0.0') > -1) {
+        // to use the new params arguments. This is comparing against '2'
+        // because Juju doesn't properly stick to semver and sometimes returns
+        // versions that do not properly validate as semver.
+        if (utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
           params = {
             'auth-tag': user,
             credentials: password
