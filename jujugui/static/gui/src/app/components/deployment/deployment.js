@@ -74,7 +74,8 @@ YUI.add('deployment-component', function() {
               importBundleFile={this.props.importBundleFile}
               hideDragOverNotification={this.props.hideDragOverNotification}
               generateChangeDescription={generateChangeDescription}
-              currentChangeSet={currentChangeSet} />
+              currentChangeSet={currentChangeSet}
+              services={this.props.services} />
           };
           break;
         case 'deployment-summary':

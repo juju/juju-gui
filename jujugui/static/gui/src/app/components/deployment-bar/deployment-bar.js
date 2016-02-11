@@ -24,7 +24,8 @@ YUI.add('deployment-bar', function() {
     propTypes: {
       exportEnvironmentFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
-      importBundleFile: React.PropTypes.func.isRequired
+      importBundleFile: React.PropTypes.func.isRequired,
+      services: React.PropTypes.array.isRequired
     },
 
     previousNotifications: [],
@@ -112,46 +113,62 @@ YUI.add('deployment-bar', function() {
       }
     },
 
+    /**
+      Returns the classes for the button based on the provided props.
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'deployment-bar',
+        {
+          'deployment-bar--initial': this.props.services.length === 0
+        }
+      );
+    },
+
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
       return (
         <juju.components.Panel
           instanceName="deployment-bar-panel"
           visible={true}>
-          <span className="deployment-bar__export link"
-            onClick={this._handleExport}
-            role="button"
-            tabIndex="0">
-            Export
-          </span>
-          <span className="deployment-bar__import link"
-            onClick={this._handleImportClick}
-            role="button"
-            tabIndex="0">
-            Import
-          </span>
-          <input className="deployment-bar__file"
-            type="file"
-            onChange={this._handleImportFile}
-            accept=".zip,.yaml,.yml"
-            ref="file-input" />
-          <a className="deployment-bar__install-button"
-            href="https://jujucharms.com/get-started"
-            target="_blank">
-            Install Juju
-          </a>
-          <juju.components.DeploymentBarNotification
-            change={this.state.latestChangeDescription} />
-          <juju.components.GenericButton
-            action={this.props.deployButtonAction}
-            type="blue"
-            disabled={changeCount === 0}
-            title={changeCount.toString()} />
-          <juju.components.GenericButton
-            action={this.props.deployButtonAction}
-            type="confirm"
-            disabled={changeCount === 0}
-            title={this._getDeployButtonLabel(this.props.hasCommits)} />
+          <div className={this._generateClasses()}>
+            <span className="deployment-bar__export link"
+              onClick={this._handleExport}
+              role="button"
+              tabIndex="0">
+              Export
+            </span>
+            <span className="deployment-bar__import link"
+              onClick={this._handleImportClick}
+              role="button"
+              tabIndex="0">
+              Import
+            </span>
+            <input className="deployment-bar__file"
+              type="file"
+              onChange={this._handleImportFile}
+              accept=".zip,.yaml,.yml"
+              ref="file-input" />
+            <a className="deployment-bar__install-button"
+              href="https://jujucharms.com/get-started"
+              target="_blank">
+              Install Juju
+            </a>
+            <juju.components.DeploymentBarNotification
+              change={this.state.latestChangeDescription} />
+            <juju.components.GenericButton
+              action={this.props.deployButtonAction}
+              type="blue"
+              disabled={changeCount === 0}
+              title={changeCount.toString()} />
+            <juju.components.GenericButton
+              action={this.props.deployButtonAction}
+              type="confirm"
+              disabled={changeCount === 0}
+              title={this._getDeployButtonLabel(this.props.hasCommits)} />
+          </div>
         </juju.components.Panel>
       );
     }
