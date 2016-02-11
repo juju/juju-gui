@@ -252,9 +252,12 @@ YUI.add('juju-env-go', function(Y) {
       if (!op.Params) {
         op.Params = {};
       }
-      var version = this.facadeVersions[facade] || 0;
-      if (version !== 0) {
-        op.Version = version;
+      // Only try and determine the version if none is provided.
+      if (!op.Version) {
+        var version = this.facadeVersions[facade] || 0;
+        if (version !== 0) {
+          op.Version = version;
+        }
       }
       var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
@@ -506,22 +509,25 @@ YUI.add('juju-env-go', function(Y) {
       if (credentials && credentials.areAvailable) {
         var user = credentials.user;
         var password = credentials.password;
+        var version = 0;
         var params = {
-          'auth-tag': user,
-          credentials: password
+          AuthTag: credentials.user,
+          Password: credentials.password
         };
         // If the user is connecting to juju-core 2.0 or higher then we need
         // to use the new params arguments.
         if (utils.compareSemver(this.get('jujuCoreVersion'), '2.0.0') > -1) {
           params = {
-            AuthTag: credentials.user,
-            Password: credentials.password
+            'auth-tag': user,
+            credentials: password
           };
+          version = 2;
         }
         this._send_rpc({
           Type: 'Admin',
           Request: 'Login',
-          Params: params
+          Params: params,
+          Version: version
         }, this.handleLogin);
         this.pendingLoginResponse = true;
       } else {

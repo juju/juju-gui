@@ -1864,7 +1864,8 @@ YUI.add('juju-view-utils', function(Y) {
     @method compareSemver
     @param {String} a Version.
     @param {String} b Version to compare to.
-    @param {Boolean} If a is older than b.
+    @param {Integer} returns -1 if a is older than b, 0 if a is equal to b,
+      and 1 if a is newer than b.
   */
   utils.compareSemver = function(a, b) {
     a = a.split('-')[0];
