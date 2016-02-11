@@ -380,7 +380,7 @@ bumpversion: deps
 	bin/bumpversion $(VPART)
 
 .PHONY: dist
-dist: clean-all gui test-deps collect-requirements
+dist: clean-all deps fast-babel gui test-deps collect-requirements
 	python setup.py sdist --formats=bztar
 
 #######
