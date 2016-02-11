@@ -21,10 +21,31 @@ function enhanceWithClickOutside(WrappedComponent) {
     componentDidMount: function componentDidMount() {
       this.__wrappedComponent = this.refs.wrappedComponent;
       document.addEventListener('click', this.handleClickOutside, true);
+      // XXX ant 9 Feb 2016 Add Esc keybind to also close the current component
+      document.addEventListener('keydown', this.handleKeyDown);
     },
 
     componentWillUnmount: function componentWillUnmount() {
       document.removeEventListener('click', this.handleClickOutside, true);
+      document.removeEventListener('keydown', this.handleKeyDown);
+    },
+
+    /**
+      XXX ant 9 Feb 2016
+      Call the handleClickOutside method of the component with keyCodes match
+
+      @method handleKeyDown
+      @param {Object} e The keydown event
+    */
+    handleKeyDown: function handleKeyDown(e) {
+      e = e || window.event;
+      // keyCode === <Esc> 
+      if (e.keyCode === 27) {
+        var domNode = ReactDOM.findDOMNode(this);
+        if (domNode && typeof this.refs.wrappedComponent.handleClickOutside === 'function') {
+          this.refs.wrappedComponent.handleClickOutside(e);
+        }
+      }
     },
 
     handleClickOutside: function handleClickOutside(e) {
