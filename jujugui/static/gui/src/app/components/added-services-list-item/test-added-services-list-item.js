@@ -53,15 +53,12 @@ describe('AddedServicesListItem', function() {
         <juju.components.AddedServicesListItem
           focusService={sinon.stub()}
           unfocusService={sinon.stub()}
-          fadeService={sinon.stub()}
-          unfadeService={sinon.stub()}
           changeState={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
           panToService={sinon.stub()}
           service={mockService} />, true);
 
     var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
 
     var expected = (
       <li className="inspector-view__list-item"
@@ -78,18 +75,6 @@ describe('AddedServicesListItem', function() {
           demo
         </span>
         <span className="inspector-view__status-block">
-          <span
-            className="inspector-view__visibility-toggle"
-            ref="focusVisibilityIcon"
-            onClick={instance._toggleFocus}>
-            <juju.components.SvgIcon name="unfocused_16" size="16"/>
-          </span>
-          <span
-            className="inspector-view__visibility-toggle"
-            ref="fadeVisibilityIcon"
-            onClick={instance._toggleHighlight}>
-            <juju.components.SvgIcon name="show_16" size="16"/>
-          </span>
           {undefined}
         </span>
       </li>);
@@ -138,15 +123,12 @@ describe('AddedServicesListItem', function() {
           <juju.components.AddedServicesListItem
             focusService={sinon.stub()}
             unfocusService={sinon.stub()}
-            fadeService={sinon.stub()}
-            unfadeService={sinon.stub()}
             changeState={sinon.stub()}
             getUnitStatusCounts={status.statusCounts}
             panToService={sinon.stub()}
             service={service} />, true);
 
       var output = renderer.getRenderOutput();
-      var instance = renderer.getMountedInstance();
 
       assert.deepEqual(output,
         <li className="inspector-view__list-item"
@@ -163,18 +145,6 @@ describe('AddedServicesListItem', function() {
             demo
           </span>
           <span className="inspector-view__status-block">
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="focusVisibilityIcon"
-              onClick={instance._toggleFocus}>
-              <juju.components.SvgIcon name="unfocused_16" size="16"/>
-            </span>
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="fadeVisibilityIcon"
-              onClick={instance._toggleHighlight}>
-              <juju.components.SvgIcon name="show_16" size="16"/>
-            </span>
             {statusIcon(status)}
           </span>
         </li>);
@@ -199,15 +169,12 @@ describe('AddedServicesListItem', function() {
       <juju.components.AddedServicesListItem
         focusService={sinon.stub()}
         unfocusService={sinon.stub()}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         panToService={sinon.stub()}
         service={service} />, true);
 
     var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
 
     assert.deepEqual(output,
         <li className="inspector-view__list-item"
@@ -224,18 +191,6 @@ describe('AddedServicesListItem', function() {
             demo
           </span>
           <span className="inspector-view__status-block">
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="focusVisibilityIcon"
-              onClick={instance._toggleFocus}>
-              <juju.components.SvgIcon name="unfocused_16" size="16"/>
-            </span>
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="fadeVisibilityIcon"
-              onClick={instance._toggleHighlight}>
-              <juju.components.SvgIcon name="show_16" size="16"/>
-            </span>
             {undefined}
           </span>
         </li>);
@@ -258,15 +213,12 @@ describe('AddedServicesListItem', function() {
       <juju.components.AddedServicesListItem
         focusService={sinon.stub()}
         unfocusService={sinon.stub()}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts(1, 1)}
         panToService={sinon.stub()}
         service={service} />, true);
 
     var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
 
     assert.deepEqual(output,
         <li className="inspector-view__list-item"
@@ -283,18 +235,6 @@ describe('AddedServicesListItem', function() {
             demo
           </span>
           <span className="inspector-view__status-block">
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="focusVisibilityIcon"
-              onClick={instance._toggleFocus}>
-              <juju.components.SvgIcon name="unfocused_16" size="16"/>
-            </span>
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="fadeVisibilityIcon"
-              onClick={instance._toggleHighlight}>
-              <juju.components.SvgIcon name="show_16" size="16"/>
-            </span>
             <span className="inspector-view__status--error">1</span>
           </span>
         </li>);
@@ -317,15 +257,12 @@ describe('AddedServicesListItem', function() {
       <juju.components.AddedServicesListItem
         focusService={sinon.stub()}
         unfocusService={sinon.stub()}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
         panToService={sinon.stub()}
         service={service} />, true);
 
     var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
 
     assert.deepEqual(output,
         <li className="inspector-view__list-item"
@@ -342,18 +279,6 @@ describe('AddedServicesListItem', function() {
             demo
           </span>
           <span className="inspector-view__status-block">
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="focusVisibilityIcon"
-              onClick={instance._toggleFocus}>
-              <juju.components.SvgIcon name="unfocused_16" size="16"/>
-            </span>
-            <span
-              className="inspector-view__visibility-toggle"
-              ref="fadeVisibilityIcon"
-              onClick={instance._toggleHighlight}>
-              <juju.components.SvgIcon name="show_16" size="16"/>
-            </span>
             <span className="inspector-view__status--pending">1</span>
           </span>
         </li>);
@@ -379,8 +304,6 @@ describe('AddedServicesListItem', function() {
         <juju.components.AddedServicesListItem
           focusService={sinon.stub()}
           unfocusService={sinon.stub()}
-          fadeService={sinon.stub()}
-          unfadeService={sinon.stub()}
           changeState={changeStub}
           getUnitStatusCounts={getUnitStatusCounts()}
           panToService={panToService}
@@ -401,134 +324,6 @@ describe('AddedServicesListItem', function() {
     });
   });
 
-  it('correctly sets the visibility icons status on render', () => {
-    mockService.set('highlight', true);
-    mockService.set('fade', false);
-
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={sinon.stub()}
-        panToService={sinon.stub()}
-        service={mockService} />, true);
-
-    // This is ugly but we have to check that the proper name prop was passed
-    // to the SvgIcon component.
-    var output = renderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children[4].props.children[0].props.children,
-      <juju.components.SvgIcon name="focused_16" size="16"/>);
-    assert.deepEqual(
-      output.props.children[4].props.children[1].props.children,
-      <juju.components.SvgIcon name="show_16" size="16"/>);
-  });
-
-  it('correctly sets the visibility icons status on re-render', () => {
-    mockService.set('highlight', true);
-    mockService.set('fade', false);
-
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={sinon.stub()}
-        panToService={sinon.stub()}
-        service={mockService} />, true);
-
-    // This is ugly but we have to check that the proper name prop was passed
-    // to the SvgIcon component.
-    var output = renderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children[4].props.children[0].props.children,
-      <juju.components.SvgIcon name="focused_16" size="16"/>);
-    assert.deepEqual(
-      output.props.children[4].props.children[1].props.children,
-      <juju.components.SvgIcon name="show_16" size="16"/>);
-    // Re-render to trigger the componentWillReceiveProps.
-    renderer.render(
-      <juju.components.AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={sinon.stub()}
-        panToService={sinon.stub()}
-        service={mockService} />);
-    var output = renderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children[4].props.children[0].props.children,
-      <juju.components.SvgIcon name="focused_16" size="16"/>);
-    assert.deepEqual(
-      output.props.children[4].props.children[1].props.children,
-      <juju.components.SvgIcon name="show_16" size="16"/>);
-  });
-
-  it('toggles the focus icon and calls the correct prop on click', () => {
-    var focusService = sinon.stub();
-    var unfocusService = sinon.stub();
-    mockService.set('highlight', false);
-    var instance = testUtils.renderIntoDocument(
-      <juju.components.AddedServicesListItem
-        focusService={focusService}
-        unfocusService={unfocusService}
-        fadeService={sinon.stub()}
-        unfadeService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={sinon.stub()}
-        panToService={sinon.stub()}
-        service={mockService} />);
-
-    // Toggle focus on.
-    testUtils.Simulate.click(instance.refs.focusVisibilityIcon);
-    assert.equal(focusService.callCount, 1);
-    assert.equal(unfocusService.callCount, 0);
-    assert.equal(focusService.args[0][0], 'wordpress');
-
-    // Toggle focus off.
-    mockService.set('highlight', true);
-    testUtils.Simulate.click(instance.refs.focusVisibilityIcon);
-    assert.equal(focusService.callCount, 1);
-    assert.equal(unfocusService.callCount, 1);
-    assert.equal(focusService.args[0][0], 'wordpress');
-  });
-
-  it('toggles the fade icon and calls the correct prop on click', () => {
-    var fadeService = sinon.stub();
-    var unfadeService = sinon.stub();
-    mockService.set('fade', false);
-    var instance = testUtils.renderIntoDocument(
-      <juju.components.AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        fadeService={fadeService}
-        unfadeService={unfadeService}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={sinon.stub()}
-        panToService={sinon.stub()}
-        service={mockService} />);
-
-    // Toggle focus on.
-    testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);
-    assert.equal(fadeService.callCount, 1);
-    assert.equal(unfadeService.callCount, 0);
-    assert.equal(fadeService.args[0][0], 'wordpress');
-
-    // Toggle focus off.
-    mockService.set('fade', true);
-    testUtils.Simulate.click(instance.refs.fadeVisibilityIcon);
-    assert.equal(fadeService.callCount, 1);
-    assert.equal(unfadeService.callCount, 1);
-    assert.equal(fadeService.args[0][0], 'wordpress');
-  });
-
   it('calls the hoverService callable on mouse enter', function() {
     var service = {
       get: sinon.stub().returns('apache2'),
@@ -545,13 +340,11 @@ describe('AddedServicesListItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.AddedServicesListItem
           changeState={changeStub}
-          fadeService={sinon.stub()}
           focusService={sinon.stub()}
           hoverService={hoverService}
           getUnitStatusCounts={getUnitStatusCounts()}
           panToService={sinon.stub()}
           service={service}
-          unfadeService={sinon.stub()}
           unfocusService={sinon.stub()} />);
     output.props.onMouseEnter();
     assert.equal(hoverService.callCount, 1);
@@ -575,13 +368,11 @@ describe('AddedServicesListItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.AddedServicesListItem
           changeState={changeStub}
-          fadeService={sinon.stub()}
           focusService={sinon.stub()}
           hoverService={hoverService}
           getUnitStatusCounts={getUnitStatusCounts()}
           panToService={sinon.stub()}
           service={service}
-          unfadeService={sinon.stub()}
           unfocusService={sinon.stub()} />);
     output.props.onMouseLeave();
     assert.equal(hoverService.callCount, 1);

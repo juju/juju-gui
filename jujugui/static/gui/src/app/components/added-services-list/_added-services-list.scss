@@ -26,21 +26,6 @@
         &:hover {
             background-color: $hover-background;
         }
-
-        &.visibility-toggled,
-        &:hover {
-            .inspector-view__item-name {
-                max-width: 105px;
-            }
-
-            .inspector-view__visibility-toggle {
-                opacity: .6;
-
-                &:hover {
-                    opacity: 1;
-                }
-            }
-        }
     }
 
     &__item-icon {
@@ -63,13 +48,6 @@
         position: relative;
         top: 1px;
         color: $warm-grey;
-    }
-
-    &__visibility-toggle {
-        transition: opacity .3s;
-        opacity: 0;
-        vertical-align: middle;
-        padding: 0 15px 0 0;
     }
 
     &__status-block {
