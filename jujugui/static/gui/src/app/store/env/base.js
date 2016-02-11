@@ -99,7 +99,9 @@ YUI.add('juju-env-base', function(Y) {
       @attribute jujuCoreVersion
       @type {String}
     */
-    'jujuCoreVersion': {},
+    'jujuCoreVersion': {
+      value: ''
+    },
     /**
       The websocket URL to connect to.
 

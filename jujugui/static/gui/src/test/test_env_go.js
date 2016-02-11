@@ -241,6 +241,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('login', function() {
       it('sends the correct login message', function() {
+        env.set('jujuCoreVersion', '1.23');
         noopHandleLogin();
         env.login();
         var last_message = conn.last_message();
@@ -248,7 +249,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Type: 'Admin',
           Request: 'Login',
           RequestId: 1,
-          Params: {AuthTag: 'user-user', Password: 'password'}
+          Params: {AuthTag: 'user-user', Password: 'password'},
+          Version: 0
         };
         assert.deepEqual(expected, last_message);
       });
