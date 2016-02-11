@@ -81,6 +81,10 @@ YUI.add('deployment-bar', function() {
       @method _handleExport
     */
     _handleExport: function() {
+      var docsLink = 'https://jujucharms.com/docs/stable/' +
+        'charms-bundles#local-deploy-via-command-line';
+      var docsWindow = window.open(docsLink, '_blank');
+      docsWindow.focus();
       this.props.exportEnvironmentFile();
     },
 
