@@ -504,13 +504,24 @@ YUI.add('juju-env-go', function(Y) {
       }
       var credentials = this.getCredentials();
       if (credentials && credentials.areAvailable) {
+        var user = credentials.user;
+        var password = credentials.password;
+        var params = {
+          'auth-tag': user,
+          credentials: password
+        };
+        // If the user is connecting to juju-core 2.0 or higher then we need
+        // to use the new params arguments.
+        if (utils.compareSemver(this.get('jujuCoreVersion'), '2.0.0') > -1) {
+          params = {
+            AuthTag: credentials.user,
+            Password: credentials.password
+          };
+        }
         this._send_rpc({
           Type: 'Admin',
           Request: 'Login',
-          Params: {
-            AuthTag: credentials.user,
-            Password: credentials.password
-          }
+          Params: params
         }, this.handleLogin);
         this.pendingLoginResponse = true;
       } else {
