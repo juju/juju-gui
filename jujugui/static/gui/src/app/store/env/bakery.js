@@ -87,7 +87,7 @@ YUI.add('juju-env-bakery', function(Y) {
         @return {undefined}
       */
       fetchMacaroonFromStaticPath: function(callback) {
-        var savedMacaroon = this._getMacaroon();
+        var savedMacaroon = this.getMacaroon();
         if (savedMacaroon !== null) {
           callback(null, savedMacaroon);
           return;
@@ -119,7 +119,7 @@ YUI.add('juju-env-bakery', function(Y) {
           return;
         }
         this._authenticate(macaroon, function() {
-          callback(null, this._getMacaroon());
+          callback(null, this.getMacaroon());
         }.bind(this), callback);
       },
 
@@ -137,7 +137,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {Object} The asynchronous request instance.
        */
       sendGetRequest: function (path, successCallback, failureCallback) {
-        var macaroons = this._getMacaroon();
+        var macaroons = this.getMacaroon();
         var headers = {'Bakery-Protocol-Version': 1};
         if (macaroons !== null) {
           headers['Macaroons'] = macaroons;
@@ -170,7 +170,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {Object} response The XHR response object from initial request.
        */
       sendPostRequest: function (path, data, successCallback, failureCallback) {
-        var macaroons = this._getMacaroon();
+        var macaroons = this.getMacaroon();
         var headers = {
           'Bakery-Protocol-Version': 1,
           'Content-type': 'application/json'
@@ -257,7 +257,7 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {Object} The asynchronous request instance.
        */
       _sendOriginalRequest: function(path, successCallback, failureCallback) {
-        var macaroons = this._getMacaroon();
+        var macaroons = this.getMacaroon();
         var headers = {'Bakery-Protocol-Version': 1};
         if (macaroons !== null) {
           headers['Macaroons'] = macaroons;
@@ -554,10 +554,10 @@ YUI.add('juju-env-bakery', function(Y) {
       /**
        Get macaroon from local cookie.
 
-       @method _getMacaroon
+       @method getMacaroon
        @return {String} Macaroon that was set in local cookie.
        */
-      _getMacaroon: function() {
+      getMacaroon: function() {
         var name = this.macaroonName + '=';
         var ca = document.cookie.split(';');
         for(var i=0; i<ca.length; i++) {

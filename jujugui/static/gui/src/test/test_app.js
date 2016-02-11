@@ -1191,51 +1191,7 @@ describe('App', function() {
     });
   });
 
-  describe('_getAuth', function() {
-    var Y, app, testUtils;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-gui', 'juju-tests-utils', function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
-        done();
-      });
-    });
-
-    beforeEach(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
-      app = new Y.juju.App({
-        viewContainer: container,
-        consoleEnabled: true
-      });
-    });
-
-    afterEach(function() {
-      app.destroy({remove: true});
-    });
-
-    it('uses the auth object if it exists', function() {
-      app.set('auth', 'foo');
-      assert.equal(app._getAuth(), 'foo');
-    });
-
-    it('gets a partial auth from cookie when needed', function() {
-      app.set('auth', null);
-      app.set('jemUrl', 'jem url');
-      var stub = testUtils.makeStubMethod(app, '_getUsernameFromCookie', 'bar');
-      var auth = app._getAuth();
-      assert.equal('bar', auth.user.name);
-      assert.equal(stub.callCount(), 1);
-    });
-
-    it('skips getting username from cookie if not in JEM', function() {
-      app.set('auth', null);
-      var stub = testUtils.makeStubMethod(app, '_getUsernameFromCookie');
-      app._getAuth();
-      assert.equal(stub.callCount(), 0);
-    });
-  });
-
-  describe('_getUsernameFromCookie', function() {
+  describe('storeUser', function() {
     var Y, app;
 
     before(function(done) {
@@ -1269,36 +1225,67 @@ describe('App', function() {
         data.push({caveats: [{cid: 'declared username dalek'}]});
       }
       data = JSON.stringify(data);
-      return 'Macaroons-jem=' + btoa(data);
+      return btoa(data);
     };
 
-    it('does not check cookies if in sandbox.', function() {
-      app.set('sandbox', true);
-      assert.isNull(app._getUsernameFromCookie());
-    });
-
     it('handles no macaroon being found.', function() {
-      app._getCookie = function() {
-        return '';
-      };
-      assert.isNull(app._getUsernameFromCookie());
+      app.storeUser('jem', '');
+      var users = app.get('users');
+      assert.isUndefined(users['jem']);
     });
 
     it('can get username from a macaroon.', function() {
-      app._getCookie = function() {
-        return makeMacaroon();
-      };
-      assert.equal('rose', app._getUsernameFromCookie());
+      var macaroon = makeMacaroon();
+      app.storeUser('jem', macaroon);
+      var users = app.get('users');
+      assert.deepEqual(users['jem'], {user: {name: 'rose'}});
     });
 
     it('returns null if the macaroon has multiple usernames.', function() {
-      app._getCookie = function() {
-        return makeMacaroon(true);
-      };
-      assert.isNull(app._getUsernameFromCookie());
+      var macaroon = makeMacaroon(true);
+      app.storeUser('jem', macaroon);
+      var users = app.get('users');
+      assert.isUndefined(users['jem']);
     });
   });
 
+  describe('_getAuth', function() {
+    var Y, app;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      app = new Y.juju.App({
+        viewContainer: container,
+        consoleEnabled: true
+      });
+    });
+
+    afterEach(function() {
+      app.destroy({remove: true});
+    });
+
+    it('fetches the auth for a particular service', function() {
+      app.set('users', { 'foo': 'bar' });
+      assert.equal(app._getAuth('foo'), 'bar');
+    });
+
+    it('uses external auth if present', function() {
+      app.set('auth', 'baz');
+      app.set('users', { 'foo': 'bar' });
+      assert.equal(app._getAuth('foo'), 'baz');
+    });
+
+    it('does not break when auth is not set', function() {
+      app.set('users', {});
+      assert.isUndefined(app._getAuth('foo'));
+    });
+  });
 
   describe('Application sandbox mode', function() {
     var Y, app;

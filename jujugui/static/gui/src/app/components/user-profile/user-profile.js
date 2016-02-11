@@ -23,15 +23,16 @@ YUI.add('user-profile', function() {
   juju.components.UserProfile = React.createClass({
 
     propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      charmstore: React.PropTypes.object,
+      createSocketURL: React.PropTypes.func.isRequired,
+      dbEnvironmentSet: React.PropTypes.func.isRequired,
+      interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
       listEnvs: React.PropTypes.func,
-      switchEnv: React.PropTypes.func.isRequired,
-      changeState: React.PropTypes.func.isRequired,
-      dbEnvironmentSet: React.PropTypes.func.isRequired,
-      createSocketURL: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
-      charmstore: React.PropTypes.object,
-      interactiveLogin: React.PropTypes.bool
+      storeUser: React.PropTypes.func.isRequired,
+      switchEnv: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -137,11 +138,16 @@ YUI.add('user-profile', function() {
       Callback for fetching the macaroon.
 
       @method _fetchMacaroonCallback
-      @param {String|Object|Null} The error response from the callback.
-      @param {String} The resolved macaroon.
+      @param {String|Object|Null} error The error response from the callback.
+      @param {String} macaroon The resolved macaroon.
     */
-    _fetchMacaroonCallback: function(err, macaroon) {},
-
+    _fetchMacaroonCallback: function(error, macaroon) {
+      if (error) {
+        console.log(error);
+      } else {
+        this.props.storeUser('charmstore', macaroon);
+      }
+    },
 
     render: function() {
       var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
