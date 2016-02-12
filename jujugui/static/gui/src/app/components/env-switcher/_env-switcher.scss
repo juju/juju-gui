@@ -7,6 +7,10 @@
     &--toggle {
         cursor: pointer;
 
+        &:focus {
+            outline: 1px dotted $ubuntu-orange;
+        }
+
         .svg-icon {
             margin-left: 10px;
             vertical-align: text-top;

@@ -32,7 +32,8 @@
             padding: 10px 20px;
         }
 
-        &__environment:hover {
+        &__environment:hover,
+        &__environment:focus {
             background-color: $hover-background;
             cursor: pointer;
         }

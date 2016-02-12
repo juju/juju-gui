@@ -1,0 +1,16 @@
+var juju_config = {
+    "baseUrl": "{{.base}}",
+    "jujuCoreVersion": "{{.version}}",
+    "jujuEnvUUID": "{{.uuid}}",
+    "apiAddress": "wss://{{.host}}",
+    "socketTemplate": "{{.socket}}",
+    "socket_protocol": "wss",
+    "apiPath": "v4",
+    "charmstoreURL": "https://api.jujucharms.com/charmstore/",
+    "interactiveLogin": true,
+    "html5": true,
+    "container": "#main",
+    "viewContainer": "#main",
+    "consoleEnabled": true,
+    "serverRouting": false,
+};

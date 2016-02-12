@@ -39,8 +39,11 @@ describe('EnvList', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         envs={envs} />);
+
     assert.deepEqual(output.props.children[0].props.children, [
       <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
         data-id={envs[0].uuid}
         data-name={envs[0].name}
         onClick={undefined}
@@ -48,6 +51,8 @@ describe('EnvList', function() {
         {envs[0].name}
       </li>,
       <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
         data-id={envs[1].uuid}
         data-name={envs[1].path}
         onClick={undefined}

@@ -31,18 +31,31 @@ describe('EnvSwitcher', function() {
   });
 
   it('renders the closed switcher component', function() {
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        environmentName="MyEnv" />);
-    assert.deepEqual(output,
-      <div className="env-switcher">
+        environmentName="MyEnv" />, true);
+
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+
+    var expected = <div className="env-switcher"
+        role="navigation"
+        aria-label="Environment switcher">
         <div
           className="env-switcher--toggle"
-          onClick={output.props.children[0].props.onClick}>
+          onClick={instance.toggleEnvList}
+          onKeyPress={instance.handleKeyToggle}
+          id="environmentSwitcherToggle"
+          role="button"
+          tabIndex="0"
+          aria-haspopup="true"
+          aria-owns="environmentSwitcherMenu"
+          aria-controls="environmentSwitcherMenu"
+          aria-expanded="false">
           <span className="environment-name">
             MyEnv
           </span>
@@ -50,7 +63,8 @@ describe('EnvSwitcher', function() {
             size="16" />
         </div>
         {''}
-      </div>);
+      </div>;
+    assert.deepEqual(output, expected);
   });
 
   it('open the list on click', function() {

@@ -381,10 +381,10 @@ bumpversion: deps
 
 .PHONY: dist
 ifeq ($(GUI_NO_CLEAN),)
-dist: clean-all fast-babel gui test-deps collect-requirements
+dist: clean-all deps fast-babel gui test-deps collect-requirements
 	python setup.py sdist --formats=bztar
 else
-dist: fast-babel gui test-deps collect-requirements
+dist: deps fast-babel gui test-deps collect-requirements
 	python setup.py sdist --formats=bztar
 endif
 
