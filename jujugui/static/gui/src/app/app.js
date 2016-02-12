@@ -37,8 +37,7 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets'),
-      bundleNotifications = juju.BundleNotifications;
+      widgets = Y.namespace('juju.widgets');
 
   var components = window.juju.components; // eslint-disable-line no-unused-vars
 
@@ -1135,7 +1134,7 @@ YUI.add('juju-gui', function(Y) {
       @method _renderEnvSwitcher
     */
     _renderEnvSwitcher: function() {
-      if(!this.env.facadeSupported('EnvironmentManager')) {
+      if(this.env.findFacadeVersion('ModelManager') === null) {
         // We do not want to show the model switcher if it isn't supported as
         // it throws an error in the browser console and confuses the user
         // as it's visible but not functional.
@@ -1748,8 +1747,6 @@ YUI.add('juju-gui', function(Y) {
         if (redirectPath.indexOf('#') > -1) {
           this.dispatch();
         }
-        // Start observing bundle deployments.
-        bundleNotifications.watchAll(this.env, this.db);
       } else {
         this._renderLogin(true);
       }

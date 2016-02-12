@@ -161,20 +161,6 @@ YUI.add('juju-env-go', function(Y) {
     series: Object.keys(utils.getSeriesList()),
 
     /**
-      An object mapping facade names to the corresponding versions used by the
-      GUI API client. When a facade is not specified, it is assumed that
-      version 0 is used (for instance the "Client" facade uses version 0).
-
-      @property facadeVersions
-      @type {Object}
-    */
-    facadeVersions: {
-      CrossModelRelations: 1,
-      EnvironmentManager: 1,
-      Service: 2
-    },
-
-    /**
       Some default facades are always assumed to be present, even in old
       versions of Juju not returning facades on login. Base client, watcher and
       pinger facades are part of this list. Also facades historically
@@ -190,7 +176,6 @@ YUI.add('juju-env-go', function(Y) {
       Pinger: [0],
       // Custom GUI server types.
       ChangeSet: [0],
-      Deployer: [0],
       GUIToken: [0]
     },
 
@@ -240,10 +225,17 @@ YUI.add('juju-env-go', function(Y) {
       // are sent as part of the login response). For this reason, do not
       // check if the "Admin" facade is supported, but just assume it is,
       // otherwise even logging in ("Admin.Login") would be impossible.
-      if (facade !== 'Admin' && !this.facadeSupported(facade)) {
-        console.error('operation not supported by API server:', op);
+      var version = op.Version;
+      if (facade !== 'Admin') {
+        version = this.findFacadeVersion(facade, version);
+      }
+      if (version === null) {
+        callback({
+          Error: 'operation not supported by API server: ' + JSON.stringify(op)
+        });
         return;
       }
+      op.Version = version;
       var tid = this._counter += 1;
       if (callback) {
         this._txn_callbacks[tid] = callback;
@@ -251,13 +243,6 @@ YUI.add('juju-env-go', function(Y) {
       op.RequestId = tid;
       if (!op.Params) {
         op.Params = {};
-      }
-      // Only try and determine the version if none is provided.
-      if (!op.Version) {
-        var version = this.facadeVersions[facade] || 0;
-        if (version !== 0) {
-          op.Version = version;
-        }
       }
       var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
@@ -434,7 +419,8 @@ YUI.add('juju-env-go', function(Y) {
             user: response.AuthTag, password: response.Password});
         }
         // If login succeeded store the facades and retrieve environment info.
-        var facadeList = response.Facades || [];
+        // Starting from Juju 2.0, "Facades" is spelled "facades".
+        var facadeList = response.facades || response.Facades || [];
         var facades = facadeList.reduce(function(previous, current) {
           previous[current.Name] = current.Versions;
           return previous;
@@ -465,17 +451,30 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Reports whether the given facade is supported by current API server.
+      Return a version for the given facade name which is supported by the
+      current Juju controller. If a version is provided, return the version
+      number itself if supported, or null if that specific version is not
+      served by the controller. Otherwise, if no version is specified, return
+      the most recent supported version or null if the facade is not found.
 
-      @method facadeSupported
+      @method findFacadeVersion
       @param {String} name The facade name (for instance "Service").
-      @return {Boolean} True if the facade is supported, False otherwise.
+      @param {Int} version The optional facade version (for instance 1 or 2).
+      @return {Int} The facade version or null if facade is not supported.
     */
-    facadeSupported: function(name) {
+    findFacadeVersion: function(name, version) {
       var facades = this.get('facades') || {};
       var versions = facades[name] || this.defaultFacades[name] || [];
-      var version = this.facadeVersions[name] || 0;
-      return versions.indexOf(version) > -1;
+      if (!versions.length) {
+        return null;
+      }
+      if (version === undefined || version === null) {
+        return versions[versions.length - 1];
+      }
+      if (versions.indexOf(version) > -1) {
+        return version;
+      }
+      return null;
     },
 
     /**
@@ -1032,7 +1031,7 @@ YUI.add('juju-env-go', function(Y) {
     */
     _deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
         constraints, toMachine, callback) {
-      var serviceFacadeSupported = this.facadeSupported('Service');
+      var serviceFacadeVersion = this.findFacadeVersion('Service');
 
       // Define the API callback.
       var handleDeploy = function(userCallback, serviceName, charmUrl, data) {
@@ -1040,7 +1039,7 @@ YUI.add('juju-env-go', function(Y) {
           console.log('data returned by deploy API call:', data);
           return;
         }
-        if (serviceFacadeSupported) {
+        if (serviceFacadeVersion !== null) {
           data = data.Response.Results[0];
         }
         userCallback({
@@ -1073,21 +1072,32 @@ YUI.add('juju-env-go', function(Y) {
       };
 
       // Perform the API call.
-      if (serviceFacadeSupported) {
-        this._send_rpc({
-          Type: 'Service',
-          Request: 'ServicesDeploy',
-          Params: {Services: [serviceParams]}
-        }, handleDeploy);
-        return;
-      };
-
-      // Fall back to legacy deployment.
-      this._send_rpc({
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: serviceParams
-      }, handleDeploy);
+      switch (serviceFacadeVersion) {
+        case 0:
+        case 1:
+        // Intentionally falling through.
+        case 2:
+          this._send_rpc({
+            Type: 'Service',
+            Request: 'ServicesDeploy',
+            Params: {Services: [serviceParams]}
+          }, handleDeploy);
+          break;
+        case 3:
+          this._send_rpc({
+            Type: 'Service',
+            Request: 'Deploy',
+            Params: {Services: [serviceParams]}
+          }, handleDeploy);
+          break;
+        default:
+          // Fall back to legacy deployment.
+          this._send_rpc({
+            Type: 'Client',
+            Request: 'ServiceDeploy',
+            Params: serviceParams
+          }, handleDeploy);
+      }
     },
 
     /*
