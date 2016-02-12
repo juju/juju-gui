@@ -430,10 +430,12 @@ YUI.add('juju-gui', function(Y) {
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // XXX Update the header breadcrumb to show the username. This is a
-        // quick hack for the demo.
+        // quick hack for the demo, which has since been slightly cleaned up;
+        // however, it is still definitely hacky and should be replaced as
+        // soon as possible.
         var breadcrumbElement = document.querySelector(
             '#user-name .header-banner__link--breadcrumb');
-        var auth = this._getAuth();
+        var auth = this._getAuth('charmstore');
         if (breadcrumbElement) {
           breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
             window.juju_config.user ||
@@ -736,6 +738,7 @@ YUI.add('juju-gui', function(Y) {
           createSocketURL={this.createSocketURL.bind(this)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           interactiveLogin={this.get('interactiveLogin')}
+          storeUser={this.storeUser.bind(this)}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
     },
@@ -1035,100 +1038,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Get cookies
-
-      @method _getCookies
-    */
-    _getCookie: function() {
-      return document.cookie;
-    },
-
-    /**
-      Get user name from cookie.
-
-      @method _getUsernameFromCookie
-      @returns the username or null if no username is found.
-    */
-    _getUsernameFromCookie: function() {
-      // XXX jcsackett 2016-01-08: We should be using the whoami endpoint on
-      // jem to get the username of a logged in jem user rather than
-      // parsing the cookie. Consider this all a bad hack for demo and we'll do
-      // something better in the very near future.
-
-      // Don't look for cookies if in sandbox.
-      if (this.get('sandbox')) {
-        return null;
-      }
-      var cookie = this._getCookie();
-      var data = cookie.split(';');
-      var macaroon = null;
-      var prefix = 'Macaroons-jem=';
-      var found = data.some(function(item) {
-        macaroon = item;
-        return (item.indexOf(prefix) !== -1);
-      });
-      if (!found) {
-        console.log('No macaroon found to get username from.');
-        return null;
-      }
-      var index = macaroon.indexOf(prefix) + prefix.length;
-      macaroon = macaroon.slice(index);
-
-      try {
-        macaroon = JSON.parse(atob(macaroon));
-        var username = null;
-        // We check all the caveats of each piece of the macaroon for the
-        // username data. If we find more than one username we abandon the
-        // macaroon as invalid.
-        macaroon.some(function(piece) {
-          var caveats = piece.caveats;
-          return caveats.some(function(caveat) {
-            var declaration = 'declared username ';
-            var index = caveat.cid.indexOf(declaration);
-            if (index !== -1) {
-              if (username === null) {
-                username = caveat.cid.slice(index + declaration.length);
-              } else {
-                console.log(
-                  'Multiple usernames found in macaroon. Macaroon is invalid.');
-                username = null;
-                return true; //breaks the foreach.
-              }
-            }
-          });
-        });
-        return username;
-      } catch (e) {
-        console.log('Error working with macaroon json: ' + e);
-        return null;
-      }
-    },
-
-    /**
-      Get auth object, or if unavailable get mocked object with username from
-      cookie.
-
-      @method _getAuth
-      @returns The auth object or a mock following the format of the config
-        auth object.
-    */
-    _getAuth: function() {
-      var auth = this.get('auth');
-      var username = null;
-      if (auth === null) {
-        if (this.get('jemUrl')) {
-          // If we're in a JEM enabled environment then try and get the
-          // username from the cookie else skip it.
-          username = this._getUsernameFromCookie();
-        }
-        if (username !== null) {
-          auth = { user: { name: username }};
-        }
-      }
-      return auth;
-    },
-
-    /**
       Renders the environment switcher
 
       @method _renderEnvSwitcher
@@ -1140,7 +1049,7 @@ YUI.add('juju-gui', function(Y) {
         // as it's visible but not functional.
         return;
       }
-      var auth = this._getAuth();
+      var auth = this._getAuth('jem');
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
       ReactDOM.render(
         <components.EnvSwitcher
@@ -1259,6 +1168,12 @@ YUI.add('juju-gui', function(Y) {
           serviceName: 'jem'
         });
         this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
+
+        // Store away the JEM auth info.
+        var macaroon = bakery.getMacaroon();
+        this.storeUser('jem', macaroon);
+
+        // Setup environment listing.
         this.jem.listEnvironments((error, envList) => {
           if (error) {
             console.log('Environment listing failure: ' + error);
@@ -1318,6 +1233,9 @@ YUI.add('juju-gui', function(Y) {
           serviceName: 'charmstore'
         });
         this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
+        // Store away the charmstore auth info.
+        var macaroon = bakery.getMacaroon();
+        this.storeUser('charmstore', macaroon);
       }
     },
 
@@ -1818,7 +1736,7 @@ YUI.add('juju-gui', function(Y) {
       // quick hack for the demo.
       var breadcrumbElement = document.querySelector(
           '#user-name .header-banner__link--breadcrumb');
-      var auth = this._getAuth();
+      var auth = this._getAuth('jem');
       if (breadcrumbElement) {
         breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
           window.juju_config.user ||
@@ -2075,6 +1993,72 @@ YUI.add('juju-gui', function(Y) {
         this.cookieHandler.check();
       }
       next();
+    },
+
+    /**
+      Takes a macaroon and stores the user info (if any) in the app.
+
+      @method storeUser
+      @param {String} service The service the macaroon comes from.
+      @param {String} macaroon The base64 encoded macaroon.
+     */
+    storeUser: function(service, macaroon) {
+      if (macaroon) {
+        var username = null;
+
+        // XXX jcsackett 2016-01-08: We should be using the whoami endpoint on
+        // jem to get the username of a logged in jem user rather than
+        // parsing the macaroon. Consider this all a bad hack for demo and we'll
+        // do something better in the very near future.
+        try {
+          macaroon = JSON.parse(atob(macaroon));
+          // We check all the caveats of each piece of the macaroon for the
+          // username data. If we find more than one username we abandon the
+          // macaroon as invalid.
+          macaroon.some(function(piece) {
+            var caveats = piece.caveats;
+            return caveats.some(function(caveat) {
+              var declaration = 'declared username ';
+              var index = caveat.cid.indexOf(declaration);
+              if (index !== -1) {
+                if (username === null) {
+                  username = caveat.cid.slice(index + declaration.length);
+                } else {
+                  console.log('Multiple usernames found in macaroon. ' +
+                              'Macaroon is invalid.');
+                  username = null;
+                  return true; // Breaks the some() function call.
+                }
+              }
+            });
+          });
+        } catch (e) {
+          console.log('Error working with macaroon json: ' + e);
+        }
+
+        if (username) {
+          var users = this.get('users');
+          users[service] = {
+            user: { name: username }
+          };
+        }
+      }
+    },
+
+    /**
+      A single point for accessing auth information that properly handles
+      situations where auth is set outside the GUI (i.e., embedded).
+
+      @method _getAuth
+      @param {String} service The service to retrieve auth info from.
+     */
+    _getAuth: function(service) {
+      var externalAuth = this.get('auth');
+      if (externalAuth) {
+        return externalAuth;
+      }
+      var users = this.get('users');
+      return users && users[service];
     }
 
   }, {
@@ -2172,6 +2156,20 @@ YUI.add('juju-gui', function(Y) {
        @default '/environment/$uuid/api'
        */
       socketTemplate: {value: '/environment/$uuid/api'},
+
+      /**
+       The users associated with various services that the GUI uses. The users
+       are keyed by their service name. For example,
+       this.get('users')['charmstore'] will return the user object for the
+       charmstore service.
+
+       @attribute users
+       @type {Object}
+       @default '/environment/$uuid/api'
+       */
+      users: {
+        value: {}
+      },
 
       /**
        * Routes

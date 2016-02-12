@@ -69,7 +69,7 @@ describe('Bakery', function() {
   describe('_fetchMacaroonFromStaticPath', function() {
 
     it('can return a saved macaroon', function() {
-      var getStub = utils.makeStubMethod(bakery, '_getMacaroon', 'macaroons');
+      var getStub = utils.makeStubMethod(bakery, 'getMacaroon', 'macaroons');
       this._cleanups.push(getStub.reset);
       var callback = utils.makeStubFunction();
       bakery.fetchMacaroonFromStaticPath(callback);
@@ -78,7 +78,7 @@ describe('Bakery', function() {
     });
 
     it('fails gracefully if no static path is defined', function() {
-      var getStub = utils.makeStubMethod(bakery, '_getMacaroon', null);
+      var getStub = utils.makeStubMethod(bakery, 'getMacaroon', null);
       this._cleanups.push(getStub.reset);
       var callback = utils.makeStubFunction();
       bakery.staticMacaroonPath = false;
@@ -89,7 +89,7 @@ describe('Bakery', function() {
     });
 
     it('sends get request to fetch macaroon', function() {
-      var getStub = utils.makeStubMethod(bakery, '_getMacaroon', null);
+      var getStub = utils.makeStubMethod(bakery, 'getMacaroon', null);
       var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
       this._cleanups.push(sendGet.reset);
       this._cleanups.push(getStub.reset);
@@ -108,7 +108,7 @@ describe('Bakery', function() {
 
     it('authenticates the macaroon after fetching', function() {
       var getStub = utils.makeStubMethod(
-        bakery, '_getMacaroon', null, 'macaroons');
+        bakery, 'getMacaroon', null, 'macaroons');
       var authStub = utils.makeStubMethod(bakery, '_authenticate');
       var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
       this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
@@ -134,7 +134,7 @@ describe('Bakery', function() {
 
     it('fails gracefully if it cannot parse the macaroon response', function() {
       var getStub = utils.makeStubMethod(
-        bakery, '_getMacaroon', null, 'macaroons');
+        bakery, 'getMacaroon', null, 'macaroons');
       var authStub = utils.makeStubMethod(bakery, '_authenticate');
       var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
       this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
