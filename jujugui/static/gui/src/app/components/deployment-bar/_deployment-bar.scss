@@ -1,21 +1,22 @@
-
-
 .deployment-bar {
+    height: 40px;
+
     &__import {
         @extend %deployment-bar__links;
         left: -240px;
-
-        &:after {
-            content: '';
-            border-right: 1px solid $mid-grey;
-            position: relative;
-            right: -10px;
-        }
     }
 
     &__export {
+        @extend %fade-in;
         @extend %deployment-bar__links;
         left: -170px;
+
+        &:before {
+            content: '';
+            border-right: 1px solid $mid-grey;
+            position: relative;
+            left: -12px;
+        }
     }
 
     &__file {
@@ -24,11 +25,28 @@
     }
 
     &__install-button {
+        @extend %fade-in;
         @extend %floating-panel;
         left: -105px;
         position: absolute;
         padding: 10px;
         color: $cool-grey;
+    }
+
+    &--initial {
+        .deployment-bar {
+            &__import {
+                left: -170px;
+            }
+
+            &__export {
+                display: none;
+            }
+        }
+
+        .generic-button {
+            display: none;
+        }
     }
 }
 

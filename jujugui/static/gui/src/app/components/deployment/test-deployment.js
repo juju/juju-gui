@@ -37,6 +37,7 @@ describe('Deployment', function() {
     var renderDragOverNotification = sinon.stub();
     var importBundleFile = sinon.stub();
     var hideDragOverNotification = sinon.stub();
+    var services = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         exportEnvironmentFile={exportEnvironmentFile}
@@ -45,7 +46,8 @@ describe('Deployment', function() {
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
-        activeComponent="deployment-bar" />);
+        activeComponent="deployment-bar"
+        services={services} />);
 
     assert.deepEqual(output, <div className="deployment-view">
       <juju.components.DeploymentBar
@@ -56,7 +58,8 @@ describe('Deployment', function() {
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet} />
+        currentChangeSet={currentChangeSet}
+        services={services} />
     </div>);
   });
 
@@ -67,6 +70,7 @@ describe('Deployment', function() {
     var renderDragOverNotification = sinon.stub();
     var importBundleFile = sinon.stub();
     var hideDragOverNotification = sinon.stub();
+    var services = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         exportEnvironmentFile={exportEnvironmentFile}
@@ -74,7 +78,8 @@ describe('Deployment', function() {
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet} />);
+        currentChangeSet={currentChangeSet}
+        services={services} />);
     assert.deepEqual(output,
       <div className="deployment-view">
         <juju.components.DeploymentBar
@@ -85,7 +90,8 @@ describe('Deployment', function() {
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
-          currentChangeSet={currentChangeSet} />
+          currentChangeSet={currentChangeSet}
+          services={services} />
       </div>);
   });
 
@@ -97,6 +103,7 @@ describe('Deployment', function() {
     var renderDragOverNotification = sinon.stub();
     var importBundleFile = sinon.stub();
     var hideDragOverNotification = sinon.stub();
+    var services = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         ecsCommit={sinon.stub()}
@@ -107,7 +114,8 @@ describe('Deployment', function() {
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
         currentChangeSet={currentChangeSet}
-        autoPlaceUnits={autoPlaceUnits} />, true);
+        autoPlaceUnits={autoPlaceUnits}
+        services={services} />, true);
     var output = shallowRenderer.getRenderOutput();
     output.props.children.props.deployButtonAction();
     shallowRenderer.render(
@@ -119,7 +127,8 @@ describe('Deployment', function() {
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
-        currentChangeSet={currentChangeSet} />);
+        currentChangeSet={currentChangeSet}
+        services={services} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output,
       <div className="deployment-view">
@@ -131,7 +140,8 @@ describe('Deployment', function() {
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
-          currentChangeSet={currentChangeSet} />
+          currentChangeSet={currentChangeSet}
+          services={services} />
       </div>);
   });
 
@@ -180,7 +190,8 @@ describe('Deployment', function() {
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
-          currentChangeSet={currentChangeSet} />
+          currentChangeSet={currentChangeSet}
+          services={services} />
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -264,7 +275,8 @@ describe('Deployment', function() {
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
-          currentChangeSet={newChangeSet} />
+          currentChangeSet={newChangeSet}
+          services={services} />
       </div>);
     assert.deepEqual(output, expected);
   });

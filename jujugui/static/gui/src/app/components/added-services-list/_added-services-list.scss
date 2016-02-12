@@ -1,4 +1,5 @@
 .inspector-view {
+    @extend %fade-in;
     @extend %floating-panel;
     @extend %scroll-children;
     $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + 30px;
