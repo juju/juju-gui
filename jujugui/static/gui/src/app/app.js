@@ -866,7 +866,6 @@ YUI.add('juju-gui', function(Y) {
             updateUnitFlags={db.updateUnitFlags.bind(db)}
             findRelatedServices={db.findRelatedServices.bind(db)}
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}
-            setMVVisibility={db.setMVVisibility.bind(db)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             panToService={ServiceModule.panToService.bind(ServiceModule)}
