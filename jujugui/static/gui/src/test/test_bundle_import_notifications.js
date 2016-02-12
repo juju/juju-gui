@@ -144,6 +144,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn, user: 'user', password: 'password'
       }, 'go');
       env.connect();
+      env.set('facades', {Deployer: [0]});
       this._cleanups.push(env.close.bind(env));
       db = {notifications: {add: testUtils.makeStubFunction()}};
       bundleNotifications._watchDeployment = testUtils.makeStubFunction();
@@ -158,6 +159,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         RequestId: 1,
         Type: 'Deployer',
+        Version: 0,
         Request: 'Status',
         Params: {}
       };
@@ -184,25 +186,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         level: 'error'
       };
       assert.deepEqual(args[0], expectedNotification);
-    });
-
-    it('handles not implemented status errors', function() {
-      // Mock "console.log" so that it is possible to collect logs.
-      var mockLog = testUtils.makeStubMethod(console, 'log');
-      bundleNotifications.watchAll(env, db);
-      // Simulate a response from the server.
-      var err = 'no such request - method Deployer.Status is not implemented';
-      conn.msg({RequestId: 1, Response: {}, Error: err});
-      // No bundles are being watched.
-      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
-      // The not implemented error is not notified.
-      assert.strictEqual(db.notifications.add.called(), false);
-      // The error is still logged.
-      assert.strictEqual(mockLog.callCount(), 1);
-      var lastArgs = mockLog.lastArguments();
-      assert.strictEqual(lastArgs.length, 1);
-      assert.strictEqual(
-        lastArgs[0], 'GUI server bundle endpoints not supported: ' + err);
     });
 
     it('starts watching started/pending deployments', function() {

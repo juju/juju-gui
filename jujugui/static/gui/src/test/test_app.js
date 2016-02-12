@@ -691,6 +691,7 @@ describe('App', function() {
         assert.deepEqual(conn.last_message(), {
           RequestId: 1,
           Type: 'GUIToken',
+          Version: 0,
           Request: 'Login',
           Params: {Token: 'demoToken'}
         });
@@ -710,6 +711,7 @@ describe('App', function() {
         assert.deepEqual(conn.last_message(), {
           RequestId: 1,
           Type: 'GUIToken',
+          Version: 0,
           Request: 'Login',
           Params: {Token: 'demoToken'}
         });
@@ -806,18 +808,6 @@ describe('App', function() {
         '/foo/bar#baz',
         { overrideAllNamespaces: true }]);
       assert.equal(app.dispatch.calledOnce(), true);
-    });
-
-    it('retrieves the bundle deployments status on login', function() {
-      var app = makeApp(true, this);
-      app.onLogin({data: {result: true}});
-      var expectedMessage = {
-        RequestId: 2, // The first request is the login one.
-        Type: 'Deployer',
-        Request: 'Status',
-        Params: {}
-      };
-      assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
     // XXX This test causes intermittent cascading failures when run in CI.

@@ -93,11 +93,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn, user: 'user', password: 'password', ecs: ecs
       });
       env.connect();
-      var facades = Object.keys(env.facadeVersions).reduce(function(pre, cur) {
-        pre[cur] = [env.facadeVersions[cur]];
-        return pre;
-      }, {});
-      env.set('facades', facades);
+      env.set('facades', {
+        Client: [1],
+        CrossModelRelations: [1],
+        EnvironmentManager: [1],
+        GUIToken: [46, 47],
+        Pinger: [42],
+        Service: [2]
+      });
       this._cleanups.push(env.close.bind(env));
       cleanups = [];
     });
@@ -118,43 +121,55 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     };
 
-    describe('facadeSupported', function() {
+    describe('findFacadeVersion', function() {
 
       beforeEach(function() {
         env.set('facades', {'Test': [0, 1]});
       });
 
-      it('returns true if the facade is supported', function() {
-        env.facadeVersions = {'Test': 1};
-        assert.strictEqual(env.facadeSupported('Test'), true);
+      afterEach(function() {});
+
+      it('returns the version if the version is supported', function() {
+        assert.strictEqual(env.findFacadeVersion('Test', 0), 0);
+        assert.strictEqual(env.findFacadeVersion('Test', 1), 1);
       });
 
-      it('returns true if a default facade is supported', function() {
-        assert.strictEqual(env.facadeSupported('Client'), true);
+      it('returns the version if a default version is supported', function() {
+        assert.strictEqual(env.findFacadeVersion('ChangeSet', 0), 0);
       });
 
-      it('returns false if a facade is not supported', function() {
-        assert.strictEqual(env.facadeSupported('BadWolf'), false);
+      it('returns the last version if the facade is supported', function() {
+        assert.strictEqual(env.findFacadeVersion('Test'), 1);
       });
 
-      it('returns false if a facade version is not supported', function() {
-        env.facadeVersions = {'Test': 2};
-        assert.strictEqual(env.facadeSupported('Test'), false);
+      it('returns the version if a default facade is supported', function() {
+        assert.strictEqual(env.findFacadeVersion('ChangeSet'), 0);
       });
 
-      it('returns false if a default version is not supported', function() {
-        env.facadeVersions = {'Client': -1};
-        assert.strictEqual(env.facadeSupported('Client'), false);
+      it('returns null if a specific version is not supported', function() {
+        assert.strictEqual(env.findFacadeVersion('Test', 2), null);
       });
 
-      it('returns true if a facade is supported (legacy Juju)', function() {
+      it('returns null if a default version is not supported', function() {
+        assert.strictEqual(env.findFacadeVersion('ChangeSet', 1), null);
+      });
+
+      it('returns null if a facade is not supported', function() {
+        assert.strictEqual(env.findFacadeVersion('BadWolf'), null);
+      });
+
+      it('returns null if a facade version is not supported', function() {
+        assert.strictEqual(env.findFacadeVersion('BadWolf', 42), null);
+      });
+
+      it('returns the version if a facade is supported (legacy)', function() {
         env.set('facades', undefined);
-        assert.strictEqual(env.facadeSupported('AllWatcher'), true);
+        assert.strictEqual(env.findFacadeVersion('AllWatcher'), 0);
       });
 
-      it('returns true if a facade is supported (empty facades)', function() {
+      it('returns the version if a facade is supported (empty)', function() {
         env.set('facades', {});
-        assert.strictEqual(env.facadeSupported('Pinger'), true);
+        assert.strictEqual(env.findFacadeVersion('Pinger'), 0);
       });
 
     });
@@ -333,6 +348,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var environmentInfoExpected = {
           Type: 'Client',
           Request: 'EnvironmentInfo',
+          // Note that facade version here is 0 because the login mock response
+          // below is empty.
+          Version: 0,
           RequestId: 2,
           Params: {}
         };
@@ -342,6 +360,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var watchAllExpected = {
           Type: 'Client',
           Request: 'WatchAll',
+          // Note that facade version here is 0 because the login mock response
+          // below is empty.
+          Version: 0,
           RequestId: 3,
           Params: {}
         };
@@ -356,6 +377,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var last_message = conn.last_message();
         var expected = {
           Type: 'GUIToken',
+          Version: 47,
           Request: 'Login',
           RequestId: 1,
           Params: {Token: 'demoToken'}
@@ -437,6 +459,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var environmentInfoExpected = {
           Type: 'Client',
           Request: 'EnvironmentInfo',
+          Version: 0,
           RequestId: 2,
           Params: {}
         };
@@ -445,6 +468,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // EnvironmentInfo is the second request.
         var watchAllExpected = {
           Type: 'Client',
+          Version: 0,
           Request: 'WatchAll',
           RequestId: 3,
           Params: {}
@@ -459,6 +483,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Client',
         Request: 'EnvironmentInfo',
+        Version: 1,
         RequestId: 1,
         Params: {}
       };
@@ -501,6 +526,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Client',
         Request: 'EnvironmentGet',
+        Version: 1,
         RequestId: 1,
         Params: {}
       };
@@ -576,6 +602,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Client',
         Request: 'EnvironmentGet',
+        Version: 1,
         RequestId: 2,
         Params: {}
       };
@@ -605,6 +632,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Pinger',
         Request: 'Ping',
+        Version: 42,
         RequestId: 1,
         Params: {}
       };
@@ -617,6 +645,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Client',
         Request: 'AddServiceUnits',
+        Version: 1,
         RequestId: 1,
         Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: null}
       };
@@ -628,6 +657,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Client',
         Request: 'AddServiceUnits',
+        Version: 1,
         RequestId: 1,
         Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: '42'}
       };
@@ -669,6 +699,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Client',
         Request: 'DestroyServiceUnits',
+        Version: 1,
         RequestId: 1,
         Params: {UnitNames: ['django/2', 'django/3']}
       };
@@ -699,97 +730,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Error: 'unit django/2 does not exist'
       });
-    });
-
-
-    describe('Deployer support', function() {
-      it('sends proper messages on deployer status', function() {
-        env.deployerStatus();
-        var expectedMessage = {
-          Type: 'Deployer',
-          Request: 'Status',
-          Params: {},
-          RequestId: 1
-        };
-        assert.deepEqual(conn.last_message(), expectedMessage);
-      });
-
-      it('handles successful status responses', function() {
-        var response;
-        env.deployerStatus(function(data) {
-          response = data;
-        });
-        // Mimic the server Status response.
-        conn.msg({
-          RequestId: 1,
-          Response: {
-            LastChanges: [
-              {DeploymentId: 1, Status: 'completed', Time: 42, Error: 'fail'},
-              {DeploymentId: 2, Status: 'completed', Time: 43},
-              {DeploymentId: 3, Status: 'started', Time: 44, Queue: 0},
-              {DeploymentId: 4, Status: 'cancelled', Time: 45},
-              {DeploymentId: 5, Status: 'scheduled', Time: 46, Queue: 1}
-            ]
-          }
-        });
-        assert.isUndefined(response.err);
-        var expectedChanges = [
-          {deploymentId: 1, status: 'completed', time: 42,
-            queue: undefined, err: 'fail'},
-          {deploymentId: 2, status: 'completed', time: 43,
-            queue: undefined, err: undefined},
-          {deploymentId: 3, status: 'started', time: 44,
-            queue: 0, err: undefined},
-          {deploymentId: 4, status: 'cancelled', time: 45,
-            queue: undefined, err: undefined},
-          {deploymentId: 5, status: 'scheduled', time: 46,
-            queue: 1, err: undefined}
-        ];
-        assert.deepEqual(response.changes, expectedChanges);
-      });
-
-      it('handles status server failures', function() {
-        var response;
-        env.deployerStatus(function(data) {
-          response = data;
-        });
-        // Mimic the server Status response.
-        conn.msg({
-          RequestId: 1,
-          Error: 'bad wolf',
-          Response: {}
-        });
-        assert.strictEqual(response.err, 'bad wolf');
-      });
-
-      it('builds a proper watch request', function() {
-        env.deployerWatch(2);
-        var last_message = conn.last_message();
-        var expected = {
-          Type: 'Deployer',
-          Request: 'Watch',
-          RequestId: 1,
-          Params: {
-            DeploymentId: 2
-          }
-        };
-        assert.deepEqual(expected, last_message);
-      });
-
-      it('builds a proper watch next request', function() {
-        env.deployerNext(5);
-        var last_message = conn.last_message();
-        var expected = {
-          Type: 'Deployer',
-          Request: 'Next',
-          RequestId: 1,
-          Params: {
-            WatcherId: 5
-          }
-        };
-        assert.deepEqual(expected, last_message);
-      });
-
     });
 
     describe('Local charm upload support', function() {
@@ -925,6 +865,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Client',
         Request: 'ServiceExpose',
+        Version: 1,
         RequestId: 1,
         Params: {ServiceName: 'apache'}
       };
@@ -966,6 +907,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Client',
         Request: 'ServiceUnexpose',
+        Version: 1,
         RequestId: 1,
         Params: {ServiceName: 'apache'}
       };
@@ -1012,6 +954,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       var expectedMessage = {
         Type: 'Client',
+        Version: 1,
         Request: 'AddCharm',
         Params: {URL: 'wily/django-42'},
         RequestId: 1
@@ -1032,6 +975,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Client',
         Request: 'AddCharmWithAuthorization',
+        Version: 1,
         Params: {CharmStoreMacaroon: 'MACAROON', URL: 'trusty/django-0'},
         RequestId: 1
       };
@@ -1061,7 +1005,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: env.facadeVersions['Service'],
+        Version: 2,
         Params: {Services: [{
           ServiceName: null,
           ConfigYAML: null,
@@ -1083,6 +1027,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 0,
         Request: 'ServiceDeploy',
         Params: {
           ServiceName: null,
@@ -1103,7 +1048,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: env.facadeVersions['Service'],
+        Version: 2,
         Params: {Services: [{
           ServiceName: null,
           // Configuration values are sent as strings.
@@ -1127,7 +1072,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: env.facadeVersions['Service'],
+        Version: 2,
         Params: {Services: [{
           ServiceName: null,
           Config: {},
@@ -1171,7 +1116,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Service',
         Request: 'ServicesDeploy',
-        Version: env.facadeVersions['Service'],
+        Version: 2,
         Params: {Services: [{
           ServiceName: null,
           ConfigYAML: null,
@@ -1267,6 +1212,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{Jobs: [machineJobs.HOST_UNITS]}]
@@ -1282,6 +1228,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
@@ -1299,6 +1246,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
@@ -1317,6 +1265,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
@@ -1350,6 +1299,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'AddMachines',
         Params: {MachineParams: expectedMachineParams}
       };
@@ -1422,6 +1372,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'DestroyMachines',
         Params: {MachineNames: names, Force: force}
       };
@@ -1486,6 +1437,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'GetAnnotations',
         RequestId: 1,
         Params: {Tag: 'service-apache'}
@@ -1498,6 +1450,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
@@ -1526,6 +1479,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = [
           {
             Type: 'Client',
+            Version: 1,
             Request: 'SetAnnotations',
             RequestId: 1,
             Params: {
@@ -1545,6 +1499,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
@@ -1562,6 +1517,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
@@ -1686,6 +1642,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         Request: 'ServiceGet',
         Type: 'Client',
+        Version: 1,
         RequestId: 1,
         Params: {ServiceName: 'mysql'}
       };
@@ -1748,6 +1705,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'SetServiceConstraints',
         Params: {
           ServiceName: 'mysql',
@@ -1786,6 +1744,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Params: {
           ServiceName: 'mysql',
           Options: {
@@ -1806,6 +1765,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expected = {
         RequestId: msg.RequestId,
         Type: 'Client',
+        Version: 1,
         Request: 'ServiceSetYAML',
         Params: {
           ServiceName: 'mysql',
@@ -1860,6 +1820,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'ServiceDestroy',
         Params: {
           ServiceName: 'mysql'
@@ -1897,6 +1858,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'AddRelation',
         Params: {
           Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
@@ -1965,6 +1927,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'DestroyRelation',
         Params: {
           Endpoints: [
@@ -2032,6 +1995,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
+        Version: 1,
         Request: 'CharmInfo',
         Params: {CharmURL: 'cs:precise/wordpress-10'},
         RequestId: 1
@@ -2367,6 +2331,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(msg, {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'GetBundleChanges',
         Params: {YAML: yaml}
       });
@@ -2379,6 +2344,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(msg, {
         RequestId: 1,
         Type: 'Client',
+        Version: 1,
         Request: 'GetBundleChanges',
         Params: {Token: 'TOKEN'}
       });
@@ -2480,7 +2446,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'CrossModelRelations',
-          Version: env.facadeVersions['CrossModelRelations'],
+          Version: 1,
           Request: 'Offer',
           Params: {
             Offers: [{
@@ -2521,7 +2487,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'CrossModelRelations',
-          Version: env.facadeVersions['CrossModelRelations'],
+          Version: 1,
           Request: 'Offer',
           Params: {
             Offers: [{
@@ -2634,7 +2600,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'CrossModelRelations',
-          Version: env.facadeVersions['CrossModelRelations'],
+          Version: 1,
           Request: 'ListOffers',
           Params: {
             Filters: [{
@@ -2721,7 +2687,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'CrossModelRelations',
-          Version: env.facadeVersions['CrossModelRelations'],
+          Version: 1,
           Request: 'ServiceOffers',
           Params: {serviceurls: [url]},
           RequestId: 1
@@ -2801,20 +2767,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[0], {
           Type: 'EnvironmentManager',
-          Version: env.facadeVersions['EnvironmentManager'],
+          Version: 1,
           Request: 'ConfigSkeleton',
           Params: {},
           RequestId: 1
         });
         assert.deepEqual(conn.messages[1], {
           Type: 'Client',
+          Version: 1,
           Request: 'EnvironmentGet',
           Params: {},
           RequestId: 2
         });
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.facadeVersions['EnvironmentManager'],
+          Version: 1,
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2859,7 +2826,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.facadeVersions['EnvironmentManager'],
+          Version: 1,
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2905,7 +2872,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.facadeVersions['EnvironmentManager'],
+          Version: 1,
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -2956,7 +2923,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
           Type: 'EnvironmentManager',
-          Version: env.facadeVersions['EnvironmentManager'],
+          Version: 1,
           Request: 'CreateEnvironment',
           Params: {
             OwnerTag: 'user-who',
@@ -3082,7 +3049,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'EnvironmentManager',
-          Version: env.facadeVersions['EnvironmentManager'],
+          Version: 1,
           Request: 'ListEnvironments',
           Params: {Tag: 'user-who'},
           RequestId: 1
