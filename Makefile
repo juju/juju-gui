@@ -271,7 +271,7 @@ watch:
 # Download cache
 ################
 $(CACHE):
-	git clone --depth=1 "git@github.com:juju/juju-gui-downloadcache.git" $(CACHE)
+	git clone --depth=1 "https://github.com/juju/juju-gui-downloadcache.git" $(CACHE)
 
 downloadcache: $(CACHE)
 
