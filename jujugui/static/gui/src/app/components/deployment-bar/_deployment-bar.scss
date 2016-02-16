@@ -1,44 +1,50 @@
 .deployment-bar {
     height: 40px;
+    text-align: right;
+
+    &__import,
+    &__export {
+        margin-right: 10px;
+    }
 
     &__import {
         @extend %deployment-bar__links;
-        left: -240px;
     }
 
     &__export {
         @extend %fade-in;
         @extend %deployment-bar__links;
-        left: -170px;
 
         &:before {
             content: '';
             border-right: 1px solid $mid-grey;
-            position: relative;
-            left: -12px;
+            margin-right: 10px;
         }
     }
 
     &__file {
         @extend %deployment-bar__links;
         visibility: hidden;
+        width: 0;
+    }
+
+    &__deploy {
+        @extend %floating-panel;
+        display: inline-block;
+        margin-left: 10px;
     }
 
     &__install-button {
         @extend %fade-in;
         @extend %floating-panel;
-        left: -105px;
-        position: absolute;
+        display: inline-block;
+        margin-left: 10px;
         padding: 10px;
         color: $cool-grey;
     }
 
     &--initial {
         .deployment-bar {
-            &__import {
-                left: -170px;
-            }
-
             &__export {
                 display: none;
             }
@@ -51,9 +57,6 @@
 }
 
 %deployment-bar__links {
-    position: absolute;
-    top: 11px;
-
     &:focus,
     &:active,
     &:hover {

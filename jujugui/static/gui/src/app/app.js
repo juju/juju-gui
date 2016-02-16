@@ -829,7 +829,8 @@ YUI.add('juju-gui', function(Y) {
           generateChangeDescription={
               changesUtils.generateChangeDescription.bind(
                   changesUtils, services, units)}
-          currentChangeSet={currentChangeSet} />,
+          currentChangeSet={currentChangeSet}
+          showInstall={this.get('sandbox')} />,
         document.getElementById('deployment-container'));
     },
 

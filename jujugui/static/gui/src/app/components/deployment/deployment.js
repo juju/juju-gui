@@ -23,7 +23,8 @@ YUI.add('deployment-component', function() {
   juju.components.Deployment = React.createClass({
     propTypes: {
       exportEnvironmentFile: React.PropTypes.func.isRequired,
-      ecsClear: React.PropTypes.func.isRequired
+      ecsClear: React.PropTypes.func.isRequired,
+      showInstall: React.PropTypes.bool.isRequired
     },
 
     /**
@@ -75,7 +76,8 @@ YUI.add('deployment-component', function() {
               hideDragOverNotification={this.props.hideDragOverNotification}
               generateChangeDescription={generateChangeDescription}
               currentChangeSet={currentChangeSet}
-              services={this.props.services} />
+              services={this.props.services}
+              showInstall={this.props.showInstall} />
           };
           break;
         case 'deployment-summary':

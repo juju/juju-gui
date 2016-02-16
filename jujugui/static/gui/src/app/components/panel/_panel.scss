@@ -30,6 +30,9 @@
     right: 20px;
     bottom: 30px;
     z-index: index($z-indexed-elements, deployment-bar-panel);
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .panel-component.env-list-panel {
