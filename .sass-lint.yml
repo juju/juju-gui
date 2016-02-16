@@ -1,0 +1,18 @@
+files:
+  include: '**/*.s+(a|c)ss'
+options:
+  formatter: stylish
+  merge-default-rules: false
+rules:
+  class-name-format: 0
+  id-name-format: 0
+  indentation:
+    - 2
+    -
+      size: 4
+  no-css-comments: 0
+  no-qualifying-elements:
+    - 1
+    - allow-element-with-attribute: true
+  placeholder-name-format: 0
+  property-sort-order: 0

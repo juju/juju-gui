@@ -390,11 +390,6 @@ YUI.add('juju-topology-service', function(Y) {
           mouseleave: 'serviceMouseLeave',
           mousemove: 'serviceMouseMove'
         },
-
-        '.service-status': {
-          mouseover: 'serviceStatusMouseOver',
-          mouseout: 'serviceStatusMouseOut'
-        },
         // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
           mouseup: 'canvasClick'
@@ -797,27 +792,6 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseMove: function(box, context) {
       var topo = context.get('component');
       topo.fire('mouseMove');
-    },
-
-    /**
-     * Handle mouseover service status
-     *
-     * @method serviceStatusMouseOver
-     */
-    serviceStatusMouseOver: function(box, context) {
-      d3.select(this)
-        .select('.unit-count')
-        .classed('unit-count', true)
-        .classed('hide-count', false)
-        .classed('show-count', true);
-    },
-
-    serviceStatusMouseOut: function(box, context) {
-      d3.select(this)
-        .select('.unit-count')
-         .classed('unit-count', true)
-         .classed('show-count', false)
-         .classed('hide-count', true);
     },
 
     /**
@@ -1895,7 +1869,6 @@ YUI.add('juju-topology-service', function(Y) {
   requires: [
     'd3',
     'd3-components',
-    'd3-statusbar',
     'juju-models',
     'zip-utils'
   ]

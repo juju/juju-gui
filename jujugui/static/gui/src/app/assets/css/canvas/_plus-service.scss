@@ -1,0 +1,35 @@
+.plus-service {
+    cursor: pointer;
+    transition: opacity 0.4s ease;
+
+    &.fade {
+        visibility: visible;
+        stroke-opacity: .2;
+        opacity: .2;
+    }
+
+    &.included-plus {
+        display: none;
+
+        &.show {
+            display: block;
+        }
+    }
+
+    .plus-service__halo {
+        transition: all .3s;
+        opacity: 0;
+        r: 60;
+    }
+
+    &:hover {
+        .plus-service__halo {
+            r: 80;
+            opacity: 1;
+        }
+
+        .plus-service__inner-circle {
+            fill: $white;
+        }
+    }
+}
