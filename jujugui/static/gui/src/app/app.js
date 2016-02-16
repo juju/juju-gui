@@ -1043,7 +1043,8 @@ YUI.add('juju-gui', function(Y) {
       @method _renderEnvSwitcher
     */
     _renderEnvSwitcher: function() {
-      if(this.env.findFacadeVersion('ModelManager') === null) {
+      if(this.env.findFacadeVersion('ModelManager') === null &&
+         this.env.findFacadeVersion('EnvironmentManager') === null) {
         // We do not want to show the model switcher if it isn't supported as
         // it throws an error in the browser console and confuses the user
         // as it's visible but not functional.
@@ -1719,6 +1720,7 @@ YUI.add('juju-gui', function(Y) {
       @param {String} password The password for the new environment.
     */
     switchEnv: function(socketUrl, username, password) {
+      console.log('switching to new socket URL:', socketUrl);
       if (this.get('sandbox')) {
         console.log('switching environments is not supported in sandbox');
       }
