@@ -214,8 +214,12 @@ YUI.add('juju-bundle-models', function(Y) {
 
           @method getter
          */
-        getter: function() {
-          return this.get('promulgated');
+        getter: function(val) {
+          var promulgated = this.get('promulgated');
+          // Set the value from the promulgated flag otherwise use the provided
+          // value. The promulgated flag may not be used anymore, but it has
+          // been left here for backwards compatibility.
+          return promulgated === undefined ? val : promulgated;
         }
       },
       owner: {},
