@@ -188,14 +188,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var client = new ClientConnection({juju: juju});
       var data = {
         RequestId: 42,
-        Type: 'EnvironmentManager',
-        Request: 'ListEnvironments'
+        Type: 'ModelManager',
+        Request: 'ListModels'
       };
       client.onmessage = function(received) {
         var expected = {
           RequestId: 42,
           Response: {
-            UserEnvironments: [{
+            UserModels: [{
               Name: 'sandbox',
               UUID: 'sandbox1',
               OwnerTag: 'user-admin',
@@ -214,7 +214,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var client = new ClientConnection({juju: juju});
       var data = {
         RequestId: 42,
-        Type: 'EnvironmentManager',
+        Type: 'ModelManager',
         Request: 'ConfigSkeleton'
       };
       client.onmessage = function(received) {

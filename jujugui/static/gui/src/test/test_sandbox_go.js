@@ -49,7 +49,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
-      env.set('facades', {'Service': [2]});
+      env.set('facades', {
+        'Client': [1],
+        'ModelManager': [2],
+        'Service': [3]
+      });
     });
 
     afterEach(function() {
@@ -146,7 +150,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Add in the error indicator so the deepEqual is comparing apples to
         // apples.
         data.Error = false;
-        data.Response = {Facades: sandboxModule.Facades};
+        data.Response = {facades: sandboxModule.Facades};
         assert.deepEqual(Y.JSON.parse(received.data), data);
         assert.isTrue(state.get('authenticated'));
         done();
@@ -183,7 +187,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var expected = {
           RequestId: 42, Response: {
             AuthTag: 'user-admin',
-            Password: 'password'
+            Password: 'password',
+            facades: sandboxModule.Facades
           }
         };
         assert.deepEqual(Y.JSON.parse(received.data), expected);
@@ -236,11 +241,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.tokenLogin('demoToken');
     });
 
-    it('can return environment information.', function(done) {
+    it('can return model information.', function(done) {
       // See FakeBackend's initialization for these default values.
       var data = {
         Type: 'Client',
-        Request: 'EnvironmentInfo',
+        Request: 'ModelInfo',
         RequestId: 42
       };
       client.onmessage = function(received) {
@@ -257,11 +262,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it('returns EnvironmentGet responses', function(done) {
+    it('returns ModelGet responses', function(done) {
       var data = {
         RequestId: 42,
         Type: 'Client',
-        Request: 'EnvironmentGet'
+        Request: 'ModelGet'
       };
       client.onmessage = function(received) {
         var expected = {
@@ -392,7 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       var data = {
         Type: 'Service',
-        Request: 'ServicesDeploy',
+        Request: 'Deploy',
         Version: 2,
         Params: {Services: [{
           CharmUrl: 'cs:precise/wordpress-27',
