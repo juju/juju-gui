@@ -1398,16 +1398,17 @@ YUI.add('juju-env-go', function(Y) {
        @method setCharm
        @param {String} serviceName The name of the service to be upgraded.
        @param {String} charmUrl The URL of the charm.
-       @param {Boolean} force Force upgrading machines in error.
+       @param {Boolean} forceUnits Force the units when upgrading.
+       @param {Boolean} forceSeries Force the series when upgrading.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.
      */
-    setCharm: function(serviceName, charmUrl, force, callback) {
+    setCharm: function(serviceName, charmUrl, forceUnits, forceSeries, cb) {
       var intermediateCallback = null;
-      if (callback) {
+      if (cb) {
         intermediateCallback = Y.bind(this.handleSetCharm, this,
-            callback, serviceName, charmUrl);
+            cb, serviceName, charmUrl);
       }
       var rpc = {
         Type: 'Service',
@@ -1415,8 +1416,8 @@ YUI.add('juju-env-go', function(Y) {
         Params: {
           ServiceName: serviceName,
           CharmUrl: charmUrl,
-          ForceUnits: force,
-          ForceSeries: force
+          ForceUnits: forceUnits,
+          ForceSeries: forceSeries
         }
       };
       if (this.findFacadeVersion('Service') === null) {
@@ -1428,7 +1429,10 @@ YUI.add('juju-env-go', function(Y) {
           Params: {
             ServiceName: serviceName,
             CharmUrl: charmUrl,
-            Force: force
+            // Because the call signature has changed a bit to properly set
+            // force on the old facade we will force if either of the forced
+            // values are truthy.
+            Force: forceUnits || forceSeries
           }
         };
       }

@@ -281,35 +281,36 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @method setCharm
     @param {String} serviceName The name of the service to set.
     @param {String} charmId The charm to use.
-    @param {Boolean} force Whether or not to force the issue.
+    @param {Boolean} forceUnits Whether or not to force the issue.
+    @param {Boolean} forceSeries Whether or not to force the issue.
     @param {Function} callback A call that will receive an object, potentially
       with an "error" attribute containing a string describing the problem.
     @return {undefined} All results are passed to the callback.
     */
-    setCharm: function(serviceName, charmId, force, callback) {
+    setCharm: function(serviceName, charmId, forceUnits, forceSeries, cb) {
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATED_ERROR);
+        return cb(UNAUTHENTICATED_ERROR);
       }
       var self = this;
       var service = this.db.services.getById(serviceName);
       if (!service) {
-        return callback({error: 'Service "' + serviceName + '" not found.'});
+        return cb({error: 'Service "' + serviceName + '" not found.'});
       }
       var unitsInError = service.get('units')
         .some(function(unit) {
           return (/error/).test(unit.agent_state);
         });
-      if (unitsInError && !force) {
-        return callback({error: 'Cannot set charm on a service with units in ' +
+      if (unitsInError && (!forceUnits || !forceSeries)) {
+        return cb({error: 'Cannot set charm on a service with units in ' +
               'error without the force flag.'});
       }
       this._loadCharm(charmId, {
         success: function(charm) {
           service.set('charm', charm.get('id'));
           self.changes.services[service.get('id')] = [service, true];
-          callback({});
+          cb({});
         },
-        failure: callback
+        failure: cb
       });
     },
 
