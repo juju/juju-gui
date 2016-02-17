@@ -108,12 +108,16 @@ function ReconnectingWebSocket(url, protocols) {
             ws = null;
             if (forcedClose) {
                 self.readyState = WebSocket.CLOSED;
+                if (self.debug || ReconnectingWebSocket.debugAll) {
+                    console.debug('ReconnectingWebSocket', 'onclose', url);
+                }
                 self.onclose(event);
             } else {
                 self.readyState = WebSocket.CONNECTING;
                 if (!reconnectAttempt && !timedOut) {
                     if (self.debug || ReconnectingWebSocket.debugAll) {
-                        console.debug('ReconnectingWebSocket', 'onclose', url);
+                        console.debug(
+                            'ReconnectingWebSocket', 'onclose reconnect', url);
                     }
                     self.onclose(event);
                 }
