@@ -189,6 +189,8 @@ YUI.add('juju-env-go', function(Y) {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
       this.defaultUser = 'admin';
+      this._allWatcherId = null;
+      this._pinger = null;
       this.on('_rpc_response', this._handleRpcResponse);
     },
 
@@ -343,6 +345,27 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Stop the Juju mega-watcher currently in use.
+
+      @method _stopWatching
+      @param {Function} callback A callable that must be called once the
+        operation is performed.
+      @private
+    */
+    _stopWatching: function(callback) {
+      var cb = function() {
+        this._allWatcherId = null;
+        callback();
+      }.bind(this);
+      this._send_rpc({
+        Type: 'AllWatcher',
+        Request: 'Stop',
+        Id: this._allWatcherId,
+        Params: {}
+      }, cb);
+    },
+
+    /**
       Prepare the service constraints by type converting integer constraints,
       removing the ones which do not have valid values, and turning tags into
       an array as expected by the juju-core API backend.
@@ -431,8 +454,8 @@ YUI.add('juju-env-go', function(Y) {
         // Start pinging the server.
         // XXX frankban: this is only required as a temporary workaround to
         // prevent Apache to disconnect the WebSocket in the embedded Juju.
-        if (!this.pinger) {
-          this.pinger = setInterval(
+        if (!this._pinger) {
+          this._pinger = setInterval(
             this.ping.bind(this), PING_INTERVAL * 1000);
         }
         // Clean up for log out text.
@@ -535,6 +558,28 @@ YUI.add('juju-env-go', function(Y) {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
       }
+    },
+
+    /**
+      Define optional operations to be performed before closing the WebSocket
+      connection. Operations performed:
+        - the pinger interval is stopped;
+        - the mega-watcher is stopped.
+      Note that not stopping the mega-watcher before disconnecting causes
+      server side disconnection to take a while, therefore preventing new
+      connections from being established (for instance when switching between
+      models in  controller).
+
+      @method beforeClose
+      @param {Function} callback A callable that must be called by the
+        function and that actually closes the connection.
+    */
+    beforeClose: function(callback) {
+      if (this._pinger) {
+        clearInterval(this._pinger);
+        this._pinger = null;
+      }
+      this._stopWatching(callback);
     },
 
     /**
