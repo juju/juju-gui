@@ -246,7 +246,7 @@ describe('InspectorChangeVersion', function() {
       get: sinon.stub().returns('django'),
       set: serviceSet
     };
-    var setCharm = sinon.stub().callsArgWith(3, 'cs:django-4');
+    var setCharm = sinon.stub().callsArgWith(4, 'cs:django-4');
     var getCharm = sinon.stub().callsArgWith(1, 'cs:django-4');
     var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
@@ -274,7 +274,7 @@ describe('InspectorChangeVersion', function() {
       get: sinon.stub().returns('django'),
       set: serviceSet
     };
-    var setCharm = sinon.stub().callsArgWith(3, {err: 'error'});
+    var setCharm = sinon.stub().callsArgWith(4, {err: 'error'});
     var getCharm = sinon.stub().callsArgWith(1);
     var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
@@ -302,7 +302,7 @@ describe('InspectorChangeVersion', function() {
       get: sinon.stub().returns('django'),
       set: serviceSet
     };
-    var setCharm = sinon.stub().callsArgWith(3, {});
+    var setCharm = sinon.stub().callsArgWith(4, {});
     var getCharm = sinon.stub().callsArgWith(1, {err: 'error'});
     var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
       'cs:django-4', 'cs:django-5', 'cs:django-6'
