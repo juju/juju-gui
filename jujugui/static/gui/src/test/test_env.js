@@ -48,6 +48,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy();
     });
 
+    it('calls "beforeClose" when the connection is closed', function() {
+      var closed = false;
+      var conn = new ClientConnection({
+        juju: {
+          open: function() {},
+          close: function() {
+            closed = true;
+          }
+        }
+      });
+      var env = new environments.BaseEnvironment({conn: conn});
+      env.connect();
+      var called = false;
+      env.beforeClose = function(callback) {
+        called = true;
+        // The connection is still open.
+        assert.strictEqual(closed, false, 'connection unexpectedly closed');
+        // Close the connection.
+        callback();
+        assert.strictEqual(closed, true, 'connection not closed');
+      };
+      env.close();
+      // The beforeClose method has been called.
+      assert.strictEqual(called, true, 'before hook not called');
+      env.destroy();
+    });
+
     it('uses the module-defined sessionStorage.', function() {
       var conn = new ClientConnection({juju: {open: function() {}}});
       var env = new environments.BaseEnvironment({conn: conn});

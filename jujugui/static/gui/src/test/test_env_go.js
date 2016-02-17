@@ -2211,6 +2211,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(msg.Id, env._allWatcherId);
     });
 
+    it('stops the mega-watcher', function() {
+      // This is normally set by _watchAll, we'll fake it here.
+      env._allWatcherId = 42;
+      // Make the request.
+      var callback = utils.makeStubFunction();
+      env._stopWatching(callback);
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+      // The callback has been called.
+      assert.strictEqual(callback.calledOnce(), true, 'callback not');
+      assert.strictEqual(env._allWatcherId, null);
+      // The request has been properly sent.
+      assert.deepEqual({
+        RequestId: 1,
+        Type: 'AllWatcher',
+        Version: 0,
+        Request: 'Stop',
+        Id: 42,
+        Params: {}
+      }, conn.last_message());
+    });
+
     it('fires "_rpc_response" message after an RPC response', function(done) {
       // We don't want the real response, we just want to be sure the event is
       // fired.

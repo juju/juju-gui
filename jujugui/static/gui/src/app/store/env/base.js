@@ -221,7 +221,6 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
-      this.pinger = null;
       // Populate our credentials if they don't already exist.
       var credentials = this.getCredentials() || {};
       if (Y.Lang.isValue(this.get('user'))) {
@@ -278,12 +277,23 @@ YUI.add('juju-env-base', function(Y) {
     */
     close: function() {
       if (this.ws) {
-        this.ws.close();
+        this.beforeClose(this.ws.close.bind(this.ws));
       }
-      if (this.pinger) {
-        clearInterval(this.pinger);
-        this.pinger = null;
-      }
+    },
+
+    /**
+      Define optional operations to be performed before closing the WebSocket
+      connection. This method, as defined here, only calls the given callback
+      as it is intended to be overridden by subclasses. Implementations are
+      responsible of calling the given callback that effectively closes the
+      WebSocket connection.
+
+      @method beforeClose
+      @param {Function} callback A callable that must be called by the
+        function and that actually closes the connection.
+    */
+    beforeClose: function(callback) {
+      callback();
     },
 
     /**

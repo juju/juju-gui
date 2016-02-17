@@ -693,6 +693,19 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Handle AllWatcher Stop messages.
+
+    @method handleAllWatcherStop
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handleAllWatcherStop: function(data, client, state) {
+      clearInterval(this.deltaIntervalId);
+      client.receive({RequestId: data.RequestId, Response: {}});
+    },
+
+    /**
     Receive a basic response. Several API calls simply return a request ID
     and an error (if there is one); this utility method handles those cases.
 
