@@ -194,7 +194,8 @@ YUI.add('env-switcher', function() {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
-        console.log(err);
+        // XXX frankban: the error should be surfaced to the user.
+        console.log('error creating new model:', err);
         return;
       }
       this.props.dbEnvironmentSet('name', data.name || data.path);

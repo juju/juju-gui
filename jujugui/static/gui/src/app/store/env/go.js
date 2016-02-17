@@ -522,7 +522,7 @@ YUI.add('juju-env-go', function(Y) {
             'auth-tag': user,
             credentials: password
           };
-          version = 2;
+          version = 3;
         }
         this._send_rpc({
           Type: 'Admin',
@@ -572,11 +572,11 @@ YUI.add('juju-env-go', function(Y) {
     /**
      * Store the environment info coming from the server.
      *
-     * @method handleEnvironmentInfo
+     * @method _handleEnvironmentInfo
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
-    handleEnvironmentInfo: function(data) {
+    _handleEnvironmentInfo: function(data) {
       if (data.Error) {
         console.warn('Error retrieving environment information.');
         return;
@@ -599,7 +599,7 @@ YUI.add('juju-env-go', function(Y) {
       }
       this.environmentGet(data => {
         if (data.err) {
-          console.warn('error calling EnvironmentGet API: ' + data.err);
+          console.warn('error calling ModelGet API: ' + data.err);
           return;
         }
         this.set('maasServer', data.config['maas-server']);
@@ -614,10 +614,14 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      */
     environmentInfo: function() {
+      var request = 'ModelInfo';
+      if (this.findFacadeVersion('Client') === 0) {
+        request = 'EnvironmentInfo';
+      }
       this._send_rpc({
         Type: 'Client',
-        Request: 'EnvironmentInfo'
-      }, this.handleEnvironmentInfo);
+        Request: request
+      }, this._handleEnvironmentInfo);
     },
 
     /**
@@ -638,9 +642,12 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(
             this._handleEnvironmentGet, null, callback);
       }
+      var facade = 'Client';
+      var version = this.findFacadeVersion(facade);
+      var request = version === 0 ? 'EnvironmentGet' : 'ModelGet';
       this._send_rpc({
-        Type: 'Client',
-        Request: 'EnvironmentGet'
+        Type: facade,
+        Request: request
       }, intermediateCallback);
     },
 
@@ -2714,10 +2721,17 @@ YUI.add('juju-env-go', function(Y) {
           console.log('createEnv done: err:', data.Error);
         };
       }
+      var facade = 'ModelManager';
+      var request = 'CreateModel';
+      if (this.findFacadeVersion(facade) === null) {
+        // Legacy version of Juju in which "model" was called "environment".
+        facade = 'EnvironmentManager';
+        request = 'CreateEnvironment';
+      }
       // In order to create a new environment, we first need to retrieve the
       // configuration skeleton for this provider.
       this._send_rpc({
-        Type: 'EnvironmentManager',
+        Type: facade,
         Request: 'ConfigSkeleton',
       }, data => {
         if (data.Error) {
@@ -2741,37 +2755,17 @@ YUI.add('juju-env-go', function(Y) {
           // keys at this point, but only when strictly necessary. Provide an
           // invalid one for now.
           config['authorized-keys'] = 'ssh-rsa INVALID';
-          var ptype = this.get('providerType');
-          switch(ptype) {
-            case 'local':
-              config.namespace = data.config.namespace;
-              break;
-            case 'ec2':
-              config['access-key'] = data.config['access-key'];
-              config['secret-key'] = data.config['secret-key'];
-              break;
-            case 'openstack':
-              config['tenant-name'] = data.config['tenant-name'];
-              config.username = data.config.username;
-              config.password = data.config.password;
-              break;
-            case 'maas':
-              config['maas-server'] = data.config['maas-server'];
-              config['maas-oauth'] = data.config['maas-oauth'];
-              config['maas-agent-name'] = data.config['maas-agent-name'];
-              break;
-            default:
-              // XXX frankban: add support for the remaining Juju providers.
-              intermediateCallback({
-                Error: ptype + ' provider is not supported yet'
-              });
-              return;
-          }
+          Object.keys(data.config).forEach((attr) => {
+            // Juju returns an error if a uuid key is included in the request.
+            if (attr !== 'uuid' && config[attr] === undefined) {
+              config[attr] = data.config[attr];
+            }
+          });
           // At this point, having both skeleton and environment options, we
           // are ready to create the new environment in this system.
           this._send_rpc({
-            Type: 'EnvironmentManager',
-            Request: 'CreateEnvironment',
+            Type: facade,
+            Request: request,
             Params: {OwnerTag: userTag, Config: config}
           }, intermediateCallback);
         });
@@ -2822,44 +2816,43 @@ YUI.add('juju-env-go', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     listEnvs: function(userTag, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback. No context is passed.
-        intermediateCallback = this._handleListEnvs.bind(null, callback);
+      var facade = 'ModelManager';
+      var request = 'ListModels';
+      var results = 'UserModels';
+      if (this.findFacadeVersion(facade) === null) {
+        facade = 'EnvironmentManager';
+        request = 'ListEnvironments';
+        results = 'UserEnvironments';
       }
+
+      var handleListEnvs = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by listEnvs API call:', data);
+          return;
+        }
+        var transformedData = {
+          err: data.Error,
+        };
+        if (!data.Error) {
+          var response = data.Response;
+          transformedData.envs = response[results].map(function(value) {
+            return {
+              name: value.Name,
+              owner: value.OwnerTag,
+              uuid: value.UUID,
+              lastConnection: value.LastConnection
+            };
+          });
+        }
+        // Call the original user callback.
+        userCallback(transformedData);
+      }.bind(this, callback);
+
       this._send_rpc({
-        Type: 'EnvironmentManager',
-        Request: 'ListEnvironments',
+        Type: facade,
+        Request: request,
         Params: {Tag: userTag}
-      }, intermediateCallback);
-    },
-
-    /**
-      Transform the data returned from the juju-core listEnvs call into that
-      suitable for the user callback.
-
-      @method _handleListEnvs
-      @static
-      @param {Function} callback The originally submitted callback.
-      @param {Object} data The response returned by the server.
-    */
-    _handleListEnvs: function(callback, data) {
-      var transformedData = {
-        err: data.Error,
-      };
-      if (!data.Error) {
-        var response = data.Response;
-        transformedData.envs = response.UserEnvironments.map(function(value) {
-          return {
-            name: value.Name,
-            owner: value.OwnerTag,
-            uuid: value.UUID,
-            lastConnection: value.LastConnection
-          };
-        });
-      }
-      // Call the original user callback.
-      callback(transformedData);
+      }, handleListEnvs);
     }
 
   });

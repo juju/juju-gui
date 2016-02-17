@@ -96,7 +96,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.set('facades', {
         Client: [1],
         CrossModelRelations: [1],
-        EnvironmentManager: [1],
+        ModelManager: [2],
         GUIToken: [46, 47],
         Pinger: [42],
         Service: [2]
@@ -280,7 +280,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'Login',
           RequestId: 1,
           Params: {'auth-tag': 'user-user', credentials: 'password'},
-          Version: 2
+          Version: 3
         };
         assert.deepEqual(expected, last_message);
       });
@@ -477,12 +477,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('sends the correct request for environment info', function() {
+    it('sends the correct request for model info', function() {
       env.environmentInfo();
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
-        Request: 'EnvironmentInfo',
+        Request: 'ModelInfo',
         Version: 1,
         RequestId: 1,
         Params: {}
@@ -490,7 +490,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, last_message);
     });
 
-    it('warns on environment info errors', function() {
+    it('sends the correct request for legacy environment info', function() {
+      env.set('facades', {Client: [0]});
+      env.environmentInfo();
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'EnvironmentInfo',
+        Version: 0,
+        RequestId: 1,
+        Params: {}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('warns on model info errors', function() {
       env.environmentInfo();
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
@@ -505,7 +519,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       console.warn = original;
     });
 
-    it('stores environment info into env attributes', function() {
+    it('stores model info into env attributes', function() {
       env.environmentInfo();
       // Assume environmentInfo to be the first request.
       conn.msg({
@@ -521,11 +535,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal('envname', env.get('environmentName'));
     });
 
-    it('sends the correct EnvironmentGet request', function() {
+    it('sends the correct ModelGet request', function() {
       env.environmentGet();
       var expectedMessage = {
         Type: 'Client',
-        Request: 'EnvironmentGet',
+        Request: 'ModelGet',
         Version: 1,
         RequestId: 1,
         Params: {}
@@ -533,7 +547,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('warns on environmentGet errors', function() {
+    it('sends the correct legacy EnvironmentGet request', function() {
+      env.set('facades', {Client: [0]});
+      env.environmentGet();
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'EnvironmentGet',
+        Version: 0,
+        RequestId: 1,
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
+    it('warns on ModelGet errors', function() {
       env.environmentInfo();
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
@@ -550,13 +577,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       conn.msg({RequestId: 2, Error: 'bad wolf'});
-      assert.strictEqual(
-          warning, 'error calling EnvironmentGet API: bad wolf');
+      assert.strictEqual(warning, 'error calling ModelGet API: bad wolf');
       // Restore the original "console.warn".
       console.warn = original;
     });
 
-    it('stores the MAAS server on EnvironmentGet results on MAAS', function() {
+    it('stores the MAAS server on ModelGet results on MAAS', function() {
       env.environmentInfo();
       conn.msg({
         RequestId: 1,
@@ -575,7 +601,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(env.get('maasServer'), '1.2.3.4/MAAS');
     });
 
-    it('ignores MAAS data on EnvironmentGet results not in MAAS', function() {
+    it('ignores MAAS data on ModelGet results not in MAAS', function() {
       env.set('providerType', 'ec2');
       env.environmentGet();
       conn.msg({
@@ -587,7 +613,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isUndefined(env.get('maasServer'));
     });
 
-    it('calls EnvironmentGet after EnvironmentInfo on MAAS', function() {
+    it('calls ModelGet after ModelInfo on MAAS', function() {
       // Simulate an EnvironmentInfo request/response.
       env.environmentInfo();
       conn.msg({
@@ -601,7 +627,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.lengthOf(conn.messages, 2);
       var expectedMessage = {
         Type: 'Client',
-        Request: 'EnvironmentGet',
+        Request: 'ModelGet',
         Version: 1,
         RequestId: 2,
         Params: {}
@@ -609,7 +635,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('does not call EnvironmentGet after Info when not on MAAS', function() {
+    it('does not call ModelGet after Info when not on MAAS', function() {
       // The MAAS server attribute is initially undefined.
       assert.isUndefined(env.get('maasServer'));
       // Simulate an EnvironmentInfo request/response.
@@ -2766,6 +2792,68 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.uuid, 'unique-id');
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[0], {
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'ConfigSkeleton',
+          Params: {},
+          RequestId: 1
+        });
+        assert.deepEqual(conn.messages[1], {
+          Type: 'Client',
+          Version: 1,
+          Request: 'ModelGet',
+          Params: {},
+          RequestId: 2
+        });
+        assert.deepEqual(conn.messages[2], {
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'CreateModel',
+          Params: {
+            OwnerTag: 'user-who',
+            Config: {
+              attr1: 'value1',
+              attr2: 'value2',
+              name: 'myenv',
+              namespace: 'who-local',
+              'authorized-keys': 'ssh-rsa INVALID'
+            }
+          },
+          RequestId: 3
+        });
+        done();
+      });
+      // Mimic the first response to ModelManager.ConfigSkeleton.
+      conn.msg({
+        RequestId: 1,
+        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
+      });
+      // Mimic the second response to Client.ModelGet.
+      conn.msg({
+        RequestId: 2,
+        Response: {Config: {namespace: 'who-local'}}
+      });
+      // Mimic the third response to ModelManager.CreateModel.
+      conn.msg({
+        RequestId: 3,
+        Response: {
+          Name: 'myenv',
+          OwnerTag: 'user-rose',
+          UUID: 'unique-id'
+        }
+      });
+    });
+
+    it('successfully creates a local environment (legacy)', function(done) {
+      env.set('providerType', 'local');
+      env.set('facades', {'EnvironmentManager': [1]});
+      env.createEnv('myenv', 'user-who', function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.name, 'myenv');
+        assert.strictEqual(data.owner, 'user-rose');
+        assert.strictEqual(data.uuid, 'unique-id');
+        assert.equal(conn.messages.length, 3);
+        assert.deepEqual(conn.messages[0], {
           Type: 'EnvironmentManager',
           Version: 1,
           Request: 'ConfigSkeleton',
@@ -2774,7 +2862,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         assert.deepEqual(conn.messages[1], {
           Type: 'Client',
-          Version: 1,
+          Version: 0,
           Request: 'EnvironmentGet',
           Params: {},
           RequestId: 2
@@ -2802,7 +2890,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Response: {Config: {attr1: 'value1', attr2: 'value2'}}
       });
-      // Mimic the second response to Client.EnvironmentGet.
+      // Mimic the second response to Client.ModelGet.
       conn.msg({
         RequestId: 2,
         Response: {Config: {namespace: 'who-local'}}
@@ -2825,9 +2913,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.name, 'my-ec2-env');
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
-          Type: 'EnvironmentManager',
-          Version: 1,
-          Request: 'CreateEnvironment',
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'CreateModel',
           Params: {
             OwnerTag: 'user-who',
             Config: {
@@ -2843,17 +2931,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the first response to ModelManager.ConfigSkeleton.
       conn.msg({
         RequestId: 1,
         Response: {Config: {attr1: 'value1', attr2: 'value2'}}
       });
-      // Mimic the second response to Client.EnvironmentGet.
+      // Mimic the second response to Client.ModelGet.
       conn.msg({
         RequestId: 2,
         Response: {Config: {'access-key': 'access!', 'secret-key': 'secret!'}}
       });
-      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      // Mimic the third response to ModelManager.CreateModel.
       conn.msg({
         RequestId: 3,
         Response: {
@@ -2871,9 +2959,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.name, 'my-openstack-env');
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
-          Type: 'EnvironmentManager',
-          Version: 1,
-          Request: 'CreateEnvironment',
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'CreateModel',
           Params: {
             OwnerTag: 'user-who',
             Config: {
@@ -2890,12 +2978,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the first response to ModelManager.ConfigSkeleton.
       conn.msg({
         RequestId: 1,
         Response: {Config: {attr1: 'valueA', attr2: 'valueB'}}
       });
-      // Mimic the second response to Client.EnvironmentGet.
+      // Mimic the second response to Client.ModelGet.
       conn.msg({
         RequestId: 2,
         Response: {Config: {
@@ -2904,7 +2992,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           password: 'secret!'
         }}
       });
-      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      // Mimic the third response to ModelManager.CreateModel.
       conn.msg({
         RequestId: 3,
         Response: {
@@ -2922,9 +3010,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.name, 'my-maas-env');
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[2], {
-          Type: 'EnvironmentManager',
-          Version: 1,
-          Request: 'CreateEnvironment',
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'CreateModel',
           Params: {
             OwnerTag: 'user-who',
             Config: {
@@ -2941,12 +3029,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the first response to ModelManager.ConfigSkeleton.
       conn.msg({
         RequestId: 1,
         Response: {Config: {attr1: 'valueA', attr2: 'valueB'}}
       });
-      // Mimic the second response to Client.EnvironmentGet.
+      // Mimic the second response to Client.ModelGet.
       conn.msg({
         RequestId: 2,
         Response: {Config: {
@@ -2955,7 +3043,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'maas-agent-name': 'agent'
         }}
       });
-      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      // Mimic the third response to ModelManager.CreateModel.
       conn.msg({
         RequestId: 3,
         Response: {
@@ -2972,7 +3060,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           data.err, 'cannot get configuration skeleton: bad wolf');
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the first response to ModelManager.ConfigSkeleton.
       conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
@@ -2982,12 +3070,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           data.err, 'cannot get environment configuration: bad wolf');
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the first response to ModelManager.ConfigSkeleton.
       conn.msg({
         RequestId: 1,
         Response: {Config: {attr1: 'value1', attr2: 'value2'}}
       });
-      // Mimic the second response to Client.EnvironmentGet.
+      // Mimic the second response to Client.ModelGet.
       conn.msg({RequestId: 2, Error: 'bad wolf'});
     });
 
@@ -2997,39 +3085,71 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.err, 'bad wolf');
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the first response to ModelManager.ConfigSkeleton.
       conn.msg({
         RequestId: 1,
         Response: {Config: {attr1: 'value1', attr2: 'value2'}}
       });
-      // Mimic the second response to Client.EnvironmentGet.
+      // Mimic the second response to Client.ModelGet.
       conn.msg({
         RequestId: 2,
         Response: {Config: {}}
       });
-      // Mimic the third response to EnvironmentManager.CreateEnvironment.
+      // Mimic the third response to ModelManager.CreateModel.
       conn.msg({RequestId: 3, Error: 'bad wolf'});
     });
 
-    it('handles failures due to unsupported provider', function(done) {
-      env.set('providerType', 'invalid');
-      env.createEnv('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(data.err, 'invalid provider is not supported yet');
+    it('lists environments for a specific owner', function(done) {
+      env.listEnvs('user-who', function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.deepEqual([
+          {
+            name: 'env1',
+            owner: 'user-who',
+            uuid: 'unique1',
+            lastConnection: 'today'
+          },
+          {
+            name: 'env2',
+            owner: 'user-rose',
+            uuid: 'unique2',
+            lastConnection: 'yesterday'
+          }
+        ], data.envs);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'ListModels',
+          Params: {Tag: 'user-who'},
+          RequestId: 1
+        });
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.EnvironmentGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {}}
+        Response: {
+          UserModels: [
+            {
+              Name: 'env1',
+              OwnerTag: 'user-who',
+              UUID: 'unique1',
+              LastConnection: 'today'
+            },
+            {
+              Name: 'env2',
+              OwnerTag: 'user-rose',
+              UUID: 'unique2',
+              LastConnection: 'yesterday'
+            }
+          ]
+        }
       });
     });
 
-    it('lists environments for a specific owner', function(done) {
+    it('lists environments for a specific owner (legacy)', function(done) {
+      env.set('facades', {'EnvironmentManager': [1]});
       env.listEnvs('user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.deepEqual([
