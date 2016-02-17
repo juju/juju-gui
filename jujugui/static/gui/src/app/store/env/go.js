@@ -1396,30 +1396,43 @@ YUI.add('juju-env-go', function(Y) {
        Set a service's charm.
 
        @method setCharm
-       @param {String} service_name The name of the service to be upgraded.
-       @param {String} charm_url The URL of the charm.
+       @param {String} serviceName The name of the service to be upgraded.
+       @param {String} charmUrl The URL of the charm.
        @param {Boolean} force Force upgrading machines in error.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.
      */
-    setCharm: function(service_name, charm_url, force, callback) {
+    setCharm: function(serviceName, charmUrl, force, callback) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(this.handleSetCharm, this,
-            callback, service_name, charm_url);
+            callback, serviceName, charmUrl);
       }
-      this._send_rpc(
-          { Type: 'Client',
-            Request: 'ServiceSetCharm',
-            Params: {
-              ServiceName: service_name,
-              CharmUrl: charm_url,
-              Force: force
-            }
-          },
-          intermediateCallback
-      );
+      var rpc = {
+        Type: 'Service',
+        Request: 'SetCharm',
+        Params: {
+          ServiceName: serviceName,
+          CharmUrl: charmUrl,
+          ForceUnits: force,
+          ForceSeries: force
+        }
+      };
+      if (this.findFacadeVersion('Service') === null) {
+        // If we don't have the new Service facade then use the old Client
+        // facade for setting the service charm.
+        rpc = {
+          Type: 'Client',
+          Request: 'ServiceSetCharm',
+          Params: {
+            ServiceName: serviceName,
+            CharmUrl: charmUrl,
+            Force: force
+          }
+        };
+      }
+      this._send_rpc(rpc, intermediateCallback);
     },
 
     /**
@@ -1429,18 +1442,18 @@ YUI.add('juju-env-go', function(Y) {
        @method handleSetCharm
        @param {Function} userCallback The callback originally submitted by the
          call site.
-       @param {String} service_name The name of the service.  Passed in since
+       @param {String} serviceName The name of the service.  Passed in since
          it is not part of the response.
-       @param {String} charm_url The URL of the charm.  Passed in since
+       @param {String} charmUrl The URL of the charm.  Passed in since
          it is not part of the response.
        @param {Object} data The response returned by the server.
        @return {undefined} Nothing.
      */
-    handleSetCharm: function(userCallback, service_name, charm_url, data) {
+    handleSetCharm: function(userCallback, serviceName, charmUrl, data) {
       var transformedData = {
         err: data.Error,
-        service_name: service_name,
-        charm_url: charm_url
+        service_name: serviceName,
+        charm_url: charmUrl
       };
       // Call the original user callback.
       userCallback(transformedData);
