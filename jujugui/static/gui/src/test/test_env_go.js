@@ -99,7 +99,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ModelManager: [2],
         GUIToken: [46, 47],
         Pinger: [42],
-        Service: [2]
+        Service: [3]
       });
       this._cleanups.push(env.close.bind(env));
       cleanups = [];
@@ -1030,6 +1030,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       var expected = {
         Type: 'Service',
+        Request: 'Deploy',
+        Version: 3,
+        Params: {Services: [{
+          ServiceName: null,
+          ConfigYAML: null,
+          Config: {},
+          Constraints: {},
+          CharmUrl: 'precise/mysql',
+          NumUnits: null,
+          ToMachineSpec: null
+        }]},
+        RequestId: 1
+      };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('successfully deploys a service (version 2 API)', function() {
+      env.set('facades', {'Service': [2]});
+      env.deploy('precise/mysql', null, null, null, null, null, null, null,
+          {immediate: true});
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Service',
         Request: 'ServicesDeploy',
         Version: 2,
         Params: {Services: [{
@@ -1047,7 +1070,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service (legacy API)', function() {
-      env.set('facades', env.defaultFacades);
+      env.set('facades', {});
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});
       msg = conn.last_message();
@@ -1073,8 +1096,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var config = {debug: true, logo: 'example.com/mylogo.png'};
       var expected = {
         Type: 'Service',
-        Request: 'ServicesDeploy',
-        Version: 2,
+        Request: 'Deploy',
+        Version: 3,
         Params: {Services: [{
           ServiceName: null,
           // Configuration values are sent as strings.
@@ -1097,8 +1120,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var config_raw = 'tuning-level: \nexpert-mojo';
       var expected = {
         Type: 'Service',
-        Request: 'ServicesDeploy',
-        Version: 2,
+        Request: 'Deploy',
+        Version: 3,
         Params: {Services: [{
           ServiceName: null,
           Config: {},
@@ -1141,8 +1164,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully deploys a service to a specific machine', function() {
       var expectedMessage = {
         Type: 'Service',
-        Request: 'ServicesDeploy',
-        Version: 2,
+        Request: 'Deploy',
+        Version: 3,
         Params: {Services: [{
           ServiceName: null,
           ConfigYAML: null,
@@ -1666,10 +1689,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_service('mysql');
       var last_message = conn.last_message();
       var expected = {
-        Request: 'ServiceGet',
-        Type: 'Client',
-        Version: 1,
         RequestId: 1,
+        Type: 'Service',
+        Version: 3,
+        Request: 'Get',
+        Params: {ServiceName: 'mysql'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct get_service message (legacy API)', function() {
+      env.set('facades', {'Client': [0]});
+      env.get_service('mysql');
+      var last_message = conn.last_message();
+      var expected = {
+        RequestId: 1,
+        Type: 'Client',
+        Version: 0,
+        Request: 'ServiceGet',
         Params: {ServiceName: 'mysql'}
       };
       assert.deepEqual(expected, last_message);

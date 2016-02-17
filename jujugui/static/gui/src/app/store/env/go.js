@@ -1894,12 +1894,20 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleGetService, null,
             callback, serviceName);
       }
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use legacy call on the Client facade.
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'ServiceGet',
+          Params: {ServiceName: serviceName}
+        }, intermediateCallback);
+        return;
+      }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'ServiceGet',
-        Params: {
-          ServiceName: serviceName
-        }
+        Type: 'Service',
+        Request: 'Get',
+        Params: {ServiceName: serviceName}
       }, intermediateCallback);
     },
 

@@ -174,8 +174,9 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
   sandboxModule.Facades = [
-    {Name: 'Service', Versions: [2]},
-    {Name: 'EnvironmentManager', Versions: [1]}
+    {Name: 'Client', Versions: [1]},
+    {Name: 'ModelManager', Versions: [2]},
+    {Name: 'Service', Versions: [3]}
   ];
 
   /**
@@ -278,7 +279,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleAdminLogin: function(data, client, state) {
       data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
-      data.Response = {Facades: sandboxModule.Facades};
+      data.Response = {facades: sandboxModule.Facades};
       client.receive(data);
     },
 
@@ -296,7 +297,11 @@ YUI.add('juju-env-sandbox', function(Y) {
       if (response) {
         client.receive({
           RequestId: data.RequestId,
-          Response: {AuthTag: response[0], Password: response[1]}
+          Response: {
+            AuthTag: response[0],
+            Password: response[1],
+            facades: sandboxModule.Facades
+          }
         });
       } else {
         client.receive({
@@ -322,15 +327,15 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle EnvironmentInfo messages.
+    Handle ModelInfo messages.
 
-    @method handleClientEnvironmentInfo
+    @method handleClientModelInfo
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientEnvironmentInfo: function(data, client, state) {
+    handleClientModelInfo: function(data, client, state) {
       client.receive({
         RequestId: data.RequestId,
         Response: {
@@ -342,14 +347,14 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle EnvironmentGet messages.
+    Handle ModelGet messages.
 
-    @method handleClientEnvironmentGet
+    @method handleClientModelGet
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handleClientEnvironmentGet: function(data, client, state) {
+    handleClientModelGet: function(data, client, state) {
       client.receive({
         RequestId: data.RequestId,
         Response: {
@@ -360,19 +365,19 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ListEnvironments.
+    Handle ListModels.
 
-    @method handleEnvironmentManagerListEnvironments
+    @method handleModelManagerListModels
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleEnvironmentManagerListEnvironments: function(data, client, state) {
+    handleModelManagerListModels: function(data, client, state) {
       client.receive({
         RequestId: data.RequestId,
         Response: {
-          UserEnvironments: [{
+          UserModels: [{
             Name: 'sandbox',
             UUID: 'sandbox1',
             OwnerTag: 'user-admin',
@@ -385,13 +390,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle ConfigSkeleton.
 
-    @method handleEnvironmentManagerConfigSkeleton
+    @method handleModelManagerConfigSkeleton
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleEnvironmentManagerConfigSkeleton: function(data, client, state) {
+    handleModelManagerConfigSkeleton: function(data, client, state) {
       client.receive({
         RequestId: data.RequestId,
         Response: {
@@ -755,15 +760,15 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle Service.ServicesDeploy messages.
+    Handle Service.Deploy messages.
 
-    @method handleServiceServicesDeploy
+    @method handleServiceDeploy
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceServicesDeploy: function(data, client, state) {
+    handleServiceDeploy: function(data, client, state) {
       var callback = function(result) {
         var res = {};
         if (result.error) {
@@ -1064,15 +1069,15 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ServiceGet messages
+    Handle Service Get messages
 
-    @method handleClientServiceGet
+    @method handleServiceGet
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientServiceGet: function(data, client, state) {
+    handleServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);
       var response = {
         RequestId: data.RequestId
