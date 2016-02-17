@@ -107,6 +107,11 @@ describe('The bundle model', function() {
     assert.equal(instance.get('is_approved'), true);
   });
 
+  it('sets is_approved if promulgated is not provided', function() {
+    instance = new models.Bundle({is_approved: true});
+    assert.equal(instance.get('is_approved'), true);
+  });
+
   it('must store the title', function() {
     expected = 'My Bountiful Bundle';
     data.title = expected;
