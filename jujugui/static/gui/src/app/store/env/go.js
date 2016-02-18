@@ -84,6 +84,33 @@ YUI.add('juju-env-go', function(Y) {
     return newObj;
   };
 
+  // Define the special machine scope used to specify unit placements.
+  var MACHINE_SCOPE = '#';
+
+  /**
+    Attempt to parse the specified string and create a corresponding placement
+    structure, with Scope and Directive fields.
+
+    @method parsePlacement
+    @param {String} toMachine The string placement.
+    @return {Object} A structure including Scope and Directive fields, or
+      null if no placement is specified.
+  */
+  var parsePlacement = function(toMachine) {
+    if (!toMachine) {
+      return null;
+    }
+    var parts = toMachine.split(':');
+    if (parts.length === 2) {
+      return {Scope: parts[0], Directive: parts[1]};
+    }
+    var part = parts[0];
+    if (part === LXC.value || part === KVM.value) {
+      return {Scope: part, Directive: ''};
+    }
+    return {Scope: MACHINE_SCOPE, Directive: part};
+  };
+
   /**
      Return an object containing all the key/value pairs of the given "obj",
      converting all the values to strings.
@@ -1488,50 +1515,51 @@ YUI.add('juju-env-go', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     _add_unit: function(service, numUnits, toMachine, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback, service and numUnits.  No context is passed.
-        intermediateCallback = Y.bind(
-            this._handleAddUnit, null, callback, service, numUnits);
+      // Define the API callback.
+      var handleAddUnit = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by addUnit API call:', data);
+          return;
+        }
+        var transformedData = {
+          err: data.Error,
+          service_name: service
+        };
+        if (data.Error) {
+          transformedData.num_units = numUnits;
+        } else {
+          var units = data.Response.Units;
+          transformedData.result = units;
+          transformedData.num_units = units.length;
+        }
+        // Call the original user callback.
+        userCallback(transformedData);
+      }.bind(this, callback);
+
+      // Make the call.
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use legacy Juju API for adding units.
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'AddServiceUnits',
+          Params: {
+            ServiceName: service,
+            NumUnits: numUnits,
+            ToMachineSpec: toMachine
+          }
+        }, handleAddUnit);
+        return;
       }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'AddServiceUnits',
+        Type: 'Service',
+        Request: 'AddUnits',
         Params: {
           ServiceName: service,
           NumUnits: numUnits,
-          ToMachineSpec: toMachine
+          Placement: [parsePlacement(toMachine)]
         }
-      }, intermediateCallback);
-    },
-
-    /**
-      Transform the data returned from the juju-core add_unit call into that
-      suitable for the user callback.
-
-      @method _handleAddUnit
-      @static
-      @param {Function} userCallback The callback originally submitted by the
-        call site.
-      @param {String} service The name of the service.  Passed in since it
-        is not part of the response.
-      @param {Integer} numUnits The number of added units.
-      @param {Object} data The response returned by the server.
-    */
-    _handleAddUnit: function(userCallback, service, numUnits, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: service
-      };
-      if (data.Error) {
-        transformedData.num_units = numUnits;
-      } else {
-        var units = data.Response.Units;
-        transformedData.result = units;
-        transformedData.num_units = units.length;
-      }
-      // Call the original user callback.
-      userCallback(transformedData);
+      }, handleAddUnit);
     },
 
     /**
@@ -2915,6 +2943,7 @@ YUI.add('juju-env-go', function(Y) {
   environments.createRelationKey = createRelationKey;
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
+  environments.parsePlacement = parsePlacement;
   environments.stringifyObjectValues = stringifyObjectValues;
   environments.machineJobs = machineJobs;
 
