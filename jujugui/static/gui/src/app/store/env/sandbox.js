@@ -1117,17 +1117,21 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle AddServiceUnits messages
+    Handle Service.AddUnits messages
 
-    @method handleClientAddServiceUnits
+    @method handleServiceAddUnits
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientAddServiceUnits: function(data, client, state) {
-      var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits,
-          data.Params.ToMachineSpec);
+    handleServiceAddUnits: function(data, client, state) {
+      var args = data.Params;
+      var toMachine;
+      if (args.Placement && args.Placement[0]) {
+        toMachine = args.Placement[0].Directive;
+      }
+      var reply = state.addUnit(args.ServiceName, args.NumUnits, toMachine);
       var units = [];
       if (!reply.error) {
         units = reply.units.map(function(u) {return u.id;});

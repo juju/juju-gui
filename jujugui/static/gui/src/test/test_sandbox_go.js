@@ -970,8 +970,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function generateServices(callback) {
       state.deploy('cs:precise/wordpress-27', function(service) {
         var data = {
-          Type: 'Client',
-          Request: 'AddServiceUnits',
+          Type: 'Service',
+          Request: 'AddUnits',
           Params: {
             ServiceName: 'wordpress',
             NumUnits: 2
@@ -1097,8 +1097,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         function(done) {
           state.deploy('cs:precise/wordpress-27', function(service) {
             var data = {
-              Type: 'Client',
-              Request: 'AddServiceUnits',
+              Type: 'Service',
+              Request: 'AddUnits',
               Params: {
                 ServiceName: 'noservice',
                 NumUnits: 2
