@@ -1680,9 +1680,19 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, service);
       }
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use the legacy API call (Juju < 2.0).
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'ServiceExpose',
+          Params: {ServiceName: service}
+        }, intermediateCallback);
+        return;
+      }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'ServiceExpose',
+        Type: 'Service',
+        Request: 'Expose',
         Params: {ServiceName: service}
       }, intermediateCallback);
     },
@@ -1725,9 +1735,19 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(
             this.handleServiceCalls, null, callback, service);
       }
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use the legacy API call (Juju < 2.0).
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'ServiceUnexpose',
+          Params: {ServiceName: service}
+        }, intermediateCallback);
+        return;
+      }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'ServiceUnexpose',
+        Type: 'Service',
+        Request: 'Unexpose',
         Params: {ServiceName: service}
       }, intermediateCallback);
     },

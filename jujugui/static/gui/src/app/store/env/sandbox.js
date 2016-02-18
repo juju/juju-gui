@@ -1144,29 +1144,29 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ServiceExpose messages
+    Handle Service.Expose messages
 
-    @method handleClientServiceExpose
+    @method handleServiceExpose
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientServiceExpose: function(data, client, state) {
+    handleServiceExpose: function(data, client, state) {
       var result = state.expose(data.Params.ServiceName);
       this._basicReceive(data, client, result);
     },
 
     /**
-    Handle ServiceUnexpose messages
+    Handle Service.Unexpose messages
 
-    @method handleClientServiceUnexpose
+    @method handleServiceUnexpose
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientServiceUnexpose: function(data, client, state) {
+    handleServiceUnexpose: function(data, client, state) {
       var result = state.unexpose(data.Params.ServiceName);
       this._basicReceive(data, client, result);
     },
