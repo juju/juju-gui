@@ -1030,8 +1030,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function generateAndExposeService(callback) {
       state.deploy('cs:precise/wordpress-27', function(data) {
         var command = {
-          Type: 'Client',
-          Request: 'ServiceExpose',
+          Type: 'Service',
+          Request: 'Expose',
           Params: {ServiceName: data.service.get('name')}
         };
         state.nextChanges();
@@ -1162,8 +1162,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             data = Y.JSON.parse(rec.data),
             service = state.db.services.getById(service_name),
             command = {
-              Type: 'Client',
-              Request: 'ServiceExpose',
+              Type: 'Service',
+              Request: 'Expose',
               Params: {ServiceName: service_name}
             };
         state.nextChanges();
@@ -1181,8 +1181,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         function(done) {
           state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
-              Type: 'Client',
-              Request: 'ServiceExpose',
+              Type: 'Service',
+              Request: 'Expose',
               Params: {ServiceName: 'foobar'}
             };
             state.nextChanges();
@@ -1202,8 +1202,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       function unexposeService(rec) {
         var service_name = 'wordpress',
             command = {
-              Type: 'Client',
-              Request: 'ServiceUnexpose',
+              Type: 'Service',
+              Request: 'Unexpose',
               Params: {ServiceName: service_name}
             };
         state.nextChanges();
@@ -1240,8 +1240,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var service_name = 'wordpress';
           state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
-              Type: 'Client',
-              Request: 'ServiceUnexpose',
+              Type: 'Service',
+              Request: 'Unexpose',
               Params: {ServiceName: service_name}
             };
             state.nextChanges();
@@ -1262,8 +1262,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         function(done) {
           function unexposeService(rec) {
             var command = {
-              Type: 'Client',
-              Request: 'ServiceUnexpose',
+              Type: 'Service',
+              Request: 'Unexpose',
               Params: {ServiceName: 'foobar'}
             };
             state.nextChanges();

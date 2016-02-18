@@ -960,9 +960,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.expose('apache', function() {}, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
+        Type: 'Service',
+        Request: 'Expose',
+        Version: 3,
+        RequestId: 1,
+        Params: {ServiceName: 'apache'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct expose message (legacy API)', function() {
+      env.set('facades', {});
+      env.expose('apache', function() {}, {immediate: true});
+      var last_message = conn.last_message();
+      var expected = {
         Type: 'Client',
         Request: 'ServiceExpose',
-        Version: 1,
+        Version: 0,
         RequestId: 1,
         Params: {ServiceName: 'apache'}
       };
@@ -1002,9 +1016,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.unexpose('apache', function() {}, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
+        Type: 'Service',
+        Request: 'Unexpose',
+        Version: 3,
+        RequestId: 1,
+        Params: {ServiceName: 'apache'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct unexpose message (legacy API)', function() {
+      env.set('facades', {});
+      env.unexpose('apache', function() {}, {immediate: true});
+      var last_message = conn.last_message();
+      var expected = {
         Type: 'Client',
         Request: 'ServiceUnexpose',
-        Version: 1,
+        Version: 0,
         RequestId: 1,
         Params: {ServiceName: 'apache'}
       };
