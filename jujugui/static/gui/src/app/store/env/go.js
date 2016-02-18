@@ -92,15 +92,15 @@ YUI.add('juju-env-go', function(Y) {
     structure, with Scope and Directive fields.
 
     @method parsePlacement
-    @param {String} machineTo The string placement.
+    @param {String} toMachine The string placement.
     @return {Object} A structure including Scope and Directive fields, or
       null if no placement is specified.
   */
-  var parsePlacement = function(machineTo) {
-    if (!machineTo) {
+  var parsePlacement = function(toMachine) {
+    if (!toMachine) {
       return null;
     }
-    var parts = machineTo.split(':');
+    var parts = toMachine.split(':');
     if (parts.length === 2) {
       return {Scope: parts[0], Directive: parts[1]};
     }
