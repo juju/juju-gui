@@ -1,5 +1,5 @@
 .user-profile-list {
-    padding: 40px;
+    margin-top: 20px;
 
     &__header {
         padding-bottom: 20px;
@@ -21,12 +21,12 @@
     }
 
     &__header-row &__line-item {
-      text-transform: capitalize;
+        text-transform: capitalize;
     }
 
     &__item-row {
         display: flex;
-        border-top: 1px solid $light-mid-grey;
+        border-top: 1px solid $mid-grey;
         list-style: none;
         padding: 13px 0;
         cursor: pointer;

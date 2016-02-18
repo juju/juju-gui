@@ -33,11 +33,15 @@ describe('UserProfile', () => {
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         jem={jem}
         switchEnv={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
-        changeState={sinon.stub()} />, true);
+        changeState={sinon.stub()}
+        storeUser={sinon.stub()}
+        username="spinach" />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
@@ -51,22 +55,29 @@ describe('UserProfile', () => {
           <juju.components.SvgIcon name="close_16"
             size="16" />
         </span>
-        <juju.components.UserProfileHeader />
-        <juju.components.UserProfileList
-          title="Models"
-          data={[]}
-          uuidKey="uuid"
-          switchEnv={instance.switchEnv}
-          whitelist={whitelist}/>
-        <juju.components.GenericButton
-          title="Log in to the charmstore"
-          action={instance._interactiveLogin} />
+        <div className="twelve-col">
+          <div className="inner-wrapper">
+            <juju.components.UserProfileHeader
+              avatar=""
+              bundleCount={0}
+              charmCount={0}
+              environmentCount={0}
+              interactiveLogin={instance._interactiveLogin}
+              username="spinach" />
+            <juju.components.UserProfileList
+              title="Models"
+              data={[]}
+              uuidKey="uuid"
+              switchEnv={instance.switchEnv}
+              whitelist={whitelist}/>
+          </div>
+        </div>
       </juju.components.Panel>
     );
     assert.deepEqual(output, expected);
   });
 
-  it('does not display charmstore log in if interactiveLogin is falsy', () => {
+  it('does not pass the charmstore login if interactiveLogin is falsy', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchEnv={sinon.stub()}
@@ -74,17 +85,29 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
         createSocketURL={sinon.stub()}
-        interactiveLogin={false} />);
-    assert.equal(output.props.children[3], '');
+        dbEnvironmentSet={sinon.stub()}
+        interactiveLogin={false}
+        storeUser={sinon.stub()}
+        username="spinach" />);
+    var expected = (
+      <juju.components.UserProfileHeader
+        avatar=""
+        bundleCount={0}
+        charmCount={0}
+        environmentCount={0}
+        interactiveLogin={undefined}
+        username="spinach" />);
+    assert.deepEqual(output.props.children[1].props.children.props.children[0],
+      expected);
   });
 
-  it('clicks to log in to charmstore fetch macaroons from the bakery', () => {
+  it('can log in to charmstore fetch macaroons from the bakery', () => {
     var charmstore = {
       bakery: {
         fetchMacaroonFromStaticPath: sinon.stub()
       }
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchEnv={sinon.stub()}
         listEnvs={sinon.stub()}
@@ -92,8 +115,12 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         createSocketURL={sinon.stub()}
         charmstore={charmstore}
-        interactiveLogin={true} />);
-    output.props.children[3].props.action();
+        dbEnvironmentSet={sinon.stub()}
+        interactiveLogin={true}
+        storeUser={sinon.stub()}
+        username="spinach" />, true);
+    var instance = renderer.getMountedInstance();
+    instance._interactiveLogin();
     assert.equal(charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1);
   });
 
@@ -102,10 +129,14 @@ describe('UserProfile', () => {
     var listEnvs = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        changeState={changeState}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         switchEnv={sinon.stub()}
         listEnvs={listEnvs}
         showConnectingMask={sinon.stub()}
-        changeState={changeState} />);
+        storeUser={sinon.stub()}
+        username="spinach" />);
 
     output.props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
@@ -125,7 +156,11 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         switchEnv={sinon.stub()}
         changeState={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         showConnectingMask={sinon.stub()}
+        storeUser={sinon.stub()}
+        username="spinach"
         jem={jem} />, true);
     var instance = component.getMountedInstance();
 
@@ -141,7 +176,11 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         switchEnv={sinon.stub()}
         changeState={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
         showConnectingMask={sinon.stub()}
+        storeUser={sinon.stub()}
+        username="spinach"
         listEnvs={listEnvs} />, true);
     var instance = component.getMountedInstance();
 
@@ -171,6 +210,8 @@ describe('UserProfile', () => {
         createSocketURL={createSocketURL}
         changeState={changeState}
         showConnectingMask={showMask}
+        storeUser={sinon.stub()}
+        username="spinach"
         dbEnvironmentSet={dbset}
         listEnvs={listEnvs} />, true);
     var instance = component.getMountedInstance();
