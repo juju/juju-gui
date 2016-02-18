@@ -68,6 +68,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, result);
     });
 
+    describe('parsePlacement', function() {
+
+      it('returns null if there is nothing to parse', function() {
+        var placement = environments.parsePlacement('');
+        assert.strictEqual(placement, null);
+      });
+
+      it('correctly returns the scope and the directive', function() {
+        var placement = environments.parsePlacement('lxc:2');
+        assert.deepEqual(placement, {Scope: 'lxc', Directive: '2'});
+      });
+
+      it('returns a new container placement', function() {
+        var placement = environments.parsePlacement('kvm');
+        assert.deepEqual(placement, {Scope: 'kvm', Directive: ''});
+      });
+
+      it('returns a machine placement', function() {
+        var placement = environments.parsePlacement('42');
+        assert.deepEqual(placement, {Scope: '#', Directive: '42'});
+      });
+
+    });
+
   });
 
   describe('Go Juju environment', function() {
@@ -665,7 +689,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('sends the correct AddServiceUnits message', function() {
+    it('sends the correct Service.AddUnits message', function() {
+      env.add_unit('django', 3, null, null, {immediate: true});
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Service',
+        Request: 'AddUnits',
+        Version: 3,
+        RequestId: 1,
+        Params: {ServiceName: 'django', NumUnits: 3, Placement: [null]}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct legacy AddServiceUnits message', function() {
+      env.set('facades', {Client: [1]});
       env.add_unit('django', 3, null, null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
@@ -679,6 +717,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds new service units to a specific machine', function() {
+      env.add_unit('django', 3, '42', null, {immediate: true});
+      var expectedMessage = {
+        Type: 'Service',
+        Request: 'AddUnits',
+        Version: 3,
+        RequestId: 1,
+        Params: {
+          ServiceName: 'django',
+          NumUnits: 3,
+          Placement: [{Scope: '#', Directive: '42'}]
+        }
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
+    it('adds new service units to a specific container', function() {
+      env.add_unit('haproxy', 1, 'lxc:47', null, {immediate: true});
+      var expectedMessage = {
+        Type: 'Service',
+        Request: 'AddUnits',
+        Version: 3,
+        RequestId: 1,
+        Params: {
+          ServiceName: 'haproxy',
+          NumUnits: 1,
+          Placement: [{Scope: 'lxc', Directive: '47'}]
+        }
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
+    it('adds new service units to a specific machine (legacy)', function() {
+      env.set('facades', {Client: [1]});
       env.add_unit('django', 3, '42', null, {immediate: true});
       var expectedMessage = {
         Type: 'Client',
@@ -1022,6 +1093,72 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Error: 'bad wolf'});
       assert.strictEqual(url, 'wily/django-42');
       assert.strictEqual(err, 'bad wolf');
+    });
+
+    describe.only('setCharm', function() {
+
+      it('sends message to change the charm version', function() {
+        var serviceName = 'rethinkdb';
+        var charmUrl = 'trusty/rethinkdb-1';
+        var forceUnits = false;
+        var forceSeries = true;
+        var cb = utils.makeStubFunction();
+        env.setCharm(serviceName, charmUrl, forceUnits, forceSeries, cb);
+        var lastMessage = conn.last_message();
+        var expected = {
+          Type: 'Service',
+          Request: 'SetCharm',
+          Version: 3,
+          RequestId: 1,
+          Params: {
+            ServiceName: serviceName,
+            CharmUrl: charmUrl,
+            ForceUnits: forceUnits,
+            ForceSeries: forceSeries
+          }
+        };
+        assert.deepEqual(lastMessage, expected);
+        // Trigger the message.
+        conn.msg(expected);
+        assert.equal(cb.callCount(), 1);
+        assert.deepEqual(cb.lastArguments(), [{
+          err: undefined,
+          service_name: serviceName,
+          charm_url: charmUrl
+        }]);
+      });
+
+      it('sends message to change the charm charm version(legacy)', function() {
+        var serviceName = 'rethinkdb';
+        var charmUrl = 'trusty/rethinkdb-1';
+        var forceUnits = false;
+        var forceSeries = true;
+        var cb = utils.makeStubFunction();
+        env.get('facades').Service = null;
+        env.setCharm(serviceName, charmUrl, forceUnits, forceSeries, cb);
+        var lastMessage = conn.last_message();
+        var expected = {
+          Type: 'Client',
+          Request: 'ServiceSetCharm',
+          Version: 1,
+          RequestId: 1,
+          Params: {
+            ServiceName: serviceName,
+            CharmUrl: charmUrl,
+            Force: forceUnits || forceSeries
+          }
+        };
+        assert.deepEqual(lastMessage, expected);
+        // Trigger the message.
+        conn.msg(expected);
+        assert.equal(cb.callCount(), 1);
+        assert.deepEqual(cb.lastArguments(), [{
+          err: undefined,
+          service_name: serviceName,
+          charm_url: charmUrl
+        }]);
+      });
+
     });
 
     it('successfully deploys a service', function() {
