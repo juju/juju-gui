@@ -1420,7 +1420,8 @@ YUI.add('juju-env-go', function(Y) {
           ForceSeries: forceSeries
         }
       };
-      if (this.findFacadeVersion('Service') === null) {
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
         // If we don't have the new Service facade then use the old Client
         // facade for setting the service charm.
         rpc = {
