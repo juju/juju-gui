@@ -1123,6 +1123,72 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(err, 'bad wolf');
     });
 
+    describe('setCharm', function() {
+
+      it('sends message to change the charm version', function() {
+        var serviceName = 'rethinkdb';
+        var charmUrl = 'trusty/rethinkdb-1';
+        var forceUnits = false;
+        var forceSeries = true;
+        var cb = utils.makeStubFunction();
+        env.setCharm(serviceName, charmUrl, forceUnits, forceSeries, cb);
+        var lastMessage = conn.last_message();
+        var expected = {
+          Type: 'Service',
+          Request: 'SetCharm',
+          Version: 3,
+          RequestId: 1,
+          Params: {
+            ServiceName: serviceName,
+            CharmUrl: charmUrl,
+            ForceUnits: forceUnits,
+            ForceSeries: forceSeries
+          }
+        };
+        assert.deepEqual(lastMessage, expected);
+        // Trigger the message.
+        conn.msg(expected);
+        assert.equal(cb.callCount(), 1);
+        assert.deepEqual(cb.lastArguments(), [{
+          err: undefined,
+          service_name: serviceName,
+          charm_url: charmUrl
+        }]);
+      });
+
+      it('sends message to change the charm charm version(legacy)', function() {
+        var serviceName = 'rethinkdb';
+        var charmUrl = 'trusty/rethinkdb-1';
+        var forceUnits = false;
+        var forceSeries = true;
+        var cb = utils.makeStubFunction();
+        env.get('facades').Service = null;
+        env.setCharm(serviceName, charmUrl, forceUnits, forceSeries, cb);
+        var lastMessage = conn.last_message();
+        var expected = {
+          Type: 'Client',
+          Request: 'ServiceSetCharm',
+          Version: 1,
+          RequestId: 1,
+          Params: {
+            ServiceName: serviceName,
+            CharmUrl: charmUrl,
+            Force: forceUnits || forceSeries
+          }
+        };
+        assert.deepEqual(lastMessage, expected);
+        // Trigger the message.
+        conn.msg(expected);
+        assert.equal(cb.callCount(), 1);
+        assert.deepEqual(cb.lastArguments(), [{
+          err: undefined,
+          service_name: serviceName,
+          charm_url: charmUrl
+        }]);
+      });
+
+    });
+
     it('successfully deploys a service', function() {
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});

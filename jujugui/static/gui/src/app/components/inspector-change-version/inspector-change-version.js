@@ -75,7 +75,7 @@ YUI.add('inspector-change-version', function() {
       @param {Object} e The click event.
     */
     _versionButtonAction: function(charmId, e) {
-      this.props.setCharm(this.props.service.get('id'), charmId, false,
+      this.props.setCharm(this.props.service.get('id'), charmId, false, false,
           this._setCharmCallback.bind(this, charmId));
     },
 

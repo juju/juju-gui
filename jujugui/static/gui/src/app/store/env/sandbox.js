@@ -991,12 +991,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientServiceSetCharm: function(data, client, state) {
+    handleServiceSetCharm: function(data, client, state) {
       var callback = Y.bind(function(result) {
         this._basicReceive(data, client, result);
       }, this);
-      state.setCharm(data.Params.ServiceName, data.Params.CharmUrl,
-          data.Params.Force, callback);
+      var params = data.Params;
+      state.setCharm(params.ServiceName, params.CharmUrl,
+          params.ForceUnits, params.ForceSeries, callback);
     },
 
     /**
