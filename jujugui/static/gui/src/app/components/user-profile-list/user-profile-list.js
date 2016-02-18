@@ -131,7 +131,7 @@ YUI.add('user-profile-list', function() {
 
     render: function () {
       return (
-        <div className="user-profile-list">
+        <div className="user-profile-list twelve-col">
           <div className="user-profile-list__header">
             {this.props.title}
             <span className="user-profile-list__size">

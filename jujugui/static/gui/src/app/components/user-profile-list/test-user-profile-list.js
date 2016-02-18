@@ -39,7 +39,7 @@ describe('UserProfileList', () => {
         uuidKey="uuid"
         switchEnv={switchEnv}/>);
     var expected = (
-      <div className="user-profile-list">
+      <div className="user-profile-list twelve-col">
         <div className="user-profile-list__header">
           Test List
           <span className="user-profile-list__size">
@@ -73,7 +73,7 @@ describe('UserProfileList', () => {
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var expected = (
-      <div className="user-profile-list">
+      <div className="user-profile-list twelve-col">
         <div className="user-profile-list__header">
           TestList
           <span className="user-profile-list__size">
@@ -176,7 +176,7 @@ describe('UserProfileList', () => {
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var expected = (
-      <div className="user-profile-list">
+      <div className="user-profile-list twelve-col">
         <div className="user-profile-list__header">
           TestList
           <span className="user-profile-list__size">

@@ -28,9 +28,69 @@ describe('UserProfileHeader', () => {
   });
 
   it('renders', () => {
+    var interactiveLogin = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.UserProfileHeader/>);
-    assert.deepEqual(output, <div className="user-profile-header"></div>);
+      <juju.components.UserProfileHeader
+        avatar="avatar.png"
+        bundleCount={5}
+        charmCount={2}
+        environmentCount={1}
+        interactiveLogin={interactiveLogin}
+        username="spinach" />);
+    var expected = (
+      <div className="user-profile-header twelve-col">
+        <juju.components.GenericButton
+          title="Log in to the charmstore"
+          type="login"
+          action={interactiveLogin} />
+        <img alt="spinach"
+          className="user-profile-header__avatar"
+          src="avatar.png" />
+        <h1 className="user-profile-header__username">
+          spinach
+        </h1>
+        <ul className="user-profile-header__counts">
+          <li className="user-profile-header__count">
+            {1} environment{''}
+          </li>
+          <li className="user-profile-header__count">
+            {5} bundle{'s'}
+          </li>
+          <li className="user-profile-header__count">
+            {2} charm{'s'}
+          </li>
+        </ul>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render without a login button', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfileHeader
+        avatar="avatar.png"
+        bundleCount={5}
+        charmCount={2}
+        environmentCount={1}
+        interactiveLogin={undefined}
+        username="spinach" />);
+    assert.isUndefined(output.props.children[0]);
+  });
+
+  it('can render with a default avatar', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfileHeader
+        avatar=""
+        bundleCount={5}
+        charmCount={2}
+        environmentCount={1}
+        interactiveLogin={undefined}
+        username="spinach" />);
+    var expected = (
+      <span className={
+        'user-profile-header__avatar user-profile-header__avatar--default'}>
+        <span className="avatar-overlay"></span>
+      </span>);
+    assert.deepEqual(output.props.children[1], expected);
   });
 
 });

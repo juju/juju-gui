@@ -32,7 +32,8 @@ YUI.add('user-profile', function() {
       listEnvs: React.PropTypes.func,
       showConnectingMask: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired,
-      switchEnv: React.PropTypes.func.isRequired
+      switchEnv: React.PropTypes.func.isRequired,
+      username: React.PropTypes.string.isRequired
     },
 
     getInitialState: function() {
@@ -151,10 +152,6 @@ YUI.add('user-profile', function() {
 
     render: function() {
       var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
-      var interactiveLogin = this.props.interactiveLogin ?
-        <juju.components.GenericButton
-          title="Log in to the charmstore"
-          action={this._interactiveLogin} /> : '';
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -165,14 +162,24 @@ YUI.add('user-profile', function() {
             <juju.components.SvgIcon name="close_16"
               size="16" />
           </span>
-          <juju.components.UserProfileHeader />
-          <juju.components.UserProfileList
-            title="Models"
-            data={this.state.envList}
-            uuidKey="uuid"
-            switchEnv={this.switchEnv}
-            whitelist={whitelist}/>
-          {interactiveLogin}
+          <div className="twelve-col">
+            <div className="inner-wrapper">
+              <juju.components.UserProfileHeader
+                avatar=""
+                bundleCount={0}
+                charmCount={0}
+                environmentCount={this.state.envList.length}
+                interactiveLogin={this.props.interactiveLogin ?
+                  this._interactiveLogin : undefined}
+                username={this.props.username} />
+              <juju.components.UserProfileList
+                title="Models"
+                data={this.state.envList}
+                uuidKey="uuid"
+                switchEnv={this.switchEnv}
+                whitelist={whitelist}/>
+            </div>
+          </div>
         </juju.components.Panel>
       );
     }
@@ -183,7 +190,6 @@ YUI.add('user-profile', function() {
   requires: [
     'svg-icon',
     'panel-component',
-    'generic-button',
     'user-profile-header',
     'user-profile-list'
   ]

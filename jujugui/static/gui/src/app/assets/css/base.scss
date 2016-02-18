@@ -137,12 +137,18 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+%link,
 .link,
-a,
-a:hover {
+a {
     cursor: pointer;
     color: $ubuntu-orange;
     text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+        text-decoration: underline;
+    }
 }
 
 button {

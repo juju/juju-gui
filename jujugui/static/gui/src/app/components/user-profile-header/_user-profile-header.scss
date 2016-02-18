@@ -1,0 +1,68 @@
+.user-profile-header {
+    padding: 20px 0;
+    border-bottom: 1px solid $mid-grey;
+
+    &__avatar {
+        $size: 96px;
+        float: left;
+        width: $size;
+        height: $size;
+        margin-right: 20px;
+        border-radius: 50%;
+
+        &--default {
+            display: block;
+            overflow: hidden;
+            position: relative;
+            background-color: #28a3ea;
+
+            .avatar-overlay {
+                position: absolute;
+                left: -20px;
+                top: 20px;
+            }
+
+            .avatar-overlay:after,
+            .avatar-overlay:before {
+                content: '';
+                position: absolute;
+                width: 300px;
+                height: 300px;
+                background-color: #000;
+                opacity: .2;
+            }
+
+            .avatar-overlay:before {
+                left: -210px;
+                transform: rotate(-45deg);
+            }
+
+            .avatar-overlay:after {
+                left: 10px;
+                transform: rotate(45deg);
+            }
+        }
+    }
+
+    &__username {
+        $size: 45px;
+        padding: 10px 0;
+        font-size: $size;
+        line-height: $size;
+    }
+
+    &__counts {
+        @extend %list-style;
+    }
+
+    &__count {
+        @extend %link;
+        float: left;
+        margin-right: 20px;
+    }
+
+    .generic-button--type-login {
+        float: right;
+        margin-top: 50px;
+    }
+}
