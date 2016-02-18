@@ -923,8 +923,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set a charm.', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {});
       var data = {
-        Type: 'Client',
-        Request: 'ServiceSetCharm',
+        Type: 'Service',
+        Request: 'SetCharm',
         Params: {
           ServiceName: 'wordpress',
           CharmUrl: 'cs:precise/mediawiki-18',
@@ -946,13 +946,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set a charm (environment integration).', function(done) {
       env.connect();
       state.deploy('cs:precise/wordpress-27', function() {});
-      var callback = function(result) {
+      var cb = function(result) {
         assert.isUndefined(result.err);
         var service = state.db.services.getById('wordpress');
         assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
         done();
       };
-      env.setCharm('wordpress', 'cs:precise/mediawiki-18', false, callback);
+      env.setCharm('wordpress', 'cs:precise/mediawiki-18', false, false, cb);
     });
 
     /**
