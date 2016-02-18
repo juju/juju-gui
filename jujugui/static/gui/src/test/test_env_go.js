@@ -1095,7 +1095,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(err, 'bad wolf');
     });
 
-    describe.only('setCharm', function() {
+    describe('setCharm', function() {
 
       it('sends message to change the charm version', function() {
         var serviceName = 'rethinkdb';
