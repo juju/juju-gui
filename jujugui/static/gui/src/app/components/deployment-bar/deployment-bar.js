@@ -25,7 +25,8 @@ YUI.add('deployment-bar', function() {
       exportEnvironmentFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
-      services: React.PropTypes.array.isRequired
+      services: React.PropTypes.array.isRequired,
+      showInstall: React.PropTypes.bool.isRequired
     },
 
     previousNotifications: [],
@@ -114,6 +115,24 @@ YUI.add('deployment-bar', function() {
     },
 
     /**
+      Generate the install button if it should be displayed.
+
+      @method _generateInstallButton
+      @returns {Object} The install button.
+    */
+    _generateInstallButton: function() {
+      if (!this.props.showInstall) {
+        return;
+      }
+      return (
+        <a className="deployment-bar__install-button"
+          href="https://jujucharms.com/get-started"
+          target="_blank">
+          Install Juju
+        </a>);
+    },
+
+    /**
       Returns the classes for the button based on the provided props.
       @method _generateClasses
       @returns {String} The collection of class names.
@@ -134,40 +153,38 @@ YUI.add('deployment-bar', function() {
           instanceName="deployment-bar-panel"
           visible={true}>
           <div className={this._generateClasses()}>
-            <span className="deployment-bar__export link"
-              onClick={this._handleExport}
-              role="button"
-              tabIndex="0">
-              Export
-            </span>
             <span className="deployment-bar__import link"
               onClick={this._handleImportClick}
               role="button"
               tabIndex="0">
               Import
             </span>
+            <span className="deployment-bar__export link"
+              onClick={this._handleExport}
+              role="button"
+              tabIndex="0">
+              Export
+            </span>
             <input className="deployment-bar__file"
               type="file"
               onChange={this._handleImportFile}
               accept=".zip,.yaml,.yml"
               ref="file-input" />
-            <a className="deployment-bar__install-button"
-              href="https://jujucharms.com/get-started"
-              target="_blank">
-              Install Juju
-            </a>
+            {this._generateInstallButton()}
             <juju.components.DeploymentBarNotification
               change={this.state.latestChangeDescription} />
-            <juju.components.GenericButton
-              action={this.props.deployButtonAction}
-              type="blue"
-              disabled={changeCount === 0}
-              title={changeCount.toString()} />
-            <juju.components.GenericButton
-              action={this.props.deployButtonAction}
-              type="confirm"
-              disabled={changeCount === 0}
-              title={this._getDeployButtonLabel(this.props.hasCommits)} />
+            <div className="deployment-bar__deploy">
+              <juju.components.GenericButton
+                action={this.props.deployButtonAction}
+                type="blue"
+                disabled={changeCount === 0}
+                title={changeCount.toString()} />
+              <juju.components.GenericButton
+                action={this.props.deployButtonAction}
+                type="confirm"
+                disabled={changeCount === 0}
+                title={this._getDeployButtonLabel(this.props.hasCommits)} />
+            </div>
           </div>
         </juju.components.Panel>
       );
@@ -176,5 +193,6 @@ YUI.add('deployment-bar', function() {
 
 }, '0.1.0', { requires: [
   'deployment-bar-notification',
+  'generic-button',
   'panel-component'
 ]});
