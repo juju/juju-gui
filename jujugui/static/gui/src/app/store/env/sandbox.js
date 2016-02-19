@@ -1175,13 +1175,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle AddRelation messages
 
-    @method handleClientAddRelation
+    @method handleServiceAddRelation
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientAddRelation: function(data, client, state) {
+    handleServiceAddRelation: function(data, client, state) {
       var stateData = state.addRelation(
           data.Params.Endpoints[0], data.Params.Endpoints[1], false);
       var resp = {RequestId: data.RequestId};
@@ -1222,13 +1222,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle DestroyRelation messages
 
-    @method handleClientDestroyRelation
+    @method handleServiceDestroyRelation
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientDestroyRelation: function(data, client, state) {
+    handleServiceDestroyRelation: function(data, client, state) {
       var result = state.removeRelation(data.Params.Endpoints[0],
           data.Params.Endpoints[1]);
       this._basicReceive(data, client, result);
