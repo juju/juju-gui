@@ -790,13 +790,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('sends the correct DestroyServiceUnits message', function() {
+    it('sends the correct Service.DestroyUnits message', function() {
+      env.remove_units(['django/2', 'django/3'], null, {immediate: true});
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Service',
+        Request: 'DestroyUnits',
+        Version: 3,
+        RequestId: 1,
+        Params: {UnitNames: ['django/2', 'django/3']}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct legacy DestroyServiceUnits message', function() {
+      env.set('facades', {Service: [2]});
       env.remove_units(['django/2', 'django/3'], null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'DestroyServiceUnits',
-        Version: 1,
+        Version: 0,
         RequestId: 1,
         Params: {UnitNames: ['django/2', 'django/3']}
       };
@@ -2047,8 +2061,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         service_name = evt.service_name;
       }, {immediate: true});
       var expected = {
+        Type: 'Service',
+        Version: 3,
+        Request: 'Destroy',
+        Params: {
+          ServiceName: 'mysql'
+        },
+        RequestId: msg.RequestId
+      };
+      msg = conn.last_message();
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.deepEqual(expected, msg);
+      assert.equal(service_name, 'mysql');
+    });
+
+    it('can destroy a service using legacy Client API', function() {
+      env.set('facades', {Client: [2]});
+      var service_name = '';
+      env.destroy_service('mysql', function(evt) {
+        service_name = evt.service_name;
+      }, {immediate: true});
+      var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 2,
         Request: 'ServiceDestroy',
         Params: {
           ServiceName: 'mysql'
@@ -2572,8 +2610,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var unit_name = 'mysql/0';
       env.remove_units([unit_name], null, {immediate: true});
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Client');
-      assert.equal(msg.Request, 'DestroyServiceUnits');
+      assert.equal(msg.Type, 'Service');
+      assert.equal(msg.Request, 'DestroyUnits');
       assert.deepEqual(msg.Params.UnitNames, ['mysql/0']);
     });
 

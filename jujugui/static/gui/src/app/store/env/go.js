@@ -1606,7 +1606,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method remove_units
     */
-    remove_units: function(unit_names, callback, options) {
+    remove_units: function(unitNames, callback, options) {
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
       if (options && options.immediate) {
@@ -1620,44 +1620,37 @@ YUI.add('juju-env-go', function(Y) {
      * Remove units from a service.
      *
      * @method _remove_units
-     * @param {Array} unit_names The units to be removed.
+     * @param {Array} unitNames The units to be removed.
      * @param {Function} callback A callable that must be called once the
-     *   operation is performed. Normalized data, including the unit_names
+     *   operation is performed. Normalized data, including the unitNames
      *   is passed to the callback.
      */
-    _remove_units: function(unit_names, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback and unit_names.  No context is passed.
-        intermediateCallback = Y.bind(this.handleRemoveUnits, null,
-            callback, unit_names);
+    _remove_units: function(unitNames, callback) {
+      // Define the API callback.
+      var handleRemoveUnits = function(userCallback, unitNames, data) {
+        if (!userCallback) {
+          console.log('data returned by DestroyUnits API call:', data);
+          return;
+        }
+        userCallback({err: data.Error, unit_names: unitNames});
+      }.bind(this, callback, unitNames);
+
+      // Perform the API call.
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use legacy Juju API for destroying units.
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'DestroyServiceUnits',
+          Params: {UnitNames: unitNames}
+        }, handleRemoveUnits);
+        return;
       }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'DestroyServiceUnits',
-        Params: {UnitNames: unit_names}
-      }, intermediateCallback);
-    },
-
-    /**
-     * Transform the data returned from the juju-core remove_units call into
-     * that suitable for the user callback.
-     *
-     * @method handleRemoveUnits
-     * @static
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {Array} unitNames The names of the removed units.  Passed in
-     * since it is not part of the response.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleRemoveUnits: function(userCallback, unitNames, data) {
-      var transformedData = {
-        err: data.Error,
-        unit_names: unitNames
-      };
-      userCallback(transformedData);
+        Type: 'Service',
+        Request: 'DestroyUnits',
+        Params: {UnitNames: unitNames}
+      }, handleRemoveUnits);
     },
 
     /**
@@ -2120,9 +2113,19 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, service);
       }
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use legacy Juju API for destroying services.
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'ServiceDestroy',
+          Params: {ServiceName: service}
+        }, intermediateCallback);
+        return;
+      }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'ServiceDestroy',
+        Type: 'Service',
+        Request: 'Destroy',
         Params: {ServiceName: service}
       }, intermediateCallback);
     },
