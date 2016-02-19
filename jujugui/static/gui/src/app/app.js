@@ -1159,6 +1159,33 @@ YUI.add('juju-gui', function(Y) {
       this.navigate(url);
     },
 
+    /** Chooses an env to connect to from the env list based on config.
+
+      @method _pickEnv
+      @param {Array} envList The list of environments to pick from.
+      @return {Object} The selected environment.
+     */
+    _pickEnv: function(envList) {
+      // XXX This picks the first environment if one is not provided by
+      // config, but we'll want to default to sandbox mode then allow the
+      // user to choose an env if one isn't provided in config.
+      var envName = this.get('jujuEnvUUID'),
+          user = this.get('user'),
+          envData = [];
+      if (envName && user) {
+        var path = user + '/' + envName;
+        envData = envList.filter(function(env) {
+          return env.path === path;
+        });
+      }
+      if (envData.length !== 0) {
+        envData = envData[0];  // Filter returns a list a of one.
+      } else {
+        envData = envList[0];
+      }
+      return envData;
+    },
+
     /**
       Composes the various socket paths and protocols and returns the correct
       URL that the GUI should use to communicate with the environment.
@@ -1186,24 +1213,8 @@ YUI.add('juju-gui', function(Y) {
             console.log('Environment listing failure: ' + error);
             return;
           }
-          
-          // XXX This picks the first environment if one is not provided by
-          // config, but we'll want to default to sandbox mode then allow the
-          // user to choose an env if one isn't provided in config.
-          var envName = this.get('jujuEnvUUID'),
-              user = this.get('user'),
-              envData; 
-          if (envName && user) {
-            var path = user + '/' + envName;
-            envData = envList.filter(function(env) {
-              return env.path === path;
-            }); 
-          }
-          if (envData.length !== 0) {
-            envData = envData[0];  // Filter returns a list a of one.
-          } else {
-            var envData = envList[0];
-          }
+
+          var envData = this._pickEnv(envList);
           this.set('environmentList', envList);
 
           // XXX frankban: we should try to connect to all the addresses in
