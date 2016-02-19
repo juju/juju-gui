@@ -1820,20 +1820,51 @@ YUI.add('juju-env-go', function(Y) {
      * @method update_annotations
      */
     update_annotations: function(entity, type, data, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback and entity.  No context is passed.
-        intermediateCallback = Y.bind(this.handleSetAnnotations, null,
-            callback, entity);
+      var version = this.findFacadeVersion('Annotations') || 0;
+
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, entity, data) {
+        if (!userCallback) {
+          return;
+        }
+        var response = {entity: entity};
+        if (data.Error) {
+          response.err = data.Error;
+          userCallback(response);
+          return;
+        }
+        if (version >= 2) {
+          // New API allows setting annotations in bulk, so we can have an
+          // error for each entity result.
+          var result = data.Response.Results[0];
+          if (result.Error) {
+            response.err = result.Error;
+          }
+        }
+        userCallback(response);
+      }.bind(this, callback, entity);
+
+      // Prepare the API request.
+      var tag = type + '-' + entity;
+      data = stringifyObjectValues(data);
+
+      // Perform the request to set annotations.
+      if (version < 2) {
+        // Use legacy Juju API on the Client facade for setting annotations.
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'SetAnnotations',
+          Params: {Tag: tag, Pairs: data}
+        }, handler);
+        return;
       }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'SetAnnotations',
+        Type: 'Annotations',
+        Request: 'Set',
         Params: {
-          Tag: type + '-' + entity,
-          Pairs: stringifyObjectValues(data)
+          Annotations: [{EntityTag: tag, Annotations: data}]
         }
-      }, intermediateCallback);
+      }, handler);
     },
 
     /**
@@ -1849,39 +1880,11 @@ YUI.add('juju-env-go', function(Y) {
      * @method remove_annotations
      */
     remove_annotations: function(entity, type, keys, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback and entity.  No context is passed.
-        intermediateCallback = Y.bind(this.handleSetAnnotations, null,
-            callback, entity);
-      }
-      var data = {};
-      Y.each(keys, function(key) {
-        data[key] = '';
-      });
-      this._send_rpc({
-        Type: 'Client',
-        Request: 'SetAnnotations',
-        Params: {
-          Tag: type + '-' + entity,
-          Pairs: data
-        }
-      }, intermediateCallback);
-    },
-
-    /**
-     * Transform the data returned from juju-core 'SetAnnotations' into that
-     * suitable for the user callback.
-     *
-     * @method handleSetAnnotations
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleSetAnnotations: function(userCallback, entity, data) {
-      // Call the original user callback.
-      userCallback({err: data.Error, entity: entity});
+      var data = keys.reduce(function(collected, key) {
+        collected[key] = '';
+        return collected;
+      }, {});
+      this.update_annotations(entity, type, data, callback);
     },
 
     /**
@@ -1899,38 +1902,56 @@ YUI.add('juju-env-go', function(Y) {
      * @method get_annotations
      */
     get_annotations: function(entity, type, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback and entity.  No context is passed.
-        intermediateCallback = Y.bind(this.handleGetAnnotations, null,
-            callback, entity);
-      }
-      this._send_rpc({
-        Type: 'Client',
-        Request: 'GetAnnotations',
-        Params: {
-          Tag: type + '-' + entity
-        }
-      }, intermediateCallback);
-    },
+      var handler;
+      var tag = type + '-' + entity;
+      var version = this.findFacadeVersion('Annotations');
 
-    /**
-     * Transform the data returned from juju-core 'GetAnnotations' into that
-     * suitable for the user callback.
-     *
-     * @method handleGetAnnotations
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleGetAnnotations: function(userCallback, entity, data) {
-      // Call the original user callback.
-      userCallback({
-        err: data.Error,
-        entity: entity,
-        results: data.Response && data.Response.Annotations
-      });
+      if (version === null || version < 2) {
+        // Use legacy Juju API on the Client facade for getting annotations.
+        handler = function(userCallback, entity, data) {
+          if (!userCallback) {
+            console.log('data returned by GetAnnotations API call:', data);
+            return;
+          }
+          userCallback({
+            err: data.Error,
+            entity: entity,
+            results: data.Response && data.Response.Annotations
+          });
+        }.bind(this, callback, entity);
+        this._send_rpc({
+          Type: 'Client',
+          Request: 'GetAnnotations',
+          Params: {Tag: tag}
+        }, handler);
+        return;
+      }
+
+      handler = function(userCallback, entity, data) {
+        if (!userCallback) {
+          console.log('data returned by Annotations.Get API call:', data);
+          return;
+        }
+        var response = {entity: entity};
+        if (data.Error) {
+          response.err = data.Error;
+          userCallback(response);
+          return;
+        }
+        var result = data.Response.Results[0];
+        if (result.Error) {
+          response.err = result.Error;
+          userCallback(response);
+          return;
+        }
+        response.results = result.Annotations;
+        userCallback(response);
+      }.bind(this, callback, entity);
+      this._send_rpc({
+        Type: 'Annotations',
+        Request: 'Get',
+        Params: {Entities: [{Tag: tag}]}
+      }, handler);
     },
 
     /**
