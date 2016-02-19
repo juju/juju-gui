@@ -173,7 +173,9 @@ YUI.add('juju-env-sandbox', function(Y) {
   });
 
   sandboxModule.ClientConnection = ClientConnection;
+  // Define sandbox API facades: please keep these in alphabetical order.
   sandboxModule.Facades = [
+    {Name: 'Annotations', Versions: [2]},
     {Name: 'Client', Versions: [1]},
     {Name: 'ModelManager', Versions: [2]},
     {Name: 'Service', Versions: [3]}
@@ -1054,18 +1056,19 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle SetAnnotations messages
+    Handle Annotations.Set messages
 
-    @method handleClientSetAnnotations
+    @method handleAnnotationsSet
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientSetAnnotations: function(data, client, state) {
+    handleAnnotationsSet: function(data, client, state) {
+      var args = data.Params.Annotations[0];
       var entityId = /^(service|unit|machine|environment)-([^ ]*)$/.
-          exec(data.Params.Tag)[2];
-      var result = state.updateAnnotations(entityId, data.Params.Pairs);
+          exec(args.EntityTag)[2];
+      var result = state.updateAnnotations(entityId, args.Annotations);
       this._basicReceive(data, client, result);
     },
 

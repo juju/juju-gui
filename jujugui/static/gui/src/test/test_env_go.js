@@ -118,6 +118,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       env.connect();
       env.set('facades', {
+        Annotations: [2],
         Client: [1],
         CrossModelRelations: [1],
         ModelManager: [2],
@@ -1660,12 +1661,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(response.names, ['1']);
     });
 
-    it('sends the correct get_annotations message', function() {
+    it('sends the correct Annotations.Get message', function() {
+      env.get_annotations('apache', 'service');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Get',
+        RequestId: 1,
+        Params: {Entities: [{Tag: 'service-apache'}]}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct legacy Client.GetAnnotations message', function() {
+      env.set('facades', {});
       env.get_annotations('apache', 'service');
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'GetAnnotations',
         RequestId: 1,
         Params: {Tag: 'service-apache'}
@@ -1673,12 +1688,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, last_message);
     });
 
-    it('sends the correct update_annotations message', function() {
+    it('sends the correct Annotations.Set message', function() {
+      env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Set',
+        RequestId: 1,
+        Params: {
+          Annotations: [{
+            EntityTag: 'service-apache',
+            Annotations: {mykey: 'myvalue'}
+          }]
+        }
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct legacy Client.SetAnnotations message', function() {
+      env.set('facades', {});
       env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
@@ -1695,7 +1729,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
           expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
       env.update_annotations('apache', 'service', annotations);
-      var pairs = conn.last_message().Params.Pairs;
+      var msg = conn.last_message();
+      var pairs = msg.Params.Annotations[0].Annotations;
       assert.deepEqual(expected, pairs);
     });
 
@@ -1704,48 +1739,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'key1': 'value1',
         'key2': 'value2'
       });
-      var expected = [
-          {
-            Type: 'Client',
-            Version: 1,
-            Request: 'SetAnnotations',
-            RequestId: 1,
-            Params: {
-              Tag: 'service-apache',
-              Pairs: {
-                key1: 'value1',
-                key2: 'value2'
-              }
-            }
-          }
-      ];
-      assert.deepEqual(expected, conn.messages);
-    });
-
-    it('sends the correct remove_annotations message', function() {
-      env.remove_annotations('apache', 'service', ['key1']);
-      var last_message = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 1,
-        Request: 'SetAnnotations',
+      var expectedMessage = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Set',
         RequestId: 1,
         Params: {
-          Tag: 'service-apache',
-          Pairs: {
-            key1: ''
-          }
+          Annotations: [{
+            EntityTag: 'service-apache',
+            Annotations: {'key1': 'value1', 'key2': 'value2'}
+          }]
+        }
+      };
+      assert.deepEqual([expectedMessage], conn.messages);
+    });
+
+    it('sends the correct message to remove annotations', function() {
+      env.remove_annotations('apache', 'service', ['key1', 'key2']);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Set',
+        RequestId: 1,
+        Params: {
+          Annotations: [{
+            EntityTag: 'service-apache',
+            Annotations: {'key1': '', 'key2': ''}
+          }]
         }
       };
       assert.deepEqual(expected, last_message);
     });
 
-    it('sends the correct remove_annotations message', function() {
+    it('sends the correct message to remove annotations (legacy)', function() {
+      env.set('facades', {});
       env.remove_annotations('apache', 'service', ['key1', 'key2']);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
@@ -1758,6 +1791,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       assert.deepEqual(expected, last_message);
     });
+
 
     it('successfully retrieves annotations', function() {
       var annotations;
@@ -1772,7 +1806,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         RequestId: 1,
         Response: {
-          Annotations: expected
+          Results: [{Annotations: expected}]
         }
       });
       assert.deepEqual(expected, annotations);
@@ -1787,12 +1821,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {}
+        Response: {Results: [{}]}
       });
       assert.isUndefined(err);
     });
 
-    it('successfully sets annotations', function() {
+    it('successfully sets multiple annotations', function() {
       var err;
       env.update_annotations('mysql', 'service', {
         'key1': 'value1',
@@ -1803,7 +1837,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {}
+        Response: {Results: [{}]}
       });
       assert.isUndefined(err);
     });
@@ -1817,12 +1851,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {}
+        Response: {Results: [{}]}
       });
       assert.isUndefined(err);
     });
 
-    it('correctly handles errors from getting annotations', function() {
+    it('handles errors from getting annotations', function() {
       var err;
       env.get_annotations('haproxy', 'service', function(data) {
         err = data.err;
@@ -1835,7 +1869,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal('This is an error.', err);
     });
 
-    it('correctly handles errors from setting annotations', function() {
+    it('handles internal errors from getting annotations', function() {
+      var err;
+      env.get_annotations('haproxy', 'service', function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Results: [{Error: 'bad wolf'}]
+        }
+      });
+      assert.equal('bad wolf', err);
+    });
+
+    it('handles errors from setting annotations', function() {
       var err;
       env.update_annotations('haproxy', 'service', {
         'key': 'value'
@@ -1848,6 +1897,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Error: 'This is an error.'
       });
       assert.equal('This is an error.', err);
+    });
+
+    it('handles internal errors from setting annotations', function() {
+      var err;
+      env.update_annotations('haproxy', 'service', {
+        'key': 'value'
+      }, function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {Results: [{Error: 'bad wolf'}]}
+      });
+      assert.equal('bad wolf', err);
     });
 
     it('correctly handles errors from removing annotations', function() {

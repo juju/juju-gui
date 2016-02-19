@@ -49,11 +49,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
-      env.set('facades', {
-        'Client': [1],
-        'ModelManager': [2],
-        'Service': [3]
-      });
+      var facades = sandboxModule.Facades.reduce(function(collected, facade) {
+        collected[facade.Name] = facade.Versions;
+        return collected;
+      }, {});
+      env.set('facades', facades);
     });
 
     afterEach(function() {
@@ -701,6 +701,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       client.open();
       client.send(Y.JSON.stringify(data));
+    });
+
+    it('can set annotations', function(done) {
+      generateServices(function() {
+        var data = {
+          Type: 'Annotations',
+          Request: 'Set',
+          Params: {
+            Annotations: [{
+              EntityTag: 'service-wordpress',
+              Annotations: {'foo': 'bar'}
+            }]
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.isUndefined(receivedData.Error);
+          assert.deepEqual(receivedData.Response, {});
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
     });
 
     it('can get a charm (environment integration)', function(done) {
