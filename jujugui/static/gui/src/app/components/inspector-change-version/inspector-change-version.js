@@ -68,13 +68,40 @@ YUI.add('inspector-change-version', function() {
     },
 
     /**
-    The callable to be passed to the version item to change versions.
+      The callable to be passed to the version item to change versions.
 
-      @method _versionButtonAction
-      @param {String} charmId The charm id.
-      @param {Object} e The click event.
+        @method _versionButtonAction
+        @param {String} charmId The charm id.
+        @param {Object} e The click event.
     */
     _versionButtonAction: function(charmId, e) {
+      // Fetch the macaroon if one is available so that they can add private
+      // charms to their models.
+      var macaroon = this.props.getMacaroon();
+      // In Juju 2.0+ we have to add the charm before we set it. This is just
+      // good practice for 1.25.
+      this.props.addCharm(charmId, macaroon,
+        this._addCharmCallback.bind(this, charmId), {
+          // XXX hatch: the ecs doesn't yet support addCharm so we are going to
+          // send the command to juju immedaitely.
+          immediate: true
+        });
+    },
+
+    /**
+      Callback for handling the results of addCharm.
+
+      @method _addCharmCallback
+      @param {String} charmId The charm id.
+      @param {Object} data The response object from the addCharm call in the
+        format {err, url}.
+    */
+    _addCharmCallback: function(charmId, data) {
+      var error = data.err;
+      if (error) {
+        this._addFailureNotification(charmId, error);
+        return;
+      }
       this.props.setCharm(this.props.service.get('id'), charmId, false, false,
           this._setCharmCallback.bind(this, charmId));
     },

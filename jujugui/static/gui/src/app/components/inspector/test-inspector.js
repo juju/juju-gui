@@ -485,6 +485,8 @@ describe('Inspector', function() {
     var addNotification = sinon.stub();
     var changeState = sinon.stub();
     var service = sinon.stub();
+    var getMacaroon = sinon.stub();
+    var addCharm = sinon.stub();
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
@@ -504,6 +506,8 @@ describe('Inspector', function() {
       <juju.components.Inspector
         addNotification={addNotification}
         changeState={changeState}
+        getMacaroon={getMacaroon}
+        addCharm={addCharm}
         setCharm={setCharm}
         getCharm={getCharm}
         getAvailableVersions={getAvailableVersions}
@@ -517,6 +521,8 @@ describe('Inspector', function() {
         changeState={changeState}
         charmId="cs:demo"
         service={service}
+        getMacaroon={getMacaroon}
+        addCharm={addCharm}
         setCharm={setCharm}
         getCharm={getCharm}
         getAvailableVersions={getAvailableVersions} />);

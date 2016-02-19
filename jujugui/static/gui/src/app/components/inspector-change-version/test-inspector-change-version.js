@@ -242,6 +242,8 @@ describe('InspectorChangeVersion', function() {
   it('can change charm version', function() {
     var changeState = sinon.stub();
     var serviceSet = sinon.stub();
+    var getMacaroon = sinon.stub().returns('macaroon');
+    var addCharm = sinon.stub();
     var service = {
       get: sinon.stub().returns('django'),
       set: serviceSet
@@ -256,20 +258,64 @@ describe('InspectorChangeVersion', function() {
           changeState={changeState}
           charmId="cs:django-5"
           service={service}
+          getMacaroon={getMacaroon}
+          addCharm={addCharm}
           setCharm={setCharm}
           getCharm={getCharm}
           getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
+    // We need to fetch a macaroon if there is one.
+    assert.equal(getMacaroon.callCount, 1);
+    // The charm needs to be added to the model first.
+    assert.equal(addCharm.callCount, 1);
+    assert.equal(addCharm.args[0][0], 'cs:django-4');
+    assert.equal(addCharm.args[0][1], 'macaroon');
+    // Call the callback
+    addCharm.args[0][2]({});
     assert.equal(serviceSet.callCount, 1);
     assert.equal(serviceSet.args[0][1], 'cs:django-4');
+  });
+
+  it('adds a notification if it can not add a charm', function() {
+    var addNotification = sinon.stub();
+    var changeState = sinon.stub();
+    var serviceSet = sinon.stub();
+    var getMacaroon = sinon.stub().returns('macaroon');
+    var setCharm = sinon.stub();
+    var service = {
+      get: sinon.stub().returns('django'),
+      set: serviceSet
+    };
+    var addCharm = sinon.stub().callsArgWith(2, {err: 'error'});
+    var getCharm = sinon.stub();
+    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
+      'cs:django-4', 'cs:django-5', 'cs:django-6'
+    ]);
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersion
+          changeState={changeState}
+          charmId="cs:django-5"
+          getMacaroon={getMacaroon}
+          addCharm={addCharm}
+          service={service}
+          addNotification={addNotification}
+          setCharm={setCharm}
+          getCharm={getCharm}
+          getAvailableVersions={getAvailableVersions} />, true);
+    shallowRenderer.getMountedInstance().componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    output.props.children[1].props.children[0].props.buttonAction();
+    assert.equal(addNotification.callCount, 1);
   });
 
   it('adds a notification if it can not set a charm', function() {
     var addNotification = sinon.stub();
     var changeState = sinon.stub();
     var serviceSet = sinon.stub();
+    var getMacaroon = sinon.stub().returns('macaroon');
+    var addCharm = sinon.stub();
     var service = {
       get: sinon.stub().returns('django'),
       set: serviceSet
@@ -285,12 +331,16 @@ describe('InspectorChangeVersion', function() {
           charmId="cs:django-5"
           service={service}
           addNotification={addNotification}
+          getMacaroon={getMacaroon}
+          addCharm={addCharm}
           setCharm={setCharm}
           getCharm={getCharm}
           getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
+    // call the addCharm callback
+    addCharm.args[0][2]({});
     assert.equal(addNotification.callCount, 1);
   });
 
@@ -298,6 +348,8 @@ describe('InspectorChangeVersion', function() {
     var addNotification = sinon.stub();
     var changeState = sinon.stub();
     var serviceSet = sinon.stub();
+    var getMacaroon = sinon.stub().returns('macaroon');
+    var addCharm = sinon.stub();
     var service = {
       get: sinon.stub().returns('django'),
       set: serviceSet
@@ -313,12 +365,16 @@ describe('InspectorChangeVersion', function() {
           charmId="cs:django-5"
           service={service}
           addNotification={addNotification}
+          getMacaroon={getMacaroon}
+          addCharm={addCharm}
           setCharm={setCharm}
           getCharm={getCharm}
           getAvailableVersions={getAvailableVersions} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
+    // call the addCharm callback
+    addCharm.args[0][2]({});
     assert.equal(addNotification.callCount, 1);
   });
 

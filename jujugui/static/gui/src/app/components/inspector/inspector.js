@@ -271,6 +271,8 @@ YUI.add('inspector-component', function() {
                 addNotification={this.props.addNotification}
                 charmId={service.get('charm')}
                 service={service}
+                getMacaroon={this.props.getMacaroon}
+                addCharm={this.props.addCharm}
                 setCharm={this.props.setCharm}
                 getCharm={this.props.getCharm}
                 getAvailableVersions={this.props.getAvailableVersions} />,

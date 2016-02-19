@@ -926,6 +926,8 @@ YUI.add('juju-gui', function(Y) {
             unexposeService={this.env.unexpose.bind(this.env)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
                 charmstore)}
+            getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
+            addCharm={this.env.addCharm.bind(this.env)}
             setCharm={this.env.setCharm.bind(this.env)}
             getCharm={this.env.get_charm.bind(this.env)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
