@@ -89,7 +89,7 @@ YUI.add('inspector-change-version', function() {
     },
 
     /**
-      Callback for handlign the results of addCharm
+      Callback for handling the results of addCharm.
 
       @method _addCharmCallback
       @param {String} charmId The charm id.
