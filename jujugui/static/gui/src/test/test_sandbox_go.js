@@ -1284,7 +1284,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state.deploy('cs:precise/mysql-26', function() {
           var data = {
             RequestId: 42,
-            Type: 'Client',
+            Type: 'Service',
             Request: 'AddRelation',
             Params: {
               Endpoints: ['wordpress:db', 'mysql:db']
@@ -1337,7 +1337,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state.deploy('cs:precise/puppet-5', function(service) {
           var data = {
             RequestId: 42,
-            Type: 'Client',
+            Type: 'Service',
             Request: 'AddRelation',
             Params: {
               Endpoints: ['wordpress:juju-info', 'puppet:juju-info']
@@ -1365,7 +1365,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           RequestId: 42,
-          Type: 'Client',
+          Type: 'Service',
           Request: 'AddRelation',
           Params: {
             Endpoints: ['wordpress:db']
@@ -1388,7 +1388,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           RequestId: 42,
-          Type: 'Client',
+          Type: 'Service',
           Request: 'AddRelation',
           Params: {
             Endpoints: ['wordpress:db', 'mysql:foo']
@@ -1413,7 +1413,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           state.addRelation(relation[0], relation[1]);
           var data = {
             RequestId: 42,
-            Type: 'Client',
+            Type: 'Service',
             Request: 'DestroyRelation',
             Params: {
               Endpoints: relation

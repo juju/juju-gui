@@ -2270,59 +2270,56 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Nothing.
      */
     _add_relation: function(endpointA, endpointB, callback) {
-      var endpoint_a = endpointToName(endpointA);
-      var endpoint_b = endpointToName(endpointB);
-      var intermediateCallback;
-      if (callback) {
-        intermediateCallback = Y.bind(this.handleAddRelation, null,
-            callback, endpoint_a, endpoint_b);
-      }
-      this._send_rpc({
-        Type: 'Client',
+      // Define relation endpoints.
+      var epA = endpointToName(endpointA);
+      var epB = endpointToName(endpointB);
+
+      // Define the API callback.
+      var handleAddRelation = function(userCallback, epA, epB, data) {
+        if (!userCallback) {
+          console.log('data returned by AddRelation API call:', data);
+          return;
+        }
+        var result = {};
+        var response = data.Response;
+        if (response && response.Endpoints) {
+          var serviceNameA = epA.split(':')[0];
+          var serviceNameB = epB.split(':')[0];
+          result.endpoints = [];
+          Y.each([serviceNameA, serviceNameB], function(serviceName) {
+            var jujuEndpoint = response.Endpoints[serviceName];
+            var guiEndpoint = {};
+            guiEndpoint[serviceName] = {'name': jujuEndpoint.Name};
+            result.endpoints.push(guiEndpoint);
+          });
+          result.id = createRelationKey(response.Endpoints);
+          // The interface and scope should be the same for both endpoints.
+          result['interface'] = response.Endpoints[serviceNameA].Interface;
+          result.scope = response.Endpoints[serviceNameA].Scope;
+        }
+        userCallback({
+          request_id: data.RequestId,
+          endpoint_a: epA,
+          endpoint_b: epB,
+          err: data.Error,
+          result: result
+        });
+      }.bind(this, callback, epA, epB);
+
+      // Send the API request.
+      var request = {
+        Type: 'Service',
         Request: 'AddRelation',
         Params: {
-          Endpoints: [endpoint_a, endpoint_b]
+          Endpoints: [epA, epB]
         }
-      }, intermediateCallback);
-    },
-
-    /**
-       Transform the data returned from juju-core call to AddRelation
-       to that suitable for the user callback.
-
-       @method handleAddRelation
-       @param {Function} userCallback The callback originally submitted by
-         the call site.
-       @param {string} endpoint_a Name of one of the services in the relation.
-       @param {string} endpoint_b Name of the other service in the relation.
-       @param {Object} data The response returned by the server.
-       @return {undefined} Nothing.
-     */
-    handleAddRelation: function(userCallback, endpoint_a, endpoint_b, data) {
-      var result = {};
-      var response = data.Response;
-      if (response && response.Endpoints) {
-        var serviceNameA = endpoint_a.split(':')[0];
-        var serviceNameB = endpoint_b.split(':')[0];
-        result.endpoints = [];
-        Y.each([serviceNameA, serviceNameB], function(serviceName) {
-          var jujuEndpoint = response.Endpoints[serviceName];
-          var guiEndpoint = {};
-          guiEndpoint[serviceName] = {'name': jujuEndpoint.Name};
-          result.endpoints.push(guiEndpoint);
-        });
-        result.id = createRelationKey(response.Endpoints);
-        // The interface and scope should be the same for both endpoints.
-        result['interface'] = response.Endpoints[serviceNameA].Interface;
-        result.scope = response.Endpoints[serviceNameA].Scope;
+      };
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use legacy Juju API for adding relations.
+        request.Type = 'Client';
       }
-      userCallback({
-        request_id: data.RequestId,
-        endpoint_a: endpoint_a,
-        endpoint_b: endpoint_b,
-        err: data.Error,
-        result: result
-      });
+      this._send_rpc(request, handleAddRelation);
     },
 
     /**
@@ -2360,41 +2357,33 @@ YUI.add('juju-env-go', function(Y) {
      * @method _remove_relation
      */
     _remove_relation: function(endpointA, endpointB, callback) {
-      var endpoint_a = endpointToName(endpointA);
-      var endpoint_b = endpointToName(endpointB);
-      var intermediateCallback;
-      if (callback) {
-        // Capture the endpoints.  No context is passed.
-        intermediateCallback = Y.bind(this.handleRemoveRelation, null,
-                                      callback, endpoint_a, endpoint_b);
-      }
-      this._send_rpc({
-        Type: 'Client',
+      // Define relation endpoints.
+      var epA = endpointToName(endpointA);
+      var epB = endpointToName(endpointB);
+
+      // Define the API callback.
+      var handleRemoveRelation = function(userCallback, epA, epB, data) {
+        if (!userCallback) {
+          console.log('data returned by DestroyRelation API call:', data);
+          return;
+        }
+        userCallback({err: data.Error, endpoint_a: epA, endpoint_b: epB});
+      }.bind(this, callback, epA, epB);
+
+      // Send the API request.
+      var request = {
+        Type: 'Service',
         Request: 'DestroyRelation',
         Params: {
-          Endpoints: [endpoint_a, endpoint_b]
+          Endpoints: [epA, epB]
         }
-      }, intermediateCallback);
-    },
-
-    /**
-     * Transform the data returned from juju-core call to DestroyRelation
-     * to that suitable for the user callback.
-     *
-     * @method handleRemoveRelation
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {string} endpoint_a Name of one of the services in the relation.
-     * @param {string} endpoint_b Name of the other service in the relation.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleRemoveRelation: function(userCallback, endpoint_a, endpoint_b, data) {
-      userCallback({
-        err: data.Error,
-        endpoint_a: endpoint_a,
-        endpoint_b: endpoint_b
-      });
+      };
+      var version = this.findFacadeVersion('Service');
+      if (version === null || version < 3) {
+        // Use legacy Juju API for removing relations.
+        request.Type = 'Client';
+      }
+      this._send_rpc(request, handleRemoveRelation);
     },
 
     /**

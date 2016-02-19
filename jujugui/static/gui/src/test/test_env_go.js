@@ -2085,8 +2085,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.add_relation(endpointA, endpointB, null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
+        Type: 'Service',
+        Version: 3,
+        Request: 'AddRelation',
+        Params: {
+          Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
+        },
+        RequestId: 1
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct AddRelation message (legacy API)', function() {
+      env.set('facades', {});
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.add_relation(endpointA, endpointB, null, {immediate: true});
+      var last_message = conn.last_message();
+      var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddRelation',
         Params: {
           Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
@@ -2154,8 +2172,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.remove_relation(endpointA, endpointB, null, {immediate: true});
       var last_message = conn.last_message();
       var expected = {
+        Type: 'Service',
+        Version: 3,
+        Request: 'DestroyRelation',
+        Params: {
+          Endpoints: [
+            'mysql:database',
+            'wordpress:website'
+          ]
+        },
+        RequestId: 1
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct DestroyRelation message (legacy API)', function() {
+      env.set('facades', {});
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, null, {immediate: true});
+      var last_message = conn.last_message();
+      var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'DestroyRelation',
         Params: {
           Endpoints: [
