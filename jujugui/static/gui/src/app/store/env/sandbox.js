@@ -841,29 +841,29 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ServiceDestroy messages
+    Handle Service.Destroy messages
 
-    @method handleClientServiceDestroy
+    @method handleServiceDestroy
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientServiceDestroy: function(data, client, state) {
+    handleServiceDestroy: function(data, client, state) {
       var result = state.destroyService(data.Params.ServiceName);
       this._basicReceive(data, client, result);
     },
 
     /**
-      Handle DestroyServiceUnits messages
+      Handle Service.DestroyUnits messages
 
-      @method handleClientDestroyServiceUnits
+      @method handleServiceDestroyUnits
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} state An instance of FakeBackend.
       @return {undefined} Side effects only.
      */
-    handleClientDestroyServiceUnits: function(data, client, state) {
+    handleServiceDestroyUnits: function(data, client, state) {
       var res = state.removeUnits(data.Params.UnitNames);
       this._basicReceive(data, client, res);
     },

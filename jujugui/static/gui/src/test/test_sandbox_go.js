@@ -613,8 +613,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can destroy a service', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Client',
-          Request: 'ServiceDestroy',
+          Type: 'Service',
+          Request: 'Destroy',
           Params: {
             ServiceName: 'wordpress'
           },
@@ -649,8 +649,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a unit', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Client',
-          Request: 'DestroyServiceUnits',
+          Type: 'Service',
+          Request: 'DestroyUnits',
           Params: {
             UnitNames: 'wordpress/0'
           },
