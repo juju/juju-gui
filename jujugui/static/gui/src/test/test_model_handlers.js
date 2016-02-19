@@ -620,18 +620,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Status: 'pending',
           StatusInfo: 'info',
           Addresses: [
-              {
-                NetworkName: '',
-                NetworkScope: 'public',
-                Type: 'hostname',
-                Value: 'example.com'
-              },
-              {
-                NetworkName: '',
-                NetworkScope: 'local-cloud',
-                Type: 'ipv4',
-                Value: '10.0.0.1'
-              }
+            {
+              NetworkName: '',
+              NetworkScope: 'public',
+              Type: 'hostname',
+              Value: 'example.com'
+            },
+            {
+              NetworkName: '',
+              NetworkScope: 'local-cloud',
+              Type: 'ipv4',
+              Value: '10.0.0.1'
+            }
           ],
           HardwareCharacteristics: {
             Arch: 'amd64',

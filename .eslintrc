@@ -3,12 +3,10 @@ env:
   node: true
 plugins:
   - react
-ecmaFeatures:
-  jsx: true
-  defaultParams: true
-  arrowFunctions: true
-  templateStrings: true
-  objectLiteralShorthandProperties: false
+parserOptions:
+  ecmaVersion: 6
+  ecmaFeatures:
+    jsx: true
 rules:
   max-len: [2, 80, 2]
   no-shadow: 0

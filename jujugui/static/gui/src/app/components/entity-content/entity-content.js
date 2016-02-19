@@ -143,11 +143,11 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        var bugLink = `https://bugs.launchpad.net/charms/+source/` +
+        var bugLink = 'https://bugs.launchpad.net/charms/+source/' +
           `${entityModel.get('name')}`;
-        var submitLink = `https://bugs.launchpad.net/charms/+source/` +
+        var submitLink = 'https://bugs.launchpad.net/charms/+source/' +
           `${entityModel.get('name')}/+filebug`;
-        var contributeLink = `https://code.launchpad.net/~charmers/charms/` +
+        var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
           `trusty/${entityModel.get('name')}/trunk`;
         return (
           <div className="row entity-content__description">
