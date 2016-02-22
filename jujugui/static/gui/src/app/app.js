@@ -730,6 +730,7 @@ YUI.add('juju-gui', function(Y) {
     _renderUserProfile: function() {
       var user = this.get('users')['charmstore'];
       var username = user && user.user && user.user.name;
+      var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
           jem={this.jem}
@@ -739,6 +740,7 @@ YUI.add('juju-gui', function(Y) {
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           createSocketURL={this.createSocketURL.bind(this)}
           showConnectingMask={this.showConnectingMask.bind(this)}
+          getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
           storeUser={this.storeUser.bind(this)}
           username={username || 'anonymous'}

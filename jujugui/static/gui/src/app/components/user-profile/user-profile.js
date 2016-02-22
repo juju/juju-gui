@@ -27,6 +27,7 @@ YUI.add('user-profile', function() {
       charmstore: React.PropTypes.object,
       createSocketURL: React.PropTypes.func.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
+      getDiagramURL: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
       listEnvs: React.PropTypes.func,
@@ -151,35 +152,6 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Calls to switch the env to the one the user clicked on.
-
-      @method _switchEnv
-      @param {Object} e The click event.
-    */
-    _switchEnv: function(e, uuid, name) {
-      this.props.switchEnv(uuid, name);
-    },
-
-    /**
-      Navigate to the entity details.
-
-      @method _handleEntityClick
-      @param {Object} e The click event.
-    */
-    _handleEntityClick: function(e) {
-      var currentTarget = e.currentTarget;
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: currentTarget.getAttribute('data-id').replace('cs:', '')
-          }
-        }
-      });
-    },
-
-    /**
       Generate the rows of model details.
 
       @method _generateModelRows
@@ -190,28 +162,52 @@ YUI.add('user-profile', function() {
       this.state.envList.forEach((model) => {
         var uuid = model.uuid;
         components.push(
-          <li className="user-profile-list__list-row twelve-col"
-            data-uuid={uuid}
+          <juju.components.UserProfileEntity
+            entity={model}
             key={uuid}
-            onClick={this._switchEnv.bind(this, uuid, model.name)}>
-            <span className="user-profile-list__list-col three-col">
+            switchEnv={this.props.switchEnv}
+            type="model">
+            <span className="user-profile__list-col three-col">
               {model.name}
             </span>
-            <span className="user-profile-list__list-col four-col">
+            <span className="user-profile__list-col four-col">
               --
             </span>
-            <span className="user-profile-list__list-col two-col">
+            <span className="user-profile__list-col two-col">
               {model.lastConnection}
             </span>
-            <span className="user-profile-list__list-col one-col">
+            <span className="user-profile__list-col one-col">
               --
             </span>
-            <span className="user-profile-list__list-col two-col last-col">
+            <span className="user-profile__list-col two-col last-col">
               {model.owner}
             </span>
-          </li>);
+          </juju.components.UserProfileEntity>);
       });
       return components;
+    },
+
+    /**
+      Generate a list of tags.
+
+      @method _generateTags
+      @param {Array} tags A list of tags.
+      @param {String} id The id of the entity.
+      @returns {Object} A list of tag components.
+    */
+    _generateTags: function(tagList, id) {
+      var tags = [];
+      tagList.forEach((tag) => {
+        tags.push(
+          <li className="user-profile__comma-item"
+            key={id + '-' + tag}>
+            {tag}
+          </li>);
+      });
+      return (
+        <ul className="user-profile__list-tags">
+          {tags}
+        </ul>);
     },
 
     /**
@@ -237,7 +233,24 @@ YUI.add('user-profile', function() {
           icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg' // eslint-disable-line
         }],
         units: 6,
-        owner: 'Luca'
+        owner: 'Luca',
+        description: 'Lorem ipsum dolor sit conesectetuer',
+        commits: [{
+          id: '1',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '2',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '3',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }]
       }, {
         id: 'cs:django2',
         name: 'django',
@@ -252,7 +265,24 @@ YUI.add('user-profile', function() {
           icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg' // eslint-disable-line
         }],
         units: 6,
-        owner: 'Luca'
+        owner: 'Luca',
+        description: 'Lorem ipsum dolor sit conesectetuer',
+        commits: [{
+          id: '1',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '2',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '3',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }]
       }];
 
       bundles.forEach((bundle) => {
@@ -260,42 +290,34 @@ YUI.add('user-profile', function() {
         var charms = [];
         bundle.charms.forEach((charm) => {
           charms.push(
-            <img className="user-profile-list__list-icon"
+            <img className="user-profile__list-icon"
               key={'icon-' + charm.id}
               src={charm.icon}
               title={charm.name} />);
         });
-        var tags = [];
-        bundle.tags.forEach((tag) => {
-          tags.push(
-            <li className="user-profile-list__list-tag"
-              key={id + '-' + tag}>
-              {tag}
-            </li>);
-        });
         components.push(
-          <li className="user-profile-list__list-row twelve-col"
+          <juju.components.UserProfileEntity
+            changeState={this.props.changeState}
+            entity={bundle}
+            getDiagramURL={this.props.getDiagramURL}
             key={id}
-            data-id={id}
-            onClick={this._handleEntityClick}>
-            <span className={'user-profile-list__list-col five-col ' +
-              'user-profile-list__list-name'}>
+            type="bundle">
+            <span className={'user-profile__list-col five-col ' +
+              'user-profile__list-name'}>
               {bundle.name}
-              <ul className="user-profile-list__list-tags">
-                {tags}
-              </ul>
+              {this._generateTags(bundle.tags, id)}
             </span>
-            <span className={'user-profile-list__list-col three-col ' +
-              'user-profile-list__list-icons'}>
+            <span className={'user-profile__list-col three-col ' +
+              'user-profile__list-icons'}>
               {charms}
             </span>
-            <span className="user-profile-list__list-col one-col prepend-one">
+            <span className="user-profile__list-col one-col prepend-one">
               {bundle.units}
             </span>
-            <span className="user-profile-list__list-col two-col last-col">
+            <span className="user-profile__list-col two-col last-col">
               {bundle.owner}
             </span>
-          </li>);
+          </juju.components.UserProfileEntity>);
       });
       return components;
     },
@@ -315,51 +337,76 @@ YUI.add('user-profile', function() {
         tags: ['app', 'ops'],
         icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg', // eslint-disable-line
         owner: 'Luca',
-        series: 'wily'
+        series: 'wily',
+        description: 'Lorem ipsum dolor sit conesectetuer',
+        commits: [{
+          id: '1',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '2',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '3',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }]
       }, {
         id: 'cs:django2',
         name: 'django',
         tags: ['app', 'ops'],
         icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg', // eslint-disable-line
         owner: 'Luca',
-        series: 'wily'
+        series: 'wily',
+        description: 'Lorem ipsum dolor sit conesectetuer',
+        commits: [{
+          id: '1',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '2',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }, {
+          id: '3',
+          description: 'Lorem ipsum dolor sit conesectetuer',
+          author: 'Luca',
+          time: 'Today 1:02pm'
+        }]
       }];
       charms.forEach((charm) => {
         var id = charm.id;
-        var tags = [];
-        charm.tags.forEach((tag) => {
-          tags.push(
-            <li className="user-profile-list__list-tag"
-              key={id + '-' + tag}>
-              {tag}
-            </li>);
-        });
         components.push(
-          <li className="user-profile-list__list-row twelve-col"
+          <juju.components.UserProfileEntity
+            changeState={this.props.changeState}
+            entity={charm}
             key={id}
-            data-id={id}
-            onClick={this._handleEntityClick}>
-            <span className={'user-profile-list__list-col three-col ' +
-              'user-profile-list__list-name'}>
+            type="charm">
+            <span className={'user-profile__list-col three-col ' +
+              'user-profile__list-name'}>
               {charm.name}
-              <ul className="user-profile-list__list-tags">
-                {tags}
-              </ul>
+              {this._generateTags(charm.tags, id)}
             </span>
-            <span className="user-profile-list__list-col four-col">
+            <span className="user-profile__list-col four-col">
               {charm.series}
             </span>
-            <span className={'user-profile-list__list-col one-col ' +
-              'user-profile-list__list-icons'}>
-              <img className="user-profile-list__list-icon"
+            <span className={'user-profile__list-col one-col ' +
+              'user-profile__list-icons'}>
+              <img className="user-profile__list-icon"
                 src={charm.icon}
                 title={charm.name} />
             </span>
-            <span className={'user-profile-list__list-col two-col ' +
+            <span className={'user-profile__list-col two-col ' +
               'prepend-two last-col'}>
               {charm.owner}
             </span>
-          </li>);
+          </juju.components.UserProfileEntity>);
       });
       return components;
     },
@@ -385,84 +432,77 @@ YUI.add('user-profile', function() {
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
                 username={this.props.username} />
-              <div className="user-profile-list twelve-col">
-                <div className="user-profile-list__header">
-                  Models
-                  <span className="user-profile-list__size">
-                    ({this.state.envList.length})
-                  </span>
-                </div>
-                <ul className="user-profile-list__list twelve-col">
-                  <li className="user-profile-list__list-header twelve-col">
-                    <span className="user-profile-list__list-col three-col">
-                      Name
-                    </span>
-                    <span className="user-profile-list__list-col four-col">
-                      Credential
-                    </span>
-                    <span className="user-profile-list__list-col two-col">
-                      Last accessed
-                    </span>
-                    <span className="user-profile-list__list-col one-col">
-                      Units
-                    </span>
-                    <span className={
-                      'user-profile-list__list-col two-col last-col'}>
-                      Owner
-                    </span>
-                  </li>
-                  {this._generateModelRows()}
-                </ul>
-              </div>
-            <div className="user-profile-list twelve-col">
-              <div className="user-profile-list__header">
-                Bundles
-                <span className="user-profile-list__size">
-                  (xx)
+              <div className="user-profile__header">
+                Models
+                <span className="user-profile__size">
+                  ({this.state.envList.length})
                 </span>
               </div>
-              <ul className="user-profile-list__list twelve-col">
-                <li className="user-profile-list__list-header twelve-col">
-                  <span className="user-profile-list__list-col seven-col">
+              <ul className="user-profile__list twelve-col">
+                <li className="user-profile__list-header twelve-col">
+                  <span className="user-profile__list-col three-col">
                     Name
                   </span>
-                  <span className="user-profile-list__list-col two-col">
-                    Charms
+                  <span className="user-profile__list-col four-col">
+                    Credential
                   </span>
-                  <span className="user-profile-list__list-col one-col">
+                  <span className="user-profile__list-col two-col">
+                    Last accessed
+                  </span>
+                  <span className="user-profile__list-col one-col">
                     Units
                   </span>
                   <span className={
-                    'user-profile-list__list-col two-col last-col'}>
+                    'user-profile__list-col two-col last-col'}>
+                    Owner
+                  </span>
+                </li>
+                {this._generateModelRows()}
+              </ul>
+              <div className="user-profile__header">
+                Bundles
+                <span className="user-profile__size">
+                  (xx)
+                </span>
+              </div>
+              <ul className="user-profile__list twelve-col">
+                <li className="user-profile__list-header twelve-col">
+                  <span className="user-profile__list-col seven-col">
+                    Name
+                  </span>
+                  <span className="user-profile__list-col two-col">
+                    Charms
+                  </span>
+                  <span className="user-profile__list-col one-col">
+                    Units
+                  </span>
+                  <span className={
+                    'user-profile__list-col two-col last-col'}>
                     Owner
                   </span>
                 </li>
                 {this._generateBundleRows()}
               </ul>
-            </div>
-          <div className="user-profile-list twelve-col">
-            <div className="user-profile-list__header">
-              Charms
-              <span className="user-profile-list__size">
-                (xx)
-              </span>
-            </div>
-            <ul className="user-profile-list__list twelve-col">
-              <li className="user-profile-list__list-header twelve-col">
-                <span className="user-profile-list__list-col three-col">
-                  Name
+              <div className="user-profile__header">
+                Charms
+                <span className="user-profile__size">
+                  (xx)
                 </span>
-                <span className="user-profile-list__list-col seven-col">
-                  Series
-                </span>
-                <span className={
-                  'user-profile-list__list-col two-col last-col'}>
-                  Owner
-                </span>
-              </li>
-              {this._generateCharmRows()}
-            </ul>
-          </div>
+              </div>
+              <ul className="user-profile__list twelve-col">
+                <li className="user-profile__list-header twelve-col">
+                  <span className="user-profile__list-col three-col">
+                    Name
+                  </span>
+                  <span className="user-profile__list-col seven-col">
+                    Series
+                  </span>
+                  <span className="user-profile__list-col two-col last-col">
+                    Owner
+                  </span>
+                </li>
+                {this._generateCharmRows()}
+              </ul>
             </div>
           </div>
         </juju.components.Panel>
@@ -475,7 +515,7 @@ YUI.add('user-profile', function() {
   requires: [
     'svg-icon',
     'panel-component',
-    'user-profile-header',
-    'user-profile-list'
+    'user-profile-entity',
+    'user-profile-header'
   ]
 });
