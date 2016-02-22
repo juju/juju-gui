@@ -244,10 +244,13 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
-      var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
-      var charmCount = this.state.charmList && this.state.charmList.length;
-      var bundleCount = this.state.bundleList && this.state.bundleList.length;
-      var envCount = this.state.envList && this.state.envList.length;
+      var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'],
+          charmList = this.state.charmList,
+          bundleList = this.state.bundleList,
+          envList = this.state.envList,
+          charmCount = (charmList && charmList.length) || 0,
+          bundleCount = (bundleList && bundleList.length) || 0,
+          envCount = (envList && envList.length) || 0;
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -262,9 +265,9 @@ YUI.add('user-profile', function() {
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
                 avatar=""
-                bundleCount={bundleCount || 0}
-                charmCount={charmCount || 0}
-                environmentCount={envCount || 0}
+                bundleCount={bundleCount}
+                charmCount={charmCount}
+                environmentCount={envCount}
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
                 username={this.props.username} />

@@ -332,9 +332,10 @@ describe('jujulib charmstore', function() {
     });
 
     it('can list bundles', function() {
-      charmstore.list('test-author', 'cb', {type: 'bundle'});
+      charmstore.list('test-author', 'cb', 'bundle');
       var qs = generatePath.lastCall.args[1];
-      assert.ok(qs.indexOf('type=bundle'), 'bundle not set in query string');
+      assert.equal(qs.indexOf('type=bundle') > -1, true,
+                   'bundle not set in query string');
     });
 
     it('calls to make a valid charmstore request', function() {
