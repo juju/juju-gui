@@ -126,7 +126,7 @@ YUI.add('user-profile', function() {
       });
       var cs = this.props.charmstore;
       var url = (cs && cs.url && cs.version) && cs.url + cs.version;
-      var type = entity.entityType;
+      var entityType = entity.entityType;
       var icon;
       if (url && entityType === 'charm') {
         var id = entity.id.replace('cs:', '');
