@@ -483,7 +483,7 @@ var module = module;
         'include=charm-metadata',
         'include=bundle-metadata',
         'include=bundle-unit-count',
-        'include=extra-info%2Fbzr-owner',
+        'include=extra-info',
         'include=supported-series',
         'include=stats'
       ];

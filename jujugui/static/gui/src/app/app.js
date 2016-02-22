@@ -728,8 +728,8 @@ YUI.add('juju-gui', function(Y) {
       @method _renderUserProfile
     */
     _renderUserProfile: function() {
-      var user = this.get('users')['charmstore'];
-      var username = user && user.user && user.user.name;
+      var auth = this.get('users')['charmstore'];
+      var username = auth && auth.user && auth.user.name;
       ReactDOM.render(
         <window.juju.components.UserProfile
           jem={this.jem}

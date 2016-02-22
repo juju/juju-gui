@@ -29,7 +29,7 @@ describe('UserProfileList', () => {
   });
 
   it('renders without data', () => {
-    var data = [];
+    var data = null;
     var count = 0;
     var clickHandler = sinon.stub();
     var output = jsTestUtils.shallowRender(
@@ -47,6 +47,30 @@ describe('UserProfileList', () => {
           </span>
         </div>
         <juju.components.Spinner />
+      </div>);
+
+    assert.deepEqual(output, expected);
+  });
+
+  it('renders with no data found', () => {
+    var data = [];
+    var count = 0;
+    var clickHandler = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfileList
+        title="Test List"
+        data={data}
+        uuidKey="uuid"
+        clickHandler={clickHandler}/>);
+    var expected = (
+      <div className="user-profile-list twelve-col">
+        <div className="user-profile-list__header">
+          Test List
+          <span className="user-profile-list__size">
+            {' '} ({count})
+          </span>
+        </div>
+        No data found.
       </div>);
 
     assert.deepEqual(output, expected);

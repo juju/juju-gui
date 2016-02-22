@@ -46,6 +46,13 @@ YUI.add('user-profile-list', function() {
           if (!valid) { return; }
         }
         var value = showKeys ? key : item[key];
+        // If the value is a function, we actually want the function's return
+        // value. That allows us to wrap complex data types in functions that
+        // return their JSX value.  For example, a function that iterates
+        // through an array of URLs, returning anchor elements for each.
+        if (typeof value === 'function') {
+          value = value();
+        }
         var reactKey = `${item[this.props.uuidKey]}-${key}`;
         items.push(
           <div
@@ -106,8 +113,13 @@ YUI.add('user-profile-list', function() {
       @method displayData
     */
     displayData: function() {
-      if (!this.props.data || this.props.data.length === 0) {
+      if (!this.props.data) {
         return <juju.components.Spinner />;
+      }
+      if (this.props.data.length === 0) {
+        // XXX kadams54: Need to think about a way to make this message more
+        // user-friendly and data-specific, i.e., "No charms found".
+        return 'No data found.';
       }
       // If we have data then dynamically generate the columns and rows
       return (
@@ -133,12 +145,13 @@ YUI.add('user-profile-list', function() {
     },
 
     render: function () {
+      var length = (this.props.data && this.props.data.length) || 0;
       return (
         <div className="user-profile-list twelve-col">
           <div className="user-profile-list__header">
             {this.props.title}
             <span className="user-profile-list__size">
-              {' '} ({this.props.data.length})
+              {' '} ({length})
             </span>
           </div>
           {this.displayData()}

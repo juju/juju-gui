@@ -33,7 +33,13 @@ YUI.add('user-profile', function() {
       showConnectingMask: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired,
       switchEnv: React.PropTypes.func.isRequired,
-      username: React.PropTypes.string.isRequired
+      username: React.PropTypes.string
+    },
+
+    getDefaultProps: function() {
+      return {
+        username: ''
+      };
     },
 
     getInitialState: function() {
@@ -46,6 +52,8 @@ YUI.add('user-profile', function() {
 
     componentWillMount: function() {
       this._fetchEnvironments();
+      this._fetchEntities('charm');
+      this._fetchEntities('bundle');
     },
 
     /**
@@ -84,33 +92,87 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Requests a list from charmstore of the user's charms.
+      Requests a list from charmstore of the user's entities.
 
-      @method _fetchCharms
-      @param {String} user the current user
+      @method _fetchEntities
+      @param {String} type the entity type, charm or bundle
     */
-    _fetchCharms:  function(user) {
-      var callback = this._fetchCharmsCallback;
+    _fetchEntities:  function(type) {
+      var callback = this._fetchEntitiesCallback.bind(this, type);
       var charmstore = this.props.charmstore;
-      // XXX grab the username from somewhere
-      charmstore.list(user, callback.bind(this, null), 'charm');
+      var username = this.props.username;
+      if (charmstore && charmstore.list) {
+        charmstore.list(username, callback, type);
+      }
     },
 
     /**
-      Callback for the request to list a user's charms.
+      Munge a single entity into data ready to be displayed on the user's
+      profile.
 
-      @method _fetchCharmsCallback
+      @method _processEntity
+      @param {Object} entity A charm or a bundle from the API.
+    */
+    _processEntity: function(entity) {
+      var tags = entity.tags || [];
+      tags = tags.map(function(tag) {
+        return (
+          <span
+            key={tag}
+            className="user-profile__entityList-tags">
+            {tag}
+          </span>
+        );
+      });
+      var cs = this.props.charmstore;
+      var url = (cs && cs.url && cs.version) && cs.url + cs.version;
+      var type = entity.entityType;
+      var icon;
+      if (url && entityType === 'charm') {
+        var id = entity.id.replace('cs:', '');
+        var iconURL = `${url}/${id}/icon.svg`;
+        // XXX kadams54: move height and width into the CSS in subsequent
+        // "make this look pretty" work.
+        icon = (
+          <img
+            className="user-profile__entityList-icon"
+            src={iconURL}
+            width="24"
+            height="24"/>
+        );
+      }
+      // XXX kadams54: need to fetch individual entity icons for bundles.
+      // XXX kadams54: need to pull in series info; currently not supported
+      // in jujulib so add in subsequent branch.
+      return {
+        name: entity.name,
+        owner: entity.owner,
+        tags: tags,
+        icon: icon,
+        series: []
+      };
+    },
+
+    /**
+      Callback for the request to list a user's entities.
+
+      @method _fetchEntitiesCallback
       @param {String} error The error from the request, or null.
       @param {Object} data The data from the request.
     */
-    _fetchCharmsCallback: function (error, data) {
+    _fetchEntitiesCallback: function (type, error, data) {
       if (error) {
         console.log(error);
         return;
       }
-      this.setState({charmsList: data});
+      // Pull out just the data we need to display.
+      var entityList = data.map(this._processEntity, this);
+      if (type === 'charm') {
+        this.setState({charmList: entityList});
+      } else if (type === 'bundle') {
+        this.setState({bundleList: entityList});
+      }
     },
-
 
     /**
       Take the supplied UUID, fetch the username and password then call the
@@ -183,6 +245,9 @@ YUI.add('user-profile', function() {
 
     render: function() {
       var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
+      var charmCount = this.state.charmList && this.state.charmList.length;
+      var bundleCount = this.state.bundleList && this.state.bundleList.length;
+      var envCount = this.state.envList && this.state.envList.length;
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -197,9 +262,9 @@ YUI.add('user-profile', function() {
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
                 avatar=""
-                bundleCount={0}
-                charmCount={0}
-                environmentCount={this.state.envList.length}
+                bundleCount={bundleCount || 0}
+                charmCount={charmCount || 0}
+                environmentCount={envCount || 0}
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
                 username={this.props.username} />
@@ -211,10 +276,12 @@ YUI.add('user-profile', function() {
                 whitelist={whitelist}/>
               <juju.components.UserProfileList
                 title="Charms"
-                data={this.state.charmList} />
+                data={this.state.charmList}
+                uuidKey="id" />
               <juju.components.UserProfileList
                 title="Bundles"
-                data={this.state.bundleList} />
+                data={this.state.bundleList}
+                uuidKey="id" />
             </div>
           </div>
         </juju.components.Panel>
