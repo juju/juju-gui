@@ -262,7 +262,6 @@ YUI.add('user-profile-entity', function() {
       var entity = props.entity;
       var type = props.type;
       var isModel = type === 'model';
-      var isBundle = type === 'bundle';
       var isCharm = type === 'charm';
       var id = isModel ? entity.uuid : entity.id;
       var buttonAction = isModel ? this._switchEnv.bind(
