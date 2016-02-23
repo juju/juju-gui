@@ -229,30 +229,30 @@ YUI.add('user-profile-entity', function() {
     },
 
     /**
-      Generate the charms for a bundle.
+      Generate the services for a bundle.
 
-      @method _generateCharms
-      @return {Object} The charms component.
+      @method _generateServices
+      @return {Object} The services component.
     */
-    _generateCharms: function() {
+    _generateServices: function() {
       if (this.props.type !== 'bundle') {
         return;
       }
       var entity = this.props.entity;
-      var charms = [];
-      entity.charms.forEach((charm) => {
-        var name = charm.name;
-        charms.push(
+      var services = [];
+      var names = Object.keys(entity.services);
+      names.forEach((name) => {
+        services.push(
           <li className="user-profile__comma-item"
-            key={entity.id + '-charm-' + name}>
+            key={entity.id + '-service-' + name}>
             {name}
           </li>);
       });
       return (
         <div className="nine-col">
           Composed of:
-          <ul className="user-profile__entity-charm-list">
-            {charms}
+          <ul className="user-profile__entity-service-list">
+            {services}
           </ul>
         </div>);
     },
@@ -292,7 +292,7 @@ YUI.add('user-profile-entity', function() {
             <div className={'user-profile__entity-details-content twelve-col ' +
               'no-margin-bottom'}>
               {this._generateSeries()}
-              {this._generateCharms()}
+              {this._generateServices()}
               <div className="three-col last-col">
                 Owner: {entity.owner}
               </div>

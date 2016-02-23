@@ -108,53 +108,6 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Munge a single entity into data ready to be displayed on the user's
-      profile.
-
-      @method _processEntity
-      @param {Object} entity A charm or a bundle from the API.
-    */
-    _processEntity: function(entity) {
-      var tags = entity.tags || [];
-      tags = tags.map(function(tag) {
-        return (
-          <span
-            key={tag}
-            className="user-profile__entityList-tags">
-            {tag}
-          </span>
-        );
-      });
-      var cs = this.props.charmstore;
-      var url = (cs && cs.url && cs.version) && cs.url + cs.version;
-      var entityType = entity.entityType;
-      var icon;
-      if (url && entityType === 'charm') {
-        var id = entity.id.replace('cs:', '');
-        var iconURL = `${url}/${id}/icon.svg`;
-        // XXX kadams54: move height and width into the CSS in subsequent
-        // "make this look pretty" work.
-        icon = (
-          <img
-            className="user-profile__entityList-icon"
-            src={iconURL}
-            width="24"
-            height="24"/>
-        );
-      }
-      // XXX kadams54: need to fetch individual entity icons for bundles.
-      // XXX kadams54: need to pull in series info; currently not supported
-      // in jujulib so add in subsequent branch.
-      return {
-        name: entity.name,
-        owner: entity.owner,
-        tags: tags,
-        icon: icon,
-        series: []
-      };
-    },
-
-    /**
       Callback for the request to list a user's entities.
 
       @method _fetchEntitiesCallback
@@ -167,11 +120,10 @@ YUI.add('user-profile', function() {
         return;
       }
       // Pull out just the data we need to display.
-      var entityList = data.map(this._processEntity, this);
       if (type === 'charm') {
-        this.setState({charmList: entityList});
+        this.setState({charmList: data});
       } else if (type === 'bundle') {
-        this.setState({bundleList: entityList});
+        this.setState({bundleList: data});
       }
     },
 
@@ -289,6 +241,9 @@ YUI.add('user-profile', function() {
       @returns {Object} A list of tag components.
     */
     _generateTags: function(tagList, id) {
+      if (!tagList) {
+        return;
+      }
       var tags = [];
       tagList.forEach((tag) => {
         tags.push(
@@ -304,6 +259,22 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Construct the URL for a service icon.
+
+      @method _getIcon
+      @param {String} id The service ID.
+      @returns {String} The icon URL.
+    */
+    _getIcon: function(id) {
+      if (!id) {
+        return;
+      }
+      var cs = this.props.charmstore;
+      var path = id.replace('cs:', '');
+      return `${cs.url}${cs.version}/${path}/icon.svg`;
+    },
+
+    /**
       Generate the rows of bundle details.
 
       @method _generateBundleRows
@@ -311,83 +282,22 @@ YUI.add('user-profile', function() {
     */
     _generateBundleRows: function() {
       var components = [];
-      // XXX mocked for now!
-      var bundles = [{
-        id: 'cs:django',
-        name: 'django',
-        tags: ['app', 'ops'],
-        charms: [{
-          id: 'wordpress',
-          name: 'wordpress',
-          icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg' // eslint-disable-line
-        }, {
-          id: 'mysql',
-          name: 'mysql',
-          icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg' // eslint-disable-line
-        }],
-        units: 6,
-        owner: 'Luca',
-        description: 'Lorem ipsum dolor sit conesectetuer',
-        commits: [{
-          id: '1',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '2',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '3',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }]
-      }, {
-        id: 'cs:django2',
-        name: 'django',
-        tags: ['app', 'ops'],
-        charms: [{
-          id: 'wordpress',
-          name: 'wordpress',
-          icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg' // eslint-disable-line
-        }, {
-          id: 'mysql',
-          name: 'mysql',
-          icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg' // eslint-disable-line
-        }],
-        units: 6,
-        owner: 'Luca',
-        description: 'Lorem ipsum dolor sit conesectetuer',
-        commits: [{
-          id: '1',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '2',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '3',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }]
-      }];
-
-      bundles.forEach((bundle) => {
+      var cs = this.props.charmstore;
+      this.state.bundleList.forEach((bundle) => {
         var id = bundle.id;
-        var charms = [];
-        bundle.charms.forEach((charm) => {
-          charms.push(
+        var services = [];
+        var serviceNames = Object.keys(bundle.services);
+        serviceNames.forEach((serviceName, idx) => {
+          var service = bundle.services[serviceName];
+          var id = service.charm;
+          var key = `icon-${idx}-${id}`;
+          services.push(
             <img className="user-profile__list-icon"
-              key={'icon-' + charm.id}
-              src={charm.icon}
-              title={charm.name} />);
+              key={key}
+              src={this._getIcon(id)}
+              title={service.charm} />);
         });
+        // XXX kadams54: Need to pull in unit count.
         components.push(
           <juju.components.UserProfileEntity
             changeState={this.props.changeState}
@@ -402,10 +312,10 @@ YUI.add('user-profile', function() {
             </span>
             <span className={'user-profile__list-col three-col ' +
               'user-profile__list-icons'}>
-              {charms}
+              {services}
             </span>
             <span className="user-profile__list-col one-col prepend-one">
-              {bundle.units}
+              [unit #]
             </span>
             <span className="user-profile__list-col two-col last-col">
               {bundle.owner}
@@ -423,58 +333,12 @@ YUI.add('user-profile', function() {
     */
     _generateCharmRows: function() {
       var components = [];
-      // XXX mocked for now!
-      var charms = [{
-        id: 'cs:django',
-        name: 'django',
-        tags: ['app', 'ops'],
-        icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg', // eslint-disable-line
-        owner: 'Luca',
-        series: 'wily',
-        description: 'Lorem ipsum dolor sit conesectetuer',
-        commits: [{
-          id: '1',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '2',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '3',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }]
-      }, {
-        id: 'cs:django2',
-        name: 'django',
-        tags: ['app', 'ops'],
-        icon: 'https://api.jujucharms.com/charmstore/v5/trusty/mysql-25/icon.svg', // eslint-disable-line
-        owner: 'Luca',
-        series: 'wily',
-        description: 'Lorem ipsum dolor sit conesectetuer',
-        commits: [{
-          id: '1',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '2',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }, {
-          id: '3',
-          description: 'Lorem ipsum dolor sit conesectetuer',
-          author: 'Luca',
-          time: 'Today 1:02pm'
-        }]
-      }];
-      charms.forEach((charm) => {
+      this.state.charmList.forEach((charm) => {
         var id = charm.id;
+        // Ensure the icon is set.
+        charm.icon = charm.icon || this._getIcon(id);
+        // XXX kadams54: Need to add support for parsing SupportedSeries to
+        // jujulib and then using that info to populate the series below.
         components.push(
           <juju.components.UserProfileEntity
             changeState={this.props.changeState}
@@ -487,7 +351,7 @@ YUI.add('user-profile', function() {
               {this._generateTags(charm.tags, id)}
             </span>
             <span className="user-profile__list-col four-col">
-              {charm.series}
+              [series]
             </span>
             <span className={'user-profile__list-col one-col ' +
               'user-profile__list-icons'}>
@@ -534,7 +398,7 @@ YUI.add('user-profile', function() {
               <div className="user-profile__header">
                 Models
                 <span className="user-profile__size">
-                  ({this.state.envList.length})
+                  ({envCount})
                 </span>
               </div>
               <ul className="user-profile__list twelve-col">
@@ -561,7 +425,7 @@ YUI.add('user-profile', function() {
               <div className="user-profile__header">
                 Bundles
                 <span className="user-profile__size">
-                  (xx)
+                  ({bundleCount})
                 </span>
               </div>
               <ul className="user-profile__list twelve-col">
@@ -585,7 +449,7 @@ YUI.add('user-profile', function() {
               <div className="user-profile__header">
                 Charms
                 <span className="user-profile__size">
-                  (xx)
+                  ({charmCount})
                 </span>
               </div>
               <ul className="user-profile__list twelve-col">
