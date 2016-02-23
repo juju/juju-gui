@@ -1386,6 +1386,53 @@ describe('App', function() {
       app.destroy();
     });
 
+    it('can pick the right environment from a list based on config',
+        function() {
+          app = new Y.juju.App({
+            apiAddress: 'example.com:17070',
+            conn: {close: function() {}},
+            container: container,
+            jujuCoreVersion: '1.21.1.1-trusty-amd64',
+            jujuEnvUUID: 'tardis',
+            user: 'rose',
+            socket_protocol: 'ws',
+            socketTemplate: '/juju/api/$server/$port/$uuid',
+            viewContainer: container
+          });
+          var fakeEnvList = [{
+            path: 'dalek/exterminate',
+          }, {
+            path: 'rose/badwolf',
+          }, {
+            path: 'rose/tardis'
+          }];
+          var envData = app._pickEnv(fakeEnvList);
+          assert.equal('rose/tardis', envData.path);
+        });
+
+    it('picks the first environment in a list without config',
+        function() {
+          app = new Y.juju.App({
+            apiAddress: 'example.com:17070',
+            conn: {close: function() {}},
+            container: container,
+            jujuCoreVersion: '1.21.1.1-trusty-amd64',
+            user: 'rose',
+            socket_protocol: 'ws',
+            socketTemplate: '/juju/api/$server/$port/$uuid',
+            viewContainer: container
+          });
+          var fakeEnvList = [{
+            path: 'dalek/exterminate',
+          }, {
+            path: 'rose/badwolf',
+          }, {
+            path: 'rose/tardis'
+          }];
+          var envData = app._pickEnv(fakeEnvList);
+          assert.equal('dalek/exterminate', envData.path);
+        });
+
     it('should honor socket_protocol and uuid', function() {
       var expected = [
         'ws://',
