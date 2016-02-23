@@ -317,17 +317,25 @@ describe('jujulib charmstore', function() {
     });
 
     it('accepts an author & calls to generate an api path', function() {
-      charmstore.list('test-author');
+      charmstore.list('test-author', 'cb');
       assert.equal(generatePath.callCount, 1, 'generatePath not called');
       assert.deepEqual(generatePath.lastCall.args, [
         'list',
-        'owner=' + 'test-author&' +
+        'owner=test-author&' +
+            'type=charm&' +
             'include=charm-metadata&' +
             'include=bundle-metadata&' +
             'include=bundle-unit-count&' +
-            'include=extra-info%2Fbzr-owner&' +
+            'include=extra-info&' +
             'include=supported-series&' +
             'include=stats']);
+    });
+
+    it('can list bundles', function() {
+      charmstore.list('test-author', 'cb', 'bundle');
+      var qs = generatePath.lastCall.args[1];
+      assert.equal(qs.indexOf('type=bundle') > -1, true,
+                   'bundle not set in query string');
     });
 
     it('calls to make a valid charmstore request', function() {
