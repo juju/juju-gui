@@ -1150,13 +1150,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var lastMessage = conn.last_message();
         var expected = {
           Type: 'Service',
-          Request: 'SetCharm',
+          Request: 'Update',
           Version: 3,
           RequestId: 1,
           Params: {
             ServiceName: serviceName,
             CharmUrl: charmUrl,
-            ForceUnits: forceUnits,
+            ForceCharmUrl: forceUnits,
             ForceSeries: forceSeries
           }
         };
@@ -1182,13 +1182,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var lastMessage = conn.last_message();
         var expected = {
           Type: 'Client',
-          Request: 'ServiceSetCharm',
+          Request: 'ServiceUpdate',
           Version: 1,
           RequestId: 1,
           Params: {
             ServiceName: serviceName,
             CharmUrl: charmUrl,
-            Force: forceUnits || forceSeries
+            ForceCharmUrl: forceUnits || forceSeries
           }
         };
         assert.deepEqual(lastMessage, expected);
@@ -2006,84 +2006,52 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(err, 'service "yoursql" not found');
     });
 
-    it('can set service constraints', function() {
-      env.set_constraints('mysql', {'cpu-cores': '4'});
-      msg = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 1,
-        Request: 'SetServiceConstraints',
-        Params: {
-          ServiceName: 'mysql',
-          Constraints: {
-            'cpu-cores': 4
-          }
-        },
-        RequestId: msg.RequestId
-      };
-      assert.deepEqual(expected, msg);
-    });
-
-    it('must error if neither data nor config are passed', function() {
-      assert.throws(function() {
-        env.set_config(
-            'mysql', undefined, undefined, null, null, {immediate: true});
-      }, 'Exactly one of config and data must be provided');
-    });
-
-    it('must error if both data and config are passed', function() {
-      assert.throws(function() {
-        env.set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML', null,
-            null, {immediate: true});
-      }, 'Exactly one of config and data must be provided');
-    });
-
     it('can set a service config', function() {
-      // This also tests that it only sends the changed values
-      env.set_config('mysql', {
-        'cfg-key': 'cfg-val',
-        'unchanged': 'bar'
-      }, null, {
-        'cfg-key': 'foo',
-        'unchanged': 'bar'
-      }, null, {immediate: true});
+      var settings = {'cfg-key': 'cfg-val', 'unchanged': 'bar'};
+      var callback = null;
+      env.set_config('mysql', settings, callback, {immediate: true});
       msg = conn.last_message();
       var expected = {
-        Type: 'Client',
-        Version: 1,
+        Type: 'Service',
+        Request: 'Update',
+        Version: 3,
         Params: {
           ServiceName: 'mysql',
-          Options: {
+          SettingsStrings: {
             'cfg-key': 'cfg-val',
             'unchanged': 'bar'
           }
         },
-        Request: 'ServiceSet',
         RequestId: msg.RequestId
       };
       assert.deepEqual(expected, msg);
     });
 
-    it('can set a service config from a file', function() {
-      var data = 'tuning-level: \nexpert-mojo';
-      env.set_config('mysql', null, data, null, null, {immediate: true});
+    it('can set a service config (legacy API)', function() {
+      env.set('facades', {});
+      var settings = {'cfg-key': 'cfg-val', 'unchanged': 'bar'};
+      var callback = null;
+      env.set_config('mysql', settings, callback, {immediate: true});
       msg = conn.last_message();
       var expected = {
-        RequestId: msg.RequestId,
         Type: 'Client',
-        Version: 1,
-        Request: 'ServiceSetYAML',
+        Request: 'ServiceUpdate',
+        Version: 0,
         Params: {
           ServiceName: 'mysql',
-          Config: data
-        }
+          SettingsStrings: {
+            'cfg-key': 'cfg-val',
+            'unchanged': 'bar'
+          }
+        },
+        RequestId: msg.RequestId
       };
       assert.deepEqual(expected, msg);
     });
 
     it('handles failed set config', function() {
       var err, service_name;
-      env.set_config('yoursql', {}, null, {}, function(evt) {
+      env.set_config('yoursql', {}, function(evt) {
         err = evt.err;
         service_name = evt.service_name;
       }, {immediate: true});
@@ -2098,9 +2066,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles successful set config', function() {
       var dataReturned;
-      var oldConfig = {key1: 'value1', key2: 'value2', key3: 'value3'};
-      var newConfig = {key2: 'CHANGED!'};
-      env.set_config('django', newConfig, null, oldConfig, function(evt) {
+      var settings = {key1: 'value1', key2: 'value2', key3: 'value3'};
+      env.set_config('django', settings, function(evt) {
         dataReturned = evt;
       }, {immediate: true});
       msg = conn.last_message();
@@ -2108,15 +2075,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: msg.RequestId,
         Response: {}
       });
-      assert.isUndefined(dataReturned.err);
-      assert.equal(dataReturned.service_name, 'django');
-      // The returned event includes the changed config options.
-      assert.deepEqual(dataReturned.newValues, {key2: 'CHANGED!'});
-      // The old and new config objects are not modified in the process.
-      assert.deepEqual(
-          oldConfig, {key1: 'value1', key2: 'value2', key3: 'value3'});
-      assert.deepEqual(
-          newConfig, {key2: 'CHANGED!'});
+      assert.strictEqual(dataReturned.err, undefined);
+      assert.strictEqual(dataReturned.service_name, 'django');
+      assert.deepEqual(dataReturned.newValues, settings);
     });
 
     it('can destroy a service', function() {
@@ -2526,6 +2487,235 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Error: 'charm not found'
       });
+    });
+
+    it('updates services charm URL', function(done) {
+      var args = {url: 'cs:wily/django-42'};
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.url, args.url);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            CharmUrl: args.url,
+            ForceCharmUrl: false,
+            ForceSeries: false,
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services charm URL (force units)', function(done) {
+      var args = {url: 'cs:wily/django-42', forceUnits: true};
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.forceUnits, true);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            CharmUrl: args.url,
+            ForceCharmUrl: true,
+            ForceSeries: false,
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services charm URL (force series)', function(done) {
+      var args = {url: 'cs:wily/django-42', forceSeries: true};
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.forceSeries, true);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            CharmUrl: args.url,
+            ForceCharmUrl: false,
+            ForceSeries: true
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services settings', function(done) {
+      var args = {settings: {'opt1': 'val1', 'opt2': 42}};
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.deepEqual(data.settings, args.settings);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            SettingsStrings: {'opt1': 'val1', 'opt2': '42'}
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services constraints', function(done) {
+      var args = {constraints: {'cpu-cores': '4', 'mem': 2000}};
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.deepEqual(data.constraints, args.constraints);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            Constraints: {'cpu-cores': 4, 'mem': 2000}
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services minimum number of units', function(done) {
+      var args = {minUnits: 2};
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.minUnits, args.minUnits);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            MinUnits: 2
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services (multiple properties)', function(done) {
+      var args = {
+        url: 'cs:trusty/django-47',
+        forceUnits: true,
+        forceSeries: true,
+        settings: {'opt1': 'val1', 'opt2': true},
+        constraints: {'cpu-cores': 8},
+        minUnits: 3
+      };
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.url, args.url);
+        assert.strictEqual(data.forceUnits, true);
+        assert.strictEqual(data.forceSeries, true);
+        assert.deepEqual(data.settings, args.settings);
+        assert.deepEqual(data.constraints, args.constraints);
+        assert.strictEqual(data.minUnits, 3);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Service',
+          Version: 3,
+          Request: 'Update',
+          Params: {
+            ServiceName: 'django',
+            CharmUrl: args.url,
+            ForceCharmUrl: true,
+            ForceSeries: true,
+            SettingsStrings: {'opt1': 'val1', 'opt2': 'true'},
+            Constraints: args.constraints,
+            MinUnits: 3
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('updates services (legacy API)', function(done) {
+      env.set('facades', {});
+      var args = {
+        url: 'cs:trusty/django-47',
+        forceUnits: true,
+        settings: {'opt1': 'val1', 'opt2': true},
+        constraints: {'cpu-cores': 8},
+        minUnits: 3
+      };
+      env.updateService('django', args, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.url, args.url);
+        assert.strictEqual(data.forceUnits, true);
+        assert.deepEqual(data.settings, args.settings);
+        assert.deepEqual(data.constraints, args.constraints);
+        assert.strictEqual(data.minUnits, 3);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Client',
+          Version: 0,
+          Request: 'ServiceUpdate',
+          Params: {
+            ServiceName: 'django',
+            CharmUrl: args.url,
+            ForceCharmUrl: true,
+            SettingsStrings: {'opt1': 'val1', 'opt2': 'true'},
+            Constraints: args.constraints,
+            MinUnits: 3
+          },
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('handles failures while updating services', function(done) {
+      env.updateService('django', {url: 'django-47'}, function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.url, 'django-47');
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
     it('provides for a missing Params', function() {

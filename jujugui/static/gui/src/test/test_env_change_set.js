@@ -1669,11 +1669,11 @@ describe('Environment Change Set', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
         this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
-        var args = [1, 2, 3, 4, callback, { immediate: true}];
+        var args = ['service', {key: 'value'}, callback, { immediate: true}];
         envObj.set_config.apply(envObj, args);
         assert.equal(envObj._set_config.calledOnce(), true);
         var setConfigArgs = envObj._set_config.lastArguments();
-        // remove the options param off of the end and compare to that. as it
+        // Remove the options param off of the end and compare to that. as it
         // should be removed before env.deploy is called.
         assert.deepEqual(
             setConfigArgs, Array.prototype.slice.call(args, 0, -1));
@@ -1690,7 +1690,7 @@ describe('Environment Change Set', function() {
             // this is using bind instead of apply because of how the
             // assert.throws assertion operates.
             envObj.set_config.bind(
-                envObj, 'foo', 2, 3, 4, callback, { immediate: true}),
+                envObj, 'foo', {}, callback, { immediate: true}),
             'You cannot immediately setConfig on a queued service');
         assert.equal(envObj._set_config.callCount(), 0);
         // make sure that we don't add it to the changeSet.

@@ -156,12 +156,10 @@ describe('Configuration', function() {
     testUtils.Simulate.click(save);
 
     assert.equal(setConfig.callCount, 1);
-    assert.equal(setConfig.args[0][0], 'cs:trusty/ghost');
-    assert.deepEqual(
-      setConfig.args[0][1],
-      { option1: 'new value', option2: false });
-    assert.strictEqual(setConfig.args[0][2], null);
-    assert.strictEqual(setConfig.args[0][3], null);
+    var args = setConfig.args[0];
+    assert.strictEqual(args.length, 3);
+    assert.equal(args[0], 'cs:trusty/ghost');
+    assert.deepEqual(args[1], {option1: 'new value', option2: false});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionA: {
