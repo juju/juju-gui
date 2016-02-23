@@ -282,7 +282,6 @@ YUI.add('user-profile', function() {
     */
     _generateBundleRows: function() {
       var components = [];
-      var cs = this.props.charmstore;
       this.state.bundleList.forEach((bundle) => {
         var id = bundle.id;
         var services = [];
