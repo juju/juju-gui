@@ -1,4 +1,5 @@
 .user-profile {
+    @extend %scroll-children;
     z-index: index($z-indexed-elements, user-profile);
     top: $navbar-height;
     bottom: 0;
@@ -11,5 +12,77 @@
         top: 20px;
         right: 20px;
         cursor: pointer;
+    }
+
+    &__header {
+        margin-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 15px;
+        font-size: 1.375em;
+    }
+
+    &__size {
+        color: $light-mid-grey;
+        margin-left: 0.25em;
+    }
+
+    &__list {
+        @extend %list-style;
+        border-bottom: 1px solid $mid-grey;
+
+        &-row,
+        &-header {
+            margin: 0;
+            padding: 15px 0 15px 15px;
+        }
+
+        &-header {
+            border-bottom: 1px solid $mid-grey;
+        }
+
+        &-row {
+            border-bottom: 1px dotted $mid-grey;
+            cursor: pointer;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+        &-col {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        &-name {
+            margin: -9px 0;
+        }
+
+        &-tags {
+            @extend %list-style;
+            color: $warm-grey;
+            font-size: 14px;
+        }
+
+        &-icons {
+            text-align: right;
+        }
+
+        &-icon {
+            @extend %icon--small;
+            margin-left: 3px;
+        }
+    }
+
+    &__comma-item {
+        display: inline;
+
+        &:after {
+            content: ', ';
+        }
+
+        &:last-child:after {
+            content: '';
+        }
     }
 }

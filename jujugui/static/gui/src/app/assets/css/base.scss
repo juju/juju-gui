@@ -299,6 +299,10 @@ code {
     color: $cool-grey;
 }
 
+.no-margin-bottom {
+    margin-bottom: 0;
+}
+
 /** Widgets **/
 @import "header";
 @import "loading";
