@@ -1506,7 +1506,7 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Sends a message to the server only.
     */
     setCharm: function(service, url, forceUnits, forceSeries, callback) {
-      var args = {url: url, forceUnits: forceUnits, forceSeries:forceSeries};
+      var args = {url: url, forceUnits: forceUnits, forceSeries: forceSeries};
       this.updateService(service, args, function(data) {
         if (!callback) {
           return;
@@ -2036,13 +2036,13 @@ YUI.add('juju-env-go', function(Y) {
 
       @method set_config
     */
-    set_config: function(service, config, callback, options) {
+    set_config: function(serviceName, config, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        // Need to check that the service is a real service name and not
+        // Need to check that the serviceName is a real service name and not
         // a queued service id before allowing immediate or not.
-        if (ecs.changeSet[service]) {
+        if (ecs.changeSet[serviceName]) {
           throw 'You cannot immediately setConfig on a queued service';
         } else {
           this._set_config.apply(this, args);
@@ -2056,7 +2056,7 @@ YUI.add('juju-env-go', function(Y) {
       Change the configuration of the given service.
 
       @method _set_config
-      @param {String} service The service name.
+      @param {String} serviceName The service name.
       @param {Object} config The charm configuration options.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object containing:
@@ -2064,14 +2064,14 @@ YUI.add('juju-env-go', function(Y) {
         - service_name: the name of the service;
         - newValues: the new configuration options.
     */
-    _set_config: function(service, config, callback) {
-      this.updateService(service, {settings: config}, function(data) {
+    _set_config: function(serviceName, config, callback) {
+      this.updateService(serviceName, {settings: config}, function(data) {
         if (!callback) {
           return;
         }
         callback({
           err: data.err,
-          service_name: service,
+          service_name: serviceName,
           newValues: config
         });
       });
