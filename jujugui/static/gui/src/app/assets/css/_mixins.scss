@@ -10,16 +10,6 @@
     box-shadow: $arguments;
 }
 
-@mixin create-linear-gradient($gradient-start, $gradient-end) {
-    background-image: -ms-linear-gradient(top, $gradient-start, $gradient-end);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from($gradient-start), to($gradient-end));
-    background-image: -webkit-linear-gradient(top, $gradient-start, $gradient-end);
-    background-image: -o-linear-gradient(top, $gradient-start, $gradient-end);
-    background-image: -moz-linear-gradient(top, $gradient-start, $gradient-end);
-    background-image: linear-gradient(top, $gradient-start, $gradient-end);
-    background-repeat: repeat-x;
-}
-
 /*
  * Rotation transform.  Call with numerical value and units, e.g.
  * .rotate(-90deg);
@@ -141,28 +131,14 @@ button,
     }
 }
 
-.uncommitted-circle {
-    vertical-align: bottom;
-    margin-left: 1px;
-    color: $uncommitted;
-    font-size: 32px;
-    line-height: 0px;
-}
-
 @mixin diamond($color: inherit) {
-  @include rotate(45deg);
-  content: '';
-  width: 6px;
-  height: 6px;
-  position: absolute;
-  display: block;
-  background-color: $color;
-}
-
-%bws-list {
-  overflow-y: auto;
-  max-height: 350px;
-  border-top: 1px solid $mid-grey;
+    @include rotate(45deg);
+    content: '';
+    width: 6px;
+    height: 6px;
+    position: absolute;
+    display: block;
+    background-color: $color;
 }
 
 %floating-panel {

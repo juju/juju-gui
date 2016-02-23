@@ -1,0 +1,62 @@
+.user-profile__entity {
+    &--expanded {
+        .user-profile__entity {
+            &-summary {
+                display: none;
+            }
+
+            &-details {
+                display: block;
+            }
+        }
+    }
+
+    &-details {
+        @extend %floating-panel;
+        // The details will be hidden initially.
+        display: none;
+        margin: 5px 0 5px -15px;
+
+        &-header {
+            padding: 20px;
+            border-bottom: 1px solid $mid-grey;
+
+            &-action {
+                text-align: right;
+
+                .generic-button {
+                    margin: -10px 0;
+                }
+            }
+        }
+
+        &-content {
+            padding: 0 20px;
+        }
+    }
+
+    &-icon {
+        @extend %icon--small;
+        margin-right: 10px;
+    }
+
+    &-diagram {
+        padding: 40px;
+        background: $canvas-background;
+        text-align: center;
+    }
+
+    &-commits {
+        margin-top: 20px;
+    }
+
+    &-commit-list {
+        @extend %list-style;
+    }
+
+    &-charm-list {
+        @extend %list-style;
+        display: inline-block;
+        margin-left: 0.25em;
+    }
+}
