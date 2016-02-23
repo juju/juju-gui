@@ -173,9 +173,11 @@ YUI.add('inspector-config', function() {
       }
       var changedConfig = this._getChangedValues(configValues);
       // If there are no changed values then don't set the config.
-      var size = Object.keys(changedConfig).length;
-      if (size > 0) {
-        this._setConfig(changedConfig);
+      if (Object.keys(changedConfig).length > 0) {
+        props.setConfig(props.service.get('id'),
+          changedConfig,
+          this._setConfigCallback
+        );
       }
       this._showInspectorIndex();
     },
@@ -198,22 +200,6 @@ YUI.add('inspector-config', function() {
         }
       });
       return changedValues;
-    },
-
-    /**
-      Calls the env set config method.
-
-      @method _setConfig
-      @param {Object} configValues The configuration values to save.
-    */
-    _setConfig: function(configValues) {
-      this.props.setConfig(
-        this.props.service.get('id'),
-        configValues,
-        null,
-        null,
-        this._setConfigCallback
-      );
     },
 
     /**

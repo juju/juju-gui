@@ -1409,7 +1409,7 @@ YUI.add('juju-env-go', function(Y) {
         form, e.g. "2/lxc/0" or "1/kvm/42".
       @param {Object} data The response returned by the server, e.g.:
         {RequestId: 1, Error: 'an error occurred', Response: {}}
-     */
+    */
     _handleDestroyMachines: function(userCallback, names, data) {
       var transformedData = {
         err: data.Error,
@@ -1420,75 +1420,103 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Update an existing service in the Juju model.
+      By using this API call, it is possible to update any or all of the
+      following service attributes:
+        - its charm URL;
+        - its settings (charm configuration options);
+        - its constraints;
+        - its minimum number of units.
+
+      @method updateService
+      @param {String} service The name of the service to be updated.
+      @param {Object} args An object with any or all of the following fields:
+        - url (String): the charm URL;
+        - forceUnits (Bool): whether to force units when upgrading the URL;
+        - forceSeries (Bool): whether to force series when upgrading the URL;
+        - settings (Object): the configuration key/value pairs;
+        - constraints (Object): the constraints;
+        - minUnits (Integer): the minimum number of units for this service.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. The callback receives an object with all the
+        attributes in args with two additional fields:
+        - service: the name of the service;
+        - err: optional error encountered in the process.
+    */
+    updateService: function(service, args, callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, service, args, data) {
+        if (!userCallback) {
+          console.log('data returned by service update API call:', data);
+          return;
+        }
+        var response = {service: service, err: data.Error};
+        Object.keys(args).forEach((key) => {
+          response[key] = args[key];
+        });
+        userCallback(response);
+      }.bind(this, callback, service, args);
+
+      // Prepare the request parameters.
+      var version = this.findFacadeVersion('Service') || 0;
+      var params = {ServiceName: service};
+      if (args.url) {
+        params.CharmUrl = args.url;
+        var forceUnits = !!args.forceUnits;
+        var forceSeries = !!args.forceSeries;
+        if (version >= 3) {
+          params.ForceCharmUrl = forceUnits;
+          params.ForceSeries = forceSeries;
+        } else {
+          // Because the call signature has changed a bit to properly set
+          // force on the old facade we will force if either of the forced
+          // values are truthy.
+          params.ForceCharmUrl = forceUnits || forceSeries;
+        }
+      }
+      if (args.settings) {
+        params.SettingsStrings = stringifyObjectValues(args.settings);
+      }
+      if (args.constraints) {
+        params.Constraints = this.prepareConstraints(args.constraints);
+      }
+      if (args.minUnits)  {
+        params.MinUnits = args.minUnits;
+      }
+
+      // Perform the API call.
+      var request = {Type: 'Service', Request: 'Update', Params: params};
+      if (version < 3) {
+        // Use legacy Juju API on the CLient facade for updating services.
+        request = {Type: 'Client', Request: 'ServiceUpdate', Params: params};
+      }
+      this._send_rpc(request, handler);
+    },
+
+    /**
        Set a service's charm.
 
        @method setCharm
-       @param {String} serviceName The name of the service to be upgraded.
-       @param {String} charmUrl The URL of the charm.
+       @param {String} service The name of the service to be upgraded.
+       @param {String} url The URL of the charm.
        @param {Boolean} forceUnits Force the units when upgrading.
        @param {Boolean} forceSeries Force the series when upgrading.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.
-     */
-    setCharm: function(serviceName, charmUrl, forceUnits, forceSeries, cb) {
-      var intermediateCallback = null;
-      if (cb) {
-        intermediateCallback = Y.bind(this.handleSetCharm, this,
-            cb, serviceName, charmUrl);
-      }
-      var rpc = {
-        Type: 'Service',
-        Request: 'SetCharm',
-        Params: {
-          ServiceName: serviceName,
-          CharmUrl: charmUrl,
-          ForceUnits: forceUnits,
-          ForceSeries: forceSeries
+    */
+    setCharm: function(service, url, forceUnits, forceSeries, callback) {
+      var args = {url: url, forceUnits: forceUnits, forceSeries: forceSeries};
+      this.updateService(service, args, function(data) {
+        if (!callback) {
+          return;
         }
-      };
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
-        // If we don't have the new Service facade then use the old Client
-        // facade for setting the service charm.
-        rpc = {
-          Type: 'Client',
-          Request: 'ServiceSetCharm',
-          Params: {
-            ServiceName: serviceName,
-            CharmUrl: charmUrl,
-            // Because the call signature has changed a bit to properly set
-            // force on the old facade we will force if either of the forced
-            // values are truthy.
-            Force: forceUnits || forceSeries
-          }
-        };
-      }
-      this._send_rpc(rpc, intermediateCallback);
-    },
-
-    /**
-       Transform the data returned from juju-core 'setCharm' into a form which
-       is suitable for the user callback.
-
-       @method handleSetCharm
-       @param {Function} userCallback The callback originally submitted by the
-         call site.
-       @param {String} serviceName The name of the service.  Passed in since
-         it is not part of the response.
-       @param {String} charmUrl The URL of the charm.  Passed in since
-         it is not part of the response.
-       @param {Object} data The response returned by the server.
-       @return {undefined} Nothing.
-     */
-    handleSetCharm: function(userCallback, serviceName, charmUrl, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: serviceName,
-        charm_url: charmUrl
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
+        callback({
+          err: data.err,
+          service_name: data.service,
+          charm_url: data.url
+        });
+      });
     },
 
     /**
@@ -1786,29 +1814,6 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Transform the data returned from the set_config call into that suitable
-     * for the user callback.
-     *
-     * @method handleSetConfig
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {String} service The name of the service.  Passed in since it
-     * is not part of the response.
-     * @param {Object} newValues The modified config options.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleSetConfig: function(userCallback, serviceName, newValues, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: serviceName,
-        newValues: newValues
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
-    },
-
-    /**
      * Update the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
@@ -2029,10 +2034,9 @@ YUI.add('juju-env-go', function(Y) {
       The parameters match the parameters for the public env deploy method in
       go.js.
 
-      @method setConfig
+      @method set_config
     */
-    set_config: function(serviceName, config, data, serviceConfig, callback,
-        options) {
+    set_config: function(serviceName, config, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
@@ -2049,52 +2053,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Change the configuration of the given service.
+      Change the configuration of the given service.
 
-       @method _set_config
-       @param {String} serviceName The service name.
-       @param {Object} config The charm configuration options.
-       @param {String} data The YAML representation of the charm
-         configuration options. Only one of `config` and `data` should be
-         provided, though `data` takes precedence if it is given.
-       @param {Object} serviceConfig the current configuration object
-                       of the service.
-       @param {Function} callback A callable that must be called once the
+      @method _set_config
+      @param {String} serviceName The service name.
+      @param {Object} config The charm configuration options.
+      @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object containing:
-          err - a string describing the problem (if an error occurred),
-          service_name - the name of the service.
-       @return {undefined} Sends a message to the server only.
-     */
-    _set_config: function(serviceName, config, data, serviceConfig, callback) {
-      if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
-          (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
-        throw 'Exactly one of config and data must be provided';
-      }
-      var intermediateCallback, newValues, request;
-      request = {
-        Type: 'Client',
-        Params: {ServiceName: serviceName}
-      };
-      if (data) {
-        request.Request = 'ServiceSetYAML';
-        request.Params.Config = data;
-      } else {
-        // Only the modified options are sent to the API backend. With the
-        // new React configuration system the modified values is determined
-        // in the view and set in the service model so we can faithfully
-        // take what it says to set as correct.
-        newValues = config;
-
-        request.Request = 'ServiceSet';
-        request.Params.Options = stringifyObjectValues(newValues);
-      }
-      if (callback) {
-        // Capture the callback, serviceName and newValues.
-        // No context is passed.
-        intermediateCallback = Y.bind(this.handleSetConfig, null,
-            callback, serviceName, newValues);
-      }
-      this._send_rpc(request, intermediateCallback);
+        - err: a string describing the problem (if an error occurred);
+        - service_name: the name of the service;
+        - newValues: the new configuration options.
+    */
+    _set_config: function(serviceName, config, callback) {
+      this.updateService(serviceName, {settings: config}, function(data) {
+        if (!callback) {
+          return;
+        }
+        callback({
+          err: data.err,
+          service_name: serviceName,
+          newValues: config
+        });
+      });
     },
 
     /**
@@ -2149,57 +2129,6 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'Destroy',
         Params: {ServiceName: service}
       }, intermediateCallback);
-    },
-
-    /**
-       Change the constraints of the given service.
-
-       @method set_constraints
-       @param {String} serviceName The service name.
-       @param {Object} constraints The new service constraints.
-       @param {Function} callback A callable that must be called once the
-        operation is performed.
-       @return {undefined} Sends a message to the server only.
-    */
-    set_constraints: function(serviceName, constraints, callback) {
-      var intermediateCallback, sendData;
-      if (callback) {
-        // Capture the callback and serviceName.  No context is passed.
-        intermediateCallback = Y.bind(this.handleSetConstraints, null,
-            callback, serviceName);
-      }
-      constraints = this.prepareConstraints(constraints);
-      sendData = {
-        Type: 'Client',
-        Request: 'SetServiceConstraints',
-        Params: {
-          ServiceName: serviceName,
-          Constraints: constraints
-        }
-      };
-      this._send_rpc(sendData, intermediateCallback);
-    },
-
-    /**
-       Transform the data returned from juju-core call to
-       SetServiceConstraints into that suitable for the user callback.
-
-       @method handleSetConstraints
-       @static
-       @param {Function} userCallback The callback originally submitted by
-         the call site.
-       @param {String} serviceName The name of the service.  Passed in since
-         it is not part of the response.
-       @param {Object} data The response returned by the server.
-       @return {undefined} Nothing.
-    */
-    handleSetConstraints: function(userCallback, serviceName, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: serviceName
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
     },
 
     /**

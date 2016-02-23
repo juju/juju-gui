@@ -772,11 +772,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set constraints', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Client',
-          Request: 'SetServiceConstraints',
+          Type: 'Service',
+          Request: 'Update',
           Params: {
             ServiceName: 'wordpress',
-            Constraints: { mem: '2' }
+            Constraints: {mem: '2'}
           },
           RequestId: 42
         };
@@ -803,18 +803,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(service.get('constraints').mem, 2);
           done();
         };
-        env.set_constraints('wordpress', {mem: '2'}, callback);
+        env.updateService('wordpress', {constraints: {mem: '2'}}, callback);
       });
     });
 
     it('can set config', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Client',
-          Request: 'ServiceSet',
+          Type: 'Service',
+          Request: 'Update',
           Params: {
             ServiceName: 'wordpress',
-            Options: { engine: 'apache' }
+            SettingsStrings: {engine: 'apache'}
           },
           RequestId: 42
         };
@@ -849,55 +849,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           done();
         };
-        env.set_config('wordpress', {engine: 'apache'}, undefined, {},
-            callback, {immediate: true});
-      });
-    });
-
-    it('can set YAML config', function(done) {
-      state.deploy('cs:precise/wordpress-27', function() {
-        var data = {
-          Type: 'Client',
-          Request: 'ServiceSetYAML',
-          Params: {
-            ServiceName: 'wordpress',
-            Config: 'wordpress:\n  engine: apache'
-          },
-          RequestId: 42
-        };
-        client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
-          assert.isUndefined(receivedData.Error);
-          var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), {
-            debug: 'no',
-            engine: 'apache',
-            tuning: 'single',
-            'wp-content': ''
-          });
-          done();
-        };
-        client.open();
-        client.send(Y.JSON.stringify(data));
-      });
-    });
-
-    it('can set YAML config (environment integration)', function(done) {
-      env.connect();
-      state.deploy('cs:precise/wordpress-27', function() {
-        var callback = function(result) {
-          assert.isUndefined(result.err);
-          var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), {
-            debug: 'no',
-            engine: 'apache',
-            tuning: 'single',
-            'wp-content': ''
-          });
-          done();
-        };
-        env.set_config('wordpress', undefined,
-            'wordpress:\n  engine: apache', {}, callback, {immediate: true});
+        env.set_config(
+          'wordpress', {engine: 'apache'}, callback, {immediate: true});
       });
     });
 
@@ -948,11 +901,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {});
       var data = {
         Type: 'Service',
-        Request: 'SetCharm',
+        Request: 'Update',
         Params: {
           ServiceName: 'wordpress',
           CharmUrl: 'cs:precise/mediawiki-18',
-          Force: false
         },
         RequestId: 42
       };

@@ -913,59 +913,48 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle SetServiceConstraints messages
+      Handle Service.Update messages
 
-    @method handleClientSetServiceConstraints
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
+      @method handleServiceUpdate
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+      @return {undefined} Side effects only.
     */
-    handleClientSetServiceConstraints: function(data, client, state) {
-      var result = state.setConstraints(data.Params.ServiceName,
-          data.Params.Constraints);
-      this._basicReceive(data, client, result);
-    },
+    handleServiceUpdate: function(data, client, state) {
+      var result;
+      var params = data.Params;
+      var service = params.ServiceName;
+      var callback = function(result) {
+        this._basicReceive(data, client, result);
+      }.bind(this);
 
-    /**
-    Handle ServiceSet messages
-
-    @method handleClientServiceSet
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleClientServiceSet: function(data, client, state) {
-      var result = state.setConfig(
-          data.Params.ServiceName, data.Params.Options);
-      this._basicReceive(data, client, result);
-    },
-
-    /**
-    Handle ServiceSetYAML messages
-
-    @method handleClientServiceSetYAML
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleClientServiceSetYAML: function(data, client, state) {
-      var config = {};
-      try {
-        config = jsyaml.safeLoad(data.Params.Config);
-      } catch (e) {
-        if (e instanceof jsyaml.YAMLException) {
-          this._basicReceive(data, client,
-              {error: 'Error parsing YAML.\n' + e});
-          return;
+      // Handle service settings.
+      if (params.SettingsStrings) {
+        result = state.setConfig(service, params.SettingsStrings);
+        if (result.error) {
+          callback(result);
         }
-        throw e;
       }
-      var serviceName = data.Params.ServiceName;
-      var result = state.setConfig(serviceName, config[serviceName]);
-      this._basicReceive(data, client, result);
+
+      // Handle service constraints.
+      if (params.Constraints) {
+        result = state.setConstraints(service, params.Constraints);
+        if (result.error) {
+          callback(result);
+        }
+      }
+      // XXX frankban: handle MinUnits when/if required.
+
+      // Handle charm URL changes.
+      // This is kept as last step as it is asynchronous.
+      if (params.CharmUrl) {
+        state.setCharm(
+          service, params.CharmUrl, params.ForceCharmUrl, params.ForceSeries,
+          callback);
+        return;
+      }
+      callback({});
     },
 
     /**
@@ -982,24 +971,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       // so relationName is ignored.
       var result = state.resolved(data.Params.UnitName);
       this._basicReceive(data, client, result);
-    },
-
-    /**
-    Handle ServiceSetCharm messages
-
-    @method handleClientServiceSetCharm
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleServiceSetCharm: function(data, client, state) {
-      var callback = Y.bind(function(result) {
-        this._basicReceive(data, client, result);
-      }, this);
-      var params = data.Params;
-      state.setCharm(params.ServiceName, params.CharmUrl,
-          params.ForceUnits, params.ForceSeries, callback);
     },
 
     /**
