@@ -130,7 +130,7 @@ describe('UserProfile', () => {
                   Name
                 </span>
                 <span className={
-                  'user-profile__list-col user-profile__list-icons three-col'}>
+                  'user-profile__list-col three-col user-profile__list-icons'}>
                   Charms
                 </span>
                 <span className="user-profile__list-col one-col prepend-one">
@@ -260,7 +260,7 @@ describe('UserProfile', () => {
               Name
             </span>
             <span className={
-              'user-profile__list-col user-profile__list-icons three-col'}>
+              'user-profile__list-col three-col user-profile__list-icons'}>
               Charms
             </span>
             <span className="user-profile__list-col one-col prepend-one">
