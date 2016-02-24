@@ -36,8 +36,12 @@ describe('UserProfile', () => {
       owner: 'test-owner'
     }];
     var list = sinon.stub();
-    charms = [jsTestUtils.makeEntity().toEntity()];
-    bundles = [jsTestUtils.makeEntity(true).toEntity()];
+    var charm = jsTestUtils.makeEntity().toEntity();
+    charm.series = [charm.series];
+    charms = [charm];
+    var bundle = jsTestUtils.makeEntity(true).toEntity();
+    bundle.series = [bundle.series];
+    bundles = [bundle];
     list.withArgs('test-owner', sinon.match.any, 'charm').callsArgWith(
       1, null, charms);
     list.withArgs('test-owner', sinon.match.any, 'bundle').callsArgWith(
