@@ -235,6 +235,9 @@ describe('jujulib charmstore', function() {
           'bundle-metadata': {
             'Services': ''
           },
+          'bundle-unit-count': {
+            'Count': 7
+          },
           'extra-info': {
             'bzr-owner': 'hatch',
             'bzr-revisions': 5,
@@ -259,7 +262,8 @@ describe('jujulib charmstore', function() {
         name: 'mongodb-cluster',
         owner: 'hatch',
         revisions: 5,
-        services: ''
+        services: '',
+        unitCount: 7
       });
     });
   });

@@ -302,8 +302,7 @@ var module = module;
           charmMeta = meta['charm-metadata'],
           charmConfig = meta['charm-config'],
           bundleMeta = meta['bundle-metadata'],
-          bzrOwner = extraInfo['bzr-owner'],
-          supportedSeries = meta['supported-series'];
+          bzrOwner = extraInfo['bzr-owner'];
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
@@ -351,6 +350,7 @@ var module = module;
         }, this);
       }
       if (processed.entityType === 'bundle') {
+        processed.unitCount = meta['bundle-unit-count']['Count'];
         processed.deployerFileUrl =
             this.url +
             this.version + '/' +
