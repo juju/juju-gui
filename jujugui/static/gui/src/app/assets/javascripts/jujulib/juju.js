@@ -350,7 +350,9 @@ var module = module;
         }, this);
       }
       if (processed.entityType === 'bundle') {
-        processed.unitCount = meta['bundle-unit-count']['Count'];
+        if (meta['bundle-unit-count']) {
+          processed.unitCount = meta['bundle-unit-count']['Count'];
+        }
         processed.deployerFileUrl =
             this.url +
             this.version + '/' +
