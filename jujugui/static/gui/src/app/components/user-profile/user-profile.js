@@ -271,7 +271,7 @@ YUI.add('user-profile', function() {
         return;
       }
       var listItems = [];
-      if (typeof series !== 'array') {
+      if (Array.isArray(series) !== 'array') {
         series = [series];
       }
       series.forEach((release) => {
