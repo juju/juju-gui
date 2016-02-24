@@ -51,7 +51,9 @@ YUI.add('machine-view-scale-up', function() {
               className="machine-view__scale-up-unit-input"
               placeholder="units"
               ref={'scaleUpUnit-' + service.get('id')}
-              type="text" />
+              type="number"
+              min="0"
+              step="1" />
           </li>);
       });
       return (
