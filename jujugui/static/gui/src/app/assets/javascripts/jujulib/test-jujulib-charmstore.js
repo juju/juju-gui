@@ -146,6 +146,12 @@ describe('jujulib charmstore', function() {
           },
           stats: {
             ArchiveDownloadCount: 10
+          },
+          'supported-series': {
+            SupportedSeries: [
+              'precise',
+              'trusty'
+            ]
           }
         }
       };
@@ -194,7 +200,8 @@ describe('jujulib charmstore', function() {
             description: 'bar is less awesome',
             type: 'String'
           }
-        }
+        },
+        series: ['precise', 'trusty']
       });
     });
 

@@ -302,7 +302,8 @@ var module = module;
           charmMeta = meta['charm-metadata'],
           charmConfig = meta['charm-config'],
           bundleMeta = meta['bundle-metadata'],
-          bzrOwner = extraInfo['bzr-owner'];
+          bzrOwner = extraInfo['bzr-owner'],
+          supportedSeries = meta['supported-series'];
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
@@ -319,6 +320,9 @@ var module = module;
       if (meta['charm-related']) {
         this._lowerCaseKeys(meta['charm-related'], meta['charm-related']);
         processed.relatedCharms = meta['charm-related'];
+      }
+      if (meta['supported-series']) {
+        processed.series = meta['supported-series']['SupportedSeries'];
       }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
