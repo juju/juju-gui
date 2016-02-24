@@ -213,6 +213,28 @@ YUI.add('user-profile-entity', function() {
     },
 
     /**
+      Generate the description.
+
+      @method _generateDescription
+      @return {Object} The description.
+    */
+    _generateDescription: function() {
+      var description = this.props.entity.description;
+      if (!description) {
+        return;
+      }
+      return (
+        <div className="twelve-col no-margin-bottom">
+          <div className="two-col">
+            Description
+          </div>
+          <div className="ten-col last-col">
+            {description}
+          </div>
+        </div>);
+    },
+
+    /**
       Generate the series for a charm.
 
       @method _generateSeries
@@ -298,12 +320,7 @@ YUI.add('user-profile-entity', function() {
                 Owner: {entity.owner}
               </div>
               {this._generateDiagram()}
-              <div className="two-col">
-                Description
-              </div>
-              <div className="ten-col last-col">
-                {entity.description}
-              </div>
+              {this._generateDescription()}
               {this._generateTags()}
               {this._generateCommits()}
             </div>

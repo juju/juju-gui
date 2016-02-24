@@ -76,12 +76,7 @@ describe('UserProfileEntity', () => {
               Owner: {"test-owner"}
             </div>
             {undefined}
-            <div className="two-col">
-              Description
-            </div>
-            <div className="ten-col last-col">
-              {undefined}
-            </div>
+            {undefined}
             {undefined}
             {undefined}
           </div>
@@ -105,7 +100,7 @@ describe('UserProfileEntity', () => {
     var output = renderer.getRenderOutput();
     var button = output.props.children[1].props.children[0].props.children[1]
       .props.children;
-    var tag = output.props.children[1].props.children[1].props.children[6]
+    var tag = output.props.children[1].props.children[1].props.children[5]
       .props.children[1].props.children[0];
     var expected = (
       <li className="user-profile__entity user-profile__list-row twelve-col"
@@ -149,11 +144,13 @@ describe('UserProfileEntity', () => {
               <object type="image/svg+xml" data="bundle.svg"
                 className="entity-content__diagram-image" />
             </div>
-            <div className="two-col">
-              Description
-            </div>
-            <div className="ten-col last-col">
-              HA Django cluster.
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Description
+              </div>
+              <div className="ten-col last-col">
+                HA Django cluster.
+              </div>
             </div>
             <div className="twelve-col no-margin-bottom">
               <div className="two-col">
@@ -189,7 +186,7 @@ describe('UserProfileEntity', () => {
     var output = renderer.getRenderOutput();
     var button = output.props.children[1].props.children[0].props.children[1]
       .props.children;
-    var tag = output.props.children[1].props.children[1].props.children[6]
+    var tag = output.props.children[1].props.children[1].props.children[5]
       .props.children[1].props.children[0];
     var expected = (
       <li className="user-profile__entity user-profile__list-row twelve-col"
@@ -223,11 +220,13 @@ describe('UserProfileEntity', () => {
               Owner: {"test-owner"}
             </div>
             {undefined}
-            <div className="two-col">
-              Description
-            </div>
-            <div className="ten-col last-col">
-              Django framework.
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Description
+              </div>
+              <div className="ten-col last-col">
+                Django framework.
+              </div>
             </div>
             <div className="twelve-col no-margin-bottom">
               <div className="two-col">
@@ -307,7 +306,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[6]
+    output.props.children[1].props.children[1].props.children[5]
       .props.children[1].props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
