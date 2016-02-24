@@ -293,7 +293,7 @@ describe('UserProfile', () => {
                 title="django" />
             </span>
             <span className="user-profile__list-col one-col prepend-one">
-              [unit #]
+              {5}
             </span>
             <span className="user-profile__list-col two-col last-col">
               test-owner
@@ -334,7 +334,12 @@ describe('UserProfile', () => {
               </ul>
             </span>
             <span className="user-profile__list-col four-col">
-              [series]
+              <ul className="user-profile__list-series">
+                {[<li className="user-profile__comma-item"
+                  key="cs:django-trusty">
+                  trusty
+                </li>]}
+              </ul>
             </span>
             <span className={'user-profile__list-col one-col ' +
               'user-profile__list-icons'}>

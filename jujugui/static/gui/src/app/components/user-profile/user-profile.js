@@ -271,6 +271,9 @@ YUI.add('user-profile', function() {
         return;
       }
       var listItems = [];
+      if (typeof series !== 'array') {
+        series = [series];
+      }
       series.forEach((release) => {
         listItems.push(
           <li className="user-profile__comma-item"

@@ -172,7 +172,8 @@ var jsTestUtils = {
         services: {
           gunicorn: {charm: 'gunicorn'},
           django: {charm: 'django'}
-        }
+        },
+        unitCount: 5
       };
     } else {
       pojo = {
