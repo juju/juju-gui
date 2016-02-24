@@ -24,7 +24,7 @@ YUI.add('user-profile', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      charmstore: React.PropTypes.object,
+      charmstore: React.PropTypes.object.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
@@ -416,7 +416,7 @@ YUI.add('user-profile', function() {
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
                 username={this.props.username} />
-              <div className="user-profile__header">
+              <div className="user-profile__header twelve-col no-margin-bottom">
                 Models
                 <span className="user-profile__size">
                   ({envCount})
@@ -443,7 +443,7 @@ YUI.add('user-profile', function() {
                 </li>
                 {this._generateModelRows()}
               </ul>
-              <div className="user-profile__header">
+              <div className="user-profile__header twelve-col no-margin-bottom">
                 Bundles
                 <span className="user-profile__size">
                   ({bundleCount})
@@ -467,7 +467,7 @@ YUI.add('user-profile', function() {
                 </li>
                 {this._generateBundleRows()}
               </ul>
-              <div className="user-profile__header">
+              <div className="user-profile__header twelve-col no-margin-bottom">
                 Charms
                 <span className="user-profile__size">
                   ({charmCount})

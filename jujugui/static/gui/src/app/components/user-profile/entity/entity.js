@@ -263,13 +263,14 @@ YUI.add('user-profile-entity', function() {
       var type = props.type;
       var isModel = type === 'model';
       var isCharm = type === 'charm';
+      var name = entity.name;
       var id = isModel ? entity.uuid : entity.id;
       var buttonAction = isModel ? this._switchEnv.bind(
-        this, id, entity.name) : this._viewEntity.bind(this, id);
+        this, id, name) : this._viewEntity.bind(this, id);
       var icon = isCharm ? (
         <img className="user-profile__entity-icon"
           src={entity.icon}
-          title={entity.name} />) : undefined;
+          title={name} />) : undefined;
       return (
         <li className={this._generateClasses()}
           onClick={this._toggle}>
@@ -280,7 +281,7 @@ YUI.add('user-profile-entity', function() {
           <div className="user-profile__entity-details twelve-col">
             <div className="user-profile__entity-details-header twelve-col">
               <div className="ten-col no-margin-bottom">
-                {icon}{entity.name}
+                {icon}{name}
               </div>
               <div className={'user-profile__entity-details-header-action ' +
                 'two-col last-col no-margin-bottom'}>

@@ -21,31 +21,53 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfile', () => {
+  var models, charmstore, charms, bundles;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
     YUI().use('user-profile', () => { done(); });
   });
 
-  // XXX Skip this test until the content of the profile has been locked down.
-  xit('renders the header and lists', () => {
+  beforeEach(() => {
+    models = [{
+      uuid: 'env1',
+      name: 'sandbox',
+      lastConnection: 'today',
+      owner: 'test-owner'
+    }];
+    var list = sinon.stub();
+    charms = [jsTestUtils.makeEntity().toEntity()];
+    bundles = [jsTestUtils.makeEntity(true).toEntity()];
+    list.withArgs('test-owner', sinon.match.any, 'charm').callsArgWith(
+      1, null, charms);
+    list.withArgs('test-owner', sinon.match.any, 'bundle').callsArgWith(
+      1, null, bundles);
+    charmstore = {
+      list: list,
+      version: '9',
+      url: 'example.com/'
+    };
+  });
+
+  it('renders the header and lists', () => {
     var jem = {
-      listEnvironments: sinon.stub().returns([])
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: []})
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        charmstore={{}}
         createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         jem={jem}
         switchEnv={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
         storeUser={sinon.stub()}
-        username="spinach" />, true);
+        username="test-owner" />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
-    var whitelist = ['path', 'name', 'user', 'uuid', 'host-ports'];
     var expected = (
       <juju.components.Panel
         instanceName="user-profile"
@@ -64,21 +86,78 @@ describe('UserProfile', () => {
               charmCount={0}
               environmentCount={0}
               interactiveLogin={instance._interactiveLogin}
-              username="spinach" />
-            <juju.components.UserProfileList
-              title="Models"
-              data={[]}
-              uuidKey="uuid"
-              clickHandler={instance.switchEnv}
-              whitelist={whitelist}/>
-            <juju.components.UserProfileList
-              title="Charms"
-              data={[]}
-              uuidKey="id" />
-            <juju.components.UserProfileList
-              title="Bundles"
-              data={[]}
-              uuidKey="id" />
+              username="test-owner" />
+            <div className="user-profile__header twelve-col no-margin-bottom">
+              Models
+              <span className="user-profile__size">
+                ({0})
+              </span>
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col three-col">
+                  Name
+                </span>
+                <span className="user-profile__list-col four-col">
+                  Credential
+                </span>
+                <span className="user-profile__list-col two-col">
+                  Last accessed
+                </span>
+                <span className="user-profile__list-col one-col">
+                  Units
+                </span>
+                <span className={
+                  'user-profile__list-col two-col last-col'}>
+                  Owner
+                </span>
+              </li>
+              {[]}
+            </ul>
+            <div className="user-profile__header twelve-col no-margin-bottom">
+              Bundles
+              <span className="user-profile__size">
+                ({0})
+              </span>
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col seven-col">
+                  Name
+                </span>
+                <span className="user-profile__list-col two-col">
+                  Charms
+                </span>
+                <span className="user-profile__list-col one-col">
+                  Units
+                </span>
+                <span className={
+                  'user-profile__list-col two-col last-col'}>
+                  Owner
+                </span>
+              </li>
+              {[]}
+            </ul>
+            <div className="user-profile__header twelve-col no-margin-bottom">
+              Charms
+              <span className="user-profile__size">
+                ({0})
+              </span>
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col three-col">
+                  Name
+                </span>
+                <span className="user-profile__list-col seven-col">
+                  Series
+                </span>
+                <span className="user-profile__list-col two-col last-col">
+                  Owner
+                </span>
+              </li>
+              {[]}
+            </ul>
           </div>
         </div>
       </juju.components.Panel>
@@ -86,18 +165,207 @@ describe('UserProfile', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('renders lists of entities', () => {
+    var jem = {
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
+    };
+    var changeState = sinon.stub();
+    var getDiagramURL = sinon.stub();
+    var switchEnv = sinon.stub();
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        charmstore={charmstore}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={getDiagramURL}
+        jem={jem}
+        switchEnv={switchEnv}
+        showConnectingMask={sinon.stub()}
+        interactiveLogin={true}
+        changeState={changeState}
+        storeUser={sinon.stub()}
+        username="test-owner" />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var expected = (
+      <div className="inner-wrapper">
+        <juju.components.UserProfileHeader
+          avatar=""
+          bundleCount={1}
+          charmCount={1}
+          environmentCount={1}
+          interactiveLogin={instance._interactiveLogin}
+          username="test-owner" />
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          Models
+          <span className="user-profile__size">
+            ({1})
+          </span>
+        </div>
+        <ul className="user-profile__list twelve-col">
+          <li className="user-profile__list-header twelve-col">
+            <span className="user-profile__list-col three-col">
+              Name
+            </span>
+            <span className="user-profile__list-col four-col">
+              Credential
+            </span>
+            <span className="user-profile__list-col two-col">
+              Last accessed
+            </span>
+            <span className="user-profile__list-col one-col">
+              Units
+            </span>
+            <span className={
+              'user-profile__list-col two-col last-col'}>
+              Owner
+            </span>
+          </li>
+          {[<juju.components.UserProfileEntity
+            entity={models[0]}
+            key="env1"
+            switchEnv={switchEnv}
+            type="model">
+            <span className="user-profile__list-col three-col">
+              sandbox
+            </span>
+            <span className="user-profile__list-col four-col">
+              --
+            </span>
+            <span className="user-profile__list-col two-col">
+              today
+            </span>
+            <span className="user-profile__list-col one-col">
+              --
+            </span>
+            <span className="user-profile__list-col two-col last-col">
+              test-owner
+            </span>
+          </juju.components.UserProfileEntity>]}
+        </ul>
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          Bundles
+          <span className="user-profile__size">
+            ({1})
+          </span>
+        </div>
+        <ul className="user-profile__list twelve-col">
+          <li className="user-profile__list-header twelve-col">
+            <span className="user-profile__list-col seven-col">
+              Name
+            </span>
+            <span className="user-profile__list-col two-col">
+              Charms
+            </span>
+            <span className="user-profile__list-col one-col">
+              Units
+            </span>
+            <span className={
+              'user-profile__list-col two-col last-col'}>
+              Owner
+            </span>
+          </li>
+          {[<juju.components.UserProfileEntity
+            changeState={changeState}
+            entity={bundles[0]}
+            getDiagramURL={getDiagramURL}
+            key="django-cluster"
+            type="bundle">
+            <span className={'user-profile__list-col five-col ' +
+              'user-profile__list-name'}>
+              django-cluster
+              <ul className="user-profile__list-tags">
+                {[<li className="user-profile__comma-item"
+                  key="django-cluster-database">
+                  database
+                </li>]}
+              </ul>
+            </span>
+            <span className={'user-profile__list-col three-col ' +
+              'user-profile__list-icons'}>
+              <img className="user-profile__list-icon"
+                key="icon-0-gunicorn"
+                src="example.com/9/gunicorn/icon.svg"
+                title="gunicorn" />
+              <img className="user-profile__list-icon"
+                key="icon-1-django"
+                src="example.com/9/django/icon.svg"
+                title="django" />
+            </span>
+            <span className="user-profile__list-col one-col prepend-one">
+              [unit #]
+            </span>
+            <span className="user-profile__list-col two-col last-col">
+              test-owner
+            </span>
+          </juju.components.UserProfileEntity>]}
+        </ul>
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          Charms
+          <span className="user-profile__size">
+            ({1})
+          </span>
+        </div>
+        <ul className="user-profile__list twelve-col">
+          <li className="user-profile__list-header twelve-col">
+            <span className="user-profile__list-col three-col">
+              Name
+            </span>
+            <span className="user-profile__list-col seven-col">
+              Series
+            </span>
+            <span className="user-profile__list-col two-col last-col">
+              Owner
+            </span>
+          </li>
+          {[<juju.components.UserProfileEntity
+            changeState={changeState}
+            entity={charms[0]}
+            key="cs:django"
+            type="charm">
+            <span className={'user-profile__list-col three-col ' +
+              'user-profile__list-name'}>
+              django
+              <ul className="user-profile__list-tags">
+                {[<li className="user-profile__comma-item"
+                  key="cs:django-database">
+                  database
+                </li>]}
+              </ul>
+            </span>
+            <span className="user-profile__list-col four-col">
+              [series]
+            </span>
+            <span className={'user-profile__list-col one-col ' +
+              'user-profile__list-icons'}>
+              <img className="user-profile__list-icon"
+                src="example.com/9/django/icon.svg"
+                title="django" />
+            </span>
+            <span className={'user-profile__list-col two-col ' +
+              'prepend-two last-col'}>
+              test-owner
+            </span>
+          </juju.components.UserProfileEntity>]}
+        </ul>
+      </div>);
+    assert.deepEqual(output.props.children[1].props.children, expected);
+  });
+
   it('does not pass the charmstore login if interactiveLogin is falsy', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        charmstore={{}}
         switchEnv={sinon.stub()}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
         createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         interactiveLogin={false}
         storeUser={sinon.stub()}
-        username="spinach" />);
+        username="test-owner" />);
     var expected = (
       <juju.components.UserProfileHeader
         avatar=""
@@ -105,7 +373,7 @@ describe('UserProfile', () => {
         charmCount={0}
         environmentCount={0}
         interactiveLogin={undefined}
-        username="spinach" />);
+        username="test-owner" />);
     assert.deepEqual(output.props.children[1].props.children.props.children[0],
       expected);
   });
@@ -125,9 +393,10 @@ describe('UserProfile', () => {
         createSocketURL={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         storeUser={sinon.stub()}
-        username="spinach" />, true);
+        username="test-owner" />, true);
     var instance = renderer.getMountedInstance();
     instance._interactiveLogin();
     assert.equal(charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1);
@@ -138,14 +407,16 @@ describe('UserProfile', () => {
     var listEnvs = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        charmstore={{}}
         changeState={changeState}
         createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         switchEnv={sinon.stub()}
         listEnvs={listEnvs}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
-        username="spinach" />);
+        username="test-owner" />);
 
     output.props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
@@ -159,44 +430,44 @@ describe('UserProfile', () => {
 
   it('requests jem envs if jem is provided and updates state', () => {
     var jem = {
-      listEnvironments: sinon.stub()
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchEnv={sinon.stub()}
         changeState={sinon.stub()}
+        charmstore={{}}
         createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
-        username="spinach"
+        username="test-owner"
         jem={jem} />, true);
     var instance = component.getMountedInstance();
 
     assert.equal(jem.listEnvironments.callCount, 1);
-    // This should be the callback passed to the listEnvironments call.
-    jem.listEnvironments.args[0][0](null, ['myenvs']);
-    assert.deepEqual(instance.state.envList, ['myenvs']);
+    assert.deepEqual(instance.state.envList, models);
   });
 
   it('requests jes envs if no jem is provided and updates state', () => {
-    var listEnvs = sinon.stub();
+    var listEnvs = sinon.stub().callsArgWith(1, {envs: models});
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchEnv={sinon.stub()}
         changeState={sinon.stub()}
+        charmstore={{}}
         createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
-        username="spinach"
+        username="test-owner"
         listEnvs={listEnvs} />, true);
     var instance = component.getMountedInstance();
 
     assert.equal(listEnvs.args[0][0], 'user-admin');
-    // This should be the callback passed to listEnvs.
-    listEnvs.args[0][1](['myenvs']);
-    assert.deepEqual(instance.state.envList, ['myenvs']);
+    assert.deepEqual(instance.state.envList, models);
   });
 
   it('switches env when calling switchEnv method passed to list', () => {
@@ -218,9 +489,11 @@ describe('UserProfile', () => {
         switchEnv={switchEnv}
         createSocketURL={createSocketURL}
         changeState={changeState}
+        charmstore={{}}
+        getDiagramURL={sinon.stub()}
         showConnectingMask={showMask}
         storeUser={sinon.stub()}
-        username="spinach"
+        username="test-owner"
         dbEnvironmentSet={dbset}
         listEnvs={listEnvs} />, true);
     var instance = component.getMountedInstance();
@@ -251,16 +524,14 @@ describe('UserProfile', () => {
   });
 
   it('requests entities and updates state', () => {
-    var username = 'test-user';
-    var charmstore = {
-      list: sinon.stub()
-    };
+    var username = 'test-owner';
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         changeState={sinon.stub()}
         charmstore={charmstore}
         createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
@@ -272,16 +543,9 @@ describe('UserProfile', () => {
                  'charmstore list not called');
     assert.equal(charmstore.list.args[0][0], username,
                  'username not passed to list request');
-    // This should be the callback passed to the list call.
-    var data = [{
-      name: 'mycharm',
-      owner: username,
-      tags: [],
-      icon: undefined,
-      series: []
-    }];
-    charmstore.list.args[0][1](null, data);
-    assert.deepEqual(instance.state.charmList, data,
-                     'callback does not properly set state');
+    assert.deepEqual(instance.state.charmList, charms,
+                     'callback does not properly set charm state');
+    assert.deepEqual(instance.state.bundleList, bundles,
+                     'callback does not properly set bundle state');
   });
 });
