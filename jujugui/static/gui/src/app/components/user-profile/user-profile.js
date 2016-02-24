@@ -321,6 +321,7 @@ YUI.add('user-profile', function() {
               src={this._getIcon(id)}
               title={service.charm} />);
         });
+        var unitCount = bundle.unitCount || <span>&nbsp;</span>;
         components.push(
           <juju.components.UserProfileEntity
             changeState={this.props.changeState}
@@ -338,7 +339,7 @@ YUI.add('user-profile', function() {
               {services}
             </span>
             <span className="user-profile__list-col one-col prepend-one">
-              {bundle.unitCount}
+              {unitCount}
             </span>
             <span className="user-profile__list-col two-col last-col">
               {bundle.owner}
@@ -451,13 +452,14 @@ YUI.add('user-profile', function() {
               </div>
               <ul className="user-profile__list twelve-col">
                 <li className="user-profile__list-header twelve-col">
-                  <span className="user-profile__list-col seven-col">
+                  <span className="user-profile__list-col five-col">
                     Name
                   </span>
-                  <span className="user-profile__list-col two-col">
+                  <span className={
+                    'user-profile__list-col user-profile__list-icons three-col'}>
                     Charms
                   </span>
-                  <span className="user-profile__list-col one-col">
+                  <span className="user-profile__list-col one-col prepend-one">
                     Units
                   </span>
                   <span className={

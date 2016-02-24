@@ -126,13 +126,14 @@ describe('UserProfile', () => {
             </div>
             <ul className="user-profile__list twelve-col">
               <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col seven-col">
+                <span className="user-profile__list-col five-col">
                   Name
                 </span>
-                <span className="user-profile__list-col two-col">
+                <span className={
+                  'user-profile__list-col user-profile__list-icons three-col'}>
                   Charms
                 </span>
-                <span className="user-profile__list-col one-col">
+                <span className="user-profile__list-col one-col prepend-one">
                   Units
                 </span>
                 <span className={
@@ -255,13 +256,14 @@ describe('UserProfile', () => {
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col seven-col">
+            <span className="user-profile__list-col five-col">
               Name
             </span>
-            <span className="user-profile__list-col two-col">
+            <span className={
+              'user-profile__list-col user-profile__list-icons three-col'}>
               Charms
             </span>
-            <span className="user-profile__list-col one-col">
+            <span className="user-profile__list-col one-col prepend-one">
               Units
             </span>
             <span className={
