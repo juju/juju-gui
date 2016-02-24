@@ -320,6 +320,9 @@ var module = module;
         this._lowerCaseKeys(meta['charm-related'], meta['charm-related']);
         processed.relatedCharms = meta['charm-related'];
       }
+      if (meta['supported-series']) {
+        processed.series = meta['supported-series']['SupportedSeries'];
+      }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);
@@ -347,6 +350,9 @@ var module = module;
         }, this);
       }
       if (processed.entityType === 'bundle') {
+        if (meta['bundle-unit-count']) {
+          processed.unitCount = meta['bundle-unit-count']['Count'];
+        }
         processed.deployerFileUrl =
             this.url +
             this.version + '/' +

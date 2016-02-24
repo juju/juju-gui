@@ -259,6 +259,31 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Generate a list of series.
+
+      @method _generateSeries
+      @param {Array} series A list of series.
+      @param {String} id The id of the entity.
+      @returns {Object} A list of series components.
+    */
+    _generateSeries: function(series, id) {
+      if (!series) {
+        return;
+      }
+      var listItems = [];
+      series.forEach((release) => {
+        listItems.push(
+          <li className="user-profile__comma-item"
+            key={id + '-' + release}>
+            {release}
+          </li>);
+      });
+      return (
+        <ul className="user-profile__list-series">
+          {listItems}
+        </ul>);
+    },
+    /**
       Construct the URL for a service icon.
 
       @method _getIcon
@@ -296,7 +321,6 @@ YUI.add('user-profile', function() {
               src={this._getIcon(id)}
               title={service.charm} />);
         });
-        // XXX kadams54: Need to pull in unit count.
         components.push(
           <juju.components.UserProfileEntity
             changeState={this.props.changeState}
@@ -314,7 +338,7 @@ YUI.add('user-profile', function() {
               {services}
             </span>
             <span className="user-profile__list-col one-col prepend-one">
-              [unit #]
+              {bundle.unitCount}
             </span>
             <span className="user-profile__list-col two-col last-col">
               {bundle.owner}
@@ -336,8 +360,6 @@ YUI.add('user-profile', function() {
         var id = charm.id;
         // Ensure the icon is set.
         charm.icon = charm.icon || this._getIcon(id);
-        // XXX kadams54: Need to add support for parsing SupportedSeries to
-        // jujulib and then using that info to populate the series below.
         components.push(
           <juju.components.UserProfileEntity
             changeState={this.props.changeState}
@@ -350,7 +372,7 @@ YUI.add('user-profile', function() {
               {this._generateTags(charm.tags, id)}
             </span>
             <span className="user-profile__list-col four-col">
-              [series]
+              {this._generateSeries(charm.series, id)}
             </span>
             <span className={'user-profile__list-col one-col ' +
               'user-profile__list-icons'}>
