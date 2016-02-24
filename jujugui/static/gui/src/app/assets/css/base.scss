@@ -157,11 +157,23 @@ button {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="password"] {
     padding: 5px 10px;
     background-color: #fff;
     border: 1px solid $mid-grey;
     border-radius: $border-radius;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 input[type="radio"],

@@ -100,7 +100,9 @@ describe('MachineViewScaleUp', function() {
               className="machine-view__scale-up-unit-input"
               placeholder="units"
               ref="scaleUpUnit-111111$"
-              type="text" />
+              type="number"
+              min="0"
+              step="1" />
           </li>
           <li className="machine-view__scale-up-unit"
             key="222222$">
@@ -112,7 +114,9 @@ describe('MachineViewScaleUp', function() {
               className="machine-view__scale-up-unit-input"
               placeholder="units"
               ref="scaleUpUnit-222222$"
-              type="text" />
+              type="number"
+              min="0"
+              step="1" />
           </li>
         </ul>
         <juju.components.ButtonRow buttons={[{

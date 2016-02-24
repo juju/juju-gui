@@ -130,7 +130,10 @@ YUI.add('scale-service', function() {
           <div className="scale-service--units">
             <input
               className="scale-service--units__input"
-              type="text"
+              type="number"
+              min="0"
+              step="1"
+              autoComplete="off"
               name="num-units"
               onChange={this._updateState}
               ref="numUnitsInput"/>
@@ -163,7 +166,11 @@ YUI.add('scale-service', function() {
           <juju.components.ButtonRow buttons={buttons} />
         </form>
       );
-    }
+    },
+
+    componentDidMount: function() {
+      this.refs.numUnitsInput.focus();
+    },
   });
 
 }, '0.1.0', { requires: [
