@@ -455,8 +455,8 @@ YUI.add('user-profile', function() {
                   <span className="user-profile__list-col five-col">
                     Name
                   </span>
-                  <span className={
-                    'user-profile__list-col user-profile__list-icons three-col'}>
+                  <span className={'user-profile__list-col three-col ' +
+                    'user-profile__list-icons'}>
                     Charms
                   </span>
                   <span className="user-profile__list-col one-col prepend-one">
