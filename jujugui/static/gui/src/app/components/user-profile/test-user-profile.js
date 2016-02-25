@@ -170,6 +170,39 @@ describe('UserProfile', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('displays loading spinners before the content loads', () => {
+    var jem = {
+      listEnvironments: sinon.stub()
+    };
+    charmstore.list = sinon.stub();
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        charmstore={charmstore}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        jem={jem}
+        switchEnv={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        interactiveLogin={true}
+        changeState={sinon.stub()}
+        storeUser={sinon.stub()}
+        username="test-owner" />, true);
+    var output = component.getRenderOutput();
+    assert.deepEqual(
+      output.props.children[1].props.children.props.children[2]
+        .props.children[1],
+      <juju.components.Spinner />);
+    assert.deepEqual(
+      output.props.children[1].props.children.props.children[4]
+        .props.children[1],
+      <juju.components.Spinner />);
+    assert.deepEqual(
+      output.props.children[1].props.children.props.children[6]
+        .props.children[1],
+      <juju.components.Spinner />);
+  });
+
   it('renders lists of entities', () => {
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})

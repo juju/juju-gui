@@ -47,7 +47,10 @@ YUI.add('user-profile', function() {
       return {
         envList: [],
         charmList: [],
-        bundleList: []
+        bundleList: [],
+        loadingBundles: false,
+        loadingCharms: false,
+        loadingModels: false
       };
     },
 
@@ -65,12 +68,16 @@ YUI.add('user-profile', function() {
     _fetchEnvironments:  function() {
       var props = this.props;
       var jem = props.jem;
-      if (jem) {
-        jem.listEnvironments(this._fetchEnvironmentsCallback);
-      } else {
-        props.listEnvs(
-          'user-admin', this._fetchEnvironmentsCallback.bind(this, null));
-      }
+      this.setState({loadingModels: true}, () => {
+        // Delay the call until after the state change to prevent race
+        // conditions.
+        if (jem) {
+          jem.listEnvironments(this._fetchEnvironmentsCallback);
+        } else {
+          props.listEnvs(
+            'user-admin', this._fetchEnvironmentsCallback.bind(this, null));
+        }
+      });
     },
 
     /**
@@ -81,6 +88,7 @@ YUI.add('user-profile', function() {
       @param {Object} data The data from the request.
     */
     _fetchEnvironmentsCallback: function (error, data) {
+      this.setState({loadingModels: false});
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
@@ -103,7 +111,17 @@ YUI.add('user-profile', function() {
       var charmstore = this.props.charmstore;
       var username = this.props.username;
       if (charmstore && charmstore.list) {
-        charmstore.list(username, callback, type);
+        var state = {};
+        if (type === 'charm') {
+          state.loadingCharms = true;
+        } else {
+          state.loadingBundles = true;
+        }
+        this.setState(state, () => {
+          // Delay the call until after the state change to prevent race
+          // conditions.
+          charmstore.list(username, callback, type);
+        });
       }
     },
 
@@ -114,16 +132,22 @@ YUI.add('user-profile', function() {
       @param {String} error The error from the request, or null.
       @param {Object} data The data from the request.
     */
-    _fetchEntitiesCallback: function (type, error, data) {
+    _fetchEntitiesCallback: function(type, error, data) {
       if (error) {
         console.log(error);
         return;
       }
       // Pull out just the data we need to display.
       if (type === 'charm') {
-        this.setState({charmList: data});
+        this.setState({
+          charmList: data,
+          loadingCharms: false
+        });
       } else if (type === 'bundle') {
-        this.setState({bundleList: data});
+        this.setState({
+          bundleList: data,
+          loadingBundles: false
+        });
       }
     },
 
@@ -203,6 +227,9 @@ YUI.add('user-profile', function() {
       @returns {Array} The markup for the rows.
     */
     _generateModelRows: function() {
+      if (this.state.loadingModels) {
+        return <juju.components.Spinner />;
+      }
       var components = [];
       this.state.envList.forEach((model) => {
         var uuid = model.uuid;
@@ -306,6 +333,9 @@ YUI.add('user-profile', function() {
       @returns {Array} The markup for the rows.
     */
     _generateBundleRows: function() {
+      if (this.state.loadingBundles) {
+        return <juju.components.Spinner />;
+      }
       var components = [];
       this.state.bundleList.forEach((bundle) => {
         var id = bundle.id;
@@ -356,6 +386,9 @@ YUI.add('user-profile', function() {
       @returns {Array} The markup for the rows.
     */
     _generateCharmRows: function() {
+      if (this.state.loadingCharms) {
+        return <juju.components.Spinner />;
+      }
       var components = [];
       this.state.charmList.forEach((charm) => {
         var id = charm.id;
@@ -499,6 +532,7 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
+    'loading-spinner',
     'svg-icon',
     'panel-component',
     'user-profile-entity',
