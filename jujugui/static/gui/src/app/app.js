@@ -729,6 +729,7 @@ YUI.add('juju-gui', function(Y) {
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
+          authenticated={!!username}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}

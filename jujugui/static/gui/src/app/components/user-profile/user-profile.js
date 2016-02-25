@@ -23,6 +23,7 @@ YUI.add('user-profile', function() {
   juju.components.UserProfile = React.createClass({
 
     propTypes: {
+      authenticated: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
@@ -575,6 +576,7 @@ YUI.add('user-profile', function() {
           <div className="twelve-col">
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
+                authenticated={this.props.authenticated}
                 avatar=""
                 bundleCount={this.state.bundleList.length}
                 charmCount={this.state.charmList.length}

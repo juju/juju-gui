@@ -23,6 +23,7 @@ YUI.add('user-profile-header', function() {
   juju.components.UserProfileHeader = React.createClass({
 
     propTypes: {
+      authenticated: React.PropTypes.bool.isRequired,
       avatar: React.PropTypes.string.isRequired,
       bundleCount: React.PropTypes.number.isRequired,
       charmCount: React.PropTypes.number.isRequired,
@@ -39,7 +40,7 @@ YUI.add('user-profile-header', function() {
     */
     _generateLogin: function() {
       var interactiveLogin = this.props.interactiveLogin;
-      if (!interactiveLogin) {
+      if (!interactiveLogin || this.props.authenticated) {
         return;
       }
       return (
