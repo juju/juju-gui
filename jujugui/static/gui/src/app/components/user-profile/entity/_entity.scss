@@ -6,16 +6,16 @@
             }
 
             &-details {
+                @extend %floating-panel;
                 display: block;
             }
         }
     }
 
     &-details {
-        @extend %floating-panel;
-        // The details will be hidden initially.
-        display: none;
+        transition: all 0.3s;
         margin: 5px 0 5px -15px;
+        overflow: hidden;
 
         &-header {
             padding: 20px;
