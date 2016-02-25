@@ -24,7 +24,7 @@ YUI.add('user-profile', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      charmstore: React.PropTypes.object,
+      charmstore: React.PropTypes.object.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
@@ -321,6 +321,7 @@ YUI.add('user-profile', function() {
               src={this._getIcon(id)}
               title={service.charm} />);
         });
+        var unitCount = bundle.unitCount || <span>&nbsp;</span>;
         components.push(
           <juju.components.UserProfileEntity
             changeState={this.props.changeState}
@@ -338,7 +339,7 @@ YUI.add('user-profile', function() {
               {services}
             </span>
             <span className="user-profile__list-col one-col prepend-one">
-              {bundle.unitCount}
+              {unitCount}
             </span>
             <span className="user-profile__list-col two-col last-col">
               {bundle.owner}
@@ -416,7 +417,7 @@ YUI.add('user-profile', function() {
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
                 username={this.props.username} />
-              <div className="user-profile__header">
+              <div className="user-profile__header twelve-col no-margin-bottom">
                 Models
                 <span className="user-profile__size">
                   ({envCount})
@@ -443,7 +444,7 @@ YUI.add('user-profile', function() {
                 </li>
                 {this._generateModelRows()}
               </ul>
-              <div className="user-profile__header">
+              <div className="user-profile__header twelve-col no-margin-bottom">
                 Bundles
                 <span className="user-profile__size">
                   ({bundleCount})
@@ -451,13 +452,14 @@ YUI.add('user-profile', function() {
               </div>
               <ul className="user-profile__list twelve-col">
                 <li className="user-profile__list-header twelve-col">
-                  <span className="user-profile__list-col seven-col">
+                  <span className="user-profile__list-col five-col">
                     Name
                   </span>
-                  <span className="user-profile__list-col two-col">
+                  <span className={'user-profile__list-col three-col ' +
+                    'user-profile__list-icons'}>
                     Charms
                   </span>
-                  <span className="user-profile__list-col one-col">
+                  <span className="user-profile__list-col one-col prepend-one">
                     Units
                   </span>
                   <span className={
@@ -467,7 +469,7 @@ YUI.add('user-profile', function() {
                 </li>
                 {this._generateBundleRows()}
               </ul>
-              <div className="user-profile__header">
+              <div className="user-profile__header twelve-col no-margin-bottom">
                 Charms
                 <span className="user-profile__size">
                   ({charmCount})

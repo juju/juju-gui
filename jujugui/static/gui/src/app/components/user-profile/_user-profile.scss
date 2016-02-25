@@ -7,15 +7,15 @@
     left: 0;
 
     &__close {
-        position: absolute;
+        position: fixed;
         z-index: 1;
-        top: 20px;
+        top: $navbar-height + 20px;
         right: 20px;
         cursor: pointer;
     }
 
     &__header {
-        margin-top: 20px;
+        margin-top: 10px;
         padding-bottom: 20px;
         padding-left: 15px;
         font-size: 1.375em;

@@ -168,7 +168,12 @@ var jsTestUtils = {
         tags: ['database'],
         options: {},
         series: 'trusty',
-        files: files
+        files: files,
+        services: {
+          gunicorn: {charm: 'gunicorn'},
+          django: {charm: 'django'}
+        },
+        unitCount: 5
       };
     } else {
       pojo = {
