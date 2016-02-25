@@ -805,6 +805,9 @@ YUI.add('juju-gui', function(Y) {
       @method _renderDemoNotification
     */
     _renderDemoNotification: function() {
+      if (!this.get('sandbox')) {
+        return false;
+      }
       ReactDOM.render(
         <window.juju.components.DemoNotification
           sandboxMode={this.get('sandbox')}/>,
