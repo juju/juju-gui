@@ -1,0 +1,40 @@
+.demo-notification {
+  z-index: index($z-indexed-elements, demo-notification);
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: $cool-grey;
+  padding: 10px;
+
+  &__text {
+    position: relative;
+    top: 10px;
+    float: right;
+    color: $white;
+    margin: 0;
+  }
+
+  &__highlight {
+    font-weight: 900;
+  }
+
+  &__button {
+    @extend %button;
+    float: right;
+    margin-left: 20px;
+    margin-right: 10px;
+  }
+
+  &__button-external {
+    -moz-background-size: 0.7em 0.7em;
+    -webkit-background-size: 0.7em 0.7em;
+    -o-background-size: 0.7em 0.7em;
+    background-size: 0.7em 0.7em;
+    padding-right: .9em;
+    background-image: url("//assets.ubuntu.com/v1/71a7de8f-external-link-orange.svg");
+    background-position: 100% top;
+    background-repeat: no-repeat;
+  }
+}
