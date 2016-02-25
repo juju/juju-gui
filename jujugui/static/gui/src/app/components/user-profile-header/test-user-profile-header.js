@@ -31,7 +31,7 @@ describe('UserProfileHeader', () => {
     var interactiveLogin = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        authenticated={true}
+        authenticated={false}
         avatar="avatar.png"
         bundleCount={5}
         charmCount={2}
