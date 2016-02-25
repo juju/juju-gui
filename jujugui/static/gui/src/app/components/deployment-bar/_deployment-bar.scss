@@ -34,15 +34,6 @@
         margin-left: 10px;
     }
 
-    &__install-button {
-        @extend %fade-in;
-        @extend %floating-panel;
-        display: inline-block;
-        margin-left: 10px;
-        padding: 10px;
-        color: $cool-grey;
-    }
-
     &--initial {
         .deployment-bar {
             &__export {

@@ -152,6 +152,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="inspector-container"></div>
       <div id="white-box-container"></div>
       <div id="machine-view"></div>
+      <div id="demo-notification"></div>
 
       <div class="cookie-policy" style="display:none;">
         <div class="wrapper">

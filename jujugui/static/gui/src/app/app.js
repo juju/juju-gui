@@ -799,6 +799,19 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the demo notification component to the page in the
+      designated element.
+
+      @method _renderDemoNotification
+    */
+    _renderDemoNotification: function() {
+      ReactDOM.render(
+        <window.juju.components.DemoNotification
+          sandboxMode={this.get('sandbox')}/>,
+        document.getElementById('demo-notification'));
+    },
+
+    /**
       Renders the Deployment component to the page in the
       designated element.
 
@@ -1897,6 +1910,7 @@ YUI.add('juju-gui', function(Y) {
       this._renderDeployment();
       this._renderEnvSwitcher();
       this._renderHeaderSearch();
+      this._renderDemoNotification();
       // When we render the components we also want to trigger the rest of
       // the application to render but only based on the current state.
       this.state.dispatch();
@@ -2283,6 +2297,7 @@ YUI.add('juju-gui', function(Y) {
     'panel-component',
     'shortcuts',
     'user-profile',
+    'demo-notification',
     // juju-views group
     'd3-components',
     'juju-view-utils',
