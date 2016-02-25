@@ -6,6 +6,11 @@
 .env-switcher {
     &--toggle {
         cursor: pointer;
+        color: $cool-grey;
+
+        .environment-name {
+            font-size: 23px;
+        }
 
         &:focus {
             outline: 1px dotted $ubuntu-orange;
@@ -14,6 +19,13 @@
         .svg-icon {
             margin-left: 10px;
             vertical-align: text-top;
+            fill: currentColor;
+        }
+
+        &:hover {
+            color: $ubuntu-orange;
         }
     }
+
+
 }
