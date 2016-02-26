@@ -105,7 +105,7 @@ YUI.add('user-profile-entity', function() {
           '.user-profile__entity-details-inner').offsetHeight + 'px';
         this.setState({styles: {
           height: newHeight,
-          opacity: expanded ? 0 : 100
+          opacity: expanded ? 0 : 1
         }});
       });
     },
