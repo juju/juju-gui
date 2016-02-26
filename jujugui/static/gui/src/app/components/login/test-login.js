@@ -31,6 +31,7 @@ describe('LoginComponent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
+        helpMessage="Exterminate!"
         setCredentials={sinon.stub()}
         login={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
@@ -75,7 +76,7 @@ describe('LoginComponent', function() {
           </form>
         </div>
         <div className="login__message">
-          Find your password with `juju api-info --password password`
+          Exterminate!
           <div className="login__message-link">
             <a
               href="https://jujucharms.com"

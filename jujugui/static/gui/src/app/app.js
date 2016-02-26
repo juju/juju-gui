@@ -693,10 +693,17 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} failure Whether the login failed.
     */
     _renderLogin: function(failure) {
+      var msg = 'Find your password with ' +
+                '`juju show-controller --include-passwords`';
+      if (this.get('jujuCoreVersion').lastIndexOf('1.', 0) === 0) {
+        // Use old command to retrieve the password.
+        msg = 'Find your password with `juju api-info --password password`';
+      }
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
           envName={this.db.environment.get('name') || 'Sandbox'}
+          helpMessage={msg}
           setCredentials={this.env.setCredentials.bind(this.env)}
           login={this.env.login.bind(this.env)}
           loginFailure={failure} />,

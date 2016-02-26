@@ -627,9 +627,10 @@ describe('App', function() {
     // Create and return a new app. If connect is True, also connect the env.
     var makeApp = function(connect, context) {
       var app = new Y.juju.App({
+        consoleEnabled: true,
         env: env,
-        viewContainer: container,
-        consoleEnabled: true
+        jujuCoreVersion: '2.0.0',
+        viewContainer: container
       });
       app.navigate = function() { return true; };
       if (connect) {
@@ -645,6 +646,40 @@ describe('App', function() {
       assert.equal('Admin', message.Type);
       assert.equal('Login', message.Request);
     };
+
+    it('renders the correct login help message for Juju >= 2', function(done) {
+      var render = utils.makeStubMethod(ReactDOM, 'render');
+      this._cleanups.push(render.reset);
+      var app = makeApp(true, this);
+      app.after('ready', function() {
+        // Log out so that the login form is displayed.
+        app.logout();
+        assert.strictEqual(render.calledOnce(), true);
+        var node = render.lastArguments()[0];
+        assert.strictEqual(
+          node.props.helpMessage,
+          'Find your password with `juju show-controller --include-passwords`'
+        );
+        done();
+      });
+    });
+
+    it('renders the correct login help message for Juju < 2', function(done) {
+      var render = utils.makeStubMethod(ReactDOM, 'render');
+      this._cleanups.push(render.reset);
+      var app = makeApp(true, this);
+      app.set('jujuCoreVersion', '1.25.0');
+      app.after('ready', function() {
+        // Log out so that the login form is displayed.
+        app.logout();
+        assert.strictEqual(render.calledOnce(), true);
+        var node = render.lastArguments()[0];
+        assert.strictEqual(
+          node.props.helpMessage,
+          'Find your password with `juju api-info --password password`');
+        done();
+      });
+    });
 
     it('avoids trying to login if the env is not connected', function(done) {
       var app = makeApp(false, this); // Create a disconnected app.
