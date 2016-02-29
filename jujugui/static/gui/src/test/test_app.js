@@ -654,11 +654,12 @@ describe('App', function() {
       app.after('ready', function() {
         // Log out so that the login form is displayed.
         app.logout();
-        assert.strictEqual(render.calledOnce(), true);
+        assert.strictEqual(render.calledOnce(), true, 'render not called');
         var node = render.lastArguments()[0];
         assert.strictEqual(
           node.props.helpMessage,
-          'Find your password with `juju show-controller --include-passwords`'
+          'Find your username and password with ' +
+          '`juju show-controller --include-passwords`'
         );
         done();
       });
@@ -672,7 +673,7 @@ describe('App', function() {
       app.after('ready', function() {
         // Log out so that the login form is displayed.
         app.logout();
-        assert.strictEqual(render.calledOnce(), true);
+        assert.strictEqual(render.calledOnce(), true, 'render not called');
         var node = render.lastArguments()[0];
         assert.strictEqual(
           node.props.helpMessage,

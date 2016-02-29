@@ -693,7 +693,7 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} failure Whether the login failed.
     */
     _renderLogin: function(failure) {
-      var msg = 'Find your password with ' +
+      var msg = 'Find your username and password with ' +
                 '`juju show-controller --include-passwords`';
       if (this.get('jujuCoreVersion').lastIndexOf('1.', 0) === 0) {
         // Use old command to retrieve the password.
