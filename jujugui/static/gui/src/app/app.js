@@ -1057,23 +1057,19 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
     },
 
-    /**
-      Renders the environment switcher
-
-      @method _renderEnvSwitcher
-    */
-    _renderEnvSwitcher: function() {
+    _renderBreadcrumb: function() {
+      var showEnvSwitcher = true;
       if(this.env.findFacadeVersion('ModelManager') === null &&
          this.env.findFacadeVersion('EnvironmentManager') === null) {
         // We do not want to show the model switcher if it isn't supported as
         // it throws an error in the browser console and confuses the user
         // as it's visible but not functional.
-        return;
+        showEnvSwitcher = false;
       }
       var auth = this._getAuth('jem');
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
       ReactDOM.render(
-        <components.EnvSwitcher
+        <components.HeaderBreadcrumb
           app={this}
           env={this.env}
           environmentName={envName}
@@ -1082,8 +1078,9 @@ YUI.add('juju-gui', function(Y) {
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
           showConnectingMask={this.showConnectingMask.bind(this)}
-          authDetails={auth} />,
-        document.getElementById('environment-switcher'));
+          authDetails={auth}
+          showEnvSwitcher={showEnvSwitcher}/>,
+        document.getElementById('header-breadcrumb'));
     },
 
     /**
@@ -1915,7 +1912,7 @@ YUI.add('juju-gui', function(Y) {
         this.db.machines.filterByParent().length
       );
       this._renderDeployment();
-      this._renderEnvSwitcher();
+      this._renderBreadcrumb();
       this._renderHeaderSearch();
       // When we render the components we also want to trigger the rest of
       // the application to render but only based on the current state.
@@ -2291,7 +2288,7 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-component',
     'env-size-display',
-    'env-switcher',
+    'header-breadcrumb',
     'expanding-progress',
     'header-search',
     'inspector-component',

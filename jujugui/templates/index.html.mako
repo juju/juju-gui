@@ -79,6 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           </a>
           % endif
         </div>
+        <div id="header-breadcrumb"></div>
       </div>
 
       <div class="header-banner header-banner--right">
