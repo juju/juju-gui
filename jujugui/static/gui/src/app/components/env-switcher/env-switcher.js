@@ -159,7 +159,7 @@ YUI.add('env-switcher', function() {
       // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
       // and template selection in the GUI, this code should be updated to not
       // select template based on state server.
-      var srvCb = function(error, servers) {
+      var srvCb = (error, servers) => {
         if (error) {
           console.log(error);
           return;
@@ -169,7 +169,7 @@ YUI.add('env-switcher', function() {
           var baseTemplate = serverName;
           jem.newEnvironment(
             envOwnerName, envName, baseTemplate, serverName, password,
-            this.createEnvCallback.bind(this));
+            this.createEnvCallback);
         } else {
           console.log(
             'Cannot create a new environment: No state servers found.');
@@ -177,7 +177,7 @@ YUI.add('env-switcher', function() {
       };
 
       if (jem) {
-        jem.listServers(srvCb.bind(this));
+        jem.listServers(srvCb);
       } else {
         this.props.env.createEnv(
             envName, 'user-admin', this.createEnvCallback.bind(this, null));

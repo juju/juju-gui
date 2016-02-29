@@ -30,14 +30,17 @@ describe('MachineViewColumn', function() {
   it('can render', function() {
     var menuItems = [];
     var toggle = {};
+    var dropUnit = sinon.stub();
     // The component is wrapped to handle drag and drop, but we just want to
     // test the internal component so we access it via DecoratedComponent.
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
         activeMenuItem="name"
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
-        dropUnit="wordpress/0"
+        dropUnit={dropUnit}
+        isOver={false}
         menuItems={menuItems}
         title="Sandbox"
         toggle={toggle}
@@ -49,7 +52,7 @@ describe('MachineViewColumn', function() {
         <juju.components.MachineViewHeader
           activeMenuItem="name"
           droppable={true}
-          dropUnit="wordpress/0"
+          dropUnit={dropUnit}
           menuItems={menuItems}
           title="Sandbox"
           toggle={toggle}
@@ -68,6 +71,7 @@ describe('MachineViewColumn', function() {
   it('can render in droppable mode', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={true}
@@ -86,6 +90,7 @@ describe('MachineViewColumn', function() {
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
+        isOver={false}
         title="Sandbox"
         type="machine" />);
     var expected = (

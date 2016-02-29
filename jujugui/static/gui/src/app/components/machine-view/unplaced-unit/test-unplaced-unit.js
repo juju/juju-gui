@@ -35,8 +35,12 @@ describe('MachineViewUnplacedUnit', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
+        createMachine={sinon.stub()}
         icon="icon.svg"
+        machines={{}}
+        placeUnit={sinon.stub()}
         removeUnit={removeUnit}
+        selectMachine={sinon.stub()}
         unit={unit} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -67,9 +71,13 @@ describe('MachineViewUnplacedUnit', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
+        createMachine={sinon.stub()}
         icon="icon.svg"
         isDragging={true}
+        machines={{}}
+        placeUnit={sinon.stub()}
         removeUnit={removeUnit}
+        selectMachine={sinon.stub()}
         unit={unit} />);
     var expected = (
       <li className={'machine-view__unplaced-unit ' +
@@ -87,8 +95,12 @@ describe('MachineViewUnplacedUnit', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
+        createMachine={sinon.stub()}
         icon="icon.svg"
+        machines={{}}
+        placeUnit={sinon.stub()}
         removeUnit={removeUnit}
+        selectMachine={sinon.stub()}
         unit={unit} />);
     output.props.children[2].props.items[1].action();
     assert.equal(removeUnit.callCount, 1);

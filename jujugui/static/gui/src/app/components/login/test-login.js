@@ -109,6 +109,7 @@ describe('LoginComponent', function() {
     var login = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
+        envName="testenv"
         setCredentials={setCredentials}
         login={login} />);
     component.refs.username.value = 'foo';

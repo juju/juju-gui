@@ -41,7 +41,7 @@ describe('MachineViewScaleUp', function() {
               return 'django';
               break;
             case 'icon':
-              return 'django.svg';
+              return 'data:image/gif;base64,';
               break;
           }
         }
@@ -55,7 +55,7 @@ describe('MachineViewScaleUp', function() {
               return 'mysql';
               break;
             case 'icon':
-              return 'mysql.svg';
+              return 'data:image/gif;base64,';
               break;
           }
         }
@@ -94,7 +94,7 @@ describe('MachineViewScaleUp', function() {
             key="111111$">
             <img alt="django"
               className="machine-view__scale-up-unit-icon"
-              src="django.svg" />
+              src="data:image/gif;base64," />
             django
             <input
               className="machine-view__scale-up-unit-input"
@@ -108,7 +108,7 @@ describe('MachineViewScaleUp', function() {
             key="222222$">
             <img alt="mysql"
               className="machine-view__scale-up-unit-icon"
-              src="mysql.svg" />
+              src="data:image/gif;base64," />
             mysql
             <input
               className="machine-view__scale-up-unit-input"
@@ -145,7 +145,7 @@ describe('MachineViewScaleUp', function() {
               return 'django';
               break;
             case 'icon':
-              return 'django.svg';
+              return 'data:image/gif;base64,';
               break;
           }
         }
@@ -159,7 +159,7 @@ describe('MachineViewScaleUp', function() {
               return 'mysql';
               break;
             case 'icon':
-              return 'mysql.svg';
+              return 'data:image/gif;base64,';
               break;
           }
         }
@@ -180,7 +180,7 @@ describe('MachineViewScaleUp', function() {
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
-    var confirm = output.getDOMNode().querySelector(
+    var confirm = ReactDOM.findDOMNode(output).querySelector(
       '.generic-button--type-confirm');
     var input1 = output.refs['scaleUpUnit-111111$'];
     input1.value = '5';
@@ -208,7 +208,7 @@ describe('MachineViewScaleUp', function() {
               return 'juju-gui';
               break;
             case 'icon':
-              return 'juju-gui.svg';
+              return 'data:image/gif;base64,';
               break;
           }
         }
@@ -222,7 +222,7 @@ describe('MachineViewScaleUp', function() {
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
-    var confirm = output.getDOMNode().querySelector(
+    var confirm = ReactDOM.findDOMNode(output).querySelector(
       '.generic-button--type-confirm');
     var input1 = output.refs['scaleUpUnit-juju-gui'];
     input1.value = '5';

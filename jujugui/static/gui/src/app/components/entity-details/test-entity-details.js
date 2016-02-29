@@ -46,7 +46,9 @@ describe('EntityDetails', function() {
         deployService={sinon.spy()}
         changeState={sinon.spy()}
         getEntity={sinon.spy()}
-        pluralize={sinon.spy()} />);
+        makeEntityModel={sinon.spy()}
+        pluralize={sinon.spy()}
+        scrollPosition={0} />);
     assert.equal(output.props.className, 'entity-details');
   });
 
@@ -124,9 +126,11 @@ describe('EntityDetails', function() {
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
+          makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
-          pluralize={pluralize} />, true);
+          pluralize={pluralize}
+          scrollPosition={0} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.componentDidMount();
     var output = shallowRenderer.getRenderOutput();
@@ -223,9 +227,11 @@ describe('EntityDetails', function() {
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
+          makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
-          pluralize={pluralize} />, true);
+          pluralize={pluralize}
+          scrollPosition={0} />, true);
     shallowRenderer.getMountedInstance().componentDidMount();
     shallowRenderer.unmount();
     assert.equal(abort.callCount, 1);
