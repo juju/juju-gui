@@ -81,7 +81,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             % endif
           </li>
           <li id="user-name" class="header-banner__list-item">
-            <a class="header-banner__link--breadcrumb" href="#">
+            <a class="header-banner__link--breadcrumb" href="/profile/">
               anonymous
             </a>
           </li>

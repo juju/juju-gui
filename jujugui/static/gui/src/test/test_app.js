@@ -59,7 +59,8 @@ describe('App', function() {
         'deployment-container',
         'login-container',
         'notifications-container',
-        'loading-message'
+        'loading-message',
+        'environment-switcher'
       ];
       container = Y.Node.create('<div>');
       container.set('id', 'test-container');
