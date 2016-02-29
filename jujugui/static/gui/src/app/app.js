@@ -725,7 +725,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderUserProfile: function() {
       var auth = this.get('users')['charmstore'];
-      var username = auth && auth.user && auth.user.name;
+      var username = auth && auth.user;
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
@@ -1218,7 +1218,9 @@ YUI.add('juju-gui', function(Y) {
 
         // Store away the JEM auth info.
         var macaroon = bakery.getMacaroon();
-        this.storeUser('jem', macaroon);
+        if (macaroon) {
+          this.storeUser('jem');
+        }
 
         // Setup environment listing.
         this.jem.listEnvironments((error, envList) => {
@@ -1281,7 +1283,9 @@ YUI.add('juju-gui', function(Y) {
         this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
         // Store away the charmstore auth info.
         var macaroon = bakery.getMacaroon();
-        this.storeUser('charmstore', macaroon);
+        if (macaroon) {
+          this.storeUser('charmstore');
+        }
       }
     },
 
@@ -2048,46 +2052,22 @@ YUI.add('juju-gui', function(Y) {
       @param {String} service The service the macaroon comes from.
       @param {String} macaroon The base64 encoded macaroon.
      */
-    storeUser: function(service, macaroon) {
-      if (macaroon) {
-        var username = null;
-
-        // XXX jcsackett 2016-01-08: We should be using the whoami endpoint on
-        // jem to get the username of a logged in jem user rather than
-        // parsing the macaroon. Consider this all a bad hack for demo and we'll
-        // do something better in the very near future.
-        try {
-          macaroon = JSON.parse(atob(macaroon));
-          // We check all the caveats of each piece of the macaroon for the
-          // username data. If we find more than one username we abandon the
-          // macaroon as invalid.
-          macaroon.some(function(piece) {
-            var caveats = piece.caveats;
-            return caveats.some(function(caveat) {
-              var declaration = 'declared username ';
-              var index = caveat.cid.indexOf(declaration);
-              if (index !== -1) {
-                if (username === null) {
-                  username = caveat.cid.slice(index + declaration.length);
-                } else {
-                  console.log('Multiple usernames found in macaroon. ' +
-                              'Macaroon is invalid.');
-                  username = null;
-                  return true; // Breaks the some() function call.
-                }
-              }
-            });
-          });
-        } catch (e) {
-          console.log('Error working with macaroon json: ' + e);
+    storeUser: function(service) {
+      var callback = function(error, auth) {
+        if (error) {
+          console.error('Unable to query user information', error);
+          return;
         }
-
-        if (username) {
-          var users = this.get('users');
-          users[service] = {
-            user: { name: username }
-          };
+        if (auth) {
+          this.get('users')[service] = auth;
         }
+      };
+      if (service === 'jem') {
+        this.jem.whoami(callback.bind(this));
+      } else if (service == 'charmstore') {
+        this.get('charmstore').whoami(callback.bind(this));
+      } else {
+        console.error('Unrecognized service', service);
       }
     },
 

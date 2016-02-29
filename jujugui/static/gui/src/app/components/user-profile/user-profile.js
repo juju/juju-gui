@@ -216,7 +216,7 @@ YUI.add('user-profile', function() {
       if (error) {
         console.log(error);
       } else {
-        this.props.storeUser('charmstore', macaroon);
+        this.props.storeUser('charmstore');
       }
     },
 
