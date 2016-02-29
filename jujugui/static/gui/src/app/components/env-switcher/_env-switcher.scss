@@ -10,6 +10,14 @@
 
         .environment-name {
             font-size: 23px;
+
+            &:before {
+                content: '/';
+                position: relative;
+                left: -8px;
+                top: 1px;
+                color: $mid-grey;
+            }
         }
 
         &:focus {

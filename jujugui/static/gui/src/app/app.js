@@ -753,6 +753,8 @@ YUI.add('juju-gui', function(Y) {
           username={username || 'anonymous'}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
+      // The model name should not be visible when viewing the profile.
+      document.getElementById('environment-switcher').classList.add('hidden');
     },
 
     /**
@@ -1048,6 +1050,9 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _emptySectionC: function() {
+      // If the model name has been hidden by the profile then show it again.
+      document.getElementById(
+        'environment-switcher').classList.remove('hidden');
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
     },
@@ -1764,6 +1769,14 @@ YUI.add('juju-gui', function(Y) {
       console.log('switching to new socket URL:', socketUrl);
       if (this.get('sandbox')) {
         console.log('switching environments is not supported in sandbox');
+        // In the sandbox we need to close the profile page to simulate loading
+        // a model.
+        this.changeState({
+          sectionC: {
+            component: null,
+            metadata: null
+          }
+        });
       }
       if (username && password) {
         // We don't always get a new username and password when switching
