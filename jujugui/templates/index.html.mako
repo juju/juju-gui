@@ -65,30 +65,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
 
       <div class="header-banner header-banner--left">
-        <ul id="browser-nav" class="header-banner__list">
-          <li id="nav-brand-env" class="header-banner__list-item">
-            ## Conditionally linking is not needed in the Go version of the template.
-            % if logo_url:
-            <a class="header-banner__link" target="_blank" href="${logo_url}">
-            % endif
-              <svg class="svg-icon header-banner__logo"
-                viewBox="0 0 75 30"
-                style="width:75px; height:30px;">
-                <use xlink:href="#juju-logo" />
-              </svg>
-            % if logo_url:
-            </a>
-            % endif
-          </li>
-          <li id="user-name" class="header-banner__list-item">
-            <a class="header-banner__link--breadcrumb" href="/profile/">
-              anonymous
-            </a>
-          </li>
-          <li class="header-banner__list-item">
-            <div id="environment-switcher"></div>
-          </li>
-        </ul>
+        <div class="header-banner__logo">
+          ## Conditionally linking is not needed in the Go version of the template.
+          % if logo_url:
+          <a class="header-banner__link" target="_blank" href="${logo_url}">
+          % endif
+            <svg class="svg-icon"
+              viewBox="0 0 75 30"
+              style="width:75px; height:30px;">
+              <use xlink:href="#juju-logo" />
+            </svg>
+          % if logo_url:
+          </a>
+          % endif
+        </div>
       </div>
 
       <div class="header-banner header-banner--right">
