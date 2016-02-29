@@ -180,4 +180,27 @@ describe('jujulib environment manager', function() {
       }
     );
   });
+
+  it('identifies the current user', function(done) {
+    var currentUser = {user: 'test'};
+    var bakery = {
+      sendGetRequest: function(path, data, success, failure) {
+        assert.equal(path, 'http://example.com/v1/whoami');
+        var xhr = _makeXHRRequest(currentUser);
+        success(xhr);
+      },
+    };
+
+    env = new window.jujulib.environment('http://example.com', bakery);
+    env.whoami(
+      function(error, data) {
+        if (error) {
+          assert.fail('callback should be successful');
+        } else {
+          assert.deepEqual(data, currentUser);
+        }
+        done();
+      }
+    );
+  });
 });
