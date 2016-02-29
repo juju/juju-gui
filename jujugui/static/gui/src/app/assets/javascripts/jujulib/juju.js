@@ -504,6 +504,37 @@ var module = module;
     },
 
     /**
+      Queries the whoami service for auth info.
+
+      @method whoami
+    */
+    whoami: function(callback) {
+      var transformAuthObject = function(callback, error, data) {
+        if (error !== null) {
+          callback(error, data);
+        } else {
+          var auth = {};
+          // Mapping from the API's attributes to the lowercase attributes more
+          // common in the JS world. Not sure if we want to do this, or if
+          // there's a better way (i.e., one that handles deeply nested
+          // structures), but this works for now.
+          Object.keys(data).forEach(function(key) {
+            auth[key.toLowerCase()] = data[key];
+          });
+          callback(error, auth);
+        }
+      };
+      var path = this._generatePath('whoami');
+      return _makeRequest(
+        this.bakery,
+        path,
+        'GET',
+        null,
+        transformAuthObject.bind(this, callback)
+      );
+    },
+
+    /**
       Takes the bundle id and fetches the bundle YAML contents. Required for
       deploying a bundle via the deployer.
 
