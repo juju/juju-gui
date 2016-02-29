@@ -12,6 +12,12 @@
         border-bottom: 1px solid $mid-grey;
         line-height: 1.5;
         cursor: pointer;
+
+        &:focus,
+        &:active,
+        &:hover {
+            background-color: $hover-background;
+        }
     }
 
     &__status {
